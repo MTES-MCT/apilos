@@ -1,2 +1,5 @@
+# Environment variable
+.env
+
 #local repo to store DB data
 pgdata/
