@@ -9,12 +9,12 @@ services:
     volumes:
       - ./pg-init-scripts:/docker-entrypoint-initdb.d
       - ./pgdata:/var/lib/postgresql/data
-#    ports:
-#      - 5431:5432
+    ports:
+      - 5433:5432
   appel:
     build: .
-#    command: python manage.py runserver 0.0.0.0:8000
-    command: tail -f README.md
+#    command: tail -f README.md
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
     ports:

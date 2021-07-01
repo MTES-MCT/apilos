@@ -1,5 +1,7 @@
 Django>=3.0,<4.0
 psycopg2-binary>=2.8
-django_bootstrap_icons>=0.5.5
-django-bootstrap-v5>=1.0.2
-Pillow>=8.1.2
+#django_bootstrap_icons>=0.5.5
+#django-bootstrap-v5>=1.0.2
+#Pillow>=8.1.2
+python-docx>=0.8.11
+python-decouple>=3.4

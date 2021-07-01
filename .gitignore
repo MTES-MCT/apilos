@@ -1,5 +1,9 @@
 # Environment variable
 .env
 
+#Cache
+__pycache__
+.DS_Store
+
 #local repo to store DB data
 pgdata/
