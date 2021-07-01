@@ -1,0 +1,28 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_USER=appel
+      - POSTGRES_PASSWORD=appel
+      - POSTGRES_MULTIPLE_DATABASES=appel-test
+    volumes:
+      - ./pg-init-scripts:/docker-entrypoint-initdb.d
+      - ./pgdata:/var/lib/postgresql/data
+#    ports:
+#      - 5431:5432
+  appel:
+    build: .
+#    command: python manage.py runserver 0.0.0.0:8000
+    command: tail -f README.md
+    volumes:
+      - .:/code
+    ports:
+      - "8001:8000"
+    depends_on:
+      - postgres
+
+volumes:
+  data:
+    driver: local
+  pgdata:
