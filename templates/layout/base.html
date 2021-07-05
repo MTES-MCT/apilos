@@ -19,9 +19,15 @@
   </head>
 
   <body>
-    {% block header %}{% endblock %}
+    {% block header %}
+      {% include "layout/header.html" with dark=False %}
+    {% endblock %}
     {% include "common/notifications.html" %}
-    {% block content %}{% endblock %}
+    <div class="container py-3">
+      <nav class="row">
+        {% block content %}{% endblock %}
+      </nav>
+    </div>
     {% include "common/matomo.html" %}
     {% include "common/sentry.html" %}
     {% block js %}

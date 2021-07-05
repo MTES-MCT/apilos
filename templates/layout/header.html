@@ -12,27 +12,16 @@
         </h1>
       </div>
       <div class="col-md-7 col-lg-6 col-xl-5 my-1 d-flex justify-content-end align-items-center">
-        coller à droite :)<br>ici nous mettrons les boutons d'authentification
         {% if user.is_authenticated %}
           <span>
             <span class="d-none d-sm-inline-block">Bonjour</span>
             <strong>{{ user.username }}</strong>
           </span>
-          <!-- HIDDEN -->
-          {% if false %}
-          <a class="btn btn-link mx-1" href="{% url "mon_compte" %}">
-            Mon compte
-          </a>
           <a class="btn btn-light" href="{% url "logout" %}">Déconnexion</a>
-          {% endif %}
           {% else %}
-          <!-- HIDDEN -->
-          {% if false %}
           <div class="text-right">
             <a class="btn btn-link" href="{% url "login" %}?next={{ request.path }}">Identifiez-vous</a>
-            <a class="btn btn-primary" href="{% url "django_registration_register" %}">Créez un compte</a>
           </div>
-          {% endif %}
         {% endif %}
         </div>
     </nav>
