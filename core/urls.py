@@ -22,9 +22,9 @@ from django.urls import include
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
+    path('bailleurs/', include('bailleurs.urls')),
     path('conventions/', include('conventions.urls')),
-    path('lessors/', include('lessors.urls')),
-    path('programs/', include('programs.urls')),
+    path('programmes/', include('programmes.urls')),
     path('stats/', include('stats.urls')),
     path('users/', include('users.urls')),
     path('', include('users.urls')),

@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class LessorsConfig(AppConfig):
+class ProgrammesConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'lessors'
+    name = 'programmes'

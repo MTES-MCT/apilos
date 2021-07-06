@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Convention, Pret
+
+admin.site.register(Convention)
+admin.site.register(Pret)

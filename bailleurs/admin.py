@@ -1,6 +1,6 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Lessor
+from .models import Bailleur
 
-admin.site.register(Lessor)
+admin.site.register(Bailleur)
