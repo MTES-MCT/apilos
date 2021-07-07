@@ -13,26 +13,32 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 
-
 from decouple import config
-
+import dj_database_url
 
 from django.core.exceptions import ImproperlyConfigured
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+def get_env_variable(name, cast=str):
+    try:
+        return cast(os.environ[var_name])
+    except:
+        return config(name, cast=cast)
 
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', cast=bool, default=False)
+SECRET_KEY = get_env_variable('SECRET_KEY')
+DEBUG = get_env_variable('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = []
+env_allowed_hosts = []
+try:
+  env_allowed_hosts = os.environ["ALLOWED_HOSTS"].split(",")
+except KeyError:
+  pass
 
-
-# Application definition
+ALLOWED_HOSTS = ["localhost"] + env_allowed_hosts
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -80,25 +86,23 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+try:
+    database_url = os.environ["DATABASE_URL"]
+    default_settings = dj_database_url.config()
+except KeyError:
+    default_settings = {
+            'ENGINE': 'django.db.backends.postgresql',
+            'USER': config('DB_USER'),
+            'NAME': config('DB_NAME'),
+            'HOST': config('DB_HOST'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'PORT': config('DB_PORT', default='5432'),
+            'TEST': {
+                'NAME': config('DB_NAME')+'-test',
+            },
+    }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'USER': config('DB_USER'),
-        'NAME': config('DB_NAME'),
-        'HOST': config('DB_HOST'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'PORT': config('DB_PORT', default='5432'),
-        'TEST': {
-            'NAME': config('DB_NAME')+'-test',
-        },
-    },
-}
-
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+DATABASES = { 'default': default_settings }
 
 AUTH_PASSWORD_VALIDATORS = [
     {

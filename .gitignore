@@ -1,9 +1,12 @@
 # Environment variable
 .env
+venv
 
 #Cache
 __pycache__
 .DS_Store
+*.pyc
 
 #local repo to store DB data
 pgdata/
+staticfiles
