@@ -1,0 +1,32 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.9
+        environment:
+          DATABASE_URL: postgres://root:password@localhost/appel_test
+          SECRET_KEY: secret-key
+          DEBUG: False
+      - image: circleci/postgres:12.2-postgis
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: appel_test
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            pip install -r requirements.txt
+      - run:
+          name: Wait for Postgres server
+          command: dockerize -wait tcp://localhost:5432 -timeout 10s
+      - run:
+          name: Run database migrations
+          command: |
+            python3 ./manage.py migrate
+      - run:
+          name: Run tests
+          command: |
+            python3 manage.py test

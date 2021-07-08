@@ -1,7 +1,6 @@
 import uuid
 
 from django.db import models
-from django.utils import timezone
 from django.urls import reverse
 
 class Bailleur(models.Model):
@@ -24,5 +23,5 @@ class Bailleur(models.Model):
     def __str__(self):
         return self.nom
 
-#    def get_absolute_url(self):
-#        return reverse('bailleur:bailleur-detail', args=[str(self.uuid)])
+    def get_absolute_url(self):
+        return reverse('bailleur-details', args=[str(self.uuid)])

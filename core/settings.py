@@ -142,6 +142,7 @@ STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, "staticfiles"))
 STATIC_URL = "/static/"
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
+#FIXME: pourquoi STAGING = FALSE ?
 STAGING = False
 
 # Default primary key field type

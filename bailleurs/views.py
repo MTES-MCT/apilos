@@ -1,3 +1,4 @@
 from django.shortcuts import render
 
-# Create your views here.
+def bailleur_details(request, uuid):
+  return 'ok'
