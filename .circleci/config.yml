@@ -44,9 +44,10 @@ jobs:
           path: test-reports/
           destination: python_app
   deploy_staging:
-    machine:
-      enabled: true
+    docker:
+      - image: circleci/python:3.9
     steps:
+      - checkout
       - run:
           name: Add Scalingo to known_hosts
           command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
