@@ -54,7 +54,7 @@ jobs:
       - run:
           name: Deploy Staging APpeL on Scalingo
           command: |
-            git push git@ssh.osc-fr1.scalingo.com:appel-staging.git $CIRCLE_BRANCH:master
+            git push -f git@ssh.osc-fr1.scalingo.com:appel-staging.git ${CIRCLE_BRANCH}:master
                      
 
 workflows:
