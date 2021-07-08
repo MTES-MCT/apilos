@@ -43,3 +43,26 @@ jobs:
       - store_artifacts:
           path: test-reports/
           destination: python_app
+  deploy_staging:
+    machine:
+      enabled: true
+    steps:
+      - run:
+          name: Add Scalingo to known_hosts
+          command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy Staging APpeL on Scalingo
+          command: |
+            git push git@ssh.osc-fr1.scalingo.com:appel-staging.git $CIRCLE_SHA1:master
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy_staging:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop
