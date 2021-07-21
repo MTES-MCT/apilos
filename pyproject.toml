@@ -1,0 +1,11 @@
+[tool.darker]
+src = [
+    "core",
+]
+diff = false
+check = false
+isort = true
+lint = [
+    "pylint",
+]
+log_level = "INFO"
