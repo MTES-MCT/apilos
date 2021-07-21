@@ -1,8 +1,13 @@
 [tool.darker]
 src = [
     "core",
+    "bailleurs",
+    "conventions",
+    "programmes",
+    "stats",
+    "users"
 ]
-diff = false
+diff = true
 check = false
 isort = true
 lint = [
