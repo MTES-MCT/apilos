@@ -12,10 +12,15 @@ APpeL a aussi pour vocation d centraliser et fiabiliter les statistiques des log
 
 ... etc
 
+### Linter
+
+Nous utilisons pylint et nous l'avons inclut dand le git hook pre-commit
+
 ## liens utils
 
 https://fabrique-numerique.gitbook.io/guide/developpement/etat-de-lart-de-lincubateur
 https://doc.incubateur.net/startups/la-vie-dune-se/construction/kit-de-demarrage
+
 
 
 ## Pense-bête environnement technique

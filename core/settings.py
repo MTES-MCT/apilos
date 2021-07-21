@@ -16,11 +16,10 @@ import os
 from decouple import config
 import dj_database_url
 
-from django.core.exceptions import ImproperlyConfigured
-
 def get_env_variable(name, cast=str):
     try:
-        return cast(os.environ[var_name])
+        return cast(os.environ[name])
+    # pylint: disable=W0702, bare-except
     except:
         return config(name, cast=cast)
 
@@ -34,9 +33,9 @@ DEBUG = get_env_variable('DEBUG', cast=bool)
 
 env_allowed_hosts = []
 try:
-  env_allowed_hosts = os.environ["ALLOWED_HOSTS"].split(",")
+    env_allowed_hosts = os.environ["ALLOWED_HOSTS"].split(",")
 except KeyError:
-  pass
+    pass
 
 ALLOWED_HOSTS = ["localhost"] + env_allowed_hosts
 
@@ -142,7 +141,7 @@ STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, "staticfiles"))
 STATIC_URL = "/static/"
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
-#FIXME: pourquoi STAGING = FALSE ?
+# Why STAGING = FALSE ?
 STAGING = False
 
 # Default primary key field type
