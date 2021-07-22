@@ -1,0 +1,7 @@
+.ds_banner {
+  background-color: #F9F8F6;
+}
+
+.fr-fi--xxl:after, .fr-fi--xxl:before {
+  font-size: 4rem!important;
+}
