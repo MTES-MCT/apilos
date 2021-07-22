@@ -13,9 +13,9 @@
               <p class="fr-mb-3w">
                 Via APpeL vous pourrez modifier, valider et transmettre votre projet de convention aux services instructeurs.
               </p>
-              <p class="fr-mb-5w"><button class="fr-btn" href="{% url "login" %}?next={{ request.path }}">
-                <span class="fr-fi-edit-line" aria-hidden="true"></span>Faire ma convention
-              </button></p>
+              <p class="fr-mb-5w">
+                {% include "common/login_button.html" %}
+              </p>
           </div>
           <div class="fr-col-12 fr-col-lg-5 fr-pl-0 fr-pl-md-4w fr-pb-0">
               <figure class="fr-content-media fr-my-0">
@@ -30,32 +30,50 @@
 <div class="fr-container">
   <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-lg-10 fr-col-offset-lg-1">
-          <h2>Comment ça marche ?</h2>
+          <h2 class="fr-mb-3w">Comment ça marche ?</h2>
           <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters">
               <div class="fr-col-lg-2 fr-col-md-3">
                 <span class="fr-fi-checkbox-circle-line fr-fi--xxl" aria-hidden="true"></span>
               </div>
-              <div class="fr-col-lg-10 fr-col-md-9">
+              <div class="fr-col-lg-10 fr-col-md-9 fr-mb-3w">
                 <h3>Créez votre projet de convention en 4 étapes</h3>
                 <ul>
-                  <li>test</li>
-                  <li>test</li>
-                  <li>test</li>
-                  <li>test</li>
+                  <li>Récupérez les informations de l’agrément de financement</li>
+                  <li>Validez ou modifiez les informations déjà connues par l’Etat</li>
+                  <li>Calculez simplement votre loyer maximal</li>
+                  <li>Déposez en ligne vos documents</li>
                 </ul>
               </div>
+            </div>
+          </div>
+          <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w">
+              <div class="fr-col-lg-2 fr-col-md-3">
+                <span class="fr-fi-mail-line fr-fi--xxl" aria-hidden="true"></span>
+              </div>
+              <div class="fr-col-lg-10 fr-col-md-9">
+                <h3>Transmettez le projet de convention aux services instructeurs</h3>
+                <ul>
+                  <li>Envoyez votre projet de convention</li>
+                  <li>Vous êtes informés en temps réel de l’avancée de votre projet</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="fr-container">
+            <ul class="fr-btns-group fr-btns-group--inline fr-mb-3w">
+              <li>
+                {% include "common/login_button.html" %}
+              </li>
+              <li>
+                  <button class="fr-btn fr-btn--secondary">
+                    Comment créer ma convention ?
+                  </button>
+              </li>
+            </ul>
 
-          <p class="fr-mt-5w">
-
-
-
-
-            Ce projet est le volet numérique de la marque de l'État, qui permet pour les citoyens d'avoir une cohérence graphique et une meilleure expérience à travers l'ensemble des sites de l'État. Le Système de Design de l'État regroupe un ensemble de composants
-              réutilisables, répondant à des standards et à une gouvernance, pouvant être assemblés pour créer des sites Internet accessibles et ergonomiques
-          </p>
-
-
+          </div>
       </div>
   </div>
 </div>

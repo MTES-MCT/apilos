@@ -16,13 +16,15 @@
                           <!-- L’alternative de l’image (attribut alt) doit impérativement être renseignée et reprendre le texte visible dans l’image -->
                       </div>
                       <div class="fr-header__navbar">
-                          <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="modal-870" aria-haspopup="menu" title="Menu" id="fr-btn-menu-mobile-4">
-                              Menu
-                          </button>
+                        {% if user.is_authenticated %}
+                          <button class="fr-btn fr-fi-close-circle-line" onclick="location.href='{% url 'logout' %}'"></button>
+                        {% else %}
+                          <button class="fr-btn fr-fi-edit-line" onclick="location.href='{% url 'login' %}'"></button>
+                        {% endif %}
                       </div>
-                  </div>
-                  <div class="fr-header__service">
-                      <a href="/" title="Accueil - [À MODIFIER | Nom du site / service]">
+                    </div>
+                    <div class="fr-header__service">
+                      <a href="/" title="Accueil - APpeL">
                           <p class="fr-header__service-title">APpeL</p>
                       </a>
                       <p class="fr-header__service-tagline">Le portail qui pré-remplit les conventions APL pour les bailleurs sociaux</p>
@@ -32,25 +34,25 @@
                   <div class="fr-header__tools-links">
                         {% if user.is_authenticated %}
                         <ul class="fr-links-group">
-                          <li>
+                          <li class="fr-mx-3w">
                           Bonjour
                           <strong>{{ user.username }}</strong>
                         </li>
                         <li>
-                          <a class="fr-link fr-fi-close-circle-line" href="{% url "logout" %}">Déconnexion</a>
-                        </li>
+                          <button class="fr-btn fr-btn--secondary" onclick="location.href='{% url 'logout' %}'">
+                            <span class="fr-fi-close-circle-line fr-mr-1w" aria-hidden="true"></span>Déconnexion
+                          </button>
+                    </li>
                       </ul>
                       {% else %}
-
                         <ul class="fr-btns-group fr-btns-group--inline">
                           <li>
-                              <button class="fr-btn" href="{% url "login" %}?next={{ request.path }}">
-                                <span class="fr-fi-edit-line fr-mr-1w" aria-hidden="true"></span>Faire ma convention
-                              </button>
+                            {% include "common/login_button.html" %}
                           </li>
                           <li>
                               <button class="fr-btn fr-btn--secondary">
-                                <span class="fr-fi-account-line fr-mr-1w" aria-hidden="true"></span>Espace instructeur
+                                <span class="fr-fi-account-line fr-mr-1w" aria-hidden="true">
+                                </span>Espace instructeur
                               </button>
                           </li>
                       </ul>
