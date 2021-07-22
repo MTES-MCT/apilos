@@ -1,29 +1,56 @@
 {% load static %}
-
-<header role="banner" class="container-fluid p-0 m-0" style="border-bottom: 1px solid #ccc">
-  <div class="container py-3">
-    <nav class="row">
-      <div class="col-md-5 col-lg-6 col-xl-7 my-1">
-        <h1 class="h3 m-0 p-0">
-          <a class="d-flex align-items-center text-decoration-none" href="{% url "home" %}">
-            <img src="{% static "img/logo-marianne.png" %}" alt="APpeL, République Française" height="75">
-            <img src="{% static "img/logo-APpeL.svg" %}" alt="APpeL, République Française" height="75">
-          </a>
-        </h1>
-      </div>
-      <div class="col-md-7 col-lg-6 col-xl-5 my-1 d-flex justify-content-end align-items-center">
-        {% if user.is_authenticated %}
-          <span>
-            <span class="d-none d-sm-inline-block">Bonjour</span>
-            <strong>{{ user.username }}</strong>
-          </span>
-          <a class="btn btn-light" href="{% url "logout" %}">Déconnexion</a>
-          {% else %}
-          <div class="text-right">
-            <a class="btn btn-link" href="{% url "login" %}?next={{ request.path }}">Identifiez-vous</a>
+<header role="banner" class="fr-header">
+  <div class="fr-header__body">
+      <div class="fr-container">
+          <div class="fr-header__body-row">
+              <div class="fr-header__brand fr-enlarge-link">
+                  <div class="fr-header__brand-top">
+                      <div class="fr-header__logo">
+                          <p class="fr-logo">
+                              République
+                              <br>Française
+                          </p>
+                      </div>
+                      <div class="fr-header__operator">
+                          <img src="{% static "img/appel_logo.png" %}" class="fr-responsive-img" style="max-width:5rem;" alt="APpeL, conventionnement APL" />
+                          <!-- L’alternative de l’image (attribut alt) doit impérativement être renseignée et reprendre le texte visible dans l’image -->
+                      </div>
+                      <div class="fr-header__navbar">
+                          <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="modal-870" aria-haspopup="menu" title="Menu" id="fr-btn-menu-mobile-4">
+                              Menu
+                          </button>
+                      </div>
+                  </div>
+                  <div class="fr-header__service">
+                      <a href="/" title="Accueil - [À MODIFIER | Nom du site / service]">
+                          <p class="fr-header__service-title">APpeL</p>
+                      </a>
+                      <p class="fr-header__service-tagline">Le portail qui pré-remplit les conventions APL pour les bailleurs sociaux</p>
+                  </div>
+              </div>
+              <div class="fr-header__tools">
+                  <div class="fr-header__tools-links">
+                      <ul class="fr-links-group">
+                        {% if user.is_authenticated %}
+                        <li>
+                          Bonjour
+                          <strong>{{ user.username }}</strong>
+                        </li>
+                        <li>
+                          <a class="fr-link fr-fi-close-circle-line" href="{% url "logout" %}">Déconnexion</a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a class="fr-link fr-fi-account-line" href="#">Espace instructeur</a>
+                        </li>
+                        <li>
+                            <a class="fr-link fr-fi-lock-line" href="{% url "login" %}?next={{ request.path }}">Se connecter</a>
+                        </li>
+                      {% endif %}
+                      </ul>
+                  </div>
+              </div>
           </div>
-        {% endif %}
-        </div>
-    </nav>
+      </div>
   </div>
 </header>
