@@ -3,9 +3,11 @@ import uuid
 from django.db import models
 from django.urls import reverse
 
+
 class Bailleur(models.Model):
     class Meta:
-        permissions = (('can_edit_bailleur', "Créer ou mettre à jour un bailleur"),)
+        permissions = (("can_edit_bailleur", "Créer ou mettre à jour un bailleur"),)
+
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=255)
@@ -24,4 +26,4 @@ class Bailleur(models.Model):
         return self.nom
 
     def get_absolute_url(self):
-        return reverse('bailleur-details', args=[str(self.uuid)])
+        return reverse("bailleur-details", args=[str(self.uuid)])

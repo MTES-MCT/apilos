@@ -9,7 +9,7 @@ src = [
 ]
 diff = true
 check = false
-isort = true
+isort = false
 lint = [
     "pylint",
 ]

@@ -17,6 +17,18 @@ APpeL a aussi pour vocation d centraliser et fiabiliter les statistiques des log
 Nous utilisons [darker](https://github.com/akaihola/darker) pour gérer le formattage et le linter de l'application
 Le fichier de configuration est pyproject.toml à la racine du projet
 
+Pour installer les git hook de pre-commit, installer le package precommit
+
+```
+pip install pre-commit
+```
+
+et installer les hooks en executant pre-commit:
+
+```
+pre-commit install
+```
+
 ## liens utils
 
 https://fabrique-numerique.gitbook.io/guide/developpement/etat-de-lart-de-lincubateur

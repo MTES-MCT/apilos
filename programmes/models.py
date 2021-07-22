@@ -2,23 +2,28 @@ import uuid
 
 from django.db import models
 
+
 class Financement(models.TextChoices):
-    PLUS = 'PLUS', 'PLUS'
-    PLAI = 'PLAI', 'PLAI'
-    PLUS_PLAI = 'PLUS-PLAI', 'PLUS-PLAI'
-    PLS = 'PLS', 'PLS'
+    PLUS = "PLUS", "PLUS"
+    PLAI = "PLAI", "PLAI"
+    PLUS_PLAI = "PLUS-PLAI", "PLUS-PLAI"
+    PLS = "PLS", "PLS"
+
 
 class Programme(models.Model):
     class TypeOperation(models.TextChoices):
-        NEUF = 'NEUF', 'Neuf'
-        ACQUIS = 'ACQUIS', 'Acquis amélioré'
-        DEMEMBREMENT = 'DEMEMBREMENT', 'Démembrement'
-        USUFRUIT = 'USUFRUIT', 'Usufruit'
-        VEFA = 'VEFA', 'VEFA'
+        NEUF = "NEUF", "Neuf"
+        ACQUIS = "ACQUIS", "Acquis amélioré"
+        DEMEMBREMENT = "DEMEMBREMENT", "Démembrement"
+        USUFRUIT = "USUFRUIT", "Usufruit"
+        VEFA = "VEFA", "VEFA"
+
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=255)
-    bailleur = models.ForeignKey('bailleurs.Bailleur', on_delete=models.CASCADE, null=False)
+    bailleur = models.ForeignKey(
+        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
+    )
     code_postal = models.CharField(max_length=10, null=True)
     ville = models.CharField(max_length=255, null=True)
     adresse = models.CharField(max_length=255, null=True)
@@ -38,7 +43,7 @@ class Programme(models.Model):
     date_acte_notarie = models.DateField(null=True)
     reference_notaire = models.TextField(null=True)
     reference_publication_acte = models.TextField(null=True)
-    permis_construire = models.CharField(max_length=255, null=True) 
+    permis_construire = models.CharField(max_length=255, null=True)
     date_achevement_previsible = models.DateField(null=True)
     date_achat = models.DateField(null=True)
     date_achevement = models.DateField(null=True)
@@ -48,12 +53,15 @@ class Programme(models.Model):
     def __str__(self):
         return self.nom
 
+
 class ReferenceCadastrale(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=255)
-    bailleur = models.ForeignKey('bailleurs.Bailleur', on_delete=models.CASCADE, null=False)
-    programme = models.ForeignKey('Programme', on_delete=models.CASCADE, null=False)
+    bailleur = models.ForeignKey(
+        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
+    )
+    programme = models.ForeignKey("Programme", on_delete=models.CASCADE, null=False)
     section = models.CharField(max_length=255, null=True)
     numero = models.IntegerField(null=True)
     lieudit = models.CharField(max_length=255, null=True)
@@ -61,12 +69,15 @@ class ReferenceCadastrale(models.Model):
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
+
 class Lot(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     numero = models.IntegerField(null=True)
-    bailleur = models.ForeignKey('bailleurs.Bailleur', on_delete=models.CASCADE, null=False)
-    programme = models.ForeignKey('Programme', on_delete=models.CASCADE, null=False)
+    bailleur = models.ForeignKey(
+        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
+    )
+    programme = models.ForeignKey("Programme", on_delete=models.CASCADE, null=False)
     financement = models.CharField(
         max_length=25,
         choices=Financement.choices,
@@ -76,18 +87,22 @@ class Lot(models.Model):
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
+
 class Logement(models.Model):
     class TypologieLogement(models.TextChoices):
-        T1 = 'T1', 'T1'
-        T2 = 'T2', 'T2'
-        T3 = 'T3', 'T3'
-        T4 = 'T4', 'T4'
-        T5 = 'T5', 'T5 et plus'
+        T1 = "T1", "T1"
+        T2 = "T2", "T2"
+        T3 = "T3", "T3"
+        T4 = "T4", "T4"
+        T5 = "T5", "T5 et plus"
+
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     designation = models.CharField(max_length=255)
-    bailleur = models.ForeignKey('bailleurs.Bailleur', on_delete=models.CASCADE, null=False)
-    lot = models.ForeignKey('Lot', on_delete=models.CASCADE, null=False)
+    bailleur = models.ForeignKey(
+        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
+    )
+    lot = models.ForeignKey("Lot", on_delete=models.CASCADE, null=False)
     typologie = models.CharField(
         max_length=25,
         choices=TypologieLogement.choices,
@@ -102,16 +117,20 @@ class Logement(models.Model):
     loyer = models.FloatField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
-    
+
+
 class Annexe(models.Model):
     class TypologieAnnexe(models.TextChoices):
-        BALCON = 'BALCON', 'Balcon'
-        TERRASSE = 'TERRASSE', 'Terrasse'
-        JARDIN = 'JARDIN', 'Jardin'
+        BALCON = "BALCON", "Balcon"
+        TERRASSE = "TERRASSE", "Terrasse"
+        JARDIN = "JARDIN", "Jardin"
+
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    bailleur = models.ForeignKey('bailleurs.Bailleur', on_delete=models.CASCADE, null=False)
-    logement = models.ForeignKey('Logement', on_delete=models.CASCADE, null=False)
+    bailleur = models.ForeignKey(
+        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
+    )
+    logement = models.ForeignKey("Logement", on_delete=models.CASCADE, null=False)
     typologie = models.CharField(
         max_length=25,
         choices=TypologieAnnexe.choices,
@@ -123,15 +142,19 @@ class Annexe(models.Model):
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
+
 class TypeStationnement(models.Model):
     class TypologieStationnement(models.TextChoices):
-        GARAGE_AERIEN = 'GARAGE_AERIEN', 'Garage Aérien'
-        GARAGE_ENTERRE = 'GARAGE_ENTERRE', 'Garage enterré'
-        PLACE_STATIONNEMENT = 'PLACE_STATIONNEMENT', 'Place stationnement'
+        GARAGE_AERIEN = "GARAGE_AERIEN", "Garage Aérien"
+        GARAGE_ENTERRE = "GARAGE_ENTERRE", "Garage enterré"
+        PLACE_STATIONNEMENT = "PLACE_STATIONNEMENT", "Place stationnement"
+
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    bailleur = models.ForeignKey('bailleurs.Bailleur', on_delete=models.CASCADE, null=False)
-    lot = models.ForeignKey('Lot', on_delete=models.CASCADE, null=False)
+    bailleur = models.ForeignKey(
+        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
+    )
+    lot = models.ForeignKey("Lot", on_delete=models.CASCADE, null=False)
     typologie = models.CharField(
         max_length=25,
         choices=TypologieStationnement.choices,
