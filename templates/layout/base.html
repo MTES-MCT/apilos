@@ -22,6 +22,7 @@
     <!--Css-->
 
     <link rel="stylesheet" href="{% static "dsfr/css/dsfr.min.css" %}">
+    <link rel="stylesheet" href="{% static "css/main.css" %}">
 
     {% block javascript_extras %}{% endblock %}
   </head>
@@ -31,11 +32,12 @@
       {% include "layout/header.html" %}
     {% endblock %}
     {% include "common/notifications.html" %}
-    <div class="container py-3">
-      <nav class="row">
-        {% block content %}{% endblock %}
-      </nav>
-    </div>
+    <main role="main" class="contentAll">
+      {% block content %}{% endblock %}
+    </main>
+    {% block footer %}
+      {% include "layout/footer.html" %}
+    {% endblock %}
     {% include "common/matomo.html" %}
     {% include "common/sentry.html" %}
     {% block js %}

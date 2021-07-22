@@ -5,10 +5,59 @@
 {% block page_title %}APpeL, la plateforme de conventionement des logements sociaux{% endblock%}
 
 {% block content %}
-  <div class="container py-3">
-    <nav class="row">
-
-      <p>C'est ici que l'on affiche le contenu de la page !</p>
-    </nav>
+<div class="fr-container-fluid ds_banner">
+  <div class="fr-container">
+      <div class="fr-grid-row fr-grid-row--gutters">
+          <div class="fr-col-lg-6 fr-col-offset-lg-1">
+              <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Créez votre projet de convention APL en quelques clics</h2>
+              <p class="fr-mb-3w">
+                Via APpeL vous pourrez modifier, valider et transmettre votre projet de convention aux services instructeurs.
+              </p>
+              <p class="fr-mb-5w"><button class="fr-btn" href="{% url "login" %}?next={{ request.path }}">
+                <span class="fr-fi-edit-line" aria-hidden="true"></span>Faire ma convention
+              </button></p>
+          </div>
+          <div class="fr-col-12 fr-col-lg-5 fr-pl-0 fr-pl-md-4w fr-pb-0">
+              <figure class="fr-content-media fr-my-0">
+                  <div class="fr-content-media__img">
+                  </div>
+              </figure>
+          </div>
+      </div>
   </div>
+</div>
+<hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
+<div class="fr-container">
+  <div class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-lg-10 fr-col-offset-lg-1">
+          <h2>Comment ça marche ?</h2>
+          <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters">
+              <div class="fr-col-lg-2 fr-col-md-3">
+                <span class="fr-fi-checkbox-circle-line fr-fi--xxl" aria-hidden="true"></span>
+              </div>
+              <div class="fr-col-lg-10 fr-col-md-9">
+                <h3>Créez votre projet de convention en 4 étapes</h3>
+                <ul>
+                  <li>test</li>
+                  <li>test</li>
+                  <li>test</li>
+                  <li>test</li>
+                </ul>
+              </div>
+
+          <p class="fr-mt-5w">
+
+
+
+
+            Ce projet est le volet numérique de la marque de l'État, qui permet pour les citoyens d'avoir une cohérence graphique et une meilleure expérience à travers l'ensemble des sites de l'État. Le Système de Design de l'État regroupe un ensemble de composants
+              réutilisables, répondant à des standards et à une gouvernance, pouvant être assemblés pour créer des sites Internet accessibles et ergonomiques
+          </p>
+
+
+      </div>
+  </div>
+</div>
+
 {% endblock %}

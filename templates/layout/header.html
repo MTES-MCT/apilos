@@ -28,26 +28,33 @@
                       <p class="fr-header__service-tagline">Le portail qui pré-remplit les conventions APL pour les bailleurs sociaux</p>
                   </div>
               </div>
-              <div class="fr-header__tools">
+              <div class="fr-header__tools fr-mt-2w">
                   <div class="fr-header__tools-links">
-                      <ul class="fr-links-group">
                         {% if user.is_authenticated %}
-                        <li>
+                        <ul class="fr-links-group">
+                          <li>
                           Bonjour
                           <strong>{{ user.username }}</strong>
                         </li>
                         <li>
                           <a class="fr-link fr-fi-close-circle-line" href="{% url "logout" %}">Déconnexion</a>
                         </li>
-                        {% else %}
-                        <li>
-                            <a class="fr-link fr-fi-account-line" href="#">Espace instructeur</a>
-                        </li>
-                        <li>
-                            <a class="fr-link fr-fi-lock-line" href="{% url "login" %}?next={{ request.path }}">Se connecter</a>
-                        </li>
-                      {% endif %}
                       </ul>
+                      {% else %}
+
+                        <ul class="fr-btns-group fr-btns-group--inline">
+                          <li>
+                              <button class="fr-btn" href="{% url "login" %}?next={{ request.path }}">
+                                <span class="fr-fi-edit-line fr-mr-1w" aria-hidden="true"></span>Faire ma convention
+                              </button>
+                          </li>
+                          <li>
+                              <button class="fr-btn fr-btn--secondary">
+                                <span class="fr-fi-account-line fr-mr-1w" aria-hidden="true"></span>Espace instructeur
+                              </button>
+                          </li>
+                      </ul>
+                      {% endif %}
                   </div>
               </div>
           </div>
