@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from .models import Programme, ReferenceCadastrale, Lot, Logement, Annexe, TypeStationnement
+from .models import (
+    Programme,
+    ReferenceCadastrale,
+    Lot,
+    Logement,
+    Annexe,
+    TypeStationnement,
+)
 
 admin.site.register(Programme)
 admin.site.register(ReferenceCadastrale)

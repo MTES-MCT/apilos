@@ -9,19 +9,23 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('conventions', '0001_initial'),
-        ('programmes', '0002_auto_20210706_1816'),
+        ("conventions", "0001_initial"),
+        ("programmes", "0002_auto_20210706_1816"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='convention',
-            name='lot',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='programmes.lot'),
+            model_name="convention",
+            name="lot",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="programmes.lot"
+            ),
         ),
         migrations.AddField(
-            model_name='convention',
-            name='programme',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='programmes.programme'),
+            model_name="convention",
+            name="programme",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="programmes.programme"
+            ),
         ),
     ]
