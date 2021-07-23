@@ -26,4 +26,4 @@ class Bailleur(models.Model):
         return self.nom
 
     def get_absolute_url(self):
-        return reverse("bailleur-details", args=[str(self.uuid)])
+        return reverse("bailleurs:details", args=[str(self.uuid)])

@@ -22,10 +22,9 @@ from django.urls import include
 urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
-    path("bailleurs/", include("bailleurs.urls")),
-    path("conventions/", include("conventions.urls")),
-    path("programmes/", include("programmes.urls")),
-    path("stats/", include("stats.urls")),
-    path("users/", include("users.urls")),
-    path("", include("users.urls")),
+    path("bailleurs/", include(('bailleurs.urls', 'bailleurs'), namespace='bailleurs') ),
+    path("conventions/", include(('conventions.urls', 'conventions'), namespace='conventions') ),
+    path("programmes/", include(('programmes.urls', 'programmes'), namespace='programmes') ),
+    path("stats/", include(('stats.urls', 'stats'), namespace='stats') ),
+    path("", include(('users.urls', 'users'), namespace='users') ),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

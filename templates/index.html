@@ -7,23 +7,20 @@
 {% block content %}
 <div class="fr-container-fluid ds_banner">
   <div class="fr-container">
-      <div class="fr-grid-row fr-grid-row--gutters">
-          <div class="fr-col-lg-6 fr-col-offset-lg-1 fr-mb-2w">
-              <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Créez votre projet de convention APL en quelques clics</h2>
-              <p class="fr-mb-3w">
-                Via APpeL vous pourrez modifier, valider et transmettre votre projet de convention aux services instructeurs.
-              </p>
-              <p class="fr-mb-3w">
-                {% include "common/login_button.html" %}
-              </p>
-          </div>
-          <div class="fr-col-12 fr-col-lg-5 fr-pl-0 fr-pl-md-4w fr-pb-0">
-              <figure class="fr-content-media fr-my-0">
-                  <div class="fr-content-media__img">
-                  </div>
-              </figure>
-          </div>
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-lg-6 fr-col-offset-lg-1 fr-mb-2w">
+        {% include "common/main_presentation.html" %}
+        <p class="fr-mb-3w">
+          {% include "common/login_button.html" %}
+        </p>
       </div>
+      <div class="fr-col-12 fr-col-lg-5 fr-pl-0 fr-pl-md-4w fr-pb-0">
+          <figure class="fr-content-media fr-my-0">
+              <div class="fr-content-media__img">
+              </div>
+          </figure>
+      </div>
+    </div>
   </div>
 </div>
 <hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">

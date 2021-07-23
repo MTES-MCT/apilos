@@ -29,7 +29,7 @@
 
   <body>
     {% block header %}
-      {% include "layout/header.html" %}
+      {% include "layout/header.html" with without_action_button=False %}
     {% endblock %}
     {% include "common/notifications.html" %}
     <main role="main" class="contentAll">
