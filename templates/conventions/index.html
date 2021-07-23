@@ -1,0 +1,33 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}APpeL, la plateforme de conventionement des logements sociaux{% endblock%}
+
+{% block content %}
+<div class="fr-container-fluid ds_banner">
+  <div class="fr-container">
+      <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-lg-6 fr-col-offset-lg-1 fr-my-5w">
+          <p class="fr-mb-3w">
+            Commencer une nouvelle convention dès à présent
+          </p>
+          <button class="fr-btn">
+            <span class="fr-fi-edit-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
+          </button>
+        </div>
+      </div>
+  </div>
+</div>
+<hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
+<div class="fr-container">
+  <div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-lg-10 fr-col-offset-lg-1">
+        <h2 class="fr-mb-3w">Toutes mes conventions</h2>
+    </div>
+    <div class="fr-col-lg-10 fr-col-offset-lg-1">
+      <p>Vous n'avez pas encore de conventions...</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

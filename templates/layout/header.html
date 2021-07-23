@@ -30,6 +30,7 @@
                       <p class="fr-header__service-tagline">Le portail qui pré-remplit les conventions APL pour les bailleurs sociaux</p>
                   </div>
               </div>
+              {% if not without_action_button %}
               <div class="fr-header__tools fr-mt-2w">
                   <div class="fr-header__tools-links">
                         {% if user.is_authenticated %}
@@ -59,6 +60,7 @@
                       {% endif %}
                   </div>
               </div>
+              {% endif %}
           </div>
       </div>
   </div>

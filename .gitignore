@@ -10,3 +10,6 @@ __pycache__
 #local repo to store DB data
 pgdata/
 staticfiles
+
+#IDE
+.vscode/
