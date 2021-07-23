@@ -13,45 +13,43 @@
 
 <div class="fr-container-fluid ds_banner">
   <div class="fr-container">
-      <div class="fr-grid-row fr-grid-row--gutters">
-          <div class="fr-col-lg-6 fr-col-offset-lg-1 fr-mb-2w">
-              <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Créez votre projet de convention APL en quelques clics</h2>
-              <p class="fr-mb-3w">
-                Via APpeL vous pourrez modifier, valider et transmettre votre projet de convention aux services instructeurs.
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-lg-6 fr-col-offset-lg-1 fr-mb-2w">
+        {% include "common/main_presentation.html" %}
+        <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Créez votre projet de convention APL en quelques clics</h2>
+          <p class="fr-mb-3w">
+            Via APpeL vous pourrez modifier, valider et transmettre votre projet de convention aux services instructeurs.
+          </p>
+        </div>
+        <div class="fr-col-12 fr-col-lg-5 fr-pl-0 fr-pl-md-4w fr-py-4w fr-pb-0">
+          <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="fr-input-group fr-mt-3w {% if form.errors %}fr-input-group--error{% endif %}">
+              <label class="fr-label" for="username">Nom d'utilisateur</label>
+              <input class="fr-input {% if form.errors %}fr-input--error{% endif %}" type="text" id="username" name="username">
+              {% if form.errors %}
+              <p id="text-input-error-desc-error" class="fr-error-text">
+                Votre nom d'utilisateur et votre mot de passe de correspondent pas.
+                <br>Veuillez essayer une nouvelle fois.
               </p>
-          </div>
-          <div class="fr-col-12 fr-col-lg-5 fr-pl-0 fr-pl-md-4w fr-py-4w fr-pb-0">
-
-            <form method="post" action="{% url 'login' %}">
-              {% csrf_token %}
-              <div class="fr-input-group fr-mt-3w {% if form.errors %}fr-input-group--error{% endif %}">
-                <label class="fr-label" for="username">Nom d'utilisateur</label>
-                <input class="fr-input {% if form.errors %}fr-input--error{% endif %}" type="text" id="username" name="username">
-                {% if form.errors %}
-                <p id="text-input-error-desc-error" class="fr-error-text">
-                  Votre nom d'utilisateur et votre mot de passe de correspondent pas.
-                  <br>Veuillez essayer une nouvelle fois.
-                </p>
-                {% endif %}
-              </div>
-              <div class="fr-input-group fr-mt-3w {% if form.errors %}fr-input-group--error{% endif %}">
-                <label class="fr-label" for="password">Mot de passe</label>
-                <input class="fr-input {% if form.errors %}fr-input--error{% endif %}" type="password" id="password" name="password">
-              </div>
-              <div class="fr-mt-3w">
-                <button class="fr-btn" type="submit">
-                  Connexion
-                </button>
-                <input type="hidden" name="next" value="{{ next }}" />
-              </div>
-            </form>
-            <p><a href="{% url 'password_reset' %}">Mot de passe oublié ?</a></p>
-          </div>
+              {% endif %}
+            </div>
+            <div class="fr-input-group fr-mt-3w {% if form.errors %}fr-input-group--error{% endif %}">
+              <label class="fr-label" for="password">Mot de passe</label>
+              <input class="fr-input {% if form.errors %}fr-input--error{% endif %}" type="password" id="password" name="password">
+            </div>
+            <div class="fr-mt-3w">
+              <button class="fr-btn" type="submit">
+                Connexion
+              </button>
+              <input type="hidden" name="next" value="{{ next }}" />
+            </div>
+          </form>
+          <p><a href="{% url 'password_reset' %}">Mot de passe oublié ?</a></p>
+        </div>
       </div>
+    </div>
   </div>
 </div>
 <hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
-
-
-
 {% endblock %}
