@@ -6,32 +6,43 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="robots" content="{% block robots %}{% if STAGING %}noindex, nofollow{% else %}index, follow{% endif %}{% endblock %}">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!--Title and desc-->
+
     <title>{% block page_title %}APpeL, la plateforme de conventionement des logements sociaux{% endblock%}</title>
-    <meta name="description" content="{% block page_description %}Plateforme prmettant d'instruire des conventionnnement de logemen socieux en France{% endblock %}">
-<!--<link rel="manifest" href="{% static "manifest.webmanifest" %}">-->
-    <meta name="theme-color" content="#075ea2">
-    <link rel="shortcut icon" type="image/x-icon" href="{% static "img/favicon.ico" %}">
-<!--<link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}">-->
-<!--<link rel="canonical" href="{{ SITE_ROOT_URL }}{{ request.path }}">-->
+    <meta name="description" content="{% block page_description %}Plateforme prmettant d'instruire des conventionnnement de logements sociaux en France{% endblock %}">
+
+    <!--Favicon-->
+
+    <link rel="apple-touch-icon" href="{% static "dsfr/favicons/apple-touch-icon.png" %}"><!-- 180×180 -->
+    <link rel="icon" href="{% static "dsfr/favicons/favicon.svg" %}" type="image/svg+xml">
+    <link rel="shortcut icon" href="{% static "dsfr/favicons/favicon.ico" %}" type="image/x-icon"><!-- 32×32 -->
+    <link rel="manifest" href="{% static "dsfr/favicons/manifest.webmanifest" %}" crossorigin="use-credentials">
+
+    <!--Css-->
+
+    <link rel="stylesheet" href="{% static "dsfr/css/dsfr.min.css" %}">
     <link rel="stylesheet" href="{% static "css/main.css" %}">
+
     {% block javascript_extras %}{% endblock %}
-    <link rel="stylesheet" href="{% static 'css/bootstrap/dist/css/bootstrap.min.css' %}">
   </head>
 
   <body>
     {% block header %}
-      {% include "layout/header.html" with dark=False %}
+      {% include "layout/header.html" %}
     {% endblock %}
     {% include "common/notifications.html" %}
-    <div class="container py-3">
-      <nav class="row">
-        {% block content %}{% endblock %}
-      </nav>
-    </div>
+    <main role="main" class="contentAll">
+      {% block content %}{% endblock %}
+    </main>
+    {% block footer %}
+      {% include "layout/footer.html" %}
+    {% endblock %}
     {% include "common/matomo.html" %}
     {% include "common/sentry.html" %}
     {% block js %}
-      <script src="{% static 'css/bootstrap/dist/css/bootstrap.min.js' %}"></script>
+      <script type="module" src="{% static "dsfr/js/dsfr.module.min.js" %}"></script>
+      <script type="text/javascript" nomodule src="{% static "dsfr/js/dsfr.nomodule.min.js" %}"></script>
     {% endblock %}
   </body>
 </html>
