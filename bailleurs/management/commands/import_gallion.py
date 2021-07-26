@@ -6,7 +6,7 @@ from openpyxl import load_workbook
 from openpyxl.utils.cell import coordinate_from_string, column_index_from_string
 from instructeurs.models import Administration
 from bailleurs.models import Bailleur
-from programmes.models import Programme, Financement, Lot
+from programmes.models import Programme, Financement, Lot, TypeStationnement
 
 def str_row(row):
   return (f"Bailleur (siret, nom) : {row['MOA (code SIRET)']} - {row['MOA (nom officiel)']}" +
@@ -67,11 +67,13 @@ class Command(BaseCommand):
     to_sprit = to_sprit_input or to_sprit
 
     my_objects = []
+    my_parkings = []
     count_rows = 0
     count_inserted = 0
     for row in ws.iter_rows(min_row=5,max_row=ws.max_row,min_col=2, max_col=ws.max_column):
       count_rows += 1
       my_row = {}
+      my_row['count'] = count_rows + 4
       for cell in row:
         my_row[column_from_index[cell.column]] = str(cell.value).strip() if cell.column in to_sprit else cell.value
       if len(my_row['MOA (code SIRET)']) != 14:
@@ -88,12 +90,33 @@ class Command(BaseCommand):
           continue
       my_objects.append(my_row)
       count_inserted += 1
+      if not my_row['Nb Garages aériens'] is None and int(my_row['Nb Garages aériens']) > 0:
+        ga_row = my_row.copy()
+        ga_row['Typologie Garage'] = "Garage Aérien" #typologie
+        ga_row['Nb Stationnement'] = my_row['Nb Garages aériens'] #nb_stationnements
+        ga_row['Loyer'] = my_row['Loyer Garages aériens'] #loyer
+        my_parkings.append(ga_row)
+      if not my_row['Nb Garages enterrés'] is None and int(str(my_row['Nb Garages enterrés'])) > 0:
+        ge_row = my_row.copy()
+        ge_row['Typologie Garage'] = "Garage enterré" #typologie
+        ge_row['Nb Stationnement'] = my_row['Nb Garages enterrés'] #nb_stationnements
+        ge_row['Loyer'] = my_row['Loyer Garages enterrés'] #loyer
+        my_parkings.append(ge_row)
+      if not my_row['Nb Places Stationnement'] is None and int(str(my_row['Nb Places Stationnement'])) > 0:
+        ps_row = my_row.copy()
+        ps_row['Typologie Garage'] = "Place stationnement" #typologie
+        ps_row['Nb Stationnement'] = my_row['Nb Places Stationnement'] #nb_stationnements
+        ps_row['Loyer'] = my_row['Loyer Places Stationnement'] #loyer
+        my_parkings.append(ps_row)
     print(f"{count_rows - count_inserted} / {count_rows} lignes ignorées")
+    print(f"{len(my_objects)} lignes objet")
+    print(f"{len(my_parkings)} lignes parking")
 
     Administration.map_and_create(my_objects)
     Bailleur.map_and_create(my_objects)
     Programme.map_and_create(my_objects)
     Lot.map_and_create(my_objects)
+    TypeStationnement.map_and_create(my_parkings)
 
 
 

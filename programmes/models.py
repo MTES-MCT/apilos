@@ -11,7 +11,7 @@ class Financement(models.TextChoices):
     PLS = "PLS", "PLS"
 
 class Programme(IngestableModel):
-    pivot= ['nom', 'ville']
+    pivot= ['bailleur', 'nom', 'ville']
     mapping= {
         "nom": 'Nom Opération',
         "code_postal": "Opération code postal",
@@ -24,7 +24,7 @@ class Programme(IngestableModel):
         "annee_gestion_programmation": 'Année Gestion Programmation',
         "numero_gallion": 'N° Opération GALION',
         "type_habitat": "Type d'habitat",
-        "bailleur": "MOA (nom officiel)",
+        "bailleur": "MOA (code SIRET)",
 #        "departement": "Département",
     }
 
@@ -106,7 +106,7 @@ class Lot(IngestableModel):
     mapping= {
         "financement": 'Produit',
         "programme": 'Nom Opération',
-        "bailleur": "MOA (nom officiel)"
+        "bailleur": "MOA (code SIRET)",
     }
 
     id = models.AutoField(primary_key=True)
@@ -181,7 +181,15 @@ class Annexe(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
 
-class TypeStationnement(models.Model):
+class TypeStationnement(IngestableModel):
+    pivot= ['typologie', 'lot']
+    mapping= {
+        "typologie": 'Typologie Garage',
+        "nb_stationnements": 'Nb Stationnement',
+        "loyer": 'Loyer',
+        "lot": 'Produit',
+        "bailleur": "MOA (code SIRET)",
+    }
     class TypologieStationnement(models.TextChoices):
         GARAGE_AERIEN = "GARAGE_AERIEN", "Garage Aérien"
         GARAGE_ENTERRE = "GARAGE_ENTERRE", "Garage enterré"

@@ -17,6 +17,24 @@ def build_filter(my_cls, element_dict):
         object_filter = {my_cls.pivot: element_dict[my_cls.mapping[my_cls.pivot]]}
     return object_filter
 
+# Résolution récurcive du pivot
+def get_elements_for_pivots(cls, element):
+    result_pivots = []
+    pivots = cls.pivot
+    if not isinstance(pivots,list):
+        pivots = [pivots]
+    for pivot in pivots:
+        if type(cls._meta.get_field(pivot)).__name__ == 'ForeignKey':
+            subresult = get_elements_for_pivots(cls._meta.get_field(pivot).related_model, element)
+            if isinstance(subresult,list):
+                result_pivots += subresult
+            else:
+                result_pivots.append(subresult)
+        else:
+            result_pivots.append(element[cls.mapping[pivot]])
+    return result_pivots
+
+
 class IngestableModel(models.Model):
     pivot= ''
     mapping= {}
@@ -27,20 +45,25 @@ class IngestableModel(models.Model):
     @classmethod
     def map_and_create(cls, elements):
         count = 0
+        count_dup = 0
         mapped_elements = {}
         for element in elements:
             # pylint: disable=W0640, cell-var-from-loop
-            element_pivot = "__".join(
-            map(lambda pivot: element[cls.mapping[pivot]], cls.pivot)
-            ) if isinstance(cls.pivot,list) else element[cls.mapping[cls.pivot]]
-            if not element_pivot in mapped_elements:
+            element_pivot = "__".join(get_elements_for_pivots(cls, element))
+            if element_pivot not in mapped_elements:
 #                print(element_pivot)
                 mapped_elements[element_pivot] = {}
                 for element_item in cls.mapping.items():
                     mapped_elements[element_pivot][element_item[0]] = element[element_item[1]]
                 if cls.find_or_create_by_pivot(mapped_elements[element_pivot], element):
                     count += 1
+            else:
+                count_dup += 1
+                mapped_elements2 = {}
+                for element_item in cls.mapping.items():
+                    mapped_elements2[element_item[0]] = element[element_item[1]]
         print(f"{count} éléments créés de class {cls}")
+        print(f"{count_dup} éléments dupliqué pour la class {cls}")
         return mapped_elements
 
     @classmethod
