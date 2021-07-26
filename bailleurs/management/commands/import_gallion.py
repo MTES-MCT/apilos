@@ -6,66 +6,96 @@ from openpyxl import load_workbook
 from openpyxl.utils.cell import coordinate_from_string, column_index_from_string
 from instructeurs.models import Administration
 from bailleurs.models import Bailleur
+from programmes.models import Programme, Financement, Lot
+
+def str_row(row):
+  return (f"Bailleur (siret, nom) : {row['MOA (code SIRET)']} - {row['MOA (nom officiel)']}" +
+    f", Administration (code, nom) : {row['Gestionnaire (code)']} - {row['Gestionnaire']}" +
+    f", Programme (nom, ville) : {row['Nom Opération']} - {row['Commune']},"+
+    f" Financement : {row['Produit']}")
+
 
 class Command(BaseCommand):
   def handle(self, **options):
     BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
     file_path = os.path.join(BASE_DIR, "documents", "v3.xlsx")
-    val = input("Enter your value ("+file_path+"): ")
-    if not(val):
-      val = file_path
-    wb = load_workbook(val)
 
+
+
+    file_path_input = input("Enter your value (default: "+file_path+"): ")
+    file_path = file_path_input or file_path
+    wb = load_workbook(file_path)
     if not wb.sheetnames:
       print('Error, the worksheet is not compatible, no sheet detected')
       exit(1)
+
     sheet_name = 'Rapport 1'
+    sheet_name_input = input("Enter the sheetname to read (default: "+sheet_name+"): ")
+    sheet_name = sheet_name_input or sheet_name
     ws = wb[sheet_name]
-    first_cell_of_table = 'B4'
 
     # Create one object by row
     column_from_index = {}
     for tuple in ws['B4':'AH4']:
       for cell in tuple:
-        column_from_index[cell.column] = cell.value
+        column_from_index[cell.column] = str(cell.value).strip()
 #        print(cell.value)
 
+    # List here the fields to strip
+    to_sprit = [
+      'Nom Opération',
+      'N° Opération GALION',
+      'Commune',
+      'Zone ABC',
+      'Gestionnaire',
+      'Gestionnaire (code)',
+      'MOA (nom officiel)',
+      'MOA (code SIRET)',
+      'MOA Adresse 1',
+      'MOA Code postal',
+      'MOA Ville',
+      "Type d'habitat",
+      'Nom Opération',
+      'Adresse Opération 1',
+      'Opération code postal',
+      'Nature logement',
+      'Type Bénéficiaire',
+      'Produit',
+    ]
+
+    to_sprit_input = map(lambda x: x.strip(), input("List here the fields to strip (default: " + ','.join(to_sprit) + "): ").split(','))
+    to_sprit = to_sprit_input or to_sprit
+
     my_objects = []
-    for row in ws.iter_rows(min_row=5,max_row=ws.max_row,min_col=2, max_col=ws.max_column): #(    'B{}:AH{}'.format(4,int(ws.max_row))):
+    count_rows = 0
+    count_inserted = 0
+    for row in ws.iter_rows(min_row=5,max_row=ws.max_row,min_col=2, max_col=ws.max_column):
+      count_rows += 1
       my_row = {}
       for cell in row:
-        my_row[column_from_index[cell.column]] = cell.value
+        my_row[column_from_index[cell.column]] = str(cell.value).strip() if cell.column in to_sprit else cell.value
       if len(my_row['MOA (code SIRET)']) != 14:
-        print(f"le siret n'a pas de bon format, l'entrée est ignorée: {my_row}")
+        print(f"le siret n'a pas de bon format, l'entrée est ignorée: {str_row(my_row)}")
         continue
-      if not my_row['Gestionnaire (code)']:
-        print(f"le service instructeur n'est pas renseigné, l'entrée est ignorée: {my_row}")
+      if len(my_row['Gestionnaire (code)']) != 5:
+        print(f"le service instructeur n'est pas renseigné, l'entrée est ignorée: {str_row(my_row)}")
         continue
+      if not my_row['Produit'] in dir(Financement):
+        if my_row['Produit'][0:4] in ['PLUS','PLAI']:
+          my_row['Produit'] = my_row['Produit'][0:4]
+        else:
+          print(f"le financement n'est pas supporté, l'entrée est ignorée: {str_row(my_row)}")
+          continue
       my_objects.append(my_row)
+      count_inserted += 1
+    print(f"{count_rows - count_inserted} / {count_rows} lignes ignorées")
 
     Administration.map_and_create(my_objects)
     Bailleur.map_and_create(my_objects)
+    Programme.map_and_create(my_objects)
+    Lot.map_and_create(my_objects)
 
 
-
-
-    # admininstration_pivot= 'code'
-    # admininstration_mapping= {
-    #   'nom': 'Gestionnaire',
-    #   'code': 'Gestionnaire (code)',
-    # }
-
-    # administrations = {}
-    # for element in my_objects:
-    #   element_pivot = element[admininstration_mapping[admininstration_pivot]]
-    #   if not element_pivot in administrations:
-    #     print(element_pivot)
-    #     administrations[element_pivot] = {}
-    #     for element_key in admininstration_mapping:
-    #       administrations[element_pivot][element_key] = element[admininstration_mapping[element_key]]
-    #     Administration.find_or_create_by_pivot(administrations[element_pivot])
-    # administration2 = Administration.map_object(my_objects)
-    # print(administration2)
 
 # Année Gestion Programmation
 # Département
@@ -73,6 +103,14 @@ class Command(BaseCommand):
 # Commune
 # Zone 123
 # Zone ABC
+# Gestionnaire
+# Gestionnaire (code)
+# Gestionnaire (code SIREN)
+# MOA (nom officiel)
+# MOA (code SIRET)
+# MOA Adresse 1
+# MOA Code postal
+# MOA Ville
 # Type d'habitat
 # Nom Opération
 # Adresse Opération 1
@@ -89,74 +127,3 @@ class Command(BaseCommand):
 # Loyer Garages enterrés
 # Nb Places Stationnement
 # Loyer Places Stationnement
-
-
-#    print(my_objects)
-
-    # Close the workbook after reading
-    wb.close()
-
-
-
-
-# bailleur = {
-#   'MOA (nom officiel)' : bailleur.nom,
-#   'MOA (code SIRET)' : bailleur.siret,
-#   'MOA Adresse 1' : bailleur.siege ?
-#   'MOA Code postal' : bailleur.siege ?
-#   'MOA Ville' : bailleur.siege ?
-#   '' : bailleur.capital_social
-#   '' : bailleur.dg_nom
-#   '' : bailleur.dg_fonction
-#   '' : bailleur.dg_date_deliberation
-# }
-
-# Programme = {
-#   'Nom Opération': programme.nom,
-#   ? : programme.code_postal,
-#   'Commune': programme.ville,
-#   'Adresse Opération 1': programme.adresse,
-#   'Nb logts': programme.nb_logements,
-#   'Zone 123': ?
-#   'Zone ABC': ?
-#   'Type Financement' : ? #beaucoup de mixte
-#   'Produit' : ? # PLUS / PLAI/ PLS ... t plus encore
-#   'Nature logement' ? # ordinaire, résidences, pension... etc
-#   'Réf. Coordonnées XY': ?
-#   'Type Bénéficiaire': ?, # Ménage Étidiants Jeunes...
-#   'SU totale' : ?,
-#   'Nb Jardins' : ?
-#   'Loyer Jardins' : ?
-#   ? : programme.type_operation,
-#   ? : programme.anru,
-#   ? : programme.nb_logement_non_conventionne,
-#   ? : programme.nb_locaux_commerciaux,
-#   ? : programme.nb_bureaux,
-#   ? : programme.vendeur,
-#   ? : programme.acquereur,
-#   ? : programme.date_acte_notarie,
-#   ? : programme.reference_notaire,
-#   ? : programme.reference_publication_acte,
-#   ? : programme.permis_construire,
-#   'Année Gestion Programmation': programme.date_achevement_previsible, #différence année et date
-#   ? : programme.date_achat,
-#   'Année Achèvement Travaux': programme.date_achevement, #différence année et date -> célulle toujours vide
-#   'Année Gestion Début': ?,
-#   'Année Gestion Clôture': ?,
-#   'N° Opération GALION': ?,
-#   "Type d'habitat": ?, # individuel ou collectif
-#   'Gestionnaire : ?': ? # lien avec l'instance instructeur ?
-# }
-
-# ReferenceCadastrale = {
-#   'Réf. Parcelle cadastrale': ?
-# }
-
-# TypeStationnement = {
-#   'Nb Garages aériens' : programme.Lot.TypeStationnement.topologie/nb_stationnements, # ici je n'ai pas de notion de lot
-#   'Loyer Garages aériens' : programme.Lot.TypeStationnement.topologie/loyer, # ici je n'ai pas de notion de lot
-#   'Nb Garages enterrés' : programme.Lot.TypeStationnement.topologie/nb_stationnements, # ici je n'ai pas de notion de lot
-#   'Loyer Garages enterrés' : programme.Lot.TypeStationnement.topologie/loyer, # ici je n'ai pas de notion de lot
-#   'Nb Places Stationnement' : programme.Lot.TypeStationnement.topologie/nb_stationnements, # ici je n'ai pas de notion de lot
-#   'Loyer Places Stationnement' : programme.Lot.TypeStationnement.topologie/loyer, # ici je n'ai pas de notion de lot
-# }
