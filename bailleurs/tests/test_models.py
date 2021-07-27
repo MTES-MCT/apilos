@@ -2,7 +2,6 @@ from django.test import TestCase
 from bailleurs.models import Bailleur
 import datetime
 
-
 class BailleurModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):

@@ -25,6 +25,7 @@ class Programme(IngestableModel):
         "numero_gallion": 'N° Opération GALION',
         "type_habitat": "Type d'habitat",
         "bailleur": "MOA (code SIRET)",
+        "administration": 'Gestionnaire (code)'
 #        "departement": "Département",
     }
 
@@ -44,6 +45,9 @@ class Programme(IngestableModel):
     nom = models.CharField(max_length=255)
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
+    )
+    administration = models.ForeignKey(
+        "instructeurs.Administration", on_delete=models.SET_NULL, null=True
     )
     code_postal = models.CharField(max_length=10, null=True)
     ville = models.CharField(max_length=255, null=True)
