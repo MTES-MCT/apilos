@@ -7,18 +7,25 @@
 {% block content %}
 <div class="fr-container-fluid ds_banner">
   <div class="fr-container">
-      <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-lg-6 fr-col-offset-lg-1 fr-my-5w">
-          <p class="fr-mb-3w">
-            Commencer une nouvelle convention dès à présent
-          </p>
-          <button class="fr-btn">
-            <span class="fr-fi-edit-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
-          </button>
-        </div>
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-lg-11 fr-col-offset-lg-1 fr-my-5w">
+        {% if request.user.is_bailleur %}
+        <p class="fr-mb-3w">
+          Commencer une nouvelle convention dès à présent
+        </p>
+        <button class="fr-btn">
+          <span class="fr-fi-edit-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
+        </button>
+        {% elif request.user.is_instructeur or request.user.is_staff %}
+        <h2 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h2>
+        {% else %}
+        <p class="fr-mb-3w">Votre profile n'est pas bien configuré, merci de vous rapprocher de votre instructeur</p>
+        {% endif %}
       </div>
+    </div>
   </div>
 </div>
+
 <hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
 <div class="fr-container">
   <div class="fr-grid-row fr-grid-row--gutters">
@@ -26,6 +33,8 @@
         <h2 class="fr-mb-3w">Toutes mes conventions</h2>
     </div>
     <div class="fr-col-lg-10 fr-col-offset-lg-1">
+      {{ request.user.is_bailleur }}
+      {{ programmes }}
       <p>Vous n'avez pas encore de conventions...</p>
     </div>
   </div>
