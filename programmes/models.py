@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from core.models import IngestableModel
 
 
 class Financement(models.TextChoices):
@@ -9,14 +10,34 @@ class Financement(models.TextChoices):
     PLUS_PLAI = "PLUS-PLAI", "PLUS-PLAI"
     PLS = "PLS", "PLS"
 
+class Programme(IngestableModel):
+    pivot= ['bailleur', 'nom', 'ville']
+    mapping= {
+        "nom": 'Nom Opération',
+        "code_postal": "Opération code postal",
+        "ville": 'Commune',
+        "adresse": 'Adresse Opération 1',
+        "nb_logements": 'Nb logts',
+        "zone_123": 'Zone 123',
+        "zone_abc": 'Zone ABC',
+        "surface_utile_totale": 'SU totale',
+        "annee_gestion_programmation": 'Année Gestion Programmation',
+        "numero_gallion": 'N° Opération GALION',
+        "type_habitat": "Type d'habitat",
+        "bailleur": "MOA (code SIRET)",
+#        "departement": "Département",
+    }
 
-class Programme(models.Model):
     class TypeOperation(models.TextChoices):
         NEUF = "NEUF", "Neuf"
         ACQUIS = "ACQUIS", "Acquis amélioré"
         DEMEMBREMENT = "DEMEMBREMENT", "Démembrement"
         USUFRUIT = "USUFRUIT", "Usufruit"
         VEFA = "VEFA", "VEFA"
+
+    class TypeHabitat(models.TextChoices):
+        INDIVIDUEL = "INDIVIDUEL", "Individuel"
+        COLLECTIF = "COLLECTIF", "Collectif"
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
@@ -27,8 +48,18 @@ class Programme(models.Model):
     code_postal = models.CharField(max_length=10, null=True)
     ville = models.CharField(max_length=255, null=True)
     adresse = models.CharField(max_length=255, null=True)
+    departement = models.IntegerField(null=True)
     nb_logements = models.IntegerField(null=True)
-
+    numero_gallion = models.CharField(max_length=255, null=True)
+    annee_gestion_programmation = models.IntegerField(null=True)
+    zone_123 = models.IntegerField(null=True)
+    zone_abc = models.CharField(max_length=255, null=True)
+    surface_utile_totale = models.FloatField(null=True)
+    type_habitat = models.CharField(
+        max_length=25,
+        choices=TypeHabitat.choices,
+        default=TypeHabitat.INDIVIDUEL,
+    )
     type_operation = models.CharField(
         max_length=25,
         choices=TypeOperation.choices,
@@ -70,7 +101,14 @@ class ReferenceCadastrale(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
 
-class Lot(models.Model):
+class Lot(IngestableModel):
+    pivot= ['financement', 'programme']
+    mapping= {
+        "financement": 'Produit',
+        "programme": 'Nom Opération',
+        "bailleur": "MOA (code SIRET)",
+    }
+
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     numero = models.IntegerField(null=True)
@@ -143,7 +181,15 @@ class Annexe(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
 
-class TypeStationnement(models.Model):
+class TypeStationnement(IngestableModel):
+    pivot= ['typologie', 'lot']
+    mapping= {
+        "typologie": 'Typologie Garage',
+        "nb_stationnements": 'Nb Stationnement',
+        "loyer": 'Loyer',
+        "lot": 'Produit',
+        "bailleur": "MOA (code SIRET)",
+    }
     class TypologieStationnement(models.TextChoices):
         GARAGE_AERIEN = "GARAGE_AERIEN", "Garage Aérien"
         GARAGE_ENTERRE = "GARAGE_ENTERRE", "Garage enterré"

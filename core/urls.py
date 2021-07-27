@@ -24,6 +24,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("bailleurs/", include(('bailleurs.urls', 'bailleurs'), namespace='bailleurs') ),
     path("conventions/", include(('conventions.urls', 'conventions'), namespace='conventions') ),
+    path("instructeurs/",
+    include(('instructeurs.urls', 'instructeurs'), namespace='instructeurs') ),
     path("programmes/", include(('programmes.urls', 'programmes'), namespace='programmes') ),
     path("stats/", include(('stats.urls', 'stats'), namespace='stats') ),
     path("", include(('users.urls', 'users'), namespace='users') ),
