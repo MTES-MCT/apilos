@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "bailleurs.apps.BailleursConfig",
     "conventions.apps.ConventionsConfig",
+    "instructeurs.apps.InstructeursConfig",
     "programmes.apps.ProgrammesConfig",
     "stats.apps.StatsConfig",
     "users.apps.UsersConfig",

@@ -10,7 +10,7 @@ class BailleursModelsTest(TestCase):
             nom="3F",
             siret="12345678901234",
             capital_social="SA",
-            siege="Marseille",
+            ville="Marseille",
             dg_nom="Patrick Patoulachi",
             dg_fonction="PDG",
             dg_date_deliberation=datetime.date(2014, 10, 9),
