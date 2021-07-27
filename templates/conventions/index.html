@@ -33,7 +33,11 @@
         <h2 class="fr-mb-3w">Toutes mes conventions</h2>
     </div>
     <div class="fr-col-lg-10 fr-col-offset-lg-1">
+      {% if conventions %}
+      {{ conventions }}
+      {% else %}
       <p>Vous n'avez pas encore de conventions...</p>
+      {% endif %}
     </div>
   </div>
 </div>

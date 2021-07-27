@@ -24,6 +24,23 @@ class User(AbstractUser):
     def is_role(self, role):
         return role in map( lambda r : r.typologie, self.role_set.all())
 
+    def convention_filter(self):
+        administrations = []
+        bailleurs = []
+        for role in self.role_set.all():
+            if role.typologie == Role.TypeRole.INSTRUCTEUR and role.administration is not None:
+                administrations.append(role.administration.id)
+            if role.typologie == Role.TypeRole.BAILLEUR and role.bailleur is not None:
+                bailleurs.append(role.bailleur.id)
+        filter_result = {}
+#Lot.objects.prefetch_related('programme').prefetch_related('bailleur').filter(programme__id=17538, bailleur__id=1035)
+#Lot.objects.prefetch_related('programme').prefetch_related('bailleur').filter(programme__id=17538, programme__bailleur_id=1035)
+        if administrations:
+            filter_result['programme__administration_id__in'] = administrations
+        if bailleurs:
+            filter_result['bailleur_id__in'] = bailleurs
+        return filter_result
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
