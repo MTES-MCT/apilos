@@ -3,7 +3,7 @@ from bailleurs.models import Bailleur
 import datetime
 
 
-class BailleursModelsTest(TestCase):
+class BailleurModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         Bailleur.objects.create(

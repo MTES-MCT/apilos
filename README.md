@@ -10,6 +10,9 @@ APpeL a aussi pour vocation d centraliser et fiabiliter les statistiques des log
 
 ## Solution technique
 
+Nous utilisons le framework Django.
+Django
+[Système de design de l'état](https://gouvfr.atlassian.net/wiki/spaces/DB/overview?homepageId=145359476)
 ... etc
 
 ### Linter
@@ -29,6 +32,21 @@ et installer les hooks en executant pre-commit:
 pre-commit install
 ```
 
+## import SISAL
+
+SISAL est le datawarehouse des APL dont nous exportons les données des agréments nécessaires au conventionnement APL
+
+Pour faire cet import nous avons ajouté une commande django `import_gallion` éditable ici : bailleurs/management/commands/import_gallion.py
+
+Pour executer cet import en local:
+
+```docker-compose exec appel python3 manage.py import_gallion```
+
+Sur Scalingo
+
+```scalingo --app appel-staging/fabnum-appel run  python3 manage.py import_gallion```
+
+
 ## liens utils
 
 https://fabrique-numerique.gitbook.io/guide/developpement/etat-de-lart-de-lincubateur
@@ -41,9 +59,7 @@ https://doc.incubateur.net/startups/la-vie-dune-se/construction/kit-de-demarrage
 Dev : Django (comme Acceslibre, AideTerritoire TrackDechet)
 
 Tests unitaires et integration
-CI/CD: github-action / circleci ?
 Base documentaire : S3 avec scaleway
-PAAS - Scalingo
 Analytics : Matomo
 Monitoring logiciel : Sentry
 Monitoring système : updownio ?

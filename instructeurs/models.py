@@ -15,3 +15,6 @@ class Administration(IngestableModel):
     uuid = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=255)
     code = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.nom

@@ -3,6 +3,7 @@ src = [
     "core",
     "bailleurs",
     "conventions",
+    "instructeurs",
     "programmes",
     "stats",
     "users"
