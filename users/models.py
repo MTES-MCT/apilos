@@ -24,17 +24,15 @@ class User(AbstractUser):
     def is_role(self, role):
         return role in map( lambda r : r.typologie, self.role_set.all())
 
-#Lot.objects.prefetch_related('programme').prefetch_related('bailleur').filter(programme__id=17538, bailleur__id=1035)
-#Lot.objects.prefetch_related('programme').prefetch_related('bailleur').filter(programme__id=17538, programme__bailleur_id=1035)
     def programme_filter(self):
-        bailleur_ids = map( lambda role : role.bailleur_id, self.role_set.filter(typologie=Role.TypeRole.BAILLEUR))
+        bailleur_ids = list(map( lambda role : role.bailleur_id, self.role_set.filter(typologie=Role.TypeRole.BAILLEUR)))
         if bailleur_ids:
             return {'bailleur_id__in': bailleur_ids}
         return {}
 
     def convention_filter(self):
-        bailleur_ids = map( lambda role : role.bailleur_id, self.role_set.filter(typologie=Role.TypeRole.BAILLEUR))
-        administration_ids = map( lambda role : role.administration_id, self.role_set.filter(typologie=Role.TypeRole.INSTRUCTEUR))
+        bailleur_ids = list(map( lambda role : role.bailleur_id, self.role_set.filter(typologie=Role.TypeRole.BAILLEUR)))
+        administration_ids = list(map( lambda role : role.administration_id, self.role_set.filter(typologie=Role.TypeRole.INSTRUCTEUR)))
         filter_result = {}
         if administration_ids:
             filter_result['programme__administration_id__in'] = administration_ids

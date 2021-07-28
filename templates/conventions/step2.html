@@ -8,10 +8,13 @@
         <h2 class="fr-mb-3w">Etape 2 - Information bailleur</h2>
         <p class="fr-mb-3w">
           ...
+          convention id = {{convention_uuid}}
         </p>
       </div>
       <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-        {% include "common/button/precedent.html" with precedent='conventions:step1' %}
+        <button class="fr-btn" onclick="location.href='{% url 'conventions:step1_u' convention_uuid=convention_uuid %}'">
+          <span class="fr-fi-arrow-left-s-line fr-mr-1w" aria-hidden="true"></span>Précédent
+        </button>
         {% include "common/button/suivant.html" with suivant='conventions:step3' %}
       </div>
     </div>
