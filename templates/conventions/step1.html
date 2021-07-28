@@ -1,0 +1,23 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="fr-container-fluid ds_banner">
+  <div class="fr-container">
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-lg-11 fr-col-offset-lg-1 fr-my-5w">
+        <h2 class="fr-mb-3w">Etape 1 - Saisi du programme</h2>
+        <p class="fr-mb-3w">
+          Saisi du programme
+        </p>
+      </div>
+      <div class="fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
+        <button class="fr-btn fr-btn--secondary" onclick="location.href='{% url 'conventions:index' %}'">
+          Annulé
+        </button>
+        {% include "common/button/suivant.html" with suivant='conventions:step2' %}
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
+{% endblock %}

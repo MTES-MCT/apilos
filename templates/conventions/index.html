@@ -13,7 +13,7 @@
         <p class="fr-mb-3w">
           Commencer une nouvelle convention dès à présent
         </p>
-        <button class="fr-btn">
+        <button class="fr-btn" onclick="location.href='{% url 'conventions:step1' %}'">
           <span class="fr-fi-edit-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
         </button>
         {% elif request.user.is_instructeur or request.user.is_staff %}
