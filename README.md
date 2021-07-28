@@ -36,15 +36,15 @@ pre-commit install
 
 SISAL est le datawarehouse des APL dont nous exportons les données des agréments nécessaires au conventionnement APL
 
-Pour faire cet import nous avons ajouté une commande django `import_gallion` éditable ici : bailleurs/management/commands/import_gallion.py
+Pour faire cet import nous avons ajouté une commande django `import_galion` éditable ici : bailleurs/management/commands/import_galion.py
 
 Pour executer cet import en local:
 
-```docker-compose exec appel python3 manage.py import_gallion```
+```docker-compose exec appel python3 manage.py import_galion```
 
 Sur Scalingo
 
-```scalingo --app appel-staging/fabnum-appel run  python3 manage.py import_gallion```
+```scalingo --app appel-staging/fabnum-appel run  python3 manage.py import_galion```
 
 
 ## liens utils

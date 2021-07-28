@@ -43,7 +43,7 @@ class IngestableModel(models.Model):
         abstract = True
 
     @classmethod
-    def map_and_create(cls, elements):
+    def map_and_create(cls, elements, create_only=True):
         count = 0
         count_dup = 0
         mapped_elements = {}
@@ -55,21 +55,23 @@ class IngestableModel(models.Model):
                 mapped_elements[element_pivot] = {}
                 for element_item in cls.mapping.items():
                     mapped_elements[element_pivot][element_item[0]] = element[element_item[1]]
-                if cls.find_or_create_by_pivot(mapped_elements[element_pivot], element):
+                if cls.find_or_create_by_pivot(
+                mapped_elements[element_pivot], element, create_only):
                     count += 1
             else:
                 count_dup += 1
                 mapped_elements2 = {}
                 for element_item in cls.mapping.items():
                     mapped_elements2[element_item[0]] = element[element_item[1]]
-        print(f"{count} éléments créés de class {cls}")
+        print(f"{count} éléments créés ou mis à jour de class {cls}")
         print(f"{count_dup} éléments dupliqué pour la class {cls}")
         return mapped_elements
 
     @classmethod
-    def find_or_create_by_pivot(cls, element, full_element):
+    def find_or_create_by_pivot(cls, element, full_element, create_only=True):
         object_filter = build_filter(cls, full_element)
-        if not cls.objects.filter(**object_filter):
+        my_objects = cls.objects.filter(**object_filter)
+        if not my_objects:
             object_fields = {}
             for each_field in element.keys():
                 if type(cls._meta.get_field(each_field)).__name__ == 'ForeignKey':
@@ -79,13 +81,25 @@ class IngestableModel(models.Model):
                     each_field
                     ).related_model.objects.filter(**sub_object_filter)[0]
                 else:
-                    if type(cls._meta.get_field(each_field)).__name__ == 'CharField':
-                        object_fields[each_field] = element[each_field]
-                    else:
-                        object_fields[each_field] = element[each_field]
+                    object_fields[each_field] = element[each_field]
             new_object = cls(**object_fields)
             new_object.save()
-        else:
-#            print('already exist!')
-            return False
-        return True
+            return True
+        if not create_only:
+            if len(my_objects) != 1:
+                print('multiple object returned, ' +
+                f'it is not possible to update it, it is too dangerous {object_filter}')
+            else:
+                my_object = my_objects[0]
+                for each_field in element.keys():
+                    if type(cls._meta.get_field(each_field)).__name__ == 'ForeignKey':
+                        sub_object_filter = build_filter(
+                        cls._meta.get_field(each_field).related_model, full_element)
+                        my_object.__setattr__(each_field,cls._meta.get_field(
+                        each_field
+                        ).related_model.objects.filter(**sub_object_filter)[0])
+                    else:
+                        my_object.__setattr__(each_field,element[each_field])
+                my_object.save()
+                return True
+        return False

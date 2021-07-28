@@ -22,7 +22,7 @@ class Programme(IngestableModel):
         "zone_abc": 'Zone ABC',
         "surface_utile_totale": 'SU totale',
         "annee_gestion_programmation": 'Année Gestion Programmation',
-        "numero_gallion": 'N° Opération GALION',
+        "numero_galion": 'N° Opération GALION',
         "type_habitat": "Type d'habitat",
         "bailleur": "MOA (code SIRET)",
         "administration": 'Gestionnaire (code)'
@@ -54,7 +54,7 @@ class Programme(IngestableModel):
     adresse = models.CharField(max_length=255, null=True)
     departement = models.IntegerField(null=True)
     nb_logements = models.IntegerField(null=True)
-    numero_gallion = models.CharField(max_length=255, null=True)
+    numero_galion = models.CharField(max_length=255, null=True)
     annee_gestion_programmation = models.IntegerField(null=True)
     zone_123 = models.IntegerField(null=True)
     zone_abc = models.CharField(max_length=255, null=True)
