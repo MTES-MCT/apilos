@@ -1,21 +1,17 @@
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Permission
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required, permission_required
 
-from conventions.services import ConventionService
-from programmes.services import ProgrammeService
-
-convention_service = ConventionService()
-programme_service = ProgrammeService()
+from . import services
 
 @login_required
 @permission_required('convention.view_convention')
 def index(request):
-    conventions = convention_service.all_conventions(request.user)
+    conventions = services.conventions_index(request.user)
     return render(request, "conventions/index.html", {'conventions': conventions})
 
 def step1(request):
-    programmes = programme_service.all_programmes_lots(request.user)
+    programmes = services.conventions_step1(request.user)
     return render(request, "conventions/step1.html", {'programmes': programmes})
 
 def step2(request):
