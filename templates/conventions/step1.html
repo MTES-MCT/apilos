@@ -4,18 +4,37 @@
 <div class="fr-container-fluid ds_banner">
   <div class="fr-container">
     <div class="fr-grid-row fr-grid-row--gutters">
-      <div class="fr-col-lg-11 fr-col-offset-lg-1 fr-my-5w">
-        <h2 class="fr-mb-3w">Etape 1 - Saisi du programme</h2>
-        <p class="fr-mb-3w">
-          Saisi du programme
-        </p>
-      </div>
-      <div class="fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-        <button class="fr-btn fr-btn--secondary" onclick="location.href='{% url 'conventions:index' %}'">
-          Annulé
-        </button>
-        {% include "common/button/suivant.html" with suivant='conventions:step2' %}
-      </div>
+
+
+      <form method="post" action="{% url 'conventions:step2' %}">
+        {% csrf_token %}
+
+
+
+
+        <div class="fr-col-md-12 fr-col-lg-11 fr-col-offset-lg-1 fr-my-5w">
+          <h2 class="fr-mb-3w">Etape 1 - Saisi du programme</h2>
+          <p class="fr-mb-3w">
+            <label class="fr-label" for="select">
+              Séléctionnez votre programme et son financement
+            </label>
+            <select class="fr-select" id="select" name="select">
+              <option value="" selected disabled hidden>Selectionnez une option</option>
+              {% for lot in programmes %}
+              <option value="{{lot.id}}">
+                {{ lot.programme.nom }} - {{ lot.financement }} - {{ lot.programme.ville}} - {{lot.programme.nb_logements}} lgts
+              </option>
+              {% endfor %}
+            </select>
+          </p>
+        </div>
+        <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
+          <button class="fr-btn fr-btn--secondary" onclick="location.href='{% url 'conventions:index' %}'">
+            Annulé
+          </button>
+          {% include "common/button/suivant_submit.html" with suivant='conventions:step2' %}
+        </div>
+      </form>
     </div>
   </div>
 </div>
