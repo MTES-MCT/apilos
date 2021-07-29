@@ -1,9 +1,9 @@
 {% if convention_uuid %}
-<button class="fr-btn" onclick="location.href='{% url precedent convention_uuid=convention_uuid %}'">
+<a class="fr-btn" href='{% url precedent convention_uuid=convention_uuid %}'>
   <span class="fr-fi-arrow-left-s-line fr-mr-1w" aria-hidden="true"></span>Précédent
-</button>
+</a>
 {% else %}
-<button class="fr-btn" onclick="location.href='{% url precedent %}'">
+<a class="fr-btn" href='{% url precedent %}'>
   <span class="fr-fi-arrow-left-s-line fr-mr-1w" aria-hidden="true"></span>Précédent
-</button>
+</a>
 {% endif %}

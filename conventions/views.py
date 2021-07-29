@@ -16,10 +16,6 @@ def index(request):
     return render(request, "conventions/index.html", {'conventions': conventions})
 
 @permission_required('convention.change_convention')
-def step2(request, convention_uuid):
-    return render(request, "conventions/step2.html", {'convention_uuid': convention_uuid})
-
-@permission_required('convention.change_convention')
 def select_programme_create(request):
     result = services.select_programme_create(request)
     if result['success']:
@@ -34,6 +30,22 @@ def select_programme_update(request, convention_uuid):
         return HttpResponseRedirect(reverse('conventions:step2', args=[result['convention'].uuid]) )
     else:
         return render(request, "conventions/step1.html", {'form': result['form'], 'convention_uuid': result['convention_uuid'], 'programmes': result['programmes']})
+
+
+
+@permission_required('convention.change_convention')
+def step2(request, convention_uuid):
+    print('STEP2')
+    result = services.bailleur_update(request, convention_uuid)
+    if result['success']:
+        return HttpResponseRedirect(reverse('conventions:step3', args=[result['convention'].uuid]) )
+    else:
+        print(result['form'])
+        return render(request, "conventions/step2.html", {'form': result['form'], 'convention_uuid': result['convention_uuid']})
+
+
+
+
 
 @permission_required('convention.change_convention')
 def step3(request, convention_uuid):

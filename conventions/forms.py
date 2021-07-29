@@ -9,7 +9,6 @@ class ProgrammeSelectionForm(forms.Form):
   def clean_lot_uuid(self):
     lot_uuid = self.cleaned_data['lot_uuid']
 
-    print(lot_uuid)
     # check that lot_id exist in DB
     if not Lot.objects.get(uuid=lot_uuid):
       raise ValidationError("le programme avec ce financement n'existe pas")
