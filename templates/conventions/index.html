@@ -36,23 +36,29 @@
             <caption>Toutes mes conventions</caption>
             <thead>
             <tr>
-                <th scope="col">Programme</th>
-                <th scope="col">Financement</th>
-                <th scope="col">Statut</th>
-                <th scope="col">Action</th>
+              {% if request.user.is_instructeur %}
+              <th scope="col">Bailleur</th>
+              {% endif %}
+              <th scope="col">Programme</th>
+              <th scope="col">Financement</th>
+              <th scope="col">Statut</th>
+              <th scope="col">Action</th>
             </tr>
             </thead>
             <tbody>
             {% for convention in conventions %}
             <tr>
-                <td>{{convention.programme.nom}}</td>
-                <td>{{convention.financement}}</td>
-                <td>{{convention.statut}}</td>
-                <td>
-                  <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" onclick="location.href='{% url 'conventions:step1_update' convention_uuid=convention.uuid %}'"">
-                    Edit
-                 </button>
-                </td>
+              {% if request.user.is_instructeur %}
+              <td>{{convention.bailleur.nom}}</td>
+              {% endif %}
+              <td>{{convention.programme.nom}}</td>
+              <td>{{convention.financement}}</td>
+              <td>{{convention.statut}}</td>
+              <td>
+                <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" onclick="location.href='{% url 'conventions:step1_update' convention_uuid=convention.uuid %}'"">
+                  Edit
+               </button>
+              </td>
             </tr>
             {% endfor %}
             </tbody>
