@@ -5,9 +5,7 @@ from django.db import models
 class User(AbstractUser):
     pass
 
-# To implement if we need to custom permission
     def has_perm(self, perm, obj=None):
-        #print(f'PERMISSION : {perm}')
         if self.is_staff:
             return True
         permissions = []
@@ -24,21 +22,20 @@ class User(AbstractUser):
     def is_role(self, role):
         return role in map( lambda r : r.typologie, self.role_set.all())
 
+    def programme_filter(self):
+        bailleur_ids = list(map( lambda role : role.bailleur_id, self.role_set.filter(typologie=Role.TypeRole.BAILLEUR)))
+        if bailleur_ids:
+            return {'bailleur_id__in': bailleur_ids}
+        return {}
+
     def convention_filter(self):
-        administrations = []
-        bailleurs = []
-        for role in self.role_set.all():
-            if role.typologie == Role.TypeRole.INSTRUCTEUR and role.administration is not None:
-                administrations.append(role.administration.id)
-            if role.typologie == Role.TypeRole.BAILLEUR and role.bailleur is not None:
-                bailleurs.append(role.bailleur.id)
+        bailleur_ids = list(map( lambda role : role.bailleur_id, self.role_set.filter(typologie=Role.TypeRole.BAILLEUR)))
+        administration_ids = list(map( lambda role : role.administration_id, self.role_set.filter(typologie=Role.TypeRole.INSTRUCTEUR)))
         filter_result = {}
-#Lot.objects.prefetch_related('programme').prefetch_related('bailleur').filter(programme__id=17538, bailleur__id=1035)
-#Lot.objects.prefetch_related('programme').prefetch_related('bailleur').filter(programme__id=17538, programme__bailleur_id=1035)
-        if administrations:
-            filter_result['programme__administration_id__in'] = administrations
-        if bailleurs:
-            filter_result['bailleur_id__in'] = bailleurs
+        if administration_ids:
+            filter_result['programme__administration_id__in'] = administration_ids
+        if bailleur_ids:
+            filter_result['bailleur_id__in'] = bailleur_ids
         return filter_result
 
     def __str__(self):

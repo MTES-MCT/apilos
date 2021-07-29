@@ -1,0 +1,209 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="fr-container-fluid ds_banner">
+  <div class="fr-container">
+    <form method="post" action="">
+      {% csrf_token %}
+      <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
+          <h2 class="fr-mb-3w">Etape 2 - Identité du signataire</h2>
+
+
+          <div class="fr-input-group {% if form.nom.errors %}fr-select-group--error{% endif %}">
+            <label class="fr-label" for="{{form.nom.id_for_label}}">
+              Nom du bailleur
+            </label>
+            <input
+              class="fr-input {% if form.nom.errors %}fr-input--error{% endif %}"
+              aria-describedby="text-input-error-desc-error"
+              type="text" id="{{form.nom.id_for_label}}"
+              name="nom"
+              value="{{ form.nom.value|default_if_none:'' }}">
+            {% for error in form.nom.errors %}
+            <p id="text-input-error-desc-error" class="fr-error-text">
+              {{ error }}
+            </p>
+            {% endfor %}
+          </div>
+
+
+          <div class="fr-mb-2w">
+            <div class="fr-grid-row fr-grid-row--gutters">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                <div class="fr-input-group {% if form.siret.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.siret.id_for_label}}">
+                    SIRET
+                  </label>
+                  <input
+                    class="fr-input {% if form.siret.errors %}fr-input--error{% endif %}"
+                    aria-describedby="text-input-error-desc-error"
+                    type="text"
+                    id="{{form.siret.id_for_label}}"
+                    name="siret"
+                    value="{{ form.siret.value|default_if_none:'' }}">
+                  {% for error in form.siret.errors %}
+                  <p id="text-input-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                <div class="fr-input-group {% if form.capital_social.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.capital_social.id_for_label}}">
+                    Capital social
+                  </label>
+                  <input
+                    class="fr-input {% if form.capital_social.errors %}fr-input--error{% endif %}"
+                    aria-describedby="text-input-error-desc-error"
+                    type="text" id="{{form.capital_social.id_for_label}}"
+                    name="capital_social"
+                    value="{{ form.capital_social.value|default_if_none:'' }}">
+                  {% for error in form.capital_social.errors %}
+                  <p id="text-input-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="fr-input-group {% if form.adresse.errors %}fr-select-group--error{% endif %}">
+            <label class="fr-label" for="{{form.adresse.id_for_label}}">
+              Adresse
+            </label>
+            <input
+              class="fr-input {% if form.adresse.errors %}fr-input--error{% endif %}"
+              aria-describedby="text-input-error-desc-error"
+              type="text" id="{{form.adresse.id_for_label}}"
+              name="adresse"
+              value="{{ form.adresse.value|default_if_none:'' }}">
+            {% for error in form.adresse.errors %}
+            <p id="text-input-error-desc-error" class="fr-error-text">
+              {{ error }}
+            </p>
+            {% endfor %}
+          </div>
+
+
+          <div class="fr-mb-2w">
+            <div class="fr-grid-row fr-grid-row--gutters">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                <div class="fr-input-group {% if form.code_postal.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.code_postal.id_for_label}}">
+                    Code postal
+                  </label>
+                  <input
+                    class="fr-input {% if form.code_postal.errors %}fr-input--error{% endif %}"
+                    aria-describedby="text-input-error-desc-error"
+                    type="text"
+                    id="{{form.code_postal.id_for_label}}"
+                    name="code_postal"
+                    value="{{ form.code_postal.value|default_if_none:'' }}">
+                  {% for error in form.code_postal.errors %}
+                  <p id="text-input-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                <div class="fr-input-group {% if form.ville.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.ville.id_for_label}}">
+                    Ville
+                  </label>
+                  <input
+                    class="fr-input {% if form.ville.errors %}fr-input--error{% endif %}"
+                    aria-describedby="text-input-error-desc-error"
+                    type="text"
+                    id="{{form.ville.id_for_label}}"
+                    name="ville"
+                    value="{{ form.ville.value|default_if_none:'' }}">
+                  {% for error in form.ville.errors %}
+                  <p id="text-input-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fr-input-group {% if form.dg_nom.errors %}fr-select-group--error{% endif %}">
+            <label class="fr-label" for="{{form.dg_nom.id_for_label}}">
+              Nom du directeur générale
+            </label>
+            <input
+              class="fr-input {% if form.dg_nom.errors %}fr-input--error{% endif %}"
+              aria-describedby="text-input-error-desc-error"
+              type="text"
+              id="{{form.dg_nom.id_for_label}}"
+              name="dg_nom"
+              value="{{ form.dg_nom.value|default_if_none:'' }}">
+            {% for error in form.dg_nom.errors %}
+            <p id="text-input-error-desc-error" class="fr-error-text">
+              {{ error }}
+            </p>
+            {% endfor %}
+          </div>
+
+
+          <div class="fr-mb-2w">
+            <div class="fr-grid-row fr-grid-row--gutters">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                <div class="fr-input-group {% if form.dg_fonction.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.dg_fonction.id_for_label}}">
+                    Fonction du directeur general
+                  </label>
+                  <input
+                    class="fr-input {% if form.dg_fonction.errors %}fr-input--error{% endif %}"
+                    aria-describedby="text-input-error-desc-error"
+                    type="text"
+                    id="{{form.dg_fonction.id_for_label}}"
+                    name="dg_fonction"
+                    value="{{ form.dg_fonction.value|default_if_none:'' }}">
+                  {% for error in form.dg_fonction.errors %}
+                  <p id="text-input-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                <div class="fr-input-group {% if form.dg_date_deliberation.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.dg_date_deliberation.id_for_label}}">
+                    Date de délibération
+                  </label>
+                  <div class="fr-input-wrap fr-fi-calendar-line fr-mt-1w" >
+                    <input
+                      class="fr-input {% if form.dg_date_deliberation.errors %}fr-input--error{% endif %}"
+                      type="date"
+                      id="{{form.dg_date_deliberation.id_for_label}}"
+                      name="dg_date_deliberation"
+                      value="{{ form.dg_date_deliberation.value }}">
+                  </div>
+                  {% for error in form.dg_date_deliberation.errors %}
+                  <p id="text-input-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+      <div class="fr-col-12 fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
+        {% include "common/button/precedent.html" with precedent='conventions:step1_update' convention_uuid=convention_uuid %}
+        {% include "common/button/suivant.html" with suivant='conventions:step2' convention_uuid=convention_uuid %}
+      </div>
+    </form>
+  </div>
+</div>
+<hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="fr-container-fluid ds_banner">
+  <div class="fr-container">
+    <form method="post" action="">
+      {% csrf_token %}
+      <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
+          <h2 class="fr-mb-3w">Etape 1 - Saisi du programme</h2>
+          <p class="fr-mb-3w">
+            <div class="fr-select-group {% if form.lot_uuid.errors %}fr-select-group--error{% endif %}">
+              <label class="fr-label" for="{{form.lot_uuid.id_for_label}}">
+                Séléctionnez votre programme et son financement
+              </label>
+              <select class="fr-select {% if form.lot_uuid.errors %}fr-select--error{% endif %}" id="lot_uuid" name="lot_uuid">
+                <option value="" selected disabled hidden>Selectionnez une option</option>
+                {% for lot in programmes %}
+                <option value="{{lot.uuid}}" {% if lot.uuid|stringformat:"s"  == form.lot_uuid.value %}selected{% endif %}>
+                  {{ lot.programme.nom }} - {{ lot.financement }} - {{ lot.programme.ville}} - {{lot.programme.nb_logements}} lgts
+                </option>
+                {% endfor %}
+              </select>
+              {% for error in form.lot_uuid.errors %}
+              <p id="select-error-desc-error" class="fr-error-text">
+                {{ error }}
+              </p>
+              {% endfor %}
+            </div>
+          </p>
+        </div>
+      </div>
+      <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
+        <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
+          Annulé
+        </a>
+        {% include "common/button/suivant_submit.html" with suivant='conventions:step2' %}
+      </div>
+    </form>
+  </div>
+</div>
+<hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
+{% endblock %}

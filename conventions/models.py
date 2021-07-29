@@ -17,16 +17,30 @@ class Convention(models.Model):
         "programmes.Programme", on_delete=models.CASCADE, null=False
     )
     lot = models.ForeignKey("programmes.Lot", on_delete=models.CASCADE, null=False)
-    date_fin_conventionnement = models.DateField()
+    date_fin_conventionnement = models.DateField(null=True)
     financement = models.CharField(
         max_length=25,
         choices=Financement.choices,
         default=Financement.PLUS,
     )
-    soumis_le = models.DateTimeField()
-    valide_le = models.DateTimeField()
+    soumis_le = models.DateTimeField(null=True)
+    valide_le = models.DateTimeField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.uuid
+
+# TODO:
+# gérer un decorateur : https://docs.djangoproject.com/en/dev/howto/custom-template-tags/#howto-custom-template-tags
+# Ou créé un champ statut
+    def statut(self):
+        if self.valide_le:
+            return 'Validé'
+        elif self.soumis_le:
+            return "En cours d'instruction"
+        else:
+            return "Brouillon"
 
 
 class Pret(models.Model):
