@@ -70,6 +70,18 @@ class AdministrationsModelsTest(TestCase):
         user = User.objects.get(username="sabine")
         expected_object_name = f"{user.first_name} {user.last_name}"
         self.assertEqual(str(user), expected_object_name)
+        user.first_name = ''
+        expected_object_name = f"{user.last_name}"
+        self.assertEqual(str(user), expected_object_name)
+        user.last_name = ''
+        user.first_name = 'Sabine'
+        expected_object_name = f"{user.first_name}"
+        self.assertEqual(str(user), expected_object_name)
+        user.last_name = ''
+        user.first_name = ''
+        expected_object_name = f"{user.username}"
+        self.assertEqual(str(user), expected_object_name)
+
 
     def test_is_role(self):
         user_instructeur = User.objects.get(username="sabine")

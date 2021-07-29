@@ -39,7 +39,7 @@ class User(AbstractUser):
         return filter_result
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}" if self.first_name or self.last_name else self.username
+        return f"{self.first_name} {self.last_name}".strip() if self.first_name or self.last_name else self.username
 
 class Role(models.Model):
     class TypeRole(models.TextChoices):
