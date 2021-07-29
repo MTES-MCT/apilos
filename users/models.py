@@ -5,15 +5,12 @@ from django.db import models
 class User(AbstractUser):
     pass
 
-# To implement if we need to custom permission
     def has_perm(self, perm, obj=None):
-#        print(f'PERMISSION : {perm}')
         if self.is_staff:
             return True
         permissions = []
         for role in self.role_set.all():
             permissions += map(lambda permission: permission.content_type.name + '.' + permission.codename, role.group.permissions.all())
-#        print(f'PERMISSIONS : {permissions}')
         return perm in permissions
 
     def is_bailleur(self):
