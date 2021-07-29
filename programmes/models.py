@@ -7,6 +7,7 @@ from core.models import IngestableModel
 class Financement(models.TextChoices):
     PLUS = "PLUS", "PLUS"
     PLAI = "PLAI", "PLAI"
+    PLAI_ADP = "PLAI_ADP", "PLAI_ADP"
     PLUS_PLAI = "PLUS-PLAI", "PLUS-PLAI"
     PLS = "PLS", "PLS"
 
