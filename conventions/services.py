@@ -92,7 +92,7 @@ def bailleur_update(request, convention_uuid):
             'ville': bailleur.ville,
             'dg_nom': bailleur.dg_nom,
             'dg_fonction': bailleur.dg_fonction,
-            'dg_date_deliberation': bailleur.dg_date_deliberation.strftime("%Y-%m-%d"),
+            'dg_date_deliberation': bailleur.dg_date_deliberation.strftime("%Y-%m-%d") if bailleur.dg_date_deliberation is not None else '',
         })
 
     return {'success':False, 'convention_uuid': convention_uuid, 'form':form}
