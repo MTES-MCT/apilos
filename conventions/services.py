@@ -8,13 +8,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 
 
-def conventions_index(request, infilter={}):
+def conventions_index(request, infilter):
     infilter.update(request.user.convention_filter())
     conventions = Convention.objects.prefetch_related('programme').filter(**infilter)
     return conventions
 
-
-def conventions_step1(request, infilter={}):
+def conventions_step1(request, infilter):
     infilter.update(request.user.programme_filter())
     return Lot.objects.prefetch_related('programme').prefetch_related('convention_set').filter(**infilter).order_by('programme__nom', 'financement')
 
@@ -32,7 +31,7 @@ def select_programme_create(request):
     else:
         form = ProgrammeSelectionForm()
 
-    programmes = conventions_step1(request)
+    programmes = conventions_step1(request, {})
     return {'success':False, 'programmes':programmes, 'form':form} # render(request, "conventions/step1.html", {'form': form, 'programmes': programmes})
 
 def select_programme_update(request, convention_uuid):
@@ -56,7 +55,7 @@ def select_programme_update(request, convention_uuid):
     else:
         form = ProgrammeSelectionForm(initial={'lot_uuid': str(convention.lot.uuid),})
 
-    programmes = conventions_step1(request)
+    programmes = conventions_step1(request, {})
     return {'success':False, 'programmes':programmes, 'convention_uuid': convention_uuid, 'form':form}
 
 def bailleur_update(request, convention_uuid):
