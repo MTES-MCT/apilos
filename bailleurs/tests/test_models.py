@@ -16,7 +16,7 @@ class BailleurModelsTest(TestCase):
             #            operation_exceptionnelle =
         )
 
-    def test_object_name_is_last_name_comma_first_name(self):
+    def test_object_str(self):
         bailleur = Bailleur.objects.get(id=1)
         expected_object_name = f"{bailleur.nom}"
         self.assertEqual(str(bailleur), expected_object_name)
