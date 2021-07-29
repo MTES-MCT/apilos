@@ -3,10 +3,10 @@
 {% block content %}
 <div class="fr-container-fluid ds_banner">
   <div class="fr-container">
-    <div class="fr-grid-row fr-grid-row--gutters">
-      <form method="post" action="">
+    <form method="post" action="">
+      <div class="fr-grid-row fr-grid-row--gutters">
         {% csrf_token %}
-        <div class="fr-col-md-12 fr-col-lg-11 fr-col-offset-lg-1 fr-my-5w">
+        <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
           <h2 class="fr-mb-3w">Etape 1 - Saisi du programme</h2>
           <p class="fr-mb-3w">
             <div class="fr-select-group {% if form.lot_uuid.errors %}fr-select-group--error{% endif %}">
@@ -29,14 +29,14 @@
             </div>
           </p>
         </div>
-        <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-          <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
-            Annulé
-          </a>
-          {% include "common/button/suivant_submit.html" with suivant='conventions:step2' %}
-        </div>
-      </form>
-    </div>
+      </div>
+      <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
+        <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
+          Annulé
+        </a>
+        {% include "common/button/suivant_submit.html" with suivant='conventions:step2' %}
+      </div>
+    </form>
   </div>
 </div>
 <hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">

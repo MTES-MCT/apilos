@@ -28,6 +28,20 @@ class Convention(models.Model):
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.uuid
+
+# TODO:
+# gérer un decorateur : https://docs.djangoproject.com/en/dev/howto/custom-template-tags/#howto-custom-template-tags
+# Ou créé un champ statut
+    def statut(self):
+        if self.valide_le:
+            return 'Validé'
+        elif self.soumis_le:
+            return "En cours d'instruction"
+        else:
+            return "Brouillon"
+
 
 class Pret(models.Model):
     class Preteur(models.TextChoices):

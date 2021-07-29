@@ -10,10 +10,10 @@
           ...
         </p>
       </div>
-      <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-        {% include "common/button/precedent.html" with precedent='conventions:step7' %}
-        {% include "common/button/suivant.html" with suivant='conventions:stepfin' %}
     </div>
+    <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
+      {% include "common/button/precedent.html" with precedent='conventions:step7' convention_uuid=convention_uuid %}
+      {% include "common/button/suivant.html" with suivant='conventions:stepfin' convention_uuid=convention_uuid %}
     </div>
   </div>
 </div>

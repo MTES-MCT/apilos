@@ -10,69 +10,55 @@ from .models import Convention
 from . import services
 from .forms import ProgrammeSelectionForm
 
-@login_required
 @permission_required('convention.view_convention')
 def index(request):
     conventions = services.conventions_index(request)
     return render(request, "conventions/index.html", {'conventions': conventions})
 
+@permission_required('convention.change_convention')
 def step2(request, convention_uuid):
     return render(request, "conventions/step2.html", {'convention_uuid': convention_uuid})
 
-def convention_select_programme_create(request):
-
-    if request.method == 'POST':
-        form = ProgrammeSelectionForm(request.POST)
-        if form.is_valid():
-            lot = Lot.objects.get(uuid=form.cleaned_data['lot_uuid'])
-            convention = Convention.objects.create(lot=lot, programme_id=lot.programme_id, bailleur_id=lot.bailleur_id, financement=lot.financement)
-            convention.save()
-            # All is OK -> Next:
-            return HttpResponseRedirect(reverse('conventions:step2', args=[convention.uuid]) )
-
-    # If this is a GET (or any other method) create the default form.
+@permission_required('convention.change_convention')
+def select_programme_create(request):
+    result = services.select_programme_create(request)
+    if result['success']:
+        return HttpResponseRedirect(reverse('conventions:step2', args=[result['convention'].uuid]) )
     else:
-        form = ProgrammeSelectionForm()
+        return render(request, "conventions/step1.html", {'form': result['form'], 'programmes': result['programmes']})
 
-    programmes = services.conventions_step1(request)
-    return render(request, "conventions/step1.html", {'form': form, 'programmes': programmes})
-
-
-def convention_select_programme_update(request, convention_uuid):
-    #TODO: gestion du 404
-    convention = Convention.objects.get(uuid=convention_uuid)
-
-    if request.method == 'POST':
-#        if request.POST['convention_uuid'] is None:
-        form = ProgrammeSelectionForm(request.POST)
-        if form.is_valid():
-            lot = Lot.objects.get(uuid=form.cleaned_data['lot_uuid'])
-            convention.lot=lot
-            convention.programme_id=lot.programme_id
-            convention.bailleur_id=lot.bailleur_id
-            convention.financement=lot.financement
-            convention.save()
-            # All is OK -> Next:
-            return HttpResponseRedirect(reverse('conventions:step2', args=[convention.uuid]) )
-
-    # If this is a GET (or any other method) create the default form.
+@permission_required('convention.change_convention')
+def select_programme_update(request, convention_uuid):
+    result = services.select_programme_update(request, convention_uuid)
+    if result['success']:
+        return HttpResponseRedirect(reverse('conventions:step2', args=[result['convention'].uuid]) )
     else:
-        form = ProgrammeSelectionForm(initial={'lot_uuid': str(convention.lot.uuid),})
+        return render(request, "conventions/step1.html", {'form': result['form'], 'convention_uuid': result['convention_uuid'], 'programmes': result['programmes']})
 
-    programmes = services.conventions_step1(request)
-    return render(request, "conventions/step1.html", {'form': form, 'convention_uuid': convention_uuid, 'programmes': programmes})
+@permission_required('convention.change_convention')
+def step3(request, convention_uuid):
+    return render(request, "conventions/step3.html", {'convention_uuid': convention_uuid})
 
-def step3(request):
-    return render(request, "conventions/step3.html")
-def step4(request):
-    return render(request, "conventions/step4.html")
-def step5(request):
-    return render(request, "conventions/step5.html")
-def step6(request):
-    return render(request, "conventions/step6.html")
-def step7(request):
-    return render(request, "conventions/step7.html")
-def step8(request):
-    return render(request, "conventions/step8.html")
-def stepfin(request):
-    return render(request, "conventions/stepfin.html")
+@permission_required('convention.change_convention')
+def step4(request, convention_uuid):
+    return render(request, "conventions/step4.html", {'convention_uuid': convention_uuid})
+
+@permission_required('convention.change_convention')
+def step5(request, convention_uuid):
+    return render(request, "conventions/step5.html", {'convention_uuid': convention_uuid})
+
+@permission_required('convention.change_convention')
+def step6(request, convention_uuid):
+    return render(request, "conventions/step6.html", {'convention_uuid': convention_uuid})
+
+@permission_required('convention.change_convention')
+def step7(request, convention_uuid):
+    return render(request, "conventions/step7.html", {'convention_uuid': convention_uuid})
+
+@permission_required('convention.change_convention')
+def step8(request, convention_uuid):
+    return render(request, "conventions/step8.html", {'convention_uuid': convention_uuid})
+
+@permission_required('convention.change_convention')
+def stepfin(request, convention_uuid):
+    return render(request, "conventions/stepfin.html", {'convention_uuid': convention_uuid})
