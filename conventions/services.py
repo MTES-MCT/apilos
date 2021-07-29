@@ -16,7 +16,7 @@ def conventions_index(request, infilter={}):
 
 def conventions_step1(request, infilter={}):
     infilter.update(request.user.programme_filter())
-    return Lot.objects.prefetch_related('programme').filter(**infilter).order_by('programme__nom', 'financement')
+    return Lot.objects.prefetch_related('programme').prefetch_related('convention_set').filter(**infilter).order_by('programme__nom', 'financement')
 
 def select_programme_create(request):
     if request.method == 'POST':
