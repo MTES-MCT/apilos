@@ -83,9 +83,6 @@ def bailleur_update(request, convention_uuid):
 
     # If this is a GET (or any other method) create the default form.
     else:
-        print(bailleur.adresse == "")
-        print(bailleur.capital_social is None)
-        print(bailleur.dg_date_deliberation)
         form = BailleurForm(initial={
             'nom': bailleur.nom,
             'siret': bailleur.siret,
