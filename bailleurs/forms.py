@@ -12,7 +12,7 @@ class BailleurForm(forms.Form):
     'max_length':'Le SIRET ou SIREN ne doivent pas excéder 14 caractères',
     'min_length':'Le SIRET ou SIREN doivent avoir 9 caractères minimum',
   })
-  capital_social = forms.CharField(max_length=255, error_messages={
+  capital_social = forms.CharField(max_length=255, required=False, error_messages={
     'max_length':"Le capital social ne doit pas excéder 255 caractères",
   })
   adresse = forms.CharField(max_length=255, error_messages={
