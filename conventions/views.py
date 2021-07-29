@@ -13,7 +13,7 @@ from .forms import ProgrammeSelectionForm
 @permission_required('convention.view_convention')
 def index(request):
     conventions = services.conventions_index(request)
-    return render(request, "conventions/index.html", {'conventions': conventions})
+    return render(request, "conventions/index.html", {'conventions': conventions, 'filter': request.user.convention_filter()})
 
 @permission_required('convention.change_convention')
 def select_programme_create(request):

@@ -32,8 +32,10 @@
     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1">
       {% if conventions %}
       <div class="fr-table fr-table--bordered">
+        <p hidden>{{filter}}</p>
         <table>
             <caption>Toutes mes conventions</caption>
+
             <thead>
             <tr>
               {% if request.user.is_instructeur %}
