@@ -29,7 +29,7 @@ class Convention(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.uuid
+        return str(self.uuid)
 
 # TODO:
 # gérer un decorateur : https://docs.djangoproject.com/en/dev/howto/custom-template-tags/#howto-custom-template-tags
