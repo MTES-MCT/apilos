@@ -72,5 +72,9 @@ def step8(request, convention_uuid):
     return render(request, "conventions/step8.html", {'convention_uuid': convention_uuid})
 
 @permission_required('convention.change_convention')
+def step9(request, convention_uuid):
+    return render(request, "conventions/step9.html", {'convention_uuid': convention_uuid})
+
+@permission_required('convention.change_convention')
 def stepfin(request, convention_uuid):
     return render(request, "conventions/stepfin.html", {'convention_uuid': convention_uuid})

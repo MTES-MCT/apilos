@@ -12,5 +12,6 @@ urlpatterns = [
   path('step6/<convention_uuid>', views.step6, name='step6'),
   path('step7/<convention_uuid>', views.step7, name='step7'),
   path('step8/<convention_uuid>', views.step8, name='step8'),
+  path('step9/<convention_uuid>', views.step9, name='step9'),
   path('stepfin/<convention_uuid>', views.stepfin, name='stepfin'),
 ]
