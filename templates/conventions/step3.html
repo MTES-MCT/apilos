@@ -11,18 +11,6 @@
           <p class="fr-mb-3w">
             <span style="font-style: italic;">Vous editez actuellement la convention : {{convention}}</span>
           </p>
-  <!--
-            adresse
-            code_postal
-            ville
-            nb_logements
-            type_habitat
-            type_operation
-            anru
-            nb_logement_non_conventionne
-            nb_locaux_commerciaux
-            nb_bureaux
-  -->
 
 
           <div class="fr-input-group {% if form.adresse.errors %}fr-select-group--error{% endif %}">
@@ -126,25 +114,6 @@
                   </p>
                   {% endfor %}
                 </div>
-<!--
-                <div class="fr-checkbox-group {% if form.anru.errors %}fr-checkbox-group--error{% endif %}">
-                  <input
-                    {% if form.anru.errors %}aria-describedby="checkboxes-error-desc-error"{% endif %}
-                    type="checkbox"
-                    id="anru"
-                    name="anru">
-                  <label class="fr-label" for="anru"> ANRU
-                    <span class="fr-hint-text">Le programme bénéficie d'un financement ANRU : {{form.anru}}</span>
-                  </label>
-                  {% for error in form.anru.errors %}
-                  <p id="checkboxes-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
-
--->
-
               </div>
             </div>
           </div>
