@@ -23,6 +23,7 @@ class Convention(models.Model):
         choices=Financement.choices,
         default=Financement.PLUS,
     )
+    comments = models.TextField(null=True)
     soumis_le = models.DateTimeField(null=True)
     valide_le = models.DateTimeField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
