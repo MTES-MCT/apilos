@@ -10,6 +10,8 @@ from .models import Convention
 from . import services
 from .forms import ProgrammeSelectionForm
 
+NB_STEPS = 9
+
 @permission_required('convention.view_convention')
 def index(request):
     conventions = services.conventions_index(request, {})
@@ -29,52 +31,78 @@ def select_programme_update(request, convention_uuid):
     if result['success']:
         return HttpResponseRedirect(reverse('conventions:step2', args=[result['convention'].uuid]) )
     else:
-        return render(request, "conventions/step1.html", {'form': result['form'], 'convention_uuid': result['convention_uuid'], 'programmes': result['programmes']})
-
-
+        return render(request, "conventions/step1.html", {
+            'form': result['form'],
+            'convention_uuid': result['convention_uuid'],
+            'programmes': result['programmes'],
+            'nb_steps': NB_STEPS,
+        })
 
 @permission_required('convention.change_convention')
 def step2(request, convention_uuid):
-    print('STEP2')
     result = services.bailleur_update(request, convention_uuid)
     if result['success']:
         return HttpResponseRedirect(reverse('conventions:step3', args=[result['convention'].uuid]) )
     else:
         print(result['form'])
-        return render(request, "conventions/step2.html", {'form': result['form'], 'convention_uuid': result['convention_uuid']})
-
-
-
-
+        return render(request, "conventions/step2.html", {
+            'form': result['form'],
+            'convention_uuid': result['convention_uuid'],
+            'nb_steps': NB_STEPS,
+        })
 
 @permission_required('convention.change_convention')
 def step3(request, convention_uuid):
-    return render(request, "conventions/step3.html", {'convention_uuid': convention_uuid})
+    return render(request, "conventions/step3.html", {
+        'convention_uuid': convention_uuid,
+        'nb_steps': NB_STEPS,
+    })
 
 @permission_required('convention.change_convention')
 def step4(request, convention_uuid):
-    return render(request, "conventions/step4.html", {'convention_uuid': convention_uuid})
+    return render(request, "conventions/step4.html", {
+        'convention_uuid': convention_uuid,
+        'nb_steps': NB_STEPS,
+    })
 
 @permission_required('convention.change_convention')
 def step5(request, convention_uuid):
-    return render(request, "conventions/step5.html", {'convention_uuid': convention_uuid})
+    return render(request, "conventions/step5.html", {
+        'convention_uuid': convention_uuid,
+        'nb_steps': NB_STEPS,
+    })
 
 @permission_required('convention.change_convention')
 def step6(request, convention_uuid):
-    return render(request, "conventions/step6.html", {'convention_uuid': convention_uuid})
+    return render(request, "conventions/step6.html", {
+        'convention_uuid': convention_uuid,
+        'nb_steps': NB_STEPS,
+    })
 
 @permission_required('convention.change_convention')
 def step7(request, convention_uuid):
-    return render(request, "conventions/step7.html", {'convention_uuid': convention_uuid})
+    return render(request, "conventions/step7.html", {
+        'convention_uuid': convention_uuid,
+        'nb_steps': NB_STEPS,
+    })
 
 @permission_required('convention.change_convention')
 def step8(request, convention_uuid):
-    return render(request, "conventions/step8.html", {'convention_uuid': convention_uuid})
+    return render(request, "conventions/step8.html", {
+        'convention_uuid': convention_uuid,
+        'nb_steps': NB_STEPS,
+    })
 
 @permission_required('convention.change_convention')
 def step9(request, convention_uuid):
-    return render(request, "conventions/step9.html", {'convention_uuid': convention_uuid})
+    return render(request, "conventions/step9.html", {
+        'convention_uuid': convention_uuid,
+        'nb_steps': NB_STEPS,
+    })
 
 @permission_required('convention.change_convention')
 def stepfin(request, convention_uuid):
-    return render(request, "conventions/stepfin.html", {'convention_uuid': convention_uuid})
+    return render(request, "conventions/stepfin.html", {
+        'convention_uuid': convention_uuid,
+        'nb_steps': NB_STEPS,
+    })
