@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from programmes.models import Lot
+from programmes.models import Lot, TypeHabitat
 
 class ProgrammeSelectionForm(forms.Form):
   lot_uuid = forms.CharField(error_messages={'required': 'La selection du programme et de son financement est obligatoire'})
@@ -31,7 +31,7 @@ class ProgrammeForm(forms.Form):
     'max_length':"La ville ne doit pas excéder 255 caractères",
   })
   nb_logements = forms.IntegerField()
-  type_habitat = forms.CharField(required=False)
+  type_habitat = forms.TypedChoiceField(required=False, choices=TypeHabitat.choices)
   type_operation = forms.CharField(required=False)
   anru = forms.BooleanField(required=False)
   nb_logement_non_conventionne = forms.IntegerField(required=False)

@@ -1,6 +1,7 @@
 from conventions.models import Convention
 from programmes.models import Lot
 from programmes.forms import ProgrammeSelectionForm, ProgrammeForm
+from .forms import ConventionCommentForm
 from bailleurs.forms import BailleurForm
 
 from django.shortcuts import render, redirect
@@ -123,7 +124,6 @@ def programme_update(request, convention_uuid):
 
     # If this is a GET (or any other method) create the default form.
     else:
-        print(programme.anru)
         form = ProgrammeForm(initial={
             'adresse': programme.adresse,
             'code_postal': programme.code_postal,
@@ -135,6 +135,29 @@ def programme_update(request, convention_uuid):
             'nb_logement_non_conventionne': programme.nb_logement_non_conventionne,
             'nb_locaux_commerciaux': programme.nb_locaux_commerciaux,
             'nb_bureaux': programme.nb_bureaux,
+        })
+
+    return {'success':False, 'convention': convention, 'form':form}
+
+
+def convention_comments(request, convention_uuid):
+    #TODO: gestion du 404
+    convention = Convention.objects.get(uuid=convention_uuid)
+
+    if request.method == 'POST':
+#        if request.POST['convention_uuid'] is None:
+        form = ConventionCommentForm(request.POST)
+        if form.is_valid():
+            convention.comments = form.cleaned_data['comments']
+            convention.save()
+            # All is OK -> Next:
+            return {'success':True, 'convention':convention, 'form':form}
+
+    # If this is a GET (or any other method) create the default form.
+    else:
+        print(convention.comments)
+        form = ConventionCommentForm(initial={
+            'comments': convention.comments,
         })
 
     return {'success':False, 'convention': convention, 'form':form}

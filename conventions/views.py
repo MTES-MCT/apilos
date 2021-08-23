@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 
 from . import services
+from programmes.models import TypeHabitat, TypeOperation
 
 NB_STEPS = 9
 
@@ -56,6 +57,8 @@ def step3(request, convention_uuid):
             'form': result['form'],
             'convention': result['convention'],
             'nb_steps': NB_STEPS,
+            'types_habitat': TypeHabitat,
+            'types_operation': TypeOperation,
         })
 
 @permission_required('convention.change_convention')
@@ -95,10 +98,15 @@ def step8(request, convention_uuid):
 
 @permission_required('convention.change_convention')
 def step9(request, convention_uuid):
-    return render(request, "conventions/step9.html", {
-        'convention_uuid': convention_uuid,
-        'nb_steps': NB_STEPS,
-    })
+    result = services.convention_comments(request, convention_uuid)
+    if result['success']:
+        return HttpResponseRedirect(reverse('conventions:stepfin', args=[result['convention'].uuid]) )
+    else:
+        return render(request, "conventions/step9.html", {
+            'form': result['form'],
+            'convention': result['convention'],
+            'nb_steps': NB_STEPS,
+        })
 
 @permission_required('convention.change_convention')
 def stepfin(request, convention_uuid):
