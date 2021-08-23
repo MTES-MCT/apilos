@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 
 from . import services
+from programmes.models import TypeHabitat, TypeOperation
 
 NB_STEPS = 9
 
@@ -56,6 +57,8 @@ def step3(request, convention_uuid):
             'form': result['form'],
             'convention': result['convention'],
             'nb_steps': NB_STEPS,
+            'types_habitat': TypeHabitat,
+            'types_operation': TypeOperation,
         })
 
 @permission_required('convention.change_convention')

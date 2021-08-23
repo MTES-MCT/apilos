@@ -123,7 +123,6 @@ def programme_update(request, convention_uuid):
 
     # If this is a GET (or any other method) create the default form.
     else:
-        print(programme.anru)
         form = ProgrammeForm(initial={
             'adresse': programme.adresse,
             'code_postal': programme.code_postal,

@@ -11,6 +11,17 @@ class Financement(models.TextChoices):
     PLUS_PLAI = "PLUS-PLAI", "PLUS-PLAI"
     PLS = "PLS", "PLS"
 
+class TypeOperation(models.TextChoices):
+    NEUF = "NEUF", "Neuf"
+    ACQUIS = "ACQUIS", "Acquis amélioré"
+    DEMEMBREMENT = "DEMEMBREMENT", "Démembrement"
+    USUFRUIT = "USUFRUIT", "Usufruit"
+    VEFA = "VEFA", "VEFA"
+
+class TypeHabitat(models.TextChoices):
+    INDIVIDUEL = "INDIVIDUEL", "Individuel"
+    COLLECTIF = "COLLECTIF", "Collectif"
+
 class Programme(IngestableModel):
     pivot= ['bailleur', 'nom', 'ville']
     mapping= {
@@ -30,16 +41,6 @@ class Programme(IngestableModel):
 #        "departement": "Département",
     }
 
-    class TypeOperation(models.TextChoices):
-        NEUF = "NEUF", "Neuf"
-        ACQUIS = "ACQUIS", "Acquis amélioré"
-        DEMEMBREMENT = "DEMEMBREMENT", "Démembrement"
-        USUFRUIT = "USUFRUIT", "Usufruit"
-        VEFA = "VEFA", "VEFA"
-
-    class TypeHabitat(models.TextChoices):
-        INDIVIDUEL = "INDIVIDUEL", "Individuel"
-        COLLECTIF = "COLLECTIF", "Collectif"
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)

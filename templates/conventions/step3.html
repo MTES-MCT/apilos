@@ -159,9 +159,14 @@
                     Type d'habitat
                   </label>
                   <select class="fr-select {% if form.type_habitat.errors %}fr-select--error{% endif %}" id="type_habitat" name="type_habitat">
-                    <option value="" selected disabled hidden>Collectif ou individuel ?</option>
-                    <option value="1">Collectif</option>
-                    <option value="2">Individuel</option>
+                    <option value="" {% if not type_habitat.value %}selected{% endif %} disabled hidden>Collectif ou individuel ?</option>
+                    <option value="" >Non applicable</option>
+                    {% for type_habitat in types_habitat %}
+                    <option value="{{type_habitat.value}}"
+                      {% if type_habitat.value  == form.type_habitat.value %}selected{% endif %}>
+                      {{type_habitat.label}}
+                    </option>
+                    {% endfor %}
                   </select>
                   {% for error in form.type_habitat.errors %}
                   <p id="select-error-desc-error" class="fr-error-text">
@@ -177,9 +182,13 @@
                   </label>
                   <select class="fr-select {% if form.type_operation.errors %}fr-select--error{% endif %}" id="type_operation" name="type_operation">
                     <option value="" selected disabled hidden>Selectionner un type d'opération</option>
-                    <option value="1">Réhabilitation</option>
-                    <option value="2">Ancien</option>
-                    <option value="2">Neuf</option>
+                    <option value="" >Non applicable</option>
+                    {% for type_operation in types_operation %}
+                    <option value="{{type_operation.value}}"
+                      {% if type_operation.value  == form.type_operation.value %}selected{% endif %}>
+                      {{type_operation.label}}
+                    </option>
+                    {% endfor %}
                   </select>
                   {% for error in form.type_operation.errors %}
                   <p id="select-error-desc-error" class="fr-error-text">
