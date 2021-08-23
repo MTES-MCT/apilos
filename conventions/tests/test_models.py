@@ -36,5 +36,7 @@ class ConventionModelsTest(TestCase):
 
     def test_object_str(self):
         convention = Convention.objects.get(id=1)
-        expected_object_name = f"{convention.uuid}"
+        lot = convention.lot
+        programme = convention.programme
+        expected_object_name = f"{programme.nom} - {lot.financement} - {programme.ville} - {programme.nb_logements} lgts"
         self.assertEqual(str(convention), expected_object_name)
