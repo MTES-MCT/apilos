@@ -4,11 +4,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 
-from programmes.models import Lot
-from .models import Convention
-
 from . import services
-from .forms import ProgrammeSelectionForm
 
 @permission_required('convention.view_convention')
 def index(request):
@@ -40,16 +36,23 @@ def step2(request, convention_uuid):
     if result['success']:
         return HttpResponseRedirect(reverse('conventions:step3', args=[result['convention'].uuid]) )
     else:
-        print(result['form'])
-        return render(request, "conventions/step2.html", {'form': result['form'], 'convention_uuid': result['convention_uuid']})
-
-
-
-
+        return render(request, "conventions/step2.html", {
+            'form': result['form'],
+            'convention': result['convention'],
+            'nb_steps': NB_STEPS,
+        })
 
 @permission_required('convention.change_convention')
 def step3(request, convention_uuid):
-    return render(request, "conventions/step3.html", {'convention_uuid': convention_uuid})
+    result = services.programme_update(request, convention_uuid)
+    if result['success']:
+        return HttpResponseRedirect(reverse('conventions:step4', args=[result['convention'].uuid]) )
+    else:
+        return render(request, "conventions/step3.html", {
+            'form': result['form'],
+            'convention': result['convention'],
+            'nb_steps': NB_STEPS,
+        })
 
 @permission_required('convention.change_convention')
 def step4(request, convention_uuid):

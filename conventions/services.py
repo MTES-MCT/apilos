@@ -1,6 +1,6 @@
 from conventions.models import Convention
 from programmes.models import Lot
-from .forms import ProgrammeSelectionForm
+from programmes.forms import ProgrammeSelectionForm, ProgrammeForm
 from bailleurs.forms import BailleurForm
 
 from django.shortcuts import render, redirect
@@ -58,6 +58,7 @@ def select_programme_update(request, convention_uuid):
     programmes = conventions_step1(request, {})
     return {'success':False, 'programmes':programmes, 'convention_uuid': convention_uuid, 'form':form}
 
+
 def bailleur_update(request, convention_uuid):
     #TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -94,4 +95,46 @@ def bailleur_update(request, convention_uuid):
             'dg_date_deliberation': bailleur.dg_date_deliberation.strftime("%Y-%m-%d") if bailleur.dg_date_deliberation is not None else '',
         })
 
-    return {'success':False, 'convention_uuid': convention_uuid, 'form':form}
+    return {'success':False, 'convention': convention, 'form':form}
+
+
+def programme_update(request, convention_uuid):
+    #TODO: gestion du 404
+    convention = Convention.objects.get(uuid=convention_uuid)
+    programme = convention.programme
+
+    if request.method == 'POST':
+#        if request.POST['convention_uuid'] is None:
+        form = ProgrammeForm(request.POST)
+        if form.is_valid():
+            programme.adresse = form.cleaned_data['adresse']
+            programme.code_postal = form.cleaned_data['code_postal']
+            programme.ville = form.cleaned_data['ville']
+            programme.nb_logements = form.cleaned_data['nb_logements']
+            programme.type_habitat = form.cleaned_data['type_habitat']
+            programme.type_operation = form.cleaned_data['type_operation']
+            programme.anru = form.cleaned_data['anru']
+            programme.nb_logement_non_conventionne = form.cleaned_data['nb_logement_non_conventionne']
+            programme.nb_locaux_commerciaux = form.cleaned_data['nb_locaux_commerciaux']
+            programme.nb_bureaux = form.cleaned_data['nb_bureaux']
+            programme.save()
+            # All is OK -> Next:
+            return {'success':True, 'convention':convention, 'form':form}
+
+    # If this is a GET (or any other method) create the default form.
+    else:
+        print(programme.anru)
+        form = ProgrammeForm(initial={
+            'adresse': programme.adresse,
+            'code_postal': programme.code_postal,
+            'ville': programme.ville,
+            'nb_logements': programme.nb_logements,
+            'type_habitat': programme.type_habitat,
+            'type_operation': programme.type_operation,
+            'anru': programme.anru,
+            'nb_logement_non_conventionne': programme.nb_logement_non_conventionne,
+            'nb_locaux_commerciaux': programme.nb_locaux_commerciaux,
+            'nb_bureaux': programme.nb_bureaux,
+        })
+
+    return {'success':False, 'convention': convention, 'form':form}

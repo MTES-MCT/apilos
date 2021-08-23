@@ -3,18 +3,272 @@
 {% block content %}
 <div class="fr-container-fluid ds_banner">
   <div class="fr-container">
-    <div class="fr-grid-row fr-grid-row--gutters">
-      <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-        <h2 class="fr-mb-3w">Etape 3 - Nature du programme immobilier</h2>
-        <p class="fr-mb-3w">
-          ...
-        </p>
+
+    <form method="post" action="">
+      {% csrf_token %}
+      <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
+          <h2>Etape 3/{{ nb_steps }} - Nature du programme immobilier</h2>
+          <p class="fr-mb-3w">
+            <span style="font-style: italic;">Vous editez actuellement la convention : {{convention}}</span>
+          </p>
+  <!--
+            adresse
+            code_postal
+            ville
+            nb_logements
+            type_habitat
+            type_operation
+            anru
+            nb_logement_non_conventionne
+            nb_locaux_commerciaux
+            nb_bureaux
+  -->
+
+
+          <div class="fr-input-group {% if form.adresse.errors %}fr-select-group--error{% endif %}">
+            <label class="fr-label" for="{{form.adresse.id_for_label}}">
+              Adresse
+            </label>
+            <input
+              class="fr-input {% if form.adresse.errors %}fr-input--error{% endif %}"
+              aria-describedby="text-input-error-desc-error"
+              type="text" id="{{form.adresse.id_for_label}}"
+              name="adresse"
+              value="{{ form.adresse.value|default_if_none:'' }}">
+            {% for error in form.adresse.errors %}
+            <p id="text-input-error-desc-error" class="fr-error-text">
+              {{ error }}
+            </p>
+            {% endfor %}
+          </div>
+
+
+          <div class="fr-mb-2w">
+            <div class="fr-grid-row fr-grid-row--gutters">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                <div class="fr-input-group {% if form.code_postal.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.code_postal.id_for_label}}">
+                    Code postal
+                  </label>
+                  <input
+                    class="fr-input {% if form.code_postal.errors %}fr-input--error{% endif %}"
+                    aria-describedby="text-input-error-desc-error"
+                    type="text"
+                    id="{{form.code_postal.id_for_label}}"
+                    name="code_postal"
+                    value="{{ form.code_postal.value|default_if_none:'' }}">
+                  {% for error in form.code_postal.errors %}
+                  <p id="text-input-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                <div class="fr-input-group {% if form.ville.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.ville.id_for_label}}">
+                    Ville
+                  </label>
+                  <input
+                    class="fr-input {% if form.ville.errors %}fr-input--error{% endif %}"
+                    aria-describedby="text-input-error-desc-error"
+                    type="text"
+                    id="{{form.ville.id_for_label}}"
+                    name="ville"
+                    value="{{ form.ville.value|default_if_none:'' }}">
+                  {% for error in form.ville.errors %}
+                  <p id="text-input-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="fr-mb-2w">
+            <div class="fr-grid-row fr-grid-row--gutters">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                <div class="fr-input-group {% if form.nb_logements.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.nb_logements.id_for_label}}">
+                    Nombre de logements
+                  </label>
+                  <input
+                    class="fr-input {% if form.nb_logements.errors %}fr-input--error{% endif %}"
+                    pattern="[0-9]*"
+                    inputmode="numeric"
+                    {% if form.nb_logements.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
+                    type="number"
+                    id="{{form.nb_logements.id_for_label}}"
+                    name="nb_logements"
+                    value="{{ form.nb_logements.value|default_if_none:'' }}">
+                  {% for error in form.nb_logements.errors %}
+                  <p id="text-input-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w fr-mt-3w">
+                <div class="fr-checkbox-group {% if form.anru.errors %}fr-checkbox-group--error{% endif %}">
+                  <input
+                  type="checkbox"
+                  id="anru"
+                  {% if form.anru.value %}checked="checked"{% endif %}
+                  name="anru">
+                  <label class="fr-label" for="anru"> ANRU
+                    <span class="fr-hint-text">Le programme bénéficie d'un financement ANRU</span>
+                  </label>
+                  {% for error in form.anru.errors %}
+                  <p id="checkboxes-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+<!--
+                <div class="fr-checkbox-group {% if form.anru.errors %}fr-checkbox-group--error{% endif %}">
+                  <input
+                    {% if form.anru.errors %}aria-describedby="checkboxes-error-desc-error"{% endif %}
+                    type="checkbox"
+                    id="anru"
+                    name="anru">
+                  <label class="fr-label" for="anru"> ANRU
+                    <span class="fr-hint-text">Le programme bénéficie d'un financement ANRU : {{form.anru}}</span>
+                  </label>
+                  {% for error in form.anru.errors %}
+                  <p id="checkboxes-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+
+-->
+
+              </div>
+            </div>
+          </div>
+
+
+          <div class="fr-mb-2w">
+            <div class="fr-grid-row fr-grid-row--gutters">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+
+                <div class="fr-select-group {% if form.type_habitat.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.type_habitat.id_for_label}}">
+                    Type d'habitat
+                  </label>
+                  <select class="fr-select {% if form.type_habitat.errors %}fr-select--error{% endif %}" id="type_habitat" name="type_habitat">
+                    <option value="" selected disabled hidden>Collectif ou individuel ?</option>
+                    <option value="1">Collectif</option>
+                    <option value="2">Individuel</option>
+                  </select>
+                  {% for error in form.type_habitat.errors %}
+                  <p id="select-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                <div class="fr-select-group {% if form.type_operation.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.type_operation.id_for_label}}">
+                    Type d'opération
+                  </label>
+                  <select class="fr-select {% if form.type_operation.errors %}fr-select--error{% endif %}" id="type_operation" name="type_operation">
+                    <option value="" selected disabled hidden>Selectionner un type d'opération</option>
+                    <option value="1">Réhabilitation</option>
+                    <option value="2">Ancien</option>
+                    <option value="2">Neuf</option>
+                  </select>
+                  {% for error in form.type_operation.errors %}
+                  <p id="select-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="fr-mb-2w">
+            <div class="fr-grid-row fr-grid-row--gutters">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                <div class="fr-input-group {% if form.nb_logement_non_conventionne.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.nb_logement_non_conventionne.id_for_label}}">
+                    Nb logements non-conventionnés
+                  </label>
+                  <input
+                    class="fr-input {% if form.nb_logement_non_conventionne.errors %}fr-input--error{% endif %}"
+                    pattern="[0-9]*"
+                    inputmode="numeric"
+                    {% if form.nb_logement_non_conventionne.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
+                    type="number"
+                    id="{{form.nb_logement_non_conventionne.id_for_label}}"
+                    name="nb_logement_non_conventionne"
+                    value="{{ form.nb_logement_non_conventionne.value|default_if_none:0 }}">
+                  {% for error in form.nb_logement_non_conventionne.errors %}
+                  <p id="text-input-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-pl-md-1w fr-mb-2w">
+                <div class="fr-input-group {% if form.nb_locaux_commerciaux.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.nb_locaux_commerciaux.id_for_label}}">
+                    nb_locaux_commerciaux
+                  </label>
+                  <input
+                    class="fr-input {% if form.nb_locaux_commerciaux.errors %}fr-input--error{% endif %}"
+                    pattern="[0-9]*"
+                    inputmode="numeric"
+                    {% if form.nb_locaux_commerciaux.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
+                    type="number"
+                    id="{{form.nb_locaux_commerciaux.id_for_label}}"
+                    name="nb_locaux_commerciaux"
+                    value="{{ form.nb_locaux_commerciaux.value|default_if_none:0 }}">
+                  {% for error in form.nb_locaux_commerciaux.errors %}
+                  <p id="text-input-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-pl-md-1w fr-mb-2w">
+                <div class="fr-input-group {% if form.nb_bureaux.errors %}fr-select-group--error{% endif %}">
+                  <label class="fr-label" for="{{form.nb_bureaux.id_for_label}}">
+                    nb_bureaux
+                  </label>
+                  <input
+                    class="fr-input {% if form.nb_bureaux.errors %}fr-input--error{% endif %}"
+                    pattern="[0-9]*"
+                    inputmode="numeric"
+                    {% if form.nb_bureaux.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
+                    type="number"
+                    id="{{form.nb_bureaux.id_for_label}}"
+                    name="nb_bureaux"
+                    value="{{ form.nb_bureaux.value|default_if_none:0 }}">
+                  {% for error in form.nb_bureaux.errors %}
+                  <p id="text-input-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
       </div>
-    </div>
-    <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-      {% include "common/button/precedent.html" with precedent='conventions:step2' convention_uuid=convention_uuid %}
-      {% include "common/button/suivant.html" with suivant='conventions:step4' convention_uuid=convention_uuid %}
-    </div>
+      <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
+        {% include "common/button/precedent.html" with precedent='conventions:step2' convention_uuid=convention.uuid %}
+        {% include "common/button/suivant.html" with suivant='conventions:step3' convention_uuid=convention.uuid %}
+      </div>
+    </form>
   </div>
 </div>
 <hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
