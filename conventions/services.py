@@ -1,7 +1,7 @@
 from conventions.models import Convention
 from programmes.models import Lot
 from programmes.forms import ProgrammeSelectionForm, ProgrammeForm, ProgrammmeCadastralForm
-from .forms import ConventionCommentForm
+from .forms import ConventionCommentForm, ConventionFinancementForm
 from bailleurs.forms import BailleurForm
 
 from django.shortcuts import render, redirect
@@ -172,6 +172,27 @@ def programme_cadastral_update(request, convention_uuid):
             'acquereur': programme.acquereur,
             'reference_notaire': programme.reference_notaire,
             'reference_publication_acte': programme.reference_publication_acte,
+        })
+
+    return {'success':False, 'convention': convention, 'form':form}
+
+
+def convention_financement(request, convention_uuid):
+    #TODO: gestion du 404
+    convention = Convention.objects.get(uuid=convention_uuid)
+
+    if request.method == 'POST':
+        form = ConventionFinancementForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data['date_fin_conventionnement'])
+            convention.date_fin_conventionnement = form.cleaned_data['date_fin_conventionnement']
+            convention.save()
+            # All is OK -> Next:
+            return {'success':True, 'convention':convention, 'form':form}
+
+    else:
+        form = ConventionFinancementForm(initial={
+            'date_fin_conventionnement': format_date_for_form(convention.date_fin_conventionnement),
         })
 
     return {'success':False, 'convention': convention, 'form':form}

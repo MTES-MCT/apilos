@@ -3,18 +3,42 @@
 {% block content %}
 <div class="fr-container-fluid ds_banner">
   <div class="fr-container">
-    <div class="fr-grid-row fr-grid-row--gutters">
-      <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-        <h2 class="fr-mb-3w">Etape 5/{{ nb_steps }} - Financements</h2>
-        <p class="fr-mb-3w">
-          ...
-        </p>
+    <form method="post" action="">
+      {% csrf_token %}
+      <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
+          <h2>Etape 5/{{ nb_steps }} - Financements</h2>
+          {% include "common/convention_edit_info.html" with convention=convention %}
+          {% include "common/mandatory_fields_info.html" %}
+
+
+          <div class="fr-input-group {% if form.date_fin_conventionnement.errors %}fr-select-group--error{% endif %}">
+            <label class="fr-label" for="{{form.date_fin_conventionnement.id_for_label}}">
+              Durée de la convention
+            </label>
+            <div class="fr-input-wrap fr-fi-calendar-line fr-mt-1w" >
+              <input
+                class="fr-input {% if form.date_fin_conventionnement.errors %}fr-input--error{% endif %}"
+                type="date"
+                id="{{form.date_fin_conventionnement.id_for_label}}"
+                name="date_fin_conventionnement"
+                value="{{ form.date_fin_conventionnement.value }}">
+            </div>
+            {% for error in form.date_fin_conventionnement.errors %}
+            <p id="text-input-error-desc-error" class="fr-error-text">
+              {{ error }}
+            </p>
+            {% endfor %}
+          </div>
+
+
+        </div>
       </div>
-    </div>
-    <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-      {% include "common/button/precedent.html" with precedent='conventions:step4' convention_uuid=convention_uuid %}
-      {% include "common/button/suivant.html" with suivant='conventions:step6' convention_uuid=convention_uuid %}
-    </div>
+      <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
+        {% include "common/button/precedent.html" with precedent='conventions:step4' convention_uuid=convention.uuid %}
+        {% include "common/button/suivant.html" with suivant='conventions:step5' convention_uuid=convention.uuid %}
+      </div>
+    </form>
   </div>
 </div>
 <hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
