@@ -1,6 +1,6 @@
 from conventions.models import Convention
 from programmes.models import Lot
-from programmes.forms import ProgrammeSelectionForm, ProgrammeForm
+from programmes.forms import ProgrammeSelectionForm, ProgrammeForm, ProgrammmeCadastralForm
 from .forms import ConventionCommentForm
 from bailleurs.forms import BailleurForm
 
@@ -8,6 +8,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 
+def format_date_for_form(date):
+    return date.strftime("%Y-%m-%d") if date is not None else ''
 
 def conventions_index(request, infilter):
     infilter.update(request.user.convention_filter())
@@ -93,11 +95,10 @@ def bailleur_update(request, convention_uuid):
             'ville': bailleur.ville,
             'dg_nom': bailleur.dg_nom,
             'dg_fonction': bailleur.dg_fonction,
-            'dg_date_deliberation': bailleur.dg_date_deliberation.strftime("%Y-%m-%d") if bailleur.dg_date_deliberation is not None else '',
+            'dg_date_deliberation': format_date_for_form(bailleur.dg_date_deliberation),
         })
 
     return {'success':False, 'convention': convention, 'form':form}
-
 
 def programme_update(request, convention_uuid):
     #TODO: gestion du 404
@@ -140,12 +141,47 @@ def programme_update(request, convention_uuid):
     return {'success':False, 'convention': convention, 'form':form}
 
 
+def programme_cadastral_update(request, convention_uuid):
+    #TODO: gestion du 404
+    convention = Convention.objects.get(uuid=convention_uuid)
+    programme = convention.programme
+
+    if request.method == 'POST':
+        form = ProgrammmeCadastralForm(request.POST)
+        if form.is_valid():
+            programme.permis_construire = form.cleaned_data['permis_construire']
+            programme.date_acte_notarie = form.cleaned_data['date_acte_notarie']
+            programme.date_achevement_previsible = form.cleaned_data['date_achevement_previsible']
+            programme.date_achat = form.cleaned_data['date_achat']
+            programme.date_achevement = form.cleaned_data['date_achevement']
+            programme.vendeur = form.cleaned_data['vendeur']
+            programme.acquereur = form.cleaned_data['acquereur']
+            programme.reference_notaire = form.cleaned_data['reference_notaire']
+            programme.reference_publication_acte = form.cleaned_data['reference_publication_acte']
+            programme.save()
+            # All is OK -> Next:
+            return {'success':True, 'convention':convention, 'form':form}
+    else:
+        form = ProgrammmeCadastralForm(initial={
+            'permis_construire': programme.permis_construire,
+            'date_acte_notarie': format_date_for_form(programme.date_acte_notarie),
+            'date_achevement_previsible': format_date_for_form(programme.date_achevement_previsible),
+            'date_achat': format_date_for_form(programme.date_achat),
+            'date_achevement': format_date_for_form(programme.date_achevement),
+            'vendeur': programme.vendeur,
+            'acquereur': programme.acquereur,
+            'reference_notaire': programme.reference_notaire,
+            'reference_publication_acte': programme.reference_publication_acte,
+        })
+
+    return {'success':False, 'convention': convention, 'form':form}
+
+
 def convention_comments(request, convention_uuid):
     #TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
 
     if request.method == 'POST':
-#        if request.POST['convention_uuid'] is None:
         form = ConventionCommentForm(request.POST)
         if form.is_valid():
             convention.comments = form.cleaned_data['comments']
@@ -153,9 +189,7 @@ def convention_comments(request, convention_uuid):
             # All is OK -> Next:
             return {'success':True, 'convention':convention, 'form':form}
 
-    # If this is a GET (or any other method) create the default form.
     else:
-        print(convention.comments)
         form = ConventionCommentForm(initial={
             'comments': convention.comments,
         })

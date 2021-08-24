@@ -5,3 +5,11 @@
 .fr-fi--xxl:after, .fr-fi--xxl:before {
   font-size: 4rem!important;
 }
+
+.notes {
+  color: #6A6A6A;
+}
+
+.warning-notification {
+  color: #E10600;
+}
