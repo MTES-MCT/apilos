@@ -8,14 +8,13 @@
       <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
           <h2>Etape 3/{{ nb_steps }} - Nature du programme immobilier</h2>
-          <p class="fr-mb-3w">
-            <span style="font-style: italic;">Vous editez actuellement la convention : {{convention}}</span>
-          </p>
+          {% include "common/convention_edit_info.html" with convention=convention %}
+          {% include "common/mandatory_fields_info.html" %}
 
 
           <div class="fr-input-group {% if form.adresse.errors %}fr-select-group--error{% endif %}">
             <label class="fr-label" for="{{form.adresse.id_for_label}}">
-              Adresse
+              Adresse {% include "common/mandatory_field.html" %}
             </label>
             <input
               class="fr-input {% if form.adresse.errors %}fr-input--error{% endif %}"
@@ -36,7 +35,7 @@
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                 <div class="fr-input-group {% if form.code_postal.errors %}fr-select-group--error{% endif %}">
                   <label class="fr-label" for="{{form.code_postal.id_for_label}}">
-                    Code postal
+                    Code postal {% include "common/mandatory_field.html" %}
                   </label>
                   <input
                     class="fr-input {% if form.code_postal.errors %}fr-input--error{% endif %}"
@@ -55,7 +54,7 @@
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
                 <div class="fr-input-group {% if form.ville.errors %}fr-select-group--error{% endif %}">
                   <label class="fr-label" for="{{form.ville.id_for_label}}">
-                    Ville
+                    Ville {% include "common/mandatory_field.html" %}
                   </label>
                   <input
                     class="fr-input {% if form.ville.errors %}fr-input--error{% endif %}"
@@ -80,11 +79,12 @@
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
                 <div class="fr-input-group {% if form.nb_logements.errors %}fr-select-group--error{% endif %}">
                   <label class="fr-label" for="{{form.nb_logements.id_for_label}}">
-                    Nombre de logements
+                    Nombre de logements {% include "common/mandatory_field.html" %}
                   </label>
                   <input
                     class="fr-input {% if form.nb_logements.errors %}fr-input--error{% endif %}"
                     pattern="[0-9]*"
+                    min=0
                     inputmode="numeric"
                     {% if form.nb_logements.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
                     type="number"
@@ -105,7 +105,7 @@
                   id="anru"
                   {% if form.anru.value %}checked="checked"{% endif %}
                   name="anru">
-                  <label class="fr-label" for="anru"> ANRU
+                  <label class="fr-label" for="anru"> ANRU&nbsp;{% include "common/mandatory_field.html" %}
                     <span class="fr-hint-text">Le programme bénéficie d'un financement ANRU</span>
                   </label>
                   {% for error in form.anru.errors %}
@@ -175,11 +175,12 @@
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
                 <div class="fr-input-group {% if form.nb_logement_non_conventionne.errors %}fr-select-group--error{% endif %}">
                   <label class="fr-label" for="{{form.nb_logement_non_conventionne.id_for_label}}">
-                    Nb logements non-conventionnés
+                    Logements non-conventionnés
                   </label>
                   <input
                     class="fr-input {% if form.nb_logement_non_conventionne.errors %}fr-input--error{% endif %}"
                     pattern="[0-9]*"
+                    min=0
                     inputmode="numeric"
                     {% if form.nb_logement_non_conventionne.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
                     type="number"
@@ -196,11 +197,12 @@
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-pl-md-1w fr-mb-2w">
                 <div class="fr-input-group {% if form.nb_locaux_commerciaux.errors %}fr-select-group--error{% endif %}">
                   <label class="fr-label" for="{{form.nb_locaux_commerciaux.id_for_label}}">
-                    nb_locaux_commerciaux
+                    Locaux commerciaux
                   </label>
                   <input
                     class="fr-input {% if form.nb_locaux_commerciaux.errors %}fr-input--error{% endif %}"
                     pattern="[0-9]*"
+                    min=0
                     inputmode="numeric"
                     {% if form.nb_locaux_commerciaux.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
                     type="number"
@@ -217,11 +219,12 @@
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-pl-md-1w fr-mb-2w">
                 <div class="fr-input-group {% if form.nb_bureaux.errors %}fr-select-group--error{% endif %}">
                   <label class="fr-label" for="{{form.nb_bureaux.id_for_label}}">
-                    nb_bureaux
+                    Bureaux
                   </label>
                   <input
                     class="fr-input {% if form.nb_bureaux.errors %}fr-input--error{% endif %}"
                     pattern="[0-9]*"
+                    min=0
                     inputmode="numeric"
                     {% if form.nb_bureaux.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
                     type="number"
@@ -248,5 +251,4 @@
     </form>
   </div>
 </div>
-<hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
 {% endblock %}

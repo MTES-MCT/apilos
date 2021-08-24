@@ -38,10 +38,25 @@ class ProgrammeForm(forms.Form):
   nb_locaux_commerciaux = forms.IntegerField(required=False)
   nb_bureaux = forms.IntegerField(required=False)
 
-          # nb_logements
-          # type_habitat
-          # type_operation
-          # anru
-          # nb_logement_non_conventionne
-          # nb_locaux_commerciaux
-          # nb_bureaux
+
+class ProgrammmeCadastralForm(forms.Form):
+
+  permis_construire = forms.CharField(required=False)
+  date_acte_notarie = forms.DateField(required=False)
+  date_achevement_previsible = forms.DateField(required=False)
+  date_achat = forms.DateField(required=False)
+  date_achevement = forms.DateField(required=False)
+  vendeur = forms.CharField(required=True, max_length=5000, error_messages={
+    'required': "Les informations relatives au vendeur sont obligatoires",
+    'max_length':"Le message ne doit pas excéder 5000 characters",
+    })
+  acquereur = forms.CharField(required=True, max_length=5000, error_messages={
+    'required': "Les informations relatives à l'aquéreur sont obligatoires",
+    'max_length':"Le message ne doit pas excéder 5000 characters",
+    })
+  reference_notaire = forms.CharField(required=False, max_length=5000, error_messages={
+    'max_length':"Le message ne doit pas excéder 5000 characters",
+    })
+  reference_publication_acte = forms.CharField(required=False, max_length=5000, error_messages={
+    'max_length':"Le message ne doit pas excéder 5000 characters",
+    })
