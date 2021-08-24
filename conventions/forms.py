@@ -7,3 +7,6 @@ class ConventionCommentForm(forms.Form):
     'max_length':"Le message ne doit pas excéder 5000 characters",
     })
 
+class ConventionFinancementForm(forms.Form):
+
+  date_fin_conventionnement = forms.DateField(required=False)

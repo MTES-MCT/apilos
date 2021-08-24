@@ -41,7 +41,6 @@ class Programme(IngestableModel):
 #        "departement": "Département",
     }
 
-
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=255)
