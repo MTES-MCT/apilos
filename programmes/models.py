@@ -12,11 +12,14 @@ class Financement(models.TextChoices):
     PLS = "PLS", "PLS"
 
 class TypeOperation(models.TextChoices):
-    NEUF = "NEUF", "Neuf"
-    ACQUIS = "ACQUIS", "Acquis amélioré"
+    NEUF = "NEUF", "Construction Neuve"
+    ACQUIS = "ACQUIS", "Acquisition-Amélioration"
     DEMEMBREMENT = "DEMEMBREMENT", "Démembrement"
+    REHABILITATION = "REHABILITATION", "Réhabilitation"
+    SANSTRAVAUX = "SANSTRAVAUX", "Sans travaux"
     USUFRUIT = "USUFRUIT", "Usufruit"
     VEFA = "VEFA", "VEFA"
+
 
 class TypeHabitat(models.TextChoices):
     INDIVIDUEL = "INDIVIDUEL", "Individuel"
