@@ -63,10 +63,15 @@ def step3(request, convention_uuid):
 
 @permission_required('convention.change_convention')
 def step4(request, convention_uuid):
-    return render(request, "conventions/step4.html", {
-        'convention_uuid': convention_uuid,
-        'nb_steps': NB_STEPS,
-    })
+    result = services.programme_cadastral_update(request, convention_uuid)
+    if result['success']:
+        return HttpResponseRedirect(reverse('conventions:step5', args=[result['convention'].uuid]) )
+    else:
+        return render(request, "conventions/step4.html", {
+            'form': result['form'],
+            'convention': result['convention'],
+            'nb_steps': NB_STEPS,
+        })
 
 @permission_required('convention.change_convention')
 def step5(request, convention_uuid):
