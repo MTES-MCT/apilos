@@ -3,19 +3,83 @@
 {% block content %}
 <div class="fr-container-fluid ds_banner">
   <div class="fr-container">
-    <div class="fr-grid-row fr-grid-row--gutters">
-      <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-        <h2 class="fr-mb-3w">Etape 6/{{ nb_steps }} - Détails des logements</h2>
-        <p class="fr-mb-3w">
-          ...
-        </p>
+    <form method="post" action="">
+      {% csrf_token %}
+      <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
+  <!--
+          <h2 class="fr-mb-3w">Etape 6/{{ nb_steps }} - Détails des logements</h2>
+  -->
+          <h2>Etape 6/{{ nb_steps }} - Détails des logements</h2>
+          {% include "common/convention_edit_info.html" with convention=convention %}
+
+
+          <p>Pour éditer vos logements, il vous suffit de télécharger le modèle ci-dessous, d'ajouter ou de modifier votre liste de prêts, puis de le téléverser à nouveau.</p>
+          <p>Attention, la liste des logements téléversée écrase la liste courante.</p>
+          <div class="fr-btn">
+            <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Télécharger le modèle
+          </div>
+          <div class="fr-btn fr-btn--secondary">
+            <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Téléverser le fichier de vos logements
+          </div>
+          <hr class="fr-col-12 fr-my-3w">
+
+          {{ formset.management_form }}
+          <div class="fr-table fr-table--bordered">
+            <table>
+                <caption>Liste des logements associés à la convention</caption>
+
+                <thead>
+                <tr>
+                  <th scope="col">Désignation</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Surface habitable</th>
+                  <th scope="col">Surface des annexes<br>Réelle</th>
+                  <th scope="col">Surface des annexes<br>Retenue dans la SU</th>
+                  <th scope="col">Surface Utile</th>
+                  <th scope="col">Loyer maxinum en € par m2 de surface utile</th>
+                  <th scope="col">Coefficient propre au logement</th>
+                  <th scope="col">Loyer maxinum du logement en €</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for form in formset %}
+                <tr>
+                  <td>
+                    <input
+                      class="fr-input {% if form.designation.errors %}fr-input--error{% endif %}"
+                      aria-describedby="text-input-error-desc-error"
+                      type="text"
+                      id="{{form.designation.id_for_label}}"
+                      name="{{form.designation.html_name}}"
+                      value="{{ form.designation.value|default_if_none:'' }}">
+                    {% for error in form.designation.errors %}
+                    <p id="text-input-error-desc-error" class="fr-error-text">
+                      {{ error }}
+                    </p>
+                    {% endfor %}
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+          </div>
+
+        </div>
       </div>
-    </div>
-    <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-      {% include "common/button/precedent.html" with precedent='conventions:step5' convention_uuid=convention_uuid %}
-      {% include "common/button/suivant.html" with suivant='conventions:step7' convention_uuid=convention_uuid %}
-    </div>
+      <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
+        {% include "common/button/precedent.html" with precedent='conventions:step5' convention_uuid=convention.uuid %}
+        {% include "common/button/suivant.html" with suivant='conventions:step6' convention_uuid=convention.uuid %}
+      </div>
+    </form>
   </div>
 </div>
-<hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
 {% endblock %}

@@ -43,15 +43,15 @@ class Convention(models.Model):
         else:
             return "Brouillon"
 
+class Preteur(models.TextChoices):
+    ETAT = "ETAT", "Etat"
+    EPCI = "EPCI", "EPCI"
+    REGION = "REGION", "Region"
+    CDCF = "CDCF", "Caisse des dépots et des consignations Froncière"
+    CDCL = "CDCL", "Caisse des dépots et des consignations Locative"
+    AUTRE = "AUTRE", "Autre"
 
 class Pret(models.Model):
-    class Preteur(models.TextChoices):
-        ETAT = "ETAT", "Etat"
-        EPCI = "EPCI", "EPCI"
-        REGION = "REGION", "Region"
-        CDCF = "CDCF", "Caisse des dépots et des consignations Froncière"
-        CDCL = "CDCL", "Caisse des dépots et des consignations Locative"
-        AUTRE = "AUTRE", "Autre"
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)

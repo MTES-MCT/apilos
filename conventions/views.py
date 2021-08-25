@@ -1,11 +1,12 @@
-from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.models import Permission
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse, reverse_lazy
+from django.contrib.auth.decorators import permission_required
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
-from . import services
 from programmes.models import TypeHabitat, TypeOperation
+from .models import Preteur
+from . import services
+
 
 NB_STEPS = 9
 
@@ -81,16 +82,24 @@ def step5(request, convention_uuid):
     else:
         return render(request, "conventions/step5.html", {
             'form': result['form'],
+            'formset': result['formset'],
             'convention': result['convention'],
             'nb_steps': NB_STEPS,
+            'preteurs': Preteur,
         })
 
 @permission_required('convention.change_convention')
 def step6(request, convention_uuid):
-    return render(request, "conventions/step6.html", {
-        'convention_uuid': convention_uuid,
-        'nb_steps': NB_STEPS,
-    })
+    result = services.logements_update(request, convention_uuid)
+    if result['success']:
+        return HttpResponseRedirect(reverse('conventions:step7', args=[result['convention'].uuid]) )
+    else:
+        print(result['formset'])
+        return render(request, "conventions/step6.html", {
+            'formset': result['formset'],
+            'convention': result['convention'],
+            'nb_steps': NB_STEPS,
+        })
 
 @permission_required('convention.change_convention')
 def step7(request, convention_uuid):

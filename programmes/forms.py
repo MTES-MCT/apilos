@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.forms import formset_factory
 
 from programmes.models import Lot, TypeHabitat
 
@@ -60,3 +61,13 @@ class ProgrammmeCadastralForm(forms.Form):
   reference_publication_acte = forms.CharField(required=False, max_length=5000, error_messages={
     'max_length':"Le message ne doit pas excéder 5000 characters",
     })
+
+class LogementForm(forms.Form):
+
+  designation = forms.CharField(max_length=255, min_length=1, error_messages={
+    'required': "La designation du logement est obligatoire",
+    'min_length':"La designation du logement est obligatoire",
+    'max_length':"La designation du logement ne doit pas excéder 255 caractères",
+  })
+
+LogementFormSet = formset_factory(LogementForm, extra=0)

@@ -1,12 +1,9 @@
 from conventions.models import Convention
 from programmes.models import Lot
 from programmes.forms import ProgrammeSelectionForm, ProgrammeForm, ProgrammmeCadastralForm
-from .forms import ConventionCommentForm, ConventionFinancementForm
+from programmes.forms import LogementFormSet
 from bailleurs.forms import BailleurForm
-
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse, reverse_lazy
+from .forms import ConventionCommentForm, ConventionFinancementForm, PretFormSet
 
 def format_date_for_form(date):
     return date.strftime("%Y-%m-%d") if date is not None else ''
@@ -180,22 +177,53 @@ def programme_cadastral_update(request, convention_uuid):
 def convention_financement(request, convention_uuid):
     #TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
+    prets= convention.pret_set.all()
 
     if request.method == 'POST':
         form = ConventionFinancementForm(request.POST)
-        if form.is_valid():
-            print(form.cleaned_data['date_fin_conventionnement'])
+        formset = PretFormSet(request.POST)
+
+        if form.is_valid() and formset.is_valid():
             convention.date_fin_conventionnement = form.cleaned_data['date_fin_conventionnement']
             convention.save()
             # All is OK -> Next:
-            return {'success':True, 'convention':convention, 'form':form}
+            return {'success':True, 'convention':convention, 'form':form, 'formset': formset}
 
     else:
+        initial = []
+        for pret in prets:
+            initial.append({'numero': pret.numero})
+        if len(initial) == 0:
+            initial.append({'numero': '123', 'montant': 30000})
+            initial.append({'numero': ''})
+        formset = PretFormSet(initial=initial)
         form = ConventionFinancementForm(initial={
             'date_fin_conventionnement': format_date_for_form(convention.date_fin_conventionnement),
         })
+    return {'success':False, 'convention': convention, 'form':form, 'formset': formset}
 
-    return {'success':False, 'convention': convention, 'form':form}
+def logements_update(request, convention_uuid):
+    #TODO: gestion du 404
+    convention = Convention.objects.get(uuid=convention_uuid)
+    logements= convention.lot.logement_set.all()
+
+    if request.method == 'POST':
+        formset = LogementFormSet(request.POST)
+
+        if formset.is_valid():
+            return {'success':True, 'convention':convention, 'formset': formset}
+
+    else:
+        initial = []
+        for logement in logements:
+            initial.append({'designation': logement.designation})
+# TODO: remove the if : only for test purpose
+        if len(initial) == 0:
+            print('designation')
+            initial.append({'designation': '123456789'})
+            initial.append({'designation': ''})
+        formset = LogementFormSet(initial=initial)
+    return {'success':False, 'convention': convention, 'formset': formset}
 
 
 def convention_comments(request, convention_uuid):
