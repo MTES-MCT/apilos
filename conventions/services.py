@@ -5,6 +5,9 @@ from programmes.forms import LogementFormSet
 from bailleurs.forms import BailleurForm
 from .forms import ConventionCommentForm, ConventionFinancementForm, PretFormSet, UploadForm
 
+from openpyxl import load_workbook
+from io import BytesIO
+
 def format_date_for_form(date):
     return date.strftime("%Y-%m-%d") if date is not None else ''
 
@@ -174,10 +177,45 @@ def programme_cadastral_update(request, convention_uuid):
     return {'success':False, 'convention': convention, 'form':form}
 
 
-def handle_uploaded_file(f):
-    with open('/code/static/tmp/tmp.xlsx', 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
+def handle_uploaded_file(my_file):
+
+    pret_mapping = {
+        "Numéro": 'numero',
+        "Date d'octroi": 'date_octroi',
+        'Durée': 'duree',
+        'Montant': 'montant',
+        'Prêteur': 'preteur',
+        "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": 'autre',
+    }
+    file_in_memory = my_file.read()
+    my_wb = load_workbook(filename=BytesIO(file_in_memory))
+    if not my_wb.sheetnames:
+        print('Error, the worksheet is not compatible, no sheet detected')
+        return []
+    sheet_name = 'Prêts'
+    my_ws = my_wb[sheet_name]
+    if not my_ws:
+        print("Error, the worksheet is not compatible, sheet named 'Prêts' is not detected")
+        return []
+    column_from_index = {}
+    for my_tuple in my_ws['A1':'F1']:
+      for cell in my_tuple:
+        column_from_index[cell.column] = pret_mapping[str(cell.value).strip()]
+    my_objects = []
+    for row in my_ws.iter_rows(min_row=2,max_row=my_ws.max_row,min_col=1, max_col=my_ws.max_column):
+        my_row = {}
+        for cell in row:
+            my_row[column_from_index[cell.column]] = str(cell.value).strip()
+        my_objects.append(my_row)
+    return my_objects
+
+
+
+
+
+    # with open('/code/static/tmp/tmp.xlsx', 'wb+') as destination:
+    #     for chunk in f.chunks():
+    #         destination.write(chunk)
 
 
 def convention_financement(request, convention_uuid):
@@ -187,17 +225,16 @@ def convention_financement(request, convention_uuid):
     if request.method == 'POST':
         # L'utilisateur a cliqué sur téléversé un fichier button
         if request.POST.get("Upload", False):
-            print('recupération du  contnu du fichier')
+            print('recupération du contenu du fichier')
             form = ConventionFinancementForm(request.POST)
+            formset = PretFormSet(request.POST)
             upform = UploadForm(request.POST, request.FILES)
             print(request.POST)
             print(upform)
-            formset = PretFormSet(initial=[
-                {'numero': '123', 'montant': 30000},
-                {'numero': ''}
-            ])
             if upform.is_valid():
-                handle_uploaded_file(request.FILES['file'])
+                objects = handle_uploaded_file(request.FILES['file'])
+                formset = PretFormSet(initial=objects)
+                print(objects)
         # L'utilisateur a cliqué sur 'Enregistrer e Suivant'
         else:
             form = ConventionFinancementForm(request.POST)
