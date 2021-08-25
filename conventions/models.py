@@ -47,8 +47,8 @@ class Preteur(models.TextChoices):
     ETAT = "ETAT", "Etat"
     EPCI = "EPCI", "EPCI"
     REGION = "REGION", "Region"
-    CDCF = "CDCF", "Caisse des dépots et des consignations Froncière"
-    CDCL = "CDCL", "Caisse des dépots et des consignations Locative"
+    CDCF = "CDCF", "Caisse des dépots et des consignations froncière"
+    CDCL = "CDCL", "Caisse des dépots et des consignations locative"
     AUTRE = "AUTRE", "Autre"
 
 class Pret(models.Model):

@@ -74,19 +74,35 @@ def step4(request, convention_uuid):
             'nb_steps': NB_STEPS,
         })
 
+
+from .forms import UploadForm
+
 @permission_required('convention.change_convention')
 def step5(request, convention_uuid):
+    print(bool(request.POST.get("Upload", False)))
     result = services.convention_financement(request, convention_uuid)
     if result['success']:
         return HttpResponseRedirect(reverse('conventions:step6', args=[result['convention'].uuid]) )
     else:
+        up = UploadForm()
         return render(request, "conventions/step5.html", {
+            'upform' : up,
             'form': result['form'],
             'formset': result['formset'],
             'convention': result['convention'],
             'nb_steps': NB_STEPS,
             'preteurs': Preteur,
         })
+
+
+def upload_prets(request, convention_uuid):
+    result = services.upload_pret(request, convention_uuid)
+    if request.method == 'POST':
+        form = UploadForm(request.POST, request.FILES)
+        print(form)
+        if form.is_valid():
+            print('BINGO')
+    return HttpResponseRedirect(reverse('conventions:step5', args=[result['convention'].uuid]) )
 
 @permission_required('convention.change_convention')
 def step6(request, convention_uuid):
@@ -133,3 +149,33 @@ def stepfin(request, convention_uuid):
         'convention_uuid': convention_uuid,
         'nb_steps': NB_STEPS,
     })
+
+
+
+
+# Import mimetypes module
+import mimetypes
+# import os module
+import os
+# Import HttpResponse module
+from django.http.response import HttpResponse
+
+
+def download_convention_prets(request, convention_uuid):
+    # Define Django project base directory
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filename = 'prets.xlsx'
+    # Define the full file path
+    filepath = BASE_DIR + '/static/files/' + filename
+
+    if os.path.exists(filepath):
+        with open(filepath, "rb") as excel:
+            data = excel.read()
+
+        response = HttpResponse(data,content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=prets.xlsx'
+        return response
+
+
+
+

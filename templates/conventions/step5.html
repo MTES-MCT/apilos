@@ -3,7 +3,8 @@
 {% block content %}
 <div class="fr-container-fluid ds_banner">
   <div class="fr-container">
-    <form method="post" action="">
+
+    <form method="post" action="" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
@@ -36,12 +37,23 @@
 
           <p>Pour éditer vos prêts, il vous suffit de télécharger le modèle ci-dessous, d'ajouter ou de modifier votre liste de prêts, puis de le téléverser à nouveau.</p>
           <p>Attention, la liste des prêts téléversée écrase la liste courante.</p>
-          <div class="fr-btn">
-            <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Télécharger le modèle
-          </div>
-          <div class="fr-btn fr-btn--secondary">
+          <button type="button" class="fr-btn" onclick="location.href='{% url 'conventions:convention_prets' convention_uuid=convention.uuid %}'">
+            <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Télécharger le modèle !
+          </button>
+
+
+          <button name="Upload" value=True class="fr-btn">
             <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Téléverser le fichier de vos prêts
-          </div>
+          </button>
+
+          <input
+          class="fr-input {% if upform.file.errors %}fr-input--error{% endif %}"
+          aria-describedby="text-input-error-desc-error"
+          type="file"
+          id="{{upform.file.id_for_label}}"
+          name="{{upform.file.html_name}}"
+          value="{{ upform.file.value|default_if_none:'' }}">
+
           <hr class="fr-col-12 fr-my-3w">
 
           {{ formset.management_form }}

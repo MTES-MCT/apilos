@@ -3,7 +3,7 @@ from programmes.models import Lot
 from programmes.forms import ProgrammeSelectionForm, ProgrammeForm, ProgrammmeCadastralForm
 from programmes.forms import LogementFormSet
 from bailleurs.forms import BailleurForm
-from .forms import ConventionCommentForm, ConventionFinancementForm, PretFormSet
+from .forms import ConventionCommentForm, ConventionFinancementForm, PretFormSet, UploadForm
 
 def format_date_for_form(date):
     return date.strftime("%Y-%m-%d") if date is not None else ''
@@ -174,33 +174,57 @@ def programme_cadastral_update(request, convention_uuid):
     return {'success':False, 'convention': convention, 'form':form}
 
 
+def handle_uploaded_file(f):
+    with open('/code/static/tmp/tmp.xlsx', 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+
+
 def convention_financement(request, convention_uuid):
     #TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
-    prets= convention.pret_set.all()
 
     if request.method == 'POST':
-        form = ConventionFinancementForm(request.POST)
-        formset = PretFormSet(request.POST)
+        # L'utilisateur a cliqué sur téléversé un fichier button
+        if request.POST.get("Upload", False):
+            print('recupération du  contnu du fichier')
+            form = ConventionFinancementForm(request.POST)
+            upform = UploadForm(request.POST, request.FILES)
+            print(request.POST)
+            print(upform)
+            formset = PretFormSet(initial=[
+                {'numero': '123', 'montant': 30000},
+                {'numero': ''}
+            ])
+            if upform.is_valid():
+                handle_uploaded_file(request.FILES['file'])
+        # L'utilisateur a cliqué sur 'Enregistrer e Suivant'
+        else:
+            form = ConventionFinancementForm(request.POST)
+            formset = PretFormSet(request.POST)
 
-        if form.is_valid() and formset.is_valid():
-            convention.date_fin_conventionnement = form.cleaned_data['date_fin_conventionnement']
-            convention.save()
-            # All is OK -> Next:
-            return {'success':True, 'convention':convention, 'form':form, 'formset': formset}
+            if form.is_valid() and formset.is_valid():
+                convention.date_fin_conventionnement = form.cleaned_data['date_fin_conventionnement']
+                convention.save()
+                # All is OK -> Next:
+                return {'success':True, 'convention':convention, 'form':form, 'formset': formset}
 
     else:
         initial = []
+        prets= convention.pret_set.all()
         for pret in prets:
             initial.append({'numero': pret.numero})
-        if len(initial) == 0:
-            initial.append({'numero': '123', 'montant': 30000})
-            initial.append({'numero': ''})
+        # if len(initial) == 0:
+        #     initial.append({'numero': '123', 'montant': 30000})
+        #     initial.append({'numero': ''})
         formset = PretFormSet(initial=initial)
         form = ConventionFinancementForm(initial={
             'date_fin_conventionnement': format_date_for_form(convention.date_fin_conventionnement),
         })
     return {'success':False, 'convention': convention, 'form':form, 'formset': formset}
+
+
+
 
 def logements_update(request, convention_uuid):
     #TODO: gestion du 404

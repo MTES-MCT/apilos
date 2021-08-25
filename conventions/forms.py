@@ -1,5 +1,6 @@
 from django import forms
 from django.forms import formset_factory
+from django.forms.fields import FileField
 
 from .models import Preteur
 
@@ -30,3 +31,7 @@ class PretForm(forms.Form):
     })
 
 PretFormSet = formset_factory(PretForm, extra=0)
+
+class UploadForm(forms.Form):
+
+  file = FileField()
