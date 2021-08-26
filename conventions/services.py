@@ -1,4 +1,4 @@
-from conventions.models import Convention
+from conventions.models import Convention, Preteur, Pret
 from programmes.models import Lot
 from programmes.forms import ProgrammeSelectionForm, ProgrammeForm, ProgrammmeCadastralForm
 from programmes.forms import LogementFormSet
@@ -177,55 +177,13 @@ def programme_cadastral_update(request, convention_uuid):
     return {'success':False, 'convention': convention, 'form':form}
 
 
-def handle_uploaded_file(my_file):
-
-    pret_mapping = {
-        "Numéro": 'numero',
-        "Date d'octroi": 'date_octroi',
-        'Durée': 'duree',
-        'Montant': 'montant',
-        'Prêteur': 'preteur',
-        "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": 'autre',
-    }
-    file_in_memory = my_file.read()
-    my_wb = load_workbook(filename=BytesIO(file_in_memory))
-    if not my_wb.sheetnames:
-        print('Error, the worksheet is not compatible, no sheet detected')
-        return []
-    sheet_name = 'Prêts'
-    my_ws = my_wb[sheet_name]
-    if not my_ws:
-        print("Error, the worksheet is not compatible, sheet named 'Prêts' is not detected")
-        return []
-    column_from_index = {}
-    for my_tuple in my_ws['A1':'F1']:
-      for cell in my_tuple:
-        column_from_index[cell.column] = pret_mapping[str(cell.value).strip()]
-    my_objects = []
-    for row in my_ws.iter_rows(min_row=2,max_row=my_ws.max_row,min_col=1, max_col=my_ws.max_column):
-        my_row = {}
-        for cell in row:
-            my_row[column_from_index[cell.column]] = str(cell.value).strip()
-        my_objects.append(my_row)
-    return my_objects
-
-
-
-
-
-    # with open('/code/static/tmp/tmp.xlsx', 'wb+') as destination:
-    #     for chunk in f.chunks():
-    #         destination.write(chunk)
-
-
 def convention_financement(request, convention_uuid):
     #TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
-
+    print('Financement')
     if request.method == 'POST':
-        # L'utilisateur a cliqué sur téléversé un fichier button
+        # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
-            print('recupération du contenu du fichier')
             form = ConventionFinancementForm(request.POST)
             formset = PretFormSet(request.POST)
             upform = UploadForm(request.POST, request.FILES)
@@ -235,38 +193,68 @@ def convention_financement(request, convention_uuid):
                 objects = handle_uploaded_file(request.FILES['file'])
                 formset = PretFormSet(initial=objects)
                 print(objects)
-        # L'utilisateur a cliqué sur 'Enregistrer e Suivant'
+        # When the user cliked on "Enregistrer et Suivant"
         else:
+            print('Post')
             form = ConventionFinancementForm(request.POST)
             formset = PretFormSet(request.POST)
-
+            upform = UploadForm()
+            print(formset)
             if form.is_valid() and formset.is_valid():
                 convention.date_fin_conventionnement = form.cleaned_data['date_fin_conventionnement']
                 convention.save()
-                # All is OK -> Next:
-                return {'success':True, 'convention':convention, 'form':form, 'formset': formset}
+                # MANAGE formset save in DB
+                convention.pret_set.all().delete()
+                for form_pret in formset:
+                    pret = Pret.objects.create(
+                        convention = convention,
+                        bailleur = convention.bailleur,
+                        numero = form_pret.cleaned_data['numero'],
+                        date_octroi = form_pret.cleaned_data['date_octroi'],
+                        duree = form_pret.cleaned_data['duree'],
+                        montant = form_pret.cleaned_data['montant'],
+                        preteur = form_pret.cleaned_data['preteur'],
+#                        autre = form_pret.cleaned_data['autre'],
+                    )
+                    pret.save
 
+                # All is OK -> Next:
+                return {
+                    'success':True,
+                    'convention':convention,
+                    'form':form,
+                    'formset': formset,
+                }
+    # When display the file for the first time
     else:
         initial = []
         prets= convention.pret_set.all()
         for pret in prets:
-            initial.append({'numero': pret.numero})
-        # if len(initial) == 0:
-        #     initial.append({'numero': '123', 'montant': 30000})
-        #     initial.append({'numero': ''})
+            initial.append({
+                'numero': pret.numero,
+                'date_octroi': format_date_for_form(pret.date_octroi),
+                'duree': pret.duree,
+                'montant': pret.montant,
+                'preteur': pret.preteur,
+
+            })
+        upform = UploadForm()
         formset = PretFormSet(initial=initial)
         form = ConventionFinancementForm(initial={
             'date_fin_conventionnement': format_date_for_form(convention.date_fin_conventionnement),
         })
-    return {'success':False, 'convention': convention, 'form':form, 'formset': formset}
-
-
+    return {
+        'success': False,
+        'convention': convention,
+        'form': form,
+        'formset': formset,
+        'upform': upform,
+    }
 
 
 def logements_update(request, convention_uuid):
     #TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
-    logements= convention.lot.logement_set.all()
 
     if request.method == 'POST':
         formset = LogementFormSet(request.POST)
@@ -276,6 +264,7 @@ def logements_update(request, convention_uuid):
 
     else:
         initial = []
+        logements= convention.lot.logement_set.all()
         for logement in logements:
             initial.append({'designation': logement.designation})
 # TODO: remove the if : only for test purpose
@@ -305,3 +294,60 @@ def convention_comments(request, convention_uuid):
         })
 
     return {'success':False, 'convention': convention, 'form':form}
+
+
+
+
+
+import datetime
+
+def handle_uploaded_file(my_file):
+
+    pret_mapping = {
+        "Numéro": {'name': 'numero'},
+        "Date d'octroi": {'name': 'date_octroi', 'type':'Date'},
+        'Durée': {'name': 'duree'},
+        'Montant': {'name': 'montant'},
+        'Prêteur': {'name': 'preteur', 'type': Preteur},
+        "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": {'name': 'autre'},
+    }
+
+    preteur = {}
+    for choice in Preteur.choices:
+        preteur[choice[1]] = choice[0]
+
+    file_in_memory = my_file.read()
+    my_wb = load_workbook(filename=BytesIO(file_in_memory))
+    if not my_wb.sheetnames:
+        print('Error, the worksheet is not compatible, no sheet detected')
+        return []
+    sheet_name = 'Prêts'
+    my_ws = my_wb[sheet_name]
+    if not my_ws:
+        print("Error, the worksheet is not compatible, sheet named 'Prêts' is not detected")
+        return []
+    column_from_index = {}
+    for my_tuple in my_ws['A1':'F1']:
+      for cell in my_tuple:
+        column_from_index[cell.column] = str(cell.value).strip()
+    my_objects = []
+    for row in my_ws.iter_rows(min_row=2,max_row=my_ws.max_row,min_col=1, max_col=my_ws.max_column):
+        my_row = {}
+        empty_line = True
+        for cell in row:
+            # Check the empty lines
+            if cell.value:
+                empty_line = False
+            if type(cell.value) is datetime.datetime:
+                #Error managment
+                value = format_date_for_form(cell.value)
+            elif 'type' in pret_mapping[column_from_index[cell.column]] and pret_mapping[column_from_index[cell.column]]['type'] == Preteur:
+                if cell.value is not None:
+                    value = preteur[cell.value] if cell.value in preteur else None
+            else:
+                value = str(cell.value).strip()
+            my_row[pret_mapping[column_from_index[cell.column]]['name']] = value
+        # Ignore if the line is empty
+        if not empty_line:
+            my_objects.append(my_row)
+    return my_objects

@@ -62,10 +62,10 @@ class Pret(models.Model):
     preteur = models.CharField(
         max_length=25,
         choices=Preteur.choices,
-        default=Preteur.CDCF,
+        default=Preteur.AUTRE,
     )
-    autre = models.CharField(max_length=255)
-    date_octroi = models.DateField()
+    autre = models.CharField(null=True,max_length=255)
+    date_octroi = models.DateField(null=True)
     numero = models.CharField(max_length=255)
-    duree = models.IntegerField()
+    duree = models.IntegerField(null=True)
     montant = models.FloatField()

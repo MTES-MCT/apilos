@@ -79,14 +79,12 @@ from .forms import UploadForm
 
 @permission_required('convention.change_convention')
 def step5(request, convention_uuid):
-    print(bool(request.POST.get("Upload", False)))
     result = services.convention_financement(request, convention_uuid)
     if result['success']:
         return HttpResponseRedirect(reverse('conventions:step6', args=[result['convention'].uuid]) )
     else:
-        up = UploadForm()
         return render(request, "conventions/step5.html", {
-            'upform' : up,
+            'upform' : result['upform'],
             'form': result['form'],
             'formset': result['formset'],
             'convention': result['convention'],
@@ -94,15 +92,6 @@ def step5(request, convention_uuid):
             'preteurs': Preteur,
         })
 
-
-def upload_prets(request, convention_uuid):
-    result = services.upload_pret(request, convention_uuid)
-    if request.method == 'POST':
-        form = UploadForm(request.POST, request.FILES)
-        print(form)
-        if form.is_valid():
-            print('BINGO')
-    return HttpResponseRedirect(reverse('conventions:step5', args=[result['convention'].uuid]) )
 
 @permission_required('convention.change_convention')
 def step6(request, convention_uuid):

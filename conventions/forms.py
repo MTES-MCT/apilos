@@ -34,4 +34,6 @@ PretFormSet = formset_factory(PretForm, extra=0)
 
 class UploadForm(forms.Form):
 
-  file = FileField()
+  file = FileField(error_messages={
+    'required': "Vous devez séléctionner un fichier avant de cliquer sur le bouton 'Téléverser'",
+    })
