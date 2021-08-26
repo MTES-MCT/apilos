@@ -14,4 +14,5 @@ urlpatterns = [
   path('step8/<convention_uuid>', views.step8, name='step8'),
   path('step9/<convention_uuid>', views.step9, name='step9'),
   path('stepfin/<convention_uuid>', views.stepfin, name='stepfin'),
+  path('convention_prets/<convention_uuid>', views.download_convention_prets, name='convention_prets'),
 ]
