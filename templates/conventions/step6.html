@@ -7,21 +7,48 @@
       {% csrf_token %}
       <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-  <!--
-          <h2 class="fr-mb-3w">Etape 6/{{ nb_steps }} - Détails des logements</h2>
-  -->
           <h2>Etape 6/{{ nb_steps }} - Détails des logements</h2>
+          <h4 class="warning-notification">
+            <span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true"></span>
+            Cet écran est en cours de développement et n'est pas encore fonctionnel<br>
+            Merci de votre compréhension
+          </h3>
           {% include "common/convention_edit_info.html" with convention=convention %}
+          {% include "common/mandatory_fields_info.html" %}
 
+          <p>Pour éditer vos logements, il vous suffit de télécharger le modèle ci-dessous, d'ajouter ou de modifier votre liste de logements, puis de le téléverser à nouveau.<br>
+          <span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true">Attention, la liste des logements téléversée écrase la liste courante.</p>
 
-          <p>Pour éditer vos logements, il vous suffit de télécharger le modèle ci-dessous, d'ajouter ou de modifier votre liste de prêts, puis de le téléverser à nouveau.</p>
-          <p>Attention, la liste des logements téléversée écrase la liste courante.</p>
-          <div class="fr-btn">
-            <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Télécharger le modèle
+          <div class="fr-grid-row fr-grid-row--gutters fr-ml-3w">
+
+            <button type="button" class="fr-btn" onclick="location.href='{% url 'conventions:load_xlsx_model' convention_uuid=convention.uuid file_type='logements' %}'">
+              <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Télécharger le modèle !
+            </button>
           </div>
-          <div class="fr-btn fr-btn--secondary">
-            <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Téléverser le fichier de vos logements
+          <div class="fr-my-3w">Puis</p>
+          <div class="fr-grid-row fr-grid-row--gutters fr-ml-3w">
+            <div>
+              <button name="Upload" value=True class="fr-btn">
+                <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Téléverser le fichier de vos prêts
+              </button>
+            </div>
+            <div class="fr-ml-3w">
+              <input
+                class="fr-input {% if upform.file.errors %}fr-input--error{% endif %}"
+                aria-describedby="text-input-error-desc-error"
+                type="file"
+                id="{{upform.file.id_for_label}}"
+                name="{{upform.file.html_name}}"
+                value="{{ upform.file.value|default_if_none:'' }}">
+              {% for error in upform.file.errors %}
+                <p id="text-input-error-desc-error" class="fr-error-text">
+                  {{ error }}
+                </p>
+              {% endfor %}
+            </div>
+
           </div>
+
           <hr class="fr-col-12 fr-my-3w">
 
           {{ formset.management_form }}
@@ -31,15 +58,15 @@
 
                 <thead>
                 <tr>
-                  <th scope="col">Désignation</th>
-                  <th scope="col">Type</th>
-                  <th scope="col">Surface habitable</th>
-                  <th scope="col">Surface des annexes<br>Réelle</th>
-                  <th scope="col">Surface des annexes<br>Retenue dans la SU</th>
-                  <th scope="col">Surface Utile</th>
-                  <th scope="col">Loyer maxinum en € par m2 de surface utile</th>
-                  <th scope="col">Coefficient propre au logement</th>
-                  <th scope="col">Loyer maxinum du logement en €</th>
+                  <th scope="col" style='min-width:200px;'>Désignation {% include "common/mandatory_field.html" %}</th>
+                  <th scope="col" style='min-width:150px;'>Type {% include "common/mandatory_field.html" %}</th>
+                  <th scope="col" style='min-width:120px;'>Surface habitable {% include "common/mandatory_field.html" %}</th>
+                  <th scope="col" style='min-width:120px;'>Surface des annexes réelle {% include "common/mandatory_field.html" %}</th>
+                  <th scope="col" style='min-width:120px;'>Surface des annexes retenue dans la SU {% include "common/mandatory_field.html" %}</th>
+                  <th scope="col" style='min-width:120px;'>Surface Utile {% include "common/mandatory_field.html" %}</th>
+                  <th scope="col" style='min-width:120px;'>Loyer maxinum en € par m2 de surface utile {% include "common/mandatory_field.html" %}</th>
+                  <th scope="col" style='min-width:120px;'>Coefficient propre au logement {% include "common/mandatory_field.html" %}</th>
+                  <th scope="col" style='min-width:120px;'>Loyer maxinum du logement en € {% include "common/mandatory_field.html" %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -59,20 +86,160 @@
                     </p>
                     {% endfor %}
                   </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                  <td>
+                    <select
+                      class="fr-select {% if form.typology.errors %}fr-select--error{% endif %}"
+                      id="{{form.typology.id_for_label}}"
+                      name="{{form.typology.html_name}}">
+                      <option value="" {% if not form.typology.value %}selected{% endif %} disabled hidden>Sélectionnez le prêteur</option>
+                      {% for typology in typologies %}
+                      <option value="{{typology.value}}"
+                        {% if typology.value  == form.typology.value %}selected{% endif %}>
+                        {{typology.label}}
+                      </option>
+                      {% endfor %}
+                    </select>
+                    {% for error in form.typology.errors %}
+                    <p id="select-error-desc-error" class="fr-error-text">
+                      {{ error }}
+                    </p>
+                    {% endfor %}
+                  </td>
+                  <td>
+                    <input
+                      class="fr-input {% if form.surface_habitable.errors %}fr-input--error{% endif %}"
+                      pattern="[0-9]*"
+                      min=0
+                      step="0.01"
+                      inputmode="numeric"
+                      {% if form.surface_habitable.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
+                      type="number"
+                      id="{{form.surface_habitable.id_for_label}}"
+                      name="{{form.surface_habitable.html_name}}"
+                      value="{{ form.surface_habitable.value|default_if_none:'' }}">
+                    {% for error in form.surface_habitable.errors %}
+                    <p id="text-input-error-desc-error" class="fr-error-text">
+                      {{ error }}
+                    </p>
+                    {% endfor %}
+
+                  </td>
+                  <td>
+
+                    <input
+                      class="fr-input {% if form.surface_annexes.errors %}fr-input--error{% endif %}"
+                      pattern="[0-9]*"
+                      min=0
+                      step="0.01"
+                      inputmode="numeric"
+                      {% if form.surface_annexes.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
+                      type="number"
+                      id="{{form.surface_annexes.id_for_label}}"
+                      name="{{form.surface_annexes.html_name}}"
+                      value="{{ form.surface_annexes.value|default_if_none:'' }}">
+                    {% for error in form.surface_annexes.errors %}
+                    <p id="text-input-error-desc-error" class="fr-error-text">
+                      {{ error }}
+                    </p>
+                    {% endfor %}
+
+                  </td>
+                  <td>
+
+                    <input
+                      class="fr-input {% if form.surface_annexes_retenue.errors %}fr-input--error{% endif %}"
+                      pattern="[0-9]*"
+                      min=0
+                      step="0.01"
+                      inputmode="numeric"
+                      {% if form.surface_annexes_retenue.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
+                      type="number"
+                      id="{{form.surface_annexes_retenue.id_for_label}}"
+                      name="{{form.surface_annexes_retenue.html_name}}"
+                      value="{{ form.surface_annexes_retenue.value|default_if_none:'' }}">
+                    {% for error in form.surface_annexes_retenue.errors %}
+                    <p id="text-input-error-desc-error" class="fr-error-text">
+                      {{ error }}
+                    </p>
+                    {% endfor %}
+                  </td>
+                  <td>
+                    <input
+                      class="fr-input {% if form.surface_utile.errors %}fr-input--error{% endif %}"
+                      pattern="[0-9]*"
+                      min=0
+                      step="0.01"
+                      inputmode="numeric"
+                      {% if form.surface_utile.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
+                      type="number"
+                      id="{{form.surface_utile.id_for_label}}"
+                      name="{{form.surface_utile.html_name}}"
+                      value="{{ form.surface_utile.value|default_if_none:'' }}">
+                    {% for error in form.surface_utile.errors %}
+                    <p id="text-input-error-desc-error" class="fr-error-text">
+                      {{ error }}
+                    </p>
+                    {% endfor %}
+                  </td>
+                  <td>
+                    <input
+                      class="fr-input {% if form.loyer_par_metre_carre.errors %}fr-input--error{% endif %}"
+                      pattern="[0-9]*"
+                      min=0
+                      step="0.01"
+                      inputmode="numeric"
+                      {% if form.loyer_par_metre_carre.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
+                      type="number"
+                      id="{{form.loyer_par_metre_carre.id_for_label}}"
+                      name="{{form.loyer_par_metre_carre.html_name}}"
+                      value="{{ form.loyer_par_metre_carre.value|default_if_none:'' }}">
+                    {% for error in form.loyer_par_metre_carre.errors %}
+                    <p id="text-input-error-desc-error" class="fr-error-text">
+                      {{ error }}
+                    </p>
+                    {% endfor %}
+                  </td>
+                  <td>
+                    <input
+                      class="fr-input {% if form.coeficient.errors %}fr-input--error{% endif %}"
+                      pattern="[0-9]*"
+                      min=0
+                      step="0.01"
+                      inputmode="numeric"
+                      {% if form.coeficient.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
+                      type="number"
+                      id="{{form.coeficient.id_for_label}}"
+                      name="{{form.coeficient.html_name}}"
+                      value="{{ form.coeficient.value|default_if_none:'' }}">
+                    {% for error in form.coeficient.errors %}
+                    <p id="text-input-error-desc-error" class="fr-error-text">
+                      {{ error }}
+                    </p>
+                    {% endfor %}
+                  </td>
+                  <td>
+                    <input
+                      class="fr-input {% if form.loyer.errors %}fr-input--error{% endif %}"
+                      pattern="[0-9]*"
+                      min=0
+                      step="0.01"
+                      inputmode="numeric"
+                      {% if form.loyer.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
+                      type="number"
+                      id="{{form.loyer.id_for_label}}"
+                      name="{{form.loyer.html_name}}"
+                      value="{{ form.loyer.value|default_if_none:'' }}">
+                    {% for error in form.loyer.errors %}
+                    <p id="text-input-error-desc-error" class="fr-error-text">
+                      {{ error }}
+                    </p>
+                    {% endfor %}
+                  </td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
           </div>
-
         </div>
       </div>
       <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">

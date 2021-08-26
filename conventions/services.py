@@ -269,9 +269,29 @@ def logements_update(request, convention_uuid):
             initial.append({'designation': logement.designation})
 # TODO: remove the if : only for test purpose
         if len(initial) == 0:
-            print('designation')
-            initial.append({'designation': '123456789'})
-            initial.append({'designation': ''})
+            initial.append({
+                'designation': '123456789',
+                'typologie': 'T2',
+                'surface_habitable': 60.56,
+                'surface_annexes': 12.4,
+                'surface_annexes_retenue': 6.2,
+                'surface_utile': 66.72,
+                'loyer_par_metre_carre': 5.2,
+                'coeficient': 1,
+                'loyer': 347,
+            })
+            initial.append({
+                'designation': '987654321',
+                'typologie': '',
+                'surface_habitable': '',
+                'surface_annexes': '',
+                'surface_annexes_retenue': '',
+                'surface_utile': '',
+                'loyer_par_metre_carre': '',
+                'coeficient': '',
+                'loyer': '',
+            })
+
         formset = LogementFormSet(initial=initial)
     return {'success':False, 'convention': convention, 'formset': formset}
 

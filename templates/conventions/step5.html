@@ -8,11 +8,9 @@
       {% csrf_token %}
       <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-  <!--
-          <h2 class="fr-mb-3w">Etape 6/{{ nb_steps }} - Détails des logements</h2>
-  -->
           <h2>Etape 5/{{ nb_steps }} - Financements</h2>
           {% include "common/convention_edit_info.html" with convention=convention %}
+          {% include "common/mandatory_fields_info.html" %}
 
           <div class="fr-input-group {% if form.date_fin_conventionnement.errors %}fr-select-group--error{% endif %}">
             <label class="fr-label" for="{{form.date_fin_conventionnement.id_for_label}}">
@@ -40,7 +38,7 @@
 
           <div class="fr-grid-row fr-grid-row--gutters fr-ml-3w">
 
-            <button type="button" class="fr-btn" onclick="location.href='{% url 'conventions:convention_prets' convention_uuid=convention.uuid %}'">
+            <button type="button" class="fr-btn" onclick="location.href='{% url 'conventions:load_xlsx_model' convention_uuid=convention.uuid  file_type='prets' %}'">
               <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Télécharger le modèle !
             </button>
           </div>
@@ -77,10 +75,10 @@
 
                 <thead>
                 <tr>
-                  <th scope="col">Numéro</th>
+                  <th scope="col">Numéro {% include "common/mandatory_field.html" %}</th>
                   <th scope="col">Date d'octroi</th>
                   <th scope="col">Durée</th>
-                  <th scope="col">Montant</th>
+                  <th scope="col">Montant {% include "common/mandatory_field.html" %}</th>
                   <th scope="col">Préteur</th>
                 </tr>
                 </thead>
@@ -156,7 +154,7 @@
                       class="fr-select {% if form_pret.preteur.errors %}fr-select--error{% endif %}"
                       id="{{form_pret.preteur.id_for_label}}"
                       name="{{form_pret.preteur.html_name}}">
-                      <option value="" {% if not preteur.value %}selected{% endif %} disabled hidden>Sélectionnez le prêteur</option>
+                      <option value="" {% if not form_pret.preteur.value %}selected{% endif %} disabled hidden>Sélectionnez le prêteur</option>
                       {% for preteur in preteurs %}
                       <option value="{{preteur.value}}"
                         {% if preteur.value  == form_pret.preteur.value %}selected{% endif %}>
