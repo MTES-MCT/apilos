@@ -99,8 +99,8 @@ def step6(request, convention_uuid):
     if result['success']:
         return HttpResponseRedirect(reverse('conventions:step7', args=[result['convention'].uuid]) )
     else:
-        print(result['formset'])
         return render(request, "conventions/step6.html", {
+            'upform' : result['upform'],
             'formset': result['formset'],
             'convention': result['convention'],
             'nb_steps': NB_STEPS,
