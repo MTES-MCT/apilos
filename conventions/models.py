@@ -46,7 +46,7 @@ class Convention(models.Model):
 class Preteur(models.TextChoices):
     ETAT = "ETAT", "Etat"
     EPCI = "EPCI", "EPCI"
-    REGION = "REGION", "Region"
+    REGION = "REGION", "Région"
     CDCF = "CDCF", "Caisse des dépots et des consignations froncière"
     CDCL = "CDCL", "Caisse des dépots et des consignations locative"
     AUTRE = "AUTRE", "Autre"
