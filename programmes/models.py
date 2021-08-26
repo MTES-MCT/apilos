@@ -133,14 +133,14 @@ class Lot(IngestableModel):
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
+class TypologieLogement(models.TextChoices):
+    T1 = "T1", "T1"
+    T2 = "T2", "T2"
+    T3 = "T3", "T3"
+    T4 = "T4", "T4"
+    T5 = "T5", "T5 et plus"
 
 class Logement(models.Model):
-    class TypologieLogement(models.TextChoices):
-        T1 = "T1", "T1"
-        T2 = "T2", "T2"
-        T3 = "T3", "T3"
-        T4 = "T4", "T4"
-        T5 = "T5", "T5 et plus"
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)

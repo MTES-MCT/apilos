@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from programmes.models import TypeHabitat, TypeOperation
+from programmes.models import TypeHabitat, TypeOperation, TypologieLogement
 from .models import Preteur
 from . import services
 
@@ -104,6 +104,7 @@ def step6(request, convention_uuid):
             'formset': result['formset'],
             'convention': result['convention'],
             'nb_steps': NB_STEPS,
+            'typologies': TypologieLogement,
         })
 
 @permission_required('convention.change_convention')
@@ -142,18 +143,17 @@ def stepfin(request, convention_uuid):
 
 
 
-# Import mimetypes module
-import mimetypes
 # import os module
 import os
 # Import HttpResponse module
 from django.http.response import HttpResponse
 
 
-def download_convention_prets(request, convention_uuid):
+def load_xlsx_model(request, convention_uuid, file_type):
     # Define Django project base directory
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'prets.xlsx'
+
+    filename = f'{file_type}.xlsx'
     # Define the full file path
     filepath = BASE_DIR + '/static/files/' + filename
 
@@ -162,7 +162,7 @@ def download_convention_prets(request, convention_uuid):
             data = excel.read()
 
         response = HttpResponse(data,content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename=prets.xlsx'
+        response['Content-Disposition'] = f'attachment; filename={file_type}.xlsx'
         return response
 
 

@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import formset_factory
 
-from programmes.models import Lot, TypeHabitat
+from programmes.models import Lot, TypeHabitat, TypologieLogement
 
 class ProgrammeSelectionForm(forms.Form):
   lot_uuid = forms.CharField(error_messages={'required': 'La selection du programme et de son financement est obligatoire'})
@@ -68,6 +68,28 @@ class LogementForm(forms.Form):
     'required': "La designation du logement est obligatoire",
     'min_length':"La designation du logement est obligatoire",
     'max_length':"La designation du logement ne doit pas excéder 255 caractères",
+  })
+  typologie = forms.TypedChoiceField(required=True, choices=TypologieLogement.choices)
+  surface_habitable = forms.FloatField(error_messages={
+    'required': "La surface habitable est obligatoire",
+  })
+  surface_annexes = forms.FloatField(error_messages={
+    'required': "La surface des annexes est obligatoire",
+  })
+  surface_annexes_retenue = forms.FloatField(error_messages={
+    'required': "La surface des annexes retenue est obligatoire",
+  })
+  surface_utile = forms.FloatField(error_messages={
+    'required': "La surface utile est obligatoire",
+  })
+  loyer_par_metre_carre = forms.FloatField(error_messages={
+    'required': "Le loyer par m2 est obligatoire",
+  })
+  coeficient = forms.FloatField(error_messages={
+    'required': "Le coéficient est obligatoire",
+  })
+  loyer = forms.FloatField(error_messages={
+    'required': "Le loyer est obligatoire",
   })
 
 LogementFormSet = formset_factory(LogementForm, extra=0)
