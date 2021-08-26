@@ -180,26 +180,21 @@ def programme_cadastral_update(request, convention_uuid):
 def convention_financement(request, convention_uuid):
     #TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
-    print('Financement')
+
     if request.method == 'POST':
         # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
             form = ConventionFinancementForm(request.POST)
             formset = PretFormSet(request.POST)
             upform = UploadForm(request.POST, request.FILES)
-            print(request.POST)
-            print(upform)
             if upform.is_valid():
                 objects = handle_uploaded_file(request.FILES['file'])
                 formset = PretFormSet(initial=objects)
-                print(objects)
         # When the user cliked on "Enregistrer et Suivant"
         else:
-            print('Post')
             form = ConventionFinancementForm(request.POST)
             formset = PretFormSet(request.POST)
             upform = UploadForm()
-            print(formset)
             if form.is_valid() and formset.is_valid():
                 convention.date_fin_conventionnement = form.cleaned_data['date_fin_conventionnement']
                 convention.save()
@@ -257,10 +252,19 @@ def logements_update(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
 
     if request.method == 'POST':
-        formset = LogementFormSet(request.POST)
 
-        if formset.is_valid():
-            return {'success':True, 'convention':convention, 'formset': formset}
+        if request.POST.get("Upload", False):
+            print('todo')
+        # When the user cliked on "Enregistrer et Suivant"
+        else:
+            formset = LogementFormSet(request.POST)
+            upform = UploadForm()
+            print('todo')
+
+            return {
+                'success':True,
+                'convention':convention
+            }
 
     else:
         initial = []
@@ -291,10 +295,15 @@ def logements_update(request, convention_uuid):
                 'coeficient': '',
                 'loyer': '',
             })
-
         formset = LogementFormSet(initial=initial)
-    return {'success':False, 'convention': convention, 'formset': formset}
+        upform = UploadForm()
 
+    return {
+        'success': False,
+        'convention': convention,
+        'formset': formset,
+        'upform': upform,
+    }
 
 def convention_comments(request, convention_uuid):
     #TODO: gestion du 404
