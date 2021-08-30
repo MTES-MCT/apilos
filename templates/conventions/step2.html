@@ -174,24 +174,7 @@
                 </div>
               </div>
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                <div class="fr-input-group {% if form.dg_date_deliberation.errors %}fr-select-group--error{% endif %}">
-                  <label class="fr-label" for="{{form.dg_date_deliberation.id_for_label}}">
-                    Date de délibération {% include "common/mandatory_field.html" %}
-                  </label>
-                  <div class="fr-input-wrap fr-fi-calendar-line fr-mt-1w" >
-                    <input
-                      class="fr-input {% if form.dg_date_deliberation.errors %}fr-input--error{% endif %}"
-                      type="date"
-                      id="{{form.dg_date_deliberation.id_for_label}}"
-                      name="dg_date_deliberation"
-                      value="{{ form.dg_date_deliberation.value }}">
-                  </div>
-                  {% for error in form.dg_date_deliberation.errors %}
-                  <p id="text-input-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
+                {% include "common/form/input_date.html" with form_input=form.dg_date_deliberation label="Date de délibération" mandatory=True %}
               </div>
             </div>
           </div>
