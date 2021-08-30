@@ -43,6 +43,21 @@
         {% block js %}
             <script type="module" src="{% static "dsfr/js/dsfr.module.min.js" %}"></script>
             <script type="text/javascript" nomodule src="{% static "dsfr/js/dsfr.nomodule.min.js" %}"></script>
+            <script>
+                document.addEventListener("DOMContentLoaded", function(event) {
+                    console.log(localStorage.getItem('scrollloc'))
+                    if (localStorage.getItem('scrollloc') == window.location) {
+                        var scrollpos = localStorage.getItem('scrollpos');
+                        if (scrollpos) window.scrollTo(0, scrollpos);
+                        localStorage.setItem('scrollpos', 0);
+                    }
+                });
+
+                window.onbeforeunload = function(e) {
+                    localStorage.setItem('scrollpos', window.scrollY);
+                    localStorage.setItem('scrollloc', window.location);
+                };
+            </script>
         {% endblock %}
     </body>
 </html>

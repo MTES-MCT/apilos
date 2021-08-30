@@ -88,15 +88,4 @@
             </form>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function(event) {
-            var scrollpos = localStorage.getItem('scrollpos_step5');
-            if (scrollpos) window.scrollTo(0, scrollpos);
-            localStorage.setItem('scrollpos_step5', 0);
-        });
-
-        window.onbeforeunload = function(e) {
-            localStorage.setItem('scrollpos_step5', window.scrollY);
-        };
-    </script>
 {% endblock %}
