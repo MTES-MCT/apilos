@@ -33,38 +33,7 @@
 
           <hr class="fr-col-12 fr-my-3w">
 
-          <p>Pour éditer vos prêts, il vous suffit de télécharger le modèle ci-dessous, d'ajouter ou de modifier votre liste de prêts, puis de le téléverser à nouveau.<br>
-          <span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true">Attention, la liste des prêts téléversée écrase la liste courante.</p>
-
-          <div class="fr-grid-row fr-grid-row--gutters fr-ml-3w">
-
-            <button type="button" class="fr-btn" onclick="location.href='{% url 'conventions:load_xlsx_model' convention_uuid=convention.uuid  file_type='prets' %}'">
-              <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Télécharger le modèle !
-            </button>
-          </div>
-          <div class="fr-my-3w">Puis</p>
-          <div class="fr-grid-row fr-grid-row--gutters fr-ml-3w">
-            <div>
-              <button name="Upload" value=True class="fr-btn">
-                <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Téléverser le fichier de vos prêts
-              </button>
-            </div>
-            <div class="fr-ml-3w">
-              <input
-                class="fr-input {% if upform.file.errors %}fr-input--error{% endif %}"
-                aria-describedby="text-input-error-desc-error"
-                type="file"
-                id="{{upform.file.id_for_label}}"
-                name="{{upform.file.html_name}}"
-                value="{{ upform.file.value|default_if_none:'' }}">
-              {% for error in upform.file.errors %}
-                <p id="text-input-error-desc-error" class="fr-error-text">
-                  {{ error }}
-                </p>
-              {% endfor %}
-            </div>
-
-          </div>
+          {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='prets' upform=upform  what='prêts'%}
 
           <hr class="fr-col-12 fr-my-3w">
 
@@ -100,7 +69,7 @@
                     {% endfor %}
                   </td>
                   <td>
-                    <div class="fr-input-wrap fr-fi-calendar-line fr-mt-1w" >
+                    <div class="fr-input-wrap fr-fi-calendar-line" >
                       <input
                         class="fr-input {% if form_pret.date_octroi.errors %}fr-input--error{% endif %}"
                         type="date"
@@ -115,39 +84,10 @@
                     {% endfor %}
                   </td>
                   <td>
-                    <input
-                      class="fr-input {% if form_pret.duree.errors %}fr-input--error{% endif %}"
-                      pattern="[0-9]*"
-                      min=0
-                      inputmode="numeric"
-                      {% if form_pret.duree.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
-                      type="number"
-                      id="{{form_pret.duree.id_for_label}}"
-                      name="{{form_pret.duree.html_name}}"
-                      value="{{ form_pret.duree.value|default_if_none:'' }}">
-                    {% for error in form_pret.duree.errors %}
-                    <p id="text-input-error-desc-error" class="fr-error-text">
-                      {{ error }}
-                    </p>
-                    {% endfor %}
+                    {% include "common/form/input_number.html" with form_input=form_pret.duree %}
                   </td>
                   <td>
-                    <input
-                      class="fr-input {% if form_pret.montant.errors %}fr-input--error{% endif %}"
-                      pattern="[0-9]*"
-                      min=0
-                      step="0.01"
-                      inputmode="numeric"
-                      {% if form_pret.montant.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
-                      type="number"
-                      id="{{form_pret.montant.id_for_label}}"
-                      name="{{form_pret.montant.html_name}}"
-                      value="{{ form_pret.montant.value|default_if_none:'' }}">
-                    {% for error in form_pret.montant.errors %}
-                    <p id="text-input-error-desc-error" class="fr-error-text">
-                      {{ error }}
-                    </p>
-                    {% endfor %}
+                    {% include "common/form/input_number.html" with form_input=form_pret.montant step="0.01" %}
                   </td>
                   <td>
                     <select
