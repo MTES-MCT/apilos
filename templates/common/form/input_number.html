@@ -2,7 +2,7 @@
   class="fr-input {% if form_input.errors %}fr-input--error{% endif %}"
   pattern="[0-9]*"
   min=0
-  step="{% if step %}0.01{% else %}1{% endif %}"
+  step="{% if step %}{{step}}{% else %}1{% endif %}"
   inputmode="numeric"
   {% if form_input.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
   type="number"

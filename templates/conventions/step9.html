@@ -8,27 +8,17 @@
 
       <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-          <h2 class="fr-mb-3w">Etape 9/{{ nb_steps }} - Ajouter des informations à l'attention du service instructeur</h2>
+          <h2>Etape 9/{{ nb_steps }} - Ajouter des informations à l'attention du service instructeur</h2>
+          {% include "common/convention_edit_info.html" with convention=convention %}
+          {% include "common/mandatory_fields_info.html" %}
 
 
           <div class="fr-input-group {% if form.comments.errors %}fr-select-group--error{% endif %}">
             <label class="fr-label" for="{{form.comments.id_for_label}}">
               Ajoutez vos commentaires à l'attention de l'instructeur
             </label>
-            <textarea
-              class="fr-input {% if form.comments.errors %}fr-input--error{% endif %}"
-              aria-describedby="text-input-error-desc-error"
-              type="text" id="{{form.comments.id_for_label}}"
-              name="comments"
-              rows="10">{{ form.comments.value|default_if_none:'' }}</textarea>
-            {% for error in form.comments.errors %}
-            <p id="text-input-error-desc-error" class="fr-error-text">
-              {{ error }}
-            </p>
-            {% endfor %}
+            {% include "common/form/input_text.html" with form_input=form.comments rows=10 %}
           </div>
-
-
         </div>
       </div>
       <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
