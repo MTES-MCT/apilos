@@ -21,8 +21,3 @@ class BailleurModelsTest(TestCase):
         bailleur = Bailleur.objects.get(id=1)
         expected_object_name = f"{bailleur.nom}"
         self.assertEqual(str(bailleur), expected_object_name)
-
-    def test_get_absolute_url(self):
-        bailleur = Bailleur.objects.get(id=1)
-        # This will also fail if the urlconf is not defined.
-        self.assertEqual(bailleur.get_absolute_url(), f"/bailleurs/{bailleur.uuid}")

@@ -34,6 +34,3 @@ class Bailleur(IngestableModel):
 
     def __str__(self):
         return f'{self.nom}'
-
-    def get_absolute_url(self):
-        return reverse("bailleurs:details", args=[str(self.uuid)])
