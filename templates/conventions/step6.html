@@ -42,18 +42,7 @@
                 {% for form in formset %}
                 <tr>
                   <td>
-                    <input
-                      class="fr-input {% if form.designation.errors %}fr-input--error{% endif %}"
-                      aria-describedby="text-input-error-desc-error"
-                      type="text"
-                      id="{{form.designation.id_for_label}}"
-                      name="{{form.designation.html_name}}"
-                      value="{{ form.designation.value|default_if_none:'' }}">
-                    {% for error in form.designation.errors %}
-                    <p id="text-input-error-desc-error" class="fr-error-text">
-                      {{ error }}
-                    </p>
-                    {% endfor %}
+                    {% include "common/form/input_text.html" with form_input=form.designation %}
                   </td>
                   <td>
                     <select

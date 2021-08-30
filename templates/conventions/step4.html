@@ -11,24 +11,7 @@
           {% include "common/convention_edit_info.html" with convention=convention %}
           {% include "common/mandatory_fields_info.html" %}
 
-
-          <div class="fr-input-group {% if form.permis_construire.errors %}fr-select-group--error{% endif %}">
-            <label class="fr-label" for="{{form.permis_construire.id_for_label}}">
-              Numéro de permis construire
-            </label>
-            <input
-              class="fr-input {% if form.permis_construire.errors %}fr-input--error{% endif %}"
-              aria-describedby="text-input-error-desc-error"
-              type="text"
-              id="{{form.permis_construire.id_for_label}}"
-              name="{{form.permis_construire.html_name}}"
-              value="{{ form.permis_construire.value|default_if_none:'' }}">
-            {% for error in form.permis_construire.errors %}
-            <p id="text-input-error-desc-error" class="fr-error-text">
-              {{ error }}
-            </p>
-            {% endfor %}
-          </div>
+          {% include "common/form/input_text.html" with form_input=form.permis_construire label="Numéro de permis construire" %}
 
           <div class="fr-mb-2w">
             <div class="fr-grid-row fr-grid-row--gutters">
@@ -41,7 +24,6 @@
             </div>
           </div>
 
-
           <div class="fr-mb-2w">
             <div class="fr-grid-row fr-grid-row--gutters">
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
@@ -53,16 +35,14 @@
             </div>
           </div>
 
-
           <div class="fr-input-group {% if form.vendeur.errors %}fr-select-group--error{% endif %}">
             <label class="fr-label fr-mb-1w" for="{{form.vendeur.id_for_label}}">
               Vendeur
               {% include "common/mandatory_field.html" %}
             </label>
             {% include "common/form/input_upload_button.html"%}
-            {% include "common/form/input_text.html" with form_input=form.vendeur rows=5 %}
+            {% include "common/form/input_textarea.html" with form_input=form.vendeur rows=5 %}
           </div>
-
 
           <div class="fr-input-group {% if form.acquereur.errors %}fr-select-group--error{% endif %}">
             <label class="fr-label fr-mb-1w" for="{{form.acquereur.id_for_label}}">
@@ -70,25 +50,23 @@
               {% include "common/mandatory_field.html" %}
             </label>
             {% include "common/form/input_upload_button.html"%}
-            {% include "common/form/input_text.html" with form_input=form.acquereur rows=5 %}
+            {% include "common/form/input_textarea.html" with form_input=form.acquereur rows=5 %}
           </div>
-
 
           <div class="fr-input-group {% if form.reference_notaire.errors %}fr-select-group--error{% endif %}">
             <label class="fr-label fr-mb-1w" for="{{form.reference_notaire.id_for_label}}">
               Référence du notaire
             </label>
             {% include "common/form/input_upload_button.html"%}
-            {% include "common/form/input_text.html" with form_input=form.reference_notaire rows=5 %}
+            {% include "common/form/input_textarea.html" with form_input=form.reference_notaire rows=5 %}
           </div>
-
 
           <div class="fr-input-group {% if form.reference_publication_acte.errors %}fr-select-group--error{% endif %}">
             <label class="fr-label fr-mb-1w" for="{{form.reference_publication_acte.id_for_label}}">
               Référence de publication de l'acte
               </label>
               {% include "common/form/input_upload_button.html"%}
-              {% include "common/form/input_text.html" with form_input=form.reference_publication_acte rows=5 %}
+              {% include "common/form/input_textarea.html" with form_input=form.reference_publication_acte rows=5 %}
           </div>
 
         </div>

@@ -11,174 +11,44 @@
           {% include "common/convention_edit_info.html" with convention=convention %}
           {% include "common/mandatory_fields_info.html" %}
 
-          <div class="fr-input-group {% if form.nom.errors %}fr-select-group--error{% endif %}">
-            <label class="fr-label" for="{{form.nom.id_for_label}}">
-              Nom du bailleur {% include "common/mandatory_field.html" %}
-            </label>
-            <input
-              class="fr-input {% if form.nom.errors %}fr-input--error{% endif %}"
-              aria-describedby="text-input-error-desc-error"
-              type="text" id="{{form.nom.id_for_label}}"
-              name="nom"
-              value="{{ form.nom.value|default_if_none:'' }}">
-            {% for error in form.nom.errors %}
-            <p id="text-input-error-desc-error" class="fr-error-text">
-              {{ error }}
-            </p>
-            {% endfor %}
-          </div>
-
+          {% include "common/form/input_text.html" with form_input=form.nom label="Nom du bailleur" mandatory=True %}
 
           <div class="fr-mb-2w">
             <div class="fr-grid-row fr-grid-row--gutters">
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                <div class="fr-input-group {% if form.siret.errors %}fr-select-group--error{% endif %}">
-                  <label class="fr-label" for="{{form.siret.id_for_label}}">
-                    SIRET ou SIREN {% include "common/mandatory_field.html" %}
-                  </label>
-                  <input
-                    class="fr-input {% if form.siret.errors %}fr-input--error{% endif %}"
-                    aria-describedby="text-input-error-desc-error"
-                    type="text"
-                    id="{{form.siret.id_for_label}}"
-                    name="siret"
-                    value="{{ form.siret.value|default_if_none:'' }}">
-                  {% for error in form.siret.errors %}
-                  <p id="text-input-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
+                {% include "common/form/input_text.html" with form_input=form.siret label="SIRET ou SIREN" mandatory=True %}
               </div>
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                <div class="fr-input-group {% if form.capital_social.errors %}fr-select-group--error{% endif %}">
-                  <label class="fr-label" for="{{form.capital_social.id_for_label}}">
-                    Capital social
-                  </label>
-                  <input
-                    class="fr-input {% if form.capital_social.errors %}fr-input--error{% endif %}"
-                    aria-describedby="text-input-error-desc-error"
-                    type="text" id="{{form.capital_social.id_for_label}}"
-                    name="capital_social"
-                    value="{{ form.capital_social.value|default_if_none:'' }}">
-                  {% for error in form.capital_social.errors %}
-                  <p id="text-input-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
+                {% include "common/form/input_text.html" with form_input=form.capital_social label="Capital social" mandatory=False %}
               </div>
             </div>
           </div>
 
-
-          <div class="fr-input-group {% if form.adresse.errors %}fr-select-group--error{% endif %}">
-            <label class="fr-label" for="{{form.adresse.id_for_label}}">
-              Adresse {% include "common/mandatory_field.html" %}
-            </label>
-            <input
-              class="fr-input {% if form.adresse.errors %}fr-input--error{% endif %}"
-              aria-describedby="text-input-error-desc-error"
-              type="text" id="{{form.adresse.id_for_label}}"
-              name="adresse"
-              value="{{ form.adresse.value|default_if_none:'' }}">
-            {% for error in form.adresse.errors %}
-            <p id="text-input-error-desc-error" class="fr-error-text">
-              {{ error }}
-            </p>
-            {% endfor %}
-          </div>
-
+          {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" mandatory=True %}
 
           <div class="fr-mb-2w">
             <div class="fr-grid-row fr-grid-row--gutters">
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                <div class="fr-input-group {% if form.code_postal.errors %}fr-select-group--error{% endif %}">
-                  <label class="fr-label" for="{{form.code_postal.id_for_label}}">
-                    Code postal {% include "common/mandatory_field.html" %}
-                  </label>
-                  <input
-                    class="fr-input {% if form.code_postal.errors %}fr-input--error{% endif %}"
-                    aria-describedby="text-input-error-desc-error"
-                    type="text"
-                    id="{{form.code_postal.id_for_label}}"
-                    name="code_postal"
-                    value="{{ form.code_postal.value|default_if_none:'' }}">
-                  {% for error in form.code_postal.errors %}
-                  <p id="text-input-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
+                {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" mandatory=True %}
               </div>
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                <div class="fr-input-group {% if form.ville.errors %}fr-select-group--error{% endif %}">
-                  <label class="fr-label" for="{{form.ville.id_for_label}}">
-                    Ville {% include "common/mandatory_field.html" %}
-                  </label>
-                  <input
-                    class="fr-input {% if form.ville.errors %}fr-input--error{% endif %}"
-                    aria-describedby="text-input-error-desc-error"
-                    type="text"
-                    id="{{form.ville.id_for_label}}"
-                    name="ville"
-                    value="{{ form.ville.value|default_if_none:'' }}">
-                  {% for error in form.ville.errors %}
-                  <p id="text-input-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
+                {% include "common/form/input_text.html" with form_input=form.ville label="Ville" mandatory=True %}
               </div>
             </div>
           </div>
 
-          <div class="fr-input-group {% if form.dg_nom.errors %}fr-select-group--error{% endif %}">
-            <label class="fr-label" for="{{form.dg_nom.id_for_label}}">
-              Nom du directeur générale {% include "common/mandatory_field.html" %}
-            </label>
-            <input
-              class="fr-input {% if form.dg_nom.errors %}fr-input--error{% endif %}"
-              aria-describedby="text-input-error-desc-error"
-              type="text"
-              id="{{form.dg_nom.id_for_label}}"
-              name="dg_nom"
-              value="{{ form.dg_nom.value|default_if_none:'' }}">
-            {% for error in form.dg_nom.errors %}
-            <p id="text-input-error-desc-error" class="fr-error-text">
-              {{ error }}
-            </p>
-            {% endfor %}
-          </div>
-
+          {% include "common/form/input_text.html" with form_input=form.dg_nom label="Nom du directeur générale" mandatory=True %}
 
           <div class="fr-mb-2w">
             <div class="fr-grid-row fr-grid-row--gutters">
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                <div class="fr-input-group {% if form.dg_fonction.errors %}fr-select-group--error{% endif %}">
-                  <label class="fr-label" for="{{form.dg_fonction.id_for_label}}">
-                    Fonction du directeur general {% include "common/mandatory_field.html" %}
-                  </label>
-                  <input
-                    class="fr-input {% if form.dg_fonction.errors %}fr-input--error{% endif %}"
-                    aria-describedby="text-input-error-desc-error"
-                    type="text"
-                    id="{{form.dg_fonction.id_for_label}}"
-                    name="dg_fonction"
-                    value="{{ form.dg_fonction.value|default_if_none:'' }}">
-                  {% for error in form.dg_fonction.errors %}
-                  <p id="text-input-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
+                {% include "common/form/input_text.html" with form_input=form.dg_fonction label="Fonction du directeur générale" mandatory=True %}
               </div>
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
                 {% include "common/form/input_date.html" with form_input=form.dg_date_deliberation label="Date de délibération" mandatory=True %}
               </div>
             </div>
           </div>
-
 
         </div>
       </div>

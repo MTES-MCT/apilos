@@ -43,18 +43,7 @@
                 {% for form_pret in formset %}
                 <tr>
                   <td>
-                    <input
-                      class="fr-input {% if form_pret.numero.errors %}fr-input--error{% endif %}"
-                      aria-describedby="text-input-error-desc-error"
-                      type="text"
-                      id="{{form_pret.numero.id_for_label}}"
-                      name="{{form_pret.numero.html_name}}"
-                      value="{{ form_pret.numero.value|default_if_none:'' }}">
-                    {% for error in form_pret.numero.errors %}
-                    <p id="text-input-error-desc-error" class="fr-error-text">
-                      {{ error }}
-                    </p>
-                    {% endfor %}
+                    {% include "common/form/input_text.html" with form_input=form_pret.numero %}
                   </td>
                   <td>
                     {% include "common/form/input_date.html" with form_input=form_pret.date_octroi %}

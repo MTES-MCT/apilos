@@ -12,63 +12,16 @@
           {% include "common/mandatory_fields_info.html" %}
 
 
-          <div class="fr-input-group {% if form.adresse.errors %}fr-select-group--error{% endif %}">
-            <label class="fr-label" for="{{form.adresse.id_for_label}}">
-              Adresse {% include "common/mandatory_field.html" %}
-            </label>
-            <input
-              class="fr-input {% if form.adresse.errors %}fr-input--error{% endif %}"
-              aria-describedby="text-input-error-desc-error"
-              type="text" id="{{form.adresse.id_for_label}}"
-              name="adresse"
-              value="{{ form.adresse.value|default_if_none:'' }}">
-            {% for error in form.adresse.errors %}
-            <p id="text-input-error-desc-error" class="fr-error-text">
-              {{ error }}
-            </p>
-            {% endfor %}
-          </div>
+          {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" mandatory=True %}
 
 
           <div class="fr-mb-2w">
             <div class="fr-grid-row fr-grid-row--gutters">
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                <div class="fr-input-group {% if form.code_postal.errors %}fr-select-group--error{% endif %}">
-                  <label class="fr-label" for="{{form.code_postal.id_for_label}}">
-                    Code postal {% include "common/mandatory_field.html" %}
-                  </label>
-                  <input
-                    class="fr-input {% if form.code_postal.errors %}fr-input--error{% endif %}"
-                    aria-describedby="text-input-error-desc-error"
-                    type="text"
-                    id="{{form.code_postal.id_for_label}}"
-                    name="code_postal"
-                    value="{{ form.code_postal.value|default_if_none:'' }}">
-                  {% for error in form.code_postal.errors %}
-                  <p id="text-input-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
+                {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" mandatory=True %}
               </div>
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                <div class="fr-input-group {% if form.ville.errors %}fr-select-group--error{% endif %}">
-                  <label class="fr-label" for="{{form.ville.id_for_label}}">
-                    Ville {% include "common/mandatory_field.html" %}
-                  </label>
-                  <input
-                    class="fr-input {% if form.ville.errors %}fr-input--error{% endif %}"
-                    aria-describedby="text-input-error-desc-error"
-                    type="text"
-                    id="{{form.ville.id_for_label}}"
-                    name="ville"
-                    value="{{ form.ville.value|default_if_none:'' }}">
-                  {% for error in form.ville.errors %}
-                  <p id="text-input-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
+                {% include "common/form/input_text.html" with form_input=form.ville label="Ville" mandatory=True %}
               </div>
             </div>
           </div>
@@ -184,7 +137,7 @@
             <label class="fr-label" for="{{form.autre_locaux_hors_convention.id_for_label}}">
               Autres
             </label>
-            {% include "common/form/input_text.html" with form_input=form.autre_locaux_hors_convention %}
+            {% include "common/form/input_textarea.html" with form_input=form.autre_locaux_hors_convention %}
           </div>
 
 
