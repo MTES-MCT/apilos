@@ -6,28 +6,39 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('conventions', '0004_auto_20210823_1813'),
+        ("conventions", "0004_auto_20210823_1813"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='pret',
-            name='autre',
+            model_name="pret",
+            name="autre",
             field=models.CharField(max_length=255, null=True),
         ),
         migrations.AlterField(
-            model_name='pret',
-            name='date_octroi',
+            model_name="pret",
+            name="date_octroi",
             field=models.DateField(null=True),
         ),
         migrations.AlterField(
-            model_name='pret',
-            name='duree',
+            model_name="pret",
+            name="duree",
             field=models.IntegerField(null=True),
         ),
         migrations.AlterField(
-            model_name='pret',
-            name='preteur',
-            field=models.CharField(choices=[('ETAT', 'Etat'), ('EPCI', 'EPCI'), ('REGION', 'Region'), ('CDCF', 'Caisse des dépots et des consignations froncière'), ('CDCL', 'Caisse des dépots et des consignations locative'), ('AUTRE', 'Autre')], default='AUTRE', max_length=25),
+            model_name="pret",
+            name="preteur",
+            field=models.CharField(
+                choices=[
+                    ("ETAT", "Etat"),
+                    ("EPCI", "EPCI"),
+                    ("REGION", "Region"),
+                    ("CDCF", "Caisse des dépots et des consignations froncière"),
+                    ("CDCL", "Caisse des dépots et des consignations locative"),
+                    ("AUTRE", "Autre"),
+                ],
+                default="AUTRE",
+                max_length=25,
+            ),
         ),
     ]

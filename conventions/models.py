@@ -32,16 +32,17 @@ class Convention(models.Model):
     def __str__(self):
         return f"{self.programme.nom} - {self.lot.financement} - {self.programme.ville} - {self.programme.nb_logements} lgts"
 
-# TODO:
-# gérer un decorateur : https://docs.djangoproject.com/en/dev/howto/custom-template-tags/#howto-custom-template-tags
-# Ou créé un champ statut
+    # TODO:
+    # gérer un decorateur : https://docs.djangoproject.com/en/dev/howto/custom-template-tags/#howto-custom-template-tags
+    # Ou créé un champ statut
     def statut(self):
         if self.valide_le:
-            return 'Validé'
+            return "Validé"
         elif self.soumis_le:
             return "En cours d'instruction"
         else:
             return "Brouillon"
+
 
 class Preteur(models.TextChoices):
     ETAT = "ETAT", "Etat"
@@ -50,6 +51,7 @@ class Preteur(models.TextChoices):
     CDCF = "CDCF", "Caisse des dépots et des consignations froncière"
     CDCL = "CDCL", "Caisse des dépots et des consignations locative"
     AUTRE = "AUTRE", "Autre"
+
 
 class Pret(models.Model):
 
@@ -64,7 +66,7 @@ class Pret(models.Model):
         choices=Preteur.choices,
         default=Preteur.AUTRE,
     )
-    autre = models.CharField(null=True,max_length=255)
+    autre = models.CharField(null=True, max_length=255)
     date_octroi = models.DateField(null=True)
     numero = models.CharField(max_length=255)
     duree = models.IntegerField(null=True)

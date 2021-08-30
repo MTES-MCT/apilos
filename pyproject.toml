@@ -6,7 +6,7 @@ src = [
     "instructeurs",
     "programmes",
     "stats",
-    "users"
+    "users",
 ]
 diff = true
 check = false

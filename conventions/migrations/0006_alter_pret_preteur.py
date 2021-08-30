@@ -6,13 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('conventions', '0005_auto_20210826_1154'),
+        ("conventions", "0005_auto_20210826_1154"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='pret',
-            name='preteur',
-            field=models.CharField(choices=[('ETAT', 'Etat'), ('EPCI', 'EPCI'), ('REGION', 'Région'), ('CDCF', 'Caisse des dépots et des consignations froncière'), ('CDCL', 'Caisse des dépots et des consignations locative'), ('AUTRE', 'Autre')], default='AUTRE', max_length=25),
+            model_name="pret",
+            name="preteur",
+            field=models.CharField(
+                choices=[
+                    ("ETAT", "Etat"),
+                    ("EPCI", "EPCI"),
+                    ("REGION", "Région"),
+                    ("CDCF", "Caisse des dépots et des consignations froncière"),
+                    ("CDCL", "Caisse des dépots et des consignations locative"),
+                    ("AUTRE", "Autre"),
+                ],
+                default="AUTRE",
+                max_length=25,
+            ),
         ),
     ]

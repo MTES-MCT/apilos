@@ -11,6 +11,7 @@ class Financement(models.TextChoices):
     PLUS_PLAI = "PLUS-PLAI", "PLUS-PLAI"
     PLS = "PLS", "PLS"
 
+
 class TypeOperation(models.TextChoices):
     NEUF = "NEUF", "Construction Neuve"
     ACQUIS = "ACQUIS", "Acquisition-Amélioration"
@@ -25,23 +26,24 @@ class TypeHabitat(models.TextChoices):
     INDIVIDUEL = "INDIVIDUEL", "Individuel"
     COLLECTIF = "COLLECTIF", "Collectif"
 
+
 class Programme(IngestableModel):
-    pivot= ['bailleur', 'nom', 'ville']
-    mapping= {
-        "nom": 'Nom Opération',
+    pivot = ["bailleur", "nom", "ville"]
+    mapping = {
+        "nom": "Nom Opération",
         "code_postal": "Opération code postal",
-        "ville": 'Commune',
-        "adresse": 'Adresse Opération 1',
-        "nb_logements": 'Nb logts',
-        "zone_123": 'Zone 123',
-        "zone_abc": 'Zone ABC',
-        "surface_utile_totale": 'SU totale',
-        "annee_gestion_programmation": 'Année Gestion Programmation',
-        "numero_galion": 'N° Opération GALION',
+        "ville": "Commune",
+        "adresse": "Adresse Opération 1",
+        "nb_logements": "Nb logts",
+        "zone_123": "Zone 123",
+        "zone_abc": "Zone ABC",
+        "surface_utile_totale": "SU totale",
+        "annee_gestion_programmation": "Année Gestion Programmation",
+        "numero_galion": "N° Opération GALION",
         "type_habitat": "Type d'habitat",
         "bailleur": "MOA (code SIRET)",
-        "administration": 'Gestionnaire (code)'
-#        "departement": "Département",
+        "administration": "Gestionnaire (code)"
+        #        "departement": "Département",
     }
 
     id = models.AutoField(primary_key=True)
@@ -110,10 +112,10 @@ class ReferenceCadastrale(models.Model):
 
 
 class Lot(IngestableModel):
-    pivot= ['financement', 'programme']
-    mapping= {
-        "financement": 'Produit',
-        "programme": 'Nom Opération',
+    pivot = ["financement", "programme"]
+    mapping = {
+        "financement": "Produit",
+        "programme": "Nom Opération",
         "bailleur": "MOA (code SIRET)",
     }
 
@@ -133,12 +135,14 @@ class Lot(IngestableModel):
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
+
 class TypologieLogement(models.TextChoices):
     T1 = "T1", "T1"
     T2 = "T2", "T2"
     T3 = "T3", "T3"
     T4 = "T4", "T4"
     T5 = "T5", "T5 et plus"
+
 
 class Logement(models.Model):
 
@@ -190,14 +194,15 @@ class Annexe(models.Model):
 
 
 class TypeStationnement(IngestableModel):
-    pivot= ['typologie', 'lot']
-    mapping= {
-        "typologie": 'Typologie Garage',
-        "nb_stationnements": 'Nb Stationnement',
-        "loyer": 'Loyer',
-        "lot": 'Produit',
+    pivot = ["typologie", "lot"]
+    mapping = {
+        "typologie": "Typologie Garage",
+        "nb_stationnements": "Nb Stationnement",
+        "loyer": "Loyer",
+        "lot": "Produit",
         "bailleur": "MOA (code SIRET)",
     }
+
     class TypologieStationnement(models.TextChoices):
         GARAGE_AERIEN = "GARAGE_AERIEN", "Garage Aérien"
         GARAGE_ENTERRE = "GARAGE_ENTERRE", "Garage enterré"

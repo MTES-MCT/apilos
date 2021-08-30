@@ -7,14 +7,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('instructeurs', '0001_initial'),
-        ('programmes', '0006_alter_programme_administration'),
+        ("instructeurs", "0001_initial"),
+        ("programmes", "0006_alter_programme_administration"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='programme',
-            name='administration',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='instructeurs.administration'),
+            model_name="programme",
+            name="administration",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="instructeurs.administration",
+            ),
         ),
     ]

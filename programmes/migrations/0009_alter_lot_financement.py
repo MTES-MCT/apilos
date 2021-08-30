@@ -6,13 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('programmes', '0008_rename_numero_gallion_programme_numero_galion'),
+        ("programmes", "0008_rename_numero_gallion_programme_numero_galion"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='lot',
-            name='financement',
-            field=models.CharField(choices=[('PLUS', 'PLUS'), ('PLAI', 'PLAI'), ('PLAI_ADP', 'PLAI_ADP'), ('PLUS-PLAI', 'PLUS-PLAI'), ('PLS', 'PLS')], default='PLUS', max_length=25),
+            model_name="lot",
+            name="financement",
+            field=models.CharField(
+                choices=[
+                    ("PLUS", "PLUS"),
+                    ("PLAI", "PLAI"),
+                    ("PLAI_ADP", "PLAI_ADP"),
+                    ("PLUS-PLAI", "PLUS-PLAI"),
+                    ("PLS", "PLS"),
+                ],
+                default="PLUS",
+                max_length=25,
+            ),
         ),
     ]

@@ -4,6 +4,7 @@ from bailleurs.models import Bailleur
 from programmes.models import Programme, Lot, Financement
 import datetime
 
+
 class ConventionModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -24,14 +25,14 @@ class ConventionModelsTest(TestCase):
         lot = Lot.objects.create(
             programme=programme,
             bailleur=bailleur,
-            financement= Financement.PLUS,
+            financement=Financement.PLUS,
         )
         Convention.objects.create(
             numero=1,
             lot=lot,
             programme=programme,
             bailleur=bailleur,
-            financement= Financement.PLUS,
+            financement=Financement.PLUS,
         )
 
     def test_object_str(self):

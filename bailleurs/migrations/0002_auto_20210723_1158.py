@@ -6,52 +6,52 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bailleurs', '0001_initial'),
+        ("bailleurs", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='bailleur',
-            name='siege',
+            model_name="bailleur",
+            name="siege",
         ),
         migrations.AddField(
-            model_name='bailleur',
-            name='adresse',
+            model_name="bailleur",
+            name="adresse",
             field=models.CharField(max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='bailleur',
-            name='code_postal',
+            model_name="bailleur",
+            name="code_postal",
             field=models.CharField(max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='bailleur',
-            name='ville',
+            model_name="bailleur",
+            name="ville",
             field=models.CharField(max_length=255, null=True),
         ),
         migrations.AlterField(
-            model_name='bailleur',
-            name='capital_social',
+            model_name="bailleur",
+            name="capital_social",
             field=models.CharField(max_length=255, null=True),
         ),
         migrations.AlterField(
-            model_name='bailleur',
-            name='dg_date_deliberation',
+            model_name="bailleur",
+            name="dg_date_deliberation",
             field=models.DateField(null=True),
         ),
         migrations.AlterField(
-            model_name='bailleur',
-            name='dg_fonction',
+            model_name="bailleur",
+            name="dg_fonction",
             field=models.CharField(max_length=255, null=True),
         ),
         migrations.AlterField(
-            model_name='bailleur',
-            name='dg_nom',
+            model_name="bailleur",
+            name="dg_nom",
             field=models.CharField(max_length=255, null=True),
         ),
         migrations.AlterField(
-            model_name='bailleur',
-            name='operation_exceptionnelle',
+            model_name="bailleur",
+            name="operation_exceptionnelle",
             field=models.TextField(null=True),
         ),
     ]

@@ -1,6 +1,7 @@
 from django.test import TestCase
 from instructeurs.models import Administration
 
+
 class AdministrationsModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -13,4 +14,3 @@ class AdministrationsModelsTest(TestCase):
         administration = Administration.objects.get(id=1)
         expected_object_name = f"{administration.nom}"
         self.assertEqual(str(administration), expected_object_name)
-

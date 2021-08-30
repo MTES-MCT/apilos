@@ -5,14 +5,15 @@ from django.urls import reverse
 
 from core.models import IngestableModel
 
+
 class Bailleur(IngestableModel):
-    pivot= 'siret'
-    mapping= {
-        'nom': 'MOA (nom officiel)',
-        'siret' : 'MOA (code SIRET)',
-        'adresse': 'MOA Adresse 1',
-        'code_postal' : 'MOA Code postal',
-        'ville' : 'MOA Ville',
+    pivot = "siret"
+    mapping = {
+        "nom": "MOA (nom officiel)",
+        "siret": "MOA (code SIRET)",
+        "adresse": "MOA Adresse 1",
+        "code_postal": "MOA Code postal",
+        "ville": "MOA Ville",
     }
 
     id = models.AutoField(primary_key=True)

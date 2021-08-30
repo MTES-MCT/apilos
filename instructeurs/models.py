@@ -3,12 +3,13 @@ import uuid
 from django.db import models
 from core.models import IngestableModel
 
+
 class Administration(IngestableModel):
 
-    pivot= 'code'
-    mapping= {
-        'nom': 'Gestionnaire',
-        'code': 'Gestionnaire (code)',
+    pivot = "code"
+    mapping = {
+        "nom": "Gestionnaire",
+        "code": "Gestionnaire (code)",
     }
 
     id = models.AutoField(primary_key=True)

@@ -6,38 +6,42 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('programmes', '0002_auto_20210706_1816'),
+        ("programmes", "0002_auto_20210706_1816"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='programme',
-            name='annee_gestion_programmation',
+            model_name="programme",
+            name="annee_gestion_programmation",
             field=models.IntegerField(null=True),
         ),
         migrations.AddField(
-            model_name='programme',
-            name='numero_gallion',
+            model_name="programme",
+            name="numero_gallion",
             field=models.CharField(max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='programme',
-            name='surface_utile_totale',
+            model_name="programme",
+            name="surface_utile_totale",
             field=models.FloatField(null=True),
         ),
         migrations.AddField(
-            model_name='programme',
-            name='type_habitat',
-            field=models.CharField(choices=[('INDIVIDUEL', 'Individuel'), ('COLLECTIF', 'Collectif')], default='INDIVIDUEL', max_length=25),
+            model_name="programme",
+            name="type_habitat",
+            field=models.CharField(
+                choices=[("INDIVIDUEL", "Individuel"), ("COLLECTIF", "Collectif")],
+                default="INDIVIDUEL",
+                max_length=25,
+            ),
         ),
         migrations.AddField(
-            model_name='programme',
-            name='zone_123',
+            model_name="programme",
+            name="zone_123",
             field=models.IntegerField(null=True),
         ),
         migrations.AddField(
-            model_name='programme',
-            name='zone_abc',
+            model_name="programme",
+            name="zone_abc",
             field=models.CharField(max_length=255, null=True),
         ),
     ]
