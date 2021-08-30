@@ -1,9 +1,9 @@
+import datetime
 from django.test import TestCase
 from bailleurs.models import Bailleur
-import datetime
-
 
 class BailleurModelsTest(TestCase):
+    # pylint: disable=E1101 no-member
     @classmethod
     def setUpTestData(cls):
         Bailleur.objects.create(

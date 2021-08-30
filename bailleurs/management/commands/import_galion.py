@@ -1,13 +1,12 @@
 import os
-from pathlib import Path
+import sys
 
 from django.core.management.base import BaseCommand
+from django.conf import settings
 from openpyxl import load_workbook
-from openpyxl.utils.cell import coordinate_from_string, column_index_from_string
 from instructeurs.models import Administration
 from bailleurs.models import Bailleur
 from programmes.models import Programme, Financement, Lot, TypeStationnement
-
 
 def str_row(row):
     return (
@@ -19,16 +18,16 @@ def str_row(row):
 
 
 class Command(BaseCommand):
-    def handle(self, **options):
-        BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
-        file_path = os.path.join(BASE_DIR, "documents", "v3.xlsx")
+    def handle(self, *args, **options):
+        basedir = settings.BASE_DIR
+        file_path = os.path.join(basedir, "documents", "v3.xlsx")
 
         file_path_input = input("Enter your value (default: " + file_path + "): ")
         file_path = file_path_input or file_path
         wb = load_workbook(file_path)
         if not wb.sheetnames:
             print("Error, the worksheet is not compatible, no sheet detected")
-            exit(1)
+            sys.exit(1)
 
         sheet_name = "Rapport 1"
         sheet_name_input = input(
@@ -41,7 +40,8 @@ class Command(BaseCommand):
         print("Choose the action required (default 1) ")
         print("1: Create only, the already existing entry won't be updated")
         print(
-            "2: Create and Update, create if it doesn't exist, else update entry based on its pivots"
+            "2: Create and Update, create if it doesn't exist, " +
+            "else update entry based on its pivots"
         )
         inp = input("Choose your option: ")
 
@@ -54,8 +54,8 @@ class Command(BaseCommand):
 
         # Create one object by row
         column_from_index = {}
-        for tuple in ws["B4":"AH4"]:
-            for cell in tuple:
+        for my_tuple in ws["B4":"AH4"]:
+            for cell in my_tuple:
                 column_from_index[cell.column] = str(cell.value).strip()
         #        print(cell.value)
 
@@ -110,7 +110,8 @@ class Command(BaseCommand):
                 continue
             if len(my_row["Gestionnaire (code)"]) != 5:
                 print(
-                    f"le service instructeur n'est pas renseigné, l'entrée est ignorée: {str_row(my_row)}"
+                    "le service instructeur n'est pas renseigné, " +
+                    f"l'entrée est ignorée: {str_row(my_row)}"
                 )
                 continue
             if not my_row["Produit"] in dir(Financement):
@@ -118,7 +119,8 @@ class Command(BaseCommand):
                     my_row["Produit"] = my_row["Produit"][0:4]
                 else:
                     print(
-                        f"le financement n'est pas supporté, l'entrée est ignorée: {str_row(my_row)}"
+                        "le financement n'est pas supporté, " +
+                        f"l'entrée est ignorée: {str_row(my_row)}"
                     )
                     continue
             my_objects.append(my_row)
