@@ -51,7 +51,7 @@
                   {% endfor %}
                 </div>
               </div>
-              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                 <div class="fr-input-group {% if form.ville.errors %}fr-select-group--error{% endif %}">
                   <label class="fr-label" for="{{form.ville.id_for_label}}">
                     Ville {% include "common/mandatory_field.html" %}
@@ -76,7 +76,7 @@
 
           <div class="fr-mb-2w">
             <div class="fr-grid-row fr-grid-row--gutters">
-              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                 <div class="fr-input-group {% if form.nb_logements.errors %}fr-select-group--error{% endif %}">
                   <label class="fr-label" for="{{form.nb_logements.id_for_label}}">
                     Nombre de logements {% include "common/mandatory_field.html" %}
@@ -98,7 +98,7 @@
                   {% endfor %}
                 </div>
               </div>
-              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w fr-mt-3w">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w fr-mt-3w">
                 <div class="fr-checkbox-group {% if form.anru.errors %}fr-checkbox-group--error{% endif %}">
                   <input
                   type="checkbox"
@@ -143,7 +143,7 @@
                   {% endfor %}
                 </div>
               </div>
-              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                 <div class="fr-select-group {% if form.type_operation.errors %}fr-select-group--error{% endif %}">
                   <label class="fr-label" for="{{form.type_operation.id_for_label}}">
                     Type d'opération
@@ -168,32 +168,13 @@
             </div>
           </div>
 
+          <h4>
+            Locaux auxquels ne s'applique pas la présente convention
+          </h4>
 
           <div class="fr-mb-2w">
             <div class="fr-grid-row fr-grid-row--gutters">
-              <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
-                <div class="fr-input-group {% if form.nb_logement_non_conventionne.errors %}fr-select-group--error{% endif %}">
-                  <label class="fr-label" for="{{form.nb_logement_non_conventionne.id_for_label}}">
-                    Logements non-conventionnés
-                  </label>
-                  <input
-                    class="fr-input {% if form.nb_logement_non_conventionne.errors %}fr-input--error{% endif %}"
-                    pattern="[0-9]*"
-                    min=0
-                    inputmode="numeric"
-                    {% if form.nb_logement_non_conventionne.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
-                    type="number"
-                    id="{{form.nb_logement_non_conventionne.id_for_label}}"
-                    name="nb_logement_non_conventionne"
-                    value="{{ form.nb_logement_non_conventionne.value|default_if_none:0 }}">
-                  {% for error in form.nb_logement_non_conventionne.errors %}
-                  <p id="text-input-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
-              </div>
-              <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-pl-md-1w fr-mb-2w">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                 <div class="fr-input-group {% if form.nb_locaux_commerciaux.errors %}fr-select-group--error{% endif %}">
                   <label class="fr-label" for="{{form.nb_locaux_commerciaux.id_for_label}}">
                     Locaux commerciaux
@@ -215,7 +196,7 @@
                   {% endfor %}
                 </div>
               </div>
-              <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-pl-md-1w fr-mb-2w">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                 <div class="fr-input-group {% if form.nb_bureaux.errors %}fr-select-group--error{% endif %}">
                   <label class="fr-label" for="{{form.nb_bureaux.id_for_label}}">
                     Bureaux
@@ -238,6 +219,24 @@
                 </div>
               </div>
             </div>
+          </div>
+
+
+          <div class="fr-input-group {% if form.autre_locaux_hors_convention.errors %}fr-select-group--error{% endif %}">
+            <label class="fr-label" for="{{form.autre_locaux_hors_convention.id_for_label}}">
+              Autres
+            </label>
+            <textarea
+              class="fr-input {% if form.autre_locaux_hors_convention.errors %}fr-input--error{% endif %}"
+              aria-describedby="text-input-error-desc-error"
+              type="text" id="{{form.autre_locaux_hors_convention.id_for_label}}"
+              name="autre_locaux_hors_convention"
+              rows="3">{{ form.autre_locaux_hors_convention.value|default_if_none:'' }}</textarea>
+            {% for error in form.autre_locaux_hors_convention.errors %}
+            <p id="text-input-error-desc-error" class="fr-error-text">
+              {{ error }}
+            </p>
+            {% endfor %}
           </div>
 
 

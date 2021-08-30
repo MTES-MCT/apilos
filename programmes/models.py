@@ -74,9 +74,9 @@ class Programme(IngestableModel):
         default=TypeOperation.NEUF,
     )
     anru = models.BooleanField(default=False)
-    nb_logement_non_conventionne = models.IntegerField(null=True)
     nb_locaux_commerciaux = models.IntegerField(null=True)
     nb_bureaux = models.IntegerField(null=True)
+    autre_locaux_hors_convention = models.TextField(null=True)
     vendeur = models.TextField(null=True)
     acquereur = models.TextField(null=True)
     date_acte_notarie = models.DateField(null=True)
