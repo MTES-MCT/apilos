@@ -35,9 +35,11 @@ class ProgrammeForm(forms.Form):
   type_habitat = forms.TypedChoiceField(required=False, choices=TypeHabitat.choices)
   type_operation = forms.CharField(required=False)
   anru = forms.BooleanField(required=False)
-  nb_logement_non_conventionne = forms.IntegerField(required=False)
   nb_locaux_commerciaux = forms.IntegerField(required=False)
   nb_bureaux = forms.IntegerField(required=False)
+  autre_locaux_hors_convention = forms.CharField(required=False, max_length=5000, error_messages={
+    'max_length':"L'information ne doit pas excéder 5000 characters",
+    })
 
 
 class ProgrammmeCadastralForm(forms.Form):

@@ -116,7 +116,7 @@ def programme_update(request, convention_uuid):
             programme.type_habitat = form.cleaned_data['type_habitat']
             programme.type_operation = form.cleaned_data['type_operation']
             programme.anru = form.cleaned_data['anru']
-            programme.nb_logement_non_conventionne = form.cleaned_data['nb_logement_non_conventionne']
+            programme.autre_locaux_hors_convention = form.cleaned_data['autre_locaux_hors_convention']
             programme.nb_locaux_commerciaux = form.cleaned_data['nb_locaux_commerciaux']
             programme.nb_bureaux = form.cleaned_data['nb_bureaux']
             programme.save()
@@ -133,7 +133,7 @@ def programme_update(request, convention_uuid):
             'type_habitat': programme.type_habitat,
             'type_operation': programme.type_operation,
             'anru': programme.anru,
-            'nb_logement_non_conventionne': programme.nb_logement_non_conventionne,
+            'autre_locaux_hors_convention': programme.autre_locaux_hors_convention,
             'nb_locaux_commerciaux': programme.nb_locaux_commerciaux,
             'nb_bureaux': programme.nb_bureaux,
         })
