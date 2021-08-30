@@ -1,18 +1,18 @@
 <div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}">
-  {% if label %}
-  <label class="fr-label" for="{{form_input.id_for_label}}">
-    {{ label }}{% if mandatory %}&nbsp;{% include "common/mandatory_field.html" %}{% endif %}
-  </label>
-  {% endif %}
-  <input
-    class="fr-input {% if form_input.errors %}fr-input--error{% endif %}"
-    aria-describedby="text-input-error-desc-error"
-    type="text" id="{{form_input.id_for_label}}"
-    name="{{form_input.html_name}}"
-    value="{{ form_input.value|default_if_none:'' }}">
-  {% for error in form_input.errors %}
-  <p id="text-input-error-desc-error" class="fr-error-text">
-    {{ error }}
-  </p>
-  {% endfor %}
+    {% if label %}
+        <label class="fr-label" for="{{form_input.id_for_label}}">
+            {{ label }}{% if mandatory %}&nbsp;{% include "common/mandatory_field.html" %}{% endif %}
+        </label>
+    {% endif %}
+    <input
+        class="fr-input {% if form_input.errors %}fr-input--error{% endif %}"
+        aria-describedby="text-input-error-desc-error"
+        type="text" id="{{form_input.id_for_label}}"
+        name="{{form_input.html_name}}"
+        value="{{ form_input.value|default_if_none:'' }}">
+    {% for error in form_input.errors %}
+        <p id="text-input-error-desc-error" class="fr-error-text">
+            {{ error }}
+        </p>
+    {% endfor %}
 </div>

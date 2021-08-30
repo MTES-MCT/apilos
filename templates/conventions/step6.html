@@ -1,101 +1,101 @@
 {% extends "layout/base.html" %}
 
 {% block content %}
-<div class="fr-container-fluid ds_banner">
-  <div class="fr-container">
-    <form method="post" action="" enctype="multipart/form-data">
-      {% csrf_token %}
-      <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-          <h2>Etape 6/{{ nb_steps }} - Détails des logements</h2>
-          <h4 class="warning-notification">
-            <span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true"></span>
-            Cet écran est en cours de développement et n'est pas encore fonctionnel<br>
-            Merci de votre compréhension
-          </h3>
-          {% include "common/convention_edit_info.html" with convention=convention %}
-          {% include "common/mandatory_fields_info.html" %}
+    <div class="fr-container-fluid ds_banner">
+        <div class="fr-container">
+            <form method="post" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
+                        <h2>Etape 6/{{ nb_steps }} - Détails des logements</h2>
+                        <h4 class="warning-notification">
+                            <span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true"></span>
+                            Cet écran est en cours de développement et n'est pas encore fonctionnel<br>
+                            Merci de votre compréhension
+                        </h3>
+                        {% include "common/convention_edit_info.html" with convention=convention %}
+                        {% include "common/mandatory_fields_info.html" %}
 
-          {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='logements' upform=upform  what='logements'%}
+                        {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='logements' upform=upform  what='logements'%}
 
-          <hr class="fr-col-12 fr-my-3w">
+                        <hr class="fr-col-12 fr-my-3w">
 
-          {{ formset.management_form }}
-          <div class="fr-table fr-table--bordered">
-            <table>
-                <caption>Liste des logements associés à la convention</caption>
+                        {{ formset.management_form }}
+                        <div class="fr-table fr-table--bordered">
+                            <table>
+                                <caption>Liste des logements associés à la convention</caption>
 
-                <thead>
-                <tr>
-                  <th scope="col" style='min-width:200px;'>Désignation {% include "common/mandatory_field.html" %}</th>
-                  <th scope="col" style='min-width:150px;'>Type {% include "common/mandatory_field.html" %}</th>
-                  <th scope="col" style='min-width:120px;'>Surface habitable {% include "common/mandatory_field.html" %}</th>
-                  <th scope="col" style='min-width:120px;'>Surface des annexes réelle {% include "common/mandatory_field.html" %}</th>
-                  <th scope="col" style='min-width:120px;'>Surface des annexes retenue dans la SU {% include "common/mandatory_field.html" %}</th>
-                  <th scope="col" style='min-width:120px;'>Surface Utile {% include "common/mandatory_field.html" %}</th>
-                  <th scope="col" style='min-width:120px;'>Loyer maxinum en € par m2 de surface utile {% include "common/mandatory_field.html" %}</th>
-                  <th scope="col" style='min-width:120px;'>Coefficient propre au logement {% include "common/mandatory_field.html" %}</th>
-                  <th scope="col" style='min-width:120px;'>Loyer maxinum du logement en € {% include "common/mandatory_field.html" %}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for form in formset %}
-                <tr>
-                  <td>
-                    {% include "common/form/input_text.html" with form_input=form.designation %}
-                  </td>
-                  <td>
-                    <select
-                      class="fr-select {% if form.typology.errors %}fr-select--error{% endif %}"
-                      id="{{form.typology.id_for_label}}"
-                      name="{{form.typology.html_name}}">
-                      <option value="" {% if not form.typology.value %}selected{% endif %} disabled hidden>Sélectionnez le prêteur</option>
-                      {% for typology in typologies %}
-                      <option value="{{typology.value}}"
-                        {% if typology.value  == form.typology.value %}selected{% endif %}>
-                        {{typology.label}}
-                      </option>
-                      {% endfor %}
-                    </select>
-                    {% for error in form.typology.errors %}
-                    <p id="select-error-desc-error" class="fr-error-text">
-                      {{ error }}
-                    </p>
-                    {% endfor %}
-                  </td>
-                  <td>
-                    {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" %}
-                  </td>
-                  <td>
-                    {% include "common/form/input_number.html" with form_input=form.surface_annexes step="0.01" %}
-                  </td>
-                  <td>
-                    {% include "common/form/input_number.html" with form_input=form.surface_annexes_retenue step="0.01" %}
-                  </td>
-                  <td>
-                    {% include "common/form/input_number.html" with form_input=form.surface_utile step="0.01" %}
-                  </td>
-                  <td>
-                    {% include "common/form/input_number.html" with form_input=form.loyer_par_metre_carre step="0.01" %}
-                  </td>
-                  <td>
-                    {% include "common/form/input_number.html" with form_input=form.coeficient step="0.001" %}
-                  </td>
-                  <td>
-                    {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" %}
-                  </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-          </div>
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style='min-width:200px;'>Désignation {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col" style='min-width:150px;'>Type {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col" style='min-width:120px;'>Surface habitable {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col" style='min-width:120px;'>Surface des annexes réelle {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col" style='min-width:120px;'>Surface des annexes retenue dans la SU {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col" style='min-width:120px;'>Surface Utile {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col" style='min-width:120px;'>Loyer maxinum en € par m2 de surface utile {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col" style='min-width:120px;'>Coefficient propre au logement {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col" style='min-width:120px;'>Loyer maxinum du logement en € {% include "common/mandatory_field.html" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for form in formset %}
+                                        <tr>
+                                            <td>
+                                                {% include "common/form/input_text.html" with form_input=form.designation %}
+                                            </td>
+                                            <td>
+                                                <select
+                                                    class="fr-select {% if form.typology.errors %}fr-select--error{% endif %}"
+                                                    id="{{form.typology.id_for_label}}"
+                                                    name="{{form.typology.html_name}}">
+                                                    <option value="" {% if not form.typology.value %}selected{% endif %} disabled hidden>Sélectionnez le prêteur</option>
+                                                    {% for typology in typologies %}
+                                                        <option value="{{typology.value}}"
+                                                            {% if typology.value  == form.typology.value %}selected{% endif %}>
+                                                            {{typology.label}}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                                {% for error in form.typology.errors %}
+                                                    <p id="select-error-desc-error" class="fr-error-text">
+                                                        {{ error }}
+                                                    </p>
+                                                {% endfor %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form.surface_annexes step="0.01" %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form.surface_annexes_retenue step="0.01" %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form.surface_utile step="0.01" %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form.loyer_par_metre_carre step="0.01" %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form.coeficient step="0.001" %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
+                    {% include "common/button/precedent.html" with precedent='conventions:step5' convention_uuid=convention.uuid %}
+                    {% include "common/button/suivant.html" with suivant='conventions:step6' convention_uuid=convention.uuid %}
+                </div>
+            </form>
         </div>
-      </div>
-      <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-        {% include "common/button/precedent.html" with precedent='conventions:step5' convention_uuid=convention.uuid %}
-        {% include "common/button/suivant.html" with suivant='conventions:step6' convention_uuid=convention.uuid %}
-      </div>
-    </form>
-  </div>
-</div>
+    </div>
 {% endblock %}

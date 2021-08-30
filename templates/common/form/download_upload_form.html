@@ -1,32 +1,32 @@
 <p>Pour éditer vos {{ what }}, il vous suffit de télécharger le modèle ci-dessous, d'ajouter ou de modifier votre liste de {{ what }}, puis de le téléverser à nouveau.<br>
-  <span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true">Attention, la liste des {{ what }} téléversée écrase la liste courante.</p>
+    <span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true">Attention, la liste des {{ what }} téléversée écrase la liste courante.</p>
 
-  <div class="fr-grid-row fr-grid-row--gutters fr-ml-3w">
+    <div class="fr-grid-row fr-grid-row--gutters fr-ml-3w">
 
-    <button type="button" class="fr-btn" onclick="location.href='{% url 'conventions:load_xlsx_model' convention_uuid=convention_uuid file_type=file_type %}'">
-      <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Télécharger le modèle !
-    </button>
-  </div>
-  <div class="fr-my-3w">Puis</p>
-  <div class="fr-grid-row fr-grid-row--gutters fr-ml-3w">
-    <div>
-      <button name="Upload" value=True class="fr-btn">
-        <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Téléverser le fichier de vos {{ what }}
-      </button>
+        <button type="button" class="fr-btn" onclick="location.href='{% url 'conventions:load_xlsx_model' convention_uuid=convention_uuid file_type=file_type %}'">
+            <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Télécharger le modèle !
+        </button>
     </div>
-    <div class="fr-ml-3w">
-      <input
-        class="fr-input {% if upform.file.errors %}fr-input--error{% endif %}"
-        aria-describedby="text-input-error-desc-error"
-        type="file"
-        id="{{upform.file.id_for_label}}"
-        name="{{upform.file.html_name}}"
-        value="{{ upform.file.value|default_if_none:'' }}">
-      {% for error in upform.file.errors %}
-        <p id="text-input-error-desc-error" class="fr-error-text">
-          {{ error }}
-        </p>
-      {% endfor %}
-    </div>
+    <div class="fr-my-3w">Puis</p>
+    <div class="fr-grid-row fr-grid-row--gutters fr-ml-3w">
+        <div>
+            <button name="Upload" value=True class="fr-btn">
+                <span class="fr-fi-file-download-line fr-mr-1w" aria-hidden="true"></span>Téléverser le fichier de vos {{ what }}
+            </button>
+        </div>
+        <div class="fr-ml-3w">
+            <input
+                class="fr-input {% if upform.file.errors %}fr-input--error{% endif %}"
+                aria-describedby="text-input-error-desc-error"
+                type="file"
+                id="{{upform.file.id_for_label}}"
+                name="{{upform.file.html_name}}"
+                value="{{ upform.file.value|default_if_none:'' }}">
+            {% for error in upform.file.errors %}
+                <p id="text-input-error-desc-error" class="fr-error-text">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </div>
 
-  </div>
+    </div>
