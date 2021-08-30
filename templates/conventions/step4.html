@@ -11,206 +11,62 @@
           {% include "common/convention_edit_info.html" with convention=convention %}
           {% include "common/mandatory_fields_info.html" %}
 
+          {% include "common/form/input_text.html" with form_input=form.permis_construire label="Numéro de permis construire" %}
 
-          <div class="fr-input-group {% if form.permis_construire.errors %}fr-select-group--error{% endif %}">
-            <label class="fr-label" for="{{form.permis_construire.id_for_label}}">
-              Numéro de permis construire
-            </label>
-            <input
-              class="fr-input {% if form.permis_construire.errors %}fr-input--error{% endif %}"
-              aria-describedby="text-input-error-desc-error"
-              type="text"
-              id="{{form.permis_construire.id_for_label}}"
-              name="permis_construire"
-              value="{{ form.permis_construire.value|default_if_none:'' }}">
-            {% for error in form.permis_construire.errors %}
-            <p id="text-input-error-desc-error" class="fr-error-text">
-              {{ error }}
-            </p>
-            {% endfor %}
+          <div class="fr-mb-2w">
+            <div class="fr-grid-row fr-grid-row--gutters">
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                {% include "common/form/input_date.html" with form_input=form.date_acte_notarie label="Date de l'acte notarié" %}
+              </div>
+              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                {% include "common/form/input_date.html" with form_input=form.date_achat label="Date d'achat" %}
+              </div>
+            </div>
           </div>
 
           <div class="fr-mb-2w">
             <div class="fr-grid-row fr-grid-row--gutters">
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                <div class="fr-input-group {% if form.date_acte_notarie.errors %}fr-select-group--error{% endif %}">
-                  <label class="fr-label" for="{{form.date_acte_notarie.id_for_label}}">
-                    Date de l'acte notarié
-                  </label>
-                  <div class="fr-input-wrap fr-fi-calendar-line fr-mt-1w" >
-                    <input
-                      class="fr-input {% if form.date_acte_notarie.errors %}fr-input--error{% endif %}"
-                      type="date"
-                      id="{{form.date_acte_notarie.id_for_label}}"
-                      name="date_acte_notarie"
-                      value="{{ form.date_acte_notarie.value }}">
-                  </div>
-                  {% for error in form.date_acte_notarie.errors %}
-                  <p id="text-input-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
+                {% include "common/form/input_date.html" with form_input=form.date_achevement_previsible label="Date d'achevement previsible" %}
               </div>
               <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                <div class="fr-input-group {% if form.date_achat.errors %}fr-select-group--error{% endif %}">
-                  <label class="fr-label" for="{{form.date_achat.id_for_label}}">
-                    Date d'achat
-                  </label>
-                  <div class="fr-input-wrap fr-fi-calendar-line fr-mt-1w" >
-                    <input
-                      class="fr-input {% if form.date_achat.errors %}fr-input--error{% endif %}"
-                      type="date"
-                      id="{{form.date_achat.id_for_label}}"
-                      name="date_achat"
-                      value="{{ form.date_achat.value }}">
-                  </div>
-                  {% for error in form.date_achat.errors %}
-                  <p id="text-input-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
+                {% include "common/form/input_date.html" with form_input=form.date_achevement label="Date d'achevement ou d'obtention de certificat deconformité" %}
               </div>
             </div>
           </div>
-
-
-          <div class="fr-mb-2w">
-            <div class="fr-grid-row fr-grid-row--gutters">
-              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                <div class="fr-input-group {% if form.date_achevement_previsible.errors %}fr-select-group--error{% endif %}">
-                  <label class="fr-label" for="{{form.date_achevement_previsible.id_for_label}}">
-                    Date d'achevement previsible
-                  </label>
-                  <div class="fr-input-wrap fr-fi-calendar-line fr-mt-1w" >
-                    <input
-                      class="fr-input {% if form.date_achevement_previsible.errors %}fr-input--error{% endif %}"
-                      type="date"
-                      id="{{form.date_achevement_previsible.id_for_label}}"
-                      name="date_achevement_previsible"
-                      value="{{ form.date_achevement_previsible.value }}">
-                  </div>
-                  {% for error in form.date_achevement_previsible.errors %}
-                  <p id="text-input-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
-              </div>
-              <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                <div class="fr-input-group {% if form.date_achevement.errors %}fr-select-group--error{% endif %}">
-                  <label class="fr-label" for="{{form.date_achevement.id_for_label}}">
-                    Date d'achevement ou d'obtention de certificat deconformité
-                  </label>
-                  <div class="fr-input-wrap fr-fi-calendar-line fr-mt-1w" >
-                    <input
-                      class="fr-input {% if form.date_achevement.errors %}fr-input--error{% endif %}"
-                      type="date"
-                      id="{{form.date_achevement.id_for_label}}"
-                      name="date_achevement"
-                      value="{{ form.date_achevement.value }}">
-                  </div>
-                  {% for error in form.date_achat.errors %}
-                  <p id="text-input-error-desc-error" class="fr-error-text">
-                    {{ error }}
-                  </p>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-          </div>
-
 
           <div class="fr-input-group {% if form.vendeur.errors %}fr-select-group--error{% endif %}">
-            <label class="fr-label" for="{{form.vendeur.id_for_label}}">
+            <label class="fr-label fr-mb-1w" for="{{form.vendeur.id_for_label}}">
               Vendeur
               {% include "common/mandatory_field.html" %}
-              <br>
-              <button class="fr-btn fr-btn--secondary fr-text--sm" onclick="" disabled title='fonctionnalité bientôt disponible'>
-                <span class="fr-fi-download-line fr-mr-1w fr-fi--sm" aria-hidden="true"></span>Téléversez une image
-              </button>
-              <i class="fr-text--sm">ou remplissez le champ ci-dessous</i>
             </label>
-            <textarea
-              class="fr-input {% if form.vendeur.errors %}fr-input--error{% endif %}"
-              aria-describedby="text-input-error-desc-error"
-              type="text" id="{{form.vendeur.id_for_label}}"
-              name="vendeur"
-              rows="5">{{ form.vendeur.value|default_if_none:'' }}</textarea>
-            {% for error in form.vendeur.errors %}
-            <p id="text-input-error-desc-error" class="fr-error-text">
-              {{ error }}
-            </p>
-            {% endfor %}
+            {% include "common/form/input_upload_button.html"%}
+            {% include "common/form/input_textarea.html" with form_input=form.vendeur rows=5 %}
           </div>
-
 
           <div class="fr-input-group {% if form.acquereur.errors %}fr-select-group--error{% endif %}">
-            <label class="fr-label" for="{{form.acquereur.id_for_label}}">
+            <label class="fr-label fr-mb-1w" for="{{form.acquereur.id_for_label}}">
               Acquéreur
               {% include "common/mandatory_field.html" %}
-              <br>
-              <button class="fr-btn fr-btn--secondary fr-text--sm" onclick="" disabled title='fonctionnalité bientôt disponible'>
-                <span class="fr-fi-download-line fr-mr-1w fr-fi--sm" aria-hidden="true"></span>Téléversez une image
-              </button>
-              <i class="fr-text--sm">ou remplissez le champ ci-dessous</i>
             </label>
-            <textarea
-              class="fr-input {% if form.acquereur.errors %}fr-input--error{% endif %}"
-              aria-describedby="text-input-error-desc-error"
-              type="text" id="{{form.acquereur.id_for_label}}"
-              name="acquereur"
-              rows="5">{{ form.acquereur.value|default_if_none:'' }}</textarea>
-            {% for error in form.acquereur.errors %}
-            <p id="text-input-error-desc-error" class="fr-error-text">
-              {{ error }}
-            </p>
-            {% endfor %}
+            {% include "common/form/input_upload_button.html"%}
+            {% include "common/form/input_textarea.html" with form_input=form.acquereur rows=5 %}
           </div>
-
 
           <div class="fr-input-group {% if form.reference_notaire.errors %}fr-select-group--error{% endif %}">
-            <label class="fr-label" for="{{form.reference_notaire.id_for_label}}">
-              Référence du notaire<br>
-              <button class="fr-btn fr-btn--secondary fr-text--sm" onclick="" disabled title='fonctionnalité bientôt disponible'>
-                <span class="fr-fi-download-line fr-mr-1w fr-fi--sm" aria-hidden="true"></span>Téléversez une image
-              </button>
-              <i class="fr-text--sm">ou remplissez le champ ci-dessous</i>
+            <label class="fr-label fr-mb-1w" for="{{form.reference_notaire.id_for_label}}">
+              Référence du notaire
             </label>
-            <textarea
-              class="fr-input {% if form.reference_notaire.errors %}fr-input--error{% endif %}"
-              aria-describedby="text-input-error-desc-error"
-              type="text" id="{{form.reference_notaire.id_for_label}}"
-              name="reference_notaire"
-              rows="5">{{ form.reference_notaire.value|default_if_none:'' }}</textarea>
-            {% for error in form.reference_notaire.errors %}
-            <p id="text-input-error-desc-error" class="fr-error-text">
-              {{ error }}
-            </p>
-            {% endfor %}
+            {% include "common/form/input_upload_button.html"%}
+            {% include "common/form/input_textarea.html" with form_input=form.reference_notaire rows=5 %}
           </div>
 
-
           <div class="fr-input-group {% if form.reference_publication_acte.errors %}fr-select-group--error{% endif %}">
-            <label class="fr-label" for="{{form.reference_publication_acte.id_for_label}}">
-              Référence de publication de l'acte<br>
-              <button class="fr-btn fr-btn--secondary fr-text--sm" onclick="" disabled title='fonctionnalité bientôt disponible'>
-                <span class="fr-fi-download-line fr-mr-1w fr-fi--sm" aria-hidden="true"></span>Téléversez une image
-              </button>
-              <i class="fr-text--sm">ou remplissez le champ ci-dessous</i>
-            </label>
-            <textarea
-              class="fr-input {% if form.reference_publication_acte.errors %}fr-input--error{% endif %}"
-              aria-describedby="text-input-error-desc-error"
-              type="text" id="{{form.reference_publication_acte.id_for_label}}"
-              name="reference_publication_acte"
-              rows="5">{{ form.reference_publication_acte.value|default_if_none:'' }}</textarea>
-            {% for error in form.reference_publication_acte.errors %}
-            <p id="text-input-error-desc-error" class="fr-error-text">
-              {{ error }}
-            </p>
-            {% endfor %}
+            <label class="fr-label fr-mb-1w" for="{{form.reference_publication_acte.id_for_label}}">
+              Référence de publication de l'acte
+              </label>
+              {% include "common/form/input_upload_button.html"%}
+              {% include "common/form/input_textarea.html" with form_input=form.reference_publication_acte rows=5 %}
           </div>
 
         </div>

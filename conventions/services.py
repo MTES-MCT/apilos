@@ -254,7 +254,10 @@ def logements_update(request, convention_uuid):
     if request.method == 'POST':
 
         if request.POST.get("Upload", False):
-            print('todo')
+            formset = PretFormSet(request.POST)
+            upform = UploadForm(request.POST, request.FILES)
+            if upform.is_valid():
+                print('todo')
         # When the user cliked on "Enregistrer et Suivant"
         else:
             formset = LogementFormSet(request.POST)
