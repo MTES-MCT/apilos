@@ -14,16 +14,21 @@
 
                         <div class="fr-input-group {% if form.date_fin_conventionnement.errors %}fr-select-group--error{% endif %}">
                             <label class="fr-label" for="{{form.date_fin_conventionnement.id_for_label}}">
-                                Durée de la convention
+                                Date de fin de la convention
                             </label>
                             {% include "common/form/input_date.html" with form_input=form.date_fin_conventionnement %}
                         </div>
 
                         <hr class="fr-col-12 fr-my-3w">
 
-                        {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='prets' upform=upform  what='prêts'%}
+                        {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='prets' upform=upform  what='prêts' import_errors=import_errors %}
 
                         <hr class="fr-col-12 fr-my-3w">
+                        {% for error in import_warnings %}
+                            <p id="text-input-error-desc-error" class="fr-error-text">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
 
                         {{ formset.management_form }}
                         <div class="fr-table fr-table--bordered">
@@ -32,11 +37,12 @@
 
                                 <thead>
                                     <tr>
-                                        <th scope="col">Numéro {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col">Numéro</th>
                                         <th scope="col">Date d'octroi</th>
                                         <th scope="col">Durée</th>
                                         <th scope="col">Montant {% include "common/mandatory_field.html" %}</th>
                                         <th scope="col">Préteur</th>
+                                        <th scope="col">Précisee le prêteur si 'Autre'</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -72,6 +78,9 @@
                                                         {{ error }}
                                                     </p>
                                                 {% endfor %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_text.html" with form_input=form_pret.autre %}
                                             </td>
                                         </tr>
                                     {% endfor %}

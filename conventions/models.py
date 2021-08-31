@@ -1,6 +1,5 @@
-from django.db import models
-
 import uuid
+import datetime
 
 from django.db import models
 from programmes.models import Financement
@@ -48,13 +47,11 @@ class Preteur(models.TextChoices):
     ETAT = "ETAT", "Etat"
     EPCI = "EPCI", "EPCI"
     REGION = "REGION", "Région"
-    CDCF = "CDCF", "Caisse des dépots et des consignations froncière"
-    CDCL = "CDCL", "Caisse des dépots et des consignations locative"
+    CDCF = "CDCF", "CDC froncière"
+    CDCL = "CDCL", "CDC locative"
     AUTRE = "AUTRE", "Autre"
 
-
 class Pret(models.Model):
-
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     bailleur = models.ForeignKey(
@@ -68,6 +65,17 @@ class Pret(models.Model):
     )
     autre = models.CharField(null=True, max_length=255)
     date_octroi = models.DateField(null=True)
-    numero = models.CharField(max_length=255)
+    numero = models.CharField(null=True, max_length=255)
     duree = models.IntegerField(null=True)
     montant = models.FloatField()
+
+    # Needed to import xlsx files
+    import_mapping = {
+        "Numéro": numero,
+        "Date d'octroi": date_octroi,
+        "Durée": duree,
+        "Montant": montant,
+        "Prêteur": preteur,
+        "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": autre,
+    }
+    sheet_name = "Prêts"
