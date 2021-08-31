@@ -19,6 +19,7 @@ class ConventionCommentForm(forms.Form):
 class ConventionFinancementForm(forms.Form):
 
     date_fin_conventionnement = forms.DateField(required=False)
+    fond_propre = forms.FloatField(required=False)
 
 
 class PretForm(forms.Form):
@@ -54,6 +55,7 @@ class UploadForm(forms.Form):
 
     file = FileField(
         error_messages={
-            "required": "Vous devez séléctionner un fichier avant de cliquer sur le bouton 'Téléverser'",
+            "required":
+                "Vous devez séléctionner un fichier avant de cliquer sur le bouton 'Téléverser'",
         }
     )
