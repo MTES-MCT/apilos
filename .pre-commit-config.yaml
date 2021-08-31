@@ -7,6 +7,10 @@ repos:
     -   id: trailing-whitespace
     -   id: check-yaml
     -   id: check-added-large-files
+-   repo: https://github.com/pycqa/pylint
+    rev: v2.10.2
+    hooks:
+    -   id: pylint
 -   repo: https://github.com/rtts/djhtml
     rev: v1.4.9
     hooks:
