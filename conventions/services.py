@@ -1,10 +1,9 @@
 import datetime
 
-from zipfile import BadZipFile
-from django.db import models
-from openpyxl import load_workbook
 from io import BytesIO
 from enum import Enum
+from zipfile import BadZipFile
+from openpyxl import load_workbook
 
 from conventions.models import Convention, Preteur, Pret
 from programmes.models import Lot
@@ -79,7 +78,6 @@ def select_programme_create(request):
 
 
 def select_programme_update(request, convention_uuid):
-    # TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
 
     if request.method == "POST":
@@ -113,7 +111,6 @@ def select_programme_update(request, convention_uuid):
 
 
 def bailleur_update(request, convention_uuid):
-    # TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
     bailleur = convention.bailleur
 
@@ -156,7 +153,6 @@ def bailleur_update(request, convention_uuid):
 
 
 def programme_update(request, convention_uuid):
-    # TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
     programme = convention.programme
 
@@ -201,7 +197,6 @@ def programme_update(request, convention_uuid):
 
 
 def programme_cadastral_update(request, convention_uuid):
-    # TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
     programme = convention.programme
 
@@ -245,7 +240,6 @@ def programme_cadastral_update(request, convention_uuid):
 
 
 def convention_financement(request, convention_uuid):
-    # TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
     import_errors = None
     import_warnings = None
@@ -272,6 +266,9 @@ def convention_financement(request, convention_uuid):
                 convention.date_fin_conventionnement = form.cleaned_data[
                     "date_fin_conventionnement"
                 ]
+                convention.fond_propre = form.cleaned_data[
+                    "fond_propre"
+                ]
                 convention.save()
                 # MANAGE formset save in DB
                 convention.pret_set.all().delete()
@@ -286,7 +283,7 @@ def convention_financement(request, convention_uuid):
                         preteur=form_pret.cleaned_data["preteur"],
                         #                        autre = form_pret.cleaned_data['autre'],
                     )
-                    pret.save
+                    pret.save()
 
                 # All is OK -> Next:
                 return {
@@ -316,6 +313,7 @@ def convention_financement(request, convention_uuid):
                 "date_fin_conventionnement": format_date_for_form(
                     convention.date_fin_conventionnement
                 ),
+                "fond_propre": convention.fond_propre,
             }
         )
     return {
@@ -330,7 +328,6 @@ def convention_financement(request, convention_uuid):
 
 
 def logements_update(request, convention_uuid):
-    # TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
 
     if request.method == "POST":
@@ -353,7 +350,6 @@ def logements_update(request, convention_uuid):
         logements = convention.lot.logement_set.all()
         for logement in logements:
             initial.append({"designation": logement.designation})
-        # TODO: remove the if : only for test purpose
         if len(initial) == 0:
             initial.append(
                 {
@@ -393,7 +389,6 @@ def logements_update(request, convention_uuid):
 
 
 def convention_comments(request, convention_uuid):
-    # TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
 
     if request.method == "POST":
@@ -415,24 +410,26 @@ def convention_comments(request, convention_uuid):
 
 
 def handle_uploaded_file(my_file, myClass):
-
+    # pylint: disable=R0912,R0915
     import_mapping = myClass.import_mapping
-    sheet_name = myClass.sheet_name
-    file_in_memory = my_file.read()
     try:
-        my_wb = load_workbook(filename=BytesIO(file_in_memory))
+        my_wb = load_workbook(filename=BytesIO(my_file.read()))
     except BadZipFile:
         return {
             "success": ReturnStatus.ERROR,
-            'errors':[Exception("Le fichier importé ne semble pas être du bon format, 'xlsx' est le format attendu")]
+            'errors':[Exception(
+                "Le fichier importé ne semble pas être du bon format, 'xlsx' est le format attendu"
+            )]
         }
 
     try:
-        my_ws = my_wb[sheet_name]
+        my_ws = my_wb[myClass.sheet_name]
     except KeyError:
         return {
             "success": ReturnStatus.ERROR,
-            'errors': [Exception("Le fichier importé doit avoir une feuille nommée 'Prêts'")]
+            'errors': [Exception(
+                f"Le fichier importé doit avoir une feuille nommée '{myClass.sheet_name}'"
+            )]
         }
     import_warnings = []
     column_from_index = {}
@@ -471,11 +468,12 @@ def handle_uploaded_file(my_file, myClass):
 
             # Date case
             if model_field.get_internal_type() == 'DateField':
-                if type(cell.value) is datetime.datetime:
+                if isinstance(cell.value, datetime.datetime):
                     value = format_date_for_form(cell.value)
                 else:
                     import_warnings.append(Exception(
-                        f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' de la colonne {column_from_index[cell.column]} " +
+                        f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
+                        "de la colonne {column_from_index[cell.column]} " +
                         "doit être une date"
                     ))
 
@@ -486,40 +484,44 @@ def handle_uploaded_file(my_file, myClass):
                     value = next((x[0] for x in model_field.choices if x[1] == cell.value), None)
                     if value is None: # value is not Null but not in the choices neither
                         import_warnings.append(Exception(
-                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' de la colonne {column_from_index[cell.column]} " +
+                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
+                            "de la colonne {column_from_index[cell.column]} " +
                             f"doit faire partie des valeurs : {', '.join(Preteur.labels)}"
                         ))
 
             # Float case
             elif model_field.get_internal_type() == 'FloatField':
                 if cell.value is not None:
-                    if isinstance(cell.value, int) or isinstance(cell.value, float):
+                    if isinstance(cell.value, (float, int)):
                         value = float(cell.value)
                     else:
                         import_warnings.append(Exception(
-                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' de la colonne {column_from_index[cell.column]} " +
+                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
+                            "de la colonne {column_from_index[cell.column]} " +
                             "doit être une valeur numérique"
                         ))
 
             # Integer case
             elif model_field.get_internal_type() == 'IntegerField':
                 if cell.value is not None:
-                    if isinstance(cell.value, int) or isinstance(cell.value, float):
+                    if isinstance(cell.value, (float, int)):
                         value = int(cell.value)
                     else:
                         import_warnings.append(Exception(
-                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' de la colonne {column_from_index[cell.column]} " +
+                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
+                            "de la colonne {column_from_index[cell.column]} " +
                             "doit être une valeur numérique"
                         ))
 
             # String case
             elif model_field.get_internal_type() == 'CharField':
                 if cell.value is not None:
-                    if isinstance(cell.value, str) or isinstance(cell.value, int) or isinstance(cell.value, float):
+                    if isinstance(cell.value, (float, int, str)):
                         value = cell.value
                     else:
                         import_warnings.append(Exception(
-                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' de la colonne {column_from_index[cell.column]} " +
+                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
+                            "de la colonne {column_from_index[cell.column]} " +
                             "doit être une valeur alphanumeric"
                         ))
             my_row[model_field.name] = value

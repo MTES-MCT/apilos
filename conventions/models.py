@@ -1,5 +1,4 @@
 import uuid
-import datetime
 
 from django.db import models
 from programmes.models import Financement
@@ -8,7 +7,7 @@ from programmes.models import Financement
 class Convention(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    numero = models.CharField(max_length=255)
+    numero = models.CharField(max_length=255, null=True)
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
@@ -22,6 +21,8 @@ class Convention(models.Model):
         choices=Financement.choices,
         default=Financement.PLUS,
     )
+    # fix me: weird to keep fond_propre here
+    fond_propre = models.FloatField(null=True)
     comments = models.TextField(null=True)
     soumis_le = models.DateTimeField(null=True)
     valide_le = models.DateTimeField(null=True)
@@ -29,18 +30,19 @@ class Convention(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.programme.nom} - {self.lot.financement} - {self.programme.ville} - {self.programme.nb_logements} lgts"
+        return (f"{self.programme.nom} - {self.lot.financement} - " +
+            f"{self.programme.ville} - {self.programme.nb_logements} lgts")
 
-    # TODO:
-    # gérer un decorateur : https://docs.djangoproject.com/en/dev/howto/custom-template-tags/#howto-custom-template-tags
+    # to do:
+    # gérer un decorateur :
+    # https://docs.djangoproject.com/en/dev/howto/custom-template-tags/#howto-custom-template-tags
     # Ou créé un champ statut
     def statut(self):
         if self.valide_le:
             return "Validé"
-        elif self.soumis_le:
+        if self.soumis_le:
             return "En cours d'instruction"
-        else:
-            return "Brouillon"
+        return "Brouillon"
 
 
 class Preteur(models.TextChoices):
