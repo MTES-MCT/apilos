@@ -42,6 +42,7 @@
                                         <th scope="col">Durée</th>
                                         <th scope="col">Montant {% include "common/mandatory_field.html" %}</th>
                                         <th scope="col">Préteur</th>
+                                        <th scope="col">Précisee le prêteur si 'Autre'</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -77,6 +78,9 @@
                                                         {{ error }}
                                                     </p>
                                                 {% endfor %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_text.html" with form_input=form_pret.autre %}
                                             </td>
                                         </tr>
                                     {% endfor %}

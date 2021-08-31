@@ -460,39 +460,69 @@ def handle_uploaded_file(my_file, myClass):
             if cell.column not in column_from_index:
                 continue
 
-            value = None
-
             # Check the empty lines to don't fill it
             if cell.value:
                 empty_line = False
             else:
                 continue
 
-            if  "class" in import_mapping[column_from_index[cell.column]]:
-                # Date case
-                if import_mapping[column_from_index[cell.column]]["class"] == datetime.datetime:
-                    if cell.value is not None and type(cell.value) is datetime.datetime:
-                        value = format_date_for_form(cell.value)
+            value = None
+            model_field = import_mapping[column_from_index[cell.column]]
+
+            # Date case
+            if model_field.get_internal_type() == 'DateField':
+                if type(cell.value) is datetime.datetime:
+                    value = format_date_for_form(cell.value)
+                else:
+                    import_warnings.append(Exception(
+                        f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' de la colonne {column_from_index[cell.column]} " +
+                        "doit être une date"
+                    ))
+
+            # TextChoices case
+            elif (model_field.get_internal_type() == 'CharField' and
+                  model_field.choices is not None):
+                if cell.value is not None:
+                    value = next((x[0] for x in model_field.choices if x[1] == cell.value), None)
+                    if value is None: # value is not Null but not in the choices neither
+                        import_warnings.append(Exception(
+                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' de la colonne {column_from_index[cell.column]} " +
+                            f"doit faire partie des valeurs : {', '.join(Preteur.labels)}"
+                        ))
+
+            # Float case
+            elif model_field.get_internal_type() == 'FloatField':
+                if cell.value is not None:
+                    if isinstance(cell.value, int) or isinstance(cell.value, float):
+                        value = float(cell.value)
                     else:
                         import_warnings.append(Exception(
                             f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' de la colonne {column_from_index[cell.column]} " +
-                            f"doit être une date"
+                            "doit être une valeur numérique"
                         ))
 
-                # TextChoices case
-                elif issubclass(import_mapping[column_from_index[cell.column]]["class"], models.TextChoices):
-                    if cell.value is not None:
-                        value = next((x[0] for x in Preteur.choices if x[1] == cell.value), None)
-                        if value is None: # value is not Null but not in the choices neither
-                            import_warnings.append(Exception(
-                                f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' de la colonne {column_from_index[cell.column]} " +
-                                f"doit faire partie des valeurs : {', '.join(Preteur.labels)}"
-                            ))
+            # Integer case
+            elif model_field.get_internal_type() == 'IntegerField':
+                if cell.value is not None:
+                    if isinstance(cell.value, int) or isinstance(cell.value, float):
+                        value = int(cell.value)
+                    else:
+                        import_warnings.append(Exception(
+                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' de la colonne {column_from_index[cell.column]} " +
+                            "doit être une valeur numérique"
+                        ))
 
             # String case
-            else:
-                value = cell.value
-            my_row[import_mapping[column_from_index[cell.column]]["name"]] = value
+            elif model_field.get_internal_type() == 'CharField':
+                if cell.value is not None:
+                    if isinstance(cell.value, str) or isinstance(cell.value, int) or isinstance(cell.value, float):
+                        value = cell.value
+                    else:
+                        import_warnings.append(Exception(
+                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' de la colonne {column_from_index[cell.column]} " +
+                            "doit être une valeur alphanumeric"
+                        ))
+            my_row[model_field.name] = value
 
         # Ignore if the line is empty
         if not empty_line:

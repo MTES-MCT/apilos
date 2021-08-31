@@ -52,18 +52,6 @@ class Preteur(models.TextChoices):
     AUTRE = "AUTRE", "Autre"
 
 class Pret(models.Model):
-    import_mapping = {
-        "Numéro": {"name": "numero"},
-        "Date d'octroi": {"name": "date_octroi", "class": datetime.datetime},
-        "Durée": {"name": "duree"},
-        "Montant": {"name": "montant"},
-        "Prêteur": {"name": "preteur", "class": Preteur},
-        "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": {
-            "name": "autre"
-        },
-    }
-    sheet_name = "Prêts"
-
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     bailleur = models.ForeignKey(
@@ -80,3 +68,14 @@ class Pret(models.Model):
     numero = models.CharField(null=True, max_length=255)
     duree = models.IntegerField(null=True)
     montant = models.FloatField()
+
+    # Needed to import xlsx files
+    import_mapping = {
+        "Numéro": numero,
+        "Date d'octroi": date_octroi,
+        "Durée": duree,
+        "Montant": montant,
+        "Prêteur": preteur,
+        "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": autre,
+    }
+    sheet_name = "Prêts"
