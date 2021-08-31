@@ -1,3 +1,11 @@
+import datetime
+
+from zipfile import BadZipFile
+from django.db import models
+from openpyxl import load_workbook
+from io import BytesIO
+from enum import Enum
+
 from conventions.models import Convention, Preteur, Pret
 from programmes.models import Lot
 from programmes.forms import (
@@ -14,9 +22,10 @@ from .forms import (
     UploadForm,
 )
 
-from openpyxl import load_workbook
-from io import BytesIO
-
+class ReturnStatus(Enum):
+    SUCCESS = 'SUCCESS'
+    ERROR = 'ERROR'
+    WARNING = 'WARNING'
 
 def format_date_for_form(date):
     return date.strftime("%Y-%m-%d") if date is not None else ""
@@ -52,7 +61,7 @@ def select_programme_create(request):
             convention.save()
             # All is OK -> Next:
             return {
-                "success": True,
+                "success": ReturnStatus.SUCCESS,
                 "convention": convention,
                 "form": form,
             }  # HttpResponseRedirect(reverse('conventions:step2', args=[convention.uuid]) )
@@ -63,7 +72,7 @@ def select_programme_create(request):
 
     programmes = conventions_step1(request, {})
     return {
-        "success": False,
+        "success": ReturnStatus.ERROR,
         "programmes": programmes,
         "form": form,
     }  # render(request, "conventions/step1.html", {'form': form, 'programmes': programmes})
@@ -84,7 +93,7 @@ def select_programme_update(request, convention_uuid):
             convention.financement = lot.financement
             convention.save()
             # All is OK -> Next:
-            return {"success": True, "convention": convention, "form": form}
+            return {"success": ReturnStatus.SUCCESS, "convention": convention, "form": form}
 
     # If this is a GET (or any other method) create the default form.
     else:
@@ -96,7 +105,7 @@ def select_programme_update(request, convention_uuid):
 
     programmes = conventions_step1(request, {})
     return {
-        "success": False,
+        "success": ReturnStatus.ERROR,
         "programmes": programmes,
         "convention_uuid": convention_uuid,
         "form": form,
@@ -123,7 +132,7 @@ def bailleur_update(request, convention_uuid):
             bailleur.dg_date_deliberation = form.cleaned_data["dg_date_deliberation"]
             bailleur.save()
             # All is OK -> Next:
-            return {"success": True, "convention": convention, "form": form}
+            return {"success": ReturnStatus.SUCCESS, "convention": convention, "form": form}
 
     # If this is a GET (or any other method) create the default form.
     else:
@@ -143,7 +152,7 @@ def bailleur_update(request, convention_uuid):
             }
         )
 
-    return {"success": False, "convention": convention, "form": form}
+    return {"success": ReturnStatus.ERROR, "convention": convention, "form": form}
 
 
 def programme_update(request, convention_uuid):
@@ -169,7 +178,7 @@ def programme_update(request, convention_uuid):
             programme.nb_bureaux = form.cleaned_data["nb_bureaux"]
             programme.save()
             # All is OK -> Next:
-            return {"success": True, "convention": convention, "form": form}
+            return {"success": ReturnStatus.SUCCESS, "convention": convention, "form": form}
 
     # If this is a GET (or any other method) create the default form.
     else:
@@ -188,7 +197,7 @@ def programme_update(request, convention_uuid):
             }
         )
 
-    return {"success": False, "convention": convention, "form": form}
+    return {"success": ReturnStatus.ERROR, "convention": convention, "form": form}
 
 
 def programme_cadastral_update(request, convention_uuid):
@@ -214,7 +223,7 @@ def programme_cadastral_update(request, convention_uuid):
             ]
             programme.save()
             # All is OK -> Next:
-            return {"success": True, "convention": convention, "form": form}
+            return {"success": ReturnStatus.SUCCESS, "convention": convention, "form": form}
     else:
         form = ProgrammmeCadastralForm(
             initial={
@@ -232,12 +241,14 @@ def programme_cadastral_update(request, convention_uuid):
             }
         )
 
-    return {"success": False, "convention": convention, "form": form}
+    return {"success": ReturnStatus.ERROR, "convention": convention, "form": form}
 
 
 def convention_financement(request, convention_uuid):
     # TODO: gestion du 404
     convention = Convention.objects.get(uuid=convention_uuid)
+    import_errors = None
+    import_warnings = None
 
     if request.method == "POST":
         # When the user cliked on "Téléverser" button
@@ -246,8 +257,12 @@ def convention_financement(request, convention_uuid):
             formset = PretFormSet(request.POST)
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                objects = handle_uploaded_file(request.FILES["file"])
-                formset = PretFormSet(initial=objects)
+                result = handle_uploaded_file(request.FILES["file"], Pret)
+                if result['success'] != ReturnStatus.ERROR:
+                    formset = PretFormSet(initial=result['objects'])
+                    import_warnings = result['import_warnings']
+                else:
+                    import_errors = result['errors']
         # When the user cliked on "Enregistrer et Suivant"
         else:
             form = ConventionFinancementForm(request.POST)
@@ -275,7 +290,7 @@ def convention_financement(request, convention_uuid):
 
                 # All is OK -> Next:
                 return {
-                    "success": True,
+                    "success": ReturnStatus.SUCCESS,
                     "convention": convention,
                     "form": form,
                     "formset": formset,
@@ -304,11 +319,13 @@ def convention_financement(request, convention_uuid):
             }
         )
     return {
-        "success": False,
+        "success": ReturnStatus.ERROR,
         "convention": convention,
         "form": form,
         "formset": formset,
         "upform": upform,
+        "import_errors": import_errors,
+        "import_warnings": import_warnings,
     }
 
 
@@ -329,7 +346,7 @@ def logements_update(request, convention_uuid):
             upform = UploadForm()
             print("todo")
 
-            return {"success": True, "convention": convention}
+            return {"success": ReturnStatus.SUCCESS, "convention": convention}
 
     else:
         initial = []
@@ -368,7 +385,7 @@ def logements_update(request, convention_uuid):
         upform = UploadForm()
 
     return {
-        "success": False,
+        "success": ReturnStatus.ERROR,
         "convention": convention,
         "formset": formset,
         "upform": upform,
@@ -385,7 +402,7 @@ def convention_comments(request, convention_uuid):
             convention.comments = form.cleaned_data["comments"]
             convention.save()
             # All is OK -> Next:
-            return {"success": True, "convention": convention, "form": form}
+            return {"success": ReturnStatus.SUCCESS, "convention": convention, "form": form}
 
     else:
         form = ConventionCommentForm(
@@ -394,45 +411,44 @@ def convention_comments(request, convention_uuid):
             }
         )
 
-    return {"success": False, "convention": convention, "form": form}
+    return {"success": ReturnStatus.ERROR, "convention": convention, "form": form}
 
 
-import datetime
+def handle_uploaded_file(my_file, myClass):
 
-
-def handle_uploaded_file(my_file):
-
-    pret_mapping = {
-        "Numéro": {"name": "numero"},
-        "Date d'octroi": {"name": "date_octroi", "type": "Date"},
-        "Durée": {"name": "duree"},
-        "Montant": {"name": "montant"},
-        "Prêteur": {"name": "preteur", "type": Preteur},
-        "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": {
-            "name": "autre"
-        },
-    }
-
-    preteur = {}
-    for choice in Preteur.choices:
-        preteur[choice[1]] = choice[0]
-
+    import_mapping = myClass.import_mapping
+    sheet_name = myClass.sheet_name
     file_in_memory = my_file.read()
-    my_wb = load_workbook(filename=BytesIO(file_in_memory))
-    if not my_wb.sheetnames:
-        print("Error, the worksheet is not compatible, no sheet detected")
-        return []
-    sheet_name = "Prêts"
-    my_ws = my_wb[sheet_name]
-    if not my_ws:
-        print(
-            "Error, the worksheet is not compatible, sheet named 'Prêts' is not detected"
-        )
-        return []
+    try:
+        my_wb = load_workbook(filename=BytesIO(file_in_memory))
+    except BadZipFile:
+        return {
+            "success": ReturnStatus.ERROR,
+            'errors':[Exception("Le fichier importé ne semble pas être du bon format, 'xlsx' est le format attendu")]
+        }
+
+    try:
+        my_ws = my_wb[sheet_name]
+    except KeyError:
+        return {
+            "success": ReturnStatus.ERROR,
+            'errors': [Exception("Le fichier importé doit avoir une feuille nommée 'Prêts'")]
+        }
+    import_warnings = []
     column_from_index = {}
-    for my_tuple in my_ws["A1":"F1"]:
-        for cell in my_tuple:
+    for col in my_ws.iter_cols(min_col=1, max_col=my_ws.max_column, min_row=1, max_row=1):
+        for cell in col:
+            if cell.value is None:
+                continue
+            if cell.value not in import_mapping:
+                import_warnings.append(Exception(
+                    f"La colonne nommée '{cell.value}' est inconnue, elle sera ignorée. " +
+                    f"Les colonnes attendues sont : {', '.join(import_mapping.keys())}"
+                ))
+                continue
             column_from_index[cell.column] = str(cell.value).strip()
+
+    # transform each line into object
     my_objects = []
     for row in my_ws.iter_rows(
         min_row=2, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
@@ -440,22 +456,50 @@ def handle_uploaded_file(my_file):
         my_row = {}
         empty_line = True
         for cell in row:
-            # Check the empty lines
+            # Ignore unknown column
+            if cell.column not in column_from_index:
+                continue
+
+            value = None
+
+            # Check the empty lines to don't fill it
             if cell.value:
                 empty_line = False
-            if type(cell.value) is datetime.datetime:
-                # Error managment
-                value = format_date_for_form(cell.value)
-            elif (
-                "type" in pret_mapping[column_from_index[cell.column]]
-                and pret_mapping[column_from_index[cell.column]]["type"] == Preteur
-            ):
-                if cell.value is not None:
-                    value = preteur[cell.value] if cell.value in preteur else None
             else:
-                value = str(cell.value).strip()
-            my_row[pret_mapping[column_from_index[cell.column]]["name"]] = value
+                continue
+
+            if  "class" in import_mapping[column_from_index[cell.column]]:
+                # Date case
+                if import_mapping[column_from_index[cell.column]]["class"] == datetime.datetime:
+                    if cell.value is not None and type(cell.value) is datetime.datetime:
+                        value = format_date_for_form(cell.value)
+                    else:
+                        import_warnings.append(Exception(
+                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' de la colonne {column_from_index[cell.column]} " +
+                            f"doit être une date"
+                        ))
+
+                # TextChoices case
+                elif issubclass(import_mapping[column_from_index[cell.column]]["class"], models.TextChoices):
+                    if cell.value is not None:
+                        value = next((x[0] for x in Preteur.choices if x[1] == cell.value), None)
+                        if value is None: # value is not Null but not in the choices neither
+                            import_warnings.append(Exception(
+                                f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' de la colonne {column_from_index[cell.column]} " +
+                                f"doit faire partie des valeurs : {', '.join(Preteur.labels)}"
+                            ))
+
+            # String case
+            else:
+                value = cell.value
+            my_row[import_mapping[column_from_index[cell.column]]["name"]] = value
+
         # Ignore if the line is empty
         if not empty_line:
             my_objects.append(my_row)
-    return my_objects
+
+    return {
+        "success": ReturnStatus.SUCCESS if len(import_warnings) == 0 else ReturnStatus.WARNING,
+        'objects': my_objects,
+        "import_warnings": import_warnings,
+    }

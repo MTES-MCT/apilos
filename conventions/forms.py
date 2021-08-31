@@ -24,10 +24,9 @@ class ConventionFinancementForm(forms.Form):
 class PretForm(forms.Form):
 
     numero = forms.CharField(
-        required=True,
+        required=False,
         max_length=255,
         error_messages={
-            "required": "Le numero de prêt est obligatoire",
             "max_length": "Le numero ne doit pas excéder 255 characters",
         },
     )

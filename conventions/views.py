@@ -1,12 +1,15 @@
+import os
+
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
+from django.conf import settings
 
 from programmes.models import TypeHabitat, TypeOperation, TypologieLogement
 from .models import Preteur
 from . import services
-
+from .services import ReturnStatus
 
 NB_STEPS = 9
 
@@ -24,7 +27,7 @@ def index(request):
 @permission_required("convention.change_convention")
 def select_programme_create(request):
     result = services.select_programme_create(request)
-    if result["success"]:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:step2", args=[result["convention"].uuid])
         )
@@ -39,7 +42,7 @@ def select_programme_create(request):
 @permission_required("convention.change_convention")
 def select_programme_update(request, convention_uuid):
     result = services.select_programme_update(request, convention_uuid)
-    if result["success"]:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:step2", args=[result["convention"].uuid])
         )
@@ -59,7 +62,7 @@ def select_programme_update(request, convention_uuid):
 @permission_required("convention.change_convention")
 def step2(request, convention_uuid):
     result = services.bailleur_update(request, convention_uuid)
-    if result["success"]:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:step3", args=[result["convention"].uuid])
         )
@@ -78,7 +81,7 @@ def step2(request, convention_uuid):
 @permission_required("convention.change_convention")
 def step3(request, convention_uuid):
     result = services.programme_update(request, convention_uuid)
-    if result["success"]:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:step4", args=[result["convention"].uuid])
         )
@@ -99,7 +102,7 @@ def step3(request, convention_uuid):
 @permission_required("convention.change_convention")
 def step4(request, convention_uuid):
     result = services.programme_cadastral_update(request, convention_uuid)
-    if result["success"]:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:step5", args=[result["convention"].uuid])
         )
@@ -115,13 +118,10 @@ def step4(request, convention_uuid):
         )
 
 
-from .forms import UploadForm
-
-
 @permission_required("convention.change_convention")
 def step5(request, convention_uuid):
     result = services.convention_financement(request, convention_uuid)
-    if result["success"]:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:step6", args=[result["convention"].uuid])
         )
@@ -136,6 +136,8 @@ def step5(request, convention_uuid):
                 "convention": result["convention"],
                 "nb_steps": NB_STEPS,
                 "preteurs": Preteur,
+                "import_errors": result["import_errors"],
+                "import_warnings": result["import_warnings"],
             },
         )
 
@@ -143,7 +145,7 @@ def step5(request, convention_uuid):
 @permission_required("convention.change_convention")
 def step6(request, convention_uuid):
     result = services.logements_update(request, convention_uuid)
-    if result["success"]:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:step7", args=[result["convention"].uuid])
         )
@@ -188,7 +190,7 @@ def step8(request, convention_uuid):
 @permission_required("convention.change_convention")
 def step9(request, convention_uuid):
     result = services.convention_comments(request, convention_uuid)
-    if result["success"]:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:stepfin", args=[result["convention"].uuid])
         )
@@ -216,20 +218,8 @@ def stepfin(request, convention_uuid):
     )
 
 
-# import os module
-import os
-
-# Import HttpResponse module
-from django.http.response import HttpResponse
-
-
 def load_xlsx_model(request, convention_uuid, file_type):
-    # Define Django project base directory
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-    filename = f"{file_type}.xlsx"
-    # Define the full file path
-    filepath = BASE_DIR + "/static/files/" + filename
+    filepath = f'{settings.BASE_DIR}/static/files/{file_type}.xlsx'
 
     if os.path.exists(filepath):
         with open(filepath, "rb") as excel:
