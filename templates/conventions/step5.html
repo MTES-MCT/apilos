@@ -3,7 +3,6 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
-
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
@@ -12,9 +11,10 @@
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
 
-                        {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='prets' upform=upform  what='prêts' import_errors=import_errors %}
+                        {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='prets' upform=upform  what='prêts' %}
 
                         <hr class="fr-col-12 fr-my-3w">
+
                         {% for error in import_warnings %}
                             <p id="text-input-error-desc-error" class="fr-error-text">
                                 {{ error }}

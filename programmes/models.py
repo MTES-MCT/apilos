@@ -170,6 +170,20 @@ class Logement(models.Model):
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
+    import_mapping = {
+        "Désignation des logements" : designation,
+        "Type": typologie,
+        "Surface habitable\n(article R.111-2)": surface_habitable,
+        "Surface des annexes\nRéelle": surface_annexes,
+        "Surface des annexes\nRetenue dans la SU": surface_annexes_retenue,
+        'Surface utile\n(surface habitable augmentée de 50% de la surface des annexes)':
+            surface_utile,
+        "Loyer maxinum en € par m² de surface utile": loyer_par_metre_carre,
+        "Coefficient propre au logement": coeficient,
+        "Loyer maxinum du logement en €\n(col 4 * col 5 * col 6)": loyer,
+    }
+    sheet_name = "Logements"
+
 
 class Annexe(models.Model):
     class TypologieAnnexe(models.TextChoices):

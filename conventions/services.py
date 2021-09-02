@@ -6,13 +6,13 @@ from zipfile import BadZipFile
 from openpyxl import load_workbook
 
 from conventions.models import Convention, Preteur, Pret
-from programmes.models import Lot
+from programmes.models import Lot, Logement
 from programmes.forms import (
     ProgrammeSelectionForm,
     ProgrammeForm,
     ProgrammmeCadastralForm,
+    LogementFormSet,
 )
-from programmes.forms import LogementFormSet
 from bailleurs.forms import BailleurForm
 from .forms import (
     ConventionCommentForm,
@@ -111,7 +111,7 @@ def select_programme_update(request, convention_uuid):
 
 
 def bailleur_update(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
+    convention = Convention.objects.prefetch_related("bailleur").get(uuid=convention_uuid)
     bailleur = convention.bailleur
 
     if request.method == "POST":
@@ -153,7 +153,7 @@ def bailleur_update(request, convention_uuid):
 
 
 def programme_update(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
+    convention = Convention.objects.prefetch_related("programme").get(uuid=convention_uuid)
     programme = convention.programme
 
     if request.method == "POST":
@@ -197,7 +197,7 @@ def programme_update(request, convention_uuid):
 
 
 def programme_cadastral_update(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
+    convention = Convention.objects.prefetch_related("programme").get(uuid=convention_uuid)
     programme = convention.programme
 
     if request.method == "POST":
@@ -240,27 +240,22 @@ def programme_cadastral_update(request, convention_uuid):
 
 
 def convention_financement(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
-    import_errors = None
+    convention = Convention.objects.prefetch_related("pret_set").get(uuid=convention_uuid)
     import_warnings = None
 
     if request.method == "POST":
         # When the user cliked on "Téléverser" button
+        formset = PretFormSet(request.POST)
+        form = ConventionFinancementForm(request.POST)
         if request.POST.get("Upload", False):
-            form = ConventionFinancementForm(request.POST)
-            formset = PretFormSet(request.POST)
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = handle_uploaded_file(request.FILES["file"], Pret)
+                result = handle_uploaded_file(upform, request.FILES["file"], Pret)
                 if result['success'] != ReturnStatus.ERROR:
                     formset = PretFormSet(initial=result['objects'])
                     import_warnings = result['import_warnings']
-                else:
-                    import_errors = result['errors']
         # When the user cliked on "Enregistrer et Suivant"
         else:
-            form = ConventionFinancementForm(request.POST)
-            formset = PretFormSet(request.POST)
             upform = UploadForm()
             form_is_valid = form.is_valid()
             formset_is_valid = formset.is_valid()
@@ -272,7 +267,6 @@ def convention_financement(request, convention_uuid):
                     "fond_propre"
                 ]
                 convention.save()
-                # MANAGE formset save in DB
                 convention.pret_set.all().delete()
                 for form_pret in formset:
                     pret = Pret.objects.create(
@@ -283,7 +277,7 @@ def convention_financement(request, convention_uuid):
                         duree=form_pret.cleaned_data["duree"],
                         montant=form_pret.cleaned_data["montant"],
                         preteur=form_pret.cleaned_data["preteur"],
-                        #                        autre = form_pret.cleaned_data['autre'],
+                        autre = form_pret.cleaned_data['autre'],
                     )
                     pret.save()
 
@@ -306,6 +300,7 @@ def convention_financement(request, convention_uuid):
                     "duree": pret.duree,
                     "montant": pret.montant,
                     "preteur": pret.preteur,
+                    "autre": pret.autre,
                 }
             )
         upform = UploadForm()
@@ -324,69 +319,83 @@ def convention_financement(request, convention_uuid):
         "form": form,
         "formset": formset,
         "upform": upform,
-        "import_errors": import_errors,
         "import_warnings": import_warnings,
     }
 
 
 def logements_update(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
+    convention = (
+        Convention.objects
+            .prefetch_related("lot")
+            .prefetch_related("lot__logement_set")
+            .get(uuid=convention_uuid)
+    )
+    import_warnings = None
 
     if request.method == "POST":
-
+        # When the user cliked on "Téléverser" button
+        formset = LogementFormSet(request.POST)
         if request.POST.get("Upload", False):
-            formset = PretFormSet(request.POST)
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                print("todo")
+                result = handle_uploaded_file(upform, request.FILES["file"], Logement)
+                if result['success'] != ReturnStatus.ERROR:
+                    formset = LogementFormSet(initial=result['objects'])
+                    import_warnings = result['import_warnings']
         # When the user cliked on "Enregistrer et Suivant"
         else:
-            formset = LogementFormSet(request.POST)
             upform = UploadForm()
-            print("todo")
+            if formset.is_valid():
+                convention.lot.logement_set.all().delete()
+                for form_logement in formset:
+                    logement = Logement.objects.create(
+                        lot=convention.lot,
+                        bailleur=convention.bailleur,
+                        designation=form_logement.cleaned_data["designation"],
+                        typologie=form_logement.cleaned_data["typologie"],
+                        surface_habitable=form_logement.cleaned_data["surface_habitable"],
+                        surface_annexes=form_logement.cleaned_data["surface_annexes"],
+                        surface_annexes_retenue=
+                            form_logement.cleaned_data["surface_annexes_retenue"],
+                        surface_utile=form_logement.cleaned_data["surface_utile"],
+                        loyer_par_metre_carre=form_logement.cleaned_data["loyer_par_metre_carre"],
+                        coeficient=form_logement.cleaned_data["coeficient"],
+                        loyer=form_logement.cleaned_data["loyer"],
+                    )
+                    logement.save()
 
-            return {"success": ReturnStatus.SUCCESS, "convention": convention}
-
+                # All is OK -> Next:
+                return {
+                    "success": ReturnStatus.SUCCESS,
+                    "convention": convention,
+                    "formset": formset,
+                }
+    # When display the file for the first time
     else:
         initial = []
         logements = convention.lot.logement_set.all()
         for logement in logements:
-            initial.append({"designation": logement.designation})
-        if len(initial) == 0:
             initial.append(
                 {
-                    "designation": "123456789",
-                    "typologie": "T2",
-                    "surface_habitable": 60.56,
-                    "surface_annexes": 12.4,
-                    "surface_annexes_retenue": 6.2,
-                    "surface_utile": 66.72,
-                    "loyer_par_metre_carre": 5.2,
-                    "coeficient": 1,
-                    "loyer": 347,
+                    "designation": logement.designation,
+                    "typologie": logement.typologie,
+                    "surface_habitable": logement.surface_habitable,
+                    "surface_annexes": logement.surface_annexes,
+                    "surface_annexes_retenue": logement.surface_annexes_retenue,
+                    "surface_utile": logement.surface_utile,
+                    "loyer_par_metre_carre": logement.loyer_par_metre_carre,
+                    "coeficient": logement.coeficient,
+                    "loyer": logement.loyer,
                 }
             )
-            initial.append(
-                {
-                    "designation": "987654321",
-                    "typologie": "",
-                    "surface_habitable": "",
-                    "surface_annexes": "",
-                    "surface_annexes_retenue": "",
-                    "surface_utile": "",
-                    "loyer_par_metre_carre": "",
-                    "coeficient": "",
-                    "loyer": "",
-                }
-            )
-        formset = LogementFormSet(initial=initial)
         upform = UploadForm()
-
+        formset = LogementFormSet(initial=initial)
     return {
         "success": ReturnStatus.ERROR,
         "convention": convention,
         "formset": formset,
         "upform": upform,
+        "import_warnings": import_warnings,
     }
 
 
@@ -411,27 +420,24 @@ def convention_comments(request, convention_uuid):
     return {"success": ReturnStatus.ERROR, "convention": convention, "form": form}
 
 
-def handle_uploaded_file(my_file, myClass):
+def handle_uploaded_file(upform, my_file, myClass):
     import_mapping = myClass.import_mapping
     try:
         my_wb = load_workbook(filename=BytesIO(my_file.read()))
     except BadZipFile:
-        return {
-            "success": ReturnStatus.ERROR,
-            'errors':[Exception(
-                "Le fichier importé ne semble pas être du bon format, 'xlsx' est le format attendu"
-            )]
-        }
-
+        upform.add_error(
+            'file',
+            "Le fichier importé ne semble pas être du bon format, 'xlsx' est le format attendu"
+        )
+        return {"success": ReturnStatus.ERROR}
     try:
         my_ws = my_wb[myClass.sheet_name]
     except KeyError:
-        return {
-            "success": ReturnStatus.ERROR,
-            'errors': [Exception(
-                f"Le fichier importé doit avoir une feuille nommée '{myClass.sheet_name}'"
-            )]
-        }
+        upform.add_error(
+            'file',
+            f"Le fichier importé doit avoir une feuille nommée '{myClass.sheet_name}'"
+        )
+        return {"success": ReturnStatus.ERROR}
     import_warnings = []
     column_from_index = {}
     for col in my_ws.iter_cols(min_col=1, max_col=my_ws.max_column, min_row=1, max_row=1):
@@ -449,7 +455,7 @@ def handle_uploaded_file(my_file, myClass):
     # transform each line into object
     my_objects = []
     for row in my_ws.iter_rows(
-        min_row=2, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
+        min_row=3, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
     ):
         my_row, empty_line, new_warnings = extract_row(row, column_from_index, import_mapping)
         import_warnings = [*import_warnings, *new_warnings]

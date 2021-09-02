@@ -8,17 +8,24 @@
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
                         <h2>Etape 6/{{ nb_steps }} - Détails des logements</h2>
-                        <h4 class="warning-notification">
-                            <span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true"></span>
-                            Cet écran est en cours de développement et n'est pas encore fonctionnel<br>
-                            Merci de votre compréhension
-                        </h3>
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
 
                         {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='logements' upform=upform  what='logements'%}
 
                         <hr class="fr-col-12 fr-my-3w">
+
+                        {% for error in import_warnings %}
+                            <p id="text-input-error-desc-error" class="fr-error-text">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+
+                        {% for error in formset.non_form_errors %}
+                            <p id="text-input-error-desc-error" class="fr-error-text">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
 
                         {{ formset.management_form }}
                         <div class="fr-table fr-table--bordered">
@@ -46,18 +53,18 @@
                                             </td>
                                             <td>
                                                 <select
-                                                    class="fr-select {% if form.typology.errors %}fr-select--error{% endif %}"
-                                                    id="{{form.typology.id_for_label}}"
-                                                    name="{{form.typology.html_name}}">
-                                                    <option value="" {% if not form.typology.value %}selected{% endif %} disabled hidden>Sélectionnez le prêteur</option>
-                                                    {% for typology in typologies %}
-                                                        <option value="{{typology.value}}"
-                                                            {% if typology.value  == form.typology.value %}selected{% endif %}>
-                                                            {{typology.label}}
+                                                    class="fr-select {% if form.typologie.errors %}fr-select--error{% endif %}"
+                                                    id="{{form.typologie.id_for_label}}"
+                                                    name="{{form.typologie.html_name}}">
+                                                    <option value="" {% if not form.typologie.value %}selected{% endif %} disabled hidden></option>
+                                                    {% for typologie in typologies %}
+                                                        <option value="{{typologie.value}}"
+                                                            {% if typologie.value  == form.typologie.value %}selected{% endif %}>
+                                                            {{typologie.label}}
                                                         </option>
                                                     {% endfor %}
                                                 </select>
-                                                {% for error in form.typology.errors %}
+                                                {% for error in form.typologie.errors %}
                                                     <p id="select-error-desc-error" class="fr-error-text">
                                                         {{ error }}
                                                     </p>

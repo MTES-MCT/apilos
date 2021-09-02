@@ -1,5 +1,3 @@
-import os
-
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
@@ -31,12 +29,11 @@ def select_programme_create(request):
         return HttpResponseRedirect(
             reverse("conventions:step2", args=[result["convention"].uuid])
         )
-    else:
-        return render(
-            request,
-            "conventions/step1.html",
-            {"form": result["form"], "programmes": result["programmes"]},
-        )
+    return render(
+        request,
+        "conventions/step1.html",
+        {"form": result["form"], "programmes": result["programmes"]},
+    )
 
 
 @permission_required("convention.change_convention")
@@ -46,17 +43,16 @@ def select_programme_update(request, convention_uuid):
         return HttpResponseRedirect(
             reverse("conventions:step2", args=[result["convention"].uuid])
         )
-    else:
-        return render(
-            request,
-            "conventions/step1.html",
-            {
-                "form": result["form"],
-                "convention_uuid": result["convention_uuid"],
-                "programmes": result["programmes"],
-                "nb_steps": NB_STEPS,
-            },
-        )
+    return render(
+        request,
+        "conventions/step1.html",
+        {
+            "form": result["form"],
+            "convention_uuid": result["convention_uuid"],
+            "programmes": result["programmes"],
+            "nb_steps": NB_STEPS,
+        },
+    )
 
 
 @permission_required("convention.change_convention")
@@ -66,16 +62,15 @@ def step2(request, convention_uuid):
         return HttpResponseRedirect(
             reverse("conventions:step3", args=[result["convention"].uuid])
         )
-    else:
-        return render(
-            request,
-            "conventions/step2.html",
-            {
-                "form": result["form"],
-                "convention": result["convention"],
-                "nb_steps": NB_STEPS,
-            },
-        )
+    return render(
+        request,
+        "conventions/step2.html",
+        {
+            "form": result["form"],
+            "convention": result["convention"],
+            "nb_steps": NB_STEPS,
+        },
+    )
 
 
 @permission_required("convention.change_convention")
@@ -85,18 +80,17 @@ def step3(request, convention_uuid):
         return HttpResponseRedirect(
             reverse("conventions:step4", args=[result["convention"].uuid])
         )
-    else:
-        return render(
-            request,
-            "conventions/step3.html",
-            {
-                "form": result["form"],
-                "convention": result["convention"],
-                "nb_steps": NB_STEPS,
-                "types_habitat": TypeHabitat,
-                "types_operation": TypeOperation,
-            },
-        )
+    return render(
+        request,
+        "conventions/step3.html",
+        {
+            "form": result["form"],
+            "convention": result["convention"],
+            "nb_steps": NB_STEPS,
+            "types_habitat": TypeHabitat,
+            "types_operation": TypeOperation,
+        },
+    )
 
 
 @permission_required("convention.change_convention")
@@ -106,16 +100,15 @@ def step4(request, convention_uuid):
         return HttpResponseRedirect(
             reverse("conventions:step5", args=[result["convention"].uuid])
         )
-    else:
-        return render(
-            request,
-            "conventions/step4.html",
-            {
-                "form": result["form"],
-                "convention": result["convention"],
-                "nb_steps": NB_STEPS,
-            },
-        )
+    return render(
+        request,
+        "conventions/step4.html",
+        {
+            "form": result["form"],
+            "convention": result["convention"],
+            "nb_steps": NB_STEPS,
+        },
+    )
 
 
 @permission_required("convention.change_convention")
@@ -125,21 +118,19 @@ def step5(request, convention_uuid):
         return HttpResponseRedirect(
             reverse("conventions:step6", args=[result["convention"].uuid])
         )
-    else:
-        return render(
-            request,
-            "conventions/step5.html",
-            {
-                "upform": result["upform"],
-                "form": result["form"],
-                "formset": result["formset"],
-                "convention": result["convention"],
-                "nb_steps": NB_STEPS,
-                "preteurs": Preteur,
-                "import_errors": result["import_errors"],
-                "import_warnings": result["import_warnings"],
-            },
-        )
+    return render(
+        request,
+        "conventions/step5.html",
+        {
+            "upform": result["upform"],
+            "form": result["form"],
+            "formset": result["formset"],
+            "convention": result["convention"],
+            "nb_steps": NB_STEPS,
+            "preteurs": Preteur,
+            "import_warnings": result["import_warnings"],
+        },
+    )
 
 
 @permission_required("convention.change_convention")
@@ -149,18 +140,18 @@ def step6(request, convention_uuid):
         return HttpResponseRedirect(
             reverse("conventions:step7", args=[result["convention"].uuid])
         )
-    else:
-        return render(
-            request,
-            "conventions/step6.html",
-            {
-                "upform": result["upform"],
-                "formset": result["formset"],
-                "convention": result["convention"],
-                "nb_steps": NB_STEPS,
-                "typologies": TypologieLogement,
-            },
-        )
+    return render(
+        request,
+        "conventions/step6.html",
+        {
+            "upform": result["upform"],
+            "formset": result["formset"],
+            "convention": result["convention"],
+            "nb_steps": NB_STEPS,
+            "typologies": TypologieLogement,
+            "import_warnings": result["import_warnings"],
+        },
+    )
 
 
 @permission_required("convention.change_convention")
@@ -194,16 +185,15 @@ def step9(request, convention_uuid):
         return HttpResponseRedirect(
             reverse("conventions:stepfin", args=[result["convention"].uuid])
         )
-    else:
-        return render(
-            request,
-            "conventions/step9.html",
-            {
-                "form": result["form"],
-                "convention": result["convention"],
-                "nb_steps": NB_STEPS,
-            },
-        )
+    return render(
+        request,
+        "conventions/step9.html",
+        {
+            "form": result["form"],
+            "convention": result["convention"],
+            "nb_steps": NB_STEPS,
+        },
+    )
 
 
 @permission_required("convention.change_convention")
@@ -220,14 +210,14 @@ def stepfin(request, convention_uuid):
 
 def load_xlsx_model(request, convention_uuid, file_type):
     filepath = f'{settings.BASE_DIR}/static/files/{file_type}.xlsx'
+    print(f'load_xlsx_model for convention_uuid {convention_uuid}')
 
-    if os.path.exists(filepath):
-        with open(filepath, "rb") as excel:
-            data = excel.read()
+    with open(filepath, "rb") as excel:
+        data = excel.read()
 
-        response = HttpResponse(
-            data,
-            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        )
-        response["Content-Disposition"] = f"attachment; filename={file_type}.xlsx"
-        return response
+    response = HttpResponse(
+        data,
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = f"attachment; filename={file_type}.xlsx"
+    return response
