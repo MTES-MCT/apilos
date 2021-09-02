@@ -262,7 +262,9 @@ def convention_financement(request, convention_uuid):
             form = ConventionFinancementForm(request.POST)
             formset = PretFormSet(request.POST)
             upform = UploadForm()
-            if form.is_valid() and formset.is_valid():
+            form_is_valid = form.is_valid()
+            formset_is_valid = formset.is_valid()
+            if form_is_valid and formset_is_valid:
                 convention.date_fin_conventionnement = form.cleaned_data[
                     "date_fin_conventionnement"
                 ]

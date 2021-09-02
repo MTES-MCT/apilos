@@ -1,9 +1,9 @@
 from django import forms
-from django.forms import formset_factory
+from django.forms import BaseFormSet, formset_factory
 from django.forms.fields import FileField
+from django.core.exceptions import ValidationError
 
 from .models import Preteur
-
 
 class ConventionCommentForm(forms.Form):
 
@@ -48,7 +48,77 @@ class PretForm(forms.Form):
     )
 
 
-PretFormSet = formset_factory(PretForm, extra=0)
+    def clean(self):
+        cleaned_data = super().clean()
+        preteur = cleaned_data.get("preteur")
+
+        if preteur in ['CDCF','CDCL']:
+            if not cleaned_data.get("date_octroi"):
+                self.add_error(
+                    'date_octroi',
+                    "La date d'octroi est obligatoire pour un prêt de la " +
+                    "Caisse de dépôts et consignations"
+                )
+            if not cleaned_data.get("duree"):
+                self.add_error(
+                    'duree',
+                    "La durée est obligatoire pour un prêt de la Caisse de dépôts et consignations"
+                )
+            if not cleaned_data.get("numero"):
+                self.add_error(
+                    'numero',
+                    "Le numéro est obligatoire pour un prêt de la Caisse de dépôts et consignations"
+                )
+        if preteur in ['AUTRE']:
+            if not cleaned_data.get("autre"):
+                self.add_error('autre', "Merci de préciser le prêteur")
+
+
+class BasePretFormSet(BaseFormSet):
+    def clean(self):
+        self.manage_numero_validation()
+        self.manage_cdc_validation()
+
+    def manage_cdc_validation(self):
+        for form in self.forms:
+#            if self.can_delete() and self._should_delete_form(form):
+#                continue
+            if form.cleaned_data.get('preteur') in ['CDCF', 'CDCL']:
+                return
+        error = ValidationError(
+            "Au moins un prêt à la Caisee des dépôts et consignations doit-être déclaré " +
+            "(CDC foncière, CDC locative)"
+        )
+        self._non_form_errors.append(error)
+
+    def manage_numero_validation(self):
+        numeros = {}
+        error_on_numero = False
+        for form in self.forms:
+#            if self.can_delete() and self._should_delete_form(form):
+#                continue
+            numero = form.cleaned_data.get('numero')
+            if numero:
+                if numero in numeros.keys():
+                    error_on_numero = True
+                    form.add_error(
+                        'numero',
+                        "Les numeros de prêt doivent être distinct lorsqu'ils sont définis"
+                    )
+                    if 'numero' not in numeros[numero].errors:
+                        numeros[numero].add_error(
+                            'numero',
+                            "Les numeros de prêt doivent être distinct lorsqu'ils sont définis"
+                        )
+                numeros[numero] = form
+        if error_on_numero:
+            error = ValidationError(
+                "Les numeros de prêt doivent être distinct lorsqu'ils sont définis !!!"
+                )
+            self._non_form_errors.append(error)
+
+
+PretFormSet = formset_factory(PretForm, formset=BasePretFormSet, extra=0)
 
 
 class UploadForm(forms.Form):
