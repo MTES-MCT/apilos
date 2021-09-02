@@ -492,7 +492,7 @@ def extract_row(row, column_from_index, import_mapping):
             else:
                 new_warnings.append(Exception(
                     f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                    "de la colonne {column_from_index[cell.column]} " +
+                    f"de la colonne {column_from_index[cell.column]} " +
                     "doit être une date"
                 ))
 
@@ -504,7 +504,7 @@ def extract_row(row, column_from_index, import_mapping):
                 if value is None: # value is not Null but not in the choices neither
                     new_warnings.append(Exception(
                         f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                        "de la colonne {column_from_index[cell.column]} " +
+                        f"de la colonne {column_from_index[cell.column]} " +
                         f"doit faire partie des valeurs : {', '.join(Preteur.labels)}"
                     ))
 
@@ -516,7 +516,7 @@ def extract_row(row, column_from_index, import_mapping):
                 else:
                     new_warnings.append(Exception(
                         f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                        "de la colonne {column_from_index[cell.column]} " +
+                        f"de la colonne {column_from_index[cell.column]} " +
                         "doit être une valeur numérique"
                     ))
 
@@ -528,7 +528,7 @@ def extract_row(row, column_from_index, import_mapping):
                 else:
                     new_warnings.append(Exception(
                         f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                        "de la colonne {column_from_index[cell.column]} " +
+                        f"de la colonne {column_from_index[cell.column]} " +
                         "doit être une valeur numérique"
                     ))
 
@@ -540,7 +540,7 @@ def extract_row(row, column_from_index, import_mapping):
                 else:
                     new_warnings.append(Exception(
                         f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                        "de la colonne {column_from_index[cell.column]} " +
+                        f"de la colonne {column_from_index[cell.column]} " +
                         "doit être une valeur alphanumeric"
                     ))
         my_row[model_field.name] = value
