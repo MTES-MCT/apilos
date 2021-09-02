@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.forms import formset_factory
+from django.forms import BaseFormSet, formset_factory
 
 from programmes.models import Lot, TypeHabitat, TypologieLogement
 
@@ -150,4 +150,16 @@ class LogementForm(forms.Form):
     )
 
 
-LogementFormSet = formset_factory(LogementForm, extra=0)
+class BaseLogementFormSet(BaseFormSet):
+    def clean(self):
+        self.manage_non_empty_validation()
+
+    def manage_non_empty_validation(self):
+        if len(self.forms) == 0:
+            error = ValidationError(
+                "La liste des logements ne peut pas être vide"
+                )
+            self._non_form_errors.append(error)
+
+
+LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, extra=0)
