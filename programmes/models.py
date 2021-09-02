@@ -13,6 +13,7 @@ class Financement(models.TextChoices):
 
 
 class TypeOperation(models.TextChoices):
+    SANSOBJECT = "SANSOBJECT", "Sans Object"
     NEUF = "NEUF", "Construction Neuve"
     ACQUIS = "ACQUIS", "Acquisition-Amélioration"
     DEMEMBREMENT = "DEMEMBREMENT", "Démembrement"
@@ -23,6 +24,7 @@ class TypeOperation(models.TextChoices):
 
 
 class TypeHabitat(models.TextChoices):
+    SANSOBJECT = "SANSOBJECT", "Sans Object"
     INDIVIDUEL = "INDIVIDUEL", "Individuel"
     COLLECTIF = "COLLECTIF", "Collectif"
 

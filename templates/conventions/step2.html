@@ -9,9 +9,11 @@
                     <div class="fr-col-12 fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
                         <h2>Etape 2/{{ nb_steps }} - Identité du signataire</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
+                        <p>Vérifiez la conformité des informations ci-dessous</p>
                         {% include "common/mandatory_fields_info.html" %}
 
                         {% include "common/form/input_text.html" with form_input=form.nom label="Nom du bailleur" mandatory=True %}
+
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
@@ -36,12 +38,12 @@
                             </div>
                         </div>
 
-                        {% include "common/form/input_text.html" with form_input=form.dg_nom label="Nom du directeur générale" mandatory=True %}
+                        {% include "common/form/input_text.html" with form_input=form.dg_nom label="Nom du directeur général" mandatory=True %}
 
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_text.html" with form_input=form.dg_fonction label="Fonction du directeur générale" mandatory=True %}
+                                    {% include "common/form/input_text.html" with form_input=form.dg_fonction label="Fonction du directeur général" mandatory=True %}
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
                                     {% include "common/form/input_date.html" with form_input=form.dg_date_deliberation label="Date de délibération" mandatory=True %}

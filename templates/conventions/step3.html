@@ -66,8 +66,7 @@
                                             Type d'habitat
                                         </label>
                                         <select class="fr-select {% if form.type_habitat.errors %}fr-select--error{% endif %}" id="type_habitat" name="type_habitat">
-                                            <option value="" {% if not type_habitat.value %}selected{% endif %} disabled hidden>Collectif ou individuel ?</option>
-                                            <option value="" >Sans Object</option>
+                                            <option value="" {% if not type_habitat.value %}selected{% endif %} disabled hidden></option>
                                             {% for type_habitat in types_habitat %}
                                                 <option value="{{type_habitat.value}}"
                                                     {% if type_habitat.value  == form.type_habitat.value %}selected{% endif %}>
@@ -88,8 +87,7 @@
                                             Type d'opération
                                         </label>
                                         <select class="fr-select {% if form.type_operation.errors %}fr-select--error{% endif %}" id="type_operation" name="type_operation">
-                                            <option value="" selected disabled hidden>Selectionner un type d'opération</option>
-                                            <option value="" >Sans Object</option>
+                                            <option value="" selected disabled hidden></option>
                                             {% for type_operation in types_operation %}
                                                 <option value="{{type_operation.value}}"
                                                     {% if type_operation.value  == form.type_operation.value %}selected{% endif %}>

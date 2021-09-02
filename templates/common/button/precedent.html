@@ -1,9 +1,9 @@
 {% if convention_uuid %}
-    <a class="fr-btn" href='{% url precedent convention_uuid=convention_uuid %}'>
-        <span class="fr-fi-arrow-left-s-line fr-mr-1w" aria-hidden="true"></span>Précédent
+    <a class="fr-btn fr-btn--secondary fr-fi-arrow-left-s-line fr-btn--icon-left" href='{% url precedent convention_uuid=convention_uuid %}'>
+        Précédent
     </a>
 {% else %}
-    <a class="fr-btn" href='{% url precedent %}'>
-        <span class="fr-fi-arrow-left-s-line fr-mr-1w" aria-hidden="true"></span>Précédent
+    <a class="fr-btn fr-btn--secondary fr-fi-arrow-left-s-line fr-btn--icon-left" href='{% url precedent %}'>
+        Précédent
     </a>
 {% endif %}

@@ -10,9 +10,11 @@
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-lg-11 fr-col-offset-lg-1 fr-my-5w">
                     {% if request.user.is_bailleur %}
-                        <p class="fr-mb-3w">
+                        <h2 class="fr-mb-3w">Modifiez un projet de convention en cours ou créez une nouvelle convention</h2>
+
+                        <h4 class="fr-mb-3w">
                             Commencer une nouvelle convention dès à présent
-                        </p>
+                        </h4>
                         <button class="fr-btn" onclick="location.href='{% url 'conventions:step1' %}'">
                             <span class="fr-fi-edit-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
                         </button>
@@ -34,7 +36,7 @@
                     <div class="fr-table fr-table--bordered">
                         <p hidden>{{filter}}</p>
                         <table>
-                            <caption>Toutes mes conventions</caption>
+                            <caption>Gérez vos conventions</caption>
 
                             <thead>
                                 <tr>
@@ -43,6 +45,8 @@
                                     {% endif %}
                                     <th scope="col">Programme</th>
                                     <th scope="col">Financement</th>
+                                    <th scope="col">Ville</th>
+                                    <th scope="col">Nombre de logements</th>
                                     <th scope="col">Statut</th>
                                     <th scope="col">Action</th>
                                 </tr>
@@ -55,6 +59,8 @@
                                         {% endif %}
                                         <td>{{convention.programme.nom}}</td>
                                         <td>{{convention.financement}}</td>
+                                        <td>{{convention.programme.ville}}</td>
+                                        <td>{{convention.programme.nb_logements}}</td>
                                         <td>{{convention.statut}}</td>
                                         <td>
                                             <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" onclick="location.href='{% url 'conventions:step1_update' convention_uuid=convention.uuid %}'"">

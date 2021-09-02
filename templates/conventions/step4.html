@@ -7,7 +7,7 @@
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                        <h2>Etape 4/{{ nb_steps }} - Programme : informations cadastrales</h2>
+                        <h2>Etape 4/{{ nb_steps }} - Informations cadastrales sur le programme</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
 
@@ -27,10 +27,10 @@
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_date.html" with form_input=form.date_achevement_previsible label="Date d'achevement previsible" %}
+                                    {% include "common/form/input_date.html" with form_input=form.date_achevement_previsible label="Date d'achèvement previsible" %}
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                    {% include "common/form/input_date.html" with form_input=form.date_achevement label="Date d'achevement ou d'obtention de certificat deconformité" %}
+                                    {% include "common/form/input_date.html" with form_input=form.date_achevement label="Date d'achèvement ou d'obtention de certificat de conformité" %}
                                 </div>
                             </div>
                         </div>
