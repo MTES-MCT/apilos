@@ -222,6 +222,12 @@ class Annexe(models.Model):
     sheet_name = "Annexes"
 
 
+class TypologieStationnement(models.TextChoices):
+    GARAGE_AERIEN = "GARAGE_AERIEN", "Garage Aérien"
+    GARAGE_ENTERRE = "GARAGE_ENTERRE", "Garage enterré"
+    PLACE_STATIONNEMENT = "PLACE_STATIONNEMENT", "Place stationnement"
+
+
 class TypeStationnement(IngestableModel):
     pivot = ["typologie", "lot"]
     mapping = {
@@ -231,11 +237,6 @@ class TypeStationnement(IngestableModel):
         "lot": "Produit",
         "bailleur": "MOA (code SIRET)",
     }
-
-    class TypologieStationnement(models.TextChoices):
-        GARAGE_AERIEN = "GARAGE_AERIEN", "Garage Aérien"
-        GARAGE_ENTERRE = "GARAGE_ENTERRE", "Garage enterré"
-        PLACE_STATIONNEMENT = "PLACE_STATIONNEMENT", "Place stationnement"
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
@@ -252,3 +253,10 @@ class TypeStationnement(IngestableModel):
     loyer = models.FloatField()
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+    import_mapping = {
+        "Type de stationnement": typologie,
+        "Nombre de stationnements": nb_stationnements,
+        "Loyer maxinum en €": loyer,
+    }
+    sheet_name = "Stationnements"

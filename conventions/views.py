@@ -4,7 +4,13 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.conf import settings
 
-from programmes.models import TypeHabitat, TypeOperation, TypologieLogement, TypologieAnnexe
+from programmes.models import (
+    TypeHabitat,
+    TypeOperation,
+    TypologieLogement,
+    TypologieAnnexe,
+    TypologieStationnement
+)
 from .models import Preteur
 from . import services
 from .services import ReturnStatus
@@ -177,12 +183,21 @@ def step7(request, convention_uuid):
 
 @permission_required("convention.change_convention")
 def step8(request, convention_uuid):
+    result = services.stationnements_update(request, convention_uuid)
+    if result["success"] == ReturnStatus.SUCCESS:
+        return HttpResponseRedirect(
+            reverse("conventions:step9", args=[result["convention"].uuid])
+        )
     return render(
         request,
         "conventions/step8.html",
         {
-            "convention_uuid": convention_uuid,
+            "upform": result["upform"],
+            "formset": result["formset"],
+            "convention": result["convention"],
             "nb_steps": NB_STEPS,
+            "typologies": TypologieStationnement,
+            "import_warnings": result["import_warnings"],
         },
     )
 
