@@ -153,6 +153,7 @@ class LogementForm(forms.Form):
 class BaseLogementFormSet(BaseFormSet):
     def clean(self):
         self.manage_non_empty_validation()
+        self.manage_designation_validation()
 
     def manage_non_empty_validation(self):
         if len(self.forms) == 0:
@@ -161,5 +162,31 @@ class BaseLogementFormSet(BaseFormSet):
                 )
             self._non_form_errors.append(error)
 
+    def manage_designation_validation(self):
+        designations = {}
+        error_on_designation = False
+        for form in self.forms:
+#            if self.can_delete() and self._should_delete_form(form):
+#                continue
+            designation = form.cleaned_data.get('designation')
+            if designation:
+                if designation in designations.keys():
+                    error_on_designation = True
+                    form.add_error(
+                        'designation',
+                        "Les designations de logement doivent être distinct lorsqu'ils sont définis"
+                    )
+                    if 'designation' not in designations[designation].errors:
+                        designations[designation].add_error(
+                            'designation',
+                            "Les designations de logement doivent être distinct lorsqu'ils sont " +
+                            "définis"
+                        )
+                designations[designation] = form
+        if error_on_designation:
+            error = ValidationError(
+                "Les designations de logement doivent être distinct lorsqu'ils sont définis !!!"
+                )
+            self._non_form_errors.append(error)
 
 LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, extra=0)
