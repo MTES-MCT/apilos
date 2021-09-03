@@ -2,7 +2,13 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
 
-from programmes.models import Lot, TypeHabitat, TypologieLogement, TypologieAnnexe
+from programmes.models import (
+    Lot,
+    TypeHabitat,
+    TypologieLogement,
+    TypologieAnnexe,
+    TypologieStationnement
+)
 
 
 class ProgrammeSelectionForm(forms.Form):
@@ -47,7 +53,10 @@ class ProgrammeForm(forms.Form):
             "max_length": "La ville ne doit pas excéder 255 caractères",
         },
     )
-    nb_logements = forms.IntegerField()
+    nb_logements = forms.IntegerField( error_messages={
+            "required": "Le nombre de logements est obligatoire",
+        },
+    )
     type_habitat = forms.TypedChoiceField(required=False, choices=TypeHabitat.choices)
     type_operation = forms.CharField(required=False)
     anru = forms.BooleanField(required=False)
@@ -220,15 +229,39 @@ class AnnexeForm(forms.Form):
             "required": "Le loyer est obligatoire",
         }
     )
-    # to manage if Logement exists
-#    lot_id = forms.IntegerField(required=False)
-
-    # def clean(self):
-    #     cleaned_data = super().clean()
-
 
 
 class BaseAnnexeFormSet(BaseFormSet):
     pass
 
 AnnexeFormSet = formset_factory(AnnexeForm, formset=BaseAnnexeFormSet, extra=0)
+
+
+class TypeStationnementForm(forms.Form):
+
+    typologie = forms.TypedChoiceField(
+        required=True,
+        choices=TypologieStationnement.choices,
+        error_messages={
+            "required": "La typologie des stationnement est obligatoire",
+        }
+    )
+    nb_stationnements = forms.IntegerField( error_messages={
+            "required": "Le nombre de stationnements est obligatoire",
+        },
+    )
+    loyer = forms.FloatField(
+        error_messages={
+            "required": "Le loyer est obligatoire",
+        }
+    )
+
+
+class BaseTypeStationnementFormSet(BaseFormSet):
+    pass
+
+TypeStationnementFormSet = formset_factory(
+    TypeStationnementForm,
+    formset=BaseTypeStationnementFormSet,
+    extra=0
+)

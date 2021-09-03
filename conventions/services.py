@@ -6,12 +6,13 @@ from zipfile import BadZipFile
 from openpyxl import load_workbook
 
 from conventions.models import Convention, Preteur, Pret
-from programmes.models import Lot, Logement, Annexe
+from programmes.models import Lot, Logement, Annexe, TypeStationnement
 from programmes.forms import (
     ProgrammeSelectionForm,
     ProgrammeForm,
     ProgrammmeCadastralForm,
     LogementFormSet,
+    TypeStationnementFormSet,
     AnnexeFormSet,
 )
 from bailleurs.forms import BailleurForm
@@ -479,6 +480,71 @@ def annexes_update(request, convention_uuid):
             )
         upform = UploadForm()
         formset = AnnexeFormSet(initial=initial)
+    return {
+        "success": ReturnStatus.ERROR,
+        "convention": convention,
+        "formset": formset,
+        "upform": upform,
+        "import_warnings": import_warnings,
+    }
+
+
+
+
+def stationnements_update(request, convention_uuid):
+    convention = (
+        Convention.objects
+            .prefetch_related("lot")
+            .prefetch_related("lot__typestationnement_set")
+            .get(uuid=convention_uuid)
+    )
+    import_warnings = None
+
+    if request.method == "POST":
+        # When the user cliked on "Téléverser" button
+        formset = TypeStationnementFormSet(request.POST)
+        if request.POST.get("Upload", False):
+            upform = UploadForm(request.POST, request.FILES)
+            if upform.is_valid():
+                result = handle_uploaded_file(upform, request.FILES["file"], TypeStationnement)
+                if result['success'] != ReturnStatus.ERROR:
+                    formset = TypeStationnementFormSet(initial=result['objects'])
+                    import_warnings = result['import_warnings']
+        # When the user cliked on "Enregistrer et Suivant"
+        else:
+            upform = UploadForm()
+            if formset.is_valid():
+                convention.lot.typestationnement_set.all().delete()
+                for form_stationnement in formset:
+                    stationnement = TypeStationnement.objects.create(
+                        lot=convention.lot,
+                        bailleur=convention.bailleur,
+                        typologie=form_stationnement.cleaned_data["typologie"],
+                        nb_stationnements=form_stationnement.cleaned_data["nb_stationnements"],
+                        loyer=form_stationnement.cleaned_data["loyer"],
+                    )
+                    stationnement.save()
+
+                # All is OK -> Next:
+                return {
+                    "success": ReturnStatus.SUCCESS,
+                    "convention": convention,
+                    "formset": formset,
+                }
+    # When display the file for the first time
+    else:
+        initial = []
+        stationnements = convention.lot.typestationnement_set.all()
+        for stationnement in stationnements:
+            initial.append(
+                {
+                    "typologie": stationnement.typologie,
+                    "nb_stationnements": stationnement.nb_stationnements,
+                    "loyer": stationnement.loyer,
+                }
+            )
+        upform = UploadForm()
+        formset = TypeStationnementFormSet(initial=initial)
     return {
         "success": ReturnStatus.ERROR,
         "convention": convention,
