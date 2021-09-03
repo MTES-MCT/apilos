@@ -6,12 +6,13 @@ from zipfile import BadZipFile
 from openpyxl import load_workbook
 
 from conventions.models import Convention, Preteur, Pret
-from programmes.models import Lot, Logement
+from programmes.models import Lot, Logement, Annexe
 from programmes.forms import (
     ProgrammeSelectionForm,
     ProgrammeForm,
     ProgrammmeCadastralForm,
     LogementFormSet,
+    AnnexeFormSet,
 )
 from bailleurs.forms import BailleurForm
 from .forms import (
@@ -399,6 +400,81 @@ def logements_update(request, convention_uuid):
     }
 
 
+def annexes_update(request, convention_uuid):
+    convention = (
+        Convention.objects
+            .prefetch_related("lot")
+            .prefetch_related("lot__logement_set")
+            .prefetch_related("lot__logement_set__annexe_set")
+            .get(uuid=convention_uuid)
+    )
+    import_warnings = None
+
+    if request.method == "POST":
+        # When the user cliked on "Téléverser" button
+        formset = AnnexeFormSet(request.POST)
+        if request.POST.get("Upload", False):
+            upform = UploadForm(request.POST, request.FILES)
+            if upform.is_valid():
+                result = handle_uploaded_file(upform, request.FILES["file"], Annexe)
+                print(result['objects'])
+                if result['success'] != ReturnStatus.ERROR:
+                    formset = AnnexeFormSet(initial=result['objects'])
+                    import_warnings = result['import_warnings']
+        # When the user cliked on "Enregistrer et Suivant"
+        else:
+            upform = UploadForm()
+            if formset.is_valid():
+#                convention.lot.logement_set.annexe_set.all().delete()
+                Annexe.objects.filter(logement__lot_id=convention.lot.id).delete()
+                for form_annexe in formset:
+                    logement = Logement.objects.get(
+                        designation=form_annexe.cleaned_data["logement_designation"],
+                        lot = convention.lot
+                    )
+                    annexe = Annexe.objects.create(
+                        logement=logement,
+                        bailleur=convention.bailleur,
+                        typologie=form_annexe.cleaned_data["typologie"],
+                        surface_hors_surface_retenue=
+                            form_annexe.cleaned_data["surface_hors_surface_retenue"],
+                        loyer_par_metre_carre=form_annexe.cleaned_data["loyer_par_metre_carre"],
+                        loyer=form_annexe.cleaned_data["loyer"],
+                    )
+                    annexe.save()
+
+                # All is OK -> Next:
+                return {
+                    "success": ReturnStatus.SUCCESS,
+                    "convention": convention,
+                    "formset": formset,
+                }
+    # When display the file for the first time
+    else:
+        initial = []
+        annexes = Annexe.objects.filter(logement__lot_id=convention.lot.id)
+        for annexe in annexes:
+            initial.append(
+                {
+                    "typologie": annexe.typologie,
+                    "logement_designation": annexe.logement.designation,
+                    "logement_typologie": annexe.logement.typologie,
+                    "surface_hors_surface_retenue": annexe.surface_hors_surface_retenue,
+                    "loyer_par_metre_carre": annexe.loyer_par_metre_carre,
+                    "loyer": annexe.loyer,
+                }
+            )
+        upform = UploadForm()
+        formset = AnnexeFormSet(initial=initial)
+    return {
+        "success": ReturnStatus.ERROR,
+        "convention": convention,
+        "formset": formset,
+        "upform": upform,
+        "import_warnings": import_warnings,
+    }
+
+
 def convention_comments(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
 
@@ -491,64 +567,70 @@ def extract_row(row, column_from_index, import_mapping):
         value = None
         model_field = import_mapping[column_from_index[cell.column]]
 
-        # Date case
-        if model_field.get_internal_type() == 'DateField':
-            if isinstance(cell.value, datetime.datetime):
-                value = format_date_for_form(cell.value)
-            else:
-                new_warnings.append(Exception(
-                    f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                    f"de la colonne {column_from_index[cell.column]} " +
-                    "doit être une date"
-                ))
+        if isinstance(model_field, str):
+            key = model_field
+            value = cell.value
+        else:
+            key = model_field.name
 
-        # TextChoices case
-        elif (model_field.get_internal_type() == 'CharField' and
-                model_field.choices is not None):
-            if cell.value is not None:
-                value = next((x[0] for x in model_field.choices if x[1] == cell.value), None)
-                if value is None: # value is not Null but not in the choices neither
-                    new_warnings.append(Exception(
-                        f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                        f"de la colonne {column_from_index[cell.column]} " +
-                        f"doit faire partie des valeurs : {', '.join(Preteur.labels)}"
-                    ))
-
-        # Float case
-        elif model_field.get_internal_type() == 'FloatField':
-            if cell.value is not None:
-                if isinstance(cell.value, (float, int)):
-                    value = float(cell.value)
+            # Date case
+            if model_field.get_internal_type() == 'DateField':
+                if isinstance(cell.value, datetime.datetime):
+                    value = format_date_for_form(cell.value)
                 else:
                     new_warnings.append(Exception(
                         f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
                         f"de la colonne {column_from_index[cell.column]} " +
-                        "doit être une valeur numérique"
+                        "doit être une date"
                     ))
 
-        # Integer case
-        elif model_field.get_internal_type() == 'IntegerField':
-            if cell.value is not None:
-                if isinstance(cell.value, (float, int)):
-                    value = int(cell.value)
-                else:
-                    new_warnings.append(Exception(
-                        f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                        f"de la colonne {column_from_index[cell.column]} " +
-                        "doit être une valeur numérique"
-                    ))
+            # TextChoices case
+            elif (model_field.get_internal_type() == 'CharField' and
+                    model_field.choices is not None):
+                if cell.value is not None:
+                    value = next((x[0] for x in model_field.choices if x[1] == cell.value), None)
+                    if value is None: # value is not Null but not in the choices neither
+                        new_warnings.append(Exception(
+                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
+                            f"de la colonne {column_from_index[cell.column]} " +
+                            f"doit faire partie des valeurs : {', '.join(Preteur.labels)}"
+                        ))
 
-        # String case
-        elif model_field.get_internal_type() == 'CharField':
-            if cell.value is not None:
-                if isinstance(cell.value, (float, int, str)):
-                    value = cell.value
-                else:
-                    new_warnings.append(Exception(
-                        f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                        f"de la colonne {column_from_index[cell.column]} " +
-                        "doit être une valeur alphanumeric"
-                    ))
-        my_row[model_field.name] = value
+            # Float case
+            elif model_field.get_internal_type() == 'FloatField':
+                if cell.value is not None:
+                    if isinstance(cell.value, (float, int)):
+                        value = float(cell.value)
+                    else:
+                        new_warnings.append(Exception(
+                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
+                            f"de la colonne {column_from_index[cell.column]} " +
+                            "doit être une valeur numérique"
+                        ))
+
+            # Integer case
+            elif model_field.get_internal_type() == 'IntegerField':
+                if cell.value is not None:
+                    if isinstance(cell.value, (float, int)):
+                        value = int(cell.value)
+                    else:
+                        new_warnings.append(Exception(
+                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
+                            f"de la colonne {column_from_index[cell.column]} " +
+                            "doit être une valeur numérique"
+                        ))
+
+            # String case
+            elif model_field.get_internal_type() == 'CharField':
+                if cell.value is not None:
+                    if isinstance(cell.value, (float, int, str)):
+                        value = cell.value
+                    else:
+                        new_warnings.append(Exception(
+                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
+                            f"de la colonne {column_from_index[cell.column]} " +
+                            "doit être une valeur alphanumeric"
+                        ))
+        my_row[key] = value
 
     return my_row, empty_line, new_warnings

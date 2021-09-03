@@ -184,12 +184,14 @@ class Logement(models.Model):
     }
     sheet_name = "Logements"
 
+class TypologieAnnexe(models.TextChoices):
+    BALCON = "BALCON", "Balcon"
+    TERRASSE = "TERRASSE", "Terrasse"
+    JARDIN = "JARDIN", "Jardin"
+    CAVE = "CAVE", "Cave"
+
 
 class Annexe(models.Model):
-    class TypologieAnnexe(models.TextChoices):
-        BALCON = "BALCON", "Balcon"
-        TERRASSE = "TERRASSE", "Terrasse"
-        JARDIN = "JARDIN", "Jardin"
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
@@ -200,13 +202,24 @@ class Annexe(models.Model):
     typologie = models.CharField(
         max_length=25,
         choices=TypologieAnnexe.choices,
-        default=TypologieAnnexe.BALCON,
+        default=TypologieAnnexe.TERRASSE,
     )
     surface_hors_surface_retenue = models.FloatField()
     loyer_par_metre_carre = models.FloatField()
     loyer = models.FloatField()
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+
+    import_mapping = {
+        "Type d'annexe": typologie,
+        "Désignation des logements" : "logement_designation",
+        "Typologie des logements": "logement_typologie",
+        "Surface de l'annexe": surface_hors_surface_retenue,
+        "Loyer unitaire en €": loyer_par_metre_carre,
+        "Loyer maxinum en €": loyer,
+    }
+    sheet_name = "Annexes"
 
 
 class TypeStationnement(IngestableModel):

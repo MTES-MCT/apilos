@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
 
-from programmes.models import Lot, TypeHabitat, TypologieLogement
+from programmes.models import Lot, TypeHabitat, TypologieLogement, TypologieAnnexe
 
 
 class ProgrammeSelectionForm(forms.Form):
@@ -190,3 +190,43 @@ class BaseLogementFormSet(BaseFormSet):
             self._non_form_errors.append(error)
 
 LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, extra=0)
+
+
+class AnnexeForm(forms.Form):
+
+    typologie = forms.TypedChoiceField(required=True, choices=TypologieAnnexe.choices)
+    logement_designation = forms.CharField(
+        max_length=255,
+        min_length=1,
+        error_messages={
+            "required": "La designation du logement est obligatoire",
+            "min_length": "La designation du logement est obligatoire",
+            "max_length": "La designation du logement ne doit pas excéder 255 caractères",
+        },
+    )
+    logement_typologie = forms.TypedChoiceField(required=True, choices=TypologieLogement.choices)
+    surface_hors_surface_retenue = forms.FloatField(
+        error_messages={
+            "required": "La surface habitable est obligatoire",
+        }
+    )
+    loyer_par_metre_carre = forms.FloatField(
+        error_messages={
+            "required": "Le loyer par m2 est obligatoire",
+        }
+    )
+    loyer = forms.FloatField(
+        error_messages={
+            "required": "Le loyer est obligatoire",
+        }
+    )
+
+    # def clean(self):
+    #     cleaned_data = super().clean()
+
+
+
+class BaseAnnexeFormSet(BaseFormSet):
+    pass
+
+AnnexeFormSet = formset_factory(AnnexeForm, formset=BaseAnnexeFormSet, extra=0)

@@ -47,7 +47,6 @@ class PretForm(forms.Form):
         }
     )
 
-
     def clean(self):
         cleaned_data = super().clean()
         preteur = cleaned_data.get("preteur")
