@@ -12,6 +12,14 @@ class Financement(models.TextChoices):
     PLS = "PLS", "PLS"
 
 
+class TypologieLogement(models.TextChoices):
+    T1 = "T1", "T1"
+    T2 = "T2", "T2"
+    T3 = "T3", "T3"
+    T4 = "T4", "T4"
+    T5 = "T5", "T5 et plus"
+
+
 class TypeOperation(models.TextChoices):
     SANSOBJECT = "SANSOBJECT", "Sans Object"
     NEUF = "NEUF", "Construction Neuve"
@@ -27,6 +35,19 @@ class TypeHabitat(models.TextChoices):
     SANSOBJECT = "SANSOBJECT", "Sans Object"
     INDIVIDUEL = "INDIVIDUEL", "Individuel"
     COLLECTIF = "COLLECTIF", "Collectif"
+
+
+class TypologieAnnexe(models.TextChoices):
+    BALCON = "BALCON", "Balcon"
+    TERRASSE = "TERRASSE", "Terrasse"
+    JARDIN = "JARDIN", "Jardin"
+    CAVE = "CAVE", "Cave"
+
+
+class TypologieStationnement(models.TextChoices):
+    GARAGE_AERIEN = "GARAGE_AERIEN", "Garage Aérien"
+    GARAGE_ENTERRE = "GARAGE_ENTERRE", "Garage enterré"
+    PLACE_STATIONNEMENT = "PLACE_STATIONNEMENT", "Place stationnement"
 
 
 class Programme(IngestableModel):
@@ -86,6 +107,8 @@ class Programme(IngestableModel):
     date_acte_notarie = models.DateField(null=True)
     reference_notaire = models.TextField(null=True)
     reference_publication_acte = models.TextField(null=True)
+    acte_de_vente = models.TextField(null=True)
+    edd_volumetrique = models.TextField(null=True)
     permis_construire = models.CharField(max_length=255, null=True)
     date_achevement_previsible = models.DateField(null=True)
     date_achat = models.DateField(null=True)
@@ -95,6 +118,35 @@ class Programme(IngestableModel):
 
     def __str__(self):
         return self.nom
+
+
+class LogementEDD(models.Model):
+    id = models.AutoField(primary_key=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    designation = models.CharField(max_length=255)
+    bailleur = models.ForeignKey(
+        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
+    )
+    programme = models.ForeignKey("Programme", on_delete=models.CASCADE, null=False)
+    financement = models.CharField(
+        max_length=25,
+        choices=Financement.choices,
+        default=Financement.PLUS,
+    )
+    typologie = models.CharField(
+        max_length=25,
+        choices=TypologieLogement.choices,
+        default=TypologieLogement.T1,
+    )
+    cree_le = models.DateTimeField(auto_now_add=True)
+    mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+    import_mapping = {
+        "Désignation des logements" : designation,
+        "Financement" : financement,
+        "Type des logements": typologie,
+    }
+    sheet_name = "EDD Simplifié"
 
 
 class ReferenceCadastrale(models.Model):
@@ -138,14 +190,6 @@ class Lot(IngestableModel):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
 
-class TypologieLogement(models.TextChoices):
-    T1 = "T1", "T1"
-    T2 = "T2", "T2"
-    T3 = "T3", "T3"
-    T4 = "T4", "T4"
-    T5 = "T5", "T5 et plus"
-
-
 class Logement(models.Model):
 
     id = models.AutoField(primary_key=True)
@@ -184,12 +228,6 @@ class Logement(models.Model):
     }
     sheet_name = "Logements"
 
-class TypologieAnnexe(models.TextChoices):
-    BALCON = "BALCON", "Balcon"
-    TERRASSE = "TERRASSE", "Terrasse"
-    JARDIN = "JARDIN", "Jardin"
-    CAVE = "CAVE", "Cave"
-
 
 class Annexe(models.Model):
 
@@ -221,11 +259,6 @@ class Annexe(models.Model):
     }
     sheet_name = "Annexes"
 
-
-class TypologieStationnement(models.TextChoices):
-    GARAGE_AERIEN = "GARAGE_AERIEN", "Garage Aérien"
-    GARAGE_ENTERRE = "GARAGE_ENTERRE", "Garage enterré"
-    PLACE_STATIONNEMENT = "PLACE_STATIONNEMENT", "Place stationnement"
 
 
 class TypeStationnement(IngestableModel):

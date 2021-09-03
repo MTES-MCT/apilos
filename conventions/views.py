@@ -4,6 +4,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.conf import settings
 
+from conventions.models import Financement
+
 from programmes.models import (
     TypeHabitat,
     TypeOperation,
@@ -110,9 +112,14 @@ def step4(request, convention_uuid):
         request,
         "conventions/step4.html",
         {
+            "upform": result["upform"],
             "form": result["form"],
+            "formset": result["formset"],
             "convention": result["convention"],
+            "financements": Financement,
+            "typologies": TypologieLogement,
             "nb_steps": NB_STEPS,
+            "import_warnings": result["import_warnings"],
         },
     )
 

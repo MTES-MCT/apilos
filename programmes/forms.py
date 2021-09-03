@@ -9,7 +9,7 @@ from programmes.models import (
     TypologieAnnexe,
     TypologieStationnement
 )
-
+from conventions.models import Financement
 
 class ProgrammeSelectionForm(forms.Form):
     lot_uuid = forms.CharField(
@@ -108,6 +108,20 @@ class ProgrammmeCadastralForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
     )
+    acte_de_vente = forms.CharField(
+        required=False,
+        max_length=5000,
+        error_messages={
+            "max_length": "Le message ne doit pas excéder 5000 characters",
+        },
+    )
+    edd_volumetrique = forms.CharField(
+        required=False,
+        max_length=5000,
+        error_messages={
+            "max_length": "Le message ne doit pas excéder 5000 characters",
+        },
+    )
 
 
 class LogementForm(forms.Form):
@@ -121,7 +135,13 @@ class LogementForm(forms.Form):
             "max_length": "La designation du logement ne doit pas excéder 255 caractères",
         },
     )
-    typologie = forms.TypedChoiceField(required=True, choices=TypologieLogement.choices)
+    typologie = forms.TypedChoiceField(
+        required=True,
+        choices=TypologieLogement.choices,
+        error_messages={
+            "required": "Le type de logement est obligatoire",
+        }
+    )
     surface_habitable = forms.FloatField(
         error_messages={
             "required": "La surface habitable est obligatoire",
@@ -265,3 +285,38 @@ TypeStationnementFormSet = formset_factory(
     formset=BaseTypeStationnementFormSet,
     extra=0
 )
+
+
+class LogementEDDForm(forms.Form):
+
+    designation = forms.CharField(
+        max_length=255,
+        min_length=1,
+        error_messages={
+            "required": "La designation du logement est obligatoire",
+            "min_length": "La designation du logement est obligatoire",
+            "max_length": "La designation du logement ne doit pas excéder 255 caractères",
+        },
+    )
+    typologie = forms.TypedChoiceField(
+        required=True,
+        choices=TypologieLogement.choices,
+        error_messages={
+            "required": "Le type de logement est obligatoire",
+        }
+    )
+    financement = forms.TypedChoiceField(
+        required=True,
+        choices=Financement.choices,
+        error_messages={
+            "required": "Le financement est obligatoire",
+        }
+    )
+
+
+
+class BaseLogementEDDFormSet(BaseFormSet):
+    pass
+
+
+LogementEDDFormSet = formset_factory(LogementEDDForm, formset=BaseLogementEDDFormSet, extra=0)

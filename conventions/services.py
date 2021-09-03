@@ -6,7 +6,7 @@ from zipfile import BadZipFile
 from openpyxl import load_workbook
 
 from conventions.models import Convention, Preteur, Pret
-from programmes.models import Lot, Logement, Annexe, TypeStationnement
+from programmes.models import Lot, Logement, Annexe, TypeStationnement, LogementEDD
 from programmes.forms import (
     ProgrammeSelectionForm,
     ProgrammeForm,
@@ -14,6 +14,7 @@ from programmes.forms import (
     LogementFormSet,
     TypeStationnementFormSet,
     AnnexeFormSet,
+    LogementEDDFormSet,
 )
 from bailleurs.forms import BailleurForm
 from .forms import (
@@ -197,31 +198,85 @@ def programme_update(request, convention_uuid):
 
     return {"success": ReturnStatus.ERROR, "convention": convention, "form": form}
 
-
 def programme_cadastral_update(request, convention_uuid):
-    convention = Convention.objects.prefetch_related("programme").get(uuid=convention_uuid)
+    # pylint: disable=R0915
+    convention = (Convention.objects
+        .prefetch_related("programme")
+        .prefetch_related("programme__logementedd_set")
+        .get(uuid=convention_uuid)
+    )
     programme = convention.programme
 
+    import_warnings = None
+
     if request.method == "POST":
+        # When the user cliked on "Téléverser" button
+        formset = LogementEDDFormSet(request.POST)
         form = ProgrammmeCadastralForm(request.POST)
-        if form.is_valid():
-            programme.permis_construire = form.cleaned_data["permis_construire"]
-            programme.date_acte_notarie = form.cleaned_data["date_acte_notarie"]
-            programme.date_achevement_previsible = form.cleaned_data[
-                "date_achevement_previsible"
-            ]
-            programme.date_achat = form.cleaned_data["date_achat"]
-            programme.date_achevement = form.cleaned_data["date_achevement"]
-            programme.vendeur = form.cleaned_data["vendeur"]
-            programme.acquereur = form.cleaned_data["acquereur"]
-            programme.reference_notaire = form.cleaned_data["reference_notaire"]
-            programme.reference_publication_acte = form.cleaned_data[
-                "reference_publication_acte"
-            ]
-            programme.save()
-            # All is OK -> Next:
-            return {"success": ReturnStatus.SUCCESS, "convention": convention, "form": form}
+        if request.POST.get("Upload", False):
+            upform = UploadForm(request.POST, request.FILES)
+            print('upform')
+            if upform.is_valid():
+                print('upform')
+                result = handle_uploaded_file(upform, request.FILES["file"], LogementEDD)
+                if result['success'] != ReturnStatus.ERROR:
+                    formset = LogementEDDFormSet(initial=result['objects'])
+                    import_warnings = result['import_warnings']
+        # When the user cliked on "Enregistrer et Suivant"
+        else:
+            upform = UploadForm()
+            form_is_valid = form.is_valid()
+            formset_is_valid = formset.is_valid()
+            if form_is_valid and formset_is_valid:
+                programme.permis_construire = form.cleaned_data["permis_construire"]
+                programme.date_acte_notarie = form.cleaned_data["date_acte_notarie"]
+                programme.date_achevement_previsible = form.cleaned_data[
+                    "date_achevement_previsible"
+                ]
+                programme.date_achat = form.cleaned_data["date_achat"]
+                programme.date_achevement = form.cleaned_data["date_achevement"]
+                programme.vendeur = form.cleaned_data["vendeur"]
+                programme.acquereur = form.cleaned_data["acquereur"]
+                programme.reference_notaire = form.cleaned_data["reference_notaire"]
+                programme.reference_publication_acte = form.cleaned_data[
+                    "reference_publication_acte"
+                ]
+                programme.acte_de_vente = form.cleaned_data["acte_de_vente"]
+                programme.edd_volumetrique = form.cleaned_data["edd_volumetrique"]
+                programme.save()
+
+                programme.logementedd_set.all().delete()
+                for form_logementedd in formset:
+                    logementedd = LogementEDD.objects.create(
+                        programme=programme,
+                        bailleur=convention.bailleur,
+                        financement=form_logementedd.cleaned_data["financement"],
+                        designation=form_logementedd.cleaned_data["designation"],
+                        typologie=form_logementedd.cleaned_data["typologie"],
+                    )
+                    logementedd.save()
+
+                # All is OK -> Next:
+                return {
+                    "success": ReturnStatus.SUCCESS,
+                    "convention": convention,
+                    "form": form,
+                    "formset": formset,
+                }
+    # When display the file for the first time
     else:
+        initial = []
+        logementedds = programme.logementedd_set.all()
+        for logementedd in logementedds:
+            initial.append(
+                {
+                    "financement": logementedd.financement,
+                    "designation": logementedd.designation,
+                    "typologie": logementedd.typologie,
+                }
+            )
+        formset = LogementEDDFormSet(initial=initial)
+        upform = UploadForm()
         form = ProgrammmeCadastralForm(
             initial={
                 "permis_construire": programme.permis_construire,
@@ -235,10 +290,18 @@ def programme_cadastral_update(request, convention_uuid):
                 "acquereur": programme.acquereur,
                 "reference_notaire": programme.reference_notaire,
                 "reference_publication_acte": programme.reference_publication_acte,
+                "acte_de_vente": programme.acte_de_vente,
+                "edd_volumetrique": programme.edd_volumetrique,
             }
         )
-
-    return {"success": ReturnStatus.ERROR, "convention": convention, "form": form}
+    return {
+        "success": ReturnStatus.ERROR,
+        "convention": convention,
+        "form": form,
+        "formset": formset,
+        "upform": upform,
+        "import_warnings": import_warnings,
+    }
 
 
 def convention_financement(request, convention_uuid):

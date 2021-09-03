@@ -3,7 +3,7 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
-            <form method="post" action="">
+            <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
@@ -40,7 +40,7 @@
                                 Vendeur
                                 {% include "common/mandatory_field.html" %}
                             </label>
-                            {% include "common/form/input_upload_button.html"%}
+                            {% include "common/form/input_upload_button.html" with textarea=True %}
                             {% include "common/form/input_textarea.html" with form_input=form.vendeur rows=5 %}
                         </div>
 
@@ -49,7 +49,7 @@
                                 Acquéreur
                                 {% include "common/mandatory_field.html" %}
                             </label>
-                            {% include "common/form/input_upload_button.html"%}
+                            {% include "common/form/input_upload_button.html" with textarea=True %}
                             {% include "common/form/input_textarea.html" with form_input=form.acquereur rows=5 %}
                         </div>
 
@@ -57,7 +57,7 @@
                             <label class="fr-label fr-mb-1w" for="{{form.reference_notaire.id_for_label}}">
                                 Référence du notaire
                             </label>
-                            {% include "common/form/input_upload_button.html"%}
+                            {% include "common/form/input_upload_button.html" with textarea=True %}
                             {% include "common/form/input_textarea.html" with form_input=form.reference_notaire rows=5 %}
                         </div>
 
@@ -65,16 +65,112 @@
                             <label class="fr-label fr-mb-1w" for="{{form.reference_publication_acte.id_for_label}}">
                                 Référence de publication de l'acte
                             </label>
-                            {% include "common/form/input_upload_button.html"%}
+                            {% include "common/form/input_upload_button.html" with textarea=True %}
                             {% include "common/form/input_textarea.html" with form_input=form.reference_publication_acte rows=5 %}
                         </div>
 
+                        <div class="fr-input-group {% if form.acte_de_vente.errors %}fr-select-group--error{% endif %}">
+                            <label class="fr-label fr-mb-1w" for="{{form.acte_de_vente.id_for_label}}">
+                                Acte de vente
+                            </label>
+                            {% include "common/form/input_upload_button.html" with textarea=False %}
+                        </div>
+
+                        <hr class="fr-col-12 fr-my-3w">
+                        <h4>État descriptif de division (EDD volumétrique et/ou EDD simplifié)</h4>
+
+                        <div class="fr-input-group {% if form.edd_volumetrique.errors %}fr-select-group--error{% endif %}">
+                            <label class="fr-label fr-mb-1w" for="{{form.edd_volumetrique.id_for_label}}">
+                                EDD volumétrique
+                            </label>
+                            {% include "common/form/input_upload_button.html" with textarea=True %}
+                            {% include "common/form/input_textarea.html" with form_input=form.edd_volumetrique rows=5 %}
+                        </div>
+
+                        <p class="fr-mb-1w">EDD Simplifé</p>
+
+                        {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='logements_edd' upform=upform  what="logements pour l'EDD simplifié"%}
+
+                        <hr class="fr-col-12 fr-my-3w">
+
+                        {% for error in import_warnings %}
+                            <p id="text-input-error-desc-error" class="fr-error-text">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+
+                        {% for error in formset.non_form_errors %}
+                            <p id="text-input-error-desc-error" class="fr-error-text">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+
+                        {{ formset.management_form }}
+                        <div class="fr-table fr-table--bordered">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Financement {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col">Désignation {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col">Type {% include "common/mandatory_field.html" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for form in formset %}
+                                        <tr>
+                                            <td>
+                                                <select
+                                                    class="fr-select {% if form.financement.errors %}fr-select--error{% endif %}"
+                                                    id="{{form.financement.id_for_label}}"
+                                                    name="{{form.financement.html_name}}">
+                                                    <option value="" {% if not form.financement.value %}selected{% endif %} disabled hidden></option>
+                                                    {% for financement in financements %}
+                                                        <option value="{{financement.value}}"
+                                                            {% if financement.value  == form.financement.value %}selected{% endif %}>
+                                                            {{financement.label}}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                                {% for error in form.financement.errors %}
+                                                    <p id="select-error-desc-error" class="fr-error-text">
+                                                        {{ error }}
+                                                    </p>
+                                                {% endfor %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_text.html" with form_input=form.designation %}
+                                            </td>
+                                            <td>
+                                                <select
+                                                    class="fr-select {% if form.typologie.errors %}fr-select--error{% endif %}"
+                                                    id="{{form.typologie.id_for_label}}"
+                                                    name="{{form.typologie.html_name}}">
+                                                    <option value="" {% if not form.typologie.value %}selected{% endif %} disabled hidden></option>
+                                                    {% for typologie in typologies %}
+                                                        <option value="{{typologie.value}}"
+                                                            {% if typologie.value  == form.typologie.value %}selected{% endif %}>
+                                                            {{typologie.label}}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                                {% for error in form.typologie.errors %}
+                                                    <p id="select-error-desc-error" class="fr-error-text">
+                                                        {{ error }}
+                                                    </p>
+                                                {% endfor %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
                     {% include "common/button/precedent.html" with precedent='conventions:step3' convention_uuid=convention.uuid %}
                     {% include "common/button/suivant.html" with suivant='conventions:step4' convention_uuid=convention.uuid %}
                 </div>
+
 
             </form>
         </div>
