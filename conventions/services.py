@@ -424,8 +424,21 @@ def annexes_update(request, convention_uuid):
         # When the user cliked on "Enregistrer et Suivant"
         else:
             upform = UploadForm()
+            #to do : manage this one in the model
+            formset.is_valid()
+            for form_annexe in formset:
+                try:
+                    logement = convention.lot.logement_set.get(
+                        designation=form_annexe.cleaned_data["logement_designation"],
+                        lot = convention.lot
+                    )
+                except Logement.DoesNotExist:
+                    form_annexe.add_error(
+                        'logement_designation',
+                        "Ce logement n'existe pas dans ce lot"
+                    )
+
             if formset.is_valid():
-#                convention.lot.logement_set.annexe_set.all().delete()
                 Annexe.objects.filter(logement__lot_id=convention.lot.id).delete()
                 for form_annexe in formset:
                     logement = Logement.objects.get(

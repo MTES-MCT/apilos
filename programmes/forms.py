@@ -220,6 +220,8 @@ class AnnexeForm(forms.Form):
             "required": "Le loyer est obligatoire",
         }
     )
+    # to manage if Logement exists
+#    lot_id = forms.IntegerField(required=False)
 
     # def clean(self):
     #     cleaned_data = super().clean()
