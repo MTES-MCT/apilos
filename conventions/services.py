@@ -638,6 +638,29 @@ def convention_comments(request, convention_uuid):
     return {"success": ReturnStatus.ERROR, "convention": convention, "form": form}
 
 
+def convention_summary(request, convention_uuid):
+    convention = (
+        Convention.objects
+            .prefetch_related("bailleur")
+            .prefetch_related("programme")
+            .prefetch_related("lot")
+            .prefetch_related("lot__typestationnement_set")
+            .prefetch_related("lot__logement_set")
+            .get(uuid=convention_uuid)
+    )
+    return {
+        "success": ReturnStatus.SUCCESS,
+        "convention": convention,
+        "bailleur": convention.bailleur,
+        "lot": convention.lot,
+        "programme": convention.programme,
+        "logements": convention.lot.logement_set.all(),
+        "stationnements": convention.lot.typestationnement_set.all(),
+        "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
+    }
+
+
+
 def handle_uploaded_file(upform, my_file, myClass):
     import_mapping = myClass.import_mapping
     try:

@@ -5,15 +5,317 @@
         <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                    <h2 class="fr-mb-3w">Récapitulatif</h2>
+                    <h2>Etape 10/{{ nb_steps }} - Récapitulatif</h2>
+                    {% include "common/convention_edit_info.html" with convention=convention %}
                     <p class="fr-mb-3w">
-                        ...This is the end !
-                        Voici les données que vous avez saisit
+                        ATTENTION : le document de convention n'est pas encore soumis à l'instruction,
+                        pour finaliser votre demande de conventionnement, vous devez clicker sur le bouton
+                        "Soumettre au service instructeur"
                     </p>
+                    <h4>Convention</h4>
+                    <p class="fr-my-1w">Nom du programme : {{programme.nom}}</p>
+                    <p class="fr-my-1w">Financement : {{lot.financement}}</p>
+                    <p class="fr-my-1w">Ville : {{programme.ville}}</p>
+                    <p class="fr-my-1w">Nombre de logements : {{programme.nb_logements}}</p>
+
+                    <h4>Bailleur</h4>
+                    <p class="fr-my-1w">Nom : {{bailleur.nom}}</p>
+                    <p class="fr-my-1w">SIRET ou SIREN : {{bailleur.siret}}</p>
+                    <p class="fr-my-1w">Capital social : {{bailleur.capital_social}}</p>
+                    <p class="fr-my-1w">Adresse : {{bailleur.adresse}}</p>
+                    <p class="fr-my-1w">Code postal : {{bailleur.code_postal}}</p>
+                    <p class="fr-my-1w">Ville : {{bailleur.ville}}</p>
+                    <p class="fr-my-1w">Nom du directeur général : {{bailleur.dg_nom}}</p>
+                    <p class="fr-my-1w">Fonction du directeur général : {{bailleur.dg_fonction}}</p>
+                    <p class="fr-my-1w">Date de délibération : {{bailleur.dg_date_deliberation}}</p>
+
+                    <h4>Programme</h4>
+                    <p class="fr-my-1w">Nom : {{programme.nom}}</p>
+                    <p class="fr-my-1w">Adresse : {{programme.adresse}}</p>
+                    <p class="fr-my-1w">Code postal : {{programme.code_postal}}</p>
+                    <p class="fr-my-1w">Ville : {{programme.ville}}</p>
+                    <p class="fr-my-1w">Nombre de logements : {{programme.nb_logements}}</p>
+                    <p class="fr-my-1w">ANRU : {{programme.anru}}</p>
+                    <p class="fr-my-1w">Type d'habitat : {{programme.type_habitat}}</p>
+                    <p class="fr-my-1w">Type d'opération : {{programme.type_operation}}</p>
+                    <p class="fr-my-1w">Nombre de locaux commerciaux (non-conventionnés) : {{programme.nb_locaux_commerciaux}}</p>
+                    <p class="fr-my-1w">Nombre de bureaux (non-conventionnés) : {{programme.nb_bureaux}}</p>
+                    <p class="fr-my-1w">Autres logements non-conventionnés : {{programme.autre_locaux_hors_convention}}</p>
+
+
+                    <p class="fr-my-1w">Numéro de permis construire : {{programme.permis_construire}}</p>
+                    <p class="fr-my-1w">Date de l'acte notarié : {{programme.date_acte_notarie}}</p>
+                    <p class="fr-my-1w">Date d'achat : {{programme.date_achat}}</p>
+                    <p class="fr-my-1w">Date d'achèvement previsible : {{programme.date_achevement_previsible}}</p>
+                    <p class="fr-my-1w">Date d'achèvement ou d'obtention de certificat de conformité : {{programme.date_achevement}}</p>
+
+                    <p class="fr-my-1w">Vendeur : {{programme.vendeur}}</p>
+                    <p class="fr-my-1w">Acquéreur : {{programme.acquereur}}</p>
+                    <p class="fr-my-1w">Référence du notaire : {{programme.reference_notaire}}</p>
+                    <p class="fr-my-1w">Référence de publication de l'acte : {{programme.reference_publication_acte}}</p>
+                    <p class="fr-my-1w">Acte de vente : {{programme.acte_de_vente}}</p>
+                    <p class="fr-my-1w">EDD volumétrique : {{programme.edd_volumetrique}}</p>
+                    <p class="fr-my-1w">EDD Simplifé : </p>
+
+                    <div class="fr-table fr-table--bordered">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Financement {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col">Désignation {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col">Type {% include "common/mandatory_field.html" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for lgt in programme.logementedd_set.all %}
+                                    <tr>
+                                        <td>
+                                            {{lgt.financement}}
+                                        </td>
+                                        <td>
+                                            {{lgt.designation}}
+                                        </td>
+                                        <td>
+                                            {{lgt.typologie}}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4>Financement</h4>
+                    <p class="fr-my-1w">Prêts : </p>
+                    <div class="fr-table fr-table--bordered">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Numéro</th>
+                                    <th scope="col">Date d'octroi</th>
+                                    <th scope="col">Durée</th>
+                                    <th scope="col">Montant {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col">Préteur</th>
+                                    <th scope="col">Précisee le prêteur si 'Autre'</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pret in convention.pret_set.all %}
+                                    <tr>
+                                        <td>
+                                            {{ pret.numero }}
+                                        </td>
+                                        <td>
+                                            {{ pret.date_octroi }}
+                                        </td>
+                                        <td>
+                                            {{ pret.duree }}
+                                        </td>
+                                        <td>
+                                            {{ pret.montant }}
+                                        </td>
+                                        <td>
+                                            {{ pret.preteur }}
+                                        </td>
+                                        <td>
+                                            {{ pret.autre }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="fr-my-1w">Date de fin de la convention : {{programme.date_fin_conventionnement}}</p>
+                    <p class="fr-my-1w">Fonds propres : {{programme.fond_propre}}</p>
+
+                    <h4>Logements</h4>
+
+                    <div class="fr-table fr-table--bordered">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col" style='min-width:200px;'>Désignation {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:150px;'>Type {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:120px;'>Surface habitable {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:120px;'>Surface des annexes réelle {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:120px;'>Surface des annexes retenue dans la SU {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:120px;'>Surface Utile {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:120px;'>Loyer maxinum en € par m2 de surface utile {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:120px;'>Coefficient propre au logement {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:120px;'>Loyer maxinum du logement en € {% include "common/mandatory_field.html" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for logement in logements %}
+                                    <tr>
+                                        <td>
+                                            {{ logement.designation }}
+                                        </td>
+                                        <td>
+                                            {{ logement.typologie }}
+                                        </td>
+                                        <td>
+                                            {{ logement.surface_habitable }}
+                                        </td>
+                                        <td>
+                                            {{ logement.surface_annexes }}
+                                        </td>
+                                        <td>
+                                            {{ logement.surface_annexes_retenue }}
+                                        </td>
+                                        <td>
+                                            {{ logement.surface_utile }}
+                                        </td>
+                                        <td>
+                                            {{ logement.loyer_par_metre_carre }}
+                                        </td>
+                                        <td>
+                                            {{ logement.coeficient }}
+                                        </td>
+                                        <td>
+                                            {{ logement.loyer }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <h4>Annexes</h4>
+
+
+                    <div class="fr-table fr-table--bordered">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col" style='min-width:150px;'>Type d'annexe {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:200px;'>Désignation des logements {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:150px;'>Typologie des logements {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:120px;'>Surface de l'annexe {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:120px;'>Loyer unitaire en € {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:120px;'>Loyer maxinum du logement en € {% include "common/mandatory_field.html" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for annexe in annexes %}
+                                    <tr>
+                                        <td>
+                                            {{ annexe.typologie }}
+                                        </td>
+                                        <td>
+                                            {{ annexe.logement_designation }}
+                                            {% include "common/form/input_text.html" with form_input=form.logement_designation %}
+                                        </td>
+                                        <td>
+                                            {{ annexe.logement_typologie }}
+                                        </td>
+                                        <td>
+                                            {{ annexe.surface_hors_surface_retenue }}
+                                        </td>
+                                        <td>
+                                            {{ annexe.loyer_par_metre_carre }}
+                                        </td>
+                                        <td>
+                                            {{ annexe.loyer }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <h4>Stationnements</h4>
+                    <div class="fr-table fr-table--bordered">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col" style='min-width:150px;'>Type de stationnement {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:200px;'>Nombre de staionnements {% include "common/mandatory_field.html" %}</th>
+                                    <th scope="col" style='min-width:150px;'>Loyer maximum en € {% include "common/mandatory_field.html" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stationnement in stationnements %}
+                                    <tr>
+                                        <td>
+                                            {{ stationnement.typologie }}
+                                        </td>
+                                        <td>
+                                            {{ stationnement.nb_stationnements }}
+                                        </td>
+                                        <td>
+                                            {{ stationnement.loyer }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <h4>Informations à l'attention du service instructeur</h4>
+                    <p class="fr-my-1w">{{ convention.comments }}</p>
+
+
+
+                    <!--
+
+                    <h4>Bailleur</h4>
+                        <p class="fr-my-1w">Nom : {{bailleur.nom}}</p>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6">
+                                <p class="fr-my-1w">SIRET ou SIREN : {{bailleur.siret}}</p>
+                            </div>
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w">
+                                <p class="fr-my-1w">Capital social : {{bailleur.capital_social}}</p>
+                            </div>
+                        </div>
+                        <p class="fr-my-1w">Adresse : {{bailleur.adresse}}</p>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6">
+                                <p class="fr-my-1w">Code postal : {{bailleur.code_postal}}</p>
+                            </div>
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w">
+                                <p class="fr-my-1w">Ville : {{bailleur.ville}}</p>
+                            </div>
+                        </div>
+                        <p class="fr-my-1w">Nom du directeur général : {{bailleur.dg_nom}}</p>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6">
+                                <p class="fr-my-1w">Fonction du directeur général : {{bailleur.dg_fonction}}</p>
+                            </div>
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w">
+                                <p class="fr-my-1w">Date de délibération : {{bailleur.dg_date_deliberation}}</p>
+                            </div>
+                        </div>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6">
+                            <h4>Convention</h4>
+                            <p class="fr-my-1w">Nom du programme : {{programme.nom}}</p>
+                            <p class="fr-my-1w">Financement : {{lot.financement}}</p>
+                            <p class="fr-my-1w">Ville : {{programme.ville}}</p>
+                            <p class="fr-my-1w">Nombre de logements : {{programme.nb_logements}}</p>
+                            </div>
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w">
+                            <h4>Bailleur</h4>
+                            <p class="fr-my-1w">Nom : {{bailleur.nom}}</p>
+                            <p class="fr-my-1w">SIRET ou SIREN : {{bailleur.siret}}</p>
+                            <p class="fr-my-1w">Capital social : {{bailleur.capital_social}}</p>
+                            <p class="fr-my-1w">Adresse : {{bailleur.adresse}}</p>
+                            <p class="fr-my-1w">Code postal : {{bailleur.code_postal}}</p>
+                            <p class="fr-my-1w">Ville : {{bailleur.ville}}</p>
+                            <p class="fr-my-1w">Nom du directeur général : {{bailleur.dg_nom}}</p>
+                            <p class="fr-my-1w">Fonction du directeur général : {{bailleur.dg_fonction}}</p>
+                            <p class="fr-my-1w">Date de délibération : {{bailleur.dg_date_deliberation}}</p>
+                        </div>
+                    </div>
+                    -->
+
+
+
                 </div>
             </div>
             <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-                {% include "common/button/precedent.html" with precedent='conventions:step9' convention_uuid=convention_uuid %}
+                {% include "common/button/precedent.html" with precedent='conventions:step9' convention_uuid=convention.uuid %}
                 <div>
                     <button class="fr-btn fr-btn--secondary" onclick="location.href='{% url 'conventions:index' %}'">
                         Enregistrer le Brouillon

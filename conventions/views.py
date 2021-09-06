@@ -17,8 +17,7 @@ from .models import Preteur
 from . import services
 from .services import ReturnStatus
 
-NB_STEPS = 9
-
+NB_STEPS = 10
 
 @permission_required("convention.view_convention")
 def index(request):
@@ -229,11 +228,18 @@ def step9(request, convention_uuid):
 
 @permission_required("convention.change_convention")
 def stepfin(request, convention_uuid):
+    result = services.convention_summary(request, convention_uuid)
     return render(
         request,
         "conventions/stepfin.html",
         {
-            "convention_uuid": convention_uuid,
+            "convention": result["convention"],
+            "bailleur": result["bailleur"],
+            "programme": result["programme"],
+            "lot": result["lot"],
+            "logements": result["logements"],
+            "annexes": result["annexes"],
+            "stationnements": result["stationnements"],
             "nb_steps": NB_STEPS,
         },
     )
