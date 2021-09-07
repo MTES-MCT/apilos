@@ -215,9 +215,7 @@ def programme_cadastral_update(request, convention_uuid):
         form = ProgrammmeCadastralForm(request.POST)
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
-            print('upform')
             if upform.is_valid():
-                print('upform')
                 result = handle_uploaded_file(upform, request.FILES["file"], LogementEDD)
                 if result['success'] != ReturnStatus.ERROR:
                     formset = LogementEDDFormSet(initial=result['objects'])
@@ -481,7 +479,6 @@ def annexes_update(request, convention_uuid):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
                 result = handle_uploaded_file(upform, request.FILES["file"], Annexe)
-                print(result['objects'])
                 if result['success'] != ReturnStatus.ERROR:
                     formset = AnnexeFormSet(initial=result['objects'])
                     import_warnings = result['import_warnings']
@@ -648,8 +645,20 @@ def convention_summary(request, convention_uuid):
             .prefetch_related("lot__logement_set")
             .get(uuid=convention_uuid)
     )
+    if request.method == "POST":
+        if request.POST.get("SubmitConvention", False):
+            convention.soumis_le = datetime.date.today()
+            convention.save()
+            return {
+                "success": ReturnStatus.SUCCESS,
+                "convention": convention,
+            }
+        return {
+            "success": ReturnStatus.WARNING,
+            "convention": convention,
+        }
     return {
-        "success": ReturnStatus.SUCCESS,
+        "success": ReturnStatus.ERROR,
         "convention": convention,
         "bailleur": convention.bailleur,
         "lot": convention.lot,

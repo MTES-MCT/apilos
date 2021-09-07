@@ -13,7 +13,7 @@ urlpatterns = [
     path("step7/<convention_uuid>", views.step7, name="step7"),
     path("step8/<convention_uuid>", views.step8, name="step8"),
     path("step9/<convention_uuid>", views.step9, name="step9"),
-    path("stepfin/<convention_uuid>", views.stepfin, name="stepfin"),
+    path("step10/<convention_uuid>", views.step10, name="step10"),
     path(
         "load_xlsx_model/<convention_uuid>/<file_type>",
         views.load_xlsx_model,
