@@ -213,7 +213,7 @@ def step9(request, convention_uuid):
     result = services.convention_comments(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:stepfin", args=[result["convention"].uuid])
+            reverse("conventions:step10", args=[result["convention"].uuid])
         )
     return render(
         request,
@@ -226,12 +226,29 @@ def step9(request, convention_uuid):
     )
 
 
+
 @permission_required("convention.change_convention")
-def stepfin(request, convention_uuid):
+def step10(request, convention_uuid):
     result = services.convention_summary(request, convention_uuid)
+    if result["success"] == ReturnStatus.SUCCESS:
+        return render(
+            request,
+            "conventions/submitted.html",
+            {
+                "convention": result["convention"],
+            },
+        )
+    if result["success"] == ReturnStatus.WARNING:
+        return render(
+            request,
+            "conventions/saved.html",
+            {
+                "convention": result["convention"],
+            },
+        )
     return render(
         request,
-        "conventions/stepfin.html",
+        "conventions/step10.html",
         {
             "convention": result["convention"],
             "bailleur": result["bailleur"],
