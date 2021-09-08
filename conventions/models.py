@@ -4,6 +4,30 @@ from django.db import models
 from programmes.models import Financement
 
 
+class Preteur(models.TextChoices):
+    ETAT = "ETAT", "Etat"
+    EPCI = "EPCI", "EPCI"
+    REGION = "REGION", "Région"
+    CDCF = "CDCF", "CDC froncière"
+    CDCL = "CDCL", "CDC locative"
+    AUTRE = "AUTRE", "Autre"
+
+
+class ConventionStatut(models.TextChoices):
+    # La convention n'est pas ecore soumise à l'instruction
+    BROUILLON = "BROUILLON", "Brouillon"
+    # La convention est soumise à l'instruction et n'est pas encore validée par l'instructeur
+    INSTRUCTION = "INSTRUCTION", "En cours d'instruction"
+    # L'instructeur a demandé des corrections au bailleur.
+    # Après correction, la convention devra être à nouveau soumise
+    CORRECTION = "CORRECTION", "Corrections requises"
+    # L'instructeur a validé la convention,
+    # le document de convention est édité et il n'a plus qu'à être signé
+    VALIDE = "VALIDE", "Validé"
+    # La convention est signée et archivée. disponible pour les autres services de l'état
+    CLOS = "CLOS", "Convention close"
+
+
 class Convention(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
@@ -24,6 +48,11 @@ class Convention(models.Model):
     # fix me: weird to keep fond_propre here
     fond_propre = models.FloatField(null=True)
     comments = models.TextField(null=True)
+    statut = models.CharField(
+        max_length=25,
+        choices=ConventionStatut.choices,
+        default=ConventionStatut.BROUILLON,
+    )
     soumis_le = models.DateTimeField(null=True)
     valide_le = models.DateTimeField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
@@ -37,21 +66,16 @@ class Convention(models.Model):
     # gérer un decorateur :
     # https://docs.djangoproject.com/en/dev/howto/custom-template-tags/#howto-custom-template-tags
     # Ou créé un champ statut
-    def statut(self):
-        if self.valide_le:
-            return "Validé"
-        if self.soumis_le:
-            return "En cours d'instruction"
-        return "Brouillon"
+    def is_bailleur_editable(self):
+        return (self.statut == ConventionStatut.BROUILLON or
+            self.statut == ConventionStatut.CORRECTION)
 
+    def is_instructeur_editable(self):
+        return self.statut != ConventionStatut.CLOS
 
-class Preteur(models.TextChoices):
-    ETAT = "ETAT", "Etat"
-    EPCI = "EPCI", "EPCI"
-    REGION = "REGION", "Région"
-    CDCF = "CDCF", "CDC froncière"
-    CDCL = "CDCL", "CDC locative"
-    AUTRE = "AUTRE", "Autre"
+    def is_submitted(self):
+        return self.statut not in [ConventionStatut.BROUILLON, ConventionStatut.CORRECTION]
+
 
 class Pret(models.Model):
     id = models.AutoField(primary_key=True)

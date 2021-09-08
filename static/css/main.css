@@ -13,3 +13,15 @@
 .warning-notification {
   color: #E10600;
 }
+
+.table--limited-height {
+  max-height:400px;
+  overflow-y: auto;
+}
+
+.button-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}

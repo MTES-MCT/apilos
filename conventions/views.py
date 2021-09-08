@@ -13,7 +13,7 @@ from programmes.models import (
     TypologieAnnexe,
     TypologieStationnement
 )
-from .models import Preteur
+from .models import Convention, Preteur
 from . import services
 from .services import ReturnStatus
 
@@ -229,6 +229,32 @@ def step9(request, convention_uuid):
 
 @permission_required("convention.change_convention")
 def step10(request, convention_uuid):
+
+    if request.method == "POST":
+        if request.POST.get("GenerateConvention", False):
+            convention = (
+                Convention.objects
+                    .prefetch_related("bailleur")
+                    .prefetch_related("programme")
+                    .prefetch_related("lot")
+                    .prefetch_related("lot__typestationnement_set")
+                    .prefetch_related("lot__logement_set")
+                    .get(uuid=convention_uuid)
+            )
+            filepath = f'{settings.BASE_DIR}/documents/HLM-jinja.docx'
+            print(f'load HLM docx for convention_uuid {convention_uuid}')
+
+            with open(filepath, "rb") as docx:
+                data = docx.read()
+
+            response = HttpResponse(
+                data,
+                content_type="application/vnd.openxmlformats-officedocument.wordprocessingm",
+            )
+            response["Content-Disposition"] = f"attachment; filename={convention}.docx"
+            return response
+
+
     result = services.convention_summary(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return render(
@@ -264,7 +290,7 @@ def step10(request, convention_uuid):
 
 def load_xlsx_model(request, convention_uuid, file_type):
     filepath = f'{settings.BASE_DIR}/static/files/{file_type}.xlsx'
-    print(f'load_xlsx_model for convention_uuid {convention_uuid}')
+    print(f'load_xlsx_model {file_type}.xlsx for convention_uuid {convention_uuid}')
 
     with open(filepath, "rb") as excel:
         data = excel.read()

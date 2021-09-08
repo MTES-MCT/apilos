@@ -13,12 +13,9 @@
             </div>
 
             <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-                <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
-                    Retourner à la liste des conventions
-                </a>
+                {% include "common/button/return_convention_index.html" %}
             </div>
 
         </div>
     </div>
-    <hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
 {% endblock %}

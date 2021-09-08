@@ -1,7 +1,7 @@
 {% extends "layout/base.html" %}
 
 {% block content %}
-    <div class="fr-container-fluid ds_banner">
+    <div class="fr-container-fluid ds_banner fr-pb-1w">
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -39,7 +39,7 @@
                                         <th scope="col">Durée</th>
                                         <th scope="col">Montant {% include "common/mandatory_field.html" %}</th>
                                         <th scope="col">Préteur</th>
-                                        <th scope="col">Précisee le prêteur si 'Autre'</th>
+                                        <th scope="col">Préciser le prêteur si 'Autre'</th>
                                     </tr>
                                 </thead>
                                 <tbody>

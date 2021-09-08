@@ -1,9 +1,9 @@
-from django.test import TestCase
-from conventions.models import Convention
-from bailleurs.models import Bailleur
-from programmes.models import Programme, Lot, Financement
 import datetime
 
+from django.test import TestCase
+from conventions.models import Convention, ConventionStatut
+from bailleurs.models import Bailleur
+from programmes.models import Programme, Lot, Financement
 
 class ConventionModelsTest(TestCase):
     @classmethod
@@ -39,5 +39,28 @@ class ConventionModelsTest(TestCase):
         convention = Convention.objects.get(id=1)
         lot = convention.lot
         programme = convention.programme
-        expected_object_name = f"{programme.nom} - {lot.financement} - {programme.ville} - {programme.nb_logements} lgts"
+        expected_object_name = (f"{programme.nom} - {lot.financement} - " +
+            f"{programme.ville} - {programme.nb_logements} lgts")
         self.assertEqual(str(convention), expected_object_name)
+
+    def test_is_functions(self):
+        convention = Convention.objects.get(id=1)
+        self.assertTrue(convention.is_bailleur_editable())
+        self.assertTrue(convention.is_instructeur_editable())
+        self.assertFalse(convention.is_submitted())
+        convention.statut = ConventionStatut.INSTRUCTION
+        self.assertFalse(convention.is_bailleur_editable())
+        self.assertTrue(convention.is_instructeur_editable())
+        self.assertTrue(convention.is_submitted())
+        convention.statut = ConventionStatut.CORRECTION
+        self.assertTrue(convention.is_bailleur_editable())
+        self.assertTrue(convention.is_instructeur_editable())
+        self.assertFalse(convention.is_submitted())
+        convention.statut = ConventionStatut.VALIDE
+        self.assertFalse(convention.is_bailleur_editable())
+        self.assertTrue(convention.is_instructeur_editable())
+        self.assertTrue(convention.is_submitted())
+        convention.statut = ConventionStatut.CLOS
+        self.assertFalse(convention.is_bailleur_editable())
+        self.assertFalse(convention.is_instructeur_editable())
+        self.assertTrue(convention.is_submitted())

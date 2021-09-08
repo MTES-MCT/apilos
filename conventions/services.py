@@ -5,7 +5,7 @@ from enum import Enum
 from zipfile import BadZipFile
 from openpyxl import load_workbook
 
-from conventions.models import Convention, Preteur, Pret
+from conventions.models import Convention, ConventionStatut, Preteur, Pret
 from programmes.models import Lot, Logement, Annexe, TypeStationnement, LogementEDD
 from programmes.forms import (
     ProgrammeSelectionForm,
@@ -549,8 +549,6 @@ def annexes_update(request, convention_uuid):
     }
 
 
-
-
 def stationnements_update(request, convention_uuid):
     convention = (
         Convention.objects
@@ -646,8 +644,21 @@ def convention_summary(request, convention_uuid):
             .get(uuid=convention_uuid)
     )
     if request.method == "POST":
+        if request.POST.get("GenerateConvention", False):
+            print("GenerateConvention")
+            return {
+                "success": ReturnStatus.ERROR,
+                "convention": convention,
+                "bailleur": convention.bailleur,
+                "lot": convention.lot,
+                "programme": convention.programme,
+                "logements": convention.lot.logement_set.all(),
+                "stationnements": convention.lot.typestationnement_set.all(),
+                "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
+            }
         if request.POST.get("SubmitConvention", False):
             convention.soumis_le = datetime.date.today()
+            convention.statut = ConventionStatut.INSTRUCTION
             convention.save()
             return {
                 "success": ReturnStatus.SUCCESS,
@@ -669,11 +680,10 @@ def convention_summary(request, convention_uuid):
     }
 
 
-
 def handle_uploaded_file(upform, my_file, myClass):
     import_mapping = myClass.import_mapping
     try:
-        my_wb = load_workbook(filename=BytesIO(my_file.read()))
+        my_wb = load_workbook(filename=BytesIO(my_file.read()), data_only=True)
     except BadZipFile:
         upform.add_error(
             'file',
@@ -732,7 +742,7 @@ def extract_row(row, column_from_index, import_mapping):
             continue
 
         # Check the empty lines to don't fill it
-        if cell.value:
+        if cell.value is not None:
             empty_line = False
         else:
             continue
