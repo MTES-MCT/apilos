@@ -105,3 +105,27 @@ class Pret(models.Model):
         "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": autre,
     }
     sheet_name = "Prêts"
+
+    def _get_preteur(self):
+        return self.preteur
+    p = property(_get_preteur)
+
+    def _get_autre(self):
+        return self.autre
+    a = property(_get_autre)
+
+    def _get_date_octroi(self):
+        return self.date_octroi
+    do = property(_get_date_octroi)
+
+    def _get_numero(self):
+        return self.numero
+    n = property(_get_numero)
+
+    def _get_duree(self):
+        return self.duree
+    d = property(_get_duree)
+
+    def _get_montant(self):
+        return self.montant
+    m = property(_get_montant)

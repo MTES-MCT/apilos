@@ -148,6 +148,9 @@ class LogementEDD(models.Model):
     }
     sheet_name = "EDD Simplifié"
 
+    def __str__(self):
+        return self.designation
+
 
 class ReferenceCadastrale(models.Model):
     id = models.AutoField(primary_key=True)
@@ -185,9 +188,11 @@ class Lot(IngestableModel):
         choices=Financement.choices,
         default=Financement.PLUS,
     )
-    volumes = models.TextField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.programme.nom} - {self.financement}"
 
 
 class Logement(models.Model):
@@ -228,6 +233,45 @@ class Logement(models.Model):
     }
     sheet_name = "Logements"
 
+    def __str__(self):
+        return self.designation
+
+    def _get_designation(self):
+        return self.designation
+    d = property(_get_designation)
+
+    def _get_typologie(self):
+        return self.typologie
+    t = property(_get_typologie)
+
+    def _get_surface_habitable(self):
+        return self.surface_habitable
+    sh = property(_get_surface_habitable)
+
+    def _get_surface_annexes(self):
+        return self.surface_annexes
+    sa = property(_get_surface_annexes)
+
+    def _get_surface_annexes_retenue(self):
+        return self.surface_annexes_retenue
+    sar = property(_get_surface_annexes_retenue)
+
+    def _get_surface_utile(self):
+        return self.surface_utile
+    su = property(_get_surface_utile)
+
+    def _get_loyer_par_metre_carre(self):
+        return self.loyer_par_metre_carre
+    lpmc = property(_get_loyer_par_metre_carre)
+
+    def _get_coeficient(self):
+        return self.coeficient
+    c = property(_get_coeficient)
+
+    def _get_loyer(self):
+        return self.loyer
+    l = property(_get_loyer)
+
 
 class Annexe(models.Model):
 
@@ -248,7 +292,6 @@ class Annexe(models.Model):
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
-
     import_mapping = {
         "Type d'annexe": typologie,
         "Désignation des logements" : "logement_designation",
@@ -259,6 +302,28 @@ class Annexe(models.Model):
     }
     sheet_name = "Annexes"
 
+    def __str__(self):
+        return f"{self.typologie} - {self.logement}"
+
+    def _get_typologie(self):
+        return self.typologie
+    t = property(_get_typologie)
+
+    def _get_logement(self):
+        return self.logement
+    lgt = property(_get_logement)
+
+    def _get_surface_hors_surface_retenue(self):
+        return self.surface_hors_surface_retenue
+    shsr = property(_get_surface_hors_surface_retenue)
+
+    def _get_loyer_par_metre_carre(self):
+        return self.loyer_par_metre_carre
+    lpmc = property(_get_loyer_par_metre_carre)
+
+    def _get_loyer(self):
+        return self.loyer
+    l = property(_get_loyer)
 
 
 class TypeStationnement(IngestableModel):
@@ -293,3 +358,18 @@ class TypeStationnement(IngestableModel):
         "Loyer maxinum en €": loyer,
     }
     sheet_name = "Stationnements"
+
+    def __str__(self):
+        return f"{self.typologie} - {self.lot}"
+
+    def _get_typologie(self):
+        return self.typologie
+    t = property(_get_typologie)
+
+    def _get_nb_stationnements(self):
+        return self.nb_stationnements
+    nb = property(_get_nb_stationnements)
+
+    def _get_loyer(self):
+        return self.loyer
+    l = property(_get_loyer)

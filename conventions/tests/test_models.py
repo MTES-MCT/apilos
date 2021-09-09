@@ -1,23 +1,13 @@
 import datetime
-
 from django.test import TestCase
-from conventions.models import Convention, ConventionStatut
-from bailleurs.models import Bailleur
+from core.tests import utils
+from conventions.models import Convention, ConventionStatut, Pret, Preteur
 from programmes.models import Programme, Lot, Financement
 
 class ConventionModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        bailleur = Bailleur.objects.create(
-            nom="3F",
-            siret="12345678901234",
-            capital_social="SA",
-            ville="Marseille",
-            dg_nom="Patrick Patoulachi",
-            dg_fonction="PDG",
-            dg_date_deliberation=datetime.date(2014, 10, 9),
-            #            operation_exceptionnelle =
-        )
+        bailleur = utils.create_bailleur()
         programme = Programme.objects.create(
             nom="3F",
             bailleur=bailleur,
@@ -64,3 +54,23 @@ class ConventionModelsTest(TestCase):
         self.assertFalse(convention.is_bailleur_editable())
         self.assertFalse(convention.is_instructeur_editable())
         self.assertTrue(convention.is_submitted())
+
+
+    def test_properties(self):
+        convention = Convention.objects.get(id=1)
+        pret = Pret.objects.create(
+            convention = convention,
+            bailleur = convention.bailleur,
+            preteur = Preteur.CDCF,
+            date_octroi = datetime.datetime.today(),
+            autre = "test autre",
+            numero = "mon numero",
+            duree = 50,
+            montant = 123456.789
+        )
+        self.assertEqual(pret.preteur, pret.p)
+        self.assertEqual(pret.autre, pret.a)
+        self.assertEqual(pret.date_octroi, pret.do)
+        self.assertEqual(pret.numero, pret.n)
+        self.assertEqual(pret.duree, pret.d)
+        self.assertEqual(pret.montant, pret.m)

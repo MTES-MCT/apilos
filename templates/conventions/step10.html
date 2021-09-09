@@ -353,9 +353,9 @@
                     {% if convention.is_instructeur_editable %}
                         {% include "common/button/precedent.html" with precedent='conventions:step9' convention_uuid=convention.uuid %}
                         <div>
-                            <form method="post" action="" enctype="multipart/form-data">
+                            <form method="post" action="{% url 'conventions:generate_convention' convention_uuid=convention.uuid %}" enctype="multipart/form-data">
                                 {% csrf_token %}
-                                <button name="GenerateConvention" value=True class="fr-btn">
+                                <button class="fr-btn">
                                     Générer et Télécharger la convention
                                 </button>
                             </form>
