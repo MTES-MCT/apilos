@@ -61,11 +61,26 @@
                                         <td>{{convention.financement}}</td>
                                         <td>{{convention.programme.ville}}</td>
                                         <td>{{convention.programme.nb_logements}}</td>
-                                        <td>{{convention.statut}}</td>
+                                        <td>{{convention.get_statut_display}}</td>
                                         <td>
-                                            <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" onclick="location.href='{% url 'conventions:step1_update' convention_uuid=convention.uuid %}'"">
-                                                Edit
-                                            </button>
+                                            {% if request.user.is_bailleur %}
+                                                {% if convention.is_bailleur_editable %}
+                                                    <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" onclick="location.href='{% url 'conventions:step1_update' convention_uuid=convention.uuid %}'"">
+                                                        Edit
+                                                    </button>
+                                                {% else %}
+                                                    <button class="fr-btn fr-fi-eye-line" title="Visualiser votre convention" onclick="location.href='{% url 'conventions:step10' convention_uuid=convention.uuid %}'"">
+                                                        View
+                                                    </button>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% if request.user.is_instructeur %}
+                                                {% if convention.is_instructeur_editable %}
+                                                    <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" onclick="location.href='{% url 'conventions:step10' convention_uuid=convention.uuid %}'"">
+                                                        Edit
+                                                    </button>
+                                                {% endif %}
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}

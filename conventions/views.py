@@ -11,7 +11,7 @@ from programmes.models import (
     TypeOperation,
     TypologieLogement,
     TypologieAnnexe,
-    TypologieStationnement
+    TypologieStationnement,
 )
 from .models import Preteur
 from . import services
@@ -225,6 +225,19 @@ def step9(request, convention_uuid):
         },
     )
 
+@permission_required("convention.change_convention")
+def generate_convention(request, convention_uuid):
+    print("generate convetnion")
+
+    #if request.method == "POST":
+    data, file_name = services.generate_convention(convention_uuid)
+
+    response = HttpResponse(
+        data,
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingm",
+    )
+    response["Content-Disposition"] = f"attachment; filename={file_name}.docx"
+    return response
 
 
 @permission_required("convention.change_convention")
@@ -262,9 +275,11 @@ def step10(request, convention_uuid):
     )
 
 
+#   return send_file(file_stream, as_attachment=True, attachment_filename='report_'+user_id+'.docx')
+
 def load_xlsx_model(request, convention_uuid, file_type):
     filepath = f'{settings.BASE_DIR}/static/files/{file_type}.xlsx'
-    print(f'load_xlsx_model for convention_uuid {convention_uuid}')
+    print(f'load_xlsx_model {file_type}.xlsx for convention_uuid {convention_uuid}')
 
     with open(filepath, "rb") as excel:
         data = excel.read()

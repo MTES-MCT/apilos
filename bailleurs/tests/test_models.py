@@ -1,23 +1,14 @@
-import datetime
 from django.test import TestCase
+from core.tests import utils
 from bailleurs.models import Bailleur
 
 class BailleurModelsTest(TestCase):
     # pylint: disable=E1101 no-member
     @classmethod
     def setUpTestData(cls):
-        Bailleur.objects.create(
-            nom="3F",
-            siret="12345678901234",
-            capital_social="SA",
-            ville="Marseille",
-            dg_nom="Patrick Patoulachi",
-            dg_fonction="PDG",
-            dg_date_deliberation=datetime.date(2014, 10, 9),
-            #            operation_exceptionnelle =
-        )
+        utils.create_bailleur()
 
     def test_object_str(self):
-        bailleur = Bailleur.objects.get(id=1)
+        bailleur = Bailleur.objects.order_by("uuid").first()
         expected_object_name = f"{bailleur.nom}"
         self.assertEqual(str(bailleur), expected_object_name)

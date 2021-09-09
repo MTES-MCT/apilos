@@ -1,11 +1,16 @@
-import datetime
 
 from io import BytesIO
 from enum import Enum
 from zipfile import BadZipFile
+import datetime
+import math
+import io
+import jinja2
+from docxtpl import DocxTemplate
 from openpyxl import load_workbook
+from django.conf import settings
 
-from conventions.models import Convention, Preteur, Pret
+from conventions.models import Convention, ConventionStatut, Preteur, Pret
 from programmes.models import Lot, Logement, Annexe, TypeStationnement, LogementEDD
 from programmes.forms import (
     ProgrammeSelectionForm,
@@ -549,8 +554,6 @@ def annexes_update(request, convention_uuid):
     }
 
 
-
-
 def stationnements_update(request, convention_uuid):
     convention = (
         Convention.objects
@@ -648,6 +651,7 @@ def convention_summary(request, convention_uuid):
     if request.method == "POST":
         if request.POST.get("SubmitConvention", False):
             convention.soumis_le = datetime.date.today()
+            convention.statut = ConventionStatut.INSTRUCTION
             convention.save()
             return {
                 "success": ReturnStatus.SUCCESS,
@@ -669,11 +673,10 @@ def convention_summary(request, convention_uuid):
     }
 
 
-
 def handle_uploaded_file(upform, my_file, myClass):
     import_mapping = myClass.import_mapping
     try:
-        my_wb = load_workbook(filename=BytesIO(my_file.read()))
+        my_wb = load_workbook(filename=BytesIO(my_file.read()), data_only=True)
     except BadZipFile:
         upform.add_error(
             'file',
@@ -732,7 +735,7 @@ def extract_row(row, column_from_index, import_mapping):
             continue
 
         # Check the empty lines to don't fill it
-        if cell.value:
+        if cell.value is not None:
             empty_line = False
         else:
             continue
@@ -808,3 +811,92 @@ def extract_row(row, column_from_index, import_mapping):
         my_row[key] = value
 
     return my_row, empty_line, new_warnings
+
+
+def to_fr_date(date):
+    if date is None:
+        return ""
+    return date.strftime("%d/%m/%Y")
+
+def to_fr_float(value, d=2):
+    if value is None:
+        return ""
+    return format(value, f",.{d}f").replace(',', ' ').replace('.',',')
+
+
+def generate_convention(convention_uuid):
+    convention = (
+        Convention.objects
+            .prefetch_related("bailleur")
+            .prefetch_related("programme")
+            .prefetch_related("lot")
+            .prefetch_related("pret_set")
+            .prefetch_related("lot__typestationnement_set")
+            .prefetch_related("lot__logement_set")
+            .prefetch_related("programme__logementedd_set")
+            .get(uuid=convention_uuid)
+    )
+    annexes = (
+        Annexe.objects
+        .prefetch_related("logement")
+        .filter(logement__lot_id=convention.lot.id).all()
+    )
+    filepath = f'{settings.BASE_DIR}/documents/HLM-template.docx'
+    doc = DocxTemplate(filepath)
+
+    surface_habitable_totale = 0
+    surface_annexes_retenue_totale = 0
+    surface_utile_totale = 0
+    for logement in convention.lot.logement_set.all():
+        surface_habitable_totale += logement.surface_habitable
+        surface_annexes_retenue_totale += logement.surface_annexes_retenue
+        surface_utile_totale += logement.surface_utile
+
+
+    # tester si il logement exists avant de commencer
+    context = {
+        "convention": convention,
+        "bailleur": convention.bailleur,
+        "programme": convention.programme,
+        "logement_edds": convention.programme.logementedd_set.all(), # S6
+        "logements": convention.lot.logement_set.all(),
+        "annexes": annexes,
+        "stationnements": convention.lot.typestationnement_set.all(),
+        "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF","CDCL"]),
+        "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF","CDCL"]),
+        # Type (type1, type2): type_habitat, type_operation ?
+        # autre_type ?
+        "autre_type": "A DEFINIR",
+        "lot": convention.lot.__dict__,
+        "nb_logements_mixite_sociale_30": math.ceil(convention.programme.nb_logements*3/10),
+        "nb_logements_mixite_sociale_30_arrondie": round(convention.programme.nb_logements*3/10),
+        "nb_logements_mixite_sociale_10_arrondie": round(convention.programme.nb_logements/10),
+
+        # S3 : edd_volumedtrique
+        "S4": "S4 : A DEFINIR",
+        "S7": "S7 : A DEFINIR",
+        "S8": "S8 : A DEFINIR",
+        "S5": "S5 : A DEFINIR : est-ce que c'est par typologie de logement T1, T2, T3, T4... ?",
+        "Mix1092": "A DEFINIR, quel est le calcul à appliquer ?",
+        "loyer_m2": convention.lot.logement_set.first().loyer_par_metre_carre,
+        "surface_habitable_totale": surface_habitable_totale,
+        "surface_annexes_retenue_totale": surface_annexes_retenue_totale,
+        "surface_utile_totale": surface_utile_totale,
+        "locaux": "Locaux : A DEFINIR",
+        "acte_notarie": "A DEFINIR : faut-il ajouter tout l'acte de vente ?"
+
+
+        # "image": InlineImage(
+        #     doc, image_descriptor=f"{settings.BASE_DIR}/documents/Screenshot.png", width=Inches(5)
+        # ),
+    }
+
+    jinja_env = jinja2.Environment()
+    jinja_env.filters['d'] = to_fr_date
+    jinja_env.filters['f'] = to_fr_float
+    doc.render(context, jinja_env)
+    file_stream = io.BytesIO()
+    doc.save(file_stream)
+    file_stream.seek(0)
+
+    return file_stream, f'{convention}'
