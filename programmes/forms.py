@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
 
 from programmes.models import (
+    LogementEDD,
     Lot,
     TypeHabitat,
     TypologieLogement,
@@ -197,10 +198,13 @@ class LogementForm(forms.Form):
 
 
 class BaseLogementFormSet(BaseFormSet):
+    programme_id = None
+
     def clean(self):
         self.manage_non_empty_validation()
         self.manage_designation_validation()
         self.manage_same_loyer_par_metre_carre()
+        self.manage_edd_consistency()
 
     def manage_non_empty_validation(self):
         if len(self.forms) == 0:
@@ -253,6 +257,18 @@ class BaseLogementFormSet(BaseFormSet):
                     'loyer_par_metre_carre',
                     "non conforme"
                 )
+
+    def manage_edd_consistency(self):
+        lgts_edd = LogementEDD.objects.filter(programme_id=22095)
+        if lgts_edd.count() != 0:
+            for form in self.forms:
+                try:
+                    lgts_edd.get(designation=form.cleaned_data.get('designation'))
+                except LogementEDD.DoesNotExist:
+                    form.add_error(
+                        'designation',
+                        "Ce logement n'est pas dans l'EDD simplifié"
+                    )
 
 
 LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, extra=0)

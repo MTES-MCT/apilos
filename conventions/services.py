@@ -413,6 +413,7 @@ def logements_update(request, convention_uuid):
         # When the user cliked on "Enregistrer et Suivant"
         else:
             upform = UploadForm()
+            formset.programme_id = convention.programme_id
             if formset.is_valid():
                 convention.lot.logement_set.all().delete()
                 for form_logement in formset:
