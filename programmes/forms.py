@@ -127,6 +127,7 @@ class ProgrammmeCadastralForm(forms.Form):
 
 class LogementForm(forms.Form):
 
+    uuid = forms.UUIDField(required=False)
     designation = forms.CharField(
         max_length=255,
         min_length=1,

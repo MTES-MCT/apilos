@@ -415,23 +415,48 @@ def logements_update(request, convention_uuid):
             upform = UploadForm()
             formset.programme_id = convention.programme_id
             if formset.is_valid():
-                convention.lot.logement_set.all().delete()
+                lgt_uuids1 = list(map(
+                    lambda x : x.cleaned_data["uuid"],
+                    formset
+                ))
+                lgt_uuids = list(filter(None, lgt_uuids1))
+                print(type(lgt_uuids))
+                print(lgt_uuids)
+                convention.lot.logement_set.exclude(uuid__in=lgt_uuids).delete()
                 for form_logement in formset:
-                    logement = Logement.objects.create(
-                        lot=convention.lot,
-                        bailleur=convention.bailleur,
-                        designation=form_logement.cleaned_data["designation"],
-                        typologie=form_logement.cleaned_data["typologie"],
-                        surface_habitable=form_logement.cleaned_data["surface_habitable"],
-                        surface_annexes=form_logement.cleaned_data["surface_annexes"],
-                        surface_annexes_retenue=
-                            form_logement.cleaned_data["surface_annexes_retenue"],
-                        surface_utile=form_logement.cleaned_data["surface_utile"],
-                        loyer_par_metre_carre=form_logement.cleaned_data["loyer_par_metre_carre"],
-                        coeficient=form_logement.cleaned_data["coeficient"],
-                        loyer=form_logement.cleaned_data["loyer"],
-                    )
-                    logement.save()
+                    if form_logement.cleaned_data["uuid"]:
+                        logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
+                        logement.designation=form_logement.cleaned_data["designation"]
+                        logement.typologie=form_logement.cleaned_data["typologie"]
+                        logement.surface_habitable=form_logement.cleaned_data["surface_habitable"]
+                        logement.surface_annexes=form_logement.cleaned_data["surface_annexes"]
+                        logement.surface_annexes_retenue=(
+                            form_logement.cleaned_data["surface_annexes_retenue"]
+                        )
+                        logement.surface_utile=form_logement.cleaned_data["surface_utile"]
+                        logement.loyer_par_metre_carre=(
+                            form_logement.cleaned_data["loyer_par_metre_carre"]
+                        )
+                        logement.coeficient=form_logement.cleaned_data["coeficient"]
+                        logement.loyer=form_logement.cleaned_data["loyer"]
+                        logement.save()
+                    else:
+                        logement = Logement.objects.create(
+                            lot=convention.lot,
+                            bailleur=convention.bailleur,
+                            designation=form_logement.cleaned_data["designation"],
+                            typologie=form_logement.cleaned_data["typologie"],
+                            surface_habitable=form_logement.cleaned_data["surface_habitable"],
+                            surface_annexes=form_logement.cleaned_data["surface_annexes"],
+                            surface_annexes_retenue=
+                                form_logement.cleaned_data["surface_annexes_retenue"],
+                            surface_utile=form_logement.cleaned_data["surface_utile"],
+                            loyer_par_metre_carre=
+                                form_logement.cleaned_data["loyer_par_metre_carre"],
+                            coeficient=form_logement.cleaned_data["coeficient"],
+                            loyer=form_logement.cleaned_data["loyer"],
+                        )
+                        logement.save()
 
                 # All is OK -> Next:
                 return {
@@ -446,6 +471,7 @@ def logements_update(request, convention_uuid):
         for logement in logements:
             initial.append(
                 {
+                    "uuid": logement.uuid,
                     "designation": logement.designation,
                     "typologie": logement.typologie,
                     "surface_habitable": logement.surface_habitable,

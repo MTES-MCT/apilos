@@ -49,6 +49,11 @@
                                     {% for form in formset %}
                                         <tr>
                                             <td>
+                                                <input
+                                                    type="hidden"
+                                                    id="{{form.uuid.id_for_label}}"
+                                                    name="{{form.uuid.html_name}}"
+                                                    value="{{ form.uuid.value|default_if_none:'' }}">
                                                 {% include "common/form/input_text.html" with form_input=form.designation %}
                                             </td>
                                             <td>
