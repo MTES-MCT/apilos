@@ -5,6 +5,7 @@
     pattern="[0-9]*"
     min=0
     step="{% if step %}{{step}}{% else %}1{% endif %}"
+    {% if onchange %}onchange="{{onchange}}"{% endif %}
     inputmode="numeric"
     {% if form_input.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
     type="number"
