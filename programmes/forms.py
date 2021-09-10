@@ -178,11 +178,29 @@ class LogementForm(forms.Form):
         }
     )
 
+    def clean_loyer(self):
+        surface_utile = self.cleaned_data["surface_utile"]
+        loyer_par_metre_carre = self.cleaned_data["loyer_par_metre_carre"]
+        coeficient = self.cleaned_data["coeficient"]
+        loyer = self.cleaned_data["loyer"]
+
+        # check that lot_id exist in DB
+        if round(loyer,2) != round(surface_utile*loyer_par_metre_carre*coeficient,2):
+            raise ValidationError(
+                "Le loyer doit-être le produit de la surface utile, " +
+                "du loyer par mètre carré et du coéficient. " +
+                f"valeur attendue : {round(surface_utile*loyer_par_metre_carre*coeficient,2)}"
+            )
+
+        return loyer
+
+
 
 class BaseLogementFormSet(BaseFormSet):
     def clean(self):
         self.manage_non_empty_validation()
         self.manage_designation_validation()
+        self.manage_same_loyer_par_metre_carre()
 
     def manage_non_empty_validation(self):
         if len(self.forms) == 0:
@@ -217,6 +235,25 @@ class BaseLogementFormSet(BaseFormSet):
                 "Les designations de logement doivent être distinct lorsqu'ils sont définis !!!"
                 )
             self._non_form_errors.append(error)
+
+    def manage_same_loyer_par_metre_carre(self):
+        lpmc = None
+        error = None
+        for form in self.forms:
+            if lpmc is None:
+                lpmc = form.cleaned_data.get('loyer_par_metre_carre')
+            elif lpmc != form.cleaned_data.get('loyer_par_metre_carre'):
+                error = ValidationError(
+                    "Le loyer par mètre carré doit être le même pour tous les logements du lot"
+                )
+                self._non_form_errors.append(error)
+        if error is not None:
+            for form in self.forms:
+                form.add_error(
+                    'loyer_par_metre_carre',
+                    "non conforme"
+                )
+
 
 LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, extra=0)
 
