@@ -138,6 +138,7 @@ class LogementEDD(models.Model):
     )
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+    lot_num = 0
 
     import_mapping = {
         "Désignation des logements" : designation,

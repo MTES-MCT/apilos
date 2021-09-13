@@ -891,6 +891,7 @@ def generate_convention(convention_uuid):
         surface_annexes_retenue_totale += logement.surface_annexes_retenue
         surface_utile_totale += logement.surface_utile
 
+    logement_edds, lot_num = prepare_logement_edds(convention)
 
     # tester si il logement exists avant de commencer
     context = {
@@ -899,7 +900,7 @@ def generate_convention(convention_uuid):
         "programme": convention.programme,
         "lot": convention.lot,
         "administration": convention.programme.administration,
-        "logement_edds": convention.programme.logementedd_set.all(), # S6
+        "logement_edds": logement_edds,
         "logements": convention.lot.logement_set.all(),
         "annexes": annexes,
         "stationnements": convention.lot.typestationnement_set.all(),
@@ -907,6 +908,7 @@ def generate_convention(convention_uuid):
         "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF","CDCL"]),
         "references_cadatrales ": "A faire ici : afficher les références cadastrales",
 
+        "lot_num": lot_num,
         # ajouter le calcule si nb_logement > ou pas à 10 logements
         "nb_logements_mixite_sociale_30_si_plus": (
             math.ceil(convention.lot.nb_logements*3/10)
@@ -942,9 +944,30 @@ def generate_convention(convention_uuid):
     jinja_env = jinja2.Environment()
     jinja_env.filters['d'] = to_fr_date
     jinja_env.filters['f'] = to_fr_float
+    jinja_env.filters['len'] = len
     doc.render(context, jinja_env)
     file_stream = io.BytesIO()
     doc.save(file_stream)
     file_stream.seek(0)
 
     return file_stream, f'{convention}'
+
+
+def prepare_logement_edds(convention):
+    logement_edds = (convention
+        .programme
+        .logementedd_set
+        .order_by('financement', 'designation')
+        .all()
+    )
+    count = 0
+    financement = None
+    lot_num = 0
+    for logement_edd in logement_edds:
+        if financement != logement_edd.financement:
+            financement = logement_edd.financement
+            count = count + 1
+            if convention.lot.financement == logement_edd.financement:
+                lot_num = count
+        logement_edd.lot_num = count
+    return logement_edds, lot_num
