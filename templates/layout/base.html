@@ -43,7 +43,7 @@
         {% block js %}
             <script type="module" src="{% static "dsfr/js/dsfr.module.min.js" %}"></script>
             <script type="text/javascript" nomodule src="{% static "dsfr/js/dsfr.nomodule.min.js" %}"></script>
-            <script>
+            <script type="text/javascript">
                 document.addEventListener("DOMContentLoaded", function(event) {
                     console.log(localStorage.getItem('scrollloc'))
                     if (localStorage.getItem('scrollloc') == window.location) {
