@@ -1,11 +1,9 @@
+import datetime
 from django.test import TestCase
+from django.contrib.auth.models import Group, Permission
 from users.models import User, Role
 from bailleurs.models import Bailleur
-from django.contrib.auth.models import Group, Permission
 from instructeurs.models import Administration
-
-import datetime
-
 
 class AdministrationsModelsTest(TestCase):
     @classmethod
@@ -148,5 +146,5 @@ class AdministrationsModelsTest(TestCase):
     # Test model Role
     def test_object_role_str(self):
         role = User.objects.get(username="sabine").role_set.all()[0]
-        expected_object_name = f"{role.typologie} - {role.administration}"
+        expected_object_name = f"{role.user} - {role.typologie} - {role.administration}"
         self.assertEqual(str(role), expected_object_name)
