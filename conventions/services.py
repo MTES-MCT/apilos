@@ -11,7 +11,7 @@ from openpyxl import load_workbook
 from django.conf import settings
 
 from conventions.models import Convention, ConventionStatut, Preteur, Pret
-from programmes.models import Lot, Logement, Annexe, TypeStationnement, LogementEDD
+from programmes.models import Financement, Lot, Logement, Annexe, TypeStationnement, LogementEDD
 from programmes.forms import (
     ProgrammeSelectionForm,
     ProgrammeForm,
@@ -40,7 +40,12 @@ def format_date_for_form(date):
 
 def conventions_index(request, infilter):
     infilter.update(request.user.convention_filter())
-    conventions = Convention.objects.prefetch_related("programme").filter(**infilter)
+    conventions = (
+        Convention.objects
+        .prefetch_related("programme")
+        .prefetch_related("lot")
+        .filter(**infilter)
+    )
     return conventions
 
 
@@ -161,8 +166,13 @@ def bailleur_update(request, convention_uuid):
 
 
 def programme_update(request, convention_uuid):
-    convention = Convention.objects.prefetch_related("programme").get(uuid=convention_uuid)
+    convention = (Convention.objects
+        .prefetch_related("programme")
+        .prefetch_related("lot")
+        .get(uuid=convention_uuid)
+    )
     programme = convention.programme
+    lot = convention.lot
 
     if request.method == "POST":
         #        if request.POST['convention_uuid'] is None:
@@ -171,7 +181,6 @@ def programme_update(request, convention_uuid):
             programme.adresse = form.cleaned_data["adresse"]
             programme.code_postal = form.cleaned_data["code_postal"]
             programme.ville = form.cleaned_data["ville"]
-            programme.nb_logements = form.cleaned_data["nb_logements"]
             programme.type_habitat = form.cleaned_data["type_habitat"]
             programme.type_operation = form.cleaned_data["type_operation"]
             programme.anru = form.cleaned_data["anru"]
@@ -181,6 +190,8 @@ def programme_update(request, convention_uuid):
             programme.nb_locaux_commerciaux = form.cleaned_data["nb_locaux_commerciaux"]
             programme.nb_bureaux = form.cleaned_data["nb_bureaux"]
             programme.save()
+            lot.nb_logements = form.cleaned_data["nb_logements"]
+            lot.save()
             # All is OK -> Next:
             return {"success": ReturnStatus.SUCCESS, "convention": convention, "form": form}
 
@@ -191,7 +202,7 @@ def programme_update(request, convention_uuid):
                 "adresse": programme.adresse,
                 "code_postal": programme.code_postal,
                 "ville": programme.ville,
-                "nb_logements": programme.nb_logements,
+                "nb_logements": lot.nb_logements,
                 "type_habitat": programme.type_habitat,
                 "type_operation": programme.type_operation,
                 "anru": programme.anru,
@@ -897,9 +908,22 @@ def generate_convention(convention_uuid):
         "references_cadatrales ": "A faire ici : afficher les références cadastrales",
 
         # ajouter le calcule si nb_logement > ou pas à 10 logements
-        "nb_logements_mixite_sociale_30": math.ceil(convention.programme.nb_logements*3/10),
-        "nb_logements_mixite_sociale_30_arrondie": round(convention.programme.nb_logements*3/10),
-        "nb_logements_mixite_sociale_10_arrondie": round(convention.programme.nb_logements/10),
+        "nb_logements_mixite_sociale_30_si_plus": (
+            math.ceil(convention.lot.nb_logements*3/10)
+            if convention.lot.financement == Financement.PLUS
+            else 0
+        ),
+        "nb_logements_mixite_sociale_30_arrondie_si_plus": (
+            round(convention.lot.nb_logements*3/10)
+            if convention.lot.financement == Financement.PLUS
+            else 0
+        ),
+        "nb_logements_mixite_sociale_10_arrondie_si_plus": (
+            round(convention.lot.nb_logements/10)
+            if convention.lot.financement == Financement.PLUS
+            else 0
+        ),
+        "nb_logements_mixite_sociale_10_arrondie": round(convention.lot.nb_logements/10),
 
         # S3 : edd_volumedtrique
         "Mix1092": "c'est 10 % quelques soit le nombre de logements",

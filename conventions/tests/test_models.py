@@ -2,16 +2,13 @@ import datetime
 from django.test import TestCase
 from core.tests import utils
 from conventions.models import Convention, ConventionStatut, Pret, Preteur
-from programmes.models import Programme, Lot, Financement
+from programmes.models import Lot, Financement
 
 class ConventionModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         bailleur = utils.create_bailleur()
-        programme = Programme.objects.create(
-            nom="3F",
-            bailleur=bailleur,
-        )
+        programme = utils.create_programme(bailleur)
         lot = Lot.objects.create(
             programme=programme,
             bailleur=bailleur,
@@ -30,7 +27,7 @@ class ConventionModelsTest(TestCase):
         lot = convention.lot
         programme = convention.programme
         expected_object_name = (f"{programme.nom} - {lot.financement} - " +
-            f"{programme.ville} - {programme.nb_logements} lgts")
+            f"{programme.ville} - {lot.nb_logements} lgts")
         self.assertEqual(str(convention), expected_object_name)
 
     def test_is_functions(self):

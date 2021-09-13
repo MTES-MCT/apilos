@@ -25,7 +25,7 @@
                                     {% include "common/display_field_if_exists.html" with label="Nom du programme" value=programme.nom %}
                                     {% include "common/display_field_if_exists.html" with label="Financement" value=lot.financement %}
                                     {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville %}
-                                    {% include "common/display_field_if_exists.html" with label="Nombre de logements" value=programme.nb_logements %}
+                                    {% include "common/display_field_if_exists.html" with label="Nombre de logements" value=lot.nb_logements %}
                                 </div>
                             </div>
                         </div>
@@ -53,7 +53,7 @@
                                     {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse %}
                                     {% include "common/display_field_if_exists.html" with label="Code postal" value=programme.code_postal %}
                                     {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville %}
-                                    {% include "common/display_field_if_exists.html" with label="Nombre de logements" value=programme.nb_logements %}
+                                    {% include "common/display_field_if_exists.html" with label="Nombre de logements" value=lot.nb_logements %}
                                     {% include "common/display_field_if_exists.html" with label="ANRU" value=programme.anru %}
                                     {% include "common/display_field_if_exists.html" with label="Type d'habitat" value=programme.get_type_habitat_display %}
                                     {% include "common/display_field_if_exists.html" with label="Type d'opération" value=programme.get_type_operation_display %}

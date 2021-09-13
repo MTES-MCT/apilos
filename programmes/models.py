@@ -57,7 +57,6 @@ class Programme(IngestableModel):
         "code_postal": "Opération code postal",
         "ville": "Commune",
         "adresse": "Adresse Opération 1",
-        "nb_logements": "Nb logts",
         "zone_123": "Zone 123",
         "zone_abc": "Zone ABC",
         "surface_utile_totale": "SU totale",
@@ -82,7 +81,6 @@ class Programme(IngestableModel):
     ville = models.CharField(max_length=255, null=True)
     adresse = models.CharField(max_length=255, null=True)
     departement = models.IntegerField(null=True)
-    nb_logements = models.IntegerField(null=True)
     numero_galion = models.CharField(max_length=255, null=True)
     annee_gestion_programmation = models.IntegerField(null=True)
     zone_123 = models.IntegerField(null=True)
@@ -174,11 +172,13 @@ class Lot(IngestableModel):
         "financement": "Produit",
         "programme": "Nom Opération",
         "bailleur": "MOA (code SIRET)",
+        "nb_logements": "Nb logts",
     }
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     numero = models.IntegerField(null=True)
+    nb_logements = models.IntegerField(null=True)
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
