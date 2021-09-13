@@ -856,6 +856,7 @@ def generate_convention(convention_uuid):
         Convention.objects
             .prefetch_related("bailleur")
             .prefetch_related("programme")
+            .prefetch_related("programme__administration")
             .prefetch_related("lot")
             .prefetch_related("pret_set")
             .prefetch_related("lot__typestationnement_set")
@@ -885,32 +886,28 @@ def generate_convention(convention_uuid):
         "convention": convention,
         "bailleur": convention.bailleur,
         "programme": convention.programme,
+        "lot": convention.lot,
+        "administration": convention.programme.administration,
         "logement_edds": convention.programme.logementedd_set.all(), # S6
         "logements": convention.lot.logement_set.all(),
         "annexes": annexes,
         "stationnements": convention.lot.typestationnement_set.all(),
         "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF","CDCL"]),
         "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF","CDCL"]),
-        # Type (type1, type2): type_habitat, type_operation ?
-        # autre_type ?
-        "autre_type": "A DEFINIR",
-        "lot": convention.lot.__dict__,
+        "references_cadatrales ": "A faire ici : afficher les références cadastrales",
+
+        # ajouter le calcule si nb_logement > ou pas à 10 logements
         "nb_logements_mixite_sociale_30": math.ceil(convention.programme.nb_logements*3/10),
         "nb_logements_mixite_sociale_30_arrondie": round(convention.programme.nb_logements*3/10),
         "nb_logements_mixite_sociale_10_arrondie": round(convention.programme.nb_logements/10),
 
         # S3 : edd_volumedtrique
-        "S4": "S4 : A DEFINIR",
-        "S7": "S7 : A DEFINIR",
-        "S8": "S8 : A DEFINIR",
-        "S5": "S5 : A DEFINIR : est-ce que c'est par typologie de logement T1, T2, T3, T4... ?",
-        "Mix1092": "A DEFINIR, quel est le calcul à appliquer ?",
+        "Mix1092": "c'est 10 % quelques soit le nombre de logements",
         "loyer_m2": convention.lot.logement_set.first().loyer_par_metre_carre,
         "surface_habitable_totale": surface_habitable_totale,
         "surface_annexes_retenue_totale": surface_annexes_retenue_totale,
         "surface_utile_totale": surface_utile_totale,
         "locaux": "Locaux : A DEFINIR",
-        "acte_notarie": "A DEFINIR : faut-il ajouter tout l'acte de vente ?"
 
 
         # "image": InlineImage(

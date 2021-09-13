@@ -1,10 +1,7 @@
-from django.contrib.auth.models import AbstractUser, Group
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-
 class User(AbstractUser):
-    pass
-
     def has_perm(self, perm, obj=None):
         if self.is_staff:
             return True
@@ -93,4 +90,4 @@ class Role(models.Model):
         elif self.administration is not None:
             entity = self.administration
 
-        return f"{self.typologie} - {entity}"
+        return f"{self.user} - {self.typologie} - {entity}"
