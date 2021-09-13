@@ -18,7 +18,3 @@ repos:
     rev: v1.4.9
     hooks:
     -   id: djhtml
--   repo: https://github.com/akaihola/darker
-    rev: 1.2.4
-    hooks:
-    -   id: darker
