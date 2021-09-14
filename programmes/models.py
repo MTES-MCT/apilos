@@ -45,7 +45,6 @@ class TypeHabitat(models.TextChoices):
 
 
 class TypologieAnnexe(models.TextChoices):
-    BALCON = "BALCON", "Balcon"
     TERRASSE = "TERRASSE", "Terrasse"
     JARDIN = "JARDIN", "Jardin"
     CAVE = "CAVE", "Cave"
