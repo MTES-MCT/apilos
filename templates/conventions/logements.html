@@ -34,15 +34,15 @@
 
                                 <thead>
                                     <tr>
-                                        <th scope="col" style='min-width:200px;'>Désignation {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
-                                        <th scope="col" style='min-width:150px;'>Type {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
-                                        <th scope="col" style='min-width:120px;'>Surface habitable {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
-                                        <th scope="col" style='min-width:120px;'>Surface des annexes réelle {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
-                                        <th scope="col" style='min-width:120px;'>Surface des annexes retenue dans la SU {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
-                                        <th scope="col" style='min-width:120px;'>Surface Utile {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
-                                        <th scope="col" style='min-width:120px;'>Loyer maxinum en € par m2 de surface utile {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
-                                        <th scope="col" style='min-width:120px;'>Coefficient propre au logement {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
-                                        <th scope="col" style='min-width:120px;'>Loyer maxinum du logement en € {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:200px;'>Désignation {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:150px;'>Type {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Surface habitable {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Surface des annexes réelle {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Surface des annexes retenue dans la SU {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Surface Utile {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Loyer maxinum en € par m2 de surface utile {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Coefficient propre au logement {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Loyer maxinum du logement en € {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>

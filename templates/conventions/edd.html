@@ -46,9 +46,9 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th scope="col">Financement {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
-                                        <th scope="col">Désignation {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
-                                        <th scope="col">Type {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col">Financement {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col">Désignation {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col">Type {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>

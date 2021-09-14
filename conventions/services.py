@@ -508,6 +508,7 @@ def logements_update(request, convention_uuid):
         else:
             upform = UploadForm()
             formset.programme_id = convention.programme_id
+            formset.lot_id = convention.lot_id
             if formset.is_valid():
                 lgt_uuids1 = list(map(
                     lambda x : x.cleaned_data["uuid"],

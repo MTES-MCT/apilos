@@ -240,12 +240,14 @@ class LogementForm(forms.Form):
 
 class BaseLogementFormSet(BaseFormSet):
     programme_id = None
+    lot_id = None
 
     def clean(self):
         self.manage_non_empty_validation()
         self.manage_designation_validation()
         self.manage_same_loyer_par_metre_carre()
         self.manage_edd_consistency()
+        self.manage_nb_logement_consistency()
 
     def manage_non_empty_validation(self):
         if len(self.forms) == 0:
@@ -300,7 +302,7 @@ class BaseLogementFormSet(BaseFormSet):
                 )
 
     def manage_edd_consistency(self):
-        lgts_edd = LogementEDD.objects.filter(programme_id=22095)
+        lgts_edd = LogementEDD.objects.filter(programme_id=self.programme_id)
         if lgts_edd.count() != 0:
             for form in self.forms:
                 try:
@@ -311,6 +313,14 @@ class BaseLogementFormSet(BaseFormSet):
                         "Ce logement n'est pas dans l'EDD simplifié"
                     )
 
+    def manage_nb_logement_consistency(self):
+        lot = Lot.objects.get(id=self.lot_id)
+        if lot.nb_logements != self.total_form_count():
+            error = ValidationError(
+                f"Le nombre de logement a conventionner ({lot.nb_logements}) " +
+                f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
+            )
+            self._non_form_errors.append(error)
 
 LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, extra=0)
 

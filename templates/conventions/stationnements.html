@@ -34,9 +34,9 @@
 
                                 <thead>
                                     <tr>
-                                        <th scope="col" style='min-width:150px;'>Type de stationnement {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
-                                        <th scope="col" style='min-width:200px;'>Nombre de staionnements {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
-                                        <th scope="col" style='min-width:150px;'>Loyer maximum en € {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:150px;'>Type de stationnement {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:200px;'>Nombre de staionnements {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:150px;'>Loyer maximum en € {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>

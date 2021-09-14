@@ -129,3 +129,6 @@ class Pret(models.Model):
     def _get_montant(self):
         return self.montant
     m = property(_get_montant)
+
+    def p_full(self):
+        return self.get_preteur_display().replace('CDC', 'Caisse des dépôts et des consignations')
