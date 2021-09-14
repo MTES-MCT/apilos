@@ -55,7 +55,7 @@ class ProgrammeForm(forms.Form):
         },
     )
     nb_logements = forms.IntegerField( error_messages={
-            "required": "Le nombre de logements est obligatoire",
+            "required": "Le nombre de logements à conventionner est obligatoire",
         },
     )
     type_habitat = forms.TypedChoiceField(required=False, choices=TypeHabitat.choices)
@@ -72,7 +72,7 @@ class ProgrammeForm(forms.Form):
     )
 
 
-class ProgrammmeCadastralForm(forms.Form):
+class ProgrammeCadastralForm(forms.Form):
 
     permis_construire = forms.CharField(required=False)
     date_acte_notarie = forms.DateField(required=False)
@@ -116,6 +116,47 @@ class ProgrammmeCadastralForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
     )
+
+class ReferenceCadastraleForm(forms.Form):
+    section = forms.CharField(
+        required=True,
+        max_length=255,
+        error_messages={
+            "required": "La section est obligatoire",
+            "max_length": "Le message ne doit pas excéder 255 characters",
+        },
+    )
+    numero = forms.IntegerField(
+        error_messages={
+            "required": "Le numéro est obligatoire",
+        },
+    )
+    lieudit = forms.CharField(
+        required=True,
+        max_length=255,
+        error_messages={
+            "required": "Le lieudit est obligatoire",
+            "max_length": "Le lieudit ne doit pas excéder 255 characters",
+        },
+    )
+    surface = forms.FloatField(
+        error_messages={
+            "required": "La surface est obligatoire",
+        },
+    )
+
+class BaseReferenceCadastraleFormSet(BaseFormSet):
+    pass
+
+ReferenceCadastraleFormSet = formset_factory(
+    ReferenceCadastraleForm,
+    formset=BaseReferenceCadastraleFormSet,
+    extra=0
+)
+
+
+class ProgrammeEDDForm(forms.Form):
+
     edd_volumetrique = forms.CharField(
         required=False,
         max_length=5000,
@@ -197,15 +238,16 @@ class LogementForm(forms.Form):
         return loyer
 
 
-
 class BaseLogementFormSet(BaseFormSet):
     programme_id = None
+    lot_id = None
 
     def clean(self):
         self.manage_non_empty_validation()
         self.manage_designation_validation()
         self.manage_same_loyer_par_metre_carre()
         self.manage_edd_consistency()
+        self.manage_nb_logement_consistency()
 
     def manage_non_empty_validation(self):
         if len(self.forms) == 0:
@@ -260,7 +302,7 @@ class BaseLogementFormSet(BaseFormSet):
                 )
 
     def manage_edd_consistency(self):
-        lgts_edd = LogementEDD.objects.filter(programme_id=22095)
+        lgts_edd = LogementEDD.objects.filter(programme_id=self.programme_id)
         if lgts_edd.count() != 0:
             for form in self.forms:
                 try:
@@ -271,6 +313,14 @@ class BaseLogementFormSet(BaseFormSet):
                         "Ce logement n'est pas dans l'EDD simplifié"
                     )
 
+    def manage_nb_logement_consistency(self):
+        lot = Lot.objects.get(id=self.lot_id)
+        if lot.nb_logements != self.total_form_count():
+            error = ValidationError(
+                f"Le nombre de logement a conventionner ({lot.nb_logements}) " +
+                f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
+            )
+            self._non_form_errors.append(error)
 
 LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, extra=0)
 

@@ -7,7 +7,7 @@
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                        <h2>Etape 8/{{ nb_steps }} - Stationnements</h2>
+                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Stationnements</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
 
@@ -34,9 +34,9 @@
 
                                 <thead>
                                     <tr>
-                                        <th scope="col" style='min-width:150px;'>Type de stationnement {% include "common/mandatory_field.html" %}</th>
-                                        <th scope="col" style='min-width:200px;'>Nombre de staionnements {% include "common/mandatory_field.html" %}</th>
-                                        <th scope="col" style='min-width:150px;'>Loyer maximum en € {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col" style='min-width:150px;'>Type de stationnement {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:200px;'>Nombre de staionnements {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:150px;'>Loyer maximum en € {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -75,8 +75,8 @@
                     </div>
                 </div>
                 <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-                    {% include "common/button/precedent.html" with precedent='conventions:step7' convention_uuid=convention.uuid %}
-                    {% include "common/button/suivant.html" with suivant='conventions:step8' convention_uuid=convention.uuid %}
+                    {% include "common/button/precedent.html" with precedent='conventions:annexes' convention_uuid=convention.uuid %}
+                    {% include "common/button/suivant.html" with suivant='conventions:stationnements' convention_uuid=convention.uuid %}
                 </div>
             </form>
         </div>

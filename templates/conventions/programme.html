@@ -7,13 +7,11 @@
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                        <h2>Etape 3/{{ nb_steps }} - Nature du programme immobilier</h2>
+                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Nature du programme immobilier</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
 
-
                         {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" mandatory=True %}
-
 
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
@@ -32,7 +30,7 @@
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                                     <div class="fr-input-group {% if form.nb_logements.errors %}fr-select-group--error{% endif %}">
                                         <label class="fr-label" for="{{form.nb_logements.id_for_label}}">
-                                            Nombre de logements {% include "common/mandatory_field.html" %}
+                                            Nombre de logements à conventionner {% include "common/mandatory_field.html" %}
                                         </label>
                                         {% include "common/form/input_number.html" with form_input=form.nb_logements %}
                                     </div>
@@ -142,8 +140,8 @@
                     </div>
                 </div>
                 <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w button-bar">
-                    {% include "common/button/precedent.html" with precedent='conventions:step2' convention_uuid=convention.uuid %}
-                    {% include "common/button/suivant.html" with suivant='conventions:step3' convention_uuid=convention.uuid %}
+                    {% include "common/button/precedent.html" with precedent='conventions:bailleur' convention_uuid=convention.uuid %}
+                    {% include "common/button/suivant.html" with suivant='conventions:programme' convention_uuid=convention.uuid %}
                 </div>
             </form>
         </div>

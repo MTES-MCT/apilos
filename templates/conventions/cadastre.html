@@ -1,0 +1,146 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner fr-pb-1w">
+        <div class="fr-container">
+            <form method="post" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
+                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Informations cadastrales sur le programme</h2>
+                        {% include "common/convention_edit_info.html" with convention=convention %}
+                        {% include "common/mandatory_fields_info.html" %}
+
+                        {% include "common/form/input_text.html" with form_input=form.permis_construire label="Numéro de permis construire" %}
+
+                        <div class="fr-mb-2w">
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_date.html" with form_input=form.date_acte_notarie label="Date de l'acte notarié" %}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                                    {% include "common/form/input_date.html" with form_input=form.date_achat label="Date d'achat" %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="fr-mb-2w">
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_date.html" with form_input=form.date_achevement_previsible label="Date d'achèvement previsible" %}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                                    {% include "common/form/input_date.html" with form_input=form.date_achevement label="Date d'achèvement ou d'obtention de certificat de conformité" %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="fr-input-group {% if form.vendeur.errors %}fr-select-group--error{% endif %}">
+                            <label class="fr-label fr-mb-1w" for="{{form.vendeur.id_for_label}}">
+                                Vendeur
+                                {% include "common/mandatory_field.html" %}
+                            </label>
+                            {% include "common/form/input_upload_button.html" with textarea=True %}
+                            {% include "common/form/input_textarea.html" with form_input=form.vendeur rows=5 %}
+                        </div>
+
+                        <div class="fr-input-group {% if form.acquereur.errors %}fr-select-group--error{% endif %}">
+                            <label class="fr-label fr-mb-1w" for="{{form.acquereur.id_for_label}}">
+                                Acquéreur
+                                {% include "common/mandatory_field.html" %}
+                            </label>
+                            {% include "common/form/input_upload_button.html" with textarea=True %}
+                            {% include "common/form/input_textarea.html" with form_input=form.acquereur rows=5 %}
+                        </div>
+
+                        <div class="fr-input-group {% if form.reference_notaire.errors %}fr-select-group--error{% endif %}">
+                            <label class="fr-label fr-mb-1w" for="{{form.reference_notaire.id_for_label}}">
+                                Référence du notaire
+                            </label>
+                            {% include "common/form/input_upload_button.html" with textarea=True %}
+                            {% include "common/form/input_textarea.html" with form_input=form.reference_notaire rows=5 %}
+                        </div>
+
+                        <div class="fr-input-group {% if form.reference_publication_acte.errors %}fr-select-group--error{% endif %}">
+                            <label class="fr-label fr-mb-1w" for="{{form.reference_publication_acte.id_for_label}}">
+                                Référence de publication de l'acte
+                            </label>
+                            {% include "common/form/input_upload_button.html" with textarea=True %}
+                            {% include "common/form/input_textarea.html" with form_input=form.reference_publication_acte rows=5 %}
+                        </div>
+
+                        <div class="fr-input-group {% if form.acte_de_vente.errors %}fr-select-group--error{% endif %}">
+                            <label class="fr-label fr-mb-1w" for="{{form.acte_de_vente.id_for_label}}">
+                                Acte de vente
+                            </label>
+                            {% include "common/form/input_upload_button.html" with textarea=False %}
+                        </div>
+
+                        <hr class="fr-col-12 fr-my-3w">
+
+                        <h4>Références cadastrales</h4>
+
+                        {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='cadastre' upform=upform  what="références cadastrales"%}
+
+                        <hr class="fr-col-12 fr-my-3w">
+
+                        {% for error in import_warnings %}
+                            <p id="text-input-error-desc-error" class="fr-error-text">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+
+                        {% for error in formset.non_form_errors %}
+                            <p id="text-input-error-desc-error" class="fr-error-text">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+
+                        {{ formset.management_form }}
+                        <div class="fr-table fr-table--bordered">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Section {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col">Numéro {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col">Lieudit {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col">Surface {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for form_pret in formset %}
+                                        <tr>
+                                            <td>
+                                                {% include "common/form/input_text.html" with form_input=form_pret.section %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_text.html" with form_input=form_pret.numero %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_text.html" with form_input=form_pret.lieudit %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form_pret.surface %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <hr class="fr-col-12 fr-my-3w">
+
+
+                    </div>
+                </div>
+
+                <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w button-bar">
+                    {% include "common/button/precedent.html" with precedent='conventions:programme' convention_uuid=convention.uuid %}
+                    {% include "common/button/suivant.html" with suivant='conventions:cadastre' convention_uuid=convention.uuid %}
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

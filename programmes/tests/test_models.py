@@ -1,4 +1,3 @@
-import datetime
 import random
 from django.test import TestCase
 from core.tests import utils
@@ -32,29 +31,7 @@ class BailleurModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         bailleur = utils.create_bailleur()
-        programme = Programme.objects.create(
-            nom="3F",
-            bailleur = bailleur,
-            code_postal = "75007",
-            ville = "Paris",
-            adresse = "22 rue segur",
-            departement = 75,
-            nb_logements = 100,
-            numero_galion = "12345",
-            annee_gestion_programmation = 2018,
-            zone_123 = 3,
-            zone_abc = 'B1',
-            surface_utile_totale = 5243.21,
-            nb_locaux_commerciaux = 5,
-            nb_bureaux = 25,
-            autre_locaux_hors_convention = "quelques uns",
-            vendeur = "identité du vendeur",
-            acquereur = "identité de l'acquéreur",
-            permis_construire = "123 456 789 ABC",
-            date_achevement_previsible = datetime.date.today() + datetime.timedelta(days=365),
-            date_achat = datetime.date.today() - datetime.timedelta(days=365),
-            date_achevement = datetime.date.today() + datetime.timedelta(days=465),
-        )
+        programme = utils.create_programme(bailleur)
 
         count = 0
         for financement in [Financement.PLAI,Financement.PLUS]:
@@ -64,6 +41,7 @@ class BailleurModelsTest(TestCase):
                 bailleur = bailleur,
                 programme = programme,
                 financement = financement,
+                nb_logements = 50,
             )
             for index in range(50):
                 typologie, coef, sh, sa, sar, su = params_logement(index)

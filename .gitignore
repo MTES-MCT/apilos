@@ -17,3 +17,4 @@ staticfiles
 
 #temporaire
 scripts/mailjet.py
+documents/HLM-template-v*

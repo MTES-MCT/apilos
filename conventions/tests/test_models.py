@@ -2,35 +2,43 @@ import datetime
 from django.test import TestCase
 from core.tests import utils
 from conventions.models import Convention, ConventionStatut, Pret, Preteur
-from programmes.models import Programme, Lot, Financement
+from programmes.models import Lot, Financement
 
 class ConventionModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         bailleur = utils.create_bailleur()
-        programme = Programme.objects.create(
-            nom="3F",
-            bailleur=bailleur,
-        )
+        programme = utils.create_programme(bailleur)
         lot = Lot.objects.create(
             programme=programme,
             bailleur=bailleur,
             financement=Financement.PLUS,
         )
-        Convention.objects.create(
+        convention = Convention.objects.create(
             numero=1,
             lot=lot,
             programme=programme,
             bailleur=bailleur,
             financement=Financement.PLUS,
         )
+        Pret.objects.create(
+            convention = convention,
+            bailleur = bailleur,
+            preteur = Preteur.CDCF,
+            date_octroi = datetime.datetime.today(),
+            autre = "test autre",
+            numero = "mon numero",
+            duree = 50,
+            montant = 123456.789
+        )
+
 
     def test_object_str(self):
         convention = Convention.objects.get(id=1)
         lot = convention.lot
         programme = convention.programme
         expected_object_name = (f"{programme.nom} - {lot.financement} - " +
-            f"{programme.ville} - {programme.nb_logements} lgts")
+            f"{programme.ville} - {lot.nb_logements} lgts")
         self.assertEqual(str(convention), expected_object_name)
 
     def test_is_functions(self):
@@ -57,20 +65,23 @@ class ConventionModelsTest(TestCase):
 
 
     def test_properties(self):
-        convention = Convention.objects.get(id=1)
-        pret = Pret.objects.create(
-            convention = convention,
-            bailleur = convention.bailleur,
-            preteur = Preteur.CDCF,
-            date_octroi = datetime.datetime.today(),
-            autre = "test autre",
-            numero = "mon numero",
-            duree = 50,
-            montant = 123456.789
-        )
+        pret = Pret.objects.first()
         self.assertEqual(pret.preteur, pret.p)
         self.assertEqual(pret.autre, pret.a)
         self.assertEqual(pret.date_octroi, pret.do)
         self.assertEqual(pret.numero, pret.n)
         self.assertEqual(pret.duree, pret.d)
         self.assertEqual(pret.montant, pret.m)
+
+    def test_p_full(self):
+        pret = Pret.objects.first()
+        pret.preteur = Preteur.CDCF
+        self.assertEqual(pret.p_full(), 'Caisse des dépôts et des consignations froncière')
+        pret.preteur = Preteur.CDCL
+        self.assertEqual(pret.p_full(), 'Caisse des dépôts et des consignations locative')
+        pret.preteur = Preteur.AUTRE
+        self.assertEqual(pret.p_full(), 'Autre')
+        pret.preteur = Preteur.ETAT
+        self.assertEqual(pret.p_full(), 'Etat')
+        pret.preteur = Preteur.REGION
+        self.assertEqual(pret.p_full(), 'Région')

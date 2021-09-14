@@ -7,7 +7,7 @@
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                        <h2>Etape 6/{{ nb_steps }} - Détails des logements</h2>
+                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Détails des logements</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
 
@@ -34,15 +34,15 @@
 
                                 <thead>
                                     <tr>
-                                        <th scope="col" style='min-width:200px;'>Désignation {% include "common/mandatory_field.html" %}</th>
-                                        <th scope="col" style='min-width:150px;'>Type {% include "common/mandatory_field.html" %}</th>
-                                        <th scope="col" style='min-width:120px;'>Surface habitable {% include "common/mandatory_field.html" %}</th>
-                                        <th scope="col" style='min-width:120px;'>Surface des annexes réelle {% include "common/mandatory_field.html" %}</th>
-                                        <th scope="col" style='min-width:120px;'>Surface des annexes retenue dans la SU {% include "common/mandatory_field.html" %}</th>
-                                        <th scope="col" style='min-width:120px;'>Surface Utile {% include "common/mandatory_field.html" %}</th>
-                                        <th scope="col" style='min-width:120px;'>Loyer maxinum en € par m2 de surface utile {% include "common/mandatory_field.html" %}</th>
-                                        <th scope="col" style='min-width:120px;'>Coefficient propre au logement {% include "common/mandatory_field.html" %}</th>
-                                        <th scope="col" style='min-width:120px;'>Loyer maxinum du logement en € {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col" style='min-width:200px;'>Désignation {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:150px;'>Type {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Surface habitable {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Surface des annexes réelle {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Surface des annexes retenue dans la SU {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Surface Utile {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Loyer maxinum en € par m2 de surface utile {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Coefficient propre au logement {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
+                                        <th scope="col" style='min-width:120px;'>Loyer maxinum du logement en € {% if formset.total_form_count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -125,8 +125,8 @@
                     </div>
                 </div>
                 <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-                    {% include "common/button/precedent.html" with precedent='conventions:step5' convention_uuid=convention.uuid %}
-                    {% include "common/button/suivant.html" with suivant='conventions:step6' convention_uuid=convention.uuid %}
+                    {% include "common/button/precedent.html" with precedent='conventions:prets' convention_uuid=convention.uuid %}
+                    {% include "common/button/suivant.html" with suivant='conventions:logements' convention_uuid=convention.uuid %}
                 </div>
             </form>
         </div>
@@ -146,26 +146,4 @@
         compute_total_value('su')
         compute_total_value('loyer')
     </script>
-    <!-- <script  type="text/javascript">
-
-        var t = document.getElementById("lgts_table"),
-        tableRows = t.getElementsByTagName("tr")
-        for ( i =0, len = tableRows.length; i<len; i++) {
-            tds = tableRows[i].getElementById("lgt_loyer")
-            console.log(tds)
-        }
-
-
-
-
-
-        r = [], i, len, tds, j, jlen;
-
-        for ( i =0, len = tableRows.length; i<len; i++) {
-            tds = tableRows[i].getElementsById('td');
-    for( j = 0, jlen = tds.length; j < jlen; j++) {
-        r.push(tds[j]);
-    }
-}
-</script> -->
 {% endblock %}

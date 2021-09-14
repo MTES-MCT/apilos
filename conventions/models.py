@@ -60,7 +60,7 @@ class Convention(models.Model):
 
     def __str__(self):
         return (f"{self.programme.nom} - {self.lot.financement} - " +
-            f"{self.programme.ville} - {self.programme.nb_logements} lgts")
+            f"{self.programme.ville} - {self.lot.nb_logements} lgts")
 
     # to do:
     # gérer un decorateur :
@@ -129,3 +129,6 @@ class Pret(models.Model):
     def _get_montant(self):
         return self.montant
     m = property(_get_montant)
+
+    def p_full(self):
+        return self.get_preteur_display().replace('CDC', 'Caisse des dépôts et des consignations')

@@ -15,7 +15,7 @@
                         <h4 class="fr-mb-3w">
                             Commencer une nouvelle convention dès à présent
                         </h4>
-                        <button class="fr-btn" onclick="location.href='{% url 'conventions:step1' %}'">
+                        <button class="fr-btn" onclick="location.href='{% url 'conventions:selection' %}'">
                             <span class="fr-fi-edit-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
                         </button>
                     {% elif request.user.is_instructeur or request.user.is_staff %}
@@ -46,7 +46,7 @@
                                     <th scope="col">Programme</th>
                                     <th scope="col">Financement</th>
                                     <th scope="col">Ville</th>
-                                    <th scope="col">Nombre de logements</th>
+                                    <th scope="col">Nombre de logements à conventionner</th>
                                     <th scope="col">Statut</th>
                                     <th scope="col">Action</th>
                                 </tr>
@@ -60,23 +60,23 @@
                                         <td>{{convention.programme.nom}}</td>
                                         <td>{{convention.financement}}</td>
                                         <td>{{convention.programme.ville}}</td>
-                                        <td>{{convention.programme.nb_logements}}</td>
+                                        <td>{{convention.lot.nb_logements}}</td>
                                         <td>{{convention.get_statut_display}}</td>
                                         <td>
                                             {% if request.user.is_bailleur %}
                                                 {% if convention.is_bailleur_editable %}
-                                                    <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" onclick="location.href='{% url 'conventions:step1_update' convention_uuid=convention.uuid %}'"">
+                                                    <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" onclick="location.href='{% url 'conventions:selection_update' convention_uuid=convention.uuid %}'"">
                                                         Edit
                                                     </button>
                                                 {% else %}
-                                                    <button class="fr-btn fr-fi-eye-line" title="Visualiser votre convention" onclick="location.href='{% url 'conventions:step10' convention_uuid=convention.uuid %}'"">
+                                                    <button class="fr-btn fr-fi-eye-line" title="Visualiser votre convention" onclick="location.href='{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}'"">
                                                         View
                                                     </button>
                                                 {% endif %}
                                             {% endif %}
                                             {% if request.user.is_instructeur %}
                                                 {% if convention.is_instructeur_editable %}
-                                                    <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" onclick="location.href='{% url 'conventions:step10' convention_uuid=convention.uuid %}'"">
+                                                    <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" onclick="location.href='{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}'"">
                                                         Edit
                                                     </button>
                                                 {% endif %}
