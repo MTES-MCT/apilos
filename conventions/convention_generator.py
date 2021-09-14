@@ -34,12 +34,16 @@ def generate_hlm(convention):
         'su': 0,
         'loyer': 0,
     }
-    for logement in convention.lot.logement_set.all():
+    nb_logements_par_type = {}
+    for logement in convention.lot.logement_set.order_by('typologie').all():
         logements_totale['sh'] += logement.surface_habitable
         logements_totale['sa'] += logement.surface_annexes
         logements_totale['sar'] += logement.surface_annexes_retenue
         logements_totale['su'] += logement.surface_utile
         logements_totale['loyer'] += logement.loyer
+        if logement.typologie not in nb_logements_par_type:
+            nb_logements_par_type[logement.get_typologie_display()] = 0
+        nb_logements_par_type[logement.get_typologie_display()] += 1
 
     logement_edds, lot_num = prepare_logement_edds(convention)
     mixite = compute_mixte(convention)
@@ -58,6 +62,7 @@ def generate_hlm(convention):
         "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF","CDCL"]),
         "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF","CDCL"]),
         "references_cadastrales": convention.programme.referencecadastrale_set.all(),
+        "nb_logements_par_type" : nb_logements_par_type,
         "lot_num": lot_num,
         # 30 % au moins > 10 logement si PLUS
         "mixPLUSsup10plafond_30pc" : mixite['mixPLUSsup10plafond_30pc'],
