@@ -3,23 +3,27 @@ from io import BytesIO
 from enum import Enum
 from zipfile import BadZipFile
 import datetime
-import math
-import io
-import jinja2
-from docxtpl import DocxTemplate
 from openpyxl import load_workbook
-from django.conf import settings
 
 from conventions.models import Convention, ConventionStatut, Preteur, Pret
-from programmes.models import Financement, Lot, Logement, Annexe, TypeStationnement, LogementEDD
+from programmes.models import (
+    Lot,
+    Logement,
+    Annexe,
+    TypeStationnement,
+    LogementEDD,
+    ReferenceCadastrale
+)
 from programmes.forms import (
     ProgrammeSelectionForm,
     ProgrammeForm,
-    ProgrammmeCadastralForm,
+    ProgrammeCadastralForm,
+    ProgrammeEDDForm,
     LogementFormSet,
     TypeStationnementFormSet,
     AnnexeFormSet,
     LogementEDDFormSet,
+    ReferenceCadastraleFormSet,
 )
 from bailleurs.forms import BailleurForm
 from .forms import (
@@ -28,6 +32,7 @@ from .forms import (
     PretFormSet,
     UploadForm,
 )
+from . import convention_generator
 
 class ReturnStatus(Enum):
     SUCCESS = 'SUCCESS'
@@ -49,7 +54,7 @@ def conventions_index(request, infilter):
     return conventions
 
 
-def conventions_step1(request, infilter):
+def conventions_selection(request, infilter):
     infilter.update(request.user.programme_filter())
     return (
         Lot.objects.prefetch_related("programme")
@@ -76,18 +81,18 @@ def select_programme_create(request):
                 "success": ReturnStatus.SUCCESS,
                 "convention": convention,
                 "form": form,
-            }  # HttpResponseRedirect(reverse('conventions:step2', args=[convention.uuid]) )
+            }  # HttpResponseRedirect(reverse('conventions:bailleur', args=[convention.uuid]) )
 
     # If this is a GET (or any other method) create the default form.
     else:
         form = ProgrammeSelectionForm()
 
-    programmes = conventions_step1(request, {})
+    programmes = conventions_selection(request, {})
     return {
         "success": ReturnStatus.ERROR,
         "programmes": programmes,
         "form": form,
-    }  # render(request, "conventions/step1.html", {'form': form, 'programmes': programmes})
+    }  # render(request, "conventions/selection.html", {'form': form, 'programmes': programmes})
 
 
 def select_programme_update(request, convention_uuid):
@@ -114,7 +119,7 @@ def select_programme_update(request, convention_uuid):
             }
         )
 
-    programmes = conventions_step1(request, {})
+    programmes = conventions_selection(request, {})
     return {
         "success": ReturnStatus.ERROR,
         "programmes": programmes,
@@ -218,7 +223,7 @@ def programme_cadastral_update(request, convention_uuid):
     # pylint: disable=R0915
     convention = (Convention.objects
         .prefetch_related("programme")
-        .prefetch_related("programme__logementedd_set")
+        .prefetch_related("programme__referencecadastrale_set")
         .get(uuid=convention_uuid)
     )
     programme = convention.programme
@@ -227,14 +232,14 @@ def programme_cadastral_update(request, convention_uuid):
 
     if request.method == "POST":
         # When the user cliked on "Téléverser" button
-        formset = LogementEDDFormSet(request.POST)
-        form = ProgrammmeCadastralForm(request.POST)
+        formset = ReferenceCadastraleFormSet(request.POST)
+        form = ProgrammeCadastralForm(request.POST)
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = handle_uploaded_file(upform, request.FILES["file"], LogementEDD)
+                result = handle_uploaded_file(upform, request.FILES["file"], ReferenceCadastrale)
                 if result['success'] != ReturnStatus.ERROR:
-                    formset = LogementEDDFormSet(initial=result['objects'])
+                    formset = ReferenceCadastraleFormSet(initial=result['objects'])
                     import_warnings = result['import_warnings']
         # When the user cliked on "Enregistrer et Suivant"
         else:
@@ -256,6 +261,96 @@ def programme_cadastral_update(request, convention_uuid):
                     "reference_publication_acte"
                 ]
                 programme.acte_de_vente = form.cleaned_data["acte_de_vente"]
+                programme.save()
+
+                programme.referencecadastrale_set.all().delete()
+                for form_referencecadastrale in formset:
+                    referencecadastrale = ReferenceCadastrale.objects.create(
+                        programme=programme,
+                        bailleur=convention.bailleur,
+                        section=form_referencecadastrale.cleaned_data["section"],
+                        numero=form_referencecadastrale.cleaned_data["numero"],
+                        lieudit=form_referencecadastrale.cleaned_data["lieudit"],
+                        surface=form_referencecadastrale.cleaned_data["surface"],
+                    )
+                    referencecadastrale.save()
+
+                # All is OK -> Next:
+                return {
+                    "success": ReturnStatus.SUCCESS,
+                    "convention": convention,
+                    "form": form,
+                    "formset": formset,
+                }
+    # When display the file for the first time
+    else:
+        initial = []
+        referencecadastrales = programme.referencecadastrale_set.all()
+        for referencecadastrale in referencecadastrales:
+            initial.append(
+                {
+                    "section": referencecadastrale.section,
+                    "numero": referencecadastrale.numero,
+                    "lieudit": referencecadastrale.lieudit,
+                    "surface": referencecadastrale.surface,
+                }
+            )
+        formset = ReferenceCadastraleFormSet(initial=initial)
+        upform = UploadForm()
+        form = ProgrammeCadastralForm(
+            initial={
+                "permis_construire": programme.permis_construire,
+                "date_acte_notarie": format_date_for_form(programme.date_acte_notarie),
+                "date_achevement_previsible": format_date_for_form(
+                    programme.date_achevement_previsible
+                ),
+                "date_achat": format_date_for_form(programme.date_achat),
+                "date_achevement": format_date_for_form(programme.date_achevement),
+                "vendeur": programme.vendeur,
+                "acquereur": programme.acquereur,
+                "reference_notaire": programme.reference_notaire,
+                "reference_publication_acte": programme.reference_publication_acte,
+                "acte_de_vente": programme.acte_de_vente,
+            }
+        )
+    return {
+        "success": ReturnStatus.ERROR,
+        "convention": convention,
+        "form": form,
+        "formset": formset,
+        "upform": upform,
+        "import_warnings": import_warnings,
+    }
+
+
+def programme_edd_update(request, convention_uuid):
+    # pylint: disable=R0915
+    convention = (Convention.objects
+        .prefetch_related("programme")
+        .prefetch_related("programme__logementedd_set")
+        .get(uuid=convention_uuid)
+    )
+    programme = convention.programme
+
+    import_warnings = None
+
+    if request.method == "POST":
+        # When the user cliked on "Téléverser" button
+        formset = LogementEDDFormSet(request.POST)
+        form = ProgrammeEDDForm(request.POST)
+        if request.POST.get("Upload", False):
+            upform = UploadForm(request.POST, request.FILES)
+            if upform.is_valid():
+                result = handle_uploaded_file(upform, request.FILES["file"], LogementEDD)
+                if result['success'] != ReturnStatus.ERROR:
+                    formset = LogementEDDFormSet(initial=result['objects'])
+                    import_warnings = result['import_warnings']
+        # When the user cliked on "Enregistrer et Suivant"
+        else:
+            upform = UploadForm()
+            form_is_valid = form.is_valid()
+            formset_is_valid = formset.is_valid()
+            if form_is_valid and formset_is_valid:
                 programme.edd_volumetrique = form.cleaned_data["edd_volumetrique"]
                 programme.save()
 
@@ -291,20 +386,8 @@ def programme_cadastral_update(request, convention_uuid):
             )
         formset = LogementEDDFormSet(initial=initial)
         upform = UploadForm()
-        form = ProgrammmeCadastralForm(
+        form = ProgrammeEDDForm(
             initial={
-                "permis_construire": programme.permis_construire,
-                "date_acte_notarie": format_date_for_form(programme.date_acte_notarie),
-                "date_achevement_previsible": format_date_for_form(
-                    programme.date_achevement_previsible
-                ),
-                "date_achat": format_date_for_form(programme.date_achat),
-                "date_achevement": format_date_for_form(programme.date_achevement),
-                "vendeur": programme.vendeur,
-                "acquereur": programme.acquereur,
-                "reference_notaire": programme.reference_notaire,
-                "reference_publication_acte": programme.reference_publication_acte,
-                "acte_de_vente": programme.acte_de_vente,
                 "edd_volumetrique": programme.edd_volumetrique,
             }
         )
@@ -851,123 +934,20 @@ def extract_row(row, column_from_index, import_mapping):
     return my_row, empty_line, new_warnings
 
 
-def to_fr_date(date):
-    if date is None:
-        return ""
-    return date.strftime("%d/%m/%Y")
-
-def to_fr_float(value, d=2):
-    if value is None:
-        return ""
-    return format(value, f",.{d}f").replace(',', ' ').replace('.',',')
-
-
 def generate_convention(convention_uuid):
     convention = (
         Convention.objects
             .prefetch_related("bailleur")
-            .prefetch_related("programme")
-            .prefetch_related("programme__administration")
             .prefetch_related("lot")
-            .prefetch_related("pret_set")
             .prefetch_related("lot__typestationnement_set")
             .prefetch_related("lot__logement_set")
+            .prefetch_related("pret_set")
+            .prefetch_related("programme")
+            .prefetch_related("programme__administration")
             .prefetch_related("programme__logementedd_set")
+            .prefetch_related("programme__referencecadastrale_set")
             .get(uuid=convention_uuid)
     )
-    annexes = (
-        Annexe.objects
-        .prefetch_related("logement")
-        .filter(logement__lot_id=convention.lot.id).all()
-    )
-    filepath = f'{settings.BASE_DIR}/documents/HLM-template.docx'
-    doc = DocxTemplate(filepath)
-
-    surface_habitable_totale = 0
-    surface_annexes_retenue_totale = 0
-    surface_utile_totale = 0
-    for logement in convention.lot.logement_set.all():
-        surface_habitable_totale += logement.surface_habitable
-        surface_annexes_retenue_totale += logement.surface_annexes_retenue
-        surface_utile_totale += logement.surface_utile
-
-    logement_edds, lot_num = prepare_logement_edds(convention)
-
-    # tester si il logement exists avant de commencer
-    context = {
-        "convention": convention,
-        "bailleur": convention.bailleur,
-        "programme": convention.programme,
-        "lot": convention.lot,
-        "administration": convention.programme.administration,
-        "logement_edds": logement_edds,
-        "logements": convention.lot.logement_set.all(),
-        "annexes": annexes,
-        "stationnements": convention.lot.typestationnement_set.all(),
-        "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF","CDCL"]),
-        "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF","CDCL"]),
-        "references_cadatrales ": "A faire ici : afficher les références cadastrales",
-
-        "lot_num": lot_num,
-        # ajouter le calcule si nb_logement > ou pas à 10 logements
-        "nb_logements_mixite_sociale_30_si_plus": (
-            math.ceil(convention.lot.nb_logements*3/10)
-            if convention.lot.financement == Financement.PLUS
-            else 0
-        ),
-        "nb_logements_mixite_sociale_30_arrondie_si_plus": (
-            round(convention.lot.nb_logements*3/10)
-            if convention.lot.financement == Financement.PLUS
-            else 0
-        ),
-        "nb_logements_mixite_sociale_10_arrondie_si_plus": (
-            round(convention.lot.nb_logements/10)
-            if convention.lot.financement == Financement.PLUS
-            else 0
-        ),
-        "nb_logements_mixite_sociale_10_arrondie": round(convention.lot.nb_logements/10),
-
-        # S3 : edd_volumedtrique
-        "Mix1092": "c'est 10 % quelques soit le nombre de logements",
-        "loyer_m2": convention.lot.logement_set.first().loyer_par_metre_carre,
-        "surface_habitable_totale": surface_habitable_totale,
-        "surface_annexes_retenue_totale": surface_annexes_retenue_totale,
-        "surface_utile_totale": surface_utile_totale,
-        "locaux": "Locaux : A DEFINIR",
-
-
-        # "image": InlineImage(
-        #     doc, image_descriptor=f"{settings.BASE_DIR}/documents/Screenshot.png", width=Inches(5)
-        # ),
-    }
-
-    jinja_env = jinja2.Environment()
-    jinja_env.filters['d'] = to_fr_date
-    jinja_env.filters['f'] = to_fr_float
-    jinja_env.filters['len'] = len
-    doc.render(context, jinja_env)
-    file_stream = io.BytesIO()
-    doc.save(file_stream)
-    file_stream.seek(0)
+    file_stream = convention_generator.generate_hlm(convention)
 
     return file_stream, f'{convention}'
-
-
-def prepare_logement_edds(convention):
-    logement_edds = (convention
-        .programme
-        .logementedd_set
-        .order_by('financement', 'designation')
-        .all()
-    )
-    count = 0
-    financement = None
-    lot_num = 0
-    for logement_edd in logement_edds:
-        if financement != logement_edd.financement:
-            financement = logement_edd.financement
-            count = count + 1
-            if convention.lot.financement == logement_edd.financement:
-                lot_num = count
-        logement_edd.lot_num = count
-    return logement_edds, lot_num

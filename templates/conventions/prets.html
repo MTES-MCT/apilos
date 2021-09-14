@@ -7,7 +7,7 @@
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                        <h2>Etape 5/{{ nb_steps }} - Financements</h2>
+                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Financements</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
 
@@ -37,7 +37,7 @@
                                         <th scope="col">Numéro</th>
                                         <th scope="col">Date d'octroi</th>
                                         <th scope="col">Durée</th>
-                                        <th scope="col">Montant {% include "common/mandatory_field.html" %}</th>
+                                        <th scope="col">Montant {% if formset.count %}{% include "common/mandatory_field.html" %}{% endif %}</th>
                                         <th scope="col">Préteur</th>
                                         <th scope="col">Préciser le prêteur si 'Autre'</th>
                                     </tr>
@@ -105,16 +105,11 @@
                             </div>
                         </div>
 
-
-
-
-
-
                     </div>
                 </div>
                 <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-                    {% include "common/button/precedent.html" with precedent='conventions:step4' convention_uuid=convention.uuid %}
-                    {% include "common/button/suivant.html" with suivant='conventions:step5' convention_uuid=convention.uuid %}
+                    {% include "common/button/precedent.html" with precedent='conventions:edd' convention_uuid=convention.uuid %}
+                    {% include "common/button/suivant.html" with suivant='conventions:prets' convention_uuid=convention.uuid %}
                 </div>
             </form>
         </div>

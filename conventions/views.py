@@ -4,20 +4,19 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.conf import settings
 
-from conventions.models import Financement
-
 from programmes.models import (
     TypeHabitat,
     TypeOperation,
     TypologieLogement,
     TypologieAnnexe,
     TypologieStationnement,
+    FinancementEDD,
 )
 from .models import Preteur
 from . import services
 from .services import ReturnStatus
 
-NB_STEPS = 10
+NB_STEPS = 11
 
 @permission_required("convention.view_convention")
 def index(request):
@@ -31,69 +30,76 @@ def index(request):
 
 @permission_required("convention.change_convention")
 def select_programme_create(request):
+    # STEP 1
     result = services.select_programme_create(request)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:step2", args=[result["convention"].uuid])
+            reverse("conventions:bailleur", args=[result["convention"].uuid])
         )
     return render(
         request,
-        "conventions/step1.html",
+        "conventions/selection.html",
         {"form": result["form"], "programmes": result["programmes"]},
     )
 
 
 @permission_required("convention.change_convention")
 def select_programme_update(request, convention_uuid):
+    # STEP 1
     result = services.select_programme_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:step2", args=[result["convention"].uuid])
+            reverse("conventions:bailleur", args=[result["convention"].uuid])
         )
     return render(
         request,
-        "conventions/step1.html",
+        "conventions/selection.html",
         {
             "form": result["form"],
             "convention_uuid": result["convention_uuid"],
             "programmes": result["programmes"],
             "nb_steps": NB_STEPS,
+            "convention_form_step": 1,
         },
     )
 
 
 @permission_required("convention.change_convention")
-def step2(request, convention_uuid):
+def bailleur(request, convention_uuid):
+    # STEP 2
     result = services.bailleur_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:step3", args=[result["convention"].uuid])
+            reverse("conventions:programme", args=[result["convention"].uuid])
         )
     return render(
         request,
-        "conventions/step2.html",
+        "conventions/bailleur.html",
         {
             "form": result["form"],
             "convention": result["convention"],
             "nb_steps": NB_STEPS,
+            "convention_form_step": 2,
         },
     )
 
 
 @permission_required("convention.change_convention")
-def step3(request, convention_uuid):
+def programme(request, convention_uuid):
+    # STEP 3
     result = services.programme_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:step4", args=[result["convention"].uuid])
+            reverse("conventions:cadastre", args=[result["convention"].uuid])
         )
     return render(
         request,
-        "conventions/step3.html",
+        "conventions/programme.html",
         {
             "form": result["form"],
             "convention": result["convention"],
             "nb_steps": NB_STEPS,
+            "convention_form_step": 3,
             "types_habitat": TypeHabitat,
             "types_operation": TypeOperation,
         },
@@ -101,44 +107,71 @@ def step3(request, convention_uuid):
 
 
 @permission_required("convention.change_convention")
-def step4(request, convention_uuid):
+def cadastre(request, convention_uuid):
+    # STEP 4
     result = services.programme_cadastral_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:step5", args=[result["convention"].uuid])
+            reverse("conventions:edd", args=[result["convention"].uuid])
         )
     return render(
         request,
-        "conventions/step4.html",
+        "conventions/cadastre.html",
         {
             "upform": result["upform"],
             "form": result["form"],
             "formset": result["formset"],
             "convention": result["convention"],
-            "financements": Financement,
             "typologies": TypologieLogement,
             "nb_steps": NB_STEPS,
+            "convention_form_step": 4,
             "import_warnings": result["import_warnings"],
         },
     )
 
 
 @permission_required("convention.change_convention")
-def step5(request, convention_uuid):
-    result = services.convention_financement(request, convention_uuid)
+def edd(request, convention_uuid):
+    # STEP 5
+    result = services.programme_edd_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:step6", args=[result["convention"].uuid])
+            reverse("conventions:prets", args=[result["convention"].uuid])
         )
     return render(
         request,
-        "conventions/step5.html",
+        "conventions/edd.html",
+        {
+            "upform": result["upform"],
+            "form": result["form"],
+            "formset": result["formset"],
+            "convention": result["convention"],
+            "financements": FinancementEDD,
+            "typologies": TypologieLogement,
+            "nb_steps": NB_STEPS,
+            "convention_form_step": 5,
+            "import_warnings": result["import_warnings"],
+        },
+    )
+
+
+@permission_required("convention.change_convention")
+def prets(request, convention_uuid):
+    result = services.convention_financement(request, convention_uuid)
+    if result["success"] == ReturnStatus.SUCCESS:
+        return HttpResponseRedirect(
+            reverse("conventions:logements", args=[result["convention"].uuid])
+        )
+    return render(
+        request,
+        "conventions/prets.html",
         {
             "upform": result["upform"],
             "form": result["form"],
             "formset": result["formset"],
             "convention": result["convention"],
             "nb_steps": NB_STEPS,
+            "convention_form_step": 6,
             "preteurs": Preteur,
             "import_warnings": result["import_warnings"],
         },
@@ -146,20 +179,21 @@ def step5(request, convention_uuid):
 
 
 @permission_required("convention.change_convention")
-def step6(request, convention_uuid):
+def logements(request, convention_uuid):
     result = services.logements_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:step7", args=[result["convention"].uuid])
+            reverse("conventions:annexes", args=[result["convention"].uuid])
         )
     return render(
         request,
-        "conventions/step6.html",
+        "conventions/logements.html",
         {
             "upform": result["upform"],
             "formset": result["formset"],
             "convention": result["convention"],
             "nb_steps": NB_STEPS,
+            "convention_form_step": 7,
             "typologies": TypologieLogement,
             "import_warnings": result["import_warnings"],
         },
@@ -167,20 +201,21 @@ def step6(request, convention_uuid):
 
 
 @permission_required("convention.change_convention")
-def step7(request, convention_uuid):
+def annexes(request, convention_uuid):
     result = services.annexes_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:step8", args=[result["convention"].uuid])
+            reverse("conventions:stationnements", args=[result["convention"].uuid])
         )
     return render(
         request,
-        "conventions/step7.html",
+        "conventions/annexes.html",
         {
             "upform": result["upform"],
             "formset": result["formset"],
             "convention": result["convention"],
             "nb_steps": NB_STEPS,
+            "convention_form_step": 8,
             "typologies": TypologieAnnexe,
             "logement_typologies": TypologieLogement,
             "import_warnings": result["import_warnings"],
@@ -188,20 +223,21 @@ def step7(request, convention_uuid):
     )
 
 @permission_required("convention.change_convention")
-def step8(request, convention_uuid):
+def stationnements(request, convention_uuid):
     result = services.stationnements_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:step9", args=[result["convention"].uuid])
+            reverse("conventions:comments", args=[result["convention"].uuid])
         )
     return render(
         request,
-        "conventions/step8.html",
+        "conventions/stationnements.html",
         {
             "upform": result["upform"],
             "formset": result["formset"],
             "convention": result["convention"],
             "nb_steps": NB_STEPS,
+            "convention_form_step": 9,
             "typologies": TypologieStationnement,
             "import_warnings": result["import_warnings"],
         },
@@ -209,27 +245,25 @@ def step8(request, convention_uuid):
 
 
 @permission_required("convention.change_convention")
-def step9(request, convention_uuid):
+def comments(request, convention_uuid):
     result = services.convention_comments(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:step10", args=[result["convention"].uuid])
+            reverse("conventions:recapitulatif", args=[result["convention"].uuid])
         )
     return render(
         request,
-        "conventions/step9.html",
+        "conventions/comments.html",
         {
             "form": result["form"],
             "convention": result["convention"],
             "nb_steps": NB_STEPS,
+            "convention_form_step": 10,
         },
     )
 
 @permission_required("convention.change_convention")
 def generate_convention(request, convention_uuid):
-    print("generate convetnion")
-
-    #if request.method == "POST":
     data, file_name = services.generate_convention(convention_uuid)
 
     response = HttpResponse(
@@ -241,7 +275,8 @@ def generate_convention(request, convention_uuid):
 
 
 @permission_required("convention.change_convention")
-def step10(request, convention_uuid):
+def recapitulatif(request, convention_uuid):
+    #Step 11/11
     result = services.convention_summary(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return render(
@@ -261,7 +296,7 @@ def step10(request, convention_uuid):
         )
     return render(
         request,
-        "conventions/step10.html",
+        "conventions/recapitulatif.html",
         {
             "convention": result["convention"],
             "bailleur": result["bailleur"],
@@ -271,6 +306,7 @@ def step10(request, convention_uuid):
             "annexes": result["annexes"],
             "stationnements": result["stationnements"],
             "nb_steps": NB_STEPS,
+            "convention_form_step": 11,
         },
     )
 

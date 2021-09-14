@@ -12,6 +12,13 @@ class Financement(models.TextChoices):
     PLS = "PLS", "PLS"
 
 
+class FinancementEDD(models.TextChoices):
+    PLUS = "PLUS", "PLUS"
+    PLAI = "PLAI", "PLAI"
+    PLAI_ADP = "PLAI_ADP", "PLAI_ADP"
+    PLS = "PLS", "PLS"
+
+
 class TypologieLogement(models.TextChoices):
     T1 = "T1", "T1"
     T2 = "T2", "T2"
@@ -21,7 +28,7 @@ class TypologieLogement(models.TextChoices):
 
 
 class TypeOperation(models.TextChoices):
-    SANSOBJECT = "SANSOBJECT", "Sans Object"
+    SANSOBJET = "SANSOBJET", "Sans Objet"
     NEUF = "NEUF", "Construction Neuve"
     ACQUIS = "ACQUIS", "Acquisition-Amélioration"
     DEMEMBREMENT = "DEMEMBREMENT", "Démembrement"
@@ -32,7 +39,7 @@ class TypeOperation(models.TextChoices):
 
 
 class TypeHabitat(models.TextChoices):
-    SANSOBJECT = "SANSOBJECT", "Sans Object"
+    SANSOBJET = "SANSOBJET", "Sans Objet"
     INDIVIDUEL = "INDIVIDUEL", "Individuel"
     COLLECTIF = "COLLECTIF", "Collectif"
 
@@ -128,8 +135,8 @@ class LogementEDD(models.Model):
     programme = models.ForeignKey("Programme", on_delete=models.CASCADE, null=False)
     financement = models.CharField(
         max_length=25,
-        choices=Financement.choices,
-        default=Financement.PLUS,
+        choices=FinancementEDD.choices,
+        default=FinancementEDD.PLUS,
     )
     typologie = models.CharField(
         max_length=25,
@@ -154,7 +161,6 @@ class LogementEDD(models.Model):
 class ReferenceCadastrale(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    nom = models.CharField(max_length=255)
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
@@ -165,6 +171,17 @@ class ReferenceCadastrale(models.Model):
     surface = models.FloatField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+    import_mapping = {
+        "Section" : section,
+        "Numéro" : numero,
+        "Lieudit" : lieudit,
+        "Surface" : surface,
+    }
+    sheet_name = "Références Cadastrales"
+
+    def __str__(self):
+        return f'{self.section} - {self.numero} - {self.lieudit}'
 
 
 class Lot(IngestableModel):

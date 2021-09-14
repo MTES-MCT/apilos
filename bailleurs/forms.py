@@ -49,15 +49,17 @@ class BailleurForm(forms.Form):
     dg_nom = forms.CharField(
         max_length=255,
         error_messages={
-            "required": "Le nom du directeur général est obligatoire",
-            "max_length": "Le nom du directeur général ne doit pas excéder 255 caractères",
+            "required": "Le nom du signataire de la convention est obligatoire",
+            "max_length":
+                "Le nom du signataire de la convention ne doit pas excéder 255 caractères",
         },
     )
     dg_fonction = forms.CharField(
         max_length=255,
         error_messages={
-            "required": "La fonction du directeur général est obligatoire",
-            "max_length": "La fonction du directeur général ne doit pas excéder 255 caractères",
+            "required": "La fonction du signataire de la convention est obligatoire",
+            "max_length":
+                "La fonction du signataire de la convention ne doit pas excéder 255 caractères",
         },
     )
     dg_date_deliberation = forms.DateField(

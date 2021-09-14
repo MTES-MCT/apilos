@@ -55,7 +55,7 @@ class ProgrammeForm(forms.Form):
         },
     )
     nb_logements = forms.IntegerField( error_messages={
-            "required": "Le nombre de logements est obligatoire",
+            "required": "Le nombre de logements à conventionner est obligatoire",
         },
     )
     type_habitat = forms.TypedChoiceField(required=False, choices=TypeHabitat.choices)
@@ -72,7 +72,7 @@ class ProgrammeForm(forms.Form):
     )
 
 
-class ProgrammmeCadastralForm(forms.Form):
+class ProgrammeCadastralForm(forms.Form):
 
     permis_construire = forms.CharField(required=False)
     date_acte_notarie = forms.DateField(required=False)
@@ -116,6 +116,47 @@ class ProgrammmeCadastralForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
     )
+
+class ReferenceCadastraleForm(forms.Form):
+    section = forms.CharField(
+        required=True,
+        max_length=255,
+        error_messages={
+            "required": "La section est obligatoire",
+            "max_length": "Le message ne doit pas excéder 255 characters",
+        },
+    )
+    numero = forms.IntegerField(
+        error_messages={
+            "required": "Le numéro est obligatoire",
+        },
+    )
+    lieudit = forms.CharField(
+        required=True,
+        max_length=255,
+        error_messages={
+            "required": "Le lieudit est obligatoire",
+            "max_length": "Le lieudit ne doit pas excéder 255 characters",
+        },
+    )
+    surface = forms.FloatField(
+        error_messages={
+            "required": "La surface est obligatoire",
+        },
+    )
+
+class BaseReferenceCadastraleFormSet(BaseFormSet):
+    pass
+
+ReferenceCadastraleFormSet = formset_factory(
+    ReferenceCadastraleForm,
+    formset=BaseReferenceCadastraleFormSet,
+    extra=0
+)
+
+
+class ProgrammeEDDForm(forms.Form):
+
     edd_volumetrique = forms.CharField(
         required=False,
         max_length=5000,
@@ -195,7 +236,6 @@ class LogementForm(forms.Form):
             )
 
         return loyer
-
 
 
 class BaseLogementFormSet(BaseFormSet):

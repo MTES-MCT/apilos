@@ -8,7 +8,7 @@
 
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                        <h2>Etape 9/{{ nb_steps }} - Ajouter des informations à l'attention du service instructeur</h2>
+                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Ajouter des informations à l'attention du service instructeur</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
 
@@ -22,8 +22,8 @@
                     </div>
                 </div>
                 <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
-                    {% include "common/button/precedent.html" with precedent='conventions:step8' convention_uuid=convention.uuid %}
-                    {% include "common/button/suivant.html" with suivant='conventions:step9' convention_uuid=convention.uuid %}
+                    {% include "common/button/precedent.html" with precedent='conventions:stationnements' convention_uuid=convention.uuid %}
+                    {% include "common/button/suivant.html" with suivant='conventions:comments' convention_uuid=convention.uuid %}
                 </div>
             </form>
         </div>
