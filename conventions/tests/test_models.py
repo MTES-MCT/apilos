@@ -1,4 +1,5 @@
 import datetime
+
 from django.test import TestCase
 from core.tests import utils
 from conventions.models import Convention, ConventionStatut, Pret, Preteur
@@ -85,3 +86,6 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(pret.p_full(), 'Etat')
         pret.preteur = Preteur.REGION
         self.assertEqual(pret.p_full(), 'Région')
+
+    def test_xlsx(self):
+        utils.assert_xlsx(self, Pret, 'prets')

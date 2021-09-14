@@ -8,6 +8,7 @@ from programmes.models import (
     LogementEDD,
     Logement,
     Financement,
+    ReferenceCadastrale,
     TypologieLogement,
     TypologieAnnexe,
     TypologieStationnement,
@@ -140,3 +141,10 @@ class BailleurModelsTest(TestCase):
         self.assertEqual(stationnement.loyer, stationnement.l)
         self.assertEqual(stationnement.typologie, stationnement.t)
         self.assertEqual(stationnement.nb_stationnements, stationnement.nb)
+
+    def test_xlsx(self):
+        utils.assert_xlsx(self, Annexe, 'annexes')
+        utils.assert_xlsx(self, ReferenceCadastrale, 'cadastre')
+        utils.assert_xlsx(self, LogementEDD, 'logements_edd')
+        utils.assert_xlsx(self, Logement, 'logements')
+        utils.assert_xlsx(self, TypeStationnement, 'stationnements')

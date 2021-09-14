@@ -796,7 +796,7 @@ def convention_summary(request, convention_uuid):
 
 
 def handle_uploaded_file(upform, my_file, myClass):
-    import_mapping = myClass.import_mapping
+    # pylint: disable=R0912
     try:
         my_wb = load_workbook(filename=BytesIO(my_file.read()), data_only=True)
     except BadZipFile:
@@ -819,25 +819,27 @@ def handle_uploaded_file(upform, my_file, myClass):
         for cell in col:
             if cell.value is None:
                 continue
-            if cell.value not in import_mapping:
+            if cell.value not in myClass.import_mapping:
                 import_warnings.append(Exception(
                     f"La colonne nommée '{cell.value}' est inconnue, elle sera ignorée. " +
-                    f"Les colonnes attendues sont : {', '.join(import_mapping.keys())}"
+                    f"Les colonnes attendues sont : {', '.join(myClass.import_mapping.keys())}"
                 ))
                 continue
             column_from_index[cell.column] = str(cell.value).strip()
 
-    # transform each line into object
-    my_objects = []
-    for row in my_ws.iter_rows(
-        min_row=3, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
-    ):
-        my_row, empty_line, new_warnings = extract_row(row, column_from_index, import_mapping)
-        import_warnings = [*import_warnings, *new_warnings]
+    error_column = False
+    for key in myClass.import_mapping:
+        if key not in list(column_from_index.values()):
+            upform.add_error(
+                'file',
+                f"Le fichier importé doit avoir une colonne nommée '{key}'"
+            )
+            error_column = True
+    if error_column:
+        return {"success": ReturnStatus.ERROR}
 
-        # Ignore if the line is empty
-        if not empty_line:
-            my_objects.append(my_row)
+    # transform each line into object
+    my_objects = get_object_from_worksheet(my_ws, column_from_index, myClass)
 
     return {
         "success": ReturnStatus.SUCCESS if len(import_warnings) == 0 else ReturnStatus.WARNING,
@@ -845,6 +847,22 @@ def handle_uploaded_file(upform, my_file, myClass):
         "import_warnings": import_warnings,
     }
 
+def get_object_from_worksheet(my_ws, column_from_index, myClass):
+    my_objects = []
+    for row in my_ws.iter_rows(
+        min_row=3, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
+    ):
+        my_row, empty_line, new_warnings = extract_row(
+            row,
+            column_from_index,
+            myClass.import_mapping
+        )
+        import_warnings = [*import_warnings, *new_warnings]
+
+        # Ignore if the line is empty
+        if not empty_line:
+            my_objects.append(my_row)
+    return my_objects
 
 def extract_row(row, column_from_index, import_mapping):
     # pylint: disable=R0912
