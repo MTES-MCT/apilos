@@ -47,7 +47,6 @@ def generate_hlm(convention):
 
     logement_edds, lot_num = prepare_logement_edds(convention)
     mixite = compute_mixte(convention)
-#    mixPLUSsup10plafond_30pc, mixPLUSinf10_30pc, mixPLUSinf10_10pc, mix_10pc
     # tester si il logement exists avant de commencer
     context = {
         "convention": convention,
@@ -65,7 +64,7 @@ def generate_hlm(convention):
         "nb_logements_par_type" : nb_logements_par_type,
         "lot_num": lot_num,
         # 30 % au moins > 10 logement si PLUS
-        "mixPLUSsup10plafond_30pc" : mixite['mixPLUSsup10plafond_30pc'],
+        "mixPLUSsup10_30pc" : mixite['mixPLUSsup10_30pc'], # 30 % plus de 10 logements si PLUS
         "mixPLUSinf10_30pc" : mixite['mixPLUSinf10_30pc'], # 30 % moins de 10 logements si PLUS
         "mixPLUSinf10_10pc" : mixite['mixPLUSinf10_10pc'], # 10 % moins de 10 logements si PLUS
         "mixPLUS_30pc" : mixite['mixPLUS_30pc'], # 30 % si PLUS
@@ -91,7 +90,7 @@ def generate_hlm(convention):
 
 def compute_mixte(convention):
     mixite = {
-        'mixPLUSsup10plafond_30pc': 0,
+        'mixPLUSsup10_30pc': 0,
         'mixPLUSinf10_30pc': 0,
         'mixPLUSinf10_10pc': 0,
         'mixPLUS_30pc': 0,
