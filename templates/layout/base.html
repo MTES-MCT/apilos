@@ -58,6 +58,18 @@
                     localStorage.setItem('scrollloc', window.location);
                 };
             </script>
+            <script>
+                function toggle(element_id) {
+                    element = document.getElementById(element_id);
+                    display = element.style.display;
+                    if (display == 'none') {
+                        element.style.display = 'block';
+                    }
+                    else {
+                        element.style.display = 'none';
+                    }
+                }
+            </script>
         {% endblock %}
     </body>
 </html>
