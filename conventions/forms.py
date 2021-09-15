@@ -18,7 +18,9 @@ class ConventionCommentForm(forms.Form):
 
 class ConventionFinancementForm(forms.Form):
 
-    date_fin_conventionnement = forms.DateField(required=False)
+    date_fin_conventionnement = forms.DateField(error_messages={
+        "required": "La date de fin de conventionnement est obligatoire",
+    })
     fond_propre = forms.FloatField(required=False)
 
 
