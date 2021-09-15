@@ -1,7 +1,11 @@
 <div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}">
     {% if label %}
         <label class="fr-label fr-mb-1w" for="{{form_input.id_for_label}}">
-            {{ label }}{% if mandatory %}&nbsp;{% include "common/mandatory_field.html" %}{% endif %}
+            {{ label }}
+            {% if mandatory %}&nbsp;{% include "common/mandatory_field.html" %}{% endif %}
+
+            {% if help %}&nbsp;<a class="fr-link fr-text--xs" data-fr-opened="false" aria-controls="{{help_modal}}" href="#" style="min-height: 0; padding: .0rem .75rem;">{{help}}</a>{% endif %}
+            {% if description %}<span class="fr-hint-text">{{description}}</span>{% endif %}
         </label>
     {% endif %}
     <div class="fr-input-wrap fr-fi-calendar-line" >

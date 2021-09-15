@@ -45,7 +45,24 @@
                                     {% include "common/form/input_text.html" with form_input=form.dg_fonction label="Fonction du signataire de la convention" mandatory=True %}
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                    {% include "common/form/input_date.html" with form_input=form.dg_date_deliberation label="Date de délibération" mandatory=True %}
+                                    {% include "common/form/input_date.html" with form_input=form.dg_date_deliberation label="Date de délibération" mandatory=True help="Plus d'information" help_modal='aide-ddd' %} <!-- description="Date à laquelle le signataire a reçu le mandat lui permettant de signer la convention" -->
+                                    <dialog aria-labelledby="fr-modal-title-modal-1" role="dialog" id="aide-ddd" class="fr-modal">
+                                        <div class="fr-container fr-container--fluid fr-container-md">
+                                            <div class="fr-grid-row fr-grid-row--center">
+                                                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                                                    <div class="fr-modal__body">
+                                                        <div class="fr-modal__header">
+                                                            <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="aide-ddd" type="button">Fermer</button>
+                                                        </div>
+                                                        <div class="fr-modal__content">
+                                                            <h1 id="fr-modal-title-modal-1" class="fr-modal__title"><span class="fr-fi-arrow-right-line fr-fi--lg"></span>Date de délibération</h1>
+                                                            <p>Il s'agit de la date à laquelle le signataire a reçu le mandat lui permettant de signer la convention</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </dialog>
                                 </div>
                             </div>
                         </div>
