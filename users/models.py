@@ -19,7 +19,7 @@ class User(AbstractUser):
         return self.is_role(Role.TypeRole.BAILLEUR)
 
     def is_instructeur(self):
-        return self.is_role(Role.TypeRole.INSTRUCTEUR)
+        return self.is_role(Role.TypeRole.INSTRUCTEUR) or self.is_staff
 
     def is_role(self, role):
         return role in map(lambda r: r.typologie, self.role_set.all())

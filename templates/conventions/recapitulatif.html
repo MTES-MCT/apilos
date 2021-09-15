@@ -75,7 +75,7 @@
                                     {% include "common/display_field_if_exists.html" with label="Acquéreur" value=programme.acquereur %}
                                     {% include "common/display_field_if_exists.html" with label="Référence du notaire" value=programme.reference_notaire %}
                                     {% include "common/display_field_if_exists.html" with label="Référence de publication de l'acte" value=programme.reference_publication_acte %}
-                                    {% include "common/display_field_if_exists.html" with label="Acte de vente" value=programme.acte_de_vente %}
+                                    {% include "common/display_field_if_exists.html" with label="Acte de propriété" value=programme.acte_de_vente %}
                                 </div>
                             </div>
                         </div>
@@ -204,7 +204,7 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    {% include "common/display_field_if_exists.html" with label="Date de fin de la convention" value=programme.date_fin_conventionnement %}
+                                    {% include "common/display_field_if_exists.html" with mandatory=True label="Date de fin de la convention" value=programme.date_fin_conventionnement %}
                                     {% include "common/display_field_if_exists.html" with label="Fonds propres" value=programme.fond_propre %}
                                 </div>
                             </div>

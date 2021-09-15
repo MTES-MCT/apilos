@@ -1,8 +1,5 @@
-#Pillow>=8.1.2
-#django-bootstrap-v5>=1.0.2
-#django_bootstrap_icons>=0.5.5
-darker>=1.2.4
 Django>=3.0,<4.0
+django-mailjet>=0.3.1
 djhtml>=1.4.9
 dj-database-url>=0.5.0
 dj-static>=0.0.6
