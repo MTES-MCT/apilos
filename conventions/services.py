@@ -839,7 +839,12 @@ def handle_uploaded_file(upform, my_file, myClass):
         return {"success": ReturnStatus.ERROR}
 
     # transform each line into object
-    my_objects = get_object_from_worksheet(my_ws, column_from_index, myClass)
+    my_objects, import_warnings = get_object_from_worksheet(
+        my_ws,
+        column_from_index,
+        myClass,
+        import_warnings
+    )
 
     return {
         "success": ReturnStatus.SUCCESS if len(import_warnings) == 0 else ReturnStatus.WARNING,
@@ -847,7 +852,7 @@ def handle_uploaded_file(upform, my_file, myClass):
         "import_warnings": import_warnings,
     }
 
-def get_object_from_worksheet(my_ws, column_from_index, myClass):
+def get_object_from_worksheet(my_ws, column_from_index, myClass, import_warnings):
     my_objects = []
     for row in my_ws.iter_rows(
         min_row=3, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
@@ -862,7 +867,7 @@ def get_object_from_worksheet(my_ws, column_from_index, myClass):
         # Ignore if the line is empty
         if not empty_line:
             my_objects.append(my_row)
-    return my_objects
+    return my_objects, import_warnings
 
 def extract_row(row, column_from_index, import_mapping):
     # pylint: disable=R0912
