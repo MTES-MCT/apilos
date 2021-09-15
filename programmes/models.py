@@ -167,7 +167,7 @@ class ReferenceCadastrale(models.Model):
     section = models.CharField(max_length=255, null=True)
     numero = models.IntegerField(null=True)
     lieudit = models.CharField(max_length=255, null=True)
-    surface = models.FloatField(null=True)
+    surface = models.CharField(max_length=255, null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 

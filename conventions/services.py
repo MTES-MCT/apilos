@@ -765,6 +765,8 @@ def convention_summary(request, convention_uuid):
         Convention.objects
             .prefetch_related("bailleur")
             .prefetch_related("programme")
+            .prefetch_related("programme__referencecadastrale_set")
+            .prefetch_related("programme__logementedd_set")
             .prefetch_related("lot")
             .prefetch_related("lot__typestationnement_set")
             .prefetch_related("lot__logement_set")
@@ -789,8 +791,10 @@ def convention_summary(request, convention_uuid):
         "bailleur": convention.bailleur,
         "lot": convention.lot,
         "programme": convention.programme,
+        "logement_edds": convention.programme.logementedd_set.all(),
         "logements": convention.lot.logement_set.all(),
         "stationnements": convention.lot.typestationnement_set.all(),
+        "reference_cadastrales": convention.programme.referencecadastrale_set.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
     }
 

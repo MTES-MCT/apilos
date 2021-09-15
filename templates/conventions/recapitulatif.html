@@ -81,6 +81,47 @@
                         </div>
                     </div>
 
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-lg-12">
+                            <div class="fr-card fr-card--no-arrow">
+                                <div class="fr-card__body">
+                                    <h4 class="fr-card__title">Références cadastrales</h4>
+                                    <div class="fr-table fr-table--bordered table--limited-height">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Section {% include "common/mandatory_field.html" %}</th>
+                                                    <th scope="col">Numéro {% include "common/mandatory_field.html" %}</th>
+                                                    <th scope="col">Lieudit {% include "common/mandatory_field.html" %}</th>
+                                                    <th scope="col">Surface {% include "common/mandatory_field.html" %}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for reference in reference_cadastrales %}
+                                                    <tr>
+                                                        <td>
+                                                            {{ reference.section }}
+                                                        </td>
+                                                        <td>
+                                                            {{ reference.numero }}
+                                                        </td>
+                                                        <td>
+                                                            {{ reference.lieudit }}
+                                                        </td>
+                                                        <td>
+                                                            {{ reference.surface }}
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="fr-grid-row fr-grid-row--gutters">
                         <div class="fr-col-12 fr-col-lg-12">
                             <div class="fr-card fr-card--no-arrow">
@@ -98,7 +139,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for lgt in programme.logementedd_set.all %}
+                                                {% for lgt in logement_edds %}
                                                     <tr>
                                                         <td>
                                                             {{lgt.financement}}
