@@ -301,6 +301,8 @@ def recapitulatif(request, convention_uuid):
             "convention": result["convention"],
             "bailleur": result["bailleur"],
             "programme": result["programme"],
+            "logement_edds": result["logement_edds"],
+            "reference_cadastrales": result["reference_cadastrales"],
             "lot": result["lot"],
             "logements": result["logements"],
             "annexes": result["annexes"],

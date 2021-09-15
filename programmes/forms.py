@@ -139,9 +139,12 @@ class ReferenceCadastraleForm(forms.Form):
             "max_length": "Le lieudit ne doit pas excéder 255 characters",
         },
     )
-    surface = forms.FloatField(
+    surface = forms.CharField(
+        required=True,
+        max_length=255,
         error_messages={
             "required": "La surface est obligatoire",
+            "max_length": "La surface ne doit pas excéder 255 characters",
         },
     )
 
