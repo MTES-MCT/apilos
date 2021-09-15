@@ -39,6 +39,8 @@
                             <label class="fr-label fr-mb-1w" for="{{form.vendeur.id_for_label}}">
                                 Vendeur
                                 {% include "common/mandatory_field.html" %}
+                                &nbsp;<button class="fr-link fr-link--sm fr-fi-information-line" style="min-height: 0; padding: .1rem;" type='button' onclick="toggle('{{form.vendeur.id_for_label}}_description')"></button>
+                                <span class="fr-hint-text" id="{{form.vendeur.id_for_label}}_description" style="display:none;">Identité du vendeur telle que mentionnée dans l'acte de vente</span>
                             </label>
                             {% include "common/form/input_upload_button.html" with textarea=True %}
                             {% include "common/form/input_textarea.html" with form_input=form.vendeur rows=5 %}
@@ -48,6 +50,8 @@
                             <label class="fr-label fr-mb-1w" for="{{form.acquereur.id_for_label}}">
                                 Acquéreur
                                 {% include "common/mandatory_field.html" %}
+                                &nbsp;<button class="fr-link fr-link--sm fr-fi-information-line" style="min-height: 0; padding: .1rem;" type='button' onclick="toggle('{{form.acquereur.id_for_label}}_description')"></button>
+                                <span class="fr-hint-text" id="{{form.acquereur.id_for_label}}_description" style="display:none;">Identité de l'acquéreur telle que mentionnée dans l'acte de vente</span>
                             </label>
                             {% include "common/form/input_upload_button.html" with textarea=True %}
                             {% include "common/form/input_textarea.html" with form_input=form.acquereur rows=5 %}

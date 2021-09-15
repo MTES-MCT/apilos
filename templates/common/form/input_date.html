@@ -1,7 +1,12 @@
 <div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}">
     {% if label %}
         <label class="fr-label fr-mb-1w" for="{{form_input.id_for_label}}">
-            {{ label }}{% if mandatory %}&nbsp;{% include "common/mandatory_field.html" %}{% endif %}
+            {{ label }}
+            {% if mandatory %}&nbsp;{% include "common/mandatory_field.html" %}{% endif %}
+            {% if description %}
+                &nbsp;<button class="fr-link fr-link--sm fr-fi-information-line" style="min-height: 0; padding: .1rem;" type='button' onclick="toggle('{{form_input.id_for_label}}_description')"></button>
+                <span class="fr-hint-text" id="{{form_input.id_for_label}}_description" style="display:none;">{{description}}</span>
+            {% endif %}
         </label>
     {% endif %}
     <div class="fr-input-wrap fr-fi-calendar-line" >
@@ -18,8 +23,3 @@
         </p>
     {% endfor %}
 </div>
-
-
-
-
-
