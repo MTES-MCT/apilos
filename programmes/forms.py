@@ -31,6 +31,15 @@ class ProgrammeSelectionForm(forms.Form):
 
 class ProgrammeForm(forms.Form):
 
+    nom = forms.CharField(
+        max_length=255,
+        min_length=1,
+        error_messages={
+            "required": "Le nom du programme est obligatoire",
+            "min_length": "Le nom du programme est obligatoire",
+            "max_length": "Le nom du programme ne doit pas excéder 255 caractères",
+        },
+    )
     adresse = forms.CharField(
         max_length=255,
         min_length=1,

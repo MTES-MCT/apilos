@@ -11,6 +11,7 @@
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
 
+                        {% include "common/form/input_text.html" with form_input=form.nom label="Nom du programme" mandatory=True %}
                         {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" mandatory=True %}
 
                         <div class="fr-mb-2w">
@@ -28,12 +29,7 @@
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    <div class="fr-input-group {% if form.nb_logements.errors %}fr-select-group--error{% endif %}">
-                                        <label class="fr-label" for="{{form.nb_logements.id_for_label}}">
-                                            Nombre de logements à conventionner {% include "common/mandatory_field.html" %}
-                                        </label>
-                                        {% include "common/form/input_number.html" with form_input=form.nb_logements %}
-                                    </div>
+                                    {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" mandatory=True %}
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w fr-mt-3w">
                                     <div class="fr-checkbox-group {% if form.anru.errors %}fr-checkbox-group--error{% endif %}">
@@ -110,20 +106,10 @@
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    <div class="fr-input-group {% if form.nb_locaux_commerciaux.errors %}fr-select-group--error{% endif %}">
-                                        <label class="fr-label" for="{{form.nb_locaux_commerciaux.id_for_label}}">
-                                            Locaux commerciaux
-                                        </label>
-                                        {% include "common/form/input_number.html" with form_input=form.nb_locaux_commerciaux %}
-                                    </div>
+                                    {% include "common/form/input_number.html" with form_input=form.nb_locaux_commerciaux label="Locaux commerciaux" %}
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    <div class="fr-input-group {% if form.nb_bureaux.errors %}fr-select-group--error{% endif %}">
-                                        <label class="fr-label" for="{{form.nb_bureaux.id_for_label}}">
-                                            Bureaux
-                                        </label>
-                                        {% include "common/form/input_number.html" with form_input=form.nb_bureaux %}
-                                    </div>
+                                    {% include "common/form/input_number.html" with form_input=form.nb_bureaux label="Bureaux" %}
                                 </div>
                             </div>
                         </div>

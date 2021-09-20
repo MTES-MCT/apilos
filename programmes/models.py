@@ -123,6 +123,13 @@ class Programme(IngestableModel):
     def __str__(self):
         return self.nom
 
+    def get_type_habitat_advanced_display(self):
+        return self.get_type_habitat_display() if self.type_habitat != TypeHabitat.SANSOBJET else ''
+
+    def get_type_operation_advanced_display(self):
+        return (self.get_type_operation_display()
+            if self.type_operation != TypeOperation.SANSOBJET else '')
+
 
 class LogementEDD(models.Model):
     id = models.AutoField(primary_key=True)

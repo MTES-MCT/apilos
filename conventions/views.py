@@ -39,7 +39,11 @@ def select_programme_create(request):
     return render(
         request,
         "conventions/selection.html",
-        {"form": result["form"], "programmes": result["programmes"]},
+        {
+            **result,
+            "nb_steps": NB_STEPS,
+            "convention_form_step": 1,
+        },
     )
 
 
@@ -55,9 +59,7 @@ def select_programme_update(request, convention_uuid):
         request,
         "conventions/selection.html",
         {
-            "form": result["form"],
-            "convention_uuid": result["convention_uuid"],
-            "programmes": result["programmes"],
+            **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 1,
         },
@@ -76,8 +78,7 @@ def bailleur(request, convention_uuid):
         request,
         "conventions/bailleur.html",
         {
-            "form": result["form"],
-            "convention": result["convention"],
+            **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 2,
         },
@@ -96,8 +97,7 @@ def programme(request, convention_uuid):
         request,
         "conventions/programme.html",
         {
-            "form": result["form"],
-            "convention": result["convention"],
+            **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 3,
             "types_habitat": TypeHabitat,
@@ -118,14 +118,10 @@ def cadastre(request, convention_uuid):
         request,
         "conventions/cadastre.html",
         {
-            "upform": result["upform"],
-            "form": result["form"],
-            "formset": result["formset"],
-            "convention": result["convention"],
+            **result,
             "typologies": TypologieLogement,
             "nb_steps": NB_STEPS,
             "convention_form_step": 4,
-            "import_warnings": result["import_warnings"],
         },
     )
 
@@ -142,15 +138,11 @@ def edd(request, convention_uuid):
         request,
         "conventions/edd.html",
         {
-            "upform": result["upform"],
-            "form": result["form"],
-            "formset": result["formset"],
-            "convention": result["convention"],
+            **result,
             "financements": FinancementEDD,
             "typologies": TypologieLogement,
             "nb_steps": NB_STEPS,
             "convention_form_step": 5,
-            "import_warnings": result["import_warnings"],
         },
     )
 
@@ -166,14 +158,10 @@ def prets(request, convention_uuid):
         request,
         "conventions/prets.html",
         {
-            "upform": result["upform"],
-            "form": result["form"],
-            "formset": result["formset"],
-            "convention": result["convention"],
+            **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 6,
             "preteurs": Preteur,
-            "import_warnings": result["import_warnings"],
         },
     )
 
@@ -189,13 +177,10 @@ def logements(request, convention_uuid):
         request,
         "conventions/logements.html",
         {
-            "upform": result["upform"],
-            "formset": result["formset"],
-            "convention": result["convention"],
+            **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 7,
             "typologies": TypologieLogement,
-            "import_warnings": result["import_warnings"],
         },
     )
 
@@ -211,14 +196,11 @@ def annexes(request, convention_uuid):
         request,
         "conventions/annexes.html",
         {
-            "upform": result["upform"],
-            "formset": result["formset"],
-            "convention": result["convention"],
+            **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 8,
             "typologies": TypologieAnnexe,
             "logement_typologies": TypologieLogement,
-            "import_warnings": result["import_warnings"],
         },
     )
 
@@ -233,13 +215,10 @@ def stationnements(request, convention_uuid):
         request,
         "conventions/stationnements.html",
         {
-            "upform": result["upform"],
-            "formset": result["formset"],
-            "convention": result["convention"],
+            **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 9,
             "typologies": TypologieStationnement,
-            "import_warnings": result["import_warnings"],
         },
     )
 
@@ -255,8 +234,7 @@ def comments(request, convention_uuid):
         request,
         "conventions/comments.html",
         {
-            "form": result["form"],
-            "convention": result["convention"],
+            **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 10,
         },
@@ -298,15 +276,7 @@ def recapitulatif(request, convention_uuid):
         request,
         "conventions/recapitulatif.html",
         {
-            "convention": result["convention"],
-            "bailleur": result["bailleur"],
-            "programme": result["programme"],
-            "logement_edds": result["logement_edds"],
-            "reference_cadastrales": result["reference_cadastrales"],
-            "lot": result["lot"],
-            "logements": result["logements"],
-            "annexes": result["annexes"],
-            "stationnements": result["stationnements"],
+            **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 11,
         },
