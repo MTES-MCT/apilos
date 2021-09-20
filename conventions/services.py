@@ -5,7 +5,7 @@ from zipfile import BadZipFile
 import datetime
 from openpyxl import load_workbook
 
-from conventions.models import Convention, ConventionStatut, Preteur, Pret
+from conventions.models import Convention, ConventionStatut, Pret
 from programmes.models import (
     Lot,
     Logement,
@@ -919,7 +919,8 @@ def extract_row(row, column_from_index, import_mapping):
                         new_warnings.append(Exception(
                             f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
                             f"de la colonne {column_from_index[cell.column]} " +
-                            f"doit faire partie des valeurs : {', '.join(Preteur.labels)}"
+                            "doit faire partie des valeurs : " +
+                            f"{', '.join(map(lambda x : x[1], model_field.choices))}"
                         ))
 
             # Float case
