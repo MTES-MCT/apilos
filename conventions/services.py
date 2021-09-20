@@ -183,6 +183,7 @@ def programme_update(request, convention_uuid):
         #        if request.POST['convention_uuid'] is None:
         form = ProgrammeForm(request.POST)
         if form.is_valid():
+            programme.nom = form.cleaned_data["nom"]
             programme.adresse = form.cleaned_data["adresse"]
             programme.code_postal = form.cleaned_data["code_postal"]
             programme.ville = form.cleaned_data["ville"]
@@ -204,6 +205,7 @@ def programme_update(request, convention_uuid):
     else:
         form = ProgrammeForm(
             initial={
+                "nom": programme.nom,
                 "adresse": programme.adresse,
                 "code_postal": programme.code_postal,
                 "ville": programme.ville,
