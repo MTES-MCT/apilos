@@ -219,7 +219,7 @@ class LogementForm(forms.Form):
     )
     loyer_par_metre_carre = forms.FloatField(
         error_messages={
-            "required": "Le loyer par m2 est obligatoire",
+            "required": "Le loyer par m² est obligatoire",
         }
     )
     coeficient = forms.FloatField(
@@ -357,7 +357,7 @@ class AnnexeForm(forms.Form):
     )
     loyer_par_metre_carre = forms.FloatField(
         error_messages={
-            "required": "Le loyer par m2 est obligatoire",
+            "required": "Le loyer par m² est obligatoire",
         }
     )
     loyer = forms.FloatField(
