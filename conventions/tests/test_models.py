@@ -77,9 +77,9 @@ class ConventionModelsTest(TestCase):
     def test_p_full(self):
         pret = Pret.objects.first()
         pret.preteur = Preteur.CDCF
-        self.assertEqual(pret.p_full(), 'Caisse des dépôts et des consignations froncière')
+        self.assertEqual(pret.p_full(), 'Caisse de Dépôts et Consignation pour le foncier')
         pret.preteur = Preteur.CDCL
-        self.assertEqual(pret.p_full(), 'Caisse des dépôts et des consignations locative')
+        self.assertEqual(pret.p_full(), 'Caisse de Dépôts et Consignation pour le logement')
         pret.preteur = Preteur.AUTRE
         self.assertEqual(pret.p_full(), 'Autre')
         pret.preteur = Preteur.ETAT
