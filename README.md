@@ -1,12 +1,14 @@
-# APpeL
+# APiLos
+
+> Assistance au Pilotage du Logement social
 
 Plateforme Numérique pour la gestion unifiée des conventio APL
 
 Lorsqu'un bailleur construit un logement social en france, avant la mise en location, il signe une convention APL avec le territoire.Ce tte conventionest nécéssaire
 
-APpeL offre une solution numérique pour la gestion de ces convention entre bailleurs, territoire at plus tard d'autres acteur tel que les préfecture ou la CAF.
+APiLos offre une solution numérique pour la gestion de ces convention entre bailleurs, territoire at plus tard d'autres acteur tel que les préfecture ou la CAF.
 
-APpeL a aussi pour vocation d centraliser et fiabiliter les statistiques des logement sociaux sur le territoire français.
+APiLos a aussi pour vocation d centraliser et fiabiliter les statistiques des logement sociaux sur le territoire français.
 
 ## Solution technique
 
@@ -40,11 +42,11 @@ Pour faire cet import nous avons ajouté une commande django `import_galion` éd
 
 Pour executer cet import en local:
 
-```docker-compose exec appel python3 manage.py import_galion```
+```docker-compose exec apilos python3 manage.py import_galion```
 
 Sur Scalingo
 
-```scalingo --app appel-staging/fabnum-appel run  python3 manage.py import_galion```
+```scalingo --app apilos-staging/fabnum-apilos run  python3 manage.py import_galion```
 
 
 ## liens utils

@@ -3,15 +3,15 @@ services:
   postgres:
     image: postgres:12-alpine
     environment:
-      - POSTGRES_USER=appel
-      - POSTGRES_PASSWORD=appel
-      - POSTGRES_MULTIPLE_DATABASES=appel-test
+      - POSTGRES_USER=apilos
+      - POSTGRES_PASSWORD=apilos
+      - POSTGRES_MULTIPLE_DATABASES=apilos-test
     volumes:
       - ./pg-init-scripts:/docker-entrypoint-initdb.d
       - ./pgdata:/var/lib/postgresql/data
     ports:
       - 5433:5432
-  appel:
+  apilos:
     build: .
 #    command: tail -f README.md
     command: python manage.py runserver 0.0.0.0:8000

@@ -5,14 +5,14 @@ jobs:
     docker:
       - image: circleci/python:3.9
         environment:
-          DATABASE_URL: postgres://root:password@localhost/appel_test
+          DATABASE_URL: postgres://root:password@localhost/apilos_test
           SECRET_KEY: secret-key
           DEBUG: False
       - image: circleci/postgres:12.2-postgis
         environment:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: appel_test
+          POSTGRES_DB: apilos_test
     steps:
       - checkout
       - restore_cache:
@@ -52,10 +52,10 @@ jobs:
           name: Add Scalingo to known_hosts
           command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
       - run:
-          name: Deploy Staging APpeL on Scalingo
+          name: Deploy Staging APiLos on Scalingo
           command: |
-            git push -f git@ssh.osc-fr1.scalingo.com:appel-staging.git $CIRCLE_SHA1:master
-                     
+            git push -f git@ssh.osc-fr1.scalingo.com:apilos-staging.git $CIRCLE_SHA1:master
+
 
 workflows:
   version: 2
