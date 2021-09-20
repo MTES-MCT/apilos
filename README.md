@@ -2,25 +2,33 @@
 
 > Assistance au Pilotage du Logement social
 
-Plateforme Numérique pour la gestion unifiée des conventio APL
+Plateforme Numérique pour la gestion unifiée des conventions APL
 
-Lorsqu'un bailleur construit un logement social en france, avant la mise en location, il signe une convention APL avec le territoire.Ce tte conventionest nécéssaire
+Lorsqu'un bailleur construit un logement social en france, avant la mise en location, il signe une convention APL avec le territoire. Cette convention est nécéssaire pour déterminer le prix au m2 et d'autres modalités de mise en location.
 
-APiLos offre une solution numérique pour la gestion de ces convention entre bailleurs, territoire at plus tard d'autres acteur tel que les préfecture ou la CAF.
+APiLos offre une solution numérique pour la gestion de ces conventions entre bailleurs et instructeur de l'état (appartenant généralement au territoire) et plus tard d'autres acteurs tel que les préfectures ou la CAF.
 
-APiLos a aussi pour vocation d centraliser et fiabiliter les statistiques des logement sociaux sur le territoire français.
+APiLos a aussi pour vocation de centraliser et fiabiliter les statistiques des logemente sociaux sur le territoire français pour un pilotage éclairé de la construction du parc social en France.
 
 ## Solution technique
 
-Nous utilisons le framework Django.
-Django
-[Système de design de l'état](https://gouvfr.atlassian.net/wiki/spaces/DB/overview?homepageId=145359476)
-... etc
+La plateforme est développé avec le framework Django et son moteur de template par défaut.
 
-### Linter
+Le design de l'interface suit le [Système de design de l'état](https://gouvfr.atlassian.net/wiki/spaces/DB/overview?homepageId=145359476)
 
-Nous utilisons [darker](https://github.com/akaihola/darker) pour gérer le formattage et le linter de l'application
-Le fichier de configuration est pyproject.toml à la racine du projet
+La génération de document .docx est prise en charge par la librairie [python-docx-template](https://docxtpl.readthedocs.io/en/latest/) qui utilise le moteur de template Jinja2 pour générer des documents docx
+
+Le package openpyxl est utilisé pour l'interprétation des fichier xlsx
+
+### Qualité de code
+
+Plusieurs outils sont utilisés pour gérer la qualité de code:
+
+* [git pre-commit](https://pre-commit.com/) avec les hooks de bases : trailing-whitespace, check-yaml, check-added-large-files
+* [pylint](https://pypi.org/project/pylint/) comme linter intégré au pre-commit pour les fichier python (config $BASE/.pylintrc)
+* [djhtml] comme prettier des fichier html
+
+### Installer les hook de pre-commit
 
 Pour installer les git hook de pre-commit, installer le package precommit
 
@@ -33,6 +41,24 @@ et installer les hooks en executant pre-commit:
 ```
 pre-commit install
 ```
+
+## CI/CD
+
+La solution circleci est utilisée. La config est ici : $BASE/.circleci/config.yaml
+
+### CI
+
+A chaque push sur github, le projet est buildé et les tests sont passés
+
+### CD
+
+A chaque push sur la branche develop, le projet est déployé en [staging](https://staging.apilos.incubateur.net/)
+
+## Push to prod
+
+A faire : intégrer le process de mise en prod dans circle ci
+
+En attendant, utiliser la commande à partir de la branch master : `git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master`
 
 ## import SISAL
 
@@ -58,7 +84,6 @@ https://doc.incubateur.net/startups/la-vie-dune-se/construction/kit-de-demarrage
 
 ## Pense-bête environnement technique
 
-Dev : Django (comme Acceslibre, AideTerritoire TrackDechet)
 
 Tests unitaires et integration
 Base documentaire : S3 avec scaleway
