@@ -29,7 +29,7 @@ class AdministrationsModelsTest(TestCase):
         bailleur = Bailleur.objects.create(
             nom="3F",
             siret="12345678901234",
-            capital_social="SA",
+            capital_social="123000.50",
             ville="Marseille",
             dg_nom="Patrick Patoulachi",
             dg_fonction="PDG",

@@ -19,7 +19,7 @@ class Bailleur(IngestableModel):
     uuid = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=255)
     siret = models.CharField(max_length=14)
-    capital_social = models.CharField(max_length=255, null=True)
+    capital_social = models.FloatField(null=True)
     adresse = models.CharField(max_length=255, null=True)
     code_postal = models.CharField(max_length=255, null=True)
     ville = models.CharField(max_length=255, null=True)
