@@ -8,8 +8,8 @@ class Preteur(models.TextChoices):
     ETAT = "ETAT", "Etat"
     EPCI = "EPCI", "EPCI"
     REGION = "REGION", "Région"
-    CDCF = "CDCF", "CDC froncière"
-    CDCL = "CDCL", "CDC locative"
+    CDCF = "CDCF", "CDC pour le foncier"
+    CDCL = "CDCL", "CDC pour le logement"
     AUTRE = "AUTRE", "Autre"
 
 
@@ -131,4 +131,4 @@ class Pret(models.Model):
     m = property(_get_montant)
 
     def p_full(self):
-        return self.get_preteur_display().replace('CDC', 'Caisse des dépôts et des consignations')
+        return self.get_preteur_display().replace('CDC', 'Caisse de Dépôts et Consignation')

@@ -13,14 +13,14 @@ class AdministrationsModelsTest(TestCase):
             password="12345",
             first_name="Sabine",
             last_name="Marini",
-            email="sabine@appel.com",
+            email="sabine@apilos.fr",
         )
         user_bailleur = User.objects.create(
             username="raph",
             password="12345",
             first_name="Raphaëlle",
             last_name="Neyton",
-            email="raph@appel.com",
+            email="raph@apilos.fr",
         )
         administration = Administration.objects.create(
             nom="CA d'Arles-Crau-Camargue-Montagnette",
