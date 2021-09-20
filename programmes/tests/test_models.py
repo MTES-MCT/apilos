@@ -13,6 +13,8 @@ from programmes.models import (
     TypologieAnnexe,
     TypologieStationnement,
     TypeStationnement,
+    TypeHabitat,
+    TypeOperation,
     Annexe,
 )
 
@@ -27,7 +29,7 @@ def params_logement(index):
         return TypologieLogement.T4, 1.1, 80, 20, 10, 90
     return TypologieLogement.T5, 0.9, 110, 28, 12, 122
 
-class BailleurModelsTest(TestCase):
+class ProgrammeModelsTest(TestCase):
     # pylint: disable=E1101 no-member
     @classmethod
     def setUpTestData(cls):
@@ -141,6 +143,29 @@ class BailleurModelsTest(TestCase):
         self.assertEqual(stationnement.loyer, stationnement.l)
         self.assertEqual(stationnement.typologie, stationnement.t)
         self.assertEqual(stationnement.nb_stationnements, stationnement.nb)
+
+    def test_advanced_display(self):
+        programme = Programme.objects.order_by('-uuid').first()
+        programme.type_habitat = TypeHabitat.SANSOBJET
+        self.assertEqual(programme.get_type_habitat_advanced_display(), '')
+        type_habitat = random.choice([TypeHabitat.INDIVIDUEL, TypeHabitat.COLLECTIF])
+        programme.type_habitat = type_habitat
+        self.assertEqual(programme.get_type_habitat_advanced_display(), type_habitat.label)
+
+        programme.type_operation = TypeOperation.SANSOBJET
+        self.assertEqual(programme.get_type_operation_advanced_display(), '')
+        type_operation = random.choice([
+            TypeOperation.NEUF,
+            TypeOperation.ACQUIS,
+            TypeOperation.DEMEMBREMENT,
+            TypeOperation.REHABILITATION,
+            TypeOperation.SANSTRAVAUX,
+            TypeOperation.USUFRUIT,
+            TypeOperation.VEFA,
+        ])
+        programme.type_operation = type_operation
+        self.assertEqual(programme.get_type_operation_advanced_display(), type_operation.label)
+
 
     def test_xlsx(self):
         utils.assert_xlsx(self, Annexe, 'annexes')
