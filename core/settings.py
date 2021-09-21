@@ -35,7 +35,7 @@ DEBUG = get_env_variable("DEBUG", cast=bool)
 mailjet_api_key = get_env_variable("MAILJET_API_KEY")
 mailjet_api_secret = get_env_variable("MAILJET_API_SECRET")
 
-DEFAULT_FROM_EMAIL = 'apilos-support@beta.gouv.fr'
+DEFAULT_FROM_EMAIL = 'contact@apilos.beta.gouv.fr'
 
 if mailjet_api_key != '':
     print('using MailjetBackend')
