@@ -77,7 +77,6 @@ class PretForm(forms.Form):
 
 class BasePretFormSet(BaseFormSet):
     def clean(self):
-        self.manage_numero_validation()
         self.manage_cdc_validation()
 
     def manage_cdc_validation(self):
@@ -91,32 +90,6 @@ class BasePretFormSet(BaseFormSet):
             "(CDC foncière, CDC locative)"
         )
         self._non_form_errors.append(error)
-
-    def manage_numero_validation(self):
-        numeros = {}
-        error_on_numero = False
-        for form in self.forms:
-#            if self.can_delete() and self._should_delete_form(form):
-#                continue
-            numero = form.cleaned_data.get('numero')
-            if numero:
-                if numero in numeros.keys():
-                    error_on_numero = True
-                    form.add_error(
-                        'numero',
-                        "Les numeros de prêt doivent être distinct lorsqu'ils sont définis"
-                    )
-                    if 'numero' not in numeros[numero].errors:
-                        numeros[numero].add_error(
-                            'numero',
-                            "Les numeros de prêt doivent être distinct lorsqu'ils sont définis"
-                        )
-                numeros[numero] = form
-        if error_on_numero:
-            error = ValidationError(
-                "Les numeros de prêt doivent être distinct lorsqu'ils sont définis !!!"
-                )
-            self._non_form_errors.append(error)
 
 
 PretFormSet = formset_factory(PretForm, formset=BasePretFormSet, extra=0)
