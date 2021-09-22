@@ -1,20 +1,19 @@
+{% load static %}
+
 <p>Pour éditer vos {{ what }}, il vous suffit de télécharger le modèle ci-dessous, d'ajouter ou de modifier votre liste de {{ what }}, puis de le téléverser à nouveau.<br>
     <span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true"></span>Attention, la liste des {{ what }} téléversée écrase la liste courante.</p>
-
-<div class="fr-grid-row fr-grid-row--gutters fr-ml-3w">
-
-    <button type="button" class="fr-btn fr-btn--secondary fr-fi-file-download-line fr-btn--icon-left" onclick="location.href='{% url 'conventions:load_xlsx_model' convention_uuid=convention_uuid file_type=file_type %}'">
-        Télécharger le modèle des {{ what }} !
-    </button>
-</div>
-<div class="fr-my-3w">Puis</p>
-<div class="fr-grid-row fr-grid-row--gutters fr-ml-3w">
-    <div>
-        <button name="Upload" value=True class="fr-btn fr-fi-file-download-line fr-btn--icon-left">
-            Téléverser le fichier de vos {{ what }}
+<div class="fr-grid-row fr-grid-row--gutters fr-mx-1w">
+    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-btns-group">
+        <button type="button" class="fr-btn fr-btn--secondary" onclick="location.href='{% url 'conventions:load_xlsx_model' convention_uuid=convention_uuid file_type=file_type %}'">
+            <img class="apilos-fi-btn--secondary fr-mr-1w" src="{% static "icons/download.svg" %}">Télécharger le modèle des {{ what }} !
         </button>
     </div>
-    <div class="fr-ml-3w">
+</div>
+
+<div class="fr-my-3w">Puis</div>
+
+<div class="fr-grid-row fr-grid-row--gutters fr-mx-1w">
+    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6" >
         <input
             class="fr-input {% if upform.file.errors %}fr-input--error{% endif %}"
             aria-describedby="text-input-error-desc-error"
@@ -28,5 +27,9 @@
             </p>
         {% endfor %}
     </div>
-
+    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w  fr-btns-group">
+        <button name="Upload" value=True class="fr-btn">
+            <img class="apilos-fi-btn fr-mr-1w" src="{% static "icons/upload.svg" %}" ></img>Téléverser le fichier de vos {{ what }}
+        </button>
+    </div>
 </div>
