@@ -1,5 +1,6 @@
 from django import forms
 
+
 class BailleurForm(forms.Form):
 
     nom = forms.CharField(
@@ -46,16 +47,16 @@ class BailleurForm(forms.Form):
         max_length=255,
         error_messages={
             "required": "Le nom du signataire de la convention est obligatoire",
-            "max_length":
-                "Le nom du signataire de la convention ne doit pas excéder 255 caractères",
+            "max_length": "Le nom du signataire de la convention "
+            + "ne doit pas excéder 255 caractères",
         },
     )
     dg_fonction = forms.CharField(
         max_length=255,
         error_messages={
             "required": "La fonction du signataire de la convention est obligatoire",
-            "max_length":
-                "La fonction du signataire de la convention ne doit pas excéder 255 caractères",
+            "max_length": "La fonction du signataire de la convention "
+            + "ne doit pas excéder 255 caractères",
         },
     )
     dg_date_deliberation = forms.DateField(

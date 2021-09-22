@@ -22,7 +22,8 @@ def get_env_variable(name, cast=str):
         return cast(os.environ[name])
     # pylint: disable=W0702, bare-except
     except:
-        return config(name, cast=cast, default='')
+        return config(name, cast=cast, default="")
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -35,16 +36,16 @@ DEBUG = get_env_variable("DEBUG", cast=bool)
 mailjet_api_key = get_env_variable("MAILJET_API_KEY")
 mailjet_api_secret = get_env_variable("MAILJET_API_SECRET")
 
-DEFAULT_FROM_EMAIL = 'contact@apilos.beta.gouv.fr'
+DEFAULT_FROM_EMAIL = "contact@apilos.beta.gouv.fr"
 
-if mailjet_api_key != '':
-    print('using MailjetBackend')
-    EMAIL_BACKEND = 'django_mailjet.backends.MailjetBackend'
+if mailjet_api_key != "":
+    print("using MailjetBackend")
+    EMAIL_BACKEND = "django_mailjet.backends.MailjetBackend"
     MAILJET_API_KEY = mailjet_api_key
     MAILJET_API_SECRET = mailjet_api_secret
 else:
-    print('using console.EmailBackend')
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    print("using console.EmailBackend")
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 env_allowed_hosts = []
 try:

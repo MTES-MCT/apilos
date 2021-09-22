@@ -2,6 +2,7 @@ from django.test import TestCase
 from core.tests import utils
 from bailleurs.models import Bailleur
 
+
 class BailleurModelsTest(TestCase):
     # pylint: disable=E1101 no-member
     @classmethod
