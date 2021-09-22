@@ -7,17 +7,16 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
-            <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-grid-row fr-grid-row--gutters fr-py-6w">
                 <div class="fr-col-lg-6 fr-col-offset-lg-1 fr-mb-2w">
                     {% include "common/bailleur_presentation.html" %}
                     <p class="fr-mb-3w">
                         {% include "common/button/login.html" %}
                     </p>
                 </div>
-                <div class="fr-col-12 fr-col-lg-5 fr-pl-0 fr-pl-md-4w fr-pb-0">
+                <div class="fr-col-12 fr-col-lg-5 fr-pl-0 fr-pl-md-4w">
                     <figure class="fr-content-media fr-my-0">
-                        <div class="fr-content-media__img">
-                        </div>
+                        <img src="{% static "img/accueil.jpg" %}" style="display: block;width: auto;height: auto;" >
                     </figure>
                 </div>
             </div>

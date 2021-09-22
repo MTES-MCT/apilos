@@ -6,8 +6,17 @@
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
                     <h2>Félicitation</h2>
-                    {% include "common/convention_edit_info.html" with convention=convention %}
-                    <p class="fr-mb-3w">Bravo, c'est soumis le : {{convention.soumis_le}}</p>
+                    <p class="fr-mb-3w">
+                        <span style="font-style: italic;">Référence de la convention : {{convention}}</span>
+                    </p>
+                    <h4 class="fr-mb-3w">Bravo, vous venez de soumettre votre convention à l'instruction en date du {{convention.soumis_le}}</h4>
+                    <p class="fr-mb-3w">La présente convention ne peut plus être modifiée. Le service instructeur a été notifié et instruira cette convention dans les plus bref délais.
+                        Il reviendra ensuite vers vous pour finaliser cette convention.
+                    </p>
+                    <p class="fr-mb-3w">Vous pouvez cependant consulter à tout moment les données saisies ainsi que le statut d'instruction de votre convention sur la plateforme APiLos</p>
+                    <p class="fr-mb-3w">Nous restons à votre disposition pour toute information et question.</p>
+                    <p class="fr-mb-3w">En vous remerciant, nous vous souhaitons une bonne journée</p>
+                    <p class="fr-mb-3w">L'équipe <a href="mailto:contact@apilos.beta.gouv.fr" target="_blank">APiLos</a></p>
 
                 </div>
             </div>
