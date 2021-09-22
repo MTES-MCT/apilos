@@ -283,8 +283,8 @@ class BaseLogementFormSet(BaseFormSet):
                     error_on_designation = True
                     form.add_error(
                         "designation",
-                        "Les designations de logement doivent être distinct " +
-                        "lorsqu'ils sont définis",
+                        "Les designations de logement doivent être distinct "
+                        + "lorsqu'ils sont définis",
                     )
                     if "designation" not in designations[designation].errors:
                         designations[designation].add_error(
