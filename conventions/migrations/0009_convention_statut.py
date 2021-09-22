@@ -6,19 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('conventions', '0008_auto_20210831_1707'),
+        ("conventions", "0008_auto_20210831_1707"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='convention',
-            name='statut',
-            field=models.CharField(choices=[
-                ('BROUILLON', 'Brouillon'),
-                ('INSTRUCTION', "En cours d'instruction"),
-                ('CORRECTION', 'Corrections requises'),
-                ('VALIDE', 'Validé'),
-                ('CLOS', 'Convention close')],
-            default='BROUILLON', max_length=25),
+            model_name="convention",
+            name="statut",
+            field=models.CharField(
+                choices=[
+                    ("BROUILLON", "Brouillon"),
+                    ("INSTRUCTION", "En cours d'instruction"),
+                    ("CORRECTION", "Corrections requises"),
+                    ("VALIDE", "Validé"),
+                    ("CLOS", "Convention close"),
+                ],
+                default="BROUILLON",
+                max_length=25,
+            ),
         ),
     ]

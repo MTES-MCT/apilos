@@ -59,22 +59,29 @@ class Convention(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return (f"{self.programme.nom} - {self.lot.financement} - " +
-            f"{self.programme.ville} - {self.lot.nb_logements} lgts")
+        return (
+            f"{self.programme.nom} - {self.lot.financement} - "
+            + f"{self.programme.ville} - {self.lot.nb_logements} lgts"
+        )
 
     # to do:
     # gérer un decorateur :
     # https://docs.djangoproject.com/en/dev/howto/custom-template-tags/#howto-custom-template-tags
     # Ou créé un champ statut
     def is_bailleur_editable(self):
-        return (self.statut == ConventionStatut.BROUILLON or
-            self.statut == ConventionStatut.CORRECTION)
+        return (
+            self.statut == ConventionStatut.BROUILLON
+            or self.statut == ConventionStatut.CORRECTION
+        )
 
     def is_instructeur_editable(self):
         return self.statut != ConventionStatut.CLOS
 
     def is_submitted(self):
-        return self.statut not in [ConventionStatut.BROUILLON, ConventionStatut.CORRECTION]
+        return self.statut not in [
+            ConventionStatut.BROUILLON,
+            ConventionStatut.CORRECTION,
+        ]
 
 
 class Pret(models.Model):
@@ -108,27 +115,35 @@ class Pret(models.Model):
 
     def _get_preteur(self):
         return self.preteur
+
     p = property(_get_preteur)
 
     def _get_autre(self):
         return self.autre
+
     a = property(_get_autre)
 
     def _get_date_octroi(self):
         return self.date_octroi
+
     do = property(_get_date_octroi)
 
     def _get_numero(self):
         return self.numero
+
     n = property(_get_numero)
 
     def _get_duree(self):
         return self.duree
+
     d = property(_get_duree)
 
     def _get_montant(self):
         return self.montant
+
     m = property(_get_montant)
 
     def p_full(self):
-        return self.get_preteur_display().replace('CDC', 'Caisse de Dépôts et Consignation')
+        return self.get_preteur_display().replace(
+            "CDC", "Caisse de Dépôts et Consignation"
+        )

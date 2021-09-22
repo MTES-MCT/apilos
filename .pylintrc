@@ -1,4 +1,5 @@
 [MASTER]
+ignore-paths=conventions/migrations
 disable=
     C0103, # invalid-name
     C0114, # missing-module-docstring
