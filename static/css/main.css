@@ -25,3 +25,13 @@
   align-items: center;
   justify-content: space-between;
 }
+
+.apilos-fi-btn {
+  width: 16px;
+  filter: invert(100%) sepia(0%) saturate(7490%) hue-rotate(274deg) brightness(108%) contrast(103%);
+}
+
+.apilos-fi-btn--secondary {
+  width: 16px;
+  filter: invert(14%) sepia(62%) saturate(6699%) hue-rotate(244deg) brightness(56%) contrast(131%);
+}
