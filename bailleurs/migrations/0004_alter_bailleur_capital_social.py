@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bailleurs', '0003_alter_bailleur_options'),
+        ("bailleurs", "0003_alter_bailleur_options"),
     ]
 
     operations = [
@@ -15,8 +15,8 @@ class Migration(migrations.Migration):
             name="capital_social",
         ),
         migrations.AddField(
-            model_name='bailleur',
-            name='capital_social',
+            model_name="bailleur",
+            name="capital_social",
             field=models.FloatField(null=True),
         ),
     ]

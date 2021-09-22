@@ -124,11 +124,18 @@ class Programme(IngestableModel):
         return self.nom
 
     def get_type_habitat_advanced_display(self):
-        return self.get_type_habitat_display() if self.type_habitat != TypeHabitat.SANSOBJET else ''
+        return (
+            self.get_type_habitat_display()
+            if self.type_habitat != TypeHabitat.SANSOBJET
+            else ""
+        )
 
     def get_type_operation_advanced_display(self):
-        return (self.get_type_operation_display()
-            if self.type_operation != TypeOperation.SANSOBJET else '')
+        return (
+            self.get_type_operation_display()
+            if self.type_operation != TypeOperation.SANSOBJET
+            else ""
+        )
 
 
 class LogementEDD(models.Model):
@@ -154,8 +161,8 @@ class LogementEDD(models.Model):
     lot_num = 0
 
     import_mapping = {
-        "Désignation des logements" : designation,
-        "Financement" : financement,
+        "Désignation des logements": designation,
+        "Financement": financement,
         "Type des logements": typologie,
     }
     sheet_name = "EDD Simplifié"
@@ -179,15 +186,15 @@ class ReferenceCadastrale(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     import_mapping = {
-        "Section" : section,
-        "Numéro" : numero,
-        "Lieudit" : lieudit,
-        "Surface" : surface,
+        "Section": section,
+        "Numéro": numero,
+        "Lieudit": lieudit,
+        "Surface": surface,
     }
     sheet_name = "Références Cadastrales"
 
     def __str__(self):
-        return f'{self.section} - {self.numero} - {self.lieudit}'
+        return f"{self.section} - {self.numero} - {self.lieudit}"
 
 
 class Lot(IngestableModel):
@@ -244,13 +251,14 @@ class Logement(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     import_mapping = {
-        "Désignation des logements" : designation,
+        "Désignation des logements": designation,
         "Type": typologie,
         "Surface habitable\n(article R.111-2)": surface_habitable,
         "Surface des annexes\nRéelle": surface_annexes,
         "Surface des annexes\nRetenue dans la SU": surface_annexes_retenue,
-        'Surface utile\n(surface habitable augmentée de 50% de la surface des annexes)':
-            surface_utile,
+        "Surface utile\n(surface habitable augmentée de 50% de la surface des annexes)": (
+            surface_utile
+        ),
         "Loyer maxinum en € par m² de surface utile": loyer_par_metre_carre,
         "Coefficient propre au logement": coeficient,
         "Loyer maxinum du logement en €\n(col 4 * col 5 * col 6)": loyer,
@@ -262,38 +270,47 @@ class Logement(models.Model):
 
     def _get_designation(self):
         return self.designation
+
     d = property(_get_designation)
 
     def _get_typologie(self):
         return self.typologie
+
     t = property(_get_typologie)
 
     def _get_surface_habitable(self):
         return self.surface_habitable
+
     sh = property(_get_surface_habitable)
 
     def _get_surface_annexes(self):
         return self.surface_annexes
+
     sa = property(_get_surface_annexes)
 
     def _get_surface_annexes_retenue(self):
         return self.surface_annexes_retenue
+
     sar = property(_get_surface_annexes_retenue)
 
     def _get_surface_utile(self):
         return self.surface_utile
+
     su = property(_get_surface_utile)
 
     def _get_loyer_par_metre_carre(self):
         return self.loyer_par_metre_carre
+
     lpmc = property(_get_loyer_par_metre_carre)
 
     def _get_coeficient(self):
         return self.coeficient
+
     c = property(_get_coeficient)
 
     def _get_loyer(self):
         return self.loyer
+
     l = property(_get_loyer)
 
 
@@ -318,7 +335,7 @@ class Annexe(models.Model):
 
     import_mapping = {
         "Type d'annexe": typologie,
-        "Désignation des logements" : "logement_designation",
+        "Désignation des logements": "logement_designation",
         "Typologie des logements": "logement_typologie",
         "Surface de l'annexe": surface_hors_surface_retenue,
         "Loyer unitaire en €": loyer_par_metre_carre,
@@ -331,22 +348,27 @@ class Annexe(models.Model):
 
     def _get_typologie(self):
         return self.typologie
+
     t = property(_get_typologie)
 
     def _get_logement(self):
         return self.logement
+
     lgt = property(_get_logement)
 
     def _get_surface_hors_surface_retenue(self):
         return self.surface_hors_surface_retenue
+
     shsr = property(_get_surface_hors_surface_retenue)
 
     def _get_loyer_par_metre_carre(self):
         return self.loyer_par_metre_carre
+
     lpmc = property(_get_loyer_par_metre_carre)
 
     def _get_loyer(self):
         return self.loyer
+
     l = property(_get_loyer)
 
 
@@ -388,12 +410,15 @@ class TypeStationnement(IngestableModel):
 
     def _get_typologie(self):
         return self.typologie
+
     t = property(_get_typologie)
 
     def _get_nb_stationnements(self):
         return self.nb_stationnements
+
     nb = property(_get_nb_stationnements)
 
     def _get_loyer(self):
         return self.loyer
+
     l = property(_get_loyer)

@@ -1,18 +1,12 @@
-
-from io import BytesIO
-from enum import Enum
-from zipfile import BadZipFile
 import datetime
-from openpyxl import load_workbook
 
-from conventions.models import Convention, ConventionStatut, Pret
 from programmes.models import (
     Lot,
     Logement,
     Annexe,
     TypeStationnement,
     LogementEDD,
-    ReferenceCadastrale
+    ReferenceCadastrale,
 )
 from programmes.forms import (
     ProgrammeSelectionForm,
@@ -26,28 +20,22 @@ from programmes.forms import (
     ReferenceCadastraleFormSet,
 )
 from bailleurs.forms import BailleurForm
-from .forms import (
+from conventions.models import Convention, ConventionStatut, Pret
+from conventions.forms import (
     ConventionCommentForm,
     ConventionFinancementForm,
     PretFormSet,
     UploadForm,
 )
+from . import utils
 from . import convention_generator
-
-class ReturnStatus(Enum):
-    SUCCESS = 'SUCCESS'
-    ERROR = 'ERROR'
-    WARNING = 'WARNING'
-
-def format_date_for_form(date):
-    return date.strftime("%Y-%m-%d") if date is not None else ""
+from . import upload_objects
 
 
 def conventions_index(request, infilter):
     infilter.update(request.user.convention_filter())
     conventions = (
-        Convention.objects
-        .prefetch_related("programme")
+        Convention.objects.prefetch_related("programme")
         .prefetch_related("lot")
         .filter(**infilter)
     )
@@ -78,7 +66,7 @@ def select_programme_create(request):
             convention.save()
             # All is OK -> Next:
             return {
-                "success": ReturnStatus.SUCCESS,
+                "success": utils.ReturnStatus.SUCCESS,
                 "convention": convention,
                 "form": form,
             }  # HttpResponseRedirect(reverse('conventions:bailleur', args=[convention.uuid]) )
@@ -89,7 +77,7 @@ def select_programme_create(request):
 
     programmes = conventions_selection(request, {})
     return {
-        "success": ReturnStatus.ERROR,
+        "success": utils.ReturnStatus.ERROR,
         "programmes": programmes,
         "form": form,
     }  # render(request, "conventions/selection.html", {'form': form, 'programmes': programmes})
@@ -109,7 +97,11 @@ def select_programme_update(request, convention_uuid):
             convention.financement = lot.financement
             convention.save()
             # All is OK -> Next:
-            return {"success": ReturnStatus.SUCCESS, "convention": convention, "form": form}
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "convention": convention,
+                "form": form,
+            }
 
     # If this is a GET (or any other method) create the default form.
     else:
@@ -121,7 +113,7 @@ def select_programme_update(request, convention_uuid):
 
     programmes = conventions_selection(request, {})
     return {
-        "success": ReturnStatus.ERROR,
+        "success": utils.ReturnStatus.ERROR,
         "programmes": programmes,
         "convention_uuid": convention_uuid,
         "form": form,
@@ -129,7 +121,9 @@ def select_programme_update(request, convention_uuid):
 
 
 def bailleur_update(request, convention_uuid):
-    convention = Convention.objects.prefetch_related("bailleur").get(uuid=convention_uuid)
+    convention = Convention.objects.prefetch_related("bailleur").get(
+        uuid=convention_uuid
+    )
     bailleur = convention.bailleur
 
     if request.method == "POST":
@@ -147,7 +141,11 @@ def bailleur_update(request, convention_uuid):
             bailleur.dg_date_deliberation = form.cleaned_data["dg_date_deliberation"]
             bailleur.save()
             # All is OK -> Next:
-            return {"success": ReturnStatus.SUCCESS, "convention": convention, "form": form}
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "convention": convention,
+                "form": form,
+            }
 
     # If this is a GET (or any other method) create the default form.
     else:
@@ -161,18 +159,18 @@ def bailleur_update(request, convention_uuid):
                 "ville": bailleur.ville,
                 "dg_nom": bailleur.dg_nom,
                 "dg_fonction": bailleur.dg_fonction,
-                "dg_date_deliberation": format_date_for_form(
+                "dg_date_deliberation": utils.format_date_for_form(
                     bailleur.dg_date_deliberation
                 ),
             }
         )
 
-    return {"success": ReturnStatus.ERROR, "convention": convention, "form": form}
+    return {"success": utils.ReturnStatus.ERROR, "convention": convention, "form": form}
 
 
 def programme_update(request, convention_uuid):
-    convention = (Convention.objects
-        .prefetch_related("programme")
+    convention = (
+        Convention.objects.prefetch_related("programme")
         .prefetch_related("lot")
         .get(uuid=convention_uuid)
     )
@@ -199,7 +197,11 @@ def programme_update(request, convention_uuid):
             lot.nb_logements = form.cleaned_data["nb_logements"]
             lot.save()
             # All is OK -> Next:
-            return {"success": ReturnStatus.SUCCESS, "convention": convention, "form": form}
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "convention": convention,
+                "form": form,
+            }
 
     # If this is a GET (or any other method) create the default form.
     else:
@@ -219,12 +221,13 @@ def programme_update(request, convention_uuid):
             }
         )
 
-    return {"success": ReturnStatus.ERROR, "convention": convention, "form": form}
+    return {"success": utils.ReturnStatus.ERROR, "convention": convention, "form": form}
+
 
 def programme_cadastral_update(request, convention_uuid):
     # pylint: disable=R0915
-    convention = (Convention.objects
-        .prefetch_related("programme")
+    convention = (
+        Convention.objects.prefetch_related("programme")
         .prefetch_related("programme__referencecadastrale_set")
         .get(uuid=convention_uuid)
     )
@@ -239,10 +242,12 @@ def programme_cadastral_update(request, convention_uuid):
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = handle_uploaded_file(upform, request.FILES["file"], ReferenceCadastrale)
-                if result['success'] != ReturnStatus.ERROR:
-                    formset = ReferenceCadastraleFormSet(initial=result['objects'])
-                    import_warnings = result['import_warnings']
+                result = upload_objects.handle_uploaded_file(
+                    upform, request.FILES["file"], ReferenceCadastrale
+                )
+                if result["success"] != utils.ReturnStatus.ERROR:
+                    formset = ReferenceCadastraleFormSet(initial=result["objects"])
+                    import_warnings = result["import_warnings"]
         # When the user cliked on "Enregistrer et Suivant"
         else:
             upform = UploadForm()
@@ -279,7 +284,7 @@ def programme_cadastral_update(request, convention_uuid):
 
                 # All is OK -> Next:
                 return {
-                    "success": ReturnStatus.SUCCESS,
+                    "success": utils.ReturnStatus.SUCCESS,
                     "convention": convention,
                     "form": form,
                     "formset": formset,
@@ -302,12 +307,16 @@ def programme_cadastral_update(request, convention_uuid):
         form = ProgrammeCadastralForm(
             initial={
                 "permis_construire": programme.permis_construire,
-                "date_acte_notarie": format_date_for_form(programme.date_acte_notarie),
-                "date_achevement_previsible": format_date_for_form(
+                "date_acte_notarie": utils.format_date_for_form(
+                    programme.date_acte_notarie
+                ),
+                "date_achevement_previsible": utils.format_date_for_form(
                     programme.date_achevement_previsible
                 ),
-                "date_achat": format_date_for_form(programme.date_achat),
-                "date_achevement": format_date_for_form(programme.date_achevement),
+                "date_achat": utils.format_date_for_form(programme.date_achat),
+                "date_achevement": utils.format_date_for_form(
+                    programme.date_achevement
+                ),
                 "vendeur": programme.vendeur,
                 "acquereur": programme.acquereur,
                 "reference_notaire": programme.reference_notaire,
@@ -316,7 +325,7 @@ def programme_cadastral_update(request, convention_uuid):
             }
         )
     return {
-        "success": ReturnStatus.ERROR,
+        "success": utils.ReturnStatus.ERROR,
         "convention": convention,
         "form": form,
         "formset": formset,
@@ -327,8 +336,8 @@ def programme_cadastral_update(request, convention_uuid):
 
 def programme_edd_update(request, convention_uuid):
     # pylint: disable=R0915
-    convention = (Convention.objects
-        .prefetch_related("programme")
+    convention = (
+        Convention.objects.prefetch_related("programme")
         .prefetch_related("programme__logementedd_set")
         .get(uuid=convention_uuid)
     )
@@ -343,10 +352,12 @@ def programme_edd_update(request, convention_uuid):
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = handle_uploaded_file(upform, request.FILES["file"], LogementEDD)
-                if result['success'] != ReturnStatus.ERROR:
-                    formset = LogementEDDFormSet(initial=result['objects'])
-                    import_warnings = result['import_warnings']
+                result = upload_objects.handle_uploaded_file(
+                    upform, request.FILES["file"], LogementEDD
+                )
+                if result["success"] != utils.ReturnStatus.ERROR:
+                    formset = LogementEDDFormSet(initial=result["objects"])
+                    import_warnings = result["import_warnings"]
         # When the user cliked on "Enregistrer et Suivant"
         else:
             upform = UploadForm()
@@ -369,7 +380,7 @@ def programme_edd_update(request, convention_uuid):
 
                 # All is OK -> Next:
                 return {
-                    "success": ReturnStatus.SUCCESS,
+                    "success": utils.ReturnStatus.SUCCESS,
                     "convention": convention,
                     "form": form,
                     "formset": formset,
@@ -394,7 +405,7 @@ def programme_edd_update(request, convention_uuid):
             }
         )
     return {
-        "success": ReturnStatus.ERROR,
+        "success": utils.ReturnStatus.ERROR,
         "convention": convention,
         "form": form,
         "formset": formset,
@@ -404,7 +415,9 @@ def programme_edd_update(request, convention_uuid):
 
 
 def convention_financement(request, convention_uuid):
-    convention = Convention.objects.prefetch_related("pret_set").get(uuid=convention_uuid)
+    convention = Convention.objects.prefetch_related("pret_set").get(
+        uuid=convention_uuid
+    )
     import_warnings = None
 
     if request.method == "POST":
@@ -414,10 +427,12 @@ def convention_financement(request, convention_uuid):
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = handle_uploaded_file(upform, request.FILES["file"], Pret)
-                if result['success'] != ReturnStatus.ERROR:
-                    formset = PretFormSet(initial=result['objects'])
-                    import_warnings = result['import_warnings']
+                result = upload_objects.handle_uploaded_file(
+                    upform, request.FILES["file"], Pret
+                )
+                if result["success"] != utils.ReturnStatus.ERROR:
+                    formset = PretFormSet(initial=result["objects"])
+                    import_warnings = result["import_warnings"]
         # When the user cliked on "Enregistrer et Suivant"
         else:
             upform = UploadForm()
@@ -427,9 +442,7 @@ def convention_financement(request, convention_uuid):
                 convention.date_fin_conventionnement = form.cleaned_data[
                     "date_fin_conventionnement"
                 ]
-                convention.fond_propre = form.cleaned_data[
-                    "fond_propre"
-                ]
+                convention.fond_propre = form.cleaned_data["fond_propre"]
                 convention.save()
                 convention.pret_set.all().delete()
                 for form_pret in formset:
@@ -441,13 +454,13 @@ def convention_financement(request, convention_uuid):
                         duree=form_pret.cleaned_data["duree"],
                         montant=form_pret.cleaned_data["montant"],
                         preteur=form_pret.cleaned_data["preteur"],
-                        autre = form_pret.cleaned_data['autre'],
+                        autre=form_pret.cleaned_data["autre"],
                     )
                     pret.save()
 
                 # All is OK -> Next:
                 return {
-                    "success": ReturnStatus.SUCCESS,
+                    "success": utils.ReturnStatus.SUCCESS,
                     "convention": convention,
                     "form": form,
                     "formset": formset,
@@ -460,7 +473,7 @@ def convention_financement(request, convention_uuid):
             initial.append(
                 {
                     "numero": pret.numero,
-                    "date_octroi": format_date_for_form(pret.date_octroi),
+                    "date_octroi": utils.format_date_for_form(pret.date_octroi),
                     "duree": pret.duree,
                     "montant": pret.montant,
                     "preteur": pret.preteur,
@@ -471,14 +484,14 @@ def convention_financement(request, convention_uuid):
         formset = PretFormSet(initial=initial)
         form = ConventionFinancementForm(
             initial={
-                "date_fin_conventionnement": format_date_for_form(
+                "date_fin_conventionnement": utils.format_date_for_form(
                     convention.date_fin_conventionnement
                 ),
                 "fond_propre": convention.fond_propre,
             }
         )
     return {
-        "success": ReturnStatus.ERROR,
+        "success": utils.ReturnStatus.ERROR,
         "convention": convention,
         "form": form,
         "formset": formset,
@@ -489,10 +502,9 @@ def convention_financement(request, convention_uuid):
 
 def logements_update(request, convention_uuid):
     convention = (
-        Convention.objects
-            .prefetch_related("lot")
-            .prefetch_related("lot__logement_set")
-            .get(uuid=convention_uuid)
+        Convention.objects.prefetch_related("lot")
+        .prefetch_related("lot__logement_set")
+        .get(uuid=convention_uuid)
     )
     import_warnings = None
 
@@ -502,40 +514,47 @@ def logements_update(request, convention_uuid):
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = handle_uploaded_file(upform, request.FILES["file"], Logement)
-                if result['success'] != ReturnStatus.ERROR:
-                    formset = LogementFormSet(initial=result['objects'])
-                    import_warnings = result['import_warnings']
+                result = upload_objects.handle_uploaded_file(
+                    upform, request.FILES["file"], Logement
+                )
+                if result["success"] != utils.ReturnStatus.ERROR:
+                    formset = LogementFormSet(initial=result["objects"])
+                    import_warnings = result["import_warnings"]
         # When the user cliked on "Enregistrer et Suivant"
         else:
             upform = UploadForm()
             formset.programme_id = convention.programme_id
             formset.lot_id = convention.lot_id
             if formset.is_valid():
-                lgt_uuids1 = list(map(
-                    lambda x : x.cleaned_data["uuid"],
-                    formset
-                ))
+                lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], formset))
                 lgt_uuids = list(filter(None, lgt_uuids1))
                 print(type(lgt_uuids))
                 print(lgt_uuids)
                 convention.lot.logement_set.exclude(uuid__in=lgt_uuids).delete()
                 for form_logement in formset:
                     if form_logement.cleaned_data["uuid"]:
-                        logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
-                        logement.designation=form_logement.cleaned_data["designation"]
-                        logement.typologie=form_logement.cleaned_data["typologie"]
-                        logement.surface_habitable=form_logement.cleaned_data["surface_habitable"]
-                        logement.surface_annexes=form_logement.cleaned_data["surface_annexes"]
-                        logement.surface_annexes_retenue=(
-                            form_logement.cleaned_data["surface_annexes_retenue"]
+                        logement = Logement.objects.get(
+                            uuid=form_logement.cleaned_data["uuid"]
                         )
-                        logement.surface_utile=form_logement.cleaned_data["surface_utile"]
-                        logement.loyer_par_metre_carre=(
-                            form_logement.cleaned_data["loyer_par_metre_carre"]
-                        )
-                        logement.coeficient=form_logement.cleaned_data["coeficient"]
-                        logement.loyer=form_logement.cleaned_data["loyer"]
+                        logement.designation = form_logement.cleaned_data["designation"]
+                        logement.typologie = form_logement.cleaned_data["typologie"]
+                        logement.surface_habitable = form_logement.cleaned_data[
+                            "surface_habitable"
+                        ]
+                        logement.surface_annexes = form_logement.cleaned_data[
+                            "surface_annexes"
+                        ]
+                        logement.surface_annexes_retenue = form_logement.cleaned_data[
+                            "surface_annexes_retenue"
+                        ]
+                        logement.surface_utile = form_logement.cleaned_data[
+                            "surface_utile"
+                        ]
+                        logement.loyer_par_metre_carre = form_logement.cleaned_data[
+                            "loyer_par_metre_carre"
+                        ]
+                        logement.coeficient = form_logement.cleaned_data["coeficient"]
+                        logement.loyer = form_logement.cleaned_data["loyer"]
                         logement.save()
                     else:
                         logement = Logement.objects.create(
@@ -543,13 +562,19 @@ def logements_update(request, convention_uuid):
                             bailleur=convention.bailleur,
                             designation=form_logement.cleaned_data["designation"],
                             typologie=form_logement.cleaned_data["typologie"],
-                            surface_habitable=form_logement.cleaned_data["surface_habitable"],
-                            surface_annexes=form_logement.cleaned_data["surface_annexes"],
-                            surface_annexes_retenue=
-                                form_logement.cleaned_data["surface_annexes_retenue"],
+                            surface_habitable=form_logement.cleaned_data[
+                                "surface_habitable"
+                            ],
+                            surface_annexes=form_logement.cleaned_data[
+                                "surface_annexes"
+                            ],
+                            surface_annexes_retenue=form_logement.cleaned_data[
+                                "surface_annexes_retenue"
+                            ],
                             surface_utile=form_logement.cleaned_data["surface_utile"],
-                            loyer_par_metre_carre=
-                                form_logement.cleaned_data["loyer_par_metre_carre"],
+                            loyer_par_metre_carre=form_logement.cleaned_data[
+                                "loyer_par_metre_carre"
+                            ],
                             coeficient=form_logement.cleaned_data["coeficient"],
                             loyer=form_logement.cleaned_data["loyer"],
                         )
@@ -557,7 +582,7 @@ def logements_update(request, convention_uuid):
 
                 # All is OK -> Next:
                 return {
-                    "success": ReturnStatus.SUCCESS,
+                    "success": utils.ReturnStatus.SUCCESS,
                     "convention": convention,
                     "formset": formset,
                 }
@@ -583,7 +608,7 @@ def logements_update(request, convention_uuid):
         upform = UploadForm()
         formset = LogementFormSet(initial=initial)
     return {
-        "success": ReturnStatus.ERROR,
+        "success": utils.ReturnStatus.ERROR,
         "convention": convention,
         "formset": formset,
         "upform": upform,
@@ -593,11 +618,10 @@ def logements_update(request, convention_uuid):
 
 def annexes_update(request, convention_uuid):
     convention = (
-        Convention.objects
-            .prefetch_related("lot")
-            .prefetch_related("lot__logement_set")
-            .prefetch_related("lot__logement_set__annexe_set")
-            .get(uuid=convention_uuid)
+        Convention.objects.prefetch_related("lot")
+        .prefetch_related("lot__logement_set")
+        .prefetch_related("lot__logement_set__annexe_set")
+        .get(uuid=convention_uuid)
     )
     import_warnings = None
 
@@ -607,25 +631,26 @@ def annexes_update(request, convention_uuid):
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = handle_uploaded_file(upform, request.FILES["file"], Annexe)
-                if result['success'] != ReturnStatus.ERROR:
-                    formset = AnnexeFormSet(initial=result['objects'])
-                    import_warnings = result['import_warnings']
+                result = upload_objects.handle_uploaded_file(
+                    upform, request.FILES["file"], Annexe
+                )
+                if result["success"] != utils.ReturnStatus.ERROR:
+                    formset = AnnexeFormSet(initial=result["objects"])
+                    import_warnings = result["import_warnings"]
         # When the user cliked on "Enregistrer et Suivant"
         else:
             upform = UploadForm()
-            #to do : manage this one in the model
+            # to do : manage this one in the model
             formset.is_valid()
             for form_annexe in formset:
                 try:
                     logement = convention.lot.logement_set.get(
                         designation=form_annexe.cleaned_data["logement_designation"],
-                        lot = convention.lot
+                        lot=convention.lot,
                     )
                 except Logement.DoesNotExist:
                     form_annexe.add_error(
-                        'logement_designation',
-                        "Ce logement n'existe pas dans ce lot"
+                        "logement_designation", "Ce logement n'existe pas dans ce lot"
                     )
 
             if formset.is_valid():
@@ -633,22 +658,25 @@ def annexes_update(request, convention_uuid):
                 for form_annexe in formset:
                     logement = Logement.objects.get(
                         designation=form_annexe.cleaned_data["logement_designation"],
-                        lot = convention.lot
+                        lot=convention.lot,
                     )
                     annexe = Annexe.objects.create(
                         logement=logement,
                         bailleur=convention.bailleur,
                         typologie=form_annexe.cleaned_data["typologie"],
-                        surface_hors_surface_retenue=
-                            form_annexe.cleaned_data["surface_hors_surface_retenue"],
-                        loyer_par_metre_carre=form_annexe.cleaned_data["loyer_par_metre_carre"],
+                        surface_hors_surface_retenue=form_annexe.cleaned_data[
+                            "surface_hors_surface_retenue"
+                        ],
+                        loyer_par_metre_carre=form_annexe.cleaned_data[
+                            "loyer_par_metre_carre"
+                        ],
                         loyer=form_annexe.cleaned_data["loyer"],
                     )
                     annexe.save()
 
                 # All is OK -> Next:
                 return {
-                    "success": ReturnStatus.SUCCESS,
+                    "success": utils.ReturnStatus.SUCCESS,
                     "convention": convention,
                     "formset": formset,
                 }
@@ -670,7 +698,7 @@ def annexes_update(request, convention_uuid):
         upform = UploadForm()
         formset = AnnexeFormSet(initial=initial)
     return {
-        "success": ReturnStatus.ERROR,
+        "success": utils.ReturnStatus.ERROR,
         "convention": convention,
         "formset": formset,
         "upform": upform,
@@ -680,10 +708,9 @@ def annexes_update(request, convention_uuid):
 
 def stationnements_update(request, convention_uuid):
     convention = (
-        Convention.objects
-            .prefetch_related("lot")
-            .prefetch_related("lot__typestationnement_set")
-            .get(uuid=convention_uuid)
+        Convention.objects.prefetch_related("lot")
+        .prefetch_related("lot__typestationnement_set")
+        .get(uuid=convention_uuid)
     )
     import_warnings = None
 
@@ -693,10 +720,12 @@ def stationnements_update(request, convention_uuid):
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = handle_uploaded_file(upform, request.FILES["file"], TypeStationnement)
-                if result['success'] != ReturnStatus.ERROR:
-                    formset = TypeStationnementFormSet(initial=result['objects'])
-                    import_warnings = result['import_warnings']
+                result = upload_objects.handle_uploaded_file(
+                    upform, request.FILES["file"], TypeStationnement
+                )
+                if result["success"] != utils.ReturnStatus.ERROR:
+                    formset = TypeStationnementFormSet(initial=result["objects"])
+                    import_warnings = result["import_warnings"]
         # When the user cliked on "Enregistrer et Suivant"
         else:
             upform = UploadForm()
@@ -707,14 +736,16 @@ def stationnements_update(request, convention_uuid):
                         lot=convention.lot,
                         bailleur=convention.bailleur,
                         typologie=form_stationnement.cleaned_data["typologie"],
-                        nb_stationnements=form_stationnement.cleaned_data["nb_stationnements"],
+                        nb_stationnements=form_stationnement.cleaned_data[
+                            "nb_stationnements"
+                        ],
                         loyer=form_stationnement.cleaned_data["loyer"],
                     )
                     stationnement.save()
 
                 # All is OK -> Next:
                 return {
-                    "success": ReturnStatus.SUCCESS,
+                    "success": utils.ReturnStatus.SUCCESS,
                     "convention": convention,
                     "formset": formset,
                 }
@@ -733,7 +764,7 @@ def stationnements_update(request, convention_uuid):
         upform = UploadForm()
         formset = TypeStationnementFormSet(initial=initial)
     return {
-        "success": ReturnStatus.ERROR,
+        "success": utils.ReturnStatus.ERROR,
         "convention": convention,
         "formset": formset,
         "upform": upform,
@@ -750,7 +781,11 @@ def convention_comments(request, convention_uuid):
             convention.comments = form.cleaned_data["comments"]
             convention.save()
             # All is OK -> Next:
-            return {"success": ReturnStatus.SUCCESS, "convention": convention, "form": form}
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "convention": convention,
+                "form": form,
+            }
 
     else:
         form = ConventionCommentForm(
@@ -759,20 +794,19 @@ def convention_comments(request, convention_uuid):
             }
         )
 
-    return {"success": ReturnStatus.ERROR, "convention": convention, "form": form}
+    return {"success": utils.ReturnStatus.ERROR, "convention": convention, "form": form}
 
 
 def convention_summary(request, convention_uuid):
     convention = (
-        Convention.objects
-            .prefetch_related("bailleur")
-            .prefetch_related("programme")
-            .prefetch_related("programme__referencecadastrale_set")
-            .prefetch_related("programme__logementedd_set")
-            .prefetch_related("lot")
-            .prefetch_related("lot__typestationnement_set")
-            .prefetch_related("lot__logement_set")
-            .get(uuid=convention_uuid)
+        Convention.objects.prefetch_related("bailleur")
+        .prefetch_related("programme")
+        .prefetch_related("programme__referencecadastrale_set")
+        .prefetch_related("programme__logementedd_set")
+        .prefetch_related("lot")
+        .prefetch_related("lot__typestationnement_set")
+        .prefetch_related("lot__logement_set")
+        .get(uuid=convention_uuid)
     )
     if request.method == "POST":
         if request.POST.get("SubmitConvention", False):
@@ -780,15 +814,15 @@ def convention_summary(request, convention_uuid):
             convention.statut = ConventionStatut.INSTRUCTION
             convention.save()
             return {
-                "success": ReturnStatus.SUCCESS,
+                "success": utils.ReturnStatus.SUCCESS,
                 "convention": convention,
             }
         return {
-            "success": ReturnStatus.WARNING,
+            "success": utils.ReturnStatus.WARNING,
             "convention": convention,
         }
     return {
-        "success": ReturnStatus.ERROR,
+        "success": utils.ReturnStatus.ERROR,
         "convention": convention,
         "bailleur": convention.bailleur,
         "lot": convention.lot,
@@ -801,184 +835,19 @@ def convention_summary(request, convention_uuid):
     }
 
 
-def handle_uploaded_file(upform, my_file, myClass):
-    # pylint: disable=R0912
-    try:
-        my_wb = load_workbook(filename=BytesIO(my_file.read()), data_only=True)
-    except BadZipFile:
-        upform.add_error(
-            'file',
-            "Le fichier importé ne semble pas être du bon format, 'xlsx' est le format attendu"
-        )
-        return {"success": ReturnStatus.ERROR}
-    try:
-        my_ws = my_wb[myClass.sheet_name]
-    except KeyError:
-        upform.add_error(
-            'file',
-            f"Le fichier importé doit avoir une feuille nommée '{myClass.sheet_name}'"
-        )
-        return {"success": ReturnStatus.ERROR}
-    import_warnings = []
-    column_from_index = {}
-    for col in my_ws.iter_cols(min_col=1, max_col=my_ws.max_column, min_row=1, max_row=1):
-        for cell in col:
-            if cell.value is None:
-                continue
-            if cell.value not in myClass.import_mapping:
-                import_warnings.append(Exception(
-                    f"La colonne nommée '{cell.value}' est inconnue, elle sera ignorée. " +
-                    f"Les colonnes attendues sont : {', '.join(myClass.import_mapping.keys())}"
-                ))
-                continue
-            column_from_index[cell.column] = str(cell.value).strip()
-
-    error_column = False
-    for key in myClass.import_mapping:
-        if key not in list(column_from_index.values()):
-            upform.add_error(
-                'file',
-                f"Le fichier importé doit avoir une colonne nommée '{key}'"
-            )
-            error_column = True
-    if error_column:
-        return {"success": ReturnStatus.ERROR}
-
-    # transform each line into object
-    my_objects, import_warnings = get_object_from_worksheet(
-        my_ws,
-        column_from_index,
-        myClass,
-        import_warnings
-    )
-
-    return {
-        "success": ReturnStatus.SUCCESS if len(import_warnings) == 0 else ReturnStatus.WARNING,
-        'objects': my_objects,
-        "import_warnings": import_warnings,
-    }
-
-def get_object_from_worksheet(my_ws, column_from_index, myClass, import_warnings):
-    my_objects = []
-    for row in my_ws.iter_rows(
-        min_row=3, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
-    ):
-        my_row, empty_line, new_warnings = extract_row(
-            row,
-            column_from_index,
-            myClass.import_mapping
-        )
-        import_warnings = [*import_warnings, *new_warnings]
-
-        # Ignore if the line is empty
-        if not empty_line:
-            my_objects.append(my_row)
-    return my_objects, import_warnings
-
-def extract_row(row, column_from_index, import_mapping):
-    # pylint: disable=R0912
-    new_warnings = []
-    my_row = {}
-    empty_line = True
-    for cell in row:
-        # Ignore unknown column
-        if cell.column not in column_from_index:
-            continue
-
-        # Check the empty lines to don't fill it
-        if cell.value is not None:
-            empty_line = False
-        else:
-            continue
-
-
-        value = None
-        model_field = import_mapping[column_from_index[cell.column]]
-
-        if isinstance(model_field, str):
-            key = model_field
-            value = cell.value
-        else:
-            key = model_field.name
-
-            # Date case
-            if model_field.get_internal_type() == 'DateField':
-                if isinstance(cell.value, datetime.datetime):
-                    value = format_date_for_form(cell.value)
-                else:
-                    new_warnings.append(Exception(
-                        f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                        f"de la colonne {column_from_index[cell.column]} " +
-                        "doit être une date"
-                    ))
-
-            # TextChoices case
-            elif (model_field.get_internal_type() == 'CharField' and
-                    model_field.choices is not None):
-                if cell.value is not None:
-                    value = next((x[0] for x in model_field.choices if x[1] == cell.value), None)
-                    if value is None: # value is not Null but not in the choices neither
-                        new_warnings.append(Exception(
-                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                            f"de la colonne {column_from_index[cell.column]} " +
-                            "doit faire partie des valeurs : " +
-                            f"{', '.join(map(lambda x : x[1], model_field.choices))}"
-                        ))
-
-            # Float case
-            elif model_field.get_internal_type() == 'FloatField':
-                if cell.value is not None:
-                    if isinstance(cell.value, (float, int)):
-                        value = float(cell.value)
-                    else:
-                        new_warnings.append(Exception(
-                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                            f"de la colonne {column_from_index[cell.column]} " +
-                            "doit être une valeur numérique"
-                        ))
-
-            # Integer case
-            elif model_field.get_internal_type() == 'IntegerField':
-                if cell.value is not None:
-                    if isinstance(cell.value, (float, int)):
-                        value = int(cell.value)
-                    else:
-                        new_warnings.append(Exception(
-                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                            f"de la colonne {column_from_index[cell.column]} " +
-                            "doit être une valeur numérique"
-                        ))
-
-            # String case
-            elif model_field.get_internal_type() == 'CharField':
-                if cell.value is not None:
-                    if isinstance(cell.value, (float, int, str)):
-                        value = cell.value
-                    else:
-                        new_warnings.append(Exception(
-                            f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' " +
-                            f"de la colonne {column_from_index[cell.column]} " +
-                            "doit être une valeur alphanumeric"
-                        ))
-        my_row[key] = value
-
-    return my_row, empty_line, new_warnings
-
-
 def generate_convention(convention_uuid):
     convention = (
-        Convention.objects
-            .prefetch_related("bailleur")
-            .prefetch_related("lot")
-            .prefetch_related("lot__typestationnement_set")
-            .prefetch_related("lot__logement_set")
-            .prefetch_related("pret_set")
-            .prefetch_related("programme")
-            .prefetch_related("programme__administration")
-            .prefetch_related("programme__logementedd_set")
-            .prefetch_related("programme__referencecadastrale_set")
-            .get(uuid=convention_uuid)
+        Convention.objects.prefetch_related("bailleur")
+        .prefetch_related("lot")
+        .prefetch_related("lot__typestationnement_set")
+        .prefetch_related("lot__logement_set")
+        .prefetch_related("pret_set")
+        .prefetch_related("programme")
+        .prefetch_related("programme__administration")
+        .prefetch_related("programme__logementedd_set")
+        .prefetch_related("programme__referencecadastrale_set")
+        .get(uuid=convention_uuid)
     )
     file_stream = convention_generator.generate_hlm(convention)
 
-    return file_stream, f'{convention}'
+    return file_stream, f"{convention}"

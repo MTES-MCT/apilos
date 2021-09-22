@@ -5,6 +5,7 @@ from core.tests import utils
 from conventions.models import Convention, ConventionStatut, Pret, Preteur
 from programmes.models import Lot, Financement
 
+
 class ConventionModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -23,23 +24,24 @@ class ConventionModelsTest(TestCase):
             financement=Financement.PLUS,
         )
         Pret.objects.create(
-            convention = convention,
-            bailleur = bailleur,
-            preteur = Preteur.CDCF,
-            date_octroi = datetime.datetime.today(),
-            autre = "test autre",
-            numero = "mon numero",
-            duree = 50,
-            montant = 123456.789
+            convention=convention,
+            bailleur=bailleur,
+            preteur=Preteur.CDCF,
+            date_octroi=datetime.datetime.today(),
+            autre="test autre",
+            numero="mon numero",
+            duree=50,
+            montant=123456.789,
         )
-
 
     def test_object_str(self):
         convention = Convention.objects.get(id=1)
         lot = convention.lot
         programme = convention.programme
-        expected_object_name = (f"{programme.nom} - {lot.financement} - " +
-            f"{programme.ville} - {lot.nb_logements} lgts")
+        expected_object_name = (
+            f"{programme.nom} - {lot.financement} - "
+            + f"{programme.ville} - {lot.nb_logements} lgts"
+        )
         self.assertEqual(str(convention), expected_object_name)
 
     def test_is_functions(self):
@@ -64,7 +66,6 @@ class ConventionModelsTest(TestCase):
         self.assertFalse(convention.is_instructeur_editable())
         self.assertTrue(convention.is_submitted())
 
-
     def test_properties(self):
         pret = Pret.objects.first()
         self.assertEqual(pret.preteur, pret.p)
@@ -77,15 +78,19 @@ class ConventionModelsTest(TestCase):
     def test_p_full(self):
         pret = Pret.objects.first()
         pret.preteur = Preteur.CDCF
-        self.assertEqual(pret.p_full(), 'Caisse de Dépôts et Consignation pour le foncier')
+        self.assertEqual(
+            pret.p_full(), "Caisse de Dépôts et Consignation pour le foncier"
+        )
         pret.preteur = Preteur.CDCL
-        self.assertEqual(pret.p_full(), 'Caisse de Dépôts et Consignation pour le logement')
+        self.assertEqual(
+            pret.p_full(), "Caisse de Dépôts et Consignation pour le logement"
+        )
         pret.preteur = Preteur.AUTRE
-        self.assertEqual(pret.p_full(), 'Autre')
+        self.assertEqual(pret.p_full(), "Autre")
         pret.preteur = Preteur.ETAT
-        self.assertEqual(pret.p_full(), 'Etat')
+        self.assertEqual(pret.p_full(), "Etat")
         pret.preteur = Preteur.REGION
-        self.assertEqual(pret.p_full(), 'Région')
+        self.assertEqual(pret.p_full(), "Région")
 
     def test_xlsx(self):
-        utils.assert_xlsx(self, Pret, 'prets')
+        utils.assert_xlsx(self, Pret, "prets")

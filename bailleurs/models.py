@@ -32,4 +32,4 @@ class Bailleur(IngestableModel):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.nom}'
+        return f"{self.nom}"

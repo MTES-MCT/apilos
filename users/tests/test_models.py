@@ -5,6 +5,7 @@ from users.models import User, Role
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
 
+
 class AdministrationsModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):

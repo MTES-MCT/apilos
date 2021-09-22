@@ -4,7 +4,11 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("selection", views.select_programme_create, name="selection"),
-    path("selection/<convention_uuid>", views.select_programme_update, name="selection_update"),
+    path(
+        "selection/<convention_uuid>",
+        views.select_programme_update,
+        name="selection_update",
+    ),
     path("bailleur/<convention_uuid>", views.bailleur, name="bailleur"),
     path("programme/<convention_uuid>", views.programme, name="programme"),
     path("cadastre/<convention_uuid>", views.cadastre, name="cadastre"),
@@ -12,10 +16,16 @@ urlpatterns = [
     path("prets/<convention_uuid>", views.prets, name="prets"),
     path("logements/<convention_uuid>", views.logements, name="logements"),
     path("annexes/<convention_uuid>", views.annexes, name="annexes"),
-    path("stationnements/<convention_uuid>", views.stationnements, name="stationnements"),
+    path(
+        "stationnements/<convention_uuid>", views.stationnements, name="stationnements"
+    ),
     path("comments/<convention_uuid>", views.comments, name="comments"),
     path("recapitulatif/<convention_uuid>", views.recapitulatif, name="recapitulatif"),
-    path("generate/<convention_uuid>", views.generate_convention, name="generate_convention"),
+    path(
+        "generate/<convention_uuid>",
+        views.generate_convention,
+        name="generate_convention",
+    ),
     path(
         "load_xlsx_model/<convention_uuid>/<file_type>",
         views.load_xlsx_model,
