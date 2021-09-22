@@ -120,7 +120,14 @@ class ProgrammeCadastralForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
     )
-    acte_de_vente = forms.CharField(
+    acte_de_propriete = forms.CharField(
+        required=False,
+        max_length=5000,
+        error_messages={
+            "max_length": "Le message ne doit pas excéder 5000 characters",
+        },
+    )
+    acte_notarial = forms.CharField(
         required=False,
         max_length=5000,
         error_messages={
