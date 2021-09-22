@@ -267,7 +267,8 @@ def programme_cadastral_update(request, convention_uuid):
                 programme.reference_publication_acte = form.cleaned_data[
                     "reference_publication_acte"
                 ]
-                programme.acte_de_vente = form.cleaned_data["acte_de_vente"]
+                programme.acte_de_propriete = form.cleaned_data["acte_de_propriete"]
+                programme.acte_notarial = form.cleaned_data["acte_notarial"]
                 programme.save()
 
                 programme.referencecadastrale_set.all().delete()
@@ -321,7 +322,8 @@ def programme_cadastral_update(request, convention_uuid):
                 "acquereur": programme.acquereur,
                 "reference_notaire": programme.reference_notaire,
                 "reference_publication_acte": programme.reference_publication_acte,
-                "acte_de_vente": programme.acte_de_vente,
+                "acte_de_propriete": programme.acte_de_propriete,
+                "acte_notarial": programme.acte_notarial,
             }
         )
     return {
