@@ -71,8 +71,10 @@ class PretForm(forms.Form):
             if not cleaned_data.get("numero"):
                 self.add_error(
                     "numero",
-                    ("Le numéro est obligatoire pour un prêt" +
-                    " de la Caisse de dépôts et consignations"),
+                    (
+                        "Le numéro est obligatoire pour un prêt"
+                        + " de la Caisse de dépôts et consignations"
+                    ),
                 )
         if preteur in ["AUTRE"]:
             if not cleaned_data.get("autre"):
@@ -103,7 +105,9 @@ class UploadForm(forms.Form):
 
     file = FileField(
         error_messages={
-            "required": ("Vous devez séléctionner un fichier avant " +
-            "de cliquer sur le bouton 'Téléverser'"),
+            "required": (
+                "Vous devez séléctionner un fichier avant "
+                + "de cliquer sur le bouton 'Téléverser'"
+            ),
         }
     )

@@ -307,12 +307,16 @@ def programme_cadastral_update(request, convention_uuid):
         form = ProgrammeCadastralForm(
             initial={
                 "permis_construire": programme.permis_construire,
-                "date_acte_notarie": utils.format_date_for_form(programme.date_acte_notarie),
+                "date_acte_notarie": utils.format_date_for_form(
+                    programme.date_acte_notarie
+                ),
                 "date_achevement_previsible": utils.format_date_for_form(
                     programme.date_achevement_previsible
                 ),
                 "date_achat": utils.format_date_for_form(programme.date_achat),
-                "date_achevement": utils.format_date_for_form(programme.date_achevement),
+                "date_achevement": utils.format_date_for_form(
+                    programme.date_achevement
+                ),
                 "vendeur": programme.vendeur,
                 "acquereur": programme.acquereur,
                 "reference_notaire": programme.reference_notaire,
