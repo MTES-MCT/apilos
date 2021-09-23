@@ -243,7 +243,11 @@ def programme_cadastral_update(request, convention_uuid):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
                 result = upload_objects.handle_uploaded_file(
-                    upform, request.FILES["file"], ReferenceCadastrale
+                    upform,
+                    request.FILES["file"],
+                    ReferenceCadastrale,
+                    convention,
+                    "cadastre.xlsx",
                 )
                 if result["success"] != utils.ReturnStatus.ERROR:
                     formset = ReferenceCadastraleFormSet(initial=result["objects"])
@@ -355,7 +359,11 @@ def programme_edd_update(request, convention_uuid):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
                 result = upload_objects.handle_uploaded_file(
-                    upform, request.FILES["file"], LogementEDD
+                    upform,
+                    request.FILES["file"],
+                    LogementEDD,
+                    convention,
+                    "logements_edd.xlsx",
                 )
                 if result["success"] != utils.ReturnStatus.ERROR:
                     formset = LogementEDDFormSet(initial=result["objects"])
@@ -430,7 +438,7 @@ def convention_financement(request, convention_uuid):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
                 result = upload_objects.handle_uploaded_file(
-                    upform, request.FILES["file"], Pret
+                    upform, request.FILES["file"], Pret, convention, "prets.xlsx"
                 )
                 if result["success"] != utils.ReturnStatus.ERROR:
                     formset = PretFormSet(initial=result["objects"])
@@ -517,7 +525,11 @@ def logements_update(request, convention_uuid):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
                 result = upload_objects.handle_uploaded_file(
-                    upform, request.FILES["file"], Logement
+                    upform,
+                    request.FILES["file"],
+                    Logement,
+                    convention,
+                    "logements.xlsx",
                 )
                 if result["success"] != utils.ReturnStatus.ERROR:
                     formset = LogementFormSet(initial=result["objects"])
@@ -634,7 +646,7 @@ def annexes_update(request, convention_uuid):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
                 result = upload_objects.handle_uploaded_file(
-                    upform, request.FILES["file"], Annexe
+                    upform, request.FILES["file"], Annexe, convention, "annexes.xlsx"
                 )
                 if result["success"] != utils.ReturnStatus.ERROR:
                     formset = AnnexeFormSet(initial=result["objects"])
@@ -723,7 +735,11 @@ def stationnements_update(request, convention_uuid):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
                 result = upload_objects.handle_uploaded_file(
-                    upform, request.FILES["file"], TypeStationnement
+                    upform,
+                    request.FILES["file"],
+                    TypeStationnement,
+                    convention,
+                    "stationnements.xlsx",
                 )
                 if result["success"] != utils.ReturnStatus.ERROR:
                     formset = TypeStationnementFormSet(initial=result["objects"])

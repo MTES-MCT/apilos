@@ -3,12 +3,26 @@ from zipfile import BadZipFile
 import datetime
 from openpyxl import load_workbook
 
+from core import s3
+from core import settings
 from . import utils
 
 
-def handle_uploaded_file(upform, my_file, myClass):
+def save_uploaded_file(my_file, convention, file_name):
+    my_file.seek(0)
+    s3.client.put_object(
+        Body=my_file.read(),
+        Bucket=f"{settings.AWS_STORAGE_BUCKET_NAME}",
+        Key=f"conventions/{convention.uuid}/uploads/{file_name}",
+        ACL="private",
+        CacheControl="max-age=31556926",  # 1 year
+    )
+
+
+def handle_uploaded_file(upform, my_file, myClass, convention, file_name):
     # pylint: disable=R0912
     try:
+        my_file.seek(0)
         my_wb = load_workbook(filename=BytesIO(my_file.read()), data_only=True)
     except BadZipFile:
         upform.add_error(
@@ -24,6 +38,9 @@ def handle_uploaded_file(upform, my_file, myClass):
             f"Le fichier importé doit avoir une feuille nommée '{myClass.sheet_name}'",
         )
         return {"success": utils.ReturnStatus.ERROR}
+
+    save_uploaded_file(my_file, convention, file_name)
+
     import_warnings = []
     column_from_index = {}
     for col in my_ws.iter_cols(
