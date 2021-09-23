@@ -22,9 +22,19 @@ urlpatterns = [
     path("comments/<convention_uuid>", views.comments, name="comments"),
     path("recapitulatif/<convention_uuid>", views.recapitulatif, name="recapitulatif"),
     path(
+        "save/<convention_uuid>",
+        views.save_convention,
+        name="save",
+    ),
+    path(
+        "validate/<convention_uuid>",
+        views.validate_convention,
+        name="validate",
+    ),
+    path(
         "generate/<convention_uuid>",
         views.generate_convention,
-        name="generate_convention",
+        name="generate",
     ),
     path(
         "load_xlsx_model/<convention_uuid>/<file_type>",

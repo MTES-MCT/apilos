@@ -8,6 +8,7 @@ from instructeurs.models import Administration
 from bailleurs.models import Bailleur
 from programmes.models import Programme, Financement, Lot, TypeStationnement
 
+
 def str_row(row):
     return (
         f"Bailleur (siret, nom) : {row['MOA (code SIRET)']} - {row['MOA (nom officiel)']}"
@@ -18,6 +19,7 @@ def str_row(row):
 
 
 class Command(BaseCommand):
+    # pylint: disable=R0912,R0914,R0915
     def handle(self, *args, **options):
         basedir = settings.BASE_DIR
         file_path = os.path.join(basedir, "documents", "v3.xlsx")
@@ -40,8 +42,8 @@ class Command(BaseCommand):
         print("Choose the action required (default 1) ")
         print("1: Create only, the already existing entry won't be updated")
         print(
-            "2: Create and Update, create if it doesn't exist, " +
-            "else update entry based on its pivots"
+            "2: Create and Update, create if it doesn't exist, "
+            + "else update entry based on its pivots"
         )
         inp = input("Choose your option: ")
 
@@ -110,8 +112,8 @@ class Command(BaseCommand):
                 continue
             if len(my_row["Gestionnaire (code)"]) != 5:
                 print(
-                    "le service instructeur n'est pas renseigné, " +
-                    f"l'entrée est ignorée: {str_row(my_row)}"
+                    "le service instructeur n'est pas renseigné, "
+                    + f"l'entrée est ignorée: {str_row(my_row)}"
                 )
                 continue
             if not my_row["Produit"] in dir(Financement):
@@ -119,8 +121,8 @@ class Command(BaseCommand):
                     my_row["Produit"] = my_row["Produit"][0:4]
                 else:
                     print(
-                        "le financement n'est pas supporté, " +
-                        f"l'entrée est ignorée: {str_row(my_row)}"
+                        "le financement n'est pas supporté, "
+                        + f"l'entrée est ignorée: {str_row(my_row)}"
                     )
                     continue
             my_objects.append(my_row)
@@ -152,7 +154,7 @@ class Command(BaseCommand):
                 and int(str(my_row["Nb Places Stationnement"])) > 0
             ):
                 ps_row = my_row.copy()
-                ps_row["Typologie Garage"] = "Place stationnement"  # typologie
+                ps_row["Typologie Garage"] = "Place de stationnement"  # typologie
                 ps_row["Nb Stationnement"] = my_row[
                     "Nb Places Stationnement"
                 ]  # nb_stationnements

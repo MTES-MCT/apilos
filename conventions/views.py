@@ -243,37 +243,9 @@ def comments(request, convention_uuid):
 
 
 @permission_required("convention.change_convention")
-def generate_convention(request, convention_uuid):
-    data, file_name = services.generate_convention(convention_uuid)
-
-    response = HttpResponse(
-        data,
-        content_type="application/vnd.openxmlformats-officedocument.wordprocessingm",
-    )
-    response["Content-Disposition"] = f"attachment; filename={file_name}.docx"
-    return response
-
-
-@permission_required("convention.change_convention")
 def recapitulatif(request, convention_uuid):
     # Step 11/11
     result = services.convention_summary(request, convention_uuid)
-    if result["success"] == utils.ReturnStatus.SUCCESS:
-        return render(
-            request,
-            "conventions/submitted.html",
-            {
-                "convention": result["convention"],
-            },
-        )
-    if result["success"] == utils.ReturnStatus.WARNING:
-        return render(
-            request,
-            "conventions/saved.html",
-            {
-                "convention": result["convention"],
-            },
-        )
     return render(
         request,
         "conventions/recapitulatif.html",
@@ -283,6 +255,46 @@ def recapitulatif(request, convention_uuid):
             "convention_form_step": 11,
         },
     )
+
+
+@permission_required("convention.change_convention")
+def save_convention(request, convention_uuid):
+    result = services.convention_save(request, convention_uuid)
+    if result["success"] == utils.ReturnStatus.SUCCESS:
+        return render(
+            request,
+            "conventions/submitted.html",
+            result,
+        )
+    if result["success"] == utils.ReturnStatus.WARNING:
+        return render(
+            request,
+            "conventions/saved.html",
+            result,
+        )
+    return HttpResponseRedirect(
+        reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+    )
+
+
+@permission_required("convention.change_convention")
+def validate_convention(request, convention_uuid):
+    result = services.convention_validate(request, convention_uuid)
+    return HttpResponseRedirect(
+        reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+    )
+
+
+@permission_required("convention.change_convention")
+def generate_convention(request, convention_uuid):
+    data, file_name = services.generate_convention(convention_uuid)
+
+    response = HttpResponse(
+        data,
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingm",
+    )
+    response["Content-Disposition"] = f"attachment; filename={file_name}.docx"
+    return response
 
 
 #   return send_file(file_stream, as_attachment=True, attachment_filename='report_'+user_id+'.docx')

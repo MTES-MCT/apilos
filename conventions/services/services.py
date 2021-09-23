@@ -826,19 +826,6 @@ def convention_summary(request, convention_uuid):
         .prefetch_related("lot__logement_set")
         .get(uuid=convention_uuid)
     )
-    if request.method == "POST":
-        if request.POST.get("SubmitConvention", False):
-            convention.soumis_le = datetime.date.today()
-            convention.statut = ConventionStatut.INSTRUCTION
-            convention.save()
-            return {
-                "success": utils.ReturnStatus.SUCCESS,
-                "convention": convention,
-            }
-        return {
-            "success": utils.ReturnStatus.WARNING,
-            "convention": convention,
-        }
     return {
         "success": utils.ReturnStatus.ERROR,
         "convention": convention,
@@ -850,6 +837,43 @@ def convention_summary(request, convention_uuid):
         "stationnements": convention.lot.typestationnement_set.all(),
         "reference_cadastrales": convention.programme.referencecadastrale_set.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
+    }
+
+
+def convention_save(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    submitted = utils.ReturnStatus.WARNING
+    if request.method == "POST":
+        if request.POST.get("SubmitConvention", False):
+            convention.soumis_le = datetime.datetime.now()
+            convention.statut = ConventionStatut.INSTRUCTION
+            convention.save()
+            submitted = utils.ReturnStatus.SUCCESS
+        return {
+            "success": submitted,
+            "convention": convention,
+        }
+    return {
+        "success": utils.ReturnStatus.ERROR,
+        "convention": convention,
+    }
+
+
+def convention_validate(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    if request.method == "POST":
+        if not convention.valide_le:
+            convention.valide_le = datetime.datetime.now()
+        convention.statut = ConventionStatut.VALIDE
+        convention.save()
+        submitted = utils.ReturnStatus.SUCCESS
+        return {
+            "success": submitted,
+            "convention": convention,
+        }
+    return {
+        "success": utils.ReturnStatus.ERROR,
+        "convention": convention,
     }
 
 

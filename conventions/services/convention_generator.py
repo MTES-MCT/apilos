@@ -84,6 +84,9 @@ def generate_hlm(convention):
         "sar_totale": logements_totale["sar"],
         "su_totale": logements_totale["su"],
         "loyer_total": logements_totale["loyer"],
+        "liste_des_annexes": compute_liste_des_annexes(
+            convention.lot.typestationnement_set.all(), annexes
+        ),
     }
 
     jinja_env = jinja2.Environment()
@@ -96,6 +99,34 @@ def generate_hlm(convention):
     file_stream.seek(0)
 
     return file_stream
+
+
+def compute_liste_des_annexes(typestationnements, annexes):
+    annexes_par_type = {}
+    for annexe in annexes:
+        if annexe.get_typologie_display() not in annexes_par_type:
+            annexes_par_type[annexe.get_typologie_display()] = 0
+        annexes_par_type[annexe.get_typologie_display()] += 1
+
+    stationnement_par_type = {}
+    for stationnement in typestationnements:
+        if stationnement.get_typologie_display() not in stationnement_par_type:
+            stationnement_par_type[stationnement.get_typologie_display()] = 0
+        stationnement_par_type[
+            stationnement.get_typologie_display()
+        ] += stationnement.nb_stationnements
+
+    annexes_list = []
+    for key, value in annexes_par_type.items():
+        annexes_list.append(
+            f"{value} annexe{'s' if value > 1 else ''} de type {key.lower()}"
+        )
+    for key, value in stationnement_par_type.items():
+        annexes_list.append(
+            f"{value} stationnement{'s' if value > 1 else ''} de type {key.lower()}"
+        )
+
+    return ", ".join(annexes_list)
 
 
 def compute_mixte(convention):

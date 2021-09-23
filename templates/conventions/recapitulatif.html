@@ -314,22 +314,22 @@
                                                 {% for annexe in annexes %}
                                                     <tr>
                                                         <td>
-                                                            {{ annexe.typologie }}
+                                                            {{ annexe.get_typologie_display }}
                                                         </td>
                                                         <td>
                                                             {{ annexe.logement.designation }}
                                                         </td>
                                                         <td>
-                                                            {{ annexe.logement.typologie }}
+                                                            {{ annexe.logement.get_typologie_display }}
                                                         </td>
                                                         <td>
-                                                            {{ annexe.surface_hors_surface_retenue }}
+                                                            {{ annexe.surface_hors_surface_retenue|floatformat:2 }}
                                                         </td>
                                                         <td>
-                                                            {{ annexe.loyer_par_metre_carre }}
+                                                            {{ annexe.loyer_par_metre_carre|floatformat:2 }}
                                                         </td>
                                                         <td>
-                                                            {{ annexe.loyer }}
+                                                            {{ annexe.loyer|floatformat:2 }}
                                                         </td>
                                                     </tr>
                                                 {% endfor %}
@@ -359,13 +359,13 @@
                                                 {% for stationnement in stationnements %}
                                                     <tr>
                                                         <td>
-                                                            {{ stationnement.typologie }}
+                                                            {{ stationnement.get_typologie_display }}
                                                         </td>
                                                         <td>
                                                             {{ stationnement.nb_stationnements }}
                                                         </td>
                                                         <td>
-                                                            {{ stationnement.loyer }}
+                                                            {{ stationnement.loyer|floatformat:2 }}
                                                         </td>
                                                     </tr>
                                                 {% endfor %}
@@ -397,7 +397,7 @@
                     {% if convention.is_bailleur_editable %}
                         {% include "common/button/precedent.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
                         <div>
-                            <form method="post" action="" enctype="multipart/form-data">
+                            <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}">
                                 {% csrf_token %}
                                 <button class="fr-btn fr-btn--secondary">
                                     Enregistrer le Brouillon
@@ -415,18 +415,46 @@
                     {% if convention.is_instructeur_editable %}
                         {% include "common/button/precedent.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
                         <div>
-                            <form method="post" action="{% url 'conventions:generate_convention' convention_uuid=convention.uuid %}" enctype="multipart/form-data">
+                            <form method="post" action="{% url 'conventions:generate' convention_uuid=convention.uuid %}">
                                 {% csrf_token %}
                                 <button class="fr-btn">
                                     Générer et Télécharger la convention
                                 </button>
                             </form>
                         </div>
+
                     {% else %}
                         {% include "common/button/return_convention_index.html" %}
                     {% endif %}
                 {% endif %}
             </div>
+
+
+            {% if request.user.is_instructeur %}
+                <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w">
+
+                    <div class="fr-mb-3w fr-p-3w" style="border-radius: 25px;border: 2px solid #E10600;background:#dacbca;font-size:bold;">
+                        {% if not convention.valide_le %}
+
+                            <p class="fr-my-3w">Une fois la convention générée, si celle-ci correspond aux attendus, vous pouvez l'envoyer au bailleur par email et cliquer sur la bouton ci-dessous.
+                                Cela nous permet de suivre le statut de la convention en temps réel.</p>
+                            <div>
+                                <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}">
+                                    {% csrf_token %}
+                                    <button class="fr-btn">
+                                        Valider la convention
+                                    </button>
+                                </form>
+                            </div>
+                        {% else %}
+                            <p>La convention a été validée le {{ convention.valide_le|date:"j F Y" }}</p>
+                        {% endif %}
+                        <p class="fr-my-3w"><b>Bientôt</b>, nous serons en mesure de prendre en charge la suite du processus de conventionnement dans l'interface</p>
+                    </div>
+                </div>
+
+            {% endif %}
+
 
         </div>
     </div>
