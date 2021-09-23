@@ -3,19 +3,15 @@ from zipfile import BadZipFile
 import datetime
 from openpyxl import load_workbook
 
-from core import s3
-from core import settings
+from core.storage import client
 from . import utils
 
 
 def save_uploaded_file(my_file, convention, file_name):
     my_file.seek(0)
-    s3.client.put_object(
-        Body=my_file.read(),
-        Bucket=f"{settings.AWS_STORAGE_BUCKET_NAME}",
-        Key=f"conventions/{convention.uuid}/uploads/{file_name}",
-        ACL="private",
-        CacheControl="max-age=31556926",  # 1 year
+    client.put_object(
+        my_file=my_file.read(),
+        target=f"conventions/{convention.uuid}/uploads/{file_name}",
     )
 
 
