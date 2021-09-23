@@ -21,6 +21,12 @@ def to_fr_float(value, d=2):
     return format(value, f",.{d}f").replace(",", " ").replace(".", ",")
 
 
+def pluralize(value):
+    if value > 1:
+        return "s"
+    return ""
+
+
 def generate_hlm(convention):
     annexes = (
         Annexe.objects.prefetch_related("logement")
@@ -92,6 +98,7 @@ def generate_hlm(convention):
     jinja_env = jinja2.Environment()
     jinja_env.filters["d"] = to_fr_date
     jinja_env.filters["f"] = to_fr_float
+    jinja_env.filters["pl"] = pluralize
     jinja_env.filters["len"] = len
     doc.render(context, jinja_env)
     file_stream = io.BytesIO()
