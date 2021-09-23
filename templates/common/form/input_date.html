@@ -4,8 +4,7 @@
             {{ label }}
             {% if mandatory %}&nbsp;{% include "common/mandatory_field.html" %}{% endif %}
             {% if description %}
-                &nbsp;<button class="fr-link fr-link--sm fr-fi-information-line" style="min-height: 0; padding: .1rem;" type='button' onclick="toggle('{{form_input.id_for_label}}_description')"></button>
-                <span class="fr-hint-text" id="{{form_input.id_for_label}}_description" style="display:none;">{{description}}</span>
+                {% include "common/help_field.html" with form_input=form_input description=description %}
             {% endif %}
         </label>
     {% endif %}

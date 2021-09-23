@@ -92,15 +92,10 @@
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_date.html" with form_input=form.date_fin_conventionnement label="Date de fin de la convention" mandatory=True %}
+                                    {% include "common/form/input_date.html" with form_input=form.date_fin_conventionnement label="Date de fin de la convention" mandatory=True description="Année de signature de la convention + au moins la durée du prêt le plus long. Elle ne peut être inférieure à 9 ans. Spécificité pour le PLS: comprise entre 15 et 40 ans.Si la convention est signée après le 30 juin, la durée de la convention à prendre en compte débute à l’année N+1." %}
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                    <div class="fr-input-group {% if form.fond_propre.errors %}fr-select-group--error{% endif %}">
-                                        <label class="fr-label" for="{{form.fond_propre.id_for_label}}">
-                                            Fonds propres
-                                        </label>
-                                        {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" %}
-                                    </div>
+                                    {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" label="Fonds propres" %}
                                 </div>
                             </div>
                         </div>
