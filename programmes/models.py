@@ -124,7 +124,7 @@ class Programme(IngestableModel):
     def __str__(self):
         return self.nom
 
-    def get_type_habitat_advanced_display(self, nb_logements):
+    def get_type_habitat_advanced_display(self, nb_logements=0):
         return (
             " "
             + self.get_type_habitat_display().lower()
