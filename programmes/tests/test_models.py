@@ -152,11 +152,23 @@ class ProgrammeModelsTest(TestCase):
     def test_advanced_display(self):
         programme = Programme.objects.order_by("-uuid").first()
         programme.type_habitat = TypeHabitat.SANSOBJET
+        print(programme.get_type_habitat_advanced_display())
         self.assertEqual(programme.get_type_habitat_advanced_display(), "")
+        self.assertEqual(programme.get_type_habitat_advanced_display(1), "")
+        self.assertEqual(programme.get_type_habitat_advanced_display(2), "")
         type_habitat = random.choice([TypeHabitat.INDIVIDUEL, TypeHabitat.COLLECTIF])
         programme.type_habitat = type_habitat
         self.assertEqual(
-            programme.get_type_habitat_advanced_display(), type_habitat.label
+            programme.get_type_habitat_advanced_display(0),
+            " " + type_habitat.label.lower(),
+        )
+        self.assertEqual(
+            programme.get_type_habitat_advanced_display(1),
+            " " + type_habitat.label.lower(),
+        )
+        self.assertEqual(
+            programme.get_type_habitat_advanced_display(2),
+            " " + type_habitat.label.lower() + "s",
         )
 
         programme.type_operation = TypeOperation.SANSOBJET
@@ -167,14 +179,19 @@ class ProgrammeModelsTest(TestCase):
                 TypeOperation.ACQUIS,
                 TypeOperation.DEMEMBREMENT,
                 TypeOperation.REHABILITATION,
-                TypeOperation.SANSTRAVAUX,
                 TypeOperation.USUFRUIT,
                 TypeOperation.VEFA,
             ]
         )
         programme.type_operation = type_operation
         self.assertEqual(
-            programme.get_type_operation_advanced_display(), type_operation.label
+            programme.get_type_operation_advanced_display(),
+            " en " + type_operation.label.lower(),
+        )
+        programme.type_operation = TypeOperation.SANSTRAVAUX
+        self.assertEqual(
+            programme.get_type_operation_advanced_display(),
+            " " + TypeOperation.SANSTRAVAUX.label.lower(),
         )
 
     def test_xlsx(self):

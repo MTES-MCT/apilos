@@ -124,16 +124,21 @@ class Programme(IngestableModel):
     def __str__(self):
         return self.nom
 
-    def get_type_habitat_advanced_display(self):
+    def get_type_habitat_advanced_display(self, nb_logements=0):
         return (
-            self.get_type_habitat_display()
-            if self.type_habitat != TypeHabitat.SANSOBJET
+            " "
+            + self.get_type_habitat_display().lower()
+            + ("s" if nb_logements and nb_logements > 1 else "")
+            if self.type_habitat and self.type_habitat != TypeHabitat.SANSOBJET
             else ""
         )
 
     def get_type_operation_advanced_display(self):
+        prefix = "en "
+        if self.type_operation == TypeOperation.SANSTRAVAUX:
+            prefix = ""
         return (
-            self.get_type_operation_display()
+            " " + prefix + self.get_type_operation_display().lower()
             if self.type_operation != TypeOperation.SANSOBJET
             else ""
         )
