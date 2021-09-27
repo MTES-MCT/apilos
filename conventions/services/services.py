@@ -375,6 +375,13 @@ def programme_edd_update(request, convention_uuid):
             formset_is_valid = formset.is_valid()
             if form_is_valid and formset_is_valid:
                 programme.edd_volumetrique = form.cleaned_data["edd_volumetrique"]
+                programme.mention_publication_edd_volumetrique = form.cleaned_data[
+                    "mention_publication_edd_volumetrique"
+                ]
+                programme.edd_classique = form.cleaned_data["edd_classique"]
+                programme.mention_publication_edd_classique = form.cleaned_data[
+                    "mention_publication_edd_classique"
+                ]
                 programme.save()
 
                 programme.logementedd_set.all().delete()
@@ -412,6 +419,11 @@ def programme_edd_update(request, convention_uuid):
         form = ProgrammeEDDForm(
             initial={
                 "edd_volumetrique": programme.edd_volumetrique,
+                "mention_publication_edd_volumetrique": (
+                    programme.mention_publication_edd_volumetrique
+                ),
+                "edd_classique": programme.edd_classique,
+                "mention_publication_edd_classique": programme.mention_publication_edd_classique,
             }
         )
     return {

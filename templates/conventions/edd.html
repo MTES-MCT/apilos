@@ -16,14 +16,26 @@
                         </p>
 
                         <div class="fr-input-group {% if form.edd_volumetrique.errors %}fr-select-group--error{% endif %}">
-                            <label class="fr-label fr-mb-1w" for="{{form.edd_volumetrique.id_for_label}}">
+                            <h4 class="fr-mb-1w" for="{{form.edd_volumetrique.id_for_label}}">
                                 EDD volumétrique
-                            </label>
+                            </h4>
                             {% include "common/form/input_upload_button.html" with textarea=True %}
                             {% include "common/form/input_textarea.html" with form_input=form.edd_volumetrique rows=5 %}
                         </div>
 
-                        <p class="fr-mb-1w">EDD Simplifé</p>
+                        {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_volumetrique label="Mention de publication de l'EDD volumétrique" %}
+
+                        <div class="fr-input-group {% if form.edd_classique.errors %}fr-select-group--error{% endif %}">
+                            <h4 class="fr-mb-1w" for="{{form.edd_classique.id_for_label}}">
+                                EDD classique
+                            </h4>
+                            {% include "common/form/input_upload_button.html" with textarea=True %}
+                            {% include "common/form/input_textarea.html" with form_input=form.edd_classique rows=5 %}
+                        </div>
+
+                        {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_classique label="Mention de publication de l'EDD classique" %}
+
+                        <h4 class="fr-mb-1w">EDD Simplifé</h4>
 
                         {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='logements_edd' upform=upform  what="logements pour l'EDD simplifié"%}
 

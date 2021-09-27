@@ -183,7 +183,33 @@ class ProgrammeEDDForm(forms.Form):
         required=False,
         max_length=5000,
         error_messages={
-            "max_length": "Le message ne doit pas excéder 5000 characters",
+            "max_length": "L'EDD volumétrique ne doit pas excéder 5000 characters",
+        },
+    )
+
+    mention_publication_edd_volumetrique = forms.CharField(
+        required=False,
+        max_length=1000,
+        error_messages={
+            "max_length": "La mention de publication de l'EDD volumétrique "
+            + "ne doit pas excéder 1000 characters",
+        },
+    )
+
+    edd_classique = forms.CharField(
+        required=False,
+        max_length=5000,
+        error_messages={
+            "max_length": "L'EDD classique ne doit pas excéder 5000 characters",
+        },
+    )
+
+    mention_publication_edd_classique = forms.CharField(
+        required=False,
+        max_length=1000,
+        error_messages={
+            "max_length": "La mention de publication de l'EDD classique "
+            + "ne doit pas excéder 1000 characters",
         },
     )
 
