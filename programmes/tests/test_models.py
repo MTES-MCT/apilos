@@ -128,7 +128,7 @@ class ProgrammeModelsTest(TestCase):
     def test_properties(self):
         logement = Logement.objects.order_by("uuid").first()
         self.assertEqual(logement.designation, logement.d)
-        self.assertEqual(logement.typologie, logement.t)
+        self.assertEqual(logement.get_typologie_display(), logement.t)
         self.assertEqual(logement.surface_habitable, logement.sh)
         self.assertEqual(logement.surface_annexes, logement.sa)
         self.assertEqual(logement.surface_annexes_retenue, logement.sar)
@@ -138,7 +138,7 @@ class ProgrammeModelsTest(TestCase):
         self.assertEqual(logement.loyer, logement.l)
 
         annexe = Annexe.objects.order_by("uuid").first()
-        self.assertEqual(annexe.typologie, annexe.t)
+        self.assertEqual(annexe.get_typologie_display(), annexe.t)
         self.assertEqual(annexe.logement, annexe.lgt)
         self.assertEqual(annexe.surface_hors_surface_retenue, annexe.shsr)
         self.assertEqual(annexe.loyer_par_metre_carre, annexe.lpmc)
@@ -146,7 +146,7 @@ class ProgrammeModelsTest(TestCase):
 
         stationnement = TypeStationnement.objects.order_by("uuid").first()
         self.assertEqual(stationnement.loyer, stationnement.l)
-        self.assertEqual(stationnement.typologie, stationnement.t)
+        self.assertEqual(stationnement.get_typologie_display(), stationnement.t)
         self.assertEqual(stationnement.nb_stationnements, stationnement.nb)
 
     def test_advanced_display(self):
