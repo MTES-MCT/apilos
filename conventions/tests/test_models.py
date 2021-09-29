@@ -68,7 +68,7 @@ class ConventionModelsTest(TestCase):
 
     def test_properties(self):
         pret = Pret.objects.first()
-        self.assertEqual(pret.preteur, pret.p)
+        self.assertEqual(pret.get_preteur_display(), pret.p)
         self.assertEqual(pret.autre, pret.a)
         self.assertEqual(pret.date_octroi, pret.do)
         self.assertEqual(pret.numero, pret.n)

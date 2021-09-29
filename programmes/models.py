@@ -283,7 +283,7 @@ class Logement(models.Model):
     d = property(_get_designation)
 
     def _get_typologie(self):
-        return self.typologie
+        return self.get_typologie_display()
 
     t = property(_get_typologie)
 
@@ -356,7 +356,7 @@ class Annexe(models.Model):
         return f"{self.typologie} - {self.logement}"
 
     def _get_typologie(self):
-        return self.typologie
+        return self.get_typologie_display()
 
     t = property(_get_typologie)
 
@@ -418,7 +418,7 @@ class TypeStationnement(IngestableModel):
         return f"{self.typologie} - {self.lot}"
 
     def _get_typologie(self):
-        return self.typologie
+        return self.get_typologie_display()
 
     t = property(_get_typologie)
 

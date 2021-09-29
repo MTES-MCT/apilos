@@ -114,7 +114,7 @@ class Pret(models.Model):
     sheet_name = "Prêts"
 
     def _get_preteur(self):
-        return self.preteur
+        return self.get_preteur_display()
 
     p = property(_get_preteur)
 
