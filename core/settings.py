@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "dsfr",
     "bailleurs.apps.BailleursConfig",
     "conventions.apps.ConventionsConfig",
     "instructeurs.apps.InstructeursConfig",
