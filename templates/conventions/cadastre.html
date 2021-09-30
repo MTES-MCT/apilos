@@ -1,5 +1,18 @@
 {% extends "layout/base.html" %}
 
+{% load static %}
+
+{% block javascript_extras %}
+    <script src="{% static "dropzonejs/min/dropzone.min.js" %}"></script>
+    <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}"></script>
+{% endblock %}
+
+{% block css_extras %}
+    <link rel="stylesheet" href="{% static "dropzonejs/min/basic.min.css" %}">
+    <link rel="stylesheet" href="{% static "dropzonejs/min/dropzone.min.css" %}">
+{% endblock %}
+
+
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
         <div class="fr-container">
@@ -88,7 +101,11 @@
                                         <label class="fr-label fr-mb-1w" for="{{form.acte_notarial.id_for_label}}">
                                             Acte notarial
                                         </label>
-                                        {% include "common/form/input_upload_button.html" with textarea=False %}
+                                        <div class="fr-col-12 dropzone dz" id="acte_notarial_dropzone">
+                                            <div class="fallback">
+                                                <input name="file" type="file" multiple />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -162,4 +179,34 @@
             </form>
         </div>
     </div>
+    <!-- <form action="/upload/" method="POST" class="dropzone dz">
+    {% csrf_token %}
+    <div class="fallback">
+        <input name="file" type multiple />
+    </div>
+</form> -->
+    <script>
+        Dropzone.autoDiscover = false;
+
+
+        let myDropzone = new Dropzone("div#acte_notarial_dropzone", {
+            url: "/upload/",
+            uploadMultiple: true,
+            maxFilesize: 4, // 4 Mo = 4194304o
+            acceptedFiles: 'image/*,application/pdf',
+            addRemoveLinks: true,
+            init: function () {
+                this.on("removedfile", function (file) {
+                    //                alert('done for '+ file.name);
+                })
+            },
+            dictInvalidFileType: "You can't upload files of this type. Taille : ({{filesize}}MiB)",
+            dictFileTooBig: "le fichier est trop gros ({{filesize}}Mo). Max filesize: {{maxFilesize}}Mo.",
+            headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        });
+        //    var mockFile = { name: "apilos_logo.png", size: 2572 };
+        //    myDropzone.options.addedfile.call(myDropzone, mockFile);
+        //    myDropzone.options.thumbnail.call(myDropzone, mockFile, "http://localhost:8001/static/img/apilos_logo.png");
+    </script>
+
 {% endblock %}

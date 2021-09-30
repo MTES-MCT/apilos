@@ -37,4 +37,5 @@ urlpatterns = [
     ),
     path("stats/", include(("stats.urls", "stats"), namespace="stats")),
     path("", include(("users.urls", "users"), namespace="users")),
+    path("upload/", include(("upload.urls", "upload"), namespace="upload")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
