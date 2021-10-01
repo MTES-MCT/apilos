@@ -54,10 +54,6 @@ def _get_files_from_field(field):
     file_ids = []
     if field:
         file_ids = json.loads(field)["files"]
-    print("file_ids")
-    print(file_ids)
-    files = UploadedFile.objects.filter(uuid__in=file_ids)
-    print(files)
     return UploadedFile.objects.filter(uuid__in=file_ids)
 
 
