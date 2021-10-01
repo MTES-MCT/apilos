@@ -1,4 +1,5 @@
 import base64
+import re
 
 from io import BytesIO
 from PIL import Image
@@ -6,6 +7,7 @@ from PIL import Image
 from django.http.response import JsonResponse
 from django.views.decorators.http import require_POST
 
+from core import settings
 from .models import UploadedFile, UploadedFileSerializer
 
 
@@ -20,7 +22,6 @@ def upload_file(request):
             thumbnail=thumbnail(file),
             content_type=file.content_type,
         )
-        print(uploaded_file.thumbnail)
         handle_uploaded_file(uploaded_file, file)
         uploaded_file.save()
         uploaded_files.append(UploadedFileSerializer(uploaded_file).data)
@@ -34,16 +35,26 @@ def handle_uploaded_file(uploaded_file, file):
 
 
 def thumbnail(file):
-
-    print(file.content_type)
+    content_type = file.content_type
+    match_types = re.findall(r"image/([A-Za-z]+)", content_type)
+    thumbnail_format = "PNG"
+    if len(match_types):
+        thumbnail_format = match_types[0].upper()
+        img_file = file.file
+    elif content_type == "application/pdf":
+        img_file = settings.BASE_DIR / "static/img/pdf.png"
+        content_type = "image/png"
+    else:
+        img_file = settings.BASE_DIR / "static/img/img.png"
+        content_type = "image/png"
 
     thumbnail_size = 120, 120
     data_img = BytesIO()
-    img = Image.open(file.file)
+    img = Image.open(img_file)
     img.thumbnail(thumbnail_size)
 
-    img.save(data_img, format="BMP")
+    img.save(data_img, format=thumbnail_format)
 
-    return "data:image/jpg;base64,{}".format(
-        base64.b64encode(data_img.getvalue()).decode("utf-8")
+    return "data:{};base64,{}".format(
+        content_type, base64.b64encode(data_img.getvalue()).decode("utf-8")
     )

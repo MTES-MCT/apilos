@@ -27,11 +27,10 @@
                         document.getElementById(form_id).value = JSON.stringify(files);
                     })
                     this.on("success", function (file, response) {
-                        console.log(response);
+                        //document.querySelector('img[alt="test.pdf"]').src --> retrieve thumbnail
                         main_response = response;
                         for (var i = 0; i < response.uploaded_file.length; i++) {
                             if (response.uploaded_file[i].filename == file.name) {
-                                console.log(response.uploaded_file[i])
                                 file.uuid = response.uploaded_file[i].uuid
                             }
                         }
@@ -53,7 +52,6 @@
             var mockFile = { name: name, size: size, uuid: uuid };
             myDropzone.options.addedfile.call(myDropzone, mockFile);
             myDropzone.options.thumbnail.call(myDropzone, mockFile, thumbnail_url);
-
         }
 
     </script>
@@ -155,7 +153,7 @@
                                         </label>
                                         <div class="fr-col-12 dropzone dz" id="{{form.acte_notarial_files.id_for_label}}_dropzone">
                                             <div class="fallback">
-                                                <input name="file" type="file" multiple />
+                                                Votre navigateur ne permet pas de téléverser des documents.
                                             </div>
                                         </div>
                                         <input hidden
@@ -170,7 +168,7 @@
                                     </script>
                                     {% for acte_notarial_file in acte_notarial_files %}
                                         <script type="text/javascript">
-                                            init_dropzone_thumbnail(myDropzone, "{{acte_notarial_file.filename}}", "{{acte_notarial_file.size}}", "{{acte_notarial_file.uuid}}", "{{acte_notarial_file.thumbnail}}")//"http://localhost:8001/static/img/img.png")
+                                            init_dropzone_thumbnail(myDropzone, "{{acte_notarial_file.filename}}", "{{acte_notarial_file.size}}", "{{acte_notarial_file.uuid}}", "{{acte_notarial_file.thumbnail}}")
                                         </script>
                                     {% endfor %}
                                 </div>
