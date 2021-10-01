@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from programmes.models import (
     Lot,
@@ -27,9 +28,37 @@ from conventions.forms import (
     PretFormSet,
     UploadForm,
 )
+from upload.models import UploadedFile
 from . import utils
 from . import convention_generator
 from . import upload_objects
+
+
+def _set_files_and_text_field(files_field, text_field=""):
+    files = []
+    print(files_field)
+    if files_field and isinstance(files_field, str):
+        files = json.loads(files_field.replace("'", '"'))
+    field = {"files": files, "text": text_field}
+    return json.dumps(field)
+
+
+def _get_file_ids_from_field(field):
+    files = []
+    if field:
+        files = json.loads(field)["files"]
+    return json.dumps(files)
+
+
+def _get_files_from_field(field):
+    file_ids = []
+    if field:
+        file_ids = json.loads(field)["files"]
+    print("file_ids")
+    print(file_ids)
+    files = UploadedFile.objects.filter(uuid__in=file_ids)
+    print(files)
+    return UploadedFile.objects.filter(uuid__in=file_ids)
 
 
 def conventions_index(request, infilter):
@@ -272,7 +301,9 @@ def programme_cadastral_update(request, convention_uuid):
                     "reference_publication_acte"
                 ]
                 programme.acte_de_propriete = form.cleaned_data["acte_de_propriete"]
-                programme.acte_notarial = form.cleaned_data["acte_notarial"]
+                programme.acte_notarial = _set_files_and_text_field(
+                    form.cleaned_data["acte_notarial_files"]
+                )
                 programme.save()
 
                 programme.referencecadastrale_set.all().delete()
@@ -328,6 +359,9 @@ def programme_cadastral_update(request, convention_uuid):
                 "reference_publication_acte": programme.reference_publication_acte,
                 "acte_de_propriete": programme.acte_de_propriete,
                 "acte_notarial": programme.acte_notarial,
+                "acte_notarial_files": _get_file_ids_from_field(
+                    programme.acte_notarial
+                ),
             }
         )
     return {
@@ -337,6 +371,7 @@ def programme_cadastral_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
+        "acte_notarial_files": _get_files_from_field(programme.acte_notarial).all(),
     }
 
 

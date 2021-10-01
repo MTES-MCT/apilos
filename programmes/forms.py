@@ -134,6 +134,9 @@ class ProgrammeCadastralForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
     )
+    acte_notarial_files = forms.CharField(
+        required=False,
+    )
 
 
 class ReferenceCadastraleForm(forms.Form):

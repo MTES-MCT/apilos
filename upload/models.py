@@ -12,6 +12,7 @@ class UploadedFile(models.Model):
     filepath = models.CharField(max_length=255, null=True, unique=True)
     #    image = models.ImageField(upload_to = 'image' , default = 'demo/demo.png')
     size = models.CharField(max_length=255, null=True)
+    content_type = models.CharField(max_length=255, null=True)
     thumbnail = models.CharField(max_length=100000, blank=True, null=True)
 
     # def save(self, force_insert=False, force_update=False, using=None, update_fields=None):

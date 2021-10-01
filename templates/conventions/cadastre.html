@@ -5,6 +5,58 @@
 {% block javascript_extras %}
     <script src="{% static "dropzonejs/min/dropzone.min.js" %}"></script>
     <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}"></script>
+    <script>
+        Dropzone.autoDiscover = false;
+        let main_response = undefined;
+        function init_dropzone_from_file(form_id) {
+            let myDropzone = new Dropzone("div#"+form_id+"_dropzone", {
+                url: "/upload/",
+                uploadMultiple: true,
+                maxFilesize: 4, // 4 Mo = 4194304o
+                acceptedFiles: 'image/*,application/pdf',
+                addRemoveLinks: true,
+                init: function () {
+                    this.on("removedfile", function (file) {
+                        console.log(file)
+                        let files = [];
+                        if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
+                        const index = files.indexOf(file.uuid);
+                        if (index > -1) {
+                            files.splice(index, 1);
+                        }
+                        document.getElementById(form_id).value = JSON.stringify(files);
+                    })
+                    this.on("success", function (file, response) {
+                        console.log(response);
+                        main_response = response;
+                        for (var i = 0; i < response.uploaded_file.length; i++) {
+                            if (response.uploaded_file[i].filename == file.name) {
+                                console.log(response.uploaded_file[i])
+                                file.uuid = response.uploaded_file[i].uuid
+                            }
+                        }
+                        let files = [];
+                        if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
+                        if (!files.includes(file.uuid)) files.push(file.uuid);
+                        document.getElementById(form_id).value = JSON.stringify(files);
+                    })
+                },
+                dictInvalidFileType: "Il n'est pas possible de téléverser ce fichier, seul les Images et PDF sont acceptées",
+                dictFileTooBig: "Le fichier est trop gros, il n doit pas dépasser 4Mo.",
+                dictDefaultMessage: "Cliquez dans la zone ou déposez-y vos fichiez",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            });
+            return myDropzone;
+        }
+
+        function init_dropzone_thumbnail(myDropzone, name, size, uuid, thumbnail_url) {
+            var mockFile = { name: name, size: size, uuid: uuid };
+            myDropzone.options.addedfile.call(myDropzone, mockFile);
+            myDropzone.options.thumbnail.call(myDropzone, mockFile, thumbnail_url);
+
+        }
+
+    </script>
 {% endblock %}
 
 {% block css_extras %}
@@ -101,12 +153,26 @@
                                         <label class="fr-label fr-mb-1w" for="{{form.acte_notarial.id_for_label}}">
                                             Acte notarial
                                         </label>
-                                        <div class="fr-col-12 dropzone dz" id="acte_notarial_dropzone">
+                                        <div class="fr-col-12 dropzone dz" id="{{form.acte_notarial_files.id_for_label}}_dropzone">
                                             <div class="fallback">
                                                 <input name="file" type="file" multiple />
                                             </div>
                                         </div>
+                                        <input hidden
+                                            type="hidden"
+                                            id="{{form.acte_notarial_files.id_for_label}}"
+                                            name="{{form.acte_notarial_files.html_name}}"
+                                            value='{{ form.acte_notarial_files.value }}' />
+
                                     </div>
+                                    <script type="text/javascript">
+                                        let myDropzone = init_dropzone_from_file("{{form.acte_notarial_files.id_for_label}}");
+                                    </script>
+                                    {% for acte_notarial_file in acte_notarial_files %}
+                                        <script type="text/javascript">
+                                            init_dropzone_thumbnail(myDropzone, "{{acte_notarial_file.filename}}", "{{acte_notarial_file.size}}", "{{acte_notarial_file.uuid}}", "{{acte_notarial_file.thumbnail}}")//"http://localhost:8001/static/img/img.png")
+                                        </script>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
@@ -185,28 +251,6 @@
         <input name="file" type multiple />
     </div>
 </form> -->
-    <script>
-        Dropzone.autoDiscover = false;
 
-
-        let myDropzone = new Dropzone("div#acte_notarial_dropzone", {
-            url: "/upload/",
-            uploadMultiple: true,
-            maxFilesize: 4, // 4 Mo = 4194304o
-            acceptedFiles: 'image/*,application/pdf',
-            addRemoveLinks: true,
-            init: function () {
-                this.on("removedfile", function (file) {
-                    //                alert('done for '+ file.name);
-                })
-            },
-            dictInvalidFileType: "You can't upload files of this type. Taille : ({{filesize}}MiB)",
-            dictFileTooBig: "le fichier est trop gros ({{filesize}}Mo). Max filesize: {{maxFilesize}}Mo.",
-            headers: {'X-CSRFToken': '{{ csrf_token }}'}
-        });
-        //    var mockFile = { name: "apilos_logo.png", size: 2572 };
-        //    myDropzone.options.addedfile.call(myDropzone, mockFile);
-        //    myDropzone.options.thumbnail.call(myDropzone, mockFile, "http://localhost:8001/static/img/apilos_logo.png");
-    </script>
 
 {% endblock %}
