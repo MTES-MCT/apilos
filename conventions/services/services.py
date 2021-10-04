@@ -44,14 +44,14 @@ def _set_files_and_text_field(files_field, text_field=""):
 
 
 def _get_file_ids_from_field(field):
-    files = []
+    files = {}
     if field:
         files = json.loads(field)["files"]
     return json.dumps(files)
 
 
 def _get_files_from_field(field):
-    file_ids = []
+    file_ids = {}
     if field:
         file_ids = json.loads(field)["files"]
     return UploadedFile.objects.filter(uuid__in=file_ids)
@@ -297,6 +297,9 @@ def programme_cadastral_update(request, convention_uuid):
                     "reference_publication_acte"
                 ]
                 programme.acte_de_propriete = form.cleaned_data["acte_de_propriete"]
+                programme.acte_de_propriete = _set_files_and_text_field(
+                    form.cleaned_data["acte_de_propriete_files"]
+                )
                 programme.acte_notarial = _set_files_and_text_field(
                     form.cleaned_data["acte_notarial_files"]
                 )
@@ -354,6 +357,9 @@ def programme_cadastral_update(request, convention_uuid):
                 "reference_notaire": programme.reference_notaire,
                 "reference_publication_acte": programme.reference_publication_acte,
                 "acte_de_propriete": programme.acte_de_propriete,
+                "acte_de_propriete_files": _get_file_ids_from_field(
+                    programme.acte_de_propriete
+                ),
                 "acte_notarial": programme.acte_notarial,
                 "acte_notarial_files": _get_file_ids_from_field(
                     programme.acte_notarial
@@ -368,6 +374,9 @@ def programme_cadastral_update(request, convention_uuid):
         "upform": upform,
         "import_warnings": import_warnings,
         "acte_notarial_files": _get_files_from_field(programme.acte_notarial).all(),
+        "acte_de_propriete_files": _get_files_from_field(
+            programme.acte_de_propriete
+        ).all(),
     }
 
 

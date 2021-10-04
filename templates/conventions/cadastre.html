@@ -93,20 +93,11 @@
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    <div class="fr-input-group {% if form.acte_de_propriete.errors %}fr-select-group--error{% endif %}">
-                                        <label class="fr-label fr-mb-1w" for="{{form.acte_de_propriete.id_for_label}}">
-                                            Acte de propriété
-                                        </label>
-                                        {% include "common/form/input_upload_button.html" with textarea=False %}
-                                    </div>
+                                    {% include "common/form/input_upload.html" with label="Acte de propriété" form_input=form.acte_de_propriete form_input_files=form.acte_de_propriete_files files=acte_de_propriete_files convention=convention %}
                                 </div>
-
-                                {% include "common/form/input_upload.html" with label="Acte notarial" form_input=form.acte_notarial form_input_files=form.acte_notarial_files files=acte_notarial_files %}
-
-
-
-
-
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_upload.html" with label="Acte notarial" form_input=form.acte_notarial form_input_files=form.acte_notarial_files files=acte_notarial_files convention=convention %}
+                                </div>
                             </div>
                         </div>
 

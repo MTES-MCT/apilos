@@ -1,7 +1,7 @@
 Dropzone.autoDiscover = false;
 
 let main_response = undefined;
-function init_dropzone_from_file(form_id, csrf_token) {
+function init_dropzone_from_file(form_id, csrf_token, convention_uuid) {
     let myDropzone = new Dropzone("div#"+form_id+"_dropzone", {
         url: "/upload/",
         uploadMultiple: true,
@@ -10,7 +10,6 @@ function init_dropzone_from_file(form_id, csrf_token) {
         addRemoveLinks: true,
         init: function () {
             this.on("removedfile", function (file) {
-                console.log(file)
                 let files = {};
                 if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
                 delete files[file.uuid]
@@ -20,7 +19,6 @@ function init_dropzone_from_file(form_id, csrf_token) {
                 //console.log(file)
                 if (document.querySelector('img[alt="'+file.name+'"]') != null ) {
                     file.thumbnail = document.querySelector('img[alt="'+file.name+'"]').src;
-                    console.log(file.thumbnail)
                 }
                 main_response = response;
                 for (var i = 0; i < response.uploaded_file.length; i++) {
@@ -29,7 +27,9 @@ function init_dropzone_from_file(form_id, csrf_token) {
                     }
                 }
                 let files = {};
+                console.log(form_id)
                 if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
+                if (files.constructor !== Object) files = {}
                 if (files[file.uuid] === undefined) files[file.uuid] = {'uuid':file.uuid,'thumbnail' : file.thumbnail};
                 document.getElementById(form_id).value = JSON.stringify(files);
             })
@@ -37,7 +37,8 @@ function init_dropzone_from_file(form_id, csrf_token) {
         dictInvalidFileType: "Il n'est pas possible de téléverser ce fichier, seul les Images et PDF sont acceptées",
         dictFileTooBig: "Le fichier est trop gros, il n doit pas dépasser 4Mo.",
         dictDefaultMessage: "Cliquez dans la zone ou déposez-y vos fichiez",
-        headers: {'X-CSRFToken': csrf_token}
+        headers: {'X-CSRFToken': csrf_token},
+        params: { convention: convention_uuid }
     });
     return myDropzone;
 }
