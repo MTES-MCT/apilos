@@ -36,7 +36,7 @@
             {% if textarea %}
                 <i class="fr-text--sm">et/ou </i>
             {% endif %}
-            <button type="button" class="fr-btn fr-mb-1w" onclick="document.getElementById('{{form_input_files.id_for_label}}_dropzone').click()">
+            <button type="button" class="fr-btn fr-mb-1w" onclick="document.getElementById('{{form_input_files_json.id_for_label}}_dropzone').click()">
                 <img class="apilos-fi-btn fr-mr-1w" src="{% static "icons/upload.svg" %}" ></img>Téléverser une image
             </button>
             {% include "common/help_field.html" with id="{{form_input.id_for_label}}_description" description="Les fichiers images et pdf sont acceptés dans la limite de 100 Mo" %}

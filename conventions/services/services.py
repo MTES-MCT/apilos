@@ -42,7 +42,7 @@ def _set_files_and_text_field(files_field, text_field=""):
     return json.dumps(field)
 
 
-def _get_text_and_files_from_field(field):
+def _get_text_and_files_from_field(name, field):
     object_field = {}
 
     files = {}
@@ -67,43 +67,10 @@ def _get_text_and_files_from_field(field):
             if "thumbnail" in files[str(file.uuid)]
             else None,
         }
-    object_field["files"] = returned_files
-    object_field["files_json"] = json.dumps(returned_files)
-
-    return object_field
-
-
-def _get_text_and_files_from_field2(name, field):
-    object_field = {}
-
-    files = {}
-    if field:
-        try:
-            object_field = json.loads(field)
-        except json.decoder.JSONDecodeError:
-            object_field = {
-                "files": {},
-                "text": field if isinstance(field, str) else "",
-            }
-        files = object_field["files"]
-
-    returned_files = {}
-    for file in UploadedFile.objects.filter(uuid__in=files):
-        returned_files[str(file.uuid)] = {
-            "uuid": str(file.uuid),
-            "filename": file.filename,
-            "size": file.size,
-            "content_type": file.content_type,
-            "thumbnail": files[str(file.uuid)]["thumbnail"]
-            if "thumbnail" in files[str(file.uuid)]
-            else None,
-        }
-    object_field["files"] = returned_files
     object_field["files_json"] = json.dumps(returned_files)
 
     return {
         name: object_field["text"],
-        name + "_files": object_field["files"],
         name + "_files_json": object_field["files_json"],
     }
 
@@ -411,18 +378,18 @@ def programme_cadastral_update(request, convention_uuid):
                 "date_achevement": utils.format_date_for_form(
                     programme.date_achevement
                 ),
-                **_get_text_and_files_from_field2("vendeur", programme.vendeur),
-                **_get_text_and_files_from_field2("acquereur", programme.acquereur),
-                **_get_text_and_files_from_field2(
+                **_get_text_and_files_from_field("vendeur", programme.vendeur),
+                **_get_text_and_files_from_field("acquereur", programme.acquereur),
+                **_get_text_and_files_from_field(
                     "reference_notaire", programme.reference_notaire
                 ),
-                **_get_text_and_files_from_field2(
+                **_get_text_and_files_from_field(
                     "reference_publication_acte", programme.reference_publication_acte
                 ),
-                **_get_text_and_files_from_field2(
+                **_get_text_and_files_from_field(
                     "acte_de_propriete", programme.acte_de_propriete
                 ),
-                **_get_text_and_files_from_field2(
+                **_get_text_and_files_from_field(
                     "acte_notarial", programme.acte_notarial
                 ),
             }
@@ -743,7 +710,6 @@ def annexes_update(request, convention_uuid):
         .get(uuid=convention_uuid)
     )
     import_warnings = None
-
     if request.method == "POST":
         # When the user cliked on "Téléverser" button
         formset = AnnexeFormSet(request.POST)
@@ -771,7 +737,6 @@ def annexes_update(request, convention_uuid):
                     form_annexe.add_error(
                         "logement_designation", "Ce logement n'existe pas dans ce lot"
                     )
-
             if formset.is_valid():
                 Annexe.objects.filter(logement__lot_id=convention.lot.id).delete()
                 for form_annexe in formset:
@@ -832,7 +797,6 @@ def stationnements_update(request, convention_uuid):
         .get(uuid=convention_uuid)
     )
     import_warnings = None
-
     if request.method == "POST":
         # When the user cliked on "Téléverser" button
         formset = TypeStationnementFormSet(request.POST)
@@ -897,7 +861,6 @@ def stationnements_update(request, convention_uuid):
 
 def convention_comments(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
-
     if request.method == "POST":
         form = ConventionCommentForm(request.POST)
         if form.is_valid():
