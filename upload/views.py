@@ -6,6 +6,7 @@ from PIL import Image
 
 from django.http.response import JsonResponse
 from django.views.decorators.http import require_POST
+from django.core.files.storage import default_storage
 
 from core import settings
 from .models import UploadedFile, UploadedFileSerializer
@@ -29,9 +30,11 @@ def upload_file(request):
 
 
 def handle_uploaded_file(uploaded_file, file):
-    with open(f"media/{uploaded_file.uuid}", "wb+") as destination:
-        for chunk in file.chunks():
-            destination.write(chunk)
+    # with default_storage.open(f'media/{uploaded_file.uuid}', 'w') as destination:
+    destination = default_storage.open(f"media/{uploaded_file.uuid}", "w")
+    for chunk in file.chunks():
+        destination.write(chunk)
+    destination.close()
 
 
 def thumbnail(file):
