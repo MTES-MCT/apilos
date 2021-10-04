@@ -35,8 +35,16 @@ function init_dropzone_from_file(form_id, csrf_token, convention_uuid) {
             })
         },
         dictInvalidFileType: "Il n'est pas possible de téléverser ce fichier, seul les Images et PDF sont acceptées",
-        dictFileTooBig: "Le fichier est trop gros, il n doit pas dépasser 4Mo.",
         dictDefaultMessage: "Cliquez dans la zone ou déposez-y vos fichiez",
+        dictFallbackMessage: "Votre navigateur ne support pas la fonction drag'n'drop. Nous vous conseillons de changer de navigateur",
+        dictFallbackText: "",
+        dictFileTooBig: "Le fichier est trop gros, il ne doit pas dépasser 4Mo.",
+        dictInvalidFileType: "Il n'est pas possible de téléverser ce fichier, seul les Images et PDF sont acceptées",
+        dictResponseError: "Le serveur a retourner une erreur, si le problème perpsiste, nous vous prions de contacter votre administration référente",
+        dictCancelUpload: "Annuler",
+        dictCancelUploadConfirmation: "Etes vous certain de vouloir supprimer ce fichier ?",
+        dictRemoveFile: "Supprimer",
+        dictMaxFilesExceeded: "Vous ne pouvez plus téléverser d'autres documents",
         headers: {'X-CSRFToken': csrf_token},
         params: { convention: convention_uuid }
     });
