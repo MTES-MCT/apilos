@@ -5,13 +5,15 @@ function init_dropzone_from_file(form_id, csrf_token, convention_uuid) {
     let myDropzone = new Dropzone("div#"+form_id+"_dropzone", {
         url: "/upload/",
         uploadMultiple: true,
-        maxFilesize: 4, // 4 Mo = 4194304o
+        maxFilesize: 100, // 100 Mo
         acceptedFiles: 'image/*,application/pdf',
         addRemoveLinks: true,
         init: function () {
             this.on("removedfile", function (file) {
                 let files = {};
+                console.log(form_id)
                 if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
+                console.log(files[file.uuid])
                 delete files[file.uuid]
                 document.getElementById(form_id).value = JSON.stringify(files);
             })
@@ -35,7 +37,7 @@ function init_dropzone_from_file(form_id, csrf_token, convention_uuid) {
             })
         },
         dictInvalidFileType: "Il n'est pas possible de téléverser ce fichier, seul les Images et PDF sont acceptées",
-        dictDefaultMessage: "Cliquez dans la zone ou déposez-y vos fichiez",
+        dictDefaultMessage: "Cliquez dans la zone ou déposez-y vos fichiers",
         dictFallbackMessage: "Votre navigateur ne support pas la fonction drag'n'drop. Nous vous conseillons de changer de navigateur",
         dictFallbackText: "",
         dictFileTooBig: "Le fichier est trop gros, il ne doit pas dépasser 4Mo.",
@@ -52,8 +54,11 @@ function init_dropzone_from_file(form_id, csrf_token, convention_uuid) {
 }
 
 function init_dropzone_thumbnail(myDropzone, name, size, uuid, thumbnail_url) {
+    console.log('init_dropzone_thumbnail')
     var mockFile = { name: name, size: size, uuid: uuid };
     myDropzone.options.addedfile.call(myDropzone, mockFile);
-    myDropzone.options.thumbnail.call(myDropzone, mockFile, thumbnail_url);
+    if (thumbnail_url != 'None') {
+        myDropzone.options.thumbnail.call(myDropzone, mockFile, thumbnail_url);
+    }
     myDropzone.emit("complete", mockFile);
 }

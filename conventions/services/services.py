@@ -36,25 +36,41 @@ from . import upload_objects
 
 def _set_files_and_text_field(files_field, text_field=""):
     files = []
-    print(files_field)
     if files_field and isinstance(files_field, str):
         files = json.loads(files_field.replace("'", '"'))
     field = {"files": files, "text": text_field}
     return json.dumps(field)
 
 
-def _get_file_ids_from_field(field):
+def _get_text_and_files_from_field(field):
+    object_field = {}
+
     files = {}
     if field:
-        files = json.loads(field)["files"]
-    return json.dumps(files)
+        try:
+            object_field = json.loads(field)
+        except json.decoder.JSONDecodeError:
+            object_field = {
+                "files": {},
+                "text": field if isinstance(field, str) else "",
+            }
+        files = object_field["files"]
 
+    returned_files = {}
+    for file in UploadedFile.objects.filter(uuid__in=files):
+        returned_files[str(file.uuid)] = {
+            "uuid": str(file.uuid),
+            "filename": file.filename,
+            "size": file.size,
+            "content_type": file.content_type,
+            "thumbnail": files[str(file.uuid)]["thumbnail"]
+            if "thumbnail" in files[str(file.uuid)]
+            else None,
+        }
+    object_field["files"] = returned_files
+    object_field["files_json"] = json.dumps(returned_files)
 
-def _get_files_from_field(field):
-    file_ids = {}
-    if field:
-        file_ids = json.loads(field)["files"]
-    return UploadedFile.objects.filter(uuid__in=file_ids)
+    return object_field
 
 
 def conventions_index(request, infilter):
@@ -290,18 +306,27 @@ def programme_cadastral_update(request, convention_uuid):
                 ]
                 programme.date_achat = form.cleaned_data["date_achat"]
                 programme.date_achevement = form.cleaned_data["date_achevement"]
-                programme.vendeur = form.cleaned_data["vendeur"]
-                programme.acquereur = form.cleaned_data["acquereur"]
-                programme.reference_notaire = form.cleaned_data["reference_notaire"]
-                programme.reference_publication_acte = form.cleaned_data[
-                    "reference_publication_acte"
-                ]
-                programme.acte_de_propriete = form.cleaned_data["acte_de_propriete"]
+                programme.vendeur = _set_files_and_text_field(
+                    form.cleaned_data["vendeur_files"],
+                    form.cleaned_data["vendeur"],
+                )
+                programme.acquereur = _set_files_and_text_field(
+                    form.cleaned_data["acquereur_files"],
+                    form.cleaned_data["acquereur"],
+                )
+                programme.reference_notaire = _set_files_and_text_field(
+                    form.cleaned_data["reference_notaire_files"],
+                    form.cleaned_data["reference_notaire"],
+                )
+                programme.reference_publication_acte = _set_files_and_text_field(
+                    form.cleaned_data["reference_publication_acte_files"],
+                    form.cleaned_data["reference_publication_acte"],
+                )
                 programme.acte_de_propriete = _set_files_and_text_field(
-                    form.cleaned_data["acte_de_propriete_files"]
+                    form.cleaned_data["acte_de_propriete_files"],
                 )
                 programme.acte_notarial = _set_files_and_text_field(
-                    form.cleaned_data["acte_notarial_files"]
+                    form.cleaned_data["acte_notarial_files"],
                 )
                 programme.save()
 
@@ -352,16 +377,18 @@ def programme_cadastral_update(request, convention_uuid):
                 "date_achevement": utils.format_date_for_form(
                     programme.date_achevement
                 ),
-                "vendeur": programme.vendeur,
-                "acquereur": programme.acquereur,
-                "reference_notaire": programme.reference_notaire,
-                "reference_publication_acte": programme.reference_publication_acte,
-                "acte_de_propriete": programme.acte_de_propriete,
-                "acte_de_propriete_files": _get_file_ids_from_field(
+                "vendeur": _get_text_and_files_from_field(programme.vendeur),
+                "acquereur": _get_text_and_files_from_field(programme.acquereur),
+                "reference_notaire": _get_text_and_files_from_field(
+                    programme.reference_notaire
+                ),
+                "reference_publication_acte": _get_text_and_files_from_field(
+                    programme.reference_publication_acte
+                ),
+                "acte_de_propriete": _get_text_and_files_from_field(
                     programme.acte_de_propriete
                 ),
-                "acte_notarial": programme.acte_notarial,
-                "acte_notarial_files": _get_file_ids_from_field(
+                "acte_notarial": _get_text_and_files_from_field(
                     programme.acte_notarial
                 ),
             }
@@ -373,10 +400,6 @@ def programme_cadastral_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
-        "acte_notarial_files": _get_files_from_field(programme.acte_notarial).all(),
-        "acte_de_propriete_files": _get_files_from_field(
-            programme.acte_de_propriete
-        ).all(),
     }
 
 

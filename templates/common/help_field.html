@@ -1,2 +1,8 @@
-&nbsp;<button class="fr-link fr-link--sm fr-fi-information-line" style="min-height: 0; padding: .1rem;" type='button' onclick="toggle('{{form_input.id_for_label}}_description')"></button>
-<span class="fr-hint-text" id="{{form_input.id_for_label}}_description" style="display:none;">{{description}}</span>
+{% if id %}
+    &nbsp;<button class="fr-link fr-link--sm fr-fi-information-line" style="min-height: 0; padding: .1rem;" type='button' onclick="toggle('{{id}}')"></button>
+    <span class="fr-hint-text" id="{{id}}" style="display:none;">{{description}}</span>
+{% else %}
+    &nbsp;<button class="fr-link fr-link--sm fr-fi-information-line" style="min-height: 0; padding: .1rem;" type='button' onclick="toggle('{{form_input.id_for_label}}_description')"></button>
+    <span class="fr-hint-text" id="{{form_input.id_for_label}}_description" style="display:none;">{{description}}</span>
+{% endif %}
+

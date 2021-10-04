@@ -98,6 +98,9 @@ class ProgrammeCadastralForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
     )
+    vendeur_files = forms.CharField(
+        required=False,
+    )
     acquereur = forms.CharField(
         required=True,
         max_length=5000,
@@ -106,6 +109,9 @@ class ProgrammeCadastralForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
     )
+    acquereur_files = forms.CharField(
+        required=False,
+    )
     reference_notaire = forms.CharField(
         required=False,
         max_length=5000,
@@ -113,12 +119,18 @@ class ProgrammeCadastralForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
     )
+    reference_notaire_files = forms.CharField(
+        required=False,
+    )
     reference_publication_acte = forms.CharField(
         required=False,
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
+    )
+    reference_publication_acte_files = forms.CharField(
+        required=False,
     )
     acte_de_propriete = forms.CharField(
         required=False,
