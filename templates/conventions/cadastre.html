@@ -105,6 +105,9 @@
                                         <label class="fr-label fr-mb-1w" for="{{form.acte_notarial.id_for_label}}">
                                             Acte notarial
                                         </label>
+                                        <button type="button" class="fr-btn fr-mb-1w" onclick="document.getElementById('{{form.acte_notarial_files.id_for_label}}_dropzone').click()">
+                                            <img class="apilos-fi-btn fr-mr-1w" src="{% static "icons/upload.svg" %}" ></img>Téléverser une image
+                                        </button>
                                         <div class="fr-col-12 dropzone dz" id="{{form.acte_notarial_files.id_for_label}}_dropzone">
                                             <div class="fallback">
                                                 Votre navigateur ne permet pas de téléverser des documents.
@@ -117,7 +120,6 @@
                                             id="{{form.acte_notarial_files.id_for_label}}"
                                             name="{{form.acte_notarial_files.html_name}}"
                                             value='{{ form.acte_notarial_files.value }}' />
-
                                     </div>
                                     <script type="text/javascript">
                                         let myDropzone = init_dropzone_from_file("{{form.acte_notarial_files.id_for_label}}", '{{ csrf_token }}');
