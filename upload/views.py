@@ -16,6 +16,8 @@ from .models import UploadedFile, UploadedFileSerializer
 def upload_file(request):
     files = request.FILES
     uploaded_files = []
+    convention_uuid = request.POST["convention"]
+
     for file in files.values():
         uploaded_file = UploadedFile.objects.create(
             filename=file.name,
@@ -23,15 +25,17 @@ def upload_file(request):
             thumbnail=thumbnail(file),
             content_type=file.content_type,
         )
-        handle_uploaded_file(uploaded_file, file)
+        handle_uploaded_file(uploaded_file, file, convention_uuid)
         uploaded_file.save()
         uploaded_files.append(UploadedFileSerializer(uploaded_file).data)
     return JsonResponse({"success": "true", "uploaded_file": uploaded_files})
 
 
-def handle_uploaded_file(uploaded_file, file):
+def handle_uploaded_file(uploaded_file, file, convention_uuid):
     # with default_storage.open(f'media/{uploaded_file.uuid}', 'w') as destination:
-    destination = default_storage.open(f"media/{uploaded_file.uuid}", "w")
+    destination = default_storage.open(
+        f"conventions/{convention_uuid}/media/{uploaded_file.uuid}", "w"
+    )
     for chunk in file.chunks():
         destination.write(chunk)
     destination.close()
