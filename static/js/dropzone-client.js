@@ -29,10 +29,15 @@ function init_dropzone_from_file(form_id, csrf_token, convention_uuid) {
                     }
                 }
                 let files = {};
-                console.log(form_id)
                 if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
                 if (files.constructor !== Object) files = {}
-                if (files[file.uuid] === undefined) files[file.uuid] = {'uuid':file.uuid,'thumbnail' : file.thumbnail};
+                console.log(file)
+                if (files[file.uuid] === undefined) files[file.uuid] = {
+                    'uuid':file.uuid,
+                    'thumbnail' : file.thumbnail,
+                    'size': file.size,
+                    'filename': file.name
+                };
                 document.getElementById(form_id).value = JSON.stringify(files);
             })
         },
@@ -57,8 +62,17 @@ function init_dropzone_thumbnail(myDropzone, name, size, uuid, thumbnail_url) {
     console.log('init_dropzone_thumbnail')
     var mockFile = { name: name, size: size, uuid: uuid };
     myDropzone.options.addedfile.call(myDropzone, mockFile);
-    if (thumbnail_url != 'None') {
+    if (thumbnail_url != 'None' && thumbnail_url != undefined) {
         myDropzone.options.thumbnail.call(myDropzone, mockFile, thumbnail_url);
     }
     myDropzone.emit("complete", mockFile);
+}
+
+function init_dropzone_list(myDropzone,form_id) {
+    let files = {};
+    if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
+    Object.keys(files).forEach(file_uuid => {
+        var file = files[file_uuid]
+        init_dropzone_thumbnail(myDropzone, file.filename, file.size, file.uuid, file.thumbnail)
+    });
 }

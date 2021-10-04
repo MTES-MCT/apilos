@@ -73,6 +73,41 @@ def _get_text_and_files_from_field(field):
     return object_field
 
 
+def _get_text_and_files_from_field2(name, field):
+    object_field = {}
+
+    files = {}
+    if field:
+        try:
+            object_field = json.loads(field)
+        except json.decoder.JSONDecodeError:
+            object_field = {
+                "files": {},
+                "text": field if isinstance(field, str) else "",
+            }
+        files = object_field["files"]
+
+    returned_files = {}
+    for file in UploadedFile.objects.filter(uuid__in=files):
+        returned_files[str(file.uuid)] = {
+            "uuid": str(file.uuid),
+            "filename": file.filename,
+            "size": file.size,
+            "content_type": file.content_type,
+            "thumbnail": files[str(file.uuid)]["thumbnail"]
+            if "thumbnail" in files[str(file.uuid)]
+            else None,
+        }
+    object_field["files"] = returned_files
+    object_field["files_json"] = json.dumps(returned_files)
+
+    return {
+        name: object_field["text"],
+        name + "_files": object_field["files"],
+        name + "_files_json": object_field["files_json"],
+    }
+
+
 def conventions_index(request, infilter):
     infilter.update(request.user.convention_filter())
     conventions = (
@@ -307,29 +342,28 @@ def programme_cadastral_update(request, convention_uuid):
                 programme.date_achat = form.cleaned_data["date_achat"]
                 programme.date_achevement = form.cleaned_data["date_achevement"]
                 programme.vendeur = _set_files_and_text_field(
-                    form.cleaned_data["vendeur_files"],
+                    form.cleaned_data["vendeur_files_json"],
                     form.cleaned_data["vendeur"],
                 )
                 programme.acquereur = _set_files_and_text_field(
-                    form.cleaned_data["acquereur_files"],
+                    form.cleaned_data["acquereur_files_json"],
                     form.cleaned_data["acquereur"],
                 )
                 programme.reference_notaire = _set_files_and_text_field(
-                    form.cleaned_data["reference_notaire_files"],
+                    form.cleaned_data["reference_notaire_files_json"],
                     form.cleaned_data["reference_notaire"],
                 )
                 programme.reference_publication_acte = _set_files_and_text_field(
-                    form.cleaned_data["reference_publication_acte_files"],
+                    form.cleaned_data["reference_publication_acte_files_json"],
                     form.cleaned_data["reference_publication_acte"],
                 )
                 programme.acte_de_propriete = _set_files_and_text_field(
-                    form.cleaned_data["acte_de_propriete_files"],
+                    form.cleaned_data["acte_de_propriete_files_json"],
                 )
                 programme.acte_notarial = _set_files_and_text_field(
-                    form.cleaned_data["acte_notarial_files"],
+                    form.cleaned_data["acte_notarial_files_json"],
                 )
                 programme.save()
-
                 programme.referencecadastrale_set.all().delete()
                 for form_referencecadastrale in formset:
                     referencecadastrale = ReferenceCadastrale.objects.create(
@@ -377,19 +411,19 @@ def programme_cadastral_update(request, convention_uuid):
                 "date_achevement": utils.format_date_for_form(
                     programme.date_achevement
                 ),
-                "vendeur": _get_text_and_files_from_field(programme.vendeur),
-                "acquereur": _get_text_and_files_from_field(programme.acquereur),
-                "reference_notaire": _get_text_and_files_from_field(
-                    programme.reference_notaire
+                **_get_text_and_files_from_field2("vendeur", programme.vendeur),
+                **_get_text_and_files_from_field2("acquereur", programme.acquereur),
+                **_get_text_and_files_from_field2(
+                    "reference_notaire", programme.reference_notaire
                 ),
-                "reference_publication_acte": _get_text_and_files_from_field(
-                    programme.reference_publication_acte
+                **_get_text_and_files_from_field2(
+                    "reference_publication_acte", programme.reference_publication_acte
                 ),
-                "acte_de_propriete": _get_text_and_files_from_field(
-                    programme.acte_de_propriete
+                **_get_text_and_files_from_field2(
+                    "acte_de_propriete", programme.acte_de_propriete
                 ),
-                "acte_notarial": _get_text_and_files_from_field(
-                    programme.acte_notarial
+                **_get_text_and_files_from_field2(
+                    "acte_notarial", programme.acte_notarial
                 ),
             }
         )
@@ -411,9 +445,7 @@ def programme_edd_update(request, convention_uuid):
         .get(uuid=convention_uuid)
     )
     programme = convention.programme
-
     import_warnings = None
-
     if request.method == "POST":
         # When the user cliked on "Téléverser" button
         formset = LogementEDDFormSet(request.POST)
@@ -504,7 +536,6 @@ def convention_financement(request, convention_uuid):
         uuid=convention_uuid
     )
     import_warnings = None
-
     if request.method == "POST":
         # When the user cliked on "Téléverser" button
         formset = PretFormSet(request.POST)
@@ -592,7 +623,6 @@ def logements_update(request, convention_uuid):
         .get(uuid=convention_uuid)
     )
     import_warnings = None
-
     if request.method == "POST":
         # When the user cliked on "Téléverser" button
         formset = LogementFormSet(request.POST)
