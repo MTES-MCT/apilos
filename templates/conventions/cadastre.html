@@ -100,36 +100,13 @@
                                         {% include "common/form/input_upload_button.html" with textarea=False %}
                                     </div>
                                 </div>
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                    <div class="fr-input-group {% if form.acte_notarial.errors %}fr-select-group--error{% endif %}">
-                                        <label class="fr-label fr-mb-1w" for="{{form.acte_notarial.id_for_label}}">
-                                            Acte notarial
-                                        </label>
-                                        <button type="button" class="fr-btn fr-mb-1w" onclick="document.getElementById('{{form.acte_notarial_files.id_for_label}}_dropzone').click()">
-                                            <img class="apilos-fi-btn fr-mr-1w" src="{% static "icons/upload.svg" %}" ></img>Téléverser une image
-                                        </button>
-                                        <div class="fr-col-12 dropzone dz" id="{{form.acte_notarial_files.id_for_label}}_dropzone">
-                                            <div class="fallback">
-                                                Votre navigateur ne permet pas de téléverser des documents.
-                                                Nous vous conseillons de modifier vos paramètres concernant
-                                                l'application des scripts javascript ou d'utiliser un autre navigateur.
-                                            </div>
-                                        </div>
-                                        <input hidden
-                                            type="hidden"
-                                            id="{{form.acte_notarial_files.id_for_label}}"
-                                            name="{{form.acte_notarial_files.html_name}}"
-                                            value='{{ form.acte_notarial_files.value }}' />
-                                    </div>
-                                    <script type="text/javascript">
-                                        let myDropzone = init_dropzone_from_file("{{form.acte_notarial_files.id_for_label}}", '{{ csrf_token }}');
-                                    </script>
-                                    {% for acte_notarial_file in acte_notarial_files %}
-                                        <script type="text/javascript">
-                                            init_dropzone_thumbnail(myDropzone, "{{acte_notarial_file.filename}}", "{{acte_notarial_file.size}}", "{{acte_notarial_file.uuid}}", "{{acte_notarial_file.thumbnail}}")
-                                        </script>
-                                    {% endfor %}
-                                </div>
+
+                                {% include "common/form/input_upload.html" with label="Acte notarial" form_input=form.acte_notarial form_input_files=form.acte_notarial_files files=acte_notarial_files %}
+
+
+
+
+
                             </div>
                         </div>
 

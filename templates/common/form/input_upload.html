@@ -1,0 +1,32 @@
+{% load static %}
+
+<div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+    <div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}">
+        <label class="fr-label fr-mb-1w" for="{{form_input.id_for_label}}">
+            {{ label }}
+        </label>
+        <button type="button" class="fr-btn fr-mb-1w" onclick="document.getElementById('{{form_input_files.id_for_label}}_dropzone').click()">
+            <img class="apilos-fi-btn fr-mr-1w" src="{% static "icons/upload.svg" %}" ></img>Téléverser une image
+        </button>
+        <div class="fr-col-12 dropzone dz" id="{{form_input_files.id_for_label}}_dropzone">
+            <div class="fallback">
+                Votre navigateur ne permet pas de téléverser des documents.
+                Nous vous conseillons de modifier vos paramètres concernant
+                l'application des scripts javascript ou d'utiliser un autre navigateur.
+            </div>
+        </div>
+        <input hidden
+            type="hidden"
+            id="{{form_input_files.id_for_label}}"
+            name="{{form_input_files.html_name}}"
+            value='{{ form_input_files.value }}' />
+    </div>
+    <script type="text/javascript">
+        let myDropzone = init_dropzone_from_file("{{form_input_files.id_for_label}}", '{{ csrf_token }}');
+    </script>
+    {% for file in files %}
+        <script type="text/javascript">
+            init_dropzone_thumbnail(myDropzone, "{{file.filename}}", "{{file.size}}", "{{file.uuid}}", "{{file.thumbnail}}")
+        </script>
+    {% endfor %}
+</div>
