@@ -57,6 +57,7 @@ def generate_hlm(convention):
     logement_edds, lot_num = prepare_logement_edds(convention)
     mixite = compute_mixte(convention)
     # tester si il logement exists avant de commencer
+    print(convention.programme.acquereur_text)
     context = {
         "convention": convention,
         "bailleur": convention.bailleur,

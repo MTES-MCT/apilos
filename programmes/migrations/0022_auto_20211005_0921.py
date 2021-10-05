@@ -76,6 +76,7 @@ def update_fields_with_images(apps, schema_editor):
                         "text": field if isinstance(field, str) else "",
                     }
                 )
+
         # ACTE NOTARIAL
         field = prog.acte_notarial
         if field is not None and field != "":
@@ -83,6 +84,32 @@ def update_fields_with_images(apps, schema_editor):
                 json.loads(field)
             except json.decoder.JSONDecodeError:
                 prog.acte_notarial = json.dumps(
+                    {
+                        "files": {},
+                        "text": field if isinstance(field, str) else "",
+                    }
+                )
+
+        # EDD VOLUMETRIQUE
+        field = prog.edd_volumetrique
+        if field is not None and field != "":
+            try:
+                json.loads(field)
+            except json.decoder.JSONDecodeError:
+                prog.edd_volumetrique = json.dumps(
+                    {
+                        "files": {},
+                        "text": field if isinstance(field, str) else "",
+                    }
+                )
+
+        # EDD CLASSIQUE
+        field = prog.edd_classique
+        if field is not None and field != "":
+            try:
+                json.loads(field)
+            except json.decoder.JSONDecodeError:
+                prog.edd_classique = json.dumps(
                     {
                         "files": {},
                         "text": field if isinstance(field, str) else "",
@@ -154,6 +181,26 @@ def rollback_field_with_images(apps, schema_editor):
             try:
                 json_field = json.loads(field)
                 prog.acte_notarial = json_field["text"] if "text" in json_field else ""
+            except json.decoder.JSONDecodeError:
+                print(f"json error : {field}")
+
+        # EDD VOLUMETRIQUE
+        field = prog.edd_volumetrique
+        if field is not None and field != "":
+            try:
+                json_field = json.loads(field)
+                prog.edd_volumetrique = (
+                    json_field["text"] if "text" in json_field else ""
+                )
+            except json.decoder.JSONDecodeError:
+                print(f"json error : {field}")
+
+        # EDD CLASSIQUE
+        field = prog.edd_classique
+        if field is not None and field != "":
+            try:
+                json_field = json.loads(field)
+                prog.edd_classique = json_field["text"] if "text" in json_field else ""
             except json.decoder.JSONDecodeError:
                 print(f"json error : {field}")
 
