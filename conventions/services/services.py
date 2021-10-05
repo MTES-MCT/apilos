@@ -70,7 +70,7 @@ def _get_text_and_files_from_field(name, field):
     object_field["files_json"] = json.dumps(returned_files)
 
     return {
-        name: object_field["text"],
+        name: object_field["text"] if "text" in object_field else "",
         name + "_files_json": object_field["files_json"],
     }
 
