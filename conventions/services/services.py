@@ -67,11 +67,11 @@ def _get_text_and_files_from_field(name, field):
             if "thumbnail" in files[str(file.uuid)]
             else None,
         }
-    object_field["files_json"] = json.dumps(returned_files)
+    object_field["files"] = json.dumps(returned_files)
 
     return {
         name: object_field["text"] if "text" in object_field else "",
-        name + "_files_json": object_field["files_json"],
+        name + "_files": object_field["files"],
     }
 
 
@@ -309,26 +309,26 @@ def programme_cadastral_update(request, convention_uuid):
                 programme.date_achat = form.cleaned_data["date_achat"]
                 programme.date_achevement = form.cleaned_data["date_achevement"]
                 programme.vendeur = _set_files_and_text_field(
-                    form.cleaned_data["vendeur_files_json"],
+                    form.cleaned_data["vendeur_files"],
                     form.cleaned_data["vendeur"],
                 )
                 programme.acquereur = _set_files_and_text_field(
-                    form.cleaned_data["acquereur_files_json"],
+                    form.cleaned_data["acquereur_files"],
                     form.cleaned_data["acquereur"],
                 )
                 programme.reference_notaire = _set_files_and_text_field(
-                    form.cleaned_data["reference_notaire_files_json"],
+                    form.cleaned_data["reference_notaire_files"],
                     form.cleaned_data["reference_notaire"],
                 )
                 programme.reference_publication_acte = _set_files_and_text_field(
-                    form.cleaned_data["reference_publication_acte_files_json"],
+                    form.cleaned_data["reference_publication_acte_files"],
                     form.cleaned_data["reference_publication_acte"],
                 )
                 programme.acte_de_propriete = _set_files_and_text_field(
-                    form.cleaned_data["acte_de_propriete_files_json"],
+                    form.cleaned_data["acte_de_propriete_files"],
                 )
                 programme.acte_notarial = _set_files_and_text_field(
-                    form.cleaned_data["acte_notarial_files_json"],
+                    form.cleaned_data["acte_notarial_files"],
                 )
                 programme.save()
                 programme.referencecadastrale_set.all().delete()

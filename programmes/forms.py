@@ -101,9 +101,6 @@ class ProgrammeCadastralForm(forms.Form):
     vendeur_files = forms.CharField(
         required=False,
     )
-    vendeur_files_json = forms.CharField(
-        required=False,
-    )
     acquereur = forms.CharField(
         required=True,
         max_length=5000,
@@ -113,9 +110,6 @@ class ProgrammeCadastralForm(forms.Form):
         },
     )
     acquereur_files = forms.CharField(
-        required=False,
-    )
-    acquereur_files_json = forms.CharField(
         required=False,
     )
     reference_notaire = forms.CharField(
@@ -128,9 +122,6 @@ class ProgrammeCadastralForm(forms.Form):
     reference_notaire_files = forms.CharField(
         required=False,
     )
-    reference_notaire_files_json = forms.CharField(
-        required=False,
-    )
     reference_publication_acte = forms.CharField(
         required=False,
         max_length=5000,
@@ -139,9 +130,6 @@ class ProgrammeCadastralForm(forms.Form):
         },
     )
     reference_publication_acte_files = forms.CharField(
-        required=False,
-    )
-    reference_publication_acte_files_json = forms.CharField(
         required=False,
     )
     acte_de_propriete = forms.CharField(
@@ -154,9 +142,6 @@ class ProgrammeCadastralForm(forms.Form):
     acte_de_propriete_files = forms.CharField(
         required=False,
     )
-    acte_de_propriete_files_json = forms.CharField(
-        required=False,
-    )
     acte_notarial = forms.CharField(
         required=False,
         max_length=5000,
@@ -165,9 +150,6 @@ class ProgrammeCadastralForm(forms.Form):
         },
     )
     acte_notarial_files = forms.CharField(
-        required=False,
-    )
-    acte_notarial_files_json = forms.CharField(
         required=False,
     )
 
