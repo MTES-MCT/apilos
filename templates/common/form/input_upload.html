@@ -2,7 +2,7 @@
 
 <div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}">
     <div class="fr-mb-2w">
-        {% if textarea %}
+        {% if textarea and not verticalDisplay %}
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
         {% endif %}
@@ -27,7 +27,7 @@
         {% endif %}
 
 
-        {% if textarea %}
+        {% if textarea and not verticalDisplay %}
             </div>
             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
         {% endif %}
@@ -57,12 +57,14 @@
             value="{{form_input_files.value }}" />
     </div>
     <script type="text/javascript">
+        //        document.addEventListener("DOMContentLoaded", function() {
         let {{form_input.id_for_label}} = init_dropzone_from_file("{{form_input_files.id_for_label}}", '{{ csrf_token }}', '{{ convention.uuid }}');
         init_dropzone_list({{form_input.id_for_label}},"{{form_input_files.id_for_label}}")
+        //        });
     </script>
 
 
-    {% if textarea %}
+    {% if textarea and not verticalDisplay %}
         </div>
         </div>
     {% endif %}

@@ -205,6 +205,10 @@ class ProgrammeEDDForm(forms.Form):
         },
     )
 
+    edd_volumetrique_files = forms.CharField(
+        required=False,
+    )
+
     mention_publication_edd_volumetrique = forms.CharField(
         required=False,
         max_length=1000,
@@ -220,6 +224,10 @@ class ProgrammeEDDForm(forms.Form):
         error_messages={
             "max_length": "L'EDD classique ne doit pas excéder 5000 characters",
         },
+    )
+
+    edd_classique_files = forms.CharField(
+        required=False,
     )
 
     mention_publication_edd_classique = forms.CharField(

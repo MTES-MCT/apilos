@@ -1,5 +1,18 @@
 {% extends "layout/base.html" %}
 
+{% load static %}
+
+{% block javascript_extras %}
+    <script src="{% static "dropzonejs/min/dropzone.min.js" %}"></script>
+    <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}"></script>
+    <script src="{% static "js/dropzone-client.js" %}"></script>
+{% endblock %}
+
+{% block css_extras %}
+    <link rel="stylesheet" href="{% static "dropzonejs/min/basic.min.css" %}">
+    <link rel="stylesheet" href="{% static "dropzonejs/min/dropzone.min.css" %}">
+{% endblock %}
+
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
@@ -12,13 +25,8 @@
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
 
+                        {% include "common/form/input_upload.html" with label="Ajoutez vos commentaires à l'attention de l'instructeur" form_input=form.comments form_input_files=form.comments_files convention=convention textarea=True verticalDisplay=True %}
 
-                        <div class="fr-input-group {% if form.comments.errors %}fr-select-group--error{% endif %}">
-                            <label class="fr-label" for="{{form.comments.id_for_label}}">
-                                Ajoutez vos commentaires à l'attention de l'instructeur
-                            </label>
-                            {% include "common/form/input_textarea.html" with form_input=form.comments rows=10 %}
-                        </div>
                     </div>
                 </div>
                 <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">

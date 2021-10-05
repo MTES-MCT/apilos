@@ -1,6 +1,5 @@
 Dropzone.autoDiscover = false;
 
-let main_response = undefined;
 function init_dropzone_from_file(form_id, csrf_token, convention_uuid) {
     let myDropzone = new Dropzone("div#"+form_id+"_dropzone", {
         url: "/upload/",
@@ -11,18 +10,14 @@ function init_dropzone_from_file(form_id, csrf_token, convention_uuid) {
         init: function () {
             this.on("removedfile", function (file) {
                 let files = {};
-                console.log(form_id)
                 if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
-                console.log(files[file.uuid])
                 delete files[file.uuid]
                 document.getElementById(form_id).value = JSON.stringify(files);
             })
             this.on("success", function (file, response) {
-                //console.log(file)
                 if (document.querySelector('img[alt="'+file.name+'"]') != null ) {
                     file.thumbnail = document.querySelector('img[alt="'+file.name+'"]').src;
                 }
-                main_response = response;
                 for (var i = 0; i < response.uploaded_file.length; i++) {
                     if (response.uploaded_file[i].filename == file.name) {
                         file.uuid = response.uploaded_file[i].uuid
@@ -31,7 +26,6 @@ function init_dropzone_from_file(form_id, csrf_token, convention_uuid) {
                 let files = {};
                 if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
                 if (files.constructor !== Object) files = {}
-                console.log(file)
                 if (files[file.uuid] === undefined) files[file.uuid] = {
                     'uuid':file.uuid,
                     'thumbnail' : file.thumbnail,
@@ -59,7 +53,6 @@ function init_dropzone_from_file(form_id, csrf_token, convention_uuid) {
 }
 
 function init_dropzone_thumbnail(myDropzone, name, size, uuid, thumbnail_url) {
-    console.log('init_dropzone_thumbnail')
     var mockFile = { name: name, size: size, uuid: uuid };
     myDropzone.options.addedfile.call(myDropzone, mockFile);
     if (thumbnail_url != 'None' && thumbnail_url != undefined) {

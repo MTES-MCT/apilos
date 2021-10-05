@@ -36,6 +36,7 @@ from . import upload_objects
 
 def _set_files_and_text_field(files_field, text_field=""):
     files = []
+    print(files_field)
     if files_field and isinstance(files_field, str):
         files = json.loads(files_field.replace("'", '"'))
     field = {"files": files, "text": text_field}
@@ -436,11 +437,17 @@ def programme_edd_update(request, convention_uuid):
             form_is_valid = form.is_valid()
             formset_is_valid = formset.is_valid()
             if form_is_valid and formset_is_valid:
-                programme.edd_volumetrique = form.cleaned_data["edd_volumetrique"]
+                programme.edd_volumetrique = _set_files_and_text_field(
+                    form.cleaned_data["edd_volumetrique_files"],
+                    form.cleaned_data["edd_volumetrique"],
+                )
                 programme.mention_publication_edd_volumetrique = form.cleaned_data[
                     "mention_publication_edd_volumetrique"
                 ]
-                programme.edd_classique = form.cleaned_data["edd_classique"]
+                programme.edd_classique = _set_files_and_text_field(
+                    form.cleaned_data["edd_classique_files"],
+                    form.cleaned_data["edd_classique"],
+                )
                 programme.mention_publication_edd_classique = form.cleaned_data[
                     "mention_publication_edd_classique"
                 ]
@@ -480,11 +487,15 @@ def programme_edd_update(request, convention_uuid):
         upform = UploadForm()
         form = ProgrammeEDDForm(
             initial={
-                "edd_volumetrique": programme.edd_volumetrique,
+                **_get_text_and_files_from_field(
+                    "edd_volumetrique", programme.edd_volumetrique
+                ),
                 "mention_publication_edd_volumetrique": (
                     programme.mention_publication_edd_volumetrique
                 ),
-                "edd_classique": programme.edd_classique,
+                **_get_text_and_files_from_field(
+                    "edd_classique", programme.edd_classique
+                ),
                 "mention_publication_edd_classique": programme.mention_publication_edd_classique,
             }
         )
@@ -864,7 +875,11 @@ def convention_comments(request, convention_uuid):
     if request.method == "POST":
         form = ConventionCommentForm(request.POST)
         if form.is_valid():
-            convention.comments = form.cleaned_data["comments"]
+            convention.comments = _set_files_and_text_field(
+                form.cleaned_data["comments_files"],
+                form.cleaned_data["comments"],
+            )
+
             convention.save()
             # All is OK -> Next:
             return {
@@ -877,6 +892,7 @@ def convention_comments(request, convention_uuid):
         form = ConventionCommentForm(
             initial={
                 "comments": convention.comments,
+                **_get_text_and_files_from_field("comments", convention.comments),
             }
         )
 

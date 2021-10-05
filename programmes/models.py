@@ -2,6 +2,7 @@ import uuid
 
 from django.db import models
 from core.models import IngestableModel
+from core import model_utils
 
 
 class Financement(models.TextChoices):
@@ -145,6 +146,30 @@ class Programme(IngestableModel):
             if self.type_operation != TypeOperation.SANSOBJET
             else ""
         )
+
+    def vendeur_text(self):
+        return model_utils.get_field_key(self, "vendeur", "text")
+
+    def acquereur_text(self):
+        return model_utils.get_field_key(self, "acquereur", "text")
+
+    def reference_notaire_text(self):
+        return model_utils.get_field_key(self, "reference_notaire", "text")
+
+    def reference_publication_acte_text(self):
+        return model_utils.get_field_key(self, "reference_publication_acte", "text")
+
+    def acte_de_propriete_text(self):
+        return model_utils.get_field_key(self, "acte_de_propriete", "text")
+
+    def acte_notarial_text(self):
+        return model_utils.get_field_key(self, "acte_notarial", "text")
+
+    def edd_volumetrique_text(self):
+        return model_utils.get_field_key(self, "edd_volumetrique", "text")
+
+    def edd_classique_text(self):
+        return model_utils.get_field_key(self, "edd_classique", "text")
 
 
 class LogementEDD(models.Model):
