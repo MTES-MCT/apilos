@@ -56,6 +56,9 @@
                             <div class="fr-card fr-card--no-arrow">
                                 <div class="fr-card__body">
                                     <h4 class="fr-card__title">Programme</h4>
+                                    {% if request.user.is_instructeur %}
+                                        {% include "common/display_field_if_exists.html" with label="Numero Galion" value=programme.numero_galion %}
+                                    {% endif %}
                                     {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom %}
                                     {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse %}
                                     {% include "common/display_field_if_exists.html" with label="Code postal" value=programme.code_postal %}
