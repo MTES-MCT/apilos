@@ -16,7 +16,7 @@
                     {% include "common/convention_edit_info.html" with convention=convention %}
 
                     {% if not convention.is_submitted %}
-                        <p class="fr-mb-3w fr-p-3w" style="border-radius: 25px;border: 2px solid #E10600;background:#dacbca;font-size:bold;">
+                        <p class="content-alert alert fr-mb-3w fr-p-3w">
                             <b>ATTENTION</b> : le document de convention n'est pas encore soumis à l'instruction{% if user.is_bailleur %},
                                 pour finaliser votre demande de conventionnement, vous devez clicker sur le bouton
                                 <b>"Soumettre au service instructeur"</b>{% endif %}
@@ -400,7 +400,7 @@
                 </div>
             </div>
 
-            <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w" style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
+            <div class="form-button-footer fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w">
                 {% if request.user.is_bailleur %}
                     {% if convention.is_bailleur_editable %}
                         {% include "common/button/precedent.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
@@ -441,7 +441,7 @@
             {% if request.user.is_instructeur %}
                 <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w">
 
-                    <div class="fr-mb-3w fr-p-3w" style="border-radius: 25px;border: 2px solid #E10600;background:#dacbca;font-size:bold;">
+                    <div class="content-alert alert fr-mb-3w fr-p-3w">
                         {% if not convention.valide_le %}
 
                             <p class="fr-my-3w">Une fois la convention générée, si celle-ci correspond aux attendus, vous pouvez l'envoyer au bailleur par email et cliquer sur la bouton ci-dessous.
