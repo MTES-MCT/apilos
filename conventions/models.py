@@ -87,6 +87,9 @@ class Convention(models.Model):
     def comments_text(self):
         return model_utils.get_field_key(self, "comments", "text")
 
+    def comments_files(self):
+        return model_utils.get_field_key(self, "comments", "files")
+
 
 class Pret(models.Model):
     id = models.AutoField(primary_key=True)

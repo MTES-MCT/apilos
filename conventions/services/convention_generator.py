@@ -1,12 +1,17 @@
+import os
 import io
 import jinja2
-from docxtpl import DocxTemplate
+from docxtpl import DocxTemplate, InlineImage
+from docx.shared import Inches
+
 from django.conf import settings
+from django.core.files.storage import default_storage
 
 from programmes.models import (
     Financement,
     Annexe,
 )
+from upload.models import UploadedFile
 
 
 def to_fr_date(date):
@@ -27,7 +32,33 @@ def pluralize(value):
     return ""
 
 
+def _build_files_for_docx(doc, convention_uuid, file_list):
+    # pylint: disable=R1732
+    local_pathes = []
+    docx_images = []
+    files = UploadedFile.objects.filter(uuid__in=file_list)
+    for object_file in files:  # convention.programme.vendeur_files().values():
+        if "image" in object_file.content_type:
+            file = default_storage.open(
+                f"conventions/{convention_uuid}/media/{object_file.uuid}_{object_file.filename}",
+                "rb",
+            )
+            local_path = (
+                settings.MEDIA_ROOT / f"{object_file.uuid}_{object_file.filename}"
+            )
+            local_file = open(local_path, "wb")
+            local_file.write(file.read())
+            file.close()
+            local_file.close()
+            docx_images.append(
+                InlineImage(doc, image_descriptor=f"{local_path}", width=Inches(5))
+            )
+            local_pathes.append(f"{local_path}")
+    return docx_images, local_pathes
+
+
 def generate_hlm(convention):
+    # pylint: disable=R0914
     annexes = (
         Annexe.objects.prefetch_related("logement")
         .filter(logement__lot_id=convention.lot.id)
@@ -57,7 +88,33 @@ def generate_hlm(convention):
     logement_edds, lot_num = prepare_logement_edds(convention)
     mixite = compute_mixte(convention)
     # tester si il logement exists avant de commencer
-    print(convention.programme.acquereur_text)
+
+    local_pathes = []
+    vendeur_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.vendeur_files()
+    )
+    local_pathes += tmp_local_path
+    acquereur_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.acquereur_files()
+    )
+    local_pathes += tmp_local_path
+    reference_notaire_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.reference_notaire_files()
+    )
+    local_pathes += tmp_local_path
+    reference_publication_acte_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.reference_publication_acte_files()
+    )
+    local_pathes += tmp_local_path
+    edd_volumetrique_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.edd_volumetrique_files()
+    )
+    local_pathes += tmp_local_path
+    edd_classique_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.edd_volumetrique_files()
+    )
+    local_pathes += tmp_local_path
+
     context = {
         "convention": convention,
         "bailleur": convention.bailleur,
@@ -71,6 +128,12 @@ def generate_hlm(convention):
         "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF", "CDCL"]),
         "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF", "CDCL"]),
         "references_cadastrales": convention.programme.referencecadastrale_set.all(),
+        "vendeur_images": vendeur_images,
+        "acquereur_images": acquereur_images,
+        "reference_notaire_images": reference_notaire_images,
+        "reference_publication_acte_images": reference_publication_acte_images,
+        "edd_volumetrique_images": edd_volumetrique_images,
+        "edd_classique_images": edd_classique_images,
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
         # 30 % au moins > 10 logement si PLUS
@@ -105,6 +168,10 @@ def generate_hlm(convention):
     file_stream = io.BytesIO()
     doc.save(file_stream)
     file_stream.seek(0)
+
+    for local_path in list(set(local_pathes)):
+        print(local_path)
+        os.remove(local_path)
 
     return file_stream
 

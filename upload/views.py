@@ -4,12 +4,32 @@ import re
 from io import BytesIO
 from PIL import Image
 
-from django.http.response import JsonResponse
-from django.views.decorators.http import require_POST
+from django.http.response import HttpResponse, JsonResponse
+from django.views.decorators.http import require_POST, require_GET
 from django.core.files.storage import default_storage
 
 from core import settings
 from .models import UploadedFile, UploadedFileSerializer
+
+
+@require_GET
+def display_file(request, convention_uuid, uploaded_file_uuid):
+    uploaded_file = UploadedFile.objects.get(uuid=uploaded_file_uuid)
+
+    file = default_storage.open(
+        f"conventions/{convention_uuid}/media/{uploaded_file.uuid}_{uploaded_file.filename}",
+        "rb",
+    )
+
+    data = file.read()
+    file.close()
+
+    response = HttpResponse(
+        data,
+        content_type=uploaded_file.content_type,
+    )
+    response["Content-Disposition"] = f"attachment; filename={uploaded_file.filename}"
+    return response
 
 
 @require_POST
@@ -34,7 +54,8 @@ def upload_file(request):
 def handle_uploaded_file(uploaded_file, file, convention_uuid):
     # with default_storage.open(f'media/{uploaded_file.uuid}', 'w') as destination:
     destination = default_storage.open(
-        f"conventions/{convention_uuid}/media/{uploaded_file.uuid}", "w"
+        f"conventions/{convention_uuid}/media/{uploaded_file.uuid}_{uploaded_file.filename}",
+        "w",
     )
     for chunk in file.chunks():
         destination.write(chunk)
