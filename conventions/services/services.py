@@ -92,7 +92,7 @@ def conventions_selection(request, infilter):
         Lot.objects.prefetch_related("programme")
         .prefetch_related("convention_set")
         .filter(**infilter)
-        .order_by("programme__nom", "financement")
+        .order_by("programme__ville", "programme__nom", "nb_logements", "financement")
     )
 
 

@@ -39,8 +39,8 @@ class ConventionModelsTest(TestCase):
         lot = convention.lot
         programme = convention.programme
         expected_object_name = (
-            f"{programme.nom} - {lot.financement} - "
-            + f"{programme.ville} - {lot.nb_logements} lgts"
+            f"{programme.ville} - {programme.nom} - "
+            + f"{lot.nb_logements} lgts - {lot.financement}"
         )
         self.assertEqual(str(convention), expected_object_name)
 
