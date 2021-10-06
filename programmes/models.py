@@ -151,43 +151,45 @@ class Programme(IngestableModel):
         return model_utils.get_field_key(self, "vendeur", "text")
 
     def vendeur_files(self):
-        return model_utils.get_field_key(self, "vendeur", "files")
+        return model_utils.get_field_key(self, "vendeur", "files", default={})
 
     def acquereur_text(self):
         return model_utils.get_field_key(self, "acquereur", "text")
 
     def acquereur_files(self):
-        return model_utils.get_field_key(self, "acquereur", "files")
+        return model_utils.get_field_key(self, "acquereur", "files", default={})
 
     def reference_notaire_text(self):
         return model_utils.get_field_key(self, "reference_notaire", "text")
 
     def reference_notaire_files(self):
-        return model_utils.get_field_key(self, "reference_notaire", "files")
+        return model_utils.get_field_key(self, "reference_notaire", "files", default={})
 
     def reference_publication_acte_text(self):
         return model_utils.get_field_key(self, "reference_publication_acte", "text")
 
     def reference_publication_acte_files(self):
-        return model_utils.get_field_key(self, "reference_publication_acte", "files")
+        return model_utils.get_field_key(
+            self, "reference_publication_acte", "files", default={}
+        )
 
     def acte_de_propriete_files(self):
-        return model_utils.get_field_key(self, "acte_de_propriete", "files")
+        return model_utils.get_field_key(self, "acte_de_propriete", "files", default={})
 
     def acte_notarial_files(self):
-        return model_utils.get_field_key(self, "acte_notarial", "files")
+        return model_utils.get_field_key(self, "acte_notarial", "files", default={})
 
     def edd_volumetrique_text(self):
         return model_utils.get_field_key(self, "edd_volumetrique", "text")
 
     def edd_volumetrique_files(self):
-        return model_utils.get_field_key(self, "edd_volumetrique", "files")
+        return model_utils.get_field_key(self, "edd_volumetrique", "files", default={})
 
     def edd_classique_text(self):
         return model_utils.get_field_key(self, "edd_classique", "text")
 
     def edd_classique_files(self):
-        return model_utils.get_field_key(self, "edd_classique", "files")
+        return model_utils.get_field_key(self, "edd_classique", "files", default={})
 
 
 class LogementEDD(models.Model):
