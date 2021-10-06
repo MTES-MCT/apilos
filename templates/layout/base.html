@@ -1,4 +1,4 @@
-{% load static dsfr_tags %}
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -15,12 +15,14 @@
 
         <!--Favicon-->
 
-        {% dsfr_favicon %}
+        <link rel="apple-touch-icon" href="{% static "dsfr/favicons/apple-touch-icon.png" %}"><!-- 180×180 -->
+        <link rel="icon" href="{% static "dsfr/favicons/favicon.svg" %}" type="image/svg+xml">
+        <link rel="shortcut icon" href="{% static "dsfr/favicons/favicon.ico" %}" type="image/x-icon"><!-- 32×32 -->
+        <link rel="manifest" href="{% static "dsfr/favicons/manifest.webmanifest" %}" crossorigin="use-credentials">
 
         <!--Css-->
 
-        {% dsfr_css %}
-        <link rel="stylesheet" href="{% static "css/main.css" %}">
+        <link rel="stylesheet" href="{% static "dsfr/css/dsfr.min.css" %}">        <link rel="stylesheet" href="{% static "css/main.css" %}">
 
         {% block css_extras %}{% endblock %}
         {% block javascript_extras %}{% endblock %}
