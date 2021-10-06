@@ -1,4 +1,5 @@
 import random
+
 from django.test import TestCase
 from core.tests import utils
 
@@ -200,3 +201,14 @@ class ProgrammeModelsTest(TestCase):
         utils.assert_xlsx(self, LogementEDD, "logements_edd")
         utils.assert_xlsx(self, Logement, "logements")
         utils.assert_xlsx(self, TypeStationnement, "stationnements")
+
+    def test_get_text_and_files(self):
+        programme = Programme.objects.order_by("-uuid").first()
+        utils.assert_get_text_and_files(self, programme, "vendeur")
+        utils.assert_get_text_and_files(self, programme, "acquereur")
+        utils.assert_get_text_and_files(self, programme, "reference_notaire")
+        utils.assert_get_text_and_files(self, programme, "reference_publication_acte")
+        utils.assert_get_text_and_files(self, programme, "edd_volumetrique")
+        utils.assert_get_text_and_files(self, programme, "edd_classique")
+        utils.assert_get_files(self, programme, "acte_de_propriete")
+        utils.assert_get_files(self, programme, "acte_notarial")
