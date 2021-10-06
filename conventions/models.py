@@ -2,6 +2,7 @@ import uuid
 
 from django.db import models
 from programmes.models import Financement
+from core import model_utils
 
 
 class Preteur(models.TextChoices):
@@ -82,6 +83,12 @@ class Convention(models.Model):
             ConventionStatut.BROUILLON,
             ConventionStatut.CORRECTION,
         ]
+
+    def comments_text(self):
+        return model_utils.get_field_key(self, "comments", "text")
+
+    def comments_files(self):
+        return model_utils.get_field_key(self, "comments", "files")
 
 
 class Pret(models.Model):

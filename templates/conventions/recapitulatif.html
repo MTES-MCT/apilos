@@ -1,5 +1,12 @@
 {% extends "layout/base.html" %}
 
+{% load static %}
+
+{% block css_extras %}
+    <link rel="stylesheet" href="{% static "dropzonejs/min/basic.min.css" %}">
+    <link rel="stylesheet" href="{% static "dropzonejs/min/dropzone.min.css" %}">
+{% endblock %}
+
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
@@ -71,12 +78,12 @@
                                     {% include "common/display_field_if_exists.html" with label="Date d'achat" value=programme.date_achat %}
                                     {% include "common/display_field_if_exists.html" with label="Date d'achèvement previsible" value=programme.date_achevement_previsible %}
                                     {% include "common/display_field_if_exists.html" with label="Date d'achèvement ou d'obtention de certificat de conformité" value=programme.date_achevement %}
-                                    {% include "common/display_field_if_exists.html" with label="Vendeur" value=programme.vendeur %}
-                                    {% include "common/display_field_if_exists.html" with label="Acquéreur" value=programme.acquereur %}
-                                    {% include "common/display_field_if_exists.html" with label="Référence du notaire" value=programme.reference_notaire %}
-                                    {% include "common/display_field_if_exists.html" with label="Référence de publication de l'acte" value=programme.reference_publication_acte %}
-                                    {% include "common/display_field_if_exists.html" with label="Acte de propriété" value=programme.acte_de_propriete %}
-                                    {% include "common/display_field_if_exists.html" with label="Acte de propriété" value=programme.acte_notarial %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Vendeur" text=programme.vendeur_text file_list=programme.vendeur_files.values %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Acquéreur" text=programme.acquereur_text file_list=programme.acquereur_files.values %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Référence du notaire" text=programme.reference_notaire_text file_list=programme.reference_notaire_files.values %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Référence de publication de l'acte" text=programme.reference_publication_acte_text file_list=programme.reference_publication_acte_files.values %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Acte de propriété" text=programme.acte_de_propriete_text file_list=programme.acte_de_propriete_files.values %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Acte de propriété" text=programme.acte_notarial_text file_list=programme.acte_notarial_files.values %}
                                 </div>
                             </div>
                         </div>
@@ -128,7 +135,8 @@
                             <div class="fr-card fr-card--no-arrow">
                                 <div class="fr-card__body">
                                     <h4 class="fr-card__title">Programme - EDD</h4>
-                                    {% include "common/display_field_if_exists.html" with label="EDD volumétrique" value=programme.edd_volumetrique %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="EDD volumétrique" text=programme.edd_volumetrique_text file_list=programme.edd_volumetrique_files.values %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="EDD classique" text=programme.edd_classique_text file_list=programme.edd_classique_files.values %}
                                     <p class="fr-my-1w">EDD Simplifé : </p>
                                     <div class="fr-table fr-table--bordered table--limited-height">
                                         <table>
@@ -383,7 +391,7 @@
                                 <div class="fr-card__body">
                                     <h4 class="fr-card__title">Informations à l'attention du service instructeur</h4>
                                     <div class="table--limited-height">
-                                        {% include "common/display_field_if_exists.html" with label="" value=convention.comments|linebreaks %}
+                                        {% include "common/display_text_and_files_if_exists.html" with text=convention.comments_text file_list=convention.comments_files.values %}
                                     </div>
                                 </div>
                             </div>

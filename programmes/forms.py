@@ -98,6 +98,9 @@ class ProgrammeCadastralForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
     )
+    vendeur_files = forms.CharField(
+        required=False,
+    )
     acquereur = forms.CharField(
         required=True,
         max_length=5000,
@@ -106,12 +109,18 @@ class ProgrammeCadastralForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
     )
+    acquereur_files = forms.CharField(
+        required=False,
+    )
     reference_notaire = forms.CharField(
         required=False,
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
+    )
+    reference_notaire_files = forms.CharField(
+        required=False,
     )
     reference_publication_acte = forms.CharField(
         required=False,
@@ -120,6 +129,9 @@ class ProgrammeCadastralForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
     )
+    reference_publication_acte_files = forms.CharField(
+        required=False,
+    )
     acte_de_propriete = forms.CharField(
         required=False,
         max_length=5000,
@@ -127,12 +139,18 @@ class ProgrammeCadastralForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
     )
+    acte_de_propriete_files = forms.CharField(
+        required=False,
+    )
     acte_notarial = forms.CharField(
         required=False,
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
+    )
+    acte_notarial_files = forms.CharField(
+        required=False,
     )
 
 
@@ -187,6 +205,10 @@ class ProgrammeEDDForm(forms.Form):
         },
     )
 
+    edd_volumetrique_files = forms.CharField(
+        required=False,
+    )
+
     mention_publication_edd_volumetrique = forms.CharField(
         required=False,
         max_length=1000,
@@ -202,6 +224,10 @@ class ProgrammeEDDForm(forms.Form):
         error_messages={
             "max_length": "L'EDD classique ne doit pas excéder 5000 characters",
         },
+    )
+
+    edd_classique_files = forms.CharField(
+        required=False,
     )
 
     mention_publication_edd_classique = forms.CharField(

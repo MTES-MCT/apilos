@@ -16,6 +16,10 @@ class ConventionCommentForm(forms.Form):
         },
     )
 
+    comments_files = forms.CharField(
+        required=False,
+    )
+
 
 class ConventionFinancementForm(forms.Form):
 

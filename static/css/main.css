@@ -35,3 +35,16 @@
   width: 16px;
   filter: invert(14%) sepia(62%) saturate(6699%) hue-rotate(244deg) brightness(56%) contrast(131%);
 }
+
+.dz {
+  border: dashed !important;
+  border-color: #ccc !important;
+  border-radius: 10px !important;
+  height: 200px;
+  overflow:scroll;
+  white-space: nowrap;
+}
+
+.dz:hover {
+  background-color: aliceblue !important;
+}
