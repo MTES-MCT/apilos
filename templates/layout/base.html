@@ -46,7 +46,6 @@
             <script type="text/javascript" nomodule src="{% static "dsfr/js/dsfr.nomodule.min.js" %}"></script>
             <script type="text/javascript">
                 document.addEventListener("DOMContentLoaded", function(event) {
-                    console.log(localStorage.getItem('scrollloc'))
                     if (localStorage.getItem('scrollloc') == window.location) {
                         var scrollpos = localStorage.getItem('scrollpos');
                         if (scrollpos) window.scrollTo(0, scrollpos);

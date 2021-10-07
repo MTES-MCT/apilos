@@ -36,7 +36,6 @@ from . import upload_objects
 
 def _set_files_and_text_field(files_field, text_field=""):
     files = []
-    print(files_field)
     if files_field and isinstance(files_field, str):
         files = json.loads(files_field.replace("'", '"'))
     field = {"files": files, "text": text_field}
@@ -625,8 +624,6 @@ def logements_update(request, convention_uuid):
             if formset.is_valid():
                 lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], formset))
                 lgt_uuids = list(filter(None, lgt_uuids1))
-                print(type(lgt_uuids))
-                print(lgt_uuids)
                 convention.lot.logement_set.exclude(uuid__in=lgt_uuids).delete()
                 for form_logement in formset:
                     if form_logement.cleaned_data["uuid"]:

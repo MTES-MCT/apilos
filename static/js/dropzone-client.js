@@ -1,11 +1,12 @@
 Dropzone.autoDiscover = false;
 
-function init_dropzone_from_file(form_id, csrf_token, convention_uuid) {
+function init_dropzone_from_file(form_id, csrf_token, convention_uuid, accepted_files) {
+    if (accepted_files == undefined ) accepted_files = 'image/*,application/pdf'
     let myDropzone = new Dropzone("div#"+form_id+"_dropzone", {
         url: "/upload/",
         uploadMultiple: true,
         maxFilesize: 100, // 100 Mo
-        acceptedFiles: 'image/*,application/pdf',
+        acceptedFiles: accepted_files,
         addRemoveLinks: true,
         init: function () {
             this.on("removedfile", function (file) {

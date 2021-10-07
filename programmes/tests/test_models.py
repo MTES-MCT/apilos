@@ -153,7 +153,6 @@ class ProgrammeModelsTest(TestCase):
     def test_advanced_display(self):
         programme = Programme.objects.order_by("-uuid").first()
         programme.type_habitat = TypeHabitat.SANSOBJET
-        print(programme.get_type_habitat_advanced_display())
         self.assertEqual(programme.get_type_habitat_advanced_display(), "")
         self.assertEqual(programme.get_type_habitat_advanced_display(1), "")
         self.assertEqual(programme.get_type_habitat_advanced_display(2), "")

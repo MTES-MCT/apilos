@@ -37,7 +37,7 @@ urlpatterns = [
         name="generate",
     ),
     path(
-        "load_xlsx_model/<convention_uuid>/<file_type>",
+        "load_xlsx_model/<file_type>",
         views.load_xlsx_model,
         name="load_xlsx_model",
     ),

@@ -57,7 +57,6 @@ class IngestableModel(models.Model):
             # pylint: disable=W0640, cell-var-from-loop
             element_pivot = "__".join(get_elements_for_pivots(cls, element))
             if element_pivot not in mapped_elements:
-                #                print(element_pivot)
                 mapped_elements[element_pivot] = {}
                 for element_item in cls.mapping.items():
                     mapped_elements[element_pivot][element_item[0]] = element[
