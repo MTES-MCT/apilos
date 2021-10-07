@@ -21,7 +21,7 @@
                                             value="{{lot.uuid}}"
                                             {% if lot.uuid|stringformat:"s"  == form.lot_uuid.value %}selected{% endif %}
                                             {% if lot.convention_set.all and lot.uuid|stringformat:"s"  != form.lot_uuid.value %}disabled="disabled"{% endif %}>
-                                            {{ lot.programme.nom }} - {{ lot.financement }} - {{ lot.programme.ville}} - {{lot.nb_logements}} lgts
+                                            {{ lot.programme.ville}} - {{ lot.programme.nom }} - {{lot.nb_logements}} lgts - {{ lot.financement }}
                                         </option>
                                     {% endfor %}
                                 </select>
