@@ -107,7 +107,7 @@ class Pret(models.Model):
     date_octroi = models.DateField(null=True)
     numero = models.CharField(null=True, max_length=255)
     duree = models.IntegerField(null=True)
-    montant = models.FloatField()
+    montant = models.DecimalField(max_digits=12, decimal_places=2)
 
     # Needed to import xlsx files
     import_mapping = {

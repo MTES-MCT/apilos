@@ -50,10 +50,13 @@ class PretForm(forms.Form):
     )
     date_octroi = forms.DateField(required=False)
     duree = forms.IntegerField(required=False)
-    montant = forms.FloatField(
+    montant = forms.DecimalField(
+        max_digits=12,
+        decimal_places=2,
         error_messages={
             "required": "Le montant du prêt est obligatoire",
-        }
+            "max_digits": "Le montant du prêt doit-être inférieur à 10 000 000 000 €",
+        },
     )
 
     def clean(self):

@@ -92,7 +92,9 @@ class Programme(IngestableModel):
     annee_gestion_programmation = models.IntegerField(null=True)
     zone_123 = models.IntegerField(null=True)
     zone_abc = models.CharField(max_length=255, null=True)
-    surface_utile_totale = models.FloatField(null=True)
+    surface_utile_totale = models.DecimalField(
+        max_digits=8, decimal_places=2, null=True
+    )
     type_habitat = models.CharField(
         max_length=25,
         choices=TypeHabitat.choices,
@@ -294,13 +296,17 @@ class Logement(models.Model):
         choices=TypologieLogement.choices,
         default=TypologieLogement.T1,
     )
-    surface_habitable = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    surface_annexes = models.FloatField(null=True)
-    surface_annexes_retenue = models.FloatField(null=True)
-    surface_utile = models.FloatField(null=True)
-    loyer_par_metre_carre = models.FloatField(null=True)
-    coeficient = models.FloatField(null=True)
-    loyer = models.FloatField(null=True)
+    surface_habitable = models.DecimalField(max_digits=6, decimal_places=2, null=True)
+    surface_annexes = models.DecimalField(max_digits=6, decimal_places=2, null=True)
+    surface_annexes_retenue = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True
+    )
+    surface_utile = models.DecimalField(max_digits=6, decimal_places=2, null=True)
+    loyer_par_metre_carre = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True
+    )
+    coeficient = models.DecimalField(max_digits=6, decimal_places=3, null=True)
+    loyer = models.DecimalField(max_digits=6, decimal_places=2, null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
@@ -381,9 +387,9 @@ class Annexe(models.Model):
         choices=TypologieAnnexe.choices,
         default=TypologieAnnexe.TERRASSE,
     )
-    surface_hors_surface_retenue = models.FloatField()
-    loyer_par_metre_carre = models.FloatField()
-    loyer = models.FloatField()
+    surface_hors_surface_retenue = models.DecimalField(max_digits=6, decimal_places=2)
+    loyer_par_metre_carre = models.DecimalField(max_digits=6, decimal_places=2)
+    loyer = models.DecimalField(max_digits=6, decimal_places=2)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
@@ -448,7 +454,7 @@ class TypeStationnement(IngestableModel):
         default=TypologieStationnement.PLACE_STATIONNEMENT,
     )
     nb_stationnements = models.IntegerField()
-    loyer = models.FloatField()
+    loyer = models.DecimalField(max_digits=6, decimal_places=2)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
