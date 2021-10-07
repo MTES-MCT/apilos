@@ -1,5 +1,14 @@
 {% load static %}
+
 <header role="banner" class="fr-header">
+    <div id="browser_alert"  hidden>
+        <div class="fr-header__body header-alert alert">
+            <div>
+                ⚠️ Attention, vous utilisez actuellement Internet Explorer, ce navigateur n'est pas compatible avec toutes les fonctionnalités de la platforme...<br>
+                Nous vous conseillons d'utiliser un autre navigateur tel que Chrome, Edge ou Firefox
+            </div>
+        </div>
+    </div>
     <div class="fr-header__body">
         <div class="fr-container">
             <div class="fr-header__body-row">
@@ -75,3 +84,9 @@
         </div>
     </div>
 </header>
+<script>
+    // useful link: https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+    if (/*@cc_on!@*/false || !!document.documentMode) {
+        document.getElementById('browser_alert').hidden = false
+    }
+</script>
