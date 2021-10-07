@@ -300,9 +300,8 @@ def generate_convention(request, convention_uuid):
 #   return send_file(file_stream, as_attachment=True, attachment_filename='report_'+user_id+'.docx')
 
 
-def load_xlsx_model(request, convention_uuid, file_type):
+def load_xlsx_model(request, file_type):
     filepath = f"{settings.BASE_DIR}/static/files/{file_type}.xlsx"
-    print(f"load_xlsx_model {file_type}.xlsx for convention_uuid {convention_uuid}")
 
     with open(filepath, "rb") as excel:
         data = excel.read()

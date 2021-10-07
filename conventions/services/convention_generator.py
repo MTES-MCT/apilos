@@ -57,6 +57,45 @@ def _build_files_for_docx(doc, convention_uuid, file_list):
     return docx_images, local_pathes
 
 
+def _get_object_images(doc, convention):
+    object_images = {}
+    local_pathes = []
+    vendeur_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.vendeur_files()
+    )
+    object_images["vendeur_images"] = vendeur_images
+    local_pathes += tmp_local_path
+    acquereur_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.acquereur_files()
+    )
+    object_images["acquereur_images"] = acquereur_images
+    local_pathes += tmp_local_path
+    reference_notaire_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.reference_notaire_files()
+    )
+    object_images["reference_notaire_images"] = reference_notaire_images
+    local_pathes += tmp_local_path
+    reference_publication_acte_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.reference_publication_acte_files()
+    )
+    object_images[
+        "reference_publication_acte_images"
+    ] = reference_publication_acte_images
+    local_pathes += tmp_local_path
+    edd_volumetrique_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.edd_volumetrique_files()
+    )
+    object_images["edd_volumetrique_images"] = edd_volumetrique_images
+    local_pathes += tmp_local_path
+    edd_classique_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.edd_classique_files()
+    )
+    object_images["edd_classique_images"] = edd_classique_images
+    local_pathes += tmp_local_path
+
+    return object_images, local_pathes
+
+
 def generate_hlm(convention):
     # pylint: disable=R0914
     annexes = (
@@ -89,31 +128,7 @@ def generate_hlm(convention):
     mixite = compute_mixte(convention)
     # tester si il logement exists avant de commencer
 
-    local_pathes = []
-    vendeur_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.vendeur_files()
-    )
-    local_pathes += tmp_local_path
-    acquereur_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.acquereur_files()
-    )
-    local_pathes += tmp_local_path
-    reference_notaire_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.reference_notaire_files()
-    )
-    local_pathes += tmp_local_path
-    reference_publication_acte_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.reference_publication_acte_files()
-    )
-    local_pathes += tmp_local_path
-    edd_volumetrique_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.edd_volumetrique_files()
-    )
-    local_pathes += tmp_local_path
-    edd_classique_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.edd_volumetrique_files()
-    )
-    local_pathes += tmp_local_path
+    object_images, local_pathes = _get_object_images(doc, convention)
 
     context = {
         "convention": convention,
@@ -128,12 +143,14 @@ def generate_hlm(convention):
         "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF", "CDCL"]),
         "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF", "CDCL"]),
         "references_cadastrales": convention.programme.referencecadastrale_set.all(),
-        "vendeur_images": vendeur_images,
-        "acquereur_images": acquereur_images,
-        "reference_notaire_images": reference_notaire_images,
-        "reference_publication_acte_images": reference_publication_acte_images,
-        "edd_volumetrique_images": edd_volumetrique_images,
-        "edd_classique_images": edd_classique_images,
+        "vendeur_images": object_images["vendeur_images"],
+        "acquereur_images": object_images["acquereur_images"],
+        "reference_notaire_images": object_images["reference_notaire_images"],
+        "reference_publication_acte_images": object_images[
+            "reference_publication_acte_images"
+        ],
+        "edd_volumetrique_images": object_images["edd_volumetrique_images"],
+        "edd_classique_images": object_images["edd_classique_images"],
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
         # 30 % au moins > 10 logement si PLUS
@@ -170,7 +187,6 @@ def generate_hlm(convention):
     file_stream.seek(0)
 
     for local_path in list(set(local_pathes)):
-        print(local_path)
         os.remove(local_path)
 
     return file_stream

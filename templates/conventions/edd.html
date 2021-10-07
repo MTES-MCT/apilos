@@ -28,11 +28,11 @@
                             et donc plusieurs conventions. Il existe 2 types d’EDD: EDD simplifié & EDD volumétrique
                         </p>
 
-                        {% include "common/form/input_upload.html" with label="EDD volumétrique" form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files convention=convention textarea=True %}
+                        {% include "common/form/input_upload.html" with label="EDD volumétrique" form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files convention=convention textarea=True image_only=True %}
 
                         {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_volumetrique label="Mention de publication de l'EDD volumétrique" %}
 
-                        {% include "common/form/input_upload.html" with label="EDD classique" form_input=form.edd_classique form_input_files=form.edd_classique_files convention=convention textarea=True %}
+                        {% include "common/form/input_upload.html" with label="EDD classique" form_input=form.edd_classique form_input_files=form.edd_classique_files convention=convention textarea=True image_only=True %}
 
                         {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_classique label="Mention de publication de l'EDD classique" %}
 

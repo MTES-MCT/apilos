@@ -39,12 +39,10 @@ mailjet_api_secret = get_env_variable("MAILJET_API_SECRET")
 DEFAULT_FROM_EMAIL = "contact@apilos.beta.gouv.fr"
 
 if mailjet_api_key != "":
-    print("using MailjetBackend")
     EMAIL_BACKEND = "django_mailjet.backends.MailjetBackend"
     MAILJET_API_KEY = mailjet_api_key
     MAILJET_API_SECRET = mailjet_api_secret
 else:
-    print("using console.EmailBackend")
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 env_allowed_hosts = []
