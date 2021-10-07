@@ -259,40 +259,61 @@ class LogementForm(forms.Form):
             "required": "Le type de logement est obligatoire",
         },
     )
-    surface_habitable = forms.FloatField(
+    surface_habitable = forms.DecimalField(
+        max_digits=6,
+        decimal_places=2,
         error_messages={
             "required": "La surface habitable est obligatoire",
-        }
+            "max_digits": "La surface habitable doit-être inférieur à 10000 m²",
+        },
     )
-    surface_annexes = forms.FloatField(
+    surface_annexes = forms.DecimalField(
+        max_digits=6,
+        decimal_places=2,
         error_messages={
             "required": "La surface des annexes est obligatoire",
-        }
+            "max_digits": "La surface des annexes doit-être inférieur à 10000 m²",
+        },
     )
-    surface_annexes_retenue = forms.FloatField(
+    surface_annexes_retenue = forms.DecimalField(
+        max_digits=6,
+        decimal_places=2,
         error_messages={
             "required": "La surface des annexes retenue est obligatoire",
-        }
+            "max_digits": "La surface des annexes retenue doit-être inférieur à 10000 m²",
+        },
     )
-    surface_utile = forms.FloatField(
+    surface_utile = forms.DecimalField(
+        max_digits=6,
+        decimal_places=2,
         error_messages={
             "required": "La surface utile est obligatoire",
-        }
+            "max_digits": "La surface utile doit-être inférieur à 10000 m²",
+        },
     )
-    loyer_par_metre_carre = forms.FloatField(
+    loyer_par_metre_carre = forms.DecimalField(
+        max_digits=6,
+        decimal_places=2,
         error_messages={
             "required": "Le loyer par m² est obligatoire",
-        }
+            "max_digits": "La loyer par m² doit-être inférieur à 10000 €",
+        },
     )
-    coeficient = forms.FloatField(
+    coeficient = forms.DecimalField(
+        max_digits=6,
+        decimal_places=3,
         error_messages={
             "required": "Le coéficient est obligatoire",
-        }
+            "max_digits": "La coéficient doit-être inférieur à 1000",
+        },
     )
-    loyer = forms.FloatField(
+    loyer = forms.DecimalField(
+        max_digits=6,
+        decimal_places=2,
         error_messages={
             "required": "Le loyer est obligatoire",
-        }
+            "max_digits": "La loyer doit-être inférieur à 10000 €",
+        },
     )
 
     def clean_loyer(self):
@@ -412,20 +433,29 @@ class AnnexeForm(forms.Form):
     logement_typologie = forms.TypedChoiceField(
         required=True, choices=TypologieLogement.choices
     )
-    surface_hors_surface_retenue = forms.FloatField(
+    surface_hors_surface_retenue = forms.DecimalField(
+        max_digits=6,
+        decimal_places=2,
         error_messages={
             "required": "La surface habitable est obligatoire",
-        }
+            "max_digits": "La surface habitable doit-être inférieur à 10000 m²",
+        },
     )
-    loyer_par_metre_carre = forms.FloatField(
+    loyer_par_metre_carre = forms.DecimalField(
+        max_digits=6,
+        decimal_places=2,
         error_messages={
             "required": "Le loyer par m² est obligatoire",
-        }
+            "max_digits": "La loyer par m² doit-être inférieur à 10000 €",
+        },
     )
-    loyer = forms.FloatField(
+    loyer = forms.DecimalField(
+        max_digits=6,
+        decimal_places=2,
         error_messages={
             "required": "Le loyer est obligatoire",
-        }
+            "max_digits": "La loyer doit-être inférieur à 10000 €",
+        },
     )
 
 
@@ -450,10 +480,13 @@ class TypeStationnementForm(forms.Form):
             "required": "Le nombre de stationnements est obligatoire",
         },
     )
-    loyer = forms.FloatField(
+    loyer = forms.DecimalField(
+        max_digits=6,
+        decimal_places=2,
         error_messages={
             "required": "Le loyer est obligatoire",
-        }
+            "max_digits": "La loyer doit-être inférieur à 10000 €",
+        },
     )
 
 

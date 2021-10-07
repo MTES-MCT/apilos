@@ -1,6 +1,7 @@
 from io import BytesIO
 from zipfile import BadZipFile
 import datetime
+from decimal import Decimal
 from openpyxl import load_workbook
 
 from core.storage import client
@@ -103,15 +104,11 @@ def extract_row(row, column_from_index, import_mapping):
     empty_line = True
     for cell in row:
         # Ignore unknown column
-        if cell.column not in column_from_index:
+        if cell.column not in column_from_index or cell.value is None:
             continue
 
         # Check the empty lines to don't fill it
-        if cell.value is not None:
-            empty_line = False
-        else:
-            continue
-
+        empty_line = False
         value = None
         model_field = import_mapping[column_from_index[cell.column]]
 
@@ -160,6 +157,21 @@ def extract_row(row, column_from_index, import_mapping):
                 if cell.value is not None:
                     if isinstance(cell.value, (float, int)):
                         value = float(cell.value)
+                    else:
+                        new_warnings.append(
+                            Exception(
+                                f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' "
+                                + f"de la colonne {column_from_index[cell.column]} "
+                                + "doit être une valeur numérique"
+                            )
+                        )
+
+            # Decimal case
+            elif model_field.get_internal_type() == "DecimalField":
+                if cell.value is not None:
+                    if isinstance(cell.value, (float, int)):
+                        local_format = "{:." + str(model_field.decimal_places) + "f}"
+                        value = Decimal(local_format.format(cell.value))
                     else:
                         new_warnings.append(
                             Exception(
