@@ -259,10 +259,13 @@ class LogementForm(forms.Form):
             "required": "Le type de logement est obligatoire",
         },
     )
-    surface_habitable = forms.FloatField(
+    surface_habitable = forms.DecimalField(
+        max_digits=6,
+        decimal_places=2,
         error_messages={
             "required": "La surface habitable est obligatoire",
-        }
+            "max_digits": "La surface habitable doit-être inférieur à 10000 m²",
+        },
     )
     surface_annexes = forms.FloatField(
         error_messages={

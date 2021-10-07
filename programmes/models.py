@@ -294,7 +294,7 @@ class Logement(models.Model):
         choices=TypologieLogement.choices,
         default=TypologieLogement.T1,
     )
-    surface_habitable = models.FloatField(null=True)
+    surface_habitable = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     surface_annexes = models.FloatField(null=True)
     surface_annexes_retenue = models.FloatField(null=True)
     surface_utile = models.FloatField(null=True)
