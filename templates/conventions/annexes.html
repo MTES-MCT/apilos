@@ -10,6 +10,8 @@
                         <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Annexes</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
+                        <p><span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true"></span>Attention, les annexes concernées sont ici les jardins, les caves et les terrasses<br>
+                            la déclaration des stationnements par type se fera à la prochaine étape</p>
 
                         {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='annexes' upform=upform  what='annexes'%}
 
