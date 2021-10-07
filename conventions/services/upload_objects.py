@@ -1,6 +1,7 @@
 from io import BytesIO
 from zipfile import BadZipFile
 import datetime
+from decimal import Decimal
 from openpyxl import load_workbook
 
 from core.storage import client
@@ -169,7 +170,8 @@ def extract_row(row, column_from_index, import_mapping):
             elif model_field.get_internal_type() == "DecimalField":
                 if cell.value is not None:
                     if isinstance(cell.value, (float, int)):
-                        value = round(float(cell.value), model_field.decimal_places)
+                        local_format = "{:." + str(model_field.decimal_places) + "f}"
+                        value = Decimal(local_format.format(cell.value))
                     else:
                         new_warnings.append(
                             Exception(
