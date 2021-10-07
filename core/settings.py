@@ -17,12 +17,12 @@ from decouple import config
 import dj_database_url
 
 
-def get_env_variable(name, cast=str):
+def get_env_variable(name, cast=str, default=""):
     try:
         return cast(os.environ[name])
     # pylint: disable=W0702, bare-except
     except:
-        return config(name, cast=cast, default="")
+        return config(name, cast=cast, default=default)
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,6 +32,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = get_env_variable("SECRET_KEY")
 DEBUG = get_env_variable("DEBUG", cast=bool)
+ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
 
 mailjet_api_key = get_env_variable("MAILJET_API_KEY")
 mailjet_api_secret = get_env_variable("MAILJET_API_SECRET")
@@ -93,6 +94,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "core.context_processor.get_environment",
             ],
         },
     },
