@@ -24,9 +24,17 @@ class ConventionCommentForm(forms.Form):
 class ConventionFinancementForm(forms.Form):
 
     date_fin_conventionnement = forms.DateField(
+        required=True,
         error_messages={
             "required": "La date de fin de conventionnement est obligatoire",
-        }
+        },
+        help_text=(
+            "Année de signature de la convention + au moins la durée du prêt"
+            + " le plus long. Elle ne peut être inférieure à 9 ans. Spécificité"
+            + " pour le PLS: comprise entre 15 et 40 ans.Si la convention est"
+            + " signée après le 30 juin, la durée de la convention à prendre en"
+            + " compte débute à l’année N+1."
+        ),
     )
     fond_propre = forms.FloatField(required=False)
 

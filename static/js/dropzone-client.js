@@ -15,8 +15,19 @@ function init_dropzone_from_file(form_id, csrf_token, convention_uuid, accepted_
                 delete files[file.uuid]
                 document.getElementById(form_id).value = JSON.stringify(files);
             })
+            this.on("error", function (file, errorMessage, xhr) {
+                console.log(file)
+                console.log(errorMessage)
+                var error = document.createElement("p");
+                error.classList.add('fr-error-text')
+                error.appendChild(document.createTextNode(errorMessage))
+                document.getElementById(form_id + '_errors').appendChild(error)
+            })
+            this.on("queuecomplete", function() {
+                console.log('all_files_uploaded');
+            });
             this.on("success", function (file, response) {
-                if (document.querySelector('img[alt="'+file.name+'"]') != null ) {
+                    if (document.querySelector('img[alt="'+file.name+'"]') != null ) {
                     file.thumbnail = document.querySelector('img[alt="'+file.name+'"]').src;
                 }
                 for (var i = 0; i < response.uploaded_file.length; i++) {
@@ -36,12 +47,11 @@ function init_dropzone_from_file(form_id, csrf_token, convention_uuid, accepted_
                 document.getElementById(form_id).value = JSON.stringify(files);
             })
         },
-        dictInvalidFileType: "Il n'est pas possible de téléverser ce fichier, seul les Images et PDF sont acceptées",
         dictDefaultMessage: "Cliquez dans la zone ou déposez-y vos fichiers",
         dictFallbackMessage: "Votre navigateur ne support pas la fonction drag'n'drop. Nous vous conseillons de changer de navigateur",
         dictFallbackText: "",
         dictFileTooBig: "Le fichier est trop gros, il ne doit pas dépasser 4Mo.",
-        dictInvalidFileType: "Il n'est pas possible de téléverser ce fichier, seul les Images et PDF sont acceptées",
+        dictInvalidFileType: "Le format du fichier n'est pas accepté",
         dictResponseError: "Le serveur a retourner une erreur, si le problème perpsiste, nous vous prions de contacter votre administration référente",
         dictCancelUpload: "Annuler",
         dictCancelUploadConfirmation: "Etes vous certain de vouloir supprimer ce fichier ?",

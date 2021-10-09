@@ -1,8 +1,8 @@
 from django import forms
+from core import forms_utils
 
 
 class BailleurForm(forms.Form):
-
     nom = forms.CharField(
         required=True,
         error_messages={
@@ -22,27 +22,7 @@ class BailleurForm(forms.Form):
     capital_social = forms.FloatField(
         required=False,
     )
-    adresse = forms.CharField(
-        max_length=255,
-        error_messages={
-            "required": "L'adresse est obligatoire",
-            "max_length": "L'adresse ne doit pas excéder 255 caractères",
-        },
-    )
-    code_postal = forms.CharField(
-        max_length=255,
-        error_messages={
-            "required": "Le code postal est obligatoire",
-            "max_length": "Le code postal ne doit pas excéder 255 caractères",
-        },
-    )
-    ville = forms.CharField(
-        max_length=255,
-        error_messages={
-            "required": "La ville est obligatoire",
-            "max_length": "La ville ne doit pas excéder 255 caractères",
-        },
-    )
+    adresse, code_postal, ville = forms_utils.address_form_fields()
     dg_nom = forms.CharField(
         max_length=255,
         error_messages={
@@ -62,7 +42,11 @@ class BailleurForm(forms.Form):
     dg_date_deliberation = forms.DateField(
         error_messages={
             "required": "La date de délibération est obligatoire",
-        }
+        },
+        help_text=(
+            "Date à laquelle le signataire a reçu le mandat lui "
+            + "permettant de signer la convention"
+        ),
     )
 
     def clean_nom(self):
