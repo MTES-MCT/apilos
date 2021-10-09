@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
+from core import forms_utils
 
 from programmes.models import (
     LogementEDD,
@@ -31,7 +32,6 @@ class ProgrammeSelectionForm(forms.Form):
 
 
 class ProgrammeForm(forms.Form):
-
     nom = forms.CharField(
         max_length=255,
         min_length=1,
@@ -41,29 +41,7 @@ class ProgrammeForm(forms.Form):
             "max_length": "Le nom du programme ne doit pas excéder 255 caractères",
         },
     )
-    adresse = forms.CharField(
-        max_length=255,
-        min_length=1,
-        error_messages={
-            "required": "L'adresse est obligatoire",
-            "min_length": "L'adresse est obligatoire",
-            "max_length": "L'adresse ne doit pas excéder 255 caractères",
-        },
-    )
-    code_postal = forms.CharField(
-        max_length=255,
-        error_messages={
-            "required": "Le code postal est obligatoire",
-            "max_length": "Le code postal ne doit pas excéder 255 caractères",
-        },
-    )
-    ville = forms.CharField(
-        max_length=255,
-        error_messages={
-            "required": "La ville est obligatoire",
-            "max_length": "La ville ne doit pas excéder 255 caractères",
-        },
-    )
+    adresse, code_postal, ville = forms_utils.address_form_fields()
     nb_logements = forms.IntegerField(
         error_messages={
             "required": "Le nombre de logements à conventionner est obligatoire",
@@ -84,7 +62,6 @@ class ProgrammeForm(forms.Form):
 
 
 class ProgrammeCadastralForm(forms.Form):
-
     permis_construire = forms.CharField(required=False)
     date_acte_notarie = forms.DateField(required=False)
     date_achevement_previsible = forms.DateField(required=False)
@@ -97,9 +74,11 @@ class ProgrammeCadastralForm(forms.Form):
             "required": "Les informations relatives au vendeur sont obligatoires",
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
+        help_text="Identité du vendeur telle que mentionnée dans l'acte de propriété",
     )
     vendeur_files = forms.CharField(
         required=False,
+        help_text="Les fichiers de type images sont acceptés dans la limite de 100 Mo",
     )
     acquereur = forms.CharField(
         required=True,
@@ -108,9 +87,11 @@ class ProgrammeCadastralForm(forms.Form):
             "required": "Les informations relatives à l'aquéreur sont obligatoires",
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
+        help_text="Identité de l'acquéreur telle que mentionnée dans l'acte de propriété",
     )
     acquereur_files = forms.CharField(
         required=False,
+        help_text="Les fichiers de type images sont acceptés dans la limite de 100 Mo",
     )
     reference_notaire = forms.CharField(
         required=False,
@@ -121,6 +102,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     reference_notaire_files = forms.CharField(
         required=False,
+        help_text="Les fichiers de type images sont acceptés dans la limite de 100 Mo",
     )
     reference_publication_acte = forms.CharField(
         required=False,
@@ -131,6 +113,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     reference_publication_acte_files = forms.CharField(
         required=False,
+        help_text="Les fichiers de type images sont acceptés dans la limite de 100 Mo",
     )
     acte_de_propriete = forms.CharField(
         required=False,
@@ -141,6 +124,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     acte_de_propriete_files = forms.CharField(
         required=False,
+        help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )
     acte_notarial = forms.CharField(
         required=False,
@@ -151,6 +135,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     acte_notarial_files = forms.CharField(
         required=False,
+        help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )
 
 

@@ -2,10 +2,8 @@
     {% if label %}
         <label class="fr-label fr-mb-1w" for="{{form_input.id_for_label}}">
             {{ label }}
-            {% if mandatory %}&nbsp;{% include "common/mandatory_field.html" %}{% endif %}
-            {% if description %}
-                {% include "common/help_field.html" with form_input=form_input description=description %}
-            {% endif %}
+            {% include "common/mandatory_field.html" with form_input=form_input %}
+            {% include "common/help_field.html" with form_input=form_input %}
         </label>
     {% endif %}
     <div class="fr-input-wrap fr-fi-calendar-line" >

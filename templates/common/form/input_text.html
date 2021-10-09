@@ -1,7 +1,8 @@
 <div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}">
     {% if label %}
         <label class="fr-label" for="{{form_input.id_for_label}}">
-            {{ label }}{% if mandatory %}&nbsp;{% include "common/mandatory_field.html" %}{% endif %}
+            {{ label }}
+            {% include "common/mandatory_field.html" with form_input=form_input %}
         </label>
     {% endif %}
     <input

@@ -38,7 +38,7 @@
                                             id="anru"
                                             {% if form.anru.value %}checked="checked"{% endif %}
                                             name="anru">
-                                        <label class="fr-label" for="anru"> ANRU&nbsp;{% include "common/mandatory_field.html" %}
+                                        <label class="fr-label" for="anru"> ANRU{% include "common/mandatory_field.html" with form_input=form.anru %}
                                             <span class="fr-hint-text">Le programme bénéficie d'un financement ANRU</span>
                                         </label>
                                         {% for error in form.anru.errors %}
