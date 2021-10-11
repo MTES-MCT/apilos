@@ -42,16 +42,16 @@ class AdministrationsModelsTest(TestCase):
         group_instructeur.permissions.set(
             [
                 Permission.objects.get(
-                    content_type__model="convention", codename="add_convention"
+                    content_type__model="logement", codename="add_logement"
                 ),
                 Permission.objects.get(
-                    content_type__model="convention", codename="change_convention"
+                    content_type__model="logement", codename="change_logement"
                 ),
                 Permission.objects.get(
-                    content_type__model="convention", codename="delete_convention"
+                    content_type__model="logement", codename="delete_logement"
                 ),
                 Permission.objects.get(
-                    content_type__model="convention", codename="view_convention"
+                    content_type__model="logement", codename="view_logement"
                 ),
             ]
         )
@@ -61,13 +61,13 @@ class AdministrationsModelsTest(TestCase):
         group_bailleur.permissions.set(
             [
                 Permission.objects.get(
-                    content_type__model="convention", codename="add_convention"
+                    content_type__model="logement", codename="add_logement"
                 ),
                 Permission.objects.get(
-                    content_type__model="convention", codename="change_convention"
+                    content_type__model="logement", codename="change_logement"
                 ),
                 Permission.objects.get(
-                    content_type__model="convention", codename="view_convention"
+                    content_type__model="logement", codename="view_logement"
                 ),
             ]
         )
@@ -111,12 +111,12 @@ class AdministrationsModelsTest(TestCase):
 
     def test_permissions(self):
         user_instructeur = User.objects.get(username="sabine")
-        self.assertTrue(user_instructeur.has_perm("convention.change_convention"))
-        self.assertTrue(user_instructeur.has_perm("convention.delete_convention"))
+        self.assertTrue(user_instructeur.has_perm("logement.change_logement"))
+        self.assertTrue(user_instructeur.has_perm("logement.delete_logement"))
         self.assertFalse(user_instructeur.has_perm("bailleur.delete_bailleur"))
         user_bailleur = User.objects.get(username="raph")
-        self.assertTrue(user_bailleur.has_perm("convention.change_convention"))
-        self.assertFalse(user_bailleur.has_perm("convention.delete_convention"))
+        self.assertTrue(user_bailleur.has_perm("logement.change_logement"))
+        self.assertFalse(user_bailleur.has_perm("logement.delete_logement"))
         self.assertFalse(user_bailleur.has_perm("bailleur.delete_bailleur"))
 
     def test_programme_filter(self):
