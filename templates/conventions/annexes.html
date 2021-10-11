@@ -13,9 +13,10 @@
                         <p><span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true"></span>Attention, les annexes concernées sont ici les jardins, les caves et les terrasses<br>
                             la déclaration des stationnements par type se fera à la prochaine étape</p>
 
-                        {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='annexes' upform=upform  what='annexes'%}
-
-                        <hr class="fr-col-12 fr-my-3w">
+                        {% if editable %}
+                            {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='annexes' upform=upform  what='annexes'%}
+                            <hr class="fr-col-12 fr-my-3w">
+                        {% endif %}
 
                         {% for error in import_warnings %}
                             <p id="text-input-error-desc-error" class="fr-error-text">
@@ -51,7 +52,8 @@
                                                 <select
                                                     class="fr-select {% if form.typologie.errors %}fr-select--error{% endif %}"
                                                     id="{{form.typologie.id_for_label}}"
-                                                    name="{{form.typologie.html_name}}">
+                                                    name="{{form.typologie.html_name}}"
+                                                    {% if not editable %}disabled{% endif %}>
                                                     <option value="" {% if not form.typologie.value %}selected{% endif %} disabled hidden></option>
                                                     {% for typologie in typologies %}
                                                         <option value="{{typologie.value}}"
@@ -73,7 +75,8 @@
                                                 <select
                                                     class="fr-select {% if form.logement_typologie.errors %}fr-select--error{% endif %}"
                                                     id="{{form.logement_typologie.id_for_label}}"
-                                                    name="{{form.logement_typologie.html_name}}">
+                                                    name="{{form.logement_typologie.html_name}}"
+                                                    {% if not editable %}disabled{% endif %}>
                                                     <option value="" {% if not form.logement_typologie.value %}selected{% endif %} disabled hidden></option>
                                                     {% for logement_typologie in logement_typologies %}
                                                         <option value="{{logement_typologie.value}}"
@@ -105,8 +108,12 @@
                     </div>
                 </div>
                 <div class="form-button-footer fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w">
-                    {% include "common/button/precedent.html" with precedent='conventions:logements' convention_uuid=convention.uuid %}
-                    {% include "common/button/suivant.html" with suivant='conventions:annexes' convention_uuid=convention.uuid %}
+                    {% include "common/button/previous.html" with precedent='conventions:logements' convention_uuid=convention.uuid %}
+                    {% if editable %}
+                        {% include "common/button/next_and_save.html" with suivant='conventions:annexes' convention_uuid=convention.uuid editable=editable %}
+                    {% else %}
+                        {% include "common/button/next.html" with suivant='conventions:stationnements' convention_uuid=convention.uuid %}
+                    {% endif %}
                 </div>
             </form>
         </div>

@@ -68,7 +68,6 @@ def _get_text_and_files_from_field(name, field):
             else None,
         }
     object_field["files"] = json.dumps(returned_files)
-
     return {
         name: object_field["text"] if "text" in object_field else "",
         name + "_files": object_field["files"],
@@ -100,6 +99,7 @@ def select_programme_create(request):
         form = ProgrammeSelectionForm(request.POST)
         if form.is_valid():
             lot = Lot.objects.get(uuid=form.cleaned_data["lot_uuid"])
+            request.user.check_perm("convention.add_convention", lot)
             convention = Convention.objects.create(
                 lot=lot,
                 programme_id=lot.programme_id,
@@ -113,7 +113,6 @@ def select_programme_create(request):
                 "convention": convention,
                 "form": form,
             }  # HttpResponseRedirect(reverse('conventions:bailleur', args=[convention.uuid]) )
-
     # If this is a GET (or any other method) create the default form.
     else:
         form = ProgrammeSelectionForm()
@@ -123,13 +122,14 @@ def select_programme_create(request):
         "success": utils.ReturnStatus.ERROR,
         "programmes": programmes,
         "form": form,
+        "editable": request.user.has_perm("convention.add_convention"),
     }  # render(request, "conventions/selection.html", {'form': form, 'programmes': programmes})
 
 
 def select_programme_update(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
-
     if request.method == "POST":
+        request.user.check_perm("convention.change_convention", convention)
         #        if request.POST['convention_uuid'] is None:
         form = ProgrammeSelectionForm(request.POST)
         if form.is_valid():
@@ -145,21 +145,21 @@ def select_programme_update(request, convention_uuid):
                 "convention": convention,
                 "form": form,
             }
-
     # If this is a GET (or any other method) create the default form.
     else:
+        request.user.check_perm("convention.view_convention", convention)
         form = ProgrammeSelectionForm(
             initial={
                 "lot_uuid": str(convention.lot.uuid),
             }
         )
-
     programmes = conventions_selection(request, {})
     return {
         "success": utils.ReturnStatus.ERROR,
         "programmes": programmes,
         "convention_uuid": convention_uuid,
         "form": form,
+        "editable": request.user.has_perm("convention.change_convention", convention),
     }
 
 
@@ -168,9 +168,8 @@ def bailleur_update(request, convention_uuid):
         uuid=convention_uuid
     )
     bailleur = convention.bailleur
-
     if request.method == "POST":
-        #        if request.POST['convention_uuid'] is None:
+        request.user.check_perm("convention.change_convention", convention)
         form = BailleurForm(request.POST)
         if form.is_valid():
             bailleur.nom = form.cleaned_data["nom"]
@@ -189,9 +188,9 @@ def bailleur_update(request, convention_uuid):
                 "convention": convention,
                 "form": form,
             }
-
     # If this is a GET (or any other method) create the default form.
     else:
+        request.user.check_perm("convention.view_convention", convention)
         form = BailleurForm(
             initial={
                 "nom": bailleur.nom,
@@ -207,8 +206,12 @@ def bailleur_update(request, convention_uuid):
                 ),
             }
         )
-
-    return {"success": utils.ReturnStatus.ERROR, "convention": convention, "form": form}
+    return {
+        "success": utils.ReturnStatus.ERROR,
+        "convention": convention,
+        "form": form,
+        "editable": request.user.has_perm("convention.change_convention", convention),
+    }
 
 
 def programme_update(request, convention_uuid):
@@ -219,8 +222,8 @@ def programme_update(request, convention_uuid):
     )
     programme = convention.programme
     lot = convention.lot
-
     if request.method == "POST":
+        request.user.check_perm("convention.change_convention", convention)
         #        if request.POST['convention_uuid'] is None:
         form = ProgrammeForm(request.POST)
         if form.is_valid():
@@ -245,9 +248,9 @@ def programme_update(request, convention_uuid):
                 "convention": convention,
                 "form": form,
             }
-
     # If this is a GET (or any other method) create the default form.
     else:
+        request.user.check_perm("convention.view_convention", convention)
         form = ProgrammeForm(
             initial={
                 "nom": programme.nom,
@@ -263,8 +266,12 @@ def programme_update(request, convention_uuid):
                 "nb_bureaux": programme.nb_bureaux,
             }
         )
-
-    return {"success": utils.ReturnStatus.ERROR, "convention": convention, "form": form}
+    return {
+        "success": utils.ReturnStatus.ERROR,
+        "convention": convention,
+        "form": form,
+        "editable": request.user.has_perm("convention.change_convention", convention),
+    }
 
 
 def programme_cadastral_update(request, convention_uuid):
@@ -275,10 +282,9 @@ def programme_cadastral_update(request, convention_uuid):
         .get(uuid=convention_uuid)
     )
     programme = convention.programme
-
     import_warnings = None
-
     if request.method == "POST":
+        request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         formset = ReferenceCadastraleFormSet(request.POST)
         form = ProgrammeCadastralForm(request.POST)
@@ -342,7 +348,6 @@ def programme_cadastral_update(request, convention_uuid):
                         surface=form_referencecadastrale.cleaned_data["surface"],
                     )
                     referencecadastrale.save()
-
                 # All is OK -> Next:
                 return {
                     "success": utils.ReturnStatus.SUCCESS,
@@ -352,6 +357,7 @@ def programme_cadastral_update(request, convention_uuid):
                 }
     # When display the file for the first time
     else:
+        request.user.check_perm("convention.view_convention", convention)
         initial = []
         referencecadastrales = programme.referencecadastrale_set.all()
         for referencecadastrale in referencecadastrales:
@@ -401,6 +407,7 @@ def programme_cadastral_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
+        "editable": request.user.has_perm("convention.change_convention", convention),
     }
 
 
@@ -414,6 +421,7 @@ def programme_edd_update(request, convention_uuid):
     programme = convention.programme
     import_warnings = None
     if request.method == "POST":
+        request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         formset = LogementEDDFormSet(request.POST)
         form = ProgrammeEDDForm(request.POST)
@@ -451,7 +459,6 @@ def programme_edd_update(request, convention_uuid):
                     "mention_publication_edd_classique"
                 ]
                 programme.save()
-
                 programme.logementedd_set.all().delete()
                 for form_logementedd in formset:
                     logementedd = LogementEDD.objects.create(
@@ -462,7 +469,6 @@ def programme_edd_update(request, convention_uuid):
                         typologie=form_logementedd.cleaned_data["typologie"],
                     )
                     logementedd.save()
-
                 # All is OK -> Next:
                 return {
                     "success": utils.ReturnStatus.SUCCESS,
@@ -472,6 +478,7 @@ def programme_edd_update(request, convention_uuid):
                 }
     # When display the file for the first time
     else:
+        request.user.check_perm("convention.view_convention", convention)
         initial = []
         logementedds = programme.logementedd_set.all()
         for logementedd in logementedds:
@@ -505,6 +512,7 @@ def programme_edd_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
+        "editable": request.user.has_perm("convention.change_convention", convention),
     }
 
 
@@ -514,6 +522,7 @@ def convention_financement(request, convention_uuid):
     )
     import_warnings = None
     if request.method == "POST":
+        request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         formset = PretFormSet(request.POST)
         form = ConventionFinancementForm(request.POST)
@@ -550,7 +559,6 @@ def convention_financement(request, convention_uuid):
                         autre=form_pret.cleaned_data["autre"],
                     )
                     pret.save()
-
                 # All is OK -> Next:
                 return {
                     "success": utils.ReturnStatus.SUCCESS,
@@ -560,6 +568,7 @@ def convention_financement(request, convention_uuid):
                 }
     # When display the file for the first time
     else:
+        request.user.check_perm("convention.view_convention", convention)
         initial = []
         prets = convention.pret_set.all()
         for pret in prets:
@@ -590,6 +599,7 @@ def convention_financement(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
+        "editable": request.user.has_perm("convention.change_convention", convention),
     }
 
 
@@ -601,6 +611,7 @@ def logements_update(request, convention_uuid):
     )
     import_warnings = None
     if request.method == "POST":
+        request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         formset = LogementFormSet(request.POST)
         if request.POST.get("Upload", False):
@@ -673,7 +684,6 @@ def logements_update(request, convention_uuid):
                             loyer=form_logement.cleaned_data["loyer"],
                         )
                         logement.save()
-
                 # All is OK -> Next:
                 return {
                     "success": utils.ReturnStatus.SUCCESS,
@@ -682,6 +692,7 @@ def logements_update(request, convention_uuid):
                 }
     # When display the file for the first time
     else:
+        request.user.check_perm("convention.view_convention", convention)
         initial = []
         logements = convention.lot.logement_set.all()
         for logement in logements:
@@ -707,6 +718,7 @@ def logements_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
+        "editable": request.user.has_perm("convention.change_convention", convention),
     }
 
 
@@ -719,6 +731,7 @@ def annexes_update(request, convention_uuid):
     )
     import_warnings = None
     if request.method == "POST":
+        request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         formset = AnnexeFormSet(request.POST)
         if request.POST.get("Upload", False):
@@ -765,7 +778,6 @@ def annexes_update(request, convention_uuid):
                         loyer=form_annexe.cleaned_data["loyer"],
                     )
                     annexe.save()
-
                 # All is OK -> Next:
                 return {
                     "success": utils.ReturnStatus.SUCCESS,
@@ -774,6 +786,7 @@ def annexes_update(request, convention_uuid):
                 }
     # When display the file for the first time
     else:
+        request.user.check_perm("convention.view_convention", convention)
         initial = []
         annexes = Annexe.objects.filter(logement__lot_id=convention.lot.id)
         for annexe in annexes:
@@ -795,6 +808,7 @@ def annexes_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
+        "editable": request.user.has_perm("convention.change_convention", convention),
     }
 
 
@@ -806,6 +820,7 @@ def stationnements_update(request, convention_uuid):
     )
     import_warnings = None
     if request.method == "POST":
+        request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         formset = TypeStationnementFormSet(request.POST)
         if request.POST.get("Upload", False):
@@ -837,7 +852,6 @@ def stationnements_update(request, convention_uuid):
                         loyer=form_stationnement.cleaned_data["loyer"],
                     )
                     stationnement.save()
-
                 # All is OK -> Next:
                 return {
                     "success": utils.ReturnStatus.SUCCESS,
@@ -846,6 +860,7 @@ def stationnements_update(request, convention_uuid):
                 }
     # When display the file for the first time
     else:
+        request.user.check_perm("convention.view_convention", convention)
         initial = []
         stationnements = convention.lot.typestationnement_set.all()
         for stationnement in stationnements:
@@ -864,19 +879,20 @@ def stationnements_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
+        "editable": request.user.has_perm("convention.change_convention", convention),
     }
 
 
 def convention_comments(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     if request.method == "POST":
+        request.user.check_perm("convention.change_convention", convention)
         form = ConventionCommentForm(request.POST)
         if form.is_valid():
             convention.comments = _set_files_and_text_field(
                 form.cleaned_data["comments_files"],
                 form.cleaned_data["comments"],
             )
-
             convention.save()
             # All is OK -> Next:
             return {
@@ -884,16 +900,20 @@ def convention_comments(request, convention_uuid):
                 "convention": convention,
                 "form": form,
             }
-
     else:
+        request.user.check_perm("convention.view_convention", convention)
         form = ConventionCommentForm(
             initial={
                 "comments": convention.comments,
                 **_get_text_and_files_from_field("comments", convention.comments),
             }
         )
-
-    return {"success": utils.ReturnStatus.ERROR, "convention": convention, "form": form}
+    return {
+        "success": utils.ReturnStatus.ERROR,
+        "convention": convention,
+        "form": form,
+        "editable": request.user.has_perm("convention.change_convention", convention),
+    }
 
 
 def convention_summary(request, convention_uuid):
@@ -918,6 +938,7 @@ def convention_summary(request, convention_uuid):
         "stationnements": convention.lot.typestationnement_set.all(),
         "reference_cadastrales": convention.programme.referencecadastrale_set.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
+        "editable": request.user.has_perm("convention.change_convention", convention),
     }
 
 
@@ -925,6 +946,7 @@ def convention_save(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     submitted = utils.ReturnStatus.WARNING
     if request.method == "POST":
+        request.user.check_perm("convention.change_convention", convention)
         if request.POST.get("SubmitConvention", False):
             convention.soumis_le = datetime.datetime.now()
             convention.statut = ConventionStatut.INSTRUCTION
@@ -943,6 +965,7 @@ def convention_save(request, convention_uuid):
 def convention_validate(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     if request.method == "POST":
+        request.user.check_perm("convention.change_convention", convention)
         if not convention.valide_le:
             convention.valide_le = datetime.datetime.now()
         convention.statut = ConventionStatut.VALIDE
@@ -972,5 +995,4 @@ def generate_convention(convention_uuid):
         .get(uuid=convention_uuid)
     )
     file_stream = convention_generator.generate_hlm(convention)
-
     return file_stream, f"{convention}"

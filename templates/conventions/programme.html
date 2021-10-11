@@ -37,7 +37,8 @@
                                             type="checkbox"
                                             id="anru"
                                             {% if form.anru.value %}checked="checked"{% endif %}
-                                            name="anru">
+                                            name="anru"
+                                            {% if not editable %}disabled{% endif %}>
                                         <label class="fr-label" for="anru"> ANRU{% include "common/mandatory_field.html" with form_input=form.anru %}
                                             <span class="fr-hint-text">Le programme bénéficie d'un financement ANRU</span>
                                         </label>
@@ -59,7 +60,11 @@
                                         <label class="fr-label" for="{{form.type_habitat.id_for_label}}">
                                             Type d'habitat
                                         </label>
-                                        <select class="fr-select {% if form.type_habitat.errors %}fr-select--error{% endif %}" id="type_habitat" name="type_habitat">
+                                        <select
+                                            class="fr-select {% if form.type_habitat.errors %}fr-select--error{% endif %}"
+                                            id="type_habitat"
+                                            name="type_habitat"
+                                            {% if not editable %}disabled{% endif %}>
                                             <option value="" {% if not type_habitat.value %}selected{% endif %} disabled hidden></option>
                                             {% for type_habitat in types_habitat %}
                                                 <option value="{{type_habitat.value}}"
@@ -80,7 +85,11 @@
                                         <label class="fr-label" for="{{form.type_operation.id_for_label}}">
                                             Type d'opération
                                         </label>
-                                        <select class="fr-select {% if form.type_operation.errors %}fr-select--error{% endif %}" id="type_operation" name="type_operation">
+                                        <select
+                                            class="fr-select {% if form.type_operation.errors %}fr-select--error{% endif %}"
+                                            id="type_operation"
+                                            name="type_operation"
+                                            {% if not editable %}disabled{% endif %}>
                                             <option value="" selected disabled hidden></option>
                                             {% for type_operation in types_operation %}
                                                 <option value="{{type_operation.value}}"
@@ -126,8 +135,12 @@
                     </div>
                 </div>
                 <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w button-bar">
-                    {% include "common/button/precedent.html" with precedent='conventions:bailleur' convention_uuid=convention.uuid %}
-                    {% include "common/button/suivant.html" with suivant='conventions:programme' convention_uuid=convention.uuid %}
+                    {% include "common/button/previous.html" with precedent='conventions:bailleur' convention_uuid=convention.uuid %}
+                    {% if editable %}
+                        {% include "common/button/next_and_save.html" with suivant='conventions:programme' convention_uuid=convention.uuid editable=editable %}
+                    {% else %}
+                        {% include "common/button/next.html" with suivant='conventions:cadastre' convention_uuid=convention.uuid %}
+                    {% endif %}
                 </div>
             </form>
         </div>
