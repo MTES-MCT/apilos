@@ -79,13 +79,13 @@ class AdministrationsModelsTest(TestCase):
                     content_type__model="convention", codename="add_convention"
                 ),
                 Permission.objects.get(
-                    content_type__model="convention", codename="change_convention"
+                    content_type__model="logement", codename="change_logement"
                 ),
                 Permission.objects.get(
-                    content_type__model="convention", codename="delete_convention"
+                    content_type__model="logement", codename="delete_logement"
                 ),
                 Permission.objects.get(
-                    content_type__model="convention", codename="view_convention"
+                    content_type__model="logement", codename="view_logement"
                 ),
             ]
         )
@@ -107,10 +107,10 @@ class AdministrationsModelsTest(TestCase):
                     content_type__model="convention", codename="add_convention"
                 ),
                 Permission.objects.get(
-                    content_type__model="convention", codename="change_convention"
+                    content_type__model="logement", codename="change_logement"
                 ),
                 Permission.objects.get(
-                    content_type__model="convention", codename="view_convention"
+                    content_type__model="logement", codename="view_logement"
                 ),
             ]
         )
