@@ -35,7 +35,6 @@ class User(AbstractUser):
         )
 
     def has_perm(self, perm, obj=None):
-        print(perm)
         if self.is_staff:
             return True
         # request.user.check_perm("convention.change_convention", convention)

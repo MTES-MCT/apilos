@@ -21,7 +21,7 @@ def create_bailleur():
     )
 
 
-def create_programme(bailleur):
+def create_programme(bailleur, administration=None):
     files_and_text = (
         '{"files": {"bbfc7e3a-e0e7-4899-a1e1-fc632c3ea6b0": {"uuid": "bbfc7e3a'
         + '-e0e7-4899-a1e1-fc632c3ea6b0", "thumbnail": "data:image/png;base64,'
@@ -118,6 +118,7 @@ def create_programme(bailleur):
 
     return Programme.objects.create(
         nom="3F",
+        administration=administration,
         bailleur=bailleur,
         code_postal="75007",
         ville="Paris",
