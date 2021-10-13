@@ -204,9 +204,21 @@ class AdministrationsModelsTest(TestCase):
         self.assertTrue(
             user_instructeur.has_perm("convention.view_convention", convention)
         )
+        self.assertTrue(user_instructeur.has_perm("convention.add_convention"))
+        self.assertTrue(
+            user_instructeur.has_perm("convention.add_convention", convention.lot)
+        )
         self.assertFalse(
             user_instructeur_metropole.has_perm(
                 "convention.view_convention", convention
+            )
+        )
+        self.assertTrue(
+            user_instructeur_metropole.has_perm("convention.add_convention")
+        )
+        self.assertFalse(
+            user_instructeur_metropole.has_perm(
+                "convention.add_convention", convention.lot
             )
         )
         convention.statut = ConventionStatut.INSTRUCTION
@@ -246,6 +258,14 @@ class AdministrationsModelsTest(TestCase):
         )
         self.assertFalse(
             user_bailleur_hlm.has_perm("convention.view_convention", convention)
+        )
+        self.assertTrue(user_bailleur.has_perm("convention.add_convention"))
+        self.assertTrue(
+            user_bailleur.has_perm("convention.add_convention", convention.lot)
+        )
+        self.assertTrue(user_bailleur_hlm.has_perm("convention.add_convention"))
+        self.assertFalse(
+            user_bailleur_hlm.has_perm("convention.add_convention", convention.lot)
         )
         convention.statut = ConventionStatut.INSTRUCTION
         self.assertFalse(
