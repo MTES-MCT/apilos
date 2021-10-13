@@ -11,6 +11,7 @@ from programmes.models import (
     TypologieAnnexe,
     TypologieStationnement,
     FinancementEDD,
+    Financement,
 )
 from conventions.services import services, utils, instruction_services
 from conventions.models import Preteur
@@ -43,6 +44,7 @@ def select_programme_create(request):
             **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 1,
+            "financements": Financement,
         },
     )
 

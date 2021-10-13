@@ -125,6 +125,7 @@ def select_programme_create(request):
         "programmes": programmes,
         "form": form,
         "editable": request.user.has_perm("convention.add_convention"),
+        "bailleurs": request.user.bailleurs(),
     }  # render(request, "conventions/selection.html", {'form': form, 'programmes': programmes})
 
 
@@ -159,7 +160,7 @@ def select_programme_update(request, convention_uuid):
     return {
         "success": utils.ReturnStatus.ERROR,
         "programmes": programmes,
-        "convention_uuid": convention_uuid,
+        "convention": convention,
         "form": form,
         "editable": request.user.has_perm("convention.change_convention", convention),
     }

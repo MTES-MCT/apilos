@@ -17,9 +17,10 @@
                                         <input
                                             type="radio"
                                             id="selection"
+                                            value="selection"
                                             name="{{form.existing_programme.html_name}}"
                                             checked
-                                            onclick="conv_mode(true)">
+                                            onclick="conv_mode(true)"/>
                                         <label class="fr-label" for="selection">
                                             Séléctionnez votre programme et son financement {% include "common/mandatory_field.html" with form_input=form.lot_uuid %}
                                         </label>
@@ -44,19 +45,44 @@
                                         {% endfor %}
                                     </div>
 
+                                    {% if not convention.uuid %}
+                                        <div class="fr-radio-group">
+                                            <input
+                                                type="radio"
+                                                id="creation"
+                                                value="creation"
+                                                name="{{form.existing_programme.html_name}}"
+                                                onclick="conv_mode(false)"/>
+                                            <label class="fr-label" for="creation">Vous n'avez pas trouvé le programme à conventionner dans la liste déroulante ? Créez votre convention à partir de zéro
+                                            </label>
+                                        </div>
+                                        <div id='programme_creation' hidden>
 
-                                    <div class="fr-radio-group">
-                                        <input
-                                            type="radio"
-                                            id="creation"
-                                            name="{{form.existing_programme.html_name}}"
-                                            onclick="conv_mode(false)">
-                                        <label class="fr-label" for="creation">Vous n'avez pas trouvé le programme à conventionner dans la liste déroulante ? Créez votre convention à partir de zéro
-                                        </label>
-                                    </div>
-                                    <div id='programme_creation' hidden>
-                                        PROGRAMME CREATION
-                                    </div>
+                                            {% include "common/form/select_enum.html" with form_input=form.bailleur label="Bailleur" enum=bailleurs without_empty_option=True %}
+                                            {% include "common/form/input_text.html" with form_input=form.nom label="Nom du programme" %}
+
+                                            <div class="fr-grid-row fr-grid-row--gutters">
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                    {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" %}
+                                                </div>
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                    {% include "common/form/select_enum.html" with form_input=form.financement label="Financement" enum=financements %}
+                                                </div>
+                                            </div>
+
+                                            <div class="fr-grid-row fr-grid-row--gutters">
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                    {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" %}
+                                                </div>
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                    {% include "common/form/input_text.html" with form_input=form.ville label="Ville" %}
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    {% endif %}
+
                                 </div>
                             </fieldset>
                         </div>
@@ -71,13 +97,13 @@
                         Revenir à l'étape précédente
                     </a>
                     {% if editable %}
-                        {% if convention_uuid %}
-                            {% include "common/button/next_and_save.html" with suivant='conventions:selection_update' convention_uuid=convention_uuid %}
+                        {% if convention.uuid %}
+                            {% include "common/button/next_and_save.html" with suivant='conventions:selection_update' convention_uuid=convention.uuid %}
                         {% else %}
                             {% include "common/button/next_and_save.html" with suivant='conventions:selection' %}
                         {% endif %}
                     {% else %}
-                        {% include "common/button/next.html" with suivant='conventions:bailleur' convention_uuid=convention_uuid %}
+                        {% include "common/button/next.html" with suivant='conventions:bailleur' convention_uuid=convention.uuid %}
                     {% endif %}
                 </div>
             </form>

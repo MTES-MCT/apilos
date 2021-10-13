@@ -89,6 +89,14 @@ class User(AbstractUser):
             return {"bailleur_id__in": bailleur_ids}
         return {}
 
+    def bailleurs(self):
+        return list(
+            map(
+                lambda role: role.bailleur,
+                self.role_set.filter(typologie=Role.TypeRole.BAILLEUR),
+            )
+        )
+
     def convention_filter(self):
         bailleur_ids = list(
             map(
