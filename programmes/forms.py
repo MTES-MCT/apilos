@@ -21,6 +21,10 @@ class ProgrammeSelectionForm(forms.Form):
         }
     )
 
+    existing_programme = forms.ChoiceField(
+        choices=[("selection", "selection"), ("creation", "creation")]
+    )
+
     def clean_lot_uuid(self):
         lot_uuid = self.cleaned_data["lot_uuid"]
 
