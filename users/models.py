@@ -1,11 +1,58 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import PermissionDenied
 from django.db import models
+
+from conventions.models import Convention, ConventionStatut
+from programmes.models import Lot
 
 
 class User(AbstractUser):
+    def has_view_convention(self, obj):
+        if isinstance(obj, Convention):
+            # is bailleur of the convention or is instructeur of the convention
+            return self.role_set.filter(
+                bailleur_id=obj.bailleur_id
+            ) or self.role_set.filter(administration_id=obj.programme.administration_id)
+        raise Exception(
+            "Les permissions ne sont pas correctement configurer, un "
+            + "objet de type Convention doit être asocié à la "
+            + "permission 'view_convention'"
+        )
+
+    def has_change_convention(self, obj):
+        if isinstance(obj, Convention):
+            # is bailleur of the convention
+            if self.role_set.filter(bailleur_id=obj.bailleur_id):
+                return obj.statut == ConventionStatut.BROUILLON
+            # is instructeur of the convention
+            if self.role_set.filter(administration_id=obj.programme.administration_id):
+                return obj.statut != ConventionStatut.BROUILLON
+            return False
+        raise Exception(
+            "Les permissions ne sont pas correctement configurer, un "
+            + "objet de type Convention doit être asocié à la "
+            + "permission 'change_convention'"
+        )
+
     def has_perm(self, perm, obj=None):
         if self.is_staff:
             return True
+        # request.user.check_perm("convention.change_convention", convention)
+        if perm == "convention.change_convention":
+            return self.has_change_convention(obj)
+        # request.user.check_perm("convention.add_convention", lot)
+        if perm == "convention.add_convention":
+            if isinstance(obj, Lot):
+                # is bailleur of the convention or is instructeur of the convention
+                return self.role_set.filter(
+                    bailleur_id=obj.bailleur_id
+                ) or self.role_set.filter(
+                    administration_id=obj.programme.administration_id
+                )
+        # request.user.check_perm("convention.view_convention", convention)
+        if perm == "convention.view_convention":
+            return self.has_view_convention(obj)
+
         permissions = []
         for role in self.role_set.all():
             permissions += map(
@@ -16,7 +63,13 @@ class User(AbstractUser):
             )
         return perm in permissions
 
-    def is_bailleur(self):
+    def check_perm(self, perm, obj=None):
+        if not self.has_perm(perm, obj):
+            raise PermissionDenied
+
+    def is_bailleur(self, bailleur_id=None):
+        if bailleur_id is not None:
+            return self.roles.filter(bailleur_id=bailleur_id)
         return self.is_role(Role.TypeRole.BAILLEUR)
 
     def is_instructeur(self):

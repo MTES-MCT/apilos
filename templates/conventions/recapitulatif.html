@@ -406,7 +406,7 @@
             <div class="form-button-footer fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w">
                 {% if request.user.is_bailleur %}
                     {% if convention.is_bailleur_editable %}
-                        {% include "common/button/precedent.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
+                        {% include "common/button/previous.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
                         <div>
                             <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}">
                                 {% csrf_token %}
@@ -424,7 +424,7 @@
                 {% endif %}
                 {% if request.user.is_instructeur %}
                     {% if convention.is_instructeur_editable %}
-                        {% include "common/button/precedent.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
+                        {% include "common/button/previous.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
                         <div>
                             <form method="post" action="{% url 'conventions:generate' convention_uuid=convention.uuid %}">
                                 {% csrf_token %}

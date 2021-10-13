@@ -1,0 +1,9 @@
+{% if convention_uuid %}
+    <button class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" type="button" onclick="location.href='{% url suivant convention_uuid=convention_uuid %}'">
+        Suivant
+    </button>
+{% else %}
+    <button class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" type="button" onclick="location.href='{% url suivant %}'">
+        Suivant
+    </button>
+{% endif %}

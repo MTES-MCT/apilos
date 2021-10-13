@@ -11,9 +11,10 @@
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
 
-                        {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='logements' upform=upform  what='logements'%}
-
-                        <hr class="fr-col-12 fr-my-3w">
+                        {% if editable %}
+                            {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='logements' upform=upform  what='logements'%}
+                            <hr class="fr-col-12 fr-my-3w">
+                        {% endif %}
 
                         {% for error in import_warnings %}
                             <p id="text-input-error-desc-error" class="fr-error-text">
@@ -60,7 +61,8 @@
                                                 <select
                                                     class="fr-select {% if form.typologie.errors %}fr-select--error{% endif %}"
                                                     id="{{form.typologie.id_for_label}}"
-                                                    name="{{form.typologie.html_name}}">
+                                                    name="{{form.typologie.html_name}}"
+                                                    {% if not editable %}disabled{% endif %}>
                                                     <option value="" {% if not form.typologie.value %}selected{% endif %} disabled hidden></option>
                                                     {% for typologie in typologies %}
                                                         <option value="{{typologie.value}}"
@@ -125,8 +127,12 @@
                     </div>
                 </div>
                 <div class="form-button-footer fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w">
-                    {% include "common/button/precedent.html" with precedent='conventions:prets' convention_uuid=convention.uuid %}
-                    {% include "common/button/suivant.html" with suivant='conventions:logements' convention_uuid=convention.uuid %}
+                    {% include "common/button/previous.html" with precedent='conventions:prets' convention_uuid=convention.uuid %}
+                    {% if editable %}
+                        {% include "common/button/next_and_save.html" with suivant='conventions:logements' convention_uuid=convention.uuid editable=editable %}
+                    {% else %}
+                        {% include "common/button/next.html" with suivant='conventions:annexes' convention_uuid=convention.uuid %}
+                    {% endif %}
                 </div>
             </form>
         </div>
