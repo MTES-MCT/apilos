@@ -9,29 +9,92 @@
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
                         <h2 class="fr-mb-3w">Etape {{convention_form_step}}/{{ nb_steps }} - Choix du programme à conventionner</h2>
                         {% include "common/mandatory_fields_info.html" %}
-                        <p class="fr-mb-3w">
-                            <div class="fr-select-group{% if form.lot_uuid.errors %} fr-select-group--error{% endif %}">
-                                <label class="fr-label" for="{{form.lot_uuid.id_for_label}}">
-                                    Séléctionnez votre programme et son financement {% include "common/mandatory_field.html" with form_input=form.lot_uuid %}
-                                </label>
-                                <select class="fr-select {% if form.lot_uuid.errors %}fr-select--error{% endif %}" id="lot_uuid" name="lot_uuid" {% if not editable %}disabled{% endif %}>
-                                    <option value="" selected disabled hidden>Selectionnez une option</option>
-                                    {% for lot in programmes %}
-                                        <option
-                                            value="{{lot.uuid}}"
-                                            {% if lot.uuid|stringformat:"s"  == form.lot_uuid.value %}selected{% endif %}
-                                            {% if lot.convention_set.all and lot.uuid|stringformat:"s"  != form.lot_uuid.value %}disabled="disabled"{% endif %}>
-                                            {{ lot.programme.ville}} - {{ lot.programme.nom }} - {{lot.nb_logements}} lgts - {{ lot.financement }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                {% for error in form.lot_uuid.errors %}
-                                    <p id="select-error-desc-error" class="fr-error-text">
-                                        {{ error }}
-                                    </p>
-                                {% endfor %}
-                            </div>
-                        </p>
+
+                        <div class="fr-mb-3w fr-form-group">
+                            <fieldset class="fr-fieldset">
+                                <div class="fr-fieldset__content">
+                                    <div class="fr-radio-group">
+                                        <input
+                                            type="radio"
+                                            id="selection"
+                                            value="selection"
+                                            name="{{form.existing_programme.html_name}}"
+                                            {% if form.existing_programme.value == 'selection' %}checked{% endif %}
+                                            onclick="conv_mode(true)"/>
+                                        <label class="fr-label" for="selection">
+                                            Séléctionnez votre programme et son financement {% include "common/mandatory_field.html" with form_input=form.lot_uuid %}
+                                        </label>
+                                    </div>
+
+                                    <div id='programme_selection' class="fr-ml-4w fr-select-group{% if form.lot_uuid.errors %} fr-select-group--error{% endif %}"  {% if form.existing_programme.value != 'selection' %}hidden{% endif %}>
+                                        <select class="fr-select {% if form.lot_uuid.errors %}fr-select--error{% endif %}" id="lot_uuid" name="lot_uuid" {% if not editable %}disabled{% endif %}>
+                                            <option value="" selected disabled hidden>Selectionnez une option</option>
+                                            {% for lot in programmes %}
+                                                <option
+                                                    value="{{lot.uuid}}"
+                                                    {% if lot.uuid|stringformat:"s"  == form.lot_uuid.value %}selected{% endif %}
+                                                    {% if lot.convention_set.all and lot.uuid|stringformat:"s"  != form.lot_uuid.value %}disabled="disabled"{% endif %}>
+                                                    {{ lot.programme.ville}} - {{ lot.programme.nom }} - {{lot.nb_logements}} lgts - {{ lot.financement }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        {% for error in form.lot_uuid.errors %}
+                                            <p id="select-error-desc-error" class="fr-error-text">
+                                                {{ error }}
+                                            </p>
+                                        {% endfor %}
+                                    </div>
+
+                                    {% if not convention.uuid %}
+                                        <div class="fr-radio-group">
+                                            <input
+                                                type="radio"
+                                                id="creation"
+                                                value="creation"
+                                                name="{{form.existing_programme.html_name}}"
+                                                {% if form.existing_programme.value == 'creation' %}checked{% endif %}
+                                                onclick="conv_mode(false)"/>
+                                            <label class="fr-label" for="creation">Vous n'avez pas trouvé le programme à conventionner dans la liste déroulante ? Créez votre convention à partir de zéro
+                                            </label>
+                                        </div>
+                                        <div id='programme_creation' {% if form.existing_programme.value != 'creation' %}hidden{% endif %}>
+
+                                            {% if bailleurs.length == 1 %}
+                                                {% include "common/form/select_enum.html" with form_input=form.bailleur label="Bailleur" enum=bailleurs without_empty_option=True %}
+                                            {% else %}
+                                                {% include "common/form/select_enum.html" with form_input=form.bailleur label="Bailleur" enum=bailleurs without_empty_option=False %}
+                                            {% endif %}
+                                            {% include "common/form/input_text.html" with form_input=form.nom label="Nom du programme" %}
+
+                                            <div class="fr-grid-row fr-grid-row--gutters">
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                    {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" %}
+                                                </div>
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                    {% include "common/form/select_enum.html" with form_input=form.financement label="Financement" enum=financements %}
+                                                </div>
+                                            </div>
+
+                                            <div class="fr-grid-row fr-grid-row--gutters">
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                    {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" %}
+                                                </div>
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                    {% include "common/form/input_text.html" with form_input=form.ville label="Ville" %}
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+                            </fieldset>
+                        </div>
+
+
+
+
                     </div>
                 </div>
                 <div class="form-button-footer fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w">
@@ -39,16 +102,23 @@
                         Revenir à l'étape précédente
                     </a>
                     {% if editable %}
-                        {% if convention_uuid %}
-                            {% include "common/button/next_and_save.html" with suivant='conventions:selection_update' convention_uuid=convention_uuid %}
+                        {% if convention.uuid %}
+                            {% include "common/button/next_and_save.html" with suivant='conventions:selection_update' convention_uuid=convention.uuid %}
                         {% else %}
                             {% include "common/button/next_and_save.html" with suivant='conventions:selection' %}
                         {% endif %}
                     {% else %}
-                        {% include "common/button/next.html" with suivant='conventions:bailleur' convention_uuid=convention_uuid %}
+                        {% include "common/button/next.html" with suivant='conventions:bailleur' convention_uuid=convention.uuid %}
                     {% endif %}
                 </div>
             </form>
         </div>
     </div>
+    <script>
+        function conv_mode(is_select) {
+            document.getElementById('programme_selection').hidden = !is_select
+            document.getElementById('programme_creation').hidden = is_select
+        }
+    </script>
+
 {% endblock %}

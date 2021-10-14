@@ -11,16 +11,16 @@
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
 
-                        {% include "common/form/input_text.html" with form_input=form.nom label="Nom du programme" mandatory=True %}
-                        {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" mandatory=True %}
+                        {% include "common/form/input_text.html" with form_input=form.nom label="Nom du programme" %}
+                        {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" %}
 
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" mandatory=True %}
+                                    {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" %}
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_text.html" with form_input=form.ville label="Ville" mandatory=True %}
+                                    {% include "common/form/input_text.html" with form_input=form.ville label="Ville" %}
                                 </div>
                             </div>
                         </div>
@@ -29,7 +29,7 @@
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" mandatory=True %}
+                                    {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" %}
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w fr-mt-3w">
                                     <div class="fr-checkbox-group {% if form.anru.errors %}fr-checkbox-group--error{% endif %}">

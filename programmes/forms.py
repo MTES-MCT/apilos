@@ -16,19 +16,76 @@ from conventions.models import Financement
 
 class ProgrammeSelectionForm(forms.Form):
     lot_uuid = forms.CharField(
+        required=False,
         error_messages={
             "required": "La selection du programme et de son financement est obligatoire"
-        }
+        },
     )
 
-    def clean_lot_uuid(self):
-        lot_uuid = self.cleaned_data["lot_uuid"]
+    existing_programme = forms.ChoiceField(
+        choices=[("selection", "selection"), ("creation", "creation")]
+    )
+    bailleur = forms.IntegerField(required=False)
+    nom = forms.CharField(
+        required=False,
+        max_length=255,
+        min_length=1,
+        error_messages={
+            "required": "Le nom du programme est obligatoire",
+            "min_length": "Le nom du programme est obligatoire",
+            "max_length": "Le nom du programme ne doit pas excéder 255 caractères",
+        },
+    )
+    nb_logements = forms.IntegerField(
+        required=False,
+        error_messages={
+            "required": "Le nombre de logements à conventionner est obligatoire",
+        },
+    )
+    financement = forms.TypedChoiceField(
+        required=False,
+        choices=Financement.choices,
+        error_messages={
+            "required": "Le financement est obligatoire",
+        },
+    )
+    code_postal = forms.CharField(
+        required=False,
+        max_length=255,
+        error_messages={
+            "required": "Le code postal est obligatoire",
+            "max_length": "Le code postal ne doit pas excéder 255 caractères",
+        },
+    )
+    ville = forms.CharField(
+        required=False,
+        max_length=255,
+        error_messages={
+            "required": "La ville est obligatoire",
+            "max_length": "La ville ne doit pas excéder 255 caractères",
+        },
+    )
 
-        # check that lot_id exist in DB
-        if not Lot.objects.get(uuid=lot_uuid):
-            raise ValidationError("le programme avec ce financement n'existe pas")
+    def validate_required_field(self, cleaned_data, field_name):
+        if field_name in cleaned_data and (
+            cleaned_data[field_name] is None or cleaned_data[field_name] == ""
+        ):
+            self._errors[field_name] = self.error_class(
+                [self.fields[field_name].error_messages["required"]]
+            )
+            del cleaned_data[field_name]
 
-        return lot_uuid
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data["existing_programme"] == "selection":
+            self.validate_required_field(cleaned_data, "lot_uuid")
+        if cleaned_data["existing_programme"] == "creation":
+            self.validate_required_field(cleaned_data, "bailleur")
+            self.validate_required_field(cleaned_data, "nom")
+            self.validate_required_field(cleaned_data, "nb_logements")
+            self.validate_required_field(cleaned_data, "financement")
+            self.validate_required_field(cleaned_data, "code_postal")
+            self.validate_required_field(cleaned_data, "ville")
 
 
 class ProgrammeForm(forms.Form):

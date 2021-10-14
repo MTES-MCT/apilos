@@ -11,8 +11,9 @@ from programmes.models import (
     TypologieAnnexe,
     TypologieStationnement,
     FinancementEDD,
+    Financement,
 )
-from conventions.services import services, utils
+from conventions.services import services, utils, instruction_services
 from conventions.models import Preteur
 
 NB_STEPS = 11
@@ -43,6 +44,7 @@ def select_programme_create(request):
             **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 1,
+            "financements": Financement,
         },
     )
 
@@ -256,7 +258,7 @@ def comments(request, convention_uuid):
 # @permission_required("convention.change_convention", raise_exception=True)
 def recapitulatif(request, convention_uuid):
     # Step 11/11
-    result = services.convention_summary(request, convention_uuid)
+    result = instruction_services.convention_summary(request, convention_uuid)
     return render(
         request,
         "conventions/recapitulatif.html",
@@ -271,7 +273,7 @@ def recapitulatif(request, convention_uuid):
 # Handle in service.py
 # @permission_required("convention.change_convention")
 def save_convention(request, convention_uuid):
-    result = services.convention_save(request, convention_uuid)
+    result = instruction_services.convention_save(request, convention_uuid)
     if result["success"] == utils.ReturnStatus.SUCCESS:
         return render(
             request,
@@ -292,7 +294,7 @@ def save_convention(request, convention_uuid):
 # Handle in service.py
 # @permission_required("convention.change_convention")
 def validate_convention(request, convention_uuid):
-    result = services.convention_validate(request, convention_uuid)
+    result = instruction_services.convention_validate(request, convention_uuid)
     return HttpResponseRedirect(
         reverse("conventions:recapitulatif", args=[result["convention"].uuid])
     )
@@ -301,7 +303,7 @@ def validate_convention(request, convention_uuid):
 # Handle in service.py
 # @permission_required("convention.change_convention")
 def generate_convention(request, convention_uuid):
-    data, file_name = services.generate_convention(convention_uuid)
+    data, file_name = instruction_services.generate_convention(convention_uuid)
 
     response = HttpResponse(
         data,

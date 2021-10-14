@@ -117,6 +117,7 @@ except KeyError:
         "TEST": {
             "NAME": config("DB_NAME") + "-test",
         },
+        "ATOMIC_REQUESTS": True,
     }
 
 DATABASES = {"default": default_settings}

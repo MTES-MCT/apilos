@@ -33,3 +33,13 @@ class Bailleur(IngestableModel):
 
     def __str__(self):
         return f"{self.nom}"
+
+    def _get_id(self):
+        return self.id
+
+    value = property(_get_id)
+
+    def _get_nom(self):
+        return self.nom
+
+    label = property(_get_nom)
