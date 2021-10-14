@@ -6,6 +6,12 @@ from conventions.models import Convention, ConventionStatut
 from programmes.models import Lot
 
 
+class slist(list):
+    @property
+    def length(self):
+        return len(self)
+
+
 class User(AbstractUser):
     def has_view_convention(self, obj):
         if isinstance(obj, Convention):
@@ -90,7 +96,7 @@ class User(AbstractUser):
         return {}
 
     def bailleurs(self):
-        return list(
+        return slist(
             map(
                 lambda role: role.bailleur,
                 self.role_set.filter(typologie=Role.TypeRole.BAILLEUR),
