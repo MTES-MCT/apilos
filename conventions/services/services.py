@@ -472,7 +472,12 @@ def programme_edd_update(request, convention_uuid):
         else:
             upform = UploadForm()
             form_is_valid = form.is_valid()
+            formset.programme_id = convention.programme_id
+            formset.ignore_optional_errors = request.POST.get(
+                "ignore_optional_errors", False
+            )
             formset_is_valid = formset.is_valid()
+
             if form_is_valid and formset_is_valid:
                 programme.edd_volumetrique = _set_files_and_text_field(
                     form.cleaned_data["edd_volumetrique_files"],
