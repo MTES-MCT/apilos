@@ -569,7 +569,45 @@ class LogementEDDForm(forms.Form):
 
 
 class BaseLogementEDDFormSet(BaseFormSet):
-    pass
+    programme_id = None
+    optional_errors = []
+    ignore_optional_errors = False
+
+    def is_valid(self):
+        return super().is_valid() and len(self.optional_errors) == 0
+
+    def clean(self):
+        self.manage_edd_consistency()
+
+    def manage_edd_consistency(self):
+        self.optional_errors = []
+        if len(self.forms) == 0 or self.ignore_optional_errors:
+            return
+        lots = Lot.objects.filter(programme_id=self.programme_id)
+        programme_financements = list(set(map(lambda x: x.financement, lots)))
+        lgts_edd_financements = list(
+            set(map(lambda x: x.cleaned_data.get("financement"), self.forms))
+        )
+        for programme_financement in programme_financements:
+            if programme_financement not in lgts_edd_financements:
+                if len(programme_financements) > 1:
+                    financement_message = (
+                        "Les financements connus pour ce programme sont "
+                        + ", ".join(programme_financements)
+                    )
+                else:
+                    financement_message = (
+                        "Le seul financement connu pour ce programme est "
+                        + programme_financement
+                    )
+
+                error = ValidationError(
+                    "L'EDD simplifié doit comporter tous les logements du "
+                    + f"programme quelquesoit leur financement. {financement_message}",
+                    code=101,
+                )
+                self.optional_errors.append(error)
+                return
 
 
 LogementEDDFormSet = formset_factory(
