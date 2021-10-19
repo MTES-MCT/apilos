@@ -16,7 +16,7 @@ def save_uploaded_file(my_file, convention, file_name):
     )
 
 
-def handle_uploaded_file(upform, my_file, myClass, convention, file_name):
+def handle_uploaded_xlsx(upform, my_file, myClass, convention, file_name):
     # pylint: disable=R0912
     try:
         my_file.seek(0)

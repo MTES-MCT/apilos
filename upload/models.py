@@ -9,10 +9,9 @@ class UploadedFile(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     filename = models.CharField(max_length=255, null=True)
-    filepath = models.CharField(max_length=255, null=True, unique=True)
+    dirpath = models.CharField(max_length=255, null=True)
     size = models.CharField(max_length=255, null=True)
     content_type = models.CharField(max_length=255, null=True)
-    thumbnail = models.CharField(max_length=100000, blank=True, null=True)
 
     def __str__(self):
         return self.filename

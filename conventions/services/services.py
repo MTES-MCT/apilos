@@ -321,7 +321,7 @@ def programme_cadastral_update(request, convention_uuid):
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = upload_objects.handle_uploaded_file(
+                result = upload_objects.handle_uploaded_xlsx(
                     upform,
                     request.FILES["file"],
                     ReferenceCadastrale,
@@ -458,7 +458,7 @@ def programme_edd_update(request, convention_uuid):
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = upload_objects.handle_uploaded_file(
+                result = upload_objects.handle_uploaded_xlsx(
                     upform,
                     request.FILES["file"],
                     LogementEDD,
@@ -564,7 +564,7 @@ def convention_financement(request, convention_uuid):
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = upload_objects.handle_uploaded_file(
+                result = upload_objects.handle_uploaded_xlsx(
                     upform, request.FILES["file"], Pret, convention, "prets.xlsx"
                 )
                 if result["success"] != utils.ReturnStatus.ERROR:
@@ -652,7 +652,7 @@ def logements_update(request, convention_uuid):
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = upload_objects.handle_uploaded_file(
+                result = upload_objects.handle_uploaded_xlsx(
                     upform,
                     request.FILES["file"],
                     Logement,
@@ -772,7 +772,7 @@ def annexes_update(request, convention_uuid):
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = upload_objects.handle_uploaded_file(
+                result = upload_objects.handle_uploaded_xlsx(
                     upform, request.FILES["file"], Annexe, convention, "annexes.xlsx"
                 )
                 if result["success"] != utils.ReturnStatus.ERROR:
@@ -861,7 +861,7 @@ def stationnements_update(request, convention_uuid):
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
-                result = upload_objects.handle_uploaded_file(
+                result = upload_objects.handle_uploaded_xlsx(
                     upform,
                     request.FILES["file"],
                     TypeStationnement,
