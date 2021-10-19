@@ -49,23 +49,6 @@
   background-color: aliceblue !important;
 }
 
-.header-alert {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  height:60px;
-}
-
-.content-alert {
-  border-radius: 25px;
-}
-
-.alert {
-  border: 2px solid #E10600;
-  background:#dacbca;
-  font-size:bold;
-}
 
 .form-button-footer {
   display: flex;

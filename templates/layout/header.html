@@ -1,12 +1,10 @@
 {% load static %}
 
 <header role="banner" class="fr-header">
-    <div id="browser_alert"  hidden>
-        <div class="fr-header__body header-alert alert">
-            <div>
-                ⚠️ Attention, vous utilisez actuellement Internet Explorer, ce navigateur n'est pas compatible avec toutes les fonctionnalités de la platforme...<br>
-                Nous vous conseillons d'utiliser un autre navigateur tel que Chrome, Edge ou Firefox
-            </div>
+    <div id="browser_alert" hidden>
+        <div role="alert" class="fr-alert fr-alert--error">
+            <p>Attention, vous utilisez actuellement un navigateur qui n'est pas compatible avec toutes les fonctionnalités de la platforme.</p>
+            <p>Nous vous conseillons d'utiliser un autre navigateur tel que Chrome, Edge ou Firefox</p>
         </div>
     </div>
     <div class="fr-header__body">

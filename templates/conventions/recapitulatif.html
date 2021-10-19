@@ -16,11 +16,12 @@
                     {% include "common/convention_edit_info.html" with convention=convention %}
 
                     {% if not convention.is_submitted %}
-                        <p class="content-alert alert fr-mb-3w fr-p-3w">
-                            <b>ATTENTION</b> : le document de convention n'est pas encore soumis à l'instruction{% if user.is_bailleur %},
+                        <div role="alert" class="fr-alert fr-alert--error">
+                            <p class="fr-alert__title">Attention</p>
+                            <p>le document de convention n'est pas encore soumis à l'instruction{% if user.is_bailleur %},
                                 pour finaliser votre demande de conventionnement, vous devez clicker sur le bouton
-                                <b>"Soumettre au service instructeur"</b>{% endif %}
-                        </p>
+                                <b>"Soumettre au service instructeur"</b>{% endif %}</p>
+                        </div>
                     {% endif %}
 
 
@@ -444,10 +445,11 @@
             {% if request.user.is_instructeur %}
                 <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w">
 
-                    <div class="content-alert alert fr-mb-3w fr-p-3w">
+                    <div role="alert" class="fr-alert fr-alert--error">
                         {% if not convention.valide_le %}
+                            <!-- <p class="fr-alert__title">Convention à valider</p> -->
 
-                            <p class="fr-my-3w">Une fois la convention générée, si celle-ci correspond aux attendus, vous pouvez l'envoyer au bailleur par email et cliquer sur la bouton ci-dessous.
+                            <p>Une fois la convention générée, si celle-ci correspond aux attendus, vous pouvez l'envoyer au bailleur par email et cliquer sur la bouton ci-dessous.
                                 Cela nous permet de suivre le statut de la convention en temps réel.</p>
                             <div>
                                 <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}">
@@ -458,7 +460,7 @@
                                 </form>
                             </div>
                         {% else %}
-                            <p>La convention a été validée le {{ convention.valide_le|date:"j F Y" }}</p>
+                            <p class="fr-alert__title">La convention a été validée le {{ convention.valide_le|date:"j F Y" }}</p>
                         {% endif %}
                         <p class="fr-my-3w"><b>Bientôt</b>, nous serons en mesure de prendre en charge la suite du processus de conventionnement dans l'interface</p>
                     </div>
