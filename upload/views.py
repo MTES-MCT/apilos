@@ -37,7 +37,6 @@ def display_file(request, convention_uuid, uploaded_file_uuid):
             + f"{uploaded_file.uuid}_{uploaded_file.filename}"
         )
 
-    print(filepath)
     file = default_storage.open(
         filepath,
         "rb",
