@@ -25,7 +25,7 @@
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         {% include "common/mandatory_fields_info.html" %}
 
-                        {% include "common/form/input_upload.html" with label="Ajoutez vos commentaires à l'attention de l'instructeur" form_input=form.comments form_input_files=form.comments_files convention=convention file_list=convention.comments_files.values textarea=True verticalDisplay=True %}
+                        {% include "common/form/input_upload.html" with label="Ajoutez vos commentaires à l'attention de l'instructeur" form_input=form.comments form_input_files=form.comments_files object_name='convention' object_uuid=convention.uuid file_list=convention.comments_files.values textarea=True verticalDisplay=True %}
 
                     </div>
                 </div>

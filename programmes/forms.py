@@ -125,10 +125,13 @@ class ProgrammeCadastralForm(forms.Form):
     date_achat = forms.DateField(required=False)
     date_achevement = forms.DateField(required=False)
     vendeur = forms.CharField(
-        required=True,
+        required=False,
         max_length=5000,
         error_messages={
-            "required": "Les informations relatives au vendeur sont obligatoires",
+            "required": (
+                "Les informations relatives au vendeur "
+                + "(image(s) ou texte) sont obligatoires"
+            ),
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
         help_text="Identité du vendeur telle que mentionnée dans l'acte de propriété",
@@ -138,10 +141,13 @@ class ProgrammeCadastralForm(forms.Form):
         help_text="Les fichiers de type images sont acceptés dans la limite de 100 Mo",
     )
     acquereur = forms.CharField(
-        required=True,
+        required=False,
         max_length=5000,
         error_messages={
-            "required": "Les informations relatives à l'aquéreur sont obligatoires",
+            "required": (
+                "Les informations relatives à l'aquéreur "
+                + "(image(s) ou texte) sont obligatoires"
+            ),
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
         help_text="Identité de l'acquéreur telle que mentionnée dans l'acte de propriété",
@@ -194,6 +200,21 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if not cleaned_data["vendeur"] and cleaned_data["vendeur_files"] == "{}":
+            self._errors["vendeur"] = self.error_class(
+                [self.fields["vendeur"].error_messages["required"]]
+            )
+            del cleaned_data["vendeur"]
+            del cleaned_data["vendeur_files"]
+        if not cleaned_data["acquereur"] and cleaned_data["acquereur_files"] == "{}":
+            self._errors["acquereur"] = self.error_class(
+                [self.fields["acquereur"].error_messages["required"]]
+            )
+            del cleaned_data["acquereur"]
+            del cleaned_data["acquereur_files"]
 
 
 class ReferenceCadastraleForm(forms.Form):

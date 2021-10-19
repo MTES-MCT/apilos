@@ -1,6 +1,6 @@
 Dropzone.autoDiscover = false;
 
-function init_dropzone_from_file(form_id, csrf_token, convention_uuid, accepted_files) {
+function init_dropzone_from_file(form_id, csrf_token, parameters, accepted_files) {
     if (accepted_files == undefined ) accepted_files = 'image/*,application/pdf'
     let myDropzone = new Dropzone("div#"+form_id+"_dropzone", {
         url: "/upload/",
@@ -58,7 +58,7 @@ function init_dropzone_from_file(form_id, csrf_token, convention_uuid, accepted_
         dictRemoveFile: "Supprimer",
         dictMaxFilesExceeded: "Vous ne pouvez plus téléverser d'autres documents",
         headers: {'X-CSRFToken': csrf_token},
-        params: { convention: convention_uuid }
+        params: parameters
     });
     return myDropzone;
 }
