@@ -1,5 +1,7 @@
 {% extends "layout/base.html" %}
 
+{% block page_title %}Cadastre - APiLos{% endblock%}
+
 {% load static %}
 
 {% block javascript_extras %}
@@ -21,31 +23,29 @@
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Informations cadastrales sur le programme</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
+                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Informations cadastrales sur le programme</h2>
                         {% include "common/mandatory_fields_info.html" %}
+
+                        <h4>Permis et dates</h4>
 
                         {% include "common/form/input_text.html" with form_input=form.permis_construire label="Numéro de permis construire" %}
 
-                        <div class="fr-mb-2w">
-                            <div class="fr-grid-row fr-grid-row--gutters">
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_date.html" with form_input=form.date_acte_notarie label="Date de l'acte notarié" %}
-                                </div>
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                    {% include "common/form/input_date.html" with form_input=form.date_achat label="Date d'achat" %}
-                                </div>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_date.html" with form_input=form.date_acte_notarie label="Date de l'acte notarié" %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                                {% include "common/form/input_date.html" with form_input=form.date_achat label="Date d'achat" %}
                             </div>
                         </div>
 
-                        <div class="fr-mb-2w">
-                            <div class="fr-grid-row fr-grid-row--gutters">
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_date.html" with form_input=form.date_achevement_previsible label="Date d'achèvement previsible" %}
-                                </div>
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                    {% include "common/form/input_date.html" with form_input=form.date_achevement label="Date d'achèvement ou d'obtention de certificat de conformité" %}
-                                </div>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_date.html" with form_input=form.date_achevement_previsible label="Date d'achèvement previsible" %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                                {% include "common/form/input_date.html" with form_input=form.date_achevement label="Date d'achèvement ou d'obtention de certificat de conformité" %}
                             </div>
                         </div>
 

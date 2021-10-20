@@ -1,5 +1,7 @@
 {% extends "layout/base.html" %}
 
+{% block page_title %}Annexes - APiLos{% endblock%}
+
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
         <div class="fr-container">
@@ -7,11 +9,16 @@
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Annexes</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
+                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Annexes</h2>
                         {% include "common/mandatory_fields_info.html" %}
-                        <p><span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true"></span>Attention, les annexes concernées sont ici les jardins, les caves et les terrasses<br>
-                            la déclaration des stationnements par type se fera à la prochaine étape</p>
+
+                        <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
+                            <p>Attention, les annexes concernées sont ici les jardins, les caves et les terrasses</p>
+                            <p>la déclaration des stationnements par type se fera à la prochaine étape</p>
+                        </div>
+
+                        <h4>Annexes associés aux logements</h4>
 
                         {% if editable %}
                             {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='annexes' upform=upform  what='annexes'%}
@@ -33,7 +40,6 @@
                         {{ formset.management_form }}
                         <div class="fr-table fr-table--bordered">
                             <table>
-                                <caption>Liste des annexes associés aux logements</caption>
 
                                 <thead>
                                     <tr>

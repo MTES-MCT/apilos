@@ -1,5 +1,7 @@
 {% extends "layout/base.html" %}
 
+{% block page_title %}Type de stationnements - APiLos{% endblock%}
+
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
         <div class="fr-container">
@@ -7,9 +9,11 @@
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Stationnements</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
+                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Stationnements</h2>
                         {% include "common/mandatory_fields_info.html" %}
+
+                        <h4>Liste des stationnements associés au lot conventionné</h4>
 
                         {% if editable %}
                             {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='stationnements' upform=upform  what='stationnements'%}
@@ -31,8 +35,6 @@
                         {{ formset.management_form }}
                         <div class="fr-table fr-table--bordered">
                             <table>
-                                <caption>Liste des stationnements associés au lot conventionné</caption>
-
                                 <thead>
                                     <tr>
                                         <th scope="col" class="col__width--150">Type de stationnement {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>

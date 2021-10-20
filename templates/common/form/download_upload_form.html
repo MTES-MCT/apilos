@@ -1,7 +1,6 @@
 {% load static %}
 
-<p>Pour éditer vos {{ what }}, il vous suffit de télécharger le modèle ci-dessous, d'ajouter ou de modifier votre liste de {{ what }}, puis de le téléverser à nouveau.<br>
-    <span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true"></span>Attention, la liste des {{ what }} téléversée écrase la liste courante.</p>
+<p>Télécharger le modèle, éditer puis téléverser vos {{ what }}. <span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true"></span>Attention, la liste des {{ what }} téléversée écrase la liste courante.</p>
 <div class="fr-grid-row fr-grid-row--gutters fr-mx-1w">
     <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-btns-group">
         <button type="button" class="fr-btn fr-btn--secondary" onclick="location.href='{% url 'conventions:load_xlsx_model' file_type=file_type %}'">
@@ -10,7 +9,7 @@
     </div>
 </div>
 
-<div class="fr-my-3w">Puis</div>
+<div class="fr-mb-2w">Puis</div>
 
 <div class="fr-grid-row fr-grid-row--gutters fr-mx-1w">
     <div class="fr-col-12 fr-col-md-12 fr-col-lg-6" >
