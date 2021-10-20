@@ -222,30 +222,31 @@ CSP_SCRIPT_SRC_ELEM = (
 )
 CSP_IMG_SRC = ("'self'", "data:")
 CSP_OBJECT_SRC = "'none'"
-CSP_PREFETCH_SRC = None
-CSP_MEDIA_SRC = None
-CSP_FRAME_SRC = None
 CSP_FONT_SRC = "'self'", "data:"
 CSP_CONNECT_SRC = ("'self'", "https://stats.data.gouv.fr/piwik.php")
 CSP_STYLE_SRC = "'self'"
-CSP_STYLE_SRC_ATTR = None
-CSP_STYLE_SRC_ELEM = None
-CSP_BASE_URI = None
-CSP_CHILD_SRC = None
-CSP_FRAME_ANCESTORS = None
-CSP_NAVIGATE_TO = None
-CSP_FORM_ACTION = None
-CSP_SANDBOX = None
-CSP_REPORT_URI = None
-CSP_REPORT_TO = None
 CSP_MANIFEST_SRC = "'self'"
-CSP_WORKER_SRC = None
-CSP_PLUGIN_TYPES = None
-CSP_REQUIRE_SRI_FOR = None
-CSP_UPGRADE_INSECURE_REQUESTS = False
-CSP_BLOCK_ALL_MIXED_CONTENT = False
 CSP_INCLUDE_NONCE_IN = [
     "default-src",
     "script-src",
     "style-src",
 ]
+
+# CSP_PREFETCH_SRC = None
+# CSP_MEDIA_SRC = None
+# CSP_FRAME_SRC = None
+# CSP_STYLE_SRC_ATTR = None
+# CSP_STYLE_SRC_ELEM = None
+# CSP_BASE_URI = None
+# CSP_CHILD_SRC = None
+# CSP_FRAME_ANCESTORS = None
+# CSP_NAVIGATE_TO = None
+# CSP_FORM_ACTION = None
+# CSP_SANDBOX = None
+# CSP_REPORT_URI = None
+# CSP_REPORT_TO = None
+# CSP_WORKER_SRC = None
+# CSP_PLUGIN_TYPES = None
+# CSP_REQUIRE_SRI_FOR = None
+# CSP_UPGRADE_INSECURE_REQUESTS = False
+# CSP_BLOCK_ALL_MIXED_CONTENT = False
