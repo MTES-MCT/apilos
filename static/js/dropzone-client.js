@@ -1,4 +1,3 @@
-Dropzone.autoDiscover = false;
 
 function init_dropzone_from_file(form_id, accepted_files) {
     csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value
@@ -63,6 +62,7 @@ function init_dropzone_from_file(form_id, accepted_files) {
         headers: {'X-CSRFToken': csrf_token},
         params: parameters
     });
+    Dropzone.autoDiscover = false;
     return myDropzone;
 }
 
