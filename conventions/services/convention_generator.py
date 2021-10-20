@@ -40,7 +40,7 @@ def _build_files_for_docx(doc, convention_uuid, file_list):
     for object_file in files:  # convention.programme.vendeur_files().values():
         if "image" in object_file.content_type:
             file = default_storage.open(
-                f"conventions/{convention_uuid}/media/{object_file.uuid}_{object_file.filename}",
+                object_file.filepath(convention_uuid),
                 "rb",
             )
             local_path = (
@@ -107,19 +107,19 @@ def generate_hlm(convention):
     doc = DocxTemplate(filepath)
 
     logements_totale = {
-        "sh": 0,
-        "sa": 0,
-        "sar": 0,
-        "su": 0,
-        "loyer": 0,
+        "sh_totale": 0,
+        "sa_totale": 0,
+        "sar_totale": 0,
+        "su_totale": 0,
+        "loyer_total": 0,
     }
     nb_logements_par_type = {}
     for logement in convention.lot.logement_set.order_by("typologie").all():
-        logements_totale["sh"] += logement.surface_habitable
-        logements_totale["sa"] += logement.surface_annexes
-        logements_totale["sar"] += logement.surface_annexes_retenue
-        logements_totale["su"] += logement.surface_utile
-        logements_totale["loyer"] += logement.loyer
+        logements_totale["sh_totale"] += logement.surface_habitable
+        logements_totale["sa_totale"] += logement.surface_annexes
+        logements_totale["sar_totale"] += logement.surface_annexes_retenue
+        logements_totale["su_totale"] += logement.surface_utile
+        logements_totale["loyer_total"] += logement.loyer
         if logement.typologie not in nb_logements_par_type:
             nb_logements_par_type[logement.get_typologie_display()] = 0
         nb_logements_par_type[logement.get_typologie_display()] += 1
@@ -143,34 +143,12 @@ def generate_hlm(convention):
         "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF", "CDCL"]),
         "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF", "CDCL"]),
         "references_cadastrales": convention.programme.referencecadastrale_set.all(),
-        "vendeur_images": object_images["vendeur_images"],
-        "acquereur_images": object_images["acquereur_images"],
-        "reference_notaire_images": object_images["reference_notaire_images"],
-        "reference_publication_acte_images": object_images[
-            "reference_publication_acte_images"
-        ],
-        "edd_volumetrique_images": object_images["edd_volumetrique_images"],
-        "edd_classique_images": object_images["edd_classique_images"],
+        **object_images,
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
-        # 30 % au moins > 10 logement si PLUS
-        "mixPLUSsup10_30pc": mixite[
-            "mixPLUSsup10_30pc"
-        ],  # 30 % plus de 10 logements si PLUS
-        "mixPLUSinf10_30pc": mixite[
-            "mixPLUSinf10_30pc"
-        ],  # 30 % moins de 10 logements si PLUS
-        "mixPLUSinf10_10pc": mixite[
-            "mixPLUSinf10_10pc"
-        ],  # 10 % moins de 10 logements si PLUS
-        "mixPLUS_30pc": mixite["mixPLUS_30pc"],  # 30 % si PLUS
-        "mixPLUS_10pc": mixite["mixPLUS_10pc"],  # 10 % si PLUS
-        "loyer_m2": convention.lot.logement_set.first().loyer_par_metre_carre,
-        "sh_totale": logements_totale["sh"],
-        "sa_totale": logements_totale["sa"],
-        "sar_totale": logements_totale["sar"],
-        "su_totale": logements_totale["su"],
-        "loyer_total": logements_totale["loyer"],
+        **mixite,
+        "loyer_m2": get_loyer_par_metre_carre(convention),
+        **logements_totale,
         "liste_des_annexes": compute_liste_des_annexes(
             convention.lot.typestationnement_set.all(), annexes
         ),
@@ -190,6 +168,13 @@ def generate_hlm(convention):
         os.remove(local_path)
 
     return file_stream
+
+
+def get_loyer_par_metre_carre(convention):
+    logement = convention.lot.logement_set.first()
+    if logement:
+        return convention.lot.logement_set.first().loyer_par_metre_carre
+    return 0
 
 
 def compute_liste_des_annexes(typestationnements, annexes):

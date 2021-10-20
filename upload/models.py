@@ -13,6 +13,15 @@ class UploadedFile(models.Model):
     size = models.CharField(max_length=255, null=True)
     content_type = models.CharField(max_length=255, null=True)
 
+    def filepath(self, convention_uuid):
+        if self.dirpath:
+            filepath = f"{self.dirpath}/{self.uuid}_{self.filename}"
+        else:
+            filepath = (
+                f"conventions/{convention_uuid}/media/" + f"{self.uuid}_{self.filename}"
+            )
+        return filepath
+
     def __str__(self):
         return self.filename
 
