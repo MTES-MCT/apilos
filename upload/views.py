@@ -27,18 +27,8 @@ def _compute_dirpath(request):
 def display_file(request, convention_uuid, uploaded_file_uuid):
     uploaded_file = UploadedFile.objects.get(uuid=uploaded_file_uuid)
 
-    if uploaded_file.dirpath:
-        filepath = (
-            f"{uploaded_file.dirpath}/{uploaded_file.uuid}_{uploaded_file.filename}"
-        )
-    else:
-        filepath = (
-            f"conventions/{convention_uuid}/media/"
-            + f"{uploaded_file.uuid}_{uploaded_file.filename}"
-        )
-
     file = default_storage.open(
-        filepath,
+        uploaded_file.filepath(convention_uuid),
         "rb",
     )
 
