@@ -1,6 +1,11 @@
 Dropzone.autoDiscover = false;
 
-function init_dropzone_from_file(form_id, csrf_token, parameters, accepted_files) {
+function init_dropzone_from_file(form_id, accepted_files) {
+    csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value
+    object_name = document.getElementById(form_id + "_object_name").value
+    object_uuid = document.getElementById(form_id + "_object_uuid").value
+    parameters = {}
+    parameters[object_name]= object_uuid
     if (accepted_files == undefined ) accepted_files = 'image/*,application/pdf'
     let myDropzone = new Dropzone("div#"+form_id+"_dropzone", {
         url: "/upload/",
@@ -16,8 +21,6 @@ function init_dropzone_from_file(form_id, csrf_token, parameters, accepted_files
                 document.getElementById(form_id).value = JSON.stringify(files);
             })
             this.on("error", function (file, errorMessage, xhr) {
-                console.log(file)
-                console.log(errorMessage)
                 var error = document.createElement("p");
                 error.classList.add('fr-error-text')
                 error.appendChild(document.createTextNode(errorMessage))

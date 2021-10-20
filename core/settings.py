@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "stats.apps.StatsConfig",
     "users.apps.UsersConfig",
     "upload.apps.UploadConfig",
+    "csp",
 ]
 
 MIDDLEWARE = [
@@ -78,6 +79,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "csp.middleware.CSPMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -95,6 +97,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "core.context_processor.get_environment",
+                "csp.context_processors.nonce",  # allow CSP_NONCE in template
             ],
         },
     },
@@ -175,8 +178,6 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 # Object storage with Scaleway
-
-
 AWS_ACCESS_KEY_ID = get_env_variable("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = get_env_variable("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = get_env_variable("AWS_STORAGE_BUCKET_NAME")
@@ -191,3 +192,61 @@ else:
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# Security settings
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = "Strict"
+SESSION_COOKIE_SAMESITE = "Strict"
+
+# https://django-csp.readthedocs.io/en/latest/configuration.html
+CSP_DEFAULT_SRC = "none"
+CSP_SCRIPT_SRC = (
+    "'self'",
+    "'sha256-IH4SW4oQ2+qpVYUp6BAFl76Y8BFalgWTYQkH1/a78y8='",
+)  # Check to give a exhaustive list
+CSP_SCRIPT_SRC_ATTR = "'unsafe-inline'"
+CSP_SCRIPT_SRC_ELEM = (
+    "'self'",  # Can we remove self ?
+    "'sha256-GFlyyOWKc6dO10vtY99KH1e0Nzmh9vLY6iqtsWgHe6k='",  # Vendeur
+    "'sha256-QHhorxSvdNSQWhalDZHGA2XcvsjOdsmS58GA5QaJ/OU='",  # Acquereur
+    "'sha256-+PnkN0qk0DCHsI0y521uMebSJIWrmv0dFRQ/S561ULM='",  # Référence du notaire
+    "'sha256-NReCIjugI34tPhPVKyr5iv0HUUEe6y5sTL+ma3aQTp8='",  # Référence de publication de l'acte
+    "'sha256-kHqGInRILlllC8rPrYK1f6EwACEMFnlnCK+dFpWstzg='",  # Acte de propriété
+    "'sha256-w1EMiRuk76A+KmjYIOVL4pmm9bqmoKnwce1e7Eu3sO8='",  # Acte notarial
+    "'sha256-EscldfOJzFmg7GyCmLb0TYJr83JypmtT/aEEkBoCndw='",  # EDD volumetrique
+    "'sha256-gea3/HF8cJqJgt3x3xm9/zB4/l6lYaDpQSDFIKAR0rU='",  # EDD classique
+    "'sha256-IH4SW4oQ2+qpVYUp6BAFl76Y8BFalgWTYQkH1/a78y8='",  # Matomo
+    "'sha256-BDkwe7ZnNbR6SoJ6JQei31efZ7+all75pyRkUK89l5c='",  # Comments
+    "https://stats.data.gouv.fr/piwik.js",  # Matomo
+)
+CSP_IMG_SRC = ("'self'", "data:")
+CSP_OBJECT_SRC = "'none'"
+CSP_FONT_SRC = "'self'", "data:"
+CSP_CONNECT_SRC = ("'self'", "https://stats.data.gouv.fr/piwik.php")
+CSP_STYLE_SRC = "'self'"
+CSP_MANIFEST_SRC = "'self'"
+CSP_INCLUDE_NONCE_IN = [
+    "default-src",
+    "script-src",
+    "style-src",
+]
+
+# CSP_PREFETCH_SRC = None
+# CSP_MEDIA_SRC = None
+# CSP_FRAME_SRC = None
+# CSP_STYLE_SRC_ATTR = None
+# CSP_STYLE_SRC_ELEM = None
+# CSP_BASE_URI = None
+# CSP_CHILD_SRC = None
+# CSP_FRAME_ANCESTORS = None
+# CSP_NAVIGATE_TO = None
+# CSP_FORM_ACTION = None
+# CSP_SANDBOX = None
+# CSP_REPORT_URI = None
+# CSP_REPORT_TO = None
+# CSP_WORKER_SRC = None
+# CSP_PLUGIN_TYPES = None
+# CSP_REQUIRE_SRI_FOR = None
+# CSP_UPGRADE_INSECURE_REQUESTS = False
+# CSP_BLOCK_ALL_MIXED_CONTENT = False

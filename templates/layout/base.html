@@ -62,32 +62,8 @@
         {% block js %}
             <script type="module" src="{% static "dsfr/js/dsfr.module.min.js" %}"></script>
             <script type="text/javascript" nomodule src="{% static "dsfr/js/dsfr.nomodule.min.js" %}"></script>
-            <script type="text/javascript">
-                document.addEventListener("DOMContentLoaded", function(event) {
-                    if (localStorage.getItem('scrollloc') == window.location) {
-                        var scrollpos = localStorage.getItem('scrollpos');
-                        if (scrollpos) window.scrollTo(0, scrollpos);
-                        localStorage.setItem('scrollpos', 0);
-                    }
-                });
-
-                window.onbeforeunload = function(e) {
-                    localStorage.setItem('scrollpos', window.scrollY);
-                    localStorage.setItem('scrollloc', window.location);
-                };
-            </script>
-            <script>
-                function toggle(element_id) {
-                    element = document.getElementById(element_id);
-                    display = element.style.display;
-                    if (display == 'none') {
-                        element.style.display = 'block';
-                    }
-                    else {
-                        element.style.display = 'none';
-                    }
-                }
-            </script>
+            <script type="text/javascript" src="{% static "js/main.js" %}"></script>
         {% endblock %}
+
     </body>
 </html>

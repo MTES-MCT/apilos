@@ -3,6 +3,7 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
+            {{nonce}}
             <form method="post" action="">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
@@ -20,7 +21,7 @@
                                             value="selection"
                                             name="{{form.existing_programme.html_name}}"
                                             {% if form.existing_programme.value == 'selection' %}checked{% endif %}
-                                            onclick="conv_mode(true)"/>
+                                            onclick="convention_mode(true)"/>
                                         <label class="fr-label" for="selection">
                                             Séléctionnez votre programme et son financement {% include "common/mandatory_field.html" with form_input=form.lot_uuid %}
                                         </label>
@@ -53,12 +54,11 @@
                                                 value="creation"
                                                 name="{{form.existing_programme.html_name}}"
                                                 {% if form.existing_programme.value == 'creation' %}checked{% endif %}
-                                                onclick="conv_mode(false)"/>
-                                            <label class="fr-label" for="creation">Vous n'avez pas trouvé le programme à conventionner dans la liste déroulante ? Créez votre convention à partir de zéro
+                                                onclick="convention_mode(false)"/>
+                                            <label class="fr-label" for="creation">Convention sans agrément : créez votre convention à partir de zéro
                                             </label>
                                         </div>
                                         <div id='programme_creation' {% if form.existing_programme.value != 'creation' %}hidden{% endif %}>
-
                                             {% if bailleurs.length == 1 %}
                                                 {% include "common/form/select_enum.html" with form_input=form.bailleur label="Bailleur" enum=bailleurs without_empty_option=True %}
                                             {% else %}
@@ -114,11 +114,4 @@
             </form>
         </div>
     </div>
-    <script>
-        function conv_mode(is_select) {
-            document.getElementById('programme_selection').hidden = !is_select
-            document.getElementById('programme_creation').hidden = is_select
-        }
-    </script>
-
 {% endblock %}
