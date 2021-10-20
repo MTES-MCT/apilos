@@ -1,5 +1,7 @@
 {% extends "layout/base.html" %}
 
+{% block page_title %}EDD - APiLos{% endblock%}
+
 {% load static %}
 
 {% block javascript_extras %}
@@ -20,13 +22,14 @@
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - État descriptif de division</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
+                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - État descriptif de division</h2>
                         {% include "common/mandatory_fields_info.html" %}
 
-                        <p><span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true"></span>Pour rappel, l'état descriptif de division est obligatoire dès qu’un programme comporte plusieurs financements
-                            et donc plusieurs conventions. Il existe 2 types d’EDD: EDD simplifié & EDD volumétrique
-                        </p>
+                        <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
+                            <p>Pour rappel, l'état descriptif de division est obligatoire dès qu’un programme comporte plusieurs financements et donc plusieurs conventions. </p>
+                            <p>Il existe 2 types d’EDD: EDD simplifié & EDD volumétrique</p>
+                        </div>
 
                         {% include "common/form/input_upload.html" with label="EDD volumétrique" form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.edd_volumetrique_files.values %}
 
@@ -36,7 +39,7 @@
 
                         {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_classique label="Mention de publication de l'EDD classique" %}
 
-                        <h4 class="fr-mb-1w">EDD Simplifé</h4>
+                        <h4 class="fr-mb-1w">EDD Simplifié</h4>
 
                         {% if editable %}
                             {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='logements_edd' upform=upform  what="logements pour l'EDD simplifié"%}

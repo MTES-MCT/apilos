@@ -1,5 +1,7 @@
 {% extends "layout/base.html" %}
 
+{% block page_title %}Logements - APiLos{% endblock%}
+
 {% load static %}
 
 {% block content %}
@@ -9,9 +11,11 @@
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Détails des logements</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
+                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Détails des logements</h2>
                         {% include "common/mandatory_fields_info.html" %}
+
+                        <h4>Logements associés à la convention</h4>
 
                         {% if editable %}
                             {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='logements' upform=upform  what='logements'%}
@@ -33,8 +37,6 @@
                         {{ formset.management_form }}
                         <div class="fr-table fr-table--bordered">
                             <table id="lgts_table">
-                                <caption>Liste des logements associés à la convention</caption>
-
                                 <thead>
                                     <tr>
                                         <th scope="col" class="col__width--200">Désignation {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>

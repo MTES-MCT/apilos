@@ -1,5 +1,7 @@
 {% extends "layout/base.html" %}
 
+{% block page_title %}Recapitulatif - APiLos{% endblock%}
+
 {% load static %}
 
 {% block css_extras %}
@@ -12,8 +14,8 @@
         <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                    <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Récapitulatif</h2>
                     {% include "common/convention_edit_info.html" with convention=convention %}
+                    <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Récapitulatif</h2>
 
                     {% if not convention.is_submitted %}
                         <div role="alert" class="fr-alert fr-alert--error">

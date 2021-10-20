@@ -1,5 +1,7 @@
 {% extends "layout/base.html" %}
 
+{% block page_title %}Programme - APiLos{% endblock%}
+
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
@@ -7,119 +9,69 @@
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Nature du programme immobilier</h2>
                         {% include "common/convention_edit_info.html" with convention=convention %}
+                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Nature du programme immobilier</h2>
                         {% include "common/mandatory_fields_info.html" %}
+
+                        <h4>Adresse du programme</h4>
 
                         {% include "common/form/input_text.html" with form_input=form.nom label="Nom du programme" %}
                         {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" %}
 
-                        <div class="fr-mb-2w">
-                            <div class="fr-grid-row fr-grid-row--gutters">
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" %}
-                                </div>
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_text.html" with form_input=form.ville label="Ville" %}
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_text.html" with form_input=form.ville label="Ville" %}
+                            </div>
+                        </div>
+
+                        <h4 class="fr-mt-2w">Détails du programme</h4>
+
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w fr-mt-3w">
+                                <div class="fr-checkbox-group {% if form.anru.errors %}fr-checkbox-group--error{% endif %}">
+                                    <input
+                                        type="checkbox"
+                                        id="anru"
+                                        {% if form.anru.value %}checked="checked"{% endif %}
+                                        name="anru"
+                                        {% if not editable %}disabled{% endif %}>
+                                    <label class="fr-label" for="anru"> ANRU{% include "common/mandatory_field.html" with form_input=form.anru %}
+                                        <span class="fr-hint-text">Le programme bénéficie d'un financement ANRU</span>
+                                    </label>
+                                    {% for error in form.anru.errors %}
+                                        <p id="checkboxes-error-desc-error" class="fr-error-text">
+                                            {{ error }}
+                                        </p>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
 
-
-                        <div class="fr-mb-2w">
-                            <div class="fr-grid-row fr-grid-row--gutters">
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" %}
-                                </div>
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w fr-mt-3w">
-                                    <div class="fr-checkbox-group {% if form.anru.errors %}fr-checkbox-group--error{% endif %}">
-                                        <input
-                                            type="checkbox"
-                                            id="anru"
-                                            {% if form.anru.value %}checked="checked"{% endif %}
-                                            name="anru"
-                                            {% if not editable %}disabled{% endif %}>
-                                        <label class="fr-label" for="anru"> ANRU{% include "common/mandatory_field.html" with form_input=form.anru %}
-                                            <span class="fr-hint-text">Le programme bénéficie d'un financement ANRU</span>
-                                        </label>
-                                        {% for error in form.anru.errors %}
-                                            <p id="checkboxes-error-desc-error" class="fr-error-text">
-                                                {{ error }}
-                                            </p>
-                                        {% endfor %}
-                                    </div>
-                                </div>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/select_enum.html" with form_input=form.type_habitat label="Type d'habitat" enum=types_habitat %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/select_enum.html" with form_input=form.type_operation label="Type d'opération" enum=types_operation %}
                             </div>
                         </div>
 
-
-                        <div class="fr-mb-2w">
-                            <div class="fr-grid-row fr-grid-row--gutters">
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    <div class="fr-select-group {% if form.type_habitat.errors %}fr-select-group--error{% endif %}">
-                                        <label class="fr-label" for="{{form.type_habitat.id_for_label}}">
-                                            Type d'habitat
-                                        </label>
-                                        <select
-                                            class="fr-select {% if form.type_habitat.errors %}fr-select--error{% endif %}"
-                                            id="type_habitat"
-                                            name="type_habitat"
-                                            {% if not editable %}disabled{% endif %}>
-                                            <option value="" {% if not type_habitat.value %}selected{% endif %} disabled hidden></option>
-                                            {% for type_habitat in types_habitat %}
-                                                <option value="{{type_habitat.value}}"
-                                                    {% if type_habitat.value  == form.type_habitat.value %}selected{% endif %}>
-                                                    {{type_habitat.label}}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                        {% for error in form.type_habitat.errors %}
-                                            <p id="select-error-desc-error" class="fr-error-text">
-                                                {{ error }}
-                                            </p>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    <div class="fr-select-group {% if form.type_operation.errors %}fr-select-group--error{% endif %}">
-                                        <label class="fr-label" for="{{form.type_operation.id_for_label}}">
-                                            Type d'opération
-                                        </label>
-                                        <select
-                                            class="fr-select {% if form.type_operation.errors %}fr-select--error{% endif %}"
-                                            id="type_operation"
-                                            name="type_operation"
-                                            {% if not editable %}disabled{% endif %}>
-                                            <option value="" selected disabled hidden></option>
-                                            {% for type_operation in types_operation %}
-                                                <option value="{{type_operation.value}}"
-                                                    {% if type_operation.value  == form.type_operation.value %}selected{% endif %}>
-                                                    {{type_operation.label}}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                        {% for error in form.type_operation.errors %}
-                                            <p id="select-error-desc-error" class="fr-error-text">
-                                                {{ error }}
-                                            </p>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <h4>
+                        <h4 class="fr-mt-2w">
                             Locaux auxquels ne s'appliquent pas la présente convention
                         </h4>
 
-                        <div class="fr-mb-2w">
-                            <div class="fr-grid-row fr-grid-row--gutters">
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_number.html" with form_input=form.nb_locaux_commerciaux label="Locaux commerciaux" %}
-                                </div>
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_number.html" with form_input=form.nb_bureaux label="Bureaux" %}
-                                </div>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_number.html" with form_input=form.nb_locaux_commerciaux label="Locaux commerciaux" %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_number.html" with form_input=form.nb_bureaux label="Bureaux" %}
                             </div>
                         </div>
 
