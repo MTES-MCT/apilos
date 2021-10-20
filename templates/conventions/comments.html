@@ -3,9 +3,9 @@
 {% load static %}
 
 {% block javascript_extras %}
-    <script src="{% static "dropzonejs/min/dropzone.min.js" %}"></script>
-    <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}"></script>
-    <script src="{% static "js/dropzone-client.js" %}"></script>
+    <script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
 {% block css_extras %}
