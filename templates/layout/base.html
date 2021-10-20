@@ -29,7 +29,7 @@
         {% block javascript_extras %}{% endblock %}
         {% if ENVIRONMENT == 'production' %}
             <!-- Matomo -->
-            <script>
+            <script nonce="{{request.csp_nonce}}">
                 var _paq = window._paq = window._paq || [];
                 /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
                 _paq.push(['trackPageView']);
@@ -59,10 +59,11 @@
         {% endblock %}
         {% include "common/matomo.html" %}
         {% include "common/sentry.html" %}
+        {{request.csp_nonce}}
         {% block js %}
-            <script type="module" src="{% static "dsfr/js/dsfr.module.min.js" %}"></script>
-            <script type="text/javascript" nomodule src="{% static "dsfr/js/dsfr.nomodule.min.js" %}"></script>
-            <script type="text/javascript" src="{% static "js/main.js" %}"></script>
+            <script type="module" src="{% static "dsfr/js/dsfr.module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+            <script type="text/javascript" nomodule src="{% static "dsfr/js/dsfr.nomodule.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+            <script type="text/javascript" src="{% static "js/main.js" %}" nonce="{{request.csp_nonce}}"></script>
         {% endblock %}
 
     </body>
