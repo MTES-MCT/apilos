@@ -1,4 +1,6 @@
 {% if form_input.help_text %}
-    &nbsp;<button class="fr-link fr-link--sm fr-fi-information-line" style="min-height: 0; padding: .1rem;" type='button' onclick="toggle('{{form_input.id_for_label}}_description')"></button>
-    <span class="fr-hint-text" id="{{form_input.id_for_label}}_description" style="display:none;">{{form_input.help_text}}</span>
+    &nbsp;<button class="fr-link fr-link--sm fr-fi-information-line content__helpicon" type='button' onclick="toggle('{{form_input.id_for_label}}_description')"></button>
+    <div id="{{form_input.id_for_label}}_description" hidden>
+        <span class="fr-hint-text">{{form_input.help_text}}</span>
+    </div>
 {% endif %}

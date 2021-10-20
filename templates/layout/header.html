@@ -19,7 +19,7 @@
                             </p>
                         </div>
                         <div class="fr-header__operator">
-                            <img src="{% static "img/apilos_logo.png" %}" class="fr-responsive-img" style="width:5rem;" alt="APiLos, conventionnement APL" />
+                            <img src="{% static "img/apilos_logo.png" %}" class="fr-responsive-img header__logo" alt="APiLos, conventionnement APL" />
                             <!-- L’alternative de l’image (attribut alt) doit impérativement être renseignée et reprendre le texte visible dans l’image -->
                         </div>
                         <div class="fr-header__navbar">
@@ -82,9 +82,3 @@
         </div>
     </div>
 </header>
-<script>
-    // useful link: https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
-    if (/*@cc_on!@*/false || !!document.documentMode) {
-        document.getElementById('browser_alert').hidden = false
-    }
-</script>

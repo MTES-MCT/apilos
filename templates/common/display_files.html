@@ -1,5 +1,5 @@
 {% for file in file_list %}
-    <div style="display: flex;flex-direction: row;align-items: center;justify-content: left;">
+    <div class="content__fileblock">
         <div class='fr-mx-1w dz-image'>
             <img class="small_thumbnail" {% if file.thumbnail %}src='{{file.thumbnail}}'{% endif %}/>
         </div>

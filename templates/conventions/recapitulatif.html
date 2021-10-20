@@ -233,15 +233,15 @@
                                         <table>
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" style='min-width:200px;'>Désignation {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:150px;'>Type {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:120px;'>Surface habitable {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:120px;'>Surface des annexes réelle {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:120px;'>Surface des annexes retenue dans la SU {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:120px;'>Surface Utile {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:120px;'>Loyer maxinum en € par m² de surface utile {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:120px;'>Coefficient propre au logement {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:120px;'>Loyer maxinum du logement en € {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--200">Désignation {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--150">Type {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Surface habitable {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Surface des annexes réelle {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Surface des annexes retenue dans la SU {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Surface Utile {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Loyer maxinum en € par m² de surface utile {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Coefficient propre au logement {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Loyer maxinum du logement en € {% include "common/mandatory_field_star.html" %}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -314,12 +314,12 @@
                                         <table>
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" style='min-width:150px;'>Type d'annexe {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:200px;'>Désignation des logements {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:150px;'>Typologie des logements {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:120px;'>Surface de l'annexe {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:120px;'>Loyer unitaire en € {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:120px;'>Loyer maxinum du logement en € {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--150">Type d'annexe {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--200">Désignation des logements {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--150">Typologie des logements {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Surface de l'annexe {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Loyer unitaire en € {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Loyer maxinum du logement en € {% include "common/mandatory_field_star.html" %}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -362,9 +362,9 @@
                                         <table>
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" style='min-width:150px;'>Type de stationnement {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:200px;'>Nombre de staionnements {% include "common/mandatory_field_star.html" %}</th>
-                                                    <th scope="col" style='min-width:150px;'>Loyer maximum en € {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--150">Type de stationnement {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--200">Nombre de staionnements {% include "common/mandatory_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--150">Loyer maximum en € {% include "common/mandatory_field_star.html" %}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -472,20 +472,7 @@
         </div>
     </div>
 
-    <script  type="text/javascript">
-        function compute_total_value(what){
-            elements = document.querySelectorAll('[id=lgt_' + what + ']');
-            total_value = 0;
-            for ( i =0, len = elements.length; i<len; i++) {
-                total_value = total_value + parseFloat(elements[i].innerHTML);
-            }
-            document.getElementById('total_' + what).innerHTML = "<span>" + total_value.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g, " ") + "</span>";
-        }
-        compute_total_value('sh')
-        compute_total_value('sa')
-        compute_total_value('sar')
-        compute_total_value('su')
-        compute_total_value('loyer')
-    </script>
+    <script type="text/javascript" src="{% static "js/logements-table.js" %}"></script>
+
 
 {% endblock %}
