@@ -68,7 +68,6 @@ INSTALLED_APPS = [
     "stats.apps.StatsConfig",
     "users.apps.UsersConfig",
     "upload.apps.UploadConfig",
-    #    "csp",
 ]
 
 MIDDLEWARE = [
@@ -79,7 +78,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "csp.middleware.CSPMiddleware",
+    #    "csp.middleware.CSPMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -97,7 +96,6 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "core.context_processor.get_environment",
-                #                "csp.context_processors.nonce",  # allow CSP_NONCE in template
             ],
         },
     },
