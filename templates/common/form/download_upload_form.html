@@ -3,9 +3,16 @@
 <p>Télécharger le modèle, éditer puis téléverser vos {{ what }}. <span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true"></span>Attention, la liste des {{ what }} téléversée écrase la liste courante.</p>
 <div class="fr-grid-row fr-grid-row--gutters fr-mx-1w">
     <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-btns-group">
-        <button type="button" class="fr-btn fr-btn--secondary" onclick="location.href='{% url 'conventions:load_xlsx_model' file_type=file_type %}'">
+        <button type="button" class="fr-btn fr-btn--secondary" id='download_model'>
             <img class="apilos-fi-btn--secondary fr-mr-1w" src="{% static "icons/download.svg" %}">Télécharger le modèle des {{ what }} !
         </button>
+        <script nonce="{{request.csp_nonce}}">
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('download_model')
+                    .addEventListener('click', function(){ location.href="{% url 'conventions:load_xlsx_model' file_type=file_type %}" });
+            });
+        </script>
+
     </div>
 </div>
 

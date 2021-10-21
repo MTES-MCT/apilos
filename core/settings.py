@@ -78,7 +78,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    #    "csp.middleware.CSPMiddleware",
+    "csp.middleware.CSPMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -199,9 +199,8 @@ SESSION_COOKIE_SAMESITE = "Strict"
 
 # https://django-csp.readthedocs.io/en/latest/configuration.html
 CSP_DEFAULT_SRC = "none"
-CSP_SCRIPT_SRC = None
-CSP_SCRIPT_SRC_ATTR = "'unsafe-inline'"
-CSP_SCRIPT_SRC_ELEM = ("https://stats.data.gouv.fr/piwik.js",)  # Matomo
+CSP_SCRIPT_SRC = ("https://stats.data.gouv.fr/piwik.js",)
+# CSP_SCRIPT_SRC_ELEM = ("https://stats.data.gouv.fr/piwik.js",)  # Matomo
 CSP_IMG_SRC = ("'self'", "data:")
 CSP_OBJECT_SRC = "'none'"
 CSP_FONT_SRC = "'self'", "data:"
