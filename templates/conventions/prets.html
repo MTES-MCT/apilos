@@ -96,7 +96,49 @@
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_date.html" with form_input=form.date_fin_conventionnement label="Date de fin de la convention" %}
+
+
+                                    <div class="fr-input-group {% if form.annee_fin_conventionnement.errors %}fr-select-group--error{% endif %}">
+                                        <label class="fr-label fr-mb-1w" for="{{form.annee_fin_conventionnement.id_for_label}}">
+                                            Date de fin de la convention
+                                            {% include "common/mandatory_field.html" with form_input=form.annee_fin_conventionnement %}
+                                            {% include "common/help_field.html" with form_input=form.annee_fin_conventionnement %}
+                                        </label>
+                                        <div class="fixed-date fr-mt-1w">
+                                            <div class="day-and-month">
+                                                <span>30&nbsp;/&nbsp;06&nbsp;/&nbsp;</span>
+                                            </div>
+                                            <div class="year">
+                                                <select
+                                                    class="fr-select {% if form.annee_fin_conventionnement.errors %}fr-select--error{% endif %}"
+                                                    id="{{form.annee_fin_conventionnement.id_for_label}}"
+                                                    name="{{form.annee_fin_conventionnement.html_name}}"
+                                                    {% if not editable %}disabled{% endif %}>
+                                                    <option value="" {% if not form.annee_fin_conventionnement.value %}selected{% endif %} disabled hidden>Année</option>
+                                                    {% for year in years %}
+                                                        <option value="{{year}}"
+                                                            {% if year|slugify == form.annee_fin_conventionnement.value|slugify %}selected{% endif %}>
+                                                            {{year}}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            {% for error in form.annee_fin_conventionnement.errors %}
+                                                <p id="select-error-desc-error" class="fr-error-text">
+                                                    {{ error }}
+                                                </p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+
+
+
+
+
+
+
+
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
                                     {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" label="Fonds propres" %}

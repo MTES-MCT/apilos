@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from programmes.models import (
     Programme,
@@ -576,9 +577,9 @@ def convention_financement(request, convention_uuid):
             form_is_valid = form.is_valid()
             formset_is_valid = formset.is_valid()
             if form_is_valid and formset_is_valid:
-                convention.date_fin_conventionnement = form.cleaned_data[
-                    "date_fin_conventionnement"
-                ]
+                convention.date_fin_conventionnement = datetime.date(
+                    form.cleaned_data["annee_fin_conventionnement"], 6, 30
+                )
                 convention.fond_propre = form.cleaned_data["fond_propre"]
                 convention.save()
                 convention.pret_set.all().delete()
@@ -621,9 +622,9 @@ def convention_financement(request, convention_uuid):
         formset = PretFormSet(initial=initial)
         form = ConventionFinancementForm(
             initial={
-                "date_fin_conventionnement": utils.format_date_for_form(
-                    convention.date_fin_conventionnement
-                ),
+                "annee_fin_conventionnement": convention.date_fin_conventionnement.year
+                if convention.date_fin_conventionnement is not None
+                else None,
                 "fond_propre": convention.fond_propre,
             }
         )
