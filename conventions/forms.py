@@ -3,6 +3,7 @@ from django.forms import BaseFormSet, formset_factory
 from django.forms.fields import FileField
 from django.core.exceptions import ValidationError
 
+from programmes.models import Financement, TypeOperation
 from .models import Preteur
 
 
@@ -23,6 +24,9 @@ class ConventionCommentForm(forms.Form):
 
 class ConventionFinancementForm(forms.Form):
 
+    prets = None
+    convention = None
+
     annee_fin_conventionnement = forms.IntegerField(
         required=True,
         error_messages={
@@ -37,6 +41,15 @@ class ConventionFinancementForm(forms.Form):
         ),
     )
     fond_propre = forms.FloatField(required=False)
+
+    def clean(self):
+        print(self.prets)
+        print(self.convention)
+
+        # cleaned_data = super().clean()
+        # max_fin_cdc = None
+        # print(form.cleaned_data["preteur"])
+        # convention = self.convention
 
 
 class PretForm(forms.Form):
@@ -97,20 +110,28 @@ class PretForm(forms.Form):
 
 
 class BasePretFormSet(BaseFormSet):
+
+    convention = None
+
     def clean(self):
         self.manage_cdc_validation()
 
     def manage_cdc_validation(self):
-        for form in self.forms:
-            #            if self.can_delete() and self._should_delete_form(form):
-            #                continue
-            if form.cleaned_data.get("preteur") in ["CDCF", "CDCL"]:
-                return
-        error = ValidationError(
-            "Au moins un prêt à la Caisee des dépôts et consignations doit-être déclaré "
-            + "(CDC foncière, CDC locative)"
-        )
-        self._non_form_errors.append(error)
+
+        if (
+            self.convention.financement != Financement.PLS
+            and self.convention.programme.type_operation != TypeOperation.SANSTRAVAUX
+        ):
+            for form in self.forms:
+                #            if self.can_delete() and self._should_delete_form(form):
+                #                continue
+                if form.cleaned_data.get("preteur") in ["CDCF", "CDCL"]:
+                    return
+            error = ValidationError(
+                "Au moins un prêt à la Caisee des dépôts et consignations doit-être déclaré "
+                + "(CDC foncière, CDC locative)"
+            )
+            self._non_form_errors.append(error)
 
 
 PretFormSet = formset_factory(PretForm, formset=BasePretFormSet, extra=0)

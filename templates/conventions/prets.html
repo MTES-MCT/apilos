@@ -96,8 +96,6 @@
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-
-
                                     <div class="fr-input-group {% if form.annee_fin_conventionnement.errors %}fr-select-group--error{% endif %}">
                                         <label class="fr-label fr-mb-1w" for="{{form.annee_fin_conventionnement.id_for_label}}">
                                             Date de fin de la convention
@@ -130,15 +128,6 @@
                                             {% endfor %}
                                         </div>
                                     </div>
-
-
-
-
-
-
-
-
-
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
                                     {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" label="Fonds propres" %}
