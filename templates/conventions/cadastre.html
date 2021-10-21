@@ -49,9 +49,9 @@
                             </div>
                         </div>
 
-                        {% include "common/form/input_upload.html" with label="Vendeur" form_input=form.vendeur form_input_files=form.vendeur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.vendeur_files.values %}
+                        {% include "common/form/input_upload.html" with label="Vendeur" form_input=form.vendeur form_input_files=form.vendeur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.vendeur_files.values mandatory=True %}
 
-                        {% include "common/form/input_upload.html" with label="Acquéreur" form_input=form.acquereur form_input_files=form.acquereur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.acquereur_files.values %}
+                        {% include "common/form/input_upload.html" with label="Acquéreur" form_input=form.acquereur form_input_files=form.acquereur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.acquereur_files.values mandatory=True %}
 
                         {% include "common/form/input_upload.html" with label="Référence du notaire" form_input=form.reference_notaire form_input_files=form.reference_notaire_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.reference_notaire_files.values %}
 

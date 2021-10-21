@@ -1,9 +1,21 @@
 {% if convention_uuid %}
-    <button class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" type="button" onclick="location.href='{% url suivant convention_uuid=convention_uuid %}'">
+    <button class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" type="button" id='next_button'>
         Suivant
     </button>
+    <script nonce="{{request.csp_nonce}}">
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('next_button')
+                .addEventListener('click', function(){ location.href='{% url suivant convention_uuid=convention_uuid %}' });
+        });
+    </script>
 {% else %}
-    <button class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" type="button" onclick="location.href='{% url suivant %}'">
+    <button class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" type="button" id='next_button'>
         Suivant
     </button>
+    <script nonce="{{request.csp_nonce}}">
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('next_button')
+                .addEventListener('click', function(){ location.href='{% url suivant %}' });
+        });
+    </script>
 {% endif %}

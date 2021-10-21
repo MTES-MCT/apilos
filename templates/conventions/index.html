@@ -15,9 +15,10 @@
                         <h4 class="fr-mb-3w">
                             Commencer une nouvelle convention dès à présent
                         </h4>
-                        <button class="fr-btn" onclick="location.href='{% url 'conventions:selection' %}'">
+                        <button class="fr-btn" id="new_convention">
                             <span class="fr-fi-edit-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
                         </button>
+                        {% include "common/utils/onclick_redirect.html" with id='new_convention' url_target='conventions:selection' %}
                     {% elif request.user.is_instructeur or request.user.is_staff %}
                         <h2 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h2>
                     {% else %}
@@ -65,20 +66,38 @@
                                         <td>
                                             {% if request.user.is_bailleur %}
                                                 {% if convention.is_bailleur_editable %}
-                                                    <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" onclick="location.href='{% url 'conventions:selection_update' convention_uuid=convention.uuid %}'"">
+                                                    <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" id="update_convention_{{ convention.uuid }}">
                                                         Edit
                                                     </button>
+                                                    <script nonce="{{request.csp_nonce}}">
+                                                        document.addEventListener('DOMContentLoaded', function () {
+                                                            document.getElementById('update_convention_{{ convention.uuid }}')
+                                                                .addEventListener('click', function(){ location.href="{% url 'conventions:selection_update' convention_uuid=convention.uuid %}" });
+                                                        });
+                                                    </script>
                                                 {% else %}
-                                                    <button class="fr-btn fr-fi-eye-line" title="Visualiser votre convention" onclick="location.href='{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}'"">
+                                                    <button class="fr-btn fr-fi-eye-line" title="Visualiser votre convention" id="view_convention_{{ convention.uuid }}">
                                                         View
                                                     </button>
+                                                    <script nonce="{{request.csp_nonce}}">
+                                                        document.addEventListener('DOMContentLoaded', function () {
+                                                            document.getElementById('view_convention_{{ convention.uuid }}')
+                                                                .addEventListener('click', function(){ location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" });
+                                                        });
+                                                    </script>
                                                 {% endif %}
                                             {% endif %}
                                             {% if request.user.is_instructeur %}
                                                 {% if convention.is_instructeur_editable %}
-                                                    <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" onclick="location.href='{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}'"">
+                                                    <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" id="update_convention_{{ convention.uuid }}">
                                                         Edit
                                                     </button>
+                                                    <script nonce="{{request.csp_nonce}}">
+                                                        document.addEventListener('DOMContentLoaded', function () {
+                                                            document.getElementById('update_convention_{{ convention.uuid }}')
+                                                                .addEventListener('click', function(){ location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" });
+                                                        });
+                                                    </script>
                                                 {% endif %}
                                             {% endif %}
                                         </td>
