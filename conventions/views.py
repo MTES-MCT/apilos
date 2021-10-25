@@ -170,6 +170,7 @@ def prets(request, convention_uuid):
             "nb_steps": NB_STEPS,
             "convention_form_step": 6,
             "preteurs": Preteur,
+            "years": range(2021, 2121),
         },
     )
 
