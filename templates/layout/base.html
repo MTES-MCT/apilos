@@ -59,7 +59,6 @@
         {% endblock %}
         {% include "common/matomo.html" %}
         {% include "common/sentry.html" %}
-        {{request.csp_nonce}}
         {% block js %}
             <script type="module" src="{% static "dsfr/js/dsfr.module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
             <script type="text/javascript" nomodule src="{% static "dsfr/js/dsfr.nomodule.min.js" %}" nonce="{{request.csp_nonce}}"></script>
