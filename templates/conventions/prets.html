@@ -121,12 +121,12 @@
                                                     {% endfor %}
                                                 </select>
                                             </div>
-                                            {% for error in form.annee_fin_conventionnement.errors %}
-                                                <p id="select-error-desc-error" class="fr-error-text">
-                                                    {{ error }}
-                                                </p>
-                                            {% endfor %}
                                         </div>
+                                        {% for error in form.annee_fin_conventionnement.errors %}
+                                            <p id="select-error-desc-error" class="fr-error-text">
+                                                {{ error }}
+                                            </p>
+                                        {% endfor %}
                                     </div>
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
