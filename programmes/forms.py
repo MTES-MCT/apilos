@@ -419,6 +419,7 @@ class BaseLogementFormSet(BaseFormSet):
         self.manage_same_loyer_par_metre_carre()
         self.manage_edd_consistency()
         self.manage_nb_logement_consistency()
+        self.manage_coefficient_propre()
 
     def manage_non_empty_validation(self):
         if len(self.forms) == 0:
@@ -485,6 +486,23 @@ class BaseLogementFormSet(BaseFormSet):
             error = ValidationError(
                 f"Le nombre de logement a conventionner ({lot.nb_logements}) "
                 + f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
+            )
+            self._non_form_errors.append(error)
+
+    def manage_coefficient_propre(self):
+        loyer_with_coef = 0
+        loyer_without_coef = 0
+        for form in self.forms:
+            coeficient = form.cleaned_data.get("coeficient")
+            surface_utile = form.cleaned_data.get("surface_utile")
+            loyer_par_metre_carre = form.cleaned_data.get("loyer_par_metre_carre")
+            loyer_with_coef += coeficient * surface_utile * loyer_par_metre_carre
+            loyer_without_coef += surface_utile * loyer_par_metre_carre
+        if round(loyer_with_coef, 2) > round(loyer_without_coef, 2):
+            error = ValidationError(
+                "La somme des loyers après application des coéficients ne peut excéder "
+                + "la somme des loyers sans application des coéficients, c'est à dire "
+                + f"{round(loyer_without_coef,2)} €"
             )
             self._non_form_errors.append(error)
 
