@@ -25,7 +25,9 @@ function toggle(element_id) {
 
 function convention_mode(is_select) {
     document.getElementById('programme_selection').hidden = !is_select
-    document.getElementById('programme_creation').hidden = is_select
+    if (document.getElementById('programme_creation') != null) {
+        document.getElementById('programme_creation').hidden = is_select
+    }
 }
 
 load_page()
