@@ -198,7 +198,7 @@ CSRF_COOKIE_SAMESITE = "Strict"
 SESSION_COOKIE_SAMESITE = "Strict"
 
 # https://django-csp.readthedocs.io/en/latest/configuration.html
-CSP_DEFAULT_SRC = "none"
+CSP_DEFAULT_SRC = "'none'"
 CSP_SCRIPT_SRC = ("https://stats.data.gouv.fr/piwik.js",)
 # CSP_SCRIPT_SRC_ELEM = ("https://stats.data.gouv.fr/piwik.js",)  # Matomo
 CSP_IMG_SRC = ("'self'", "data:")
@@ -209,8 +209,6 @@ CSP_STYLE_SRC = "'self'"
 CSP_MANIFEST_SRC = "'self'"
 CSP_INCLUDE_NONCE_IN = [
     "script-src",
-    "script-src-elem",
-    #     "style-src",
 ]
 
 # CSP_PREFETCH_SRC = None
