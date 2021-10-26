@@ -367,6 +367,9 @@ def programme_cadastral_update(request, convention_uuid):
                 programme.acte_notarial = _set_files_and_text_field(
                     form.cleaned_data["acte_notarial_files"],
                 )
+                programme.reference_cadastrale = _set_files_and_text_field(
+                    form.cleaned_data["reference_cadastrale_files"],
+                )
                 programme.save()
                 programme.referencecadastrale_set.all().delete()
                 for form_referencecadastrale in formset:
@@ -428,6 +431,9 @@ def programme_cadastral_update(request, convention_uuid):
                 ),
                 **_get_text_and_files_from_field(
                     "acte_notarial", programme.acte_notarial
+                ),
+                **_get_text_and_files_from_field(
+                    "reference_cadastrale", programme.reference_cadastrale
                 ),
             }
         )

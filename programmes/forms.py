@@ -200,6 +200,17 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )
+    reference_cadastrale = forms.CharField(
+        required=False,
+        max_length=5000,
+        error_messages={
+            "max_length": "Le message ne doit pas excéder 5000 characters",
+        },
+    )
+    reference_cadastrale_files = forms.CharField(
+        required=False,
+        help_text="Les fichiers de type images sont acceptés dans la limite de 100 Mo",
+    )
 
     def clean(self):
         cleaned_data = super().clean()

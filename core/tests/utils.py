@@ -140,6 +140,9 @@ def create_programme(bailleur, administration=None):
         ),
         acte_de_propriete=random.choice([files_and_text, "", "n'importe quoi", None]),
         acte_notarial=random.choice([files_and_text, "", "n'importe quoi", None]),
+        reference_cadastrale=random.choice(
+            [files_and_text, "", "n'importe quoi", None]
+        ),
         edd_volumetrique=random.choice([files_and_text, "", "n'importe quoi", None]),
         edd_classique=random.choice([files_and_text, "", "n'importe quoi", None]),
         permis_construire="123 456 789 ABC",

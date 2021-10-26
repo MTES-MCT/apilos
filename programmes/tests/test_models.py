@@ -211,3 +211,4 @@ class ProgrammeModelsTest(TestCase):
         utils.assert_get_text_and_files(self, programme, "edd_classique")
         utils.assert_get_files(self, programme, "acte_de_propriete")
         utils.assert_get_files(self, programme, "acte_notarial")
+        utils.assert_get_files(self, programme, "reference_cadastrale")
