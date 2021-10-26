@@ -1,8 +1,11 @@
+import datetime
+
 from django import forms
 from django.forms import BaseFormSet, formset_factory
 from django.forms.fields import FileField
 from django.core.exceptions import ValidationError
 
+from programmes.models import Financement, TypeOperation
 from .models import Preteur
 
 
@@ -23,7 +26,10 @@ class ConventionCommentForm(forms.Form):
 
 class ConventionFinancementForm(forms.Form):
 
-    date_fin_conventionnement = forms.DateField(
+    prets = []
+    convention = None
+
+    annee_fin_conventionnement = forms.IntegerField(
         required=True,
         error_messages={
             "required": "La date de fin de conventionnement est obligatoire",
@@ -37,6 +43,59 @@ class ConventionFinancementForm(forms.Form):
         ),
     )
     fond_propre = forms.FloatField(required=False)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        annee_fin_conventionnement = cleaned_data.get("annee_fin_conventionnement")
+        today = datetime.date.today()
+
+        if (
+            self.prets != []
+            and self.convention is not None
+            and annee_fin_conventionnement is not None
+        ):
+            if self.convention.financement == Financement.PLS:
+                min_years = today.year + 15
+                max_years = today.year + 40
+                if today.month > 6:
+                    min_years = min_years + 1
+                    max_years = max_years + 1
+                if annee_fin_conventionnement < min_years:
+                    self.add_error(
+                        "annee_fin_conventionnement",
+                        (
+                            "L'année de fin de conventionnement ne peut être inférieur à "
+                            + f"{min_years}"
+                        ),
+                    )
+                if annee_fin_conventionnement > max_years:
+                    self.add_error(
+                        "annee_fin_conventionnement",
+                        (
+                            "L'année de fin de conventionnement ne peut être supérieur à "
+                            + f"{max_years}"
+                        ),
+                    )
+            else:
+                max_duree = 0
+                for pret in self.prets:
+                    if pret.cleaned_data["preteur"] in ["CDCF", "CDCL"]:
+                        if max_duree is None:
+                            max_duree = int(pret.cleaned_data["duree"])
+                        elif max_duree < pret.cleaned_data["duree"]:
+                            max_duree = int(pret.cleaned_data["duree"])
+                max_duree = max(max_duree, 9)
+                if today.month > 6:
+                    max_duree = max_duree + 1
+                max_duree = max_duree + today.year
+                if annee_fin_conventionnement < max_duree:
+                    self.add_error(
+                        "annee_fin_conventionnement",
+                        (
+                            "L'année de fin de conventionnement ne peut être inférieur à "
+                            + f"{max_duree}"
+                        ),
+                    )
 
 
 class PretForm(forms.Form):
@@ -97,20 +156,28 @@ class PretForm(forms.Form):
 
 
 class BasePretFormSet(BaseFormSet):
+
+    convention = None
+
     def clean(self):
         self.manage_cdc_validation()
 
     def manage_cdc_validation(self):
-        for form in self.forms:
-            #            if self.can_delete() and self._should_delete_form(form):
-            #                continue
-            if form.cleaned_data.get("preteur") in ["CDCF", "CDCL"]:
-                return
-        error = ValidationError(
-            "Au moins un prêt à la Caisee des dépôts et consignations doit-être déclaré "
-            + "(CDC foncière, CDC locative)"
-        )
-        self._non_form_errors.append(error)
+        if (
+            self.convention is not None
+            and self.convention.financement != Financement.PLS
+            and self.convention.programme.type_operation != TypeOperation.SANSTRAVAUX
+        ):
+            for form in self.forms:
+                #            if self.can_delete() and self._should_delete_form(form):
+                #                continue
+                if form.cleaned_data.get("preteur") in ["CDCF", "CDCL"]:
+                    return
+            error = ValidationError(
+                "Au moins un prêt à la Caisee des dépôts et consignations doit-être déclaré "
+                + "(CDC foncière, CDC locative)"
+            )
+            self._non_form_errors.append(error)
 
 
 PretFormSet = formset_factory(PretForm, formset=BasePretFormSet, extra=0)
