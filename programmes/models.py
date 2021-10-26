@@ -116,6 +116,7 @@ class Programme(IngestableModel):
     reference_publication_acte = models.TextField(null=True)
     acte_de_propriete = models.TextField(null=True)
     acte_notarial = models.TextField(null=True)
+    reference_cadastrale = models.TextField(null=True)
     edd_volumetrique = models.TextField(max_length=5000, null=True)
     mention_publication_edd_volumetrique = models.TextField(max_length=1000, null=True)
     edd_classique = models.TextField(max_length=5000, null=True)
@@ -180,6 +181,11 @@ class Programme(IngestableModel):
 
     def acte_notarial_files(self):
         return model_utils.get_field_key(self, "acte_notarial", "files", default={})
+
+    def reference_cadastrale_files(self):
+        return model_utils.get_field_key(
+            self, "reference_cadastrale", "files", default={}
+        )
 
     def edd_volumetrique_text(self):
         return model_utils.get_field_key(self, "edd_volumetrique", "text")

@@ -101,6 +101,7 @@
                             <div class="fr-card fr-card--no-arrow">
                                 <div class="fr-card__body">
                                     <h4 class="fr-card__title">Références cadastrales</h4>
+                                    {% include "common/display_text_and_files_if_exists.html" with text=programme.reference_cadastrale_text file_list=programme.reference_cadastrale_files.values %}
                                     <div class="fr-table fr-table--bordered table--limited-height">
                                         <table>
                                             <thead>
