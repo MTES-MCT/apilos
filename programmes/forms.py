@@ -89,6 +89,8 @@ class ProgrammeSelectionForm(forms.Form):
 
 
 class ProgrammeForm(forms.Form):
+    object_name = "programme"
+
     nom = forms.CharField(
         max_length=255,
         min_length=1,

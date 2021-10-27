@@ -240,6 +240,7 @@ def bailleur_update(request, convention_uuid):
     return {
         "success": utils.ReturnStatus.ERROR,
         "convention": convention,
+        "comments": convention.get_comments_dict(),
         "form": form,
         "editable": request.user.has_perm("convention.change_convention", convention),
     }

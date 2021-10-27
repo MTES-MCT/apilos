@@ -68,7 +68,11 @@ INSTALLED_APPS = [
     "stats.apps.StatsConfig",
     "users.apps.UsersConfig",
     "upload.apps.UploadConfig",
+<<<<<<< HEAD
     # "kpis.apps.KpisConfig",
+=======
+    "comments.apps.CommentsConfig",
+>>>>>>> cc0d47f (first try to add comments in the form)
 ]
 
 MIDDLEWARE = [
@@ -80,7 +84,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "csp.middleware.CSPMiddleware",
+    #    "csp.middleware.CSPMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
