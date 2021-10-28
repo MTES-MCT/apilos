@@ -8,9 +8,8 @@
         </label>
     {% endif %}
     <div
-        class="fr-mt-1w"
-        style="display: flex;flex-direction: row;align-items: center;justify-content: stretch;"
-        {% if 'programme__nom' not in comments %}
+        class="fr-mt-1w block--row-strech"
+        {% if object_field not in comments %}
             onmouseover="document.getElementById('{{form_input.id_for_label}}_comment').hidden=false"
             onmouseleave="document.getElementById('{{form_input.id_for_label}}_comment').hidden=true"
         {% endif %}
@@ -22,16 +21,16 @@
             name="{{form_input.html_name}}"
             value="{{ form_input.value|default_if_none:'' }}"
             {% if not editable %}disabled{% endif %}>
-        <div id='{{form_input.id_for_label}}_comment' {% if 'programme__nom' not in comments %}hidden{% endif %}>
-            <img
-                title="{{comments.programme__nom}}"
+        <div id='{{form_input.id_for_label}}_comment' {% if object_field not in comments %}hidden{% endif %}>
+            <div class="content__icons {% if object_field in comments %}content__icons--red{% else %}content__icons--blue{% endif %} fr-px-1w"
                 id="{{form_input.id_for_label}}_comment-img"
                 data-fr-opened="false"
-                aria-controls="{{form_input.id_for_label}}_comment-dialog"
-                class="apilos-fi-btn fr-mx-1w"
-                style="cursor: pointer;width: 32px;height: 32px;stroke-width: 10px;stroke:red;"
-                src="{% static "icons/chat.svg" %}"
-            />
+                aria-controls="{{form_input.id_for_label}}_comment-dialog">
+                <svg role="img" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-labelledby="chatIconTitle">
+                    <title id="chatIconTitle">{% if object_field %}{{ comments|get_item:object_field }}{% endif %}</title>
+                    <path d="M8.82388455,18.5880577 L4,21 L4.65322944,16.4273939 C3.00629211,15.0013 2,13.0946628 2,11 C2,6.581722 6.4771525,3 12,3 C17.5228475,3 22,6.581722 22,11 C22,15.418278 17.5228475,19 12,19 C10.8897425,19 9.82174472,18.8552518 8.82388455,18.5880577 Z"></path>
+                </svg>
+            </div>
         </div>
     </div>
     {% for error in form_input.errors %}

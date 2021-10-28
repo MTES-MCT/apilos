@@ -148,6 +148,7 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   display: none;
 }
 
+<<<<<<< HEAD
 .statcard {
   display: flex;
   flex-direction: column;
@@ -169,3 +170,44 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   margin-top: 1.5rem;
   min-height: 65px;
 }
+=======
+ /* SVG ikonate */
+.content__icons {
+  background: var(--white);
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.content__icons--red svg {
+  width: 32px;
+  height: 32px;
+  stroke: #E10600;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  fill: none;
+  color: #E10600;
+}
+
+.content__icons--blue svg {
+  width: 32px;
+  height: 32px;
+  stroke: #0762C8;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  fill: none;
+  color: #0762C8;
+}
+
+.content__icons--green svg {
+  width: 32px;
+  height: 32px;
+  stroke: #008941;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  fill: none;
+  color: #008941;
+}
+>>>>>>> 0a8947a (enhance the svg icon to display)

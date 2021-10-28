@@ -15,7 +15,7 @@
 
                         <h4>Entreprise bailleur</h4>
 
-                        {% include "common/form/input_text.html" with form_input=form.nom label="Nom du bailleur" %}
+                        {% include "common/form/input_text.html" with form_input=form.nom label="Nom du bailleur" object_field="programme__nom" %}
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
