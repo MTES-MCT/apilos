@@ -1,41 +1,50 @@
 {% load static %}
 
 <p>Télécharger le modèle, éditer puis téléverser vos {{ what }}. <span class="fr-fi-alert-line fr-mr-1w" aria-hidden="true"></span>Attention, la liste des {{ what }} téléversée écrase la liste courante.</p>
-<div class="fr-grid-row fr-grid-row--gutters fr-mx-1w">
-    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-btns-group">
-        <button type="button" class="fr-btn fr-btn--secondary" id='download_model'>
-            <img class="apilos-fi-btn--secondary fr-mr-1w" src="{% static "icons/download.svg" %}">Télécharger le modèle des {{ what }} !
+
+<input
+    class="fileinput--hidden"
+    type="file"
+    id="{{upform.file.id_for_label}}"
+    name="{{upform.file.html_name}}"
+    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+<div class="block--row-strech">
+    <button type="button" class="fr-btn fr-btn--secondary" id='download_model'>
+        <img class="apilos-fi-btn--secondary fr-mr-1w" src="{% static "icons/download.svg" %}">Télécharger le modèle des {{ what }}
+    </button>
+    <script nonce="{{request.csp_nonce}}">
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('download_model')
+                .addEventListener('click', function(){ location.href="{% url 'conventions:load_xlsx_model' file_type=file_type %}" });
+        });
+    </script>
+
+    <div class="fr-mx-2w">Puis</div>
+
+    <div>
+        <button id="{{upform.file.id_for_label}}_upload_button" class="fr-btn" type="button">
+            <img class="apilos-fi-btn fr-mr-1w" src="{% static "icons/upload.svg" %}" ></img>Téléverser le fichier de vos {{ what }}
         </button>
-        <script nonce="{{request.csp_nonce}}">
-            document.addEventListener('DOMContentLoaded', function () {
-                document.getElementById('download_model')
-                    .addEventListener('click', function(){ location.href="{% url 'conventions:load_xlsx_model' file_type=file_type %}" });
-            });
-        </script>
-
-    </div>
-</div>
-
-<div class="fr-mb-2w">Puis</div>
-
-<div class="fr-grid-row fr-grid-row--gutters fr-mx-1w">
-    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6" >
-        <input
-            class="fr-input {% if upform.file.errors %}fr-input--error{% endif %}"
-            aria-describedby="text-input-error-desc-error"
-            type="file"
-            id="{{upform.file.id_for_label}}"
-            name="{{upform.file.html_name}}"
-            value="{{ upform.file.value|default_if_none:'' }}">
         {% for error in upform.file.errors %}
             <p id="text-input-error-desc-error" class="fr-error-text">
                 {{ error }}
             </p>
         {% endfor %}
     </div>
-    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w  fr-btns-group">
-        <button name="Upload" value=True class="fr-btn">
-            <img class="apilos-fi-btn fr-mr-1w" src="{% static "icons/upload.svg" %}" ></img>Téléverser le fichier de vos {{ what }}
-        </button>
-    </div>
+
 </div>
+
+<script nonce="{{request.csp_nonce}}">
+    document.getElementById('{{upform.file.id_for_label}}_upload_button').onclick = function() {
+        document.getElementById('{{upform.file.id_for_label}}').click();
+    };
+    document.getElementById('{{upform.file.id_for_label}}').onchange = function() {
+        var input = document.createElement('input');
+        input.setAttribute('name', 'Upload');//set the param name
+        input.setAttribute('value', 'True');//set the value
+        this.form.appendChild(input)
+        this.form.submit()
+        //        document.getElementById('button_upload').click();
+
+    }
+</script>
