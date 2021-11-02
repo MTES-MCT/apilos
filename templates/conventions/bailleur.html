@@ -19,7 +19,7 @@
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_text.html" with form_input=form.siret label="SIRET ou SIREN" %}
+                                    {% include "common/form/input_text.html" with form_input=form.siret label="SIRET ou SIREN" object_field="programme__siret" %}
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
                                     {% include "common/form/input_number.html" with step="0.01" form_input=form.capital_social label="Capital social" mandatory=False %}
