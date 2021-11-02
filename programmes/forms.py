@@ -460,7 +460,9 @@ class BaseLogementFormSet(BaseFormSet):
         for form in self.forms:
             if lpmc is None:
                 lpmc = form.cleaned_data.get("loyer_par_metre_carre")
-            elif lpmc != form.cleaned_data.get("loyer_par_metre_carre"):
+            elif (
+                lpmc != form.cleaned_data.get("loyer_par_metre_carre") and error is None
+            ):
                 error = ValidationError(
                     "Le loyer par mètre carré doit être le même pour tous les logements du lot"
                 )
