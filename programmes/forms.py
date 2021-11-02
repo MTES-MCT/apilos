@@ -467,7 +467,10 @@ class BaseLogementFormSet(BaseFormSet):
                 self._non_form_errors.append(error)
         if error is not None:
             for form in self.forms:
-                form.add_error("loyer_par_metre_carre", "non conforme")
+                form.add_error(
+                    "loyer_par_metre_carre",
+                    "Le loyer par mètre carré doit être le même pour tous les logements du lot",
+                )
 
     def manage_edd_consistency(self):
         lgts_edd = LogementEDD.objects.filter(programme_id=self.programme_id)
@@ -496,6 +499,9 @@ class BaseLogementFormSet(BaseFormSet):
             coeficient = form.cleaned_data.get("coeficient")
             surface_utile = form.cleaned_data.get("surface_utile")
             loyer_par_metre_carre = form.cleaned_data.get("loyer_par_metre_carre")
+            if None in [coeficient, surface_utile, loyer_par_metre_carre]:
+                # Another error is catch before and need to be managed before
+                return
             loyer_with_coef += coeficient * surface_utile * loyer_par_metre_carre
             loyer_without_coef += surface_utile * loyer_par_metre_carre
         if round(loyer_with_coef, 2) > round(loyer_without_coef, 2):
