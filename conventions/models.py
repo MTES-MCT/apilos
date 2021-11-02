@@ -95,10 +95,9 @@ class Convention(models.Model):
         result = {}
         for comment in self.comment_set.all():
             comment_name = comment.nom_objet + "__" + comment.champ_objet
-            result[comment_name] = comment.message
-            # if comment_name not in result:
-            #     result[comment_name] = []
-            # result[comment_name].append(comment.message)
+            if comment_name not in result:
+                result[comment_name] = []
+            result[comment_name].append(comment)
         return result
 
 
