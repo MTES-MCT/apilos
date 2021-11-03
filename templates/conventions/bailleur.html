@@ -50,6 +50,9 @@
             document.getElementById(comment_modal_id).insertBefore( uuid_div, new_comment_block );
             const textarea_div = create_comment_textarea(comment.uuid, comment.message);
             document.getElementById(comment_modal_id).insertBefore( textarea_div, new_comment_block );
+            const ul_buttons = create_comment_button(comment.uuid)
+            document.getElementById(comment_modal_id).insertBefore( ul_buttons, new_comment_block );
+            init_comment_button(comment.uuid, comment.statut, comment.is_owner, '{{request.user.is_instructeur}}')
         }
 
         //<div class="fr-mt-3w"><b>Raphaëlle Neyton (vous) :</b></div>
@@ -117,7 +120,30 @@
         //     </li>
         // </ul>
 
-        function create_comment_button(uuid, message) {
+        function create_comment_button(uuid) {
+            const ul_buttons = document.createElement('ul')
+            ul_buttons.classList.add('fr-mt-1w', 'fr-btns-group', 'fr-btns-group--right', 'fr-btns-group--inline-reverse', 'fr-btns-group--inline-lg', 'fr-btns-group--icon-left', 'fr-btns-group--sm')
+            ul_buttons.appendChild(create_li_button(uuid, 'close', 'Marquer comme clos', 'fr-btn--grey'))
+            ul_buttons.appendChild(create_li_button(uuid, 'resolve', 'Marquer comme résolu', 'fr-btn--green'))
+            ul_buttons.appendChild(create_li_button(uuid, 'reopen', 'Ré-ouvrir'))
+            ul_buttons.appendChild(create_li_button(uuid, 'save', 'Enregistrer'))
+            return ul_buttons
+        }
+
+        function create_li_button(uuid, action, label, additionalButtonClass=null) {
+            const button_action = document.createElement('button')
+            button_action.setAttribute('id', 'comment_' + action + '_' + uuid)
+            button_action.setAttribute('type', 'button')
+            button_action.classList.add('fr-btn', 'fr-btn--sm')
+            if (additionalButtonClass != null) {
+                button_action.classList.add(additionalButtonClass)
+            }
+            button_action.innerText = label
+            const li_action = document.createElement('li')
+            li_action.setAttribute('id', 'block_comment_' + action + '_' + uuid)
+            //            li_action.classList.add('button-hidden')
+            li_action.appendChild(button_action)
+            return li_action
         }
 
         function save_comment(uuid) {
@@ -145,7 +171,10 @@
         }
 
         function init_comment_button(uuid, comment_statut, is_owner, is_instructeur) {
-
+            console.log(uuid)
+            console.log(comment_statut)
+            console.log(is_owner)
+            console.log(is_instructeur)
             // button 'Marquer comme clos'
             if (is_instructeur == 'True' && comment_statut != 'CLOS') {
                 document.getElementById('block_comment_close_' + uuid).classList.remove('button-hidden')
@@ -180,7 +209,7 @@
             }
 
             // button 'Enregistrer'
-            if (comment_statut == 'OUVERT' && is_owner == 'True') {
+            if (comment_statut == 'OUVERT' && (is_owner && is_owner != 'False')) {
                 document.getElementById('block_comment_save_' + uuid).classList.remove('button-hidden')
             }
             else {

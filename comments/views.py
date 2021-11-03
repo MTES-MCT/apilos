@@ -29,6 +29,7 @@ def add_comment(request):
                 "comment": {
                     "uuid": comment.uuid,
                     "user_id": comment.user_id,
+                    "statut": comment.statut,
                     "username": str(comment.user),
                     "is_owner": bool(comment.user_id == request.user.id),
                     "mis_a_jour_le": comment.mis_a_jour_le.strftime("%d %B %Y %H:%M"),
