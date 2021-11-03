@@ -9,15 +9,13 @@ from conventions.models import Convention
 
 @require_POST
 def add_comment(request):
-    print(request.POST)
     post_data = json.loads(request.body.decode("utf-8"))
     comment = post_data["comment"].strip()
     convention_uuid = post_data["convention_uuid"]
     convention = Convention.objects.get(uuid=convention_uuid)
     if comment:
         # save comment
-        print(post_data)
-        Comment.objects.create(
+        comment = Comment.objects.create(
             user=request.user,
             convention=convention,
             message=comment,
@@ -25,5 +23,29 @@ def add_comment(request):
             champ_objet=post_data["field"],
         )
 
+        return JsonResponse(
+            {
+                "success": "true",
+                "comment": {
+                    "uuid": comment.uuid,
+                    "user_id": comment.user_id,
+                    "username": str(comment.user),
+                    "is_owner": bool(comment.user_id == request.user.id),
+                    "mis_a_jour_le": comment.mis_a_jour_le.strftime("%d %B %Y %H:%M"),
+                    "message": comment.message,
+                },
+            }
+        )
+    return JsonResponse({"success": "false"})
+
+
+@require_POST
+def update_comment(request, comment_uuid):
+    post_data = json.loads(request.body.decode("utf-8"))
+    message = post_data["message"].strip()
+    if message:
+        comment = Comment.objects.get(uuid=comment_uuid)
+        comment.message = message
+        comment.save()
         return JsonResponse({"success": "true", "comment": post_data})
     return JsonResponse({"success": "false"})

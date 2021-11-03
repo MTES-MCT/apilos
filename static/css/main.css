@@ -148,7 +148,6 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   display: none;
 }
 
-<<<<<<< HEAD
 .statcard {
   display: flex;
   flex-direction: column;
@@ -170,8 +169,8 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   margin-top: 1.5rem;
   min-height: 65px;
 }
-=======
- /* SVG ikonate */
+
+/* SVG ikonate */
 .content__icons {
   background: var(--white);
   border-radius: 4px;
@@ -210,4 +209,27 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   fill: none;
   color: #008941;
 }
->>>>>>> 0a8947a (enhance the svg icon to display)
+
+.fr-btn--green {
+  background-color: #008941;
+  --color-hover: #00a34d !important;
+  --color-active: #00a34d !important;
+}
+
+.fr-btn--grey {
+  background-color: #9C9C9C;
+  --color-hover: #CECECE !important;
+  --color-active: #CECECE !important;
+}
+
+.button-hidden {
+  display: none !important;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+.text-italic {
+  font-style: italic;
+}

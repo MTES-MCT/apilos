@@ -68,11 +68,7 @@ INSTALLED_APPS = [
     "stats.apps.StatsConfig",
     "users.apps.UsersConfig",
     "upload.apps.UploadConfig",
-<<<<<<< HEAD
-    # "kpis.apps.KpisConfig",
-=======
     "comments.apps.CommentsConfig",
->>>>>>> cc0d47f (first try to add comments in the form)
 ]
 
 MIDDLEWARE = [
