@@ -1,6 +1,16 @@
 {% load static %}
 
 <header role="banner" class="fr-header">
+    {% if ENVIRONMENT == 'staging' %}
+        <div role="alert" class="fr-alert fr-alert--info">
+            <p>Attention, vous utilisez actuellement la plateforme de <b>STAGING</b></p>
+        </div>
+    {% endif %}
+    {% if ENVIRONMENT == 'development' %}
+        <div role="alert" class="fr-alert fr-alert--info">
+            <p>Attention, vous utilisez actuellement la plateforme de <b>STAGING</b></p>
+        </div>
+    {% endif %}
     <div id="browser_alert" hidden>
         <div role="alert" class="fr-alert fr-alert--error">
             <p>Attention, vous utilisez actuellement un navigateur qui n'est pas compatible avec toutes les fonctionnalités de la platforme.</p>
