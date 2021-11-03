@@ -22,6 +22,6 @@ def item_exists(dictionary, key):
 def has_own_comment(comments, user_id):
     print(user_id)
     print(comments)
-    print(map(lambda x: x.user_id, comments))
-
-    return user_id in map(lambda x: x.user_id, comments)
+    print(list(map(lambda x: x.user_id, comments)))
+    print(user_id in list(map(lambda x: x.user_id, comments)))
+    return user_id in list(map(lambda x: x.user_id, comments))

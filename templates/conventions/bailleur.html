@@ -37,18 +37,20 @@
             //document.getElementById(input_id + '_comment-img').setAttribute('data-fr-opened',false)
         }
 
-        function create_comment_input(input_id, comment) {
+        function create_comment_input(input_id, comment, has_own_comment=true) {
             var before_id = input_id + "_new_comment"
             var comment_modal_id = input_id + "_modal_comment"
             new_comment_block = document.getElementById(before_id)
-            new_comment_block.hidden = true
+            if (has_own_comment && has_own_comment != 'False') {
+                new_comment_block.hidden = true
+            }
             const owner_div = create_comment_owner(comment.username, comment.is_owner);
             document.getElementById(comment_modal_id).insertBefore( owner_div, new_comment_block );
             const date_div = create_comment_date(comment.mis_a_jour_le);
             document.getElementById(comment_modal_id).insertBefore( date_div, new_comment_block );
             const uuid_div = create_comment_uuid(comment.uuid);
             document.getElementById(comment_modal_id).insertBefore( uuid_div, new_comment_block );
-            const textarea_div = create_comment_textarea(comment.uuid, comment.message);
+            const textarea_div = create_comment_textarea(comment.uuid, comment.message, comment.statut, comment.is_owner);
             document.getElementById(comment_modal_id).insertBefore( textarea_div, new_comment_block );
             const ul_buttons = create_comment_button(comment.uuid)
             document.getElementById(comment_modal_id).insertBefore( ul_buttons, new_comment_block );
@@ -86,40 +88,40 @@
         }
 
         //<textarea class="fr-input" aria-describedby="text-input-error-desc-error" type="text" id="comment_fb7d6bf9-291a-4b3d-b2a6-25fea7e20dcb" rows="5">tt</textarea>
-        function create_comment_textarea(uuid, message) {
+        function create_comment_textarea(uuid, message, status, is_owner=false) {
             const textarea_div = document.createElement('textarea');
             textarea_div.classList.add('fr-input')
             textarea_div.setAttribute('aria-describedby', "text-input-error-desc-error")
             textarea_div.setAttribute('type', "text")
+            if (is_owner && is_owner != 'False' && status != 'CLOS') {
+                textarea_div.disabled = false
+            }
+            else {
+                textarea_div.disabled = true
+            }
             textarea_div.setAttribute('id', "comment_" + uuid)
             textarea_div.setAttribute('rows', "5")
             textarea_div.innerText = message
             return textarea_div
         }
 
+        function disable_textarea(uuid, statut, is_owner) {
+            const textarea_div = document.getElementById("comment_" + uuid)
+            if (is_owner && is_owner != 'False' && statut != 'CLOS') {
+                textarea_div.disabled = false
+            }
+            else {
+                textarea_div.disabled = true
+            }
+        }
+
+
         // <ul class="fr-mt-1w fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--sm">
         //     <li id="block_comment_close_96c201c0-c0ce-4400-9b73-09803961e6a1" class="button-hidden">
-        //         <button id="comment_close_96c201c0-c0ce-4400-9b73-09803961e6a1" type="button" class="fr-btn fr-btn--sm fr-btn--grey">
-        //             Marquer comme clos
-        //         </button>
+        //         <button id="comment_close_96c201c0-c0ce-4400-9b73-09803961e6a1" type="button" class="fr-btn fr-btn--sm fr-btn--grey">Marquer comme clos</button>
         //     </li>
-        //     <li id="block_comment_resolve_96c201c0-c0ce-4400-9b73-09803961e6a1">
-        //         <button id="comment_resolve_96c201c0-c0ce-4400-9b73-09803961e6a1" type="button" class="fr-btn fr-btn--sm fr-btn--green">
-        //             Marquer comme résolu
-        //         </button>
-        //     </li>
-        //     <li id="block_comment_reopen_96c201c0-c0ce-4400-9b73-09803961e6a1" class="button-hidden">
-        //         <button id="comment_reopen_96c201c0-c0ce-4400-9b73-09803961e6a1" type="button" class="fr-btn fr-btn--sm">
-        //             Ré-ouvrir
-        //         </button>
-        //     </li>
-        //     <li id="block_comment_save_96c201c0-c0ce-4400-9b73-09803961e6a1">
-        //         <button id="comment_save_96c201c0-c0ce-4400-9b73-09803961e6a1" type="button" class="fr-btn fr-btn--sm">
-        //             Enregistrer
-        //         </button>
-        //     </li>
+        //     .....
         // </ul>
-
         function create_comment_button(uuid) {
             const ul_buttons = document.createElement('ul')
             ul_buttons.classList.add('fr-mt-1w', 'fr-btns-group', 'fr-btns-group--right', 'fr-btns-group--inline-reverse', 'fr-btns-group--inline-lg', 'fr-btns-group--icon-left', 'fr-btns-group--sm')
@@ -130,6 +132,9 @@
             return ul_buttons
         }
 
+        // <li id="block_comment_close_96c201c0-c0ce-4400-9b73-09803961e6a1" class="button-hidden">
+        //     <button id="comment_close_96c201c0-c0ce-4400-9b73-09803961e6a1" type="button" class="fr-btn fr-btn--sm fr-btn--grey">Marquer comme clos</button>
+        // </li>
         function create_li_button(uuid, action, label, additionalButtonClass=null) {
             const button_action = document.createElement('button')
             button_action.setAttribute('id', 'comment_' + action + '_' + uuid)
@@ -146,6 +151,90 @@
             return li_action
         }
 
+
+
+        function init_comment_button(uuid, comment_statut, is_owner, is_instructeur) {
+            // button 'Marquer comme clos'
+            if (is_instructeur == 'True' && comment_statut != 'CLOS') {
+                document.getElementById('block_comment_close_' + uuid).classList.remove('button-hidden')
+            }
+            else {
+                document.getElementById('block_comment_close_' + uuid).classList.add('button-hidden')
+            }
+            document.getElementById('comment_close_' + uuid).onclick = function() {
+                update_status_comment(uuid, 'CLOS')
+            }
+
+            // button 'Marquer comme résolu'
+            if (comment_statut == 'OUVERT') {
+                document.getElementById('block_comment_resolve_' + uuid).classList.remove('button-hidden')
+            }
+            else {
+                document.getElementById('block_comment_resolve_' + uuid).classList.add('button-hidden')
+            }
+            document.getElementById('comment_resolve_' + uuid).onclick = function() {
+                update_status_comment(uuid, 'RESOLU')
+            }
+
+            // button 'Ré-ouvrir'
+            if (comment_statut == 'RESOLU') {
+                document.getElementById('block_comment_reopen_' + uuid).classList.remove('button-hidden')
+            }
+            else {
+                document.getElementById('block_comment_reopen_' + uuid).classList.add('button-hidden')
+            }
+            document.getElementById('comment_reopen_' + uuid).onclick = function() {
+                update_status_comment(uuid, 'OUVERT')
+            }
+
+            // button 'Enregistrer'
+            if (comment_statut == 'OUVERT' && (is_owner && is_owner != 'False')) {
+                document.getElementById('block_comment_save_' + uuid).classList.remove('button-hidden')
+            }
+            else {
+                document.getElementById('block_comment_save_' + uuid).classList.add('button-hidden')
+            }
+            document.getElementById('comment_save_' + uuid).onclick = function() {
+                save_comment(uuid)
+            }
+        }
+
+        // Create a new comment
+        function create_comment(input_id, object_field) {
+            var [object_name, object_field] = object_field.split('__')
+            comment = document.getElementById(input_id+ '_comment-textarea').value
+            csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value
+
+            var headers = {
+                'X-CSRFToken': csrf_token,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+
+            fetch('/comments/', {
+                method: 'post',
+                headers: headers,
+                body: JSON.stringify({
+                    comment: comment,
+                    object : object_name,
+                    field : object_field,
+                    convention_uuid : '{{convention.uuid}}'
+                })
+            }).then(function(response) {
+                if (response.status == 200) {
+                    res = response.json()
+                    return res;
+                }
+            }).then(res => {
+                create_comment_input(input_id, res.comment)
+                console.log(res)
+            });
+
+            // Close the dialogbox
+            //document.getElementById(input_id + '_comment-img').setAttribute('data-fr-opened',false)
+        }
+
+        // Save an existing comment
         function save_comment(uuid) {
             message = document.getElementById("comment_" + uuid).value
             csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value
@@ -167,57 +256,39 @@
                     return response.json();
                 }
             }).then(res => console.log(res));
-
         }
 
-        function init_comment_button(uuid, comment_statut, is_owner, is_instructeur) {
-            console.log(uuid)
-            console.log(comment_statut)
-            console.log(is_owner)
-            console.log(is_instructeur)
-            // button 'Marquer comme clos'
-            if (is_instructeur == 'True' && comment_statut != 'CLOS') {
-                document.getElementById('block_comment_close_' + uuid).classList.remove('button-hidden')
-            }
-            else {
-                document.getElementById('block_comment_close_' + uuid).classList.add('button-hidden')
-            }
-            document.getElementById('comment_close_' + uuid).onclick = function() {
-                alert('CLOS ' + uuid)
+
+
+        // Reopen an existing comment
+        function update_status_comment(uuid, status) {
+            message = document.getElementById("comment_" + uuid).value
+            csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value
+
+            var headers = {
+                'X-CSRFToken': csrf_token,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
             }
 
-            // button 'Marquer comme résolu'
-            if (comment_statut == 'OUVERT') {
-                document.getElementById('block_comment_resolve_' + uuid).classList.remove('button-hidden')
-            }
-            else {
-                document.getElementById('block_comment_resolve_' + uuid).classList.add('button-hidden')
-            }
-            document.getElementById('comment_resolve_' + uuid).onclick = function() {
-                alert('RESOLU ' + uuid)
-            }
-
-            // button 'Ré-ouvrir'
-            if (comment_statut == 'RESOLU') {
-                document.getElementById('block_comment_reopen_' + uuid).classList.remove('button-hidden')
-            }
-            else {
-                document.getElementById('block_comment_reopen_' + uuid).classList.add('button-hidden')
-            }
-            document.getElementById('comment_reopen_' + uuid).onclick = function() {
-                alert('REOPEN ' + uuid)
-            }
-
-            // button 'Enregistrer'
-            if (comment_statut == 'OUVERT' && (is_owner && is_owner != 'False')) {
-                document.getElementById('block_comment_save_' + uuid).classList.remove('button-hidden')
-            }
-            else {
-                document.getElementById('block_comment_save_' + uuid).classList.add('button-hidden')
-            }
-            document.getElementById('comment_save_' + uuid).onclick = function() {
-                save_comment(uuid)
-            }
+            fetch('/comments/' + uuid, {
+                method: 'post',
+                headers: headers,
+                body: JSON.stringify({
+                    statut: status
+                })
+            }).then(function(response) {
+                if (response.status == 200) {
+                    return response.json();
+                }
+            }).then(res => {
+                if (res.success)
+                {
+                    var comment = res.comment
+                    init_comment_button(comment.uuid, comment.statut, comment.is_owner, '{{request.user.is_instructeur}}')
+                    disable_textarea(comment.uuid, comment.statut, comment.is_owner)
+                }
+            });
         }
 
     </script>
@@ -248,7 +319,7 @@
                             </div>
                         </div>
 
-                        {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" %}
+                        {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" object_field="programme__adresse" %}
 
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters">

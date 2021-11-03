@@ -25,7 +25,7 @@ def add_comment(request):
 
         return JsonResponse(
             {
-                "success": "true",
+                "success": True,
                 "comment": {
                     "uuid": comment.uuid,
                     "user_id": comment.user_id,
@@ -37,16 +37,33 @@ def add_comment(request):
                 },
             }
         )
-    return JsonResponse({"success": "false"})
+    return JsonResponse({"success": False})
 
 
 @require_POST
 def update_comment(request, comment_uuid):
     post_data = json.loads(request.body.decode("utf-8"))
-    message = post_data["message"].strip()
-    if message:
+    message = post_data["message"].strip() if "message" in post_data else None
+    statut = post_data["statut"] if "statut" in post_data else None
+    if message is not None or statut is not None:
         comment = Comment.objects.get(uuid=comment_uuid)
-        comment.message = message
+        if message:
+            comment.message = message
+        if statut:
+            comment.statut = statut
         comment.save()
-        return JsonResponse({"success": "true", "comment": post_data})
-    return JsonResponse({"success": "false"})
+        return JsonResponse(
+            {
+                "success": True,
+                "comment": {
+                    "uuid": comment.uuid,
+                    "user_id": comment.user_id,
+                    "statut": comment.statut,
+                    "username": str(comment.user),
+                    "is_owner": bool(comment.user_id == request.user.id),
+                    "mis_a_jour_le": comment.mis_a_jour_le.strftime("%d %B %Y %H:%M"),
+                    "message": comment.message,
+                },
+            }
+        )
+    return JsonResponse({"success": False})
