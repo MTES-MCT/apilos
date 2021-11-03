@@ -32,7 +32,9 @@ def add_comment(request):
                     "statut": comment.statut,
                     "username": str(comment.user),
                     "is_owner": bool(comment.user_id == request.user.id),
-                    "mis_a_jour_le": comment.mis_a_jour_le.strftime("%d %B %Y %H:%M"),
+                    "mis_a_jour_le": comment.mis_a_jour_le.strftime(
+                        "%e %B %Y %H:%M"
+                    ).lower(),
                     "message": comment.message,
                 },
             }
@@ -61,7 +63,9 @@ def update_comment(request, comment_uuid):
                     "statut": comment.statut,
                     "username": str(comment.user),
                     "is_owner": bool(comment.user_id == request.user.id),
-                    "mis_a_jour_le": comment.mis_a_jour_le.strftime("%d %B %Y %H:%M"),
+                    "mis_a_jour_le": comment.mis_a_jour_le.strftime(
+                        "%e %B %Y %H:%M"
+                    ).lower(),
                     "message": comment.message,
                 },
             }

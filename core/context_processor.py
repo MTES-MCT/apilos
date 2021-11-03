@@ -19,9 +19,10 @@ def item_exists(dictionary, key):
 
 
 @register.filter
-def has_own_comment(comments, user_id):
-    print(user_id)
-    print(comments)
-    print(list(map(lambda x: x.user_id, comments)))
-    print(user_id in list(map(lambda x: x.user_id, comments)))
-    return user_id in list(map(lambda x: x.user_id, comments))
+def has_own_active_comment(comments, user_id):
+    return user_id in list(
+        map(
+            lambda x: x.user_id,
+            filter(lambda comment: comment.statut != "CLOS", comments),
+        )
+    )
