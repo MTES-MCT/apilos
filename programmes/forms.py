@@ -231,6 +231,7 @@ class ProgrammeCadastralForm(forms.Form):
 
 
 class ReferenceCadastraleForm(forms.Form):
+    uuid = forms.UUIDField(required=False)
     section = forms.CharField(
         required=True,
         max_length=255,

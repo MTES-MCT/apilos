@@ -399,6 +399,7 @@ def programme_cadastral_update(request, convention_uuid):
         for referencecadastrale in referencecadastrales:
             initial.append(
                 {
+                    "uuid": referencecadastrale.uuid,
                     "section": referencecadastrale.section,
                     "numero": referencecadastrale.numero,
                     "lieudit": referencecadastrale.lieudit,
