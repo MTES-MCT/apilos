@@ -189,6 +189,7 @@ def select_programme_update(request, convention_uuid):
         "success": utils.ReturnStatus.ERROR,
         "programmes": programmes,
         "convention": convention,
+        "comments": convention.get_comments_dict(),
         "form": form,
         "editable": request.user.has_perm("convention.change_convention", convention),
     }
@@ -395,7 +396,9 @@ def programme_cadastral_update(request, convention_uuid):
     else:
         request.user.check_perm("convention.view_convention", convention)
         initial = []
-        referencecadastrales = programme.referencecadastrale_set.all()
+        referencecadastrales = programme.referencecadastrale_set.all().order_by(
+            "section"
+        )
         for referencecadastrale in referencecadastrales:
             initial.append(
                 {
