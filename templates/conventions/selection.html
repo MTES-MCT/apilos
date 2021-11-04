@@ -27,7 +27,7 @@
                                             Séléctionnez votre programme et son financement {% include "common/mandatory_field.html" with form_input=form.lot_uuid %}
                                         </label>
                                     </div>
-                                    <script nonce="{{request.csp_nonce}}">
+                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                         document.addEventListener('DOMContentLoaded', function () {
                                             document.getElementById('selection')
                                                 .addEventListener('click', function(){ convention_mode(true) });
@@ -64,7 +64,7 @@
                                             <label class="fr-label" for="creation">Convention sans agrément : créez votre convention à partir de zéro
                                             </label>
                                         </div>
-                                        <script nonce="{{request.csp_nonce}}">
+                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                             document.addEventListener('DOMContentLoaded', function () {
                                                 document.getElementById('creation')
                                                     .addEventListener('click', function(){ convention_mode(false) });

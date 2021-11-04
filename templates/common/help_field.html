@@ -3,7 +3,7 @@
     <div id="{{form_input.id_for_label}}_description" hidden>
         <span class="fr-hint-text">{{form_input.help_text}}</span>
     </div>
-    <script nonce="{{request.csp_nonce}}">
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById("{{form_input.id_for_label}}_desc_button")
                 .addEventListener('click', function(){ toggle('{{form_input.id_for_label}}_description') });

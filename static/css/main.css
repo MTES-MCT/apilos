@@ -210,6 +210,28 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   color: #008941;
 }
 
+.content__icons--grey svg {
+  width: 32px;
+  height: 32px;
+  stroke: #9C9C9C;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  fill: none;
+  color: #9C9C9C;
+}
+
+.content__icons--orange svg {
+  width: 32px;
+  height: 32px;
+  stroke: #eea317;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  fill: none;
+  color: #eea317;
+}
+
 .fr-btn--green {
   background-color: #008941;
   --color-hover: #00a34d !important;

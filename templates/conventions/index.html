@@ -69,7 +69,7 @@
                                                     <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" id="update_convention_{{ convention.uuid }}">
                                                         Edit
                                                     </button>
-                                                    <script nonce="{{request.csp_nonce}}">
+                                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                                         document.addEventListener('DOMContentLoaded', function () {
                                                             document.getElementById('update_convention_{{ convention.uuid }}')
                                                                 .addEventListener('click', function(){ location.href="{% url 'conventions:selection_update' convention_uuid=convention.uuid %}" });
@@ -79,7 +79,7 @@
                                                     <button class="fr-btn fr-fi-eye-line" title="Visualiser votre convention" id="view_convention_{{ convention.uuid }}">
                                                         View
                                                     </button>
-                                                    <script nonce="{{request.csp_nonce}}">
+                                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                                         document.addEventListener('DOMContentLoaded', function () {
                                                             document.getElementById('view_convention_{{ convention.uuid }}')
                                                                 .addEventListener('click', function(){ location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" });
@@ -92,7 +92,7 @@
                                                     <button class="fr-btn fr-fi-edit-line" title="Modifier votre convention" id="update_convention_{{ convention.uuid }}">
                                                         Edit
                                                     </button>
-                                                    <script nonce="{{request.csp_nonce}}">
+                                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                                         document.addEventListener('DOMContentLoaded', function () {
                                                             document.getElementById('update_convention_{{ convention.uuid }}')
                                                                 .addEventListener('click', function(){ location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" });

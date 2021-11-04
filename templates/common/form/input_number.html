@@ -20,7 +20,7 @@
         {% if form_input.value is not None %}value="{{ form_input.value|unlocalize }}"{% endif %}
         {% if not editable %}disabled{% endif %}>
 
-    <script nonce="{{request.csp_nonce}}">
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('{{form_input.id_for_label}}')
                 .addEventListener('click', function(){ {{onchange}} });

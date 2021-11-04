@@ -37,6 +37,7 @@ def add_comment(request):
                     ).lower(),
                     "message": comment.message,
                 },
+                "user": {"is_instructeur": request.user.is_instructeur()},
             }
         )
     return JsonResponse({"success": False})
@@ -68,6 +69,7 @@ def update_comment(request, comment_uuid):
                     ).lower(),
                     "message": comment.message,
                 },
+                "user": {"is_instructeur": request.user.is_instructeur()},
             }
         )
     return JsonResponse({"success": False})
