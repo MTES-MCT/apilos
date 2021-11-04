@@ -8,6 +8,7 @@
     <script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
 {% block css_extras %}
@@ -29,27 +30,27 @@
 
                         <h4>Permis et dates</h4>
 
-                        {% include "common/form/input_text.html" with form_input=form.permis_construire label="Numéro de permis construire" %}
+                        {% include "common/form/input_text.html" with form_input=form.permis_construire label="Numéro de permis construire" object_field="programme__permis_construire" %}
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_date.html" with form_input=form.date_acte_notarie label="Date de l'acte notarié" %}
+                                {% include "common/form/input_date.html" with form_input=form.date_acte_notarie label="Date de l'acte notarié" object_field="programme__date_acte_notarie" %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                {% include "common/form/input_date.html" with form_input=form.date_achat label="Date d'achat" %}
+                                {% include "common/form/input_date.html" with form_input=form.date_achat label="Date d'achat" object_field="programme__date_achat" %}
                             </div>
                         </div>
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_date.html" with form_input=form.date_achevement_previsible label="Date d'achèvement previsible" %}
+                                {% include "common/form/input_date.html" with form_input=form.date_achevement_previsible label="Date d'achèvement previsible" object_field="programme__date_achevement_previsible" %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                {% include "common/form/input_date.html" with form_input=form.date_achevement label="Date d'achèvement ou d'obtention de certificat de conformité" %}
+                                {% include "common/form/input_date.html" with form_input=form.date_achevement label="Date d'achèvement ou d'obtention de certificat de conformité" object_field="programme__date_achevement" %}
                             </div>
                         </div>
 
-                        {% include "common/form/input_upload.html" with label="Vendeur" form_input=form.vendeur form_input_files=form.vendeur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.vendeur_files.values mandatory=True %}
+                        {% include "common/form/input_upload.html" with label="Vendeur" form_input=form.vendeur form_input_files=form.vendeur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.vendeur_files.values mandatory=True object_field="programme__vendeur" %}
 
                         {% include "common/form/input_upload.html" with label="Acquéreur" form_input=form.acquereur form_input_files=form.acquereur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.acquereur_files.values mandatory=True %}
 

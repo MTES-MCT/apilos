@@ -136,6 +136,10 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   justify-content: stretch;
 }
 
+.block--row-strech-1 {
+  flex:1
+}
+
 .day-and-month {
   width: 85px;
 }

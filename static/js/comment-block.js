@@ -1,5 +1,37 @@
 // Manage comment block using JS
 
+
+// create the icon but doesn't work yet : te be investigated
+function create_comment_icon(input_id, messages) {
+    const path_icon = document.createElement('path');
+    path_icon.setAttribute('d',"M8.82388455,18.5880577 L4,21 L4.65322944,16.4273939 C3.00629211,15.0013 2,13.0946628 2,11 C2,6.581722 6.4771525,3 12,3 C17.5228475,3 22,6.581722 22,11 C22,15.418278 17.5228475,19 12,19 C10.8897425,19 9.82174472,18.8552518 8.82388455,18.5880577 Z")
+    const title_icon = document.createElement('title');
+    title_icon.setAttribute('id', "chatIconTitle")
+    title_icon.innerText = messages
+    const svg_icon = document.createElement('svg');
+    svg_icon.setAttribute('role', "img")
+    svg_icon.setAttribute('xmlns', "http://www.w3.org/2000/svg")
+    svg_icon.setAttribute('width', "24")
+    svg_icon.setAttribute('height', "24")
+    svg_icon.setAttribute('viewBox', "0 0 24 24")
+    svg_icon.setAttribute('aria-labelledby', "chatIconTitle")
+    svg_icon.appendChild(title_icon)
+    svg_icon.appendChild(path_icon)
+    const div_icon = document.createElement('div');
+    div_icon.classList.add('content__icons', 'fr-px-1w')
+    div_icon.setAttribute('id', input_id + "_comment-img")
+    div_icon.setAttribute('data-fr-opened', "false")
+    div_icon.setAttribute('aria-controls', input_id + "_comment-dialog")
+    div_icon.appendChild(svg_icon)
+    const main_div_icon = document.createElement('div');
+    main_div_icon.setAttribute('id', input_id + "_comment")
+    main_div_icon.appendChild(div_icon)
+    main_div_icon.classList.add('content__icons--red')
+
+    document.getElementById(input_id + "_div").appendChild(main_div_icon)
+    display_comment_icon(input_id)
+}
+
 function create_comment_input(input_id, comment, has_own_active_comment=true, is_instructeur=false) {
     var before_id = input_id + "_new_comment"
     var comment_modal_id = input_id + "_modal_comment"

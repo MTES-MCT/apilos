@@ -302,6 +302,7 @@ def programme_update(request, convention_uuid):
         "success": utils.ReturnStatus.ERROR,
         "convention": convention,
         "form": form,
+        "comments": convention.get_comments_dict(),
         "editable": request.user.has_perm("convention.change_convention", convention),
     }
 
@@ -441,6 +442,7 @@ def programme_cadastral_update(request, convention_uuid):
     return {
         "success": utils.ReturnStatus.ERROR,
         "convention": convention,
+        "comments": convention.get_comments_dict(),
         "form": form,
         "formset": formset,
         "upform": upform,

@@ -6,13 +6,17 @@
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
         {% endif %}
-        <label class="fr-label fr-mt-1w fr-mb-2w fr-h4" for="{{form_input.id_for_label}}">
-            {{ label }}
-            {% if mandatory %}
-                &nbsp;{% include "common/mandatory_field_star.html" %}
-            {% endif %}
-            {% include "common/help_field.html" with form_input=form_input %}
-        </label>
+        <div class="block--row-strech" id="{{form_input.id_for_label}}_div">
+
+            <label class="block--row-strech-1 fr-label fr-mt-1w fr-mb-2w fr-h4" for="{{form_input.id_for_label}}">
+                {{ label }}
+                {% if mandatory %}
+                    &nbsp;{% include "common/mandatory_field_star.html" %}
+                {% endif %}
+                {% include "common/help_field.html" with form_input=form_input %}
+            </label>
+            {% include "common/comment_icon.html" with form_input=form_input object_field=object_field comments=comments %}
+        </div>
 
         {% if textarea %}
             <textarea
@@ -101,7 +105,4 @@
     {% endfor %}
 </div>
 
-
-
-
-
+{% include "common/comment_dialog.html" with form_input=form_input convention=convention object_field=object_field comments=comments %}

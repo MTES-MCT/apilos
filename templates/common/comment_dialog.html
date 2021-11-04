@@ -1,5 +1,4 @@
-{% if object_field %}
-
+{% if object_field and convention.statut != 'BROUILLON' %}
     <dialog aria-labelledby="{{form_input.id_for_label}}_comment-title" id="{{form_input.id_for_label}}_comment-dialog" class="fr-modal" role="dialog" >
         <div class="fr-container fr-container--fluid fr-container-md">
             <div class="fr-grid-row fr-grid-row--center">
@@ -54,6 +53,7 @@
         </script>
     {% endfor %}
     <script type="text/javascript" nonce="{{request.csp_nonce}}">
+        //create_comment_icon('{{form_input.id_for_label}}', '{% for comment in comments|get_item:object_field%}{{ comment.message }}\n\n{% endfor %}')
         display_comment_icon('{{form_input.id_for_label}}')
         document.getElementById('{{form_input.id_for_label}}_comment-submit').onclick = function() {
             create_comment('{{convention.uuid}}', '{{form_input.id_for_label}}', '{{object_field}}')
