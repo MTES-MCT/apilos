@@ -53,7 +53,7 @@
         </script>
     {% endfor %}
     <script type="text/javascript" nonce="{{request.csp_nonce}}">
-        //create_comment_icon('{{form_input.id_for_label}}', '{% for comment in comments|get_item:object_field%}{{ comment.message }}\n\n{% endfor %}')
+        //create_comment_icon('{{form_input.id_for_label}}', '{% for comment in comments|get_item:object_field%}{{ comment.message|escapejs }}\n\n{% endfor %}')
         display_comment_icon('{{form_input.id_for_label}}')
         document.getElementById('{{form_input.id_for_label}}_comment-submit').onclick = function() {
             create_comment('{{convention.uuid}}', '{{form_input.id_for_label}}', '{{object_field}}')

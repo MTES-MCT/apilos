@@ -95,7 +95,7 @@
                                                 {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" onchange="compute_total_value('loyer')" %}
                                             </td>
                                             {% if convention.statut != 'BROUILLON' %}
-                                                {% with input_id="logement_"|add:form.uuid.value object_field="logement__"|add:form.uuid.value %}
+                                                {% with input_id="logement_"|add:form.uuid.value object_field="logement__uuid__"|add:form.uuid.value %}
                                                     <td id="{{form.uuid.id_for_label}}_div">
                                                         {% include "common/comment_icon.html" with form_input=form.uuid object_field=object_field comments=comments %}
                                                         {% include "common/comment_dialog.html" with form_input=form.uuid convention=convention object_field=object_field comments=comments %}

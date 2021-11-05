@@ -21,15 +21,15 @@
 
                         <h4>Adresse du programme</h4>
 
-                        {% include "common/form/input_text.html" with form_input=form.nom label="Nom du programme" object_field="programme__nom" %}
-                        {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" object_field="programme__adresse" %}
+                        {% include "common/form/input_text.html" with form_input=form.nom label="Nom du programme" object_field="programme__nom__"|add:form.uuid.value %}
+                        {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" object_field="programme__adresse__"|add:form.uuid.value %}
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" object_field="programme__code_postal" %}
+                                {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" object_field="programme__code_postal__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_text.html" with form_input=form.ville label="Ville" object_field="programme__ville" %}
+                                {% include "common/form/input_text.html" with form_input=form.ville label="Ville" object_field="programme__ville__"|add:form.uuid.value %}
                             </div>
                         </div>
 
@@ -37,7 +37,7 @@
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" object_field="programme__nb_logements" %}
+                                {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" object_field="programme__nb_logements__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w fr-mt-3w">
                                 <div class="fr-mt-1w block--row-strech" id="{{form.anru.id_for_label}}_div">
@@ -52,24 +52,24 @@
                                             <span class="fr-hint-text">Le programme bénéficie d'un financement ANRU</span>
                                         </label>
                                     </div>
-                                    {% include "common/comment_icon.html" with form_input=form.anru object_field="programme__anru" comments=comments %}
+                                    {% include "common/comment_icon.html" with form_input=form.anru object_field="programme__anru__"|add:form.uuid.value comments=comments %}
                                 </div>
                                 {% for error in form.anru.errors %}
                                     <p id="checkboxes-error-desc-error" class="fr-error-text">
                                         {{ error }}
                                     </p>
                                 {% endfor %}
-                                {% include "common/comment_dialog.html" with form_input=form.anru convention=convention object_field="programme__anru" comments=comments %}
+                                {% include "common/comment_dialog.html" with form_input=form.anru convention=convention object_field="programme__anru__"|add:form.uuid.value comments=comments %}
 
                             </div>
                         </div>
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/select_enum.html" with form_input=form.type_habitat label="Type d'habitat" enum=types_habitat object_field="programme__type_habitat" %}
+                                {% include "common/form/select_enum.html" with form_input=form.type_habitat label="Type d'habitat" enum=types_habitat object_field="programme__type_habitat__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/select_enum.html" with form_input=form.type_operation label="Type d'opération" enum=types_operation object_field="programme__type_operation" %}
+                                {% include "common/form/select_enum.html" with form_input=form.type_operation label="Type d'opération" enum=types_operation object_field="programme__type_operation__"|add:form.uuid.value %}
                             </div>
                         </div>
 
@@ -79,14 +79,14 @@
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_number.html" with form_input=form.nb_locaux_commerciaux label="Locaux commerciaux" object_field="programme__nb_locaux_commerciaux" %}
+                                {% include "common/form/input_number.html" with form_input=form.nb_locaux_commerciaux label="Locaux commerciaux" object_field="programme__nb_locaux_commerciaux__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_number.html" with form_input=form.nb_bureaux label="Bureaux" object_field="programme__nb_bureaux" %}
+                                {% include "common/form/input_number.html" with form_input=form.nb_bureaux label="Bureaux" object_field="programme__nb_bureaux__"|add:form.uuid.value %}
                             </div>
                         </div>
 
-                        {% include "common/form/input_textarea.html" with label="Autres" form_input=form.autre_locaux_hors_convention object_field="programme__autre_locaux_hors_convention" %}
+                        {% include "common/form/input_textarea.html" with label="Autres" form_input=form.autre_locaux_hors_convention object_field="programme__autre_locaux_hors_convention__"|add:form.uuid.value %}
 
                     </div>
                 </div>

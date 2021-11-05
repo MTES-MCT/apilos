@@ -32,13 +32,13 @@
                             <p>Il existe 2 types d’EDD: EDD simplifié & EDD volumétrique</p>
                         </div>
 
-                        {% include "common/form/input_upload.html" with label="EDD volumétrique" form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.edd_volumetrique_files.values object_field="bailleur__edd_volumetrique" %}
+                        {% include "common/form/input_upload.html" with label="EDD volumétrique" form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.edd_volumetrique_files.values object_field="programme__edd_volumetrique__"|add:form.uuid.value %}
 
-                        {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_volumetrique label="Mention de publication de l'EDD volumétrique" object_field="bailleur__mention_publication_edd_volumetrique" %}
+                        {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_volumetrique label="Mention de publication de l'EDD volumétrique" object_field="programme__mention_publication_edd_volumetrique__"|add:form.uuid.value %}
 
-                        {% include "common/form/input_upload.html" with label="EDD classique" form_input=form.edd_classique form_input_files=form.edd_classique_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.edd_classique_files.values object_field="bailleur__edd_classique" %}
+                        {% include "common/form/input_upload.html" with label="EDD classique" form_input=form.edd_classique form_input_files=form.edd_classique_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.edd_classique_files.values object_field="programme__edd_classique__"|add:form.uuid.value %}
 
-                        {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_classique label="Mention de publication de l'EDD classique" object_field="bailleur__mention_publication_edd_classique" %}
+                        {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_classique label="Mention de publication de l'EDD classique" object_field="programme__mention_publication_edd_classique__"|add:form.uuid.value %}
 
                         <h4 class="fr-mb-1w">EDD Simplifié</h4>
 
@@ -135,7 +135,7 @@
                                                 {% include "common/form/select_enum.html" with form_input=form.typologie enum=typologies %}
                                             </td>
                                             {% if convention.statut != 'BROUILLON' %}
-                                                {% with input_id="logement_edd_"|add:form.uuid.value object_field="logement_edd__"|add:form.uuid.value %}
+                                                {% with input_id="logement_edd_"|add:form.uuid.value object_field="logement_edd__uuid__"|add:form.uuid.value %}
                                                     <td id="{{form.uuid.id_for_label}}_div">
                                                         {% include "common/comment_icon.html" with form_input=form.uuid object_field=object_field comments=comments %}
                                                         {% include "common/comment_dialog.html" with form_input=form.uuid convention=convention object_field=object_field comments=comments %}

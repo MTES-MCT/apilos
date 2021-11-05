@@ -17,6 +17,7 @@ class Comment(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nom_objet = models.CharField(max_length=255)
     champ_objet = models.CharField(max_length=255)
+    uuid_objet = models.UUIDField(max_length=255)
     convention = models.ForeignKey(
         "conventions.Convention", on_delete=models.CASCADE, null=False
     )

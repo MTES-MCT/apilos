@@ -94,7 +94,13 @@ class Convention(models.Model):
     def get_comments_dict(self):
         result = {}
         for comment in self.comment_set.all():
-            comment_name = comment.nom_objet + "__" + comment.champ_objet
+            comment_name = (
+                comment.nom_objet
+                + "__"
+                + comment.champ_objet
+                + "__"
+                + str(comment.uuid_objet)
+            )
             if comment_name not in result:
                 result[comment_name] = []
             result[comment_name].append(comment)

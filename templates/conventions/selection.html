@@ -54,7 +54,7 @@
                                                 {% endfor %}
                                             </select>
                                             {% if convention %}
-                                                {% include "common/comment_icon.html" with form_input=form.lot_uuid object_field="lot__uuid" comments=comments %}
+                                                {% include "common/comment_icon.html" with form_input=form.lot_uuid object_field="lot__uuid__"|add:form.lot_uuid.value comments=comments %}
                                             {% endif %}
                                         </div>
                                         {% for error in form.lot_uuid.errors %}
@@ -63,7 +63,7 @@
                                             </p>
                                         {% endfor %}
                                         {% if convention %}
-                                            {% include "common/comment_dialog.html" with form_input=form.lot_uuid convention=convention object_field="lot__uuid" comments=comments %}
+                                            {% include "common/comment_dialog.html" with form_input=form.lot_uuid convention=convention object_field="lot__uuid__"|add:form.lot_uuid.value comments=comments %}
                                         {% endif %}
                                     </div>
 

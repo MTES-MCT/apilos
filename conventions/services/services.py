@@ -225,6 +225,7 @@ def bailleur_update(request, convention_uuid):
         request.user.check_perm("convention.view_convention", convention)
         form = BailleurForm(
             initial={
+                "uuid": bailleur.uuid,
                 "nom": bailleur.nom,
                 "siret": bailleur.siret,
                 "capital_social": bailleur.capital_social,
@@ -286,6 +287,7 @@ def programme_update(request, convention_uuid):
         request.user.check_perm("convention.view_convention", convention)
         form = ProgrammeForm(
             initial={
+                "uuid": programme.uuid,
                 "nom": programme.nom,
                 "adresse": programme.adresse,
                 "code_postal": programme.code_postal,
@@ -413,6 +415,7 @@ def programme_cadastral_update(request, convention_uuid):
         upform = UploadForm()
         form = ProgrammeCadastralForm(
             initial={
+                "uuid": programme.uuid,
                 "permis_construire": programme.permis_construire,
                 "date_acte_notarie": utils.format_date_for_form(
                     programme.date_acte_notarie
@@ -543,6 +546,7 @@ def programme_edd_update(request, convention_uuid):
         upform = UploadForm()
         form = ProgrammeEDDForm(
             initial={
+                "uuid": programme.uuid,
                 **_get_text_and_files_from_field(
                     "edd_volumetrique", programme.edd_volumetrique
                 ),
@@ -640,6 +644,7 @@ def convention_financement(request, convention_uuid):
         formset = PretFormSet(initial=initial)
         form = ConventionFinancementForm(
             initial={
+                "uuid": convention.uuid,
                 "annee_fin_conventionnement": convention.date_fin_conventionnement.year
                 if convention.date_fin_conventionnement is not None
                 else None,
@@ -964,6 +969,7 @@ def convention_comments(request, convention_uuid):
         request.user.check_perm("convention.view_convention", convention)
         form = ConventionCommentForm(
             initial={
+                "uuid": convention.uuid,
                 "comments": convention.comments,
                 **_get_text_and_files_from_field("comments", convention.comments),
             }

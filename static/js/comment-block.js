@@ -291,7 +291,7 @@ function init_comment_button(input_id, uuid, comment_statut, is_owner, is_instru
 
 // Create a new comment
 function create_comment(convention_uuid, input_id, object_field) {
-    var [object_name, object_field] = object_field.split('__')
+    var [object_name, object_field, object_uuid] = object_field.split('__')
     comment = document.getElementById(input_id+ '_comment-textarea').value
     csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value
 
@@ -306,8 +306,9 @@ function create_comment(convention_uuid, input_id, object_field) {
         headers: headers,
         body: JSON.stringify({
             comment: comment,
-            object : object_name,
-            field : object_field,
+            object_name : object_name,
+            object_field : object_field,
+            object_uuid : object_uuid,
             convention_uuid : convention_uuid
         })
     }).then(function(response) {

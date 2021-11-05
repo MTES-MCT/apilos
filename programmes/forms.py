@@ -91,6 +91,7 @@ class ProgrammeSelectionForm(forms.Form):
 class ProgrammeForm(forms.Form):
     object_name = "programme"
 
+    uuid = forms.UUIDField(required=False)
     nom = forms.CharField(
         max_length=255,
         min_length=1,
@@ -121,6 +122,8 @@ class ProgrammeForm(forms.Form):
 
 
 class ProgrammeCadastralForm(forms.Form):
+
+    uuid = forms.UUIDField(required=False)
     permis_construire = forms.CharField(required=False)
     date_acte_notarie = forms.DateField(required=False)
     date_achevement_previsible = forms.DateField(required=False)
@@ -231,6 +234,7 @@ class ProgrammeCadastralForm(forms.Form):
 
 
 class ReferenceCadastraleForm(forms.Form):
+
     uuid = forms.UUIDField(required=False)
     section = forms.CharField(
         required=True,
@@ -274,6 +278,7 @@ ReferenceCadastraleFormSet = formset_factory(
 
 class ProgrammeEDDForm(forms.Form):
 
+    uuid = forms.UUIDField(required=False)
     edd_volumetrique = forms.CharField(
         required=False,
         max_length=5000,

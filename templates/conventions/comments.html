@@ -27,8 +27,7 @@
                         {% include "common/convention_edit_info.html" with convention=convention %}
                         <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Informations complémentaires</h2>
                         {% include "common/mandatory_fields_info.html" %}
-
-                        {% include "common/form/input_upload.html" with label="Ajoutez vos commentaires à l'attention de l'instructeur" form_input=form.comments form_input_files=form.comments_files object_name='convention' object_uuid=convention.uuid file_list=convention.comments_files.values textarea=True verticalDisplay=True object_field="convention__comments" %}
+                        {% include "common/form/input_upload.html" with label="Ajoutez vos commentaires à l'attention de l'instructeur" form_input=form.comments form_input_files=form.comments_files object_name='convention' object_uuid=convention.uuid file_list=convention.comments_files.values textarea=True verticalDisplay=True object_field="convention__comments__"|add:form.uuid.value %}
 
                     </div>
                 </div>

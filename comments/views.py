@@ -19,8 +19,9 @@ def add_comment(request):
             user=request.user,
             convention=convention,
             message=comment,
-            nom_objet=post_data["object"],
-            champ_objet=post_data["field"],
+            nom_objet=post_data["object_name"],
+            champ_objet=post_data["object_field"],
+            uuid_objet=post_data["object_uuid"],
         )
 
         return JsonResponse(

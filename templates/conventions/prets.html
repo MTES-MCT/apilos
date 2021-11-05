@@ -76,7 +76,7 @@
                                                 {% include "common/form/input_text.html" with form_input=form_pret.autre %}
                                             </td>
                                             {% if convention.statut != 'BROUILLON' %}
-                                                {% with input_id="pret_"|add:form_pret.uuid.value object_field="pret__"|add:form_pret.uuid.value %}
+                                                {% with input_id="pret_"|add:form_pret.uuid.value object_field="pret__uuid__"|add:form_pret.uuid.value %}
                                                     <td id="{{form_pret.uuid.id_for_label}}_div">
                                                         {% include "common/comment_icon.html" with form_input=form_pret.uuid object_field=object_field comments=comments %}
                                                         {% include "common/comment_dialog.html" with form_input=form_pret.uuid convention=convention object_field=object_field comments=comments %}
@@ -121,9 +121,9 @@
                                                             </option>
                                                         {% endfor %}
                                                     </select>
-                                                    {% include "common/comment_icon.html" with form_input=form.annee_fin_conventionnement object_field="convention__annee_fin_conventionnement" comments=comments %}
+                                                    {% include "common/comment_icon.html" with form_input=form.annee_fin_conventionnement object_field="convention__annee_fin_conventionnement__"|add:form.uuid.value comments=comments %}
                                                 </div>
-                                                {% include "common/comment_dialog.html" with form_input=form.annee_fin_conventionnement convention=convention object_field="convention__annee_fin_conventionnement" comments=comments %}
+                                                {% include "common/comment_dialog.html" with form_input=form.annee_fin_conventionnement convention=convention object_field="convention__annee_fin_conventionnement__"|add:form.uuid.value comments=comments %}
                                             </div>
                                         </div>
                                         {% for error in form.annee_fin_conventionnement.errors %}
@@ -134,7 +134,7 @@
                                     </div>
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                    {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" label="Fonds propres" object_field="convention__fond_propre" %}
+                                    {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" label="Fonds propres" object_field="convention__fond_propre__"|add:form.uuid.value %}
                                 </div>
                             </div>
                         </div>
