@@ -147,3 +147,25 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .fileinput--hidden {
   display: none;
 }
+
+.statcard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border: 0.3rem solid;
+  border-color: #000091;
+  border-radius: 10px;
+  background-color: #E5E5F4;
+}
+
+.statcard__indicateur {
+  font-size: 2.5rem;
+  text-align: center;
+}
+.statcard__title {
+  text-align: center;
+  margin-top: 1.5rem;
+  min-height: 65px;
+}
