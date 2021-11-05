@@ -9,7 +9,7 @@
             <form method="post" action="">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
+                    <div class="fr-col-md-12  fr-my-5w">
                         <h2 class="fr-mb-3w">Etape {{convention_form_step}}/{{ nb_steps }} - Choix du programme à conventionner</h2>
                         {% include "common/mandatory_fields_info.html" %}
 
@@ -109,7 +109,7 @@
 
                     </div>
                 </div>
-                <div class="form-button-footer fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w">
+                <div class="form-button-footer fr-col-md-12  fr-py-5w">
                     <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
                         Revenir à l'étape précédente
                     </a>

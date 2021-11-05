@@ -13,7 +13,7 @@
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-my-5w">
+                <div class="fr-col-md-12 fr-my-5w">
                     {% include "common/convention_edit_info.html" with convention=convention %}
                     <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Récapitulatif</h2>
 
@@ -407,7 +407,7 @@
                 </div>
             </div>
 
-            <div class="form-button-footer fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w">
+            <div class="form-button-footer fr-col-md-12  fr-py-5w">
                 {% if request.user.is_bailleur %}
                     {% if convention.is_bailleur_editable %}
                         {% include "common/button/previous.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
@@ -446,7 +446,7 @@
 
 
             {% if request.user.is_instructeur %}
-                <div class="fr-col-md-12 fr-col-lg-10 fr-col-offset-lg-1 fr-py-5w">
+                <div class="fr-col-md-12  fr-py-5w">
 
                     <div role="alert" class="fr-alert fr-alert--error">
                         {% if not convention.valide_le %}
