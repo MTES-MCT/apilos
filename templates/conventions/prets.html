@@ -1,6 +1,12 @@
 {% extends "layout/base.html" %}
 
+{% load static %}
+
 {% block page_title %}Prêts et Financements - APiLos{% endblock%}
+
+{% block javascript_extras %}
+    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
@@ -43,6 +49,9 @@
                                         <th scope="col">Montant (en €) {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col">Préteur</th>
                                         <th scope="col">Préciser le prêteur si 'Autre'</th>
+                                        {% if convention.statut != 'BROUILLON' %}
+                                            <th scope="col">Comments</th>
+                                        {% endif %}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -61,28 +70,19 @@
                                                 {% include "common/form/input_number.html" with form_input=form_pret.montant step="0.01" %}
                                             </td>
                                             <td>
-                                                <select
-                                                    class="fr-select {% if form_pret.preteur.errors %}fr-select--error{% endif %}"
-                                                    id="{{form_pret.preteur.id_for_label}}"
-                                                    name="{{form_pret.preteur.html_name}}"
-                                                    {% if not editable %}disabled{% endif %}>
-                                                    <option value="" {% if not form_pret.preteur.value %}selected{% endif %} disabled hidden>Sélectionnez le prêteur</option>
-                                                    {% for preteur in preteurs %}
-                                                        <option value="{{preteur.value}}"
-                                                            {% if preteur.value  == form_pret.preteur.value %}selected{% endif %}>
-                                                            {{preteur.label}}
-                                                        </option>
-                                                    {% endfor %}
-                                                </select>
-                                                {% for error in form_pret.preteur.errors %}
-                                                    <p id="select-error-desc-error" class="fr-error-text">
-                                                        {{ error }}
-                                                    </p>
-                                                {% endfor %}
+                                                {% include "common/form/select_enum.html" with form_input=form_pret.preteur enum=preteurs %}
                                             </td>
                                             <td>
                                                 {% include "common/form/input_text.html" with form_input=form_pret.autre %}
                                             </td>
+                                            {% if convention.statut != 'BROUILLON' %}
+                                                {% with input_id="pret_"|add:form_pret.uuid.value object_field="pret__"|add:form_pret.uuid.value %}
+                                                    <td id="{{form_pret.uuid.id_for_label}}_div">
+                                                        {% include "common/comment_icon.html" with form_input=form_pret.uuid object_field=object_field comments=comments %}
+                                                        {% include "common/comment_dialog.html" with form_input=form_pret.uuid convention=convention object_field=object_field comments=comments %}
+                                                    </td>
+                                                {% endwith %}
+                                            {% endif %}
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -107,19 +107,23 @@
                                                 <span>30&nbsp;/&nbsp;06&nbsp;/&nbsp;</span>
                                             </div>
                                             <div class="year">
-                                                <select
-                                                    class="fr-select {% if form.annee_fin_conventionnement.errors %}fr-select--error{% endif %}"
-                                                    id="{{form.annee_fin_conventionnement.id_for_label}}"
-                                                    name="{{form.annee_fin_conventionnement.html_name}}"
-                                                    {% if not editable %}disabled{% endif %}>
-                                                    <option value="" {% if not form.annee_fin_conventionnement.value %}selected{% endif %} disabled hidden>Année</option>
-                                                    {% for year in years %}
-                                                        <option value="{{year}}"
-                                                            {% if year|slugify == form.annee_fin_conventionnement.value|slugify %}selected{% endif %}>
-                                                            {{year}}
-                                                        </option>
-                                                    {% endfor %}
-                                                </select>
+                                                <div class="block--row-strech" id="{{form.annee_fin_conventionnement.id_for_label}}_div">
+                                                    <select
+                                                        class="fr-select {% if form.annee_fin_conventionnement.errors %}fr-select--error{% endif %}"
+                                                        id="{{form.annee_fin_conventionnement.id_for_label}}"
+                                                        name="{{form.annee_fin_conventionnement.html_name}}"
+                                                        {% if not editable %}disabled{% endif %}>
+                                                        <option value="" {% if not form.annee_fin_conventionnement.value %}selected{% endif %} disabled hidden>Année</option>
+                                                        {% for year in years %}
+                                                            <option value="{{year}}"
+                                                                {% if year|slugify == form.annee_fin_conventionnement.value|slugify %}selected{% endif %}>
+                                                                {{year}}
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    {% include "common/comment_icon.html" with form_input=form.annee_fin_conventionnement object_field="convention__annee_fin_conventionnement" comments=comments %}
+                                                </div>
+                                                {% include "common/comment_dialog.html" with form_input=form.annee_fin_conventionnement convention=convention object_field="convention__annee_fin_conventionnement" comments=comments %}
                                             </div>
                                         </div>
                                         {% for error in form.annee_fin_conventionnement.errors %}
@@ -130,7 +134,7 @@
                                     </div>
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                    {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" label="Fonds propres" %}
+                                    {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" label="Fonds propres" object_field="convention__fond_propre" %}
                                 </div>
                             </div>
                         </div>

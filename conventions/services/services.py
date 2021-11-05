@@ -533,6 +533,7 @@ def programme_edd_update(request, convention_uuid):
         for logementedd in logementedds:
             initial.append(
                 {
+                    "uuid": logementedd.uuid,
                     "financement": logementedd.financement,
                     "designation": logementedd.designation,
                     "typologie": logementedd.typologie,
@@ -557,6 +558,7 @@ def programme_edd_update(request, convention_uuid):
     return {
         "success": utils.ReturnStatus.ERROR,
         "convention": convention,
+        "comments": convention.get_comments_dict(),
         "form": form,
         "formset": formset,
         "upform": upform,
@@ -625,6 +627,7 @@ def convention_financement(request, convention_uuid):
         for pret in prets:
             initial.append(
                 {
+                    "uuid": pret.uuid,
                     "numero": pret.numero,
                     "date_octroi": utils.format_date_for_form(pret.date_octroi),
                     "duree": pret.duree,
@@ -646,6 +649,7 @@ def convention_financement(request, convention_uuid):
     return {
         "success": utils.ReturnStatus.ERROR,
         "convention": convention,
+        "comments": convention.get_comments_dict(),
         "form": form,
         "formset": formset,
         "upform": upform,
@@ -766,6 +770,7 @@ def logements_update(request, convention_uuid):
     return {
         "success": utils.ReturnStatus.ERROR,
         "convention": convention,
+        "comments": convention.get_comments_dict(),
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
@@ -843,6 +848,7 @@ def annexes_update(request, convention_uuid):
         for annexe in annexes:
             initial.append(
                 {
+                    "uuid": annexe.uuid,
                     "typologie": annexe.typologie,
                     "logement_designation": annexe.logement.designation,
                     "logement_typologie": annexe.logement.typologie,
@@ -856,6 +862,7 @@ def annexes_update(request, convention_uuid):
     return {
         "success": utils.ReturnStatus.ERROR,
         "convention": convention,
+        "comments": convention.get_comments_dict(),
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
@@ -917,6 +924,7 @@ def stationnements_update(request, convention_uuid):
         for stationnement in stationnements:
             initial.append(
                 {
+                    "uuid": stationnement.uuid,
                     "typologie": stationnement.typologie,
                     "nb_stationnements": stationnement.nb_stationnements,
                     "loyer": stationnement.loyer,
@@ -927,6 +935,7 @@ def stationnements_update(request, convention_uuid):
     return {
         "success": utils.ReturnStatus.ERROR,
         "convention": convention,
+        "comments": convention.get_comments_dict(),
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
@@ -962,6 +971,7 @@ def convention_comments(request, convention_uuid):
     return {
         "success": utils.ReturnStatus.ERROR,
         "convention": convention,
+        "comments": convention.get_comments_dict(),
         "form": form,
         "editable": request.user.has_perm("convention.change_convention", convention),
     }

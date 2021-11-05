@@ -8,6 +8,7 @@
     <script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
 {% block css_extras %}
@@ -27,7 +28,7 @@
                         <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Informations complémentaires</h2>
                         {% include "common/mandatory_fields_info.html" %}
 
-                        {% include "common/form/input_upload.html" with label="Ajoutez vos commentaires à l'attention de l'instructeur" form_input=form.comments form_input_files=form.comments_files object_name='convention' object_uuid=convention.uuid file_list=convention.comments_files.values textarea=True verticalDisplay=True %}
+                        {% include "common/form/input_upload.html" with label="Ajoutez vos commentaires à l'attention de l'instructeur" form_input=form.comments form_input_files=form.comments_files object_name='convention' object_uuid=convention.uuid file_list=convention.comments_files.values textarea=True verticalDisplay=True object_field="convention__comments" %}
 
                     </div>
                 </div>

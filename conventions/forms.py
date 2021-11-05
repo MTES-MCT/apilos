@@ -100,6 +100,7 @@ class ConventionFinancementForm(forms.Form):
 
 class PretForm(forms.Form):
 
+    uuid = forms.UUIDField(required=False)
     numero = forms.CharField(
         required=False,
         max_length=255,

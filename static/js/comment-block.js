@@ -182,6 +182,7 @@ function display_comment_icon(input_id) {
         comment_icon.classList.remove('content__icons--orange')
         comment_icon.classList.remove('content__icons--green')
         comment_icon.classList.remove('content__icons--grey')
+        document.getElementById(input_id + '_div').onclick = null
         document.getElementById(input_id + '_div').onmouseover = null
         document.getElementById(input_id + '_div').onmouseleave = null
         comment_icon.hidden = false
@@ -193,6 +194,7 @@ function display_comment_icon(input_id) {
         comment_icon.classList.add('content__icons--orange')
         comment_icon.classList.remove('content__icons--green')
         comment_icon.classList.remove('content__icons--grey')
+        document.getElementById(input_id + '_div').onclick = null
         document.getElementById(input_id + '_div').onmouseover = null
         document.getElementById(input_id + '_div').onmouseleave = null
         comment_icon.hidden = false
@@ -204,6 +206,7 @@ function display_comment_icon(input_id) {
         comment_icon.classList.remove('content__icons--orange')
         comment_icon.classList.add('content__icons--green')
         comment_icon.classList.remove('content__icons--grey')
+        document.getElementById(input_id + '_div').onclick = null
         document.getElementById(input_id + '_div').onmouseover = null
         document.getElementById(input_id + '_div').onmouseleave = null
         comment_icon.hidden = false
@@ -215,6 +218,7 @@ function display_comment_icon(input_id) {
         comment_icon.classList.remove('content__icons--orange')
         comment_icon.classList.remove('content__icons--green')
         comment_icon.classList.add('content__icons--grey')
+        document.getElementById(input_id + '_div').onclick = null
         document.getElementById(input_id + '_div').onmouseover = null
         document.getElementById(input_id + '_div').onmouseleave = null
         comment_icon.hidden = false
@@ -226,6 +230,9 @@ function display_comment_icon(input_id) {
         comment_icon.classList.remove('content__icons--orange')
         comment_icon.classList.remove('content__icons--green')
         comment_icon.classList.remove('content__icons--grey')
+        document.getElementById(input_id + '_div').onclick = function() {
+            document.getElementById(input_id + '_comment').hidden=false
+        }
         document.getElementById(input_id + '_div').onmouseover = function() {
             document.getElementById(input_id + '_comment').hidden=false
         }
