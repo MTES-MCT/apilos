@@ -55,6 +55,7 @@ class Convention(models.Model):
         default=ConventionStatut.BROUILLON,
     )
     soumis_le = models.DateTimeField(null=True)
+    premiere_soumission_le = models.DateTimeField(null=True)
     valide_le = models.DateTimeField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)

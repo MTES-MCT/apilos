@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "stats.apps.StatsConfig",
     "users.apps.UsersConfig",
     "upload.apps.UploadConfig",
+    # "kpis.apps.KpisConfig",
 ]
 
 MIDDLEWARE = [

@@ -40,6 +40,8 @@ def convention_save(request, convention_uuid):
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
         if request.POST.get("SubmitConvention", False):
+            if convention.premiere_soumission_le is None:
+                convention.premiere_soumission_le = datetime.datetime.now()
             convention.soumis_le = datetime.datetime.now()
             convention.statut = ConventionStatut.INSTRUCTION
             convention.save()
