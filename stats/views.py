@@ -17,7 +17,7 @@ def index(request):
     }
 
     users = User.objects.prefetch_related("role_set").all()
-    bailleurs = users.filter(role__typologie="INSTRUCTEUR").distinct()
+    bailleurs = users.filter(role__typologie="BAILLEUR").distinct()
     instructeurs = users.filter(role__typologie="INSTRUCTEUR").distinct()
 
     print(users[0])
