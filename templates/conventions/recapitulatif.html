@@ -32,10 +32,12 @@
                             <div class="fr-card fr-card--no-arrow">
                                 <div class="fr-card__body">
                                     <h4 class="fr-card__title">Convention</h4>
-                                    {% include "common/display_field_if_exists.html" with label="Nom du programme" value=programme.nom %}
-                                    {% include "common/display_field_if_exists.html" with label="Financement" value=lot.financement %}
-                                    {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville %}
-                                    {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements %}
+                                    <div class="table--limited-height">
+                                        {% include "common/display_field_if_exists.html" with label="Nom du programme" value=programme.nom %}
+                                        {% include "common/display_field_if_exists.html" with label="Financement" value=lot.financement %}
+                                        {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville %}
+                                        {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -43,15 +45,17 @@
                             <div class="fr-card fr-card--no-arrow">
                                 <div class="fr-card__body">
                                     <h4 class="fr-card__title">Bailleur</h4>
-                                    {% include "common/display_field_if_exists.html" with label="Nom" value=bailleur.nom %}
-                                    {% include "common/display_field_if_exists.html" with label="SIRET ou SIREN" value=bailleur.siret %}
-                                    {% include "common/display_field_if_exists.html" with label="Capital social" value=bailleur.capital_social %}
-                                    {% include "common/display_field_if_exists.html" with label="Adresse" value=bailleur.adresse %}
-                                    {% include "common/display_field_if_exists.html" with label="Code postal" value=bailleur.code_postal %}
-                                    {% include "common/display_field_if_exists.html" with label="Ville" value=bailleur.ville %}
-                                    {% include "common/display_field_if_exists.html" with label="Nom du signataire de la convention" value=bailleur.dg_nom %}
-                                    {% include "common/display_field_if_exists.html" with label="Fonction du signataire de la convention" value=bailleur.dg_fonction %}
-                                    {% include "common/display_field_if_exists.html" with label="Date de délibération" value=bailleur.dg_date_deliberation %}
+                                    <div class="table--limited-height">
+                                        {% include "common/display_field_if_exists.html" with label="Nom" value=bailleur.nom %}
+                                        {% include "common/display_field_if_exists.html" with label="SIRET ou SIREN" value=bailleur.siret %}
+                                        {% include "common/display_field_if_exists.html" with label="Capital social" value=bailleur.capital_social %}
+                                        {% include "common/display_field_if_exists.html" with label="Adresse" value=bailleur.adresse %}
+                                        {% include "common/display_field_if_exists.html" with label="Code postal" value=bailleur.code_postal %}
+                                        {% include "common/display_field_if_exists.html" with label="Ville" value=bailleur.ville %}
+                                        {% include "common/display_field_if_exists.html" with label="Nom du signataire de la convention" value=bailleur.dg_nom %}
+                                        {% include "common/display_field_if_exists.html" with label="Fonction du signataire de la convention" value=bailleur.dg_fonction %}
+                                        {% include "common/display_field_if_exists.html" with label="Date de délibération" value=bailleur.dg_date_deliberation %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -59,19 +63,21 @@
                             <div class="fr-card fr-card--no-arrow">
                                 <div class="fr-card__body">
                                     <h4 class="fr-card__title">Programme</h4>
-                                    {% if request.user.is_instructeur %}
-                                        {% include "common/display_field_if_exists.html" with label="Numero Galion" value=programme.numero_galion %}
-                                    {% endif %}
-                                    {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom %}
-                                    {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse %}
-                                    {% include "common/display_field_if_exists.html" with label="Code postal" value=programme.code_postal %}
-                                    {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville %}
-                                    {% include "common/display_field_if_exists.html" with label="ANRU" value=programme.anru %}
-                                    {% include "common/display_field_if_exists.html" with label="Type d'habitat" value=programme.get_type_habitat_display %}
-                                    {% include "common/display_field_if_exists.html" with label="Type d'opération" value=programme.get_type_operation_display %}
-                                    {% include "common/display_field_if_exists.html" with label="Nombre de locaux commerciaux (non-conventionnés)" value=programme.nb_locaux_commerciaux %}
-                                    {% include "common/display_field_if_exists.html" with label="Nombre de bureaux (non-conventionnés)" value=programme.nb_bureaux %}
-                                    {% include "common/display_field_if_exists.html" with label="Autres logements non-conventionnés" value=programme.autre_locaux_hors_convention %}
+                                    <div class="table--limited-height">
+                                        {% if request.user.is_instructeur %}
+                                            {% include "common/display_field_if_exists.html" with label="Numero Galion" value=programme.numero_galion %}
+                                        {% endif %}
+                                        {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom %}
+                                        {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse %}
+                                        {% include "common/display_field_if_exists.html" with label="Code postal" value=programme.code_postal %}
+                                        {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville %}
+                                        {% include "common/display_field_if_exists.html" with label="ANRU" value=programme.anru %}
+                                        {% include "common/display_field_if_exists.html" with label="Type d'habitat" value=programme.get_type_habitat_display %}
+                                        {% include "common/display_field_if_exists.html" with label="Type d'opération" value=programme.get_type_operation_display %}
+                                        {% include "common/display_field_if_exists.html" with label="Nombre de locaux commerciaux (non-conventionnés)" value=programme.nb_locaux_commerciaux %}
+                                        {% include "common/display_field_if_exists.html" with label="Nombre de bureaux (non-conventionnés)" value=programme.nb_bureaux %}
+                                        {% include "common/display_field_if_exists.html" with label="Autres logements non-conventionnés" value=programme.autre_locaux_hors_convention %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -79,17 +85,19 @@
                             <div class="fr-card fr-card--no-arrow">
                                 <div class="fr-card__body">
                                     <h4 class="fr-card__title">Programme - informations cadastrale</h4>
-                                    {% include "common/display_field_if_exists.html" with label="Numéro de permis construire" value=programme.permis_construire %}
-                                    {% include "common/display_field_if_exists.html" with label="Date de l'acte notarié" value=programme.date_acte_notarie %}
-                                    {% include "common/display_field_if_exists.html" with label="Date d'achat" value=programme.date_achat %}
-                                    {% include "common/display_field_if_exists.html" with label="Date d'achèvement previsible" value=programme.date_achevement_previsible %}
-                                    {% include "common/display_field_if_exists.html" with label="Date d'achèvement ou d'obtention de certificat de conformité" value=programme.date_achevement %}
-                                    {% include "common/display_text_and_files_if_exists.html" with label="Vendeur" text=programme.vendeur_text file_list=programme.vendeur_files.values %}
-                                    {% include "common/display_text_and_files_if_exists.html" with label="Acquéreur" text=programme.acquereur_text file_list=programme.acquereur_files.values %}
-                                    {% include "common/display_text_and_files_if_exists.html" with label="Référence du notaire" text=programme.reference_notaire_text file_list=programme.reference_notaire_files.values %}
-                                    {% include "common/display_text_and_files_if_exists.html" with label="Référence de publication de l'acte" text=programme.reference_publication_acte_text file_list=programme.reference_publication_acte_files.values %}
-                                    {% include "common/display_text_and_files_if_exists.html" with label="Acte de propriété" text=programme.acte_de_propriete_text file_list=programme.acte_de_propriete_files.values %}
-                                    {% include "common/display_text_and_files_if_exists.html" with label="Acte notarial" text=programme.acte_notarial_text file_list=programme.acte_notarial_files.values %}
+                                    <div class="table--limited-height">
+                                        {% include "common/display_field_if_exists.html" with label="Numéro de permis construire" value=programme.permis_construire %}
+                                        {% include "common/display_field_if_exists.html" with label="Date de l'acte notarié" value=programme.date_acte_notarie %}
+                                        {% include "common/display_field_if_exists.html" with label="Date d'achat" value=programme.date_achat %}
+                                        {% include "common/display_field_if_exists.html" with label="Date d'achèvement previsible" value=programme.date_achevement_previsible %}
+                                        {% include "common/display_field_if_exists.html" with label="Date d'achèvement ou d'obtention de certificat de conformité" value=programme.date_achevement %}
+                                        {% include "common/display_text_and_files_if_exists.html" with label="Vendeur" text=programme.vendeur_text file_list=programme.vendeur_files.values %}
+                                        {% include "common/display_text_and_files_if_exists.html" with label="Acquéreur" text=programme.acquereur_text file_list=programme.acquereur_files.values %}
+                                        {% include "common/display_text_and_files_if_exists.html" with label="Référence du notaire" text=programme.reference_notaire_text file_list=programme.reference_notaire_files.values %}
+                                        {% include "common/display_text_and_files_if_exists.html" with label="Référence de publication de l'acte" text=programme.reference_publication_acte_text file_list=programme.reference_publication_acte_files.values %}
+                                        {% include "common/display_text_and_files_if_exists.html" with label="Acte de propriété" text=programme.acte_de_propriete_text file_list=programme.acte_de_propriete_files.values %}
+                                        {% include "common/display_text_and_files_if_exists.html" with label="Acte notarial" text=programme.acte_notarial_text file_list=programme.acte_notarial_files.values %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -142,8 +150,10 @@
                             <div class="fr-card fr-card--no-arrow">
                                 <div class="fr-card__body">
                                     <h4 class="fr-card__title">Programme - EDD</h4>
-                                    {% include "common/display_text_and_files_if_exists.html" with label="EDD volumétrique" text=programme.edd_volumetrique_text file_list=programme.edd_volumetrique_files.values %}
-                                    {% include "common/display_text_and_files_if_exists.html" with label="EDD classique" text=programme.edd_classique_text file_list=programme.edd_classique_files.values %}
+                                    <div class="table--limited-height">
+                                        {% include "common/display_text_and_files_if_exists.html" with label="EDD volumétrique" text=programme.edd_volumetrique_text file_list=programme.edd_volumetrique_files.values %}
+                                        {% include "common/display_text_and_files_if_exists.html" with label="EDD classique" text=programme.edd_classique_text file_list=programme.edd_classique_files.values %}
+                                    </div>
                                     <p class="fr-my-1w">EDD Simplifé : </p>
                                     <div class="fr-table fr-table--bordered table--limited-height">
                                         <table>
