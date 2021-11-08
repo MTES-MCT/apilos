@@ -11,13 +11,11 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
+            {% include "common/form/conventionform_header.html" %}
             <form method="post" action="">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-12 fr-col-md-12  fr-my-5w">
-                        {% include "common/convention_edit_info.html" with convention=convention %}
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Identité du signataire</h2>
-                        {% include "common/mandatory_fields_info.html" %}
+                    <div class="fr-col-12 fr-col-md-12 fr-mt-5w">
 
                         <h4>Entreprise bailleur</h4>
 
@@ -62,7 +60,9 @@
                         </div>
                     </div>
                 </div>
+                {% include "common/mandatory_fields_info.html" %}
                 <div class="form-button-footer fr-col-12 fr-col-md-12  fr-py-5w">
+
                     {% include "common/button/previous.html" with precedent='conventions:selection_update' convention_uuid=convention.uuid %}
                     {% if editable %}
                         {% include "common/button/next_and_save.html" with suivant='conventions:bailleur' convention_uuid=convention.uuid editable=editable %}

@@ -42,4 +42,7 @@ class Bailleur(IngestableModel):
     def _get_nom(self):
         return self.nom
 
+    def get_uuid_as_str(self):
+        return str(self.uuid)
+
     label = property(_get_nom)

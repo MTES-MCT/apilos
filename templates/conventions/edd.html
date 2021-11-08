@@ -19,13 +19,12 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
         <div class="fr-container">
+            {% include "common/form/conventionform_header.html" %}
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12  fr-my-5w">
-                        {% include "common/convention_edit_info.html" with convention=convention %}
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - État descriptif de division</h2>
-                        {% include "common/mandatory_fields_info.html" %}
+                        <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - État descriptif de division</h2> -->
 
                         <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
                             <p>Pour rappel, l'état descriptif de division est obligatoire dès qu’un programme comporte plusieurs financements et donc plusieurs conventions. </p>
@@ -137,8 +136,8 @@
                                             {% if convention.statut != 'BROUILLON' %}
                                                 {% with input_id="logement_edd_"|add:form.uuid.value object_field="logement_edd__uuid__"|add:form.uuid.value %}
                                                     <td id="{{form.uuid.id_for_label}}_div">
-                                                        {% include "common/comment_icon.html" with form_input=form.uuid object_field=object_field comments=comments %}
-                                                        {% include "common/comment_dialog.html" with form_input=form.uuid convention=convention object_field=object_field comments=comments %}
+                                                        {% include "common/comment_icon.html" with form_input_id=form.uuid.id_for_label object_field=object_field comments=comments %}
+                                                        {% include "common/comment_dialog.html" with form_input_id=form.uuid.id_for_label form_input_html=form.uuid.html_name convention=convention object_field=object_field comments=comments %}
                                                     </td>
                                                 {% endwith %}
                                             {% endif %}
@@ -150,6 +149,7 @@
                     </div>
                 </div>
 
+                {% include "common/mandatory_fields_info.html" %}
                 <div class="fr-col-md-12  fr-py-5w button-bar">
                     {% include "common/button/previous.html" with precedent='conventions:cadastre' convention_uuid=convention.uuid %}
                     {% if editable %}

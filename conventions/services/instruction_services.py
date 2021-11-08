@@ -22,6 +22,7 @@ def convention_summary(request, convention_uuid):
     return {
         "success": utils.ReturnStatus.ERROR,
         "convention": convention,
+        "comments": convention.get_comments_dict(),
         "bailleur": convention.bailleur,
         "lot": convention.lot,
         "programme": convention.programme,

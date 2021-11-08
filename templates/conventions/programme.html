@@ -11,13 +11,12 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
+            {% include "common/form/conventionform_header.html" %}
             <form method="post" action="">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-md-12  fr-my-5w">
-                        {% include "common/convention_edit_info.html" with convention=convention %}
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Nature du programme immobilier</h2>
-                        {% include "common/mandatory_fields_info.html" %}
+                    <div class="fr-col-md-12 fr-mt-5w">
+                        <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Nature du programme immobilier</h2> -->
 
                         <h4>Adresse du programme</h4>
 
@@ -52,14 +51,14 @@
                                             <span class="fr-hint-text">Le programme bénéficie d'un financement ANRU</span>
                                         </label>
                                     </div>
-                                    {% include "common/comment_icon.html" with form_input=form.anru object_field="programme__anru__"|add:form.uuid.value comments=comments %}
+                                    {% include "common/comment_icon.html" with form_input_id=form.anru.id_for_label object_field="programme__anru__"|add:form.uuid.value comments=comments %}
                                 </div>
                                 {% for error in form.anru.errors %}
                                     <p id="checkboxes-error-desc-error" class="fr-error-text">
                                         {{ error }}
                                     </p>
                                 {% endfor %}
-                                {% include "common/comment_dialog.html" with form_input=form.anru convention=convention object_field="programme__anru__"|add:form.uuid.value comments=comments %}
+                                {% include "common/comment_dialog.html" with form_input_id=form.anru.id_for_label form_input_html=form.anru.html_name convention=convention object_field="programme__anru__"|add:form.uuid.value comments=comments %}
 
                             </div>
                         </div>
@@ -90,6 +89,7 @@
 
                     </div>
                 </div>
+                {% include "common/mandatory_fields_info.html" %}
                 <div class="fr-col-md-12  fr-py-5w button-bar">
                     {% include "common/button/previous.html" with precedent='conventions:bailleur' convention_uuid=convention.uuid %}
                     {% if editable %}

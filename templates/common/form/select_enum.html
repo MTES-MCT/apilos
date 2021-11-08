@@ -21,7 +21,7 @@
                 </option>
             {% endfor %}
         </select>
-        {% include "common/comment_icon.html" with form_input=form_input object_field=object_field comments=comments %}
+        {% include "common/comment_icon.html" with form_input_id=form_input.id_for_label object_field=object_field comments=comments %}
     </div>
 
     {% for error in form_input.errors %}
@@ -31,4 +31,4 @@
     {% endfor %}
 </div>
 
-{% include "common/comment_dialog.html" with form_input=form_input convention=convention object_field=object_field comments=comments %}
+{% include "common/comment_dialog.html" with form_input_id=form_input.id_for_label form_input_html=form_input.html_name convention=convention object_field=object_field comments=comments %}

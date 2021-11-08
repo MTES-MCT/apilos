@@ -26,3 +26,8 @@ def has_own_active_comment(comments, user_id):
             filter(lambda comment: comment.statut != "CLOS", comments),
         )
     )
+
+
+@register.filter
+def add_uuid(label, uuid_to_add):
+    return f"{label}{uuid_to_add}"

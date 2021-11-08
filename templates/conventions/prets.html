@@ -11,13 +11,12 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
         <div class="fr-container">
+            {% include "common/form/conventionform_header.html" %}
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-md-12  fr-my-5w">
-                        {% include "common/convention_edit_info.html" with convention=convention %}
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Financements</h2>
-                        {% include "common/mandatory_fields_info.html" %}
+                    <div class="fr-col-md-12 fr-mt-5w">
+                        <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Financements</h2> -->
 
                         <h4>Prêts associés à la convention</h4>
 
@@ -78,8 +77,8 @@
                                             {% if convention.statut != 'BROUILLON' %}
                                                 {% with input_id="pret_"|add:form_pret.uuid.value object_field="pret__uuid__"|add:form_pret.uuid.value %}
                                                     <td id="{{form_pret.uuid.id_for_label}}_div">
-                                                        {% include "common/comment_icon.html" with form_input=form_pret.uuid object_field=object_field comments=comments %}
-                                                        {% include "common/comment_dialog.html" with form_input=form_pret.uuid convention=convention object_field=object_field comments=comments %}
+                                                        {% include "common/comment_icon.html" with form_input_id=form_pret.uuid.id_for_label object_field=object_field comments=comments %}
+                                                        {% include "common/comment_dialog.html" with form_input_id=form_pret.uuid.id_for_label form_input_html=form_pret.uuid.html_name convention=convention object_field=object_field comments=comments %}
                                                     </td>
                                                 {% endwith %}
                                             {% endif %}
@@ -121,9 +120,9 @@
                                                             </option>
                                                         {% endfor %}
                                                     </select>
-                                                    {% include "common/comment_icon.html" with form_input=form.annee_fin_conventionnement object_field="convention__annee_fin_conventionnement__"|add:form.uuid.value comments=comments %}
+                                                    {% include "common/comment_icon.html" with form_input_id=form.annee_fin_conventionnement.id_for_label object_field="convention__annee_fin_conventionnement__"|add:form.uuid.value comments=comments %}
                                                 </div>
-                                                {% include "common/comment_dialog.html" with form_input=form.annee_fin_conventionnement convention=convention object_field="convention__annee_fin_conventionnement__"|add:form.uuid.value comments=comments %}
+                                                {% include "common/comment_dialog.html" with form_input_id=form.annee_fin_conventionnement.id_for_label form_input_html=form.annee_fin_conventionnement.html_name convention=convention object_field="convention__annee_fin_conventionnement__"|add:form.uuid.value comments=comments %}
                                             </div>
                                         </div>
                                         {% for error in form.annee_fin_conventionnement.errors %}
@@ -138,9 +137,10 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
+
+                {% include "common/mandatory_fields_info.html" %}
                 <div class="form-button-footer fr-col-md-12  fr-py-5w">
                     {% include "common/button/previous.html" with precedent='conventions:edd' convention_uuid=convention.uuid %}
                     {% if editable %}

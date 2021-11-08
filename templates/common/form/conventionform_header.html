@@ -1,0 +1,13 @@
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-mt-5w">
+    </div>
+    {% if convention %}
+        <div class="fr-col-12">
+            {% include "common/convention_edit_info.html" with convention=convention %}
+        </div>
+    {% endif %}
+    <div class="fr-col-12">
+        {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
+    </div>
+    <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Identité du signataire</h2> -->
+</div>

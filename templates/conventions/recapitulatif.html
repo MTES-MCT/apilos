@@ -9,14 +9,17 @@
     <link rel="stylesheet" href="{% static "dropzonejs/min/dropzone.min.css" %}">
 {% endblock %}
 
+{% block javascript_extras %}
+    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
+
+
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
+            {% include "common/form/conventionform_header.html" %}
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-md-12 fr-my-5w">
-                    {% include "common/convention_edit_info.html" with convention=convention %}
-                    <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Récapitulatif</h2>
-
                     {% if not convention.is_submitted %}
                         <div role="alert" class="fr-alert fr-alert--error">
                             <p class="fr-alert__title">Attention</p>
@@ -44,17 +47,24 @@
                         <div class="fr-col-12 fr-col-lg-6">
                             <div class="fr-card fr-card--no-arrow">
                                 <div class="fr-card__body">
-                                    <h4 class="fr-card__title">Bailleur</h4>
+                                    <h4 class="fr-card__title">
+                                        Bailleur
+                                        <a href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}" >
+                                            <span class="fr-fi-edit-line" aria-hidden="true"></span>
+                                        </a>
+                                    </h4>
                                     <div class="table--limited-height">
-                                        {% include "common/display_field_if_exists.html" with label="Nom" value=bailleur.nom %}
-                                        {% include "common/display_field_if_exists.html" with label="SIRET ou SIREN" value=bailleur.siret %}
-                                        {% include "common/display_field_if_exists.html" with label="Capital social" value=bailleur.capital_social %}
-                                        {% include "common/display_field_if_exists.html" with label="Adresse" value=bailleur.adresse %}
-                                        {% include "common/display_field_if_exists.html" with label="Code postal" value=bailleur.code_postal %}
-                                        {% include "common/display_field_if_exists.html" with label="Ville" value=bailleur.ville %}
-                                        {% include "common/display_field_if_exists.html" with label="Nom du signataire de la convention" value=bailleur.dg_nom %}
-                                        {% include "common/display_field_if_exists.html" with label="Fonction du signataire de la convention" value=bailleur.dg_fonction %}
-                                        {% include "common/display_field_if_exists.html" with label="Date de délibération" value=bailleur.dg_date_deliberation %}
+                                        {% with bailleur_uuid=bailleur.uuid|slugify %}
+                                            {% include "common/display_field_if_exists.html" with label="Nom" value=bailleur.nom object_field="bailleur__nom__"|add:bailleur.get_uuid_as_str %}
+                                            {% include "common/display_field_if_exists.html" with label="SIRET ou SIREN" value=bailleur.siret object_field="bailleur__siret__"|add:bailleur.get_uuid_as_str %}
+                                            {% include "common/display_field_if_exists.html" with label="Capital social" value=bailleur.capital_social object_field="bailleur__capital_social__"|add:bailleur.get_uuid_as_str %}
+                                            {% include "common/display_field_if_exists.html" with label="Adresse" value=bailleur.adresse %}
+                                            {% include "common/display_field_if_exists.html" with label="Code postal" value=bailleur.code_postal %}
+                                            {% include "common/display_field_if_exists.html" with label="Ville" value=bailleur.ville %}
+                                            {% include "common/display_field_if_exists.html" with label="Nom du signataire de la convention" value=bailleur.dg_nom %}
+                                            {% include "common/display_field_if_exists.html" with label="Fonction du signataire de la convention" value=bailleur.dg_fonction %}
+                                            {% include "common/display_field_if_exists.html" with label="Date de délibération" value=bailleur.dg_date_deliberation %}
+                                        {% endwith %}
                                     </div>
                                 </div>
                             </div>
