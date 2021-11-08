@@ -142,12 +142,12 @@
 
                 {% include "common/mandatory_fields_info.html" %}
                 <div class="form-button-footer fr-col-md-12  fr-py-5w">
-                    {% include "common/button/previous.html" with precedent='conventions:edd' convention_uuid=convention.uuid %}
                     {% if editable %}
                         {% include "common/button/next_and_save.html" with suivant='conventions:prets' convention_uuid=convention.uuid editable=editable %}
                     {% else %}
                         {% include "common/button/next.html" with suivant='conventions:logements' convention_uuid=convention.uuid %}
                     {% endif %}
+                    {% include "common/button/previous.html" with precedent='conventions:edd' convention_uuid=convention.uuid %}
                 </div>
             </form>
         </div>

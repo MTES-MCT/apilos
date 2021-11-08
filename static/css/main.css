@@ -52,7 +52,7 @@
 
 .form-button-footer {
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   align-items: center;
   justify-content: space-between;
 }
@@ -176,63 +176,44 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 
 /* SVG ikonate */
 .content__icons {
+  width: 32px;
+  height: 32px;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  fill: none;
   background: var(--white);
   border-radius: 4px;
   display: inline-block;
 }
 
+.content__icons--small svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
 .content__icons--red svg {
-  width: 32px;
-  height: 32px;
   stroke: #E10600;
-  stroke-width: 1.5;
-  stroke-linecap: square;
-  stroke-linejoin: miter;
-  fill: none;
   color: #E10600;
 }
 
 .content__icons--blue svg {
-  width: 32px;
-  height: 32px;
   stroke: #0762C8;
-  stroke-width: 1.5;
-  stroke-linecap: square;
-  stroke-linejoin: miter;
-  fill: none;
   color: #0762C8;
 }
 
 .content__icons--green svg {
-  width: 32px;
-  height: 32px;
   stroke: #008941;
-  stroke-width: 1.5;
-  stroke-linecap: square;
-  stroke-linejoin: miter;
-  fill: none;
   color: #008941;
 }
 
 .content__icons--grey svg {
-  width: 32px;
-  height: 32px;
   stroke: #9C9C9C;
-  stroke-width: 1.5;
-  stroke-linecap: square;
-  stroke-linejoin: miter;
-  fill: none;
   color: #9C9C9C;
 }
 
 .content__icons--orange svg {
-  width: 32px;
-  height: 32px;
   stroke: #eea317;
-  stroke-width: 1.5;
-  stroke-linecap: square;
-  stroke-linejoin: miter;
-  fill: none;
   color: #eea317;
 }
 

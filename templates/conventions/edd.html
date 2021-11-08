@@ -23,7 +23,7 @@
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-md-12  fr-my-5w">
+                    <div class="fr-col-md-12 fr-mt-5w">
                         <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - État descriptif de division</h2> -->
 
                         <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
@@ -150,13 +150,13 @@
                 </div>
 
                 {% include "common/mandatory_fields_info.html" %}
-                <div class="fr-col-md-12  fr-py-5w button-bar">
-                    {% include "common/button/previous.html" with precedent='conventions:cadastre' convention_uuid=convention.uuid %}
+                <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
                         {% include "common/button/next_and_save.html" with suivant='conventions:edd' convention_uuid=convention.uuid editable=editable %}
                     {% else %}
                         {% include "common/button/next.html" with suivant='conventions:prets' convention_uuid=convention.uuid %}
                     {% endif %}
+                    {% include "common/button/previous.html" with precedent='conventions:cadastre' convention_uuid=convention.uuid %}
                 </div>
 
 

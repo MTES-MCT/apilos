@@ -74,6 +74,10 @@ def bailleur(request, convention_uuid):
     # STEP 2
     result = services.bailleur_update(request, convention_uuid)
     if result["success"] == utils.ReturnStatus.SUCCESS:
+        if result.get("redirect", False) == "recapitulatif":
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            )
         return HttpResponseRedirect(
             reverse("conventions:programme", args=[result["convention"].uuid])
         )

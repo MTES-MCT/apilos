@@ -37,7 +37,6 @@
             </div>
         </div>
     </dialog>
-
     {% for comment in comments|get_item:object_field %}
         <script type="text/javascript" nonce="{{request.csp_nonce}}">
             create_comment_input('{{form_input_id}}',{

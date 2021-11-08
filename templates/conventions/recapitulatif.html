@@ -55,15 +55,15 @@
                                     </h4>
                                     <div class="table--limited-height">
                                         {% with bailleur_uuid=bailleur.uuid|slugify %}
-                                            {% include "common/display_field_if_exists.html" with label="Nom" value=bailleur.nom object_field="bailleur__nom__"|add:bailleur.get_uuid_as_str %}
-                                            {% include "common/display_field_if_exists.html" with label="SIRET ou SIREN" value=bailleur.siret object_field="bailleur__siret__"|add:bailleur.get_uuid_as_str %}
-                                            {% include "common/display_field_if_exists.html" with label="Capital social" value=bailleur.capital_social object_field="bailleur__capital_social__"|add:bailleur.get_uuid_as_str %}
-                                            {% include "common/display_field_if_exists.html" with label="Adresse" value=bailleur.adresse %}
-                                            {% include "common/display_field_if_exists.html" with label="Code postal" value=bailleur.code_postal %}
-                                            {% include "common/display_field_if_exists.html" with label="Ville" value=bailleur.ville %}
-                                            {% include "common/display_field_if_exists.html" with label="Nom du signataire de la convention" value=bailleur.dg_nom %}
-                                            {% include "common/display_field_if_exists.html" with label="Fonction du signataire de la convention" value=bailleur.dg_fonction %}
-                                            {% include "common/display_field_if_exists.html" with label="Date de délibération" value=bailleur.dg_date_deliberation %}
+                                            {% include "common/display_field_if_exists.html" with label="Nom" value=bailleur.nom object_field="bailleur__nom__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="SIRET ou SIREN" value=bailleur.siret object_field="bailleur__siret__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Capital social" value=bailleur.capital_social object_field="bailleur__capital_social__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Adresse" value=bailleur.adresse object_field="bailleur__capital_social__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Code postal" value=bailleur.code_postal object_field="bailleur__capital_social__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Ville" value=bailleur.ville object_field="bailleur__ville__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Nom du signataire de la convention" value=bailleur.dg_nom object_field="bailleur__dg_nom__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Fonction du signataire de la convention" value=bailleur.dg_fonction object_field="bailleur__dg_fonction__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Date de délibération" value=bailleur.dg_date_deliberation object_field="bailleur__dg_date_deliberation__"|add:bailleur_uuid %}
                                         {% endwith %}
                                     </div>
                                 </div>
