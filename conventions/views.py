@@ -12,7 +12,8 @@ from programmes.models import (
     TypologieStationnement,
     FinancementEDD,
 )
-from conventions.services import services, utils, instruction_services
+from conventions.services import services
+from conventions.services.utils import ReturnStatus
 from conventions.models import Preteur
 
 NB_STEPS = 11
@@ -32,7 +33,7 @@ def index(request):
 def select_programme_create(request):
     # STEP 1
     result = services.select_programme_create(request)
-    if result["success"] == utils.ReturnStatus.SUCCESS:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:bailleur", args=[result["convention"].uuid])
         )
@@ -53,7 +54,7 @@ def select_programme_create(request):
 def select_programme_update(request, convention_uuid):
     # STEP 1
     result = services.select_programme_update(request, convention_uuid)
-    if result["success"] == utils.ReturnStatus.SUCCESS:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:bailleur", args=[result["convention"].uuid])
         )
@@ -73,7 +74,7 @@ def select_programme_update(request, convention_uuid):
 def bailleur(request, convention_uuid):
     # STEP 2
     result = services.bailleur_update(request, convention_uuid)
-    if result["success"] == utils.ReturnStatus.SUCCESS:
+    if result["success"] == ReturnStatus.SUCCESS:
         if result.get("redirect", False) == "recapitulatif":
             return HttpResponseRedirect(
                 reverse("conventions:recapitulatif", args=[result["convention"].uuid])
@@ -97,7 +98,7 @@ def bailleur(request, convention_uuid):
 def programme(request, convention_uuid):
     # STEP 3
     result = services.programme_update(request, convention_uuid)
-    if result["success"] == utils.ReturnStatus.SUCCESS:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:cadastre", args=[result["convention"].uuid])
         )
@@ -119,7 +120,7 @@ def programme(request, convention_uuid):
 def cadastre(request, convention_uuid):
     # STEP 4
     result = services.programme_cadastral_update(request, convention_uuid)
-    if result["success"] == utils.ReturnStatus.SUCCESS:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:edd", args=[result["convention"].uuid])
         )
@@ -140,7 +141,7 @@ def cadastre(request, convention_uuid):
 def edd(request, convention_uuid):
     # STEP 5
     result = services.programme_edd_update(request, convention_uuid)
-    if result["success"] == utils.ReturnStatus.SUCCESS:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:prets", args=[result["convention"].uuid])
         )
@@ -161,7 +162,7 @@ def edd(request, convention_uuid):
 # @permission_required("convention.change_convention")
 def prets(request, convention_uuid):
     result = services.convention_financement(request, convention_uuid)
-    if result["success"] == utils.ReturnStatus.SUCCESS:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:logements", args=[result["convention"].uuid])
         )
@@ -182,7 +183,7 @@ def prets(request, convention_uuid):
 # @permission_required("convention.change_convention")
 def logements(request, convention_uuid):
     result = services.logements_update(request, convention_uuid)
-    if result["success"] == utils.ReturnStatus.SUCCESS:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:annexes", args=[result["convention"].uuid])
         )
@@ -202,7 +203,7 @@ def logements(request, convention_uuid):
 # @permission_required("convention.change_convention")
 def annexes(request, convention_uuid):
     result = services.annexes_update(request, convention_uuid)
-    if result["success"] == utils.ReturnStatus.SUCCESS:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:stationnements", args=[result["convention"].uuid])
         )
@@ -223,7 +224,7 @@ def annexes(request, convention_uuid):
 # @permission_required("convention.change_convention")
 def stationnements(request, convention_uuid):
     result = services.stationnements_update(request, convention_uuid)
-    if result["success"] == utils.ReturnStatus.SUCCESS:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:comments", args=[result["convention"].uuid])
         )
@@ -243,7 +244,7 @@ def stationnements(request, convention_uuid):
 # @permission_required("convention.change_convention")
 def comments(request, convention_uuid):
     result = services.convention_comments(request, convention_uuid)
-    if result["success"] == utils.ReturnStatus.SUCCESS:
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:recapitulatif", args=[result["convention"].uuid])
         )
@@ -262,7 +263,7 @@ def comments(request, convention_uuid):
 # @permission_required("convention.change_convention", raise_exception=True)
 def recapitulatif(request, convention_uuid):
     # Step 11/11
-    result = instruction_services.convention_summary(request, convention_uuid)
+    result = services.convention_summary(request, convention_uuid)
     return render(
         request,
         "conventions/recapitulatif.html",
@@ -277,14 +278,14 @@ def recapitulatif(request, convention_uuid):
 # Handle in service.py
 # @permission_required("convention.change_convention")
 def save_convention(request, convention_uuid):
-    result = instruction_services.convention_save(request, convention_uuid)
-    if result["success"] == utils.ReturnStatus.SUCCESS:
+    result = services.convention_save(request, convention_uuid)
+    if result["success"] == ReturnStatus.SUCCESS:
         return render(
             request,
             "conventions/submitted.html",
             result,
         )
-    if result["success"] == utils.ReturnStatus.WARNING:
+    if result["success"] == ReturnStatus.WARNING:
         return render(
             request,
             "conventions/saved.html",
@@ -298,7 +299,7 @@ def save_convention(request, convention_uuid):
 # Handle in service.py
 # @permission_required("convention.change_convention")
 def validate_convention(request, convention_uuid):
-    result = instruction_services.convention_validate(request, convention_uuid)
+    result = services.convention_validate(request, convention_uuid)
     return HttpResponseRedirect(
         reverse("conventions:recapitulatif", args=[result["convention"].uuid])
     )
@@ -307,7 +308,7 @@ def validate_convention(request, convention_uuid):
 # Handle in service.py
 # @permission_required("convention.change_convention")
 def generate_convention(request, convention_uuid):
-    data, file_name = instruction_services.generate_convention(convention_uuid)
+    data, file_name = services.generate_convention(convention_uuid)
 
     response = HttpResponse(
         data,

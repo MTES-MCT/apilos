@@ -123,25 +123,30 @@
                                 </thead>
                                 <tbody>
                                     {% for form in formset %}
-                                        <tr>
-                                            <td>
-                                                {% include "common/form/select_enum.html" with form_input=form.financement enum=financements %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/input_text.html" with form_input=form.designation %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/select_enum.html" with form_input=form.typologie enum=typologies %}
-                                            </td>
-                                            {% if convention.statut != 'BROUILLON' %}
-                                                {% with input_id="logement_edd_"|add:form.uuid.value object_field="logement_edd__uuid__"|add:form.uuid.value %}
+                                        {% with input_id="logement_edd_"|add:form.uuid.value main_object_field="logement_edd__uuid__"|add:form.uuid.value %}
+                                            <tr>
+                                                <td>
+                                                    <input
+                                                        type="hidden"
+                                                        id="{{form.uuid.id_for_label}}"
+                                                        name="{{form.uuid.html_name}}"
+                                                        value="{{ form.uuid.value|default_if_none:'' }}">
+                                                    {% include "common/form/select_enum.html" with form_input=form.financement enum=financements parent_object_field=main_object_field %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/select_enum.html" with form_input=form.typologie enum=typologies parent_object_field=main_object_field %}
+                                                </td>
+                                                {% if convention.statut != 'BROUILLON' %}
                                                     <td id="{{form.uuid.id_for_label}}_div">
-                                                        {% include "common/comment_icon.html" with form_input_id=form.uuid.id_for_label object_field=object_field comments=comments %}
-                                                        {% include "common/comment_dialog.html" with form_input_id=form.uuid.id_for_label form_input_html=form.uuid.html_name convention=convention object_field=object_field comments=comments %}
+                                                        {% include "common/comment_icon.html" with form_input_id=form.uuid.id_for_label object_field=main_object_field comments=comments %}
+                                                        {% include "common/comment_dialog.html" with form_input_id=form.uuid.id_for_label form_input_html=form.uuid.html_name convention=convention object_field=main_object_field comments=comments %}
                                                     </td>
-                                                {% endwith %}
-                                            {% endif %}
-                                        </tr>
+                                                {% endif %}
+                                            </tr>
+                                        {% endwith %}
                                     {% endfor %}
                                 </tbody>
                             </table>

@@ -15,7 +15,7 @@
             id="{{form_input.id_for_label}}"
             name="{{form_input.html_name}}"
             value="{{ form_input.value|default_if_none:'' }}"
-            {% if not editable and comments|hasnt_active_comments:object_field %}disabled{% endif %}>
+            {% include "common/form/disable_form_input.html" %}>
         {% include "common/comment_icon.html" with form_input_id=form_input.id_for_label object_field=object_field comments=comments %}
     </div>
     {% for error in form_input.errors %}
