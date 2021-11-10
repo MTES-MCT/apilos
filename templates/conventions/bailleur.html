@@ -68,40 +68,7 @@
                         {% include "common/button/next_and_save.html" with suivant='conventions:bailleur' convention_uuid=convention.uuid %}
                         {% include "common/button/previous.html" with precedent='conventions:selection_update' convention_uuid=convention.uuid %}
                     {% else %}
-                        <div>
-                            <div id="save_after_comments" hidden>
-                                <button class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" id='atomic_button' name='UpdateAtomic' value='True'>
-                                    Enregistrer et retour au Récapitulatif
-                                </button>
-                            </div>
-                            <div id="back_to_recap" hidden>
-                                <button type='button' class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" type="button" id="return_recap">
-                                    Retour au Récapitulatif
-                                </button>
-                                <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                    document.addEventListener('DOMContentLoaded', function () {
-                                        document.getElementById('return_recap')
-                                            .addEventListener('click', function(){ location.href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' });
-                                    });
-                                </script>
-                            </div>
-                            <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                if (
-                                    document.getElementsByClassName('content__icons--red').length
-                                    + document.getElementsByClassName('content__icons--green').length
-                                    + document.getElementsByClassName('content__icons--orange').length) {
-                                        console.log('comments')
-                                        document.getElementById('save_after_comments').hidden = false
-                                        document.getElementById('back_to_recap').hidden = true
-                                    }
-                                else {
-                                    console.log('no comments')
-                                    document.getElementById('save_after_comments').hidden = true
-                                    document.getElementById('back_to_recap').hidden = false
-
-                                }
-                            </script>
-                        </div>
+                        {% include "common/button/noteditable_button.html" with convention=convention %}
                     {% endif %}
                 </div>
             </form>

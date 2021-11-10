@@ -109,7 +109,6 @@ def select_programme_update(request, convention_uuid):
             return {
                 "success": utils.ReturnStatus.SUCCESS,
                 "convention": convention,
-                "form": form,
             }
     # If this is a GET (or any other method) create the default form.
     else:
@@ -160,7 +159,6 @@ def programme_update(request, convention_uuid):
             return {
                 "success": utils.ReturnStatus.SUCCESS,
                 "convention": convention,
-                "form": form,
             }
     # If this is a GET (or any other method) create the default form.
     else:
@@ -342,10 +340,14 @@ def programme_edd_update(request, convention_uuid):
     programme = convention.programme
     import_warnings = None
     if request.method == "POST":
+        if request.POST.get("UpdateAtomic", False):
+            # A FAIRE check convention.change_convention rule
+            return _programme_edd_atomic_update(request, convention, programme)
         request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         formset = LogementEDDFormSet(request.POST)
         form = ProgrammeEDDForm(request.POST)
+        # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
@@ -370,31 +372,9 @@ def programme_edd_update(request, convention_uuid):
             formset_is_valid = formset.is_valid()
 
             if form_is_valid and formset_is_valid:
-                programme.edd_volumetrique = utils.set_files_and_text_field(
-                    form.cleaned_data["edd_volumetrique_files"],
-                    form.cleaned_data["edd_volumetrique"],
-                )
-                programme.mention_publication_edd_volumetrique = form.cleaned_data[
-                    "mention_publication_edd_volumetrique"
-                ]
-                programme.edd_classique = utils.set_files_and_text_field(
-                    form.cleaned_data["edd_classique_files"],
-                    form.cleaned_data["edd_classique"],
-                )
-                programme.mention_publication_edd_classique = form.cleaned_data[
-                    "mention_publication_edd_classique"
-                ]
-                programme.save()
-                programme.logementedd_set.all().delete()
-                for form_logementedd in formset:
-                    logementedd = LogementEDD.objects.create(
-                        programme=programme,
-                        bailleur=convention.bailleur,
-                        financement=form_logementedd.cleaned_data["financement"],
-                        designation=form_logementedd.cleaned_data["designation"],
-                        typologie=form_logementedd.cleaned_data["typologie"],
-                    )
-                    logementedd.save()
+                _save_programme_edd(programme, form)
+                _save_programme_logement_edd(formset, convention, programme)
+
                 # All is OK -> Next:
                 return {
                     "success": utils.ReturnStatus.SUCCESS,
@@ -440,3 +420,108 @@ def programme_edd_update(request, convention_uuid):
         "upform": upform,
         "import_warnings": import_warnings,
     }
+
+
+def _programme_edd_atomic_update(request, convention, programme):
+    form = ProgrammeEDDForm(
+        {
+            "uuid": programme.uuid,
+            **utils.init_text_and_files_from_field(
+                request, programme, "edd_volumetrique"
+            ),
+            "mention_publication_edd_volumetrique": (
+                request.POST.get(
+                    "mention_publication_edd_volumetrique",
+                    programme.mention_publication_edd_volumetrique,
+                )
+            ),
+            **utils.init_text_and_files_from_field(request, programme, "edd_classique"),
+            "mention_publication_edd_classique": (
+                request.POST.get(
+                    "mention_publication_edd_classique",
+                    programme.mention_publication_edd_classique,
+                )
+            ),
+        }
+    )
+    form_is_valid = form.is_valid()
+
+    formset = LogementEDDFormSet(request.POST)
+    initformset = {"form-TOTAL_FORMS": len(formset), "form-INITIAL_FORMS": len(formset)}
+    for idx, form_logementedd in enumerate(formset):
+        logementedd = LogementEDD.objects.get(uuid=form_logementedd["uuid"].value())
+        initformset = {
+            **initformset,
+            f"form-{idx}-uuid": logementedd.uuid,
+            f"form-{idx}-designation": utils.get_form_value(
+                form_logementedd, logementedd, "designation"
+            ),
+            f"form-{idx}-financement": utils.get_form_value(
+                form_logementedd, logementedd, "financement"
+            ),
+            f"form-{idx}-typologie": utils.get_form_value(
+                form_logementedd, logementedd, "typologie"
+            ),
+        }
+    formset = LogementEDDFormSet(initformset)
+    formset.programme_id = convention.programme_id
+    formset.ignore_optional_errors = request.POST.get("ignore_optional_errors", False)
+    formset_is_valid = formset.is_valid()
+
+    if form_is_valid and formset_is_valid:
+        _save_programme_edd(programme, form)
+        _save_programme_logement_edd(formset, convention, programme)
+
+        return {
+            "success": utils.ReturnStatus.SUCCESS,
+            "convention": convention,
+            "redirect": "recapitulatif",
+        }
+    upform = UploadForm()
+    return {
+        **utils.base_convention_response_error(request, convention),
+        "form": form,
+        "formset": formset,
+        "upform": upform,
+    }
+
+
+def _save_programme_edd(programme, form):
+    programme.edd_volumetrique = utils.set_files_and_text_field(
+        form.cleaned_data["edd_volumetrique_files"],
+        form.cleaned_data["edd_volumetrique"],
+    )
+    programme.mention_publication_edd_volumetrique = form.cleaned_data[
+        "mention_publication_edd_volumetrique"
+    ]
+    programme.edd_classique = utils.set_files_and_text_field(
+        form.cleaned_data["edd_classique_files"],
+        form.cleaned_data["edd_classique"],
+    )
+    programme.mention_publication_edd_classique = form.cleaned_data[
+        "mention_publication_edd_classique"
+    ]
+    programme.save()
+
+
+def _save_programme_logement_edd(formset, convention, programme):
+    lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], formset))
+    lgt_uuids = list(filter(None, lgt_uuids1))
+    programme.logementedd_set.exclude(uuid__in=lgt_uuids).delete()
+    for form_logementedd in formset:
+        if form_logementedd.cleaned_data["uuid"]:
+            logementedd = LogementEDD.objects.get(
+                uuid=form_logementedd.cleaned_data["uuid"]
+            )
+            logementedd.financement = form_logementedd.cleaned_data["financement"]
+            logementedd.designation = form_logementedd.cleaned_data["designation"]
+            logementedd.typologie = form_logementedd.cleaned_data["typologie"]
+        else:
+            logementedd = LogementEDD.objects.create(
+                programme=programme,
+                bailleur=convention.bailleur,
+                financement=form_logementedd.cleaned_data["financement"],
+                designation=form_logementedd.cleaned_data["designation"],
+                typologie=form_logementedd.cleaned_data["typologie"],
+            )
+        logementedd.save()

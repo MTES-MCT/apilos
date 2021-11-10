@@ -26,7 +26,8 @@
                 id="{{form_input.id_for_label}}"
                 name="{{form_input.html_name}}"
                 rows="{% if rows %}{{rows}}{% else %}8{% endif %}"
-                {% if not editable %}disabled{% endif %}>{{ form_input.value }}</textarea>
+                {% include "common/form/disable_form_input.html" %}
+            >{{ form_input.value }}</textarea>
         {% endif %}
 
 
@@ -35,8 +36,11 @@
             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
         {% endif %}
 
-
-        {% if editable %}
+        {% if not editable and comments|hasnt_active_comments:object_field %}
+            <div class="fr-mt-6w">
+                {% include "common/display_files.html" with file_list=file_list %}
+            </div>
+        {% else %}
             <div class="fr-mt-1w">
                 {% if textarea %}
                     <i class="fr-text--sm">et/ou </i>
@@ -85,10 +89,6 @@
                 //        });
             </script>
 
-        {% else %}
-            <div class="fr-mt-6w">
-                {% include "common/display_files.html" with file_list=file_list %}
-            </div>
         {% endif %}
 
     </div>

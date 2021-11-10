@@ -55,6 +55,10 @@ def select_programme_update(request, convention_uuid):
     # STEP 1
     result = services.select_programme_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
+        if result.get("redirect", False) == "recapitulatif":
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            )
         return HttpResponseRedirect(
             reverse("conventions:bailleur", args=[result["convention"].uuid])
         )
@@ -99,6 +103,10 @@ def programme(request, convention_uuid):
     # STEP 3
     result = services.programme_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
+        if result.get("redirect", False) == "recapitulatif":
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            )
         return HttpResponseRedirect(
             reverse("conventions:cadastre", args=[result["convention"].uuid])
         )
@@ -121,6 +129,10 @@ def cadastre(request, convention_uuid):
     # STEP 4
     result = services.programme_cadastral_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
+        if result.get("redirect", False) == "recapitulatif":
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            )
         return HttpResponseRedirect(
             reverse("conventions:edd", args=[result["convention"].uuid])
         )
@@ -142,6 +154,10 @@ def edd(request, convention_uuid):
     # STEP 5
     result = services.programme_edd_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
+        if result.get("redirect", False) == "recapitulatif":
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            )
         return HttpResponseRedirect(
             reverse("conventions:prets", args=[result["convention"].uuid])
         )
@@ -163,6 +179,10 @@ def edd(request, convention_uuid):
 def prets(request, convention_uuid):
     result = services.convention_financement(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
+        if result.get("redirect", False) == "recapitulatif":
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            )
         return HttpResponseRedirect(
             reverse("conventions:logements", args=[result["convention"].uuid])
         )
@@ -184,6 +204,10 @@ def prets(request, convention_uuid):
 def logements(request, convention_uuid):
     result = services.logements_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
+        if result.get("redirect", False) == "recapitulatif":
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            )
         return HttpResponseRedirect(
             reverse("conventions:annexes", args=[result["convention"].uuid])
         )
@@ -204,6 +228,10 @@ def logements(request, convention_uuid):
 def annexes(request, convention_uuid):
     result = services.annexes_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
+        if result.get("redirect", False) == "recapitulatif":
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            )
         return HttpResponseRedirect(
             reverse("conventions:stationnements", args=[result["convention"].uuid])
         )
@@ -225,6 +253,10 @@ def annexes(request, convention_uuid):
 def stationnements(request, convention_uuid):
     result = services.stationnements_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
+        if result.get("redirect", False) == "recapitulatif":
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            )
         return HttpResponseRedirect(
             reverse("conventions:comments", args=[result["convention"].uuid])
         )
@@ -245,6 +277,10 @@ def stationnements(request, convention_uuid):
 def comments(request, convention_uuid):
     result = services.convention_comments(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
+        if result.get("redirect", False) == "recapitulatif":
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            )
         return HttpResponseRedirect(
             reverse("conventions:recapitulatif", args=[result["convention"].uuid])
         )

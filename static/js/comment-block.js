@@ -292,7 +292,7 @@ function init_comment_button(input_id, uuid, comment_statut, is_owner, is_instru
 // Create a new comment
 function create_comment(convention_uuid, input_id, object_field) {
     var [object_name, object_field, object_uuid] = object_field.split('__')
-    comment = document.getElementById(input_id+ '_comment-textarea').value
+    comment = document.getElementById('textarea_' + input_id + '_comment').value
     csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value
 
     var headers = {
@@ -387,7 +387,7 @@ function update_status_comment(input_id, uuid, status) {
             disable_textarea(comment.uuid, comment.statut, comment.is_owner)
             if (comment.is_owner && comment.statut == 'CLOS') {
                 document.getElementById(input_id + "_new_comment").hidden = false
-                document.getElementById(input_id + "_comment-textarea").value = ''
+                document.getElementById('textarea_' + input_id + "_comment").value = ''
             }
             display_comment_icon(input_id)
         }

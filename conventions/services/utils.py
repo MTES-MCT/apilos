@@ -53,6 +53,26 @@ def get_text_and_files_from_field(name, field):
     }
 
 
+def init_text_and_files_from_field(request, object_instance, field_name):
+    if (
+        request.POST.get(field_name + "_files") is not None
+        or request.POST.get(field_name) is not None
+    ):
+        form_fields = {}
+        form_fields[field_name] = request.POST.get(field_name)
+        form_fields[field_name + "_files"] = request.POST.get(field_name + "_files")
+        return form_fields
+    return get_text_and_files_from_field(
+        field_name, getattr(object_instance, field_name)
+    )
+
+
+def get_form_value(form_instance, object_instance, field_name):
+    if form_instance[field_name].value() is not None:
+        return form_instance[field_name].value()
+    return getattr(object_instance, field_name)
+
+
 def base_convention_response_error(
     request, convention, perm="convention.change_convention"
 ):
