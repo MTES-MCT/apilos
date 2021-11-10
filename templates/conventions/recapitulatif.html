@@ -36,7 +36,16 @@
                             <div class="fr-col-12 fr-col-lg-6">
                                 <div class="fr-card fr-card--no-arrow">
                                     <div class="fr-card__body">
-                                        <h4 class="fr-card__title">Convention</h4>
+                                        <div class="block--row-strech" id="{{object_field}}_div">
+                                            <div class="block--row-strech-1">
+                                                <h4 class="fr-card__title">
+                                                    Convention
+                                                </h4>
+                                            </div>
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:selection_update' convention_uuid=convention.uuid %}" >
+                                                <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
+                                            </a>
+                                        </div>
                                         <div class="table--limited-height">
                                             {% include "common/display_field_if_exists.html" with label="Nom du programme" value=programme.nom %}
                                             {% include "common/display_field_if_exists.html" with label="Financement" value=lot.financement %}
@@ -49,12 +58,16 @@
                             <div class="fr-col-12 fr-col-lg-6">
                                 <div class="fr-card fr-card--no-arrow">
                                     <div class="fr-card__body">
-                                        <h4 class="fr-card__title">
-                                            Bailleur
-                                            <a href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}" >
-                                                <span class="fr-fi-edit-line" aria-hidden="true"></span>
+                                        <div class="block--row-strech" id="{{object_field}}_div">
+                                            <div class="block--row-strech-1">
+                                                <h4 class="fr-card__title">
+                                                    Bailleur
+                                                </h4>
+                                            </div>
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}" >
+                                                <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
                                             </a>
-                                        </h4>
+                                        </div>
                                         <div class="table--limited-height">
                                             {% with bailleur_uuid=bailleur.uuid|slugify %}
                                                 {% include "common/display_field_if_exists.html" with label="Nom" value=bailleur.nom object_field="bailleur__nom__"|add:bailleur_uuid %}
@@ -74,7 +87,16 @@
                             <div class="fr-col-12 fr-col-lg-6">
                                 <div class="fr-card fr-card--no-arrow">
                                     <div class="fr-card__body">
-                                        <h4 class="fr-card__title">Programme</h4>
+                                        <div class="block--row-strech" id="{{object_field}}_div">
+                                            <div class="block--row-strech-1">
+                                                <h4 class="fr-card__title">
+                                                    Programme
+                                                </h4>
+                                            </div>
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:programme' convention_uuid=convention.uuid %}" >
+                                                <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
+                                            </a>
+                                        </div>
                                         <div class="table--limited-height">
                                             {% if request.user.is_instructeur %}
                                                 {% include "common/display_field_if_exists.html" with label="Numero Galion" value=programme.numero_galion %}
@@ -96,7 +118,16 @@
                             <div class="fr-col-12 fr-col-lg-6">
                                 <div class="fr-card fr-card--no-arrow">
                                     <div class="fr-card__body">
-                                        <h4 class="fr-card__title">Programme - informations cadastrale</h4>
+                                        <div class="block--row-strech" id="{{object_field}}_div">
+                                            <div class="block--row-strech-1">
+                                                <h4 class="fr-card__title">
+                                                    Programme - informations cadastrale
+                                                </h4>
+                                            </div>
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}" >
+                                                <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
+                                            </a>
+                                        </div>
                                         <div class="table--limited-height">
                                             {% include "common/display_field_if_exists.html" with label="Numéro de permis construire" value=programme.permis_construire %}
                                             {% include "common/display_field_if_exists.html" with label="Date de l'acte notarié" value=programme.date_acte_notarie %}
@@ -120,7 +151,16 @@
                             <div class="fr-col-12 fr-col-lg-12">
                                 <div class="fr-card fr-card--no-arrow">
                                     <div class="fr-card__body">
-                                        <h4 class="fr-card__title">Références cadastrales</h4>
+                                        <div class="block--row-strech" id="{{object_field}}_div">
+                                            <div class="block--row-strech-1">
+                                                <h4 class="fr-card__title">
+                                                    Références cadastrales
+                                                </h4>
+                                            </div>
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                                <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
+                                            </a>
+                                        </div>
                                         {% include "common/display_text_and_files_if_exists.html" with text=programme.reference_cadastrale_text file_list=programme.reference_cadastrale_files.values %}
                                         <div class="fr-table fr-table--bordered table--limited-height">
                                             <table>
@@ -161,11 +201,16 @@
                             <div class="fr-col-12 fr-col-lg-12">
                                 <div class="fr-card fr-card--no-arrow">
                                     <div class="fr-card__body">
-                                        <h4 class="fr-card__title">Programme - EDD
-                                            <a href="{% url 'conventions:edd' convention_uuid=convention.uuid %}" >
-                                                <span class="fr-fi-edit-line" aria-hidden="true"></span>
+                                        <div class="block--row-strech" id="{{object_field}}_div">
+                                            <div class="block--row-strech-1">
+                                                <h4 class="fr-card__title">
+                                                    Programme - EDD
+                                                </h4>
+                                            </div>
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:edd' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                                <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
                                             </a>
-                                        </h4>
+                                        </div>
                                         <div class="table--limited-height">
                                             {% include "common/display_text_and_files_if_exists.html" with label="EDD volumétrique" text=programme.edd_volumetrique_text file_list=programme.edd_volumetrique_files.values object_field="programme__edd_volumetrique__"|add:programme_uuid %}
                                             {% include "common/display_field_if_exists.html" with label="Mention de publication de l'EDD volumétrique" value=programme.mention_publication_edd_volumetrique object_field="programme__mention_publication_edd_volumetrique__"|add:programme_uuid %}
@@ -224,7 +269,16 @@
                             <div class="fr-col-12 fr-col-lg-12">
                                 <div class="fr-card fr-card--no-arrow">
                                     <div class="fr-card__body">
-                                        <h4 class="fr-card__title">Financement</h4>
+                                        <div class="block--row-strech" id="{{object_field}}_div">
+                                            <div class="block--row-strech-1">
+                                                <h4 class="fr-card__title">
+                                                    Financements
+                                                </h4>
+                                            </div>
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:prets' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                                <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
+                                            </a>
+                                        </div>
                                         <p class="fr-my-1w">Prêts : </p>
                                         <div class="fr-table fr-table--bordered table--limited-height">
                                             <table>
@@ -275,7 +329,16 @@
                             <div class="fr-col-12 fr-col-lg-12">
                                 <div class="fr-card fr-card--no-arrow">
                                     <div class="fr-card__body">
-                                        <h4 class="fr-card__title">Logements</h4>
+                                        <div class="block--row-strech" id="{{object_field}}_div">
+                                            <div class="block--row-strech-1">
+                                                <h4 class="fr-card__title">
+                                                    Logements
+                                                </h4>
+                                            </div>
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:logements' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                                <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
+                                            </a>
+                                        </div>
                                         <div class="fr-table fr-table--bordered table--limited-height">
                                             <table>
                                                 <thead>
@@ -356,7 +419,16 @@
                             <div class="fr-col-12 fr-col-lg-12">
                                 <div class="fr-card fr-card--no-arrow">
                                     <div class="fr-card__body">
-                                        <h4 class="fr-card__title">Annexes</h4>
+                                        <div class="block--row-strech" id="{{object_field}}_div">
+                                            <div class="block--row-strech-1">
+                                                <h4 class="fr-card__title">
+                                                    Annexes
+                                                </h4>
+                                            </div>
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:annexes' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                                <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
+                                            </a>
+                                        </div>
                                         <div class="fr-table fr-table--bordered table--limited-height">
                                             <table>
                                                 <thead>
@@ -404,7 +476,16 @@
                             <div class="fr-col-12 fr-col-lg-12">
                                 <div class="fr-card fr-card--no-arrow">
                                     <div class="fr-card__body">
-                                        <h4 class="fr-card__title">Stationnements</h4>
+                                        <div class="block--row-strech" id="{{object_field}}_div">
+                                            <div class="block--row-strech-1">
+                                                <h4 class="fr-card__title">
+                                                    Stationnements
+                                                </h4>
+                                            </div>
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:stationnements' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                                <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
+                                            </a>
+                                        </div>
                                         <div class="fr-table fr-table--bordered table--limited-height">
                                             <table>
                                                 <thead>
@@ -440,7 +521,16 @@
                             <div class="fr-col-12 fr-col-lg-12">
                                 <div class="fr-card fr-card--no-arrow">
                                     <div class="fr-card__body">
-                                        <h4 class="fr-card__title">Informations à l'attention du service instructeur</h4>
+                                        <div class="block--row-strech" id="{{object_field}}_div">
+                                            <div class="block--row-strech-1">
+                                                <h4 class="fr-card__title">
+                                                    Informations à l'attention du service instructeur
+                                                </h4>
+                                            </div>
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:comments' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                                <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
+                                            </a>
+                                        </div>
                                         <div class="table--limited-height">
                                             {% include "common/display_text_and_files_if_exists.html" with text=convention.comments_text file_list=convention.comments_files.values %}
                                         </div>
@@ -480,7 +570,6 @@
                                     </button>
                                 </form>
                             </div>
-                            {% include "common/button/previous.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
                         {% else %}
                             {% include "common/button/return_convention_index.html" %}
                         {% endif %}

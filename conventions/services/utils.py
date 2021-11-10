@@ -73,12 +73,10 @@ def get_form_value(form_instance, object_instance, field_name):
     return getattr(object_instance, field_name)
 
 
-def base_convention_response_error(
-    request, convention, perm="convention.change_convention"
-):
+def base_convention_response_error(request, convention):
     return {
         "success": ReturnStatus.ERROR,
         "convention": convention,
         "comments": convention.get_comments_dict(),
-        "editable": request.user.has_perm(perm, convention),
+        "editable": request.user.full_editable_convention(convention),
     }

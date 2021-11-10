@@ -193,7 +193,11 @@ class AdministrationsModelsTest(TestCase):
 
         convention = Convention.objects.get(numero="0001")
         convention.statut = ConventionStatut.BROUILLON
+        self.assertFalse(user_instructeur.full_editable_convention(convention))
         self.assertFalse(
+            user_instructeur_metropole.full_editable_convention(convention)
+        )
+        self.assertTrue(
             user_instructeur.has_perm("convention.change_convention", convention)
         )
         self.assertFalse(
@@ -222,6 +226,10 @@ class AdministrationsModelsTest(TestCase):
             )
         )
         convention.statut = ConventionStatut.INSTRUCTION
+        self.assertTrue(user_instructeur.full_editable_convention(convention))
+        self.assertFalse(
+            user_instructeur_metropole.full_editable_convention(convention)
+        )
         self.assertTrue(
             user_instructeur.has_perm("convention.change_convention", convention)
         )
@@ -247,6 +255,8 @@ class AdministrationsModelsTest(TestCase):
 
         convention = Convention.objects.get(numero="0001")
         convention.statut = ConventionStatut.BROUILLON
+        self.assertTrue(user_bailleur.full_editable_convention(convention))
+        self.assertFalse(user_bailleur_hlm.full_editable_convention(convention))
         self.assertTrue(
             user_bailleur.has_perm("convention.change_convention", convention)
         )
@@ -268,7 +278,9 @@ class AdministrationsModelsTest(TestCase):
             user_bailleur_hlm.has_perm("convention.add_convention", convention.lot)
         )
         convention.statut = ConventionStatut.INSTRUCTION
-        self.assertFalse(
+        self.assertFalse(user_bailleur.full_editable_convention(convention))
+        self.assertFalse(user_bailleur_hlm.full_editable_convention(convention))
+        self.assertTrue(
             user_bailleur.has_perm("convention.change_convention", convention)
         )
         self.assertFalse(

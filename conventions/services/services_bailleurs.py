@@ -9,10 +9,10 @@ def bailleur_update(request, convention_uuid):
     )
     bailleur = convention.bailleur
     if request.method == "POST":
+        request.user.check_perm("convention.change_convention", convention)
         if request.POST.get("UpdateAtomic", False):
             # A FAIRE check convention.change_convention rule
             return _bailleur_atomic_update(request, convention, bailleur)
-        request.user.check_perm("convention.change_convention", convention)
         form = BailleurForm(request.POST)
         if form.is_valid():
             bailleur.nom = form.cleaned_data["nom"]
