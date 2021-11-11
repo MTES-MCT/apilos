@@ -11,6 +11,7 @@ from .models import Preteur
 
 class ConventionCommentForm(forms.Form):
 
+    uuid = forms.UUIDField(required=False)
     comments = forms.CharField(
         required=False,
         max_length=5000,
@@ -29,6 +30,7 @@ class ConventionFinancementForm(forms.Form):
     prets = []
     convention = None
 
+    uuid = forms.UUIDField(required=False)
     annee_fin_conventionnement = forms.IntegerField(
         required=True,
         error_messages={
@@ -100,6 +102,7 @@ class ConventionFinancementForm(forms.Form):
 
 class PretForm(forms.Form):
 
+    uuid = forms.UUIDField(required=False)
     numero = forms.CharField(
         required=False,
         max_length=255,

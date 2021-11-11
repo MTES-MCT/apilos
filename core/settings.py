@@ -68,7 +68,7 @@ INSTALLED_APPS = [
     "stats.apps.StatsConfig",
     "users.apps.UsersConfig",
     "upload.apps.UploadConfig",
-    # "kpis.apps.KpisConfig",
+    "comments.apps.CommentsConfig",
 ]
 
 MIDDLEWARE = [
@@ -93,11 +93,11 @@ TEMPLATES = [
         "OPTIONS": {
             "debug": False,
             "context_processors": [
+                "core.context_processor.get_environment",
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "core.context_processor.get_environment",
             ],
         },
     },

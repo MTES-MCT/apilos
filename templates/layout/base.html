@@ -24,12 +24,15 @@
 
         <link rel="stylesheet" href="{% static "dsfr/css/dsfr.min.css" %}">
         <link rel="stylesheet" href="{% static "css/main.css" %}">
-
+        <link rel="stylesheet" href="{% static "css/step_progressbar.css" %}">
         {% block css_extras %}{% endblock %}
+
+        <!--Js-->
+
         {% block javascript_extras %}{% endblock %}
         {% if ENVIRONMENT == 'production' %}
             <!-- Matomo -->
-            <script nonce="{{request.csp_nonce}}">
+            <script type="text/javascript" nonce="{{request.csp_nonce}}">
                 var _paq = window._paq = window._paq || [];
                 /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
                 _paq.push(['trackPageView']);

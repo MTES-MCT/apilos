@@ -12,7 +12,7 @@
     <button type="button" class="fr-btn fr-btn--secondary" id='download_model'>
         <img class="apilos-fi-btn--secondary fr-mr-1w" src="{% static "icons/download.svg" %}">Télécharger le modèle des {{ what }}
     </button>
-    <script nonce="{{request.csp_nonce}}">
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('download_model')
                 .addEventListener('click', function(){ location.href="{% url 'conventions:load_xlsx_model' file_type=file_type %}" });
@@ -34,7 +34,7 @@
 
 </div>
 
-<script nonce="{{request.csp_nonce}}">
+<script type="text/javascript" nonce="{{request.csp_nonce}}">
     document.getElementById('{{upform.file.id_for_label}}_upload_button').onclick = function() {
         document.getElementById('{{upform.file.id_for_label}}').click();
     };

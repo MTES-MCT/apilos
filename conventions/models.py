@@ -91,6 +91,21 @@ class Convention(models.Model):
     def comments_files(self):
         return model_utils.get_field_key(self, "comments", "files")
 
+    def get_comments_dict(self):
+        result = {}
+        for comment in self.comment_set.all():
+            comment_name = (
+                comment.nom_objet
+                + "__"
+                + comment.champ_objet
+                + "__"
+                + str(comment.uuid_objet)
+            )
+            if comment_name not in result:
+                result[comment_name] = []
+            result[comment_name].append(comment)
+        return result
+
 
 class Pret(models.Model):
     id = models.AutoField(primary_key=True)

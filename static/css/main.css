@@ -52,7 +52,7 @@
 
 .form-button-footer {
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   align-items: center;
   justify-content: space-between;
 }
@@ -136,6 +136,10 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   justify-content: stretch;
 }
 
+.block--row-strech-1 {
+  flex:1
+}
+
 .day-and-month {
   width: 85px;
 }
@@ -168,4 +172,71 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   text-align: center;
   margin-top: 1.5rem;
   min-height: 65px;
+}
+
+/* SVG ikonate */
+.content__icons {
+  width: 32px;
+  height: 32px;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  fill: none;
+  background: var(--white);
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.content__icons--small svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.content__icons--red svg {
+  stroke: #E10600;
+  color: #E10600;
+}
+
+.content__icons--blue svg {
+  stroke: #0762C8;
+  color: #0762C8;
+}
+
+.content__icons--green svg {
+  stroke: #008941;
+  color: #008941;
+}
+
+.content__icons--grey svg {
+  stroke: #9C9C9C;
+  color: #9C9C9C;
+}
+
+.content__icons--orange svg {
+  stroke: #eea317;
+  color: #eea317;
+}
+
+.fr-btn--green {
+  background-color: #008941;
+  --color-hover: #00a34d !important;
+  --color-active: #00a34d !important;
+}
+
+.fr-btn--grey {
+  background-color: #9C9C9C;
+  --color-hover: #CECECE !important;
+  --color-active: #CECECE !important;
+}
+
+.button-hidden {
+  display: none !important;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+.text-italic {
+  font-style: italic;
 }

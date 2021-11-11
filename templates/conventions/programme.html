@@ -1,29 +1,34 @@
 {% extends "layout/base.html" %}
 
+{% load static %}
+
 {% block page_title %}Programme - APiLos{% endblock%}
+
+{% block javascript_extras %}
+    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
+            {% include "common/form/conventionform_header.html" %}
             <form method="post" action="">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-md-12  fr-my-5w">
-                        {% include "common/convention_edit_info.html" with convention=convention %}
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Nature du programme immobilier</h2>
-                        {% include "common/mandatory_fields_info.html" %}
+                    <div class="fr-col-md-12 fr-mt-5w">
+                        <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Nature du programme immobilier</h2> -->
 
                         <h4>Adresse du programme</h4>
 
-                        {% include "common/form/input_text.html" with form_input=form.nom label="Nom du programme" %}
-                        {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" %}
+                        {% include "common/form/input_text.html" with form_input=form.nom label="Nom du programme" object_field="programme__nom__"|add:form.uuid.value %}
+                        {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" object_field="programme__adresse__"|add:form.uuid.value %}
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" %}
+                                {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" object_field="programme__code_postal__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_text.html" with form_input=form.ville label="Ville" %}
+                                {% include "common/form/input_text.html" with form_input=form.ville label="Ville" object_field="programme__ville__"|add:form.uuid.value %}
                             </div>
                         </div>
 
@@ -31,34 +36,39 @@
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" %}
+                                {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" object_field="programme__nb_logements__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w fr-mt-3w">
-                                <div class="fr-checkbox-group {% if form.anru.errors %}fr-checkbox-group--error{% endif %}">
-                                    <input
-                                        type="checkbox"
-                                        id="anru"
-                                        {% if form.anru.value %}checked="checked"{% endif %}
-                                        name="anru"
-                                        {% if not editable %}disabled{% endif %}>
-                                    <label class="fr-label" for="anru"> ANRU{% include "common/mandatory_field.html" with form_input=form.anru %}
-                                        <span class="fr-hint-text">Le programme bénéficie d'un financement ANRU</span>
-                                    </label>
-                                    {% for error in form.anru.errors %}
-                                        <p id="checkboxes-error-desc-error" class="fr-error-text">
-                                            {{ error }}
-                                        </p>
-                                    {% endfor %}
+                                <div class="fr-mt-1w block--row-strech" id="{{form.anru.id_for_label}}_div">
+                                    <div class="fr-checkbox-group block--row-strech-1 {% if form.anru.errors %}fr-checkbox-group--error{% endif %}">
+                                        <input
+                                            type="checkbox"
+                                            id="anru"
+                                            {% if form.anru.value %}checked="checked"{% endif %}
+                                            name="anru"
+                                            {% if not editable %}disabled{% endif %}>
+                                        <label class="fr-label" for="anru"> ANRU{% include "common/mandatory_field.html" with form_input=form.anru %}
+                                            <span class="fr-hint-text">Le programme bénéficie d'un financement ANRU</span>
+                                        </label>
+                                    </div>
+                                    {% include "common/comment_icon.html" with form_input_id=form.anru.id_for_label object_field="programme__anru__"|add:form.uuid.value comments=comments %}
                                 </div>
+                                {% for error in form.anru.errors %}
+                                    <p id="checkboxes-error-desc-error" class="fr-error-text">
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                                {% include "common/comment_dialog.html" with form_input_id=form.anru.id_for_label form_input_html=form.anru.html_name convention=convention object_field="programme__anru__"|add:form.uuid.value comments=comments %}
+
                             </div>
                         </div>
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/select_enum.html" with form_input=form.type_habitat label="Type d'habitat" enum=types_habitat %}
+                                {% include "common/form/select_enum.html" with form_input=form.type_habitat label="Type d'habitat" enum=types_habitat object_field="programme__type_habitat__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/select_enum.html" with form_input=form.type_operation label="Type d'opération" enum=types_operation %}
+                                {% include "common/form/select_enum.html" with form_input=form.type_operation label="Type d'opération" enum=types_operation object_field="programme__type_operation__"|add:form.uuid.value %}
                             </div>
                         </div>
 
@@ -68,30 +78,24 @@
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_number.html" with form_input=form.nb_locaux_commerciaux label="Locaux commerciaux" %}
+                                {% include "common/form/input_number.html" with form_input=form.nb_locaux_commerciaux label="Locaux commerciaux" object_field="programme__nb_locaux_commerciaux__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_number.html" with form_input=form.nb_bureaux label="Bureaux" %}
+                                {% include "common/form/input_number.html" with form_input=form.nb_bureaux label="Bureaux" object_field="programme__nb_bureaux__"|add:form.uuid.value %}
                             </div>
                         </div>
 
-
-                        <div class="fr-input-group {% if form.autre_locaux_hors_convention.errors %}fr-select-group--error{% endif %}">
-                            <label class="fr-label" for="{{form.autre_locaux_hors_convention.id_for_label}}">
-                                Autres
-                            </label>
-                            {% include "common/form/input_textarea.html" with form_input=form.autre_locaux_hors_convention %}
-                        </div>
-
+                        {% include "common/form/input_textarea.html" with label="Autres" form_input=form.autre_locaux_hors_convention object_field="programme__autre_locaux_hors_convention__"|add:form.uuid.value %}
 
                     </div>
                 </div>
-                <div class="fr-col-md-12  fr-py-5w button-bar">
-                    {% include "common/button/previous.html" with precedent='conventions:bailleur' convention_uuid=convention.uuid %}
+                {% include "common/mandatory_fields_info.html" %}
+                <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
                         {% include "common/button/next_and_save.html" with suivant='conventions:programme' convention_uuid=convention.uuid editable=editable %}
+                        {% include "common/button/previous.html" with precedent='conventions:bailleur' convention_uuid=convention.uuid %}
                     {% else %}
-                        {% include "common/button/next.html" with suivant='conventions:cadastre' convention_uuid=convention.uuid %}
+                        {% include "common/button/noteditable_button.html" with convention=convention %}
                     {% endif %}
                 </div>
             </form>

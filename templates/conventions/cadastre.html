@@ -8,6 +8,7 @@
     <script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
 {% block css_extras %}
@@ -19,59 +20,56 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
         <div class="fr-container">
+            {% include "common/form/conventionform_header.html" %}
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-md-12  fr-my-5w">
-                        {% include "common/convention_edit_info.html" with convention=convention %}
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Informations cadastrales sur le programme</h2>
-                        {% include "common/mandatory_fields_info.html" %}
+                    <div class="fr-col-md-12 fr-mt-5w">
+                        <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Informations cadastrales sur le programme</h2> -->
 
                         <h4>Permis et dates</h4>
 
-                        {% include "common/form/input_text.html" with form_input=form.permis_construire label="Numéro de permis construire" %}
+                        {% include "common/form/input_text.html" with form_input=form.permis_construire label="Numéro de permis construire" object_field="programme__permis_construire__"|add:form.uuid.value %}
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_date.html" with form_input=form.date_acte_notarie label="Date de l'acte notarié" %}
+                                {% include "common/form/input_date.html" with form_input=form.date_acte_notarie label="Date de l'acte notarié" object_field="programme__date_acte_notarie__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                {% include "common/form/input_date.html" with form_input=form.date_achat label="Date d'achat" %}
+                                {% include "common/form/input_date.html" with form_input=form.date_achat label="Date d'achat" object_field="programme__date_achat__"|add:form.uuid.value %}
                             </div>
                         </div>
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_date.html" with form_input=form.date_achevement_previsible label="Date d'achèvement previsible" %}
+                                {% include "common/form/input_date.html" with form_input=form.date_achevement_previsible label="Date d'achèvement previsible" object_field="programme__date_achevement_previsible__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                {% include "common/form/input_date.html" with form_input=form.date_achevement label="Date d'achèvement ou d'obtention de certificat de conformité" %}
+                                {% include "common/form/input_date.html" with form_input=form.date_achevement label="Date d'achèvement ou d'obtention de certificat de conformité" object_field="programme__date_achevement__"|add:form.uuid.value %}
                             </div>
                         </div>
 
-                        {% include "common/form/input_upload.html" with label="Vendeur" form_input=form.vendeur form_input_files=form.vendeur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.vendeur_files.values mandatory=True %}
+                        {% include "common/form/input_upload.html" with label="Vendeur" form_input=form.vendeur form_input_files=form.vendeur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.vendeur_files.values mandatory=True object_field="programme__vendeur__"|add:form.uuid.value %}
 
-                        {% include "common/form/input_upload.html" with label="Acquéreur" form_input=form.acquereur form_input_files=form.acquereur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.acquereur_files.values mandatory=True %}
+                        {% include "common/form/input_upload.html" with label="Acquéreur" form_input=form.acquereur form_input_files=form.acquereur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.acquereur_files.values mandatory=True object_field="programme__acquereur__"|add:form.uuid.value %}
 
-                        {% include "common/form/input_upload.html" with label="Référence du notaire" form_input=form.reference_notaire form_input_files=form.reference_notaire_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.reference_notaire_files.values %}
+                        {% include "common/form/input_upload.html" with label="Référence du notaire" form_input=form.reference_notaire form_input_files=form.reference_notaire_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.reference_notaire_files.values object_field="programme__reference_notaire__"|add:form.uuid.value %}
 
-                        {% include "common/form/input_upload.html" with label="Référence de publication de l'acte" form_input=form.reference_publication_acte form_input_files=form.reference_publication_acte_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.reference_publication_acte_files.values %}
+                        {% include "common/form/input_upload.html" with label="Référence de publication de l'acte" form_input=form.reference_publication_acte form_input_files=form.reference_publication_acte_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.reference_publication_acte_files.values object_field="programme__reference_publication_acte__"|add:form.uuid.value %}
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_upload.html" with label="Acte de propriété" form_input=form.acte_de_propriete form_input_files=form.acte_de_propriete_files object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_de_propriete_files.values %}
+                                {% include "common/form/input_upload.html" with label="Acte de propriété" form_input=form.acte_de_propriete form_input_files=form.acte_de_propriete_files object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_de_propriete_files.values object_field="programme__acte_de_propriete__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_upload.html" with label="Acte notarial" form_input=form.acte_notarial form_input_files=form.acte_notarial_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_notarial_files.values %}
+                                {% include "common/form/input_upload.html" with label="Acte notarial" form_input=form.acte_notarial form_input_files=form.acte_notarial_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_notarial_files.values object_field="programme__acte_notarial__"|add:form.uuid.value %}
                             </div>
                         </div>
 
 
                         <hr class="fr-col-12 fr-my-3w">
 
-                        <h4>Références cadastrales</h4>
-
-                        {% include "common/form/input_upload.html" with form_input=form.reference_cadastrale form_input_files=form.reference_cadastrale_files object_name='programme' object_uuid=convention.programme.uuid image_only=True file_list=convention.programme.reference_cadastrale_files.values %}
+                        {% include "common/form/input_upload.html" with label="Références cadastrales" form_input=form.reference_cadastrale form_input_files=form.reference_cadastrale_files object_name='programme' object_uuid=convention.programme.uuid image_only=True file_list=convention.programme.reference_cadastrale_files.values object_field="programme__reference_cadastrale__"|add:form.uuid.value %}
 
                         {% if editable %}
                             {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='cadastre' upform=upform  what="références cadastrales"%}
@@ -99,24 +97,40 @@
                                         <th scope="col">Numéro {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col">Lieudit {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col">Surface {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
+                                        {% if convention.statut != 'BROUILLON' %}
+                                            <th scope="col">Comments</th>
+                                        {% endif %}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for form_pret in formset %}
-                                        <tr>
-                                            <td>
-                                                {% include "common/form/input_text.html" with form_input=form_pret.section %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/input_text.html" with form_input=form_pret.numero %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/input_text.html" with form_input=form_pret.lieudit %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/input_text.html" with form_input=form_pret.surface %}
-                                            </td>
-                                        </tr>
+                                    {% for form_cadastre in formset %}
+                                        {% with main_object_field="reference_cadastrale__uuid__"|add:form_cadastre.uuid.value %}
+                                            <tr>
+                                                <td>
+                                                    <input
+                                                        type="hidden"
+                                                        id="{{form_cadastre.uuid.id_for_label}}"
+                                                        name="{{form_cadastre.uuid.html_name}}"
+                                                        value="{{ form_cadastre.uuid.value|default_if_none:'' }}">
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.section parent_object_field=main_object_field %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.numero parent_object_field=main_object_field %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.lieudit parent_object_field=main_object_field %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.surface parent_object_field=main_object_field %}
+                                                </td>
+                                                {% if convention.statut != 'BROUILLON' %}
+                                                    <td id="{{form_cadastre.uuid.id_for_label}}_div">
+                                                        {% include "common/comment_icon.html" with form_input_id=form_cadastre.uuid.id_for_label object_field=main_object_field comments=comments %}
+                                                        {% include "common/comment_dialog.html" with form_input_id=form_cadastre.uuid.id_for_label form_input_html=form_cadastre.uuid.html_name convention=convention object_field=main_object_field comments=comments %}
+                                                    </td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endwith %}
                                     {% endfor %}
                                 </tbody>
                             </table>
@@ -124,29 +138,20 @@
 
                         <hr class="fr-col-12 fr-my-3w">
 
-
                     </div>
                 </div>
 
-                <div class="fr-col-md-12  fr-py-5w button-bar">
-                    {% include "common/button/previous.html" with precedent='conventions:programme' convention_uuid=convention.uuid %}
+                {% include "common/mandatory_fields_info.html" %}
+                <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
                         {% include "common/button/next_and_save.html" with suivant='conventions:cadastre' convention_uuid=convention.uuid editable=editable %}
+                        {% include "common/button/previous.html" with precedent='conventions:programme' convention_uuid=convention.uuid %}
                     {% else %}
-                        {% include "common/button/next.html" with suivant='conventions:edd' convention_uuid=convention.uuid %}
+                        {% include "common/button/noteditable_button.html" with convention=convention %}
                     {% endif %}
                 </div>
-
 
             </form>
         </div>
     </div>
-    <!-- <form action="/upload/" method="POST" class="dropzone dz">
-    {% csrf_token %}
-    <div class="fallback">
-        <input name="file" type multiple />
-    </div>
-</form> -->
-
-
 {% endblock %}

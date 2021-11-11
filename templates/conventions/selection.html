@@ -1,18 +1,21 @@
 {% extends "layout/base.html" %}
 
+{% load static %}
+
 {% block page_title %}Selection - APiLos{% endblock%}
+
+{% block javascript_extras %}
+    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
-            {{nonce}}
+            {% include "common/form/conventionform_header.html" %}
             <form method="post" action="">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-md-12  fr-my-5w">
-                        <h2 class="fr-mb-3w">Etape {{convention_form_step}}/{{ nb_steps }} - Choix du programme à conventionner</h2>
-                        {% include "common/mandatory_fields_info.html" %}
-
+                    <div class="fr-col-md-12 fr-mt-5w">
                         <div class="fr-mb-3w fr-form-group">
                             <fieldset class="fr-fieldset">
                                 <div class="fr-fieldset__content">
@@ -27,30 +30,38 @@
                                             Séléctionnez votre programme et son financement {% include "common/mandatory_field.html" with form_input=form.lot_uuid %}
                                         </label>
                                     </div>
-                                    <script nonce="{{request.csp_nonce}}">
+                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                         document.addEventListener('DOMContentLoaded', function () {
                                             document.getElementById('selection')
                                                 .addEventListener('click', function(){ convention_mode(true) });
                                         });
                                     </script>
 
-                                    <div id='programme_selection' class="fr-ml-4w fr-select-group{% if form.lot_uuid.errors %} fr-select-group--error{% endif %}"  {% if form.existing_programme.value != 'selection' %}hidden{% endif %}>
-                                        <select class="fr-select {% if form.lot_uuid.errors %}fr-select--error{% endif %}" id="lot_uuid" name="lot_uuid" {% if not editable %}disabled{% endif %}>
-                                            <option value="" selected disabled hidden>Selectionnez une option</option>
-                                            {% for lot in programmes %}
-                                                <option
-                                                    value="{{lot.uuid}}"
-                                                    {% if lot.uuid|stringformat:"s"  == form.lot_uuid.value %}selected{% endif %}
-                                                    {% if lot.convention_set.all and lot.uuid|stringformat:"s"  != form.lot_uuid.value %}disabled="disabled"{% endif %}>
-                                                    {{ lot.programme.ville}} - {{ lot.programme.nom }} - {{lot.nb_logements}} lgts - {{ lot.financement }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
+                                    <div id='programme_selection' class="fr-ml-4w fr-select-group {% if form.lot_uuid.errors %}fr-select-group--error{% endif %}"  {% if form.existing_programme.value != 'selection' %}hidden{% endif %}>
+                                        <div class="fr-mt-1w block--row-strech" id="{{form.lot_uuid.id_for_label}}_div">
+                                            <select class="fr-select {% if form.lot_uuid.errors %}fr-select--error{% endif %}" id="lot_uuid" name="lot_uuid" {% if not editable %}disabled{% endif %}>
+                                                <option value="" selected disabled hidden>Selectionnez une option</option>
+                                                {% for lot in programmes %}
+                                                    <option
+                                                        value="{{lot.uuid}}"
+                                                        {% if lot.uuid|stringformat:"s"  == form.lot_uuid.value %}selected{% endif %}
+                                                        {% if lot.convention_set.all and lot.uuid|stringformat:"s"  != form.lot_uuid.value %}disabled="disabled"{% endif %}>
+                                                        {{ lot.programme.ville}} - {{ lot.programme.nom }} - {{lot.nb_logements}} lgts - {{ lot.financement }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                            {% if convention %}
+                                                {% include "common/comment_icon.html" with form_input_id=form.lot_uuid.id_for_label object_field="lot__uuid__"|add:form.lot_uuid.value comments=comments %}
+                                            {% endif %}
+                                        </div>
                                         {% for error in form.lot_uuid.errors %}
                                             <p id="select-error-desc-error" class="fr-error-text">
                                                 {{ error }}
                                             </p>
                                         {% endfor %}
+                                        {% if convention %}
+                                            {% include "common/comment_dialog.html" with form_input_id=form.lot_uuid.id_for_label form_input_html=form.lot_uuid.html_name convention=convention object_field="lot__uuid__"|add:form.lot_uuid.value comments=comments %}
+                                        {% endif %}
                                     </div>
 
                                     {% if not convention.uuid %}
@@ -64,7 +75,7 @@
                                             <label class="fr-label" for="creation">Convention sans agrément : créez votre convention à partir de zéro
                                             </label>
                                         </div>
-                                        <script nonce="{{request.csp_nonce}}">
+                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                             document.addEventListener('DOMContentLoaded', function () {
                                                 document.getElementById('creation')
                                                     .addEventListener('click', function(){ convention_mode(false) });
@@ -103,24 +114,33 @@
                                 </div>
                             </fieldset>
                         </div>
-
-
-
-
                     </div>
                 </div>
+
+                {% include "common/mandatory_fields_info.html" %}
+
                 <div class="form-button-footer fr-col-md-12  fr-py-5w">
-                    <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
-                        Revenir à l'étape précédente
-                    </a>
                     {% if editable %}
                         {% if convention.uuid %}
                             {% include "common/button/next_and_save.html" with suivant='conventions:selection_update' convention_uuid=convention.uuid %}
                         {% else %}
                             {% include "common/button/next_and_save.html" with suivant='conventions:selection' %}
                         {% endif %}
+                        <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
+                            Revenir à la liste des conventions
+                        </a>
                     {% else %}
-                        {% include "common/button/next.html" with suivant='conventions:bailleur' convention_uuid=convention.uuid %}
+                        <div id="back_to_recap">
+                            <button type='button' class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" type="button" id="return_recap">
+                                Retour au Récapitulatif
+                            </button>
+                        </div>
+                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                            document.addEventListener('DOMContentLoaded', function () {
+                                document.getElementById('return_recap')
+                                    .addEventListener('click', function(){ location.href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' });
+                            });
+                        </script>
                     {% endif %}
                 </div>
             </form>

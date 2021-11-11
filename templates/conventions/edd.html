@@ -8,6 +8,7 @@
     <script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
 {% block css_extras %}
@@ -18,26 +19,25 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
         <div class="fr-container">
+            {% include "common/form/conventionform_header.html" %}
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-md-12  fr-my-5w">
-                        {% include "common/convention_edit_info.html" with convention=convention %}
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - État descriptif de division</h2>
-                        {% include "common/mandatory_fields_info.html" %}
+                    <div class="fr-col-md-12 fr-mt-5w">
+                        <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - État descriptif de division</h2> -->
 
                         <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
                             <p>Pour rappel, l'état descriptif de division est obligatoire dès qu’un programme comporte plusieurs financements et donc plusieurs conventions. </p>
                             <p>Il existe 2 types d’EDD: EDD simplifié & EDD volumétrique</p>
                         </div>
 
-                        {% include "common/form/input_upload.html" with label="EDD volumétrique" form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.edd_volumetrique_files.values %}
+                        {% include "common/form/input_upload.html" with label="EDD volumétrique" form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.edd_volumetrique_files.values object_field="programme__edd_volumetrique__"|add:form.uuid.value %}
 
-                        {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_volumetrique label="Mention de publication de l'EDD volumétrique" %}
+                        {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_volumetrique label="Mention de publication de l'EDD volumétrique" object_field="programme__mention_publication_edd_volumetrique__"|add:form.uuid.value %}
 
-                        {% include "common/form/input_upload.html" with label="EDD classique" form_input=form.edd_classique form_input_files=form.edd_classique_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.edd_classique_files.values %}
+                        {% include "common/form/input_upload.html" with label="EDD classique" form_input=form.edd_classique form_input_files=form.edd_classique_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.edd_classique_files.values object_field="programme__edd_classique__"|add:form.uuid.value %}
 
-                        {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_classique label="Mention de publication de l'EDD classique" %}
+                        {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_classique label="Mention de publication de l'EDD classique" object_field="programme__mention_publication_edd_classique__"|add:form.uuid.value %}
 
                         <h4 class="fr-mb-1w">EDD Simplifié</h4>
 
@@ -57,7 +57,6 @@
                                 {{ error }}
                             </p>
                         {% endfor %}
-                        <!-- Bouton d'ouverture de la modale -->
 
                         {% if formset.optional_errors and formset.total_error_count == 0 %}
 
@@ -117,55 +116,37 @@
                                         <th scope="col">Financement {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col">Désignation {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col">Type {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
+                                        {% if convention.statut != 'BROUILLON' %}
+                                            <th scope="col">Comments</th>
+                                        {% endif %}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for form in formset %}
-                                        <tr>
-                                            <td>
-                                                <select
-                                                    class="fr-select {% if form.financement.errors %}fr-select--error{% endif %}"
-                                                    id="{{form.financement.id_for_label}}"
-                                                    name="{{form.financement.html_name}}"
-                                                    {% if not editable %}disabled{% endif %}>
-                                                    <option value="" {% if not form.financement.value %}selected{% endif %} disabled hidden></option>
-                                                    {% for financement in financements %}
-                                                        <option value="{{financement.value}}"
-                                                            {% if financement.value  == form.financement.value %}selected{% endif %}>
-                                                            {{financement.label}}
-                                                        </option>
-                                                    {% endfor %}
-                                                </select>
-                                                {% for error in form.financement.errors %}
-                                                    <p id="select-error-desc-error" class="fr-error-text">
-                                                        {{ error }}
-                                                    </p>
-                                                {% endfor %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/input_text.html" with form_input=form.designation %}
-                                            </td>
-                                            <td>
-                                                <select
-                                                    class="fr-select {% if form.typologie.errors %}fr-select--error{% endif %}"
-                                                    id="{{form.typologie.id_for_label}}"
-                                                    name="{{form.typologie.html_name}}"
-                                                    {% if not editable %}disabled{% endif %}>
-                                                    <option value="" {% if not form.typologie.value %}selected{% endif %} disabled hidden></option>
-                                                    {% for typologie in typologies %}
-                                                        <option value="{{typologie.value}}"
-                                                            {% if typologie.value  == form.typologie.value %}selected{% endif %}>
-                                                            {{typologie.label}}
-                                                        </option>
-                                                    {% endfor %}
-                                                </select>
-                                                {% for error in form.typologie.errors %}
-                                                    <p id="select-error-desc-error" class="fr-error-text">
-                                                        {{ error }}
-                                                    </p>
-                                                {% endfor %}
-                                            </td>
-                                        </tr>
+                                        {% with input_id="logement_edd_"|add:form.uuid.value main_object_field="logement_edd__uuid__"|add:form.uuid.value %}
+                                            <tr>
+                                                <td>
+                                                    <input
+                                                        type="hidden"
+                                                        id="{{form.uuid.id_for_label}}"
+                                                        name="{{form.uuid.html_name}}"
+                                                        value="{{ form.uuid.value|default_if_none:'' }}">
+                                                    {% include "common/form/select_enum.html" with form_input=form.financement enum=financements parent_object_field=main_object_field %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/select_enum.html" with form_input=form.typologie enum=typologies parent_object_field=main_object_field %}
+                                                </td>
+                                                {% if convention.statut != 'BROUILLON' %}
+                                                    <td id="{{form.uuid.id_for_label}}_div">
+                                                        {% include "common/comment_icon.html" with form_input_id=form.uuid.id_for_label object_field=main_object_field comments=comments %}
+                                                        {% include "common/comment_dialog.html" with form_input_id=form.uuid.id_for_label form_input_html=form.uuid.html_name convention=convention object_field=main_object_field comments=comments %}
+                                                    </td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endwith %}
                                     {% endfor %}
                                 </tbody>
                             </table>
@@ -173,12 +154,13 @@
                     </div>
                 </div>
 
-                <div class="fr-col-md-12  fr-py-5w button-bar">
-                    {% include "common/button/previous.html" with precedent='conventions:cadastre' convention_uuid=convention.uuid %}
+                {% include "common/mandatory_fields_info.html" %}
+                <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
                         {% include "common/button/next_and_save.html" with suivant='conventions:edd' convention_uuid=convention.uuid editable=editable %}
+                        {% include "common/button/previous.html" with precedent='conventions:cadastre' convention_uuid=convention.uuid %}
                     {% else %}
-                        {% include "common/button/next.html" with suivant='conventions:prets' convention_uuid=convention.uuid %}
+                        {% include "common/button/noteditable_button.html" with convention=convention %}
                     {% endif %}
                 </div>
 

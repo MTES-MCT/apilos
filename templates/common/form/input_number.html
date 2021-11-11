@@ -7,25 +7,28 @@
             {% include "common/mandatory_field.html" with form_input=form_input %}
         </label>
     {% endif %}
-    <input
-        class="fr-input {% if form_input.errors %}fr-input--error{% endif %}"
-        pattern="[0-9]*"
-        min=0
-        step="{% if step %}{{step}}{% else %}1{% endif %}"
-        inputmode="numeric"
-        {% if form_input.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
-        type="number"
-        id="{{form_input.id_for_label}}"
-        name="{{form_input.html_name}}"
-        {% if form_input.value is not None %}value="{{ form_input.value|unlocalize }}"{% endif %}
-        {% if not editable %}disabled{% endif %}>
+    <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
+        <input
+            class="fr-input {% if form_input.errors %}fr-input--error{% endif %}"
+            pattern="[0-9]*"
+            min=0
+            step="{% if step %}{{step}}{% else %}1{% endif %}"
+            inputmode="numeric"
+            {% if form_input.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
+            type="number"
+            id="{{form_input.id_for_label}}"
+            name="{{form_input.html_name}}"
+            {% if form_input.value is not None %}value="{{ form_input.value|unlocalize }}"{% endif %}
+            {% include "common/form/disable_form_input.html" %}>
 
-    <script nonce="{{request.csp_nonce}}">
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('{{form_input.id_for_label}}')
-                .addEventListener('click', function(){ {{onchange}} });
-        });
-    </script>
+        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('{{form_input.id_for_label}}')
+                    .addEventListener('click', function(){ {{onchange}} });
+            });
+        </script>
+        {% include "common/comment_icon.html" with form_input_id=form_input.id_for_label object_field=object_field comments=comments %}
+    </div>
 
     {% for error in form_input.errors %}
         <p id="text-input-error-desc-error" class="fr-error-text">
@@ -34,5 +37,4 @@
     {% endfor %}
 </div>
 
-
-
+{% include "common/comment_dialog.html" with form_input_id=form_input.id_for_label form_input_html=form_input.html_name  convention=convention object_field=object_field comments=comments %}

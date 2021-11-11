@@ -1,0 +1,61 @@
+{% if object_field and convention.statut != 'BROUILLON' %}
+    <dialog aria-labelledby="{{form_input_id}}_comment-title" id="{{form_input_id}}_comment-dialog" class="fr-modal" role="dialog" >
+        <div class="fr-container fr-container--fluid fr-container-md">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button type="button" class="fr-link--close fr-link" aria-controls="{{form_input_id}}_comment-dialog">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content fr-mb-1w" id="{{form_input_id}}_modal_comment">
+                            {% if label %}
+                                <h3 id="{{form_input_id}}_comment-title" class="fr-modal__title">
+                                    <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+                                    {{ label }}
+                                </h3>
+                            {% endif %}
+                            <div id="{{form_input_id}}_new_comment">
+                                <div class='fr-mt-3w fr-mb-1w'><b>Ajouter un commentaire :</b></div>
+                                <textarea
+                                    class="fr-input"
+                                    aria-describedby="text-input-error-desc-error"
+                                    type="text"
+                                    id="textarea_{{form_input_id}}_comment"
+                                    name="textarea_{{form_input_html}}_comment"
+                                    rows="5"></textarea>
+                                <ul class="fr-mt-1w fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--sm">
+                                    <li>
+                                        <button id='{{form_input_id}}_comment-submit' type="button" class="fr-btn fr-btn--sm">
+                                            Ajouter un commentaire
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
+    {% for comment in comments|get_item:object_field %}
+        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+            create_comment_input('{{form_input_id}}',{
+                username: '{{ comment.user|escapejs }}',
+                is_owner: {% if comment.user_id == request.user.id %}true{% else %}false{% endif %},
+                mis_a_jour_le: '{{comment.mis_a_jour_le}}',
+                uuid: '{{comment.uuid}}',
+                message: "{{ comment.message|escapejs }}",
+                statut: '{{comment.statut}}',
+            },
+                {% if comments|get_item:object_field|has_own_active_comment:request.user.id %}true{% else %}false{% endif %},
+                {% if request.user.is_instructeur %}true{% else %}false{% endif%});
+        </script>
+    {% endfor %}
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+        //create_comment_icon('{{form_input_id}}', '{% for comment in comments|get_item:object_field%}{{ comment.message|escapejs }}\n\n{% endfor %}')
+        display_comment_icon('{{form_input_id}}')
+        document.getElementById('{{form_input_id}}_comment-submit').onclick = function() {
+            create_comment('{{convention.uuid}}', '{{form_input_id}}', '{{object_field}}')
+        }
+    </script>
+{% endif %}

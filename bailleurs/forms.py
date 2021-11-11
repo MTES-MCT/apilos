@@ -3,6 +3,8 @@ from core import forms_utils
 
 
 class BailleurForm(forms.Form):
+
+    uuid = forms.UUIDField(required=False)
     nom = forms.CharField(
         required=True,
         error_messages={

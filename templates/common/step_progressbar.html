@@ -1,0 +1,29 @@
+<div class="container-progressbar">
+    <ul id="step_progressbar" class="progressbar">
+        <li class="{% if convention_form_step > 1  %}active{% endif %} {% if convention_form_step == 1  %}current_step{% endif %}" role="selection"><div>Sélection</div></li>
+        <li class="{% if convention_form_step > 2  %}active{% endif %} {% if convention_form_step == 2  %}current_step{% endif %} {% if convention_form_step == 1  %}after_step{% endif %}" role="bailleur"><div>Bailleur</div></li>
+        <li class="{% if convention_form_step > 3  %}active{% endif %} {% if convention_form_step == 3  %}current_step{% endif %} {% if convention_form_step == 2  %}after_step{% endif %}" role="programme"><div>Programme</div></li>
+        <li class="{% if convention_form_step > 4  %}active{% endif %} {% if convention_form_step == 4  %}current_step{% endif %} {% if convention_form_step == 3  %}after_step{% endif %}" role="cadastre"><div>Cadastre</div></li>
+        <li class="{% if convention_form_step > 5  %}active{% endif %} {% if convention_form_step == 5  %}current_step{% endif %} {% if convention_form_step == 4  %}after_step{% endif %}" role="edd"><div>EDD</div></li>
+        <li class="{% if convention_form_step > 6  %}active{% endif %} {% if convention_form_step == 6  %}current_step{% endif %} {% if convention_form_step == 5  %}after_step{% endif %}" role="prets"><div>Financement</div></li>
+        <li class="{% if convention_form_step > 7  %}active{% endif %} {% if convention_form_step == 7  %}current_step{% endif %} {% if convention_form_step == 6  %}after_step{% endif %}" role="logements"><div>Logements</div></li>
+        <li class="{% if convention_form_step > 8  %}active{% endif %} {% if convention_form_step == 8  %}current_step{% endif %} {% if convention_form_step == 7  %}after_step{% endif %}" role="annexes"><div>Annexes</div></li>
+        <li class="{% if convention_form_step > 9  %}active{% endif %} {% if convention_form_step == 9  %}current_step{% endif %} {% if convention_form_step == 8  %}after_step{% endif %}" role="stationnements"><div>Stationnements</div></li>
+        <li class="{% if convention_form_step > 10 %}active{% endif %} {% if convention_form_step == 10 %}current_step{% endif %} {% if convention_form_step == 9  %}after_step{% endif %}" role="comments"><div>Commentaires</div></li>
+        <li class="{% if convention_form_step > 11 %}active{% endif %} {% if convention_form_step == 11 %}current_step{% endif %} {% if convention_form_step == 10 %}after_step{% endif %}" role="recapitulatif"><div>Recapitulatif</div></li>
+    </ul>
+</div>
+
+{% if convention %}
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+        document.addEventListener('DOMContentLoaded', function () {
+            var lis = document.getElementById('step_progressbar').children
+            for (var i=0; i < lis.length; i++) {
+                lis[i].addEventListener('click', function(){
+                    console.log(this.getAttribute('role'))
+                    location.href='/conventions/' + this.getAttribute('role') + '/{{convention.uuid}}'
+                });
+            }
+        });
+    </script>
+{% endif %}

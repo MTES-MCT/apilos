@@ -1,4 +1,4 @@
-<script nonce="{{request.csp_nonce}}">
+<script type="text/javascript" nonce="{{request.csp_nonce}}">
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('{{ id }}')
             .addEventListener('click', function(){ location.href="{% url url_target %}{{url_params}}" });

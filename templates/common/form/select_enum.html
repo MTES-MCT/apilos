@@ -4,24 +4,31 @@
             {{ label }}
         </label>
     {% endif %}
-    <select
-        class="fr-select {% if form_input.errors %}fr-select--error{% endif %}"
-        id="{{form_input.id_for_label}}"
-        name="{{form_input.html_name}}"
-        {% if not editable %}disabled{% endif %}>
-        {% if not without_empty_option %}
-            <option value="" {% if not form_input.value %}selected{% endif %} disabled hidden></option>
-        {% endif %}
-        {% for element in enum %}
-            <option value="{{element.value}}"
-                {% if element.value  == form_input.value %}selected{% endif %}>
-                {{element.label}}
-            </option>
-        {% endfor %}
-    </select>
+
+    <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
+        <select
+            class="fr-select {% if form_input.errors %}fr-select--error{% endif %}"
+            id="{{form_input.id_for_label}}"
+            name="{{form_input.html_name}}"
+            {% include "common/form/disable_form_input.html" %}>
+            {% if not without_empty_option %}
+                <option value="" {% if not form_input.value %}selected{% endif %} disabled hidden></option>
+            {% endif %}
+            {% for element in enum %}
+                <option value="{{element.value}}"
+                    {% if element.value  == form_input.value %}selected{% endif %}>
+                    {{element.label}}
+                </option>
+            {% endfor %}
+        </select>
+        {% include "common/comment_icon.html" with form_input_id=form_input.id_for_label object_field=object_field comments=comments %}
+    </div>
+
     {% for error in form_input.errors %}
         <p id="select-error-desc-error" class="fr-error-text">
             {{ error }}
         </p>
     {% endfor %}
 </div>
+
+{% include "common/comment_dialog.html" with form_input_id=form_input.id_for_label form_input_html=form_input.html_name convention=convention object_field=object_field comments=comments %}

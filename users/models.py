@@ -27,12 +27,15 @@ class User(AbstractUser):
 
     def has_change_convention(self, obj):
         if isinstance(obj, Convention):
-            # is bailleur of the convention
-            if self.role_set.filter(bailleur_id=obj.bailleur_id):
-                return obj.statut == ConventionStatut.BROUILLON
-            # is instructeur of the convention
-            if self.role_set.filter(administration_id=obj.programme.administration_id):
-                return obj.statut != ConventionStatut.BROUILLON
+            if (
+                # is bailleur of the convention
+                self.role_set.filter(bailleur_id=obj.bailleur_id)
+                # is instructeur of the convention
+                or self.role_set.filter(
+                    administration_id=obj.programme.administration_id
+                )
+            ):
+                return obj.statut != ConventionStatut.CLOS
             return False
         raise Exception(
             "Les permissions ne sont pas correctement configurer, un "
@@ -122,6 +125,17 @@ class User(AbstractUser):
         if bailleur_ids:
             filter_result["bailleur_id__in"] = bailleur_ids
         return filter_result
+
+    def full_editable_convention(self, convention):
+        # is bailleur of the convention
+        if self.role_set.filter(bailleur_id=convention.bailleur_id):
+            return convention.statut == ConventionStatut.BROUILLON
+        # is instructeur of the convention
+        if self.role_set.filter(
+            administration_id=convention.programme.administration_id
+        ):
+            return convention.statut == ConventionStatut.INSTRUCTION
+        return False
 
     def __str__(self):
         return (

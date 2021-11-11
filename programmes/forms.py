@@ -4,6 +4,7 @@ from django.forms import BaseFormSet, formset_factory
 from core import forms_utils
 
 from programmes.models import (
+    Logement,
     LogementEDD,
     Lot,
     TypeHabitat,
@@ -89,6 +90,9 @@ class ProgrammeSelectionForm(forms.Form):
 
 
 class ProgrammeForm(forms.Form):
+    object_name = "programme"
+
+    uuid = forms.UUIDField(required=False)
     nom = forms.CharField(
         max_length=255,
         min_length=1,
@@ -119,6 +123,8 @@ class ProgrammeForm(forms.Form):
 
 
 class ProgrammeCadastralForm(forms.Form):
+
+    uuid = forms.UUIDField(required=False)
     permis_construire = forms.CharField(required=False)
     date_acte_notarie = forms.DateField(required=False)
     date_achevement_previsible = forms.DateField(required=False)
@@ -229,6 +235,8 @@ class ProgrammeCadastralForm(forms.Form):
 
 
 class ReferenceCadastraleForm(forms.Form):
+
+    uuid = forms.UUIDField(required=False)
     section = forms.CharField(
         required=True,
         max_length=255,
@@ -271,6 +279,7 @@ ReferenceCadastraleFormSet = formset_factory(
 
 class ProgrammeEDDForm(forms.Form):
 
+    uuid = forms.UUIDField(required=False)
     edd_volumetrique = forms.CharField(
         required=False,
         max_length=5000,
@@ -278,11 +287,9 @@ class ProgrammeEDDForm(forms.Form):
             "max_length": "L'EDD volumétrique ne doit pas excéder 5000 characters",
         },
     )
-
     edd_volumetrique_files = forms.CharField(
         required=False,
     )
-
     mention_publication_edd_volumetrique = forms.CharField(
         required=False,
         max_length=1000,
@@ -291,7 +298,6 @@ class ProgrammeEDDForm(forms.Form):
             + "ne doit pas excéder 1000 characters",
         },
     )
-
     edd_classique = forms.CharField(
         required=False,
         max_length=5000,
@@ -299,11 +305,9 @@ class ProgrammeEDDForm(forms.Form):
             "max_length": "L'EDD classique ne doit pas excéder 5000 characters",
         },
     )
-
     edd_classique_files = forms.CharField(
         required=False,
     )
-
     mention_publication_edd_classique = forms.CharField(
         required=False,
         max_length=1000,
@@ -520,6 +524,7 @@ LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, ext
 
 class AnnexeForm(forms.Form):
 
+    uuid = forms.UUIDField(required=False)
     typologie = forms.TypedChoiceField(required=True, choices=TypologieAnnexe.choices)
     logement_designation = forms.CharField(
         max_length=255,
@@ -560,7 +565,20 @@ class AnnexeForm(forms.Form):
 
 
 class BaseAnnexeFormSet(BaseFormSet):
-    pass
+    convention = None
+
+    def clean(self):
+        self.manage_logement_exists_validation()
+
+    def manage_logement_exists_validation(self):
+        lgts = self.convention.lot.logement_set.all()
+        for form in self.forms:
+            try:
+                lgts.get(designation=form.cleaned_data.get("logement_designation"))
+            except Logement.DoesNotExist:
+                form.add_error(
+                    "logement_designation", "Ce logement n'existe pas dans ce lot"
+                )
 
 
 AnnexeFormSet = formset_factory(AnnexeForm, formset=BaseAnnexeFormSet, extra=0)
@@ -568,6 +586,7 @@ AnnexeFormSet = formset_factory(AnnexeForm, formset=BaseAnnexeFormSet, extra=0)
 
 class TypeStationnementForm(forms.Form):
 
+    uuid = forms.UUIDField(required=False)
     typologie = forms.TypedChoiceField(
         required=True,
         choices=TypologieStationnement.choices,
@@ -601,6 +620,7 @@ TypeStationnementFormSet = formset_factory(
 
 class LogementEDDForm(forms.Form):
 
+    uuid = forms.UUIDField(required=False)
     designation = forms.CharField(
         max_length=255,
         min_length=1,

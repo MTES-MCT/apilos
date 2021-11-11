@@ -6,13 +6,17 @@
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
         {% endif %}
-        <label class="fr-label fr-mt-1w fr-mb-2w fr-h4" for="{{form_input.id_for_label}}">
-            {{ label }}
-            {% if mandatory %}
-                &nbsp;{% include "common/mandatory_field_star.html" %}
-            {% endif %}
-            {% include "common/help_field.html" with form_input=form_input %}
-        </label>
+        <div class="block--row-strech" id="{{form_input.id_for_label}}_div">
+
+            <label class="block--row-strech-1 fr-label fr-mt-1w fr-mb-2w fr-h4" for="{{form_input.id_for_label}}">
+                {{ label }}
+                {% if mandatory %}
+                    &nbsp;{% include "common/mandatory_field_star.html" %}
+                {% endif %}
+                {% include "common/help_field.html" with form_input=form_input %}
+            </label>
+            {% include "common/comment_icon.html" with form_input_id=form_input.id_for_label object_field=object_field comments=comments %}
+        </div>
 
         {% if textarea %}
             <textarea
@@ -22,7 +26,8 @@
                 id="{{form_input.id_for_label}}"
                 name="{{form_input.html_name}}"
                 rows="{% if rows %}{{rows}}{% else %}8{% endif %}"
-                {% if not editable %}disabled{% endif %}>{{ form_input.value }}</textarea>
+                {% include "common/form/disable_form_input.html" %}
+            >{{ form_input.value }}</textarea>
         {% endif %}
 
 
@@ -31,8 +36,11 @@
             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
         {% endif %}
 
-
-        {% if editable %}
+        {% if not editable and comments|hasnt_active_comments:object_field %}
+            <div class="fr-mt-6w">
+                {% include "common/display_files.html" with file_list=file_list %}
+            </div>
+        {% else %}
             <div class="fr-mt-1w">
                 {% if textarea %}
                     <i class="fr-text--sm">et/ou </i>
@@ -41,7 +49,7 @@
                     <img class="apilos-fi-btn fr-mr-1w" src="{% static "icons/upload.svg" %}" ></img>Téléverser une image
                 </button>
 
-                <script nonce="{{request.csp_nonce}}">
+                <script type="text/javascript" nonce="{{request.csp_nonce}}">
                     document.addEventListener('DOMContentLoaded', function () {
                         document.getElementById('{{form_input_files.id_for_label}}_dz_button')
                             .addEventListener('click', function(){ document.getElementById('{{form_input_files.id_for_label}}_dropzone').click() });
@@ -81,10 +89,6 @@
                 //        });
             </script>
 
-        {% else %}
-            <div class="fr-mt-6w">
-                {% include "common/display_files.html" with file_list=file_list %}
-            </div>
         {% endif %}
 
     </div>
@@ -101,7 +105,4 @@
     {% endfor %}
 </div>
 
-
-
-
-
+{% include "common/comment_dialog.html" with form_input_id=form_input.id_for_label form_input_html=form_input.html_name  convention=convention object_field=object_field comments=comments %}

@@ -1,19 +1,24 @@
 {% extends "layout/base.html" %}
 
+{% load static %}
+
 {% block page_title %}Logements - APiLos{% endblock%}
+
+{% block javascript_extras %}
+    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
 
 {% load static %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
         <div class="fr-container">
+            {% include "common/form/conventionform_header.html" %}
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-md-12  fr-my-5w">
-                        {% include "common/convention_edit_info.html" with convention=convention %}
-                        <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Détails des logements</h2>
-                        {% include "common/mandatory_fields_info.html" %}
+                    <div class="fr-col-md-12 fr-mt-5w">
+                        <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Détails des logements</h2> -->
 
                         <h4>Logements associés à la convention</h4>
 
@@ -48,61 +53,55 @@
                                         <th scope="col" class="col__width--120">Loyer maxinum en € par m² de surface utile {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col" class="col__width--120">Coefficient propre au logement {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col" class="col__width--120">Loyer maxinum du logement en € {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
+                                        {% if convention.statut != 'BROUILLON' %}
+                                            <th scope="col">Comments</th>
+                                        {% endif %}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for form in formset %}
-                                        <tr>
-                                            <td>
-                                                <input
-                                                    type="hidden"
-                                                    id="{{form.uuid.id_for_label}}"
-                                                    name="{{form.uuid.html_name}}"
-                                                    value="{{ form.uuid.value|default_if_none:'' }}">
-                                                {% include "common/form/input_text.html" with form_input=form.designation %}
-                                            </td>
-                                            <td>
-                                                <select
-                                                    class="fr-select {% if form.typologie.errors %}fr-select--error{% endif %}"
-                                                    id="{{form.typologie.id_for_label}}"
-                                                    name="{{form.typologie.html_name}}"
-                                                    {% if not editable %}disabled{% endif %}>
-                                                    <option value="" {% if not form.typologie.value %}selected{% endif %} disabled hidden></option>
-                                                    {% for typologie in typologies %}
-                                                        <option value="{{typologie.value}}"
-                                                            {% if typologie.value  == form.typologie.value %}selected{% endif %}>
-                                                            {{typologie.label}}
-                                                        </option>
-                                                    {% endfor %}
-                                                </select>
-                                                {% for error in form.typologie.errors %}
-                                                    <p id="select-error-desc-error" class="fr-error-text">
-                                                        {{ error }}
-                                                    </p>
-                                                {% endfor %}
-                                            </td>
-                                            <td id="lgt_sh">
-                                                {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" onchange="compute_total_value('sh')" %}
-                                            </td>
-                                            <td id="lgt_sa">
-                                                {% include "common/form/input_number.html" with form_input=form.surface_annexes step="0.01" onchange="compute_total_value('sa')" %}
-                                            </td>
-                                            <td id="lgt_sar">
-                                                {% include "common/form/input_number.html" with form_input=form.surface_annexes_retenue step="0.01" onchange="compute_total_value('sar')" %}
-                                            </td>
-                                            <td id="lgt_su">
-                                                {% include "common/form/input_number.html" with form_input=form.surface_utile step="0.01" onchange="compute_total_value('su')" %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/input_number.html" with form_input=form.loyer_par_metre_carre step="0.01" %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/input_number.html" with form_input=form.coeficient step="0.001" %}
-                                            </td>
-                                            <td id="lgt_loyer">
-                                                {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" onchange="compute_total_value('loyer')" %}
-                                            </td>
-                                        </tr>
+                                        {% with main_object_field="logement__uuid__"|add:form.uuid.value %}
+                                            <tr>
+                                                <td>
+                                                    <input
+                                                        type="hidden"
+                                                        id="{{form.uuid.id_for_label}}"
+                                                        name="{{form.uuid.html_name}}"
+                                                        value="{{ form.uuid.value|default_if_none:'' }}">
+                                                    {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/select_enum.html" with form_input=form.typologie enum=typologies parent_object_field=main_object_field %}
+                                                </td>
+                                                <td id="lgt_sh">
+                                                    {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" onchange="compute_total_value('sh')" parent_object_field=main_object_field %}
+                                                </td>
+                                                <td id="lgt_sa">
+                                                    {% include "common/form/input_number.html" with form_input=form.surface_annexes step="0.01" onchange="compute_total_value('sa')" parent_object_field=main_object_field %}
+                                                </td>
+                                                <td id="lgt_sar">
+                                                    {% include "common/form/input_number.html" with form_input=form.surface_annexes_retenue step="0.01" onchange="compute_total_value('sar')" parent_object_field=main_object_field %}
+                                                </td>
+                                                <td id="lgt_su">
+                                                    {% include "common/form/input_number.html" with form_input=form.surface_utile step="0.01" onchange="compute_total_value('su')" parent_object_field=main_object_field %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/input_number.html" with form_input=form.loyer_par_metre_carre step="0.01" parent_object_field=main_object_field %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/input_number.html" with form_input=form.coeficient step="0.001" parent_object_field=main_object_field %}
+                                                </td>
+                                                <td id="lgt_loyer">
+                                                    {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" onchange="compute_total_value('loyer')" parent_object_field=main_object_field %}
+                                                </td>
+                                                {% if convention.statut != 'BROUILLON' %}
+                                                    <td id="{{form.uuid.id_for_label}}_div">
+                                                        {% include "common/comment_icon.html" with form_input_id=form.uuid.id_for_label object_field=main_object_field comments=comments %}
+                                                        {% include "common/comment_dialog.html" with form_input_id=form.uuid.id_for_label form_input_html=form.uuid.html_name convention=convention object_field=main_object_field comments=comments %}
+                                                    </td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endwith %}
                                     {% endfor %}
                                     <tr>
                                         <td class="fr-text--lg">
@@ -130,12 +129,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-button-footer fr-col-md-12  fr-py-5w">
-                    {% include "common/button/previous.html" with precedent='conventions:prets' convention_uuid=convention.uuid %}
+
+                {% include "common/mandatory_fields_info.html" %}
+                <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
                         {% include "common/button/next_and_save.html" with suivant='conventions:logements' convention_uuid=convention.uuid editable=editable %}
+                        {% include "common/button/previous.html" with precedent='conventions:prets' convention_uuid=convention.uuid %}
                     {% else %}
-                        {% include "common/button/next.html" with suivant='conventions:annexes' convention_uuid=convention.uuid %}
+                        {% include "common/button/noteditable_button.html" with convention=convention %}
                     {% endif %}
                 </div>
             </form>

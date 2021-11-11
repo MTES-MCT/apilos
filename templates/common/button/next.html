@@ -2,7 +2,7 @@
     <button class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" type="button" id='next_button'>
         Suivant
     </button>
-    <script nonce="{{request.csp_nonce}}">
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('next_button')
                 .addEventListener('click', function(){ location.href='{% url suivant convention_uuid=convention_uuid %}' });
@@ -12,7 +12,7 @@
     <button class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" type="button" id='next_button'>
         Suivant
     </button>
-    <script nonce="{{request.csp_nonce}}">
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('next_button')
                 .addEventListener('click', function(){ location.href='{% url suivant %}' });
