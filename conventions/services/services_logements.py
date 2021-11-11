@@ -127,11 +127,10 @@ def _logements_atomic_update(request, convention):
     if formset.is_valid():
         _save_logements(formset, convention)
         return utils.base_response_redirect_recap_success(convention)
-    upform = UploadForm()
     return {
         **utils.base_convention_response_error(request, convention),
         "formset": formset,
-        "upform": upform,
+        "upform": UploadForm(),
     }
 
 
@@ -205,7 +204,7 @@ def annexes_update(request, convention_uuid):
             formset.convention = convention
             if formset.is_valid():
                 _save_annexes(formset, convention)
-                return utils.base_response_redirect_recap_success(convention)
+                return utils.base_response_success(convention)
     # When display the file for the first time
     else:
         request.user.check_perm("convention.view_convention", convention)
@@ -326,6 +325,8 @@ def stationnements_update(request, convention_uuid):
     import_warnings = None
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
+        if request.POST.get("UpdateAtomic", False):
+            return _stationnements_atomic_update(request, convention)
         # When the user cliked on "Téléverser" button
         formset = TypeStationnementFormSet(request.POST)
         if request.POST.get("Upload", False):
@@ -346,24 +347,8 @@ def stationnements_update(request, convention_uuid):
         else:
             upform = UploadForm()
             if formset.is_valid():
-                convention.lot.typestationnement_set.all().delete()
-                for form_stationnement in formset:
-                    stationnement = TypeStationnement.objects.create(
-                        lot=convention.lot,
-                        bailleur=convention.bailleur,
-                        typologie=form_stationnement.cleaned_data["typologie"],
-                        nb_stationnements=form_stationnement.cleaned_data[
-                            "nb_stationnements"
-                        ],
-                        loyer=form_stationnement.cleaned_data["loyer"],
-                    )
-                    stationnement.save()
-                # All is OK -> Next:
-                return {
-                    "success": utils.ReturnStatus.SUCCESS,
-                    "convention": convention,
-                    "formset": formset,
-                }
+                _save_stationnements(formset, convention)
+                return utils.base_response_success(convention)
     # When display the file for the first time
     else:
         request.user.check_perm("convention.view_convention", convention)
@@ -386,3 +371,64 @@ def stationnements_update(request, convention_uuid):
         "upform": upform,
         "import_warnings": import_warnings,
     }
+
+
+def _stationnements_atomic_update(request, convention):
+    formset = TypeStationnementFormSet(request.POST)
+    initformset = {
+        "form-TOTAL_FORMS": request.POST.get("form-TOTAL_FORMS", len(formset)),
+        "form-INITIAL_FORMS": request.POST.get("form-INITIAL_FORMS", len(formset)),
+    }
+    for idx, form_stationnement in enumerate(formset):
+        stationnement = TypeStationnement.objects.get(
+            uuid=form_stationnement["uuid"].value()
+        )
+        initformset = {
+            **initformset,
+            f"form-{idx}-uuid": stationnement.uuid,
+            f"form-{idx}-typologie": utils.get_form_value(
+                form_stationnement, stationnement, "typologie"
+            ),
+            f"form-{idx}-nb_stationnements": utils.get_form_value(
+                form_stationnement, stationnement, "nb_stationnements"
+            ),
+            f"form-{idx}-loyer": utils.get_form_value(
+                form_stationnement, stationnement, "loyer"
+            ),
+        }
+    formset = TypeStationnementFormSet(initformset)
+    if formset.is_valid():
+        _save_stationnements(formset, convention)
+        return utils.base_response_redirect_recap_success(convention)
+    return {
+        **utils.base_convention_response_error(request, convention),
+        "formset": formset,
+        "upform": UploadForm(),
+    }
+
+
+def _save_stationnements(formset, convention):
+    obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], formset))
+    obj_uuids = list(filter(None, obj_uuids1))
+    Annexe.objects.filter(logement__lot_id=convention.lot.id).exclude(
+        uuid__in=obj_uuids
+    ).delete()
+    for form_stationnement in formset:
+        if form_stationnement.cleaned_data["uuid"]:
+            stationnement = TypeStationnement.objects.get(
+                uuid=form_stationnement.cleaned_data["uuid"]
+            )
+            stationnement.typologie = form_stationnement.cleaned_data["typologie"]
+            stationnement.nb_stationnements = form_stationnement.cleaned_data[
+                "nb_stationnements"
+            ]
+            stationnement.loyer = form_stationnement.cleaned_data["loyer"]
+        else:
+            stationnement = TypeStationnement.objects.create(
+                lot=convention.lot,
+                bailleur=convention.bailleur,
+                typologie=form_stationnement.cleaned_data["typologie"],
+                nb_stationnements=form_stationnement.cleaned_data["nb_stationnements"],
+                loyer=form_stationnement.cleaned_data["loyer"],
+            )
+        stationnement.save()
