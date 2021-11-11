@@ -479,6 +479,9 @@
                                                         <th scope="col" class="col__width--120">Surface de l'annexe {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Loyer unitaire en € {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Loyer maxinum du logement en € {% include "common/mandatory_field_star.html" %}</th>
+                                                        {% if convention.statut != 'BROUILLON' %}
+                                                            <th scope="col">Comments</th>
+                                                        {% endif %}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -502,6 +505,16 @@
                                                             <td>
                                                                 {{ annexe.loyer|floatformat:2 }}
                                                             </td>
+                                                            {% if convention.statut != 'BROUILLON' %}
+                                                                {% with annexe_uuid=annexe.uuid|slugify %}
+                                                                    {% with main_object_field="annexe__uuid__"|add:annexe_uuid %}
+                                                                        <td id="{{main_object_field}}_div">
+                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
+                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                        </td>
+                                                                    {% endwith %}
+                                                                {% endwith %}
+                                                            {% endif %}
                                                         </tr>
                                                     {% endfor %}
                                                 </tbody>

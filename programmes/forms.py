@@ -4,6 +4,7 @@ from django.forms import BaseFormSet, formset_factory
 from core import forms_utils
 
 from programmes.models import (
+    Logement,
     LogementEDD,
     Lot,
     TypeHabitat,
@@ -564,7 +565,20 @@ class AnnexeForm(forms.Form):
 
 
 class BaseAnnexeFormSet(BaseFormSet):
-    pass
+    convention = None
+
+    def clean(self):
+        self.manage_logement_exists_validation()
+
+    def manage_logement_exists_validation(self):
+        lgts = self.convention.lot.logement_set.all()
+        for form in self.forms:
+            try:
+                lgts.get(designation=form.cleaned_data.get("logement_designation"))
+            except Logement.DoesNotExist:
+                form.add_error(
+                    "logement_designation", "Ce logement n'existe pas dans ce lot"
+                )
 
 
 AnnexeFormSet = formset_factory(AnnexeForm, formset=BaseAnnexeFormSet, extra=0)

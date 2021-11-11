@@ -50,7 +50,7 @@ def logements_update(request, convention_uuid):
             formset.programme_id = convention.programme_id
             formset.lot_id = convention.lot_id
             if formset.is_valid():
-                _save_programme_logements(formset, convention)
+                _save_logements(formset, convention)
                 # All is OK -> Next:
                 return utils.base_response_redirect_recap_success(convention)
     # When display the file for the first time
@@ -125,7 +125,7 @@ def _logements_atomic_update(request, convention):
     formset.lot_id = convention.lot_id
 
     if formset.is_valid():
-        _save_programme_logements(formset, convention)
+        _save_logements(formset, convention)
         return utils.base_response_redirect_recap_success(convention)
     upform = UploadForm()
     return {
@@ -135,7 +135,7 @@ def _logements_atomic_update(request, convention):
     }
 
 
-def _save_programme_logements(formset, convention):
+def _save_logements(formset, convention):
     lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], formset))
     lgt_uuids = list(filter(None, lgt_uuids1))
     convention.lot.logement_set.exclude(uuid__in=lgt_uuids).delete()
@@ -155,7 +155,6 @@ def _save_programme_logements(formset, convention):
             ]
             logement.coeficient = form_logement.cleaned_data["coeficient"]
             logement.loyer = form_logement.cleaned_data["loyer"]
-            logement.save()
         else:
             logement = Logement.objects.create(
                 lot=convention.lot,
@@ -187,6 +186,8 @@ def annexes_update(request, convention_uuid):
     import_warnings = None
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
+        if request.POST.get("UpdateAtomic", False):
+            return _annexes_atomic_update(request, convention)
         # When the user cliked on "Téléverser" button
         formset = AnnexeFormSet(request.POST)
         if request.POST.get("Upload", False):
@@ -201,44 +202,10 @@ def annexes_update(request, convention_uuid):
         # When the user cliked on "Enregistrer et Suivant"
         else:
             upform = UploadForm()
-            # to do : manage this one in the model
-            formset.is_valid()
-            for form_annexe in formset:
-                try:
-                    logement = convention.lot.logement_set.get(
-                        designation=form_annexe.cleaned_data["logement_designation"],
-                        lot=convention.lot,
-                    )
-                except Logement.DoesNotExist:
-                    form_annexe.add_error(
-                        "logement_designation", "Ce logement n'existe pas dans ce lot"
-                    )
+            formset.convention = convention
             if formset.is_valid():
-                Annexe.objects.filter(logement__lot_id=convention.lot.id).delete()
-                for form_annexe in formset:
-                    logement = Logement.objects.get(
-                        designation=form_annexe.cleaned_data["logement_designation"],
-                        lot=convention.lot,
-                    )
-                    annexe = Annexe.objects.create(
-                        logement=logement,
-                        bailleur=convention.bailleur,
-                        typologie=form_annexe.cleaned_data["typologie"],
-                        surface_hors_surface_retenue=form_annexe.cleaned_data[
-                            "surface_hors_surface_retenue"
-                        ],
-                        loyer_par_metre_carre=form_annexe.cleaned_data[
-                            "loyer_par_metre_carre"
-                        ],
-                        loyer=form_annexe.cleaned_data["loyer"],
-                    )
-                    annexe.save()
-                # All is OK -> Next:
-                return {
-                    "success": utils.ReturnStatus.SUCCESS,
-                    "convention": convention,
-                    "formset": formset,
-                }
+                _save_annexes(formset, convention)
+                return utils.base_response_redirect_recap_success(convention)
     # When display the file for the first time
     else:
         request.user.check_perm("convention.view_convention", convention)
@@ -264,6 +231,90 @@ def annexes_update(request, convention_uuid):
         "upform": upform,
         "import_warnings": import_warnings,
     }
+
+
+def _annexes_atomic_update(request, convention):
+    formset = AnnexeFormSet(request.POST)
+    initformset = {
+        "form-TOTAL_FORMS": request.POST.get("form-TOTAL_FORMS", len(formset)),
+        "form-INITIAL_FORMS": request.POST.get("form-INITIAL_FORMS", len(formset)),
+    }
+    for idx, form_annexe in enumerate(formset):
+        annexe = Annexe.objects.get(uuid=form_annexe["uuid"].value())
+        initformset = {
+            **initformset,
+            f"form-{idx}-uuid": annexe.uuid,
+            f"form-{idx}-typologie": utils.get_form_value(
+                form_annexe, annexe, "typologie"
+            ),
+            f"form-{idx}-logement_designation": (
+                form_annexe["logement_designation"].value()
+                if form_annexe["logement_designation"].value() is not None
+                else annexe.logement.designation
+            ),
+            f"form-{idx}-logement_typologie": (
+                form_annexe["logement_typologie"].value()
+                if form_annexe["logement_typologie"].value() is not None
+                else annexe.logement.typologie
+            ),
+            f"form-{idx}-surface_hors_surface_retenue": utils.get_form_value(
+                form_annexe, annexe, "surface_hors_surface_retenue"
+            ),
+            f"form-{idx}-loyer_par_metre_carre": utils.get_form_value(
+                form_annexe, annexe, "loyer_par_metre_carre"
+            ),
+            f"form-{idx}-loyer": utils.get_form_value(form_annexe, annexe, "loyer"),
+        }
+    formset = AnnexeFormSet(initformset)
+    formset.convention = convention
+    if formset.is_valid():
+        _save_annexes(formset, convention)
+        return utils.base_response_redirect_recap_success(convention)
+    return {
+        **utils.base_convention_response_error(request, convention),
+        "formset": formset,
+        "upform": UploadForm(),
+    }
+
+
+def _save_annexes(formset, convention):
+    obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], formset))
+    obj_uuids = list(filter(None, obj_uuids1))
+    Annexe.objects.filter(logement__lot_id=convention.lot.id).exclude(
+        uuid__in=obj_uuids
+    ).delete()
+    for form_annexe in formset:
+        if form_annexe.cleaned_data["uuid"]:
+            annexe = Annexe.objects.get(uuid=form_annexe.cleaned_data["uuid"])
+            logement = Logement.objects.get(
+                designation=form_annexe.cleaned_data["logement_designation"],
+                lot=convention.lot,
+            )
+            annexe.logement = logement
+            annexe.typologie = form_annexe.cleaned_data["typologie"]
+            annexe.surface_hors_surface_retenue = form_annexe.cleaned_data[
+                "surface_hors_surface_retenue"
+            ]
+            annexe.loyer_par_metre_carre = form_annexe.cleaned_data[
+                "loyer_par_metre_carre"
+            ]
+            annexe.loyer = form_annexe.cleaned_data["loyer"]
+        else:
+            logement = Logement.objects.get(
+                designation=form_annexe.cleaned_data["logement_designation"],
+                lot=convention.lot,
+            )
+            annexe = Annexe.objects.create(
+                logement=logement,
+                bailleur=convention.bailleur,
+                typologie=form_annexe.cleaned_data["typologie"],
+                surface_hors_surface_retenue=form_annexe.cleaned_data[
+                    "surface_hors_surface_retenue"
+                ],
+                loyer_par_metre_carre=form_annexe.cleaned_data["loyer_par_metre_carre"],
+                loyer=form_annexe.cleaned_data["loyer"],
+            )
+        annexe.save()
 
 
 def stationnements_update(request, convention_uuid):
