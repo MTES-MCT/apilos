@@ -19,7 +19,7 @@
             id="{{form_input.id_for_label}}"
             name="{{form_input.html_name}}"
             {% if form_input.value is not None %}value="{{ form_input.value|unlocalize }}"{% endif %}
-            {% if not editable and comments|hasnt_active_comments:object_field %}disabled{% endif %}>
+            {% include "common/form/disable_form_input.html" %}>
 
         <script type="text/javascript" nonce="{{request.csp_nonce}}">
             document.addEventListener('DOMContentLoaded', function () {

@@ -96,10 +96,7 @@ def select_programme_update(request, convention_uuid):
             convention.financement = lot.financement
             convention.save()
             # All is OK -> Next:
-            return {
-                "success": utils.ReturnStatus.SUCCESS,
-                "convention": convention,
-            }
+            return utils.base_response_success(convention)
     # If this is a GET (or any other method) create the default form.
     else:
         request.user.check_perm("convention.view_convention", convention)
@@ -132,10 +129,7 @@ def programme_update(request, convention_uuid):
         form = ProgrammeForm(request.POST)
         if form.is_valid():
             _save_programme_and_lot(programme, lot, form)
-            return {
-                "success": utils.ReturnStatus.SUCCESS,
-                "convention": convention,
-            }
+            return utils.base_response_success(convention)
     # If this is a GET (or any other method) create the default form.
     else:
         request.user.check_perm("convention.view_convention", convention)
@@ -248,10 +242,7 @@ def programme_cadastral_update(request, convention_uuid):
             if form_is_valid and formset_is_valid:
                 _save_programme_cadastrale(form, programme)
                 _save_programme_reference_cadastrale(formset, convention, programme)
-                return {
-                    "success": utils.ReturnStatus.SUCCESS,
-                    "convention": convention,
-                }
+                return utils.base_response_success(convention)
     # When display the file for the first time
     else:
         request.user.check_perm("convention.view_convention", convention)
@@ -487,16 +478,9 @@ def programme_edd_update(request, convention_uuid):
             formset_is_valid = formset.is_valid()
 
             if form_is_valid and formset_is_valid:
-                _save_programme_edd(programme, form)
+                _save_programme_edd(form, programme)
                 _save_programme_logement_edd(formset, convention, programme)
-
-                # All is OK -> Next:
-                return {
-                    "success": utils.ReturnStatus.SUCCESS,
-                    "convention": convention,
-                    "form": form,
-                    "formset": formset,
-                }
+                return utils.base_response_success(convention)
     # When display the file for the first time
     else:
         request.user.check_perm("convention.view_convention", convention)
@@ -562,7 +546,10 @@ def _programme_edd_atomic_update(request, convention, programme):
     form_is_valid = form.is_valid()
 
     formset = LogementEDDFormSet(request.POST)
-    initformset = {"form-TOTAL_FORMS": len(formset), "form-INITIAL_FORMS": len(formset)}
+    initformset = {
+        "form-TOTAL_FORMS": request.POST.get("form-TOTAL_FORMS", len(formset)),
+        "form-INITIAL_FORMS": request.POST.get("form-INITIAL_FORMS", len(formset)),
+    }
     for idx, form_logementedd in enumerate(formset):
         logementedd = LogementEDD.objects.get(uuid=form_logementedd["uuid"].value())
         initformset = {
@@ -584,7 +571,7 @@ def _programme_edd_atomic_update(request, convention, programme):
     formset_is_valid = formset.is_valid()
 
     if form_is_valid and formset_is_valid:
-        _save_programme_edd(programme, form)
+        _save_programme_edd(form, programme)
         _save_programme_logement_edd(formset, convention, programme)
         return utils.base_response_redirect_recap_success(convention)
     upform = UploadForm()
@@ -596,7 +583,7 @@ def _programme_edd_atomic_update(request, convention, programme):
     }
 
 
-def _save_programme_edd(programme, form):
+def _save_programme_edd(form, programme):
     programme.edd_volumetrique = utils.set_files_and_text_field(
         form.cleaned_data["edd_volumetrique_files"],
         form.cleaned_data["edd_volumetrique"],

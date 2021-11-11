@@ -99,6 +99,13 @@ def base_convention_response_error(request, convention):
     }
 
 
+def base_response_success(convention):
+    return {
+        "success": ReturnStatus.SUCCESS,
+        "convention": convention,
+    }
+
+
 def base_response_redirect_recap_success(convention):
     return {
         "success": ReturnStatus.SUCCESS,

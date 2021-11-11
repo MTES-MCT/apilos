@@ -15,7 +15,7 @@
 
 
 {% block content %}
-    {% with programme_uuid=programme.uuid|slugify %}
+    {% with programme_uuid=programme.uuid|slugify convention_uuid=convention.uuid|slugify %}
         <div class="fr-container-fluid ds_banner">
             <div class="fr-container">
                 {% include "common/form/conventionform_header.html" %}
@@ -194,7 +194,6 @@
                                                             {% if convention.statut != 'BROUILLON' %}
                                                                 {% with reference_uuid=reference.uuid|slugify %}
                                                                     {% with main_object_field="reference_cadastrale__uuid__"|add:reference_uuid %}
-
                                                                         <td id="{{main_object_field}}_div">
                                                                             {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
                                                                             {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
@@ -305,6 +304,9 @@
                                                         <th scope="col">Montant (en €) {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col">Préteur</th>
                                                         <th scope="col">Préciser le prêteur si 'Autre'</th>
+                                                        {% if convention.statut != 'BROUILLON' %}
+                                                            <th scope="col">Comments</th>
+                                                        {% endif %}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -328,13 +330,23 @@
                                                             <td>
                                                                 {{ pret.autre }}
                                                             </td>
+                                                            {% if convention.statut != 'BROUILLON' %}
+                                                                {% with pret_uuid=pret.uuid|slugify %}
+                                                                    {% with main_object_field="pret__uuid__"|add:pret_uuid %}
+                                                                        <td id="{{main_object_field}}_div">
+                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
+                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                        </td>
+                                                                    {% endwith %}
+                                                                {% endwith %}
+                                                            {% endif %}
                                                         </tr>
                                                     {% endfor %}
                                                 </tbody>
                                             </table>
                                         </div>
-                                        {% include "common/display_field_if_exists.html" with label="Date de fin de la convention" value=programme.date_fin_conventionnement %}
-                                        {% include "common/display_field_if_exists.html" with label="Fonds propres" value=programme.fond_propre %}
+                                        {% include "common/display_field_if_exists.html" with label="Date de fin de la convention" value=convention.date_fin_conventionnement object_field="convention__annee_fin_conventionnement__"|add:convention_uuid %}
+                                        {% include "common/display_field_if_exists.html" with label="Fonds propres" value=convention.fond_propre object_field="convention__fond_propre__"|add:convention_uuid %}
                                     </div>
                                 </div>
                             </div>
