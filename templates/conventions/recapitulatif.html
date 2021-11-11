@@ -221,7 +221,7 @@
                                                     Programme - EDD
                                                 </h4>
                                             </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:edd' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:edd' convention_uuid=convention.uuid %}" >
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
                                             </a>
                                         </div>
@@ -289,7 +289,7 @@
                                                     Financements
                                                 </h4>
                                             </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:prets' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:prets' convention_uuid=convention.uuid %}" >
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
                                             </a>
                                         </div>
@@ -362,7 +362,7 @@
                                                     Logements
                                                 </h4>
                                             </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:logements' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:logements' convention_uuid=convention.uuid %}" >
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
                                             </a>
                                         </div>
@@ -379,6 +379,9 @@
                                                         <th scope="col" class="col__width--120">Loyer maxinum en € par m² de surface utile {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Coefficient propre au logement {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Loyer maxinum du logement en € {% include "common/mandatory_field_star.html" %}</th>
+                                                        {% if convention.statut != 'BROUILLON' %}
+                                                            <th scope="col">Comments</th>
+                                                        {% endif %}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -411,6 +414,16 @@
                                                             <td id="lgt_loyer">
                                                                 {{ logement.loyer|floatformat:2 }}
                                                             </td>
+                                                            {% if convention.statut != 'BROUILLON' %}
+                                                                {% with logement_uuid=logement.uuid|slugify %}
+                                                                    {% with main_object_field="logement__uuid__"|add:logement_uuid %}
+                                                                        <td id="{{main_object_field}}_div">
+                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
+                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                        </td>
+                                                                    {% endwith %}
+                                                                {% endwith %}
+                                                            {% endif %}
                                                         </tr>
                                                     {% endfor %}
                                                     <tr>
@@ -452,7 +465,7 @@
                                                     Annexes
                                                 </h4>
                                             </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:annexes' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:annexes' convention_uuid=convention.uuid %}" >
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
                                             </a>
                                         </div>
@@ -509,7 +522,7 @@
                                                     Stationnements
                                                 </h4>
                                             </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:stationnements' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:stationnements' convention_uuid=convention.uuid %}" >
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
                                             </a>
                                         </div>
@@ -554,7 +567,7 @@
                                                     Informations à l'attention du service instructeur
                                                 </h4>
                                             </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:comments' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:comments' convention_uuid=convention.uuid %}" >
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Editer</span>
                                             </a>
                                         </div>

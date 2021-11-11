@@ -25,6 +25,9 @@ def logements_update(request, convention_uuid):
     import_warnings = None
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
+        if request.POST.get("UpdateAtomic", False):
+            return _logements_atomic_update(request, convention)
+
         # When the user cliked on "Téléverser" button
         formset = LogementFormSet(request.POST)
         if request.POST.get("Upload", False):
@@ -47,63 +50,9 @@ def logements_update(request, convention_uuid):
             formset.programme_id = convention.programme_id
             formset.lot_id = convention.lot_id
             if formset.is_valid():
-                lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], formset))
-                lgt_uuids = list(filter(None, lgt_uuids1))
-                convention.lot.logement_set.exclude(uuid__in=lgt_uuids).delete()
-                for form_logement in formset:
-                    if form_logement.cleaned_data["uuid"]:
-                        logement = Logement.objects.get(
-                            uuid=form_logement.cleaned_data["uuid"]
-                        )
-                        logement.designation = form_logement.cleaned_data["designation"]
-                        logement.typologie = form_logement.cleaned_data["typologie"]
-                        logement.surface_habitable = form_logement.cleaned_data[
-                            "surface_habitable"
-                        ]
-                        logement.surface_annexes = form_logement.cleaned_data[
-                            "surface_annexes"
-                        ]
-                        logement.surface_annexes_retenue = form_logement.cleaned_data[
-                            "surface_annexes_retenue"
-                        ]
-                        logement.surface_utile = form_logement.cleaned_data[
-                            "surface_utile"
-                        ]
-                        logement.loyer_par_metre_carre = form_logement.cleaned_data[
-                            "loyer_par_metre_carre"
-                        ]
-                        logement.coeficient = form_logement.cleaned_data["coeficient"]
-                        logement.loyer = form_logement.cleaned_data["loyer"]
-                        logement.save()
-                    else:
-                        logement = Logement.objects.create(
-                            lot=convention.lot,
-                            bailleur=convention.bailleur,
-                            designation=form_logement.cleaned_data["designation"],
-                            typologie=form_logement.cleaned_data["typologie"],
-                            surface_habitable=form_logement.cleaned_data[
-                                "surface_habitable"
-                            ],
-                            surface_annexes=form_logement.cleaned_data[
-                                "surface_annexes"
-                            ],
-                            surface_annexes_retenue=form_logement.cleaned_data[
-                                "surface_annexes_retenue"
-                            ],
-                            surface_utile=form_logement.cleaned_data["surface_utile"],
-                            loyer_par_metre_carre=form_logement.cleaned_data[
-                                "loyer_par_metre_carre"
-                            ],
-                            coeficient=form_logement.cleaned_data["coeficient"],
-                            loyer=form_logement.cleaned_data["loyer"],
-                        )
-                        logement.save()
+                _save_programme_logements(formset, convention)
                 # All is OK -> Next:
-                return {
-                    "success": utils.ReturnStatus.SUCCESS,
-                    "convention": convention,
-                    "formset": formset,
-                }
+                return utils.base_response_redirect_recap_success(convention)
     # When display the file for the first time
     else:
         request.user.check_perm("convention.view_convention", convention)
@@ -132,6 +81,100 @@ def logements_update(request, convention_uuid):
         "upform": upform,
         "import_warnings": import_warnings,
     }
+
+
+def _logements_atomic_update(request, convention):
+    formset = LogementFormSet(request.POST)
+    initformset = {
+        "form-TOTAL_FORMS": request.POST.get("form-TOTAL_FORMS", len(formset)),
+        "form-INITIAL_FORMS": request.POST.get("form-INITIAL_FORMS", len(formset)),
+    }
+    for idx, form_logement in enumerate(formset):
+        logement = Logement.objects.get(uuid=form_logement["uuid"].value())
+        initformset = {
+            **initformset,
+            f"form-{idx}-uuid": logement.uuid,
+            f"form-{idx}-designation": utils.get_form_value(
+                form_logement, logement, "designation"
+            ),
+            f"form-{idx}-typologie": utils.get_form_value(
+                form_logement, logement, "typologie"
+            ),
+            f"form-{idx}-surface_habitable": utils.get_form_value(
+                form_logement, logement, "surface_habitable"
+            ),
+            f"form-{idx}-surface_annexes": utils.get_form_value(
+                form_logement, logement, "surface_annexes"
+            ),
+            f"form-{idx}-surface_annexes_retenue": utils.get_form_value(
+                form_logement, logement, "surface_annexes_retenue"
+            ),
+            f"form-{idx}-surface_utile": utils.get_form_value(
+                form_logement, logement, "surface_utile"
+            ),
+            f"form-{idx}-loyer_par_metre_carre": utils.get_form_value(
+                form_logement, logement, "loyer_par_metre_carre"
+            ),
+            f"form-{idx}-coeficient": utils.get_form_value(
+                form_logement, logement, "coeficient"
+            ),
+            f"form-{idx}-loyer": utils.get_form_value(form_logement, logement, "loyer"),
+        }
+    formset = LogementFormSet(initformset)
+    formset.programme_id = convention.programme_id
+    formset.lot_id = convention.lot_id
+
+    if formset.is_valid():
+        _save_programme_logements(formset, convention)
+        return utils.base_response_redirect_recap_success(convention)
+    upform = UploadForm()
+    return {
+        **utils.base_convention_response_error(request, convention),
+        "formset": formset,
+        "upform": upform,
+    }
+
+
+def _save_programme_logements(formset, convention):
+    lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], formset))
+    lgt_uuids = list(filter(None, lgt_uuids1))
+    convention.lot.logement_set.exclude(uuid__in=lgt_uuids).delete()
+    for form_logement in formset:
+        if form_logement.cleaned_data["uuid"]:
+            logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
+            logement.designation = form_logement.cleaned_data["designation"]
+            logement.typologie = form_logement.cleaned_data["typologie"]
+            logement.surface_habitable = form_logement.cleaned_data["surface_habitable"]
+            logement.surface_annexes = form_logement.cleaned_data["surface_annexes"]
+            logement.surface_annexes_retenue = form_logement.cleaned_data[
+                "surface_annexes_retenue"
+            ]
+            logement.surface_utile = form_logement.cleaned_data["surface_utile"]
+            logement.loyer_par_metre_carre = form_logement.cleaned_data[
+                "loyer_par_metre_carre"
+            ]
+            logement.coeficient = form_logement.cleaned_data["coeficient"]
+            logement.loyer = form_logement.cleaned_data["loyer"]
+            logement.save()
+        else:
+            logement = Logement.objects.create(
+                lot=convention.lot,
+                bailleur=convention.bailleur,
+                designation=form_logement.cleaned_data["designation"],
+                typologie=form_logement.cleaned_data["typologie"],
+                surface_habitable=form_logement.cleaned_data["surface_habitable"],
+                surface_annexes=form_logement.cleaned_data["surface_annexes"],
+                surface_annexes_retenue=form_logement.cleaned_data[
+                    "surface_annexes_retenue"
+                ],
+                surface_utile=form_logement.cleaned_data["surface_utile"],
+                loyer_par_metre_carre=form_logement.cleaned_data[
+                    "loyer_par_metre_carre"
+                ],
+                coeficient=form_logement.cleaned_data["coeficient"],
+                loyer=form_logement.cleaned_data["loyer"],
+            )
+        logement.save()
 
 
 def annexes_update(request, convention_uuid):
