@@ -11,12 +11,14 @@ from .services_programmes import (
 from .services_conventions import (
     conventions_index,
     convention_financement,
-    logements_update,
-    annexes_update,
-    stationnements_update,
     convention_comments,
     convention_summary,
     convention_save,
     convention_validate,
     generate_convention,
+)
+from .services_logements import (
+    logements_update,
+    annexes_update,
+    stationnements_update,
 )
