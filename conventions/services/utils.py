@@ -80,6 +80,16 @@ def build_partial_form(request, convention_object, field_list):
     return fields_dict
 
 
+def build_partial_text_and_files_form(request, convention_object, field_list):
+    fields_dict = {}
+    for field in field_list:
+        fields_dict = {
+            **fields_dict,
+            **init_text_and_files_from_field(request, convention_object, field),
+        }
+    return fields_dict
+
+
 def base_convention_response_error(request, convention):
     return {
         "success": ReturnStatus.ERROR,

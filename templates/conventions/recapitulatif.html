@@ -130,17 +130,17 @@
                                             </a>
                                         </div>
                                         <div class="table--limited-height">
-                                            {% include "common/display_field_if_exists.html" with label="Numéro de permis construire" value=programme.permis_construire %}
-                                            {% include "common/display_field_if_exists.html" with label="Date de l'acte notarié" value=programme.date_acte_notarie %}
-                                            {% include "common/display_field_if_exists.html" with label="Date d'achat" value=programme.date_achat %}
-                                            {% include "common/display_field_if_exists.html" with label="Date d'achèvement previsible" value=programme.date_achevement_previsible %}
-                                            {% include "common/display_field_if_exists.html" with label="Date d'achèvement ou d'obtention de certificat de conformité" value=programme.date_achevement %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="Vendeur" text=programme.vendeur_text file_list=programme.vendeur_files.values %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="Acquéreur" text=programme.acquereur_text file_list=programme.acquereur_files.values %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="Référence du notaire" text=programme.reference_notaire_text file_list=programme.reference_notaire_files.values %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="Référence de publication de l'acte" text=programme.reference_publication_acte_text file_list=programme.reference_publication_acte_files.values %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="Acte de propriété" text=programme.acte_de_propriete_text file_list=programme.acte_de_propriete_files.values %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="Acte notarial" text=programme.acte_notarial_text file_list=programme.acte_notarial_files.values %}
+                                            {% include "common/display_field_if_exists.html" with label="Numéro de permis construire" value=programme.permis_construire object_field="programme__permis_construire__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Date de l'acte notarié" value=programme.date_acte_notarie object_field="programme__date_acte_notarie__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Date d'achat" value=programme.date_achat object_field="programme__date_achat__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Date d'achèvement previsible" value=programme.date_achevement_previsible object_field="programme__date_achevement_previsible__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Date d'achèvement ou d'obtention de certificat de conformité" value=programme.date_achevement object_field="programme__date_achevement__"|add:programme_uuid %}
+                                            {% include "common/display_text_and_files_if_exists.html" with label="Vendeur" text=programme.vendeur_text file_list=programme.vendeur_files.values object_field="programme__vendeur__"|add:programme_uuid %}
+                                            {% include "common/display_text_and_files_if_exists.html" with label="Acquéreur" text=programme.acquereur_text file_list=programme.acquereur_files.values object_field="programme__acquereur__"|add:programme_uuid %}
+                                            {% include "common/display_text_and_files_if_exists.html" with label="Référence du notaire" text=programme.reference_notaire_text file_list=programme.reference_notaire_files.values object_field="programme__reference_notaire__"|add:programme_uuid %}
+                                            {% include "common/display_text_and_files_if_exists.html" with label="Référence de publication de l'acte" text=programme.reference_publication_acte_text file_list=programme.reference_publication_acte_files.values object_field="programme__reference_publication_acte__"|add:programme_uuid %}
+                                            {% include "common/display_text_and_files_if_exists.html" with label="Acte de propriété" text=programme.acte_de_propriete_text file_list=programme.acte_de_propriete_files.values object_field="programme__acte_de_propriete__"|add:programme_uuid %}
+                                            {% include "common/display_text_and_files_if_exists.html" with label="Acte notarial" text=programme.acte_notarial_text file_list=programme.acte_notarial_files.values object_field="programme__acte_notarial__"|add:programme_uuid %}
                                         </div>
                                     </div>
                                 </div>
@@ -171,6 +171,9 @@
                                                         <th scope="col">Numéro {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col">Lieudit {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col">Surface {% include "common/mandatory_field_star.html" %}</th>
+                                                        {% if convention.statut != 'BROUILLON' %}
+                                                            <th scope="col">Comments</th>
+                                                        {% endif %}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -188,6 +191,17 @@
                                                             <td>
                                                                 {{ reference.surface }}
                                                             </td>
+                                                            {% if convention.statut != 'BROUILLON' %}
+                                                                {% with reference_uuid=reference.uuid|slugify %}
+                                                                    {% with main_object_field="reference_cadastrale__uuid__"|add:reference_uuid %}
+
+                                                                        <td id="{{main_object_field}}_div">
+                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
+                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                        </td>
+                                                                    {% endwith %}
+                                                                {% endwith %}
+                                                            {% endif %}
                                                         </tr>
                                                     {% endfor %}
                                                 </tbody>
