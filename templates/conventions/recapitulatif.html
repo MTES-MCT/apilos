@@ -101,16 +101,17 @@
                                             {% if request.user.is_instructeur %}
                                                 {% include "common/display_field_if_exists.html" with label="Numero Galion" value=programme.numero_galion %}
                                             {% endif %}
-                                            {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom %}
-                                            {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse %}
-                                            {% include "common/display_field_if_exists.html" with label="Code postal" value=programme.code_postal %}
-                                            {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville %}
-                                            {% include "common/display_field_if_exists.html" with label="ANRU" value=programme.anru %}
-                                            {% include "common/display_field_if_exists.html" with label="Type d'habitat" value=programme.get_type_habitat_display %}
-                                            {% include "common/display_field_if_exists.html" with label="Type d'opération" value=programme.get_type_operation_display %}
-                                            {% include "common/display_field_if_exists.html" with label="Nombre de locaux commerciaux (non-conventionnés)" value=programme.nb_locaux_commerciaux %}
-                                            {% include "common/display_field_if_exists.html" with label="Nombre de bureaux (non-conventionnés)" value=programme.nb_bureaux %}
-                                            {% include "common/display_field_if_exists.html" with label="Autres logements non-conventionnés" value=programme.autre_locaux_hors_convention %}
+                                            {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom object_field="programme__nom__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse object_field="programme__adresse__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Code postal" value=programme.code_postal object_field="programme__code_postal__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville object_field="programme__ville__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements object_field="programme__nb_logements__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="ANRU" value=programme.anru object_field="programme__anru__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Type d'habitat" value=programme.get_type_habitat_display object_field="programme__type_habitat__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Type d'opération" value=programme.get_type_operation_display object_field="programme__type_operation__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Nombre de locaux commerciaux (non-conventionnés)" value=programme.nb_locaux_commerciaux object_field="programme__nb_locaux_commerciaux__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Nombre de bureaux (non-conventionnés)" value=programme.nb_bureaux object_field="programme__nb_bureaux__"|add:programme_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Autres logements non-conventionnés" value=programme.autre_locaux_hors_convention object_field="programme__autre_locaux_hors_convention__"|add:programme_uuid %}
                                         </div>
                                     </div>
                                 </div>

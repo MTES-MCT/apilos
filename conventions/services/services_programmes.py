@@ -20,16 +20,6 @@ from . import utils
 from . import upload_objects
 
 
-def _conventions_selection(request, infilter):
-    infilter.update(request.user.programme_filter())
-    return (
-        Lot.objects.prefetch_related("programme")
-        .prefetch_related("convention_set")
-        .filter(**infilter)
-        .order_by("programme__ville", "programme__nom", "nb_logements", "financement")
-    )
-
-
 def select_programme_create(request):
     if request.method == "POST":
         form = ProgrammeSelectionForm(request.POST)
@@ -137,25 +127,11 @@ def programme_update(request, convention_uuid):
     lot = convention.lot
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
-        #        if request.POST['convention_uuid'] is None:
+        if request.POST.get("UpdateAtomic", False):
+            return _programme_atomic_update(request, convention, programme, lot)
         form = ProgrammeForm(request.POST)
         if form.is_valid():
-            programme.nom = form.cleaned_data["nom"]
-            programme.adresse = form.cleaned_data["adresse"]
-            programme.code_postal = form.cleaned_data["code_postal"]
-            programme.ville = form.cleaned_data["ville"]
-            programme.type_habitat = form.cleaned_data["type_habitat"]
-            programme.type_operation = form.cleaned_data["type_operation"]
-            programme.anru = form.cleaned_data["anru"]
-            programme.autre_locaux_hors_convention = form.cleaned_data[
-                "autre_locaux_hors_convention"
-            ]
-            programme.nb_locaux_commerciaux = form.cleaned_data["nb_locaux_commerciaux"]
-            programme.nb_bureaux = form.cleaned_data["nb_bureaux"]
-            programme.save()
-            lot.nb_logements = form.cleaned_data["nb_logements"]
-            lot.save()
-            # All is OK -> Next:
+            _save_programme_and_lot(programme, lot, form)
             return {
                 "success": utils.ReturnStatus.SUCCESS,
                 "convention": convention,
@@ -183,6 +159,56 @@ def programme_update(request, convention_uuid):
         **utils.base_convention_response_error(request, convention),
         "form": form,
     }
+
+
+def _programme_atomic_update(request, convention, programme, lot):
+    form = ProgrammeForm(
+        {
+            "uuid": programme.uuid,
+            "nb_logements": request.POST.get("nb_logements", lot.nb_logements),
+            **utils.build_partial_form(
+                request,
+                programme,
+                [
+                    "nom",
+                    "adresse",
+                    "code_postal",
+                    "ville",
+                    "type_habitat",
+                    "type_operation",
+                    "anru",
+                    "autre_locaux_hors_convention",
+                    "nb_locaux_commerciaux",
+                    "nb_bureaux",
+                ],
+            ),
+        }
+    )
+    if form.is_valid():
+        _save_programme_and_lot(programme, lot, form)
+        return utils.base_response_redirect_recap_success(convention)
+    return {
+        **utils.base_convention_response_error(request, convention),
+        "form": form,
+    }
+
+
+def _save_programme_and_lot(programme, lot, form):
+    programme.nom = form.cleaned_data["nom"]
+    programme.adresse = form.cleaned_data["adresse"]
+    programme.code_postal = form.cleaned_data["code_postal"]
+    programme.ville = form.cleaned_data["ville"]
+    programme.type_habitat = form.cleaned_data["type_habitat"]
+    programme.type_operation = form.cleaned_data["type_operation"]
+    programme.anru = form.cleaned_data["anru"]
+    programme.autre_locaux_hors_convention = form.cleaned_data[
+        "autre_locaux_hors_convention"
+    ]
+    programme.nb_locaux_commerciaux = form.cleaned_data["nb_locaux_commerciaux"]
+    programme.nb_bureaux = form.cleaned_data["nb_bureaux"]
+    programme.save()
+    lot.nb_logements = form.cleaned_data["nb_logements"]
+    lot.save()
 
 
 def programme_cadastral_update(request, convention_uuid):
@@ -340,10 +366,9 @@ def programme_edd_update(request, convention_uuid):
     programme = convention.programme
     import_warnings = None
     if request.method == "POST":
-        if request.POST.get("UpdateAtomic", False):
-            # A FAIRE check convention.change_convention rule
-            return _programme_edd_atomic_update(request, convention, programme)
         request.user.check_perm("convention.change_convention", convention)
+        if request.POST.get("UpdateAtomic", False):
+            return _programme_edd_atomic_update(request, convention, programme)
         # When the user cliked on "Téléverser" button
         formset = LogementEDDFormSet(request.POST)
         form = ProgrammeEDDForm(request.POST)
@@ -525,3 +550,13 @@ def _save_programme_logement_edd(formset, convention, programme):
                 typologie=form_logementedd.cleaned_data["typologie"],
             )
         logementedd.save()
+
+
+def _conventions_selection(request, infilter):
+    infilter.update(request.user.programme_filter())
+    return (
+        Lot.objects.prefetch_related("programme")
+        .prefetch_related("convention_set")
+        .filter(**infilter)
+        .order_by("programme__ville", "programme__nom", "nb_logements", "financement")
+    )

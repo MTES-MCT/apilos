@@ -11,20 +11,10 @@ def bailleur_update(request, convention_uuid):
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
         if request.POST.get("UpdateAtomic", False):
-            # A FAIRE check convention.change_convention rule
             return _bailleur_atomic_update(request, convention, bailleur)
         form = BailleurForm(request.POST)
         if form.is_valid():
-            bailleur.nom = form.cleaned_data["nom"]
-            bailleur.siret = form.cleaned_data["siret"]
-            bailleur.capital_social = form.cleaned_data["capital_social"]
-            bailleur.adresse = form.cleaned_data["adresse"]
-            bailleur.code_postal = form.cleaned_data["code_postal"]
-            bailleur.ville = form.cleaned_data["ville"]
-            bailleur.dg_nom = form.cleaned_data["dg_nom"]
-            bailleur.dg_fonction = form.cleaned_data["dg_fonction"]
-            bailleur.dg_date_deliberation = form.cleaned_data["dg_date_deliberation"]
-            bailleur.save()
+            _save_bailleur(bailleur, form)
             # All is OK -> Next:
             return {
                 "success": utils.ReturnStatus.SUCCESS,
@@ -74,22 +64,22 @@ def _bailleur_atomic_update(request, convention, bailleur):
         }
     )
     if form.is_valid():
-        bailleur.nom = form.cleaned_data["nom"]
-        bailleur.siret = form.cleaned_data["siret"]
-        bailleur.capital_social = form.cleaned_data["capital_social"]
-        bailleur.adresse = form.cleaned_data["adresse"]
-        bailleur.code_postal = form.cleaned_data["code_postal"]
-        bailleur.ville = form.cleaned_data["ville"]
-        bailleur.dg_nom = form.cleaned_data["dg_nom"]
-        bailleur.dg_fonction = form.cleaned_data["dg_fonction"]
-        bailleur.dg_date_deliberation = form.cleaned_data["dg_date_deliberation"]
-        bailleur.save()
-        return {
-            "success": utils.ReturnStatus.SUCCESS,
-            "convention": convention,
-            "redirect": "recapitulatif",
-        }
+        _save_bailleur(bailleur, form)
+        return utils.base_response_redirect_recap_success(convention)
     return {
         **utils.base_convention_response_error(request, convention),
         "form": form,
     }
+
+
+def _save_bailleur(bailleur, form):
+    bailleur.nom = form.cleaned_data["nom"]
+    bailleur.siret = form.cleaned_data["siret"]
+    bailleur.capital_social = form.cleaned_data["capital_social"]
+    bailleur.adresse = form.cleaned_data["adresse"]
+    bailleur.code_postal = form.cleaned_data["code_postal"]
+    bailleur.ville = form.cleaned_data["ville"]
+    bailleur.dg_nom = form.cleaned_data["dg_nom"]
+    bailleur.dg_fonction = form.cleaned_data["dg_fonction"]
+    bailleur.dg_date_deliberation = form.cleaned_data["dg_date_deliberation"]
+    bailleur.save()

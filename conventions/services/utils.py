@@ -73,10 +73,25 @@ def get_form_value(form_instance, object_instance, field_name):
     return getattr(object_instance, field_name)
 
 
+def build_partial_form(request, convention_object, field_list):
+    fields_dict = {}
+    for field in field_list:
+        fields_dict[field] = request.POST.get(field, getattr(convention_object, field))
+    return fields_dict
+
+
 def base_convention_response_error(request, convention):
     return {
         "success": ReturnStatus.ERROR,
         "convention": convention,
         "comments": convention.get_comments_dict(),
         "editable": request.user.full_editable_convention(convention),
+    }
+
+
+def base_response_redirect_recap_success(convention):
+    return {
+        "success": ReturnStatus.SUCCESS,
+        "convention": convention,
+        "redirect": "recapitulatif",
     }

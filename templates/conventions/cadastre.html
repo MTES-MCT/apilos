@@ -104,28 +104,33 @@
                                 </thead>
                                 <tbody>
                                     {% for form_cadastre in formset %}
-                                        <tr>
-                                            <td>
-                                                {% include "common/form/input_text.html" with form_input=form_cadastre.section %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/input_text.html" with form_input=form_cadastre.numero %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/input_text.html" with form_input=form_cadastre.lieudit %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/input_text.html" with form_input=form_cadastre.surface %}
-                                            </td>
-                                            {% if convention.statut != 'BROUILLON' %}
-                                                {% with input_id="reference_cadastrale_"|add:form_cadastre.uuid.value object_field="reference_cadastrale__uuid__"|add:form_cadastre.uuid.value %}
+                                        {% with main_object_field="reference_cadastrale__uuid__"|add:form_cadastre.uuid.value %}
+                                            <tr>
+                                                <td>
+                                                    <input
+                                                        type="hidden"
+                                                        id="{{form_cadastre.uuid.id_for_label}}"
+                                                        name="{{form_cadastre.uuid.html_name}}"
+                                                        value="{{ form_cadastre.uuid.value|default_if_none:'' }}">
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.section parent_object_field=main_object_field %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.numero parent_object_field=main_object_field %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.lieudit parent_object_field=main_object_field %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.surface parent_object_field=main_object_field %}
+                                                </td>
+                                                {% if convention.statut != 'BROUILLON' %}
                                                     <td id="{{form_cadastre.uuid.id_for_label}}_div">
-                                                        {% include "common/comment_icon.html" with form_input_id=form_cadastre.uuid.id_for_label object_field=object_field comments=comments %}
-                                                        {% include "common/comment_dialog.html" with form_input_id=form_cadastre.uuid.id_for_label form_input_html=form_cadastre.uuid.html_name convention=convention object_field=object_field comments=comments %}
+                                                        {% include "common/comment_icon.html" with form_input_id=form_cadastre.uuid.id_for_label object_field=main_object_field comments=comments %}
+                                                        {% include "common/comment_dialog.html" with form_input_id=form_cadastre.uuid.id_for_label form_input_html=form_cadastre.uuid.html_name convention=convention object_field=main_object_field comments=comments %}
                                                     </td>
-                                                {% endwith %}
-                                            {% endif %}
-                                        </tr>
+                                                {% endif %}
+                                            </tr>
+                                        {% endwith %}
                                     {% endfor %}
                                 </tbody>
                             </table>
