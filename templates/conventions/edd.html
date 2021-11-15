@@ -28,7 +28,7 @@
 
                         <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
                             <p>Pour rappel, l'état descriptif de division est obligatoire dès qu’un programme comporte plusieurs financements et donc plusieurs conventions. </p>
-                            <p>Il existe 2 types d’EDD: EDD simplifié & EDD volumétrique</p>
+                            <p>Il existe 3 types d’EDD: EDD volumétrique, EDD classique & EDD simplifié</p>
                         </div>
 
                         {% include "common/form/input_upload.html" with label="EDD volumétrique" form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.edd_volumetrique_files.values object_field="programme__edd_volumetrique__"|add:form.uuid.value %}

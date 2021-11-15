@@ -99,7 +99,7 @@
                                         </div>
                                         <div class="table--limited-height">
                                             {% if request.user.is_instructeur %}
-                                                {% include "common/display_field_if_exists.html" with label="Numero Galion" value=programme.numero_galion %}
+                                                <b>{% include "common/display_field_if_exists.html" with label="Numero Galion" value=programme.numero_galion %}</b>
                                             {% endif %}
                                             {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom object_field="programme__nom__"|add:programme_uuid %}
                                             {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse object_field="programme__adresse__"|add:programme_uuid %}
@@ -122,7 +122,7 @@
                                         <div class="block--row-strech" id="{{object_field}}_div">
                                             <div class="block--row-strech-1">
                                                 <h4 class="fr-card__title">
-                                                    Programme - informations cadastrale
+                                                    Programme - informations cadastrales
                                                 </h4>
                                             </div>
                                             <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}" >

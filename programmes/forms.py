@@ -297,6 +297,11 @@ class ProgrammeEDDForm(forms.Form):
             "max_length": "La mention de publication de l'EDD volumétrique "
             + "ne doit pas excéder 1000 characters",
         },
+        help_text=(
+            "Référence légale de dépôt de l'état descriptif de division "
+            + "volumétrique aux services des hypothèques comportant "
+            + "le numéro, le service, la date et les volumes du dépôt"
+        ),
     )
     edd_classique = forms.CharField(
         required=False,
@@ -315,6 +320,11 @@ class ProgrammeEDDForm(forms.Form):
             "max_length": "La mention de publication de l'EDD classique "
             + "ne doit pas excéder 1000 characters",
         },
+        help_text=(
+            "Référence légale de dépôt de l'état descriptif de division "
+            + "classique aux services des hypothèques comportant "
+            + "le numéro, le service, la date et les volumes du dépôt"
+        ),
     )
 
 
