@@ -52,7 +52,7 @@ class TypologieAnnexe(models.TextChoices):
 
 
 class TypologieStationnement(models.TextChoices):
-    GARAGE_AERIEN = "GARAGE_AERIEN", "Garage Aérien"
+    GARAGE_AERIEN = "GARAGE_AERIEN", "Garage aérien"
     GARAGE_ENTERRE = "GARAGE_ENTERRE", "Garage enterré"
     PLACE_STATIONNEMENT = "PLACE_STATIONNEMENT", "Place de stationnement"
 
