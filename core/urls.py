@@ -42,4 +42,9 @@ urlpatterns = [
     path("upload/", include(("upload.urls", "upload"), namespace="upload")),
     path("comments/", include(("comments.urls", "comments"), namespace="comments")),
     path("cgu", TemplateView.as_view(template_name="editorial/cgu.html"), name="cgu"),
+    path(
+        "accessibilite",
+        TemplateView.as_view(template_name="editorial/accessibilite.html"),
+        name="accessibilite",
+    ),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
