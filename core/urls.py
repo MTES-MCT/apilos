@@ -20,6 +20,9 @@ from django.conf.urls.static import static
 from django.urls import include
 
 from django.views.generic import TemplateView
+from django.contrib.sitemaps.views import sitemap
+
+from core.sitemaps import SITEMAPS
 
 urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
@@ -46,5 +49,11 @@ urlpatterns = [
         "accessibilite",
         TemplateView.as_view(template_name="editorial/accessibilite.html"),
         name="accessibilite",
+    ),
+    path(
+        "sitemap.xml",
+        sitemap,
+        {"sitemaps": SITEMAPS},
+        name="django.contrib.sitemaps.views.sitemap",
     ),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
