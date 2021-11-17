@@ -49,7 +49,6 @@
   background-color: aliceblue !important;
 }
 
-
 .form-button-footer {
   display: flex;
   flex-direction: row-reverse;
@@ -239,4 +238,17 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 
 .text-italic {
   font-style: italic;
+}
+
+
+.status_ouvert {
+  color: #0762C8;
+}
+
+.status_resolu {
+  color: #008941;
+}
+
+.status_clos {
+  color: #9C9C9C;
 }

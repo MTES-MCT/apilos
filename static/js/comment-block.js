@@ -39,31 +39,61 @@ function create_comment_input(input_id, comment, has_own_active_comment=true, is
     if (has_own_active_comment && has_own_active_comment != 'False') {
         new_comment_block.hidden = true
     }
-    const owner_div = create_comment_owner(comment.username, comment.is_owner);
-    document.getElementById(comment_modal_id).insertBefore( owner_div, new_comment_block );
+    const container_div = create_comment_container(comment.uuid)
+    const owner_div = create_comment_owner(comment.username, comment.is_owner, comment.statut);
+    container_div.appendChild(owner_div)
     const date_div = create_comment_date(comment.uuid,comment.mis_a_jour_le);
-    document.getElementById(comment_modal_id).insertBefore( date_div, new_comment_block );
+    container_div.appendChild(date_div)
     const uuid_div = create_comment_uuid(comment.uuid);
-    document.getElementById(comment_modal_id).insertBefore( uuid_div, new_comment_block );
+    container_div.appendChild(uuid_div)
     const statut_div = create_comment_statut(input_id, comment.uuid, comment.statut);
-    document.getElementById(comment_modal_id).insertBefore( statut_div, new_comment_block );
+    container_div.appendChild(statut_div)
     const textarea_div = create_comment_textarea(comment.uuid, comment.message, comment.statut, comment.is_owner);
-    document.getElementById(comment_modal_id).insertBefore( textarea_div, new_comment_block );
+    container_div.appendChild(textarea_div)
     const ul_buttons = create_comment_button(comment.uuid)
-    document.getElementById(comment_modal_id).insertBefore( ul_buttons, new_comment_block );
+    container_div.appendChild(ul_buttons)
+    document.getElementById(comment_modal_id).insertBefore( container_div, new_comment_block );
     init_comment_button(input_id, comment.uuid, comment.statut, comment.is_owner, is_instructeur)
 }
 
+//div container
+function create_comment_container(uuid) {
+    const container_div = document.createElement('div');
+    container_div.setAttribute('id','comment_container_' + uuid)
+    return container_div
+}
+
 //<div class="fr-mt-3w"><b>Raphaëlle Neyton (vous) :</b></div>
-function create_comment_owner(username, is_owner) {
+function create_comment_owner(username, is_owner, status) {
     const owner_div = document.createElement('div');
     owner_div.classList.add('fr-mt-3w')
-    owner_div.classList.add('text-bold')
+    owner_div.classList.add('block--row-strech')
+
+    const owner_span = document.createElement('span');
+    owner_span.classList.add('block--row-strech-1')
+    owner_span.classList.add('text-bold')
     inner_text = username
     if (is_owner && is_owner != 'False') {
         inner_text = inner_text + " (vous)"
     }
-    owner_div.innerText = inner_text + " :"
+    inner_text = inner_text + " : "
+    owner_span.innerText = inner_text
+    owner_div.appendChild(owner_span)
+
+    const status_span = document.createElement('span');
+    if (status == 'OUVERT') {
+        status_span.classList.add('status_ouvert')
+        status_span.innerText = 'Ouvert'
+    }
+    if (status == 'RESOLU') {
+        status_span.classList.add('status_resolu')
+        status_span.innerText = 'Résolu'
+    }
+    if (status == 'CLOS') {
+        status_span.classList.add('status_clos')
+        status_span.innerText = 'Clos'
+    }
+    owner_div.appendChild(status_span)
     return owner_div
 }
 
@@ -135,7 +165,7 @@ function create_comment_button(uuid) {
     ul_buttons.appendChild(create_li_button(uuid, 'close', 'Marquer comme clos', 'fr-btn--grey'))
     ul_buttons.appendChild(create_li_button(uuid, 'resolve', 'Marquer comme résolu', 'fr-btn--green'))
     ul_buttons.appendChild(create_li_button(uuid, 'reopen', 'Ré-ouvrir'))
-    ul_buttons.appendChild(create_li_button(uuid, 'save', 'Enregistrer'))
+    ul_buttons.appendChild(create_li_button(uuid, 'save', 'Modifier'))
     return ul_buttons
 }
 
@@ -221,7 +251,15 @@ function display_comment_icon(input_id) {
         document.getElementById(input_id + '_div').onclick = null
         document.getElementById(input_id + '_div').onmouseover = null
         document.getElementById(input_id + '_div').onmouseleave = null
-        comment_icon.hidden = false
+        document.getElementById(input_id + '_div').onclick = function() {
+            document.getElementById(input_id + '_comment').hidden=false
+        }
+        document.getElementById(input_id + '_div').onmouseover = function() {
+            document.getElementById(input_id + '_comment').hidden=false
+        }
+        document.getElementById(input_id + '_div').onmouseleave = function(){
+            document.getElementById(input_id + '_comment').hidden=true
+        }
     }
     else { // 0 : blue
         comment_icon = document.getElementById(input_id + '_comment')
@@ -245,7 +283,7 @@ function display_comment_icon(input_id) {
 
 function init_comment_button(input_id, uuid, comment_statut, is_owner, is_instructeur) {
     // button 'Marquer comme clos'
-    if (is_instructeur && is_instructeur != 'False' && comment_statut != 'CLOS') {
+    if (is_instructeur && comment_statut != 'CLOS') {
         document.getElementById('block_comment_close_' + uuid).classList.remove('button-hidden')
     }
     else {
@@ -256,7 +294,7 @@ function init_comment_button(input_id, uuid, comment_statut, is_owner, is_instru
     }
 
     // button 'Marquer comme résolu'
-    if (comment_statut == 'OUVERT') {
+    if (!is_instructeur && comment_statut == 'OUVERT') {
         document.getElementById('block_comment_resolve_' + uuid).classList.remove('button-hidden')
     }
     else {
@@ -267,7 +305,7 @@ function init_comment_button(input_id, uuid, comment_statut, is_owner, is_instru
     }
 
     // button 'Ré-ouvrir'
-    if (comment_statut == 'RESOLU') {
+    if (comment_statut == 'RESOLU' || (comment_statut == 'CLOS' && is_instructeur)) {
         document.getElementById('block_comment_reopen_' + uuid).classList.remove('button-hidden')
     }
     else {
@@ -372,7 +410,8 @@ function update_status_comment(input_id, uuid, status) {
         method: 'post',
         headers: headers,
         body: JSON.stringify({
-            statut: status
+            statut: status,
+            message: message,
         })
     }).then(function(response) {
         if (response.status == 200) {
