@@ -19,6 +19,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include
 
+from django.views.generic import TemplateView
+
 urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
@@ -39,4 +41,5 @@ urlpatterns = [
     path("", include(("users.urls", "users"), namespace="users")),
     path("upload/", include(("upload.urls", "upload"), namespace="upload")),
     path("comments/", include(("comments.urls", "comments"), namespace="comments")),
+    path("cgu", TemplateView.as_view(template_name="editorial/cgu.html"), name="cgu"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
