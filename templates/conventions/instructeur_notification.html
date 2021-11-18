@@ -1,0 +1,32 @@
+{% if request.user.is_bailleur and convention.statut == 'INSTRUCTION' %}
+    <div class="fr-col-md-12  fr-py-5w">
+        <div role="alert" class="fr-alert fr-alert--info">
+            <!-- <p class="fr-alert__title">Convention à valider</p> -->
+            {% if convention.get_last_bailleur_notification %}
+                <p>Denière notification de l'instructeur : {{ convention.get_last_bailleur_notification.cree_le }}</p>
+            {% endif %}
+            <p class='fr-h4'>Vous avez modifié la convention et/ou vous souhaitez faire part de vos commentaires à l'instructeur ? Notifier l'instructeur</p>
+            <div>
+                <form method="post" action="{% url 'conventions:feedback' convention_uuid=convention.uuid %}">
+                    {% csrf_token %}
+                    <div class="fr-checkbox-group">
+                        <input
+                            type="hidden"
+                            id="{{notificationForm.from_instructeur.id_for_label}}"
+                            name="{{notificationForm.from_instructeur.html_name}}">
+                        <input
+                            type="checkbox"
+                            id="{{notificationForm.send_copy.id_for_label}}"
+                            name="{{notificationForm.send_copy.html_name}}">
+                        <label class="fr-label" for="{{notificationForm.send_copy.id_for_label}}">envoyez-moi une copie du message envoyé
+                        </label>
+                    </div>
+                    {% include "common/form/input_textarea.html" with label="Ajouter un commentaire à l'attention du bailleur (optionnel)" form_input=notificationForm.comment editable=True %}
+                    <button class="fr-btn">
+                        Notifier le bailleur
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endif %}

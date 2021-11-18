@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
@@ -297,6 +297,7 @@ def comments(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention", raise_exception=True)
+@login_required
 def recapitulatif(request, convention_uuid):
     # Step 11/11
     result = services.convention_summary(request, convention_uuid)
@@ -334,8 +335,18 @@ def save_convention(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+def feedback_convention(request, convention_uuid):
+    result = services.convention_feedback(request, convention_uuid)
+    return HttpResponseRedirect(
+        reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+    )
+
+
+# Handle in service.py
+# @permission_required("convention.change_convention")
 def validate_convention(request, convention_uuid):
     result = services.convention_validate(request, convention_uuid)
+    print(result)
     return HttpResponseRedirect(
         reverse("conventions:recapitulatif", args=[result["convention"].uuid])
     )
@@ -344,7 +355,7 @@ def validate_convention(request, convention_uuid):
 # Handle in service.py
 # @permission_required("convention.change_convention")
 def generate_convention(request, convention_uuid):
-    data, file_name = services.generate_convention(convention_uuid)
+    data, file_name = services.generate_convention(request, convention_uuid)
 
     response = HttpResponse(
         data,
@@ -352,9 +363,6 @@ def generate_convention(request, convention_uuid):
     )
     response["Content-Disposition"] = f"attachment; filename={file_name}.docx"
     return response
-
-
-#   return send_file(file_stream, as_attachment=True, attachment_filename='report_'+user_id+'.docx')
 
 
 def load_xlsx_model(request, file_type):

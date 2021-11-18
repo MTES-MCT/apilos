@@ -14,6 +14,7 @@ from .services_conventions import (
     convention_comments,
     convention_summary,
     convention_save,
+    convention_feedback,
     convention_validate,
     generate_convention,
 )

@@ -642,20 +642,21 @@
                     {% endif %}
                 </div>
 
+                {% include "conventions/bailleur_notification.html" %}
+
+                {% include "conventions/instructeur_notification.html" %}
 
                 {% if request.user.is_instructeur %}
                     <div class="fr-col-md-12  fr-py-5w">
 
                         <div role="alert" class="fr-alert fr-alert--error">
-                            {% if not convention.valide_le %}
-                                <!-- <p class="fr-alert__title">Convention à valider</p> -->
-
+                            {% if convention.statut == 'INSTRUCTION' %}
                                 <p>Une fois la convention générée, si celle-ci correspond aux attendus, vous pouvez l'envoyer au bailleur par email et cliquer sur la bouton ci-dessous.
                                     Cela nous permet de suivre le statut de la convention en temps réel.</p>
                                 <div>
                                     <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}">
                                         {% csrf_token %}
-                                        <button class="fr-btn">
+                                        <button class="fr-btn fr-mt-3w">
                                             Valider la convention
                                         </button>
                                     </form>

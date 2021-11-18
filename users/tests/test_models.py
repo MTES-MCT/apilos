@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.contrib.auth.models import Group, Permission
 from core.tests import utils
 from users.models import User, Role
+from users.type_models import TypeRole
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
 from conventions.models import Convention, ConventionStatut
@@ -115,25 +116,25 @@ class AdministrationsModelsTest(TestCase):
             ]
         )
         Role.objects.create(
-            typologie=Role.TypeRole.BAILLEUR,
+            typologie=TypeRole.BAILLEUR,
             bailleur=bailleur,
             user=user_bailleur,
             group=group_bailleur,
         )
         Role.objects.create(
-            typologie=Role.TypeRole.BAILLEUR,
+            typologie=TypeRole.BAILLEUR,
             bailleur=bailleur_hlm,
             user=user_bailleur_hlm,
             group=group_bailleur,
         )
         Role.objects.create(
-            typologie=Role.TypeRole.INSTRUCTEUR,
+            typologie=TypeRole.INSTRUCTEUR,
             administration=administration,
             user=user_instructeur,
             group=group_instructeur,
         )
         Role.objects.create(
-            typologie=Role.TypeRole.INSTRUCTEUR,
+            typologie=TypeRole.INSTRUCTEUR,
             administration=administration_metropole,
             user=user_instructeur_metropole,
             group=group_instructeur,
