@@ -1,0 +1,12 @@
+<h4>Bonjour</h4>
+
+<p>La convention <a href="{{convention_url}}">{{convention}}</a> a été instruite.
+    Vous avez des modifications à réaliser.</p>
+
+{% if commentaire %}
+    <p>L'instructeur vous a laissé le message suivant : </p>
+    <pre style='margin:20px; padding:5px; border:1px solid grey;'>{{commentaire}}</pre>
+{% endif %}
+
+<p>Cordialement</p>
+<p><b>L'équipe <a href="mailto:contact@apilos.beta.gouv.fr">APiLos</a></b></p>

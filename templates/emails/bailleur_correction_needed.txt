@@ -1,0 +1,13 @@
+Bonjour
+
+La convention {{convention}} ({{convention_url}}) a été instruite.
+Vous avez des modifications à réaliser.
+
+{% if commentaire %}L'instructeur vous a laissé le message suivant :
+
+{% for line in commentaire.splitlines %}
+> {{line}}{% endfor %}
+{% endif %}
+
+Cordialement,
+L'équipe APiLos

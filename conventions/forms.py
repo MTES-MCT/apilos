@@ -196,3 +196,16 @@ class UploadForm(forms.Form):
             ),
         }
     )
+
+
+class NotificationForm(forms.Form):
+
+    send_copy = forms.BooleanField(required=False)
+    from_instructeur = forms.BooleanField(required=False)
+    comment = forms.CharField(
+        required=False,
+        max_length=5000,
+        error_messages={
+            "max_length": "Le commentaire ne doit pas excéder 5000 characters",
+        },
+    )

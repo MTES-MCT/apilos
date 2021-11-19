@@ -90,6 +90,20 @@ docker-compose logs -f --tail=10
 docker-compose exec apilos python manage.py test
 ```
 
+#### Coverage
+
+Lancé un test coverage
+
+```
+docker-compose exec apilos coverage run --source='.' manage.py test
+```
+
+Consulté le raport de coverage
+
+```
+docker-compose exec apilos coverage report
+```
+
 ### CI/CD
 
 La solution circleci est utilisée. La config est ici : $BASE/.circleci/config.yaml

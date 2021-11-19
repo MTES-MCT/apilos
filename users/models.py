@@ -5,6 +5,8 @@ from django.db import models
 from conventions.models import Convention, ConventionStatut
 from programmes.models import Lot
 
+from users.type_models import TypeRole
+
 
 class slist(list):
     @property
@@ -13,7 +15,7 @@ class slist(list):
 
 
 class User(AbstractUser):
-    def has_view_convention(self, obj):
+    def _has_view_convention(self, obj):
         if isinstance(obj, Convention):
             # is bailleur of the convention or is instructeur of the convention
             return self.role_set.filter(
@@ -25,7 +27,7 @@ class User(AbstractUser):
             + "permission 'view_convention'"
         )
 
-    def has_change_convention(self, obj):
+    def _has_change_convention(self, obj):
         if isinstance(obj, Convention):
             if (
                 # is bailleur of the convention
@@ -48,7 +50,7 @@ class User(AbstractUser):
             return True
         # request.user.check_perm("convention.change_convention", convention)
         if perm == "convention.change_convention":
-            return self.has_change_convention(obj)
+            return self._has_change_convention(obj)
         # request.user.check_perm("convention.add_convention", lot)
         if perm == "convention.add_convention":
             if isinstance(obj, Lot):
@@ -60,7 +62,7 @@ class User(AbstractUser):
                 )
         # request.user.check_perm("convention.view_convention", convention)
         if perm == "convention.view_convention":
-            return self.has_view_convention(obj)
+            return self._has_view_convention(obj)
 
         permissions = []
         for role in self.role_set.all():
@@ -79,10 +81,10 @@ class User(AbstractUser):
     def is_bailleur(self, bailleur_id=None):
         if bailleur_id is not None:
             return self.roles.filter(bailleur_id=bailleur_id)
-        return self.is_role(Role.TypeRole.BAILLEUR)
+        return self.is_role(TypeRole.BAILLEUR)
 
     def is_instructeur(self):
-        return self.is_role(Role.TypeRole.INSTRUCTEUR) or self.is_staff
+        return self.is_role(TypeRole.INSTRUCTEUR) or self.is_staff
 
     def is_role(self, role):
         return role in map(lambda r: r.typologie, self.role_set.all())
@@ -91,7 +93,7 @@ class User(AbstractUser):
         bailleur_ids = list(
             map(
                 lambda role: role.bailleur_id,
-                self.role_set.filter(typologie=Role.TypeRole.BAILLEUR),
+                self.role_set.filter(typologie=TypeRole.BAILLEUR),
             )
         )
         if bailleur_ids:
@@ -102,7 +104,7 @@ class User(AbstractUser):
         return slist(
             map(
                 lambda role: role.bailleur,
-                self.role_set.filter(typologie=Role.TypeRole.BAILLEUR),
+                self.role_set.filter(typologie=TypeRole.BAILLEUR),
             )
         )
 
@@ -110,13 +112,13 @@ class User(AbstractUser):
         bailleur_ids = list(
             map(
                 lambda role: role.bailleur_id,
-                self.role_set.filter(typologie=Role.TypeRole.BAILLEUR),
+                self.role_set.filter(typologie=TypeRole.BAILLEUR),
             )
         )
         administration_ids = list(
             map(
                 lambda role: role.administration_id,
-                self.role_set.filter(typologie=Role.TypeRole.INSTRUCTEUR),
+                self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
             )
         )
         filter_result = {}
@@ -146,10 +148,6 @@ class User(AbstractUser):
 
 
 class Role(models.Model):
-    class TypeRole(models.TextChoices):
-        INSTRUCTEUR = "INSTRUCTEUR", "Instructeur"
-        BAILLEUR = "BAILLEUR", "Bailleur"
-
     id = models.AutoField(primary_key=True)
     typologie = models.CharField(
         max_length=25,

@@ -13,3 +13,5 @@ class BailleurModelsTest(TestCase):
         bailleur = Bailleur.objects.order_by("uuid").first()
         expected_object_name = f"{bailleur.nom}"
         self.assertEqual(str(bailleur), expected_object_name)
+        self.assertEqual(bailleur.label, expected_object_name)
+        self.assertEqual(bailleur.value, bailleur.id)

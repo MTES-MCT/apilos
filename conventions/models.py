@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from programmes.models import Financement
 from core import model_utils
+from users.type_models import TypeRole
 
 
 class Preteur(models.TextChoices):
@@ -105,6 +106,70 @@ class Convention(models.Model):
                 result[comment_name] = []
             result[comment_name].append(comment)
         return result
+
+    def get_last_notification_by_role(self, role: TypeRole):
+        try:
+            return (
+                self.conventionhistory_set.prefetch_related("user")
+                .prefetch_related("user__role_set")
+                .filter(
+                    statut_convention=ConventionStatut.INSTRUCTION,
+                    user__role__typologie=role,
+                )
+                .latest("cree_le")
+            )
+        except ConventionHistory.DoesNotExist:
+            return None
+
+    def get_last_bailleur_notification(self):
+        return self.get_last_notification_by_role(TypeRole.BAILLEUR)
+
+    def get_last_instructeur_notification(self):
+        return self.get_last_notification_by_role(TypeRole.INSTRUCTEUR)
+
+    def get_last_submission(self):
+        try:
+            return self.conventionhistory_set.filter(
+                statut_convention=ConventionStatut.INSTRUCTION
+            ).latest("cree_le")
+        except ConventionHistory.DoesNotExist:
+            return None
+
+    def get_email_bailleur_users(self):
+        return list(set(map(lambda x: x.user.email, self.bailleur.role_set.all())))
+
+    def get_email_instructeur_users(self):
+        return list(
+            set(
+                map(
+                    lambda x: x.user.email, self.programme.administration.role_set.all()
+                )
+            )
+        )
+
+
+class ConventionHistory(models.Model):
+    id = models.AutoField(primary_key=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    bailleur = models.ForeignKey(
+        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
+    )
+    convention = models.ForeignKey("Convention", on_delete=models.CASCADE, null=False)
+    statut_convention = models.CharField(
+        max_length=25,
+        choices=ConventionStatut.choices,
+        default=ConventionStatut.BROUILLON,
+    )
+    statut_convention_precedent = models.CharField(
+        max_length=25,
+        choices=ConventionStatut.choices,
+        default=ConventionStatut.BROUILLON,
+    )
+    commentaire = models.TextField(null=True)
+    user = models.ForeignKey(
+        "users.User", related_name="valide_par", on_delete=models.SET_NULL, null=True
+    )
+    cree_le = models.DateTimeField(auto_now_add=True)
 
 
 class Pret(models.Model):

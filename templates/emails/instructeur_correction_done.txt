@@ -1,0 +1,19 @@
+Bonjour
+
+La convention {{convention}} ({{convention_url}}) a reçu les modifications demandées.
+Vous pouvez instruire à nouveau cette convention.
+
+{% if commentaire %}Le bailleur vous a laissé le message suivant :
+
+{% for line in commentaire.splitlines %}
+> {{line}}{% endfor %}
+{% endif %}
+
+Si toutes les modifications demandées ont été apportées, vous pourrez valider la convention.
+
+N'hésitez pas à vous faire part de tout retour ou suggestion d'amiloration sur la plateforme à contact@apilos.beta.gouv.fr
+
+Dans l'attente de vous retrouver sur APiLos pour une nouvelle convention, nous restons à votre disposition.
+
+Cordialement,
+L'équipe APiLos

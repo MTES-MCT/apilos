@@ -1,0 +1,6 @@
+Bonjour
+
+La convention {{convention}} ({{convention_url}}) est à instruire.
+
+Cordialement,
+L'équipe APiLos

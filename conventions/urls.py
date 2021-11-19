@@ -27,6 +27,11 @@ urlpatterns = [
         name="save",
     ),
     path(
+        "feedback/<convention_uuid>",
+        views.feedback_convention,
+        name="feedback",
+    ),
+    path(
         "validate/<convention_uuid>",
         views.validate_convention,
         name="validate",
