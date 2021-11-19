@@ -1,0 +1,7 @@
+Bonjour
+
+La convention {{convention}} ({{convention_url}}) a été envoyée avec succès à l’instructeur.
+Ce dernier reviendra vers vous pour l’instruction de cette convention.
+
+Cordialement,
+L'équipe APiLos

@@ -245,17 +245,27 @@ def convention_summary(request, convention_uuid):
     }
 
 
-def convention_save(request, convention_uuid):
+def convention_submit(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     submitted = utils.ReturnStatus.WARNING
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
         if request.POST.get("SubmitConvention", False):
+
+            ConventionHistory.objects.create(
+                bailleur=convention.bailleur,
+                convention=convention,
+                statut_convention=ConventionStatut.INSTRUCTION,
+                statut_convention_precedent=convention.statut,
+                user=request.user,
+            ).save()
+
             if convention.premiere_soumission_le is None:
                 convention.premiere_soumission_le = datetime.datetime.now()
             convention.soumis_le = datetime.datetime.now()
             convention.statut = ConventionStatut.INSTRUCTION
             convention.save()
+            _send_email_instruction(request, convention)
             submitted = utils.ReturnStatus.SUCCESS
         return {
             "success": submitted,
@@ -267,62 +277,65 @@ def convention_save(request, convention_uuid):
     }
 
 
+def _send_email_instruction(request, convention):
+    # envoi au bailleur
+    convention_url = request.build_absolute_uri(
+        reverse("conventions:recapitulatif", args=[convention.uuid])
+    )
+    from_email = "contact@apilos.beta.gouv.fr"
+
+    to = [request.user.email]
+    text_content = render_to_string(
+        "emails/bailleur_instruction.txt",
+        {
+            "convention_url": convention_url,
+            "convention": convention,
+        },
+    )
+    html_content = render_to_string(
+        "emails/bailleur_instruction.html",
+        {
+            "convention_url": convention_url,
+            "convention": convention,
+        },
+    )
+
+    msg = EmailMultiAlternatives(
+        f"Convention à instruire ({convention})", text_content, from_email, to
+    )
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+    # envoie à l'instructeur
+    to = convention.get_email_instructeur_users()
+    text_content = render_to_string(
+        "emails/instructeur_instruction.txt",
+        {
+            "convention_url": convention_url,
+            "convention": convention,
+        },
+    )
+    html_content = render_to_string(
+        "emails/instructeur_instruction.html",
+        {
+            "convention_url": convention_url,
+            "convention": convention,
+        },
+    )
+
+    msg = EmailMultiAlternatives(
+        f"Convention à instruire ({convention})", text_content, from_email, to
+    )
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+
 @require_POST
 def convention_feedback(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     notification_form = NotificationForm(request.POST)
     if notification_form.is_valid():
-
-        convention_url = request.build_absolute_uri(
-            reverse("conventions:recapitulatif", args=[convention.uuid])
-        )
-        print("notification_form.cleaned_data['from_instructeur']")
-        print(notification_form.cleaned_data["from_instructeur"])
-        if notification_form.cleaned_data["from_instructeur"]:
-            last_notification_from_bailleur = (
-                convention.get_last_bailleur_notification()
-            )
-            if last_notification_from_bailleur:
-                to = [last_notification_from_bailleur.user.email]
-            else:
-                # All bailleur users from convention
-                to = convention.get_email_bailleur_users()
-            subject = f"Convention à modifier ({convention})"
-            template_label = "notification_correction_needed"
-        else:
-            last_notification_from_instructeur = (
-                convention.get_last_instructeur_notification()
-            )
-            if last_notification_from_instructeur:
-                to = [last_notification_from_instructeur.user.email]
-            else:
-                # All instructeur users from convention
-                to = convention.get_email_instructeur_users()
-            subject = f"Convention modifiée ({convention})"
-            template_label = "notification_correction_done"
-
-        from_email = "contact@apilos.beta.gouv.fr"
-        text_content = render_to_string(
-            f"emails/{template_label}.txt",
-            {
-                "convention_url": convention_url,
-                "convention": convention,
-                "commentaire": notification_form.cleaned_data["comment"],
-            },
-        )
-        html_content = render_to_string(
-            f"emails/{template_label}.html",
-            {
-                "convention_url": convention_url,
-                "convention": convention,
-                "commentaire": notification_form.cleaned_data["comment"],
-            },
-        )
-        cc = [request.user.email] if notification_form.cleaned_data["send_copy"] else []
-
-        msg = EmailMultiAlternatives(subject, text_content, from_email, to, cc=cc)
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
+        _send_email_correction(request, convention, notification_form)
 
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
@@ -340,6 +353,55 @@ def convention_feedback(request, convention_uuid):
     }
 
 
+def _send_email_correction(request, convention, notification_form):
+    convention_url = request.build_absolute_uri(
+        reverse("conventions:recapitulatif", args=[convention.uuid])
+    )
+    if notification_form.cleaned_data["from_instructeur"]:
+        last_notification_from_bailleur = convention.get_last_bailleur_notification()
+        if last_notification_from_bailleur:
+            to = [last_notification_from_bailleur.user.email]
+        else:
+            # All bailleur users from convention
+            to = convention.get_email_bailleur_users()
+        subject = f"Convention à modifier ({convention})"
+        template_label = "bailleur_correction_needed"
+    else:
+        last_notification_from_instructeur = (
+            convention.get_last_instructeur_notification()
+        )
+        if last_notification_from_instructeur:
+            to = [last_notification_from_instructeur.user.email]
+        else:
+            # All instructeur users from convention
+            to = convention.get_email_instructeur_users()
+        subject = f"Convention modifiée ({convention})"
+        template_label = "instructeur_correction_done"
+
+    from_email = "contact@apilos.beta.gouv.fr"
+    text_content = render_to_string(
+        f"emails/{template_label}.txt",
+        {
+            "convention_url": convention_url,
+            "convention": convention,
+            "commentaire": notification_form.cleaned_data["comment"],
+        },
+    )
+    html_content = render_to_string(
+        f"emails/{template_label}.html",
+        {
+            "convention_url": convention_url,
+            "convention": convention,
+            "commentaire": notification_form.cleaned_data["comment"],
+        },
+    )
+    cc = [request.user.email] if notification_form.cleaned_data["send_copy"] else []
+
+    msg = EmailMultiAlternatives(subject, text_content, from_email, to, cc=cc)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+
 @require_POST
 def convention_validate(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -355,11 +417,41 @@ def convention_validate(request, convention_uuid):
         convention.valide_le = datetime.datetime.now()
     convention.statut = ConventionStatut.VALIDE
     convention.save()
+    _send_email_valide(request, convention)
     submitted = utils.ReturnStatus.SUCCESS
     return {
         "success": submitted,
         "convention": convention,
     }
+
+
+def _send_email_valide(request, convention):
+    convention_url = request.build_absolute_uri(
+        reverse("conventions:recapitulatif", args=[convention.uuid])
+    )
+    from_email = "contact@apilos.beta.gouv.fr"
+
+    to = [request.user.email]
+    text_content = render_to_string(
+        "emails/bailleur_valide.txt",
+        {
+            "convention_url": convention_url,
+            "convention": convention,
+        },
+    )
+    html_content = render_to_string(
+        "emails/bailleur_valide.html",
+        {
+            "convention_url": convention_url,
+            "convention": convention,
+        },
+    )
+
+    msg = EmailMultiAlternatives(
+        f"Convention validé ({convention})", text_content, from_email, to
+    )
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 
 @require_POST

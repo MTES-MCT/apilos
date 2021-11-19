@@ -20,6 +20,7 @@ NB_STEPS = 11
 
 
 # @permission_required("convention.view_convention")
+@login_required
 def index(request):
     conventions = services.conventions_index(request, {})
     return render(
@@ -29,6 +30,7 @@ def index(request):
     )
 
 
+@login_required
 @permission_required("convention.add_convention")
 def select_programme_create(request):
     # STEP 1
@@ -51,6 +53,7 @@ def select_programme_create(request):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def select_programme_update(request, convention_uuid):
     # STEP 1
     result = services.select_programme_update(request, convention_uuid)
@@ -75,6 +78,7 @@ def select_programme_update(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def bailleur(request, convention_uuid):
     # STEP 2
     result = services.bailleur_update(request, convention_uuid)
@@ -99,6 +103,7 @@ def bailleur(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def programme(request, convention_uuid):
     # STEP 3
     result = services.programme_update(request, convention_uuid)
@@ -125,6 +130,7 @@ def programme(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def cadastre(request, convention_uuid):
     # STEP 4
     result = services.programme_cadastral_update(request, convention_uuid)
@@ -150,6 +156,7 @@ def cadastre(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def edd(request, convention_uuid):
     # STEP 5
     result = services.programme_edd_update(request, convention_uuid)
@@ -176,6 +183,7 @@ def edd(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def prets(request, convention_uuid):
     result = services.convention_financement(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
@@ -201,6 +209,7 @@ def prets(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def logements(request, convention_uuid):
     result = services.logements_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
@@ -225,6 +234,7 @@ def logements(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def annexes(request, convention_uuid):
     result = services.annexes_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
@@ -250,6 +260,7 @@ def annexes(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def stationnements(request, convention_uuid):
     result = services.stationnements_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
@@ -274,6 +285,7 @@ def stationnements(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def comments(request, convention_uuid):
     result = services.convention_comments(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
@@ -314,8 +326,9 @@ def recapitulatif(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def save_convention(request, convention_uuid):
-    result = services.convention_save(request, convention_uuid)
+    result = services.convention_submit(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return render(
             request,
@@ -335,6 +348,7 @@ def save_convention(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def feedback_convention(request, convention_uuid):
     result = services.convention_feedback(request, convention_uuid)
     return HttpResponseRedirect(
@@ -344,6 +358,7 @@ def feedback_convention(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def validate_convention(request, convention_uuid):
     result = services.convention_validate(request, convention_uuid)
     print(result)
@@ -354,6 +369,7 @@ def validate_convention(request, convention_uuid):
 
 # Handle in service.py
 # @permission_required("convention.change_convention")
+@login_required
 def generate_convention(request, convention_uuid):
     data, file_name = services.generate_convention(request, convention_uuid)
 
@@ -365,6 +381,7 @@ def generate_convention(request, convention_uuid):
     return response
 
 
+@login_required
 def load_xlsx_model(request, file_type):
     filepath = f"{settings.BASE_DIR}/static/files/{file_type}.xlsx"
 

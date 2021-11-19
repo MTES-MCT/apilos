@@ -10,4 +10,4 @@ Vous avez des modifications à réaliser.
 {% endif %}
 
 Cordialement,
-l'équipe APiLos
+L'équipe APiLos
