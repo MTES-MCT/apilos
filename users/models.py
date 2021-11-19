@@ -15,7 +15,7 @@ class slist(list):
 
 
 class User(AbstractUser):
-    def has_view_convention(self, obj):
+    def _has_view_convention(self, obj):
         if isinstance(obj, Convention):
             # is bailleur of the convention or is instructeur of the convention
             return self.role_set.filter(
@@ -27,7 +27,7 @@ class User(AbstractUser):
             + "permission 'view_convention'"
         )
 
-    def has_change_convention(self, obj):
+    def _has_change_convention(self, obj):
         if isinstance(obj, Convention):
             if (
                 # is bailleur of the convention
@@ -50,7 +50,7 @@ class User(AbstractUser):
             return True
         # request.user.check_perm("convention.change_convention", convention)
         if perm == "convention.change_convention":
-            return self.has_change_convention(obj)
+            return self._has_change_convention(obj)
         # request.user.check_perm("convention.add_convention", lot)
         if perm == "convention.add_convention":
             if isinstance(obj, Lot):
@@ -62,7 +62,7 @@ class User(AbstractUser):
                 )
         # request.user.check_perm("convention.view_convention", convention)
         if perm == "convention.view_convention":
-            return self.has_view_convention(obj)
+            return self._has_view_convention(obj)
 
         permissions = []
         for role in self.role_set.all():

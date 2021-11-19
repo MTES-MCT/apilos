@@ -185,6 +185,19 @@ class AdministrationsModelsTest(TestCase):
         self.assertFalse(user_bailleur.is_instructeur())
         self.assertTrue(user_bailleur.is_bailleur())
 
+    def test_exception_permissions(self):
+        # pylint: disable=W0703
+        user_instructeur = User.objects.get(username="sabine")
+        for perm in ["convention.view_convention", "convention.change_convention"]:
+            try:
+                user_instructeur.has_perm(perm, user_instructeur)
+                self.fail(
+                    f"has_perm '{perm}' "
+                    + "with non convention object shold raise an Exception"
+                )
+            except Exception:
+                pass
+
     def test_permissions(self):
         user_instructeur = User.objects.get(username="sabine")
         user_instructeur_metropole = User.objects.get(username="roger")
