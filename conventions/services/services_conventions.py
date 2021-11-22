@@ -4,6 +4,7 @@ from django.views.decorators.http import require_POST
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import timezone
 
 from programmes.models import (
     Annexe,
@@ -261,8 +262,8 @@ def convention_submit(request, convention_uuid):
             ).save()
 
             if convention.premiere_soumission_le is None:
-                convention.premiere_soumission_le = datetime.datetime.now()
-            convention.soumis_le = datetime.datetime.now()
+                convention.premiere_soumission_le = timezone.now()
+            convention.soumis_le = timezone.now()
             convention.statut = ConventionStatut.INSTRUCTION
             convention.save()
             _send_email_instruction(request, convention)
@@ -414,7 +415,7 @@ def convention_validate(request, convention_uuid):
         user=request.user,
     ).save()
     if not convention.valide_le:
-        convention.valide_le = datetime.datetime.now()
+        convention.valide_le = timezone.now()
     convention.statut = ConventionStatut.VALIDE
     convention.save()
     _send_email_valide(request, convention)
