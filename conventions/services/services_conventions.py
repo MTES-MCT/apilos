@@ -13,6 +13,7 @@ from conventions.models import Convention, ConventionHistory, ConventionStatut, 
 from conventions.forms import (
     ConventionCommentForm,
     ConventionFinancementForm,
+    ConventionNumberForm,
     NotificationForm,
     PretFormSet,
     UploadForm,
@@ -221,7 +222,7 @@ def convention_comments(request, convention_uuid):
     }
 
 
-def convention_summary(request, convention_uuid):
+def convention_summary(request, convention_uuid, convention_number_form=None):
     convention = (
         Convention.objects.prefetch_related("bailleur")
         .prefetch_related("programme")
@@ -232,6 +233,13 @@ def convention_summary(request, convention_uuid):
         .prefetch_related("lot__logement_set")
         .get(uuid=convention_uuid)
     )
+    if convention_number_form is None:
+        convention_number_form = ConventionNumberForm(
+            initial={
+                "prefixe_numero": convention.prefixe_numero(),
+                "suffixe_numero": convention.suffixe_numero(),
+            }
+        )
     return {
         **utils.base_convention_response_error(request, convention),
         "bailleur": convention.bailleur,
@@ -243,6 +251,7 @@ def convention_summary(request, convention_uuid):
         "reference_cadastrales": convention.programme.referencecadastrale_set.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
+        "conventionNumberForm": convention_number_form,
     }
 
 
@@ -407,22 +416,65 @@ def _send_email_correction(request, convention, notification_form):
 def convention_validate(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     request.user.check_perm("convention.change_convention", convention)
-    ConventionHistory.objects.create(
-        bailleur=convention.bailleur,
-        convention=convention,
-        statut_convention=ConventionStatut.VALIDE,
-        statut_convention_precedent=convention.statut,
-        user=request.user,
-    ).save()
-    if not convention.valide_le:
-        convention.valide_le = timezone.now()
-    convention.statut = ConventionStatut.VALIDE
-    convention.save()
-    _send_email_valide(request, convention)
-    submitted = utils.ReturnStatus.SUCCESS
+
+    convention_number_form = ConventionNumberForm(request.POST)
+    if convention_number_form.is_valid():
+        prefix_numero = "/".join(
+            list(
+                filter(
+                    None,
+                    convention_number_form.cleaned_data["prefixe_numero"].split("/"),
+                )
+            )
+        )
+        print(prefix_numero)
+        convention.numero = "/".join(
+            [
+                prefix_numero,
+                convention_number_form.cleaned_data["suffixe_numero"],
+            ]
+        )
+        convention.save()
+
+        ConventionHistory.objects.create(
+            bailleur=convention.bailleur,
+            convention=convention,
+            statut_convention=ConventionStatut.VALIDE,
+            statut_convention_precedent=convention.statut,
+            user=request.user,
+        ).save()
+        if not convention.valide_le:
+            convention.valide_le = timezone.now()
+        convention.statut = ConventionStatut.VALIDE
+        convention.save()
+        _send_email_valide(request, convention)
+        return {
+            "success": utils.ReturnStatus.SUCCESS,
+            "convention": convention,
+        }
+
+    convention = (
+        Convention.objects.prefetch_related("bailleur")
+        .prefetch_related("programme")
+        .prefetch_related("programme__referencecadastrale_set")
+        .prefetch_related("programme__logementedd_set")
+        .prefetch_related("lot")
+        .prefetch_related("lot__typestationnement_set")
+        .prefetch_related("lot__logement_set")
+        .get(uuid=convention_uuid)
+    )
     return {
-        "success": submitted,
-        "convention": convention,
+        **utils.base_convention_response_error(request, convention),
+        "bailleur": convention.bailleur,
+        "lot": convention.lot,
+        "programme": convention.programme,
+        "logement_edds": convention.programme.logementedd_set.all(),
+        "logements": convention.lot.logement_set.all(),
+        "stationnements": convention.lot.typestationnement_set.all(),
+        "reference_cadastrales": convention.programme.referencecadastrale_set.all(),
+        "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
+        "notificationForm": NotificationForm(),
+        "conventionNumberForm": convention_number_form,
     }
 
 

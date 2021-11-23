@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.utils import timezone
 from programmes.models import Financement
 from core import model_utils
 from users.type_models import TypeRole
@@ -146,6 +147,38 @@ class Convention(models.Model):
                 )
             )
         )
+
+    def prefixe_numero(self):
+        if self.statut in [
+            ConventionStatut.BROUILLON,
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+        ]:
+            decret = "80.416"  # en application du décret n° 80.416
+            # decret 80.416 pour les HLM
+            # operation = "2"  # pour une opération de construction neuve (2)
+            # code opération non appliqué dans le 13
+            code_organisme = "075.050"  # par l’ OPAC-VP (n° de code : 075.050).
+            return "/".join(
+                [
+                    str(self.programme.code_postal[:-3]),
+                    str(self.programme.zone_123),
+                    str(timezone.now().month),
+                    str(timezone.now().year),
+                    decret,
+                    code_organisme,
+                ]
+            )
+        return "/".join(self.numero.split("/")[:-1])
+
+    def suffixe_numero(self):
+        if self.statut not in [
+            ConventionStatut.BROUILLON,
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+        ]:
+            return self.numero.rsplit("/", maxsplit=1)[-1]
+        return None
 
 
 class ConventionHistory(models.Model):
