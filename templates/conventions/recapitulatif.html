@@ -646,30 +646,7 @@
 
                 {% include "conventions/instructeur_notification.html" %}
 
-                {% if request.user.is_instructeur %}
-                    <div class="fr-col-md-12  fr-py-5w">
-
-                        <div role="alert" class="fr-alert fr-alert--error">
-                            {% if convention.statut == 'INSTRUCTION' %}
-                                <p>Une fois la convention générée, si celle-ci correspond aux attendus, vous pouvez l'envoyer au bailleur par email et cliquer sur la bouton ci-dessous.
-                                    Cela nous permet de suivre le statut de la convention en temps réel.</p>
-                                <div>
-                                    <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}">
-                                        {% csrf_token %}
-                                        <button class="fr-btn fr-mt-3w">
-                                            Valider la convention
-                                        </button>
-                                    </form>
-                                </div>
-                            {% else %}
-                                <p class="fr-alert__title">La convention a été validée le {{ convention.valide_le|date:"j F Y" }}</p>
-                            {% endif %}
-                            <p class="fr-my-3w"><b>Bientôt</b>, nous serons en mesure de prendre en charge la suite du processus de conventionnement sur la plateforme APiLos</p>
-                        </div>
-                    </div>
-
-                {% endif %}
-
+                {% include "conventions/instructeur_validation.html" %}
 
             </div>
         </div>

@@ -1,0 +1,39 @@
+{% if request.user.is_instructeur %}
+    <div class="fr-col-md-12  fr-py-5w">
+        <div role="alert" class="fr-alert fr-alert--error">
+            {% if convention.statut == 'INSTRUCTION' %}
+                <p class="fr-mb-3w">Une fois la convention générée, si celle-ci correspond aux attendus, vous pouvez l'envoyer au bailleur par email et cliquer sur la bouton ci-dessous.
+                    Cela nous permet de suivre le statut de la convention en temps réel.</p>
+                <div>
+                    <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}">
+                        {% csrf_token %}
+                        <p class="fr-h4">Associer un numéro de convention</p>
+
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-6 fr-col-lg-4 fr-mb-2w">
+                                <div class="block--row-strech">
+                                    <div class="block--row-strech-1">
+                                        {% include "common/form/input_text.html" with form_input=conventionNumberForm.prefixe_numero label="Prefix" %}
+                                    </div>
+                                    <p class="fr-mt-4w fr-ml-2w fr-h4">/</p>
+                                </div>
+                            </div>
+                            <div class="fr-col-12 fr-col-md-3 fr-col-lg-2 fr-pl-md-1w fr-mb-2w">
+                                {% include "common/form/input_number.html" with form_input=conventionNumberForm.suffixe_numero label="Numéro"%}
+                            </div>
+                        </div>
+
+                        <button class="fr-btn fr-mt-3w">
+                            Valider la convention
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <p class="fr-alert__title">La convention a été validée le {{ convention.valide_le|date:"j F Y" }}</p>
+                <p class="fr-alert__title">avec le numéro {{convention.numero}}</p>
+            {% endif %}
+            <p class="fr-my-3w"><b>Bientôt</b>, nous serons en mesure de prendre en charge la suite du processus de conventionnement sur la plateforme APiLos</p>
+        </div>
+    </div>
+{% endif %}
+

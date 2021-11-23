@@ -16,7 +16,7 @@ class ConventionCommentForm(forms.Form):
         required=False,
         max_length=5000,
         error_messages={
-            "max_length": "Le message ne doit pas excéder 5000 characters",
+            "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
     )
 
@@ -107,7 +107,7 @@ class PretForm(forms.Form):
         required=False,
         max_length=255,
         error_messages={
-            "max_length": "Le numero ne doit pas excéder 255 characters",
+            "max_length": "Le numero ne doit pas excéder 255 caractères",
         },
     )
     preteur = forms.TypedChoiceField(required=False, choices=Preteur.choices)
@@ -115,7 +115,7 @@ class PretForm(forms.Form):
         required=False,
         max_length=255,
         error_messages={
-            "max_length": "Le prêteur ne doit pas excéder 255 characters",
+            "max_length": "Le prêteur ne doit pas excéder 255 caractères",
         },
     )
     date_octroi = forms.DateField(required=False)
@@ -206,6 +206,27 @@ class NotificationForm(forms.Form):
         required=False,
         max_length=5000,
         error_messages={
-            "max_length": "Le commentaire ne doit pas excéder 5000 characters",
+            "max_length": "Le commentaire ne doit pas excéder 5000 caractères",
+        },
+    )
+
+
+class ConventionNumberForm(forms.Form):
+    prefixe_numero = forms.CharField(
+        max_length=250,
+        error_messages={
+            "max_length": (
+                "La longueur totale du numéro de convention ne peut pas excéder"
+                + " 250 caractères"
+            ),
+            "required": "Le préfixe du numéro de convention en obligatoire",
+        },
+        help_text="département/zone/mois.année/decret/daei/",
+    )
+    suffixe_numero = forms.CharField(
+        max_length=10,
+        error_messages={
+            "max_length": "La longueur du numéro de convention ne peut pas excéder 10 caractères",
+            "required": "Le numéro de convention en obligatoire",
         },
     )

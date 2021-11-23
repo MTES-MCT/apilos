@@ -361,9 +361,18 @@ def feedback_convention(request, convention_uuid):
 @login_required
 def validate_convention(request, convention_uuid):
     result = services.convention_validate(request, convention_uuid)
-    print(result)
-    return HttpResponseRedirect(
-        reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+    if result["success"] == ReturnStatus.SUCCESS:
+        return HttpResponseRedirect(
+            reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+        )
+    return render(
+        request,
+        "conventions/recapitulatif.html",
+        {
+            **result,
+            "nb_steps": NB_STEPS,
+            "convention_form_step": 11,
+        },
     )
 
 
