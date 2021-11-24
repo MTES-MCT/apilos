@@ -427,7 +427,6 @@ def convention_validate(request, convention_uuid):
                 )
             )
         )
-        print(prefix_numero)
         convention.numero = "/".join(
             [
                 prefix_numero,
@@ -484,7 +483,14 @@ def _send_email_valide(request, convention):
     )
     from_email = "contact@apilos.beta.gouv.fr"
 
-    to = [request.user.email]
+    cc = [request.user.email]
+    last_notification_from_bailleur = convention.get_last_bailleur_notification()
+    if last_notification_from_bailleur:
+        to = [last_notification_from_bailleur.user.email]
+    else:
+        # All bailleur users from convention
+        to = convention.get_email_bailleur_users()
+
     text_content = render_to_string(
         "emails/bailleur_valide.txt",
         {
@@ -501,7 +507,7 @@ def _send_email_valide(request, convention):
     )
 
     msg = EmailMultiAlternatives(
-        f"Convention validé ({convention})", text_content, from_email, to
+        f"Convention validé ({convention})", text_content, from_email, to, cc=cc
     )
     msg.attach_alternative(html_content, "text/html")
     msg.send()
