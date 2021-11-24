@@ -168,18 +168,9 @@ def extract_row(row, column_from_index, import_mapping):
 
             # Decimal case
             elif model_field.get_internal_type() == "DecimalField":
-                if cell.value is not None:
-                    if isinstance(cell.value, (float, int)):
-                        local_format = "{:." + str(model_field.decimal_places) + "f}"
-                        value = Decimal(local_format.format(cell.value))
-                    else:
-                        new_warnings.append(
-                            Exception(
-                                f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' "
-                                + f"de la colonne {column_from_index[cell.column]} "
-                                + "doit être une valeur numérique"
-                            )
-                        )
+                value, new_warnings = _get_value_from_decimal_field(
+                    cell, model_field, column_from_index, new_warnings
+                )
 
             # Integer case
             elif model_field.get_internal_type() == "IntegerField":
@@ -211,3 +202,46 @@ def extract_row(row, column_from_index, import_mapping):
         my_row[key] = value
 
     return my_row, empty_line, new_warnings
+
+
+def _get_value_from_decimal_field(cell, model_field, column_from_index, new_warnings):
+    value = None
+    if cell.value is not None:
+        if isinstance(cell.value, str):
+            try:
+                local_format = "{:." + str(model_field.decimal_places) + "f}"
+                value = Decimal(
+                    local_format.format(_extract_float_from_string(cell.value))
+                )
+            except ValueError:
+                new_warnings.append(
+                    Exception(
+                        f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' "
+                        + f"de la colonne {column_from_index[cell.column]} "
+                        + "doit être une valeur numérique"
+                    )
+                )
+        elif isinstance(cell.value, (float, int)):
+            local_format = "{:." + str(model_field.decimal_places) + "f}"
+            value = Decimal(local_format.format(cell.value))
+        else:
+            new_warnings.append(
+                Exception(
+                    f"{cell.column_letter}{cell.row} : La valeur '{cell.value}' "
+                    + f"de la colonne {column_from_index[cell.column]} "
+                    + "doit être une valeur numérique"
+                )
+            )
+    return value, new_warnings
+
+
+def _extract_float_from_string(my_string: str):
+    my_string = my_string.strip()
+    my_string = my_string.replace(",", ".")
+    i = 0
+    for char in my_string:
+        if char in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "."]:
+            i += 1
+        else:
+            break
+    return float(my_string[:i])
