@@ -26,7 +26,7 @@
                                 <ul class="fr-mt-1w fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--sm">
                                     <li>
                                         <button id='{{form_input_id}}_comment-submit' type="button" class="fr-btn fr-btn--sm">
-                                            Ajouter un commentaire
+                                            Commenter
                                         </button>
                                     </li>
                                 </ul>
@@ -56,6 +56,18 @@
         display_comment_icon('{{form_input_id}}')
         document.getElementById('{{form_input_id}}_comment-submit').onclick = function() {
             create_comment('{{convention.uuid}}', '{{form_input_id}}', '{{object_field}}')
+        }
+
+
+        elements = document.getElementById('{{form_input_id}}_comment-dialog').getElementsByTagName('textarea')
+        for (var i = 0; i< elements.length; i++) {
+            var id = elements[i].id
+            //elements[i].addEventListener('change', (e) => { console.log(elements[i].id) }, );
+            elements[i].addEventListener('change', function(event) {
+                var element = event.target || event.srcElement;
+                console.log('bingo : {{form_input_id}} + ' + element.id)
+            })
+
         }
     </script>
 {% endif %}

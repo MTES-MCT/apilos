@@ -17,18 +17,19 @@
         document.getElementById('return_recap')
             .addEventListener('click', function(){ location.href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' });
     });
-    if (
-        document.getElementsByClassName('content__icons--red').length
-        + document.getElementsByClassName('content__icons--green').length
-        + document.getElementsByClassName('content__icons--orange').length) {
-            console.log('comments')
-            document.getElementById('save_after_comments').hidden = false
-            document.getElementById('back_to_recap').hidden = true
-        }
+
+    comments = document.getElementsByClassName('content__icons--blue')
+    has_comments = false
+    for (var i=0;i<comments.length; i++) {
+        console.log(comments[i].hidden)
+        has_comments ||= !(comments[i].hidden)
+    }
+    if (has_comments) {
+        document.getElementById('save_after_comments').hidden = false
+        document.getElementById('back_to_recap').hidden = true
+    }
     else {
-        console.log('no comments')
         document.getElementById('save_after_comments').hidden = true
         document.getElementById('back_to_recap').hidden = false
-
     }
 </script>

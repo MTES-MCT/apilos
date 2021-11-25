@@ -49,7 +49,6 @@
   background-color: aliceblue !important;
 }
 
-
 .form-button-footer {
   display: flex;
   flex-direction: row-reverse;
@@ -192,11 +191,6 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   height: 24px !important;
 }
 
-.content__icons--red svg {
-  stroke: #E10600;
-  color: #E10600;
-}
-
 .content__icons--blue svg {
   stroke: #0762C8;
   color: #0762C8;
@@ -210,11 +204,6 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .content__icons--grey svg {
   stroke: #9C9C9C;
   color: #9C9C9C;
-}
-
-.content__icons--orange svg {
-  stroke: #eea317;
-  color: #eea317;
 }
 
 .fr-btn--green {
@@ -239,4 +228,17 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 
 .text-italic {
   font-style: italic;
+}
+
+
+.status_ouvert {
+  color: #0762C8;
+}
+
+.status_resolu {
+  color: #008941;
+}
+
+.status_clos {
+  color: #9C9C9C;
 }
