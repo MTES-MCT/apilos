@@ -258,15 +258,7 @@ function display_comment_icon(input_id) {
         document.getElementById(input_id + '_div').onclick = null
         document.getElementById(input_id + '_div').onmouseover = null
         document.getElementById(input_id + '_div').onmouseleave = null
-        document.getElementById(input_id + '_div').onclick = function() {
-            document.getElementById(input_id + '_comment').hidden=false
-        }
-        document.getElementById(input_id + '_div').onmouseover = function() {
-            document.getElementById(input_id + '_comment').hidden=false
-        }
-        document.getElementById(input_id + '_div').onmouseleave = function(){
-            document.getElementById(input_id + '_comment').hidden=true
-        }
+        comment_icon.hidden = false
     }
     else { // blue & hidden
         comment_icon = document.getElementById(input_id + '_comment')
@@ -299,7 +291,7 @@ function init_comment_button(input_id, uuid, comment_statut, is_owner, is_instru
     }
 
     // button 'Marquer comme résolu'
-    if (!is_instructeur && comment_statut == 'OUVERT') {
+    if (comment_statut == 'OUVERT') {
         document.getElementById('block_comment_resolve_' + uuid).classList.remove('button-hidden')
     }
     else {
