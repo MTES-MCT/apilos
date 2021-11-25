@@ -199,6 +199,9 @@ class Programme(IngestableModel):
     def edd_classique_files(self):
         return model_utils.get_field_key(self, "edd_classique", "files", default={})
 
+    def date_commisioning(self):
+        return self.date_achevement or self.date_achevement_previsible or "NC"
+
 
 class LogementEDD(models.Model):
     id = models.AutoField(primary_key=True)

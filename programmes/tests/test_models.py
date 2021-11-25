@@ -1,4 +1,5 @@
 import random
+from datetime import date
 
 from django.test import TestCase
 from core.tests import utils
@@ -212,3 +213,18 @@ class ProgrammeModelsTest(TestCase):
         utils.assert_get_files(self, programme, "acte_de_propriete")
         utils.assert_get_files(self, programme, "acte_notarial")
         utils.assert_get_files(self, programme, "reference_cadastrale")
+
+    def test_date_commisioning(self):
+        programme = Programme.objects.order_by("-uuid").first()
+        programme.date_achevement = None
+        programme.date_achevement_previsible = None
+        self.assertEqual(programme.date_commisioning(), "NC")
+        programme.date_achevement = date(2022, 6, 1)
+        programme.date_achevement_previsible = date(2022, 12, 31)
+        self.assertEqual(programme.date_commisioning(), date(2022, 6, 1))
+        programme.date_achevement = date(2022, 6, 1)
+        programme.date_achevement_previsible = None
+        self.assertEqual(programme.date_commisioning(), date(2022, 6, 1))
+        programme.date_achevement = None
+        programme.date_achevement_previsible = date(2022, 12, 31)
+        self.assertEqual(programme.date_commisioning(), date(2022, 12, 31))

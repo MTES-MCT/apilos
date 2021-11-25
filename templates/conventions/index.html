@@ -44,6 +44,7 @@
                                     {% if request.user.is_instructeur %}
                                         <th scope="col">Bailleur</th>
                                     {% endif %}
+                                    <th scope="col">Mise en service</th>
                                     <th scope="col">Programme</th>
                                     <th scope="col">Financement</th>
                                     <th scope="col">Ville</th>
@@ -58,6 +59,7 @@
                                         {% if request.user.is_instructeur %}
                                             <td>{{convention.bailleur.nom}}</td>
                                         {% endif %}
+                                        <td>{{convention.programme.date_commisioning}}</td>
                                         <td>{{convention.programme.nom}}</td>
                                         <td>{{convention.financement}}</td>
                                         <td>{{convention.programme.ville}}</td>
