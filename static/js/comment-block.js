@@ -26,7 +26,7 @@ function create_comment_icon(input_id, messages) {
     const main_div_icon = document.createElement('div');
     main_div_icon.setAttribute('id', input_id + "_comment")
     main_div_icon.appendChild(div_icon)
-    main_div_icon.classList.add('content__icons--red')
+//    main_div_icon.classList.add('content__icons--blue')
 
     document.getElementById(input_id + "_div").appendChild(main_div_icon)
     display_comment_icon(input_id)
@@ -40,7 +40,7 @@ function create_comment_input(input_id, comment, has_own_active_comment=true, is
         new_comment_block.hidden = true
     }
     const container_div = create_comment_container(comment.uuid)
-    const owner_div = create_comment_owner(comment.username, comment.is_owner, comment.statut);
+    const owner_div = create_comment_owner(comment.uuid,comment.username, comment.is_owner, comment.statut);
     container_div.appendChild(owner_div)
     const date_div = create_comment_date(comment.uuid,comment.mis_a_jour_le);
     container_div.appendChild(date_div)
@@ -64,7 +64,7 @@ function create_comment_container(uuid) {
 }
 
 //<div class="fr-mt-3w"><b>Raphaëlle Neyton (vous) :</b></div>
-function create_comment_owner(username, is_owner, status) {
+function create_comment_owner(uuid, username, is_owner, status) {
     const owner_div = document.createElement('div');
     owner_div.classList.add('fr-mt-3w')
     owner_div.classList.add('block--row-strech')
@@ -81,6 +81,8 @@ function create_comment_owner(username, is_owner, status) {
     owner_div.appendChild(owner_span)
 
     const status_span = document.createElement('span');
+    status_span.setAttribute('id','comment_status_' + uuid)
+    status_span.classList.add('text-bold')
     if (status == 'OUVERT') {
         status_span.classList.add('status_ouvert')
         status_span.innerText = 'Ouvert'
@@ -153,6 +155,28 @@ function disable_textarea(uuid, status, is_owner) {
     }
 }
 
+function update_status(uuid, status) {
+    const status_span = document.getElementById("comment_status_" + uuid)
+    if (status == 'OUVERT') {
+        status_span.classList.add('status_ouvert')
+        status_span.classList.remove('status_resolu')
+        status_span.classList.remove('status_clos')
+        status_span.innerText = 'Ouvert'
+    }
+    if (status == 'RESOLU') {
+        status_span.classList.remove('status_ouvert')
+        status_span.classList.add('status_resolu')
+        status_span.classList.remove('status_clos')
+        status_span.innerText = 'Résolu'
+    }
+    if (status == 'CLOS') {
+        status_span.classList.remove('status_ouvert')
+        status_span.classList.remove('status_resolu')
+        status_span.classList.add('status_clos')
+        status_span.innerText = 'Clos'
+    }
+}
+
 // <ul class="fr-mt-1w fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--sm">
 //     <li id="block_comment_close_96c201c0-c0ce-4400-9b73-09803961e6a1" class="button-hidden">
 //         <button id="comment_close_96c201c0-c0ce-4400-9b73-09803961e6a1" type="button" class="fr-btn fr-btn--sm fr-btn--grey">Marquer comme clos</button>
@@ -205,11 +229,9 @@ function display_comment_icon(input_id) {
             nb_clos += 1
         }
     }
-    if (!nb_clos && !nb_resolu && nb_open) { // 1 : red
+    if (nb_open) { // blue & displayed
         comment_icon = document.getElementById(input_id + '_comment')
-        comment_icon.classList.remove('content__icons--blue')
-        comment_icon.classList.add('content__icons--red')
-        comment_icon.classList.remove('content__icons--orange')
+        comment_icon.classList.add('content__icons--blue')
         comment_icon.classList.remove('content__icons--green')
         comment_icon.classList.remove('content__icons--grey')
         document.getElementById(input_id + '_div').onclick = null
@@ -217,23 +239,9 @@ function display_comment_icon(input_id) {
         document.getElementById(input_id + '_div').onmouseleave = null
         comment_icon.hidden = false
     }
-    else if ((nb_clos + nb_resolu) && nb_open) { // 2 : orange
+    else if (nb_resolu && !nb_open) { // green & displayed
         comment_icon = document.getElementById(input_id + '_comment')
         comment_icon.classList.remove('content__icons--blue')
-        comment_icon.classList.remove('content__icons--red')
-        comment_icon.classList.add('content__icons--orange')
-        comment_icon.classList.remove('content__icons--green')
-        comment_icon.classList.remove('content__icons--grey')
-        document.getElementById(input_id + '_div').onclick = null
-        document.getElementById(input_id + '_div').onmouseover = null
-        document.getElementById(input_id + '_div').onmouseleave = null
-        comment_icon.hidden = false
-    }
-    else if (nb_resolu && !nb_open) { // 3 : green
-        comment_icon = document.getElementById(input_id + '_comment')
-        comment_icon.classList.remove('content__icons--blue')
-        comment_icon.classList.remove('content__icons--red')
-        comment_icon.classList.remove('content__icons--orange')
         comment_icon.classList.add('content__icons--green')
         comment_icon.classList.remove('content__icons--grey')
         document.getElementById(input_id + '_div').onclick = null
@@ -241,31 +249,20 @@ function display_comment_icon(input_id) {
         document.getElementById(input_id + '_div').onmouseleave = null
         comment_icon.hidden = false
     }
-    else if (nb_clos && !nb_resolu && !nb_open) { // 4 : grey
+    else if (nb_clos && !nb_resolu && !nb_open) { // grey & displayed
+        console.log(input_id + '_comment')
         comment_icon = document.getElementById(input_id + '_comment')
         comment_icon.classList.remove('content__icons--blue')
-        comment_icon.classList.remove('content__icons--red')
-        comment_icon.classList.remove('content__icons--orange')
         comment_icon.classList.remove('content__icons--green')
         comment_icon.classList.add('content__icons--grey')
         document.getElementById(input_id + '_div').onclick = null
         document.getElementById(input_id + '_div').onmouseover = null
         document.getElementById(input_id + '_div').onmouseleave = null
-        document.getElementById(input_id + '_div').onclick = function() {
-            document.getElementById(input_id + '_comment').hidden=false
-        }
-        document.getElementById(input_id + '_div').onmouseover = function() {
-            document.getElementById(input_id + '_comment').hidden=false
-        }
-        document.getElementById(input_id + '_div').onmouseleave = function(){
-            document.getElementById(input_id + '_comment').hidden=true
-        }
+        comment_icon.hidden = false
     }
-    else { // 0 : blue
+    else { // blue & hidden
         comment_icon = document.getElementById(input_id + '_comment')
         comment_icon.classList.add('content__icons--blue')
-        comment_icon.classList.remove('content__icons--red')
-        comment_icon.classList.remove('content__icons--orange')
         comment_icon.classList.remove('content__icons--green')
         comment_icon.classList.remove('content__icons--grey')
         document.getElementById(input_id + '_div').onclick = function() {
@@ -294,7 +291,7 @@ function init_comment_button(input_id, uuid, comment_statut, is_owner, is_instru
     }
 
     // button 'Marquer comme résolu'
-    if (!is_instructeur && comment_statut == 'OUVERT') {
+    if (comment_statut == 'OUVERT') {
         document.getElementById('block_comment_resolve_' + uuid).classList.remove('button-hidden')
     }
     else {
@@ -305,7 +302,7 @@ function init_comment_button(input_id, uuid, comment_statut, is_owner, is_instru
     }
 
     // button 'Ré-ouvrir'
-    if (comment_statut == 'RESOLU' || (comment_statut == 'CLOS' && is_instructeur)) {
+    if (comment_statut == 'RESOLU') { //  || (comment_statut == 'CLOS' && is_instructeur)
         document.getElementById('block_comment_reopen_' + uuid).classList.remove('button-hidden')
     }
     else {
@@ -424,6 +421,7 @@ function update_status_comment(input_id, uuid, status) {
             document.getElementById('comment_statut_' + comment.uuid).value = res.comment.statut
             init_comment_button(input_id, comment.uuid, comment.statut, comment.is_owner, res.user.is_instructeur)
             disable_textarea(comment.uuid, comment.statut, comment.is_owner)
+            update_status(comment.uuid, comment.statut)
             if (comment.is_owner && comment.statut == 'CLOS') {
                 document.getElementById(input_id + "_new_comment").hidden = false
                 document.getElementById('textarea_' + input_id + "_comment").value = ''
