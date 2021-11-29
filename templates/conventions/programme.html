@@ -10,8 +10,9 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
+        {% include "common/convention_edit_info.html" with convention=convention %}
+        {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
         <div class="fr-container">
-            {% include "common/form/conventionform_header.html" %}
             <form method="post" action="">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">

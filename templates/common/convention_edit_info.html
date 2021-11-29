@@ -1,3 +1,38 @@
-<p class="fr-mb-3w">
-    <span class='content__headline'>Vous éditez actuellement la convention : {{convention}}</span>
-</p>
+<div class='background-contrast-grey950'>
+    <div class="fr-container">
+        {% if convention %}
+            <div class="fr-col-12 fr-pt-5w fr-pb-5w">
+                <div class="fr-highlight">
+                    <h1>{{convention}}</h1>
+                </div>
+                <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
+                    <div class="fr-col-12  ">
+                        <span class="{{convention.get_status_class}} fr-px-1w fr-h3">
+                            {{convention.get_statut_display}}
+
+                        </span>
+                    </div>
+                </div>
+                {% if request.user.is_instructeur %}
+                    <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
+                            Bailleur : {{ convention.bailleur }}
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="fr-grid-row fr-grid-row--gutters  fr-pl-9w">
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
+                        Type d'habitat : {{ convention.programme.get_type_habitat_display }}
+                    </div>
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-text--bold">
+                        Type d'opération : {{ convention.programme.get_type_operation_display }}
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        {% endif %}
+    </div>
+</div>
