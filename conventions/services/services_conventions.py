@@ -294,7 +294,8 @@ def _send_email_instruction(request, convention):
     )
     from_email = "contact@apilos.beta.gouv.fr"
 
-    to = [request.user.email]
+    # All bailleur users from convention
+    to = convention.get_email_bailleur_users()
     text_content = render_to_string(
         "emails/bailleur_instruction.txt",
         {
@@ -368,12 +369,8 @@ def _send_email_correction(request, convention, notification_form):
         reverse("conventions:recapitulatif", args=[convention.uuid])
     )
     if notification_form.cleaned_data["from_instructeur"]:
-        last_notification_from_bailleur = convention.get_last_bailleur_notification()
-        if last_notification_from_bailleur:
-            to = [last_notification_from_bailleur.user.email]
-        else:
-            # All bailleur users from convention
-            to = convention.get_email_bailleur_users()
+        # All bailleur users from convention
+        to = convention.get_email_bailleur_users()
         subject = f"Convention à modifier ({convention})"
         template_label = "bailleur_correction_needed"
     else:
@@ -484,12 +481,8 @@ def _send_email_valide(request, convention):
     from_email = "contact@apilos.beta.gouv.fr"
 
     cc = [request.user.email]
-    last_notification_from_bailleur = convention.get_last_bailleur_notification()
-    if last_notification_from_bailleur:
-        to = [last_notification_from_bailleur.user.email]
-    else:
-        # All bailleur users from convention
-        to = convention.get_email_bailleur_users()
+    # All bailleur users from convention
+    to = convention.get_email_bailleur_users()
 
     text_content = render_to_string(
         "emails/bailleur_valide.txt",
