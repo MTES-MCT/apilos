@@ -180,6 +180,17 @@ class Convention(models.Model):
             return self.numero.rsplit("/", maxsplit=1)[-1]
         return None
 
+    def get_status_class(self):
+        if self.statut in [
+            ConventionStatut.BROUILLON,
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+        ]:
+            return "convention_ongoing_status"
+        if self.statut == ConventionStatut.VALIDE:
+            return "convention_valid_status"
+        return "convention_ended_status"
+
 
 class ConventionHistory(models.Model):
     id = models.AutoField(primary_key=True)

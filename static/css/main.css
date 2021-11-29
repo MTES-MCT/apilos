@@ -242,3 +242,35 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .status_clos {
   color: #9C9C9C;
 }
+
+.convention_ongoing_status {
+  background-color: #000091; /* blue-france-sun-113 */
+  color: white;
+}
+
+.convention_valid_status {
+  background-color: #18753c; /* success-425 */
+  color: white;
+}
+
+.convention_ended_status {
+  background-color: #666666; /* grey-425 */
+  color: white;
+}
+
+.background-contrast-grey950 {
+  background-color: #EEEEEE;
+}
+
+.background-contrast-grey950:hover {
+  background-color: #DDDDDD;
+}
+
+table.fullwidth {
+  width: 100%;
+}
+
+.table--layout-fixed table {
+  display: table;
+  /* table-layout: fixed; */
+}

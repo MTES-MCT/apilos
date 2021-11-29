@@ -17,13 +17,14 @@
 {% block content %}
     {% with programme_uuid=programme.uuid|slugify convention_uuid=convention.uuid|slugify %}
         <div class="fr-container-fluid ds_banner">
+            {% include "common/convention_edit_info.html" with convention=convention %}
+            {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
             <div class="fr-container">
-                {% include "common/form/conventionform_header.html" %}
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-my-5w">
                         {% if not convention.is_submitted %}
-                            <div role="alert" class="fr-alert fr-alert--error">
+                            <div role="alert" class="fr-alert fr-alert--error fr-mb-3w">
                                 <p class="fr-alert__title">Attention</p>
                                 <p>le document de convention n'est pas encore soumis à l'instruction{% if user.is_bailleur %},
                                     pour finaliser votre demande de conventionnement, vous devez clicker sur le bouton
@@ -163,7 +164,7 @@
                                             </a>
                                         </div>
                                         {% include "common/display_text_and_files_if_exists.html" with text=programme.reference_cadastrale_text file_list=programme.reference_cadastrale_files.values %}
-                                        <div class="fr-table fr-table--bordered table--limited-height">
+                                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
                                             <table>
                                                 <thead>
                                                     <tr>
@@ -232,7 +233,7 @@
                                             {% include "common/display_field_if_exists.html" with label="Mention de publication de l'EDD classique" value=programme.mention_publication_edd_classique object_field="programme__mention_publication_edd_classique__"|add:programme_uuid %}
                                         </div>
                                         <p class="fr-my-1w">EDD Simplifé : </p>
-                                        <div class="fr-table fr-table--bordered table--limited-height">
+                                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
                                             <table>
                                                 <thead>
                                                     <tr>
@@ -294,7 +295,7 @@
                                             </a>
                                         </div>
                                         <p class="fr-my-1w">Prêts : </p>
-                                        <div class="fr-table fr-table--bordered table--limited-height">
+                                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
                                             <table>
                                                 <thead>
                                                     <tr>
@@ -366,7 +367,7 @@
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                             </a>
                                         </div>
-                                        <div class="fr-table fr-table--bordered table--limited-height">
+                                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
                                             <table>
                                                 <thead>
                                                     <tr>
@@ -469,7 +470,7 @@
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                             </a>
                                         </div>
-                                        <div class="fr-table fr-table--bordered table--limited-height">
+                                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
                                             <table>
                                                 <thead>
                                                     <tr>
@@ -539,7 +540,7 @@
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                             </a>
                                         </div>
-                                        <div class="fr-table fr-table--bordered table--limited-height">
+                                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
                                             <table>
                                                 <thead>
                                                     <tr>
