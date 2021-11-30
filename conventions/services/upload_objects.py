@@ -5,6 +5,7 @@ from decimal import Decimal
 from openpyxl import load_workbook
 
 from core.storage import client
+from programmes.models import TypologieLogement
 from . import utils
 
 
@@ -137,8 +138,11 @@ def extract_row(row, column_from_index, import_mapping):
                 and model_field.choices is not None
             ):
                 if cell.value is not None:
+                    tmp_value = cell.value
+                    if model_field.choices == TypologieLogement.choices:
+                        tmp_value = TypologieLogement.map_string(tmp_value)
                     value = next(
-                        (x[0] for x in model_field.choices if x[1] == cell.value), None
+                        (x[0] for x in model_field.choices if x[1] == tmp_value), None
                     )
                     if (
                         value is None

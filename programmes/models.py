@@ -27,6 +27,26 @@ class TypologieLogement(models.TextChoices):
     T4 = "T4", "T4"
     T5 = "T5", "T5 et plus"
 
+    @classmethod
+    def map_string(cls, value):
+        mapping = {
+            "1": "T1",
+            "2": "T2",
+            "3": "T3",
+            "4": "T4",
+            "5": "T5 et plus",
+            "5 et plus": "T5 et plus",
+            "6": "T5 et plus",
+            "7": "T5 et plus",
+            "8": "T5 et plus",
+            "9": "T5 et plus",
+            "10": "T5 et plus",
+        }
+        value = str(value)
+        if value in mapping.keys():
+            return mapping[value]
+        return value
+
 
 class TypeOperation(models.TextChoices):
     SANSOBJET = "SANSOBJET", "Sans Objet"
