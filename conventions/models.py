@@ -13,6 +13,7 @@ class Preteur(models.TextChoices):
     REGION = "REGION", "Région"
     CDCF = "CDCF", "CDC pour le foncier"
     CDCL = "CDCL", "CDC pour le logement"
+    COMMUNE = "COMMUNE", "Commune et action logement"
     AUTRE = "AUTRE", "Autre"
 
 
