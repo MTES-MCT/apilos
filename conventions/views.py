@@ -166,7 +166,7 @@ def edd(request, convention_uuid):
                 reverse("conventions:recapitulatif", args=[result["convention"].uuid])
             )
         return HttpResponseRedirect(
-            reverse("conventions:prets", args=[result["convention"].uuid])
+            reverse("conventions:financement", args=[result["convention"].uuid])
         )
     return render(
         request,
@@ -184,7 +184,7 @@ def edd(request, convention_uuid):
 # Handle in service.py
 # @permission_required("convention.change_convention")
 @login_required
-def prets(request, convention_uuid):
+def financement(request, convention_uuid):
     result = services.convention_financement(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         if result.get("redirect", False) == "recapitulatif":
@@ -196,7 +196,7 @@ def prets(request, convention_uuid):
         )
     return render(
         request,
-        "conventions/prets.html",
+        "conventions/financement.html",
         {
             **result,
             "nb_steps": NB_STEPS,

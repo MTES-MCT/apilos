@@ -93,4 +93,4 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(pret.p_full(), "Région")
 
     def test_xlsx(self):
-        utils.assert_xlsx(self, Pret, "prets")
+        utils.assert_xlsx(self, Pret, "financement")

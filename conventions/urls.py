@@ -13,7 +13,7 @@ urlpatterns = [
     path("programme/<convention_uuid>", views.programme, name="programme"),
     path("cadastre/<convention_uuid>", views.cadastre, name="cadastre"),
     path("edd/<convention_uuid>", views.edd, name="edd"),
-    path("prets/<convention_uuid>", views.prets, name="prets"),
+    path("financement/<convention_uuid>", views.financement, name="financement"),
     path("logements/<convention_uuid>", views.logements, name="logements"),
     path("annexes/<convention_uuid>", views.annexes, name="annexes"),
     path(

@@ -51,7 +51,7 @@ def convention_financement(request, convention_uuid):
             if upform.is_valid():
 
                 result = upload_objects.handle_uploaded_xlsx(
-                    upform, request.FILES["file"], Pret, convention, "prets.xlsx"
+                    upform, request.FILES["file"], Pret, convention, "financement.xlsx"
                 )
                 if result["success"] != utils.ReturnStatus.ERROR:
                     formset = PretFormSet(initial=result["objects"])

@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block page_title %}Prêts et Financements - APiLos{% endblock%}
+{% block page_title %}Financements - APiLos{% endblock%}
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
@@ -19,10 +19,10 @@
                     <div class="fr-col-md-12 fr-mt-5w">
                         <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Financements</h2> -->
 
-                        <h4>Prêts associés à la convention</h4>
+                        <h4>Financement : Prêts & Subventions</h4>
 
                         {% if editable %}
-                            {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='prets' upform=upform  what='prêts' %}
+                            {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='financement' upform=upform  what='prêts' %}
                             <hr class="fr-col-12 fr-my-3w">
                         {% endif %}
 
@@ -149,7 +149,7 @@
                 {% include "common/mandatory_fields_info.html" %}
                 <div class="form-button-footer fr-col-md-12  fr-py-5w">
                     {% if editable %}
-                        {% include "common/button/next_and_save.html" with suivant='conventions:prets' convention_uuid=convention.uuid editable=editable %}
+                        {% include "common/button/next_and_save.html" with suivant='conventions:financement' convention_uuid=convention.uuid editable=editable %}
                         {% include "common/button/previous.html" with precedent='conventions:edd' convention_uuid=convention.uuid %}
                     {% else %}
                         {% include "common/button/noteditable_button.html" with convention=convention %}

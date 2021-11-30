@@ -244,7 +244,7 @@ class Pret(models.Model):
         "Prêteur\n(choisir dans la liste déroulante)": preteur,
         "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": autre,
     }
-    sheet_name = "Prêts"
+    sheet_name = "Financements"
 
     def _get_preteur(self):
         return self.get_preteur_display()
