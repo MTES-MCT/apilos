@@ -20,3 +20,10 @@ class Administration(IngestableModel):
 
     def __str__(self):
         return self.nom
+
+    def get_ville_signature_or_empty(self):
+        return (
+            self.ville_signature
+            if self.ville_signature
+            else "                              "
+        )
