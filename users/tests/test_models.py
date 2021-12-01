@@ -55,9 +55,9 @@ class AdministrationsModelsTest(TestCase):
             siret="987654321",
             capital_social="123456",
             ville="Marseille",
-            dg_nom="Pall Antoine",
-            dg_fonction="DG",
-            dg_date_deliberation=datetime.date(2001, 12, 1),
+            signataire_nom="Pall Antoine",
+            signataire_fonction="DG",
+            signataire_date_deliberation=datetime.date(2001, 12, 1),
         )
         group_instructeur = Group.objects.create(
             name="Instructeur",

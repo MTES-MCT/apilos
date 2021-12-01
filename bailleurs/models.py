@@ -23,9 +23,9 @@ class Bailleur(IngestableModel):
     adresse = models.CharField(max_length=255, null=True)
     code_postal = models.CharField(max_length=255, null=True)
     ville = models.CharField(max_length=255, null=True)
-    dg_nom = models.CharField(max_length=255, null=True)
-    dg_fonction = models.CharField(max_length=255, null=True)
-    dg_date_deliberation = models.DateField(null=True)
+    signataire_nom = models.CharField(max_length=255, null=True)
+    signataire_fonction = models.CharField(max_length=255, null=True)
+    signataire_date_deliberation = models.DateField(null=True)
     operation_exceptionnelle = models.TextField(null=True)
 
     cree_le = models.DateTimeField(auto_now_add=True)

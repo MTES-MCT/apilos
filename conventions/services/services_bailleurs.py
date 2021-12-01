@@ -31,10 +31,10 @@ def bailleur_update(request, convention_uuid):
                 "adresse": bailleur.adresse,
                 "code_postal": bailleur.code_postal,
                 "ville": bailleur.ville,
-                "dg_nom": bailleur.dg_nom,
-                "dg_fonction": bailleur.dg_fonction,
-                "dg_date_deliberation": utils.format_date_for_form(
-                    bailleur.dg_date_deliberation
+                "signataire_nom": bailleur.signataire_nom,
+                "signataire_fonction": bailleur.signataire_fonction,
+                "signataire_date_deliberation": utils.format_date_for_form(
+                    bailleur.signataire_date_deliberation
                 ),
             }
         )
@@ -56,10 +56,14 @@ def _bailleur_atomic_update(request, convention, bailleur):
             "adresse": request.POST.get("adresse", bailleur.adresse),
             "code_postal": request.POST.get("code_postal", bailleur.code_postal),
             "ville": request.POST.get("ville", bailleur.ville),
-            "dg_nom": request.POST.get("dg_nom", bailleur.dg_nom),
-            "dg_fonction": request.POST.get("dg_fonction", bailleur.dg_fonction),
-            "dg_date_deliberation": request.POST.get(
-                "dg_date_deliberation", bailleur.dg_date_deliberation
+            "signataire_nom": request.POST.get(
+                "signataire_nom", bailleur.signataire_nom
+            ),
+            "signataire_fonction": request.POST.get(
+                "signataire_fonction", bailleur.signataire_fonction
+            ),
+            "signataire_date_deliberation": request.POST.get(
+                "signataire_date_deliberation", bailleur.signataire_date_deliberation
             ),
         }
     )
@@ -79,7 +83,9 @@ def _save_bailleur(bailleur, form):
     bailleur.adresse = form.cleaned_data["adresse"]
     bailleur.code_postal = form.cleaned_data["code_postal"]
     bailleur.ville = form.cleaned_data["ville"]
-    bailleur.dg_nom = form.cleaned_data["dg_nom"]
-    bailleur.dg_fonction = form.cleaned_data["dg_fonction"]
-    bailleur.dg_date_deliberation = form.cleaned_data["dg_date_deliberation"]
+    bailleur.signataire_nom = form.cleaned_data["signataire_nom"]
+    bailleur.signataire_fonction = form.cleaned_data["signataire_fonction"]
+    bailleur.signataire_date_deliberation = form.cleaned_data[
+        "signataire_date_deliberation"
+    ]
     bailleur.save()
