@@ -13,6 +13,7 @@ def index(request):
     convention_by_status = {
         "BROUILLON": 0,
         "INSTRUCTION": 0,
+        "CORRECTION": 0,
         "VALIDE": 0,
     }
 
@@ -20,7 +21,6 @@ def index(request):
     bailleurs = users.filter(role__typologie="BAILLEUR").distinct()
     instructeurs = users.filter(role__typologie="INSTRUCTEUR").distinct()
 
-    print(users[0])
     for query in query_by_statuses:
         convention_by_status[query["statut"]] = query["total"]
     return render(

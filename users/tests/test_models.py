@@ -239,27 +239,28 @@ class AdministrationsModelsTest(TestCase):
                 "convention.add_convention", convention.lot
             )
         )
-        convention.statut = ConventionStatut.INSTRUCTION
-        self.assertTrue(user_instructeur.full_editable_convention(convention))
-        self.assertFalse(
-            user_instructeur_metropole.full_editable_convention(convention)
-        )
-        self.assertTrue(
-            user_instructeur.has_perm("convention.change_convention", convention)
-        )
-        self.assertFalse(
-            user_instructeur_metropole.has_perm(
-                "convention.change_convention", convention
+        for statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
+            convention.statut = statut
+            self.assertTrue(user_instructeur.full_editable_convention(convention))
+            self.assertFalse(
+                user_instructeur_metropole.full_editable_convention(convention)
             )
-        )
-        self.assertTrue(
-            user_instructeur.has_perm("convention.view_convention", convention)
-        )
-        self.assertFalse(
-            user_instructeur_metropole.has_perm(
-                "convention.view_convention", convention
+            self.assertTrue(
+                user_instructeur.has_perm("convention.change_convention", convention)
             )
-        )
+            self.assertFalse(
+                user_instructeur_metropole.has_perm(
+                    "convention.change_convention", convention
+                )
+            )
+            self.assertTrue(
+                user_instructeur.has_perm("convention.view_convention", convention)
+            )
+            self.assertFalse(
+                user_instructeur_metropole.has_perm(
+                    "convention.view_convention", convention
+                )
+            )
 
         user_bailleur = User.objects.get(username="raph")
         user_bailleur_hlm = User.objects.get(username="sophie")
@@ -291,21 +292,22 @@ class AdministrationsModelsTest(TestCase):
         self.assertFalse(
             user_bailleur_hlm.has_perm("convention.add_convention", convention.lot)
         )
-        convention.statut = ConventionStatut.INSTRUCTION
-        self.assertFalse(user_bailleur.full_editable_convention(convention))
-        self.assertFalse(user_bailleur_hlm.full_editable_convention(convention))
-        self.assertTrue(
-            user_bailleur.has_perm("convention.change_convention", convention)
-        )
-        self.assertFalse(
-            user_bailleur_hlm.has_perm("convention.change_convention", convention)
-        )
-        self.assertTrue(
-            user_bailleur.has_perm("convention.view_convention", convention)
-        )
-        self.assertFalse(
-            user_bailleur_hlm.has_perm("convention.view_convention", convention)
-        )
+        for statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
+            convention.statut = statut
+            self.assertFalse(user_bailleur.full_editable_convention(convention))
+            self.assertFalse(user_bailleur_hlm.full_editable_convention(convention))
+            self.assertTrue(
+                user_bailleur.has_perm("convention.change_convention", convention)
+            )
+            self.assertFalse(
+                user_bailleur_hlm.has_perm("convention.change_convention", convention)
+            )
+            self.assertTrue(
+                user_bailleur.has_perm("convention.view_convention", convention)
+            )
+            self.assertFalse(
+                user_bailleur_hlm.has_perm("convention.view_convention", convention)
+            )
 
     def test_programme_filter(self):
         user_instructeur = User.objects.get(username="sabine")

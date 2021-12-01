@@ -115,7 +115,10 @@ class Convention(models.Model):
                 self.conventionhistory_set.prefetch_related("user")
                 .prefetch_related("user__role_set")
                 .filter(
-                    statut_convention=ConventionStatut.INSTRUCTION,
+                    statut_convention__in=[
+                        ConventionStatut.INSTRUCTION,
+                        ConventionStatut.CORRECTION,
+                    ],
                     user__role__typologie=role,
                 )
                 .latest("cree_le")
@@ -132,7 +135,10 @@ class Convention(models.Model):
     def get_last_submission(self):
         try:
             return self.conventionhistory_set.filter(
-                statut_convention=ConventionStatut.INSTRUCTION
+                statut_convention__in=[
+                    ConventionStatut.INSTRUCTION,
+                    ConventionStatut.CORRECTION,
+                ],
             ).latest("cree_le")
         except ConventionHistory.DoesNotExist:
             return None
@@ -191,6 +197,9 @@ class Convention(models.Model):
         if self.statut == ConventionStatut.VALIDE:
             return "convention_valid_status"
         return "convention_ended_status"
+
+    def is_instruction_ongoing(self):
+        return self.statut in ["INSTRUCTION", "CORRECTION"]
 
 
 class ConventionHistory(models.Model):

@@ -48,22 +48,27 @@ class ConventionModelsTest(TestCase):
         convention = Convention.objects.get(id=1)
         self.assertTrue(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instructeur_editable())
+        self.assertFalse(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_submitted())
         convention.statut = ConventionStatut.INSTRUCTION
         self.assertFalse(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instructeur_editable())
+        self.assertTrue(convention.is_instruction_ongoing())
         self.assertTrue(convention.is_submitted())
         convention.statut = ConventionStatut.CORRECTION
         self.assertTrue(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instructeur_editable())
+        self.assertTrue(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_submitted())
         convention.statut = ConventionStatut.VALIDE
         self.assertFalse(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instructeur_editable())
+        self.assertFalse(convention.is_instruction_ongoing())
         self.assertTrue(convention.is_submitted())
         convention.statut = ConventionStatut.CLOS
         self.assertFalse(convention.is_bailleur_editable())
         self.assertFalse(convention.is_instructeur_editable())
+        self.assertFalse(convention.is_instruction_ongoing())
         self.assertTrue(convention.is_submitted())
 
     def test_properties(self):

@@ -136,7 +136,10 @@ class User(AbstractUser):
         if self.role_set.filter(
             administration_id=convention.programme.administration_id
         ):
-            return convention.statut == ConventionStatut.INSTRUCTION
+            return convention.statut in [
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+            ]
         return False
 
     def __str__(self):
