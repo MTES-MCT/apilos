@@ -351,11 +351,17 @@ def convention_feedback(request, convention_uuid):
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
             convention=convention,
-            statut_convention=convention.statut,
+            statut_convention=ConventionStatut.CORRECTION,
             statut_convention_precedent=convention.statut,
             user=request.user,
             commentaire=notification_form.cleaned_data["comment"],
         ).save()
+        if (
+            convention.statut != ConventionStatut.CORRECTION
+            and request.user.is_instructeur()
+        ):
+            convention.statut = ConventionStatut.CORRECTION
+            convention.save()
 
         return utils.base_response_redirect_recap_success(convention)
     return {
