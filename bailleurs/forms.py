@@ -25,7 +25,7 @@ class BailleurForm(forms.Form):
         required=False,
     )
     adresse, code_postal, ville = forms_utils.address_form_fields()
-    dg_nom = forms.CharField(
+    signataire_nom = forms.CharField(
         max_length=255,
         error_messages={
             "required": "Le nom du signataire de la convention est obligatoire",
@@ -33,7 +33,7 @@ class BailleurForm(forms.Form):
             + "ne doit pas excéder 255 caractères",
         },
     )
-    dg_fonction = forms.CharField(
+    signataire_fonction = forms.CharField(
         max_length=255,
         error_messages={
             "required": "La fonction du signataire de la convention est obligatoire",
@@ -41,7 +41,7 @@ class BailleurForm(forms.Form):
             + "ne doit pas excéder 255 caractères",
         },
     )
-    dg_date_deliberation = forms.DateField(
+    signataire_date_deliberation = forms.DateField(
         error_messages={
             "required": "La date de délibération est obligatoire",
         },

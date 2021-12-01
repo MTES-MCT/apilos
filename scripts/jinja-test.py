@@ -20,7 +20,7 @@ context = {
         {"des": "1487 522", "s": 15, "su": "13.00", "p": 1200.0},
         {"des": "1487 523", "s": 18, "su": 12.45, "p": 1500.0},
     ],
-    "dg_nom": "Sabine Marini",
+    "signataire_nom": "Sabine Marini",
     "affiche_tableau": True,
 }
 

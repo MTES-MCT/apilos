@@ -15,9 +15,9 @@ def create_bailleur():
         siret="12345678901234",
         capital_social="123000.50",
         ville="Marseille",
-        dg_nom="Patrick Patoulachi",
-        dg_fonction="PDG",
-        dg_date_deliberation=datetime.date(2014, 10, 9),
+        signataire_nom="Patrick Patoulachi",
+        signataire_fonction="PDG",
+        signataire_date_deliberation=datetime.date(2014, 10, 9),
     )
 
 
