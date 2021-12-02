@@ -27,6 +27,11 @@ urlpatterns = [
         name="save",
     ),
     path(
+        "delete/<convention_uuid>",
+        views.delete_convention,
+        name="delete",
+    ),
+    path(
         "feedback/<convention_uuid>",
         views.feedback_convention,
         name="feedback",

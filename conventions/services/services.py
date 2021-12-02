@@ -17,6 +17,7 @@ from .services_conventions import (
     convention_feedback,
     convention_validate,
     generate_convention,
+    convention_delete,
 )
 from .services_logements import (
     logements_update,

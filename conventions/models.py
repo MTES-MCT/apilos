@@ -156,11 +156,15 @@ class Convention(models.Model):
         )
 
     def prefixe_numero(self):
-        if self.statut in [
-            ConventionStatut.BROUILLON,
-            ConventionStatut.INSTRUCTION,
-            ConventionStatut.CORRECTION,
-        ]:
+        if (
+            self.statut
+            in [
+                ConventionStatut.BROUILLON,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+            ]
+            or self.numero is None
+        ):
             decret = "80.416"  # en application du décret n° 80.416
             # decret 80.416 pour les HLM
             # operation = "2"  # pour une opération de construction neuve (2)
@@ -179,11 +183,15 @@ class Convention(models.Model):
         return "/".join(self.numero.split("/")[:-1])
 
     def suffixe_numero(self):
-        if self.statut not in [
-            ConventionStatut.BROUILLON,
-            ConventionStatut.INSTRUCTION,
-            ConventionStatut.CORRECTION,
-        ]:
+        if (
+            self.statut
+            not in [
+                ConventionStatut.BROUILLON,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+            ]
+            and self.numero is not None
+        ):
             return self.numero.rsplit("/", maxsplit=1)[-1]
         return None
 
