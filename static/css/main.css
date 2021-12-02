@@ -93,6 +93,12 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .col__width--120 {
   min-width:120px;
 }
+.col__width--130 {
+  min-width:130px;
+}
+.col__width--140 {
+  min-width:140px;
+}
 .col__width--150 {
   min-width:150px;
 }

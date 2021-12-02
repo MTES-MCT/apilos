@@ -1,6 +1,7 @@
 import datetime
 
-from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_GET, require_POST
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -285,6 +286,14 @@ def convention_submit(request, convention_uuid):
         "success": utils.ReturnStatus.ERROR,
         "convention": convention,
     }
+
+
+@require_GET
+@login_required
+def convention_delete(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    request.user.check_perm("convention.change_convention", convention)
+    convention.delete()
 
 
 def _send_email_instruction(request, convention):

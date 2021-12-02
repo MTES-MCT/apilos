@@ -346,6 +346,12 @@ def save_convention(request, convention_uuid):
     )
 
 
+@login_required
+def delete_convention(request, convention_uuid):
+    services.convention_delete(request, convention_uuid)
+    return HttpResponseRedirect(reverse("conventions:index"))
+
+
 # Handle in service.py
 # @permission_required("convention.change_convention")
 @login_required
