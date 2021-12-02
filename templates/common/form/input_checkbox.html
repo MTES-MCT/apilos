@@ -1,0 +1,24 @@
+<div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
+    <div class="fr-checkbox-group block--row-strech-1 {% if form_input.errors %}fr-checkbox-group--error{% endif %}">
+        <input type='hidden' value='FALSE' name="{{form_input.html_name}}"
+            {% include "common/form/disable_form_input.html" %}>
+        <input
+            type="checkbox"
+            id="{{form_input.html_name}}"
+            {% if form_input.value %}checked="checked"{% endif %}
+            name="{{form_input.html_name}}"
+            {% include "common/form/disable_form_input.html" %}>
+        <label class="fr-label" for="{{form_input.html_name}}"> {{ label }}{% include "common/mandatory_field.html" with form_input=form_input %}
+            {% if sublabel %}
+                <span class="fr-hint-text">{{ sublabel }}</span>
+            {% endif %}
+        </label>
+    </div>
+    {% include "common/comment_icon.html" with form_input_id=form_input.id_for_label object_field=object_field comments=comments %}
+</div>
+{% for error in form_input.errors %}
+    <p id="checkboxes-error-desc-error" class="fr-error-text">
+        {{ error }}
+    </p>
+{% endfor %}
+{% include "common/comment_dialog.html" with form_input_id=form_input.id_for_label form_input_html=form_input.html_name convention=convention object_field=object_field comments=comments %}

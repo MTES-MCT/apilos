@@ -40,27 +40,7 @@
                                 {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" object_field="programme__nb_logements__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w fr-mt-3w">
-                                <div class="fr-mt-1w block--row-strech" id="{{form.anru.id_for_label}}_div">
-                                    <div class="fr-checkbox-group block--row-strech-1 {% if form.anru.errors %}fr-checkbox-group--error{% endif %}">
-                                        <input
-                                            type="checkbox"
-                                            id="anru"
-                                            {% if form.anru.value %}checked="checked"{% endif %}
-                                            name="anru"
-                                            {% if not editable %}disabled{% endif %}>
-                                        <label class="fr-label" for="anru"> ANRU{% include "common/mandatory_field.html" with form_input=form.anru %}
-                                            <span class="fr-hint-text">Le programme bénéficie d'un financement ANRU</span>
-                                        </label>
-                                    </div>
-                                    {% include "common/comment_icon.html" with form_input_id=form.anru.id_for_label object_field="programme__anru__"|add:form.uuid.value comments=comments %}
-                                </div>
-                                {% for error in form.anru.errors %}
-                                    <p id="checkboxes-error-desc-error" class="fr-error-text">
-                                        {{ error }}
-                                    </p>
-                                {% endfor %}
-                                {% include "common/comment_dialog.html" with form_input_id=form.anru.id_for_label form_input_html=form.anru.html_name convention=convention object_field="programme__anru__"|add:form.uuid.value comments=comments %}
-
+                                {% include "common/form/input_checkbox.html" with form_input=form.anru label="ANRU" sublabel="Le programme bénéficie d'un financement ANRU" object_field="programme__anru__"|add:form.uuid.value %}
                             </div>
                         </div>
 

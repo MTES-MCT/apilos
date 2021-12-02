@@ -304,6 +304,17 @@ class Lot(IngestableModel):
         choices=Financement.choices,
         default=Financement.PLUS,
     )
+    annexe_caves = models.BooleanField(default=False)
+    annexe_soussols = models.BooleanField(default=False)
+    annexe_remises = models.BooleanField(default=False)
+    annexe_ateliers = models.BooleanField(default=False)
+    annexe_sechoirs = models.BooleanField(default=False)
+    annexe_celliers = models.BooleanField(default=False)
+    annexe_resserres = models.BooleanField(default=False)
+    annexe_combles = models.BooleanField(default=False)
+    annexe_balcons = models.BooleanField(default=False)
+    annexe_loggias = models.BooleanField(default=False)
+    annexe_terrasses = models.BooleanField(default=False)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
