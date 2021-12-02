@@ -24,7 +24,7 @@
                             <p>la déclaration des stationnements par type se fera à la prochaine étape</p>
                         </div>
 
-                        <h4>Annexes associés aux logements</h4>
+                        <h4>Annexes associés aux logements exclues du calcul de la surface habitable</h4>
 
                         {% if editable %}
                             {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='annexes' upform=upform  what='annexes'%}
@@ -99,6 +99,28 @@
                                 </tbody>
                             </table>
                         </div>
+
+
+                        <h4>Type Annexes incluses dans le calcul de la surface habitable</h4>
+
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_caves label="Caves" object_field="lot__annexe_caves__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_soussols label="Sous-sols" object_field="lot__annexe_soussols__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_remises label="Remises" object_field="lot__annexe_remises__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_ateliers label="Ateliers" object_field="lot__annexe_ateliers__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_sechoirs label="Séchoirs" object_field="lot__annexe_sechoirs__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_celliers label="Celliers extérieurs au logement" object_field="lot__annexe_celliers__"|add:form.uuid.value %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_resserres label="Resserres" object_field="lot__annexe_resserres__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_combles label="Combles et greniers aménageables" object_field="lot__annexe_combles__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_balcons label="Balcons" object_field="lot__annexe_balcons__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_loggias label="Loggias et Vérandas" object_field="lot__annexe_loggias__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_terrasses label="Terrasses" sublabel="Dans la limite de 9 m2, les parties de terrasses accessibles en étage ou aménagées sur ouvrage enterré ou à moitié enterré" object_field="lot__annexe_terrasses__"|add:form.uuid.value %}
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 

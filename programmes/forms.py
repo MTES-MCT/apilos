@@ -713,3 +713,18 @@ class BaseLogementEDDFormSet(BaseFormSet):
 LogementEDDFormSet = formset_factory(
     LogementEDDForm, formset=BaseLogementEDDFormSet, extra=0
 )
+
+
+class LotAnnexeForm(forms.Form):
+    uuid = forms.UUIDField(required=False)
+    annexe_caves = forms.BooleanField(required=False)
+    annexe_soussols = forms.BooleanField(required=False)
+    annexe_remises = forms.BooleanField(required=False)
+    annexe_ateliers = forms.BooleanField(required=False)
+    annexe_sechoirs = forms.BooleanField(required=False)
+    annexe_celliers = forms.BooleanField(required=False)
+    annexe_resserres = forms.BooleanField(required=False)
+    annexe_combles = forms.BooleanField(required=False)
+    annexe_balcons = forms.BooleanField(required=False)
+    annexe_loggias = forms.BooleanField(required=False)
+    annexe_terrasses = forms.BooleanField(required=False)

@@ -7,6 +7,7 @@ from programmes.forms import (
     LogementFormSet,
     TypeStationnementFormSet,
     AnnexeFormSet,
+    LotAnnexeForm,
 )
 from conventions.models import Convention
 from conventions.forms import (
@@ -189,6 +190,7 @@ def annexes_update(request, convention_uuid):
             return _annexes_atomic_update(request, convention)
         # When the user cliked on "Téléverser" button
         formset = AnnexeFormSet(request.POST)
+        form = LotAnnexeForm(request.POST)
         if request.POST.get("Upload", False):
             upform = UploadForm(request.POST, request.FILES)
             if upform.is_valid():
@@ -202,7 +204,10 @@ def annexes_update(request, convention_uuid):
         else:
             upform = UploadForm()
             formset.convention = convention
-            if formset.is_valid():
+            form_is_valid = form.is_valid()
+            formset_is_valid = formset.is_valid()
+            if form_is_valid and formset_is_valid:
+                _save_lot_annexes(form, convention.lot)
                 _save_annexes(formset, convention)
                 return utils.base_response_success(convention)
     # When display the file for the first time
@@ -224,15 +229,72 @@ def annexes_update(request, convention_uuid):
             )
         upform = UploadForm()
         formset = AnnexeFormSet(initial=initial)
+        form = LotAnnexeForm(
+            initial={
+                "uuid": convention.lot.uuid,
+                "annexe_caves": convention.lot.annexe_caves,
+                "annexe_soussols": convention.lot.annexe_soussols,
+                "annexe_remises": convention.lot.annexe_remises,
+                "annexe_ateliers": convention.lot.annexe_ateliers,
+                "annexe_sechoirs": convention.lot.annexe_sechoirs,
+                "annexe_celliers": convention.lot.annexe_celliers,
+                "annexe_resserres": convention.lot.annexe_resserres,
+                "annexe_combles": convention.lot.annexe_combles,
+                "annexe_balcons": convention.lot.annexe_balcons,
+                "annexe_loggias": convention.lot.annexe_loggias,
+                "annexe_terrasses": convention.lot.annexe_terrasses,
+            }
+        )
     return {
         **utils.base_convention_response_error(request, convention),
+        "form": form,
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
     }
 
 
+def _save_lot_annexes(form, lot):
+    lot.annexe_caves = form.cleaned_data["annexe_caves"]
+    lot.annexe_soussols = form.cleaned_data["annexe_soussols"]
+    lot.annexe_remises = form.cleaned_data["annexe_remises"]
+    lot.annexe_ateliers = form.cleaned_data["annexe_ateliers"]
+    lot.annexe_sechoirs = form.cleaned_data["annexe_sechoirs"]
+    lot.annexe_celliers = form.cleaned_data["annexe_celliers"]
+    lot.annexe_resserres = form.cleaned_data["annexe_resserres"]
+    lot.annexe_combles = form.cleaned_data["annexe_combles"]
+    lot.annexe_balcons = form.cleaned_data["annexe_balcons"]
+    lot.annexe_loggias = form.cleaned_data["annexe_loggias"]
+    lot.annexe_terrasses = form.cleaned_data["annexe_terrasses"]
+    lot.save()
+
+
 def _annexes_atomic_update(request, convention):
+
+    form = LotAnnexeForm(
+        {
+            "uuid": convention.lot.uuid,
+            **utils.build_partial_form(
+                request,
+                convention.lot,
+                [
+                    "annexe_caves",
+                    "annexe_soussols",
+                    "annexe_remises",
+                    "annexe_ateliers",
+                    "annexe_sechoirs",
+                    "annexe_celliers",
+                    "annexe_resserres",
+                    "annexe_combles",
+                    "annexe_balcons",
+                    "annexe_loggias",
+                    "annexe_terrasses",
+                ],
+            ),
+        }
+    )
+    form_is_valid = form.is_valid()
+
     formset = AnnexeFormSet(request.POST)
     initformset = {
         "form-TOTAL_FORMS": request.POST.get("form-TOTAL_FORMS", len(formset)),
@@ -266,7 +328,10 @@ def _annexes_atomic_update(request, convention):
         }
     formset = AnnexeFormSet(initformset)
     formset.convention = convention
-    if formset.is_valid():
+    formset_is_valid = formset.is_valid()
+
+    if form_is_valid and formset_is_valid:
+        _save_lot_annexes(form, convention.lot)
         _save_annexes(formset, convention)
         return utils.base_response_redirect_recap_success(convention)
     return {
