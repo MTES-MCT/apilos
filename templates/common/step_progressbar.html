@@ -28,7 +28,6 @@
             var lis = document.getElementById('step_progressbar').children
             for (var i=0; i < lis.length; i++) {
                 lis[i].addEventListener('click', function(){
-                    console.log(this.getAttribute('role'))
                     location.href='/conventions/' + this.getAttribute('role') + '/{{convention.uuid}}'
                 });
                 lis[i].classList.add('clickable_step')

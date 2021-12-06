@@ -31,6 +31,25 @@
             {% else %}
                 <p class="fr-alert__title">La convention a été validée le {{ convention.valide_le|date:"j F Y" }}</p>
                 <p class="fr-alert__title">avec le numéro {{convention.numero}}</p>
+
+                <div hidden>
+                    <form method="post" id="force_validation" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="Force" value="True"/>
+                        <button class="fr-btn fr-mt-3w" id="force_validation_button">
+                            Forcer la RE-validation de la convention
+                        </button>
+                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                            document.addEventListener('DOMContentLoaded', function () {
+                                document.getElementById("force_validation")
+                                    .addEventListener('submit', function(){
+                                    document.getElementById("force_validation_button").disabled = true
+                                    return true
+                                });
+                            });
+                        </script>
+                    </form>
+                </div>
             {% endif %}
             <p class="fr-my-3w"><b>Bientôt</b>, nous serons en mesure de prendre en charge la suite du processus de conventionnement sur la plateforme APiLos</p>
         </div>
