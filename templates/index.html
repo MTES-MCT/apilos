@@ -9,10 +9,7 @@
         <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters fr-py-6w">
                 <div class="fr-col-lg-6 fr-col-offset-lg-1 fr-mb-2w">
-                    {% include "common/bailleur_presentation.html" %}
-                    <p class="fr-mb-3w">
-                        {% include "common/button/login.html" with button_id="login_buton2" %}
-                    </p>
+                    {% include "layout/teasers/main_presentation.html" %}
                 </div>
                 <div class="fr-col-12 fr-col-lg-5 fr-pl-0 fr-pl-md-4w">
                     <figure class="fr-content-media fr-my-0">
@@ -27,47 +24,49 @@
         <div class="fr-grid-row fr-grid-row--gutters">
             <h2 class="fr-mb-3w">Comment ça marche ?</h2>
             <div class="fr-container">
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-lg-2 fr-col-md-3">
+                <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w">
+                    <div class="fr-col-lg-1 fr-col-md-3">
                         <span class="fr-fi-checkbox-circle-line fr-fi--xxl" aria-hidden="true"></span>
                     </div>
-                    <div class="fr-col-lg-10 fr-col-md-9 fr-mb-3w">
-                        <h3>Créez votre projet de convention en 4 étapes</h3>
+                    <div class="fr-col-lg-7 fr-col-md-9">
+                        <h3>Coté bailleur</h3>
                         <ul>
                             <li>Récupérez les informations de l’agrément de financement</li>
                             <li>Validez ou modifiez les informations déjà connues par l’Etat</li>
-                            <li>Calculez simplement votre loyer maximal</li>
                             <li>Déposez en ligne vos documents</li>
+                            <li>Transmettez le projet de convention aux services instructeurs</li>
+                            <li>Intégrez les modifications demandées par l'instructeur</li>
                         </ul>
                     </div>
+                    <div class="fr-col-lg-4 fr-col-md-12 fr-mt-md-5w fr-mt-lg-10w">
+                        <button class="fr-btn" id='espace_bailleur2'>
+                            <span class="fr-fi-account-line fr-mr-1w" aria-hidden="true">
+                            </span>Créer une convention
+                        </button>
+                        {% include "common/utils/onclick_redirect.html" with id='espace_bailleur2' url_target='login' %}
+                    </div>
                 </div>
-            </div>
-            <div class="fr-container">
                 <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w">
-                    <div class="fr-col-lg-2 fr-col-md-3">
+                    <div class="fr-col-lg-1 fr-col-md-3">
                         <span class="fr-fi-mail-line fr-fi--xxl" aria-hidden="true"></span>
                     </div>
-                    <div class="fr-col-lg-10 fr-col-md-9">
-                        <h3>Transmettez le projet de convention aux services instructeurs</h3>
+                    <div class="fr-col-lg-7 fr-col-md-9">
+                        <h3>Coté instructeurs</h3>
                         <ul>
-                            <li>Envoyez votre projet de convention</li>
-                            <li>Vous êtes informés en temps réel de l’avancée de votre projet</li>
+                            <li>Suivez en temps réel l'état d'avancement des projets de convention</li>
+                            <li>Instruisez uniquement les champs remplis par le bailleur</li>
+                            <li>Echangez avec les bailleurs via la plateforme</li>
+                            <li>Générez la convention APL au format Cerfa en 1 clic</li>
                         </ul>
                     </div>
-                </div>
-            </div>
-            <div class="fr-container">
-                <ul class="fr-btns-group fr-btns-group--inline fr-mb-3w">
-                    <li>
-                        {% include "common/button/login.html" with button_id="login_buton3" %}
-                    </li>
-                    <li>
-                        <button class="fr-btn fr-btn--secondary">
-                            Comment créer une convention ?
+                    <div class="fr-col-lg-4 fr-col-md-12 fr-mt-md-5w fr-mt-lg-10w">
+                        <button class="fr-btn fr-btn--secondary" id='espace_instructeur2'>
+                            <span class="fr-fi-account-line fr-mr-1w" aria-hidden="true">
+                            </span>Instruire une convention
                         </button>
-                    </li>
-                </ul>
-
+                        {% include "common/utils/onclick_redirect.html" with id='espace_instructeur2' url_target='login' url_params='?instructeur=1'%}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

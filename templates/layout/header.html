@@ -45,7 +45,7 @@
                         <a href="/" title="Accueil - APiLos">
                             <p class="fr-header__service-title">APiLos</p>
                         </a>
-                        <p class="fr-header__service-tagline">Le portail qui pré-remplit les conventions APL pour les bailleurs sociaux</p>
+                        <p class="fr-header__service-tagline">Le portail qui simplifie le conventionnement APL pour le logement social</p>
                     </div>
                 </div>
                 {% if not without_action_button %}
@@ -72,7 +72,11 @@
                             {% else %}
                                 <ul class="fr-links-group">
                                     <li class="fr-mx-3w">
-                                        {% include "common/button/login.html" with button_id="login_buton1" %}
+                                        <button class="fr-btn" id='espace_bailleur'>
+                                            <span class="fr-fi-account-line fr-mr-1w" aria-hidden="true">
+                                            </span>Espace bailleur
+                                        </button>
+                                        {% include "common/utils/onclick_redirect.html" with id='espace_bailleur' url_target='login' %}
                                     </li>
                                     <li>
                                         <button class="fr-btn fr-btn--secondary" id='espace_instructeur'>
@@ -82,8 +86,8 @@
                                         {% include "common/utils/onclick_redirect.html" with id='espace_instructeur' url_target='login' url_params='?instructeur=1'%}
                                     </li>
                                     <li>
-                                        <a class="fr-link" href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noopener">
-                                            <span class="fr-fi-question-line" aria-hidden="true"></span>
+                                        <a class="fr-link fr-text--lg" href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noopener">
+                                            <span class="fr-fi-question-line" aria-hidden="true"></span>&nbsp;FAQ
                                         </a>
                                     </li>
                                 </ul>
