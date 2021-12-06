@@ -40,9 +40,6 @@
                             Forcer la RE-validation de la convention
                         </button>
                         <script type="text/javascript" nonce="{{request.csp_nonce}}">
-
-                            onsubmit="myButton.disabled = true; return true;"
-
                             document.addEventListener('DOMContentLoaded', function () {
                                 document.getElementById("force_validation")
                                     .addEventListener('submit', function(){
