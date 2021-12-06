@@ -1,11 +1,12 @@
 import datetime
 
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_GET, require_POST
+from django.core.files.storage import default_storage
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
+from django.views.decorators.http import require_GET, require_POST
 
 from programmes.models import (
     Annexe,
@@ -447,6 +448,11 @@ def convention_validate(request, convention_uuid):
         )
         convention.save()
 
+    if convention_number_form.is_valid() or request.POST.get("Force"):
+
+        file_stream = convention_generator.generate_hlm(convention)
+        local_pdf_path = convention_generator.generate_pdf(file_stream, convention)
+
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
             convention=convention,
@@ -458,7 +464,7 @@ def convention_validate(request, convention_uuid):
             convention.valide_le = timezone.now()
         convention.statut = ConventionStatut.VALIDE
         convention.save()
-        _send_email_valide(request, convention)
+        _send_email_valide(request, convention, local_pdf_path)
         return {
             "success": utils.ReturnStatus.SUCCESS,
             "convention": convention,
@@ -489,7 +495,7 @@ def convention_validate(request, convention_uuid):
     }
 
 
-def _send_email_valide(request, convention):
+def _send_email_valide(request, convention, local_pdf_path=None):
     convention_url = request.build_absolute_uri(
         reverse("conventions:recapitulatif", args=[convention.uuid])
     )
@@ -518,6 +524,13 @@ def _send_email_valide(request, convention):
         f"Convention validé ({convention})", text_content, from_email, to, cc=cc
     )
     msg.attach_alternative(html_content, "text/html")
+
+    if local_pdf_path is not None:
+        pdf_file_handler = default_storage.open(local_pdf_path, "rb")
+        msg.attach(f"{convention}.pdf", pdf_file_handler.read(), "application/pdf")
+        pdf_file_handler.close()
+        msg.content_subtype = "html"
+
     msg.send()
 
 

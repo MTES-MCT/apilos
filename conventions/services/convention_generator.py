@@ -1,6 +1,9 @@
 import os
+import errno
 import io
 import jinja2
+import convertapi
+
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Inches
 
@@ -14,19 +17,135 @@ from programmes.models import (
 from upload.models import UploadedFile
 
 
-def to_fr_date(date):
+def generate_hlm(convention):
+    # pylint: disable=R0914
+    annexes = (
+        Annexe.objects.prefetch_related("logement")
+        .filter(logement__lot_id=convention.lot.id)
+        .all()
+    )
+    filepath = f"{settings.BASE_DIR}/documents/HLM-template.docx"
+    doc = DocxTemplate(filepath)
+
+    logements_totale = {
+        "sh_totale": 0,
+        "sa_totale": 0,
+        "sar_totale": 0,
+        "su_totale": 0,
+        "loyer_total": 0,
+    }
+    nb_logements_par_type = {}
+    for logement in convention.lot.logement_set.order_by("typologie").all():
+        logements_totale["sh_totale"] += logement.surface_habitable
+        logements_totale["sa_totale"] += logement.surface_annexes
+        logements_totale["sar_totale"] += logement.surface_annexes_retenue
+        logements_totale["su_totale"] += logement.surface_utile
+        logements_totale["loyer_total"] += logement.loyer
+        if logement.typologie not in nb_logements_par_type:
+            nb_logements_par_type[logement.get_typologie_display()] = 0
+        nb_logements_par_type[logement.get_typologie_display()] += 1
+
+    logement_edds, lot_num = _prepare_logement_edds(convention)
+    # tester si il logement exists avant de commencer
+
+    object_images, local_pathes = _get_object_images(doc, convention)
+
+    context = {
+        "convention": convention,
+        "bailleur": convention.bailleur,
+        "programme": convention.programme,
+        "lot": convention.lot,
+        "administration": convention.programme.administration,
+        "logement_edds": logement_edds,
+        "logements": convention.lot.logement_set.all(),
+        "annexes": annexes,
+        "stationnements": convention.lot.typestationnement_set.all(),
+        "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF", "CDCL"]),
+        "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF", "CDCL"]),
+        "references_cadastrales": convention.programme.referencecadastrale_set.all(),
+        **object_images,
+        "nb_logements_par_type": nb_logements_par_type,
+        "lot_num": lot_num,
+        **_compute_mixte(convention),
+        "loyer_m2": _get_loyer_par_metre_carre(convention),
+        **logements_totale,
+        "liste_des_annexes": _compute_liste_des_annexes(
+            convention.lot.typestationnement_set.all(), annexes
+        ),
+    }
+
+    jinja_env = jinja2.Environment()
+    jinja_env.filters["d"] = _to_fr_date
+    jinja_env.filters["f"] = _to_fr_float
+    jinja_env.filters["pl"] = _pluralize
+    jinja_env.filters["len"] = len
+    doc.render(context, jinja_env)
+    file_stream = io.BytesIO()
+    doc.save(file_stream)
+    file_stream.seek(0)
+
+    for local_path in list(set(local_pathes)):
+        os.remove(local_path)
+
+    return file_stream
+
+
+def generate_pdf(file_stream, convention):
+    # save the convention docx locally
+    local_docx_path = str(settings.MEDIA_ROOT) + f"/convention_{convention.uuid}.docx"
+    with open(local_docx_path, "wb") as local_file:
+        local_file.write(file_stream.read())
+        local_file.close()
+    file_stream.seek(0)
+
+    # get a pdf version
+    convertapi.api_secret = settings.CONVERTAPI_SECRET
+    result = convertapi.convert("pdf", {"File": local_docx_path})
+
+    convention_dirpath = f"conventions/{convention.uuid}/convention_docs/"
+    convention_filename = f"{convention.uuid}.pdf"
+    pdf_path = _save_io_as_file(result.file.io, convention_dirpath, convention_filename)
+
+    # remove docx version
+    os.remove(local_docx_path)
+    # END PDF GENERATION
+    return pdf_path
+
+
+def _save_io_as_file(file_io, convention_dirpath, convention_filename):
+
+    if settings.DEFAULT_FILE_STORAGE == "django.core.files.storage.FileSystemStorage":
+        if not os.path.exists(settings.MEDIA_URL + convention_dirpath):
+            try:
+                os.makedirs(settings.MEDIA_URL + convention_dirpath)
+            except OSError as exc:  # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+
+    pdf_path = f"{convention_dirpath}/{convention_filename}"
+    destination = default_storage.open(
+        pdf_path,
+        "bw",
+    )
+    destination.write(file_io.getbuffer())
+    destination.close()
+
+    return pdf_path
+
+
+def _to_fr_date(date):
     if date is None:
         return ""
     return date.strftime("%d/%m/%Y")
 
 
-def to_fr_float(value, d=2):
+def _to_fr_float(value, d=2):
     if value is None:
         return ""
     return format(value, f",.{d}f").replace(",", " ").replace(".", ",")
 
 
-def pluralize(value):
+def _pluralize(value):
     if value > 1:
         return "s"
     return ""
@@ -101,88 +220,14 @@ def _get_object_images(doc, convention):
     return object_images, local_pathes
 
 
-def generate_hlm(convention):
-    # pylint: disable=R0914
-    annexes = (
-        Annexe.objects.prefetch_related("logement")
-        .filter(logement__lot_id=convention.lot.id)
-        .all()
-    )
-    filepath = f"{settings.BASE_DIR}/documents/HLM-template.docx"
-    doc = DocxTemplate(filepath)
-
-    logements_totale = {
-        "sh_totale": 0,
-        "sa_totale": 0,
-        "sar_totale": 0,
-        "su_totale": 0,
-        "loyer_total": 0,
-    }
-    nb_logements_par_type = {}
-    for logement in convention.lot.logement_set.order_by("typologie").all():
-        logements_totale["sh_totale"] += logement.surface_habitable
-        logements_totale["sa_totale"] += logement.surface_annexes
-        logements_totale["sar_totale"] += logement.surface_annexes_retenue
-        logements_totale["su_totale"] += logement.surface_utile
-        logements_totale["loyer_total"] += logement.loyer
-        if logement.typologie not in nb_logements_par_type:
-            nb_logements_par_type[logement.get_typologie_display()] = 0
-        nb_logements_par_type[logement.get_typologie_display()] += 1
-
-    logement_edds, lot_num = prepare_logement_edds(convention)
-    mixite = compute_mixte(convention)
-    # tester si il logement exists avant de commencer
-
-    object_images, local_pathes = _get_object_images(doc, convention)
-
-    context = {
-        "convention": convention,
-        "bailleur": convention.bailleur,
-        "programme": convention.programme,
-        "lot": convention.lot,
-        "administration": convention.programme.administration,
-        "logement_edds": logement_edds,
-        "logements": convention.lot.logement_set.all(),
-        "annexes": annexes,
-        "stationnements": convention.lot.typestationnement_set.all(),
-        "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF", "CDCL"]),
-        "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF", "CDCL"]),
-        "references_cadastrales": convention.programme.referencecadastrale_set.all(),
-        **object_images,
-        "nb_logements_par_type": nb_logements_par_type,
-        "lot_num": lot_num,
-        **mixite,
-        "loyer_m2": get_loyer_par_metre_carre(convention),
-        **logements_totale,
-        "liste_des_annexes": compute_liste_des_annexes(
-            convention.lot.typestationnement_set.all(), annexes
-        ),
-    }
-
-    jinja_env = jinja2.Environment()
-    jinja_env.filters["d"] = to_fr_date
-    jinja_env.filters["f"] = to_fr_float
-    jinja_env.filters["pl"] = pluralize
-    jinja_env.filters["len"] = len
-    doc.render(context, jinja_env)
-    file_stream = io.BytesIO()
-    doc.save(file_stream)
-    file_stream.seek(0)
-
-    for local_path in list(set(local_pathes)):
-        os.remove(local_path)
-
-    return file_stream
-
-
-def get_loyer_par_metre_carre(convention):
+def _get_loyer_par_metre_carre(convention):
     logement = convention.lot.logement_set.first()
     if logement:
         return convention.lot.logement_set.first().loyer_par_metre_carre
     return 0
 
 
-def compute_liste_des_annexes(typestationnements, annexes):
+def _compute_liste_des_annexes(typestationnements, annexes):
     annexes_par_type = {}
     for annexe in annexes:
         if annexe.get_typologie_display() not in annexes_par_type:
@@ -210,7 +255,7 @@ def compute_liste_des_annexes(typestationnements, annexes):
     return ", ".join(annexes_list)
 
 
-def compute_mixte(convention):
+def _compute_mixte(convention):
     mixite = {
         "mixPLUSsup10_30pc": 0,
         "mixPLUSinf10_30pc": 0,
@@ -230,7 +275,7 @@ def compute_mixte(convention):
     return mixite
 
 
-def prepare_logement_edds(convention):
+def _prepare_logement_edds(convention):
     logement_edds = convention.programme.logementedd_set.order_by(
         "financement", "designation"
     ).all()

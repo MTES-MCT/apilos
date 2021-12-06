@@ -21,7 +21,6 @@
     comments = document.getElementsByClassName('content__icons--blue')
     has_comments = false
     for (var i=0;i<comments.length; i++) {
-        console.log(comments[i].hidden)
         has_comments ||= !(comments[i].hidden)
     }
     if (has_comments) {

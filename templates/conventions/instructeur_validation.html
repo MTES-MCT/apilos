@@ -31,6 +31,15 @@
             {% else %}
                 <p class="fr-alert__title">La convention a été validée le {{ convention.valide_le|date:"j F Y" }}</p>
                 <p class="fr-alert__title">avec le numéro {{convention.numero}}</p>
+
+                <div>
+                    <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}">
+                        {% csrf_token %}
+                        <button name="Force" value="True" class="fr-btn fr-mt-3w">
+                            Forcer la RE-validation de la convention
+                        </button>
+                    </form>
+                </div>
             {% endif %}
             <p class="fr-my-3w"><b>Bientôt</b>, nous serons en mesure de prendre en charge la suite du processus de conventionnement sur la plateforme APiLos</p>
         </div>

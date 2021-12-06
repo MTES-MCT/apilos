@@ -62,10 +62,8 @@
         elements = document.getElementById('{{form_input_id}}_comment-dialog').getElementsByTagName('textarea')
         for (var i = 0; i< elements.length; i++) {
             var id = elements[i].id
-            //elements[i].addEventListener('change', (e) => { console.log(elements[i].id) }, );
             elements[i].addEventListener('change', function(event) {
                 var element = event.target || event.srcElement;
-                console.log('bingo : {{form_input_id}} + ' + element.id)
             })
 
         }
