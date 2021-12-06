@@ -5,7 +5,7 @@
                 <p class="fr-mb-3w">Une fois la convention générée, si celle-ci correspond aux attendus, vous pouvez l'envoyer au bailleur par email et cliquer sur la bouton ci-dessous.
                     Cela nous permet de suivre le statut de la convention en temps réel.</p>
                 <div>
-                    <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}">
+                    <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" id="validation_form">
                         {% csrf_token %}
                         <p class="fr-h4">Associer un numéro de convention</p>
 
@@ -23,9 +23,18 @@
                             </div>
                         </div>
 
-                        <button class="fr-btn fr-mt-3w">
+                        <button class="fr-btn fr-mt-3w" id="validation_button">
                             Valider la convention
                         </button>
+                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                            document.addEventListener('DOMContentLoaded', function () {
+                                document.getElementById("validation_form")
+                                    .addEventListener('submit', function(){
+                                    document.getElementById("validation_button").disabled = true
+                                    return true
+                                });
+                            });
+                        </script>
                     </form>
                 </div>
             {% else %}
