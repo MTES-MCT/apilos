@@ -93,21 +93,35 @@ def generate_hlm(convention):
 def generate_pdf(file_stream, convention):
     # save the convention docx locally
     local_docx_path = str(settings.MEDIA_ROOT) + f"/convention_{convention.uuid}.docx"
-    with open(local_docx_path, "wb") as local_file:
-        local_file.write(file_stream.read())
-        local_file.close()
+
+    print("settings.CONVERTAPI_SECRET")
+    print(settings.CONVERTAPI_SECRET)
+    # get a pdf version
+    if settings.CONVERTAPI_SECRET:
+        with open(local_docx_path, "wb") as local_file:
+            local_file.write(file_stream.read())
+            local_file.close()
+
+        convertapi.api_secret = settings.CONVERTAPI_SECRET
+        result = convertapi.convert("pdf", {"File": local_docx_path})
+
+        convention_dirpath = f"conventions/{convention.uuid}/convention_docs/"
+        convention_filename = f"{convention.uuid}.pdf"
+        pdf_path = _save_io_as_file(
+            result.file.io, convention_dirpath, convention_filename
+        )
+
+        # remove docx version
+        os.remove(local_docx_path)
+    else:
+        convention_dirpath = f"conventions/{convention.uuid}/convention_docs/"
+        convention_filename = f"{convention.uuid}.docx"
+        pdf_path = _save_io_as_file(
+            file_stream, convention_dirpath, convention_filename
+        )
+
     file_stream.seek(0)
 
-    # get a pdf version
-    convertapi.api_secret = settings.CONVERTAPI_SECRET
-    result = convertapi.convert("pdf", {"File": local_docx_path})
-
-    convention_dirpath = f"conventions/{convention.uuid}/convention_docs/"
-    convention_filename = f"{convention.uuid}.pdf"
-    pdf_path = _save_io_as_file(result.file.io, convention_dirpath, convention_filename)
-
-    # remove docx version
-    os.remove(local_docx_path)
     # END PDF GENERATION
     return pdf_path
 
