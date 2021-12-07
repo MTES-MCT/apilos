@@ -236,6 +236,15 @@ function display_comment_icon(input_id) {
         comment_icon.classList.remove('content__icons--grey')
 
         document.getElementById(input_id).disabled = false
+
+        parent_parent = document.getElementById(input_id + '_comment').parentNode.parentNode
+        if (parent_parent.tagName == 'TR') {
+            inputs = parent_parent.getElementsByTagName('input')
+            for (var i = 0; i< inputs.length;i++) {
+                inputs[i].disabled = false
+            }
+        }
+
         if (document.getElementById('save_after_comments') !== null) {
             document.getElementById('save_after_comments').hidden = false
             document.getElementById('back_to_recap').hidden = true
