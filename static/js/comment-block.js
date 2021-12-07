@@ -234,6 +234,13 @@ function display_comment_icon(input_id) {
         comment_icon.classList.add('content__icons--blue')
         comment_icon.classList.remove('content__icons--green')
         comment_icon.classList.remove('content__icons--grey')
+
+        document.getElementById(input_id).disabled = false
+        if (document.getElementById('save_after_comments') !== null) {
+            document.getElementById('save_after_comments').hidden = false
+            document.getElementById('back_to_recap').hidden = true
+        }
+
         document.getElementById(input_id + '_div').onclick = null
         document.getElementById(input_id + '_div').onmouseover = null
         document.getElementById(input_id + '_div').onmouseleave = null
