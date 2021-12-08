@@ -168,18 +168,28 @@
                                             <table>
                                                 <thead>
                                                     <tr>
+                                                        {% if convention.statut != 'BROUILLON' %}
+                                                            <th scope="col">Comments</th>
+                                                        {% endif %}
                                                         <th scope="col">Section {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col">Numéro {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col">Lieudit {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col">Surface {% include "common/mandatory_field_star.html" %}</th>
-                                                        {% if convention.statut != 'BROUILLON' %}
-                                                            <th scope="col">Comments</th>
-                                                        {% endif %}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {% for reference in reference_cadastrales %}
                                                         <tr>
+                                                            {% if convention.statut != 'BROUILLON' %}
+                                                                {% with reference_uuid=reference.uuid|slugify %}
+                                                                    {% with main_object_field="reference_cadastrale__uuid__"|add:reference_uuid %}
+                                                                        <td id="{{main_object_field}}_div">
+                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
+                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                        </td>
+                                                                    {% endwith %}
+                                                                {% endwith %}
+                                                            {% endif %}
                                                             <td>
                                                                 {{ reference.section }}
                                                             </td>
@@ -192,16 +202,6 @@
                                                             <td>
                                                                 {{ reference.surface }}
                                                             </td>
-                                                            {% if convention.statut != 'BROUILLON' %}
-                                                                {% with reference_uuid=reference.uuid|slugify %}
-                                                                    {% with main_object_field="reference_cadastrale__uuid__"|add:reference_uuid %}
-                                                                        <td id="{{main_object_field}}_div">
-                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
-                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
-                                                                        </td>
-                                                                    {% endwith %}
-                                                                {% endwith %}
-                                                            {% endif %}
                                                         </tr>
                                                     {% endfor %}
                                                 </tbody>
@@ -237,17 +237,27 @@
                                             <table>
                                                 <thead>
                                                     <tr>
-                                                        <th scope="col">Financement {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col">Désignation {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col">Type {% include "common/mandatory_field_star.html" %}</th>
                                                         {% if convention.statut != 'BROUILLON' %}
                                                             <th scope="col">Comments</th>
                                                         {% endif %}
+                                                        <th scope="col">Financement {% include "common/mandatory_field_star.html" %}</th>
+                                                        <th scope="col">Désignation {% include "common/mandatory_field_star.html" %}</th>
+                                                        <th scope="col">Type {% include "common/mandatory_field_star.html" %}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {% for lgt in logement_edds %}
                                                         <tr>
+                                                            {% if convention.statut != 'BROUILLON' %}
+                                                                {% with lgt_uuid=lgt.uuid|slugify %}
+                                                                    {% with main_object_field="logement_edd__uuid__"|add:lgt_uuid %}
+                                                                        <td id="{{main_object_field}}_div">
+                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
+                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                        </td>
+                                                                    {% endwith %}
+                                                                {% endwith %}
+                                                            {% endif %}
                                                             <td>
                                                                 {{lgt.financement}}
                                                             </td>
@@ -257,19 +267,6 @@
                                                             <td>
                                                                 {{lgt.typologie}}
                                                             </td>
-
-                                                            {% if convention.statut != 'BROUILLON' %}
-                                                                {% with lgt_uuid=lgt.uuid|slugify %}
-                                                                    {% with main_object_field="logement_edd__uuid__"|add:lgt_uuid %}
-
-                                                                        <td id="{{main_object_field}}_div">
-                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
-                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
-                                                                        </td>
-                                                                    {% endwith %}
-                                                                {% endwith %}
-                                                            {% endif %}
-
                                                         </tr>
                                                     {% endfor %}
                                                 </tbody>
@@ -299,20 +296,30 @@
                                             <table>
                                                 <thead>
                                                     <tr>
+                                                        {% if convention.statut != 'BROUILLON' %}
+                                                            <th scope="col">Comments</th>
+                                                        {% endif %}
                                                         <th scope="col">Numéro</th>
                                                         <th scope="col">Date d'octroi</th>
                                                         <th scope="col">Durée (en années)</th>
                                                         <th scope="col">Montant (en €) {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col">Préteur</th>
                                                         <th scope="col">Préciser le prêteur si 'Autre'</th>
-                                                        {% if convention.statut != 'BROUILLON' %}
-                                                            <th scope="col">Comments</th>
-                                                        {% endif %}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {% for pret in convention.pret_set.all %}
                                                         <tr>
+                                                            {% if convention.statut != 'BROUILLON' %}
+                                                                {% with pret_uuid=pret.uuid|slugify %}
+                                                                    {% with main_object_field="pret__uuid__"|add:pret_uuid %}
+                                                                        <td id="{{main_object_field}}_div">
+                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
+                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                        </td>
+                                                                    {% endwith %}
+                                                                {% endwith %}
+                                                            {% endif %}
                                                             <td>
                                                                 {{ pret.numero }}
                                                             </td>
@@ -331,16 +338,6 @@
                                                             <td>
                                                                 {{ pret.autre }}
                                                             </td>
-                                                            {% if convention.statut != 'BROUILLON' %}
-                                                                {% with pret_uuid=pret.uuid|slugify %}
-                                                                    {% with main_object_field="pret__uuid__"|add:pret_uuid %}
-                                                                        <td id="{{main_object_field}}_div">
-                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
-                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
-                                                                        </td>
-                                                                    {% endwith %}
-                                                                {% endwith %}
-                                                            {% endif %}
                                                         </tr>
                                                     {% endfor %}
                                                 </tbody>
@@ -371,6 +368,9 @@
                                             <table>
                                                 <thead>
                                                     <tr>
+                                                        {% if convention.statut != 'BROUILLON' %}
+                                                            <th scope="col">Comments</th>
+                                                        {% endif %}
                                                         <th scope="col" class="col__width--200">Désignation {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--150">Type {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Surface habitable {% include "common/mandatory_field_star.html" %}</th>
@@ -380,14 +380,21 @@
                                                         <th scope="col" class="col__width--120">Loyer maxinum en € par m² de surface utile {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Coefficient propre au logement {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Loyer maxinum du logement en € {% include "common/mandatory_field_star.html" %}</th>
-                                                        {% if convention.statut != 'BROUILLON' %}
-                                                            <th scope="col">Comments</th>
-                                                        {% endif %}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {% for logement in logements %}
                                                         <tr>
+                                                            {% if convention.statut != 'BROUILLON' %}
+                                                                {% with logement_uuid=logement.uuid|slugify %}
+                                                                    {% with main_object_field="logement__uuid__"|add:logement_uuid %}
+                                                                        <td id="{{main_object_field}}_div">
+                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
+                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                        </td>
+                                                                    {% endwith %}
+                                                                {% endwith %}
+                                                            {% endif %}
                                                             <td>
                                                                 {{ logement.designation }}
                                                             </td>
@@ -415,16 +422,6 @@
                                                             <td id="lgt_loyer">
                                                                 {{ logement.loyer|floatformat:2 }}
                                                             </td>
-                                                            {% if convention.statut != 'BROUILLON' %}
-                                                                {% with logement_uuid=logement.uuid|slugify %}
-                                                                    {% with main_object_field="logement__uuid__"|add:logement_uuid %}
-                                                                        <td id="{{main_object_field}}_div">
-                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
-                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
-                                                                        </td>
-                                                                    {% endwith %}
-                                                                {% endwith %}
-                                                            {% endif %}
                                                         </tr>
                                                     {% endfor %}
                                                     <tr>
@@ -474,20 +471,30 @@
                                             <table>
                                                 <thead>
                                                     <tr>
+                                                        {% if convention.statut != 'BROUILLON' %}
+                                                            <th scope="col">Comments</th>
+                                                        {% endif %}
                                                         <th scope="col" class="col__width--150">Type d'annexe {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--200">Désignation des logements {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--150">Typologie des logements {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Surface de l'annexe {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Loyer unitaire en € {% include "common/mandatory_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Loyer maxinum du logement en € {% include "common/mandatory_field_star.html" %}</th>
-                                                        {% if convention.statut != 'BROUILLON' %}
-                                                            <th scope="col">Comments</th>
-                                                        {% endif %}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {% for annexe in annexes %}
                                                         <tr>
+                                                            {% if convention.statut != 'BROUILLON' %}
+                                                                {% with annexe_uuid=annexe.uuid|slugify %}
+                                                                    {% with main_object_field="annexe__uuid__"|add:annexe_uuid %}
+                                                                        <td id="{{main_object_field}}_div">
+                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
+                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                        </td>
+                                                                    {% endwith %}
+                                                                {% endwith %}
+                                                            {% endif %}
                                                             <td>
                                                                 {{ annexe.get_typologie_display }}
                                                             </td>
@@ -506,16 +513,6 @@
                                                             <td>
                                                                 {{ annexe.loyer|floatformat:2 }}
                                                             </td>
-                                                            {% if convention.statut != 'BROUILLON' %}
-                                                                {% with annexe_uuid=annexe.uuid|slugify %}
-                                                                    {% with main_object_field="annexe__uuid__"|add:annexe_uuid %}
-                                                                        <td id="{{main_object_field}}_div">
-                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
-                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
-                                                                        </td>
-                                                                    {% endwith %}
-                                                                {% endwith %}
-                                                            {% endif %}
                                                         </tr>
                                                     {% endfor %}
                                                 </tbody>
@@ -566,26 +563,17 @@
                                             <table>
                                                 <thead>
                                                     <tr>
-                                                        <th scope="col" class="col__width--150">Type de stationnement {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--200">Nombre de staionnements {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--150">Loyer maximum en € {% include "common/mandatory_field_star.html" %}</th>
                                                         {% if convention.statut != 'BROUILLON' %}
                                                             <th scope="col">Comments</th>
                                                         {% endif %}
+                                                        <th scope="col" class="col__width--150">Type de stationnement {% include "common/mandatory_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--200">Nombre de staionnements {% include "common/mandatory_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--150">Loyer maximum en € {% include "common/mandatory_field_star.html" %}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {% for stationnement in stationnements %}
                                                         <tr>
-                                                            <td>
-                                                                {{ stationnement.get_typologie_display }}
-                                                            </td>
-                                                            <td>
-                                                                {{ stationnement.nb_stationnements }}
-                                                            </td>
-                                                            <td>
-                                                                {{ stationnement.loyer|floatformat:2 }}
-                                                            </td>
                                                             {% if convention.statut != 'BROUILLON' %}
                                                                 {% with stationnement_uuid=stationnement.uuid|slugify %}
                                                                     {% with main_object_field="type_stationnement__uuid__"|add:stationnement_uuid %}
@@ -596,6 +584,15 @@
                                                                     {% endwith %}
                                                                 {% endwith %}
                                                             {% endif %}
+                                                            <td>
+                                                                {{ stationnement.get_typologie_display }}
+                                                            </td>
+                                                            <td>
+                                                                {{ stationnement.nb_stationnements }}
+                                                            </td>
+                                                            <td>
+                                                                {{ stationnement.loyer|floatformat:2 }}
+                                                            </td>
                                                         </tr>
                                                     {% endfor %}
                                                 </tbody>
