@@ -16,9 +16,9 @@
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-lg-6 fr-col-offset-lg-1 fr-mb-2w">
                     {% if request.GET.instructeur  %}
-                        {% include "common/instructeur_presentation.html" %}
+                        {% include "layout/teasers/instructeur_presentation.html" %}
                     {% else %}
-                        {% include "common/bailleur_presentation.html" %}
+                        {% include "layout/teasers/bailleur_presentation.html" %}
                     {% endif %}
                 </div>
                 <div class="fr-col-12 fr-col-lg-5 fr-pl-0 fr-pl-md-4w fr-py-4w fr-pb-0">
