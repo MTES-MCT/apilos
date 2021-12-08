@@ -2,14 +2,14 @@ Bonjour
 
 La convention {{convention}} ({{convention_url}})  a été validée.
 
-Vous pouvez maintenant :
-- l’imprimer en 3 exemplaires en recto (1 page par feuille)
+Vous pouvez dès maintenant :
+- L’imprimer en 3 exemplaires en recto (1 page par feuille)
 - Parapher toutes les pages
 - Signer à la fin de la convention. Attention à ne pas dater.
 
 Vous pourrez ensuite transmettre les 3 exemplaire signés à votre service instructeur.
 
-N'hésitez pas à vous faire part de tout retour ou suggestion d'amélioration sur la plateforme à l'adresse contact@apilos.beta.gouv.fr.
+N'hésitez pas à nous faire part de tout retour ou suggestion d'amélioration sur la plateforme à l'adresse contact@apilos.beta.gouv.fr.
 
 Dans l'attente de vous retrouver sur APiLos pour une nouvelle convention, nous restons à votre disposition.
 

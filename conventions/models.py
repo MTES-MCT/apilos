@@ -96,7 +96,7 @@ class Convention(models.Model):
 
     def get_comments_dict(self):
         result = {}
-        for comment in self.comment_set.all():
+        for comment in self.comment_set.all().order_by("cree_le"):
             comment_name = (
                 comment.nom_objet
                 + "__"

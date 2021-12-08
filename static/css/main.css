@@ -190,11 +190,11 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   background: var(--white);
   border-radius: 4px;
   display: inline-block;
+  margin: 0.25rem;
 }
 
-.content__icons--small svg {
-  width: 24px !important;
-  height: 24px !important;
+.content__icons--small {
+  margin: 0rem 0.25rem !important;
 }
 
 .content__icons--blue svg {
@@ -280,3 +280,8 @@ table.fullwidth {
   display: table;
   /* table-layout: fixed; */
 }
+
+.clickable{
+  cursor: pointer;
+}
+

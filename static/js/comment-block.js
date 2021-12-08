@@ -36,9 +36,9 @@ function create_comment_input(input_id, comment, has_own_active_comment=true, is
     var before_id = input_id + "_new_comment"
     var comment_modal_id = input_id + "_modal_comment"
     new_comment_block = document.getElementById(before_id)
-    if (has_own_active_comment && has_own_active_comment != 'False') {
-        new_comment_block.hidden = true
-    }
+    // if (has_own_active_comment && has_own_active_comment != 'False') {
+    //     new_comment_block.hidden = true
+    // }
     const container_div = create_comment_container(comment.uuid)
     const owner_div = create_comment_owner(comment.uuid,comment.username, comment.is_owner, comment.statut);
     container_div.appendChild(owner_div)
@@ -54,6 +54,11 @@ function create_comment_input(input_id, comment, has_own_active_comment=true, is
     container_div.appendChild(ul_buttons)
     document.getElementById(comment_modal_id).insertBefore( container_div, new_comment_block );
     init_comment_button(input_id, comment.uuid, comment.statut, comment.is_owner, is_instructeur)
+
+    if (comment.statut == 'CLOS') {
+        _hide_textarea_for_close_comment(comment.uuid)
+    }
+
 }
 
 //div container
@@ -129,19 +134,29 @@ function create_comment_statut(input_id, uuid, statut) {
 
 //<textarea class="fr-input" aria-describedby="text-input-error-desc-error" type="text" id="comment_fb7d6bf9-291a-4b3d-b2a6-25fea7e20dcb" rows="5">tt</textarea>
 function create_comment_textarea(uuid, message, status, is_owner=false) {
-    const textarea_div = document.createElement('textarea');
-    textarea_div.classList.add('fr-input')
-    textarea_div.setAttribute('aria-describedby', "text-input-error-desc-error")
-    textarea_div.setAttribute('type', "text")
+    const textarea_div = document.createElement('div');
+    textarea_div.setAttribute('id', "comment_textarea_div_" + uuid)
+    const textarea_textarea = document.createElement('textarea');
+    textarea_textarea.classList.add('fr-input')
+    textarea_textarea.setAttribute('aria-describedby', "text-input-error-desc-error")
+    textarea_textarea.setAttribute('type', "text")
     if (is_owner && is_owner != 'False' && status == 'OUVERT') {
-        textarea_div.disabled = false
+        textarea_textarea.disabled = false
     }
     else {
-        textarea_div.disabled = true
+        textarea_textarea.disabled = true
     }
-    textarea_div.setAttribute('id', "comment_" + uuid)
-    textarea_div.setAttribute('rows', "5")
-    textarea_div.value = message
+    textarea_textarea.setAttribute('id', "comment_" + uuid)
+
+    textarea_textarea.addEventListener('input', function() {
+        rows = this.value.split(/\r\n|\r|\n/).length
+        this.setAttribute('rows', rows)
+    })
+
+    textarea_textarea.value = message
+    textarea_textarea.setAttribute('rows', message.split(/\r\n|\r|\n/).length)
+
+    textarea_div.appendChild(textarea_textarea)
     return textarea_div
 }
 
@@ -213,6 +228,19 @@ function create_li_button(uuid, action, label, additionalButtonClass=null) {
 }
 
 
+function _hide_textarea_for_close_comment(comment_uuid) {
+    document.getElementById("comment_textarea_div_" + comment_uuid).hidden = true
+    document.getElementById("comment_container_" + comment_uuid).classList.add('clickable')
+        document.getElementById("comment_container_" + comment_uuid).addEventListener('click', function(){
+            document.getElementById("comment_textarea_div_" + comment_uuid).hidden = !document.getElementById("comment_textarea_div_" + comment_uuid).hidden
+    })
+    console.log(document.getElementById("comment_" + comment_uuid).innerText)
+//    document.getElementById("comment_" + comment_uuid).style.height = document.getElementById("comment_" + comment_uuid).scrollHeight + 'px';
+
+
+}
+
+
 function display_comment_icon(input_id) {
     statuts = document.getElementsByName(input_id + "_comment_statut")
     var nb_open = 0
@@ -235,7 +263,9 @@ function display_comment_icon(input_id) {
         comment_icon.classList.remove('content__icons--green')
         comment_icon.classList.remove('content__icons--grey')
 
-        document.getElementById(input_id).disabled = false
+        if (document.getElementById(input_id) !== null) {
+            document.getElementById(input_id).disabled = false
+        }
 
         parent_parent = document.getElementById(input_id + '_comment').parentNode.parentNode
         if (parent_parent.tagName == 'TR') {
@@ -266,7 +296,6 @@ function display_comment_icon(input_id) {
         comment_icon.hidden = false
     }
     else if (nb_clos && !nb_resolu && !nb_open) { // grey & displayed
-        console.log(input_id + '_comment')
         comment_icon = document.getElementById(input_id + '_comment')
         comment_icon.classList.remove('content__icons--blue')
         comment_icon.classList.remove('content__icons--green')
@@ -370,6 +399,7 @@ function create_comment(convention_uuid, input_id, object_field) {
     }).then(res => {
         create_comment_input(input_id, res.comment, true, res.user.is_instructeur)
         display_comment_icon(input_id)
+        document.getElementById('textarea_' + input_id + "_comment").value = ''
     });
 
     // Close the dialogbox
@@ -439,10 +469,14 @@ function update_status_comment(input_id, uuid, status) {
             disable_textarea(comment.uuid, comment.statut, comment.is_owner)
             update_status(comment.uuid, comment.statut)
             if (comment.is_owner && comment.statut == 'CLOS') {
-                document.getElementById(input_id + "_new_comment").hidden = false
+//                document.getElementById(input_id + "_new_comment").hidden = false
                 document.getElementById('textarea_' + input_id + "_comment").value = ''
             }
-            display_comment_icon(input_id)
+            if (status == 'CLOS') {
+                _hide_textarea_for_close_comment(comment.uuid)
+            }
+        display_comment_icon(input_id)
         }
     });
 }
+
