@@ -280,3 +280,8 @@ table.fullwidth {
   display: table;
   /* table-layout: fixed; */
 }
+
+.clickable{
+  cursor: pointer;
+}
+
