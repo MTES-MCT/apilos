@@ -273,6 +273,10 @@ function display_comment_icon(input_id) {
             for (var i = 0; i< inputs.length;i++) {
                 inputs[i].disabled = false
             }
+            inputs = parent_parent.getElementsByTagName('select')
+            for (var i = 0; i< inputs.length;i++) {
+                inputs[i].disabled = false
+            }
         }
 
         if (document.getElementById('save_after_comments') !== null) {

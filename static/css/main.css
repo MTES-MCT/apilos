@@ -212,6 +212,11 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   color: #9C9C9C;
 }
 
+.content__icons--darkgrey svg {
+  stroke: #161616;
+  color: #161616;
+}
+
 .fr-btn--green {
   background-color: #008941;
   --color-hover: #00a34d !important;
