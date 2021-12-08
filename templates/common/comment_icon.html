@@ -1,6 +1,6 @@
 {% if object_field and convention.statut != 'BROUILLON' %}
     <div id='{{form_input_id}}_comment' hidden>
-        <div class="content__icons fr-px-1w {% if small %}content__icons--small{% endif %}"
+        <div class="content__icons {% if small %}content__icons--small{% endif %}"
             id="{{form_input_id}}_comment-img"
             data-fr-opened="false"
             aria-controls="{{form_input_id}}_comment-dialog">
