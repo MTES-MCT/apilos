@@ -113,7 +113,7 @@ class ProgrammeForm(forms.Form):
     anru = forms.BooleanField(required=False)
     nb_locaux_commerciaux = forms.IntegerField(required=False)
     nb_bureaux = forms.IntegerField(required=False)
-    autre_locaux_hors_convention = forms.CharField(
+    autres_locaux_hors_convention = forms.CharField(
         required=False,
         max_length=5000,
         error_messages={

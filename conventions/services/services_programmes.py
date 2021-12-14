@@ -144,7 +144,7 @@ def programme_update(request, convention_uuid):
                 "type_habitat": programme.type_habitat,
                 "type_operation": programme.type_operation,
                 "anru": programme.anru,
-                "autre_locaux_hors_convention": programme.autre_locaux_hors_convention,
+                "autres_locaux_hors_convention": programme.autres_locaux_hors_convention,
                 "nb_locaux_commerciaux": programme.nb_locaux_commerciaux,
                 "nb_bureaux": programme.nb_bureaux,
             }
@@ -171,7 +171,7 @@ def _programme_atomic_update(request, convention, programme, lot):
                     "type_habitat",
                     "type_operation",
                     "anru",
-                    "autre_locaux_hors_convention",
+                    "autres_locaux_hors_convention",
                     "nb_locaux_commerciaux",
                     "nb_bureaux",
                 ],
@@ -195,8 +195,8 @@ def _save_programme_and_lot(programme, lot, form):
     programme.type_habitat = form.cleaned_data["type_habitat"]
     programme.type_operation = form.cleaned_data["type_operation"]
     programme.anru = form.cleaned_data["anru"]
-    programme.autre_locaux_hors_convention = form.cleaned_data[
-        "autre_locaux_hors_convention"
+    programme.autres_locaux_hors_convention = form.cleaned_data[
+        "autres_locaux_hors_convention"
     ]
     programme.nb_locaux_commerciaux = form.cleaned_data["nb_locaux_commerciaux"]
     programme.nb_bureaux = form.cleaned_data["nb_bureaux"]
