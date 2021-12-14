@@ -40,11 +40,8 @@ class ProgrammeModelsTest(TestCase):
         bailleur = utils.create_bailleur()
         programme = utils.create_programme(bailleur)
 
-        count = 0
         for financement in [Financement.PLAI, Financement.PLUS]:
-            count += 1
             lot = Lot.objects.create(
-                numero=count,
                 bailleur=bailleur,
                 programme=programme,
                 financement=financement,

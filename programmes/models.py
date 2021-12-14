@@ -91,8 +91,7 @@ class Programme(IngestableModel):
         "numero_galion": "N° Opération GALION",
         "type_habitat": "Type d'habitat",
         "bailleur": "MOA (code SIRET)",
-        "administration": "Gestionnaire (code)"
-        #        "departement": "Département",
+        "administration": "Gestionnaire (code)",
     }
 
     id = models.AutoField(primary_key=True)
@@ -107,7 +106,6 @@ class Programme(IngestableModel):
     code_postal = models.CharField(max_length=10, null=True)
     ville = models.CharField(max_length=255, null=True)
     adresse = models.CharField(max_length=255, null=True)
-    departement = models.IntegerField(null=True)
     numero_galion = models.CharField(max_length=255, null=True)
     annee_gestion_programmation = models.IntegerField(null=True)
     zone_123 = models.IntegerField(null=True)
@@ -128,7 +126,7 @@ class Programme(IngestableModel):
     anru = models.BooleanField(default=False)
     nb_locaux_commerciaux = models.IntegerField(null=True)
     nb_bureaux = models.IntegerField(null=True)
-    autre_locaux_hors_convention = models.TextField(null=True)
+    autres_locaux_hors_convention = models.TextField(null=True)
     vendeur = models.TextField(null=True)
     acquereur = models.TextField(null=True)
     date_acte_notarie = models.DateField(null=True)
@@ -293,7 +291,6 @@ class Lot(IngestableModel):
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    numero = models.IntegerField(null=True)
     nb_logements = models.IntegerField(null=True)
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
