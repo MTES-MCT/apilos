@@ -56,4 +56,6 @@ urlpatterns = [
         {"sitemaps": SITEMAPS},
         name="django.contrib.sitemaps.views.sitemap",
     ),
+    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    path("api/", include(("api.urls", "api"), namespace="apis")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
