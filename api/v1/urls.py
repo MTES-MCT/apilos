@@ -3,7 +3,8 @@ from django.conf.urls import url
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from programmes.api import api_views as programme_api_views
+from programmes.api import api_views as programmes_api_views
+from bailleurs.api import api_views as bailleurs_api_views
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -21,9 +22,12 @@ schema_view = get_schema_view(
 urlpatterns = [
     # API authentication
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    # Bailleurs ressource
+    path("bailleurs/", bailleurs_api_views.BailleurList.as_view()),
+    path("bailleurs/<str:uuid>/", bailleurs_api_views.BailleurDetail.as_view()),
     # Programmes ressource
-    path("programmes/", programme_api_views.ProgrammeList.as_view()),
-    path("programmes/<str:uuid>/", programme_api_views.ProgrammeDetail.as_view()),
+    path("programmes/", programmes_api_views.ProgrammeList.as_view()),
+    path("programmes/<str:uuid>/", programmes_api_views.ProgrammeDetail.as_view()),
     # SWAGGER documentation
     url(
         r"^documentation(?P<format>\.json|\.yaml)$",

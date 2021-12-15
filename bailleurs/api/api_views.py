@@ -1,18 +1,18 @@
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status, mixins, generics
-from programmes.models import Programme
-from programmes.api.serializers import ProgrammeSerializer
+from bailleurs.models import Bailleur
+from bailleurs.api.serializers import BailleurSerializer
 
 
-class ProgrammeList(
+class BailleurList(
     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 ):
     """
-    List all programmes, or create a new programme.
+    List all bailleurs, or create a new bailleur.
     """
 
-    serializer_class = ProgrammeSerializer
+    serializer_class = BailleurSerializer
 
     def get_queryset(self):
         """
@@ -20,48 +20,48 @@ class ProgrammeList(
         for the currently authenticated user.
         """
         # user = self.request.user
-        return Programme.objects.all()
+        return Bailleur.objects.all()
 
     def get(self, request):  # , format=None):
         return self.list(request)  # , *args, **kwargs)
 
     def post(self, request):  # , format=None):
-        serializer = ProgrammeSerializer(data=request.data)
+        serializer = BailleurSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProgrammeDetail(generics.GenericAPIView):
+class BailleurDetail(generics.GenericAPIView):
     """
-    Retrieve, update or delete a programme instance.
+    Retrieve, update or delete a bailleur instance.
     """
 
-    serializer_class = ProgrammeSerializer
+    serializer_class = BailleurSerializer
 
     # pylint: disable=R0201 no-self-use
     def get_object_by_uuid(self, uuid):
         try:
-            return Programme.objects.get(uuid=uuid)
-        except Programme.DoesNotExist as does_not_exist:
+            return Bailleur.objects.get(uuid=uuid)
+        except Bailleur.DoesNotExist as does_not_exist:
             raise Http404 from does_not_exist
 
     def get(self, request, uuid):  # , format=None):
-        programme = self.get_object_by_uuid(uuid)
-        serializer = ProgrammeSerializer(programme)
+        bailleur = self.get_object_by_uuid(uuid)
+        serializer = BailleurSerializer(bailleur)
         return Response(serializer.data)
 
     def put(self, request, uuid):  # , format=None):
-        programme = self.get_object_by_uuid(uuid)
-        serializer = ProgrammeSerializer(programme, data=request.data, partial=True)
+        bailleur = self.get_object_by_uuid(uuid)
+        serializer = BailleurSerializer(bailleur, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, uuid):  # , format=None):
-        programme = self.get_object_by_uuid(uuid)
-        programme.delete()
+        bailleur = self.get_object_by_uuid(uuid)
+        bailleur.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
