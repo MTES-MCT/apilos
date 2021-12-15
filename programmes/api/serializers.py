@@ -56,7 +56,44 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Programme
-        fields = ["uuid", "nom", "type_habitat", "type_operation"]
+        fields = [
+            "uuid",
+            "nom",
+            # "bailleur",
+            # "administration",
+            "code_postal",
+            "ville",
+            "adresse",
+            "numero_galion",
+            "annee_gestion_programmation",
+            "zone_123",
+            "zone_abc",
+            "surface_utile_totale",
+            "type_habitat",
+            "type_operation",
+            "anru",
+            "nb_locaux_commerciaux",
+            "nb_bureaux",
+            "autres_locaux_hors_convention",
+            # "vendeur",
+            # "acquereur",
+            # "date_acte_notarie",
+            # "reference_notaire",
+            # "reference_publication_acte",
+            # "acte_de_propriete",
+            # "acte_notarial",
+            # "reference_cadastrale",
+            # "edd_volumetrique",
+            # "mention_publication_edd_volumetrique",
+            # "edd_classique",
+            # "mention_publication_edd_classique",
+            "permis_construire",
+            "date_achevement_previsible",
+            "date_achat",
+            "date_achevement",
+            "cree_le",
+            "mis_a_jour_le",
+        ]
 
     def create(self, validated_data):
         """
@@ -68,6 +105,7 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
         """
         Update and return an existing `Programme` instance, given the validated data.
         """
-        instance.nom = validated_data.get("nom", instance.title)
+        instance.nom = validated_data.get("nom", instance.nom)
+        instance.zone_123 = validated_data.get("zone_123", instance.zone_123)
         instance.save()
         return instance

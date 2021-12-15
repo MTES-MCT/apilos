@@ -1,55 +1,58 @@
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
+from django.http import Http404
+from rest_framework.response import Response
+from rest_framework import status, mixins, generics
 from programmes.models import Programme
 from programmes.api.serializers import ProgrammeSerializer
 
 
-@csrf_exempt
-def programme_list(request):
+class ProgrammeList(
+    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
+):
     """
-    List all code snippets, or create a new snippet.
+    List all programmes, or create a new programme.
     """
-    print("list")
-    if request.method == "GET":
-        snippets = Programme.objects.all()
-        serializer = ProgrammeSerializer(snippets, many=True)
-        return JsonResponse(serializer.data, safe=False)
 
-    if request.method == "POST":
-        data = JSONParser().parse(request)
-        serializer = ProgrammeSerializer(data=data)
+    serializer_class = ProgrammeSerializer
+
+    def get(self, request):  # , format=None):
+        return self.list(request)  # , *args, **kwargs)
+
+    def post(self, request):  # , format=None):
+        serializer = ProgrammeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
-    return JsonResponse({"error": "route error"}, status=400)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@csrf_exempt
-def programme_detail(request, uuid):
+class ProgrammeDetail(generics.GenericAPIView):
     """
-    Retrieve, update or delete a code snippet.
+    Retrieve, update or delete a programme instance.
     """
-    try:
-        programme = Programme.objects.get(uuid=uuid)
-    except Programme.DoesNotExist:
-        return HttpResponse(status=404)
 
-    if request.method == "GET":
+    serializer_class = ProgrammeSerializer
+
+    # pylint: disable=R0201 no-self-use
+    def get_object_by_uuid(self, uuid):
+        try:
+            return Programme.objects.get(uuid=uuid)
+        except Programme.DoesNotExist as does_not_exist:
+            raise Http404 from does_not_exist
+
+    def get(self, request, uuid):  # , format=None):
+        programme = self.get_object_by_uuid(uuid)
         serializer = ProgrammeSerializer(programme)
-        return JsonResponse(serializer.data)
+        return Response(serializer.data)
 
-    if request.method == "PUT":
-        data = JSONParser().parse(request)
-        serializer = ProgrammeSerializer(programme, data=data)
+    def put(self, request, uuid):  # , format=None):
+        programme = self.get_object_by_uuid(uuid)
+        serializer = ProgrammeSerializer(programme, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    if request.method == "DELETE":
+    def delete(self, request, uuid):  # , format=None):
+        programme = self.get_object_by_uuid(uuid)
         programme.delete()
-        return HttpResponse(status=204)
-
-    return JsonResponse({"error": "route error"}, status=400)
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -3,7 +3,7 @@ from django.conf.urls import url
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from programmes.api import api_views
+from programmes.api import api_views as programme_api_views
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -18,16 +18,13 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
-# router = routers.DefaultRouter()
-# router.register(r"programme", views.ProgrammeViewSet)
-
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    path("programmes/", api_views.programme_list),
-    path("programmes/<str:uuid>/", api_views.programme_detail),
-    #    path("", include(router.urls)),
+    # API authentication
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    # Programmes ressource
+    path("programmes/", programme_api_views.ProgrammeList.as_view()),
+    path("programmes/<str:uuid>/", programme_api_views.ProgrammeDetail.as_view()),
+    # SWAGGER documentation
     url(
         r"^documentation(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),
