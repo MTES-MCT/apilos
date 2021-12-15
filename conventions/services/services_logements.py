@@ -53,7 +53,7 @@ def logements_update(request, convention_uuid):
             if formset.is_valid():
                 _save_logements(formset, convention)
                 # All is OK -> Next:
-                return utils.base_response_redirect_recap_success(convention)
+                return utils.base_response_success(convention)
     # When display the file for the first time
     else:
         request.user.check_perm("convention.view_convention", convention)
