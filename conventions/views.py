@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
@@ -398,6 +399,15 @@ def generate_convention(request, convention_uuid):
 
 @login_required
 def load_xlsx_model(request, file_type):
+    if file_type not in [
+        "annexes",
+        "cadastre",
+        "financement",
+        "logements_edd",
+        "logements",
+        "stationnements",
+    ]:
+        raise PermissionDenied
     filepath = f"{settings.BASE_DIR}/static/files/{file_type}.xlsx"
 
     with open(filepath, "rb") as excel:

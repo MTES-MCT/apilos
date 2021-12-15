@@ -94,8 +94,6 @@ def generate_pdf(file_stream, convention):
     # save the convention docx locally
     local_docx_path = str(settings.MEDIA_ROOT) + f"/convention_{convention.uuid}.docx"
 
-    print("settings.CONVERTAPI_SECRET")
-    print(settings.CONVERTAPI_SECRET)
     # get a pdf version
     if settings.CONVERTAPI_SECRET:
         with open(local_docx_path, "wb") as local_file:
