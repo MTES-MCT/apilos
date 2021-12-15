@@ -10,6 +10,7 @@ djhtml>=1.4.9
 dj-database-url>=0.5.0
 dj-static>=0.0.6
 docxtpl>=0.12.0
+drf-yasg>=1.20.0
 gunicorn>=20.1.0
 openpyxl>=3.0.7
 Pillow>=8.3.2
