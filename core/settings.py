@@ -207,7 +207,6 @@ SESSION_COOKIE_SAMESITE = "Lax"
 # https://django-csp.readthedocs.io/en/latest/configuration.html
 CSP_DEFAULT_SRC = "'none'"
 CSP_SCRIPT_SRC = ("https://stats.data.gouv.fr/piwik.js", "'self'")
-# CSP_SCRIPT_SRC_ELEM = ("https://stats.data.gouv.fr/piwik.js",)  # Matomo
 CSP_IMG_SRC = ("'self'", "data:")
 CSP_OBJECT_SRC = "'none'"
 CSP_FONT_SRC = "'self'", "data:"
