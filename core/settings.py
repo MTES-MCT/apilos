@@ -198,6 +198,9 @@ else:
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 6 * 60 * 60
+
 # Security settings
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -222,4 +225,8 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
 }

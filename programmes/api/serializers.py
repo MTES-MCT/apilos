@@ -57,6 +57,12 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
         """
         Create and return a new `Snippet` instance, given the validated data.
         """
+        if "bailleur_uuid" not in validated_data.keys():
+            raise serializers.ValidationError(
+                {
+                    "bailleur_uuid": "L'identifiant unique est obligatoire pour créer le programme"
+                }
+            )
         bailleur_uuid = validated_data.pop("bailleur_uuid")
         try:
             bailleur = Bailleur.objects.get(uuid=bailleur_uuid)
@@ -68,7 +74,42 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
         """
         Update and return an existing `Programme` instance, given the validated data.
         """
-        instance.nom = validated_data.get("nom", instance.nom)
-        instance.zone_123 = validated_data.get("zone_123", instance.zone_123)
+
+        if "bailleur_uuid" in validated_data.keys():
+            bailleur_uuid = validated_data.pop("bailleur_uuid")
+            try:
+                instance.bailleur = Bailleur.objects.get(uuid=bailleur_uuid)
+            except Bailleur.DoesNotExist as does_not_exist:
+                raise Http404("bailleur non trouvé") from does_not_exist
+
+        for field in [
+            "nom",
+            # "administration",
+            "code_postal",
+            "ville",
+            "adresse",
+            "numero_galion",
+            "annee_gestion_programmation",
+            "zone_123",
+            "zone_abc",
+            "surface_utile_totale",
+            "type_habitat",
+            "type_operation",
+            "anru",
+            "nb_locaux_commerciaux",
+            "nb_bureaux",
+            "autres_locaux_hors_convention",
+            "date_acte_notarie",
+            "mention_publication_edd_volumetrique",
+            "mention_publication_edd_classique",
+            "permis_construire",
+            "date_achevement_previsible",
+            "date_achat",
+            "date_achevement",
+        ]:
+            setattr(
+                instance, field, validated_data.get(field, getattr(instance, field))
+            )
+
         instance.save()
         return instance

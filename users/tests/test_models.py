@@ -80,13 +80,13 @@ class AdministrationsModelsTest(TestCase):
                     content_type__model="convention", codename="add_convention"
                 ),
                 Permission.objects.get(
-                    content_type__model="logement", codename="change_logement"
+                    content_type__model="convention", codename="change_convention"
                 ),
                 Permission.objects.get(
-                    content_type__model="logement", codename="delete_logement"
+                    content_type__model="convention", codename="delete_convention"
                 ),
                 Permission.objects.get(
-                    content_type__model="logement", codename="view_logement"
+                    content_type__model="convention", codename="view_convention"
                 ),
             ]
         )
@@ -108,10 +108,10 @@ class AdministrationsModelsTest(TestCase):
                     content_type__model="convention", codename="add_convention"
                 ),
                 Permission.objects.get(
-                    content_type__model="logement", codename="change_logement"
+                    content_type__model="convention", codename="change_convention"
                 ),
                 Permission.objects.get(
-                    content_type__model="logement", codename="view_logement"
+                    content_type__model="convention", codename="view_convention"
                 ),
             ]
         )
@@ -210,6 +210,9 @@ class AdministrationsModelsTest(TestCase):
         self.assertFalse(user_instructeur.full_editable_convention(convention))
         self.assertFalse(
             user_instructeur_metropole.full_editable_convention(convention)
+        )
+        self.assertTrue(
+            user_instructeur.has_perm("convention.change_convention", convention)
         )
         self.assertTrue(
             user_instructeur.has_perm("convention.change_convention", convention)
