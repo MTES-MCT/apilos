@@ -1,8 +1,12 @@
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status, mixins, generics
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from api.csrf_exempt_session_authentication import CsrfExemptSessionAuthentication
 from bailleurs.models import Bailleur
 from bailleurs.api.serializers import BailleurSerializer
+from bailleurs.api.permissions import BailleurPermission
 
 
 class BailleurList(
@@ -11,6 +15,9 @@ class BailleurList(
     """
     List all bailleurs, or create a new bailleur.
     """
+
+    authentication_classes = [CsrfExemptSessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated, BailleurPermission]
 
     serializer_class = BailleurSerializer
 
@@ -36,6 +43,9 @@ class BailleurDetail(generics.GenericAPIView):
     """
     Retrieve, update or delete a bailleur instance.
     """
+
+    authentication_classes = [CsrfExemptSessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated, BailleurPermission]
 
     serializer_class = BailleurSerializer
 

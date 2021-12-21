@@ -4,6 +4,7 @@ coverage>=6.1.2
 Django>=3.0,<4.0
 djangorestframework>=3.12.4
 django-csp>=3.7
+django-filter>=21.1
 django-mailjet>=0.3.1
 django-storages>=1.11.1
 djhtml>=1.4.9

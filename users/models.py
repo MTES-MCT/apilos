@@ -4,6 +4,7 @@ from django.db import models
 from bailleurs.models import Bailleur
 
 from conventions.models import Convention, ConventionStatut
+from instructeurs.models import Administration
 from programmes.models import Lot, Programme
 
 from users.type_models import TypeRole
@@ -95,11 +96,38 @@ class User(AbstractUser):
             return {"bailleur_id__in": bailleur_ids}
 
         raise Exception(
-            "L'utilisateur courant n'a pas de role associé permattant le filtre sur les bailleurs"
+            "L'utilisateur courant n'a pas de role associé permattant le filtre sur les programmes"
         )
 
     def programmes(self):
         return Programme.objects.filter(**self.programme_filter())
+
+    #
+    # list of administration following role
+    # super admin = all administration, filtre = {}
+    # instructeur = ???, filtre = {}
+    # bailleur = ???, filtre = {}
+    # else raise
+    #
+    def administration_filter(self):
+        if self.is_superuser:
+            return {}
+
+        # to do : manage programme related to geo for instructeur
+        if self.is_instructeur():
+            return {}
+
+        # to do : manage programme related to geo for bailleur
+        if self.is_bailleur():
+            return {}
+
+        raise Exception(
+            "L'utilisateur courant n'a pas de role associé permattant le "
+            + "filtre sur les administrations"
+        )
+
+    def administrations(self):
+        return Administration.objects.filter(**self.administration_filter())
 
     #
     # list of programme following role

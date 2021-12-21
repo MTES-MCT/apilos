@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     "comments.apps.CommentsConfig",
     "rest_framework",
     "drf_yasg",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -229,4 +230,8 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
+}
+
+SWAGGER_SETTINGS = {
+    "DEFAULT_AUTO_SCHEMA_CLASS": "api.auto_schema.ReadWriteAutoSchema",
 }

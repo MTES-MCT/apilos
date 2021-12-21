@@ -1,6 +1,8 @@
+from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from rest_framework import serializers
 
+from bailleurs.api.permissions import BailleurPermission
 from bailleurs.models import Bailleur
 from bailleurs.api.serializers import BailleurSerializer
 
@@ -19,6 +21,7 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
             "bailleur",
             "bailleur_uuid",
             # "administration",
+            # "administration_uuid",
             "code_postal",
             "ville",
             "adresse",
@@ -55,7 +58,7 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         """
-        Create and return a new `Snippet` instance, given the validated data.
+        Create and return a new `Programme` instance, given the validated data.
         """
         if "bailleur_uuid" not in validated_data.keys():
             raise serializers.ValidationError(
@@ -66,6 +69,10 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
         bailleur_uuid = validated_data.pop("bailleur_uuid")
         try:
             bailleur = Bailleur.objects.get(uuid=bailleur_uuid)
+            if not BailleurPermission.has_object_permission(
+                self, self.context, self, bailleur
+            ):
+                raise PermissionDenied()
         except Bailleur.DoesNotExist as does_not_exist:
             raise Http404("bailleur non trouvé") from does_not_exist
         return Programme.objects.create(**validated_data, bailleur=bailleur)
@@ -75,10 +82,18 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
         Update and return an existing `Programme` instance, given the validated data.
         """
 
+        current_user = self.context.user
         if "bailleur_uuid" in validated_data.keys():
             bailleur_uuid = validated_data.pop("bailleur_uuid")
             try:
                 instance.bailleur = Bailleur.objects.get(uuid=bailleur_uuid)
+                if not BailleurPermission.has_object_permission(
+                    self, self.context, self, instance.bailleur
+                ):
+                    raise PermissionDenied
+
+                if instance.bailleur not in current_user.bailleurs():
+                    raise PermissionDenied()
             except Bailleur.DoesNotExist as does_not_exist:
                 raise Http404("bailleur non trouvé") from does_not_exist
 

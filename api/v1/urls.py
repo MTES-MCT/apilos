@@ -5,6 +5,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from programmes.api import api_views as programmes_api_views
 from bailleurs.api import api_views as bailleurs_api_views
+from instructeurs.api import api_views as instructeurs_api_views
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -28,6 +29,12 @@ urlpatterns = [
     # Programmes ressource
     path("programmes/", programmes_api_views.ProgrammeList.as_view()),
     path("programmes/<str:uuid>/", programmes_api_views.ProgrammeDetail.as_view()),
+    # Administrateurs ressource
+    path("administrateurs/", instructeurs_api_views.AdministrationList.as_view()),
+    path(
+        "administrateurs/<str:uuid>/",
+        instructeurs_api_views.AdministrationDetail.as_view(),
+    ),
     # SWAGGER documentation
     url(
         r"^documentation(?P<format>\.json|\.yaml)$",

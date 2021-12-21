@@ -2,11 +2,25 @@ from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from rest_framework import status, mixins, generics
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+from api.csrf_exempt_session_authentication import CsrfExemptSessionAuthentication
 from programmes.models import Programme
 from programmes.api.serializers import ProgrammeSerializer
 from programmes.api.permissions import ProgrammePermission
+
+nom_param = openapi.Parameter(
+    "nom",
+    openapi.IN_QUERY,
+    description="le nom du prog",
+    required=False,
+    type=openapi.TYPE_STRING,
+)
 
 
 class ProgrammeList(
@@ -16,10 +30,14 @@ class ProgrammeList(
     List all programmes, or create a new programme.
     """
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    authentication_classes = [CsrfExemptSessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated, ProgrammePermission]
 
     serializer_class = ProgrammeSerializer
+
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ["nom", "code_postal", "ville"]
+    filterset_fields = ["nom", "code_postal", "ville", "numero_galion"]
 
     def get_queryset(self):
         """
@@ -28,11 +46,12 @@ class ProgrammeList(
         """
         return self.request.user.programmes()
 
+    @swagger_auto_schema(manual_parameters=[nom_param])
     def get(self, request):  # , format=None):
         return self.list(request)  # , *args, **kwargs)
 
     def post(self, request):  # , format=None):
-        serializer = ProgrammeSerializer(data=request.data)
+        serializer = ProgrammeSerializer(data=request.data, context=request)
         if serializer.is_valid():
             serializer.save()
 
@@ -45,7 +64,7 @@ class ProgrammeDetail(generics.GenericAPIView):
     Retrieve, update or delete a programme instance.
     """
 
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    authentication_classes = [CsrfExemptSessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated, ProgrammePermission]
 
     serializer_class = ProgrammeSerializer
@@ -73,7 +92,9 @@ class ProgrammeDetail(generics.GenericAPIView):
             self, request, self, programme
         ):
             raise PermissionDenied
-        serializer = ProgrammeSerializer(programme, data=request.data, partial=True)
+        serializer = ProgrammeSerializer(
+            programme, data=request.data, partial=True, context=request
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
