@@ -19,6 +19,18 @@ import dj_database_url
 
 def get_env_variable(name, cast=str, default=""):
     try:
+        if cast == bool:
+            return os.environ[name].lower() in [
+                "true",
+                "1",
+                "t",
+                "y",
+                "yes",
+                "yeah",
+                "yup",
+                "certainly",
+                "uh-huh",
+            ]
         return cast(os.environ[name])
     # pylint: disable=W0702, bare-except
     except:
@@ -54,7 +66,7 @@ try:
 except KeyError:
     pass
 
-ALLOWED_HOSTS = ["localhost"] + env_allowed_hosts
+ALLOWED_HOSTS = ["localhost", "local.beta.gouv.fr"] + env_allowed_hosts
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -75,6 +87,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_yasg",
     "django_filters",
+    "django_cas_ng",
 ]
 
 MIDDLEWARE = [
@@ -87,6 +100,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
+    "django_cas_ng.middleware.CASMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -203,8 +217,9 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 6 * 60 * 60
 
 # Security settings
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+if ENVIRONMENT != "development":
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = "Strict"
 SESSION_COOKIE_SAMESITE = "Lax"
 
@@ -235,3 +250,24 @@ REST_FRAMEWORK = {
 SWAGGER_SETTINGS = {
     "DEFAULT_AUTO_SCHEMA_CLASS": "api.auto_schema.ReadWriteAutoSchema",
 }
+
+CERBERE_AUTH = get_env_variable("CERBERE_AUTH", cast=bool)
+
+if CERBERE_AUTH:
+    AUTHENTICATION_BACKENDS = ["core.backends.CerbereCASBackend"]  # custom backend CAS
+
+    # CAS config
+    CAS_SERVER_URL = (
+        "https://authentification.din.developpement-durable.gouv.fr/cas/public"
+    )
+    CAS_VERSION = "CAS_2_SAML_1_0"
+    CAS_USERNAME_ATTRIBUTE = "username"
+    CAS_APPLY_ATTRIBUTES_TO_USER = True
+    CAS_RENAME_ATTRIBUTES = {
+        "UTILISATEUR.ID": "username",
+        "UTILISATEUR.NOM": "last_name",
+        "UTILISATEUR.PRENOM": "first_name",
+        "UTILISATEUR.MEL": "email",
+    }  # ,'UTILISATEUR.UNITE':'unite'
+
+    LOGIN_URL = "/accounts/cerbere-login"
