@@ -1,9 +1,11 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import PermissionDenied
 from django.db import models
+from bailleurs.models import Bailleur
 
 from conventions.models import Convention, ConventionStatut
-from programmes.models import Lot
+from instructeurs.models import Administration
+from programmes.models import Lot, Programme
 
 from users.type_models import TypeRole
 
@@ -15,8 +17,13 @@ class slist(list):
 
 
 class User(AbstractUser):
-    def _has_view_convention(self, obj):
+    def has_object_permission(self, obj):
         if isinstance(obj, Convention):
+            # is bailleur of the convention or is instructeur of the convention
+            return self.role_set.filter(
+                bailleur_id=obj.bailleur_id
+            ) or self.role_set.filter(administration_id=obj.programme.administration_id)
+        if isinstance(obj, Lot):
             # is bailleur of the convention or is instructeur of the convention
             return self.role_set.filter(
                 bailleur_id=obj.bailleur_id
@@ -24,46 +31,21 @@ class User(AbstractUser):
         raise Exception(
             "Les permissions ne sont pas correctement configurer, un "
             + "objet de type Convention doit être asocié à la "
-            + "permission 'view_convention'"
-        )
-
-    def _has_change_convention(self, obj):
-        if isinstance(obj, Convention):
-            if (
-                # is bailleur of the convention
-                self.role_set.filter(bailleur_id=obj.bailleur_id)
-                # is instructeur of the convention
-                or self.role_set.filter(
-                    administration_id=obj.programme.administration_id
-                )
-            ):
-                return obj.statut != ConventionStatut.CLOS
-            return False
-        raise Exception(
-            "Les permissions ne sont pas correctement configurer, un "
-            + "objet de type Convention doit être asocié à la "
             + "permission 'change_convention'"
         )
 
     def has_perm(self, perm, obj=None):
-        if self.is_staff:
+        if self.is_superuser:
             return True
-        # request.user.check_perm("convention.change_convention", convention)
-        if perm == "convention.change_convention":
-            return self._has_change_convention(obj)
-        # request.user.check_perm("convention.add_convention", lot)
-        if perm == "convention.add_convention":
-            if isinstance(obj, Lot):
-                # is bailleur of the convention or is instructeur of the convention
-                return self.role_set.filter(
-                    bailleur_id=obj.bailleur_id
-                ) or self.role_set.filter(
-                    administration_id=obj.programme.administration_id
-                )
-        # request.user.check_perm("convention.view_convention", convention)
-        if perm == "convention.view_convention":
-            return self._has_view_convention(obj)
-
+        # check object permission
+        if obj is not None:
+            if not self.has_object_permission(obj):
+                return False
+            # forbid to change close convention
+            if perm == "convention.change_convention" and isinstance(obj, Convention):
+                if obj.statut == ConventionStatut.CLOS:
+                    return False
+        # check permission itself
         permissions = []
         for role in self.role_set.all():
             permissions += map(
@@ -81,32 +63,102 @@ class User(AbstractUser):
     def is_bailleur(self, bailleur_id=None):
         if bailleur_id is not None:
             return self.roles.filter(bailleur_id=bailleur_id)
-        return self.is_role(TypeRole.BAILLEUR)
+        return self.is_role(TypeRole.BAILLEUR) or self.is_superuser
 
     def is_instructeur(self):
-        return self.is_role(TypeRole.INSTRUCTEUR) or self.is_staff
+        return self.is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
 
     def is_role(self, role):
         return role in map(lambda r: r.typologie, self.role_set.all())
 
+    #
+    # list of programme following role
+    # super admin = all programme, filtre = {}
+    # instructeur = all programme following geo, filtre = {}
+    # bailleur = programme which belongs to the bailleurs, filtre = {bailleur_id__in: [x,y,z]}
+    # else raise
+    #
     def programme_filter(self):
-        bailleur_ids = list(
-            map(
-                lambda role: role.bailleur_id,
-                self.role_set.filter(typologie=TypeRole.BAILLEUR),
+        if self.is_superuser:
+            return {}
+
+        # to do : manage programme related to geo for instructeur
+        if self.is_instructeur():
+            return {}
+
+        if self.is_bailleur():
+            bailleur_ids = list(
+                map(
+                    lambda role: role.bailleur_id,
+                    self.role_set.filter(typologie=TypeRole.BAILLEUR),
+                )
             )
-        )
-        if bailleur_ids:
             return {"bailleur_id__in": bailleur_ids}
-        return {}
+
+        raise Exception(
+            "L'utilisateur courant n'a pas de role associé permattant le filtre sur les programmes"
+        )
+
+    def programmes(self):
+        return Programme.objects.filter(**self.programme_filter())
+
+    #
+    # list of administration following role
+    # super admin = all administration, filtre = {}
+    # instructeur = ???, filtre = {}
+    # bailleur = ???, filtre = {}
+    # else raise
+    #
+    def administration_filter(self):
+        if self.is_superuser:
+            return {}
+
+        # to do : manage programme related to geo for instructeur
+        if self.is_instructeur():
+            return {}
+
+        # to do : manage programme related to geo for bailleur
+        if self.is_bailleur():
+            return {}
+
+        raise Exception(
+            "L'utilisateur courant n'a pas de role associé permattant le "
+            + "filtre sur les administrations"
+        )
+
+    def administrations(self):
+        return Administration.objects.filter(**self.administration_filter())
+
+    #
+    # list of bailleurs following role
+    # super admin = all bailleurs, filtre = {}
+    # instructeur = all bailleurs following geo, filtre = {}
+    # bailleur = bailleurs which belongs to the user as a bailleur, filtre = {id__in: [x,y,z]}
+    # else raise
+    #
+    def bailleur_filter(self):
+        if self.is_superuser:
+            return {}
+
+        # to do : manage programme related to geo for instructeur
+        if self.is_instructeur():
+            return {}
+
+        if self.is_bailleur():
+            bailleur_ids = list(
+                map(
+                    lambda role: role.bailleur_id,
+                    self.role_set.filter(typologie=TypeRole.BAILLEUR),
+                )
+            )
+            return {"id__in": bailleur_ids}
+
+        raise Exception(
+            "L'utilisateur courant n'a pas de role associé permattant le filtre sur les bailleurs"
+        )
 
     def bailleurs(self):
-        return slist(
-            map(
-                lambda role: role.bailleur,
-                self.role_set.filter(typologie=TypeRole.BAILLEUR),
-            )
-        )
+        return Bailleur.objects.filter(**self.bailleur_filter())
 
     def convention_filter(self):
         bailleur_ids = list(
