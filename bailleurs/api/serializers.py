@@ -15,6 +15,7 @@ class BailleurSerializer(serializers.HyperlinkedModelSerializer):
             "cree_le",
             "mis_a_jour_le",
         ]
+        ref_name = "BailleurEmbeddedSchema"
 
     def create(self, validated_data):
         """

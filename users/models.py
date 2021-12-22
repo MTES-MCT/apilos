@@ -130,31 +130,35 @@ class User(AbstractUser):
         return Administration.objects.filter(**self.administration_filter())
 
     #
-    # list of programme following role
-    # super admin = all programme, filtre = {}
-    # instructeur = all bailleurs in the territory, filtre = {}
-    # bailleur = programme which belongs to the bailleurs, filtre = {bailleur_id__in: [x,y,z]}
+    # list of bailleurs following role
+    # super admin = all bailleurs, filtre = {}
+    # instructeur = all bailleurs following geo, filtre = {}
+    # bailleur = bailleurs which belongs to the user as a bailleur, filtre = {id__in: [x,y,z]}
     # else raise
     #
-    def bailleurs(self):
+    def bailleur_filter(self):
         if self.is_superuser:
-            return Bailleur.objects.all()
+            return {}
 
-        # to do : manage bailleurs related to geo for instructeur
+        # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return Bailleur.objects.all()
+            return {}
 
         if self.is_bailleur():
-            return slist(
+            bailleur_ids = list(
                 map(
-                    lambda role: role.bailleur,
+                    lambda role: role.bailleur_id,
                     self.role_set.filter(typologie=TypeRole.BAILLEUR),
                 )
             )
+            return {"id__in": bailleur_ids}
+
         raise Exception(
-            "L'utilisateur courant n'a pas de role associé"
-            + " permattant le filtre sur les bailleurs"
+            "L'utilisateur courant n'a pas de role associé permattant le filtre sur les bailleurs"
         )
+
+    def bailleurs(self):
+        return Bailleur.objects.filter(**self.bailleur_filter())
 
     def convention_filter(self):
         bailleur_ids = list(

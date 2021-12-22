@@ -9,6 +9,8 @@ class AdministrationPermission(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
+        #        administration = Administration.objects.get(uuid=obj.uuid)
+        #        return administration in request.user.administrations()
         try:
             request.user.administrations().get(uuid=obj.uuid)
         except Administration.DoesNotExist:

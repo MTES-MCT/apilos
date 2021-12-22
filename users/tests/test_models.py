@@ -13,6 +13,14 @@ from programmes.models import Lot, Financement
 class AdministrationsModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        User.objects.create(
+            username="nicolas",
+            password="12345",
+            first_name="Nicolas",
+            last_name="Oudard",
+            email="nicolas@apilos.fr",
+            is_superuser=True,
+        )
         user_instructeur = User.objects.create(
             username="sabine",
             password="12345",
@@ -313,12 +321,33 @@ class AdministrationsModelsTest(TestCase):
             )
 
     def test_programme_filter(self):
+        user_superuser = User.objects.get(username="nicolas")
+        self.assertEqual(user_superuser.programme_filter(), {})
         user_instructeur = User.objects.get(username="sabine")
         self.assertEqual(user_instructeur.programme_filter(), {})
         user_bailleur = User.objects.get(username="raph")
         self.assertEqual(
             user_bailleur.programme_filter(),
             {"bailleur_id__in": [user_bailleur.role_set.all()[0].bailleur_id]},
+        )
+
+    def test_administration_filter(self):
+        user_superuser = User.objects.get(username="nicolas")
+        self.assertEqual(user_superuser.administration_filter(), {})
+        user_instructeur = User.objects.get(username="sabine")
+        self.assertEqual(user_instructeur.administration_filter(), {})
+        user_bailleur = User.objects.get(username="raph")
+        self.assertEqual(user_bailleur.administration_filter(), {})
+
+    def test_bailleur_filter(self):
+        user_superuser = User.objects.get(username="nicolas")
+        self.assertEqual(user_superuser.bailleur_filter(), {})
+        user_instructeur = User.objects.get(username="sabine")
+        self.assertEqual(user_instructeur.bailleur_filter(), {})
+        user_bailleur = User.objects.get(username="raph")
+        self.assertEqual(
+            user_bailleur.bailleur_filter(),
+            {"id__in": [user_bailleur.role_set.all()[0].bailleur_id]},
         )
 
     def test_convention_filter(self):

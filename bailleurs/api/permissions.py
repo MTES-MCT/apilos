@@ -9,6 +9,8 @@ class BailleurPermission(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
+        #        bailleur = Bailleur.objects.get(uuid=obj.uuid)
+        #        return bailleur in request.user.bailleurs()
         try:
             request.user.bailleurs().get(uuid=obj.uuid)
         except Bailleur.DoesNotExist:

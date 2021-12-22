@@ -2,6 +2,10 @@ from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from rest_framework import serializers
 
+from instructeurs.api.permissions import AdministrationPermission
+from instructeurs.api.serializers import AdministrationSerializer
+from instructeurs.models import Administration
+
 from bailleurs.api.permissions import BailleurPermission
 from bailleurs.models import Bailleur
 from bailleurs.api.serializers import BailleurSerializer
@@ -12,6 +16,8 @@ from programmes.models import Programme
 class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
     bailleur = BailleurSerializer(read_only=True)
     bailleur_uuid = serializers.CharField(write_only=True)
+    administration = AdministrationSerializer(read_only=True)
+    administration_uuid = serializers.CharField(write_only=True)
 
     class Meta:
         model = Programme
@@ -20,8 +26,8 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
             "nom",
             "bailleur",
             "bailleur_uuid",
-            # "administration",
-            # "administration_uuid",
+            "administration",
+            "administration_uuid",
             "code_postal",
             "ville",
             "adresse",
@@ -60,6 +66,11 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
         """
         Create and return a new `Programme` instance, given the validated data.
         """
+        validated_data = self._get_bailleur(validated_data)
+        validated_data = self._get_administration(validated_data)
+        return Programme.objects.create(**validated_data)
+
+    def _get_bailleur(self, validated_data):
         if "bailleur_uuid" not in validated_data.keys():
             raise serializers.ValidationError(
                 {
@@ -75,7 +86,28 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
                 raise PermissionDenied()
         except Bailleur.DoesNotExist as does_not_exist:
             raise Http404("bailleur non trouvé") from does_not_exist
-        return Programme.objects.create(**validated_data, bailleur=bailleur)
+        validated_data["bailleur"] = bailleur
+        return validated_data
+
+    def _get_administration(self, validated_data):
+        if "administration_uuid" not in validated_data.keys():
+            raise serializers.ValidationError(
+                {
+                    "administration_uuid": "L'identifiant unique est"
+                    + " obligatoire pour créer le programme"
+                }
+            )
+        administration_uuid = validated_data.pop("administration_uuid")
+        try:
+            administration = Administration.objects.get(uuid=administration_uuid)
+            if not AdministrationPermission.has_object_permission(
+                self, self.context, self, administration
+            ):
+                raise PermissionDenied()
+        except Administration.DoesNotExist as does_not_exist:
+            raise Http404("administration non trouvé") from does_not_exist
+        validated_data["administration"] = administration
+        return validated_data
 
     def update(self, instance, validated_data):
         """

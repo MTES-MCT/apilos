@@ -12,6 +12,7 @@ class AdministrationSerializer(serializers.HyperlinkedModelSerializer):
             "code",
             "ville_signature",
         ]
+        ref_name = "AdministrationEmbeddedSchema"
 
     def create(self, validated_data):
         """
