@@ -72,6 +72,9 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "upload.apps.UploadConfig",
     "comments.apps.CommentsConfig",
+    "rest_framework",
+    "drf_yasg",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -196,6 +199,9 @@ else:
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 6 * 60 * 60
+
 # Security settings
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -204,8 +210,7 @@ SESSION_COOKIE_SAMESITE = "Lax"
 
 # https://django-csp.readthedocs.io/en/latest/configuration.html
 CSP_DEFAULT_SRC = "'none'"
-CSP_SCRIPT_SRC = ("https://stats.data.gouv.fr/piwik.js",)
-# CSP_SCRIPT_SRC_ELEM = ("https://stats.data.gouv.fr/piwik.js",)  # Matomo
+CSP_SCRIPT_SRC = ("https://stats.data.gouv.fr/piwik.js", "'self'")
 CSP_IMG_SRC = ("'self'", "data:")
 CSP_OBJECT_SRC = "'none'"
 CSP_FONT_SRC = "'self'", "data:"
@@ -217,3 +222,16 @@ CSP_INCLUDE_NONCE_IN = [
 ]
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+}
+
+SWAGGER_SETTINGS = {
+    "DEFAULT_AUTO_SCHEMA_CLASS": "api.auto_schema.ReadWriteAutoSchema",
+}
