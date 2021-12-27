@@ -1,25 +1,37 @@
 {% if object_field %}
     <div class="block--row-strech" id="{{object_field}}_div">
         <div class="block--row-strech-1">
-            <p class="fr-my-1w">
-                {% if value %}
-                    <span class="fr-fi-check-line" aria-hidden="true"></span>
-                {% else %}
-                    <span class="fr-fi-close-line" aria-hidden="true"></span>
-                {% endif %}
-                {{label}}
-            </p>
+            <div class="fr-mt-1w content__fileblock">
+                <div class="content__icons content__icons--small content__icons--darkgrey">
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="checkboxIconTitle">
+                        <title id="checkboxIconTitle">Checkbox</title>
+                        <rect x="21" y="3" width="18" height="18" rx="1" transform="rotate(90 21 3)"></rect>
+                        {% if value %}
+                            <path d="M6.66666 12.6667L9.99999 16L17.3333 8.66669"></path>
+                        {% endif %}
+                    </svg>
+                </div>
+                <div class="fr-mb-1w">
+                    {{label}}
+                </div>
+            </div>
         </div>
         {% include "common/comment_icon.html" with form_input_id=object_field object_field=object_field comments=comments small=True %}
     </div>
     {% include "common/comment_dialog.html" with form_input_id=object_field form_input_html=object_field convention=convention object_field=object_field comments=comments %}
 {% else %}
-    <p class="fr-my-1w">
-        {% if value %}
-            <span class="fr-fi-check-line" aria-hidden="true"></span>
-        {% else %}
-            <span class="fr-fi-close-line" aria-hidden="true"></span>
-        {% endif %}
-        {{label}}
-    </p>
+    <div class="fr-mb-1w content__fileblock">
+        <div class="content__icons content__icons--small content__icons--darkgrey">
+            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="checkboxIconTitle">
+                <title id="checkboxIconTitle">Checkbox</title>
+                <rect x="21" y="3" width="18" height="18" rx="1" transform="rotate(90 21 3)"></rect>
+                {% if value %}
+                    <path d="M6.66666 12.6667L9.99999 16L17.3333 8.66669"></path>
+                {% endif %}
+            </svg>
+        </div>
+        <div class="fr-mb-1w">
+            {{label}}
+        </div>
+    </div>
 {% endif %}

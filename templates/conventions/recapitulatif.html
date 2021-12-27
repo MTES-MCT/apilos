@@ -15,7 +15,7 @@
 
 
 {% block content %}
-    {% with programme_uuid=programme.uuid|slugify convention_uuid=convention.uuid|slugify %}
+    {% with programme_uuid=programme.uuid|slugify convention_uuid=convention.uuid|slugify lot_uuid=lot.uuid|slugify %}
         <div class="fr-container-fluid ds_banner">
             {% include "common/convention_edit_info.html" with convention=convention %}
             {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
@@ -554,19 +554,19 @@
                                         <div class="fr-grid-row fr-grid-row--gutters">
                                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
 
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_caves label="Caves" object_field="lot__annexe_caves__"|add:lot.uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_soussols label="Sous-sols" object_field="lot__annexe_soussols__"|add:lot.uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_remises label="Remises" object_field="lot__annexe_remises__"|add:lot.uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_ateliers label="Ateliers" object_field="lot__annexe_ateliers__"|add:lot.uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_sechoirs label="Séchoirs" object_field="lot__annexe_sechoirs__"|add:lot.uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_celliers label="Celliers extérieurs au logement" object_field="lot__annexe_celliers__"|add:lot.uuid %}
+                                                {% include "common/display_checkbox.html" with value=lot.annexe_caves label="Caves" object_field="lot__annexe_caves__"|add:lot_uuid %}
+                                                {% include "common/display_checkbox.html" with value=lot.annexe_soussols label="Sous-sols" object_field="lot__annexe_soussols__"|add:lot_uuid %}
+                                                {% include "common/display_checkbox.html" with value=lot.annexe_remises label="Remises" object_field="lot__annexe_remises__"|add:lot_uuid %}
+                                                {% include "common/display_checkbox.html" with value=lot.annexe_ateliers label="Ateliers" object_field="lot__annexe_ateliers__"|add:lot_uuid %}
+                                                {% include "common/display_checkbox.html" with value=lot.annexe_sechoirs label="Séchoirs" object_field="lot__annexe_sechoirs__"|add:lot_uuid %}
+                                                {% include "common/display_checkbox.html" with value=lot.annexe_celliers label="Celliers extérieurs au logement" object_field="lot__annexe_celliers__"|add:lot_uuid %}
                                             </div>
                                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_resserres label="Resserres" object_field="lot__annexe_resserres__"|add:lot.uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_combles label="Combles et greniers aménageables" object_field="lot__annexe_combles__"|add:lot.uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_balcons label="Balcons" object_field="lot__annexe_balcons__"|add:lot.uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_loggias label="Loggias et Vérandas" object_field="lot__annexe_loggias__"|add:lot.uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_terrasses label="Terrasses" sublabel="Dans la limite de 9 m2, les parties de terrasses accessibles en étage ou aménagées sur ouvrage enterré ou à moitié enterré" object_field="lot__annexe_terrasses__"|add:lot.uuid %}
+                                                {% include "common/display_checkbox.html" with value=lot.annexe_resserres label="Resserres" object_field="lot__annexe_resserres__"|add:lot_uuid %}
+                                                {% include "common/display_checkbox.html" with value=lot.annexe_combles label="Combles et greniers aménageables" object_field="lot__annexe_combles__"|add:lot_uuid %}
+                                                {% include "common/display_checkbox.html" with value=lot.annexe_balcons label="Balcons" object_field="lot__annexe_balcons__"|add:lot_uuid %}
+                                                {% include "common/display_checkbox.html" with value=lot.annexe_loggias label="Loggias et Vérandas" object_field="lot__annexe_loggias__"|add:lot_uuid %}
+                                                {% include "common/display_checkbox.html" with value=lot.annexe_terrasses label="Terrasses" sublabel="Dans la limite de 9 m2, les parties de terrasses accessibles en étage ou aménagées sur ouvrage enterré ou à moitié enterré" object_field="lot__annexe_terrasses__"|add:lot_uuid %}
                                             </div>
                                         </div>
 
