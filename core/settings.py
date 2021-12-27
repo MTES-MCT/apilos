@@ -100,7 +100,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
-    "django_cas_ng.middleware.CASMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -254,6 +253,10 @@ SWAGGER_SETTINGS = {
 CERBERE_AUTH = get_env_variable("CERBERE_AUTH", cast=bool)
 
 if CERBERE_AUTH:
+    MIDDLEWARE = MIDDLEWARE + [
+        "django_cas_ng.middleware.CASMiddleware",
+    ]
+
     AUTHENTICATION_BACKENDS = ["core.backends.CerbereCASBackend"]  # custom backend CAS
 
     # CAS config
