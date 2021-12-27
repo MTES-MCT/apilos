@@ -1,11 +1,14 @@
 from django.db import models
+from django.db.utils import DataError
 
 
 def build_filter(my_cls, element_dict):
     object_filter = {}
     if isinstance(my_cls.pivot, list):
         for pivot in my_cls.pivot:
-            if type(my_cls._meta.get_field(pivot)).__name__ == "ForeignKey":
+            if isinstance(
+                my_cls._meta.get_field(pivot), models.fields.related.ForeignKey
+            ):
                 sub_object_filter = build_filter(
                     my_cls._meta.get_field(pivot).related_model, element_dict
                 )
@@ -15,6 +18,7 @@ def build_filter(my_cls, element_dict):
                     .id
                 )
             else:
+
                 object_filter[pivot] = element_dict[my_cls.mapping[pivot]]
     else:
         object_filter = {my_cls.pivot: element_dict[my_cls.mapping[my_cls.pivot]]}
@@ -22,23 +26,52 @@ def build_filter(my_cls, element_dict):
 
 
 # Résolution récurcive du pivot
-def get_elements_for_pivots(cls, element):
+def get_elements_for_pivots(my_cls, element):
     result_pivots = []
-    pivots = cls.pivot
+    pivots = my_cls.pivot
     if not isinstance(pivots, list):
         pivots = [pivots]
     for pivot in pivots:
-        if type(cls._meta.get_field(pivot)).__name__ == "ForeignKey":
+        if isinstance(my_cls._meta.get_field(pivot), models.fields.related.ForeignKey):
             subresult = get_elements_for_pivots(
-                cls._meta.get_field(pivot).related_model, element
+                my_cls._meta.get_field(pivot).related_model, element
             )
             if isinstance(subresult, list):
                 result_pivots += subresult
             else:
                 result_pivots.append(subresult)
         else:
-            result_pivots.append(element[cls.mapping[pivot]])
+            result_pivots.append(element[my_cls.mapping[pivot]])
     return result_pivots
+
+
+def _create_object_from_fields(cls, element, full_element):
+
+    object_fields = {}
+    for each_field in element.keys():
+        if isinstance(
+            cls._meta.get_field(each_field), models.fields.related.ForeignKey
+        ):
+            object_fields[each_field] = cls._meta.get_field(
+                each_field
+            ).related_model.objects.filter(
+                **build_filter(
+                    cls._meta.get_field(each_field).related_model, full_element
+                )
+            )[
+                0
+            ]
+        elif isinstance(cls._meta.get_field(each_field), models.fields.IntegerField):
+            try:
+                object_fields[each_field] = int(element[each_field])
+            except ValueError:
+                print(
+                    f"IGNORED field {each_field} because value is not"
+                    + f" int as required : {element[each_field]}"
+                )
+        else:
+            object_fields[each_field] = element[each_field]
+    return object_fields
 
 
 class IngestableModel(models.Model):
@@ -80,19 +113,17 @@ class IngestableModel(models.Model):
         object_filter = build_filter(cls, full_element)
         my_objects = cls.objects.filter(**object_filter)
         if not my_objects:
-            object_fields = {}
-            for each_field in element.keys():
-                if type(cls._meta.get_field(each_field)).__name__ == "ForeignKey":
-                    sub_object_filter = build_filter(
-                        cls._meta.get_field(each_field).related_model, full_element
-                    )
-                    object_fields[each_field] = cls._meta.get_field(
-                        each_field
-                    ).related_model.objects.filter(**sub_object_filter)[0]
-                else:
-                    object_fields[each_field] = element[each_field]
+            object_fields = _create_object_from_fields(cls, element, full_element)
             new_object = cls(**object_fields)
-            new_object.save()
+            try:
+                new_object.save()
+            except DataError:
+                print(
+                    "[DataError] Error Data while saving object,"
+                    + " probably linked to Decimal and false rent amount"
+                    + f" {new_object.__dict__}"
+                )
+                return False
             return True
         if not create_only:
             if len(my_objects) != 1:
@@ -103,15 +134,22 @@ class IngestableModel(models.Model):
             else:
                 my_object = my_objects[0]
                 for each_field in element.keys():
-                    if type(cls._meta.get_field(each_field)).__name__ == "ForeignKey":
-                        sub_object_filter = build_filter(
-                            cls._meta.get_field(each_field).related_model, full_element
-                        )
+                    if isinstance(
+                        cls._meta.get_field(each_field),
+                        models.fields.related.ForeignKey,
+                    ):
                         my_object.__setattr__(
                             each_field,
                             cls._meta.get_field(
                                 each_field
-                            ).related_model.objects.filter(**sub_object_filter)[0],
+                            ).related_model.objects.filter(
+                                **build_filter(
+                                    cls._meta.get_field(each_field).related_model,
+                                    full_element,
+                                )
+                            )[
+                                0
+                            ],
                         )
                     else:
                         my_object.__setattr__(each_field, element[each_field])
