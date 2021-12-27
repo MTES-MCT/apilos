@@ -16,6 +16,9 @@ import os
 from decouple import config
 import dj_database_url
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 
 def get_env_variable(name, cast=str, default=""):
     try:
@@ -62,11 +65,11 @@ CONVERTAPI_SECRET = get_env_variable("CONVERTAPI_SECRET")
 
 env_allowed_hosts = []
 try:
-    env_allowed_hosts = os.environ["ALLOWED_HOSTS"].split(",")
+    env_allowed_hosts = get_env_variable("ALLOWED_HOSTS").split(",")
 except KeyError:
     pass
 
-ALLOWED_HOSTS = ["localhost", "local.beta.gouv.fr"] + env_allowed_hosts
+ALLOWED_HOSTS = ["localhost"] + env_allowed_hosts
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -274,3 +277,22 @@ if CERBERE_AUTH:
     }  # ,'UTILISATEUR.UNITE':'unite'
 
     LOGIN_URL = "/accounts/cerbere-login"
+
+SENTRY_URL = get_env_variable("SENTRY_URL")
+
+if SENTRY_URL:
+    # opened issue on Sentry package : https://github.com/getsentry/sentry-python/issues/1081
+    # it should be solved in a further release
+    # pylint: disable=E0110
+    sentry_sdk.init(
+        dsn=SENTRY_URL,
+        integrations=[DjangoIntegration()],
+        environment=ENVIRONMENT,
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0,
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True,
+    )
