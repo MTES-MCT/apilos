@@ -266,8 +266,16 @@ function display_comment_icon(input_id) {
         if (document.getElementById(input_id) !== null) {
             document.getElementById(input_id).disabled = false
         }
+        else {
+            // manage checkbox
+            inputs = comment_icon.parentNode.getElementsByTagName('input')
+            for (var i = 0; i< inputs.length;i++) {
+                inputs[i].disabled = false
+            }
+        }
 
-        parent_parent = document.getElementById(input_id + '_comment').parentNode.parentNode
+        // row in a table
+        parent_parent = comment_icon.parentNode.parentNode
         if (parent_parent.tagName == 'TR') {
             inputs = parent_parent.getElementsByTagName('input')
             for (var i = 0; i< inputs.length;i++) {
