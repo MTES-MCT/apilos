@@ -13,6 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# pylint: disable=W0611
+
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings
@@ -21,11 +23,13 @@ from django.urls import include
 
 from django.views.generic import TemplateView
 from django.contrib.sitemaps.views import sitemap
+import django_cas_ng.views
 
 from core.sitemaps import SITEMAPS
+from . import signals
+
 
 urlpatterns = [
-    path("accounts/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
     path("bailleurs/", include(("bailleurs.urls", "bailleurs"), namespace="bailleurs")),
     path(
@@ -59,3 +63,21 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("api/v1/", include(("api.v1.urls", "api"), namespace="apis")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if settings.CERBERE_AUTH:
+    urlpatterns = urlpatterns + [
+        path(
+            "accounts/cerbere-login",
+            django_cas_ng.views.LoginView.as_view(),
+            name="cas_ng_login",
+        ),
+        path(
+            "accounts/cerbere-logout",
+            django_cas_ng.views.LogoutView.as_view(),
+            name="cas_ng_logout",
+        ),
+    ]
+else:
+    urlpatterns = urlpatterns + [
+        path("accounts/", include("django.contrib.auth.urls")),
+    ]

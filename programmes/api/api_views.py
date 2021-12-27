@@ -14,14 +14,6 @@ from programmes.models import Programme
 from programmes.api.serializers import ProgrammeSerializer
 from programmes.api.permissions import ProgrammePermission
 
-nom_param = openapi.Parameter(
-    "nom",
-    openapi.IN_QUERY,
-    description="le nom du prog",
-    required=False,
-    type=openapi.TYPE_STRING,
-)
-
 
 class ProgrammeList(
     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
@@ -38,6 +30,34 @@ class ProgrammeList(
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ["nom", "code_postal", "ville"]
     filterset_fields = ["nom", "code_postal", "ville", "numero_galion"]
+    nom_param = openapi.Parameter(
+        "nom",
+        openapi.IN_QUERY,
+        description="Nom du programme",
+        required=False,
+        type=openapi.TYPE_STRING,
+    )
+    code_postal_param = openapi.Parameter(
+        "code_postal",
+        openapi.IN_QUERY,
+        description="Code postal du programme",
+        required=False,
+        type=openapi.TYPE_STRING,
+    )
+    ville_param = openapi.Parameter(
+        "ville",
+        openapi.IN_QUERY,
+        description="Ville du programme",
+        required=False,
+        type=openapi.TYPE_STRING,
+    )
+    numero_galion_param = openapi.Parameter(
+        "numero_galion",
+        openapi.IN_QUERY,
+        description="Numéro galion du programme",
+        required=False,
+        type=openapi.TYPE_STRING,
+    )
 
     def get_queryset(self):
         """
@@ -46,7 +66,14 @@ class ProgrammeList(
         """
         return self.request.user.programmes()
 
-    @swagger_auto_schema(manual_parameters=[nom_param])
+    @swagger_auto_schema(
+        manual_parameters=[
+            nom_param,
+            code_postal_param,
+            ville_param,
+            numero_galion_param,
+        ]
+    )
     def get(self, request):  # , format=None):
         return self.list(request)  # , *args, **kwargs)
 
