@@ -44,6 +44,11 @@ def hasnt_active_comments(comments, object_field):
     )
 
 
+@register.filter
+def has_comments(comments, object_field):
+    return comments.get(object_field) is not None
+
+
 screen_mapping = {"bailleur": ["bailleur__nom", "bailleur__siret"]}
 
 # @register.filter
