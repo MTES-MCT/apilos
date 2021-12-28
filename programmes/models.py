@@ -75,6 +75,13 @@ class TypologieStationnement(models.TextChoices):
     GARAGE_AERIEN = "GARAGE_AERIEN", "Garage aérien"
     GARAGE_ENTERRE = "GARAGE_ENTERRE", "Garage enterré"
     PLACE_STATIONNEMENT = "PLACE_STATIONNEMENT", "Place de stationnement"
+    PARKING_EXTERIEUR_PRIVATIF = (
+        "PARKING_EXTERIEUR_PRIVATIF",
+        "Parking extérieur privatif",
+    )
+    PARKING_SOUSSOL = "PARKING_SOUSSOL", "Parking en sous-sol ou en superstructure"
+    GARAGE_BOXE_SIMPLE = "GARAGE_BOXE_SIMPLE", "Garage boxé simple"
+    GARAGE_BOXE_DOUBLE = "GARAGE_BOXE_DOUBLE", "Garage boxé double"
 
 
 class Programme(IngestableModel):
@@ -486,7 +493,7 @@ class TypeStationnement(IngestableModel):
     )
     lot = models.ForeignKey("Lot", on_delete=models.CASCADE, null=False)
     typologie = models.CharField(
-        max_length=25,
+        max_length=35,
         choices=TypologieStationnement.choices,
         default=TypologieStationnement.PLACE_STATIONNEMENT,
     )
