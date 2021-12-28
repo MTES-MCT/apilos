@@ -411,8 +411,12 @@ class LogementForm(forms.Form):
         loyer = self.cleaned_data["loyer"]
 
         # check that lot_id exist in DB
-        if round(loyer, 2) != round(
-            surface_utile * loyer_par_metre_carre * coeficient, 2
+        if (
+            abs(
+                round(loyer, 2)
+                - round(surface_utile * loyer_par_metre_carre * coeficient, 2)
+            )
+            > 0.04
         ):
             raise ValidationError(
                 "Le loyer doit-être le produit de la surface utile, "
