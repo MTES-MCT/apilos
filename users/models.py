@@ -80,13 +80,19 @@ class User(AbstractUser):
     # bailleur = programme which belongs to the bailleurs, filtre = {bailleur_id__in: [x,y,z]}
     # else raise
     #
-    def programme_filter(self):
+    def programme_filter(self, prefix=""):
         if self.is_superuser:
             return {}
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return {}
+            administration_ids = list(
+                map(
+                    lambda role: role.administration_id,
+                    self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
+                )
+            )
+            return {prefix + "administration_id__in": administration_ids}
 
         if self.is_bailleur():
             bailleur_ids = list(
@@ -95,7 +101,7 @@ class User(AbstractUser):
                     self.role_set.filter(typologie=TypeRole.BAILLEUR),
                 )
             )
-            return {"bailleur_id__in": bailleur_ids}
+            return {prefix + "bailleur_id__in": bailleur_ids}
 
         raise Exception(
             "L'utilisateur courant n'a pas de role associé permattant le filtre sur les programmes"

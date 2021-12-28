@@ -323,12 +323,36 @@ class AdministrationsModelsTest(TestCase):
     def test_programme_filter(self):
         user_superuser = User.objects.get(username="nicolas")
         self.assertEqual(user_superuser.programme_filter(), {})
+        self.assertEqual(user_superuser.programme_filter(prefix="programme__"), {})
         user_instructeur = User.objects.get(username="sabine")
-        self.assertEqual(user_instructeur.programme_filter(), {})
+        self.assertEqual(
+            user_instructeur.programme_filter(),
+            {
+                "administration_id__in": [
+                    user_instructeur.role_set.all()[0].administration_id
+                ]
+            },
+        )
+        self.assertEqual(
+            user_instructeur.programme_filter(prefix="programme__"),
+            {
+                "programme__administration_id__in": [
+                    user_instructeur.role_set.all()[0].administration_id
+                ]
+            },
+        )
         user_bailleur = User.objects.get(username="raph")
         self.assertEqual(
             user_bailleur.programme_filter(),
             {"bailleur_id__in": [user_bailleur.role_set.all()[0].bailleur_id]},
+        )
+        self.assertEqual(
+            user_bailleur.programme_filter(prefix="programme__"),
+            {
+                "programme__bailleur_id__in": [
+                    user_bailleur.role_set.all()[0].bailleur_id
+                ]
+            },
         )
 
     def test_administration_filter(self):
