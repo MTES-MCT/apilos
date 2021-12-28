@@ -215,7 +215,7 @@ class ProgrammeModelsTest(TestCase):
         programme = Programme.objects.order_by("-uuid").first()
         programme.date_achevement = None
         programme.date_achevement_previsible = None
-        self.assertEqual(programme.date_commisioning(), "NC")
+        self.assertEqual(programme.date_commisioning(), "-")
         programme.date_achevement = date(2022, 6, 1)
         programme.date_achevement_previsible = date(2022, 12, 31)
         self.assertEqual(programme.date_commisioning(), date(2022, 6, 1))

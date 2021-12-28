@@ -225,7 +225,7 @@ class Programme(IngestableModel):
         return model_utils.get_field_key(self, "edd_classique", "files", default={})
 
     def date_commisioning(self):
-        return self.date_achevement or self.date_achevement_previsible or "NC"
+        return self.date_achevement or self.date_achevement_previsible or "-"
 
 
 class LogementEDD(models.Model):
