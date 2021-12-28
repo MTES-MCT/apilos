@@ -61,13 +61,13 @@
                     <div class="fr-header__tools">
                         <div class="fr-header__tools-links">
                             {% if user.is_authenticated %}
-                                <ul class="fr-btns-group fr-btns-group--inline">
-                                    <li class="fr-mx-3w fr-mt-3w">
+                                <ul class="fr-links-group">
+                                    <li class="fr-mx-2w">
                                         Bonjour&nbsp;
                                         <strong>{{ user }}</strong>
                                     </li>
                                     {% if CERBERE_AUTH %}
-                                        <li class="fr-mt-2w">
+                                        <li>
                                             <button class="fr-btn  fr-btn--secondary" id='cerbere_logout'>
                                                 <span class="fr-fi-account-line fr-mr-1w" aria-hidden="true">
                                                 </span>Cerbere logout
@@ -75,7 +75,7 @@
                                             {% include "common/utils/onclick_redirect.html" with id='cerbere_logout' url_target='cas_ng_logout' %}
                                         </li>
                                     {% else %}
-                                        <li class="fr-mt-2w">
+                                        <li>
                                             <button class="fr-btn fr-btn--secondary" id='deconnexion'>
                                                 <span class="fr-fi-close-circle-line fr-mr-1w" aria-hidden="true"></span>Déconnexion
                                             </button>
@@ -83,8 +83,8 @@
                                         </li>
                                     {% endif %}
                                     <li>
-                                        <a class="fr-link" href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noopener">
-                                            <span class="fr-fi-question-line" aria-hidden="true"></span>
+                                        <a class="fr-link fr-text--lg" href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noopener">
+                                            <span class="fr-fi-question-line" aria-hidden="true"></span>&nbsp;FAQ
                                         </a>
                                     </li>
                                 </ul>
