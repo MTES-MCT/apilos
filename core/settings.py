@@ -260,7 +260,10 @@ if CERBERE_AUTH:
         "django_cas_ng.middleware.CASMiddleware",
     ]
 
-    AUTHENTICATION_BACKENDS = ["core.backends.CerbereCASBackend"]  # custom backend CAS
+    AUTHENTICATION_BACKENDS = [
+        "django.contrib.auth.backends.ModelBackend",
+        "core.backends.CerbereCASBackend",
+    ]  # custom backend CAS
 
     # CAS config
     CAS_SERVER_URL = (

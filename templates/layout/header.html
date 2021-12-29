@@ -36,7 +36,7 @@
                                 </li>
                                 <button class="fr-btn fr-fi-close-circle-line" id='logout'></button>
                                 {% if CERBERE_AUTH %}
-                                    {% include "common/utils/onclick_redirect.html" with id='logout' url_target='cas_ng_logout' %}
+                                    {% include "common/utils/onclick_redirect.html" with id='logout' url_target='cas_ng_logout' url_params='?next=/' %}
                                 {% else %}
                                     {% include "common/utils/onclick_redirect.html" with id='logout' url_target='logout' %}
                                 {% endif %}
@@ -72,7 +72,7 @@
                                                 <span class="fr-fi-account-line fr-mr-1w" aria-hidden="true">
                                                 </span>Cerbere logout
                                             </button>
-                                            {% include "common/utils/onclick_redirect.html" with id='cerbere_logout' url_target='cas_ng_logout' %}
+                                            {% include "common/utils/onclick_redirect.html" with id='cerbere_logout' url_target='cas_ng_logout' url_params='?next=/' %}
                                         </li>
                                     {% else %}
                                         <li>

@@ -169,24 +169,31 @@ class User(AbstractUser):
         return Bailleur.objects.filter(**self.bailleur_filter())
 
     def convention_filter(self):
-        bailleur_ids = list(
-            map(
-                lambda role: role.bailleur_id,
-                self.role_set.filter(typologie=TypeRole.BAILLEUR),
+        if self.is_superuser:
+            return {}
+
+        # to do : manage programme related to geo for instructeur
+        if self.is_instructeur():
+            administration_ids = list(
+                map(
+                    lambda role: role.administration_id,
+                    self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
+                )
             )
-        )
-        administration_ids = list(
-            map(
-                lambda role: role.administration_id,
-                self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
+            return {"programme__administration_id__in": administration_ids}
+
+        if self.is_bailleur():
+            bailleur_ids = list(
+                map(
+                    lambda role: role.bailleur_id,
+                    self.role_set.filter(typologie=TypeRole.BAILLEUR),
+                )
             )
+            return {"bailleur_id__in": bailleur_ids}
+
+        raise PermissionDenied(
+            "L'utilisateur courant n'a pas de role associé permattant le filtre sur les bailleurs"
         )
-        filter_result = {}
-        if administration_ids:
-            filter_result["programme__administration_id__in"] = administration_ids
-        if bailleur_ids:
-            filter_result["bailleur_id__in"] = bailleur_ids
-        return filter_result
 
     def full_editable_convention(self, convention):
         # is bailleur of the convention
