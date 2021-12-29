@@ -43,6 +43,7 @@
                                 <tr>
                                     {% if request.user.is_instructeur %}
                                         <th scope="col">Bailleur</th>
+                                        <th scope="col">Numéro Galion</th>
                                     {% endif %}
                                     <th scope="col">Mise en service</th>
                                     <th scope="col">Programme</th>
@@ -58,6 +59,7 @@
                                     <tr>
                                         {% if request.user.is_instructeur %}
                                             <td>{{convention.bailleur.nom}}</td>
+                                            <td>{{convention.programme.numero_galion}}</td>
                                         {% endif %}
                                         <td>{{convention.programme.date_commisioning}}</td>
                                         <td>{{convention.programme.nom}}</td>
