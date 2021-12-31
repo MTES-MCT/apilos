@@ -35,7 +35,7 @@ class ConventionModelsTest(TestCase):
         )
 
     def test_object_str(self):
-        convention = Convention.objects.get(id=1)
+        convention = Convention.objects.get(numero=1)
         lot = convention.lot
         programme = convention.programme
         expected_object_name = (
@@ -45,7 +45,7 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(str(convention), expected_object_name)
 
     def test_is_functions(self):
-        convention = Convention.objects.get(id=1)
+        convention = Convention.objects.get(numero=1)
         self.assertTrue(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
