@@ -1,12 +1,122 @@
 import datetime
-import json
 import random
 
-from io import BytesIO
-from openpyxl import load_workbook
-from django.conf import settings
-from bailleurs.models import Bailleur
+from django.contrib.auth.models import Group, Permission
+
+from conventions.models import Convention
+from programmes.models import Financement, Lot
 from programmes.models import Programme
+from bailleurs.models import Bailleur
+from users.models import User
+from instructeurs.models import Administration
+
+
+def create_users_superuser():
+    return (
+        User.objects.create_superuser("nicolas", "nico@apilos.com", "12345"),
+        User.objects.create_superuser("admin", "nico@apilos.com", "67890"),
+    )
+
+
+def create_users_instructeur():
+    user1 = User.objects.create_user("sabine", "sabine@apilos.com", "12345")
+    user1.first_name = "Sabine"
+    user1.last_name = "Marini"
+    user1.save()
+    user2 = User.objects.create_user("roger", "roger@apilos.com", "567890")
+    user2.first_name = "Roger"
+    user2.last_name = "Dupont"
+    user2.save()
+    return (
+        user1,
+        user2,
+    )
+
+
+def create_users_bailleur():
+    user1 = User.objects.create_user("raph", "raph@apilos.com", "12345")
+    user1.first_name = "Raphaëlle"
+    user1.last_name = "Neyton"
+    user1.save()
+    user2 = User.objects.create_user("sophie", "sophie@apilos.com", "567890")
+    user2.first_name = "Sophie"
+    user2.last_name = "Eaubonne"
+    user2.save()
+    return (
+        user1,
+        user2,
+    )
+
+
+def create_administrations():
+    return (
+        Administration.objects.create(
+            nom="CA d'Arles-Crau-Camargue-Montagnette",
+            code="12345",
+        ),
+        Administration.objects.create(
+            nom="Métroploe de Marseille",
+            code="67890",
+        ),
+    )
+
+
+def create_bailleurs():
+    return (
+        create_bailleur(),
+        Bailleur.objects.create(
+            nom="HLM",
+            siret="987654321",
+            capital_social="123456",
+            ville="Marseille",
+            signataire_nom="Pall Antoine",
+            signataire_fonction="DG",
+            signataire_date_deliberation=datetime.date(2001, 12, 1),
+        ),
+    )
+
+
+def create_group(name, rwd=None, rw=None, ru=None, ro=None):
+    group = Group.objects.create(
+        name=name,
+    )
+    permission_set = []
+    if rwd is not None:
+        for obj in rwd:
+            permission_set = permission_set + [
+                Permission.objects.get(content_type__model=obj, codename=f"add_{obj}"),
+                Permission.objects.get(
+                    content_type__model=obj, codename=f"change_{obj}"
+                ),
+                Permission.objects.get(
+                    content_type__model=obj, codename=f"delete_{obj}"
+                ),
+                Permission.objects.get(content_type__model=obj, codename=f"view_{obj}"),
+            ]
+    if rw is not None:
+        for obj in rw:
+            permission_set = permission_set + [
+                Permission.objects.get(content_type__model=obj, codename=f"add_{obj}"),
+                Permission.objects.get(
+                    content_type__model=obj, codename=f"change_{obj}"
+                ),
+                Permission.objects.get(content_type__model=obj, codename=f"view_{obj}"),
+            ]
+    if ru is not None:
+        for obj in ru:
+            permission_set = permission_set + [
+                Permission.objects.get(
+                    content_type__model=obj, codename=f"change_{obj}"
+                ),
+                Permission.objects.get(content_type__model=obj, codename=f"view_{obj}"),
+            ]
+    if ro is not None:
+        for obj in ro:
+            permission_set.append(
+                Permission.objects.get(content_type__model=obj, codename=f"view_{obj}")
+            )
+    group.permissions.set(permission_set)
+    return group
 
 
 def create_bailleur():
@@ -21,7 +131,7 @@ def create_bailleur():
     )
 
 
-def create_programme(bailleur, administration=None):
+def create_programme(bailleur, administration=None, nom="Programe"):
     files_and_text = (
         '{"files": {"bbfc7e3a-e0e7-4899-a1e1-fc632c3ea6b0": {"uuid": "bbfc7e3a'
         + '-e0e7-4899-a1e1-fc632c3ea6b0", "thumbnail": "data:image/png;base64,'
@@ -117,7 +227,7 @@ def create_programme(bailleur, administration=None):
     )
 
     return Programme.objects.create(
-        nom="3F",
+        nom=nom,
         administration=administration,
         bailleur=bailleur,
         code_postal="75007",
@@ -151,48 +261,19 @@ def create_programme(bailleur, administration=None):
     )
 
 
-def assert_xlsx(self, my_class, file_name):
-    filepath = f"{settings.BASE_DIR}/static/files/{file_name}.xlsx"
-    with open(filepath, "rb") as excel:
-        my_wb = load_workbook(filename=BytesIO(excel.read()), data_only=True)
-        self.assertIn(my_class.sheet_name, my_wb)
-        my_ws = my_wb[my_class.sheet_name]
-
-        column_values = []
-        for col in my_ws.iter_cols(
-            min_col=1, max_col=my_ws.max_column, min_row=1, max_row=1
-        ):
-            for cell in col:
-                column_values.append(cell.value)
-
-        for key in my_class.import_mapping:
-            self.assertIn(key, column_values)
+def create_lot(programme: Programme, financement: Financement):
+    return Lot.objects.create(
+        programme=programme,
+        bailleur=programme.bailleur,
+        financement=financement,
+    )
 
 
-def assert_get_text_and_files(self, object_to_test, field) -> None:
-    assert_get_text(self, object_to_test, field)
-    assert_get_files(self, object_to_test, field)
-
-
-def assert_get_text(self, object_to_test, field) -> None:
-    func_text = getattr(object_to_test, field + "_text")
-    text = func_text()
-    try:
-        expected_text = json.loads(getattr(object_to_test, field))["text"]
-    except TypeError:
-        expected_text = ""
-    except json.decoder.JSONDecodeError:
-        expected_text = ""
-    self.assertEqual(text, expected_text)
-
-
-def assert_get_files(self, object_to_test, field) -> None:
-    func_files = getattr(object_to_test, field + "_files")
-    files = func_files()
-    try:
-        expected_files = json.loads(getattr(object_to_test, field))["files"]
-    except TypeError:
-        expected_files = {}
-    except json.decoder.JSONDecodeError:
-        expected_files = {}
-    self.assertEqual(files, expected_files)
+def create_convention(lot: Lot, numero: str = "0001"):
+    return Convention.objects.create(
+        numero=numero,
+        lot=lot,
+        programme=lot.programme,
+        bailleur=lot.programme.bailleur,
+        financement=lot.financement,
+    )

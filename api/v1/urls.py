@@ -4,6 +4,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from programmes.api import api_views as programmes_api_views
+from conventions.api import api_views as conventions_api_views
 from bailleurs.api import api_views as bailleurs_api_views
 from instructeurs.api import api_views as instructeurs_api_views
 
@@ -29,10 +30,16 @@ urlpatterns = [
     # Programmes ressource
     path("programmes/", programmes_api_views.ProgrammeList.as_view()),
     path("programmes/<str:uuid>/", programmes_api_views.ProgrammeDetail.as_view()),
-    # Administrateurs ressource
-    path("administrateurs/", instructeurs_api_views.AdministrationList.as_view()),
+    # Lots ressource
+    path("lots/", programmes_api_views.LotList.as_view()),
+    path("lots/<str:uuid>/", programmes_api_views.LotDetail.as_view()),
+    # Conventions ressource
+    path("conventions/", conventions_api_views.ConventionList.as_view()),
+    path("conventions/<str:uuid>/", conventions_api_views.ConventionDetail.as_view()),
+    # Administrations ressource
+    path("administrations/", instructeurs_api_views.AdministrationList.as_view()),
     path(
-        "administrateurs/<str:uuid>/",
+        "administrations/<str:uuid>/",
         instructeurs_api_views.AdministrationDetail.as_view(),
     ),
     # SWAGGER documentation

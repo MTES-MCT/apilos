@@ -123,7 +123,13 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return {}
+            administration_ids = list(
+                map(
+                    lambda role: role.administration_id,
+                    self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
+                )
+            )
+            return {"id__in": administration_ids}
 
         # to do : manage programme related to geo for bailleur
         if self.is_bailleur():
@@ -194,6 +200,9 @@ class User(AbstractUser):
         raise PermissionDenied(
             "L'utilisateur courant n'a pas de role associé permattant le filtre sur les bailleurs"
         )
+
+    def conventions(self):
+        return Convention.objects.filter(**self.convention_filter())
 
     def full_editable_convention(self, convention):
         # is bailleur of the convention
