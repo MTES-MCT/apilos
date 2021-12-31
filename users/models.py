@@ -123,7 +123,13 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return {}
+            administration_ids = list(
+                map(
+                    lambda role: role.administration_id,
+                    self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
+                )
+            )
+            return {"id__in": administration_ids}
 
         # to do : manage programme related to geo for bailleur
         if self.is_bailleur():

@@ -359,7 +359,10 @@ class AdministrationsModelsTest(TestCase):
         user_superuser = User.objects.get(username="nicolas")
         self.assertEqual(user_superuser.administration_filter(), {})
         user_instructeur = User.objects.get(username="sabine")
-        self.assertEqual(user_instructeur.administration_filter(), {})
+        self.assertEqual(
+            user_instructeur.administration_filter(),
+            {"id__in": [user_instructeur.role_set.all()[0].administration_id]},
+        )
         user_bailleur = User.objects.get(username="raph")
         self.assertEqual(user_bailleur.administration_filter(), {})
 
