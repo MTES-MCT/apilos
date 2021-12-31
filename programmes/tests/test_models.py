@@ -2,7 +2,7 @@ import random
 from datetime import date
 
 from django.test import TestCase
-from core.tests import utils
+from core.tests import utils_assertions, utils_fixtures
 
 from programmes.models import (
     Programme,
@@ -37,8 +37,8 @@ class ProgrammeModelsTest(TestCase):
     # pylint: disable=E1101 no-member
     @classmethod
     def setUpTestData(cls):
-        bailleur = utils.create_bailleur()
-        programme = utils.create_programme(bailleur)
+        bailleur = utils_fixtures.create_bailleur()
+        programme = utils_fixtures.create_programme(bailleur)
 
         for financement in [Financement.PLAI, Financement.PLUS]:
             lot = Lot.objects.create(
@@ -193,23 +193,25 @@ class ProgrammeModelsTest(TestCase):
         )
 
     def test_xlsx(self):
-        utils.assert_xlsx(self, Annexe, "annexes")
-        utils.assert_xlsx(self, ReferenceCadastrale, "cadastre")
-        utils.assert_xlsx(self, LogementEDD, "logements_edd")
-        utils.assert_xlsx(self, Logement, "logements")
-        utils.assert_xlsx(self, TypeStationnement, "stationnements")
+        utils_assertions.assert_xlsx(self, Annexe, "annexes")
+        utils_assertions.assert_xlsx(self, ReferenceCadastrale, "cadastre")
+        utils_assertions.assert_xlsx(self, LogementEDD, "logements_edd")
+        utils_assertions.assert_xlsx(self, Logement, "logements")
+        utils_assertions.assert_xlsx(self, TypeStationnement, "stationnements")
 
     def test_get_text_and_files(self):
         programme = Programme.objects.order_by("-uuid").first()
-        utils.assert_get_text_and_files(self, programme, "vendeur")
-        utils.assert_get_text_and_files(self, programme, "acquereur")
-        utils.assert_get_text_and_files(self, programme, "reference_notaire")
-        utils.assert_get_text_and_files(self, programme, "reference_publication_acte")
-        utils.assert_get_text_and_files(self, programme, "edd_volumetrique")
-        utils.assert_get_text_and_files(self, programme, "edd_classique")
-        utils.assert_get_files(self, programme, "acte_de_propriete")
-        utils.assert_get_files(self, programme, "acte_notarial")
-        utils.assert_get_files(self, programme, "reference_cadastrale")
+        utils_assertions.assert_get_text_and_files(self, programme, "vendeur")
+        utils_assertions.assert_get_text_and_files(self, programme, "acquereur")
+        utils_assertions.assert_get_text_and_files(self, programme, "reference_notaire")
+        utils_assertions.assert_get_text_and_files(
+            self, programme, "reference_publication_acte"
+        )
+        utils_assertions.assert_get_text_and_files(self, programme, "edd_volumetrique")
+        utils_assertions.assert_get_text_and_files(self, programme, "edd_classique")
+        utils_assertions.assert_get_files(self, programme, "acte_de_propriete")
+        utils_assertions.assert_get_files(self, programme, "acte_notarial")
+        utils_assertions.assert_get_files(self, programme, "reference_cadastrale")
 
     def test_date_commisioning(self):
         programme = Programme.objects.order_by("-uuid").first()

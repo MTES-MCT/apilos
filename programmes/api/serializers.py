@@ -10,7 +10,8 @@ from bailleurs.api.permissions import BailleurPermission
 from bailleurs.models import Bailleur
 from bailleurs.api.serializers import BailleurSerializer
 
-from programmes.models import Programme
+from programmes.api.permissions import ProgrammePermission
+from programmes.models import Programme, Lot
 
 
 class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
@@ -61,6 +62,7 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
             "edd_volumetrique",
             "edd_classique",
         )
+        ref_name = "ProgrammeEmbeddedSchema"
 
     def create(self, validated_data):
         """
@@ -114,24 +116,19 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
         Update and return an existing `Programme` instance, given the validated data.
         """
 
-        current_user = self.context.user
-        if "bailleur_uuid" in validated_data.keys():
-            bailleur_uuid = validated_data.pop("bailleur_uuid")
-            try:
-                instance.bailleur = Bailleur.objects.get(uuid=bailleur_uuid)
-                if not BailleurPermission.has_object_permission(
-                    self, self.context, self, instance.bailleur
-                ):
-                    raise PermissionDenied
+        validated_data = self._get_bailleur(validated_data)
+        validated_data = self._get_administration(validated_data)
 
-                if instance.bailleur not in current_user.bailleurs():
-                    raise PermissionDenied()
-            except Bailleur.DoesNotExist as does_not_exist:
-                raise Http404("bailleur non trouvé") from does_not_exist
+        if not BailleurPermission.has_object_permission(
+            self, self.context, self, validated_data["bailleur"]
+        ):
+            raise PermissionDenied
+        # do we need a permission about administration ?
 
         for field in [
             "nom",
-            # "administration",
+            "bailleur",
+            "administration",
             "code_postal",
             "ville",
             "adresse",
@@ -160,3 +157,49 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
 
         instance.save()
         return instance
+
+
+class LotSerializer(serializers.HyperlinkedModelSerializer):
+    bailleur = BailleurSerializer(read_only=True)
+    programme = ProgrammeSerializer(read_only=True)
+    programme_uuid = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Lot
+        fields = [
+            "uuid",
+            "nb_logements",
+            "programme",
+            "programme_uuid",
+            "bailleur",
+            "financement",
+        ]
+        ref_name = "LotEmbeddedSchema"
+
+    def _get_programme_with_bailleur(self, validated_data):
+        if "programme_uuid" not in validated_data.keys():
+            raise serializers.ValidationError(
+                {
+                    "programme_uuid": "L'identifiant unique du programme est"
+                    + " obligatoire pour créer le lot"
+                }
+            )
+        programme_uuid = validated_data.pop("programme_uuid")
+        try:
+            programme = Programme.objects.get(uuid=programme_uuid)
+            if not ProgrammePermission.has_object_permission(
+                self, self.context, self, programme
+            ):
+                raise PermissionDenied()
+        except Programme.DoesNotExist as does_not_exist:
+            raise Http404("programme non trouvé") from does_not_exist
+        validated_data["programme"] = programme
+        validated_data["bailleur"] = programme.bailleur
+        return validated_data
+
+    def create(self, validated_data):
+        """
+        Create and return a new `Lot` instance, given the validated data.
+        """
+        validated_data = self._get_programme_with_bailleur(validated_data)
+        return Lot.objects.create(**validated_data)

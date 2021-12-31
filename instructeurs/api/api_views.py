@@ -17,18 +17,11 @@ class AdministrationList(
     List all administrations, or create a new administration.
     """
 
-    #    authentication_classes = [SessionAuthentication, BasicAuthentication]
     authentication_classes = [CsrfExemptSessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated, AdministrationPermission]
 
     serializer_class = AdministrationSerializer
-
-    def get_queryset(self):
-        """
-        This view should return a list of all the purchases
-        for the currently authenticated user.
-        """
-        return self.request.user.administrations()
+    queryset = Administration.objects.all()
 
     def get(self, request):  # , format=None):
         return self.list(request)  # , *args, **kwargs)
@@ -63,10 +56,6 @@ class AdministrationDetail(generics.GenericAPIView):
 
     def get(self, request, uuid):  # , format=None):
         administration = self.get_object(uuid)
-        if not AdministrationPermission.has_object_permission(
-            self, request, self, administration
-        ):
-            raise PermissionDenied
         serializer = AdministrationSerializer(administration)
         return Response(serializer.data)
 
