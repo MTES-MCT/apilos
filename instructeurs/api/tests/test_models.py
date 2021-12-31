@@ -1,8 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from django.contrib.auth.models import Group, Permission
-from core.tests import utils
+from core.tests import utils_fixtures
 from users.models import User, Role
 from users.type_models import TypeRole
 from instructeurs.models import Administration
@@ -12,20 +11,16 @@ ADMINISTRATION_READ_FIELDS = ["uuid", "nom", "code", "ville_signature"]
 
 class SuperUserAPITest(APITestCase):
     """
-    As super administrateur, I can do anything using the API
+    As super user, I can do anything using the API
     """
 
     def setUp(self):
-        User.objects.create_superuser("nico", "nico@apilos.com", "12345")
-        self.client.login(username="nico", password="12345")
-        self.administration_arles = Administration.objects.create(
-            nom="CA d'Arles-Crau-Camargue-Montagnette",
-            code="12345",
-        )
-        self.administration_marseille = Administration.objects.create(
-            nom="Métroploe de Marseille",
-            code="67890",
-        )
+        User.objects.create_superuser("nico_administration", "nico@apilos.com", "12345")
+        self.client.login(username="nico_administration", password="12345")
+        (
+            self.administration_arles,
+            self.administration_marseille,
+        ) = utils_fixtures.create_administrations()
 
     def test_can_get_administration_list(self):
         response = self.client.get("/api/v1/administrations/")
@@ -84,30 +79,15 @@ class InstructeurUserAPITest(APITestCase):
 
     def setUp(self):
         user_instructeur = User.objects.create_user(
-            "sabine", "sabine@apilos.com", "12345"
+            "sabine_administration", "sabine@apilos.com", "12345"
         )
-        self.client.login(username="sabine", password="12345")
-        self.administration_arles = Administration.objects.create(
-            nom="CA d'Arles-Crau-Camargue-Montagnette",
-            code="12345",
-        )
-        self.administration_marseille = Administration.objects.create(
-            nom="Métroploe de Marseille",
-            code="67890",
-        )
-        group_instructeur = Group.objects.create(
-            name="Instructeur",
-        )
-        group_instructeur.permissions.set(
-            [
-                Permission.objects.get(
-                    content_type__model="administration", codename="view_administration"
-                ),
-                Permission.objects.get(
-                    content_type__model="administration",
-                    codename="change_administration",
-                ),
-            ]
+        self.client.login(username="sabine_administration", password="12345")
+        (
+            self.administration_arles,
+            self.administration_marseille,
+        ) = utils_fixtures.create_administrations()
+        group_instructeur = utils_fixtures.create_group(
+            "Instructeur", ru=["administration"]
         )
         Role.objects.create(
             typologie=TypeRole.INSTRUCTEUR,
@@ -188,27 +168,16 @@ class BailleurUserAPITest(APITestCase):
     """
 
     def setUp(self):
-        user_bailleur = User.objects.create_user("raph", "raph@apilos.com", "12345")
-        self.client.login(username="raph", password="12345")
-        self.administration_arles = Administration.objects.create(
-            nom="CA d'Arles-Crau-Camargue-Montagnette",
-            code="12345",
+        user_bailleur = User.objects.create_user(
+            "raph_administration", "raph@apilos.com", "12345"
         )
-        self.administration_marseille = Administration.objects.create(
-            nom="Métroploe de Marseille",
-            code="67890",
-        )
-        bailleur = utils.create_bailleur()
-        group_bailleur = Group.objects.create(
-            name="Bailleur",
-        )
-        group_bailleur.permissions.set(
-            [
-                Permission.objects.get(
-                    content_type__model="administration", codename="view_administration"
-                ),
-            ]
-        )
+        self.client.login(username="raph_administration", password="12345")
+        (
+            self.administration_arles,
+            self.administration_marseille,
+        ) = utils_fixtures.create_administrations()
+        group_bailleur = utils_fixtures.create_group("Bailleur", ro=["administration"])
+        bailleur = utils_fixtures.create_bailleur()
         Role.objects.create(
             typologie=TypeRole.BAILLEUR,
             bailleur=bailleur,

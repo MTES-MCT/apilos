@@ -1,7 +1,7 @@
 import datetime
 
 from django.test import TestCase
-from core.tests import utils
+from core.tests import utils_assertions, utils_fixtures
 from conventions.models import Convention, ConventionStatut, Pret, Preteur
 from programmes.models import Lot, Financement
 
@@ -9,8 +9,8 @@ from programmes.models import Lot, Financement
 class ConventionModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        bailleur = utils.create_bailleur()
-        programme = utils.create_programme(bailleur)
+        bailleur = utils_fixtures.create_bailleur()
+        programme = utils_fixtures.create_programme(bailleur)
         lot = Lot.objects.create(
             programme=programme,
             bailleur=bailleur,
@@ -98,4 +98,4 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(pret.p_full(), "Région")
 
     def test_xlsx(self):
-        utils.assert_xlsx(self, Pret, "financement")
+        utils_assertions.assert_xlsx(self, Pret, "financement")

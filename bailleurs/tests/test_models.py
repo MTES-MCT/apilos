@@ -1,5 +1,5 @@
 from django.test import TestCase
-from core.tests import utils
+from core.tests import utils_fixtures
 from bailleurs.models import Bailleur
 
 
@@ -7,7 +7,7 @@ class BailleurModelsTest(TestCase):
     # pylint: disable=E1101 no-member
     @classmethod
     def setUpTestData(cls):
-        utils.create_bailleur()
+        utils_fixtures.create_bailleur()
 
     def test_object_str(self):
         bailleur = Bailleur.objects.order_by("uuid").first()

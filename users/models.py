@@ -201,6 +201,9 @@ class User(AbstractUser):
             "L'utilisateur courant n'a pas de role associé permattant le filtre sur les bailleurs"
         )
 
+    def conventions(self):
+        return Convention.objects.filter(**self.convention_filter())
+
     def full_editable_convention(self, convention):
         # is bailleur of the convention
         if self.role_set.filter(bailleur_id=convention.bailleur_id):

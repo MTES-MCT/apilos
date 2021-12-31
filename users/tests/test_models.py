@@ -1,128 +1,33 @@
-import datetime
 from django.test import TestCase
-from django.contrib.auth.models import Group, Permission
-from core.tests import utils
+
+from core.tests import utils_fixtures
 from users.models import User, Role
 from users.type_models import TypeRole
-from bailleurs.models import Bailleur
-from instructeurs.models import Administration
 from conventions.models import Convention, ConventionStatut
-from programmes.models import Lot, Financement
+from programmes.models import Financement
 
 
 class AdministrationsModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        User.objects.create(
-            username="nicolas",
-            password="12345",
-            first_name="Nicolas",
-            last_name="Oudard",
-            email="nicolas@apilos.fr",
-            is_superuser=True,
+        utils_fixtures.create_users_superuser()
+        (
+            user_instructeur,
+            user_instructeur_metropole,
+        ) = utils_fixtures.create_users_instructeur()
+        (user_bailleur, user_bailleur_hlm) = utils_fixtures.create_users_bailleur()
+        (
+            administration,
+            administration_metropole,
+        ) = utils_fixtures.create_administrations()
+        (bailleur, bailleur_hlm) = utils_fixtures.create_bailleurs()
+        group_instructeur = utils_fixtures.create_group(
+            "Instructeur", rwd=["logement", "convention"]
         )
-        user_instructeur = User.objects.create(
-            username="sabine",
-            password="12345",
-            first_name="Sabine",
-            last_name="Marini",
-            email="sabine@apilos.fr",
+        group_bailleur = utils_fixtures.create_group(
+            "Bailleur", rw=["logement", "convention"]
         )
-        user_instructeur_metropole = User.objects.create(
-            username="roger",
-            password="567890",
-            first_name="Roger",
-            last_name="Dupont",
-            email="roger@apilos.fr",
-        )
-        user_bailleur = User.objects.create(
-            username="raph",
-            password="12345",
-            first_name="Raphaëlle",
-            last_name="Neyton",
-            email="raph@apilos.fr",
-        )
-        user_bailleur_hlm = User.objects.create(
-            username="sophie",
-            password="567890",
-            first_name="Sophie",
-            last_name="Eaubonne",
-            email="sophie@apilos.fr",
-        )
-        administration = Administration.objects.create(
-            nom="CA d'Arles-Crau-Camargue-Montagnette",
-            code="12345",
-        )
-        administration_metropole = Administration.objects.create(
-            nom="Métroploe de Marseille",
-            code="67890",
-        )
-        bailleur = utils.create_bailleur()
-        bailleur_hlm = Bailleur.objects.create(
-            nom="HLM",
-            siret="987654321",
-            capital_social="123456",
-            ville="Marseille",
-            signataire_nom="Pall Antoine",
-            signataire_fonction="DG",
-            signataire_date_deliberation=datetime.date(2001, 12, 1),
-        )
-        group_instructeur = Group.objects.create(
-            name="Instructeur",
-        )
-        group_instructeur.permissions.set(
-            [
-                Permission.objects.get(
-                    content_type__model="logement", codename="add_logement"
-                ),
-                Permission.objects.get(
-                    content_type__model="logement", codename="change_logement"
-                ),
-                Permission.objects.get(
-                    content_type__model="logement", codename="delete_logement"
-                ),
-                Permission.objects.get(
-                    content_type__model="logement", codename="view_logement"
-                ),
-                Permission.objects.get(
-                    content_type__model="convention", codename="add_convention"
-                ),
-                Permission.objects.get(
-                    content_type__model="convention", codename="change_convention"
-                ),
-                Permission.objects.get(
-                    content_type__model="convention", codename="delete_convention"
-                ),
-                Permission.objects.get(
-                    content_type__model="convention", codename="view_convention"
-                ),
-            ]
-        )
-        group_bailleur = Group.objects.create(
-            name="Bailleur",
-        )
-        group_bailleur.permissions.set(
-            [
-                Permission.objects.get(
-                    content_type__model="logement", codename="add_logement"
-                ),
-                Permission.objects.get(
-                    content_type__model="logement", codename="change_logement"
-                ),
-                Permission.objects.get(
-                    content_type__model="logement", codename="view_logement"
-                ),
-                Permission.objects.get(
-                    content_type__model="convention", codename="add_convention"
-                ),
-                Permission.objects.get(
-                    content_type__model="convention", codename="change_convention"
-                ),
-                Permission.objects.get(
-                    content_type__model="convention", codename="view_convention"
-                ),
-            ]
-        )
+
         Role.objects.create(
             typologie=TypeRole.BAILLEUR,
             bailleur=bailleur,
@@ -147,26 +52,13 @@ class AdministrationsModelsTest(TestCase):
             user=user_instructeur_metropole,
             group=group_instructeur,
         )
-        programme = utils.create_programme(bailleur, administration)
-        lot = Lot.objects.create(
-            programme=programme,
-            bailleur=bailleur,
-            financement=Financement.PLAI,
+        programme = utils_fixtures.create_programme(
+            bailleur, administration, nom="Programe 1"
         )
-        Convention.objects.create(
-            numero="0001",
-            lot=lot,
-            programme=programme,
-            bailleur=bailleur,
-            financement=Financement.PLUS,
-        )
-        Convention.objects.create(
-            numero="0002",
-            lot=lot,
-            programme=programme,
-            bailleur=bailleur,
-            financement=Financement.PLAI,
-        )
+        lot_plai = utils_fixtures.create_lot(programme, Financement.PLAI)
+        lot_plus = utils_fixtures.create_lot(programme, Financement.PLUS)
+        utils_fixtures.create_convention(lot_plus, numero="0001")
+        utils_fixtures.create_convention(lot_plai, numero="0002")
 
     # Test model User
     def test_object_user_str(self):
