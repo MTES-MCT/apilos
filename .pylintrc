@@ -9,4 +9,4 @@ disable=
     C0116, # missing-function-docstring
 load-plugins=pylint_django
 django-settings-module=core.settings
-min-similarity-lines=40
+min-similarity-lines=20
