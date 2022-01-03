@@ -7,11 +7,6 @@ from users.models import User
 from .models import User, Role
 
 
-class CustomUserAdmin(UserAdmin):
-    fieldsets = UserAdmin.fieldsets + ((None, {"fields": ("cerbere_uid",)}),)
-    add_fieldsets = UserAdmin.add_fieldsets + ((None, {"fields": ("cerbere_uid",)}),)
-
-
 class CustomAdministrationAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "administration":
@@ -23,5 +18,5 @@ class CustomAdministrationAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-admin.site.register(User, CustomUserAdmin)
+admin.site.register(User, UserAdmin)
 admin.site.register(Role, CustomAdministrationAdmin)
