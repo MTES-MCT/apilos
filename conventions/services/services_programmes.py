@@ -625,7 +625,7 @@ def _save_programme_logement_edd(formset, convention, programme):
 
 
 def _conventions_selection(request, infilter):
-    infilter.update(request.user.programme_filter())
+    infilter.update(request.user.programme_filter("programme__"))
     return (
         Lot.objects.prefetch_related("programme")
         .prefetch_related("convention_set")

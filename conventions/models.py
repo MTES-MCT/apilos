@@ -209,6 +209,9 @@ class Convention(models.Model):
     def is_instruction_ongoing(self):
         return self.statut in ["INSTRUCTION", "CORRECTION"]
 
+    def is_validated(self):
+        return self.statut in ["VALIDE", "CLOS"]
+
 
 class ConventionHistory(models.Model):
     id = models.AutoField(primary_key=True)

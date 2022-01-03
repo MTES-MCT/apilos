@@ -11,6 +11,6 @@ class AdministrationsModelsTest(TestCase):
         )
 
     def test_object_str(self):
-        administration = Administration.objects.get(id=1)
+        administration = Administration.objects.get(code="12345")
         expected_object_name = f"{administration.nom}"
         self.assertEqual(str(administration), expected_object_name)

@@ -25,6 +25,7 @@ from . import upload_objects
 from . import convention_generator
 
 
+@login_required
 def conventions_index(request, infilter):
     infilter.update(request.user.convention_filter())
     conventions = (
@@ -35,6 +36,7 @@ def conventions_index(request, infilter):
     return conventions
 
 
+@login_required
 def convention_financement(request, convention_uuid):
     convention = Convention.objects.prefetch_related("pret_set").get(
         uuid=convention_uuid
@@ -192,6 +194,7 @@ def _save_convention_financement_prets(formset, convention):
         pret.save()
 
 
+@login_required
 def convention_comments(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     if request.method == "POST":
@@ -224,6 +227,8 @@ def convention_comments(request, convention_uuid):
     }
 
 
+@login_required
+@require_GET
 def convention_summary(request, convention_uuid, convention_number_form=None):
     convention = (
         Convention.objects.prefetch_related("bailleur")
@@ -235,6 +240,7 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
         .prefetch_related("lot__logement_set")
         .get(uuid=convention_uuid)
     )
+    request.user.check_perm("convention.view_convention", convention)
     if convention_number_form is None:
         convention_number_form = ConventionNumberForm(
             initial={
@@ -257,34 +263,31 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
     }
 
 
+@login_required
+@require_POST
 def convention_submit(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     submitted = utils.ReturnStatus.WARNING
-    if request.method == "POST":
-        request.user.check_perm("convention.change_convention", convention)
-        if request.POST.get("SubmitConvention", False):
+    request.user.check_perm("convention.change_convention", convention)
+    if request.POST.get("SubmitConvention", False):
 
-            ConventionHistory.objects.create(
-                bailleur=convention.bailleur,
-                convention=convention,
-                statut_convention=ConventionStatut.INSTRUCTION,
-                statut_convention_precedent=convention.statut,
-                user=request.user,
-            ).save()
+        ConventionHistory.objects.create(
+            bailleur=convention.bailleur,
+            convention=convention,
+            statut_convention=ConventionStatut.INSTRUCTION,
+            statut_convention_precedent=convention.statut,
+            user=request.user,
+        ).save()
 
-            if convention.premiere_soumission_le is None:
-                convention.premiere_soumission_le = timezone.now()
-            convention.soumis_le = timezone.now()
-            convention.statut = ConventionStatut.INSTRUCTION
-            convention.save()
-            _send_email_instruction(request, convention)
-            submitted = utils.ReturnStatus.SUCCESS
-        return {
-            "success": submitted,
-            "convention": convention,
-        }
+        if convention.premiere_soumission_le is None:
+            convention.premiere_soumission_le = timezone.now()
+        convention.soumis_le = timezone.now()
+        convention.statut = ConventionStatut.INSTRUCTION
+        convention.save()
+        _send_email_instruction(request, convention)
+        submitted = utils.ReturnStatus.SUCCESS
     return {
-        "success": utils.ReturnStatus.ERROR,
+        "success": submitted,
         "convention": convention,
     }
 
@@ -351,6 +354,7 @@ def _send_email_instruction(request, convention):
     msg.send()
 
 
+@login_required
 @require_POST
 def convention_feedback(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -425,6 +429,7 @@ def _send_email_correction(request, convention, notification_form):
     msg.send()
 
 
+@login_required
 @require_POST
 def convention_validate(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -544,6 +549,7 @@ def _send_email_valide(request, convention, local_pdf_path=None):
     msg.send()
 
 
+@login_required
 @require_POST
 def generate_convention(request, convention_uuid):
     convention = (

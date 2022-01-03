@@ -22,11 +22,11 @@ class Command(BaseCommand):
     # pylint: disable=R0912,R0914,R0915
     def handle(self, *args, **options):
         basedir = settings.BASE_DIR
-        file_path = os.path.join(basedir, "documents", "v3.xlsx")
+        file_path = os.path.join(basedir, "documents", "v4.xlsx")
 
         file_path_input = input("Enter your value (default: " + file_path + "): ")
         file_path = file_path_input or file_path
-        wb = load_workbook(file_path)
+        wb = load_workbook(file_path, read_only=True)
         if not wb.sheetnames:
             print("Error, the worksheet is not compatible, no sheet detected")
             sys.exit(1)
@@ -56,7 +56,7 @@ class Command(BaseCommand):
 
         # Create one object by row
         column_from_index = {}
-        for my_tuple in ws["B4":"AH4"]:
+        for my_tuple in ws["B4":"AE4"]:
             for cell in my_tuple:
                 column_from_index[cell.column] = str(cell.value).strip()
         #        print(cell.value)
@@ -169,35 +169,3 @@ class Command(BaseCommand):
         Programme.map_and_create(my_objects, create_only)
         Lot.map_and_create(my_objects, create_only)
         TypeStationnement.map_and_create(my_parkings, create_only)
-
-
-# Année Gestion Programmation
-# Département
-# N° Opération GALION
-# Commune
-# Zone 123
-# Zone ABC
-# Gestionnaire
-# Gestionnaire (code)
-# Gestionnaire (code SIREN)
-# MOA (nom officiel)
-# MOA (code SIRET)
-# MOA Adresse 1
-# MOA Code postal
-# MOA Ville
-# Type d'habitat
-# Nom Opération
-# Adresse Opération 1
-# Opération code postal
-# Année Achèvement Travaux
-# Nature logement
-# Type Bénéficiaire
-# Produit
-# Nb logts
-# SU totale
-# Nb Garages aériens
-# Loyer Garages aériens
-# Nb Garages enterrés
-# Loyer Garages enterrés
-# Nb Places Stationnement
-# Loyer Places Stationnement

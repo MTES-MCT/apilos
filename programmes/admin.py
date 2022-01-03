@@ -9,7 +9,12 @@ from .models import (
     TypeStationnement,
 )
 
-admin.site.register(Programme)
+
+class ProgrammeAdmin(admin.ModelAdmin):
+    search_fields = ["nom"]
+
+
+admin.site.register(Programme, ProgrammeAdmin)
 admin.site.register(ReferenceCadastrale)
 admin.site.register(Lot)
 admin.site.register(Logement)

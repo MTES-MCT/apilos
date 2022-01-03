@@ -16,9 +16,24 @@ import os
 from decouple import config
 import dj_database_url
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 
 def get_env_variable(name, cast=str, default=""):
     try:
+        if cast == bool:
+            return os.environ[name].lower() in [
+                "true",
+                "1",
+                "t",
+                "y",
+                "yes",
+                "yeah",
+                "yup",
+                "certainly",
+                "uh-huh",
+            ]
         return cast(os.environ[name])
     # pylint: disable=W0702, bare-except
     except:
@@ -50,7 +65,7 @@ CONVERTAPI_SECRET = get_env_variable("CONVERTAPI_SECRET")
 
 env_allowed_hosts = []
 try:
-    env_allowed_hosts = os.environ["ALLOWED_HOSTS"].split(",")
+    env_allowed_hosts = get_env_variable("ALLOWED_HOSTS").split(",")
 except KeyError:
     pass
 
@@ -72,6 +87,10 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "upload.apps.UploadConfig",
     "comments.apps.CommentsConfig",
+    "rest_framework",
+    "drf_yasg",
+    "django_filters",
+    "django_cas_ng",
 ]
 
 MIDDLEWARE = [
@@ -196,16 +215,19 @@ else:
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 6 * 60 * 60
+
 # Security settings
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+if ENVIRONMENT != "development":
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = "Strict"
 SESSION_COOKIE_SAMESITE = "Lax"
 
 # https://django-csp.readthedocs.io/en/latest/configuration.html
 CSP_DEFAULT_SRC = "'none'"
-CSP_SCRIPT_SRC = ("https://stats.data.gouv.fr/piwik.js",)
-# CSP_SCRIPT_SRC_ELEM = ("https://stats.data.gouv.fr/piwik.js",)  # Matomo
+CSP_SCRIPT_SRC = ("https://stats.data.gouv.fr/piwik.js", "'self'")
 CSP_IMG_SRC = ("'self'", "data:")
 CSP_OBJECT_SRC = "'none'"
 CSP_FONT_SRC = "'self'", "data:"
@@ -217,3 +239,63 @@ CSP_INCLUDE_NONCE_IN = [
 ]
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+}
+
+SWAGGER_SETTINGS = {
+    "DEFAULT_AUTO_SCHEMA_CLASS": "api.auto_schema.ReadWriteAutoSchema",
+}
+
+CERBERE_AUTH = get_env_variable("CERBERE_AUTH", cast=bool)
+
+if CERBERE_AUTH:
+    MIDDLEWARE = MIDDLEWARE + [
+        "django_cas_ng.middleware.CASMiddleware",
+    ]
+
+    AUTHENTICATION_BACKENDS = [
+        "django.contrib.auth.backends.ModelBackend",
+        "core.backends.CerbereCASBackend",
+    ]  # custom backend CAS
+
+    # CAS config
+    CAS_SERVER_URL = (
+        "https://authentification.din.developpement-durable.gouv.fr/cas/public"
+    )
+    CAS_VERSION = "CAS_2_SAML_1_0"
+    CAS_USERNAME_ATTRIBUTE = "username"
+    CAS_APPLY_ATTRIBUTES_TO_USER = True
+    CAS_RENAME_ATTRIBUTES = {
+        "UTILISATEUR.ID": "username",
+        "UTILISATEUR.NOM": "last_name",
+        "UTILISATEUR.PRENOM": "first_name",
+        "UTILISATEUR.MEL": "email",
+    }  # ,'UTILISATEUR.UNITE':'unite'
+
+    LOGIN_URL = "/accounts/cerbere-login"
+
+SENTRY_URL = get_env_variable("SENTRY_URL")
+
+if SENTRY_URL:
+    # opened issue on Sentry package : https://github.com/getsentry/sentry-python/issues/1081
+    # it should be solved in a further release
+    # pylint: disable=E0110
+    sentry_sdk.init(
+        dsn=SENTRY_URL,
+        integrations=[DjangoIntegration()],
+        environment=ENVIRONMENT,
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0,
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True,
+    )

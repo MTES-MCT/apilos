@@ -5,6 +5,7 @@ from core import settings
 def get_environment(request):
     data = {}
     data["ENVIRONMENT"] = settings.ENVIRONMENT
+    data["CERBERE_AUTH"] = settings.CERBERE_AUTH
     return data
 
 
@@ -41,6 +42,11 @@ def hasnt_active_comments(comments, object_field):
     return not (
         list(filter(lambda comment: (comment.statut != "CLOS"), object_comments))
     )
+
+
+@register.filter
+def has_comments(comments, object_field):
+    return comments.get(object_field) is not None
 
 
 screen_mapping = {"bailleur": ["bailleur__nom", "bailleur__siret"]}

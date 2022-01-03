@@ -136,6 +136,18 @@ Sur Scalingo
 
 ```scalingo --app apilos-staging/fabnum-apilos run  python3 manage.py import_galion```
 
+### Populer les permissions
+
+Pour modifier les permissions, il suffit de modifier dans l'interface d'administration puis d'exporter les données d'authentification :
+
+```docker-compose exec apilos python manage.py dumpdata auth --natural-foreign --natural-primary > users/fixtures/auth.json```
+
+et pour populer ces données :
+
+```docker-compose exec apilos python manage.py loaddata auth.json```
+
+Cette commande est excutée lors du déploiement de l'application juste après la migration
+
 ### Envoie de mails
 
 Nous utilisons mailjet. Si les variables d'environnements MAILJET_API_KEY et MAILJET_API_SECRET sont configurées, le backend email Mailjet est utilisé. Sinon, le backend email console est utilisé et les mail sont imprimé dans a console (dans les logs)
