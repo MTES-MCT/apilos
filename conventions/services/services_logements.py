@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+
 from programmes.models import (
     Logement,
     Annexe,
@@ -17,6 +19,7 @@ from . import utils
 from . import upload_objects
 
 
+@login_required
 def logements_update(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("lot")
@@ -176,6 +179,7 @@ def _save_logements(formset, convention):
         logement.save()
 
 
+@login_required
 def annexes_update(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("lot")
@@ -381,6 +385,7 @@ def _save_annexes(formset, convention):
         annexe.save()
 
 
+@login_required
 def stationnements_update(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("lot")

@@ -14,9 +14,18 @@ class ConventionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Convention
         fields = (
-            "uuid",
-            "numero",
             "bailleur",
-            "programme",
+            "cree_le",
+            "date_fin_conventionnement",
+            "financement",
+            "fond_propre",
             "lot",
+            "mis_a_jour_le",
+            "numero",
+            "premiere_soumission_le",
+            "programme",
+            "soumis_le",
+            "statut",
+            "uuid",
+            "valide_le",
         )

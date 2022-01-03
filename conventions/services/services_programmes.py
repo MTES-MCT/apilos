@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+
 from programmes.models import (
     Programme,
     Lot,
@@ -20,6 +22,7 @@ from . import utils
 from . import upload_objects
 
 
+@login_required
 def select_programme_create(request):
     if request.method == "POST":
         form = ProgrammeSelectionForm(request.POST)
@@ -82,6 +85,7 @@ def select_programme_create(request):
     }  # render(request, "conventions/selection.html", {'form': form, 'programmes': programmes})
 
 
+@login_required
 def select_programme_update(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     if request.method == "POST":
@@ -114,6 +118,7 @@ def select_programme_update(request, convention_uuid):
     }
 
 
+@login_required
 def programme_update(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme")
@@ -205,6 +210,7 @@ def _save_programme_and_lot(programme, lot, form):
     lot.save()
 
 
+@login_required
 def programme_cadastral_update(request, convention_uuid):
     # pylint: disable=R0915
     convention = (
@@ -438,6 +444,7 @@ def _programme_cadastrale_atomic_update(request, convention, programme):
     }
 
 
+@login_required
 def programme_edd_update(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme")

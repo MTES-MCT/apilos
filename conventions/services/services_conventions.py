@@ -292,8 +292,8 @@ def convention_submit(request, convention_uuid):
     }
 
 
-@require_GET
 @login_required
+@require_GET
 def convention_delete(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     request.user.check_perm("convention.change_convention", convention)
