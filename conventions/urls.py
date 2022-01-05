@@ -51,4 +51,9 @@ urlpatterns = [
         views.load_xlsx_model,
         name="load_xlsx_model",
     ),
+    path(
+        "operation/<programme_uuid>/<financement>",
+        views.display_operation,
+        name="display_operation",
+    ),
 ]
