@@ -52,7 +52,7 @@ urlpatterns = [
         name="load_xlsx_model",
     ),
     path(
-        "operation/<programme_uuid>/<financement>",
+        "operation/<programme_uuid>/<programme_financement>",
         views.display_operation,
         name="display_operation",
     ),
