@@ -13,7 +13,7 @@
         {% include "common/convention_edit_info.html" with convention=convention %}
         {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
         <div class="fr-container">
-            <form method="post" action="">
+            <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-mt-5w">
@@ -37,7 +37,6 @@
                                                 .addEventListener('click', function(){ convention_mode(true) });
                                         });
                                     </script>
-
                                     <div id='programme_selection' class="fr-ml-4w fr-select-group {% if form.lot_uuid.errors %}fr-select-group--error{% endif %}"  {% if form.existing_programme.value != 'selection' %}hidden{% endif %}>
                                         <div class="fr-mt-1w block--row-strech" id="{{form.lot_uuid.id_for_label}}_div">
                                             <select class="fr-select {% if form.lot_uuid.errors %}fr-select--error{% endif %}" id="lot_uuid" name="lot_uuid" {% if not editable %}disabled{% endif %}>
