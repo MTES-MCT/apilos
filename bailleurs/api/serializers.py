@@ -12,6 +12,10 @@ class BailleurSerializer(serializers.HyperlinkedModelSerializer):
             "adresse",
             "code_postal",
             "ville",
+            "capital_social",
+            "signataire_nom",
+            "signataire_fonction",
+            "signataire_date_deliberation",
             "cree_le",
             "mis_a_jour_le",
         ]
