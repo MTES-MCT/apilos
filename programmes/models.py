@@ -60,7 +60,7 @@ class TypeOperation(models.TextChoices):
 
 
 class TypeHabitat(models.TextChoices):
-    SANSOBJET = "SANSOBJET", "Sans Objet"
+    MIXTE = "MIXTE", "Mixte"
     INDIVIDUEL = "INDIVIDUEL", "Individuel"
     COLLECTIF = "COLLECTIF", "Collectif"
 
