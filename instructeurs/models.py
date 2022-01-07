@@ -17,6 +17,8 @@ class Administration(IngestableModel):
     nom = models.CharField(max_length=255)
     code = models.CharField(max_length=255)
     ville_signature = models.CharField(max_length=255, null=True)
+    cree_le = models.DateTimeField(auto_now_add=True)
+    mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.nom
