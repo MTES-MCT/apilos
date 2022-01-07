@@ -161,7 +161,7 @@ class Programme(IngestableModel):
             " "
             + self.get_type_habitat_display().lower()
             + ("s" if nb_logements and nb_logements > 1 else "")
-            if self.type_habitat and self.type_habitat != TypeHabitat.SANSOBJET
+            if self.type_habitat
             else ""
         )
 
