@@ -5,6 +5,21 @@ from core.models import IngestableModel
 from core import model_utils
 
 
+class Zone123bis(models.TextChoices):
+    Zone1 = "1", "01"
+    Zone2 = "2", "02"
+    Zone3 = "3", "03"
+    Zone1bis = "1bis", "1bis"
+
+
+class ZoneABCbis(models.TextChoices):
+    ZoneA = "A", "A"
+    ZoneAbis = "Abis", "Abis"
+    ZoneB1 = "B1", "B1"
+    ZoneB2 = "B2", "B2"
+    ZoneC = "C", "C"
+
+
 class Financement(models.TextChoices):
     PLUS = "PLUS", "PLUS"
     PLAI = "PLAI", "PLAI"
@@ -91,10 +106,10 @@ class Programme(IngestableModel):
         "code_postal": "Opération code postal",
         "ville": "Commune",
         "adresse": "Adresse Opération 1",
-        "zone_123": "Zone 123",
-        "zone_abc": "Zone ABC",
+        "zone_123_bis": "Zone 123",
+        "zone_abc_bis": "Zone ABC",
         "surface_utile_totale": "SU totale",
-        "annee_gestion_programmation": "Année Gestion Programmation",
+        "annee_gestion_programmation": "Année Programmation retenue",
         "numero_galion": "N° Opération GALION",
         "type_habitat": "Type d'habitat",
         "bailleur": "MOA (code SIRET)",
@@ -115,8 +130,25 @@ class Programme(IngestableModel):
     adresse = models.CharField(max_length=255, null=True)
     numero_galion = models.CharField(max_length=255, null=True)
     annee_gestion_programmation = models.IntegerField(null=True)
+
+    # zone_123 and zone_abc is deprecated and will be removed
+    # zone_123_bis and zone_abc_bis should be used instead
     zone_123 = models.IntegerField(null=True)
     zone_abc = models.CharField(max_length=255, null=True)
+
+    zone_123_bis = models.CharField(
+        max_length=25,
+        choices=Zone123bis.choices,
+        default=None,
+        null=True,
+    )
+    zone_abc_bis = models.CharField(
+        max_length=25,
+        choices=ZoneABCbis.choices,
+        default=None,
+        null=True,
+    )
+
     surface_utile_totale = models.DecimalField(
         max_digits=8, decimal_places=2, null=True
     )
