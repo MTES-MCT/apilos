@@ -51,12 +51,12 @@ class TypologieLogement(models.TextChoices):
 class TypeOperation(models.TextChoices):
     SANSOBJET = "SANSOBJET", "Sans Objet"
     NEUF = "NEUF", "Construction Neuve"
-    ACQUIS = "ACQUIS", "Acquisition-Amélioration"
-    DEMEMBREMENT = "DEMEMBREMENT", "Démembrement"
+    VEFA = "VEFA", "Construction Neuve > VEFA"
+    ACQUIS = "ACQUIS", "Acquisition"
+    ACQUISAMELIORATION = "ACQUISAMELIORATION", "Acquisition-Amélioration"
     REHABILITATION = "REHABILITATION", "Réhabilitation"
-    SANSTRAVAUX = "SANSTRAVAUX", "Sans travaux"
+    SANSTRAVAUX = "SANSTRAVAUX", "Sans aide financière (sans travaux)"
     USUFRUIT = "USUFRUIT", "Usufruit"
-    VEFA = "VEFA", "VEFA"
 
 
 class TypeHabitat(models.TextChoices):
