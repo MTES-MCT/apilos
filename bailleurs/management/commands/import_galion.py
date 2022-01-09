@@ -22,7 +22,7 @@ class Command(BaseCommand):
     # pylint: disable=R0912,R0914,R0915
     def handle(self, *args, **options):
         basedir = settings.BASE_DIR
-        file_path = os.path.join(basedir, "documents", "v4.xlsx")
+        file_path = os.path.join(basedir, "documents", "v5.xlsx")
 
         file_path_input = input("Enter your value (default: " + file_path + "): ")
         file_path = file_path_input or file_path
@@ -56,7 +56,7 @@ class Command(BaseCommand):
 
         # Create one object by row
         column_from_index = {}
-        for my_tuple in ws["B4":"AE4"]:
+        for my_tuple in ws["B4":"AF4"]:
             for cell in my_tuple:
                 column_from_index[cell.column] = str(cell.value).strip()
         #        print(cell.value)
