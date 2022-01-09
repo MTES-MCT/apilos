@@ -17,8 +17,6 @@ class slist(list):
 
 
 class User(AbstractUser):
-    cerbere_uid = models.IntegerField(null=True)
-
     def has_object_permission(self, obj):
         if isinstance(obj, Convention):
             # is bailleur of the convention or is instructeur of the convention

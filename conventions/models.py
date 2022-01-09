@@ -173,7 +173,7 @@ class Convention(models.Model):
             return "/".join(
                 [
                     str(self.programme.code_postal[:-3]),
-                    str(self.programme.zone_123),
+                    self.programme.zone_123_bis,
                     str(timezone.now().month),
                     str(timezone.now().year),
                     decret,
@@ -235,6 +235,7 @@ class ConventionHistory(models.Model):
         "users.User", related_name="valide_par", on_delete=models.SET_NULL, null=True
     )
     cree_le = models.DateTimeField(auto_now_add=True)
+    mis_a_jour_le = models.DateTimeField(auto_now=True)
 
 
 class Pret(models.Model):
@@ -254,6 +255,8 @@ class Pret(models.Model):
     numero = models.CharField(null=True, max_length=255)
     duree = models.IntegerField(null=True)
     montant = models.DecimalField(max_digits=12, decimal_places=2)
+    cree_le = models.DateTimeField(auto_now_add=True)
+    mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     # Needed to import xlsx files
     import_mapping = {

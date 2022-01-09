@@ -7,6 +7,7 @@ from .services_programmes import (
     programme_update,
     programme_cadastral_update,
     programme_edd_update,
+    display_operation,
 )
 from .services_conventions import (
     conventions_index,

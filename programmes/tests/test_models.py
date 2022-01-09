@@ -150,11 +150,9 @@ class ProgrammeModelsTest(TestCase):
 
     def test_advanced_display(self):
         programme = Programme.objects.order_by("-uuid").first()
-        programme.type_habitat = TypeHabitat.SANSOBJET
-        self.assertEqual(programme.get_type_habitat_advanced_display(), "")
-        self.assertEqual(programme.get_type_habitat_advanced_display(1), "")
-        self.assertEqual(programme.get_type_habitat_advanced_display(2), "")
-        type_habitat = random.choice([TypeHabitat.INDIVIDUEL, TypeHabitat.COLLECTIF])
+        type_habitat = random.choice(
+            [TypeHabitat.INDIVIDUEL, TypeHabitat.COLLECTIF, TypeHabitat.MIXTE]
+        )
         programme.type_habitat = type_habitat
         self.assertEqual(
             programme.get_type_habitat_advanced_display(0),
@@ -175,7 +173,7 @@ class ProgrammeModelsTest(TestCase):
             [
                 TypeOperation.NEUF,
                 TypeOperation.ACQUIS,
-                TypeOperation.DEMEMBREMENT,
+                TypeOperation.ACQUISAMELIORATION,
                 TypeOperation.REHABILITATION,
                 TypeOperation.USUFRUIT,
                 TypeOperation.VEFA,

@@ -1,3 +1,5 @@
+from rest_framework import serializers
+
 from django.test import TestCase
 from upload.models import UploadedFile, UploadedFileSerializer
 
@@ -26,5 +28,11 @@ class ConventionModelsTest(TestCase):
             "dirpath": uploaded_file.dirpath,
             "size": uploaded_file.size,
             "content_type": uploaded_file.content_type,
+            "cree_le": serializers.DateTimeField().to_representation(
+                uploaded_file.cree_le
+            ),
+            "mis_a_jour_le": serializers.DateTimeField().to_representation(
+                uploaded_file.mis_a_jour_le
+            ),
         }
         self.assertEqual(UploadedFileSerializer(uploaded_file).data, expected_object)

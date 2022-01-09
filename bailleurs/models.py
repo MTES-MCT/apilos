@@ -5,6 +5,15 @@ from django.db import models
 from core.models import IngestableModel
 
 
+class TypeBailleur(models.TextChoices):
+    COLLECTIVITES = "COLLECTIVITES", "Collectivités locales"
+    COMMERCIALES = "COMMERCIALES", "Entreprises commerciales"
+    HLM = "HLM", "Entreprises HLM"
+    NONRENSEIGNE = "NONRENSEIGNE", "Non renseigné"
+    PERSONNEPHISIQUE = "PERSONNEPHISIQUE", "Personnes physiques"
+    TIERSSECTEUR = "TIERSSECTEUR", "Tiers secteur"
+
+
 class Bailleur(IngestableModel):
     pivot = "siret"
     mapping = {
@@ -13,6 +22,7 @@ class Bailleur(IngestableModel):
         "adresse": "MOA Adresse 1",
         "code_postal": "MOA Code postal",
         "ville": "MOA Ville",
+        "type_bailleur": "Famille MOA",
     }
 
     id = models.AutoField(primary_key=True)
@@ -27,6 +37,11 @@ class Bailleur(IngestableModel):
     signataire_fonction = models.CharField(max_length=255, null=True)
     signataire_date_deliberation = models.DateField(null=True)
     operation_exceptionnelle = models.TextField(null=True)
+    type_bailleur = models.CharField(
+        max_length=25,
+        choices=TypeBailleur.choices,
+        default=TypeBailleur.NONRENSEIGNE,
+    )
 
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)

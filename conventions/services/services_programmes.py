@@ -1,3 +1,7 @@
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.views.decorators.http import require_GET
+
 from programmes.models import (
     Programme,
     Lot,
@@ -20,6 +24,7 @@ from . import utils
 from . import upload_objects
 
 
+@login_required
 def select_programme_create(request):
     if request.method == "POST":
         form = ProgrammeSelectionForm(request.POST)
@@ -82,6 +87,7 @@ def select_programme_create(request):
     }  # render(request, "conventions/selection.html", {'form': form, 'programmes': programmes})
 
 
+@login_required
 def select_programme_update(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     if request.method == "POST":
@@ -114,6 +120,7 @@ def select_programme_update(request, convention_uuid):
     }
 
 
+@login_required
 def programme_update(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme")
@@ -205,6 +212,7 @@ def _save_programme_and_lot(programme, lot, form):
     lot.save()
 
 
+@login_required
 def programme_cadastral_update(request, convention_uuid):
     # pylint: disable=R0915
     convention = (
@@ -438,6 +446,7 @@ def _programme_cadastrale_atomic_update(request, convention, programme):
     }
 
 
+@login_required
 def programme_edd_update(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme")
@@ -632,3 +641,38 @@ def _conventions_selection(request, infilter):
         .filter(**infilter)
         .order_by("programme__ville", "programme__nom", "nb_logements", "financement")
     )
+
+
+@login_required
+@require_GET
+def display_operation(request, programme_uuid, financement):
+    # CONVENTION
+    try:
+        programme = request.user.programmes().get(uuid=programme_uuid)
+    except Programme.DoesNotExist as does_not_exist:
+        raise PermissionDenied from does_not_exist
+
+    try:
+        convention = request.user.conventions().get(
+            programme=programme,
+            financement=financement,
+        )
+        return {"success": utils.ReturnStatus.SUCCESS, "convention": convention}
+    except Convention.DoesNotExist:
+        # LOT case
+        lot = Lot.objects.get(
+            programme=programme,
+            financement=financement,
+        )
+        form = ProgrammeSelectionForm(
+            initial={"existing_programme": "selection", "lot_uuid": f"{lot.uuid}"}
+        )
+
+        programmes = _conventions_selection(request, {})
+        return {
+            "success": utils.ReturnStatus.WARNING,
+            "programmes": programmes,
+            "form": form,
+            "editable": request.user.has_perm("convention.add_convention"),
+            "bailleurs": request.user.bailleurs(),
+        }
