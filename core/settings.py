@@ -61,13 +61,13 @@ if mailjet_api_key != "":
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-CONVERTAPI_SECRET = get_env_variable("CONVERTAPI_SECRET")
-
 env_allowed_hosts = []
 try:
     env_allowed_hosts = get_env_variable("ALLOWED_HOSTS").split(",")
 except KeyError:
     pass
+
+CONVERTAPI_SECRET = get_env_variable("CONVERTAPI_SECRET")
 
 ALLOWED_HOSTS = ["localhost"] + env_allowed_hosts
 
