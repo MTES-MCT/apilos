@@ -1,0 +1,11 @@
+
+
+<a class="fr-link fr-link--sm" href="{% url url_target %}?order_by={% if order_by == order_by_column %}-{% endif %}{{ order_by_column }}" >
+    {% if '-'|add:order_by_column == order_by%}
+        <b><span class="fr-fi-arrow-down-s-line content__icons--blue fr-fi--sm-active" aria-hidden="true"></span></b>
+    {% elif order_by_column == order_by %}
+        <b><span class="fr-fi-arrow-up-s-line content__icons--blue fr-fi--sm-active" aria-hidden="true"></span></b>
+    {% else %}
+        <span class="fr-fi-arrow-up-s-line grey content__icons--darkgrey fr-fi--sm" aria-hidden="true"></span>
+    {% endif %}
+</a>

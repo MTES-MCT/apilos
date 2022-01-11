@@ -35,22 +35,45 @@
             <div class="fr-col-md-12 ">
                 {% if conventions %}
                     <div class="fr-table fr-table--bordered">
-                        <p hidden>{{filter}}</p>
                         <table>
                             <caption>Gérez vos conventions</caption>
 
                             <thead>
                                 <tr>
                                     {% if request.user.is_instructeur %}
-                                        <th scope="col">Bailleur</th>
-                                        <th scope="col">Numéro Galion</th>
+                                        <th scope="col">
+                                            Bailleur
+                                            {% include "common/display_order_icon.html" with order_by=order_by order_by_column='bailleur__nom' url_target='conventions:index' %}
+                                        </th>
+                                        <th scope="col">
+                                            Numéro Galion
+                                            {% include "common/display_order_icon.html" with order_by=order_by order_by_column='programme__numero_galion' url_target='conventions:index' %}
+                                        </th>
                                     {% endif %}
-                                    <th scope="col">Mise en service</th>
-                                    <th scope="col">Programme</th>
-                                    <th scope="col">Financement</th>
-                                    <th scope="col">Ville</th>
-                                    <th scope="col">Nombre de logements à conventionner</th>
-                                    <th scope="col">Statut</th>
+                                    <th scope="col">
+                                        Mise en service
+                                        {% include "common/display_order_icon.html" with order_by=order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' %}
+                                    </th>
+                                    <th scope="col">
+                                        Programme
+                                        {% include "common/display_order_icon.html" with order_by=order_by order_by_column='programme__nom' url_target='conventions:index' %}
+                                    </th>
+                                    <th scope="col">
+                                        Financement
+                                        {% include "common/display_order_icon.html" with order_by=order_by order_by_column='lot__financement' url_target='conventions:index' %}
+                                    </th>
+                                    <th scope="col">
+                                        Ville
+                                        {% include "common/display_order_icon.html" with order_by=order_by order_by_column='programme__ville' url_target='conventions:index' %}
+                                    </th>
+                                    <th scope="col">
+                                        Nombre de logements à conventionner
+                                        {% include "common/display_order_icon.html" with order_by=order_by order_by_column='lot__nb_logements' url_target='conventions:index' %}
+                                    </th>
+                                    <th scope="col">
+                                        Statut
+                                        {% include "common/display_order_icon.html" with order_by=order_by order_by_column='statut' url_target='conventions:index' %}
+                                    </th>
                                     <th scope="col" class="col__width--140">Action</th>
                                 </tr>
                             </thead>
@@ -61,7 +84,7 @@
                                             <td>{{convention.bailleur.nom}}</td>
                                             <td>{{convention.programme.numero_galion}}</td>
                                         {% endif %}
-                                        <td>{{convention.programme.date_commisioning}}</td>
+                                        <td>{{convention.programme.date_achevement_compile|default_if_none:'-'}}</td>
                                         <td>{{convention.programme.nom}}</td>
                                         <td>{{convention.financement}}</td>
                                         <td>{{convention.programme.ville}}</td>

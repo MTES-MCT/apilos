@@ -26,14 +26,17 @@ from . import convention_generator
 
 
 @login_required
+@require_GET
 def conventions_index(request, infilter):
+    order_by = request.GET.get("order_by", "programme__ville")
     infilter.update(request.user.convention_filter())
     conventions = (
         Convention.objects.prefetch_related("programme")
         .prefetch_related("lot")
         .filter(**infilter)
+        .order_by(order_by)
     )
-    return conventions
+    return {"conventions": conventions, "order_by": order_by}
 
 
 @login_required

@@ -1,6 +1,9 @@
 import uuid
 
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+
 from core.models import IngestableModel
 from core import model_utils
 
@@ -182,6 +185,7 @@ class Programme(IngestableModel):
     date_achevement_previsible = models.DateField(null=True)
     date_achat = models.DateField(null=True)
     date_achevement = models.DateField(null=True)
+    date_achevement_compile = models.DateField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
@@ -256,8 +260,12 @@ class Programme(IngestableModel):
     def edd_classique_files(self):
         return model_utils.get_field_key(self, "edd_classique", "files", default={})
 
-    def date_commisioning(self):
-        return self.date_achevement or self.date_achevement_previsible or "-"
+
+@receiver(pre_save, sender=Programme)
+def compute_date_achevement_compile(_, instance, *args, **kwargs):
+    instance.date_achevement_compile = (
+        instance.date_achevement or instance.date_achevement_previsible
+    )
 
 
 class LogementEDD(models.Model):
