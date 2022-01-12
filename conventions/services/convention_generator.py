@@ -41,7 +41,7 @@ def generate_hlm(convention):
         logements_totale["sar_totale"] += logement.surface_annexes_retenue
         logements_totale["su_totale"] += logement.surface_utile
         logements_totale["loyer_total"] += logement.loyer
-        if logement.typologie not in nb_logements_par_type:
+        if logement.get_typologie_display() not in nb_logements_par_type:
             nb_logements_par_type[logement.get_typologie_display()] = 0
         nb_logements_par_type[logement.get_typologie_display()] += 1
 
