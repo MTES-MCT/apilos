@@ -453,7 +453,7 @@
                                                         </tr>
                                                     {% endfor %}
                                                     <tr>
-                                                        <td colspan="3" class="fr-text--lg">
+                                                        <td colspan="{% if convention.statut != 'BROUILLON' %}3{% else %}2{% endif %}" class="fr-text--lg">
                                                             Total
                                                         </td>
                                                         <td id="total_sh" class="fr-text--lg">
