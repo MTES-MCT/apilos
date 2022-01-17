@@ -261,8 +261,9 @@ class Programme(IngestableModel):
         return model_utils.get_field_key(self, "edd_classique", "files", default={})
 
 
+# pylint: disable=W0613
 @receiver(pre_save, sender=Programme)
-def compute_date_achevement_compile(_, instance, *args, **kwargs):
+def compute_date_achevement_compile(sender, instance, *args, **kwargs):
     instance.date_achevement_compile = (
         instance.date_achevement or instance.date_achevement_previsible
     )
