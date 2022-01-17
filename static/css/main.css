@@ -6,6 +6,18 @@
   font-size: 4rem!important;
 }
 
+.fr-fi--sm:after, .fr-fi--sm:before {
+  font-size: 1rem!important;
+}
+
+.fr-fi--sm-active:after, .fr-fi--sm-active:before {
+  font-size: 1.25rem!important;
+}
+
+.fr-link--sm {
+  padding: 0.25rem 0.5rem;
+}
+
 .notes {
   color: #6A6A6A;
 }
