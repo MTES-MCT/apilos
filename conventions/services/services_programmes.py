@@ -1,6 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_GET
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.conf import settings
 
 from programmes.models import (
     Programme,
@@ -61,6 +65,8 @@ def select_programme_create(request):
                 bailleur_id=lot.bailleur_id,
                 financement=lot.financement,
             )
+            if existing_programme != "selection":
+                _send_email_staff(request, convention)
 
             convention.save()
             # All is OK -> Next:
@@ -85,6 +91,42 @@ def select_programme_create(request):
         "editable": request.user.has_perm("convention.add_convention"),
         "bailleurs": request.user.bailleurs(),
     }  # render(request, "conventions/selection.html", {'form': form, 'programmes': programmes})
+
+
+def _send_email_staff(request, convention):
+    # envoi d'un mail au staff APiLos lors de la création from scratch
+    convention_url = request.build_absolute_uri(
+        reverse("conventions:recapitulatif", args=[convention.uuid])
+    )
+    from_email = "contact@apilos.beta.gouv.fr"
+    to = ("contact@apilos.beta.gouv.fr",)
+    text_content = render_to_string(
+        "emails/alert_create_convention.txt",
+        {
+            "convention_url": convention_url,
+            "convention": convention,
+            "programme": convention.programme,
+            "user": request.user,
+        },
+    )
+    html_content = render_to_string(
+        "emails/alert_create_convention.html",
+        {
+            "convention_url": convention_url,
+            "convention": convention,
+            "programme": convention.programme,
+            "user": request.user,
+        },
+    )
+
+    msg = EmailMultiAlternatives(
+        f"[{settings.ENVIRONMENT.upper()}] Nouvelle convention crée de zéro ({convention})",
+        text_content,
+        from_email,
+        to,
+    )
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 
 @login_required

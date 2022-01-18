@@ -211,17 +211,21 @@ class ProgrammeModelsTest(TestCase):
         utils_assertions.assert_get_files(self, programme, "acte_notarial")
         utils_assertions.assert_get_files(self, programme, "reference_cadastrale")
 
-    def test_date_commisioning(self):
+    def test_date_achevement_compile(self):
         programme = Programme.objects.order_by("-uuid").first()
         programme.date_achevement = None
         programme.date_achevement_previsible = None
-        self.assertEqual(programme.date_commisioning(), "-")
+        programme.save()
+        self.assertIsNone(programme.date_achevement_compile)
         programme.date_achevement = date(2022, 6, 1)
         programme.date_achevement_previsible = date(2022, 12, 31)
-        self.assertEqual(programme.date_commisioning(), date(2022, 6, 1))
+        programme.save()
+        self.assertEqual(programme.date_achevement_compile, date(2022, 6, 1))
         programme.date_achevement = date(2022, 6, 1)
         programme.date_achevement_previsible = None
-        self.assertEqual(programme.date_commisioning(), date(2022, 6, 1))
+        programme.save()
+        self.assertEqual(programme.date_achevement_compile, date(2022, 6, 1))
         programme.date_achevement = None
         programme.date_achevement_previsible = date(2022, 12, 31)
-        self.assertEqual(programme.date_commisioning(), date(2022, 12, 31))
+        programme.save()
+        self.assertEqual(programme.date_achevement_compile, date(2022, 12, 31))

@@ -29,28 +29,100 @@
         </div>
     </div>
 
-    <hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
     <div class="fr-container">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-md-12 ">
+
+                <form class="fr-my-3w" method="get" action="" id="search_conventions">
+                    <input type="hidden" id="order_by" name="order_by" value="{{order_by}}">
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                            <label class="fr-label" for="search_input">
+                                Nom ou ville du programme
+                            </label>
+                            <input class="fr-input" placeholder="Rechercher" type="search" id="search_input" name="search_input" value="{{search}}">
+                        </div>
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="cstatut">
+                                    Statut de la convention
+                                </label>
+                                <select class="fr-select" id="cstatut" name="cstatut">
+                                    <option value="">Tous les statuts</option>
+                                    {% for statut in statuts %}
+                                        <option value="{{statut.value}}"
+                                            {% if statut.value  == convention_statut %}selected{% endif %}>
+                                            {{statut.label}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="financement">
+                                    Type de financement
+                                </label>
+                                <select class="fr-select" id="financment" name="financement">
+                                    <option value="">Tous les financements</option>
+                                    {% for financement in financements %}
+                                        <option value="{{financement.value}}"
+                                            {% if financement.value  == convention_financement %}selected{% endif %}>
+                                            {{financement.label}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="fr-btn fr-fi-search-line fr-btn--icon-left" title="Rechercher" id="search_btn">
+                        Rechercher
+                    </button>
+                </form>
+
+
                 {% if conventions %}
                     <div class="fr-table fr-table--bordered">
-                        <p hidden>{{filter}}</p>
                         <table>
                             <caption>Gérez vos conventions</caption>
 
                             <thead>
                                 <tr>
                                     {% if request.user.is_instructeur %}
-                                        <th scope="col">Bailleur</th>
-                                        <th scope="col">Numéro Galion</th>
+                                        <th scope="col">
+                                            Bailleur
+                                            {% include "common/display_order_icon.html" with order_by=order_by order_by_column='bailleur__nom' url_target='conventions:index' %}
+                                        </th>
+                                        <th scope="col">
+                                            Numéro Galion
+                                            {% include "common/display_order_icon.html" with order_by=order_by order_by_column='programme__numero_galion' url_target='conventions:index' %}
+                                        </th>
                                     {% endif %}
-                                    <th scope="col">Mise en service</th>
-                                    <th scope="col">Programme</th>
-                                    <th scope="col">Financement</th>
-                                    <th scope="col">Ville</th>
-                                    <th scope="col">Nombre de logements à conventionner</th>
-                                    <th scope="col">Statut</th>
+                                    <th scope="col">
+                                        Mise en service
+                                        {% include "common/display_order_icon.html" with order_by=order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' %}
+                                    </th>
+                                    <th scope="col">
+                                        Programme
+                                        {% include "common/display_order_icon.html" with order_by=order_by order_by_column='programme__nom' url_target='conventions:index' %}
+                                    </th>
+                                    <th scope="col">
+                                        Financement
+                                        {% include "common/display_order_icon.html" with order_by=order_by order_by_column='lot__financement' url_target='conventions:index' %}
+                                    </th>
+                                    <th scope="col">
+                                        Ville
+                                        {% include "common/display_order_icon.html" with order_by=order_by order_by_column='programme__ville' url_target='conventions:index' %}
+                                    </th>
+                                    <th scope="col">
+                                        Nombre de logements à conventionner
+                                        {% include "common/display_order_icon.html" with order_by=order_by order_by_column='lot__nb_logements' url_target='conventions:index' %}
+                                    </th>
+                                    <th scope="col">
+                                        Statut
+                                        {% include "common/display_order_icon.html" with order_by=order_by order_by_column='statut' url_target='conventions:index' %}
+                                    </th>
                                     <th scope="col" class="col__width--140">Action</th>
                                 </tr>
                             </thead>
@@ -61,7 +133,7 @@
                                             <td>{{convention.bailleur.nom}}</td>
                                             <td>{{convention.programme.numero_galion}}</td>
                                         {% endif %}
-                                        <td>{{convention.programme.date_commisioning}}</td>
+                                        <td>{{convention.programme.date_achevement_compile|default_if_none:'-'}}</td>
                                         <td>{{convention.programme.nom}}</td>
                                         <td>{{convention.financement}}</td>
                                         <td>{{convention.programme.ville}}</td>
@@ -94,7 +166,7 @@
                         </table>
                     </div>
                 {% else %}
-                    <p>Vous n'avez pas encore de conventions...</p>
+                    <p>Aucune convention ne correspond à votre recherche ou vous n'avez pas encore de conventions...</p>
                 {% endif %}
             </div>
         </div>

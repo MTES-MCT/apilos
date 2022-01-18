@@ -173,7 +173,7 @@ class Convention(models.Model):
             return "/".join(
                 [
                     str(self.programme.code_postal[:-3]),
-                    self.programme.zone_123_bis,
+                    str(self.programme.zone_123_bis),
                     str(timezone.now().month),
                     str(timezone.now().year),
                     decret,

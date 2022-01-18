@@ -7,9 +7,11 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
+from django.db.models import Q
 
 from programmes.models import (
     Annexe,
+    Financement,
 )
 from conventions.models import Convention, ConventionHistory, ConventionStatut, Pret
 from conventions.forms import (
@@ -26,14 +28,36 @@ from . import convention_generator
 
 
 @login_required
+@require_GET
 def conventions_index(request, infilter):
+    order_by = request.GET.get("order_by", "programme__date_achevement_compile")
+    search = request.GET.get("search_input", "")
+    cstatut = request.GET.get("cstatut", "")
+    cfinancement = request.GET.get("financement", "")
     infilter.update(request.user.convention_filter())
     conventions = (
         Convention.objects.prefetch_related("programme")
         .prefetch_related("lot")
         .filter(**infilter)
+        .order_by(order_by)
     )
-    return conventions
+    if search:
+        conventions = conventions.filter(
+            Q(programme__ville__icontains=search) | Q(programme__nom__icontains=search)
+        )
+    if cstatut:
+        conventions = conventions.filter(statut=cstatut)
+    if cfinancement:
+        conventions = conventions.filter(financement=cfinancement)
+    return {
+        "conventions": conventions,
+        "order_by": order_by,
+        "search": search,
+        "convention_statut": cstatut,
+        "statuts": ConventionStatut,
+        "convention_financement": cfinancement,
+        "financements": Financement,
+    }
 
 
 @login_required

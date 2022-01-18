@@ -23,11 +23,11 @@ NB_STEPS = 11
 # @permission_required("convention.view_convention")
 @login_required
 def index(request):
-    conventions = services.conventions_index(request, {})
+    result = services.conventions_index(request, {})
     return render(
         request,
         "conventions/index.html",
-        {"conventions": conventions, "filter": request.user.convention_filter()},
+        {**result},
     )
 
 
