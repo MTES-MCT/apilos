@@ -519,8 +519,10 @@ class BaseLogementFormSet(BaseFormSet):
         lot = Lot.objects.get(id=self.lot_id)
         if lot.nb_logements != self.total_form_count():
             error = ValidationError(
-                f"Le nombre de logement a conventionner ({lot.nb_logements}) "
-                + f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
+                "Le nombre de logements à conventionner et déclarés à l'étape "
+                + f"'Programme' ({lot.nb_logements}) ne correspond pas au "
+                + "nombre de logements que vous avez téléversés à cette étape "
+                + f"'Logements' ({self.total_form_count()})"
             )
             self._non_form_errors.append(error)
 
