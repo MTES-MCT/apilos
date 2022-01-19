@@ -1,5 +1,6 @@
 [MASTER]
 ignore-paths=
+    bailleurs/migrations,
     conventions/migrations,
     programmes/migrations,
 disable=

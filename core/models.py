@@ -69,7 +69,7 @@ def _create_object_from_fields(cls, element, full_element):
                     f"IGNORED field {each_field} because value is not"
                     + f" int as required : {element[each_field]}"
                 )
-        else:
+        else:  # Manage enum case
             object_fields[each_field] = element[each_field]
     return object_fields
 
