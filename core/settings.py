@@ -105,6 +105,7 @@ INSTALLED_APPS = [
     "conventions.apps.ConventionsConfig",
     "instructeurs.apps.InstructeursConfig",
     "programmes.apps.ProgrammesConfig",
+    "settings.apps.SettingsConfig",
     "stats.apps.StatsConfig",
     "users.apps.UsersConfig",
     "upload.apps.UploadConfig",

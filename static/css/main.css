@@ -302,3 +302,13 @@ table.fullwidth {
   cursor: pointer;
 }
 
+.apilos-sidemenu {
+  min-width: 290px;
+}
+
+.apilos-settings--justify {
+  display: flex;
+  flex-direction: row;
+  align-items: top;
+  justify-content: left;
+}

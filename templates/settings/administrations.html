@@ -1,0 +1,27 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}Mon Profile - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters fr-py-5w">
+                <div class='apilos-settings--justify'>
+                    {% include 'settings/common/side_menu.html' with active_menu='administrations' %}
+                    <div>
+                        <h4>Gérer ou visualiser vos administrations</h4>
+                        <p>
+                            En tant qu'Instructeur, vous voyez la liste de vos administrations. (si vous en êtes l'administrateur),
+                            vous pouvez modifier les paramètres tel que la ville de signature ou le nombre d'examplaire
+                        </p>
+                        <p>
+                            En tant que Bailleur, vous voyez la liste des administrations attaché aux programme de votre bailleur
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

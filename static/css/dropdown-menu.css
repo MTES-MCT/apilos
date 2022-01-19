@@ -1,0 +1,30 @@
+.apilos-navbar a {
+    color: #000091;
+}
+
+.apilos-dropdown-content {
+    display: none;
+    position: fixed;
+    margin-left: -170px;
+    margin-right: 180px;
+    background-color: #fff;
+    min-width: 220px;
+    box-shadow: 1px 8px 16px 1px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.apilos-dropdown-content a {
+    float: none;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.apilos-dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.apilos-dropdown:hover .apilos-dropdown-content {
+    display: block;
+}
