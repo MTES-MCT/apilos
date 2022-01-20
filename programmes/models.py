@@ -134,11 +134,6 @@ class Programme(IngestableModel):
     numero_galion = models.CharField(max_length=255, null=True)
     annee_gestion_programmation = models.IntegerField(null=True)
 
-    # zone_123 and zone_abc is deprecated and will be removed
-    # zone_123_bis and zone_abc_bis should be used instead
-    zone_123 = models.IntegerField(null=True)
-    zone_abc = models.CharField(max_length=255, null=True)
-
     zone_123_bis = models.CharField(
         max_length=25,
         choices=Zone123bis.choices,
