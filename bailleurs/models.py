@@ -6,12 +6,29 @@ from core.models import IngestableModel
 
 
 class TypeBailleur(models.TextChoices):
-    COLLECTIVITES = "COLLECTIVITES", "Collectivités locales"
-    COMMERCIALES = "COMMERCIALES", "Entreprises commerciales"
-    HLM = "HLM", "Entreprises HLM"
+    ASSOCIATIONS = "ASSOCIATIONS", "Associations"
+    COMMERCIALES = "COMMERCIALES", "entreprises commerciales"
+    COMMUNE = "COMMUNE", "Commune"
+    COOPERATIVE_HLM_SCIC = "COOPERATIVE_HLM_SCIC", "Sté coopérative HLM /SCIC"
+    CROUS = "CROUS", "CROUS"
+    DEPARTEMENT = "DEPARTEMENT", "Département"
+    DRE_DDE_CETE_AC_PREF = "DRE_DDE_CETE_AC_PREF", "DRE,DDE,CETE,AC,Préfect."
+    EPCI = "EPCI", "EPCI"
+    ETC_PUBLIQUE_LOCAL = "ETC_PUBLIQUE_LOCAL", "Ets public local"
+    ETS_HOSTIPATIERS_PRIVES = "ETS_HOSTIPATIERS_PRIVES", "Ets hospitaliers privés"
+    FONDATION = "FONDATION", "Fondation"
+    FONDATION_HLM = "FONDATION_HLM", "Fondation HLM"
+    FRONCIERE_LOGEMENT = "FRONCIERE_LOGEMENT", "Foncière Logement"
+    GIP = "GIP", "GIP"
+    MUTUELLE = "MUTUELLE", "Mutuelle"
     NONRENSEIGNE = "NONRENSEIGNE", "Non renseigné"
-    PERSONNEPHISIQUE = "PERSONNEPHISIQUE", "Personnes physiques"
-    TIERSSECTEUR = "TIERSSECTEUR", "Tiers secteur"
+    OFFICE_PUBLIC_HLM = "OFFICE_PUBLIC_HLM", "Office public HLM (OPH)"
+    PACT_ARIM = "PACT_ARIM", "Pact-Arim"
+    PARTICULIERS = "PARTICULIERS", "Particuliers"
+    SA_HLM_ESH = "SA_HLM_ESH", "SA HLM / ESH"
+    SACI_CAP = "SACI_CAP", "SACI CAP"
+    SEM_EPL = "SEM_EPL", "SEM / EPL"
+    UES = "UES", "UES"
 
 
 class Bailleur(IngestableModel):
