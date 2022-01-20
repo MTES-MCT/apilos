@@ -480,7 +480,7 @@ def _stationnements_atomic_update(request, convention):
 def _save_stationnements(formset, convention):
     obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], formset))
     obj_uuids = list(filter(None, obj_uuids1))
-    Annexe.objects.filter(logement__lot_id=convention.lot.id).exclude(
+    TypeStationnement.objects.filter(lot_id=convention.lot.id).exclude(
         uuid__in=obj_uuids
     ).delete()
     for form_stationnement in formset:
