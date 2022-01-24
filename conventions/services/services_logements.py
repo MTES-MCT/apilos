@@ -31,7 +31,7 @@ def logements_update(request, convention_uuid):
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
         if request.POST.get("Upload", False):
-            formset, import_warnings, editable_upload = _upload_logements(
+            formset, upform, import_warnings, editable_upload = _upload_logements(
                 request, convention, import_warnings, editable_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
@@ -100,7 +100,7 @@ def _upload_logements(request, convention, import_warnings, editable_upload):
             formset = LogementFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
             editable_upload = True
-    return formset, import_warnings, editable_upload
+    return formset, upform, import_warnings, editable_upload
 
 
 def _logements_atomic_update(request, convention):
@@ -235,7 +235,7 @@ def annexes_update(request, convention_uuid):
         # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
             form = LotAnnexeForm(request.POST)
-            formset, import_warnings, editable_upload = _upload_annexes(
+            formset, upform, import_warnings, editable_upload = _upload_annexes(
                 request, convention, import_warnings, editable_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
@@ -326,7 +326,7 @@ def _upload_annexes(request, convention, import_warnings, editable_upload):
             formset = AnnexeFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
             editable_upload = True
-    return formset, import_warnings, editable_upload
+    return formset, upform, import_warnings, editable_upload
 
 
 def _save_lot_annexes(form, lot):
@@ -492,7 +492,7 @@ def stationnements_update(request, convention_uuid):
         request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
-            formset, import_warnings, editable_upload = _upload_stationnements(
+            formset, upform, import_warnings, editable_upload = _upload_stationnements(
                 request, convention, import_warnings, editable_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
@@ -568,7 +568,7 @@ def _upload_stationnements(request, convention, import_warnings, editable_upload
             formset = TypeStationnementFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
             editable_upload = True
-    return formset, import_warnings, editable_upload
+    return formset, upform, import_warnings, editable_upload
 
 
 def _stationnements_atomic_update(request, convention):

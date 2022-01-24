@@ -72,7 +72,7 @@ def convention_financement(request, convention_uuid):
         # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
             form = ConventionFinancementForm(request.POST)
-            formset, import_warnings, editable_upload = _upload_prets(
+            formset, upform, import_warnings, editable_upload = _upload_prets(
                 request, convention, import_warnings, editable_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
@@ -146,7 +146,7 @@ def _upload_prets(request, convention, import_warnings, editable_upload):
             formset = PretFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
             editable_upload = True
-    return formset, import_warnings, editable_upload
+    return formset, upform, import_warnings, editable_upload
 
 
 def _convention_financement_atomic_update(request, convention):

@@ -270,7 +270,7 @@ def programme_cadastral_update(request, convention_uuid):
         # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
             form = ProgrammeCadastralForm(request.POST)
-            formset, import_warnings, editable_upload = _upload_cadastre(
+            formset, upform, import_warnings, editable_upload = _upload_cadastre(
                 request, convention, import_warnings, editable_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
@@ -373,7 +373,7 @@ def _upload_cadastre(request, convention, import_warnings, editable_upload):
             formset = ReferenceCadastraleFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
             editable_upload = True
-    return formset, import_warnings, editable_upload
+    return formset, upform, import_warnings, editable_upload
 
 
 def _save_programme_cadastrale(form, programme):
@@ -537,7 +537,7 @@ def programme_edd_update(request, convention_uuid):
         # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
             form = ProgrammeEDDForm(request.POST)
-            formset, import_warnings, editable_upload = _upload_logements_edd(
+            formset, upform, import_warnings, editable_upload = _upload_logements_edd(
                 request, convention, import_warnings, editable_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
@@ -621,7 +621,7 @@ def _upload_logements_edd(request, convention, import_warnings, editable_upload)
             formset = LogementEDDFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
             editable_upload = True
-    return formset, import_warnings, editable_upload
+    return formset, upform, import_warnings, editable_upload
 
 
 def _programme_edd_atomic_update(request, convention, programme):
