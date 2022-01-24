@@ -173,7 +173,7 @@ def programme_update(request, convention_uuid):
     lot = convention.lot
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
-        if request.POST.get("UpdateAtomic", False):
+        if request.POST.get("redirect_to_recap", False):
             return _programme_atomic_update(request, convention, programme, lot)
         form = ProgrammeForm(request.POST)
         if form.is_valid():
@@ -264,35 +264,27 @@ def programme_cadastral_update(request, convention_uuid):
     )
     programme = convention.programme
     import_warnings = None
+    editable_upload = request.POST.get("editable_upload", False)
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
-        if request.POST.get("UpdateAtomic", False):
-            return _programme_cadastrale_atomic_update(request, convention, programme)
         # When the user cliked on "Téléverser" button
-        formset = ReferenceCadastraleFormSet(request.POST)
-        form = ProgrammeCadastralForm(request.POST)
         if request.POST.get("Upload", False):
-            upform = UploadForm(request.POST, request.FILES)
-            if upform.is_valid():
-                result = upload_objects.handle_uploaded_xlsx(
-                    upform,
-                    request.FILES["file"],
-                    ReferenceCadastrale,
-                    convention,
-                    "cadastre.xlsx",
-                )
-                if result["success"] != utils.ReturnStatus.ERROR:
-                    formset = ReferenceCadastraleFormSet(initial=result["objects"])
-                    import_warnings = result["import_warnings"]
+            form = ProgrammeCadastralForm(request.POST)
+            formset, import_warnings, editable_upload = _upload_cadastre(
+                request, convention, import_warnings, editable_upload
+            )
         # When the user cliked on "Enregistrer et Suivant"
         else:
-            upform = UploadForm()
-            form_is_valid = form.is_valid()
-            formset_is_valid = formset.is_valid()
-            if form_is_valid and formset_is_valid:
-                _save_programme_cadastrale(form, programme)
-                _save_programme_reference_cadastrale(formset, convention, programme)
-                return utils.base_response_success(convention)
+            result = _programme_cadastrale_atomic_update(request, convention, programme)
+            if result["success"] == utils.ReturnStatus.SUCCESS and request.POST.get(
+                "redirect_to_recap", False
+            ):
+                result["redirect"] = "recapitulatif"
+            return {
+                **result,
+                "editable_upload": request.user.full_editable_convention(convention)
+                or editable_upload,
+            }
     # When display the file for the first time
     else:
         request.user.check_perm("convention.view_convention", convention)
@@ -351,7 +343,37 @@ def programme_cadastral_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
+        "editable_upload": request.user.full_editable_convention(convention)
+        or editable_upload,
     }
+
+
+def _upload_cadastre(request, convention, import_warnings, editable_upload):
+    formset = ReferenceCadastraleFormSet(request.POST)
+    upform = UploadForm(request.POST, request.FILES)
+    if upform.is_valid():
+        result = upload_objects.handle_uploaded_xlsx(
+            upform,
+            request.FILES["file"],
+            ReferenceCadastrale,
+            convention,
+            "cadastre.xlsx",
+        )
+        if result["success"] != utils.ReturnStatus.ERROR:
+            refcads_by_section = {}
+            for refcad in ReferenceCadastrale.objects.filter(
+                programme_id=convention.programme_id
+            ):
+                refcads_by_section[refcad.section] = refcad.uuid
+
+            for obj in result["objects"]:
+                if "section" in obj and obj["section"] in refcads_by_section:
+                    obj["uuid"] = refcads_by_section[obj["section"]]
+
+            formset = ReferenceCadastraleFormSet(initial=result["objects"])
+            import_warnings = result["import_warnings"]
+            editable_upload = True
+    return formset, import_warnings, editable_upload
 
 
 def _save_programme_cadastrale(form, programme):
@@ -453,32 +475,44 @@ def _programme_cadastrale_atomic_update(request, convention, programme):
         "form-INITIAL_FORMS": request.POST.get("form-INITIAL_FORMS", len(formset)),
     }
     for idx, form_reference_cadastrale in enumerate(formset):
-        reference_cadastrale = ReferenceCadastrale.objects.get(
-            uuid=form_reference_cadastrale["uuid"].value()
-        )
-        initformset = {
-            **initformset,
-            f"form-{idx}-uuid": reference_cadastrale.uuid,
-            f"form-{idx}-section": utils.get_form_value(
-                form_reference_cadastrale, reference_cadastrale, "section"
-            ),
-            f"form-{idx}-numero": utils.get_form_value(
-                form_reference_cadastrale, reference_cadastrale, "numero"
-            ),
-            f"form-{idx}-lieudit": utils.get_form_value(
-                form_reference_cadastrale, reference_cadastrale, "lieudit"
-            ),
-            f"form-{idx}-surface": utils.get_form_value(
-                form_reference_cadastrale, reference_cadastrale, "surface"
-            ),
-        }
+        if form_reference_cadastrale["uuid"].value():
+            reference_cadastrale = ReferenceCadastrale.objects.get(
+                uuid=form_reference_cadastrale["uuid"].value()
+            )
+            initformset = {
+                **initformset,
+                f"form-{idx}-uuid": reference_cadastrale.uuid,
+                f"form-{idx}-section": utils.get_form_value(
+                    form_reference_cadastrale, reference_cadastrale, "section"
+                ),
+                f"form-{idx}-numero": utils.get_form_value(
+                    form_reference_cadastrale, reference_cadastrale, "numero"
+                ),
+                f"form-{idx}-lieudit": utils.get_form_value(
+                    form_reference_cadastrale, reference_cadastrale, "lieudit"
+                ),
+                f"form-{idx}-surface": utils.get_form_value(
+                    form_reference_cadastrale, reference_cadastrale, "surface"
+                ),
+            }
+        else:
+            initformset = {
+                **initformset,
+                f"form-{idx}-section": form_reference_cadastrale["section"].value(),
+                f"form-{idx}-numero": form_reference_cadastrale["numero"].value(),
+                f"form-{idx}-lieudit": form_reference_cadastrale["lieudit"].value(),
+                f"form-{idx}-surface": form_reference_cadastrale["surface"].value(),
+            }
     formset = ReferenceCadastraleFormSet(initformset)
     formset_is_valid = formset.is_valid()
 
     if form_is_valid and formset_is_valid:
         _save_programme_cadastrale(form, programme)
         _save_programme_reference_cadastrale(formset, convention, programme)
-        return utils.base_response_redirect_recap_success(convention)
+        return {
+            "success": utils.ReturnStatus.SUCCESS,
+            "convention": convention,
+        }
     upform = UploadForm()
     return {
         **utils.base_convention_response_error(request, convention),
@@ -497,47 +531,32 @@ def programme_edd_update(request, convention_uuid):
     )
     programme = convention.programme
     import_warnings = None
+    editable_upload = request.POST.get("editable_upload", False)
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
-        if request.POST.get("UpdateAtomic", False):
-            return _programme_edd_atomic_update(request, convention, programme)
-        # When the user cliked on "Téléverser" button
-        formset = LogementEDDFormSet(request.POST)
-        form = ProgrammeEDDForm(request.POST)
         # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
-            upform = UploadForm(request.POST, request.FILES)
-            if upform.is_valid():
-                result = upload_objects.handle_uploaded_xlsx(
-                    upform,
-                    request.FILES["file"],
-                    LogementEDD,
-                    convention,
-                    "logements_edd.xlsx",
-                )
-                if result["success"] != utils.ReturnStatus.ERROR:
-                    formset = LogementEDDFormSet(initial=result["objects"])
-                    import_warnings = result["import_warnings"]
+            form = ProgrammeEDDForm(request.POST)
+            formset, import_warnings, editable_upload = _upload_logements_edd(
+                request, convention, import_warnings, editable_upload
+            )
         # When the user cliked on "Enregistrer et Suivant"
         else:
-            upform = UploadForm()
-            form_is_valid = form.is_valid()
-            formset.programme_id = convention.programme_id
-            formset.ignore_optional_errors = request.POST.get(
-                "ignore_optional_errors", False
-            )
-            formset_is_valid = formset.is_valid()
-
-            if form_is_valid and formset_is_valid:
-                _save_programme_edd(form, programme)
-                _save_programme_logement_edd(formset, convention, programme)
-                return utils.base_response_success(convention)
+            result = _programme_edd_atomic_update(request, convention, programme)
+            if result["success"] == utils.ReturnStatus.SUCCESS and request.POST.get(
+                "redirect_to_recap", False
+            ):
+                result["redirect"] = "recapitulatif"
+            return {
+                **result,
+                "editable_upload": request.user.full_editable_convention(convention)
+                or request.POST.get("redirect_to_recap", False),
+            }
     # When display the file for the first time
     else:
         request.user.check_perm("convention.view_convention", convention)
         initial = []
-        logementedds = programme.logementedd_set.all()
-        for logementedd in logementedds:
+        for logementedd in programme.logementedd_set.all():
             initial.append(
                 {
                     "uuid": logementedd.uuid,
@@ -569,7 +588,40 @@ def programme_edd_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
+        "editable_upload": request.user.full_editable_convention(convention)
+        or editable_upload,
     }
+
+
+def _upload_logements_edd(request, convention, import_warnings, editable_upload):
+    formset = LogementEDDFormSet(request.POST)
+    upform = UploadForm(request.POST, request.FILES)
+    if upform.is_valid():
+        result = upload_objects.handle_uploaded_xlsx(
+            upform,
+            request.FILES["file"],
+            LogementEDD,
+            convention,
+            "logements_edd.xlsx",
+        )
+        if result["success"] != utils.ReturnStatus.ERROR:
+            edd_lgts_by_designation = {}
+            for edd_lgt in LogementEDD.objects.filter(
+                programme_id=convention.programme_id
+            ):
+                edd_lgts_by_designation[edd_lgt.designation] = edd_lgt.uuid
+
+            for obj in result["objects"]:
+                if (
+                    "designation" in obj
+                    and obj["designation"] in edd_lgts_by_designation
+                ):
+                    obj["uuid"] = edd_lgts_by_designation[obj["designation"]]
+
+            formset = LogementEDDFormSet(initial=result["objects"])
+            import_warnings = result["import_warnings"]
+            editable_upload = True
+    return formset, import_warnings, editable_upload
 
 
 def _programme_edd_atomic_update(request, convention, programme):
@@ -602,20 +654,28 @@ def _programme_edd_atomic_update(request, convention, programme):
         "form-INITIAL_FORMS": request.POST.get("form-INITIAL_FORMS", len(formset)),
     }
     for idx, form_logementedd in enumerate(formset):
-        logementedd = LogementEDD.objects.get(uuid=form_logementedd["uuid"].value())
-        initformset = {
-            **initformset,
-            f"form-{idx}-uuid": logementedd.uuid,
-            f"form-{idx}-designation": utils.get_form_value(
-                form_logementedd, logementedd, "designation"
-            ),
-            f"form-{idx}-financement": utils.get_form_value(
-                form_logementedd, logementedd, "financement"
-            ),
-            f"form-{idx}-typologie": utils.get_form_value(
-                form_logementedd, logementedd, "typologie"
-            ),
-        }
+        if form_logementedd["uuid"].value():
+            logementedd = LogementEDD.objects.get(uuid=form_logementedd["uuid"].value())
+            initformset = {
+                **initformset,
+                f"form-{idx}-uuid": logementedd.uuid,
+                f"form-{idx}-designation": utils.get_form_value(
+                    form_logementedd, logementedd, "designation"
+                ),
+                f"form-{idx}-financement": utils.get_form_value(
+                    form_logementedd, logementedd, "financement"
+                ),
+                f"form-{idx}-typologie": utils.get_form_value(
+                    form_logementedd, logementedd, "typologie"
+                ),
+            }
+        else:
+            initformset = {
+                **initformset,
+                f"form-{idx}-designation": form_logementedd["designation"].value(),
+                f"form-{idx}-financement": form_logementedd["financement"].value(),
+                f"form-{idx}-typologie": form_logementedd["typologie"].value(),
+            }
     formset = LogementEDDFormSet(initformset)
     formset.programme_id = convention.programme_id
     formset.ignore_optional_errors = request.POST.get("ignore_optional_errors", False)
@@ -624,7 +684,10 @@ def _programme_edd_atomic_update(request, convention, programme):
     if form_is_valid and formset_is_valid:
         _save_programme_edd(form, programme)
         _save_programme_logement_edd(formset, convention, programme)
-        return utils.base_response_redirect_recap_success(convention)
+        return {
+            "success": utils.ReturnStatus.SUCCESS,
+            "convention": convention,
+        }
     upform = UploadForm()
     return {
         **utils.base_convention_response_error(request, convention),

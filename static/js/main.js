@@ -5,7 +5,7 @@ function load_page() {
     }
 
     document.addEventListener("DOMContentLoaded", function(event) {
-        if (localStorage.getItem('scrollloc') == window.location) {
+        if (localStorage.getItem('scrollloc') == clean_windows_loc()) {
             var scrollpos = localStorage.getItem('scrollpos');
             if (scrollpos) window.scrollTo(0, scrollpos);
             localStorage.setItem('scrollpos', 0);
@@ -14,8 +14,12 @@ function load_page() {
 
     window.onbeforeunload = function(e) {
         localStorage.setItem('scrollpos', window.scrollY);
-        localStorage.setItem('scrollloc', window.location);
+        localStorage.setItem('scrollloc', clean_windows_loc());
     };
+}
+
+function clean_windows_loc() {
+    return window.location.protocol + '//' + window.location.host + window.location.pathname
 }
 
 function toggle(element_id) {

@@ -72,10 +72,10 @@
 
                         {% include "common/form/input_upload.html" with label="Références cadastrales" form_input=form.reference_cadastrale form_input_files=form.reference_cadastrale_files object_name='programme' object_uuid=convention.programme.uuid image_only=True file_list=convention.programme.reference_cadastrale_files.values object_field="programme__reference_cadastrale__"|add:form.uuid.value %}
 
-                        {% if editable %}
+                        <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
                             {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='cadastre' upform=upform  what="références cadastrales"%}
                             <hr class="fr-col-12 fr-my-3w">
-                        {% endif %}
+                        </div>
 
                         {% for error in import_warnings %}
                             <p id="text-input-error-desc-error" class="fr-error-text">
@@ -126,16 +126,16 @@
                                                         id="{{form_cadastre.uuid.id_for_label}}"
                                                         name="{{form_cadastre.uuid.html_name}}"
                                                         value="{{ form_cadastre.uuid.value|default_if_none:'' }}">
-                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.section parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.section parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.numero parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.numero parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.lieudit parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.lieudit parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.surface parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.surface parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                             </tr>
                                         {% endwith %}

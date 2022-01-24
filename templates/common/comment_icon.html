@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 {% if object_field and convention.statut != 'BROUILLON' %}
     <div id='{{form_input_id}}_comment' hidden>
         <div class="content__icons {% if small %}content__icons--small{% endif %}"

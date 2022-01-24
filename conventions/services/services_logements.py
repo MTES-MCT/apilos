@@ -21,6 +21,7 @@ from . import upload_objects
 
 @login_required
 def logements_update(request, convention_uuid):
+    editable_upload = request.POST.get("editable_upload", False)
     convention = (
         Convention.objects.prefetch_related("lot")
         .prefetch_related("lot__logement_set")
@@ -29,34 +30,22 @@ def logements_update(request, convention_uuid):
     import_warnings = None
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
-        if request.POST.get("UpdateAtomic", False):
-            return _logements_atomic_update(request, convention)
-
-        # When the user cliked on "Téléverser" button
-        formset = LogementFormSet(request.POST)
         if request.POST.get("Upload", False):
-            upform = UploadForm(request.POST, request.FILES)
-            if upform.is_valid():
-
-                result = upload_objects.handle_uploaded_xlsx(
-                    upform,
-                    request.FILES["file"],
-                    Logement,
-                    convention,
-                    "logements.xlsx",
-                )
-                if result["success"] != utils.ReturnStatus.ERROR:
-                    formset = LogementFormSet(initial=result["objects"])
-                    import_warnings = result["import_warnings"]
+            formset, import_warnings, editable_upload = _upload_logements(
+                request, convention, import_warnings, editable_upload
+            )
         # When the user cliked on "Enregistrer et Suivant"
         else:
-            upform = UploadForm()
-            formset.programme_id = convention.programme_id
-            formset.lot_id = convention.lot_id
-            if formset.is_valid():
-                _save_logements(formset, convention)
-                # All is OK -> Next:
-                return utils.base_response_success(convention)
+            result = _logements_atomic_update(request, convention)
+            if result["success"] == utils.ReturnStatus.SUCCESS and request.POST.get(
+                "redirect_to_recap", False
+            ):
+                result["redirect"] = "recapitulatif"
+            return {
+                **result,
+                "editable_upload": request.user.full_editable_convention(convention)
+                or editable_upload,
+            }
     # When display the file for the first time
     else:
         request.user.check_perm("convention.view_convention", convention)
@@ -84,7 +73,34 @@ def logements_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
+        "editable_upload": request.user.full_editable_convention(convention)
+        or editable_upload,
     }
+
+
+def _upload_logements(request, convention, import_warnings, editable_upload):
+    import_warnings = None
+    formset = LogementFormSet(request.POST)
+    upform = UploadForm(request.POST, request.FILES)
+    if upform.is_valid():
+        result = upload_objects.handle_uploaded_xlsx(
+            upform,
+            request.FILES["file"],
+            Logement,
+            convention,
+            "logements.xlsx",
+        )
+        if result["success"] != utils.ReturnStatus.ERROR:
+            lgts_by_designation = {}
+            for lgt in Logement.objects.filter(lot_id=convention.lot_id):
+                lgts_by_designation[lgt.designation] = lgt.uuid
+            for obj in result["objects"]:
+                if obj["designation"] in lgts_by_designation:
+                    obj["uuid"] = lgts_by_designation[obj["designation"]]
+            formset = LogementFormSet(initial=result["objects"])
+            import_warnings = result["import_warnings"]
+            editable_upload = True
+    return formset, import_warnings, editable_upload
 
 
 def _logements_atomic_update(request, convention):
@@ -94,43 +110,68 @@ def _logements_atomic_update(request, convention):
         "form-INITIAL_FORMS": request.POST.get("form-INITIAL_FORMS", len(formset)),
     }
     for idx, form_logement in enumerate(formset):
-        logement = Logement.objects.get(uuid=form_logement["uuid"].value())
-        initformset = {
-            **initformset,
-            f"form-{idx}-uuid": logement.uuid,
-            f"form-{idx}-designation": utils.get_form_value(
-                form_logement, logement, "designation"
-            ),
-            f"form-{idx}-typologie": utils.get_form_value(
-                form_logement, logement, "typologie"
-            ),
-            f"form-{idx}-surface_habitable": utils.get_form_value(
-                form_logement, logement, "surface_habitable"
-            ),
-            f"form-{idx}-surface_annexes": utils.get_form_value(
-                form_logement, logement, "surface_annexes"
-            ),
-            f"form-{idx}-surface_annexes_retenue": utils.get_form_value(
-                form_logement, logement, "surface_annexes_retenue"
-            ),
-            f"form-{idx}-surface_utile": utils.get_form_value(
-                form_logement, logement, "surface_utile"
-            ),
-            f"form-{idx}-loyer_par_metre_carre": utils.get_form_value(
-                form_logement, logement, "loyer_par_metre_carre"
-            ),
-            f"form-{idx}-coeficient": utils.get_form_value(
-                form_logement, logement, "coeficient"
-            ),
-            f"form-{idx}-loyer": utils.get_form_value(form_logement, logement, "loyer"),
-        }
+        if form_logement["uuid"].value():
+            logement = Logement.objects.get(uuid=form_logement["uuid"].value())
+            initformset = {
+                **initformset,
+                f"form-{idx}-uuid": logement.uuid,
+                f"form-{idx}-designation": utils.get_form_value(
+                    form_logement, logement, "designation"
+                ),
+                f"form-{idx}-typologie": utils.get_form_value(
+                    form_logement, logement, "typologie"
+                ),
+                f"form-{idx}-surface_habitable": utils.get_form_value(
+                    form_logement, logement, "surface_habitable"
+                ),
+                f"form-{idx}-surface_annexes": utils.get_form_value(
+                    form_logement, logement, "surface_annexes"
+                ),
+                f"form-{idx}-surface_annexes_retenue": utils.get_form_value(
+                    form_logement, logement, "surface_annexes_retenue"
+                ),
+                f"form-{idx}-surface_utile": utils.get_form_value(
+                    form_logement, logement, "surface_utile"
+                ),
+                f"form-{idx}-loyer_par_metre_carre": utils.get_form_value(
+                    form_logement, logement, "loyer_par_metre_carre"
+                ),
+                f"form-{idx}-coeficient": utils.get_form_value(
+                    form_logement, logement, "coeficient"
+                ),
+                f"form-{idx}-loyer": utils.get_form_value(
+                    form_logement, logement, "loyer"
+                ),
+            }
+        else:
+            initformset = {
+                **initformset,
+                f"form-{idx}-designation": form_logement["designation"].value(),
+                f"form-{idx}-typologie": form_logement["typologie"].value(),
+                f"form-{idx}-surface_habitable": form_logement[
+                    "surface_habitable"
+                ].value(),
+                f"form-{idx}-surface_annexes": form_logement["surface_annexes"].value(),
+                f"form-{idx}-surface_annexes_retenue": form_logement[
+                    "surface_annexes_retenue"
+                ].value(),
+                f"form-{idx}-surface_utile": form_logement["surface_utile"].value(),
+                f"form-{idx}-loyer_par_metre_carre": form_logement[
+                    "loyer_par_metre_carre"
+                ].value(),
+                f"form-{idx}-coeficient": form_logement["coeficient"].value(),
+                f"form-{idx}-loyer": form_logement["loyer"].value(),
+            }
     formset = LogementFormSet(initformset)
     formset.programme_id = convention.programme_id
     formset.lot_id = convention.lot_id
 
     if formset.is_valid():
         _save_logements(formset, convention)
-        return utils.base_response_redirect_recap_success(convention)
+        return {
+            "success": utils.ReturnStatus.SUCCESS,
+            "convention": convention,
+        }
     return {
         **utils.base_convention_response_error(request, convention),
         "formset": formset,
@@ -188,32 +229,28 @@ def annexes_update(request, convention_uuid):
         .get(uuid=convention_uuid)
     )
     import_warnings = None
+    editable_upload = request.POST.get("editable_upload", False)
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
-        if request.POST.get("UpdateAtomic", False):
-            return _annexes_atomic_update(request, convention)
         # When the user cliked on "Téléverser" button
-        formset = AnnexeFormSet(request.POST)
-        form = LotAnnexeForm(request.POST)
         if request.POST.get("Upload", False):
-            upform = UploadForm(request.POST, request.FILES)
-            if upform.is_valid():
-                result = upload_objects.handle_uploaded_xlsx(
-                    upform, request.FILES["file"], Annexe, convention, "annexes.xlsx"
-                )
-                if result["success"] != utils.ReturnStatus.ERROR:
-                    formset = AnnexeFormSet(initial=result["objects"])
-                    import_warnings = result["import_warnings"]
+            form = LotAnnexeForm(request.POST)
+            formset, import_warnings, editable_upload = _upload_annexes(
+                request, convention, import_warnings, editable_upload
+            )
         # When the user cliked on "Enregistrer et Suivant"
         else:
-            upform = UploadForm()
-            formset.convention = convention
-            form_is_valid = form.is_valid()
-            formset_is_valid = formset.is_valid()
-            if form_is_valid and formset_is_valid:
-                _save_lot_annexes(form, convention.lot)
-                _save_annexes(formset, convention)
-                return utils.base_response_success(convention)
+            result = _annexes_atomic_update(request, convention)
+            if result["success"] == utils.ReturnStatus.SUCCESS and request.POST.get(
+                "redirect_to_recap", False
+            ):
+                result["redirect"] = "recapitulatif"
+            return {
+                **result,
+                "editable_upload": request.user.full_editable_convention(convention)
+                or editable_upload,
+            }
+
     # When display the file for the first time
     else:
         request.user.check_perm("convention.view_convention", convention)
@@ -255,7 +292,41 @@ def annexes_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
+        "editable_upload": request.user.full_editable_convention(convention)
+        or editable_upload,
     }
+
+
+def _upload_annexes(request, convention, import_warnings, editable_upload):
+    formset = AnnexeFormSet(request.POST)
+    upform = UploadForm(request.POST, request.FILES)
+    if upform.is_valid():
+        result = upload_objects.handle_uploaded_xlsx(
+            upform, request.FILES["file"], Annexe, convention, "annexes.xlsx"
+        )
+        if result["success"] != utils.ReturnStatus.ERROR:
+
+            annexes_by_designation = {}
+            for annexe in Annexe.objects.filter(logement__lot_id=convention.lot.id):
+                annexes_by_designation[
+                    f"{annexe.logement_id}_{annexe.typologie}"
+                ] = annexe.uuid
+
+            for obj in result["objects"]:
+                if (
+                    "logement_id" in obj
+                    and "typologie" in obj
+                    and f"{obj['logement_id']}_{obj['typologie']}"
+                    in annexes_by_designation
+                ):
+                    obj["uuid"] = annexes_by_designation[
+                        f"{obj['logement_id']}_{obj['typologie']}"
+                    ]
+
+            formset = AnnexeFormSet(initial=result["objects"])
+            import_warnings = result["import_warnings"]
+            editable_upload = True
+    return formset, import_warnings, editable_upload
 
 
 def _save_lot_annexes(form, lot):
@@ -305,31 +376,50 @@ def _annexes_atomic_update(request, convention):
         "form-INITIAL_FORMS": request.POST.get("form-INITIAL_FORMS", len(formset)),
     }
     for idx, form_annexe in enumerate(formset):
-        annexe = Annexe.objects.get(uuid=form_annexe["uuid"].value())
-        initformset = {
-            **initformset,
-            f"form-{idx}-uuid": annexe.uuid,
-            f"form-{idx}-typologie": utils.get_form_value(
-                form_annexe, annexe, "typologie"
-            ),
-            f"form-{idx}-logement_designation": (
-                form_annexe["logement_designation"].value()
-                if form_annexe["logement_designation"].value() is not None
-                else annexe.logement.designation
-            ),
-            f"form-{idx}-logement_typologie": (
-                form_annexe["logement_typologie"].value()
-                if form_annexe["logement_typologie"].value() is not None
-                else annexe.logement.typologie
-            ),
-            f"form-{idx}-surface_hors_surface_retenue": utils.get_form_value(
-                form_annexe, annexe, "surface_hors_surface_retenue"
-            ),
-            f"form-{idx}-loyer_par_metre_carre": utils.get_form_value(
-                form_annexe, annexe, "loyer_par_metre_carre"
-            ),
-            f"form-{idx}-loyer": utils.get_form_value(form_annexe, annexe, "loyer"),
-        }
+        if form_annexe["uuid"].value():
+            annexe = Annexe.objects.get(uuid=form_annexe["uuid"].value())
+            initformset = {
+                **initformset,
+                f"form-{idx}-uuid": annexe.uuid,
+                f"form-{idx}-typologie": utils.get_form_value(
+                    form_annexe, annexe, "typologie"
+                ),
+                f"form-{idx}-logement_designation": (
+                    form_annexe["logement_designation"].value()
+                    if form_annexe["logement_designation"].value() is not None
+                    else annexe.logement.designation
+                ),
+                f"form-{idx}-logement_typologie": (
+                    form_annexe["logement_typologie"].value()
+                    if form_annexe["logement_typologie"].value() is not None
+                    else annexe.logement.typologie
+                ),
+                f"form-{idx}-surface_hors_surface_retenue": utils.get_form_value(
+                    form_annexe, annexe, "surface_hors_surface_retenue"
+                ),
+                f"form-{idx}-loyer_par_metre_carre": utils.get_form_value(
+                    form_annexe, annexe, "loyer_par_metre_carre"
+                ),
+                f"form-{idx}-loyer": utils.get_form_value(form_annexe, annexe, "loyer"),
+            }
+        else:
+            initformset = {
+                **initformset,
+                f"form-{idx}-typologie": form_annexe["typologie"].value(),
+                f"form-{idx}-logement_designation": form_annexe[
+                    "logement_designation"
+                ].value(),
+                f"form-{idx}-logement_typologie": form_annexe[
+                    "logement_typologie"
+                ].value(),
+                f"form-{idx}-surface_hors_surface_retenue": form_annexe[
+                    "surface_hors_surface_retenue"
+                ].value(),
+                f"form-{idx}-loyer_par_metre_carre": form_annexe[
+                    "loyer_par_metre_carre"
+                ].value(),
+                f"form-{idx}-loyer": form_annexe["loyer"].value(),
+            }
     formset = AnnexeFormSet(initformset)
     formset.convention = convention
     formset_is_valid = formset.is_valid()
@@ -337,10 +427,14 @@ def _annexes_atomic_update(request, convention):
     if form_is_valid and formset_is_valid:
         _save_lot_annexes(form, convention.lot)
         _save_annexes(formset, convention)
-        return utils.base_response_redirect_recap_success(convention)
+        return {
+            "success": utils.ReturnStatus.SUCCESS,
+            "convention": convention,
+        }
     return {
         **utils.base_convention_response_error(request, convention),
         "formset": formset,
+        "form": form,
         "upform": UploadForm(),
     }
 
@@ -393,32 +487,26 @@ def stationnements_update(request, convention_uuid):
         .get(uuid=convention_uuid)
     )
     import_warnings = None
+    editable_upload = request.POST.get("editable_upload", False)
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
-        if request.POST.get("UpdateAtomic", False):
-            return _stationnements_atomic_update(request, convention)
         # When the user cliked on "Téléverser" button
-        formset = TypeStationnementFormSet(request.POST)
         if request.POST.get("Upload", False):
-            upform = UploadForm(request.POST, request.FILES)
-            if upform.is_valid():
-
-                result = upload_objects.handle_uploaded_xlsx(
-                    upform,
-                    request.FILES["file"],
-                    TypeStationnement,
-                    convention,
-                    "stationnements.xlsx",
-                )
-                if result["success"] != utils.ReturnStatus.ERROR:
-                    formset = TypeStationnementFormSet(initial=result["objects"])
-                    import_warnings = result["import_warnings"]
+            formset, import_warnings, editable_upload = _upload_stationnements(
+                request, convention, import_warnings, editable_upload
+            )
         # When the user cliked on "Enregistrer et Suivant"
         else:
-            upform = UploadForm()
-            if formset.is_valid():
-                _save_stationnements(formset, convention)
-                return utils.base_response_success(convention)
+            result = _stationnements_atomic_update(request, convention)
+            if result["success"] == utils.ReturnStatus.SUCCESS and request.POST.get(
+                "redirect_to_recap", False
+            ):
+                result["redirect"] = "recapitulatif"
+            return {
+                **result,
+                "editable_upload": request.user.full_editable_convention(convention)
+                or editable_upload,
+            }
     # When display the file for the first time
     else:
         request.user.check_perm("convention.view_convention", convention)
@@ -440,7 +528,47 @@ def stationnements_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
+        "editable_upload": request.user.full_editable_convention(convention)
+        or editable_upload,
     }
+
+
+def _upload_stationnements(request, convention, import_warnings, editable_upload):
+    formset = TypeStationnementFormSet(request.POST)
+    upform = UploadForm(request.POST, request.FILES)
+    if upform.is_valid():
+
+        result = upload_objects.handle_uploaded_xlsx(
+            upform,
+            request.FILES["file"],
+            TypeStationnement,
+            convention,
+            "stationnements.xlsx",
+        )
+        if result["success"] != utils.ReturnStatus.ERROR:
+            stationnement_by_designation = {}
+            for stationnement in TypeStationnement.objects.filter(
+                lot_id=convention.lot_id
+            ):
+                stationnement_by_designation[
+                    f"{stationnement.nb_stationnements}_{stationnement.typologie}"
+                ] = stationnement.uuid
+
+            for obj in result["objects"]:
+                if (
+                    "nb_stationnements" in obj
+                    and "typologie" in obj
+                    and f"{obj['nb_stationnements']}_{obj['typologie']}"
+                    in stationnement_by_designation
+                ):
+                    obj["uuid"] = stationnement_by_designation[
+                        f"{obj['nb_stationnements']}_{obj['typologie']}"
+                    ]
+
+            formset = TypeStationnementFormSet(initial=result["objects"])
+            import_warnings = result["import_warnings"]
+            editable_upload = True
+    return formset, import_warnings, editable_upload
 
 
 def _stationnements_atomic_update(request, convention):
@@ -450,26 +578,40 @@ def _stationnements_atomic_update(request, convention):
         "form-INITIAL_FORMS": request.POST.get("form-INITIAL_FORMS", len(formset)),
     }
     for idx, form_stationnement in enumerate(formset):
-        stationnement = TypeStationnement.objects.get(
-            uuid=form_stationnement["uuid"].value()
-        )
-        initformset = {
-            **initformset,
-            f"form-{idx}-uuid": stationnement.uuid,
-            f"form-{idx}-typologie": utils.get_form_value(
-                form_stationnement, stationnement, "typologie"
-            ),
-            f"form-{idx}-nb_stationnements": utils.get_form_value(
-                form_stationnement, stationnement, "nb_stationnements"
-            ),
-            f"form-{idx}-loyer": utils.get_form_value(
-                form_stationnement, stationnement, "loyer"
-            ),
-        }
+        if form_stationnement["uuid"].value():
+            stationnement = TypeStationnement.objects.get(
+                uuid=form_stationnement["uuid"].value()
+            )
+            initformset = {
+                **initformset,
+                f"form-{idx}-uuid": stationnement.uuid,
+                f"form-{idx}-typologie": utils.get_form_value(
+                    form_stationnement, stationnement, "typologie"
+                ),
+                f"form-{idx}-nb_stationnements": utils.get_form_value(
+                    form_stationnement, stationnement, "nb_stationnements"
+                ),
+                f"form-{idx}-loyer": utils.get_form_value(
+                    form_stationnement, stationnement, "loyer"
+                ),
+            }
+        else:
+            initformset = {
+                **initformset,
+                f"form-{idx}-typologie": form_stationnement["typologie"].value(),
+                f"form-{idx}-nb_stationnements": form_stationnement[
+                    "nb_stationnements"
+                ].value(),
+                f"form-{idx}-loyer": form_stationnement["loyer"].value(),
+            }
+
     formset = TypeStationnementFormSet(initformset)
     if formset.is_valid():
         _save_stationnements(formset, convention)
-        return utils.base_response_redirect_recap_success(convention)
+        return {
+            "success": utils.ReturnStatus.SUCCESS,
+            "convention": convention,
+        }
     return {
         **utils.base_convention_response_error(request, convention),
         "formset": formset,
