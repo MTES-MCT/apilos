@@ -74,13 +74,13 @@
                                                         id="{{form.uuid.id_for_label}}"
                                                         name="{{form.uuid.html_name}}"
                                                         value="{{ form.uuid.value|default_if_none:'' }}">
-                                                    {% include "common/form/select_enum.html" with form_input=form.typologie enum=typologies parent_object_field=main_object_field %}
+                                                    {% include "common/form/select_enum.html" with form_input=form.typologie enum=typologies parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_number.html" with form_input=form.nb_stationnements parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_number.html" with form_input=form.nb_stationnements parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                             </tr>
                                         {% endwith %}

@@ -15,6 +15,11 @@
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
+                <input
+                    type="hidden"
+                    id="{{form.uuid.id_for_label}}"
+                    name="{{form.uuid.html_name}}"
+                    value="{{ form.uuid.value|default_if_none:'' }}">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-mt-5w">
                         <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Annexes</h2> -->
@@ -68,37 +73,37 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for form in formset %}
-                                        {% with main_object_field="annexe__uuid__"|add:form.uuid.value %}
+                                    {% for form_annexe in formset %}
+                                        {% with main_object_field="annexe__uuid__"|add:form_annexe.uuid.value %}
                                             <tr>
                                                 {% if convention.statut != 'BROUILLON' %}
-                                                    <td id="{{form.uuid.id_for_label}}_div">
-                                                        {% include "common/comment_icon.html" with form_input_id=form.uuid.id_for_label object_field=main_object_field comments=comments %}
-                                                        {% include "common/comment_dialog.html" with form_input_id=form.uuid.id_for_label form_input_html=form.uuid.html_name convention=convention object_field=main_object_field comments=comments %}
+                                                    <td id="{{form_annexe.uuid.id_for_label}}_div">
+                                                        {% include "common/comment_icon.html" with form_input_id=form_annexe.uuid.id_for_label object_field=main_object_field comments=comments %}
+                                                        {% include "common/comment_dialog.html" with form_input_id=form_annexe.uuid.id_for_label form_input_html=form_annexe.uuid.html_name convention=convention object_field=main_object_field comments=comments %}
                                                     </td>
                                                 {% endif %}
                                                 <td>
                                                     <input
                                                         type="hidden"
-                                                        id="{{form.uuid.id_for_label}}"
-                                                        name="{{form.uuid.html_name}}"
-                                                        value="{{ form.uuid.value|default_if_none:'' }}">
-                                                    {% include "common/form/select_enum.html" with form_input=form.typologie enum=typologies parent_object_field=main_object_field %}
+                                                        id="{{form_annexe.uuid.id_for_label}}"
+                                                        name="{{form_annexe.uuid.html_name}}"
+                                                        value="{{ form_annexe.uuid.value|default_if_none:'' }}">
+                                                    {% include "common/form/select_enum.html" with form_input=form_annexe.typologie enum=typologies parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_text.html" with form_input=form.logement_designation parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_text.html" with form_input=form_annexe.logement_designation parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/select_enum.html" with form_input=form.logement_typologie enum=logement_typologies parent_object_field=main_object_field %}
+                                                    {% include "common/form/select_enum.html" with form_input=form_annexe.logement_typologie enum=logement_typologies parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_number.html" with form_input=form.surface_hors_surface_retenue step="0.01" parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_number.html" with form_input=form_annexe.surface_hors_surface_retenue step="0.01" parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_number.html" with form_input=form.loyer_par_metre_carre step="0.01" parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_number.html" with form_input=form_annexe.loyer_par_metre_carre step="0.01" parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_number.html" with form_input=form_annexe.loyer step="0.01" parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                             </tr>
                                         {% endwith %}

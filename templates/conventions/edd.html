@@ -23,6 +23,11 @@
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
+                <input
+                    type="hidden"
+                    id="{{form.uuid.id_for_label}}"
+                    name="{{form.uuid.html_name}}"
+                    value="{{ form.uuid.value|default_if_none:'' }}">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-mt-5w">
                         <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - État descriptif de division</h2> -->
@@ -130,28 +135,28 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for form in formset %}
-                                        {% with input_id="logement_edd_"|add:form.uuid.value main_object_field="logement_edd__uuid__"|add:form.uuid.value %}
+                                    {% for form_edd in formset %}
+                                        {% with input_id="logement_edd_"|add:form_edd.uuid.value main_object_field="logement_edd__uuid__"|add:form_edd.uuid.value %}
                                             <tr>
                                                 {% if convention.statut != 'BROUILLON' %}
-                                                    <td id="{{form.uuid.id_for_label}}_div">
-                                                        {% include "common/comment_icon.html" with form_input_id=form.uuid.id_for_label object_field=main_object_field comments=comments %}
-                                                        {% include "common/comment_dialog.html" with form_input_id=form.uuid.id_for_label form_input_html=form.uuid.html_name convention=convention object_field=main_object_field comments=comments %}
+                                                    <td id="{{form_edd.uuid.id_for_label}}_div">
+                                                        {% include "common/comment_icon.html" with form_input_id=form_edd.uuid.id_for_label object_field=main_object_field comments=comments %}
+                                                        {% include "common/comment_dialog.html" with form_input_id=form_edd.uuid.id_for_label form_input_html=form_edd.uuid.html_name convention=convention object_field=main_object_field comments=comments %}
                                                     </td>
                                                 {% endif %}
                                                 <td>
                                                     <input
                                                         type="hidden"
-                                                        id="{{form.uuid.id_for_label}}"
-                                                        name="{{form.uuid.html_name}}"
-                                                        value="{{ form.uuid.value|default_if_none:'' }}">
-                                                    {% include "common/form/select_enum.html" with form_input=form.financement enum=financements parent_object_field=main_object_field editable=editable_upload %}
+                                                        id="{{form_edd.uuid.id_for_label}}"
+                                                        name="{{form_edd.uuid.html_name}}"
+                                                        value="{{ form_edd.uuid.value|default_if_none:'' }}">
+                                                    {% include "common/form/select_enum.html" with form_input=form_edd.financement enum=financements parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_text.html" with form_input=form_edd.designation parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/select_enum.html" with form_input=form.typologie enum=typologies parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/select_enum.html" with form_input=form_edd.typologie enum=typologies parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                             </tr>
                                         {% endwith %}

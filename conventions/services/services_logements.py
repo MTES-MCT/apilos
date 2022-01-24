@@ -307,20 +307,22 @@ def _upload_annexes(request, convention, import_warnings, editable_upload):
         if result["success"] != utils.ReturnStatus.ERROR:
 
             annexes_by_designation = {}
-            for annexe in Annexe.objects.filter(logement__lot_id=convention.lot.id):
+            for annexe in Annexe.objects.prefetch_related("logement").filter(
+                logement__lot_id=convention.lot.id
+            ):
                 annexes_by_designation[
-                    f"{annexe.logement_id}_{annexe.typologie}"
+                    f"{annexe.logement.designation}_{annexe.typologie}"
                 ] = annexe.uuid
 
             for obj in result["objects"]:
                 if (
-                    "logement_id" in obj
+                    "logement_designation" in obj
                     and "typologie" in obj
-                    and f"{obj['logement_id']}_{obj['typologie']}"
+                    and f"{obj['logement_designation']}_{obj['typologie']}"
                     in annexes_by_designation
                 ):
                     obj["uuid"] = annexes_by_designation[
-                        f"{obj['logement_id']}_{obj['typologie']}"
+                        f"{obj['logement_designation']}_{obj['typologie']}"
                     ]
 
             formset = AnnexeFormSet(initial=result["objects"])
