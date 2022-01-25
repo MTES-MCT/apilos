@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 {% if object_field and convention.statut != 'BROUILLON' %}
     <dialog aria-labelledby="{{form_input_id}}_comment-title" id="{{form_input_id}}_comment-dialog" class="fr-modal" role="dialog" >
         <div class="fr-container fr-container--fluid fr-container-md">
