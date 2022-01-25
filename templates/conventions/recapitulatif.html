@@ -99,7 +99,7 @@
                                             </a>
                                         </div>
                                         <div class="table--limited-height">
-                                            {% if request.user.is_instructeur %}
+                                            {% if request.session.is_instructeur %}
                                                 <b>{% include "common/display_field_if_exists.html" with label="Numero Galion" value=programme.numero_galion %}</b>
                                             {% endif %}
                                             {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom object_field="programme__nom__"|add:programme_uuid %}
@@ -668,7 +668,7 @@
                 </div>
 
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
-                    {% if request.user.is_bailleur %}
+                    {% if request.session.is_bailleur %}
                         {% if convention.is_bailleur_editable %}
                             <div>
                                 <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}">
@@ -686,7 +686,7 @@
                             {% include "common/button/return_convention_index.html" %}
                         {% endif %}
                     {% endif %}
-                    {% if request.user.is_instructeur %}
+                    {% if request.session.is_instructeur %}
                         {% if convention.is_instructeur_editable %}
                             <div>
                                 <form method="post" action="{% url 'conventions:generate' convention_uuid=convention.uuid %}">
