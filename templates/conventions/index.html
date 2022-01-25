@@ -9,7 +9,7 @@
         <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-my-5w">
-                    {% if request.user.is_bailleur %}
+                    {% if request.session.is_bailleur %}
                         <h2 class="fr-mb-3w">Créez une nouvelle convention ou gérez vos conventions en cours</h2>
 
                         <h4 class="fr-mb-3w">
@@ -19,7 +19,7 @@
                             <span class="fr-fi-edit-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
                         </button>
                         {% include "common/utils/onclick_redirect.html" with id='new_convention' url_target='conventions:selection' %}
-                    {% elif request.user.is_instructeur or request.user.is_superuser %}
+                    {% elif request.session.is_instructeur or request.user.is_superuser %}
                         <h2 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h2>
                     {% else %}
                         <p class="fr-mb-3w">Votre profile n'est pas bien configuré, merci de vous rapprocher de votre instructeur</p>
@@ -89,7 +89,7 @@
 
                             <thead>
                                 <tr>
-                                    {% if request.user.is_instructeur %}
+                                    {% if request.session.is_instructeur %}
                                         <th scope="col">
                                             Bailleur
                                             {% include "common/display_order_icon.html" with order_by=order_by order_by_column='bailleur__nom' url_target='conventions:index' %}
@@ -129,7 +129,7 @@
                             <tbody>
                                 {% for convention in conventions %}
                                     <tr>
-                                        {% if request.user.is_instructeur %}
+                                        {% if request.session.is_instructeur %}
                                             <td>{{convention.bailleur.nom}}</td>
                                             <td>{{convention.programme.numero_galion}}</td>
                                         {% endif %}
@@ -140,7 +140,7 @@
                                         <td>{{convention.lot.nb_logements}}</td>
                                         <td>{{convention.get_statut_display}}</td>
                                         <td>
-                                            {% if request.user.is_bailleur %}
+                                            {% if request.session.is_bailleur %}
                                                 {% if convention.is_bailleur_editable %}
                                                     <a class="fr-link fr-mb-1w" href="{% url 'conventions:selection_update' convention_uuid=convention.uuid %}" >
                                                         <span class="fr-fi-edit-line" aria-hidden="true"></span>
@@ -152,7 +152,7 @@
                                                     </a>
                                                 {% endif %}
                                             {% endif %}
-                                            {% if request.user.is_instructeur %}
+                                            {% if request.session.is_instructeur %}
                                                 {% if convention.is_instructeur_editable %}
                                                     <a class="fr-link fr-mb-1w" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" >
                                                         <span class="fr-fi-edit-line" aria-hidden="true"></span>

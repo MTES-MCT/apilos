@@ -25,5 +25,8 @@ class EmailBackend(ModelBackend):
             )
 
         if user.check_password(password) and self.user_can_authenticate(user):
+            request.session["is_staff"] = user.is_staff
+            request.session["is_instructeur"] = user.is_instructeur()
+            request.session["is_bailleur"] = user.is_bailleur()
             return user
         return None

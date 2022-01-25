@@ -55,7 +55,7 @@
                 statut: '{{comment.statut}}',
             },
                 {% if comments|get_item:object_field|has_own_active_comment:request.user.id %}true{% else %}false{% endif %},
-                {% if request.user.is_instructeur %}true{% else %}false{% endif%});
+                {% if request.session.is_instructeur %}true{% else %}false{% endif%});
         </script>
     {% endfor %}
     <script type="text/javascript" nonce="{{request.csp_nonce}}">
