@@ -1,4 +1,4 @@
-{% if request.user.is_instructeur and convention.is_instruction_ongoing %}
+{% if request.session.is_instructeur and convention.is_instruction_ongoing %}
     <div class="fr-col-md-12  fr-py-5w">
         <div role="alert" class="fr-alert fr-alert--info">
             <!-- <p class="fr-alert__title">Convention à valider</p> -->
