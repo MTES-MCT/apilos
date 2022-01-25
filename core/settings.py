@@ -216,7 +216,10 @@ STAGING = False
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
-AUTHENTICATION_BACKENDS = ["users.backends.EmailBackend"]
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "users.backends.EmailBackend",
+]
 
 # Redirect to home URL after login
 LOGIN_REDIRECT_URL = "/"
