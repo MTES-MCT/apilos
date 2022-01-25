@@ -29,3 +29,11 @@ def hasnt_active_comments(comments, object_field):
 @register.filter
 def has_comments(comments, object_field):
     return comments.get(object_field) is not None
+
+
+@register.filter
+def has_comments_with_prefix(comments, prefix):
+    for comment_key in comments.keys():
+        if comment_key.startswith(prefix):
+            return True
+    return False
