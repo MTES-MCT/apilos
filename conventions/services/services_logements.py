@@ -95,7 +95,7 @@ def _upload_logements(request, convention, import_warnings, editable_upload):
             for lgt in Logement.objects.filter(lot_id=convention.lot_id):
                 lgts_by_designation[lgt.designation] = lgt.uuid
             for obj in result["objects"]:
-                if obj["designation"] in lgts_by_designation:
+                if "designation" in obj and obj["designation"] in lgts_by_designation:
                     obj["uuid"] = lgts_by_designation[obj["designation"]]
             formset = LogementFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]

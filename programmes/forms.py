@@ -405,10 +405,10 @@ class LogementForm(forms.Form):
     )
 
     def clean_loyer(self):
-        surface_utile = self.cleaned_data["surface_utile"]
-        loyer_par_metre_carre = self.cleaned_data["loyer_par_metre_carre"]
-        coeficient = self.cleaned_data["coeficient"]
-        loyer = self.cleaned_data["loyer"]
+        surface_utile = self.cleaned_data.get("surface_utile", 0)
+        loyer_par_metre_carre = self.cleaned_data.get("loyer_par_metre_carre", 0)
+        coeficient = self.cleaned_data.get("coeficient", 0)
+        loyer = self.cleaned_data.get("loyer", 0)
 
         # check that lot_id exist in DB
         if (
