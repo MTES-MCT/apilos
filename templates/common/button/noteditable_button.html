@@ -1,7 +1,8 @@
-
+<input type="hidden" name="redirect_to_recap" value='True'>
+<input type="hidden" name="editable_upload" value="{{ editable_upload }}">
 <div>
     <div id="save_after_comments" hidden>
-        <button class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" id='atomic_button' name='UpdateAtomic' value='True'>
+        <button class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" id='atomic_button'>
             Enregistrer et retour au Récapitulatif
         </button>
     </div>
@@ -9,7 +10,6 @@
         <button type='button' class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" type="button" id="return_recap">
             Retour au Récapitulatif
         </button>
-
     </div>
 </div>
 <script type="text/javascript" nonce="{{request.csp_nonce}}">

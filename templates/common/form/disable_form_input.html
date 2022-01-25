@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 {% if comments and parent_object_field %}
     {% if not editable and comments|hasnt_active_comments:parent_object_field %}disabled{% endif %}
 {% elif comments and object_field %}
