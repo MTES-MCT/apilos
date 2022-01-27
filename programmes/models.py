@@ -399,9 +399,9 @@ class Logement(models.Model):
         "Surface utile\n(surface habitable augmentée de 50% de la surface des annexes)": (
             surface_utile
         ),
-        "Loyer maxinum en € par m² de surface utile": loyer_par_metre_carre,
+        "Loyer maximum en € par m² de surface utile": loyer_par_metre_carre,
         "Coefficient propre au logement": coeficient,
-        "Loyer maxinum du logement en €\n(col 4 * col 5 * col 6)": loyer,
+        "Loyer maximum du logement en €\n(col 4 * col 5 * col 6)": loyer,
     }
     sheet_name = "Logements"
 
@@ -479,7 +479,7 @@ class Annexe(models.Model):
         "Typologie des logements": "logement_typologie",
         "Surface de l'annexe": surface_hors_surface_retenue,
         "Loyer unitaire en €": loyer_par_metre_carre,
-        "Loyer maxinum en €": loyer,
+        "Loyer maximum en €": loyer,
     }
     sheet_name = "Annexes"
 
@@ -541,7 +541,7 @@ class TypeStationnement(IngestableModel):
     import_mapping = {
         "Type de stationnement": typologie,
         "Nombre de stationnements": nb_stationnements,
-        "Loyer maxinum en €": loyer,
+        "Loyer maximum en €": loyer,
     }
     sheet_name = "Stationnements"
 
