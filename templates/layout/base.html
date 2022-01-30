@@ -25,6 +25,7 @@
         <link rel="stylesheet" href="{% static "dsfr/dist/dsfr/dsfr.min.css" %}">
         <link rel="stylesheet" href="{% static "css/main.css" %}">
         <link rel="stylesheet" href="{% static "css/step_progressbar.css" %}">
+        <link rel="stylesheet" href="{% static "css/user_feedback.css" %}">
         {% block css_extras %}{% endblock %}
 
         <!--Js-->
@@ -65,6 +66,23 @@
             <script type="module" src="{% static "dsfr/dist/dsfr/dsfr.module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
             <script type="text/javascript" nomodule src="{% static "dsfr/dist/dsfr/dsfr.nomodule.min.js" %}" nonce="{{request.csp_nonce}}"></script>
             <script type="text/javascript" src="{% static "js/main.js" %}" nonce="{{request.csp_nonce}}"></script>
+        {% endblock %}
+
+        {% block feedback %}
+            <div class="container__feedback_btn">
+                <button class="cta" type="button" id="user_feedback_btn">
+                    <span class="apilos-icon fr-fi-mail-line" aria-hidden="true"></span>
+                    <span class="button-text">Faites nous part de vos retours</span>
+                </button>
+            </div>
+            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                document.addEventListener('DOMContentLoaded', function () {
+                    document.getElementById('user_feedback_btn')
+                        .addEventListener('click', function(){
+                        window.open("https://forms.gle/sKLSeAYwjLWbufhP6", '_blank').focus()
+                    });
+                });
+            </script>
         {% endblock %}
 
     </body>

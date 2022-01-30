@@ -10,6 +10,7 @@ from docx.shared import Inches
 from django.conf import settings
 from django.core.files.storage import default_storage
 
+from bailleurs.models import TypeBailleur
 from programmes.models import (
     Financement,
     Annexe,
@@ -17,14 +18,30 @@ from programmes.models import (
 from upload.models import UploadedFile
 
 
-def generate_hlm(convention):
+class NotHandleConventionType(Exception):
+    pass
+
+
+def generate_convention_doc(convention):
     # pylint: disable=R0914
     annexes = (
         Annexe.objects.prefetch_related("logement")
         .filter(logement__lot_id=convention.lot.id)
         .all()
     )
-    filepath = f"{settings.BASE_DIR}/documents/HLM-template.docx"
+    if convention.bailleur.type_bailleur in [
+        TypeBailleur.OFFICE_PUBLIC_HLM,
+        TypeBailleur.SA_HLM_ESH,
+        TypeBailleur.COOPERATIVE_HLM_SCIC,
+    ]:
+        filepath = f"{settings.BASE_DIR}/documents/HLM-template.docx"
+    elif convention.bailleur.type_bailleur in [TypeBailleur.SEM_EPL]:
+        filepath = f"{settings.BASE_DIR}/documents/SEM-template.docx"
+    else:
+        raise NotHandleConventionType(
+            "La génération de convention n'est pas disponible pour ce type de"
+            + f" bailleur : {convention.bailleur.get_type_bailleur_display()}"
+        )
     doc = DocxTemplate(filepath)
 
     logements_totale = {
