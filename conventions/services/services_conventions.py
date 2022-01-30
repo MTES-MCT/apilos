@@ -512,7 +512,7 @@ def convention_validate(request, convention_uuid):
 
     if convention_number_form.is_valid() or request.POST.get("Force"):
 
-        file_stream = convention_generator.generate_hlm(convention)
+        file_stream = convention_generator.generate_convention_doc(convention)
         local_pdf_path = convention_generator.generate_pdf(file_stream, convention)
 
         ConventionHistory.objects.create(
@@ -621,5 +621,6 @@ def generate_convention(request, convention_uuid):
         .prefetch_related("programme__referencecadastrale_set")
         .get(uuid=convention_uuid)
     )
-    file_stream = convention_generator.generate_hlm(convention)
+    file_stream = convention_generator.generate_convention_doc(convention)
+
     return file_stream, f"{convention}"
