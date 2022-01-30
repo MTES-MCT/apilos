@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 {% if object_field %}
     {% if value or comments|has_comments:object_field %}
         <div class="block--row-strech" id="{{object_field}}_div">

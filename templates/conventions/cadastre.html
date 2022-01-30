@@ -24,6 +24,11 @@
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
+                <input
+                    type="hidden"
+                    id="{{form.uuid.id_for_label}}"
+                    name="{{form.uuid.html_name}}"
+                    value="{{ form.uuid.value|default_if_none:'' }}">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-mt-5w">
                         <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Informations cadastrales sur le programme</h2> -->
@@ -72,10 +77,10 @@
 
                         {% include "common/form/input_upload.html" with label="Références cadastrales" form_input=form.reference_cadastrale form_input_files=form.reference_cadastrale_files object_name='programme' object_uuid=convention.programme.uuid image_only=True file_list=convention.programme.reference_cadastrale_files.values object_field="programme__reference_cadastrale__"|add:form.uuid.value %}
 
-                        {% if editable %}
+                        <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
                             {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='cadastre' upform=upform  what="références cadastrales"%}
                             <hr class="fr-col-12 fr-my-3w">
-                        {% endif %}
+                        </div>
 
                         {% for error in import_warnings %}
                             <p id="text-input-error-desc-error" class="fr-error-text">
@@ -95,14 +100,7 @@
                                 <thead>
                                     <tr>
                                         {% if convention.statut != 'BROUILLON' %}
-                                            <th scope="col">
-                                                <div class="content__icons content__icons--darkgrey">
-                                                    <svg role="img" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24" aria-labelledby="chatIconTitle">
-                                                        <title id="chatIconTitle">Comments</title>
-                                                        <path d="M8.82388455,18.5880577 L4,21 L4.65322944,16.4273939 C3.00629211,15.0013 2,13.0946628 2,11 C2,6.581722 6.4771525,3 12,3 C17.5228475,3 22,6.581722 22,11 C22,15.418278 17.5228475,19 12,19 C10.8897425,19 9.82174472,18.8552518 8.82388455,18.5880577 Z"></path>
-                                                    </svg>
-                                                </div>
-                                            </th>
+                                            {% include 'common/utils/comments_header.html' with comment_prefix='reference_cadastrale__uuid__' header_id='header_icon_reference_cadastrale' %}
                                         {% endif %}
                                         <th scope="col">Section {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col">Numéro {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
@@ -126,16 +124,16 @@
                                                         id="{{form_cadastre.uuid.id_for_label}}"
                                                         name="{{form_cadastre.uuid.html_name}}"
                                                         value="{{ form_cadastre.uuid.value|default_if_none:'' }}">
-                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.section parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.section parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.numero parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.numero parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.lieudit parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.lieudit parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.surface parent_object_field=main_object_field %}
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.surface parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                             </tr>
                                         {% endwith %}

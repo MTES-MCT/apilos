@@ -12,14 +12,14 @@
                         </span>
                     </div>
                 </div>
-                {% if request.user.is_instructeur %}
+                {% if request.session.is_instructeur %}
                     <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
                             Entreprise bailleur : {{ convention.bailleur }}
                         </div>
                     </div>
                 {% endif %}
-                {% if request.user.is_bailleur %}
+                {% if request.session.is_bailleur %}
                     <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
                             Service instructeur : {{ convention.programme.administration }}

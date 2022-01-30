@@ -285,6 +285,9 @@ function display_comment_icon(input_id) {
             for (var i = 0; i< inputs.length;i++) {
                 inputs[i].disabled = false
             }
+            if (document.getElementById('download_upload_block') !== null) {
+                document.getElementById('download_upload_block').hidden = false
+            }
         }
 
         if (document.getElementById('save_after_comments') !== null) {
@@ -302,6 +305,15 @@ function display_comment_icon(input_id) {
         comment_icon.classList.remove('content__icons--blue')
         comment_icon.classList.add('content__icons--green')
         comment_icon.classList.remove('content__icons--grey')
+
+        // row in a table
+        parent_parent = comment_icon.parentNode.parentNode
+        if (parent_parent.tagName == 'TR') {
+            if (document.getElementById('download_upload_block') !== null) {
+                document.getElementById('download_upload_block').hidden = false
+            }
+        }
+
         document.getElementById(input_id + '_div').onclick = null
         document.getElementById(input_id + '_div').onmouseover = null
         document.getElementById(input_id + '_div').onmouseleave = null

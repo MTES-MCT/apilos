@@ -216,6 +216,9 @@ STAGING = False
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
+AUTHENTICATION_BACKENDS = [
+    "users.backends.EmailBackend",
+]
 
 # Redirect to home URL after login
 LOGIN_REDIRECT_URL = "/"
@@ -238,6 +241,7 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_AGE = 6 * 60 * 60
 
 # Security settings
@@ -283,7 +287,7 @@ if CERBERE_AUTH:
     ]
 
     AUTHENTICATION_BACKENDS = [
-        "django.contrib.auth.backends.ModelBackend",
+        "users.backends.EmailBackend",
         "core.backends.CerbereCASBackend",
     ]  # custom backend CAS
 

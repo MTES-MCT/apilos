@@ -1,5 +1,7 @@
 {% load static %}
 
+{% load custom_filters %}
+
 <div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}">
     <div class="fr-mb-2w">
         {% if textarea and not verticalDisplay %}

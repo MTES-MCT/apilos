@@ -66,36 +66,27 @@ def convention_financement(request, convention_uuid):
         uuid=convention_uuid
     )
     import_warnings = None
+    editable_upload = request.POST.get("editable_upload", False)
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
-        if request.POST.get("UpdateAtomic", False):
-            return _convention_financement_atomic_update(request, convention)
-
         # When the user cliked on "Téléverser" button
-        formset = PretFormSet(request.POST)
-        form = ConventionFinancementForm(request.POST)
         if request.POST.get("Upload", False):
-            upform = UploadForm(request.POST, request.FILES)
-            if upform.is_valid():
-
-                result = upload_objects.handle_uploaded_xlsx(
-                    upform, request.FILES["file"], Pret, convention, "financement.xlsx"
-                )
-                if result["success"] != utils.ReturnStatus.ERROR:
-                    formset = PretFormSet(initial=result["objects"])
-                    import_warnings = result["import_warnings"]
+            form = ConventionFinancementForm(request.POST)
+            formset, upform, import_warnings, editable_upload = _upload_prets(
+                request, convention, import_warnings, editable_upload
+            )
         # When the user cliked on "Enregistrer et Suivant"
         else:
-            upform = UploadForm()
-            formset.convention = convention
-            if formset.is_valid():
-                form.prets = formset
-                form.convention = convention
-                if form.is_valid():
-                    _save_convention_financement(form, convention)
-                    _save_convention_financement_prets(formset, convention)
-                    # All is OK -> Next:
-                    return utils.base_response_success(convention)
+            result = _convention_financement_atomic_update(request, convention)
+            if result["success"] == utils.ReturnStatus.SUCCESS and request.POST.get(
+                "redirect_to_recap", False
+            ):
+                result["redirect"] = "recapitulatif"
+            return {
+                **result,
+                "editable_upload": request.user.full_editable_convention(convention)
+                or editable_upload,
+            }
     # When display the file for the first time
     else:
         request.user.check_perm("convention.view_convention", convention)
@@ -130,7 +121,32 @@ def convention_financement(request, convention_uuid):
         "form": form,
         "formset": formset,
         "upform": upform,
+        "editable_upload": request.user.full_editable_convention(convention)
+        or editable_upload,
     }
+
+
+def _upload_prets(request, convention, import_warnings, editable_upload):
+    formset = PretFormSet(request.POST)
+    upform = UploadForm(request.POST, request.FILES)
+    if upform.is_valid():
+
+        result = upload_objects.handle_uploaded_xlsx(
+            upform, request.FILES["file"], Pret, convention, "financement.xlsx"
+        )
+        if result["success"] != utils.ReturnStatus.ERROR:
+
+            prets_by_numero = {}
+            for pret in convention.pret_set.all():
+                prets_by_numero[pret.numero] = pret.uuid
+            for obj in result["objects"]:
+                if "numero" in obj and obj["numero"] in prets_by_numero:
+                    obj["uuid"] = prets_by_numero[obj["numero"]]
+
+            formset = PretFormSet(initial=result["objects"])
+            import_warnings = result["import_warnings"]
+            editable_upload = True
+    return formset, upform, import_warnings, editable_upload
 
 
 def _convention_financement_atomic_update(request, convention):
@@ -139,7 +155,10 @@ def _convention_financement_atomic_update(request, convention):
             "uuid": convention.uuid,
             "fond_propre": request.POST.get("fond_propre", convention.fond_propre),
             "annee_fin_conventionnement": request.POST.get(
-                "annee_fin_conventionnement", convention.date_fin_conventionnement.year
+                "annee_fin_conventionnement",
+                convention.date_fin_conventionnement.year
+                if convention.date_fin_conventionnement is not None
+                else None,
             ),
         }
     )
@@ -150,19 +169,30 @@ def _convention_financement_atomic_update(request, convention):
         "form-INITIAL_FORMS": request.POST.get("form-INITIAL_FORMS", len(formset)),
     }
     for idx, form_pret in enumerate(formset):
-        pret = Pret.objects.get(uuid=form_pret["uuid"].value())
-        initformset = {
-            **initformset,
-            f"form-{idx}-uuid": pret.uuid,
-            f"form-{idx}-numero": utils.get_form_value(form_pret, pret, "numero"),
-            f"form-{idx}-date_octroi": utils.get_form_value(
-                form_pret, pret, "date_octroi"
-            ),
-            f"form-{idx}-duree": utils.get_form_value(form_pret, pret, "duree"),
-            f"form-{idx}-montant": utils.get_form_value(form_pret, pret, "montant"),
-            f"form-{idx}-preteur": utils.get_form_value(form_pret, pret, "preteur"),
-            f"form-{idx}-autre": utils.get_form_value(form_pret, pret, "autre"),
-        }
+        if form_pret["uuid"].value():
+            pret = Pret.objects.get(uuid=form_pret["uuid"].value())
+            initformset = {
+                **initformset,
+                f"form-{idx}-uuid": pret.uuid,
+                f"form-{idx}-numero": utils.get_form_value(form_pret, pret, "numero"),
+                f"form-{idx}-date_octroi": utils.get_form_value(
+                    form_pret, pret, "date_octroi"
+                ),
+                f"form-{idx}-duree": utils.get_form_value(form_pret, pret, "duree"),
+                f"form-{idx}-montant": utils.get_form_value(form_pret, pret, "montant"),
+                f"form-{idx}-preteur": utils.get_form_value(form_pret, pret, "preteur"),
+                f"form-{idx}-autre": utils.get_form_value(form_pret, pret, "autre"),
+            }
+        else:
+            initformset = {
+                **initformset,
+                f"form-{idx}-numero": form_pret["numero"].value(),
+                f"form-{idx}-date_octroi": form_pret["date_octroi"].value(),
+                f"form-{idx}-duree": form_pret["duree"].value(),
+                f"form-{idx}-montant": form_pret["montant"].value(),
+                f"form-{idx}-preteur": form_pret["preteur"].value(),
+                f"form-{idx}-autre": form_pret["autre"].value(),
+            }
     formset = PretFormSet(initformset)
     formset.convention = convention
 
@@ -172,7 +202,10 @@ def _convention_financement_atomic_update(request, convention):
         if form.is_valid():
             _save_convention_financement(form, convention)
             _save_convention_financement_prets(formset, convention)
-            return utils.base_response_redirect_recap_success(convention)
+        return {
+            "success": utils.ReturnStatus.SUCCESS,
+            "convention": convention,
+        }
     upform = UploadForm()
     return {
         **utils.base_convention_response_error(request, convention),
