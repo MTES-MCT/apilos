@@ -17,7 +17,7 @@ class UserForm(forms.Form):
         required=False,
         max_length=150,
         error_messages={
-            "max_length": "Le nom du programme ne doit pas excéder 150 caractères",
+            "max_length": "Le prénom de l'utilisateur ne doit pas excéder 150 caractères",
         },
     )
 
@@ -25,13 +25,13 @@ class UserForm(forms.Form):
         required=False,
         max_length=150,
         error_messages={
-            "max_length": "Le nom du programme ne doit pas excéder 150 caractères",
+            "max_length": "Le nom de l'utilisateur ne doit pas excéder 150 caractères",
         },
     )
 
     email = forms.EmailField(
         required=True,
         error_messages={
-            "required": "Le nom d'utilisateur est obligatoire",
+            "required": "L'email de l'utilisateur est obligatoire",
         },
     )
