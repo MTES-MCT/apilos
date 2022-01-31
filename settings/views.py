@@ -20,17 +20,32 @@ def index(request):
     if request.user.is_bailleur():
         return HttpResponseRedirect(reverse("settings:bailleurs"))
     if request.user.is_instructeur():
-        return HttpResponseRedirect(reverse("settings:instructeurs"))
+        return HttpResponseRedirect(reverse("settings:administrations"))
     return HttpResponseRedirect(reverse("settings:users"))
 
 
 def users(request):
-    return render(request, "settings/users.html")
+    result = services.user_list(request)
+    return render(
+        request,
+        "settings/users.html",
+        {**result},
+    )
 
 
 def bailleurs(request):
-    return render(request, "settings/bailleurs.html")
+    result = services.bailleur_list(request)
+    return render(
+        request,
+        "settings/bailleurs.html",
+        {**result},
+    )
 
 
 def administrations(request):
-    return render(request, "settings/administrations.html")
+    result = services.administration_list(request)
+    return render(
+        request,
+        "settings/administrations.html",
+        {**result},
+    )

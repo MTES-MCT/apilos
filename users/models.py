@@ -84,25 +84,13 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            administration_ids = list(
-                map(
-                    lambda role: role.administration_id,
-                    self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
-                )
-            )
-            return {prefix + "administration_id__in": administration_ids}
+            return {prefix + "administration_id__in": self.administration_ids()}
 
         if self.is_bailleur():
-            bailleur_ids = list(
-                map(
-                    lambda role: role.bailleur_id,
-                    self.role_set.filter(typologie=TypeRole.BAILLEUR),
-                )
-            )
-            return {prefix + "bailleur_id__in": bailleur_ids}
+            return {prefix + "bailleur_id__in": self.bailleur_ids()}
 
         raise Exception(
-            "L'utilisateur courant n'a pas de role associé permattant le filtre sur les programmes"
+            "L'utilisateur courant n'a pas de role associé permettant le filtre sur les programmes"
         )
 
     def programmes(self):
@@ -121,21 +109,23 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            administration_ids = list(
-                map(
-                    lambda role: role.administration_id,
-                    self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
-                )
-            )
-            return {"id__in": administration_ids}
+            return {"id__in": self.administration_ids()}
 
         # to do : manage programme related to geo for bailleur
         if self.is_bailleur():
             return {}
 
         raise Exception(
-            "L'utilisateur courant n'a pas de role associé permattant le "
+            "L'utilisateur courant n'a pas de role associé permettant le "
             + "filtre sur les administrations"
+        )
+
+    def administration_ids(self):
+        return list(
+            map(
+                lambda role: role.administration_id,
+                self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
+            )
         )
 
     def administrations(self):
@@ -157,16 +147,18 @@ class User(AbstractUser):
             return {}
 
         if self.is_bailleur():
-            bailleur_ids = list(
-                map(
-                    lambda role: role.bailleur_id,
-                    self.role_set.filter(typologie=TypeRole.BAILLEUR),
-                )
-            )
-            return {"id__in": bailleur_ids}
+            return {"id__in": self.bailleur_ids()}
 
         raise Exception(
-            "L'utilisateur courant n'a pas de role associé permattant le filtre sur les bailleurs"
+            "L'utilisateur courant n'a pas de role associé permettant le filtre sur les bailleurs"
+        )
+
+    def bailleur_ids(self):
+        return list(
+            map(
+                lambda role: role.bailleur_id,
+                self.role_set.filter(typologie=TypeRole.BAILLEUR),
+            )
         )
 
     def bailleurs(self):
@@ -178,25 +170,13 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            administration_ids = list(
-                map(
-                    lambda role: role.administration_id,
-                    self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
-                )
-            )
-            return {"programme__administration_id__in": administration_ids}
+            return {"programme__administration_id__in": self.administration_ids()}
 
         if self.is_bailleur():
-            bailleur_ids = list(
-                map(
-                    lambda role: role.bailleur_id,
-                    self.role_set.filter(typologie=TypeRole.BAILLEUR),
-                )
-            )
-            return {"bailleur_id__in": bailleur_ids}
+            return {"bailleur_id__in": self.bailleur_ids()}
 
         raise PermissionDenied(
-            "L'utilisateur courant n'a pas de role associé permattant le filtre sur les bailleurs"
+            "L'utilisateur courant n'a pas de role associé permettant le filtre sur les bailleurs"
         )
 
     def conventions(self):
@@ -215,6 +195,28 @@ class User(AbstractUser):
                 ConventionStatut.CORRECTION,
             ]
         return False
+
+    def user_list(self, order_by="username"):
+        if self.is_superuser:
+            return User.objects.all().order_by(order_by)
+        if self.is_bailleur():
+            return (
+                User.objects.all()
+                .filter(role__bailleur_id__in=self.bailleur_ids())
+                .order_by(order_by)
+                .distinct()
+            )
+        if self.is_instructeur():
+            return (
+                User.objects.all()
+                .filter(role__administration_id__in=self.administration_ids())
+                .order_by(order_by)
+                .distinct()
+            )
+        raise Exception(
+            "L'utilisateur courant n'a pas de role associé permettant de"
+            + " filtrer les utilisateurs"
+        )
 
     def __str__(self):
         return (

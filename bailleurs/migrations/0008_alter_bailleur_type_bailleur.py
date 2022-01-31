@@ -39,8 +39,6 @@ def update_type_bailleur(apps, schema_editor):
             new_type_bailleur = TypeBailleur.NONRENSEIGNE
         else:
             new_type_bailleur = type_bailleur_by_label[cat]
-        print(cat)
-        print(new_type_bailleur)
         Bailleur.objects.filter(siret__in=siret_by_cat[cat]).update(
             type_bailleur=new_type_bailleur
         )

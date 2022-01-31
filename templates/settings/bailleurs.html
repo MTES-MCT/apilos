@@ -12,13 +12,37 @@
                     {% include 'settings/common/side_menu.html' with active_menu='bailleurs' %}
                 </div>
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
-                    <h4>Gérer ou visualiser vos bailleurs</h4>
-                    <p>
-                        En tant que Bailleur, vous voyez la liste de vos bailleurs. Vous pouvez modifier les paramètres du bailleurs
-                    </p>
-                    <p>
-                        En tant qu'Instructeur, vous voyez la liste des bailleur qui ont des programmes attaché à vos administrations
-                    </p>
+                    <div class="fr-table fr-table--bordered table--layout-fixed">
+                        <table>
+                            <caption>{{bailleurs.paginator.count}} bailleur{% if bailleurs.paginator.count > 1 %}s{% endif %}</caption>
+
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Nom
+                                    </th>
+                                    <th scope="col">
+                                        Siret
+                                    </th>
+                                    <th scope="col">
+                                        Ville
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bailleur in bailleurs %}
+                                    <tr>
+                                        <td>{{ bailleur.nom }}</td>
+                                        <td>{{ bailleur.siret }}</td>
+                                        <td>{{ bailleur.ville }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% include 'common/utils/pagination.html' with paginate_list=bailleurs %}
+
                 </div>
             </div>
         </div>

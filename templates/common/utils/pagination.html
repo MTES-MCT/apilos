@@ -1,0 +1,83 @@
+<nav role="navigation" class="fr-pagination" aria-label="Pagination">
+    <ul class="fr-pagination__list">
+        <li>
+            <a class="fr-pagination__link fr-pagination__link--first"
+                {% if paginate_list.has_previous %}href="?page=1"{% else %}aria-disabled="true"{% endif %}
+                role="link">
+                Première page
+            </a>
+        </li>
+        <li>
+            <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+                {% if paginate_list.has_previous %}href="?page={{ paginate_list.previous_page_number }}"{% else %}aria-disabled="true"{% endif %}
+                role="link">
+                Page précédente
+            </a>
+        </li>
+        {% if paginate_list.number|add:"-3" > 0 %}
+            <li class="fr-pagination__link fr-displayed-lg">···</li>
+        {% endif %}
+        {% if paginate_list.number|add:"-2" > 0 %}
+            <li>
+                <a class="fr-pagination__link"
+                    href="?page={{ paginate_list.number|add:'-2' }}"
+                    role="link"
+                    title="Page {{ paginate_list.number|add:'-2' }}">
+                    {{ paginate_list.number|add:"-2" }}
+                </a>
+            </li>
+        {% endif %}
+        {% if paginate_list.has_previous %}
+            <li>
+                <a class="fr-pagination__link"
+                    {% if paginate_list.has_previous %}href="?page={{ paginate_list.previous_page_number }}"{% else %}aria-disabled="true"{% endif %}
+                    role="link"
+                    title="Page {{ paginate_list.previous_page_number }}">
+                    {{ paginate_list.previous_page_number }}
+                </a>
+            </li>
+        {% endif %}
+        <li>
+            <a class="fr-pagination__link" aria-current="page" title="Page {{ paginate_list.number }}">
+                {{ paginate_list.number }}
+            </a>
+        </li>
+        {% if paginate_list.has_next %}
+            <li>
+                <a class="fr-pagination__link"
+                    {% if paginate_list.has_next %}href="?page={{ paginate_list.next_page_number }}"{% else %}aria-disabled="true"{% endif %}
+                    role="link"
+                    title="Page {{ paginate_list.next_page_number }}">
+                    {{ paginate_list.next_page_number }}
+                </a>
+            </li>
+        {% endif %}
+        {% if paginate_list.number|add:2 <= paginate_list.paginator.num_pages %}
+            <li>
+                <a class="fr-pagination__link"
+                    href="?page={{ paginate_list.number|add:2 }}"
+                    role="link"
+                    title="Page {{ paginate_list.number|add:2 }}">
+                    {{ paginate_list.number|add:2 }}
+                </a>
+            </li>
+        {% endif %}
+        {% if paginate_list.number|add:3 <= paginate_list.paginator.num_pages %}
+            <li class="fr-pagination__link fr-displayed-lg">···</li>
+        {% endif %}
+        <li>
+            <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+                {% if paginate_list.has_next %}href="?page={{ paginate_list.next_page_number }}"{% else %}aria-disabled="true"{% endif %}
+                role="link">
+                Page suivante
+            </a>
+        </li>
+        <li>
+            <a class="fr-pagination__link fr-pagination__link--last"
+                {% if paginate_list.has_next %}href="?page={{paginate_list.paginator.num_pages}}"{% else %}aria-disabled="true"{% endif %}
+                role="link">
+                Dernière page
+            </a>
+        </li>
+    </ul>
+</nav>

@@ -12,18 +12,41 @@
                     {% include 'settings/common/side_menu.html' with active_menu='users' %}
                 </div>
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
-                    <h4>Vos collaborateurs</h4>
-                    <p>
-                        Ici on liste les utilisateurs de vos bailleurs si vous êtes un bailleur, de vos administrations si vous êtes instructeur.
-                        De plus, si vous êtes administrateur d'une ou plusieurs entité, pour ces entité, il vous sera possible de :
-                    </p>
-                    <ul>
-                        <li>ajouter un utilisateur</li>
-                        <li>modifier un utilisateur</li>
-                        <li>supprimer un utilisateur (solf delete à prévoir)</li>
-                        <li>nommer un administarteur ou supprimer ce droit d'administration</li>
-                    </ul>
-                    <p>Si vous n'êtes pas administrateur, alors vous n'avez que le droit de voir la liste de vos collaborateurs</p>
+                    <div class="fr-table fr-table--bordered table--layout-fixed">
+                        <table>
+                            <caption>{{users.paginator.count}} collaborateur{% if users.paginator.count > 1 %}s{% endif %}</caption>
+
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Identifiant
+                                    </th>
+                                    <th scope="col">
+                                        Prénom
+                                    </th>
+                                    <th scope="col">
+                                        Nom
+                                    </th>
+                                    <th scope="col">
+                                        email
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                    <tr>
+                                        <td>{{ user.username}}</td>
+                                        <td>{{ user.first_name}}</td>
+                                        <td>{{ user.last_name}}</td>
+                                        <td>{{ user.email}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% include 'common/utils/pagination.html' with paginate_list=users %}
+
                 </div>
             </div>
         </div>

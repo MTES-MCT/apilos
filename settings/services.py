@@ -1,5 +1,6 @@
 from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from users.forms import UserForm
 
@@ -25,3 +26,51 @@ def user_profile(request):
         "editable": True,
         "success": success,
     }
+
+
+@login_required
+def user_list(request):
+
+    my_user_list = request.user.user_list()
+    page = request.GET.get("page", 1)
+    paginator = Paginator(my_user_list, 20)
+    try:
+        users = paginator.page(page)
+    except PageNotAnInteger:
+        users = paginator.page(1)
+    except EmptyPage:
+        users = paginator.page(paginator.num_pages)
+
+    return {"users": users}
+
+
+@login_required
+def administration_list(request):
+
+    my_administration_list = request.user.administrations()
+    page = request.GET.get("page", 1)
+    paginator = Paginator(my_administration_list, 20)
+    try:
+        administrations = paginator.page(page)
+    except PageNotAnInteger:
+        administrations = paginator.page(1)
+    except EmptyPage:
+        administrations = paginator.page(paginator.num_pages)
+
+    return {"administrations": administrations}
+
+
+@login_required
+def bailleur_list(request):
+
+    my_bailleur_list = request.user.bailleurs()
+    page = request.GET.get("page", 1)
+    paginator = Paginator(my_bailleur_list, 20)
+    try:
+        bailleurs = paginator.page(page)
+    except PageNotAnInteger:
+        bailleurs = paginator.page(1)
+    except EmptyPage:
+        bailleurs = paginator.page(paginator.num_pages)
+
+    return {"bailleurs": bailleurs}

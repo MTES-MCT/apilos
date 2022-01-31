@@ -258,6 +258,17 @@ class AdministrationsModelsTest(TestCase):
         user_bailleur = User.objects.get(username="raph")
         self.assertEqual(user_bailleur.administration_filter(), {})
 
+    def test_administration_ids(self):
+        user_superuser = User.objects.get(username="nicolas")
+        self.assertEqual(user_superuser.administration_ids(), [])
+        user_instructeur = User.objects.get(username="sabine")
+        self.assertEqual(
+            user_instructeur.administration_ids(),
+            [user_instructeur.role_set.all()[0].administration_id],
+        )
+        user_bailleur = User.objects.get(username="raph")
+        self.assertEqual(user_bailleur.administration_ids(), [])
+
     def test_bailleur_filter(self):
         user_superuser = User.objects.get(username="nicolas")
         self.assertEqual(user_superuser.bailleur_filter(), {})
@@ -267,6 +278,17 @@ class AdministrationsModelsTest(TestCase):
         self.assertEqual(
             user_bailleur.bailleur_filter(),
             {"id__in": [user_bailleur.role_set.all()[0].bailleur_id]},
+        )
+
+    def test_bailleur_ids(self):
+        user_superuser = User.objects.get(username="nicolas")
+        self.assertEqual(user_superuser.bailleur_ids(), [])
+        user_instructeur = User.objects.get(username="sabine")
+        self.assertEqual(user_instructeur.bailleur_ids(), [])
+        user_bailleur = User.objects.get(username="raph")
+        self.assertEqual(
+            user_bailleur.bailleur_ids(),
+            [user_bailleur.role_set.all()[0].bailleur_id],
         )
 
     def test_convention_filter(self):
@@ -284,6 +306,25 @@ class AdministrationsModelsTest(TestCase):
             user_bailleur.convention_filter(),
             {"bailleur_id__in": [user_bailleur.role_set.all()[0].bailleur_id]},
         )
+
+    def test_user_list(self):
+        user_superuser = User.objects.get(username="nicolas")
+        self.assertEqual(
+            user_superuser.user_list(order_by="username").first(),
+            User.objects.all().order_by("username").first(),
+        )
+        self.assertEqual(
+            user_superuser.user_list(order_by="username").last(),
+            User.objects.all().order_by("username").last(),
+        )
+        self.assertEqual(
+            user_superuser.user_list(order_by="username").count(),
+            User.objects.all().order_by("username").count(),
+        )
+        user_instructeur = User.objects.get(username="sabine")
+        self.assertEqual(user_instructeur.user_list().count(), 1)
+        user_bailleur = User.objects.get(username="raph")
+        self.assertEqual(user_bailleur.user_list().count(), 1)
 
     # Test model Role
     def test_object_role_str(self):
