@@ -12,17 +12,28 @@
                     {% include 'settings/common/side_menu.html' with active_menu='profile' %}
                 </div>
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
-                    <h4>Gestion de votre profil</h4>
-                    <p>
-                        Ici vous pouvez modifier votre profil, c'est à dire:
-                    </p>
-                    <ul>
-                        <li>votre adresse email</li>
-                        <li>votre nom</li>
-                        <li>votre mot de passe</li>
-                        <li>...</li>
-                    </ul>
-                    <p>Le nom d'utilisateur n'est pas modifiable</p>
+                    <div class='fr-col-12'>
+                        <h4>Gestion de votre profil</h4>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            {% if success %}
+                                <div role="success" class="fr-alert fr-alert--success fr-mb-3w">
+                                    <p>Votre profil a été enregistré avec succès</p>
+                                </div>
+                            {% endif %}
+                            {% include "common/form/input_text.html" with form_input=form.username label="Nom d'utilisateur" editable=False %}
+                            {% include "common/form/input_text.html" with form_input=form.first_name label="Prénom" %}
+                            {% include "common/form/input_text.html" with form_input=form.last_name label="Nom" %}
+                            {% include "common/form/input_text.html" with form_input=form.email label="Email" %}
+
+                            <button class="fr-btn fr-fi-save-line fr-btn--icon-left" type="submit">
+                                Enregistrer
+                            </button>
+                        </form>
+                    </div>
+                    <div class='fr-col-12'>
+                        <!-- ++ modification du mot de passe -->
+                    </div>
                 </div>
             </div>
         </div>
