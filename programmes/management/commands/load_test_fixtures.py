@@ -3,7 +3,7 @@ import random
 
 from django.core.management.base import BaseCommand
 from instructeurs.models import Administration
-from bailleurs.models import Bailleur
+from bailleurs.models import Bailleur, TypeBailleur
 from programmes.models import (
     Programme,
     Financement,
@@ -18,6 +18,7 @@ from programmes.models import (
 bailleur = {
     "nom": "Bailleur HLM de test",
     "siret": "12345678900000",
+    "type_bailleur": TypeBailleur.OFFICE_PUBLIC_HLM,
     "capital_social": 10000.01,
     "adresse": "1 place de la répubique",
     "code_postal": "00100",
@@ -25,7 +26,6 @@ bailleur = {
     "signataire_nom": "John Doe",
     "signataire_fonction": "Directeur",
     "signataire_date_deliberation": "2020-01-01",
-    "type_bailleur": "Entreprise HLM",
 }
 
 administration = {

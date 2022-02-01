@@ -32,7 +32,6 @@ class ReadWriteAutoSchema(SwaggerAutoSchema):
         body_override = self._get_request_body_override()
         if body_override and body_override is not no_body:
             return body_override
-        print(self.__class__)
         return self._convert_serializer(ReadOnly)
 
     def _convert_serializer(self, new_class):
