@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from users.forms import UserForm
+from instructeurs.models import Administration
+from instructeurs.forms import AdministrationForm
 
 
 @login_required
@@ -58,6 +60,25 @@ def administration_list(request):
         administrations = paginator.page(paginator.num_pages)
 
     return {"administrations": administrations}
+
+
+@login_required
+def edit_administration(request, administration_uuid):
+    administration = Administration.objects.get(uuid=administration_uuid)
+    success = False
+    if request.method == "POST":
+        form = AdministrationForm(request.POST)
+        if form.is_valid():
+            administration.ville_signature = form.cleaned_data["ville_signature"]
+            administration.save()
+            success = True
+    else:
+        form = AdministrationForm(initial=model_to_dict(administration))
+    return {
+        "form": form,
+        "editable": True,
+        "success": success,
+    }
 
 
 @login_required

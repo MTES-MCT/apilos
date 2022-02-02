@@ -27,6 +27,8 @@
                                     <th scope="col">
                                         Ville de signature
                                     </th>
+                                    <th scope="col">
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,6 +37,11 @@
                                         <td>{{ administration.nom }}</td>
                                         <td>{{ administration.code }}</td>
                                         <td>{{ administration.ville_signature }}</td>
+                                        <td>
+                                            <a class="fr-link fr-mb-1w" href="{% url 'settings:administration' administration_uuid=administration.uuid %}" >
+                                                <span class="fr-fi-edit-line" aria-hidden="true"></span>
+                                            </a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

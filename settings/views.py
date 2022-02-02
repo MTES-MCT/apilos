@@ -49,3 +49,14 @@ def administrations(request):
         "settings/administrations.html",
         {**result},
     )
+
+
+def edit_administration(request, administration_uuid):
+    result = services.edit_administration(request, administration_uuid)
+    if result["success"]:
+        return HttpResponseRedirect(reverse("settings:administrations"))
+    return render(
+        request,
+        "settings/edit_administration.html",
+        {**result},
+    )

@@ -27,4 +27,9 @@ urlpatterns = [
         views.administrations,
         name="administrations",
     ),
+    path(
+        "administrations/<administration_uuid>",
+        views.edit_administration,
+        name="administration",
+    ),
 ]
