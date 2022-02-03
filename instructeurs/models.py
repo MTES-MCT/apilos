@@ -14,8 +14,8 @@ class Administration(IngestableModel):
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
-    nom = models.CharField(max_length=255)
-    code = models.CharField(max_length=255)
+    nom = models.CharField(max_length=255, unique=True)
+    code = models.CharField(max_length=255, unique=True)
     ville_signature = models.CharField(max_length=255, null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)

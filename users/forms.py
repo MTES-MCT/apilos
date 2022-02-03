@@ -1,4 +1,7 @@
 from django import forms
+from django.core.exceptions import ValidationError
+
+from users.models import User
 
 
 class UserForm(forms.Form):
@@ -35,3 +38,15 @@ class UserForm(forms.Form):
             "required": "L'email de l'utilisateur est obligatoire",
         },
     )
+
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        if (
+            User.objects.filter(email=email)
+            .exclude(username=self.cleaned_data["username"])
+            .exists()
+        ):
+            raise ValidationError(
+                "Le email du bailleur existe déjà, il doit-être unique"
+            )
+        return email
