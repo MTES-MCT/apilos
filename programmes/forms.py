@@ -597,14 +597,15 @@ class BaseAnnexeFormSet(BaseFormSet):
         self.manage_logement_exists_validation()
 
     def manage_logement_exists_validation(self):
-        lgts = self.convention.lot.logement_set.all()
-        for form in self.forms:
-            try:
-                lgts.get(designation=form.cleaned_data.get("logement_designation"))
-            except Logement.DoesNotExist:
-                form.add_error(
-                    "logement_designation", "Ce logement n'existe pas dans ce lot"
-                )
+        if self.convention:
+            lgts = self.convention.lot.logement_set.all()
+            for form in self.forms:
+                try:
+                    lgts.get(designation=form.cleaned_data.get("logement_designation"))
+                except Logement.DoesNotExist:
+                    form.add_error(
+                        "logement_designation", "Ce logement n'existe pas dans ce lot"
+                    )
 
 
 AnnexeFormSet = formset_factory(AnnexeForm, formset=BaseAnnexeFormSet, extra=0)
