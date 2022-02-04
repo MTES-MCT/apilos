@@ -25,13 +25,30 @@
                             {% include "common/form/input_text.html" with form_input=form.first_name label="Prénom" %}
                             {% include "common/form/input_text.html" with form_input=form.last_name label="Nom" %}
                             {% include "common/form/input_text.html" with form_input=form.email label="Email" %}
+                            {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte label="Administrateur de compte" sublabel="L'administrateur de compte peut gérer les utilisateurs de ses entités. Si vous renoncez à être administrateur,vous ne pourez plus gérer les utilisateurs de vos entité ou vous ré-attribuer les droits d'administration" editable=request.user.is_administrator %}
 
-                            <button class="fr-btn fr-fi-save-line fr-btn--icon-left" type="submit">
+                            <button class="fr-btn fr-fi-save-line fr-btn--icon-left fr-mt-3w" type="submit">
                                 Enregistrer
                             </button>
                         </form>
                     </div>
-                    <div class='fr-col-12'>
+                    <div class='fr-col-12 fr-mt-3w'>
+
+                        <p>Si vous souhaitez ré-initialiser votre mot de passe, cliquez sur le bouton ci-dessous et suivez les instructions que vous allez recevoir par email</p>
+                        <form action="{% url 'password_reset' %}" method="post">
+                            {% csrf_token %}
+                            <input
+                                type="hidden"
+                                id="{{form.email.id_for_label}}"
+                                name="{{form.email.html_name}}"
+                                value="{{form.email.value}}" />
+                            <div class="fr-mt-3w">
+                                <button class="fr-btn" type="submit">
+                                    Réinitialiser mon mot de passe
+                                </button>
+                            </div>
+                        </form>
+
                         <!-- ++ modification du mot de passe -->
                     </div>
                 </div>

@@ -42,4 +42,9 @@ urlpatterns = [
         views.edit_user,
         name="edit_user",
     ),
+    path(
+        "users/<username>/bailleur",
+        views.add_user_bailleur,
+        name="add_user_bailleur",
+    ),
 ]

@@ -39,6 +39,10 @@ class UserForm(forms.Form):
         },
     )
 
+    administrateur_de_compte = forms.BooleanField(required=False)
+
+    is_superuser = forms.BooleanField(required=False)
+
     def clean_email(self):
         email = self.cleaned_data["email"]
         if (

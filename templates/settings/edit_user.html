@@ -20,12 +20,139 @@
                             {% include "common/form/input_text.html" with form_input=form.first_name label="Prénom" %}
                             {% include "common/form/input_text.html" with form_input=form.last_name label="Nom" %}
                             {% include "common/form/input_text.html" with form_input=form.email label="Email" %}
-
-                            <button class="fr-btn fr-fi-save-line fr-btn--icon-left" type="submit">
+                            {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte label="Administrateur de compte" sublabel="L'administrateur de compte peut gérer les utilisateurs de ses entités. Si vous renoncez à être administrateur,vous ne pourez plus gérer les utilisateurs de vos entité ou vous ré-attribuer les droits d'administration" editable=request.user.is_administrator %}
+                            {% if request.user.is_superuser %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.is_superuser label="Super Utilisateur" sublabel="Un super utilisateur a tous les droits" %}
+                            {% endif %}
+                            <button class="fr-btn fr-fi-save-line fr-btn--icon-left fr-mt-3w" type="submit">
                                 Enregistrer
                             </button>
                         </form>
                     </div>
+
+                    {% if not user.is_superuser %}
+                        {% if user.is_bailleur %}
+                            <div class='fr-col-12 fr-mt-3w'>
+                                <div class="fr-table fr-table--bordered table--layout-fixed">
+                                    <table>
+                                        {% with bailleur_count=user.bailleurs.count %}
+                                            <caption>{{bailleur_count}} bailleur{% if bailleur_count > 1 %}s{% endif %}</caption>
+                                        {% endwith %}
+
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">
+                                                    Nom
+                                                </th>
+                                                <th scope="col">
+                                                    Siret
+                                                </th>
+                                                <th scope="col">
+                                                    Ville
+                                                </th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for bailleur in user.bailleurs %}
+                                                <tr>
+                                                    <td>{{ bailleur.nom }}</td>
+                                                    <td>{{ bailleur.siret }}</td>
+                                                    <td>{{ bailleur.ville }}</td>
+                                                    <td>
+                                                        {% if request.user|is_bailleur_administrator:bailleur %}
+                                                            <a class="fr-link fr-mb-1w" >
+                                                                <span class="fr-fi-delete-line" aria-hidden="true"></span>
+                                                            </a>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button class="fr-btn fr-fi-add-circle-line fr-btn--icon-left" type="button" data-fr-opened="false" aria-controls="fr-modal-1">
+                                    Ajouter un bailleur
+                                </button>
+                                <dialog aria-labelledby="fr-modal-title-modal-1" role="dialog" id="fr-modal-1" class="fr-modal">
+                                    <div class="fr-container fr-container--fluid fr-container-md">
+                                        <div class="fr-grid-row fr-grid-row--center">
+                                            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                                                <div class="fr-modal__body">
+                                                    <div class="fr-modal__header">
+                                                        <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="fr-modal-1">Fermer</button>
+                                                    </div>
+                                                    <div class="fr-modal__content">
+                                                        <h1 id="fr-modal-title-modal-1" class="fr-modal__title">
+                                                            <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+                                                            Ajouter un bailleur à l'utilisateur ‹‹{{ form.username.value }}››
+                                                        </h1>
+                                                        <form method="post" action="{% url 'settings:add_user_bailleur' username=form.username.value %}">
+                                                            {% csrf_token %}
+                                                            {% include "common/form/select_enum.html" with form_input=form_user_bailleur.bailleur enum=request.user.bailleurs %}
+                                                            <button class="fr-btn">
+                                                                Enregistrer
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </dialog>
+                            </div>
+                        {% endif %}
+
+
+                        {% if user.is_instructeur %}
+                            <div class='fr-col-12 fr-mt-3w'>
+                                <div class="fr-table fr-table--bordered table--layout-fixed">
+                                    <table>
+                                        {% with administration_count=user.administrations.count %}
+                                            <caption>{{administration_count}} administration{% if administration_count > 1 %}s{% endif %}</caption>
+                                        {% endwith %}
+
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">
+                                                    Nom
+                                                </th>
+                                                <th scope="col">
+                                                    Code
+                                                </th>
+                                                <th scope="col">
+                                                    Ville de signature
+                                                </th>
+                                                <th scope="col">
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for administration in user.administrations %}
+                                                <tr>
+                                                    <td>{{ administration.nom }}</td>
+                                                    <td>{{ administration.code }}</td>
+                                                    <td>{{ administration.ville_signature }}</td>
+                                                    <td>
+                                                        {% if request.user|is_administration_administrator:administration %}
+                                                            <a class="fr-link fr-mb-1w" >
+                                                                <span class="fr-fi-delete-line" aria-hidden="true"></span>
+                                                            </a>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button class="fr-btn fr-fi-add-circle-line fr-btn--icon-left" type="button">
+                                    Ajouter un instructeur
+                                </button>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+
                 </div>
             </div>
         </div>

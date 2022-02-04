@@ -1,5 +1,6 @@
 from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST, require_GET
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from bailleurs.forms import BailleurForm
@@ -18,16 +19,26 @@ def user_profile(request):
     if request.method == "POST":
         posted_request = request.POST.dict()
         posted_request["username"] = request.user.username
+        # Erase admnistrateur de compte if current user is not admin
+        # Because a non-administrator can't give this status himself
         userform = UserForm(
             {
                 **request.POST.dict(),
                 "username": request.user.username,
+                "administrateur_de_compte": (
+                    request.POST.get("administrateur_de_compte", False)
+                    if request.user.is_administrator()
+                    else request.user.administrateur_de_compte
+                ),
             }
         )
         if userform.is_valid():
             request.user.first_name = userform.cleaned_data["first_name"]
             request.user.last_name = userform.cleaned_data["last_name"]
             request.user.email = userform.cleaned_data["email"]
+            request.user.administrateur_de_compte = userform.cleaned_data[
+                "administrateur_de_compte"
+            ]
             request.user.save()
             success = True
     else:
@@ -39,6 +50,7 @@ def user_profile(request):
     }
 
 
+@require_GET
 @login_required
 def administration_list(request):
 
@@ -76,6 +88,7 @@ def edit_administration(request, administration_uuid):
     }
 
 
+@require_GET
 @login_required
 def bailleur_list(request):
 
@@ -141,6 +154,7 @@ def edit_bailleur(request, bailleur_uuid):
     }
 
 
+@require_GET
 @login_required
 def user_list(request):
 
@@ -161,18 +175,49 @@ def user_list(request):
 def edit_user(request, username):
     user = User.objects.get(username=username)
     success = False
-    if request.method == "POST":
-        form = UserForm({**request.POST.dict(), "username": username})
+    if request.method == "POST" and request.user.is_administrator(user):
+        # Erase admnistrateur de compte if current user is not admin
+        # Because a non-administrator can't give this status himself
+        # --> need to chack the common scope of user and current user
+        form = UserForm(
+            {
+                **request.POST.dict(),
+                "username": username,
+                "administrateur_de_compte": (
+                    request.POST.get("administrateur_de_compte", False)
+                    if request.user.is_administrator(user)
+                    else user.administrateur_de_compte
+                ),
+                "is_superuser": (
+                    request.POST.get("is_superuser", False)
+                    if request.user.is_superuser
+                    else user.is_superuser
+                ),
+            }
+        )
+
         if form.is_valid():
             user.first_name = form.cleaned_data["first_name"]
             user.last_name = form.cleaned_data["last_name"]
             user.email = form.cleaned_data["email"]
+            user.administrateur_de_compte = form.cleaned_data[
+                "administrateur_de_compte"
+            ]
+            user.is_superuser = form.cleaned_data["is_superuser"]
             user.save()
             success = True
     else:
         form = UserForm(initial=model_to_dict(user))
     return {
         "form": form,
+        "user": user,
         "editable": True,
         "success": success,
     }
+
+
+@require_POST
+@login_required
+def add_user_bailleur(request, username):
+    user = User.objects.get(username=username)
+    return {"user": user, "success": True}

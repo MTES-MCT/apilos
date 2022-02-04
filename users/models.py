@@ -17,6 +17,10 @@ class slist(list):
 
 
 class User(AbstractUser):
+    # pylint: disable=R0904
+
+    administrateur_de_compte = models.BooleanField(default=False)
+
     def has_object_permission(self, obj):
         if isinstance(obj, Convention):
             # is bailleur of the convention or is instructeur of the convention
@@ -217,6 +221,40 @@ class User(AbstractUser):
             "L'utilisateur courant n'a pas de role associé permettant de"
             + " filtrer les utilisateurs"
         )
+
+    def is_administrator(self, user=None):
+        if self.is_superuser:
+            return True
+        if not self.administrateur_de_compte:
+            return False
+        if user is None:
+            return True
+        if user.is_superuser:
+            return False
+        # check if the scope of current_user and user is not empty
+        if list(set(user.bailleurs()) & set(self.bailleurs())) or list(
+            set(user.administrations()) & set(self.administrations())
+        ):
+            return True
+        return False
+
+    def is_administration_administrator(self, administration):
+        if self.is_superuser:
+            return True
+        if not self.administrateur_de_compte:
+            return False
+        if administration in self.administrations():
+            return True
+        return False
+
+    def is_bailleur_administrator(self, bailleur):
+        if self.is_superuser:
+            return True
+        if not self.administrateur_de_compte:
+            return False
+        if bailleur in self.bailleurs():
+            return True
+        return False
 
     def __str__(self):
         return (

@@ -6,6 +6,8 @@ from settings import services
 
 
 def index(request):
+    if request.user.is_superuser:
+        return HttpResponseRedirect(reverse("settings:users"))
     if request.user.is_bailleur():
         return HttpResponseRedirect(reverse("settings:bailleurs"))
     if request.user.is_instructeur():
@@ -75,6 +77,19 @@ def edit_user(request, username):
     result = services.edit_user(request, username)
     if result["success"]:
         return HttpResponseRedirect(reverse("settings:users"))
+    return render(
+        request,
+        "settings/edit_user.html",
+        {**result},
+    )
+
+
+def add_user_bailleur(request, username):
+    result = services.add_user_bailleur(request, username)
+    if result["success"]:
+        return HttpResponseRedirect(
+            reverse("settings:edit_user", args=[result["user"].username])
+        )
     return render(
         request,
         "settings/edit_user.html",

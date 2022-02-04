@@ -39,3 +39,18 @@ def has_comments_with_prefix(comments, prefix):
         if comment_key.startswith(prefix):
             return True
     return False
+
+
+@register.filter
+def is_administrator(current_user, user):
+    return current_user.is_administrator(user)
+
+
+@register.filter
+def is_administration_administrator(current_user, administration):
+    return current_user.is_administration_administrator(administration)
+
+
+@register.filter
+def is_bailleur_administrator(current_user, bailleur):
+    return current_user.is_bailleur_administrator(bailleur)

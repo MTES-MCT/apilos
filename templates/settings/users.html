@@ -36,14 +36,21 @@
                             <tbody>
                                 {% for user in users %}
                                     <tr>
-                                        <td>{{ user.username}}</td>
+                                        <td>
+                                            {{ user.username}}
+                                            {% if user.is_administrator %}
+                                                <i class="fr-text--light fr-text--sm">(Admin)</i>
+                                            {% endif %}
+                                        </td>
                                         <td>{{ user.first_name}}</td>
                                         <td>{{ user.last_name}}</td>
                                         <td>{{ user.email}}</td>
                                         <td>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'settings:edit_user' username=user.username %}" >
-                                                <span class="fr-fi-edit-line" aria-hidden="true"></span>
-                                            </a>
+                                            {% if request.user|is_administrator:user %}
+                                                <a class="fr-link fr-mb-1w" href="{% url 'settings:edit_user' username=user.username %}" >
+                                                    <span class="fr-fi-edit-line" aria-hidden="true"></span>
+                                                </a>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}
