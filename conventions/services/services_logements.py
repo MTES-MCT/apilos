@@ -200,8 +200,6 @@ def _save_logements(formset, convention):
             ]
             logement.coeficient = form_logement.cleaned_data["coeficient"]
             logement.loyer = form_logement.cleaned_data["loyer"]
-            print(form_logement.cleaned_data["coeficient"])
-            print(logement.coeficient)
         else:
             logement = Logement.objects.create(
                 lot=convention.lot,
