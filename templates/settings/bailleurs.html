@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block page_title %}Mon  - APiLos{% endblock%}
+{% block page_title %}Bailleur{% if bailleurs.paginator.count > 1 %}s{% endif %}  - APiLos{% endblock%}
 
 {% block content %}
     <div class="fr-container-fluid">
