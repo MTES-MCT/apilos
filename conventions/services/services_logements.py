@@ -143,6 +143,7 @@ def _logements_atomic_update(request, convention):
                     form_logement, logement, "loyer"
                 ),
             }
+            print(utils.get_form_value(form_logement, logement, "coeficient"))
         else:
             initformset = {
                 **initformset,
@@ -199,6 +200,8 @@ def _save_logements(formset, convention):
             ]
             logement.coeficient = form_logement.cleaned_data["coeficient"]
             logement.loyer = form_logement.cleaned_data["loyer"]
+            print(form_logement.cleaned_data["coeficient"])
+            print(logement.coeficient)
         else:
             logement = Logement.objects.create(
                 lot=convention.lot,
