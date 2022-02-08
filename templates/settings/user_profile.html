@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block page_title %}Mon Profil - APiLos{% endblock%}
+{% block page_title %}Votre Profil - APiLos{% endblock%}
 
 {% block content %}
     <div class="fr-container-fluid">
@@ -26,6 +26,9 @@
                             {% include "common/form/input_text.html" with form_input=form.last_name label="Nom" %}
                             {% include "common/form/input_text.html" with form_input=form.email label="Email" %}
                             {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte label="Administrateur de compte" sublabel="L'administrateur de compte peut gérer les utilisateurs de ses entités. Si vous renoncez à être administrateur,vous ne pourez plus gérer les utilisateurs de vos entité ou vous ré-attribuer les droits d'administration" editable=request.user.is_administrator %}
+                            {% if request.user.is_superuser %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.is_superuser label="Super Utilisateur" sublabel="Un super utilisateur a tous les droits" %}
+                            {% endif %}
 
                             <button class="fr-btn fr-fi-save-line fr-btn--icon-left fr-mt-3w" type="submit">
                                 Enregistrer
@@ -49,7 +52,6 @@
                             </div>
                         </form>
 
-                        <!-- ++ modification du mot de passe -->
                     </div>
                 </div>
             </div>

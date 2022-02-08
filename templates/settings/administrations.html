@@ -12,20 +12,41 @@
                     {% include 'settings/common/side_menu.html' with active_menu='administrations' %}
                 </div>
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
+
+                    <form class="fr-my-3w" method="get" action="" id="search_table">
+                        <input type="hidden" id="page" name="page" value="{{administrations.number}}">
+                        <input type="hidden" id="order_by" name="order_by" value="{{order_by}}">
+
+                        {% if total_administration > 3 %}
+                            <div class="fr-search-bar" id="header-search" role="search">
+                                <label class="fr-label" for="search_input">
+                                    Recherche
+                                </label>
+                                <input class="fr-input" placeholder="Rechercher" type="search" id="search_input" name="search_input" value="{{search_input}}">
+                                <button class="fr-btn" title="Rechercher">
+                                    Rechercher
+                                </button>
+                            </div>
+                        {% endif %}
+                    </form>
+
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table>
-                            <caption>{{administrations.paginator.count}} administration{% if administrations.paginator.count > 1 %}s{% endif %}</caption>
+                            <caption>{{administrations.paginator.count}}{% if administrations.paginator.count != total_administration %} / {{total_administration}}{% endif %} administration{% if administrations.paginator.count > 1 %}s{% endif %}</caption>
 
                             <thead>
                                 <tr>
                                     <th scope="col">
                                         Nom
+                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='nom' url_target='settings:administration' %}
                                     </th>
                                     <th scope="col">
                                         Code
+                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='code' url_target='settings:administration' %}
                                     </th>
                                     <th scope="col">
                                         Ville de signature
+                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='ville_signature' url_target='settings:administration' %}
                                     </th>
                                     <th scope="col">
                                     </th>
@@ -48,7 +69,7 @@
                         </table>
                     </div>
 
-                    {% include 'common/utils/pagination.html' with paginate_list=administrations %}
+                    {% include 'common/table/pagination.html' with paginate_list=administrations %}
 
                 </div>
             </div>

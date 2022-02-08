@@ -2,6 +2,8 @@ from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST, require_GET
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
+from django.conf import settings
 
 from bailleurs.forms import BailleurForm
 from bailleurs.models import Bailleur
@@ -30,6 +32,11 @@ def user_profile(request):
                     if request.user.is_administrator()
                     else request.user.administrateur_de_compte
                 ),
+                "is_superuser": (
+                    request.POST.get("is_superuser", False)
+                    if request.user.is_superuser
+                    else request.user.is_superuser
+                ),
             }
         )
         if userform.is_valid():
@@ -39,6 +46,7 @@ def user_profile(request):
             request.user.administrateur_de_compte = userform.cleaned_data[
                 "administrateur_de_compte"
             ]
+            request.user.is_superuser = userform.cleaned_data["is_superuser"]
             request.user.save()
             success = True
     else:
@@ -53,18 +61,34 @@ def user_profile(request):
 @require_GET
 @login_required
 def administration_list(request):
-
-    my_administration_list = request.user.administrations().order_by("nom")
+    search_input = request.GET.get("search_input", "")
+    order_by = request.GET.get("order_by", "nom")
     page = request.GET.get("page", 1)
-    paginator = Paginator(my_administration_list, 20)
+
+    my_administration_list = request.user.administrations().order_by(order_by)
+    total_administration = my_administration_list.count()
+    if search_input:
+        my_administration_list = my_administration_list.filter(
+            Q(nom__icontains=search_input)
+            | Q(code__icontains=search_input)
+            | Q(ville_signature__icontains=search_input)
+        )
+
+    paginator = Paginator(my_administration_list, settings.APILOS_PAGINATION_PER_PAGE)
     try:
         administrations = paginator.page(page)
     except PageNotAnInteger:
         administrations = paginator.page(1)
     except EmptyPage:
-        administrations = paginator.page(paginator.num_pages)
+        page = paginator.num_pages
+        administrations = paginator.page(page)
 
-    return {"administrations": administrations}
+    return {
+        "administrations": administrations,
+        "total_administration": total_administration,
+        "order_by": order_by,
+        "search_input": search_input,
+    }
 
 
 @login_required
@@ -72,7 +96,17 @@ def edit_administration(request, administration_uuid):
     administration = Administration.objects.get(uuid=administration_uuid)
     success = False
     if request.method == "POST":
-        form = AdministrationForm({**request.POST.dict(), "uuid": administration_uuid})
+        form = AdministrationForm(
+            {
+                **request.POST.dict(),
+                "uuid": administration_uuid,
+                "code": (
+                    request.POST.get("code", False)
+                    if request.user.is_superuser
+                    else administration.code
+                ),
+            }
+        )
         if form.is_valid():
             administration.nom = form.cleaned_data["nom"]
             administration.code = form.cleaned_data["code"]
@@ -91,10 +125,20 @@ def edit_administration(request, administration_uuid):
 @require_GET
 @login_required
 def bailleur_list(request):
-
-    my_bailleur_list = request.user.bailleurs().order_by("nom")
+    search_input = request.GET.get("search_input", "")
+    order_by = request.GET.get("order_by", "nom")
     page = request.GET.get("page", 1)
-    paginator = Paginator(my_bailleur_list, 20)
+
+    my_bailleur_list = request.user.bailleurs().order_by(order_by)
+    total_bailleur = my_bailleur_list.count()
+    if search_input:
+        my_bailleur_list = my_bailleur_list.filter(
+            Q(nom__icontains=search_input)
+            | Q(siret__icontains=search_input)
+            | Q(ville__icontains=search_input)
+        )
+
+    paginator = Paginator(my_bailleur_list, settings.APILOS_PAGINATION_PER_PAGE)
     try:
         bailleurs = paginator.page(page)
     except PageNotAnInteger:
@@ -102,7 +146,12 @@ def bailleur_list(request):
     except EmptyPage:
         bailleurs = paginator.page(paginator.num_pages)
 
-    return {"bailleurs": bailleurs}
+    return {
+        "bailleurs": bailleurs,
+        "total_bailleur": total_bailleur,
+        "order_by": order_by,
+        "search_input": search_input,
+    }
 
 
 @login_required
@@ -157,10 +206,21 @@ def edit_bailleur(request, bailleur_uuid):
 @require_GET
 @login_required
 def user_list(request):
-
-    my_user_list = request.user.user_list().order_by("username")
+    search_input = request.GET.get("search_input", "")
+    order_by = request.GET.get("order_by", "username")
     page = request.GET.get("page", 1)
-    paginator = Paginator(my_user_list, 20)
+
+    my_user_list = request.user.user_list().order_by(order_by)
+    total_user = my_user_list.count()
+    if search_input:
+        my_user_list = my_user_list.filter(
+            Q(username__icontains=search_input)
+            | Q(first_name__icontains=search_input)
+            | Q(last_name__icontains=search_input)
+            | Q(email__icontains=search_input)
+        )
+
+    paginator = Paginator(my_user_list, settings.APILOS_PAGINATION_PER_PAGE)
     try:
         users = paginator.page(page)
     except PageNotAnInteger:
@@ -168,7 +228,12 @@ def user_list(request):
     except EmptyPage:
         users = paginator.page(paginator.num_pages)
 
-    return {"users": users}
+    return {
+        "users": users,
+        "total_user": total_user,
+        "order_by": order_by,
+        "search_input": search_input,
+    }
 
 
 @login_required

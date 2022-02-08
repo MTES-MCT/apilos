@@ -36,7 +36,7 @@
                                 <div class="fr-table fr-table--bordered table--layout-fixed">
                                     <table>
                                         {% with bailleur_count=user.bailleurs.count %}
-                                            <caption>{{bailleur_count}} bailleur{% if bailleur_count > 1 %}s{% endif %}</caption>
+                                            <caption>Instructeur sur {{bailleur_count}} bailleur{% if bailleur_count > 1 %}s{% endif %}</caption>
                                         {% endwith %}
 
                                         <thead>
@@ -109,7 +109,7 @@
                                 <div class="fr-table fr-table--bordered table--layout-fixed">
                                     <table>
                                         {% with administration_count=user.administrations.count %}
-                                            <caption>{{administration_count}} administration{% if administration_count > 1 %}s{% endif %}</caption>
+                                            <caption>Instructeur sur {{administration_count}} administration{% if administration_count > 1 %}s{% endif %}</caption>
                                         {% endwith %}
 
                                         <thead>

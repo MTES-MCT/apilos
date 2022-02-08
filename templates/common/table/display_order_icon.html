@@ -1,5 +1,3 @@
-
-
 <a class="fr-link fr-link--sm" id='{{order_by_column}}' href='#'>
     {% if '-'|add:order_by_column == order_by%}
         <b><span class="fr-fi-arrow-down-s-line content__icons--blue fr-fi--sm-active" aria-hidden="true"></span></b>
@@ -14,8 +12,11 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('{{ order_by_column }}')
             .addEventListener('click', function(){
+            if (document.getElementById !== null) {
+                document.getElementById('page').value = "1"
+            }
             document.getElementById('order_by').value = "{% if order_by == order_by_column %}-{% endif %}{{ order_by_column }}"
-            document.getElementById('search_conventions').submit()
+            document.getElementById('search_table').submit()
         });
     });
 </script>
