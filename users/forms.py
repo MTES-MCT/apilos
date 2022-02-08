@@ -51,7 +51,7 @@ class UserForm(forms.Form):
             .exists()
         ):
             raise ValidationError(
-                "Le email du bailleur existe déjà, il doit-être unique"
+                "Le email de l'utilisateur existe déjà, il doit-être unique"
             )
         return email
 
@@ -60,6 +60,15 @@ class AddBailleurForm(forms.Form):
 
     bailleur = forms.CharField(
         error_messages={
-            "required": "Le nom d'utilisateur est obligatoire",
+            "required": "Merci de sélectionner un Bailleur",
+        }
+    )
+
+
+class AddAdministrationForm(forms.Form):
+
+    administration = forms.CharField(
+        error_messages={
+            "required": "Merci de sélectionner une Administration",
         }
     )

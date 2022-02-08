@@ -132,8 +132,10 @@ class User(AbstractUser):
             )
         )
 
-    def administrations(self):
-        return Administration.objects.filter(**self.administration_filter())
+    def administrations(self, order_by="nom"):
+        return Administration.objects.filter(**self.administration_filter()).order_by(
+            order_by
+        )
 
     #
     # list of bailleurs following role

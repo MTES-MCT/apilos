@@ -25,14 +25,12 @@
                                             id="{{form_add_bailleur.bailleur.id_for_label}}"
                                             name="{{form_add_bailleur.bailleur.html_name}}">
                                             <option value="" selected disabled hidden></option>
-                                            {% with user_bailleurs=user.bailleurs %}
-                                                {% for element in request.user.bailleurs %}
-                                                    <option value="{{element.uuid}}"
-                                                        {% if element in user_bailleurs %}disabled{% endif %}>
-                                                        {{element.label}}
-                                                    </option>
-                                                {% endfor %}
-                                            {% endwith %}
+                                            {% for element in request.user.bailleurs %}
+                                                <option value="{{element.uuid}}"
+                                                    {% if element in user_bailleurs %}disabled{% endif %}>
+                                                    {{element.label}}
+                                                </option>
+                                            {% endfor %}
                                         </select>
                                     </div>
 
