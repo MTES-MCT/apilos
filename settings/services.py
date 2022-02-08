@@ -244,10 +244,19 @@ def edit_user(request, username):
     if request.method == "POST" and request.user.is_administrator(user):
 
         action_type = request.POST.get("action_type", "")
-        if action_type == "add_bailleur":
+        if action_type == "remove_bailleur":
+            form = UserForm(initial=model_to_dict(user))
+            form_add_bailleur = AddBailleurForm()
+            bailleur_uuid = request.POST.get("bailleur")
+            Role.objects.get(
+                typologie=TypeRole.BAILLEUR,
+                bailleur=request.user.bailleurs().get(uuid=bailleur_uuid),
+                user=user,
+            ).delete()
+        elif action_type == "add_bailleur":
             form = UserForm(initial=model_to_dict(user))
             form_add_bailleur = AddBailleurForm(request.POST)
-            if form_add_bailleur.is_valid():
+            if form_add_bailleur.is_valid() and request.user.is_administrator():
                 Role.objects.create(
                     typologie=TypeRole.BAILLEUR,
                     bailleur=request.user.bailleurs().get(
