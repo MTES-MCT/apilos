@@ -1,0 +1,56 @@
+{% if request.user.is_administrator %}
+    <button class="fr-btn fr-fi-add-circle-line fr-btn--icon-left" type="button" data-fr-opened="false" aria-controls="fr-modal-1">
+        Ajouter un bailleur
+    </button>
+    <dialog aria-labelledby="fr-modal-title-modal-1" role="dialog" id="fr-modal-1" class="fr-modal">
+        <div class="fr-container fr-container--fluid fr-container-md">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="fr-modal-1">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-title-modal-1" class="fr-modal__title">
+                                <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+                                Ajouter un bailleur à l'utilisateur ‹‹{{ form.username.value }}››
+                            </h1>
+                            <form method="post" action="{% url 'settings:edit_user' username=form.username.value %}">
+                                {% csrf_token %}
+
+                                <div class="fr-select-group {% if form_add_bailleur.bailleur.errors %}fr-select-group--error{% endif %}">
+                                    <div class="fr-mt-1w block--row-strech" id="{{form_add_bailleur.bailleur.id_for_label}}_div">
+                                        <select
+                                            class="fr-select {% if form_add_bailleur.bailleur.errors %}fr-select--error{% endif %}"
+                                            id="{{form_add_bailleur.bailleur.id_for_label}}"
+                                            name="{{form_add_bailleur.bailleur.html_name}}">
+                                            <option value="" selected disabled hidden></option>
+                                            {% with user_bailleurs=user.bailleurs %}
+                                                {% for element in request.user.bailleurs %}
+                                                    <option value="{{element.uuid}}"
+                                                        {% if element in user_bailleurs %}disabled{% endif %}>
+                                                        {{element.label}}
+                                                    </option>
+                                                {% endfor %}
+                                            {% endwith %}
+                                        </select>
+                                    </div>
+
+                                    {% for error in form_add_bailleur.bailleur.errors %}
+                                        <p id="select-error-desc-error" class="fr-error-text">
+                                            {{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </div>
+
+                                <button class="fr-btn" name="action_type", value="add_bailleur">
+                                    Enregistrer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
+{% endif %}

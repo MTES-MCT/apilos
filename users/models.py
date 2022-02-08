@@ -165,8 +165,8 @@ class User(AbstractUser):
             )
         )
 
-    def bailleurs(self):
-        return Bailleur.objects.filter(**self.bailleur_filter())
+    def bailleurs(self, order_by="nom"):
+        return Bailleur.objects.filter(**self.bailleur_filter()).order_by(order_by)
 
     def convention_filter(self):
         if self.is_superuser:

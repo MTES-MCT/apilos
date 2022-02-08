@@ -1,17 +1,18 @@
 from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_GET
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.conf import settings
+from django.contrib.auth.models import Group
 
 from bailleurs.forms import BailleurForm
 from bailleurs.models import Bailleur
 from conventions.services import utils
 from instructeurs.forms import AdministrationForm
 from instructeurs.models import Administration
-from users.forms import UserForm
-from users.models import User
+from users.forms import AddBailleurForm, UserForm
+from users.models import User, Role, TypeRole
 
 
 @login_required
@@ -241,48 +242,59 @@ def edit_user(request, username):
     user = User.objects.get(username=username)
     success = False
     if request.method == "POST" and request.user.is_administrator(user):
-        # Erase admnistrateur de compte if current user is not admin
-        # Because a non-administrator can't give this status himself
-        # --> need to chack the common scope of user and current user
-        form = UserForm(
-            {
-                **request.POST.dict(),
-                "username": username,
-                "administrateur_de_compte": (
-                    request.POST.get("administrateur_de_compte", False)
-                    if request.user.is_administrator(user)
-                    else user.administrateur_de_compte
-                ),
-                "is_superuser": (
-                    request.POST.get("is_superuser", False)
-                    if request.user.is_superuser
-                    else user.is_superuser
-                ),
-            }
-        )
 
-        if form.is_valid():
-            user.first_name = form.cleaned_data["first_name"]
-            user.last_name = form.cleaned_data["last_name"]
-            user.email = form.cleaned_data["email"]
-            user.administrateur_de_compte = form.cleaned_data[
-                "administrateur_de_compte"
-            ]
-            user.is_superuser = form.cleaned_data["is_superuser"]
-            user.save()
-            success = True
+        action_type = request.POST.get("action_type", "")
+        if action_type == "add_bailleur":
+            form = UserForm(initial=model_to_dict(user))
+            form_add_bailleur = AddBailleurForm(request.POST)
+            if form_add_bailleur.is_valid():
+                Role.objects.create(
+                    typologie=TypeRole.BAILLEUR,
+                    bailleur=request.user.bailleurs().get(
+                        uuid=form_add_bailleur.cleaned_data["bailleur"]
+                    ),
+                    user=user,
+                    group=Group.objects.get(name="bailleur"),
+                )
+        else:
+            form_add_bailleur = AddBailleurForm()
+            # Erase admnistrateur de compte if current user is not admin
+            # Because a non-administrator can't give this status himself
+            # --> need to chack the common scope of user and current user
+            form = UserForm(
+                {
+                    **request.POST.dict(),
+                    "username": username,
+                    "administrateur_de_compte": (
+                        request.POST.get("administrateur_de_compte", False)
+                        if request.user.is_administrator(user)
+                        else user.administrateur_de_compte
+                    ),
+                    "is_superuser": (
+                        request.POST.get("is_superuser", False)
+                        if request.user.is_superuser
+                        else user.is_superuser
+                    ),
+                }
+            )
+
+            if form.is_valid():
+                user.first_name = form.cleaned_data["first_name"]
+                user.last_name = form.cleaned_data["last_name"]
+                user.email = form.cleaned_data["email"]
+                user.administrateur_de_compte = form.cleaned_data[
+                    "administrateur_de_compte"
+                ]
+                user.is_superuser = form.cleaned_data["is_superuser"]
+                user.save()
+                success = True
     else:
         form = UserForm(initial=model_to_dict(user))
+        form_add_bailleur = AddBailleurForm()
     return {
         "form": form,
         "user": user,
         "editable": True,
         "success": success,
+        "form_add_bailleur": form_add_bailleur,
     }
-
-
-@require_POST
-@login_required
-def add_user_bailleur(request, username):
-    user = User.objects.get(username=username)
-    return {"user": user, "success": True}

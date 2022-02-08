@@ -54,3 +54,12 @@ class UserForm(forms.Form):
                 "Le email du bailleur existe déjà, il doit-être unique"
             )
         return email
+
+
+class AddBailleurForm(forms.Form):
+
+    bailleur = forms.CharField(
+        error_messages={
+            "required": "Le nom d'utilisateur est obligatoire",
+        }
+    )
