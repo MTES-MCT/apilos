@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block page_title %}Bailleur{% if bailleurs.paginator.count > 1 %}s{% endif %}  - APiLos{% endblock%}
+{% block page_title %}Bailleur{{ bailleurs.paginator.count|pluralize }}  - APiLos{% endblock%}
 
 {% block content %}
     <div class="fr-container-fluid">
@@ -32,7 +32,7 @@
 
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table>
-                            <caption>{{bailleurs.paginator.count}}{% if bailleurs.paginator.count != total_bailleur %} / {{total_bailleur}}{% endif %} bailleur{% if bailleurs.paginator.count > 1 %}s{% endif %}</caption>
+                            <caption>{{bailleurs.paginator.count}}{% if bailleurs.paginator.count != total_bailleur %} / {{total_bailleur}}{% endif %} bailleur{{ bailleurs.paginator.count|pluralize }}</caption>
 
                             <thead>
                                 <tr>

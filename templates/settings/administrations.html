@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block page_title %}Administration{% if administrations.paginator.count > 1 %}s{% endif %} - APiLos{% endblock%}
+{% block page_title %}Administration{{ administrations.paginator.count|pluralize }} - APiLos{% endblock%}
 
 {% block content %}
     <div class="fr-container-fluid">
@@ -32,7 +32,7 @@
 
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table>
-                            <caption>{{administrations.paginator.count}}{% if administrations.paginator.count != total_administration %} / {{total_administration}}{% endif %} administration{% if administrations.paginator.count > 1 %}s{% endif %}</caption>
+                            <caption>{{administrations.paginator.count}}{% if administrations.paginator.count != total_administration %} / {{total_administration}}{% endif %} administration{{ administrations.paginator.count|pluralize }}</caption>
 
                             <thead>
                                 <tr>
