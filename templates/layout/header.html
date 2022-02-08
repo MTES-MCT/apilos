@@ -67,13 +67,11 @@
                                         <strong>{{ user }}</strong>
                                     </li>
                                     <li class="apilos-navbar">
-                                        <div class="apilos-dropdown">
-
-                                            <a class="fr-link apilos-dropbtn" href="#">
+                                        <div class="btn-group">
+                                            <button type="button" class="dropdown-toggle fr-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <span class="fr-fi-menu-fill" aria-hidden="true"></span>
-                                            </a>
-
-                                            <div class="apilos-dropdown-content">
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right apilos-dropdown-menu">
                                                 {% if CERBERE_AUTH %}
                                                     <a href="{% url 'cas_ng_logout' %}?next=/">
                                                         <span class="fr-fi-logout-box-r-line fr-mr-1w" aria-hidden="true">
@@ -90,7 +88,6 @@
                                                 <a href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noopener">
                                                     <span class="fr-fi-question-line" aria-hidden="true"></span>&nbsp;FAQ
                                                 </a>
-
                                             </div>
                                         </div>
                                     </li>
