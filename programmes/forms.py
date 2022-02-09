@@ -389,7 +389,7 @@ class LogementForm(forms.Form):
     )
     coeficient = forms.DecimalField(
         max_digits=6,
-        decimal_places=3,
+        decimal_places=4,
         error_messages={
             "required": "Le coéficient est obligatoire",
             "max_digits": "La coéficient doit-être inférieur à 1000",

@@ -366,7 +366,9 @@ class Logement(models.Model):
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    designation = models.CharField(max_length=255)
+    designation = models.CharField(
+        max_length=255, verbose_name="Désignation des logements"
+    )
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
@@ -376,16 +378,28 @@ class Logement(models.Model):
         choices=TypologieLogement.choices,
         default=TypologieLogement.T1,
     )
-    surface_habitable = models.DecimalField(max_digits=6, decimal_places=2, null=True)
+    surface_habitable = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, verbose_name="Surface habitable"
+    )
     surface_annexes = models.DecimalField(max_digits=6, decimal_places=2, null=True)
     surface_annexes_retenue = models.DecimalField(
         max_digits=6, decimal_places=2, null=True
     )
-    surface_utile = models.DecimalField(max_digits=6, decimal_places=2, null=True)
-    loyer_par_metre_carre = models.DecimalField(
-        max_digits=6, decimal_places=2, null=True
+    surface_utile = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, verbose_name="Surface utile"
     )
-    coeficient = models.DecimalField(max_digits=6, decimal_places=3, null=True)
+    loyer_par_metre_carre = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        null=True,
+        verbose_name="Loyer maximum en € par m² de surface utile",
+    )
+    coeficient = models.DecimalField(
+        max_digits=6,
+        decimal_places=4,
+        null=True,
+        verbose_name="Coefficient propre au logement",
+    )
     loyer = models.DecimalField(max_digits=6, decimal_places=2, null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
@@ -404,6 +418,13 @@ class Logement(models.Model):
         "Loyer maximum du logement en €\n(col 4 * col 5 * col 6)": loyer,
     }
     sheet_name = "Logements"
+    needed_in_mapping = [
+        designation,
+        surface_habitable,
+        surface_utile,
+        loyer_par_metre_carre,
+        coeficient,
+    ]
 
     def __str__(self):
         return self.designation

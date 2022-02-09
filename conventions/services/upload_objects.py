@@ -87,9 +87,21 @@ def get_object_from_worksheet(my_ws, column_from_index, myClass, import_warnings
     for row in my_ws.iter_rows(
         min_row=3, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
     ):
-        my_row, empty_line, new_warnings = extract_row(
-            row, column_from_index, myClass.import_mapping
-        )
+        my_row, empty_line, new_warnings = extract_row(row, column_from_index, myClass)
+
+        if not empty_line and myClass.needed_in_mapping:
+            for needed_field in myClass.needed_in_mapping:
+                if needed_field.name not in my_row:
+                    empty_line = True
+                    new_warnings.append(
+                        Exception(
+                            f"La ligne {row[0].row} a été ignorée car la"
+                            + f" valeur '{needed_field.verbose_name}'"
+                            + " n'est pas renseignée"
+                        )
+                    )
+                    break
+
         import_warnings = [*import_warnings, *new_warnings]
 
         # Ignore if the line is empty
@@ -98,7 +110,7 @@ def get_object_from_worksheet(my_ws, column_from_index, myClass, import_warnings
     return my_objects, import_warnings
 
 
-def extract_row(row, column_from_index, import_mapping):
+def extract_row(row, column_from_index, cls):
     # pylint: disable=R0912
     new_warnings = []
     my_row = {}
@@ -111,7 +123,7 @@ def extract_row(row, column_from_index, import_mapping):
         # Check the empty lines to don't fill it
         empty_line = False
         value = None
-        model_field = import_mapping[column_from_index[cell.column]]
+        model_field = cls.import_mapping[column_from_index[cell.column]]
 
         if isinstance(model_field, str):
             key = model_field
