@@ -44,6 +44,7 @@ urlpatterns = [
         "programmes/",
         include(("programmes.urls", "programmes"), namespace="programmes"),
     ),
+    path("settings/", include(("settings.urls", "settings"), namespace="settings")),
     path("stats/", include(("stats.urls", "stats"), namespace="stats")),
     path("", include(("users.urls", "users"), namespace="users")),
     path("upload/", include(("upload.urls", "upload"), namespace="upload")),

@@ -27,9 +27,14 @@ def create_users_instructeur():
     user2.first_name = "Roger"
     user2.last_name = "Dupont"
     user2.save()
+    user3 = User.objects.create_user("fix", "fix@apilos.com", "654321")
+    user3.first_name = "François"
+    user3.last_name = "Xavier"
+    user3.save()
     return (
         user1,
         user2,
+        user3,
     )
 
 
@@ -42,9 +47,14 @@ def create_users_bailleur():
     user2.first_name = "Sophie"
     user2.last_name = "Eaubonne"
     user2.save()
+    user3 = User.objects.create_user("sylvie", "sylvie@apilos.com", "01234")
+    user3.first_name = "Sylvie"
+    user3.last_name = "Vartan"
+    user3.save()
     return (
         user1,
         user2,
+        user3,
     )
 
 
@@ -57,6 +67,10 @@ def create_administrations():
         Administration.objects.create(
             nom="Métroploe de Marseille",
             code="67890",
+        ),
+        Administration.objects.create(
+            nom="Paris",
+            code="75000",
         ),
     )
 
@@ -72,6 +86,15 @@ def create_bailleurs():
             signataire_nom="Pall Antoine",
             signataire_fonction="DG",
             signataire_date_deliberation=datetime.date(2001, 12, 1),
+        ),
+        Bailleur.objects.create(
+            nom="SEM",
+            siret="2345678901",
+            capital_social="123456",
+            ville="Marseille",
+            signataire_nom="Polo Alto",
+            signataire_fonction="PDG",
+            signataire_date_deliberation=datetime.date(2011, 12, 1),
         ),
     )
 

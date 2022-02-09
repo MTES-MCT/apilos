@@ -12,7 +12,7 @@ def bailleur_update(request, convention_uuid):
         request.user.check_perm("convention.change_convention", convention)
         if request.POST.get("redirect_to_recap", False):
             return _bailleur_atomic_update(request, convention, bailleur)
-        form = BailleurForm(request.POST)
+        form = BailleurForm({**request.POST.dict(), "uuid": bailleur.uuid})
         if form.is_valid():
             _save_bailleur(bailleur, form)
             # All is OK -> Next:

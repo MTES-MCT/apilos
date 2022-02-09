@@ -37,8 +37,13 @@ class SuperUserAPITest(APITestCase):
         (
             self.administration_arles,
             self.administration_marseille,
+            self.administration_paris,
         ) = utils_fixtures.create_administrations()
-        (self.bailleur, self.bailleur_hlm) = utils_fixtures.create_bailleurs()
+        (
+            self.bailleur,
+            self.bailleur_hlm,
+            self.bailleur_sem,
+        ) = utils_fixtures.create_bailleurs()
         programme = utils_fixtures.create_programme(
             self.bailleur, self.administration_arles, nom="Programe 1"
         )
@@ -90,6 +95,7 @@ class InstructeurUserAPITest(APITestCase):
         (
             self.administration_arles,
             self.administration_marseille,
+            self.administration_paris,
         ) = utils_fixtures.create_administrations()
         group_instructeur = utils_fixtures.create_group(
             "Instructeur", rwd=["convention"]
@@ -100,7 +106,11 @@ class InstructeurUserAPITest(APITestCase):
             administration=self.administration_arles,
             group=group_instructeur,
         )
-        (self.bailleur, self.bailleur_hlm) = utils_fixtures.create_bailleurs()
+        (
+            self.bailleur,
+            self.bailleur_hlm,
+            self.bailleur_sem,
+        ) = utils_fixtures.create_bailleurs()
 
         programme_arles = utils_fixtures.create_programme(
             self.bailleur, self.administration_arles, nom="Programe 1"
@@ -177,8 +187,13 @@ class BailleurUserAPITest(APITestCase):
         (
             self.administration_arles,
             self.administration_marseille,
+            self.administration_paris,
         ) = utils_fixtures.create_administrations()
-        (self.bailleur, self.bailleur_hlm) = utils_fixtures.create_bailleurs()
+        (
+            self.bailleur,
+            self.bailleur_hlm,
+            self.bailleur_sem,
+        ) = utils_fixtures.create_bailleurs()
         group_bailleur = utils_fixtures.create_group("Bailleur", rwd=["convention"])
         Role.objects.create(
             typologie=TypeRole.BAILLEUR,
