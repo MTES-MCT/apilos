@@ -199,7 +199,6 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   stroke-linecap: square;
   stroke-linejoin: miter;
   fill: none;
-  background: var(--white);
   border-radius: 4px;
   display: inline-block;
   margin: 0.25rem;
