@@ -1,8 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import PermissionDenied
 from django.db import models
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
 
 from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
@@ -259,29 +257,6 @@ class User(AbstractUser):
         if bailleur in self.bailleurs():
             return True
         return False
-
-    def send_welcome_email(self, password, login_url):
-        # envoi au bailleur
-        from_email = "contact@apilos.beta.gouv.fr"
-        if not self.is_bailleur():
-            login_url = login_url + "?instructeur=1"
-
-        # All bailleur users from convention
-        to = [self.email]
-        text_content = render_to_string(
-            "emails/welcome_user.txt",
-            {"password": password, "user": self, "login_url": login_url},
-        )
-        html_content = render_to_string(
-            "emails/welcome_user.html",
-            {"password": password, "user": self, "login_url": login_url},
-        )
-
-        msg = EmailMultiAlternatives(
-            "Bienvenue sur la platefrome APiLos", text_content, from_email, to
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
 
     def __str__(self):
         return (

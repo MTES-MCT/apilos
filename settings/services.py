@@ -3,6 +3,8 @@ from django.views.decorators.http import require_GET
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from django.contrib.auth.models import Group
 
 from bailleurs.forms import BailleurForm
@@ -350,8 +352,8 @@ def add_user(request):
             password = User.objects.make_random_password()
             user.set_password(password)
             user.save()
-            user.send_welcome_email(
-                password, request.build_absolute_uri("/accounts/login/")
+            _send_welcome_email(
+                user, password, request.build_absolute_uri("/accounts/login/")
             )
             if form.cleaned_data["user_type"] == "BAILLEUR":
                 Role.objects.create(
@@ -379,3 +381,27 @@ def add_user(request):
         "status": status,
         "editable": True,
     }
+
+
+def _send_welcome_email(user, password, login_url):
+    # envoi au bailleur
+    from_email = "contact@apilos.beta.gouv.fr"
+    if not user.is_bailleur():
+        login_url = login_url + "?instructeur=1"
+
+    # All bailleur users from convention
+    to = [user.email]
+    text_content = render_to_string(
+        "emails/welcome_user.txt",
+        {"password": password, "user": user, "login_url": login_url},
+    )
+    html_content = render_to_string(
+        "emails/welcome_user.html",
+        {"password": password, "user": user, "login_url": login_url},
+    )
+
+    msg = EmailMultiAlternatives(
+        "Bienvenue sur la platefrome APiLos", text_content, from_email, to
+    )
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
