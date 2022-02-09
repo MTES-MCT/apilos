@@ -1,5 +1,4 @@
 from django.forms.models import model_to_dict
-from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
@@ -11,11 +10,10 @@ from bailleurs.models import Bailleur
 from conventions.services import utils
 from instructeurs.forms import AdministrationForm
 from instructeurs.models import Administration
-from users.forms import AddAdministrationForm, AddBailleurForm, UserForm
+from users.forms import AddAdministrationForm, AddBailleurForm, AddUserForm, UserForm
 from users.models import User, Role, TypeRole
 
 
-@login_required
 def user_profile(request):
     # display user form
     success = False
@@ -60,7 +58,6 @@ def user_profile(request):
 
 
 @require_GET
-@login_required
 def administration_list(request):
     search_input = request.GET.get("search_input", "")
     order_by = request.GET.get("order_by", "nom")
@@ -92,7 +89,6 @@ def administration_list(request):
     }
 
 
-@login_required
 def edit_administration(request, administration_uuid):
     administration = Administration.objects.get(uuid=administration_uuid)
     success = False
@@ -124,7 +120,6 @@ def edit_administration(request, administration_uuid):
 
 
 @require_GET
-@login_required
 def bailleur_list(request):
     search_input = request.GET.get("search_input", "")
     order_by = request.GET.get("order_by", "nom")
@@ -155,7 +150,6 @@ def bailleur_list(request):
     }
 
 
-@login_required
 def edit_bailleur(request, bailleur_uuid):
     bailleur = Bailleur.objects.get(uuid=bailleur_uuid)
     success = False
@@ -205,7 +199,6 @@ def edit_bailleur(request, bailleur_uuid):
 
 
 @require_GET
-@login_required
 def user_list(request):
     search_input = request.GET.get("search_input", "")
     order_by = request.GET.get("order_by", "username")
@@ -237,10 +230,9 @@ def user_list(request):
     }
 
 
-@login_required
 def edit_user(request, username):
     user = User.objects.get(username=username)
-    success = False
+    status = ""
     if request.method == "POST" and request.user.is_administrator(user):
 
         action_type = request.POST.get("action_type", "")
@@ -324,7 +316,7 @@ def edit_user(request, username):
                 ]
                 user.is_superuser = form.cleaned_data["is_superuser"]
                 user.save()
-                success = True
+                status = "user_updated"
     else:
         form = UserForm(initial=model_to_dict(user))
         form_add_bailleur = AddBailleurForm()
@@ -333,7 +325,57 @@ def edit_user(request, username):
         "form": form,
         "user": user,
         "editable": True,
-        "success": success,
+        "status": status,
         "form_add_bailleur": form_add_bailleur,
         "form_add_administration": form_add_administration,
+    }
+
+
+def add_user(request):
+    status = ""
+    if request.method == "POST" and request.user.is_administrator():
+        form = AddUserForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create(
+                username=form.cleaned_data["username"],
+                first_name=form.cleaned_data["first_name"],
+                last_name=form.cleaned_data["last_name"],
+                email=form.cleaned_data["email"],
+                administrateur_de_compte=form.cleaned_data["administrateur_de_compte"],
+                is_superuser=form.cleaned_data["is_superuser"]
+                if request.user.is_superuser
+                else False,
+            )
+
+            password = User.objects.make_random_password()
+            user.set_password(password)
+            user.save()
+            user.send_welcome_email(
+                password, request.build_absolute_uri("/accounts/login/")
+            )
+            if form.cleaned_data["user_type"] == "BAILLEUR":
+                Role.objects.create(
+                    typologie=TypeRole.BAILLEUR,
+                    bailleur=request.user.bailleurs().get(
+                        uuid=form.cleaned_data["bailleur"]
+                    ),
+                    user=user,
+                    group=Group.objects.get(name="bailleur"),
+                )
+            if form.cleaned_data["user_type"] == "INSTRUCTEUR":
+                Role.objects.create(
+                    typologie=TypeRole.INSTRUCTEUR,
+                    administration=request.user.administrations().get(
+                        uuid=form.cleaned_data["administration"]
+                    ),
+                    user=user,
+                    group=Group.objects.get(name="instructeur"),
+                )
+            status = "user_created"
+    else:
+        form = AddUserForm()
+    return {
+        "form": form,
+        "status": status,
+        "editable": True,
     }

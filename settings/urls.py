@@ -43,8 +43,8 @@ urlpatterns = [
         name="edit_user",
     ),
     path(
-        "users/<username>/bailleur",
-        views.add_user_bailleur,
-        name="add_user_bailleur",
+        "users/new/",
+        views.add_user,
+        name="add_user",
     ),
 ]

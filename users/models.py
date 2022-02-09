@@ -1,8 +1,10 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import PermissionDenied
 from django.db import models
-from bailleurs.models import Bailleur
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 
+from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
 from instructeurs.models import Administration
 from programmes.models import Lot, Programme
@@ -67,12 +69,12 @@ class User(AbstractUser):
     def is_bailleur(self, bailleur_id=None):
         if bailleur_id is not None:
             return self.roles.filter(bailleur_id=bailleur_id)
-        return self.is_role(TypeRole.BAILLEUR) or self.is_superuser
+        return self._is_role(TypeRole.BAILLEUR) or self.is_superuser
 
     def is_instructeur(self):
-        return self.is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
+        return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
 
-    def is_role(self, role):
+    def _is_role(self, role):
         return role in map(lambda r: r.typologie, self.role_set.all())
 
     #
@@ -88,10 +90,10 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return {prefix + "administration_id__in": self.administration_ids()}
+            return {prefix + "administration_id__in": self._administration_ids()}
 
         if self.is_bailleur():
-            return {prefix + "bailleur_id__in": self.bailleur_ids()}
+            return {prefix + "bailleur_id__in": self._bailleur_ids()}
 
         raise Exception(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les programmes"
@@ -113,18 +115,18 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return {"id__in": self.administration_ids()}
+            return {"id__in": self._administration_ids()}
 
         # to do : manage programme related to geo for bailleur
         if self.is_bailleur():
-            return {}
+            return {"id__in": []}
 
         raise Exception(
             "L'utilisateur courant n'a pas de role associé permettant le "
             + "filtre sur les administrations"
         )
 
-    def administration_ids(self):
+    def _administration_ids(self):
         return list(
             map(
                 lambda role: role.administration_id,
@@ -150,16 +152,16 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return {}
+            return {"id__in": []}
 
         if self.is_bailleur():
-            return {"id__in": self.bailleur_ids()}
+            return {"id__in": self._bailleur_ids()}
 
         raise Exception(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les bailleurs"
         )
 
-    def bailleur_ids(self):
+    def _bailleur_ids(self):
         return list(
             map(
                 lambda role: role.bailleur_id,
@@ -176,10 +178,10 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return {"programme__administration_id__in": self.administration_ids()}
+            return {"programme__administration_id__in": self._administration_ids()}
 
         if self.is_bailleur():
-            return {"bailleur_id__in": self.bailleur_ids()}
+            return {"bailleur_id__in": self._bailleur_ids()}
 
         raise PermissionDenied(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les bailleurs"
@@ -208,14 +210,14 @@ class User(AbstractUser):
         if self.is_bailleur():
             return (
                 User.objects.all()
-                .filter(role__bailleur_id__in=self.bailleur_ids())
+                .filter(role__bailleur_id__in=self._bailleur_ids())
                 .order_by(order_by)
                 .distinct()
             )
         if self.is_instructeur():
             return (
                 User.objects.all()
-                .filter(role__administration_id__in=self.administration_ids())
+                .filter(role__administration_id__in=self._administration_ids())
                 .order_by(order_by)
                 .distinct()
             )
@@ -257,6 +259,29 @@ class User(AbstractUser):
         if bailleur in self.bailleurs():
             return True
         return False
+
+    def send_welcome_email(self, password, login_url):
+        # envoi au bailleur
+        from_email = "contact@apilos.beta.gouv.fr"
+        if not self.is_bailleur():
+            login_url = login_url + "?instructeur=1"
+
+        # All bailleur users from convention
+        to = [self.email]
+        text_content = render_to_string(
+            "emails/welcome_user.txt",
+            {"password": password, "user": self, "login_url": login_url},
+        )
+        html_content = render_to_string(
+            "emails/welcome_user.html",
+            {"password": password, "user": self, "login_url": login_url},
+        )
+
+        msg = EmailMultiAlternatives(
+            "Bienvenue sur la platefrome APiLos", text_content, from_email, to
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
 
     def __str__(self):
         return (

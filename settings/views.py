@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -5,6 +6,7 @@ from django.urls import reverse
 from settings import services
 
 
+@login_required
 def index(request):
     if request.user.is_superuser:
         return HttpResponseRedirect(reverse("settings:users"))
@@ -15,6 +17,7 @@ def index(request):
     return HttpResponseRedirect(reverse("settings:users"))
 
 
+@login_required
 def administrations(request):
     result = services.administration_list(request)
     return render(
@@ -24,6 +27,7 @@ def administrations(request):
     )
 
 
+@login_required
 def edit_administration(request, administration_uuid):
     result = services.edit_administration(request, administration_uuid)
     if result["success"]:
@@ -35,6 +39,7 @@ def edit_administration(request, administration_uuid):
     )
 
 
+@login_required
 def bailleurs(request):
     result = services.bailleur_list(request)
     return render(
@@ -44,6 +49,7 @@ def bailleurs(request):
     )
 
 
+@login_required
 def edit_bailleur(request, bailleur_uuid):
     result = services.edit_bailleur(request, bailleur_uuid)
     if result["success"]:
@@ -55,6 +61,7 @@ def edit_bailleur(request, bailleur_uuid):
     )
 
 
+@login_required
 def profile(request):
     result = services.user_profile(request)
     return render(
@@ -64,6 +71,7 @@ def profile(request):
     )
 
 
+@login_required
 def users(request):
     result = services.user_list(request)
     return render(
@@ -73,9 +81,16 @@ def users(request):
     )
 
 
+@login_required
 def edit_user(request, username):
     result = services.edit_user(request, username)
-    if result["success"]:
+    if result["status"] == "user_updated":
+        return HttpResponseRedirect(reverse("settings:users"))
+    if (
+        not result["user"].is_instructeur()
+        and not result["user"].is_bailleur()
+        and not request.user.is_superuser
+    ):
         return HttpResponseRedirect(reverse("settings:users"))
     return render(
         request,
@@ -84,14 +99,13 @@ def edit_user(request, username):
     )
 
 
-def add_user_bailleur(request, username):
-    result = services.add_user_bailleur(request, username)
-    if result["success"]:
-        return HttpResponseRedirect(
-            reverse("settings:edit_user", args=[result["user"].username])
-        )
+@login_required
+def add_user(request):
+    result = services.add_user(request)
+    if result["status"] == "user_created":
+        return HttpResponseRedirect(reverse("settings:users"))
     return render(
         request,
-        "settings/edit_user.html",
+        "settings/add_user.html",
         {**result},
     )

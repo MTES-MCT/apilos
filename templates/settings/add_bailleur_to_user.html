@@ -18,28 +18,7 @@
                             <form method="post" action="{% url 'settings:edit_user' username=form.username.value %}">
                                 {% csrf_token %}
 
-                                <div class="fr-select-group {% if form_add_bailleur.bailleur.errors %}fr-select-group--error{% endif %}">
-                                    <div class="fr-mt-1w block--row-strech" id="{{form_add_bailleur.bailleur.id_for_label}}_div">
-                                        <select
-                                            class="fr-select {% if form_add_bailleur.bailleur.errors %}fr-select--error{% endif %}"
-                                            id="{{form_add_bailleur.bailleur.id_for_label}}"
-                                            name="{{form_add_bailleur.bailleur.html_name}}">
-                                            <option value="" selected disabled hidden></option>
-                                            {% for element in request.user.bailleurs %}
-                                                <option value="{{element.uuid}}"
-                                                    {% if element in user_bailleurs %}disabled{% endif %}>
-                                                    {{element.label}}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-
-                                    {% for error in form_add_bailleur.bailleur.errors %}
-                                        <p id="select-error-desc-error" class="fr-error-text">
-                                            {{ error }}
-                                        </p>
-                                    {% endfor %}
-                                </div>
+                                {% include "settings/form/select_bailleur.html" with form_input=form_add_bailleur.bailleur %}
 
                                 <button class="fr-btn" name="action_type", value="add_bailleur">
                                     Enregistrer

@@ -77,14 +77,6 @@ class AdministrationsModelsTest(TestCase):
         expected_object_name = f"{user.username}"
         self.assertEqual(str(user), expected_object_name)
 
-    def test_is_role(self):
-        user_instructeur = User.objects.get(username="sabine")
-        self.assertTrue(user_instructeur.is_instructeur())
-        self.assertFalse(user_instructeur.is_bailleur())
-        user_bailleur = User.objects.get(username="raph")
-        self.assertFalse(user_bailleur.is_instructeur())
-        self.assertTrue(user_bailleur.is_bailleur())
-
     def test_exception_permissions(self):
         # pylint: disable=W0703
         user_instructeur = User.objects.get(username="sabine")
@@ -258,17 +250,6 @@ class AdministrationsModelsTest(TestCase):
         user_bailleur = User.objects.get(username="raph")
         self.assertEqual(user_bailleur.administration_filter(), {})
 
-    def test_administration_ids(self):
-        user_superuser = User.objects.get(username="nicolas")
-        self.assertEqual(user_superuser.administration_ids(), [])
-        user_instructeur = User.objects.get(username="sabine")
-        self.assertEqual(
-            user_instructeur.administration_ids(),
-            [user_instructeur.role_set.all()[0].administration_id],
-        )
-        user_bailleur = User.objects.get(username="raph")
-        self.assertEqual(user_bailleur.administration_ids(), [])
-
     def test_bailleur_filter(self):
         user_superuser = User.objects.get(username="nicolas")
         self.assertEqual(user_superuser.bailleur_filter(), {})
@@ -278,17 +259,6 @@ class AdministrationsModelsTest(TestCase):
         self.assertEqual(
             user_bailleur.bailleur_filter(),
             {"id__in": [user_bailleur.role_set.all()[0].bailleur_id]},
-        )
-
-    def test_bailleur_ids(self):
-        user_superuser = User.objects.get(username="nicolas")
-        self.assertEqual(user_superuser.bailleur_ids(), [])
-        user_instructeur = User.objects.get(username="sabine")
-        self.assertEqual(user_instructeur.bailleur_ids(), [])
-        user_bailleur = User.objects.get(username="raph")
-        self.assertEqual(
-            user_bailleur.bailleur_ids(),
-            [user_bailleur.role_set.all()[0].bailleur_id],
         )
 
     def test_convention_filter(self):

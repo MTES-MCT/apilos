@@ -28,6 +28,9 @@ class BailleurForm(forms.Form):
 
     def clean_siret(self):
         siret = self.cleaned_data["siret"]
+        print("FORM")
+        print(self.cleaned_data["uuid"])
+        print(self.cleaned_data["siret"])
         if (
             Bailleur.objects.filter(siret=siret)
             .exclude(uuid=self.cleaned_data["uuid"])

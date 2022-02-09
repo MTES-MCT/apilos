@@ -68,7 +68,7 @@
                                     </table>
                                 </div>
 
-                                {% include 'settings/add_bailleur.html' with user_bailleurs=user.bailleurs%}
+                                {% include 'settings/add_bailleur_to_user.html' with user_bailleurs=user.bailleurs%}
 
                             </div>
                         {% endif %}
@@ -111,15 +111,15 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                {% include 'settings/add_administration.html' with user_administrations=user.administrations %}
+                                {% include 'settings/add_administration_to_user.html' with user_administrations=user.administrations %}
                             </div>
                         {% endif %}
                     {% endif %}
 
                     {% if not user.is_instructeur and not user.is_bailleur and request.user.is_superuser %}
                         <div class="fr-mt-3w">
-                            {% include 'settings/add_administration.html' %}
-                            {% include 'settings/add_bailleur.html' %}
+                            {% include 'settings/add_administration_to_user.html' %}
+                            {% include 'settings/add_bailleur_to_user.html' %}
                         </div>
                     {% endif %}
 
