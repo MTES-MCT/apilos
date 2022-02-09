@@ -89,18 +89,19 @@ def get_object_from_worksheet(my_ws, column_from_index, myClass, import_warnings
     ):
         my_row, empty_line, new_warnings = extract_row(row, column_from_index, myClass)
 
-        if not empty_line and myClass.needed_in_mapping:
-            for needed_field in myClass.needed_in_mapping:
-                if needed_field.name not in my_row:
-                    empty_line = True
-                    new_warnings.append(
-                        Exception(
-                            f"La ligne {row[0].row} a été ignorée car la"
-                            + f" valeur '{needed_field.verbose_name}'"
-                            + " n'est pas renseignée"
+        if hasattr(myClass, "needed_in_mapping"):
+            if not empty_line and myClass.needed_in_mapping:
+                for needed_field in myClass.needed_in_mapping:
+                    if needed_field.name not in my_row:
+                        empty_line = True
+                        new_warnings.append(
+                            Exception(
+                                f"La ligne {row[0].row} a été ignorée car la"
+                                + f" valeur '{needed_field.verbose_name}'"
+                                + " n'est pas renseignée"
+                            )
                         )
-                    )
-                    break
+                        break
 
         import_warnings = [*import_warnings, *new_warnings]
 
