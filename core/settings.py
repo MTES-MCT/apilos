@@ -105,7 +105,7 @@ INSTALLED_APPS = [
     "conventions.apps.ConventionsConfig",
     "instructeurs.apps.InstructeursConfig",
     "programmes.apps.ProgrammesConfig",
-    "settings.apps.SettingsConfig",
+    "apilos_settings.apps.ApilosSettingsConfig",
     "stats.apps.StatsConfig",
     "users.apps.UsersConfig",
     "upload.apps.UploadConfig",
