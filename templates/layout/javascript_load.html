@@ -1,0 +1,12 @@
+{% load static %}
+
+<script type="module" src="{% static "dsfr/dist/dsfr/dsfr.module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+<script type="text/javascript" nomodule src="{% static "dsfr/dist/dsfr/dsfr.nomodule.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+<script type="text/javascript" src="{% static "js/main.js" %}" nonce="{{request.csp_nonce}}"></script>
+
+<!--Using Bootstrap for any simple element which are not available in DSFR-->
+<!--Bootstrap-->
+
+<script type="text/javascript" src="{% static "bootstrap/dependencies/jquery-3.3.1.slim.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+<script type="text/javascript" src="{% static "bootstrap/dependencies/popper.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+<script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}" nonce="{{request.csp_nonce}}"></script>

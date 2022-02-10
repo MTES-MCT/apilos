@@ -14,12 +14,24 @@
             {% if not without_empty_option %}
                 <option value="" {% if not form_input.value %}selected{% endif %} disabled hidden></option>
             {% endif %}
-            {% for element in enum %}
-                <option value="{{element.value}}"
-                    {% if element.value  == form_input.value %}selected{% endif %}>
-                    {{element.label}}
-                </option>
-            {% endfor %}
+            {% if with_empty_option %}
+                <option value="" {% if not form_input.value %}selected{% endif %}></option>
+            {% endif %}
+            {% if enum %}
+                {% for element in enum %}
+                    <option value="{{element.value}}"
+                        {% if element.value  == form_input.value %}selected{% endif %}>
+                        {{element.label}}
+                    </option>
+                {% endfor %}
+            {% else %}
+                {% for element in form_input.field.choices %}
+                    <option value="{{element.0}}"
+                        {% if element.0  == form_input.value %}selected{% endif %}>
+                        {{element.1}}
+                    </option>
+                {% endfor %}
+            {% endif %}
         </select>
         {% include "common/comment_icon.html" with form_input_id=form_input.id_for_label object_field=object_field comments=comments %}
     </div>

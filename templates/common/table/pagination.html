@@ -1,0 +1,135 @@
+<script type="text/javascript" nonce="{{request.csp_nonce}}">
+    function page_listener(link_id, page_number) {
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById(link_id)
+                .addEventListener('click', function(){
+                document.getElementById('page').value = page_number
+                document.getElementById('search_table').submit()
+            });
+        });
+
+    }
+</script>
+<nav role="navigation" class="fr-pagination" aria-label="Pagination">
+    <ul class="fr-pagination__list">
+        <li>
+            <button class="fr-pagination__link fr-pagination__link--first"
+                {% if not paginate_list.has_previous %}disabled{% endif %}
+                role="link"
+                id="first_page">
+                Première page
+            </button>
+            {% if paginate_list.has_previous %}
+                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                    page_listener('first_page', 1)
+                </script>
+            {% endif %}
+        </li>
+        <li>
+            <button class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+                {% if not paginate_list.has_previous %}disabled{% endif %}
+                role="link"
+                id="previous_page">
+                Page précédente
+            </button>
+            {% if paginate_list.has_previous %}
+                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                    page_listener('previous_page', {{ paginate_list.previous_page_number }})
+                </script>
+            {% endif %}
+        </li>
+        {% if paginate_list.number|add:"-3" > 0 %}
+            <li class="fr-pagination__link fr-displayed-lg">···</li>
+        {% endif %}
+        {% if paginate_list.number|add:"-2" > 0 %}
+            <li>
+                <button class="fr-pagination__link"
+                    role="link"
+                    title="Page {{ paginate_list.number|add:'-2' }}"
+                    id="page_sub2">
+                    {{ paginate_list.number|add:"-2" }}
+                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                        page_listener('page_sub2', {{ paginate_list.number|add:"-2" }})
+                    </script>
+                </button>
+
+            </li>
+        {% endif %}
+        {% if paginate_list.has_previous %}
+            <li>
+                <button class="fr-pagination__link"
+                    {% if paginate_list.has_previous %}href="?page={{ paginate_list.previous_page_number }}"{% else %}aria-disabled="true"{% endif %}
+                    role="link"
+                    title="Page {{ paginate_list.previous_page_number }}"
+                    id="page_sub1">
+                    {{ paginate_list.previous_page_number }}
+                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                        page_listener('page_sub1', {{ paginate_list.previous_page_number }})
+                    </script>
+                </button>
+            </li>
+        {% endif %}
+        <li>
+            <button class="fr-pagination__link" aria-current="page" title="Page {{ paginate_list.number }}">
+                {{ paginate_list.number }}
+            </button>
+        </li>
+        {% if paginate_list.has_next %}
+            <li>
+                <button class="fr-pagination__link"
+                    {% if paginate_list.has_next %}href="?page={{ paginate_list.next_page_number }}"{% else %}aria-disabled="true"{% endif %}
+                    role="link"
+                    title="Page {{ paginate_list.next_page_number }}"
+                    id="page_add1">
+                    {{ paginate_list.next_page_number }}
+                </button>
+                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                    page_listener('page_add1', {{ paginate_list.next_page_number }})
+                </script>
+            </li>
+        {% endif %}
+        {% if paginate_list.number|add:2 <= paginate_list.paginator.num_pages %}
+            <li>
+                <button class="fr-pagination__link"
+                    href="?page={{ paginate_list.number|add:2 }}"
+                    role="link"
+                    title="Page {{ paginate_list.number|add:2 }}"
+                    id="page_add2">
+                    {{ paginate_list.number|add:2 }}
+                </button>
+                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                    page_listener('page_add2', {{ paginate_list.number|add:"2" }})
+                </script>
+            </li>
+        {% endif %}
+        {% if paginate_list.number|add:3 <= paginate_list.paginator.num_pages %}
+            <li class="fr-pagination__link fr-displayed-lg">···</li>
+        {% endif %}
+        <li>
+            <button class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+                {% if not paginate_list.has_next %}aria-disabled="true" disabled{% endif %}
+                role="link"
+                id="next_page">
+                Page suivante
+            </button>
+            {% if paginate_list.has_next %}
+                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                    page_listener('next_page', {{ paginate_list.next_page_number }})
+                </script>
+            {% endif %}
+        </li>
+        <li>
+            <button class="fr-pagination__link fr-pagination__link--last"
+                {% if not paginate_list.has_next %}aria-disabled="true" disabled{% endif %}
+                role="link"
+                id="last_page">
+                Dernière page
+            </button>
+            {% if paginate_list.has_next %}
+                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                    page_listener('last_page', {{ paginate_list.paginator.num_pages}})
+                </script>
+            {% endif %}
+        </li>
+    </ul>
+</nav>

@@ -1,0 +1,77 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}Bailleur{{ bailleurs.paginator.count|pluralize }}  - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters fr-py-5w fr-mb-1w">
+                <div class='fr-col-12 fr-col-md-4 fr-col-lg-3'>
+                    {% include 'settings/common/side_menu.html' with active_menu='bailleurs' %}
+                </div>
+                <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
+
+                    <form class="fr-my-3w" method="get" action="" id="search_table">
+                        <input type="hidden" id="page" name="page" value="{{bailleurs.number}}">
+                        <input type="hidden" id="order_by" name="order_by" value="{{order_by}}">
+
+                        {% if total_bailleur > 3 %}
+                            <div class="fr-search-bar" id="header-search" role="search">
+                                <label class="fr-label" for="search_input">
+                                    Recherche
+                                </label>
+                                <input class="fr-input" placeholder="Rechercher" type="search" id="search_input" name="search_input" value="{{search_input}}">
+                                <button class="fr-btn" title="Rechercher">
+                                    Rechercher
+                                </button>
+                            </div>
+                        {% endif %}
+                    </form>
+
+                    <div class="fr-table fr-table--bordered table--layout-fixed">
+                        <table>
+                            <caption>{{bailleurs.paginator.count}}{% if bailleurs.paginator.count != total_bailleur %} / {{total_bailleur}}{% endif %} bailleur{{ bailleurs.paginator.count|pluralize }}</caption>
+
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Nom
+                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='nom' url_target='settings:bailleur' %}
+                                    </th>
+                                    <th scope="col">
+                                        Siret
+                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='siret' url_target='settings:bailleur' %}
+                                    </th>
+                                    <th scope="col">
+                                        Ville
+                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='ville' url_target='settings:bailleur' %}
+                                    </th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bailleur in bailleurs %}
+                                    <tr>
+                                        <td>{{ bailleur.nom }}</td>
+                                        <td>{{ bailleur.siret }}</td>
+                                        <td>{{ bailleur.ville }}</td>
+                                        <td>
+                                            <a class="fr-link fr-mb-1w" href="{% url 'settings:edit_bailleur' bailleur_uuid=bailleur.uuid %}" >
+                                                <span class="fr-fi-edit-line" aria-hidden="true"></span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% include 'common/table/pagination.html' with paginate_list=bailleurs %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
