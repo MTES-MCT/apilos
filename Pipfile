@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 boto3 = ">=1.18.46"
 convertapi = ">=1.4.0"
-coverage = ">=6.1.2"
+coverage = "==6.2"
 djangorestframework = ">=3.12.4"
 django-cas-ng = ">=4.2.1"
 django-csp = ">=3.7"
