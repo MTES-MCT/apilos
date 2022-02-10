@@ -9,16 +9,11 @@ def cas_user_authenticated_callback(sender, **kwargs):
     args = {}
     args.update(kwargs)
     print(
-        """cas_user_authenticated_callback:
-    user: %s
-    created: %s
-    attributes: %s
+        f"""cas_user_authenticated_callback:
+    user: {args.get("user")}
+    created: {args.get("created")}
+    attributes: {json.dumps(args.get("attributes"), sort_keys=True, indent=2)}
     """
-        % (
-            args.get("user"),
-            args.get("created"),
-            json.dumps(args.get("attributes"), sort_keys=True, indent=2),
-        )
     )
 
 
@@ -27,10 +22,9 @@ def cas_user_logout_callback(sender, **kwargs):
     args = {}
     args.update(kwargs)
     print(
-        """cas_user_logout_callback:
-    user: %s
-    session: %s
-    ticket: %s
+        f"""cas_user_logout_callback:
+    user: {args.get("user")}
+    session: {args.get("session")}
+    ticket: {args.get("ticket")}
     """
-        % (args.get("user"), args.get("session"), args.get("ticket"))
     )
