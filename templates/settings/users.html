@@ -82,9 +82,11 @@
 
                     {% include 'common/table/pagination.html' with paginate_list=users %}
 
-                    <button class="fr-btn fr-fi-add-circle-line fr-btn--icon-left fr-mt-3w" type="button" id="add_user">
-                        Ajouter un utilisateur
-                    </button>
+                    {% if request.user.is_administrator %}
+                        <button class="fr-btn fr-fi-add-circle-line fr-btn--icon-left fr-mt-3w" type="button" id="add_user">
+                            Ajouter un utilisateur
+                        </button>
+                    {% endif %}
                     {% include "common/utils/onclick_redirect.html" with id='add_user' url_target='settings:add_user' url_params='?instructeur=1'%}
 
                 </div>
