@@ -199,10 +199,10 @@ def _convention_financement_atomic_update(request, convention):
         if form.is_valid():
             _save_convention_financement(form, convention)
             _save_convention_financement_prets(formset, convention)
-        return {
-            "success": utils.ReturnStatus.SUCCESS,
-            "convention": convention,
-        }
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "convention": convention,
+            }
     upform = UploadForm()
     return {
         **utils.base_convention_response_error(request, convention),
