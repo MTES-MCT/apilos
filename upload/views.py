@@ -16,9 +16,12 @@ def _compute_dirpath(request):
     elif "programme" in request.POST:
         uuid = request.POST["programme"]
         object_name = "programmes"
+    elif "lot" in request.POST:
+        uuid = request.POST["lot"]
+        object_name = "lots"
     else:
         raise Exception(
-            "/upload path should be called with a programme of convention parameter"
+            "/upload path should be called with a programme, lot or convention parameter"
         )
     return f"{object_name}/{uuid}/media/"
 

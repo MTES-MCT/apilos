@@ -257,6 +257,7 @@ ReferenceCadastraleFormSet = formset_factory(
 class ProgrammeEDDForm(forms.Form):
 
     uuid = forms.UUIDField(required=False)
+    lot_uuid = forms.UUIDField(required=False)
     edd_volumetrique = forms.CharField(
         required=False,
         max_length=5000,
