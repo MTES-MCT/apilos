@@ -1,6 +1,7 @@
 import os
 import errno
 import io
+import math
 import jinja2
 import convertapi
 
@@ -294,12 +295,16 @@ def _compute_mixte(convention):
     }
     if convention.lot.financement == Financement.PLUS:
         mixite["mixPLUS_10pc"] = round(convention.lot.nb_logements * 0.1)
-        mixite["mixPLUS_30pc"] = round(convention.lot.nb_logements * 0.3)
+        # cf. convention : 30 % au moins des logements
+        mixite["mixPLUS_30pc"] = math.ceil(convention.lot.nb_logements * 0.3)
         if convention.lot.nb_logements < 10:
-            mixite["mixPLUSinf10_30pc"] = round(convention.lot.nb_logements * 0.3)
+            # cf. convention : 30 % au moins des logements
+            mixite["mixPLUSinf10_30pc"] = math.ceil(convention.lot.nb_logements * 0.3)
+            # cf. convention : 10 % des logements
             mixite["mixPLUSinf10_10pc"] = round(convention.lot.nb_logements * 0.1)
         else:
-            mixite["mixPLUSsup10_30pc"] = round(convention.lot.nb_logements * 0.3)
+            # cf. convention : 30 % au moins des logements
+            mixite["mixPLUSsup10_30pc"] = math.ceil(convention.lot.nb_logements * 0.3)
 
     return mixite
 
