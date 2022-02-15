@@ -72,7 +72,7 @@
                                         <div class="table--limited-height">
                                             {% with bailleur_uuid=bailleur.uuid|slugify %}
                                                 {% include "common/display_field_if_exists.html" with label="Nom" value=bailleur.nom object_field="bailleur__nom__"|add:bailleur_uuid %}
-                                                {% include "common/display_field_if_exists.html" with label="SIRET ou SIREN" value=bailleur.siret object_field="bailleur__siret__"|add:bailleur_uuid %}
+                                                {% include "common/display_field_if_exists.html" with label="SIRET" value=bailleur.siret object_field="bailleur__siret__"|add:bailleur_uuid %}
                                                 {% include "common/display_field_if_exists.html" with label="Capital social" value=bailleur.capital_social object_field="bailleur__capital_social__"|add:bailleur_uuid %}
                                                 {% include "common/display_field_if_exists.html" with label="Adresse" value=bailleur.adresse object_field="bailleur__adresse__"|add:bailleur_uuid %}
                                                 {% include "common/display_field_if_exists.html" with label="Code postal" value=bailleur.code_postal object_field="bailleur__code_postal__"|add:bailleur_uuid %}
