@@ -1,4 +1,5 @@
 import datetime
+from dateutil.relativedelta import relativedelta
 
 from django import forms
 from django.forms import BaseFormSet, formset_factory
@@ -49,55 +50,71 @@ class ConventionFinancementForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         annee_fin_conventionnement = cleaned_data.get("annee_fin_conventionnement")
-        today = datetime.date.today()
 
         if (
-            self.prets != []
+            self.prets
             and self.convention is not None
             and annee_fin_conventionnement is not None
         ):
-            if self.convention.financement == Financement.PLS:
-                min_years = today.year + 15
-                max_years = today.year + 40
-                if today.month > 6:
-                    min_years = min_years + 1
-                    max_years = max_years + 1
-                if annee_fin_conventionnement < min_years:
-                    self.add_error(
-                        "annee_fin_conventionnement",
-                        (
-                            "L'année de fin de conventionnement ne peut être inférieur à "
-                            + f"{min_years}"
-                        ),
-                    )
-                if annee_fin_conventionnement > max_years:
-                    self.add_error(
-                        "annee_fin_conventionnement",
-                        (
-                            "L'année de fin de conventionnement ne peut être supérieur à "
-                            + f"{max_years}"
-                        ),
-                    )
+            if (
+                self.convention.financement == Financement.PLS
+                or self.convention.programme.type_operation == TypeOperation.SANSTRAVAUX
+            ):
+                self._pls_sans_travaux_end_date_validation(annee_fin_conventionnement)
             else:
-                max_duree = 0
-                for pret in self.prets:
-                    if pret.cleaned_data["preteur"] in ["CDCF", "CDCL"]:
-                        if max_duree is None:
-                            max_duree = int(pret.cleaned_data["duree"])
-                        elif max_duree < pret.cleaned_data["duree"]:
-                            max_duree = int(pret.cleaned_data["duree"])
-                max_duree = max(max_duree, 9)
-                if today.month > 6:
-                    max_duree = max_duree + 1
-                max_duree = max_duree + today.year
-                if annee_fin_conventionnement < max_duree:
-                    self.add_error(
-                        "annee_fin_conventionnement",
-                        (
-                            "L'année de fin de conventionnement ne peut être inférieur à "
-                            + f"{max_duree}"
-                        ),
+                self._other_end_date_validation(annee_fin_conventionnement)
+
+    def _pls_sans_travaux_end_date_validation(self, annee_fin_conventionnement):
+        today = datetime.date.today()
+
+        min_years = today.year + 15
+        max_years = today.year + 40
+        if today.month > 6:
+            min_years = min_years + 1
+            max_years = max_years + 1
+        if annee_fin_conventionnement < min_years:
+            self.add_error(
+                "annee_fin_conventionnement",
+                (
+                    "L'année de fin de conventionnement ne peut être inférieur à "
+                    + f"{min_years}"
+                ),
+            )
+        if annee_fin_conventionnement > max_years:
+            self.add_error(
+                "annee_fin_conventionnement",
+                (
+                    "L'année de fin de conventionnement ne peut être supérieur à "
+                    + f"{max_years}"
+                ),
+            )
+
+    def _other_end_date_validation(self, annee_fin_conventionnement):
+        end_conv = None
+        cdc_pret = None
+        for pret in self.prets:
+            if pret.cleaned_data["preteur"] in ["CDCF", "CDCL"]:
+                if pret.cleaned_data["date_octroi"] and pret.cleaned_data["duree"]:
+                    end_datetime = pret.cleaned_data["date_octroi"] + relativedelta(
+                        years=int(pret.cleaned_data["duree"])
                     )
+                    if not end_conv or end_datetime > end_conv:
+                        end_conv = end_datetime
+                        cdc_pret = pret
+        if end_conv and cdc_pret:
+            cdc_end_year = end_conv.year
+            if end_conv.year - cdc_pret.cleaned_data["date_octroi"].year < 9:
+                cdc_end_year = cdc_pret.cleaned_data["date_octroi"].year + 9
+            if end_conv and end_conv.month > 6:
+                cdc_end_year = cdc_end_year + 1
+            if annee_fin_conventionnement < cdc_end_year:
+                self.add_error(
+                    "annee_fin_conventionnement",
+                    (
+                        "L'année de fin de conventionnement ne peut être inférieur à "
+                        + f"{cdc_end_year}"
+                    ),
+                )
 
 
 class PretForm(forms.Form):
@@ -172,8 +189,6 @@ class BasePretFormSet(BaseFormSet):
             and self.convention.programme.type_operation != TypeOperation.SANSTRAVAUX
         ):
             for form in self.forms:
-                #            if self.can_delete() and self._should_delete_form(form):
-                #                continue
                 if form.cleaned_data.get("preteur") in ["CDCF", "CDCL"]:
                     return
             error = ValidationError(
