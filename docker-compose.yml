@@ -14,7 +14,7 @@ services:
   apilos:
     build: .
 #    command: tail -f README.md
-    command: python manage.py runserver 0.0.0.0:8000
+    command: pipenv run python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
     ports:

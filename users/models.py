@@ -1,8 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import PermissionDenied
 from django.db import models
-from bailleurs.models import Bailleur
 
+from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
 from instructeurs.models import Administration
 from programmes.models import Lot, Programme
@@ -17,6 +17,10 @@ class slist(list):
 
 
 class User(AbstractUser):
+    # pylint: disable=R0904
+
+    administrateur_de_compte = models.BooleanField(default=False)
+
     def has_object_permission(self, obj):
         if isinstance(obj, Convention):
             # is bailleur of the convention or is instructeur of the convention
@@ -63,12 +67,12 @@ class User(AbstractUser):
     def is_bailleur(self, bailleur_id=None):
         if bailleur_id is not None:
             return self.roles.filter(bailleur_id=bailleur_id)
-        return self.is_role(TypeRole.BAILLEUR) or self.is_superuser
+        return self._is_role(TypeRole.BAILLEUR) or self.is_superuser
 
     def is_instructeur(self):
-        return self.is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
+        return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
 
-    def is_role(self, role):
+    def _is_role(self, role):
         return role in map(lambda r: r.typologie, self.role_set.all())
 
     #
@@ -84,25 +88,13 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            administration_ids = list(
-                map(
-                    lambda role: role.administration_id,
-                    self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
-                )
-            )
-            return {prefix + "administration_id__in": administration_ids}
+            return {prefix + "administration_id__in": self._administration_ids()}
 
         if self.is_bailleur():
-            bailleur_ids = list(
-                map(
-                    lambda role: role.bailleur_id,
-                    self.role_set.filter(typologie=TypeRole.BAILLEUR),
-                )
-            )
-            return {prefix + "bailleur_id__in": bailleur_ids}
+            return {prefix + "bailleur_id__in": self._bailleur_ids()}
 
         raise Exception(
-            "L'utilisateur courant n'a pas de role associé permattant le filtre sur les programmes"
+            "L'utilisateur courant n'a pas de role associé permettant le filtre sur les programmes"
         )
 
     def programmes(self):
@@ -121,25 +113,29 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            administration_ids = list(
-                map(
-                    lambda role: role.administration_id,
-                    self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
-                )
-            )
-            return {"id__in": administration_ids}
+            return {"id__in": self._administration_ids()}
 
         # to do : manage programme related to geo for bailleur
         if self.is_bailleur():
-            return {}
+            return {"id__in": []}
 
         raise Exception(
-            "L'utilisateur courant n'a pas de role associé permattant le "
+            "L'utilisateur courant n'a pas de role associé permettant le "
             + "filtre sur les administrations"
         )
 
-    def administrations(self):
-        return Administration.objects.filter(**self.administration_filter())
+    def _administration_ids(self):
+        return list(
+            map(
+                lambda role: role.administration_id,
+                self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
+            )
+        )
+
+    def administrations(self, order_by="nom"):
+        return Administration.objects.filter(**self.administration_filter()).order_by(
+            order_by
+        )
 
     #
     # list of bailleurs following role
@@ -154,23 +150,25 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return {}
+            return {"id__in": []}
 
         if self.is_bailleur():
-            bailleur_ids = list(
-                map(
-                    lambda role: role.bailleur_id,
-                    self.role_set.filter(typologie=TypeRole.BAILLEUR),
-                )
-            )
-            return {"id__in": bailleur_ids}
+            return {"id__in": self._bailleur_ids()}
 
         raise Exception(
-            "L'utilisateur courant n'a pas de role associé permattant le filtre sur les bailleurs"
+            "L'utilisateur courant n'a pas de role associé permettant le filtre sur les bailleurs"
         )
 
-    def bailleurs(self):
-        return Bailleur.objects.filter(**self.bailleur_filter())
+    def _bailleur_ids(self):
+        return list(
+            map(
+                lambda role: role.bailleur_id,
+                self.role_set.filter(typologie=TypeRole.BAILLEUR),
+            )
+        )
+
+    def bailleurs(self, order_by="nom"):
+        return Bailleur.objects.filter(**self.bailleur_filter()).order_by(order_by)
 
     def convention_filter(self):
         if self.is_superuser:
@@ -178,25 +176,13 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            administration_ids = list(
-                map(
-                    lambda role: role.administration_id,
-                    self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
-                )
-            )
-            return {"programme__administration_id__in": administration_ids}
+            return {"programme__administration_id__in": self._administration_ids()}
 
         if self.is_bailleur():
-            bailleur_ids = list(
-                map(
-                    lambda role: role.bailleur_id,
-                    self.role_set.filter(typologie=TypeRole.BAILLEUR),
-                )
-            )
-            return {"bailleur_id__in": bailleur_ids}
+            return {"bailleur_id__in": self._bailleur_ids()}
 
         raise PermissionDenied(
-            "L'utilisateur courant n'a pas de role associé permattant le filtre sur les bailleurs"
+            "L'utilisateur courant n'a pas de role associé permettant le filtre sur les bailleurs"
         )
 
     def conventions(self):
@@ -214,6 +200,62 @@ class User(AbstractUser):
                 ConventionStatut.INSTRUCTION,
                 ConventionStatut.CORRECTION,
             ]
+        return False
+
+    def user_list(self, order_by="username"):
+        if self.is_superuser:
+            return User.objects.all().order_by(order_by)
+        if self.is_bailleur():
+            return (
+                User.objects.all()
+                .filter(role__bailleur_id__in=self._bailleur_ids())
+                .order_by(order_by)
+                .distinct()
+            )
+        if self.is_instructeur():
+            return (
+                User.objects.all()
+                .filter(role__administration_id__in=self._administration_ids())
+                .order_by(order_by)
+                .distinct()
+            )
+        raise Exception(
+            "L'utilisateur courant n'a pas de role associé permettant de"
+            + " filtrer les utilisateurs"
+        )
+
+    def is_administrator(self, user=None):
+        if self.is_superuser:
+            return True
+        if not self.administrateur_de_compte:
+            return False
+        if user is None:
+            return True
+        if user.is_superuser:
+            return False
+        # check if the scope of current_user and user is not empty
+        if list(set(user.bailleurs()) & set(self.bailleurs())) or list(
+            set(user.administrations()) & set(self.administrations())
+        ):
+            return True
+        return False
+
+    def is_administration_administrator(self, administration):
+        if self.is_superuser:
+            return True
+        if not self.administrateur_de_compte:
+            return False
+        if administration in self.administrations():
+            return True
+        return False
+
+    def is_bailleur_administrator(self, bailleur):
+        if self.is_superuser:
+            return True
+        if not self.administrateur_de_compte:
+            return False
+        if bailleur in self.bailleurs():
+            return True
         return False
 
     def __str__(self):

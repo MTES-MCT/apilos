@@ -1,0 +1,33 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}Bailleur - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters fr-py-5w">
+                <div class='fr-col-12 fr-col-md-4 fr-col-lg-3'>
+                    {% include 'settings/common/side_menu.html' with active_menu='bailleurs' %}
+                </div>
+                <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
+                    <div class='fr-col-12'>
+                        <h3>Modification du bailleur ‹‹{{ form.nom.value }}››</h3>
+                        <div role="warning" class="fr-alert fr-alert--warning fr-mb-3w">
+                            <p>Les modifications que vous apportez à votre bailleur seront appliquées à toutes les conventions qui ne sont pas encore validées</p>
+                        </div>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            {% include 'bailleurs/form_content.html' %}
+
+                            <button class="fr-btn fr-fi-save-line fr-btn--icon-left" type="submit">
+                                Enregistrer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

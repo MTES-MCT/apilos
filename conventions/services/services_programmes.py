@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_GET
 from django.core.mail import EmailMultiAlternatives
@@ -28,7 +27,6 @@ from . import utils
 from . import upload_objects
 
 
-@login_required
 def select_programme_create(request):
     if request.method == "POST":
         form = ProgrammeSelectionForm(request.POST)
@@ -129,7 +127,6 @@ def _send_email_staff(request, convention):
     msg.send()
 
 
-@login_required
 def select_programme_update(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     if request.method == "POST":
@@ -162,7 +159,6 @@ def select_programme_update(request, convention_uuid):
     }
 
 
-@login_required
 def programme_update(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme")
@@ -254,7 +250,6 @@ def _save_programme_and_lot(programme, lot, form):
     lot.save()
 
 
-@login_required
 def programme_cadastral_update(request, convention_uuid):
     # pylint: disable=R0915
     convention = (
@@ -522,7 +517,6 @@ def _programme_cadastrale_atomic_update(request, convention, programme):
     }
 
 
-@login_required
 def programme_edd_update(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme")
@@ -748,7 +742,6 @@ def _conventions_selection(request, infilter):
     )
 
 
-@login_required
 @require_GET
 def display_operation(request, programme_uuid, financement):
     # CONVENTION

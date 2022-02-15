@@ -11,39 +11,7 @@ from bailleurs.models import TypeBailleur
 
 
 def update_type_bailleur(apps, schema_editor):
-
-    Bailleur = apps.get_model("bailleurs", "Bailleur")
-
-    basedir = settings.BASE_DIR
-    file_path = os.path.join(basedir, "documents", "type_bailleurs.xlsx")
-    wb = load_workbook(file_path, read_only=True)
-    sheet_name = "Rapport 1"
-    ws = wb[sheet_name]
-
-    type_bailleur_by_label = {}
-    for value, label in TypeBailleur.choices:
-        type_bailleur_by_label[label] = value
-
-    siret_by_cat = {}
-    for row in ws.iter_rows(
-        min_row=5, max_row=ws.max_row, min_col=1, max_col=ws.max_column
-    ):
-        siret = row[0].value
-        cat = row[1].value
-        if cat not in siret_by_cat:
-            siret_by_cat[cat] = []
-        siret_by_cat[cat].append(siret)
-
-    for cat in siret_by_cat.keys():
-        if cat is None:
-            new_type_bailleur = TypeBailleur.NONRENSEIGNE
-        else:
-            new_type_bailleur = type_bailleur_by_label[cat]
-        print(cat)
-        print(new_type_bailleur)
-        Bailleur.objects.filter(siret__in=siret_by_cat[cat]).update(
-            type_bailleur=new_type_bailleur
-        )
+    print("nothing to do")
 
 
 def nothing_to_do(apps, schema_editor):

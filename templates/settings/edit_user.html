@@ -1,0 +1,130 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}Utilisateurs - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters fr-py-5w">
+                <div class='fr-col-12 fr-col-md-4 fr-col-lg-3'>
+                    {% include 'settings/common/side_menu.html' with active_menu='users' %}
+                </div>
+                <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
+                    <div class='fr-col-12'>
+                        <h3>Modification de l'utilisateur ‹‹{{ form.username.value }}››</h3>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            {% include "common/form/input_text.html" with form_input=form.username label="Nom d'utilisateur" editable=False %}
+                            {% include "common/form/input_text.html" with form_input=form.first_name label="Prénom" %}
+                            {% include "common/form/input_text.html" with form_input=form.last_name label="Nom" %}
+                            {% include "common/form/input_text.html" with form_input=form.email label="Email" %}
+                            {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte label="Administrateur de compte" sublabel="L'administrateur de compte peut gérer les utilisateurs de ses entités. Si vous renoncez à être administrateur,vous ne pourez plus gérer les utilisateurs de vos entité ou vous ré-attribuer les droits d'administration" editable=request.user.is_administrator %}
+                            {% if request.user.is_superuser %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.is_superuser label="Super Utilisateur" sublabel="Un super utilisateur a tous les droits" %}
+                            {% endif %}
+                            <button class="fr-btn fr-fi-save-line fr-btn--icon-left fr-mt-3w" type="submit">
+                                Enregistrer
+                            </button>
+                        </form>
+                    </div>
+
+                    {% if not user.is_superuser %}
+                        {% if user.is_bailleur %}
+                            <div class='fr-col-12 fr-mt-3w'>
+                                <div class="fr-table fr-table--bordered table--layout-fixed">
+                                    <table>
+                                        {% with bailleur_count=user.bailleurs.count %}
+                                            <caption>Instructeur sur {{bailleur_count}} bailleur{{ bailleur_count|pluralize }}</caption>
+                                        {% endwith %}
+
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">
+                                                    Nom
+                                                </th>
+                                                <th scope="col">
+                                                    Siret
+                                                </th>
+                                                <th scope="col">
+                                                    Ville
+                                                </th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for bailleur in user.bailleurs %}
+                                                <tr>
+                                                    <td>{{ bailleur.nom }}</td>
+                                                    <td>{{ bailleur.siret }}</td>
+                                                    <td>{{ bailleur.ville }}</td>
+                                                    <td>
+                                                        {% include 'settings/remove_bailleur.html' %}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {% include 'settings/add_bailleur_to_user.html' with user_bailleurs=user.bailleurs%}
+
+                            </div>
+                        {% endif %}
+
+
+                        {% if user.is_instructeur %}
+                            <div class='fr-col-12 fr-mt-3w'>
+                                <div class="fr-table fr-table--bordered table--layout-fixed">
+                                    <table>
+                                        {% with administration_count=user.administrations.count %}
+                                            <caption>Instructeur sur {{administration_count}} administration{{ administration_count|pluralize }}</caption>
+                                        {% endwith %}
+
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">
+                                                    Nom
+                                                </th>
+                                                <th scope="col">
+                                                    Code
+                                                </th>
+                                                <th scope="col">
+                                                    Ville de signature
+                                                </th>
+                                                <th scope="col">
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for administration in user.administrations %}
+                                                <tr>
+                                                    <td>{{ administration.nom }}</td>
+                                                    <td>{{ administration.code }}</td>
+                                                    <td>{{ administration.ville_signature }}</td>
+                                                    <td>
+                                                        {% include 'settings/remove_administration.html' %}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% include 'settings/add_administration_to_user.html' with user_administrations=user.administrations %}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if not user.is_instructeur and not user.is_bailleur and request.user.is_superuser %}
+                        <div class="fr-mt-3w">
+                            {% include 'settings/add_administration_to_user.html' %}
+                            {% include 'settings/add_bailleur_to_user.html' %}
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

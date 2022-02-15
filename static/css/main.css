@@ -199,7 +199,6 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   stroke-linecap: square;
   stroke-linejoin: miter;
   fill: none;
-  background: var(--white);
   border-radius: 4px;
   display: inline-block;
   margin: 0.25rem;
@@ -302,3 +301,21 @@ table.fullwidth {
   cursor: pointer;
 }
 
+.apilos-sidemenu {
+  min-width: 285px;
+}
+
+.apilos-settings--justify {
+  display: flex;
+  flex-direction: row;
+  align-items: top;
+  justify-content: left;
+}
+
+.apilos-dropdown-menu a {
+  float: none;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}

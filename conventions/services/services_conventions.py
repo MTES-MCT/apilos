@@ -1,6 +1,5 @@
 import datetime
 
-from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -27,7 +26,6 @@ from . import upload_objects
 from . import convention_generator
 
 
-@login_required
 @require_GET
 def conventions_index(request, infilter):
     order_by = request.GET.get("order_by", "programme__date_achevement_compile")
@@ -60,7 +58,6 @@ def conventions_index(request, infilter):
     }
 
 
-@login_required
 def convention_financement(request, convention_uuid):
     convention = Convention.objects.prefetch_related("pret_set").get(
         uuid=convention_uuid
@@ -251,7 +248,6 @@ def _save_convention_financement_prets(formset, convention):
         pret.save()
 
 
-@login_required
 def convention_comments(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     if request.method == "POST":
@@ -284,7 +280,6 @@ def convention_comments(request, convention_uuid):
     }
 
 
-@login_required
 @require_GET
 def convention_summary(request, convention_uuid, convention_number_form=None):
     convention = (
@@ -320,7 +315,6 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
     }
 
 
-@login_required
 @require_POST
 def convention_submit(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -349,7 +343,6 @@ def convention_submit(request, convention_uuid):
     }
 
 
-@login_required
 @require_GET
 def convention_delete(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -411,7 +404,6 @@ def _send_email_instruction(request, convention):
     msg.send()
 
 
-@login_required
 @require_POST
 def convention_feedback(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -486,7 +478,6 @@ def _send_email_correction(request, convention, notification_form):
     msg.send()
 
 
-@login_required
 @require_POST
 def convention_validate(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -606,7 +597,6 @@ def _send_email_valide(request, convention, local_pdf_path=None):
     msg.send()
 
 
-@login_required
 @require_POST
 def generate_convention(request, convention_uuid):
     convention = (

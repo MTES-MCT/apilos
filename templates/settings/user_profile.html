@@ -1,0 +1,60 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}Votre Profil - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters fr-py-5w fr-mb-1w">
+                <div class='fr-col-12 fr-col-md-4 fr-col-lg-3'>
+                    {% include 'settings/common/side_menu.html' with active_menu='profile' %}
+                </div>
+                <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
+                    <div class='fr-col-12'>
+                        <h4>Gestion de votre profil</h4>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            {% if success %}
+                                <div role="success" class="fr-alert fr-alert--success fr-mb-3w">
+                                    <p>Votre profil a été enregistré avec succès</p>
+                                </div>
+                            {% endif %}
+                            {% include "common/form/input_text.html" with form_input=form.username label="Nom d'utilisateur" editable=False %}
+                            {% include "common/form/input_text.html" with form_input=form.first_name label="Prénom" %}
+                            {% include "common/form/input_text.html" with form_input=form.last_name label="Nom" %}
+                            {% include "common/form/input_text.html" with form_input=form.email label="Email" %}
+                            {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte label="Administrateur de compte" sublabel="L'administrateur de compte peut gérer les utilisateurs de ses entités. Si vous renoncez à être administrateur,vous ne pourez plus gérer les utilisateurs de vos entité ou vous ré-attribuer les droits d'administration" editable=request.user.is_administrator %}
+                            {% if request.user.is_superuser %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.is_superuser label="Super Utilisateur" sublabel="Un super utilisateur a tous les droits" %}
+                            {% endif %}
+
+                            <button class="fr-btn fr-fi-save-line fr-btn--icon-left fr-mt-3w" type="submit">
+                                Enregistrer
+                            </button>
+                        </form>
+                    </div>
+                    <div class='fr-col-12 fr-mt-3w'>
+
+                        <p>Si vous souhaitez ré-initialiser votre mot de passe, cliquez sur le bouton ci-dessous et suivez les instructions que vous allez recevoir par email</p>
+                        <form action="{% url 'password_reset' %}" method="post">
+                            {% csrf_token %}
+                            <input
+                                type="hidden"
+                                id="{{form.email.id_for_label}}"
+                                name="{{form.email.html_name}}"
+                                value="{{form.email.value}}" />
+                            <div class="fr-mt-3w">
+                                <button class="fr-btn" type="submit">
+                                    Réinitialiser mon mot de passe
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

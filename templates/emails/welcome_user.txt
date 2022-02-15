@@ -1,0 +1,13 @@
+Bienvenue sur la plateforme APiLos
+Le portail qui simplifie le conventionnement APL pour le logement social
+
+Vous avez désormais accès à la plateforme avec les identifiants suivants :
+- email : {{ user.email }}
+- Identifiant : {{ user.username }}
+- Mot de passe : {{ password }}
+
+Pour vous connecter, rendez-vous ici : {{login_url}}
+
+Dans l'attente de vous retrouver sur APiLos pour une nouvelle convention, nous restons à votre disposition.
+
+L'équipe APiLos

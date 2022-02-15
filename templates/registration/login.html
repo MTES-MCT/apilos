@@ -25,11 +25,11 @@
                     <form method="post" action="{% url 'login' %}">
                         {% csrf_token %}
                         <div class="fr-input-group fr-mt-3w {% if form.errors %}fr-input-group--error{% endif %}">
-                            <label class="fr-label" for="username">Nom d'utilisateur</label>
+                            <label class="fr-label" for="username">Identifiant ou Email</label>
                             <input class="fr-input {% if form.errors %}fr-input--error{% endif %}" type="text" id="username" name="username">
                             {% if form.errors %}
                                 <p id="text-input-error-desc-error" class="fr-error-text">
-                                    Votre nom d'utilisateur et votre mot de passe de correspondent pas.
+                                    Votre identifiant / email et votre mot de passe de correspondent pas.
                                     <br>Veuillez essayer une nouvelle fois.
                                 </p>
                             {% endif %}

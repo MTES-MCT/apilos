@@ -20,12 +20,13 @@ class SuperUserAPITest(APITestCase):
         (
             self.administration_arles,
             self.administration_marseille,
+            self.administration_paris,
         ) = utils_fixtures.create_administrations()
 
     def test_can_get_administration_list(self):
         response = self.client.get("/api/v1/administrations/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["count"], 2)
+        self.assertEqual(response.data["count"], 3)
 
     def test_can_get_administration(self):
         response = self.client.get(
@@ -85,6 +86,7 @@ class InstructeurUserAPITest(APITestCase):
         (
             self.administration_arles,
             self.administration_marseille,
+            self.administration_paris,
         ) = utils_fixtures.create_administrations()
         group_instructeur = utils_fixtures.create_group(
             "Instructeur", ru=["administration"]
@@ -100,7 +102,7 @@ class InstructeurUserAPITest(APITestCase):
         # As instructeur I can list any administration
         response = self.client.get("/api/v1/administrations/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["count"], 2)
+        self.assertEqual(response.data["count"], 3)
 
     def test_can_get_administration(self):
         # As instructeur I can get any administration that I own
@@ -175,6 +177,7 @@ class BailleurUserAPITest(APITestCase):
         (
             self.administration_arles,
             self.administration_marseille,
+            self.administration_paris,
         ) = utils_fixtures.create_administrations()
         group_bailleur = utils_fixtures.create_group("Bailleur", ro=["administration"])
         bailleur = utils_fixtures.create_bailleur()
@@ -189,7 +192,7 @@ class BailleurUserAPITest(APITestCase):
         # As bailleur I can list any administration
         response = self.client.get("/api/v1/administrations/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["count"], 2)
+        self.assertEqual(response.data["count"], 3)
 
     def test_can_get_administration(self):
         # As bailleur I can get any administration that I own
