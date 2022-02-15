@@ -134,10 +134,6 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         max_length=5000,
         error_messages={
-            "required": (
-                "Les informations relatives au vendeur "
-                + "(image(s) ou texte) sont obligatoires"
-            ),
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
         help_text="Identité du vendeur telle que mentionnée dans l'acte de propriété",
@@ -150,10 +146,6 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         max_length=5000,
         error_messages={
-            "required": (
-                "Les informations relatives à l'aquéreur "
-                + "(image(s) ou texte) sont obligatoires"
-            ),
             "max_length": "Le message ne doit pas excéder 5000 characters",
         },
         help_text="Identité de l'acquéreur telle que mentionnée dans l'acte de propriété",
@@ -217,21 +209,6 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         help_text="Les fichiers de type images sont acceptés dans la limite de 100 Mo",
     )
-
-    def clean(self):
-        cleaned_data = super().clean()
-        if not cleaned_data["vendeur"] and cleaned_data["vendeur_files"] == "{}":
-            self._errors["vendeur"] = self.error_class(
-                [self.fields["vendeur"].error_messages["required"]]
-            )
-            del cleaned_data["vendeur"]
-            del cleaned_data["vendeur_files"]
-        if not cleaned_data["acquereur"] and cleaned_data["acquereur_files"] == "{}":
-            self._errors["acquereur"] = self.error_class(
-                [self.fields["acquereur"].error_messages["required"]]
-            )
-            del cleaned_data["acquereur"]
-            del cleaned_data["acquereur_files"]
 
 
 class ReferenceCadastraleForm(forms.Form):
@@ -452,7 +429,7 @@ class BaseLogementFormSet(BaseFormSet):
             #                continue
             designation = form.cleaned_data.get("designation")
             if designation:
-                if designation in designations.keys():
+                if designation in designations:
                     error_on_designation = True
                     form.add_error(
                         "designation",
