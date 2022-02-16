@@ -72,7 +72,7 @@
                                         <div class="table--limited-height">
                                             {% with bailleur_uuid=bailleur.uuid|slugify %}
                                                 {% include "common/display_field_if_exists.html" with label="Nom" value=bailleur.nom object_field="bailleur__nom__"|add:bailleur_uuid %}
-                                                {% include "common/display_field_if_exists.html" with label="SIRET ou SIREN" value=bailleur.siret object_field="bailleur__siret__"|add:bailleur_uuid %}
+                                                {% include "common/display_field_if_exists.html" with label="SIRET" value=bailleur.siret object_field="bailleur__siret__"|add:bailleur_uuid %}
                                                 {% include "common/display_field_if_exists.html" with label="Capital social" value=bailleur.capital_social object_field="bailleur__capital_social__"|add:bailleur_uuid %}
                                                 {% include "common/display_field_if_exists.html" with label="Adresse" value=bailleur.adresse object_field="bailleur__adresse__"|add:bailleur_uuid %}
                                                 {% include "common/display_field_if_exists.html" with label="Code postal" value=bailleur.code_postal object_field="bailleur__code_postal__"|add:bailleur_uuid %}
@@ -234,9 +234,9 @@
                                             </a>
                                         </div>
                                         <div class="table--limited-height">
-                                            {% include "common/display_text_and_files_if_exists.html" with label="EDD volumétrique" text=programme.edd_volumetrique_text file_list=programme.edd_volumetrique_files.values object_field="programme__edd_volumetrique__"|add:programme_uuid %}
+                                            {% include "common/display_text_and_files_if_exists.html" with label="EDD volumétrique" text=lot.edd_volumetrique_text file_list=lot.edd_volumetrique_files.values object_field="lot__edd_volumetrique__"|add:lot_uuid %}
                                             {% include "common/display_field_if_exists.html" with label="Mention de publication de l'EDD volumétrique" value=programme.mention_publication_edd_volumetrique object_field="programme__mention_publication_edd_volumetrique__"|add:programme_uuid %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="EDD classique" text=programme.edd_classique_text file_list=programme.edd_classique_files.values object_field="programme__edd_classique__"|add:programme_uuid %}
+                                            {% include "common/display_text_and_files_if_exists.html" with label="EDD classique" text=lot.edd_classique_text file_list=lot.edd_classique_files.values object_field="lot__edd_classique__"|add:lot_uuid %}
                                             {% include "common/display_field_if_exists.html" with label="Mention de publication de l'EDD classique" value=programme.mention_publication_edd_classique object_field="programme__mention_publication_edd_classique__"|add:programme_uuid %}
                                         </div>
                                         <p class="fr-my-1w">EDD Simplifé : </p>
@@ -694,6 +694,8 @@
                                     <button class="fr-btn">
                                         Générer et Télécharger la convention
                                     </button>
+                                    <a class="fr-link fr-fi-information-line" href="https://docs.apilos.beta.gouv.fr/utiliser-la-plateforme/comment-signer-une-convention#generer-la-convention-au-format-word-ou-openoffice" target="_blank"></a>
+
                                 </form>
                             </div>
                         {% else %}

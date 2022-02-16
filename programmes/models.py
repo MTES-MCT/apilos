@@ -61,7 +61,7 @@ class TypologieLogement(models.TextChoices):
             "10": "T5 et plus",
         }
         value = str(value)
-        if value in mapping.keys():
+        if value in mapping:
             return mapping[value]
         return value
 
@@ -355,8 +355,22 @@ class Lot(IngestableModel):
     annexe_balcons = models.BooleanField(default=False)
     annexe_loggias = models.BooleanField(default=False)
     annexe_terrasses = models.BooleanField(default=False)
+    edd_volumetrique = models.TextField(max_length=50000, null=True)
+    edd_classique = models.TextField(max_length=50000, null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+    def edd_volumetrique_text(self):
+        return model_utils.get_field_key(self, "edd_volumetrique", "text")
+
+    def edd_volumetrique_files(self):
+        return model_utils.get_field_key(self, "edd_volumetrique", "files", default={})
+
+    def edd_classique_text(self):
+        return model_utils.get_field_key(self, "edd_classique", "text")
+
+    def edd_classique_files(self):
+        return model_utils.get_field_key(self, "edd_classique", "files", default={})
 
     def __str__(self):
         return f"{self.programme.nom} - {self.financement}"

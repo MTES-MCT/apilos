@@ -18,19 +18,16 @@ class BailleurForm(forms.Form):
     )
     siret = forms.CharField(
         max_length=14,
-        min_length=9,
+        min_length=14,
         error_messages={
-            "required": "Le SIRET ou SIREN du bailleur est obligatoire",
-            "max_length": "Le SIRET ou SIREN ne doivent pas excéder 14 caractères",
-            "min_length": "Le SIRET ou SIREN doivent avoir 9 caractères minimum",
+            "required": "Le SIRET du bailleur est obligatoire",
+            "max_length": "Le SIRET doit comporter 14 caractères",
+            "min_length": "Le SIRET doit comporter 14 caractères",
         },
     )
 
     def clean_siret(self):
         siret = self.cleaned_data["siret"]
-        print("FORM")
-        print(self.cleaned_data["uuid"])
-        print(self.cleaned_data["siret"])
         if (
             Bailleur.objects.filter(siret=siret)
             .exclude(uuid=self.cleaned_data["uuid"])

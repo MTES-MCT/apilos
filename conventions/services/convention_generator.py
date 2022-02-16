@@ -1,6 +1,7 @@
 import os
 import errno
 import io
+import math
 import jinja2
 import convertapi
 
@@ -144,9 +145,9 @@ def generate_pdf(file_stream, convention):
 def _save_io_as_file(file_io, convention_dirpath, convention_filename):
 
     if settings.DEFAULT_FILE_STORAGE == "django.core.files.storage.FileSystemStorage":
-        if not os.path.exists(settings.MEDIA_URL + convention_dirpath):
+        if not os.path.exists(f"{settings.MEDIA_ROOT}/{convention_dirpath}"):
             try:
-                os.makedirs(settings.MEDIA_URL + convention_dirpath)
+                os.makedirs(f"{settings.MEDIA_ROOT}/{convention_dirpath}")
             except OSError as exc:  # Guard against race condition
                 if exc.errno != errno.EEXIST:
                     raise
@@ -236,12 +237,12 @@ def _get_object_images(doc, convention):
     object_images["reference_cadastrale_images"] = reference_cadastrale_images
     local_pathes += tmp_local_path
     edd_volumetrique_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.edd_volumetrique_files()
+        doc, convention.uuid, convention.lot.edd_volumetrique_files()
     )
     object_images["edd_volumetrique_images"] = edd_volumetrique_images
     local_pathes += tmp_local_path
     edd_classique_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.edd_classique_files()
+        doc, convention.uuid, convention.lot.edd_classique_files()
     )
     object_images["edd_classique_images"] = edd_classique_images
     local_pathes += tmp_local_path
@@ -294,12 +295,16 @@ def _compute_mixte(convention):
     }
     if convention.lot.financement == Financement.PLUS:
         mixite["mixPLUS_10pc"] = round(convention.lot.nb_logements * 0.1)
-        mixite["mixPLUS_30pc"] = round(convention.lot.nb_logements * 0.3)
+        # cf. convention : 30 % au moins des logements
+        mixite["mixPLUS_30pc"] = math.ceil(convention.lot.nb_logements * 0.3)
         if convention.lot.nb_logements < 10:
-            mixite["mixPLUSinf10_30pc"] = round(convention.lot.nb_logements * 0.3)
+            # cf. convention : 30 % au moins des logements
+            mixite["mixPLUSinf10_30pc"] = math.ceil(convention.lot.nb_logements * 0.3)
+            # cf. convention : 10 % des logements
             mixite["mixPLUSinf10_10pc"] = round(convention.lot.nb_logements * 0.1)
         else:
-            mixite["mixPLUSsup10_30pc"] = round(convention.lot.nb_logements * 0.3)
+            # cf. convention : 30 % au moins des logements
+            mixite["mixPLUSsup10_30pc"] = math.ceil(convention.lot.nb_logements * 0.3)
 
     return mixite
 

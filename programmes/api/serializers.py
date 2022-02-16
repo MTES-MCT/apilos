@@ -174,6 +174,10 @@ class LotSerializer(serializers.HyperlinkedModelSerializer):
             "bailleur",
             "financement",
         ]
+        read_only_fields = (
+            "edd_volumetrique",
+            "edd_classique",
+        )
         ref_name = "LotEmbeddedSchema"
 
     def _get_programme_with_bailleur(self, validated_data):
