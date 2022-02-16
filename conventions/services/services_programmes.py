@@ -119,7 +119,7 @@ def _send_email_staff(request, convention):
 
     if to:
         msg = EmailMultiAlternatives(
-            f"[{settings.ENVIRONMENT.upper()}] Nouvelle convention crée de zéro ({convention})",
+            f"[{settings.ENVIRONMENT.upper()}] Nouvelle convention créée de zéro ({convention})",
             text_content,
             from_email,
             to,
