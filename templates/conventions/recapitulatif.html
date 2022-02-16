@@ -234,9 +234,9 @@
                                             </a>
                                         </div>
                                         <div class="table--limited-height">
-                                            {% include "common/display_text_and_files_if_exists.html" with label="EDD volumétrique" text=programme.edd_volumetrique_text file_list=programme.edd_volumetrique_files.values object_field="programme__edd_volumetrique__"|add:programme_uuid %}
+                                            {% include "common/display_text_and_files_if_exists.html" with label="EDD volumétrique" text=lot.edd_volumetrique_text file_list=lot.edd_volumetrique_files.values object_field="lot__edd_volumetrique__"|add:lot_uuid %}
                                             {% include "common/display_field_if_exists.html" with label="Mention de publication de l'EDD volumétrique" value=programme.mention_publication_edd_volumetrique object_field="programme__mention_publication_edd_volumetrique__"|add:programme_uuid %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="EDD classique" text=programme.edd_classique_text file_list=programme.edd_classique_files.values object_field="programme__edd_classique__"|add:programme_uuid %}
+                                            {% include "common/display_text_and_files_if_exists.html" with label="EDD classique" text=lot.edd_classique_text file_list=lot.edd_classique_files.values object_field="lot__edd_classique__"|add:lot_uuid %}
                                             {% include "common/display_field_if_exists.html" with label="Mention de publication de l'EDD classique" value=programme.mention_publication_edd_classique object_field="programme__mention_publication_edd_classique__"|add:programme_uuid %}
                                         </div>
                                         <p class="fr-my-1w">EDD Simplifé : </p>
