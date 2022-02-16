@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block css_extras %}
-    <link rel="stylesheet" href="{% static "highcharts/highcharts.css" %}">
+    <link rel="stylesheet" href="https://code.highcharts.com/css/highcharts.css" nonce="{{request.csp_nonce}}">
 {% endblock %}
 
 {% block content %}
