@@ -145,9 +145,9 @@ def generate_pdf(file_stream, convention):
 def _save_io_as_file(file_io, convention_dirpath, convention_filename):
 
     if settings.DEFAULT_FILE_STORAGE == "django.core.files.storage.FileSystemStorage":
-        if not os.path.exists(settings.MEDIA_URL + convention_dirpath):
+        if not os.path.exists(f"{settings.MEDIA_ROOT}/{convention_dirpath}"):
             try:
-                os.makedirs(settings.MEDIA_URL + convention_dirpath)
+                os.makedirs(f"{settings.MEDIA_ROOT}/{convention_dirpath}")
             except OSError as exc:  # Guard against race condition
                 if exc.errno != errno.EEXIST:
                     raise

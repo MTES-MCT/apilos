@@ -74,10 +74,7 @@ class Convention(models.Model):
     # https://docs.djangoproject.com/en/dev/howto/custom-template-tags/#howto-custom-template-tags
     # Ou créé un champ statut
     def is_bailleur_editable(self):
-        return (
-            self.statut == ConventionStatut.BROUILLON
-            or self.statut == ConventionStatut.CORRECTION
-        )
+        return self.statut in (ConventionStatut.BROUILLON, ConventionStatut.CORRECTION)
 
     def is_instructeur_editable(self):
         return self.statut != ConventionStatut.CLOS
@@ -150,7 +147,10 @@ class Convention(models.Model):
         return list(
             set(
                 map(
-                    lambda x: x.user.email, self.programme.administration.role_set.all()
+                    lambda x: x.user.email,
+                    self.programme.administration.role_set.all()
+                    if self.programme.administration
+                    else [],
                 )
             )
         )

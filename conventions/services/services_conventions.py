@@ -374,11 +374,12 @@ def _send_email_instruction(request, convention):
         },
     )
 
-    msg = EmailMultiAlternatives(
-        f"Convention à instruire ({convention})", text_content, from_email, to
-    )
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    if to:
+        msg = EmailMultiAlternatives(
+            f"Convention à instruire ({convention})", text_content, from_email, to
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
 
     # envoie à l'instructeur
     to = convention.get_email_instructeur_users()
@@ -397,11 +398,12 @@ def _send_email_instruction(request, convention):
         },
     )
 
-    msg = EmailMultiAlternatives(
-        f"Convention à instruire ({convention})", text_content, from_email, to
-    )
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    if to:
+        msg = EmailMultiAlternatives(
+            f"Convention à instruire ({convention})", text_content, from_email, to
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
 
 
 @require_POST
@@ -473,9 +475,10 @@ def _send_email_correction(request, convention, notification_form):
     )
     cc = [request.user.email] if notification_form.cleaned_data["send_copy"] else []
 
-    msg = EmailMultiAlternatives(subject, text_content, from_email, to, cc=cc)
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    if to:
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to, cc=cc)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
 
 
 @require_POST
@@ -576,25 +579,28 @@ def _send_email_valide(request, convention, local_pdf_path=None):
         },
     )
 
-    msg = EmailMultiAlternatives(
-        f"Convention validé ({convention})", text_content, from_email, to, cc=cc
-    )
-    msg.attach_alternative(html_content, "text/html")
+    if to:
+        msg = EmailMultiAlternatives(
+            f"Convention validé ({convention})", text_content, from_email, to, cc=cc
+        )
+        msg.attach_alternative(html_content, "text/html")
 
-    if local_pdf_path is not None:
-        pdf_file_handler = default_storage.open(local_pdf_path, "rb")
-        if extention == "pdf":
-            msg.attach(f"{convention}.pdf", pdf_file_handler.read(), "application/pdf")
-        if extention == "docx":
-            msg.attach(
-                f"{convention}.docx",
-                pdf_file_handler.read(),
-                "application/vnd.openxmlformats-officedocument.wordprocessingm",
-            )
-        pdf_file_handler.close()
-        msg.content_subtype = "html"
+        if local_pdf_path is not None:
+            pdf_file_handler = default_storage.open(local_pdf_path, "rb")
+            if extention == "pdf":
+                msg.attach(
+                    f"{convention}.pdf", pdf_file_handler.read(), "application/pdf"
+                )
+            if extention == "docx":
+                msg.attach(
+                    f"{convention}.docx",
+                    pdf_file_handler.read(),
+                    "application/vnd.openxmlformats-officedocument.wordprocessingm",
+                )
+            pdf_file_handler.close()
+            msg.content_subtype = "html"
 
-    msg.send()
+        msg.send()
 
 
 @require_POST

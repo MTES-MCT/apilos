@@ -117,14 +117,15 @@ def _send_email_staff(request, convention):
         },
     )
 
-    msg = EmailMultiAlternatives(
-        f"[{settings.ENVIRONMENT.upper()}] Nouvelle convention crée de zéro ({convention})",
-        text_content,
-        from_email,
-        to,
-    )
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    if to:
+        msg = EmailMultiAlternatives(
+            f"[{settings.ENVIRONMENT.upper()}] Nouvelle convention crée de zéro ({convention})",
+            text_content,
+            from_email,
+            to,
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
 
 
 def select_programme_update(request, convention_uuid):
