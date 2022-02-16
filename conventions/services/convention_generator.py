@@ -237,12 +237,12 @@ def _get_object_images(doc, convention):
     object_images["reference_cadastrale_images"] = reference_cadastrale_images
     local_pathes += tmp_local_path
     edd_volumetrique_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.edd_volumetrique_files()
+        doc, convention.uuid, convention.lot.edd_volumetrique_files()
     )
     object_images["edd_volumetrique_images"] = edd_volumetrique_images
     local_pathes += tmp_local_path
     edd_classique_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.edd_classique_files()
+        doc, convention.uuid, convention.lot.edd_classique_files()
     )
     object_images["edd_classique_images"] = edd_classique_images
     local_pathes += tmp_local_path

@@ -564,14 +564,15 @@ def programme_edd_update(request, convention_uuid):
         form = ProgrammeEDDForm(
             initial={
                 "uuid": programme.uuid,
+                "lot_uuid": convention.lot.uuid,
                 **utils.get_text_and_files_from_field(
-                    "edd_volumetrique", programme.edd_volumetrique
+                    "edd_volumetrique", convention.lot.edd_volumetrique
                 ),
                 "mention_publication_edd_volumetrique": (
                     programme.mention_publication_edd_volumetrique
                 ),
                 **utils.get_text_and_files_from_field(
-                    "edd_classique", programme.edd_classique
+                    "edd_classique", convention.lot.edd_classique
                 ),
                 "mention_publication_edd_classique": programme.mention_publication_edd_classique,
             }
@@ -623,7 +624,7 @@ def _programme_edd_atomic_update(request, convention, programme):
         {
             "uuid": programme.uuid,
             **utils.init_text_and_files_from_field(
-                request, programme, "edd_volumetrique"
+                request, convention.lot, "edd_volumetrique"
             ),
             "mention_publication_edd_volumetrique": (
                 request.POST.get(
@@ -631,7 +632,9 @@ def _programme_edd_atomic_update(request, convention, programme):
                     programme.mention_publication_edd_volumetrique,
                 )
             ),
-            **utils.init_text_and_files_from_field(request, programme, "edd_classique"),
+            **utils.init_text_and_files_from_field(
+                request, convention.lot, "edd_classique"
+            ),
             "mention_publication_edd_classique": (
                 request.POST.get(
                     "mention_publication_edd_classique",
@@ -676,7 +679,7 @@ def _programme_edd_atomic_update(request, convention, programme):
     formset_is_valid = formset.is_valid()
 
     if form_is_valid and formset_is_valid:
-        _save_programme_edd(form, programme)
+        _save_programme_edd(form, programme, convention.lot)
         _save_programme_logement_edd(formset, convention, programme)
         return {
             "success": utils.ReturnStatus.SUCCESS,
@@ -691,21 +694,22 @@ def _programme_edd_atomic_update(request, convention, programme):
     }
 
 
-def _save_programme_edd(form, programme):
-    programme.edd_volumetrique = utils.set_files_and_text_field(
+def _save_programme_edd(form, programme, lot):
+    lot.edd_volumetrique = utils.set_files_and_text_field(
         form.cleaned_data["edd_volumetrique_files"],
         form.cleaned_data["edd_volumetrique"],
     )
     programme.mention_publication_edd_volumetrique = form.cleaned_data[
         "mention_publication_edd_volumetrique"
     ]
-    programme.edd_classique = utils.set_files_and_text_field(
+    lot.edd_classique = utils.set_files_and_text_field(
         form.cleaned_data["edd_classique_files"],
         form.cleaned_data["edd_classique"],
     )
     programme.mention_publication_edd_classique = form.cleaned_data[
         "mention_publication_edd_classique"
     ]
+    lot.save()
     programme.save()
 
 

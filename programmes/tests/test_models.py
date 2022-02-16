@@ -205,11 +205,13 @@ class ProgrammeModelsTest(TestCase):
         utils_assertions.assert_get_text_and_files(
             self, programme, "reference_publication_acte"
         )
-        utils_assertions.assert_get_text_and_files(self, programme, "edd_volumetrique")
-        utils_assertions.assert_get_text_and_files(self, programme, "edd_classique")
         utils_assertions.assert_get_files(self, programme, "acte_de_propriete")
         utils_assertions.assert_get_files(self, programme, "acte_notarial")
         utils_assertions.assert_get_files(self, programme, "reference_cadastrale")
+
+        lot = Lot.objects.order_by("-uuid").first()
+        utils_assertions.assert_get_text_and_files(self, lot, "edd_volumetrique")
+        utils_assertions.assert_get_text_and_files(self, lot, "edd_classique")
 
     def test_date_achevement_compile(self):
         programme = Programme.objects.order_by("-uuid").first()
