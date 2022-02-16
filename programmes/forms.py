@@ -260,7 +260,7 @@ class ProgrammeEDDForm(forms.Form):
     lot_uuid = forms.UUIDField(required=False)
     edd_volumetrique = forms.CharField(
         required=False,
-        max_length=5000,
+        max_length=50000,
         error_messages={
             "max_length": "L'EDD volumétrique ne doit pas excéder 5000 characters",
         },
@@ -283,7 +283,7 @@ class ProgrammeEDDForm(forms.Form):
     )
     edd_classique = forms.CharField(
         required=False,
-        max_length=5000,
+        max_length=50000,
         error_messages={
             "max_length": "L'EDD classique ne doit pas excéder 5000 characters",
         },
