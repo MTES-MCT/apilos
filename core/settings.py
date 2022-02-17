@@ -259,7 +259,7 @@ CSP_IMG_SRC = ("'self'", "data:")
 CSP_OBJECT_SRC = "'none'"
 CSP_FONT_SRC = "'self'", "data:"
 CSP_CONNECT_SRC = ("'self'", "https://stats.data.gouv.fr/piwik.php")
-CSP_STYLE_SRC = "'self'"
+CSP_STYLE_SRC = ("'self'", "https://code.highcharts.com/css/highcharts.css")
 CSP_MANIFEST_SRC = "'self'"
 CSP_INCLUDE_NONCE_IN = [
     "script-src",
