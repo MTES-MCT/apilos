@@ -21,3 +21,4 @@ staticfiles
 scripts/mailjet.py
 documents/HLM-template-v*
 static/icons/ikonate/
+static/highcharts/Highcharts-*

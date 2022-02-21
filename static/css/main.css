@@ -169,27 +169,106 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   display: none;
 }
 
+/* Stat score card */
 .statcard {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  border: 0.3rem solid;
-  border-color: #000091;
-  border-radius: 10px;
-  background-color: #E5E5F4;
+  border: 0.1rem solid;
+  border-color: rgba(47, 126, 216, 1);
+  background-color: rgba(47, 126, 216, 0.3);
+}
+
+/* color 8 to 10 : '#', '#', '#77a1e5', '#c42525', '#a6c96a' */
+/* color6 : #492970*/
+.statcard--color6 {
+  border-color: rgba(73, 41, 112, 1)!important;
+  background-color: rgba(73, 41, 112, 0.3)!important;
+}
+
+.statcard--color6 .statcard__title {
+  border-color: rgba(73, 41, 112, 1)!important;
+}
+
+/* color7 : #f28f43*/
+.statcard--color7 {
+  border-color: rgba(242, 143, 67, 1)!important;
+  background-color: rgba(242, 143, 67, 0.3)!important;
+}
+
+.statcard--color7 .statcard__title {
+  border-color: rgba(242, 143, 67, 1)!important;
+}
+
+/* color1 : #2f7ed8*/
+.statcard--color1 {
+  border-color: rgba(47, 126, 216, 1)!important;
+  background-color: rgba(47, 126, 216, 0.3)!important;
+}
+
+.statcard--color1 .statcard__title {
+  border-color: rgba(47, 126, 216, 1)!important;
+}
+
+/* color2 : #0d233a*/
+.statcard--color2 {
+  border-color: rgba(13, 35, 58, 1)!important;
+  background-color: rgba(13, 35, 58, 0.3)!important;
+}
+
+.statcard--color2 .statcard__title {
+  border-color: rgba(13, 35, 58, 1)!important;
+}
+
+/* color3 : #8bbc21*/
+.statcard--color3 {
+  border-color: rgba(139, 188, 33, 1)!important;
+  background-color: rgba(139, 188, 33, 0.3)!important;
+}
+
+.statcard--color3 .statcard__title {
+  border-color: rgba(139, 188, 33, 1)!important;
+}
+
+/* color4 : #910000*/
+.statcard--color4 {
+  border-color: rgba(145, 0, 0, 1)!important;
+  background-color: rgba(145, 0, 0, 0.3)!important;
+}
+
+.statcard--color4 .statcard__title {
+  border-color: rgba(145, 0, 0, 1)!important;
+}
+
+/* color5 : #1aadce*/
+.statcard--color5 {
+  border-color: rgba(26, 173, 206, 1)!important;
+  background-color: rgba(26, 173, 206, 0.3)!important;
+}
+
+.statcard--color5 .statcard__title {
+  border-color: rgba(26, 173, 206, 1)!important;
 }
 
 .statcard__indicateur {
   font-size: 2.5rem;
   text-align: center;
+  padding: 1.5rem 0 1rem 0;
 }
+
 .statcard__title {
-  text-align: center;
-  margin-top: 1.5rem;
-  min-height: 65px;
+  width: 100%;
+  border-bottom: 0.1rem solid;
+  border-color: rgba(47, 126, 216, 1);
+  text-align: left;
+  padding: 1rem 0 1rem 0.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 
 /* SVG ikonate */
 .content__icons {
