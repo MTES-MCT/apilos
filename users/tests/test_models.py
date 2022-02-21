@@ -3,96 +3,15 @@ from bailleurs.models import Bailleur
 
 from core.tests import utils_fixtures
 from instructeurs.models import Administration
-from users.models import User, Role
-from users.type_models import TypeRole
 from conventions.models import Convention, ConventionStatut
-from programmes.models import Financement
+from users.models import User
 
 
 class AdministrationsModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         # pylint: disable=R0914
-        utils_fixtures.create_users_superuser()
-        (
-            user_instructeur,
-            user_instructeur_metropole,
-            user_instructeur_paris,
-        ) = utils_fixtures.create_users_instructeur()
-        (
-            user_bailleur,
-            user_bailleur_hlm,
-            user_bailleur_sem,
-        ) = utils_fixtures.create_users_bailleur()
-        (
-            administration,
-            administration_metropole,
-            administration_paris,
-        ) = utils_fixtures.create_administrations()
-        (bailleur, bailleur_hlm, bailleur_sem) = utils_fixtures.create_bailleurs()
-        group_instructeur = utils_fixtures.create_group(
-            "Instructeur", rwd=["logement", "convention"]
-        )
-        group_bailleur = utils_fixtures.create_group(
-            "Bailleur", rw=["logement", "convention"]
-        )
-
-        Role.objects.create(
-            typologie=TypeRole.BAILLEUR,
-            bailleur=bailleur,
-            user=user_bailleur,
-            group=group_bailleur,
-        )
-        Role.objects.create(
-            typologie=TypeRole.BAILLEUR,
-            bailleur=bailleur_hlm,
-            user=user_bailleur,
-            group=group_bailleur,
-        )
-        Role.objects.create(
-            typologie=TypeRole.BAILLEUR,
-            bailleur=bailleur_hlm,
-            user=user_bailleur_hlm,
-            group=group_bailleur,
-        )
-        Role.objects.create(
-            typologie=TypeRole.BAILLEUR,
-            bailleur=bailleur_sem,
-            user=user_bailleur_sem,
-            group=group_bailleur,
-        )
-
-        Role.objects.create(
-            typologie=TypeRole.INSTRUCTEUR,
-            administration=administration,
-            user=user_instructeur,
-            group=group_instructeur,
-        )
-        Role.objects.create(
-            typologie=TypeRole.INSTRUCTEUR,
-            administration=administration_metropole,
-            user=user_instructeur,
-            group=group_instructeur,
-        )
-        Role.objects.create(
-            typologie=TypeRole.INSTRUCTEUR,
-            administration=administration_metropole,
-            user=user_instructeur_metropole,
-            group=group_instructeur,
-        )
-        Role.objects.create(
-            typologie=TypeRole.INSTRUCTEUR,
-            administration=administration_paris,
-            user=user_instructeur_paris,
-            group=group_instructeur,
-        )
-        programme = utils_fixtures.create_programme(
-            bailleur, administration, nom="Programe 1"
-        )
-        lot_plai = utils_fixtures.create_lot(programme, Financement.PLAI)
-        lot_plus = utils_fixtures.create_lot(programme, Financement.PLUS)
-        utils_fixtures.create_convention(lot_plus, numero="0001")
-        utils_fixtures.create_convention(lot_plai, numero="0002")
+        utils_fixtures.create_all()
 
     # Test model User
     def test_object_user_str(self):

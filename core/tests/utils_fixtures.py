@@ -7,7 +7,8 @@ from conventions.models import Convention
 from programmes.models import Financement, Lot
 from programmes.models import Programme
 from bailleurs.models import Bailleur
-from users.models import User
+from users.models import User, Role
+from users.type_models import TypeRole
 from instructeurs.models import Administration
 
 files_and_text = (
@@ -300,3 +301,82 @@ def create_convention(lot: Lot, numero: str = "0001"):
         bailleur=lot.programme.bailleur,
         financement=lot.financement,
     )
+
+
+def create_all():
+
+    # pylint: disable=R0914
+    create_users_superuser()
+    (
+        user_instructeur,
+        user_instructeur_metropole,
+        user_instructeur_paris,
+    ) = create_users_instructeur()
+    (
+        user_bailleur,
+        user_bailleur_hlm,
+        user_bailleur_sem,
+    ) = create_users_bailleur()
+    (
+        administration,
+        administration_metropole,
+        administration_paris,
+    ) = create_administrations()
+    (bailleur, bailleur_hlm, bailleur_sem) = create_bailleurs()
+    group_instructeur = create_group("Instructeur", rwd=["logement", "convention"])
+    group_bailleur = create_group("Bailleur", rw=["logement", "convention"])
+
+    Role.objects.create(
+        typologie=TypeRole.BAILLEUR,
+        bailleur=bailleur,
+        user=user_bailleur,
+        group=group_bailleur,
+    )
+    Role.objects.create(
+        typologie=TypeRole.BAILLEUR,
+        bailleur=bailleur_hlm,
+        user=user_bailleur,
+        group=group_bailleur,
+    )
+    Role.objects.create(
+        typologie=TypeRole.BAILLEUR,
+        bailleur=bailleur_hlm,
+        user=user_bailleur_hlm,
+        group=group_bailleur,
+    )
+    Role.objects.create(
+        typologie=TypeRole.BAILLEUR,
+        bailleur=bailleur_sem,
+        user=user_bailleur_sem,
+        group=group_bailleur,
+    )
+
+    Role.objects.create(
+        typologie=TypeRole.INSTRUCTEUR,
+        administration=administration,
+        user=user_instructeur,
+        group=group_instructeur,
+    )
+    Role.objects.create(
+        typologie=TypeRole.INSTRUCTEUR,
+        administration=administration_metropole,
+        user=user_instructeur,
+        group=group_instructeur,
+    )
+    Role.objects.create(
+        typologie=TypeRole.INSTRUCTEUR,
+        administration=administration_metropole,
+        user=user_instructeur_metropole,
+        group=group_instructeur,
+    )
+    Role.objects.create(
+        typologie=TypeRole.INSTRUCTEUR,
+        administration=administration_paris,
+        user=user_instructeur_paris,
+        group=group_instructeur,
+    )
+    programme = create_programme(bailleur, administration, nom="Programe 1")
+    lot_plai = create_lot(programme, Financement.PLAI)
+    lot_plus = create_lot(programme, Financement.PLUS)
+    create_convention(lot_plus, numero="0001")
+    create_convention(lot_plai, numero="0002")

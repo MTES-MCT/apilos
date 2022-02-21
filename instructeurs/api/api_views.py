@@ -21,7 +21,7 @@ class AdministrationList(
     permission_classes = [IsAuthenticated, AdministrationPermission]
 
     serializer_class = AdministrationSerializer
-    queryset = Administration.objects.all()
+    queryset = Administration.objects.all().order_by("nom")
 
     def get(self, request):  # , format=None):
         return self.list(request)  # , *args, **kwargs)
