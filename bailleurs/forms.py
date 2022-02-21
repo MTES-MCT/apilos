@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 
 from core import forms_utils
 
-from bailleurs.models import Bailleur
+from bailleurs.models import Bailleur, TypeBailleur
 
 
 class BailleurForm(forms.Form):
@@ -67,6 +67,8 @@ class BailleurForm(forms.Form):
             + "permettant de signer la convention"
         ),
     )
+
+    type_bailleur = forms.TypedChoiceField(required=False, choices=TypeBailleur.choices)
 
     def clean_nom(self):
         nom = self.cleaned_data["nom"]
