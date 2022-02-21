@@ -8,6 +8,7 @@ from programmes.models import (
     LogementEDD,
     Lot,
     TypeHabitat,
+    TypeOperation,
     TypologieLogement,
     TypologieAnnexe,
     TypologieStationnement,
@@ -109,7 +110,9 @@ class ProgrammeForm(forms.Form):
         },
     )
     type_habitat = forms.TypedChoiceField(required=False, choices=TypeHabitat.choices)
-    type_operation = forms.CharField(required=False)
+    type_operation = forms.TypedChoiceField(
+        required=False, choices=TypeOperation.choices
+    )
     anru = forms.BooleanField(required=False)
     nb_locaux_commerciaux = forms.IntegerField(required=False)
     nb_bureaux = forms.IntegerField(required=False)

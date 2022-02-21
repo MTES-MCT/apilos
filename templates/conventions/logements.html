@@ -76,7 +76,7 @@
                                                     {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/select_enum.html" with form_input=form.typologie enum=typologies parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/select_enum.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td id="lgt_sh">
                                                     {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" onchange="compute_total_value('sh')" parent_object_field=main_object_field editable=editable_upload %}
