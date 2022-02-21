@@ -23,16 +23,27 @@ class UserViewTests(TestCase):
         self.assertNotContains(response, "Deconnexion")
 
         response = self.client.post(
-            reverse("auth:login"),
+            reverse("login"),
             {"username": "sabine", "password": "faux mot de passe"},
         )
-        self.assertEqual(response.status_code, 404)
-        response = self.client.post(
-            reverse("auth:login"), {"username": "sabine", "password": "12345"}
-        )
         self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "registration/login.html")
+        self.assertFormError(
+            response,
+            "form",
+            None,
+            "Saisissez un nom d’utilisateur et un mot de passe valides. Remarquez que chacun de"
+            + " ces champs est sensible à la casse (différenciation des majuscules/minuscules).",
+        )
+        response = self.client.post(
+            reverse("login"), {"username": "sabine", "password": "12345"}
+        )
+        self.assertEqual(response.status_code, 302)
 
         response = self.client.get(reverse("users:home"))
-        self.assertContains(response, "Deconnexion")
+        self.assertRedirects(response, reverse("conventions:index"))
+
+        response = self.client.get(reverse("conventions:index"))
+        self.assertContains(response, "Déconnexion")
         self.assertNotContains(response, "Espace instructeur")
         self.assertNotContains(response, "Espace bailleur")
