@@ -19,7 +19,56 @@
                         </div>
                         <form method="post" action="">
                             {% csrf_token %}
-                            {% include 'bailleurs/form_content.html' %}
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-md-12">
+
+                                    <h4>Entreprise bailleur</h4>
+
+                                    {% include "common/form/input_text.html" with form_input=form.nom label="Nom du bailleur" object_field="bailleur__nom__"|add:form.uuid.value %}
+
+                                    {% include "common/form/select_enum.html" with form_input=form.type_bailleur label="Type de bailleur" editable=request.user.is_superuser %}
+
+                                    <div class="fr-mb-2w">
+                                        <div class="fr-grid-row fr-grid-row--gutters">
+                                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                {% include "common/form/input_text.html" with form_input=form.siret label="SIRET" object_field="bailleur__siret__"|add:form.uuid.value %}
+                                            </div>
+                                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                                                {% include "common/form/input_number.html" with step="0.01" form_input=form.capital_social label="Capital social" mandatory=False object_field="bailleur__capital_social__"|add:form.uuid.value %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% include "common/form/input_text.html" with form_input=form.adresse label="Adresse" object_field="bailleur__adresse__"|add:form.uuid.value %}
+
+                                    <div class="fr-mb-2w">
+                                        <div class="fr-grid-row fr-grid-row--gutters">
+                                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" object_field="bailleur__code_postal__"|add:form.uuid.value %}
+                                            </div>
+                                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                                                {% include "common/form/input_text.html" with form_input=form.ville label="Ville" object_field="bailleur__ville__"|add:form.uuid.value %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h4>Signataire de la convention</h4>
+
+                                    {% include "common/form/input_text.html" with form_input=form.signataire_nom label="Nom du signataire de la convention" object_field="bailleur__signataire_nom__"|add:form.uuid.value %}
+
+                                    <div class="fr-mb-2w">
+                                        <div class="fr-grid-row fr-grid-row--gutters">
+                                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                {% include "common/form/input_text.html" with form_input=form.signataire_fonction label="Fonction du signataire de la convention" object_field="bailleur__signataire_fonction__"|add:form.uuid.value %}
+                                            </div>
+                                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                                                {% include "common/form/input_date.html" with form_input=form.signataire_date_deliberation label="Date de délibération" object_field="bailleur__signataire_date_deliberation__"|add:form.uuid.value %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% include "common/mandatory_fields_info.html" %}
 
                             <button class="fr-btn fr-fi-save-line fr-btn--icon-left" type="submit">
                                 Enregistrer
