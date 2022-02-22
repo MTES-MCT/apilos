@@ -4,8 +4,7 @@ import random
 from django.contrib.auth.models import Group, Permission
 
 from conventions.models import Convention
-from programmes.models import Financement, Lot
-from programmes.models import Programme
+from programmes.models import Financement, Lot, Programme, TypeHabitat
 from bailleurs.models import Bailleur
 from users.models import User, Role
 from users.type_models import TypeRole
@@ -288,6 +287,13 @@ def create_lot(programme: Programme, financement: Financement):
         programme=programme,
         bailleur=programme.bailleur,
         financement=financement,
+        type_habitat=random.choice(
+            [
+                TypeHabitat.COLLECTIF,
+                TypeHabitat.INDIVIDUEL,
+                TypeHabitat.MIXTE,
+            ]
+        ).value,
         edd_volumetrique=random.choice([files_and_text, "", "n'importe quoi", None]),
         edd_classique=random.choice([files_and_text, "", "n'importe quoi", None]),
     )

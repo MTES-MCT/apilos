@@ -18,7 +18,7 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
-        {% include "common/convention_edit_info.html" with convention=convention %}
+        {% include "conventions/common/form_header.html" with convention=convention %}
         {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
