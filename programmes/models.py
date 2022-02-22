@@ -149,11 +149,6 @@ class Programme(IngestableModel):
     surface_utile_totale = models.DecimalField(
         max_digits=8, decimal_places=2, null=True
     )
-    type_habitat = models.CharField(
-        max_length=25,
-        choices=TypeHabitat.choices,
-        default=TypeHabitat.INDIVIDUEL,
-    )
     type_operation = models.CharField(
         max_length=25,
         choices=TypeOperation.choices,
@@ -185,15 +180,6 @@ class Programme(IngestableModel):
 
     def __str__(self):
         return self.nom
-
-    def get_type_habitat_advanced_display(self, nb_logements=0):
-        return (
-            " "
-            + self.get_type_habitat_display().lower()
-            + ("s" if nb_logements and nb_logements > 1 else "")
-            if self.type_habitat
-            else ""
-        )
 
     def get_type_operation_advanced_display(self):
         prefix = "en "
@@ -376,6 +362,15 @@ class Lot(IngestableModel):
 
     def edd_classique_files(self):
         return model_utils.get_field_key(self, "edd_classique", "files", default={})
+
+    def get_type_habitat_advanced_display(self, nb_logements=0):
+        return (
+            " "
+            + self.get_type_habitat_display().lower()
+            + ("s" if nb_logements and nb_logements > 1 else "")
+            if self.type_habitat
+            else ""
+        )
 
     def __str__(self):
         return f"{self.programme.nom} - {self.financement}"

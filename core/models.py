@@ -40,7 +40,8 @@ def build_filter(my_cls, element_dict):
                 )
                 object_filter[my_cls._meta.get_field(pivot).attname] = (
                     my_cls._meta.get_field(pivot)
-                    .related_model.objects.filter(**sub_object_filter)[0]
+                    .related_model.objects.filter(**sub_object_filter)
+                    .first()
                     .id
                 )
             elif (
@@ -86,15 +87,15 @@ def _create_object_from_fields(cls, element, full_element):
         if isinstance(
             cls._meta.get_field(each_field), models.fields.related.ForeignKey
         ):
-            object_fields[each_field] = cls._meta.get_field(
-                each_field
-            ).related_model.objects.filter(
-                **build_filter(
-                    cls._meta.get_field(each_field).related_model, full_element
+            object_fields[each_field] = (
+                cls._meta.get_field(each_field)
+                .related_model.objects.filter(
+                    **build_filter(
+                        cls._meta.get_field(each_field).related_model, full_element
+                    )
                 )
-            )[
-                0
-            ]
+                .first()
+            )
         elif isinstance(cls._meta.get_field(each_field), models.fields.IntegerField):
             try:
                 object_fields[each_field] = int(element[each_field])
@@ -192,12 +193,14 @@ class IngestableModel(models.Model):
         ):
             my_object.__setattr__(
                 each_field,
-                cls._meta.get_field(each_field).related_model.objects.filter(
+                cls._meta.get_field(each_field)
+                .related_model.objects.filter(
                     **build_filter(
                         cls._meta.get_field(each_field).related_model,
                         full_element,
                     )
-                )[0],
+                )
+                .first(),
             )
 
         elif isinstance(cls._meta.get_field(each_field), models.fields.IntegerField):

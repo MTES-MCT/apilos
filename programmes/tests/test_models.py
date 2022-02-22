@@ -149,24 +149,25 @@ class ProgrammeModelsTest(TestCase):
         self.assertEqual(stationnement.nb_stationnements, stationnement.nb)
 
     def test_advanced_display(self):
-        programme = Programme.objects.order_by("-uuid").first()
+        lot = Lot.objects.order_by("-uuid").first()
         type_habitat = random.choice(
             [TypeHabitat.INDIVIDUEL, TypeHabitat.COLLECTIF, TypeHabitat.MIXTE]
         )
-        programme.type_habitat = type_habitat
+        lot.type_habitat = type_habitat
         self.assertEqual(
-            programme.get_type_habitat_advanced_display(0),
+            lot.get_type_habitat_advanced_display(0),
             " " + type_habitat.label.lower(),
         )
         self.assertEqual(
-            programme.get_type_habitat_advanced_display(1),
+            lot.get_type_habitat_advanced_display(1),
             " " + type_habitat.label.lower(),
         )
         self.assertEqual(
-            programme.get_type_habitat_advanced_display(2),
+            lot.get_type_habitat_advanced_display(2),
             " " + type_habitat.label.lower() + "s",
         )
 
+        programme = Programme.objects.order_by("-uuid").first()
         programme.type_operation = TypeOperation.SANSOBJET
         self.assertEqual(programme.get_type_operation_advanced_display(), "")
         type_operation = random.choice(

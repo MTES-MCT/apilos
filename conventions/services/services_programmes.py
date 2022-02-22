@@ -37,24 +37,19 @@ def select_programme_create(request):
                 request.user.check_perm("convention.add_convention", lot)
             else:
                 request.user.check_perm("convention.add_convention")
-                bailleur_id = form.cleaned_data["bailleur"]
-                nom = form.cleaned_data["nom"]
-                code_postal = form.cleaned_data["code_postal"]
-                ville = form.cleaned_data["ville"]
                 programme = Programme.objects.create(
-                    nom=nom,
-                    code_postal=code_postal,
-                    ville=ville,
-                    bailleur_id=bailleur_id,
+                    nom=form.cleaned_data["nom"],
+                    code_postal=form.cleaned_data["code_postal"],
+                    ville=form.cleaned_data["ville"],
+                    bailleur_id=form.cleaned_data["bailleur"],
                 )
                 programme.save()
-                nb_logements = form.cleaned_data["nb_logements"]
-                financement = form.cleaned_data["financement"]
                 lot = Lot.objects.create(
-                    nb_logements=nb_logements,
-                    financement=financement,
+                    nb_logements=form.cleaned_data["nb_logements"],
+                    financement=form.cleaned_data["financement"],
+                    type_habitat=form.cleaned_data["type_habitat"],
                     programme=programme,
-                    bailleur_id=bailleur_id,
+                    bailleur_id=form.cleaned_data["bailleur"],
                 )
                 lot.save()
             convention = Convention.objects.create(
@@ -187,7 +182,7 @@ def programme_update(request, convention_uuid):
                 "code_postal": programme.code_postal,
                 "ville": programme.ville,
                 "nb_logements": lot.nb_logements,
-                "type_habitat": programme.type_habitat,
+                "type_habitat": lot.type_habitat,
                 "type_operation": programme.type_operation,
                 "anru": programme.anru,
                 "autres_locaux_hors_convention": programme.autres_locaux_hors_convention,
@@ -238,7 +233,6 @@ def _save_programme_and_lot(programme, lot, form):
     programme.adresse = form.cleaned_data["adresse"]
     programme.code_postal = form.cleaned_data["code_postal"]
     programme.ville = form.cleaned_data["ville"]
-    programme.type_habitat = form.cleaned_data["type_habitat"]
     programme.type_operation = form.cleaned_data["type_operation"]
     programme.anru = form.cleaned_data["anru"]
     programme.autres_locaux_hors_convention = form.cleaned_data[
@@ -248,6 +242,7 @@ def _save_programme_and_lot(programme, lot, form):
     programme.nb_bureaux = form.cleaned_data["nb_bureaux"]
     programme.save()
     lot.nb_logements = form.cleaned_data["nb_logements"]
+    lot.type_habitat = form.cleaned_data["type_habitat"]
     lot.save()
 
 
@@ -521,6 +516,7 @@ def _programme_cadastrale_atomic_update(request, convention, programme):
 def programme_edd_update(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme")
+        .prefetch_related("lot")
         .prefetch_related("programme__logementedd_set")
         .get(uuid=convention_uuid)
     )
