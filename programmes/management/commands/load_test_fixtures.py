@@ -8,7 +8,6 @@ from programmes.models import (
     Programme,
     Financement,
     Lot,
-    TypeHabitat,
     TypeOperation,
     Zone123bis,
     ZoneABCbis,
@@ -66,13 +65,6 @@ def generate_programmes(num):
                         ZoneABCbis.ZoneB1,
                         ZoneABCbis.ZoneB2,
                         ZoneABCbis.ZoneC,
-                    ]
-                ).value,
-                "type_habitat": random.choice(
-                    [
-                        TypeHabitat.COLLECTIF,
-                        TypeHabitat.INDIVIDUEL,
-                        TypeHabitat.MIXTE,
                     ]
                 ).value,
                 "type_operation": random.choice(TypeOperation.choices)[0],

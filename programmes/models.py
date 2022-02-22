@@ -114,7 +114,6 @@ class Programme(IngestableModel):
         "surface_utile_totale": "SU totale",
         "annee_gestion_programmation": "Année Programmation retenue",
         "numero_galion": "N° Opération GALION",
-        "type_habitat": "Type d'habitat",
         "bailleur": "MOA (code SIRET)",
         "administration": "Gestionnaire (code)",
     }
@@ -150,11 +149,6 @@ class Programme(IngestableModel):
     surface_utile_totale = models.DecimalField(
         max_digits=8, decimal_places=2, null=True
     )
-    type_habitat = models.CharField(
-        max_length=25,
-        choices=TypeHabitat.choices,
-        default=TypeHabitat.INDIVIDUEL,
-    )
     type_operation = models.CharField(
         max_length=25,
         choices=TypeOperation.choices,
@@ -186,15 +180,6 @@ class Programme(IngestableModel):
 
     def __str__(self):
         return self.nom
-
-    def get_type_habitat_advanced_display(self, nb_logements=0):
-        return (
-            " "
-            + self.get_type_habitat_display().lower()
-            + ("s" if nb_logements and nb_logements > 1 else "")
-            if self.type_habitat
-            else ""
-        )
 
     def get_type_operation_advanced_display(self):
         prefix = "en "
@@ -324,12 +309,13 @@ class ReferenceCadastrale(models.Model):
 
 
 class Lot(IngestableModel):
-    pivot = ["financement", "programme"]
+    pivot = ["financement", "programme", "type_habitat"]
     mapping = {
         "financement": "Produit",
         "programme": "Nom Opération",
         "bailleur": "MOA (code SIRET)",
         "nb_logements": "Nb logts",
+        "type_habitat": "Type d'habitat",
     }
 
     id = models.AutoField(primary_key=True)
@@ -344,6 +330,13 @@ class Lot(IngestableModel):
         choices=Financement.choices,
         default=Financement.PLUS,
     )
+    type_habitat = models.CharField(
+        max_length=25,
+        choices=TypeHabitat.choices,
+        default=TypeHabitat.INDIVIDUEL,
+    )
+    edd_volumetrique = models.TextField(max_length=50000, null=True)
+    edd_classique = models.TextField(max_length=50000, null=True)
     annexe_caves = models.BooleanField(default=False)
     annexe_soussols = models.BooleanField(default=False)
     annexe_remises = models.BooleanField(default=False)
@@ -355,8 +348,6 @@ class Lot(IngestableModel):
     annexe_balcons = models.BooleanField(default=False)
     annexe_loggias = models.BooleanField(default=False)
     annexe_terrasses = models.BooleanField(default=False)
-    edd_volumetrique = models.TextField(max_length=50000, null=True)
-    edd_classique = models.TextField(max_length=50000, null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
@@ -371,6 +362,15 @@ class Lot(IngestableModel):
 
     def edd_classique_files(self):
         return model_utils.get_field_key(self, "edd_classique", "files", default={})
+
+    def get_type_habitat_advanced_display(self, nb_logements=0):
+        return (
+            " "
+            + self.get_type_habitat_display().lower()
+            + ("s" if nb_logements and nb_logements > 1 else "")
+            if self.type_habitat
+            else ""
+        )
 
     def __str__(self):
         return f"{self.programme.nom} - {self.financement}"

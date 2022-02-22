@@ -44,6 +44,13 @@ class ProgrammeSelectionForm(forms.Form):
             "required": "Le nombre de logements à conventionner est obligatoire",
         },
     )
+    type_habitat = forms.TypedChoiceField(
+        required=False,
+        choices=TypeHabitat.choices,
+        error_messages={
+            "required": "Le type d'habitat est obligatoire",
+        },
+    )
     financement = forms.TypedChoiceField(
         required=False,
         choices=Financement.choices,
@@ -86,6 +93,7 @@ class ProgrammeSelectionForm(forms.Form):
             self.validate_required_field(cleaned_data, "nom")
             self.validate_required_field(cleaned_data, "nb_logements")
             self.validate_required_field(cleaned_data, "financement")
+            self.validate_required_field(cleaned_data, "type_habitat")
             self.validate_required_field(cleaned_data, "code_postal")
             self.validate_required_field(cleaned_data, "ville")
 

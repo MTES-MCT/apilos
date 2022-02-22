@@ -12,7 +12,7 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
-        {% include "common/convention_edit_info.html" with convention=convention %}
+        {% include "conventions/common/form_header.html" with convention=convention %}
         {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
@@ -26,11 +26,11 @@
                     <div class="fr-col-md-12">
 
                         <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
-                            <p>Attention, les annexes concernées sont ici les jardins, les caves et les terrasses</p>
-                            <p>la déclaration des stationnements par type se fera à la prochaine étape</p>
+                            <p>Attention, les annexes concernées sont ici les jardins, les caves et les surfaces de terrasse au-delà de 9 m² (ex : Pour une terrasse d’une surface totale de 10 m², renseignez ici uniquement 1 m², les 9m² sont intégrés dans le calcul de la surface utile)</p>
+                            <p>La déclaration des stationnements par type se fera à la prochaine étape</p>
                         </div>
 
-                        <h4>Annexes associés aux logements exclues du calcul de la surface utile</h4>
+                        <h4>Annexes associés aux logements exclues du calcul de la surface utile et pouvant donner lieu à un loyer accessoire</h4>
 
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
                             {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='annexes' upform=upform  what='annexes'%}
