@@ -23,6 +23,7 @@ class ConventionCommentForm(forms.Form):
 
     comments_files = forms.CharField(
         required=False,
+        help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )
 
 
