@@ -2,6 +2,32 @@ from django.db import models
 from django.db.utils import DataError
 
 
+def lower_value_using_mapping(my_cls, element_dict, pivot):
+    return element_dict[my_cls.mapping[pivot]].lower()
+
+
+def check_value_using_mapping(my_cls, element_dict, pivot, value):
+    return element_dict[my_cls.mapping[pivot]].lower() == value.lower()
+
+
+def filter_choices_on_value(my_cls, element_dict, pivot):
+    return list(
+        filter(
+            lambda x: element_dict[my_cls.mapping[pivot]].lower() == x[1].lower(),
+            my_cls._meta.get_field(pivot).choices,
+        )
+    )
+
+
+def filter_choices_on_key(my_cls, element_dict, key):
+    return list(
+        filter(
+            lambda x: element_dict[key].lower() == x[1].lower(),
+            my_cls._meta.get_field(key).choices,
+        )
+    )
+
+
 def build_filter(my_cls, element_dict):
     object_filter = {}
     if isinstance(my_cls.pivot, list):
@@ -17,8 +43,16 @@ def build_filter(my_cls, element_dict):
                     .related_model.objects.filter(**sub_object_filter)[0]
                     .id
                 )
+            elif (
+                isinstance(my_cls._meta.get_field(pivot), models.fields.CharField)
+                and my_cls._meta.get_field(pivot).choices
+            ):
+                filter_on_value = filter_choices_on_value(my_cls, element_dict, pivot)
+                if filter_on_value:
+                    object_filter[pivot] = filter_on_value[0][0]
+                else:
+                    object_filter[pivot] = element_dict[my_cls.mapping[pivot]]
             else:
-
                 object_filter[pivot] = element_dict[my_cls.mapping[pivot]]
     else:
         object_filter = {my_cls.pivot: element_dict[my_cls.mapping[my_cls.pivot]]}
@@ -69,6 +103,15 @@ def _create_object_from_fields(cls, element, full_element):
                     f"IGNORED field {each_field} because value is not"
                     + f" int as required : {element[each_field]}"
                 )
+        elif (
+            isinstance(cls._meta.get_field(each_field), models.fields.CharField)
+            and cls._meta.get_field(each_field).choices
+        ):
+            filter_on_value = filter_choices_on_key(cls, element, each_field)
+            if filter_on_value:
+                object_fields[each_field] = filter_on_value[0][0]
+            else:
+                object_fields[each_field] = element[each_field]
         else:  # Manage enum case
             object_fields[each_field] = element[each_field]
     return object_fields
@@ -134,25 +177,45 @@ class IngestableModel(models.Model):
             else:
                 my_object = my_objects[0]
                 for each_field in element.keys():
-                    if isinstance(
-                        cls._meta.get_field(each_field),
-                        models.fields.related.ForeignKey,
-                    ):
-                        my_object.__setattr__(
-                            each_field,
-                            cls._meta.get_field(
-                                each_field
-                            ).related_model.objects.filter(
-                                **build_filter(
-                                    cls._meta.get_field(each_field).related_model,
-                                    full_element,
-                                )
-                            )[
-                                0
-                            ],
-                        )
-                    else:
-                        my_object.__setattr__(each_field, element[each_field])
+                    cls._object_assign_resolve_field(
+                        my_object, each_field, element, full_element
+                    )
                 my_object.save()
                 return True
         return False
+
+    @classmethod
+    def _object_assign_resolve_field(cls, my_object, each_field, element, full_element):
+        if isinstance(
+            cls._meta.get_field(each_field),
+            models.fields.related.ForeignKey,
+        ):
+            my_object.__setattr__(
+                each_field,
+                cls._meta.get_field(each_field).related_model.objects.filter(
+                    **build_filter(
+                        cls._meta.get_field(each_field).related_model,
+                        full_element,
+                    )
+                )[0],
+            )
+
+        elif isinstance(cls._meta.get_field(each_field), models.fields.IntegerField):
+            try:
+                my_object.__setattr__(each_field, int(element[each_field]))
+            except ValueError:
+                print(
+                    f"IGNORED field {each_field} because value is not"
+                    + f" int as required : {element[each_field]}"
+                )
+        elif (
+            isinstance(cls._meta.get_field(each_field), models.fields.CharField)
+            and cls._meta.get_field(each_field).choices
+        ):
+            filter_on_value = filter_choices_on_key(cls, element, each_field)
+            if filter_on_value:
+                my_object.__setattr__(each_field, filter_on_value[0][0])
+            else:
+                my_object.__setattr__(each_field, element[each_field])
+        else:
+            my_object.__setattr__(each_field, element[each_field])
