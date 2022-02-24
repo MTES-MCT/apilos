@@ -19,6 +19,7 @@ function create_comment_icon(input_id, messages) {
     svg_icon.appendChild(path_icon)
     const div_icon = document.createElement('div');
     div_icon.classList.add('content__icons', 'fr-px-1w')
+    div_icon.setAttribute('id', input_id + "_comment-img")
     div_icon.setAttribute('data-fr-opened', "false")
     div_icon.setAttribute('aria-controls', input_id + "_comment-dialog")
     div_icon.appendChild(svg_icon)
@@ -455,7 +456,8 @@ function create_comment(convention_uuid, input_id, object_field) {
             document.getElementById('textarea_' + input_id + "_comment").value = ''
         }
     });
-s}
+
+}
 
 // Save an existing comment
 function save_comment(uuid) {
@@ -562,7 +564,7 @@ function global_comment_modal_display_comments(convention_uuid, input_id, title)
         for (var i = 0; i < res.comments.length; i++) {
             create_global_comment_input(input_id, res.comments[i], res.user.is_instructeur)
         }
-        document.getElementById('global_comment_modal-title').append
+        //document.getElementById('global_comment_modal-title').append
         document.getElementById('global_comment_modal-submit').onclick = function() {
             create_comment(convention_uuid, input_id, input_id)
         }
@@ -585,7 +587,7 @@ function remove_previous_comments() {
 // Create a new comment from globale modal
 function create_global_comment_input(input_id, comment, is_instructeur=false) {
     var inside_id = "global_comment_modal_comments"
-    
+
     comments_block = document.getElementById(inside_id)
     const container_div = create_comment_container(comment.uuid)
     const owner_div = create_comment_owner(comment.uuid,comment.username, comment.is_owner, comment.statut);
@@ -609,8 +611,6 @@ function create_global_comment_input(input_id, comment, is_instructeur=false) {
     }
 
 }
-
-
 
 function display_global_comment_icon(convention_uuid, input_id) {
     var [object_name, object_field, object_uuid] = input_id.split('__')
@@ -653,7 +653,7 @@ function display_global_comment_icon(convention_uuid, input_id) {
                 comment_icon.classList.add('content__icons--blue')
                 comment_icon.classList.remove('content__icons--green')
                 comment_icon.classList.remove('content__icons--grey')
-        
+
                 // row in a table
                 parent_parent = comment_icon.parentNode.parentNode
                 if (parent_parent.tagName == 'TR') {
@@ -661,7 +661,7 @@ function display_global_comment_icon(convention_uuid, input_id) {
                         document.getElementById('download_upload_block').hidden = false
                     }
                 }
-        
+
                 if (document.getElementById('save_after_comments') !== null) {
                     document.getElementById('save_after_comments').hidden = false
                     document.getElementById('back_to_recap').hidden = true
