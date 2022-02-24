@@ -5,17 +5,9 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.conf import settings
 
-from programmes.models import (
-    TypeHabitat,
-    TypeOperation,
-    TypologieLogement,
-    TypologieAnnexe,
-    TypologieStationnement,
-    FinancementEDD,
-)
+from programmes.models import FinancementEDD
 from conventions.services import services
 from conventions.services.utils import ReturnStatus
-from conventions.models import Preteur
 
 NB_STEPS = 11
 
@@ -47,7 +39,6 @@ def select_programme_create(request):
             **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 1,
-            "financements": FinancementEDD,
         },
     )
 
@@ -123,8 +114,6 @@ def programme(request, convention_uuid):
             **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 3,
-            "types_habitat": TypeHabitat,
-            "types_operation": TypeOperation,
         },
     )
 
@@ -148,7 +137,6 @@ def cadastre(request, convention_uuid):
         "conventions/cadastre.html",
         {
             **result,
-            "typologies": TypologieLogement,
             "nb_steps": NB_STEPS,
             "convention_form_step": 4,
         },
@@ -174,8 +162,6 @@ def edd(request, convention_uuid):
         "conventions/edd.html",
         {
             **result,
-            "financements": FinancementEDD,
-            "typologies": TypologieLogement,
             "nb_steps": NB_STEPS,
             "convention_form_step": 5,
         },
@@ -202,7 +188,6 @@ def financement(request, convention_uuid):
             **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 6,
-            "preteurs": Preteur,
             "years": range(2021, 2121),
         },
     )
@@ -228,7 +213,6 @@ def logements(request, convention_uuid):
             **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 7,
-            "typologies": TypologieLogement,
         },
     )
 
@@ -253,8 +237,6 @@ def annexes(request, convention_uuid):
             **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 8,
-            "typologies": TypologieAnnexe,
-            "logement_typologies": TypologieLogement,
         },
     )
 
@@ -279,7 +261,6 @@ def stationnements(request, convention_uuid):
             **result,
             "nb_steps": NB_STEPS,
             "convention_form_step": 9,
-            "typologies": TypologieStationnement,
         },
     )
 

@@ -26,7 +26,7 @@ class BailleurList(
         This view should return a list of all the purchases
         for the currently authenticated user.
         """
-        return self.request.user.bailleurs()
+        return self.request.user.bailleurs().order_by("nom")
 
     def get(self, request):  # , format=None):
         return self.list(request)  # , *args, **kwargs)

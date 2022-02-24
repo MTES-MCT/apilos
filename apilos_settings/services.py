@@ -156,8 +156,19 @@ def edit_bailleur(request, bailleur_uuid):
     bailleur = Bailleur.objects.get(uuid=bailleur_uuid)
     success = False
     if request.method == "POST":
-        form = BailleurForm({**request.POST.dict(), "uuid": bailleur_uuid})
+        form = BailleurForm(
+            {
+                **request.POST.dict(),
+                "uuid": bailleur_uuid,
+                "type_bailleur": (
+                    request.POST.get("type_bailleur", False)
+                    if request.user.is_superuser
+                    else bailleur.type_bailleur
+                ),
+            }
+        )
         if form.is_valid():
+            bailleur.type_bailleur = form.cleaned_data["type_bailleur"]
             bailleur.nom = form.cleaned_data["nom"]
             bailleur.siret = form.cleaned_data["siret"]
             bailleur.capital_social = form.cleaned_data["capital_social"]
@@ -178,6 +189,7 @@ def edit_bailleur(request, bailleur_uuid):
                     bailleur,
                     fields=[
                         "uuid",
+                        "type_bailleur",
                         "nom",
                         "siret",
                         "capital_social",

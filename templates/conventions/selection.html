@@ -10,7 +10,7 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% include "common/convention_edit_info.html" with convention=convention %}
+        {% include "conventions/common/form_header.html" with convention=convention %}
         {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
         <div class="fr-container">
             <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
@@ -46,7 +46,7 @@
                                                         value="{{lot.uuid}}"
                                                         {% if lot.uuid|stringformat:"s"  == form.lot_uuid.value %}selected{% endif %}
                                                         {% if lot.convention_set.all and lot.uuid|stringformat:"s"  != form.lot_uuid.value %}disabled="disabled"{% endif %}>
-                                                        {{ lot.programme.ville}} - {{ lot.programme.nom }} - {{lot.nb_logements}} lgts - {{ lot.financement }}
+                                                        {{ lot.programme.ville}} - {{ lot.programme.nom }} - {{lot.nb_logements}} lgts - {{ lot.get_type_habitat_display }} - {{ lot.financement }}
                                                     </option>
                                                 {% endfor %}
                                             </select>
@@ -90,10 +90,13 @@
                                             {% include "common/form/input_text.html" with form_input=form.nom label="Nom du programme" %}
 
                                             <div class="fr-grid-row fr-grid-row--gutters">
-                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
                                                     {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" %}
                                                 </div>
-                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                                                    {% include "common/form/select_enum.html" with form_input=form.type_habitat label="Type d'habitat" %}
+                                                </div>
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
                                                     {% include "common/form/select_enum.html" with form_input=form.financement label="Financement" enum=financements %}
                                                 </div>
                                             </div>
@@ -119,7 +122,7 @@
 
                 {% include "common/mandatory_fields_info.html" %}
 
-                <div class="form-button-footer fr-col-md-12  fr-py-5w">
+                <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
                         {% if convention.uuid %}
                             {% include "common/button/next_and_save.html" with suivant='conventions:selection_update' convention_uuid=convention.uuid %}

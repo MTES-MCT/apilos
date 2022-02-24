@@ -39,20 +39,21 @@ class Command(BaseCommand):
         ws = wb[sheet_name]
 
         create_only = True
-        print("Choose the action required (default 1) ")
-        print("1: Create only, the already existing entry won't be updated")
-        print(
-            "2: Create and Update, create if it doesn't exist, "
-            + "else update entry based on its pivots"
-        )
-        inp = input("Choose your option: ")
+        if settings.ENVIRONMENT != "production":
+            print("Choose the action required (default 1) ")
+            print("1: Create only, the already existing entry won't be updated")
+            print(
+                "2: Create and Update, create if it doesn't exist, "
+                + "else update entry based on its pivots"
+            )
+            inp = input("Choose your option: ")
 
-        if inp == "1":
-            create_only = True
-        elif inp == "2":
-            create_only = False
-        else:
-            print("Using default option 1: Create only")
+            if inp == "1":
+                create_only = True
+            elif inp == "2":
+                create_only = False
+            else:
+                print("Using default option 1: Create only")
 
         # Create one object by row
         column_from_index = {}

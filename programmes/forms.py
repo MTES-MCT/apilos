@@ -8,6 +8,7 @@ from programmes.models import (
     LogementEDD,
     Lot,
     TypeHabitat,
+    TypeOperation,
     TypologieLogement,
     TypologieAnnexe,
     TypologieStationnement,
@@ -41,6 +42,13 @@ class ProgrammeSelectionForm(forms.Form):
         required=False,
         error_messages={
             "required": "Le nombre de logements à conventionner est obligatoire",
+        },
+    )
+    type_habitat = forms.TypedChoiceField(
+        required=False,
+        choices=TypeHabitat.choices,
+        error_messages={
+            "required": "Le type d'habitat est obligatoire",
         },
     )
     financement = forms.TypedChoiceField(
@@ -85,6 +93,7 @@ class ProgrammeSelectionForm(forms.Form):
             self.validate_required_field(cleaned_data, "nom")
             self.validate_required_field(cleaned_data, "nb_logements")
             self.validate_required_field(cleaned_data, "financement")
+            self.validate_required_field(cleaned_data, "type_habitat")
             self.validate_required_field(cleaned_data, "code_postal")
             self.validate_required_field(cleaned_data, "ville")
 
@@ -109,7 +118,9 @@ class ProgrammeForm(forms.Form):
         },
     )
     type_habitat = forms.TypedChoiceField(required=False, choices=TypeHabitat.choices)
-    type_operation = forms.CharField(required=False)
+    type_operation = forms.TypedChoiceField(
+        required=False, choices=TypeOperation.choices
+    )
     anru = forms.BooleanField(required=False)
     nb_locaux_commerciaux = forms.IntegerField(required=False)
     nb_bureaux = forms.IntegerField(required=False)
@@ -260,9 +271,9 @@ class ProgrammeEDDForm(forms.Form):
     lot_uuid = forms.UUIDField(required=False)
     edd_volumetrique = forms.CharField(
         required=False,
-        max_length=5000,
+        max_length=50000,
         error_messages={
-            "max_length": "L'EDD volumétrique ne doit pas excéder 5000 characters",
+            "max_length": "L'EDD volumétrique ne doit pas excéder 50000 characters",
         },
     )
     edd_volumetrique_files = forms.CharField(
@@ -283,9 +294,9 @@ class ProgrammeEDDForm(forms.Form):
     )
     edd_classique = forms.CharField(
         required=False,
-        max_length=5000,
+        max_length=50000,
         error_messages={
-            "max_length": "L'EDD classique ne doit pas excéder 5000 characters",
+            "max_length": "L'EDD classique ne doit pas excéder 50000 characters",
         },
     )
     edd_classique_files = forms.CharField(

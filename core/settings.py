@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import sys
 
 from decouple import config
 import dj_database_url
@@ -48,6 +49,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = get_env_variable("SECRET_KEY")
 DEBUG = get_env_variable("DEBUG", cast=bool)
 ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
+TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 
 # LOGGING = {
 #     'version': 1,
@@ -118,7 +120,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -127,6 +128,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
 ]
+if not TESTING:
+    MIDDLEWARE = MIDDLEWARE + [
+        "whitenoise.middleware.WhiteNoiseMiddleware",
+    ]
 
 ROOT_URLCONF = "core.urls"
 
@@ -259,13 +264,18 @@ CSP_IMG_SRC = ("'self'", "data:")
 CSP_OBJECT_SRC = "'none'"
 CSP_FONT_SRC = "'self'", "data:"
 CSP_CONNECT_SRC = ("'self'", "https://stats.data.gouv.fr/piwik.php")
-CSP_STYLE_SRC = "'self'"
+CSP_STYLE_SRC = ("'self'", "https://code.highcharts.com/css/highcharts.css")
 CSP_MANIFEST_SRC = "'self'"
 CSP_INCLUDE_NONCE_IN = [
     "script-src",
 ]
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# Disable whitenoise for test
+STATICFILES_STORAGE = (
+    "django.contrib.staticfiles.storage.StaticFilesStorage"
+    if TESTING
+    else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+)
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",

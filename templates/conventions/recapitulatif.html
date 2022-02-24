@@ -17,7 +17,7 @@
 {% block content %}
     {% with programme_uuid=programme.uuid|slugify convention_uuid=convention.uuid|slugify lot_uuid=lot.uuid|slugify %}
         <div class="fr-container-fluid ds_banner">
-            {% include "common/convention_edit_info.html" with convention=convention %}
+            {% include "conventions/common/form_header.html" with convention=convention %}
             {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
             <div class="fr-container">
                 {% csrf_token %}

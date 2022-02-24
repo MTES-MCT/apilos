@@ -6,7 +6,7 @@
                     <h1>{{convention.programme.nom}}</h1>
                 </div>
                 <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
-                    <div class="fr-col-12  ">
+                    <div class="fr-col-12">
                         <span class="{{convention.get_status_class}} fr-px-1w fr-h3">
                             {{convention.get_statut_display}}
                         </span>
@@ -32,6 +32,7 @@
                     </div>
                     <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-text--bold">
                         Nombre de logements : {{ convention.lot.nb_logements|default_if_none:'-' }}
+                        {{ convention.lot.get_type_habitat_display }}{{ convention.lot.nb_logements|pluralize }}
                     </div>
                 </div>
                 <div class="fr-grid-row fr-grid-row--gutters  fr-pl-9w">
@@ -42,10 +43,6 @@
                         Ville : {{ convention.programme.ville|default_if_none:'-' }}
                     </div>
                 </div>
-
-
-
-
             </div>
         {% endif %}
     </div>

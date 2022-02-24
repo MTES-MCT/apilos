@@ -41,6 +41,10 @@
                                         {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='nom' url_target='settings:bailleur' %}
                                     </th>
                                     <th scope="col">
+                                        Type
+                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='type_bailleur' url_target='settings:bailleur' %}
+                                    </th>
+                                    <th scope="col">
                                         Siret
                                         {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='siret' url_target='settings:bailleur' %}
                                     </th>
@@ -55,6 +59,7 @@
                                 {% for bailleur in bailleurs %}
                                     <tr>
                                         <td>{{ bailleur.nom }}</td>
+                                        <td>{{ bailleur.get_type_bailleur_display }}</td>
                                         <td>{{ bailleur.siret }}</td>
                                         <td>{{ bailleur.ville }}</td>
                                         <td>

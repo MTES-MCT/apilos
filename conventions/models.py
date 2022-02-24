@@ -64,9 +64,11 @@ class Convention(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     def __str__(self):
+        programme = self.programme
+        lot = self.lot
         return (
-            f"{self.programme.ville} - {self.programme.nom} - "
-            + f"{self.lot.nb_logements} lgts - {self.lot.financement}"
+            f"{programme.ville} - {programme.nom} - "
+            + f"{lot.nb_logements} lgts - {lot.get_type_habitat_display()} - {lot.financement}"
         )
 
     # to do:

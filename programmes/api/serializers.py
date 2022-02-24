@@ -37,7 +37,6 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
             "zone_123_bis",
             "zone_abc_bis",
             "surface_utile_totale",
-            "type_habitat",
             "type_operation",
             "anru",
             "nb_locaux_commerciaux",
@@ -137,7 +136,6 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
             "zone_123_bis",
             "zone_abc_bis",
             "surface_utile_totale",
-            "type_habitat",
             "type_operation",
             "anru",
             "nb_locaux_commerciaux",
@@ -173,6 +171,7 @@ class LotSerializer(serializers.HyperlinkedModelSerializer):
             "programme_uuid",
             "bailleur",
             "financement",
+            "type_habitat",
         ]
         read_only_fields = (
             "edd_volumetrique",

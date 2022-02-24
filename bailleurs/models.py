@@ -39,7 +39,7 @@ class Bailleur(IngestableModel):
         "adresse": "MOA Adresse 1",
         "code_postal": "MOA Code postal",
         "ville": "MOA Ville",
-        "type_bailleur": "Famille MOA",
+        # "type_bailleur": "Famille MOA", -> doesn't exists in the last version of file
     }
 
     id = models.AutoField(primary_key=True)
