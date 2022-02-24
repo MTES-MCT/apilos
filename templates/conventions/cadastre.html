@@ -9,6 +9,7 @@
     <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
 {% block css_extras %}
@@ -100,7 +101,18 @@
                                 <thead>
                                     <tr>
                                         {% if convention.statut != 'BROUILLON' %}
-                                            {% include 'common/utils/comments_header.html' with comment_prefix='reference_cadastrale__uuid__' header_id='header_icon_reference_cadastrale' %}
+                                            <th scope="col">
+                                                <div id="reference_cadastrale_comment_factory"></div>
+                                                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                                    const cf = new CommentFactory({
+                                                        container_id : 'reference_cadastrale_comment_factory',
+                                                        convention_uuid : '{{convention.uuid}}',
+                                                        object_name : 'reference_cadastrale',
+                                                        object_field : 'all',
+                                                        loading_img : '{% static "icons/loading.gif" %}'
+                                                    })
+                                                </script>
+                                            </th>
                                         {% endif %}
                                         <th scope="col">Section {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col">Numéro {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>

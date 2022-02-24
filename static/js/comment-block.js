@@ -110,7 +110,8 @@ function create_comment_date(uuid, date) {
     date_div.setAttribute('id','comment_date_' + uuid)
     date_div.classList.add('fr-text-sm')
     date_div.classList.add('text-italic')
-    date_div.innerText = "le " + date
+    console.log(date)
+    date_div.innerText = 'le ' + format_french_date(date)
     return date_div
 }
 
@@ -482,12 +483,21 @@ function save_comment(uuid) {
         }
     }).then(res => {
         if (res.success) {
-            document.getElementById('comment_date_' + uuid).innerText = 'le ' + res.comment.mis_a_jour_le + ' (Enregistré)'
+            document.getElementById('comment_date_' + uuid).innerText = 'le ' + format_french_date(res.comment.mis_a_jour_le) + ' (Enregistré)'
             setTimeout(function(){
-                document.getElementById('comment_date_' + uuid).innerText = 'le ' + res.comment.mis_a_jour_le
+                document.getElementById('comment_date_' + uuid).innerText = 'le ' + format_french_date(res.comment.mis_a_jour_le)
             }, 5000);
         }
     });
+}
+
+function format_french_date(date) {
+    formatted_date = new Date(date).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric', hour:'2-digit', minute:'2-digit' })
+    if (formatted_date == 'Invalid Date')
+    {
+        formatted_date = date
+    }
+    return formatted_date
 }
 
 
