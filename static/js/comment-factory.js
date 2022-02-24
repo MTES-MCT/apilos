@@ -133,36 +133,37 @@ class CommentFactory {
         var inside_id = this.comment_dialog_id + "_comments"
 
         var comments_block = document.getElementById(inside_id)
-        const container_div = create_comment_container(comment.uuid)
-        const owner_div = create_comment_owner(comment.uuid,comment.username, comment.is_owner, comment.statut);
+        const container_div = this.create_comment_container(comment.uuid)
+        const owner_div = this.create_comment_owner(comment.uuid,comment.username, comment.is_owner, comment.statut);
         container_div.appendChild(owner_div)
-        const date_div = create_comment_date(comment.uuid,comment.mis_a_jour_le);
+        const date_div = this.create_comment_date(comment.uuid,comment.mis_a_jour_le);
         container_div.appendChild(date_div)
-        const uuid_div = create_comment_uuid(comment.uuid);
+        const uuid_div = this.create_comment_uuid(comment.uuid);
         container_div.appendChild(uuid_div)
-        const statut_div = create_comment_statut(this.comment_dialog_id, comment.uuid, comment.statut);
+        const statut_div = this.create_comment_statut(this.comment_dialog_id, comment.uuid, comment.statut);
         container_div.appendChild(statut_div)
-        const textarea_div = create_comment_textarea(comment.uuid, comment.message, comment.statut, comment.is_owner);
+        const textarea_div = this.create_comment_textarea(comment.uuid, comment.message, comment.statut, comment.is_owner);
         container_div.appendChild(textarea_div)
-        const ul_buttons = create_comment_button(comment.uuid)
+        const ul_buttons = this.create_comment_button(comment.uuid)
         container_div.appendChild(ul_buttons)
         document.getElementById(inside_id).append(container_div)
 
         this.init_comment_button(comment.uuid, comment.statut, comment.is_owner, is_instructeur)
 
         if (comment.statut == 'CLOS') {
-            _hide_textarea_for_close_comment(comment.uuid)
+            this._hide_textarea_for_close_comment(comment.uuid)
         }
     }
+
 
 
     init_comment_button(uuid, comment_statut, is_owner, is_instructeur) {
         // button 'Marquer comme clos'
         if (is_instructeur && comment_statut != 'CLOS') {
-            document.getElementById('block_comment_close_' + uuid).classList.remove('button-hidden')
+            document.getElementById('div_button_close_' + uuid).classList.remove('button-hidden')
         }
         else {
-            document.getElementById('block_comment_close_' + uuid).classList.add('button-hidden')
+            document.getElementById('div_button_close_' + uuid).classList.add('button-hidden')
         }
         document.getElementById('comment_close_' + uuid).onclick = e => {
             this.update_status_comment(uuid, 'CLOS')
@@ -170,10 +171,10 @@ class CommentFactory {
 
         // button 'Marquer comme résolu'
         if (comment_statut == 'OUVERT') {
-            document.getElementById('block_comment_resolve_' + uuid).classList.remove('button-hidden')
+            document.getElementById('div_button_resolve_' + uuid).classList.remove('button-hidden')
         }
         else {
-            document.getElementById('block_comment_resolve_' + uuid).classList.add('button-hidden')
+            document.getElementById('div_button_resolve_' + uuid).classList.add('button-hidden')
         }
         document.getElementById('comment_resolve_' + uuid).onclick = e => {
             this.update_status_comment(uuid, 'RESOLU')
@@ -181,10 +182,11 @@ class CommentFactory {
 
         // button 'Ré-ouvrir'
         if (comment_statut == 'RESOLU') { //  || (comment_statut == 'CLOS' && is_instructeur)
-            document.getElementById('block_comment_reopen_' + uuid).classList.remove('button-hidden')
+            document.getElementById('div_button_reopen_' + uuid).classList.remove('button-hidden')
         }
         else {
-            document.getElementById('block_comment_reopen_' + uuid).classList.add('button-hidden')
+            console.log('hide div_button_reopen_' + uuid)
+            document.getElementById('div_button_reopen_' + uuid).classList.add('button-hidden')
         }
         document.getElementById('comment_reopen_' + uuid).onclick = e => {
             this.update_status_comment(uuid, 'OUVERT')
@@ -192,10 +194,10 @@ class CommentFactory {
 
         // button 'Enregistrer'
         if (comment_statut == 'OUVERT' && (is_owner && is_owner != 'False')) {
-            document.getElementById('block_comment_save_' + uuid).classList.remove('button-hidden')
+            document.getElementById('div_button_save_' + uuid).classList.remove('button-hidden')
         }
         else {
-            document.getElementById('block_comment_save_' + uuid).classList.add('button-hidden')
+            document.getElementById('div_button_save_' + uuid).classList.add('button-hidden')
         }
         document.getElementById('comment_save_' + uuid).onclick = e => {
             save_comment(uuid)
@@ -392,10 +394,9 @@ class CommentFactory {
         }
     }
 
-/*
- * Functions to call backend
- *
- */
+    /*
+    * Functions which call backend
+    */
 
     // get comments
     get_comments(callback) {
@@ -496,6 +497,151 @@ class CommentFactory {
         });
     }
 
+
+    /*
+    * End functions which call backend
+    */
+
+
+    /*
+     * Create html blocks
+     */
+
+    //div container
+    create_comment_container(uuid) {
+        const container_div = document.createElement('div');
+        container_div.setAttribute('id','comment_container_' + uuid)
+        return container_div
+    }
+
+    //<div class="fr-mt-3w"><b>Raphaëlle Neyton (vous) :</b></div>
+    create_comment_owner(uuid, username, is_owner, status) {
+        const owner_div = document.createElement('div');
+        owner_div.classList.add('fr-mt-3w')
+        owner_div.classList.add('block--row-strech')
+
+        const owner_span = document.createElement('span');
+        owner_span.classList.add('block--row-strech-1')
+        owner_span.classList.add('text-bold')
+        inner_text = username
+        if (is_owner && is_owner != 'False') {
+            inner_text = inner_text + " (vous)"
+        }
+        inner_text = inner_text + " : "
+        owner_span.innerText = inner_text
+        owner_div.appendChild(owner_span)
+
+        const status_span = document.createElement('span');
+        status_span.setAttribute('id','comment_status_' + uuid)
+        status_span.classList.add('text-bold')
+        if (status == 'OUVERT') {
+            status_span.classList.add('status_ouvert')
+            status_span.innerText = 'Ouvert'
+        }
+        if (status == 'RESOLU') {
+            status_span.classList.add('status_resolu')
+            status_span.innerText = 'Résolu'
+        }
+        if (status == 'CLOS') {
+            status_span.classList.add('status_clos')
+            status_span.innerText = 'Clos'
+        }
+        owner_div.appendChild(status_span)
+        return owner_div
+    }
+
+    //<div class="fr-text-sm text-italic"><i>le 3 novembre 2021 12:06</i></div>
+    create_comment_date(uuid, date) {
+        const date_div = document.createElement('div');
+        date_div.setAttribute('id','comment_date_' + uuid)
+        date_div.classList.add('fr-text-sm')
+        date_div.classList.add('text-italic')
+        date_div.innerText = "le " + date
+        return date_div
+    }
+
+    //<input type="hidden" value="fb7d6bf9-291a-4b3d-b2a6-25fea7e20dcb">
+    create_comment_uuid(uuid) {
+        const uuid_div = document.createElement('input');
+        uuid_div.setAttribute('type', "hidden")
+        uuid_div.value = uuid
+        return uuid_div
+    }
+
+    //<input type="hidden" value="fb7d6bf9-291a-4b3d-b2a6-25fea7e20dcb">
+    create_comment_statut(input_id, uuid, statut) {
+        const statut_div = document.createElement('input');
+        statut_div.setAttribute('id','comment_statut_' + uuid)
+        statut_div.setAttribute('name', input_id + "_comment_statut")
+        statut_div.setAttribute('type', "hidden")
+        statut_div.value = statut
+        return statut_div
+    }
+
+    //<textarea class="fr-input" aria-describedby="text-input-error-desc-error" type="text" id="comment_fb7d6bf9-291a-4b3d-b2a6-25fea7e20dcb" rows="5">tt</textarea>
+    create_comment_textarea(uuid, message, status, is_owner=false) {
+        const textarea_div = document.createElement('div');
+        textarea_div.setAttribute('id', "comment_textarea_div_" + uuid)
+        const textarea_textarea = document.createElement('textarea');
+        textarea_textarea.classList.add('fr-input')
+        textarea_textarea.setAttribute('aria-describedby', "text-input-error-desc-error")
+        textarea_textarea.setAttribute('type', "text")
+        if (is_owner && is_owner != 'False' && status == 'OUVERT') {
+            textarea_textarea.disabled = false
+        }
+        else {
+            textarea_textarea.disabled = true
+        }
+        textarea_textarea.setAttribute('id', "comment_" + uuid)
+
+        textarea_textarea.addEventListener('input', function() {
+            rows = this.value.split(/\r\n|\r|\n/).length
+            this.setAttribute('rows', rows)
+        })
+
+        textarea_textarea.value = message
+        textarea_textarea.setAttribute('rows', message.split(/\r\n|\r|\n/).length)
+
+        textarea_div.appendChild(textarea_textarea)
+        return textarea_div
+    }
+
+    // <ul class="fr-mt-1w fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--sm">
+    //     <li id="div_button_close_96c201c0-c0ce-4400-9b73-09803961e6a1" class="button-hidden">
+    //         <button id="comment_close_96c201c0-c0ce-4400-9b73-09803961e6a1" type="button" class="fr-btn fr-btn--sm fr-btn--grey">Marquer comme clos</button>
+    //     </li>
+    //     .....
+    // </ul>
+    create_comment_button(uuid) {
+        const ul_buttons = document.createElement('ul')
+        ul_buttons.classList.add('fr-mt-1w', 'fr-btns-group', 'fr-btns-group--right', 'fr-btns-group--inline-reverse', 'fr-btns-group--inline-lg', 'fr-btns-group--icon-left', 'fr-btns-group--sm')
+        ul_buttons.appendChild(this.create_li_button(uuid, 'close', 'Marquer comme clos', 'fr-btn--grey'))
+        ul_buttons.appendChild(this.create_li_button(uuid, 'resolve', 'Marquer comme résolu', 'fr-btn--green'))
+        ul_buttons.appendChild(this.create_li_button(uuid, 'reopen', 'Ré-ouvrir'))
+        ul_buttons.appendChild(this.create_li_button(uuid, 'save', 'Modifier'))
+        return ul_buttons
+    }
+
+    // <li id="div_button_close_96c201c0-c0ce-4400-9b73-09803961e6a1" class="button-hidden">
+    //     <button id="button_close_96c201c0-c0ce-4400-9b73-09803961e6a1" type="button" class="fr-btn fr-btn--sm fr-btn--grey">Marquer comme clos</button>
+    // </li>
+    create_li_button(uuid, action, label, additionalButtonClass=null) {
+        const button_action = document.createElement('button')
+        button_action.setAttribute('id', 'button_' + action + '_' + uuid)
+        button_action.setAttribute('type', 'button')
+        button_action.classList.add('fr-btn', 'fr-btn--sm')
+        if (additionalButtonClass != null) {
+            button_action.classList.add(additionalButtonClass)
+        }
+        button_action.innerText = label
+        const li_action = document.createElement('li')
+        li_action.setAttribute('id', 'div_button_' + action + '_' + uuid)
+        li_action.appendChild(button_action)
+        return li_action
+    }
+
+    /*
+     * End create html blocks
+     */
+
 }
-
-
