@@ -55,7 +55,86 @@
                                 <thead>
                                     <tr>
                                         {% if convention.statut != 'BROUILLON' %}
-                                            {% include 'common/utils/comments_header.html' with comment_prefix='annexe__uuid__' header_id='header_icon_annexe' %}
+
+                                        <th scope="col">
+                                            {% with main_comment_id="annexe__all" %}
+                                                <div id='{{main_comment_id}}_comment'>
+                                                    <div class="content__icons content__icons--blue{% if small %}content__icons--small{% endif %}"
+                                                        id="{{main_comment_id}}_comment-img"
+                                                        data-fr-opened="false"
+                                                        aria-controls="global_comment_modal-dialog">
+                                                        <svg role="img" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24" aria-labelledby="chatIconTitle">
+                                                            <title id="chatIconTitle">Annexes comments</title>
+                                                            <path d="M8.82388455,18.5880577 L4,21 L4.65322944,16.4273939 C3.00629211,15.0013 2,13.0946628 2,11 C2,6.581722 6.4771525,3 12,3 C17.5228475,3 22,6.581722 22,11 C22,15.418278 17.5228475,19 12,19 C10.8897425,19 9.82174472,18.8552518 8.82388455,18.5880577 Z"></path>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            
+                                                <dialog aria-labelledby="global_comment_modal-title" id="global_comment_modal-dialog" class="fr-modal" role="dialog" >
+                                                    <div class="fr-container fr-container--fluid fr-container-md">
+                                                        <div class="fr-grid-row fr-grid-row--center">
+                                                            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                                            
+                                                                <div id="loading">
+                                                                    <img id="loading-image" src="{% static "icons/loading.gif" %}" alt="Loading..." />
+                                                                </div>
+                                            
+                                                                <div class="fr-modal__body">
+                                                                    <div class="fr-modal__header">
+                                                                        <button type="button" class="fr-link--close fr-link" aria-controls="global_comment_modal-dialog">Fermer</button>
+                                                                    </div>
+                                                                    <div class="fr-modal__content fr-mb-1w" id="global_in_page_modal_comment">
+                                                                        <h3 id="global_comment_modal-title" class="fr-modal__title">
+                                                                            <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+                                                                            <span id="global_comment_modal-title_text"></span>
+                                                                        </h3>
+                                                                        <div id="global_comment_modal_comments">
+                                                                        </div>
+                                                                        <div id="global_in_page_new_comment">
+                                                                            <div class='fr-mt-3w fr-mb-1w'><b>Ajouter un commentaire :</b></div>
+                                                                            <textarea
+                                                                                class="fr-input"
+                                                                                aria-describedby="text-input-error-desc-error"
+                                                                                type="text"
+                                                                                id="textarea_global_comment_modal"
+                                                                                name="textarea_global_comment_modal"></textarea>
+                                                                            <ul class="fr-mt-1w fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--sm">
+                                                                                <li>
+                                                                                    <button id='global_comment_modal-submit' type="button" class="fr-btn fr-btn--sm">
+                                                                                        Commenter
+                                                                                    </button>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                            
+                                            
+                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </dialog>
+                                                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                                    document.getElementById("textarea_global_comment_modal").addEventListener('input', function() {
+                                                        rows = this.value.split(/\r\n|\r|\n/).length
+                                                        this.setAttribute('rows', rows)
+                                                    })
+                                                </script>
+                                                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                                    display_global_comment_icon('{{convention.uuid}}','{{main_comment_id}}')
+
+                                                    document.getElementById('global_comment_modal-submit').onclick = function() {
+                                                        console.log('manage commit to do')
+                                                    }
+                                                    document.getElementById('{{main_comment_id}}_comment').onclick = function() {
+                                                        global_comment_modal_display_comments('{{convention.uuid}}','{{main_comment_id}}', 'Annexes')
+                                                    }
+                                                    
+                                                </script>
+                                            {% endwith %}
+                                        
+                                        </th>
                                         {% endif %}
                                         <th scope="col" class="col__width--150">Type d'annexe {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col" class="col__width--200">Désignation des logements {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>

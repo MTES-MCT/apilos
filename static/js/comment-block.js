@@ -19,7 +19,6 @@ function create_comment_icon(input_id, messages) {
     svg_icon.appendChild(path_icon)
     const div_icon = document.createElement('div');
     div_icon.classList.add('content__icons', 'fr-px-1w')
-    div_icon.setAttribute('id', input_id + "_comment-img")
     div_icon.setAttribute('data-fr-opened', "false")
     div_icon.setAttribute('aria-controls', input_id + "_comment-dialog")
     div_icon.appendChild(svg_icon)
@@ -234,15 +233,18 @@ function _hide_textarea_for_close_comment(comment_uuid) {
         document.getElementById("comment_container_" + comment_uuid).addEventListener('click', function(){
             document.getElementById("comment_textarea_div_" + comment_uuid).hidden = !document.getElementById("comment_textarea_div_" + comment_uuid).hidden
     })
-    console.log(document.getElementById("comment_" + comment_uuid).innerText)
-//    document.getElementById("comment_" + comment_uuid).style.height = document.getElementById("comment_" + comment_uuid).scrollHeight + 'px';
-
-
 }
 
 
 function display_comment_icon(input_id) {
-    statuts = document.getElementsByName(input_id + "_comment_statut")
+    var [object_name, object_field, object_uuid] = input_id.split('__')
+    if (object_field == 'all') {
+        status_name = "global_in_page_comment_statut"
+    }
+    else {
+        status_name = input_id + "_comment_statut"
+    }
+    statuts = document.getElementsByName(status_name)
     var nb_open = 0
     var nb_resolu = 0
     var nb_clos = 0
@@ -295,9 +297,11 @@ function display_comment_icon(input_id) {
             document.getElementById('back_to_recap').hidden = true
         }
 
-        document.getElementById(input_id + '_div').onclick = null
-        document.getElementById(input_id + '_div').onmouseover = null
-        document.getElementById(input_id + '_div').onmouseleave = null
+        if (document.getElementById(input_id + '_div') !== null) {
+            document.getElementById(input_id + '_div').onclick = null
+            document.getElementById(input_id + '_div').onmouseover = null
+            document.getElementById(input_id + '_div').onmouseleave = null
+        }
         comment_icon.hidden = false
     }
     else if (nb_resolu && !nb_open) { // green & displayed
@@ -314,9 +318,11 @@ function display_comment_icon(input_id) {
             }
         }
 
-        document.getElementById(input_id + '_div').onclick = null
-        document.getElementById(input_id + '_div').onmouseover = null
-        document.getElementById(input_id + '_div').onmouseleave = null
+        if (document.getElementById(input_id + '_div') !== null) {
+            document.getElementById(input_id + '_div').onclick = null
+            document.getElementById(input_id + '_div').onmouseover = null
+            document.getElementById(input_id + '_div').onmouseleave = null
+        }
         comment_icon.hidden = false
     }
     else if (nb_clos && !nb_resolu && !nb_open) { // grey & displayed
@@ -324,9 +330,11 @@ function display_comment_icon(input_id) {
         comment_icon.classList.remove('content__icons--blue')
         comment_icon.classList.remove('content__icons--green')
         comment_icon.classList.add('content__icons--grey')
-        document.getElementById(input_id + '_div').onclick = null
-        document.getElementById(input_id + '_div').onmouseover = null
-        document.getElementById(input_id + '_div').onmouseleave = null
+        if (document.getElementById(input_id + '_div') !== null) {
+            document.getElementById(input_id + '_div').onclick = null
+            document.getElementById(input_id + '_div').onmouseover = null
+            document.getElementById(input_id + '_div').onmouseleave = null
+        }
         comment_icon.hidden = false
     }
     else { // blue & hidden
@@ -334,14 +342,16 @@ function display_comment_icon(input_id) {
         comment_icon.classList.add('content__icons--blue')
         comment_icon.classList.remove('content__icons--green')
         comment_icon.classList.remove('content__icons--grey')
-        document.getElementById(input_id + '_div').onclick = function() {
-            document.getElementById(input_id + '_comment').hidden=false
-        }
-        document.getElementById(input_id + '_div').onmouseover = function() {
-            document.getElementById(input_id + '_comment').hidden=false
-        }
-        document.getElementById(input_id + '_div').onmouseleave = function(){
-            document.getElementById(input_id + '_comment').hidden=true
+        if (document.getElementById(input_id + '_div') !== null) {
+            document.getElementById(input_id + '_div').onclick = function() {
+                document.getElementById(input_id + '_comment').hidden=false
+            }
+            document.getElementById(input_id + '_div').onmouseover = function() {
+                document.getElementById(input_id + '_comment').hidden=false
+            }
+            document.getElementById(input_id + '_div').onmouseleave = function(){
+                document.getElementById(input_id + '_comment').hidden=true
+            }
         }
     }
 }
@@ -396,7 +406,12 @@ function init_comment_button(input_id, uuid, comment_statut, is_owner, is_instru
 // Create a new comment
 function create_comment(convention_uuid, input_id, object_field) {
     var [object_name, object_field, object_uuid] = object_field.split('__')
-    comment = document.getElementById('textarea_' + input_id + '_comment').value
+    if (object_field == 'all') {
+        comment = document.getElementById('textarea_global_comment_modal').value
+    }
+    else {
+        comment = document.getElementById('textarea_' + input_id + '_comment').value
+    }
     csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value
 
     var headers = {
@@ -421,14 +436,26 @@ function create_comment(convention_uuid, input_id, object_field) {
             return res;
         }
     }).then(res => {
-        create_comment_input(input_id, res.comment, true, res.user.is_instructeur)
-        display_comment_icon(input_id)
-        document.getElementById('textarea_' + input_id + "_comment").value = ''
-    });
+        if (res.success) {
+            if (object_field == 'all') {
 
-    // Close the dialogbox
-    //document.getElementById(input_id + '_comment-img').setAttribute('data-fr-opened',false)
-}
+                create_global_comment_input(object_name + "__" + object_field, res.comment, res.user.is_instructeur)
+                display_comment_icon(object_name + "__" + object_field)
+            }
+            else {
+                create_comment_input(input_id, res.comment, true, res.user.is_instructeur)
+                display_comment_icon(input_id)
+            }
+
+        }
+        if (object_field == 'all') {
+            document.getElementById('textarea_global_comment_modal').value = ''
+        }
+        else {
+            document.getElementById('textarea_' + input_id + "_comment").value = ''
+        }
+    });
+s}
 
 // Save an existing comment
 function save_comment(uuid) {
@@ -499,8 +526,177 @@ function update_status_comment(input_id, uuid, status) {
             if (status == 'CLOS') {
                 _hide_textarea_for_close_comment(comment.uuid)
             }
-        display_comment_icon(input_id)
+            display_comment_icon(input_id)
         }
     });
 }
 
+
+/*
+ * Manage with a global dialog modal that we will update on display
+ */
+function global_comment_modal_display_comments(convention_uuid, input_id, title) {
+    // display loading div over the modal : to be improved
+    document.getElementById('loading').hidden = false
+    update_global_modal_title(title)
+    remove_previous_comments()
+
+    var [object_name, object_field, object_uuid] = input_id.split('__')
+
+    var headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    }
+
+    fetch('/comments/convention/'+convention_uuid+'?'+ new URLSearchParams({
+        object_name: object_name,
+    }) , {
+        method: 'get',
+        headers: headers,
+    }).then(function(response) {
+        if (response.status == 200) {
+            res = response.json()
+            return res;
+        }
+    }).then(res => {
+        for (var i = 0; i < res.comments.length; i++) {
+            create_global_comment_input(input_id, res.comments[i], res.user.is_instructeur)
+        }
+        document.getElementById('global_comment_modal-title').append
+        document.getElementById('global_comment_modal-submit').onclick = function() {
+            create_comment(convention_uuid, input_id, input_id)
+        }
+    }).finally(
+        // remove loading layer over the modal
+        document.getElementById('loading').hidden = true
+    );
+}
+
+// update title
+function update_global_modal_title(title){
+    document.getElementById('global_comment_modal-title_text').innerText = title
+}
+
+// remove comments inside global modal
+function remove_previous_comments() {
+    document.getElementById('global_comment_modal_comments').innerHTML = "";
+}
+
+// Create a new comment from globale modal
+function create_global_comment_input(input_id, comment, is_instructeur=false) {
+    var inside_id = "global_comment_modal_comments"
+    
+    comments_block = document.getElementById(inside_id)
+    const container_div = create_comment_container(comment.uuid)
+    const owner_div = create_comment_owner(comment.uuid,comment.username, comment.is_owner, comment.statut);
+    container_div.appendChild(owner_div)
+    const date_div = create_comment_date(comment.uuid,comment.mis_a_jour_le);
+    container_div.appendChild(date_div)
+    const uuid_div = create_comment_uuid(comment.uuid);
+    container_div.appendChild(uuid_div)
+    const statut_div = create_comment_statut("global_in_page", comment.uuid, comment.statut);
+    container_div.appendChild(statut_div)
+    const textarea_div = create_comment_textarea(comment.uuid, comment.message, comment.statut, comment.is_owner);
+    container_div.appendChild(textarea_div)
+    const ul_buttons = create_comment_button(comment.uuid)
+    container_div.appendChild(ul_buttons)
+    document.getElementById(inside_id).append(container_div)
+
+    init_comment_button(input_id, comment.uuid, comment.statut, comment.is_owner, is_instructeur)
+
+    if (comment.statut == 'CLOS') {
+        _hide_textarea_for_close_comment(comment.uuid)
+    }
+
+}
+
+
+
+function display_global_comment_icon(convention_uuid, input_id) {
+    var [object_name, object_field, object_uuid] = input_id.split('__')
+
+    var headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    }
+
+    fetch('/comments/convention/'+convention_uuid+'?'+ new URLSearchParams({
+        object_name: object_name,
+    }) , {
+        method: 'get',
+        headers: headers,
+    }).then(function(response) {
+        if (response.status == 200) {
+            res = response.json()
+            return res;
+        }
+    }).then(res => {
+        if (res.success) {
+            var nb_open = 0
+            var nb_resolu = 0
+            var nb_clos = 0
+            for (var i = 0; i < res.comments.length; i++) {
+                if (res.comments[i].statut == 'OUVERT') {
+                    nb_open += 1
+                }
+                if (res.comments[i].statut == 'RESOLU') {
+                    nb_resolu += 1
+                }
+                if (res.comments[i].statut == 'CLOS') {
+                    nb_clos += 1
+                }
+            }
+
+
+            if (nb_open) { // blue & displayed
+                comment_icon = document.getElementById(input_id + '_comment')
+                comment_icon.classList.add('content__icons--blue')
+                comment_icon.classList.remove('content__icons--green')
+                comment_icon.classList.remove('content__icons--grey')
+        
+                // row in a table
+                parent_parent = comment_icon.parentNode.parentNode
+                if (parent_parent.tagName == 'TR') {
+                    if (document.getElementById('download_upload_block') !== null) {
+                        document.getElementById('download_upload_block').hidden = false
+                    }
+                }
+        
+                if (document.getElementById('save_after_comments') !== null) {
+                    document.getElementById('save_after_comments').hidden = false
+                    document.getElementById('back_to_recap').hidden = true
+                }
+                comment_icon.hidden = false
+            }
+            else if (nb_resolu && !nb_open) { // green & displayed
+                comment_icon = document.getElementById(input_id + '_comment')
+                comment_icon.classList.remove('content__icons--blue')
+                comment_icon.classList.add('content__icons--green')
+                comment_icon.classList.remove('content__icons--grey')
+                // row in a table
+                parent_parent = comment_icon.parentNode.parentNode
+                if (parent_parent.tagName == 'TR') {
+                    if (document.getElementById('download_upload_block') !== null) {
+                        document.getElementById('download_upload_block').hidden = false
+                    }
+                }
+                comment_icon.hidden = false
+            }
+            else if (nb_clos && !nb_resolu && !nb_open) { // grey & displayed
+                comment_icon = document.getElementById(input_id + '_comment')
+                comment_icon.classList.remove('content__icons--blue')
+                comment_icon.classList.remove('content__icons--green')
+                comment_icon.classList.add('content__icons--grey')
+                comment_icon.hidden = false
+            }
+            else { // blue & hidden
+                comment_icon = document.getElementById(input_id + '_comment')
+                comment_icon.classList.add('content__icons--blue')
+                comment_icon.classList.remove('content__icons--green')
+                comment_icon.classList.remove('content__icons--grey')
+            }
+
+        }
+    });
+
+}
