@@ -57,18 +57,7 @@
                                 <thead>
                                     <tr>
                                         {% if convention.statut != 'BROUILLON' %}
-                                            <th scope="col">
-                                                <div id="annexe_comment_factory"></div>
-                                                <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                                    const cf = new CommentFactory({
-                                                        container_id : 'annexe_comment_factory',
-                                                        convention_uuid : '{{convention.uuid}}',
-                                                        object_name : 'annexe',
-                                                        object_field : 'all',
-                                                        loading_img : '{% static "icons/loading.gif" %}'
-                                                    })
-                                                </script>
-                                            </th>
+                                            {% include 'common/utils/comments_header.html' with object_name='annexe' %}
                                         {% endif %}
                                         <th scope="col" class="col__width--150">Type d'annexe {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col" class="col__width--200">Désignation des logements {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>

@@ -6,6 +6,7 @@
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
 {% block content %}
@@ -49,7 +50,7 @@
                                 <thead>
                                     <tr>
                                         {% if convention.statut != 'BROUILLON' %}
-                                            {% include 'common/utils/comments_header.html' with comment_prefix='pret__uuid__' header_id='header_icon_pret' %}
+                                            {% include 'common/utils/comments_header.html' with object_name='pret' %}
                                         {% endif %}
                                         <th scope="col">Numéro</th>
                                         <th scope="col">Date d'octroi</th>

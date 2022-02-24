@@ -502,7 +502,6 @@ class CommentFactory {
                 }
                 this.display_comment_icon()
 
-                console.log(res)
                 document.getElementById('comment_date_' + this.comment_icon_id + '_' + uuid).innerText = 'le ' + this.format_french_date(res.comment.mis_a_jour_le) + ' (Enregistré)'
                 setTimeout(e => {
                     document.getElementById('comment_date_' + this.comment_icon_id + '_' + uuid).innerText = 'le ' + this.format_french_date(res.comment.mis_a_jour_le)

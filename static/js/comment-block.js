@@ -110,7 +110,6 @@ function create_comment_date(uuid, date) {
     date_div.setAttribute('id','comment_date_' + uuid)
     date_div.classList.add('fr-text-sm')
     date_div.classList.add('text-italic')
-    console.log(date)
     date_div.innerText = 'le ' + format_french_date(date)
     return date_div
 }
