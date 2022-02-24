@@ -8,6 +8,7 @@
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
 {% block content %}
@@ -32,6 +33,7 @@
 
                         <h4>Annexes associés aux logements exclues du calcul de la surface utile et pouvant donner lieu à un loyer accessoire</h4>
 
+
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
                             {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='annexes' upform=upform  what='annexes'%}
                             <hr class="fr-col-12 fr-my-3w">
@@ -55,7 +57,7 @@
                                 <thead>
                                     <tr>
                                         {% if convention.statut != 'BROUILLON' %}
-                                            {% include 'common/utils/comments_header.html' with comment_prefix='annexe__uuid__' header_id='header_icon_annexe' %}
+                                            {% include 'common/utils/comments_header.html' with object_name='annexe' %}
                                         {% endif %}
                                         <th scope="col" class="col__width--150">Type d'annexe {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col" class="col__width--200">Désignation des logements {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
