@@ -6,6 +6,7 @@
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
 {% block content %}
@@ -44,7 +45,7 @@
                                 <thead>
                                     <tr>
                                         {% if convention.statut != 'BROUILLON' %}
-                                            {% include 'common/utils/comments_header.html' with comment_prefix='logement__uuid__' header_id='header_icon_logement' %}
+                                            {% include 'common/utils/comments_header.html' with object_name='logement' %}
                                         {% endif %}
                                         <th scope="col" class="col__width--200">Désignation {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col" class="col__width--150">Type {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>

@@ -9,6 +9,7 @@
     <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
 {% block css_extras %}
@@ -120,7 +121,7 @@
                                 <thead>
                                     <tr>
                                         {% if convention.statut != 'BROUILLON' %}
-                                            {% include 'common/utils/comments_header.html' with comment_prefix='logement_edd__uuid__' header_id='header_icon_logement_edd' %}
+                                            {% include 'common/utils/comments_header.html' with object_name='logement_edd' %}
                                         {% endif %}
                                         <th scope="col">Financement {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
                                         <th scope="col">Désignation {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>

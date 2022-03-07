@@ -128,7 +128,7 @@ class ProgrammeForm(forms.Form):
         required=False,
         max_length=5000,
         error_messages={
-            "max_length": "L'information ne doit pas excéder 5000 characters",
+            "max_length": "L'information ne doit pas excéder 5000 caractères",
         },
     )
 
@@ -145,7 +145,7 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         max_length=5000,
         error_messages={
-            "max_length": "Le message ne doit pas excéder 5000 characters",
+            "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
         help_text="Identité du vendeur telle que mentionnée dans l'acte de propriété",
     )
@@ -157,7 +157,7 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         max_length=5000,
         error_messages={
-            "max_length": "Le message ne doit pas excéder 5000 characters",
+            "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
         help_text="Identité de l'acquéreur telle que mentionnée dans l'acte de propriété",
     )
@@ -169,7 +169,7 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         max_length=5000,
         error_messages={
-            "max_length": "Le message ne doit pas excéder 5000 characters",
+            "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
     )
     reference_notaire_files = forms.CharField(
@@ -180,7 +180,7 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         max_length=5000,
         error_messages={
-            "max_length": "Le message ne doit pas excéder 5000 characters",
+            "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
     )
     reference_publication_acte_files = forms.CharField(
@@ -191,7 +191,7 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         max_length=5000,
         error_messages={
-            "max_length": "Le message ne doit pas excéder 5000 characters",
+            "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
     )
     acte_de_propriete_files = forms.CharField(
@@ -202,7 +202,7 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         max_length=5000,
         error_messages={
-            "max_length": "Le message ne doit pas excéder 5000 characters",
+            "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
     )
     acte_notarial_files = forms.CharField(
@@ -213,7 +213,7 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         max_length=5000,
         error_messages={
-            "max_length": "Le message ne doit pas excéder 5000 characters",
+            "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
     )
     reference_cadastrale_files = forms.CharField(
@@ -230,7 +230,7 @@ class ReferenceCadastraleForm(forms.Form):
         max_length=255,
         error_messages={
             "required": "La section est obligatoire",
-            "max_length": "Le message ne doit pas excéder 255 characters",
+            "max_length": "Le message ne doit pas excéder 255 caractères",
         },
     )
     numero = forms.IntegerField(
@@ -243,7 +243,7 @@ class ReferenceCadastraleForm(forms.Form):
         max_length=255,
         error_messages={
             "required": "Le lieudit est obligatoire",
-            "max_length": "Le lieudit ne doit pas excéder 255 characters",
+            "max_length": "Le lieudit ne doit pas excéder 255 caractères",
         },
     )
     surface = forms.CharField(
@@ -251,7 +251,7 @@ class ReferenceCadastraleForm(forms.Form):
         max_length=255,
         error_messages={
             "required": "La surface est obligatoire",
-            "max_length": "La surface ne doit pas excéder 255 characters",
+            "max_length": "La surface ne doit pas excéder 255 caractères",
         },
     )
 
@@ -273,7 +273,7 @@ class ProgrammeEDDForm(forms.Form):
         required=False,
         max_length=50000,
         error_messages={
-            "max_length": "L'EDD volumétrique ne doit pas excéder 50000 characters",
+            "max_length": "L'EDD volumétrique ne doit pas excéder 50000 caractères",
         },
     )
     edd_volumetrique_files = forms.CharField(
@@ -284,7 +284,7 @@ class ProgrammeEDDForm(forms.Form):
         max_length=1000,
         error_messages={
             "max_length": "La mention de publication de l'EDD volumétrique "
-            + "ne doit pas excéder 1000 characters",
+            + "ne doit pas excéder 1000 caractères",
         },
         help_text=(
             "Référence légale de dépôt de l'état descriptif de division "
@@ -296,7 +296,7 @@ class ProgrammeEDDForm(forms.Form):
         required=False,
         max_length=50000,
         error_messages={
-            "max_length": "L'EDD classique ne doit pas excéder 50000 characters",
+            "max_length": "L'EDD classique ne doit pas excéder 50000 caractères",
         },
     )
     edd_classique_files = forms.CharField(
@@ -307,7 +307,7 @@ class ProgrammeEDDForm(forms.Form):
         max_length=1000,
         error_messages={
             "max_length": "La mention de publication de l'EDD classique "
-            + "ne doit pas excéder 1000 characters",
+            + "ne doit pas excéder 1000 caractères",
         },
         help_text=(
             "Référence légale de dépôt de l'état descriptif de division "
