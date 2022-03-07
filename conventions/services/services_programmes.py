@@ -201,6 +201,7 @@ def _programme_atomic_update(request, convention, programme, lot):
         {
             "uuid": programme.uuid,
             "nb_logements": request.POST.get("nb_logements", lot.nb_logements),
+            "type_habitat": request.POST.get("type_habitat", lot.type_habitat),
             **utils.build_partial_form(
                 request,
                 programme,
@@ -209,7 +210,6 @@ def _programme_atomic_update(request, convention, programme, lot):
                     "adresse",
                     "code_postal",
                     "ville",
-                    "type_habitat",
                     "type_operation",
                     "anru",
                     "autres_locaux_hors_convention",
