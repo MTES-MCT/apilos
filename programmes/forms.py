@@ -134,6 +134,14 @@ class ProgrammeForm(forms.Form):
 
 
 class ProgrammeCadastralForm(forms.Form):
+    """
+    Form to edit cadastral informations (step of convention builder)
+    content :
+    * Buildig premit
+    * Notarial and end dates
+    * Notarial elements (dates, files, image)
+    * Cadastral references
+    """
 
     uuid = forms.UUIDField(required=False)
     permis_construire = forms.CharField(required=False)
