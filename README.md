@@ -10,6 +10,8 @@ APiLos offre une solution numérique pour la gestion de ces conventions entre ba
 
 APiLos a aussi pour vocation de centraliser et fiabiliter les statistiques des logemente sociaux sur le territoire français pour un pilotage éclairé de la construction du parc social en France.
 
+APiLos est un produit du SIAP (Système d'information des aides à la pierre)
+
 ## Solution technique
 
 La plateforme est développé avec le framework Django et son moteur de template par défaut.
@@ -29,80 +31,13 @@ Plusieurs outils sont utilisés pour gérer la qualité de code:
 * [djhtml](https://pypi.org/project/djhtml/) comme prettier des fichiers html
 * [black](https://pypi.org/project/black/) comme prettier des fichiers python
 
+### Installation de la plaeforme en local (Developpeurs)
 
-### Installer les hook de pre-commit
+[DEVELOPPEUR.md](DEVELOPPEUR.md)
 
-Pour installer les git hook de pre-commit, installer le package precommit
+### Déploiement (Staging et Production)
 
-```
-pip install pre-commit
-```
-
-et installer les hooks en executant pre-commit:
-
-```
-pre-commit install
-```
-
-## Installation et déploiement
-
-### Installation local pou déveloper
-
-Configurer vos variable d'environnement dans le fichier .env (exemple dans le fichier .env.template)
-
-Toute l'application est disponible via docker-compose. L'avantage est l'isolation de la version de python et de la version de postgresql. Pas besoin d'installer un environment virtuel ni une version spécifique de postgresql, docker-compose le fait pour vous au plus proche des versions utilisées en production
-
-Pour installer,
-
-```
-docker-compose build
-```
-
-Pensez à rebuilder le container docker lorsque vous ajouter une dépendance. les dépendances sont listées dans le fichier requirements.txt à la base du projet.
-
-Pour lancer l'application en local
-
-```
-docker-compose up -d
-```
-
-Lancer un script django
-
-```
-docker-compose exec apilos python manage.py ...
-```
-
-Par exemple pour lancer les migrations :
-
-```
-docker-compose exec apilos python manage.py migrate
-```
-
-Afficher les logs
-
-```
-docker-compose logs -f --tail=10
-```
-
-### Lancement des tests
-
-```
-docker-compose exec apilos python manage.py test
-```
-
-#### Coverage
-
-Lancé un test coverage
-
-```
-docker-compose exec apilos coverage run --source='.' manage.py test
-```
-
-Consulté le raport de coverage
-
-```
-docker-compose exec apilos coverage report
-```
+[DEPLOIEMENT.md](DEPLOIEMENT.md)
 
 ### CI/CD
 
