@@ -66,10 +66,10 @@
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_upload.html" with label="Acte de propriété" form_input=form.acte_de_propriete form_input_files=form.acte_de_propriete_files object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_de_propriete_files.values object_field="programme__acte_de_propriete__"|add:form.uuid.value %}
+                                {% include "common/form/input_upload.html" with label="Acte de propriété" additional_informations=True form_input=form.acte_de_propriete form_input_files=form.acte_de_propriete_files object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_de_propriete_files.values object_field="programme__acte_de_propriete__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_upload.html" with label="Acte notarial" form_input=form.acte_notarial form_input_files=form.acte_notarial_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_notarial_files.values object_field="programme__acte_notarial__"|add:form.uuid.value %}
+                                {% include "common/form/input_upload.html" with label="Acte notarial" additional_informations=True form_input=form.acte_notarial form_input_files=form.acte_notarial_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_notarial_files.values object_field="programme__acte_notarial__"|add:form.uuid.value %}
                             </div>
                         </div>
 

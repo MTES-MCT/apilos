@@ -74,6 +74,7 @@
   height:60px;
   background-color: grey;
 }
+
 .dz-error-message {
   z-index: 100000 !important;
   width:auto !important;
@@ -418,4 +419,12 @@ table.fullwidth {
   top: 48%;
   left: 48%;
   z-index: 1000;
+}
+/* manage small icon */
+.fr-link--sm {
+  padding: 0!important;
+}
+
+.fr-link--sm:before {
+  margin: 0.1rem!important;
 }
