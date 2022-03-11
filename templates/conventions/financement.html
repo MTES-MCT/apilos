@@ -55,7 +55,7 @@
                                         <th scope="col">Numéro</th>
                                         <th scope="col">Date d'octroi</th>
                                         <th scope="col">Durée (en années)</th>
-                                        <th scope="col">Montant (en €) {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
+                                        <th scope="col">Montant (en €) {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                                         <th scope="col">Préteur</th>
                                         <th scope="col">Préciser le prêteur si 'Autre'</th>
                                     </tr>
@@ -109,8 +109,8 @@
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                                     <div class="fr-input-group {% if form.annee_fin_conventionnement.errors %}fr-select-group--error{% endif %}">
                                         <label class="fr-label fr-mb-1w" for="{{form.annee_fin_conventionnement.id_for_label}}">
-                                            Date de fin de la convention
-                                            {% include "common/mandatory_field.html" with form_input=form.annee_fin_conventionnement %}
+                                            {{ form.annee_fin_conventionnement.label }}
+                                            {% include "common/form/required_field.html" with form_input=form.annee_fin_conventionnement %}
                                             {% include "common/help_field.html" with form_input=form.annee_fin_conventionnement %}
                                         </label>
                                         <div class="block--row-strech fr-mt-1w">
@@ -145,14 +145,14 @@
                                     </div>
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                    {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" label="Fonds propres" object_field="convention__fond_propre__"|add:form.uuid.value %}
+                                    {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" object_field="convention__fond_propre__"|add:form.uuid.value %}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {% include "common/mandatory_fields_info.html" %}
+                {% include "common/required_fields_info.html" %}
                 <div class="form-button-footer fr-col-md-12  fr-py-5w">
                     {% if editable %}
                         {% include "common/button/next_and_save.html" with suivant='conventions:financement' convention_uuid=convention.uuid editable=editable %}

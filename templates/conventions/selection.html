@@ -28,7 +28,7 @@
                                             name="{{form.existing_programme.html_name}}"
                                             {% if form.existing_programme.value == 'selection' %}checked{% endif %}/>
                                         <label class="fr-label" for="selection">
-                                            Séléctionnez votre programme et son financement {% include "common/mandatory_field.html" with form_input=form.lot_uuid %}
+                                            Séléctionnez votre programme et son financement {% include "common/form/required_field.html" with form_input=form.lot_uuid %}
                                         </label>
                                     </div>
                                     <script type="text/javascript" nonce="{{request.csp_nonce}}">
@@ -83,30 +83,30 @@
                                         </script>
                                         <div id='programme_creation' {% if form.existing_programme.value != 'creation' %}hidden{% endif %}>
                                             {% if bailleurs.length == 1 %}
-                                                {% include "common/form/select_enum.html" with form_input=form.bailleur label="Bailleur" enum=bailleurs without_empty_option=True %}
+                                                {% include "common/form/select_enum.html" with form_input=form.bailleur enum=bailleurs without_empty_option=True %}
                                             {% else %}
-                                                {% include "common/form/select_enum.html" with form_input=form.bailleur label="Bailleur" enum=bailleurs without_empty_option=False %}
+                                                {% include "common/form/select_enum.html" with form_input=form.bailleur enum=bailleurs without_empty_option=False %}
                                             {% endif %}
-                                            {% include "common/form/input_text.html" with form_input=form.nom label="Nom du programme" %}
+                                            {% include "common/form/input_text.html" with form_input=form.nom %}
 
                                             <div class="fr-grid-row fr-grid-row--gutters">
                                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
-                                                    {% include "common/form/input_number.html" with form_input=form.nb_logements label="Nombre de logements à conventionner" %}
+                                                    {% include "common/form/input_number.html" with form_input=form.nb_logements %}
                                                 </div>
                                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
-                                                    {% include "common/form/select_enum.html" with form_input=form.type_habitat label="Type d'habitat" %}
+                                                    {% include "common/form/select_enum.html" with form_input=form.type_habitat %}
                                                 </div>
                                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
-                                                    {% include "common/form/select_enum.html" with form_input=form.financement label="Financement" enum=financements %}
+                                                    {% include "common/form/select_enum.html" with form_input=form.financement enum=financements %}
                                                 </div>
                                             </div>
 
                                             <div class="fr-grid-row fr-grid-row--gutters">
                                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                                    {% include "common/form/input_text.html" with form_input=form.code_postal label="Code postal" %}
+                                                    {% include "common/form/input_text.html" with form_input=form.code_postal %}
                                                 </div>
                                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                                    {% include "common/form/input_text.html" with form_input=form.ville label="Ville" %}
+                                                    {% include "common/form/input_text.html" with form_input=form.ville %}
                                                 </div>
                                             </div>
 
@@ -120,7 +120,7 @@
                     </div>
                 </div>
 
-                {% include "common/mandatory_fields_info.html" %}
+                {% include "common/required_fields_info.html" %}
 
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}

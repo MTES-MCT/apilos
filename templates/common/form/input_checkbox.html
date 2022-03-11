@@ -8,8 +8,16 @@
             {% if form_input.value %}checked="checked"{% endif %}
             name="{{form_input.html_name}}"
             {% include "common/form/disable_form_input.html" %}>
-        <label class="fr-label" for="{{form_input.html_name}}"> {{ label }}{% include "common/mandatory_field.html" with form_input=form_input %}
-            {% if sublabel %}
+        <label class="fr-label" for="{{form_input.html_name}}">
+            {% if form_input.label %}
+                {{ form_input.label }}
+            {% elif label %}
+                {{ label }}
+            {% endif %}
+            {% include "common/form/required_field.html" with form_input=form_input %}
+            {% if form_input.help_text %}
+                <span class="fr-hint-text">{{ form_input.help_text }}</span>
+            {% elif sublabel %}
                 <span class="fr-hint-text">{{ sublabel }}</span>
             {% endif %}
         </label>

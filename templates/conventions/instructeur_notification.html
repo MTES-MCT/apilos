@@ -22,7 +22,7 @@
                         <label class="fr-label" for="{{notificationForm.send_copy.id_for_label}}">envoyez-moi une copie du message envoyé
                         </label>
                     </div>
-                    {% include "common/form/input_textarea.html" with label="Ajouter un commentaire à l'attention du bailleur (optionnel)" form_input=notificationForm.comment editable=True %}
+                    {% include "common/form/input_textarea.html" with form_input=notificationForm.comment label="Ajouter un commentaire à l'attention de l'instructeur (optionnel)" editable=True %}
                     <button class="fr-btn">
                         Notifier l'instructeur
                     </button>

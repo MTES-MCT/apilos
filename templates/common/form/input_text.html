@@ -1,10 +1,16 @@
 {% load static %}
 
 <div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}">
-    {% if label %}
+    {% if form_input.label %}
+        <label class="fr-label" for="{{form_input.id_for_label}}">
+            {{ form_input.label }}
+            {% include "common/form/required_field.html" with form_input=form_input %}
+            {% include "common/help_field.html" with form_input=form_input %}
+        </label>
+    {% elif label %}
         <label class="fr-label" for="{{form_input.id_for_label}}">
             {{ label }}
-            {% include "common/mandatory_field.html" with form_input=form_input %}
+            {% include "common/form/required_field.html" with form_input=form_input %}
             {% include "common/help_field.html" with form_input=form_input %}
         </label>
     {% endif %}
