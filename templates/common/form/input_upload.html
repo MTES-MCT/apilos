@@ -10,9 +10,9 @@
         {% endif %}
         <div class="block--row-strech" id="{{form_input.id_for_label}}_div">
             <label class="block--row-strech-1 fr-label fr-mt-1w fr-mb-2w fr-h4" for="{{form_input.id_for_label}}">
-                {{ label }}
+                {{ form_input.label }}
                 {% if mandatory %}
-                    &nbsp;{% include "common/mandatory_field_star.html" %}
+                    &nbsp;{% include "common/form/required_field_star.html" %}
                 {% endif %}
                 {% include "common/help_field.html" with form_input=form_input %}
                 {% if additional_informations %}

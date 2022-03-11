@@ -11,12 +11,14 @@ class BailleurForm(forms.Form):
     uuid = forms.UUIDField(required=False)
     nom = forms.CharField(
         required=True,
+        label="Nom du bailleur",
         error_messages={
             "required": "Le nom du bailleur est obligatoire",
             "max_length": "Le nom du bailleur ne doit pas excéder 255 caractères",
         },
     )
     siret = forms.CharField(
+        label="SIRET",
         max_length=14,
         min_length=14,
         error_messages={
@@ -40,9 +42,11 @@ class BailleurForm(forms.Form):
 
     capital_social = forms.FloatField(
         required=False,
+        label="Capital social",
     )
     adresse, code_postal, ville = forms_utils.address_form_fields()
     signataire_nom = forms.CharField(
+        label="Nom du signataire de la convention",
         max_length=255,
         error_messages={
             "required": "Le nom du signataire de la convention est obligatoire",
@@ -51,6 +55,7 @@ class BailleurForm(forms.Form):
         },
     )
     signataire_fonction = forms.CharField(
+        label="Fonction du signataire de la convention",
         max_length=255,
         error_messages={
             "required": "La fonction du signataire de la convention est obligatoire",
@@ -59,6 +64,7 @@ class BailleurForm(forms.Form):
         },
     )
     signataire_date_deliberation = forms.DateField(
+        label="Date de délibération",
         error_messages={
             "required": "La date de délibération est obligatoire",
         },
@@ -68,7 +74,9 @@ class BailleurForm(forms.Form):
         ),
     )
 
-    type_bailleur = forms.TypedChoiceField(required=False, choices=TypeBailleur.choices)
+    type_bailleur = forms.TypedChoiceField(
+        required=False, label="Type de bailleur", choices=TypeBailleur.choices
+    )
 
     def clean_nom(self):
         nom = self.cleaned_data["nom"]

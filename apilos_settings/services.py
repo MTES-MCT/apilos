@@ -325,6 +325,7 @@ def edit_user(request, username):
                 user.first_name = form.cleaned_data["first_name"]
                 user.last_name = form.cleaned_data["last_name"]
                 user.email = form.cleaned_data["email"]
+                user.telephone = form.cleaned_data["telephone"]
                 user.administrateur_de_compte = form.cleaned_data[
                     "administrateur_de_compte"
                 ]
