@@ -5,12 +5,6 @@
             {% include "common/form/required_field.html" with form_input=form_input %}
             {% include "common/help_field.html" with form_input=form_input %}
         </label>
-    {% elif label %}
-        <label class="fr-label fr-mb-1w" for="{{form_input.id_for_label}}">
-            {{ label }}
-            {% include "common/form/required_field.html" with form_input=form_input %}
-            {% include "common/help_field.html" with form_input=form_input %}
-        </label>
     {% endif %}
     <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
         <div class="fr-input-wrap fr-fi-calendar-line block--row-strech-1">
