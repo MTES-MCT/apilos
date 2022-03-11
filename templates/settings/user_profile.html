@@ -21,13 +21,13 @@
                                     <p>Votre profil a été enregistré avec succès</p>
                                 </div>
                             {% endif %}
-                            {% include "common/form/input_text.html" with form_input=form.username label="Nom d'utilisateur" editable=False %}
-                            {% include "common/form/input_text.html" with form_input=form.first_name label="Prénom" %}
-                            {% include "common/form/input_text.html" with form_input=form.last_name label="Nom" %}
-                            {% include "common/form/input_text.html" with form_input=form.email label="Email" %}
-                            {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte label="Administrateur de compte" sublabel="L'administrateur de compte peut gérer les utilisateurs de ses entités. Si vous renoncez à être administrateur,vous ne pourez plus gérer les utilisateurs de vos entité ou vous ré-attribuer les droits d'administration" editable=request.user.is_administrator %}
+                            {% include "common/form/input_text.html" with form_input=form.username editable=False %}
+                            {% include "common/form/input_text.html" with form_input=form.first_name %}
+                            {% include "common/form/input_text.html" with form_input=form.last_name %}
+                            {% include "common/form/input_text.html" with form_input=form.email %}
+                            {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte editable=request.user.is_administrator %}
                             {% if request.user.is_superuser %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.is_superuser label="Super Utilisateur" sublabel="Un super utilisateur a tous les droits" %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.is_superuser %}
                             {% endif %}
 
                             <button class="fr-btn fr-fi-save-line fr-btn--icon-left fr-mt-3w" type="submit">

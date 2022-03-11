@@ -7,6 +7,7 @@ from instructeurs.models import Administration
 class AdministrationForm(forms.Form):
     uuid = forms.UUIDField(required=False)
     nom = forms.CharField(
+        label="Nom de l'administration",
         max_length=255,
         min_length=1,
         error_messages={
@@ -29,6 +30,7 @@ class AdministrationForm(forms.Form):
         return nom
 
     code = forms.CharField(
+        label="Code de l'administration",
         max_length=255,
         min_length=1,
         error_messages={
@@ -52,6 +54,7 @@ class AdministrationForm(forms.Form):
 
     ville_signature = forms.CharField(
         required=False,
+        label="Ville de signature de la convention",
         max_length=255,
         error_messages={
             "max_length": "La ville de signature ne doit pas excéder 255 caractères",

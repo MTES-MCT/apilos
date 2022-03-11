@@ -172,10 +172,10 @@
                                                         {% if convention.statut != 'BROUILLON' %}
                                                             {% include 'common/utils/comments_header.html' with object_name='reference_cadastrale' %}
                                                         {% endif %}
-                                                        <th scope="col">Section {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col">Numéro {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col">Lieudit {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col">Surface {% include "common/mandatory_field_star.html" %}</th>
+                                                        <th scope="col">Section {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col">Numéro {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col">Lieudit {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col">Surface {% include "common/form/required_field_star.html" %}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -241,9 +241,9 @@
                                                         {% if convention.statut != 'BROUILLON' %}
                                                             {% include 'common/utils/comments_header.html' with object_name='logement_edd' %}
                                                         {% endif %}
-                                                        <th scope="col">Financement {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col">Désignation {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col">Type {% include "common/mandatory_field_star.html" %}</th>
+                                                        <th scope="col">Financement {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col">Désignation {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col">Type {% include "common/form/required_field_star.html" %}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -303,7 +303,7 @@
                                                         <th scope="col">Numéro</th>
                                                         <th scope="col">Date d'octroi</th>
                                                         <th scope="col">Durée (en années)</th>
-                                                        <th scope="col">Montant (en €) {% include "common/mandatory_field_star.html" %}</th>
+                                                        <th scope="col">Montant (en €) {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col">Préteur</th>
                                                         <th scope="col">Préciser le prêteur si 'Autre'</th>
                                                     </tr>
@@ -372,15 +372,15 @@
                                                         {% if convention.statut != 'BROUILLON' %}
                                                             {% include 'common/utils/comments_header.html' with object_name='logement' %}
                                                         {% endif %}
-                                                        <th scope="col" class="col__width--150">Désignation {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Type {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Surface habitable {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Surface des annexes réelle {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Surface des annexes retenue dans la SU {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Surface Utile {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Loyer maximum en € par m² de surface utile {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Coefficient propre au logement {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Loyer maximum du logement en € {% include "common/mandatory_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Surface habitable {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Surface des annexes réelle {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Surface des annexes retenue dans la SU {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Surface Utile {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Loyer maximum en € par m² de surface utile {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Coefficient propre au logement {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Loyer maximum du logement en € {% include "common/form/required_field_star.html" %}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -473,12 +473,12 @@
                                                         {% if convention.statut != 'BROUILLON' %}
                                                             {% include 'common/utils/comments_header.html' with object_name='annexe' %}
                                                         {% endif %}
-                                                        <th scope="col" class="col__width--150">Type d'annexe {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--200">Désignation des logements {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--150">Typologie des logements {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Surface de l'annexe {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Loyer unitaire en € {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Loyer maximum du logement en € {% include "common/mandatory_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--150">Type d'annexe {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--200">Désignation des logements {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--150">Typologie des logements {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Surface de l'annexe {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Loyer unitaire en € {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Loyer maximum du logement en € {% include "common/form/required_field_star.html" %}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -565,9 +565,9 @@
                                                         {% if convention.statut != 'BROUILLON' %}
                                                             {% include 'common/utils/comments_header.html' with object_name='type_stationnement' %}
                                                         {% endif %}
-                                                        <th scope="col" class="col__width--150">Type de stationnement {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--200">Nombre de stationnements {% include "common/mandatory_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--150">Loyer maximum en € {% include "common/mandatory_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--150">Type de stationnement {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--200">Nombre de stationnements {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--150">Loyer maximum en € {% include "common/form/required_field_star.html" %}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>

@@ -59,12 +59,12 @@
                                         {% if convention.statut != 'BROUILLON' %}
                                             {% include 'common/utils/comments_header.html' with object_name='annexe' %}
                                         {% endif %}
-                                        <th scope="col" class="col__width--150">Type d'annexe {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
-                                        <th scope="col" class="col__width--200">Désignation des logements {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
-                                        <th scope="col" class="col__width--150">Typologie des logements {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
-                                        <th scope="col" class="col__width--120">Surface de l'annexe {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
-                                        <th scope="col" class="col__width--120">Loyer unitaire en € {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
-                                        <th scope="col" class="col__width--120">Loyer maximum du logement en € {% if formset.total_form_count %}{% include "common/mandatory_field_star.html" %}{% endif %}</th>
+                                        <th scope="col" class="col__width--150">Type d'annexe {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                        <th scope="col" class="col__width--200">Désignation des logements {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                        <th scope="col" class="col__width--150">Typologie des logements {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                        <th scope="col" class="col__width--120">Surface de l'annexe {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                        <th scope="col" class="col__width--120">Loyer unitaire en € {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                        <th scope="col" class="col__width--120">Loyer maximum du logement en € {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -112,26 +112,26 @@
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_caves label="Caves" object_field="lot__annexe_caves__"|add:form.uuid.value %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_soussols label="Sous-sols" object_field="lot__annexe_soussols__"|add:form.uuid.value %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_remises label="Remises" object_field="lot__annexe_remises__"|add:form.uuid.value %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_ateliers label="Ateliers" object_field="lot__annexe_ateliers__"|add:form.uuid.value %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_sechoirs label="Séchoirs" object_field="lot__annexe_sechoirs__"|add:form.uuid.value %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_celliers label="Celliers extérieurs au logement" object_field="lot__annexe_celliers__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_caves object_field="lot__annexe_caves__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_soussols object_field="lot__annexe_soussols__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_remises object_field="lot__annexe_remises__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_ateliers object_field="lot__annexe_ateliers__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_sechoirs object_field="lot__annexe_sechoirs__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_celliers object_field="lot__annexe_celliers__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_resserres label="Resserres" object_field="lot__annexe_resserres__"|add:form.uuid.value %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_combles label="Combles et greniers aménageables" object_field="lot__annexe_combles__"|add:form.uuid.value %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_balcons label="Balcons" object_field="lot__annexe_balcons__"|add:form.uuid.value %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_loggias label="Loggias et Vérandas" object_field="lot__annexe_loggias__"|add:form.uuid.value %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_terrasses label="Terrasses" sublabel="Dans la limite de 9 m2, les parties de terrasses accessibles en étage ou aménagées sur ouvrage enterré ou à moitié enterré" object_field="lot__annexe_terrasses__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_resserres object_field="lot__annexe_resserres__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_combles object_field="lot__annexe_combles__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_balcons object_field="lot__annexe_balcons__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_loggias object_field="lot__annexe_loggias__"|add:form.uuid.value %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.annexe_terrasses object_field="lot__annexe_terrasses__"|add:form.uuid.value %}
                             </div>
                         </div>
 
                     </div>
                 </div>
 
-                {% include "common/mandatory_fields_info.html" %}
+                {% include "common/required_fields_info.html" %}
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
                         {% include "common/button/next_and_save.html" with suivant='conventions:annexes' convention_uuid=convention.uuid editable=editable %}

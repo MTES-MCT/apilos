@@ -27,9 +27,13 @@ class ProgrammeSelectionForm(forms.Form):
     existing_programme = forms.ChoiceField(
         choices=[("selection", "selection"), ("creation", "creation")]
     )
-    bailleur = forms.IntegerField(required=False)
+    bailleur = forms.IntegerField(
+        required=False,
+        label="Bailleur",
+    )
     nom = forms.CharField(
         required=False,
+        label="Nom du programme",
         max_length=255,
         min_length=1,
         error_messages={
@@ -40,12 +44,14 @@ class ProgrammeSelectionForm(forms.Form):
     )
     nb_logements = forms.IntegerField(
         required=False,
+        label="Nb logements à conventionner",
         error_messages={
             "required": "Le nombre de logements à conventionner est obligatoire",
         },
     )
     type_habitat = forms.TypedChoiceField(
         required=False,
+        label="Type d'habitat",
         choices=TypeHabitat.choices,
         error_messages={
             "required": "Le type d'habitat est obligatoire",
@@ -53,6 +59,7 @@ class ProgrammeSelectionForm(forms.Form):
     )
     financement = forms.TypedChoiceField(
         required=False,
+        label="Financement",
         choices=Financement.choices,
         error_messages={
             "required": "Le financement est obligatoire",
@@ -60,6 +67,7 @@ class ProgrammeSelectionForm(forms.Form):
     )
     code_postal = forms.CharField(
         required=False,
+        label="Code postal",
         max_length=255,
         error_messages={
             "required": "Le code postal est obligatoire",
@@ -68,6 +76,7 @@ class ProgrammeSelectionForm(forms.Form):
     )
     ville = forms.CharField(
         required=False,
+        label="Ville",
         max_length=255,
         error_messages={
             "required": "La ville est obligatoire",
@@ -103,6 +112,7 @@ class ProgrammeForm(forms.Form):
 
     uuid = forms.UUIDField(required=False)
     nom = forms.CharField(
+        label="Nom",
         max_length=255,
         min_length=1,
         error_messages={
@@ -113,19 +123,33 @@ class ProgrammeForm(forms.Form):
     )
     adresse, code_postal, ville = forms_utils.address_form_fields()
     nb_logements = forms.IntegerField(
+        label="Nb logements à conventionner",
         error_messages={
             "required": "Le nombre de logements à conventionner est obligatoire",
         },
     )
-    type_habitat = forms.TypedChoiceField(required=False, choices=TypeHabitat.choices)
-    type_operation = forms.TypedChoiceField(
-        required=False, choices=TypeOperation.choices
+    type_habitat = forms.TypedChoiceField(
+        required=False, label="Type d'habitat", choices=TypeHabitat.choices
     )
-    anru = forms.BooleanField(required=False)
-    nb_locaux_commerciaux = forms.IntegerField(required=False)
-    nb_bureaux = forms.IntegerField(required=False)
+    type_operation = forms.TypedChoiceField(
+        required=False, label="Type d'opération", choices=TypeOperation.choices
+    )
+    anru = forms.BooleanField(
+        required=False,
+        label="ANRU",
+        help_text="Le programme bénéficie d'un financement ANRU",
+    )
+    nb_locaux_commerciaux = forms.IntegerField(
+        required=False,
+        label="Locaux commerciaux",
+    )
+    nb_bureaux = forms.IntegerField(
+        required=False,
+        label="Bureaux",
+    )
     autres_locaux_hors_convention = forms.CharField(
         required=False,
+        label="Autres",
         max_length=5000,
         error_messages={
             "max_length": "L'information ne doit pas excéder 5000 caractères",
@@ -144,13 +168,26 @@ class ProgrammeCadastralForm(forms.Form):
     """
 
     uuid = forms.UUIDField(required=False)
-    permis_construire = forms.CharField(required=False)
-    date_acte_notarie = forms.DateField(required=False)
-    date_achevement_previsible = forms.DateField(required=False)
-    date_achat = forms.DateField(required=False)
-    date_achevement = forms.DateField(required=False)
+    permis_construire = forms.CharField(
+        required=False,
+        label="Numéro de permis construire",
+    )
+    date_acte_notarie = forms.DateField(
+        required=False,
+        label="Date de l'acte notarié",
+    )
+    date_achevement_previsible = forms.DateField(
+        required=False,
+        label="Date d'achèvement previsible",
+    )
+    date_achat = forms.DateField(required=False, label="Date d'achat")
+    date_achevement = forms.DateField(
+        required=False,
+        label="Date d'achèvement ou d'obtention de certificat de conformité",
+    )
     vendeur = forms.CharField(
         required=False,
+        label="Vendeur",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
@@ -163,6 +200,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     acquereur = forms.CharField(
         required=False,
+        label="Acquéreur",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
@@ -175,6 +213,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     reference_notaire = forms.CharField(
         required=False,
+        label="Référence du notaire",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
@@ -186,6 +225,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     reference_publication_acte = forms.CharField(
         required=False,
+        label="Référence de publication de l'acte",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
@@ -197,6 +237,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     acte_de_propriete = forms.CharField(
         required=False,
+        label="Acte de propriété",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
@@ -208,6 +249,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     acte_notarial = forms.CharField(
         required=False,
+        label="Acte notarial",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
@@ -219,6 +261,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     reference_cadastrale = forms.CharField(
         required=False,
+        label="Références cadastrales",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
@@ -235,6 +278,7 @@ class ReferenceCadastraleForm(forms.Form):
     uuid = forms.UUIDField(required=False)
     section = forms.CharField(
         required=True,
+        label="",
         max_length=255,
         error_messages={
             "required": "La section est obligatoire",
@@ -242,12 +286,14 @@ class ReferenceCadastraleForm(forms.Form):
         },
     )
     numero = forms.IntegerField(
+        label="",
         error_messages={
             "required": "Le numéro est obligatoire",
         },
     )
     lieudit = forms.CharField(
         required=True,
+        label="",
         max_length=255,
         error_messages={
             "required": "Le lieudit est obligatoire",
@@ -256,6 +302,7 @@ class ReferenceCadastraleForm(forms.Form):
     )
     surface = forms.CharField(
         required=True,
+        label="",
         max_length=255,
         error_messages={
             "required": "La surface est obligatoire",
@@ -279,6 +326,7 @@ class ProgrammeEDDForm(forms.Form):
     lot_uuid = forms.UUIDField(required=False)
     edd_volumetrique = forms.CharField(
         required=False,
+        label="EDD volumétrique",
         max_length=50000,
         error_messages={
             "max_length": "L'EDD volumétrique ne doit pas excéder 50000 caractères",
@@ -289,6 +337,7 @@ class ProgrammeEDDForm(forms.Form):
     )
     mention_publication_edd_volumetrique = forms.CharField(
         required=False,
+        label="Mention de publication de l'EDD volumétrique",
         max_length=1000,
         error_messages={
             "max_length": "La mention de publication de l'EDD volumétrique "
@@ -302,6 +351,7 @@ class ProgrammeEDDForm(forms.Form):
     )
     edd_classique = forms.CharField(
         required=False,
+        label="EDD classique",
         max_length=50000,
         error_messages={
             "max_length": "L'EDD classique ne doit pas excéder 50000 caractères",
@@ -312,6 +362,7 @@ class ProgrammeEDDForm(forms.Form):
     )
     mention_publication_edd_classique = forms.CharField(
         required=False,
+        label="Mention de publication de l'EDD classique",
         max_length=1000,
         error_messages={
             "max_length": "La mention de publication de l'EDD classique "
@@ -329,6 +380,7 @@ class LogementForm(forms.Form):
 
     uuid = forms.UUIDField(required=False)
     designation = forms.CharField(
+        label="",
         max_length=255,
         min_length=1,
         error_messages={
@@ -339,12 +391,14 @@ class LogementForm(forms.Form):
     )
     typologie = forms.TypedChoiceField(
         required=True,
+        label="",
         choices=TypologieLogement.choices,
         error_messages={
             "required": "Le type de logement est obligatoire",
         },
     )
     surface_habitable = forms.DecimalField(
+        label="",
         max_digits=6,
         decimal_places=2,
         error_messages={
@@ -353,6 +407,7 @@ class LogementForm(forms.Form):
         },
     )
     surface_annexes = forms.DecimalField(
+        label="",
         max_digits=6,
         decimal_places=2,
         error_messages={
@@ -361,6 +416,7 @@ class LogementForm(forms.Form):
         },
     )
     surface_annexes_retenue = forms.DecimalField(
+        label="",
         max_digits=6,
         decimal_places=2,
         error_messages={
@@ -369,6 +425,7 @@ class LogementForm(forms.Form):
         },
     )
     surface_utile = forms.DecimalField(
+        label="",
         max_digits=6,
         decimal_places=2,
         error_messages={
@@ -377,6 +434,7 @@ class LogementForm(forms.Form):
         },
     )
     loyer_par_metre_carre = forms.DecimalField(
+        label="",
         max_digits=6,
         decimal_places=2,
         error_messages={
@@ -385,6 +443,7 @@ class LogementForm(forms.Form):
         },
     )
     coeficient = forms.DecimalField(
+        label="",
         max_digits=6,
         decimal_places=4,
         error_messages={
@@ -393,6 +452,7 @@ class LogementForm(forms.Form):
         },
     )
     loyer = forms.DecimalField(
+        label="",
         max_digits=6,
         decimal_places=2,
         error_messages={
@@ -547,9 +607,16 @@ LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, ext
 
 class AnnexeForm(forms.Form):
 
-    uuid = forms.UUIDField(required=False)
-    typologie = forms.TypedChoiceField(required=True, choices=TypologieAnnexe.choices)
+    uuid = forms.UUIDField(
+        required=False,
+    )
+    typologie = forms.TypedChoiceField(
+        required=True,
+        label="",
+        choices=TypologieAnnexe.choices,
+    )
     logement_designation = forms.CharField(
+        label="",
         max_length=255,
         min_length=1,
         error_messages={
@@ -559,9 +626,10 @@ class AnnexeForm(forms.Form):
         },
     )
     logement_typologie = forms.TypedChoiceField(
-        required=True, choices=TypologieLogement.choices
+        required=True, label="", choices=TypologieLogement.choices
     )
     surface_hors_surface_retenue = forms.DecimalField(
+        label="",
         max_digits=6,
         decimal_places=2,
         error_messages={
@@ -570,6 +638,7 @@ class AnnexeForm(forms.Form):
         },
     )
     loyer_par_metre_carre = forms.DecimalField(
+        label="",
         max_digits=6,
         decimal_places=2,
         error_messages={
@@ -578,6 +647,7 @@ class AnnexeForm(forms.Form):
         },
     )
     loyer = forms.DecimalField(
+        label="",
         max_digits=6,
         decimal_places=2,
         error_messages={
@@ -613,17 +683,20 @@ class TypeStationnementForm(forms.Form):
     uuid = forms.UUIDField(required=False)
     typologie = forms.TypedChoiceField(
         required=True,
+        label="",
         choices=TypologieStationnement.choices,
         error_messages={
             "required": "La typologie des stationnement est obligatoire",
         },
     )
     nb_stationnements = forms.IntegerField(
+        label="",
         error_messages={
             "required": "Le nombre de stationnements est obligatoire",
         },
     )
     loyer = forms.DecimalField(
+        label="",
         max_digits=6,
         decimal_places=2,
         error_messages={
@@ -646,6 +719,7 @@ class LogementEDDForm(forms.Form):
 
     uuid = forms.UUIDField(required=False)
     designation = forms.CharField(
+        label="",
         max_length=255,
         min_length=1,
         error_messages={
@@ -656,6 +730,7 @@ class LogementEDDForm(forms.Form):
     )
     typologie = forms.TypedChoiceField(
         required=True,
+        label="",
         choices=TypologieLogement.choices,
         error_messages={
             "required": "Le type de logement est obligatoire",
@@ -663,6 +738,7 @@ class LogementEDDForm(forms.Form):
     )
     financement = forms.TypedChoiceField(
         required=True,
+        label="",
         choices=Financement.choices,
         error_messages={
             "required": "Le financement est obligatoire",
@@ -719,14 +795,48 @@ LogementEDDFormSet = formset_factory(
 
 class LotAnnexeForm(forms.Form):
     uuid = forms.UUIDField(required=False)
-    annexe_caves = forms.BooleanField(required=False)
-    annexe_soussols = forms.BooleanField(required=False)
-    annexe_remises = forms.BooleanField(required=False)
-    annexe_ateliers = forms.BooleanField(required=False)
-    annexe_sechoirs = forms.BooleanField(required=False)
-    annexe_celliers = forms.BooleanField(required=False)
-    annexe_resserres = forms.BooleanField(required=False)
-    annexe_combles = forms.BooleanField(required=False)
-    annexe_balcons = forms.BooleanField(required=False)
-    annexe_loggias = forms.BooleanField(required=False)
-    annexe_terrasses = forms.BooleanField(required=False)
+    annexe_caves = forms.BooleanField(
+        required=False,
+        label="Caves",
+    )
+    annexe_soussols = forms.BooleanField(
+        required=False,
+        label="Sous-sols",
+    )
+    annexe_remises = forms.BooleanField(
+        required=False,
+        label="Remises",
+    )
+    annexe_ateliers = forms.BooleanField(
+        required=False,
+        label="Ateliers",
+    )
+    annexe_sechoirs = forms.BooleanField(
+        required=False,
+        label="Séchoirs",
+    )
+    annexe_celliers = forms.BooleanField(
+        required=False,
+        label="Celliers extérieurs au logement",
+    )
+    annexe_resserres = forms.BooleanField(required=False, label="Resserres")
+    annexe_combles = forms.BooleanField(
+        required=False,
+        label="Combles et greniers aménageables",
+    )
+    annexe_balcons = forms.BooleanField(
+        required=False,
+        label="Balcons",
+    )
+    annexe_loggias = forms.BooleanField(
+        required=False,
+        label="Loggias et Vérandas",
+    )
+    annexe_terrasses = forms.BooleanField(
+        required=False,
+        label="Terrasses",
+        help_text=(
+            "Dans la limite de 9 m2, les parties de terrasses accessibles en étage ou aménagées"
+            + " sur ouvrage enterré ou à moitié enterré"
+        ),
+    )
