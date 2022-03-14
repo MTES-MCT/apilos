@@ -1,7 +1,7 @@
 <div class="fr-select-group {% if form_input.errors %}fr-select-group--error{% endif %}">
-    {% if label %}
+    {% if form_input.label %}
         <label class="fr-label" for="{{form_input.id_for_label}}">
-            {{ label }}
+            {{ form_input.label }}
         </label>
     {% endif %}
     <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">

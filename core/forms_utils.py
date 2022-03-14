@@ -4,6 +4,7 @@ from django import forms
 def address_form_fields():
     return (
         forms.CharField(
+            label="Adresse",
             max_length=255,
             min_length=1,
             error_messages={
@@ -13,6 +14,7 @@ def address_form_fields():
             },
         ),
         forms.CharField(
+            label="Code postal",
             max_length=255,
             error_messages={
                 "required": "Le code postal est obligatoire",
@@ -20,6 +22,7 @@ def address_form_fields():
             },
         ),
         forms.CharField(
+            label="Ville",
             max_length=255,
             error_messages={
                 "required": "La ville est obligatoire",

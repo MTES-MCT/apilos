@@ -15,6 +15,7 @@ class ConventionCommentForm(forms.Form):
     uuid = forms.UUIDField(required=False)
     comments = forms.CharField(
         required=False,
+        label="Ajoutez vos commentaires à l'attention de l'instructeur",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
@@ -35,6 +36,7 @@ class ConventionFinancementForm(forms.Form):
     uuid = forms.UUIDField(required=False)
     annee_fin_conventionnement = forms.IntegerField(
         required=True,
+        label="Date de fin de la convention",
         error_messages={
             "required": "La date de fin de conventionnement est obligatoire",
         },
@@ -46,7 +48,10 @@ class ConventionFinancementForm(forms.Form):
             + " compte débute à l’année N+1."
         ),
     )
-    fond_propre = forms.FloatField(required=False)
+    fond_propre = forms.FloatField(
+        required=False,
+        label="Fonds propres",
+    )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -123,22 +128,31 @@ class PretForm(forms.Form):
     uuid = forms.UUIDField(required=False)
     numero = forms.CharField(
         required=False,
+        label="",
         max_length=255,
         error_messages={
             "max_length": "Le numero ne doit pas excéder 255 caractères",
         },
     )
-    preteur = forms.TypedChoiceField(required=False, choices=Preteur.choices)
+    preteur = forms.TypedChoiceField(required=False, label="", choices=Preteur.choices)
     autre = forms.CharField(
         required=False,
+        label="",
         max_length=255,
         error_messages={
             "max_length": "Le prêteur ne doit pas excéder 255 caractères",
         },
     )
-    date_octroi = forms.DateField(required=False)
-    duree = forms.IntegerField(required=False)
+    date_octroi = forms.DateField(
+        required=False,
+        label="",
+    )
+    duree = forms.IntegerField(
+        required=False,
+        label="",
+    )
     montant = forms.DecimalField(
+        label="",
         max_digits=12,
         decimal_places=2,
         error_messages={
@@ -220,6 +234,7 @@ class NotificationForm(forms.Form):
     from_instructeur = forms.BooleanField(required=False)
     comment = forms.CharField(
         required=False,
+        label="Ajouter un commentaire à l'attention du bailleur (optionnel)",
         max_length=5000,
         error_messages={
             "max_length": "Le commentaire ne doit pas excéder 5000 caractères",
@@ -229,6 +244,7 @@ class NotificationForm(forms.Form):
 
 class ConventionNumberForm(forms.Form):
     prefixe_numero = forms.CharField(
+        label="Prefix",
         max_length=250,
         error_messages={
             "max_length": (
@@ -240,6 +256,7 @@ class ConventionNumberForm(forms.Form):
         help_text="département/zone/mois.année/decret/daei/",
     )
     suffixe_numero = forms.CharField(
+        label="Numéro",
         max_length=10,
         error_messages={
             "max_length": "La longueur du numéro de convention ne peut pas excéder 10 caractères",

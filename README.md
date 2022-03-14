@@ -10,6 +10,8 @@ APiLos offre une solution numérique pour la gestion de ces conventions entre ba
 
 APiLos a aussi pour vocation de centraliser et fiabiliter les statistiques des logemente sociaux sur le territoire français pour un pilotage éclairé de la construction du parc social en France.
 
+APiLos est un produit du SIAP (Système d'information des aides à la pierre)
+
 ## Solution technique
 
 La plateforme est développé avec le framework Django et son moteur de template par défaut.
@@ -29,84 +31,22 @@ Plusieurs outils sont utilisés pour gérer la qualité de code:
 * [djhtml](https://pypi.org/project/djhtml/) comme prettier des fichiers html
 * [black](https://pypi.org/project/black/) comme prettier des fichiers python
 
+### Installation de la plaeforme en local (Developpeurs)
 
-### Installer les hook de pre-commit
+[DEVELOPPEUR.md](DEVELOPPEUR.md)
 
-Pour installer les git hook de pre-commit, installer le package precommit
+### Déploiement (Staging et Production)
 
-```
-pip install pre-commit
-```
+[DEPLOIEMENT.md](DEPLOIEMENT.md)
 
-et installer les hooks en executant pre-commit:
+### CI/CD et branch git
 
-```
-pre-commit install
-```
+Les "User Stories" (US) sont développées sur des "feature branches" (convention de nommage sNUM-US_DESCRIPTION) à partir de la branch `develop`.
+les `feature branches` font l'objet de `pull request` à merger sur `develop`.
+les `releases` sont préparées et déployées à partir de ma branch `master`
 
-## Installation et déploiement
-
-### Installation local pou déveloper
-
-Configurer vos variable d'environnement dans le fichier .env (exemple dans le fichier .env.template)
-
-Toute l'application est disponible via docker-compose. L'avantage est l'isolation de la version de python et de la version de postgresql. Pas besoin d'installer un environment virtuel ni une version spécifique de postgresql, docker-compose le fait pour vous au plus proche des versions utilisées en production
-
-Pour installer,
-
-```
-docker-compose build
-```
-
-Pensez à rebuilder le container docker lorsque vous ajouter une dépendance. les dépendances sont listées dans le fichier requirements.txt à la base du projet.
-
-Pour lancer l'application en local
-
-```
-docker-compose up -d
-```
-
-Lancer un script django
-
-```
-docker-compose exec apilos python manage.py ...
-```
-
-Par exemple pour lancer les migrations :
-
-```
-docker-compose exec apilos python manage.py migrate
-```
-
-Afficher les logs
-
-```
-docker-compose logs -f --tail=10
-```
-
-### Lancement des tests
-
-```
-docker-compose exec apilos python manage.py test
-```
-
-#### Coverage
-
-Lancé un test coverage
-
-```
-docker-compose exec apilos coverage run --source='.' manage.py test
-```
-
-Consulté le raport de coverage
-
-```
-docker-compose exec apilos coverage report
-```
-
-### CI/CD
-
-La solution circleci est utilisée. La config est ici : $BASE/.circleci/config.yaml
+La solution circleci est utilisée: [CircleCI:Apilos](https://app.circleci.com/pipelines/github/MTES-MCT/apilos?filter=all)
+La config est ici : [.circleci/config.yaml](.circleci/config.yaml)
 
 #### CI
 
@@ -114,13 +54,33 @@ A chaque push sur github, le projet est buildé et les tests sont passés
 
 #### CD
 
-A chaque push sur la branche develop, le projet est déployé en [staging](https://staging.apilos.incubateur.net/)
+A chaque push sur la branche `develop`, le projet est déployé en [staging](https://staging.apilos.incubateur.net/)
 
-### Push to prod
+### Déploiement
+
+Lors du déploiement, les étapes définient dans le script [bin/post_deploy](bin/post_deploy) sont éxécutées:
+
+1. Execution des migrations de la base de données
+2. Population des roles et des permissions
+3. Suppression des sessions expirées
+
+### Déploiement en staging
+
+Pour déployer en staging, il suffit de pousser le code sur le repository git de scalingo dans le projet de staging
+
+```git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master```
+
+### Déploiement en production
 
 A faire : intégrer le process de mise en prod dans circle ci
 
-En attendant, utiliser la commande à partir de la branch master : `git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master`
+Pour pousser en production, la version à pousser en production doit être préparée sur la branche `master` soit en mergeant les développements de la branche `develop`, soit à l'aide de la commande `cherry-pick`
+
+La branche `master` doit-être pousser sur le repo origin pour que les tests soient executés avant que la branche soit déployée
+
+Puis la la branche `master` peut-être déployée sur l'environnement de `production` sur scalingo avec la commande :
+
+```git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master```
 
 ### import SISAL
 
@@ -130,7 +90,7 @@ Pour faire cet import nous avons ajouté une commande django `import_galion` éd
 
 Pour executer cet import en local:
 
-```docker-compose exec apilos python3 manage.py import_galion```
+```docker-compose exec apilos pipenv run python3 manage.py import_galion```
 
 Sur Scalingo
 
@@ -140,11 +100,11 @@ Sur Scalingo
 
 Pour modifier les permissions, il suffit de modifier dans l'interface d'administration puis d'exporter les données d'authentification :
 
-```docker-compose exec apilos python manage.py dumpdata auth --natural-foreign --natural-primary > users/fixtures/auth.json```
+```docker-compose exec apilos pipenv run python manage.py dumpdata auth --natural-foreign --natural-primary > users/fixtures/auth.json```
 
 et pour populer ces données :
 
-```docker-compose exec apilos python manage.py loaddata auth.json```
+```docker-compose exec apilos pipenv run python manage.py loaddata auth.json```
 
 Cette commande est excutée lors du déploiement de l'application juste après la migration
 
@@ -152,9 +112,13 @@ Cette commande est excutée lors du déploiement de l'application juste après l
 
 Nous utilisons mailjet. Si les variables d'environnements MAILJET_API_KEY et MAILJET_API_SECRET sont configurées, le backend email Mailjet est utilisé. Sinon, le backend email console est utilisé et les mail sont imprimé dans a console (dans les logs)
 
+### DNS
+
+Les DNS sont configurés dans always data
+
 ### Mailing list
 
-Les mailing lists sont configurées dans alwaysdata.
+Les mailing lists sont configurées dans alwaysdata. Nous utilisons uniquement la mailing list contact@apilos.beta.gouv.fr.
 
 ## liens utils
 

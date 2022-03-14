@@ -16,19 +16,19 @@
                         <h3>Création d'un utilisateur</h3>
                         <form method="post" action="">
                             {% csrf_token %}
-                            {% include "common/form/input_text.html" with form_input=form.email label="Email" %}
-                            {% include "common/form/input_text.html" with form_input=form.username label="Identifiant de l'utilisateur" %}
-                            {% include "common/form/input_text.html" with form_input=form.first_name label="Prénom" %}
-                            {% include "common/form/input_text.html" with form_input=form.last_name label="Nom" %}
+                            {% include "common/form/input_text.html" with form_input=form.email %}
+                            {% include "common/form/input_text.html" with form_input=form.username %}
+                            {% include "common/form/input_text.html" with form_input=form.first_name %}
+                            {% include "common/form/input_text.html" with form_input=form.last_name %}
                             {% if request.user.is_administrator %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte label="Administrateur de compte" sublabel="L'administrateur de compte peut gérer les utilisateurs de ses entités. Si vous renoncez à être administrateur,vous ne pourez plus gérer les utilisateurs de vos entité ou vous ré-attribuer les droits d'administration" %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte %}
                             {% endif %}
                             {% if request.user.is_superuser %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.is_superuser label="Super Utilisateur" sublabel="Un super utilisateur a tous les droits" %}
+                                {% include "common/form/input_checkbox.html" with form_input=form.is_superuser %}
                             {% endif %}
 
                             {% if request.user.is_superuser %}
-                                {% include "common/form/select_enum.html" with form_input=form.user_type label="Type d'utilisateur" with_empty_option=True %}
+                                {% include "common/form/select_enum.html" with form_input=form.user_type with_empty_option=True %}
                                 <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                     document.addEventListener('DOMContentLoaded', function () {
                                         document.getElementById('{{form.user_type.id_for_label}}')
@@ -51,10 +51,10 @@
                                     });
                                 </script>
                                 <div id="select_administration" {% if form.user_type.value != 'INSTRUCTEUR' %} hidden {% endif %}>
-                                    {% include "settings/form/select_administration.html" with form_input=form.administration label="Administration" %}
+                                    {% include "settings/form/select_administration.html" with form_input=form.administration %}
                                 </div>
                                 <div id="select_bailleur" {% if form.user_type.value != 'BAILLEUR' %} hidden {% endif %}>
-                                    {% include "settings/form/select_bailleur.html" with form_input=form.bailleur label="Entreprise bailleur" %}
+                                    {% include "settings/form/select_bailleur.html" with form_input=form.bailleur %}
                                 </div>
                             {% else %}
                                 {% if request.session.is_bailleur %}
@@ -63,7 +63,7 @@
                                         id="{{form.user_type.id_for_label}}"
                                         name="{{form.user_type.html_name}}"
                                         value="BAILLEUR">
-                                    {% include "settings/form/select_bailleur.html" with form_input=form.bailleur label="Entreprise bailleur"%}
+                                    {% include "settings/form/select_bailleur.html" with form_input=form.bailleur%}
                                 {% endif %}
                                 {% if request.session.is_instructeur %}
                                     <input
@@ -71,7 +71,7 @@
                                         id="{{form.user_type.id_for_label}}"
                                         name="{{form.user_type.html_name}}"
                                         value="INSTRUCTEUR">
-                                    {% include "settings/form/select_administration.html" with form_input=form.administration label="Administration" %}
+                                    {% include "settings/form/select_administration.html" with form_input=form.administration %}
                                 {% endif %}
                             {% endif %}
                             <button class="fr-btn fr-fi-save-line fr-btn--icon-left fr-mt-3w" type="submit">

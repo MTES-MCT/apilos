@@ -20,6 +20,10 @@ class User(AbstractUser):
     # pylint: disable=R0904
 
     administrateur_de_compte = models.BooleanField(default=False)
+    telephone = models.CharField(
+        null=True,
+        max_length=25,
+    )
 
     def has_object_permission(self, obj):
         if isinstance(obj, Convention):
