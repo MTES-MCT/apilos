@@ -261,7 +261,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     reference_cadastrale = forms.CharField(
         required=False,
-        label="Références cadastrales",
+        label="Références cadastrales et effet relatif",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
