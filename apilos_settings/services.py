@@ -127,9 +127,10 @@ def edit_administration(request, administration_uuid):
         page=request.GET.get("page", 1),
         my_user_list=User.objects.filter(role__in=administration.role_set.all()),
     )
+    user_list_service.paginate()
 
     return {
-        **user_list_service.paginate(),
+        **user_list_service.as_dict(),
         "form": form,
         "editable": True,
         "success": success,
@@ -226,9 +227,10 @@ def edit_bailleur(request, bailleur_uuid):
         page=request.GET.get("page", 1),
         my_user_list=User.objects.filter(role__in=bailleur.role_set.all()),
     )
+    user_list_service.paginate()
 
     return {
-        **user_list_service.paginate(),
+        **user_list_service.as_dict(),
         "form": form,
         "editable": True,
         "success": success,
@@ -244,7 +246,9 @@ def user_list(request):
         page=request.GET.get("page", 1),
         my_user_list=request.user.user_list(),
     )
-    return user_list_service.paginate()
+    user_list_service.paginate()
+
+    return user_list_service.as_dict()
 
 
 def edit_user(request, username):
@@ -433,6 +437,8 @@ class UserListService:
     order_by: str
     page: str
     my_user_list: Any
+    paginated_users: Any
+    total_users: int
 
     def __init__(
         self,
@@ -446,7 +452,7 @@ class UserListService:
         self.page = page
         self.my_user_list = my_user_list
 
-    def paginate(self):
+    def paginate(self) -> None:
         total_user = self.my_user_list.count()
         if self.search_input:
             self.my_user_list = self.my_user_list.filter(
@@ -466,12 +472,15 @@ class UserListService:
         except EmptyPage:
             users = paginator.page(paginator.num_pages)
 
-        return {
-            "users": users,
-            "total_user": total_user,
-            "order_by": self.order_by,
-            "search_input": self.search_input,
-        }
+        self.paginated_users = users
+        self.total_users = total_user
 
-    def get_order_by(self):
-        return self.order_by
+    def as_dict(self):
+        return {
+            "search_input": self.search_input,
+            "order_by": self.order_by,
+            "page": self.page,
+            "my_user_list": self.my_user_list,
+            "paginated_users": self.paginated_users,
+            "total_users": self.total_users,
+        }

@@ -25,7 +25,7 @@
                     </form>
 
                     <h3 class="fr-mt-3w">Utilisateurs du bailleur ‹‹{{ form.nom.value }}››</h3>
-                    {% include 'settings/user_list.html' with users=users read_only=True %}
+                    {% include 'settings/user_list.html' with users=paginated_users read_only=True %}
                 </div>
             </div>
         </div>
