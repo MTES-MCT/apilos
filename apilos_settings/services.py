@@ -1,3 +1,4 @@
+from typing import Any
 from django.forms.models import model_to_dict
 from django.views.decorators.http import require_GET
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -119,7 +120,16 @@ def edit_administration(request, administration_uuid):
             success = True
     else:
         form = AdministrationForm(initial=model_to_dict(administration))
+
+    user_list_service = UserListService(
+        search_input=request.GET.get("search_input", ""),
+        order_by=request.GET.get("order_by", "username"),
+        page=request.GET.get("page", 1),
+        my_user_list=User.objects.filter(role__in=administration.role_set.all()),
+    )
+
     return {
+        **user_list_service.paginate(),
         "form": form,
         "editable": True,
         "success": success,
@@ -210,7 +220,15 @@ def edit_bailleur(request, bailleur_uuid):
                 ),
             }
         )
+    user_list_service = UserListService(
+        search_input=request.GET.get("search_input", ""),
+        order_by=request.GET.get("order_by", "username"),
+        page=request.GET.get("page", 1),
+        my_user_list=User.objects.filter(role__in=bailleur.role_set.all()),
+    )
+
     return {
+        **user_list_service.paginate(),
         "form": form,
         "editable": True,
         "success": success,
@@ -219,34 +237,14 @@ def edit_bailleur(request, bailleur_uuid):
 
 @require_GET
 def user_list(request):
-    search_input = request.GET.get("search_input", "")
-    order_by = request.GET.get("order_by", "username")
-    page = request.GET.get("page", 1)
 
-    my_user_list = request.user.user_list().order_by(order_by)
-    total_user = my_user_list.count()
-    if search_input:
-        my_user_list = my_user_list.filter(
-            Q(username__icontains=search_input)
-            | Q(first_name__icontains=search_input)
-            | Q(last_name__icontains=search_input)
-            | Q(email__icontains=search_input)
-        )
-
-    paginator = Paginator(my_user_list, settings.APILOS_PAGINATION_PER_PAGE)
-    try:
-        users = paginator.page(page)
-    except PageNotAnInteger:
-        users = paginator.page(1)
-    except EmptyPage:
-        users = paginator.page(paginator.num_pages)
-
-    return {
-        "users": users,
-        "total_user": total_user,
-        "order_by": order_by,
-        "search_input": search_input,
-    }
+    user_list_service = UserListService(
+        search_input=request.GET.get("search_input", ""),
+        order_by=request.GET.get("order_by", "username"),
+        page=request.GET.get("page", 1),
+        my_user_list=request.user.user_list(),
+    )
+    return user_list_service.paginate()
 
 
 def edit_user(request, username):
@@ -428,3 +426,52 @@ def _send_welcome_email(user, password, login_url):
     )
     msg.attach_alternative(html_content, "text/html")
     msg.send()
+
+
+class UserListService:
+    search_input: str
+    order_by: str
+    page: str
+    my_user_list: Any
+
+    def __init__(
+        self,
+        search_input: str,
+        order_by: str,
+        page: str,
+        my_user_list: Any,
+    ):
+        self.search_input = search_input
+        self.order_by = order_by
+        self.page = page
+        self.my_user_list = my_user_list
+
+    def paginate(self):
+        total_user = self.my_user_list.count()
+        if self.search_input:
+            self.my_user_list = self.my_user_list.filter(
+                Q(username__icontains=self.search_input)
+                | Q(first_name__icontains=self.search_input)
+                | Q(last_name__icontains=self.search_input)
+                | Q(email__icontains=self.search_input)
+            )
+        if self.order_by:
+            self.my_user_list = self.my_user_list.order_by(self.order_by)
+
+        paginator = Paginator(self.my_user_list, settings.APILOS_PAGINATION_PER_PAGE)
+        try:
+            users = paginator.page(self.page)
+        except PageNotAnInteger:
+            users = paginator.page(1)
+        except EmptyPage:
+            users = paginator.page(paginator.num_pages)
+
+        return {
+            "users": users,
+            "total_user": total_user,
+            "order_by": self.order_by,
+            "search_input": self.search_input,
+        }
+
+    def get_order_by(self):
+        return self.order_by

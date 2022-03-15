@@ -22,15 +22,18 @@
                             {% include "common/form/input_text.html" with form_input=form.last_name %}
                             {% include "common/form/input_telephone.html" with form_input=form.telephone %}
                             {% include "settings/form/email_preferences.html" with user=None form_input=form.preferences_email %}
-                            {% if request.user.is_administrator %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte %}
+                            {% if request.user.is_superuser %}
+                                <h4>Rôles spéciaux</h4>
+                            {% else %}
+                                <h4>Rôle spécial</h4>
                             {% endif %}
+                            {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte editable=request.user.is_administrator %}
                             {% if request.user.is_superuser %}
                                 {% include "common/form/input_checkbox.html" with form_input=form.is_superuser %}
                             {% endif %}
 
                             {% if request.user.is_superuser %}
-                                {% include "common/form/select_enum.html" with form_input=form.user_type with_empty_option=True %}
+                                {% include "common/form/select_enum.html" with form_input=form.user_type with_empty_option=True label_class="fr-h4" %}
                                 <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                     document.addEventListener('DOMContentLoaded', function () {
                                         document.getElementById('{{form.user_type.id_for_label}}')
