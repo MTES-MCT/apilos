@@ -16,6 +16,17 @@ class slist(list):
         return len(self)
 
 
+class EmailPreferences(models.TextChoices):
+    # Toutes les conventions : L'utilisateur reçoit tous les emails pour toutes les conventions
+    # dans son périmètre (selon ses filtres géographiques s'ils sont configurés)
+    TOUS = "TOUS", "Tous les emails"
+    # L'utilisateur reçoit tous les emails des conventions qu'il instruit
+    # L'utilisateur instructeur reçoit les emails des conventions nouvellement à instruire
+    PARTIEL = "PARTIEL", "Emails des conventions instruites"
+    # L'utilisateur ne reçoit pas les emails relatifs aux conventions
+    AUCUN = "AUCUN", "Aucun email"
+
+
 class User(AbstractUser):
     # pylint: disable=R0904
 
@@ -23,6 +34,11 @@ class User(AbstractUser):
     telephone = models.CharField(
         null=True,
         max_length=25,
+    )
+    preferences_email = models.CharField(
+        max_length=25,
+        choices=EmailPreferences.choices,
+        default=EmailPreferences.TOUS,
     )
 
     def has_object_permission(self, obj):

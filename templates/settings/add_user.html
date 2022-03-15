@@ -20,6 +20,8 @@
                             {% include "common/form/input_text.html" with form_input=form.username %}
                             {% include "common/form/input_text.html" with form_input=form.first_name %}
                             {% include "common/form/input_text.html" with form_input=form.last_name %}
+                            {% include "common/form/input_telephone.html" with form_input=form.telephone %}
+                            {% include "settings/form/email_preferences.html" with user=None form_input=form.preferences_email %}
                             {% if request.user.is_administrator %}
                                 {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte %}
                             {% endif %}

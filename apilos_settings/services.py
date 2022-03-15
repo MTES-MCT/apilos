@@ -41,9 +41,14 @@ def user_profile(request):
             }
         )
         if userform.is_valid():
+            request.user.email = userform.cleaned_data["email"]
             request.user.first_name = userform.cleaned_data["first_name"]
             request.user.last_name = userform.cleaned_data["last_name"]
-            request.user.email = userform.cleaned_data["email"]
+            request.user.telephone = userform.cleaned_data["telephone"]
+            if userform.cleaned_data["preferences_email"] is not None:
+                request.user.preferences_email = userform.cleaned_data[
+                    "preferences_email"
+                ]
             request.user.administrateur_de_compte = userform.cleaned_data[
                 "administrateur_de_compte"
             ]
@@ -51,6 +56,9 @@ def user_profile(request):
             request.user.save()
             success = True
     else:
+
+        print("request.user.preferences_email")
+        print(request.user.preferences_email)
         userform = UserForm(initial=model_to_dict(request.user))
     return {
         "form": userform,
@@ -322,10 +330,12 @@ def edit_user(request, username):
             )
 
             if form.is_valid():
+                user.email = form.cleaned_data["email"]
                 user.first_name = form.cleaned_data["first_name"]
                 user.last_name = form.cleaned_data["last_name"]
-                user.email = form.cleaned_data["email"]
                 user.telephone = form.cleaned_data["telephone"]
+                if form.cleaned_data["preferences_email"] is not None:
+                    user.preferences_email = form.cleaned_data["preferences_email"]
                 user.administrateur_de_compte = form.cleaned_data[
                     "administrateur_de_compte"
                 ]
@@ -352,15 +362,18 @@ def add_user(request):
         form = AddUserForm(request.POST)
         if form.is_valid():
             user = User.objects.create(
+                email=form.cleaned_data["email"],
                 username=form.cleaned_data["username"],
                 first_name=form.cleaned_data["first_name"],
                 last_name=form.cleaned_data["last_name"],
-                email=form.cleaned_data["email"],
+                telephone=form.cleaned_data["telephone"],
                 administrateur_de_compte=form.cleaned_data["administrateur_de_compte"],
                 is_superuser=form.cleaned_data["is_superuser"]
                 if request.user.is_superuser
                 else False,
             )
+            if form.cleaned_data["preferences_email"] is not None:
+                user.preferences_email = form.cleaned_data["preferences_email"]
 
             password = User.objects.make_random_password()
             user.set_password(password)

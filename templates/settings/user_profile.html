@@ -21,10 +21,12 @@
                                     <p>Votre profil a été enregistré avec succès</p>
                                 </div>
                             {% endif %}
+                            {% include "common/form/input_text.html" with form_input=form.email %}
                             {% include "common/form/input_text.html" with form_input=form.username editable=False %}
                             {% include "common/form/input_text.html" with form_input=form.first_name %}
                             {% include "common/form/input_text.html" with form_input=form.last_name %}
-                            {% include "common/form/input_text.html" with form_input=form.email %}
+                            {% include "common/form/input_telephone.html" with form_input=form.telephone %}
+                            {% include "settings/form/email_preferences.html" with user=request.user form_input=form.preferences_email %}
                             {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte editable=request.user.is_administrator %}
                             {% if request.user.is_superuser %}
                                 {% include "common/form/input_checkbox.html" with form_input=form.is_superuser %}
