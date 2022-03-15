@@ -2,8 +2,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 
-from users.models import EmailPreferences, User
-from users.type_models import TypeRole
+from users.models import User
+from users.type_models import TypeRole, EmailPreferences
 
 
 class UserForm(forms.Form):

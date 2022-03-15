@@ -382,7 +382,7 @@ def _send_email_instruction(request, convention):
         msg.send()
 
     # envoie à l'instructeur
-    to = convention.get_email_instructeur_users()
+    to = convention.get_email_instructeur_users(include_partial=True)
     text_content = render_to_string(
         "emails/instructeur_instruction.txt",
         {
