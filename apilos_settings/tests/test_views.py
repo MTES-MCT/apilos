@@ -66,7 +66,7 @@ class ApilosSettingsViewTests(TestCase):
             reverse("login"), {"username": "nicolas", "password": "12345"}
         )
         response = self.client.get(reverse("settings:profile"))
-        self.assertNotContains(response, "Option d'envoi d'e-mail")
+        self.assertNotContains(response, "Option d&#x27;envoi d&#x27;e-mail")
         self.assertContains(response, "Administrateur de compte")
         self.assertContains(response, "Super Utilisateur")
 
@@ -74,7 +74,7 @@ class ApilosSettingsViewTests(TestCase):
             reverse("login"), {"username": "sabine", "password": "12345"}
         )
         response = self.client.get(reverse("settings:profile"))
-        self.assertContains(response, "Option d'envoi d'e-mail")
+        self.assertContains(response, "Option d&#x27;envoi d&#x27;e-mail")
         self.assertContains(response, "Administrateur de compte")
         self.assertNotContains(response, "Super Utilisateur")
 
@@ -82,6 +82,6 @@ class ApilosSettingsViewTests(TestCase):
             reverse("login"), {"username": "raph", "password": "12345"}
         )
         response = self.client.get(reverse("settings:profile"))
-        self.assertContains(response, "Option d'envoi d'e-mail")
+        self.assertContains(response, "Option d&#x27;envoi d&#x27;e-mail")
         self.assertContains(response, "Administrateur de compte")
         self.assertNotContains(response, "Super Utilisateur")

@@ -56,9 +56,6 @@ def user_profile(request):
             request.user.save()
             success = True
     else:
-
-        print("request.user.preferences_email")
-        print(request.user.preferences_email)
         userform = UserForm(initial=model_to_dict(request.user))
     return {
         "form": userform,
