@@ -351,6 +351,11 @@ def convention_delete(request, convention_uuid):
 
 
 def _send_email_instruction(request, convention):
+    """
+    Send email "convention à instruire" when bailleur submit the convention
+    Send an email to the bailleur who click and bailleur TOUS
+    Send an email to all instructeur (except the ones who select AUCUN as email preference)
+    """
     # envoi au bailleur
     convention_url = request.build_absolute_uri(
         reverse("conventions:recapitulatif", args=[convention.uuid])
@@ -382,7 +387,7 @@ def _send_email_instruction(request, convention):
         msg.send()
 
     # envoie à l'instructeur
-    to = convention.get_email_instructeur_users()
+    to = convention.get_email_instructeur_users(include_partial=True)
     text_content = render_to_string(
         "emails/instructeur_instruction.txt",
         {
@@ -436,23 +441,30 @@ def convention_feedback(request, convention_uuid):
 
 
 def _send_email_correction(request, convention, notification_form):
+    """
+    send email to notify correction is needed of correction is done:
+    * corrections are needed => send to bailleur who interact + PARTIEL
+        and bailleur who select TOUS as email preferences
+    * corrections are done -> send email to instructeur who interact + PARTIEL and instructeur TOUS
+    """
     convention_url = request.build_absolute_uri(
         reverse("conventions:recapitulatif", args=[convention.uuid])
     )
     if notification_form.cleaned_data["from_instructeur"]:
-        # All bailleur users from convention
+        # Get bailleurs list following email preferences and interaction with the convention
         to = convention.get_email_bailleur_users()
         subject = f"Convention à modifier ({convention})"
         template_label = "bailleur_correction_needed"
     else:
-        last_notification_from_instructeur = (
-            convention.get_last_instructeur_notification()
-        )
-        if last_notification_from_instructeur:
-            to = [last_notification_from_instructeur.user.email]
-        else:
-            # All instructeur users from convention
-            to = convention.get_email_instructeur_users()
+        # last_notification_from_instructeur = (
+        #     convention.get_last_instructeur_notification()
+        # )
+        # if last_notification_from_instructeur:
+        #     to = [last_notification_from_instructeur.user.email]
+        # else:
+        #     # All instructeur users from convention
+        # Get instructeurs list following email preferences and interaction with the convention
+        to = convention.get_email_instructeur_users()
         subject = f"Convention modifiée ({convention})"
         template_label = "instructeur_correction_done"
 
