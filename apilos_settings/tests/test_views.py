@@ -9,7 +9,7 @@ class ApilosSettingsViewTests(TestCase):
     def setUpTestData(cls):
         utils_fixtures.create_all()
 
-    def test_display_bailleurs(self):
+    def test_display_bailleurs_or_administrations(self):
         """
         Superuser will display Profil, Administrations, Bailleurs and Utilisateurs in sidemenu
         Instructeur will display Profil, Administrations and Utilisateurs in sidemenu
@@ -49,3 +49,39 @@ class ApilosSettingsViewTests(TestCase):
         self.assertContains(response, "Bailleurs")
         self.assertContains(response, "Utilisateurs")
         self.assertNotContains(response, "Administrations")
+
+    def test_display_profile(self):
+        """
+        Superuser :
+            won't display "Option d'envoi d'e-mail"
+            will display "
+        Bailleur :
+            will display "Option d'envoi d'e-mail"
+            will display "Administrateur de compte" active if true else inactive
+        Instructeur :
+            will display "Option d'envoi d'e-mail"
+            will display "Administrateur de compte" active if true else inactive
+        """
+        response = self.client.post(
+            reverse("login"), {"username": "nicolas", "password": "12345"}
+        )
+        response = self.client.get(reverse("settings:profile"))
+        self.assertNotContains(response, "Option d&#x27;envoi d&#x27;e-mail")
+        self.assertContains(response, "Administrateur de compte")
+        self.assertContains(response, "Super Utilisateur")
+
+        response = self.client.post(
+            reverse("login"), {"username": "sabine", "password": "12345"}
+        )
+        response = self.client.get(reverse("settings:profile"))
+        self.assertContains(response, "Option d&#x27;envoi d&#x27;e-mail")
+        self.assertContains(response, "Administrateur de compte")
+        self.assertNotContains(response, "Super Utilisateur")
+
+        response = self.client.post(
+            reverse("login"), {"username": "raph", "password": "12345"}
+        )
+        response = self.client.get(reverse("settings:profile"))
+        self.assertContains(response, "Option d&#x27;envoi d&#x27;e-mail")
+        self.assertContains(response, "Administrateur de compte")
+        self.assertNotContains(response, "Super Utilisateur")

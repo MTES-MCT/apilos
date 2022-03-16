@@ -7,7 +7,7 @@ from conventions.models import Convention, ConventionStatut
 from instructeurs.models import Administration
 from programmes.models import Lot, Programme
 
-from users.type_models import TypeRole
+from users.type_models import TypeRole, EmailPreferences
 
 
 class slist(list):
@@ -23,6 +23,11 @@ class User(AbstractUser):
     telephone = models.CharField(
         null=True,
         max_length=25,
+    )
+    preferences_email = models.CharField(
+        max_length=25,
+        choices=EmailPreferences.choices,
+        default=EmailPreferences.TOUS,
     )
 
     def has_object_permission(self, obj):

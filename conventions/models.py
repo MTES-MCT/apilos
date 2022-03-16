@@ -1,10 +1,11 @@
 import uuid
 
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 from programmes.models import Financement
 from core import model_utils
-from users.type_models import TypeRole
+from users.type_models import TypeRole, EmailPreferences
 
 
 class Preteur(models.TextChoices):
@@ -143,19 +144,82 @@ class Convention(models.Model):
             return None
 
     def get_email_bailleur_users(self):
-        return list(set(map(lambda x: x.user.email, self.bailleur.role_set.all())))
-
-    def get_email_instructeur_users(self):
-        return list(
+        """
+        return the email of the bailleurs to send them an email following their email preferences
+        partial should include only the bailleur which interact with the convention
+        using convention statut
+        """
+        users_partial = list(
             set(
                 map(
                     lambda x: x.user.email,
-                    self.programme.administration.role_set.all()
-                    if self.programme.administration
-                    else [],
+                    self.conventionhistory_set.filter(
+                        user__preferences_email=EmailPreferences.PARTIEL,
+                        user__role__typologie=TypeRole.BAILLEUR,
+                    ),
                 )
             )
         )
+        users_all_email = list(
+            set(
+                map(
+                    lambda x: x.user.email,
+                    self.bailleur.role_set.filter(
+                        user__preferences_email=EmailPreferences.TOUS
+                    ),
+                )
+            )
+        )
+        return users_partial + users_all_email
+
+    def get_email_instructeur_users(self, include_partial: bool = False):
+        """
+        return the email of the instructeur to send them an email following their email preferences
+        if include_partial (in case of a new convention, all instructeurs should be alerted)
+        else partial should include only the instucteur which interact with the convention
+        using convention statut
+        """
+        if not self.programme.administration:
+            # the programme is not associated to an administration
+            # this can occure when the convention is done from scratch
+            # should be solved with the association of the commune to DAP (délégataire)
+            return []
+        if include_partial:
+            # All instructeurs of the administration will be notified except one
+            # who choose no email (EmailPreferences.AUCUN)
+            return list(
+                set(
+                    map(
+                        lambda x: x.user.email,
+                        self.programme.administration.role_set.filter(
+                            Q(user__preferences_email=EmailPreferences.PARTIEL)
+                            | Q(user__preferences_email=EmailPreferences.TOUS)
+                        ),
+                    )
+                )
+            )
+        users_partial = list(
+            set(
+                map(
+                    lambda x: x.user.email,
+                    self.conventionhistory_set.filter(
+                        user__preferences_email=EmailPreferences.PARTIEL,
+                        user__role__typologie=TypeRole.INSTRUCTEUR,
+                    ),
+                )
+            )
+        )
+        users_all_email = list(
+            set(
+                map(
+                    lambda x: x.user.email,
+                    self.programme.administration.role_set.filter(
+                        user__preferences_email=EmailPreferences.TOUS
+                    ),
+                )
+            )
+        )
+        return users_partial + users_all_email
 
     def prefixe_numero(self):
         if (
