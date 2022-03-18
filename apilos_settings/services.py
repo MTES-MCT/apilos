@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib.auth.models import Group
+from apilos_settings.models import Departement
 
 from bailleurs.forms import BailleurForm
 from bailleurs.models import Bailleur
@@ -39,6 +40,11 @@ def user_profile(request):
                     if request.user.is_superuser
                     else request.user.is_superuser
                 ),
+                "filtre_departements": (
+                    [int(num) for num in request.POST["filtre_departements"].split(",")]
+                    if request.POST["filtre_departements"]
+                    else []
+                ),
             }
         )
         if userform.is_valid():
@@ -55,13 +61,20 @@ def user_profile(request):
             ]
             request.user.is_superuser = userform.cleaned_data["is_superuser"]
             request.user.save()
+            if userform.cleaned_data["filtre_departements"] is not None:
+                request.user.filtre_departements.clear()
+                request.user.filtre_departements.add(
+                    *userform.cleaned_data["filtre_departements"]
+                )
             success = True
     else:
         userform = UserForm(initial=model_to_dict(request.user))
+
     return {
         "form": userform,
         "editable": True,
         "success": success,
+        "departements": Departement.objects.all(),
     }
 
 

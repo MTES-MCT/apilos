@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import PermissionDenied
 from django.db import models
+from apilos_settings.models import Departement
 
 from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
@@ -29,6 +30,7 @@ class User(AbstractUser):
         choices=EmailPreferences.choices,
         default=EmailPreferences.TOUS,
     )
+    filtre_departements = models.ManyToManyField(Departement)
 
     def has_object_permission(self, obj):
         if isinstance(obj, Convention):

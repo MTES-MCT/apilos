@@ -33,7 +33,7 @@
                             {% endif %}
 
                             {% if request.user.is_superuser %}
-                                {% include "common/form/select_enum.html" with form_input=form.user_type with_empty_option=True label_class="fr-h4" %}
+                                {% include "common/form/input_select.html" with form_input=form.user_type with_empty_option=True label_class="fr-h4" %}
                                 <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                     document.addEventListener('DOMContentLoaded', function () {
                                         document.getElementById('{{form.user_type.id_for_label}}')
