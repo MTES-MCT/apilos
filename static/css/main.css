@@ -459,3 +459,7 @@ table.fullwidth {
 .vscomp-ele {
   max-width: 100%!important;
 }
+
+.apilos-text--normal {
+  font-weight: normal;
+}

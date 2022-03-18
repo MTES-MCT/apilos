@@ -1,7 +1,8 @@
 <div class="fr-select-group {% if form_input.errors %}fr-select-group--error{% endif %}">
-    {% if form_input.label %}
+    {% if label %}
         <label class="fr-label {{ label_class }}" for="{{form_input.id_for_label}}">
-            {{ form_input.label }}
+            {{ label }}
+            <span class="fr-hint-text apilos-text--normal">{{ help_text }}</span>
         </label>
     {% endif %}
     <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">

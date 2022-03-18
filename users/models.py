@@ -30,7 +30,16 @@ class User(AbstractUser):
         choices=EmailPreferences.choices,
         default=EmailPreferences.TOUS,
     )
-    filtre_departements = models.ManyToManyField(Departement)
+    filtre_departements = models.ManyToManyField(
+        Departement,
+        related_name="filtre_departements",
+        # label="Filtrer par departements",
+        help_text=(
+            "Les programmes et conventions affichés à l'utilisateur seront filtrés en utilisant"
+            + " la liste des départements ci-dessous"
+        ),
+        blank=True,
+    )
 
     def has_object_permission(self, obj):
         if isinstance(obj, Convention):
