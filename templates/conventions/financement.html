@@ -88,7 +88,7 @@
                                                     {% include "common/form/input_number.html" with form_input=form_pret.montant step="0.01" parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/select_enum.html" with form_input=form_pret.preteur parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_select.html" with form_input=form_pret.preteur parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
                                                     {% include "common/form/input_text.html" with form_input=form_pret.autre parent_object_field=main_object_field editable=editable_upload %}

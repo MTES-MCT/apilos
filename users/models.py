@@ -1,7 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import PermissionDenied
 from django.db import models
+from django.db.models.functions import Substr
 
+from apilos_settings.models import Departement
 from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
 from instructeurs.models import Administration
@@ -28,6 +30,16 @@ class User(AbstractUser):
         max_length=25,
         choices=EmailPreferences.choices,
         default=EmailPreferences.TOUS,
+    )
+    filtre_departements = models.ManyToManyField(
+        Departement,
+        related_name="filtre_departements",
+        # label="Filtrer par departements",
+        help_text=(
+            "Les programmes et conventions affichés à l'utilisateur seront filtrés en utilisant"
+            + " la liste des départements ci-dessous"
+        ),
+        blank=True,
     )
 
     def has_object_permission(self, obj):
@@ -84,30 +96,51 @@ class User(AbstractUser):
     def _is_role(self, role):
         return role in map(lambda r: r.typologie, self.role_set.all())
 
-    #
-    # list of programme following role
-    # super admin = all programme, filtre = {}
-    # instructeur = all programme following geo, filtre = {}
-    # bailleur = programme which belongs to the bailleurs, filtre = {bailleur_id__in: [x,y,z]}
-    # else raise
-    #
-    def programme_filter(self, prefix=""):
+    def programmes(self) -> list:
+        """
+        Programme of the user following is role :
+        * super admin = all programme, filtre = {}
+        * instructeur = all programme following geo, filtre = {}
+        * bailleur = programme which belongs to the bailleurs, filtre = {bailleur_id__in: [x,y,z]}
+        else raise
+        """
         if self.is_superuser:
-            return {}
+            return Programme.objects.all()
 
-        # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return {prefix + "administration_id__in": self._administration_ids()}
+            return Programme.objects.filter(
+                administration_id__in=self._administration_ids()
+            )
 
         if self.is_bailleur():
-            return {prefix + "bailleur_id__in": self._bailleur_ids()}
+            programmes_result = Programme.objects.filter(
+                bailleur_id__in=self._bailleur_ids()
+            )
+            if self.filtre_departements.exists():
+                programmes_result = programmes_result.annotate(
+                    departement=Substr("code_postal", 1, 2)
+                ).filter(
+                    departement__in=list(
+                        self.filtre_departements.all().values_list(
+                            "code_postal", flat=True
+                        )
+                    )
+                )
+            return programmes_result
 
         raise Exception(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les programmes"
         )
 
-    def programmes(self):
-        return Programme.objects.filter(**self.programme_filter())
+    def lots(self):
+        """
+        Lots of the user following is role :
+        * super admin = all lots
+        * instructeur = all lots of programme which belongs to its administrations
+        * bailleur = all lots which belongs to its bailleur entities
+        else raise
+        """
+        return Lot.objects.filter(programme__in=self.programmes())
 
     #
     # list of administration following role
@@ -168,7 +201,7 @@ class User(AbstractUser):
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les bailleurs"
         )
 
-    def _bailleur_ids(self):
+    def _bailleur_ids(self) -> list:
         return list(
             map(
                 lambda role: role.bailleur_id,
@@ -179,23 +212,41 @@ class User(AbstractUser):
     def bailleurs(self, order_by="nom"):
         return Bailleur.objects.filter(**self.bailleur_filter()).order_by(order_by)
 
-    def convention_filter(self):
+    def conventions(self):
+        """
+        Return the conventions the user has right to view.
+        For an `instructeur`, it returns the conventions of its administrations
+        For a `bailleur`, it returns the conventions of its bailleur entities in the limit of its
+        geographic filter
+        """
         if self.is_superuser:
-            return {}
+            return Convention.objects.all()
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return {"programme__administration_id__in": self._administration_ids()}
+            return Convention.objects.filter(
+                programme__administration_id__in=self._administration_ids()
+            )
 
         if self.is_bailleur():
-            return {"bailleur_id__in": self._bailleur_ids()}
+            conventions_result = Convention.objects.filter(
+                bailleur_id__in=self._bailleur_ids()
+            )
+            if self.filtre_departements.exists():
+                conventions_result = conventions_result.annotate(
+                    departement=Substr("programme__code_postal", 1, 2)
+                ).filter(
+                    departement__in=list(
+                        self.filtre_departements.all().values_list(
+                            "code_postal", flat=True
+                        )
+                    )
+                )
+            return conventions_result
 
         raise PermissionDenied(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les bailleurs"
         )
-
-    def conventions(self):
-        return Convention.objects.filter(**self.convention_filter())
 
     def full_editable_convention(self, convention):
         # is bailleur of the convention

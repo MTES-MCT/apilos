@@ -152,7 +152,7 @@ class LotList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAP
         This view should return a list of all the purchases
         for the currently authenticated user.
         """
-        return Lot.objects.filter(**self.request.user.programme_filter("programme__"))
+        return self.request.user.lots()
 
     def get(self, request):  # , format=None):
         return self.list(request)  # , *args, **kwargs)

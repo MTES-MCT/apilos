@@ -25,7 +25,7 @@
 
                                 {% include "common/form/input_text.html" with form_input=form.nom object_field="bailleur__nom__"|add:form.uuid.value %}
 
-                                {% include "common/form/select_enum.html" with form_input=form.type_bailleur editable=request.user.is_superuser %}
+                                {% include "common/form/input_select.html" with form_input=form.type_bailleur editable=request.user.is_superuser %}
 
                                 <div class="fr-mb-2w">
                                     <div class="fr-grid-row fr-grid-row--gutters">
