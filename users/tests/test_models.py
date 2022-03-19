@@ -1,9 +1,13 @@
+from django.db.models.functions import Substr
 from django.test import TestCase
 from bailleurs.models import Bailleur
 
 from core.tests import utils_fixtures
+
+from apilos_settings.models import Departement
 from instructeurs.models import Administration
 from conventions.models import Convention, ConventionStatut
+from programmes.models import Programme
 from users.models import User
 
 
@@ -12,6 +16,11 @@ class AdministrationsModelsTest(TestCase):
     def setUpTestData(cls):
         # pylint: disable=R0914
         utils_fixtures.create_all()
+        Departement.objects.create(
+            nom="Bouches du Rhône",
+            code_postal="13",
+            code_insee="13",
+        )
 
     # Test model User
     def test_object_user_str(self):
@@ -157,47 +166,56 @@ class AdministrationsModelsTest(TestCase):
                 user_bailleur_hlm.has_perm("convention.view_convention", convention)
             )
 
-    def test_programme_filter(self):
+    def test_programmes(self):
         user_superuser = User.objects.get(username="nicolas")
-        self.assertEqual(user_superuser.programme_filter(), {})
-        self.assertEqual(user_superuser.programme_filter(prefix="programme__"), {})
+        self.assertEqual(
+            list(user_superuser.programmes().values_list("uuid", flat=True)),
+            list(Programme.objects.all().values_list("uuid", flat=True)),
+        )
         user_instructeur = User.objects.get(username="sabine")
         self.assertEqual(
-            user_instructeur.programme_filter(),
-            {
-                "administration_id__in": [
-                    user_instructeur.role_set.all()[0].administration_id,
-                    user_instructeur.role_set.all()[1].administration_id,
-                ]
-            },
-        )
-        self.assertEqual(
-            user_instructeur.programme_filter(prefix="programme__"),
-            {
-                "programme__administration_id__in": [
-                    user_instructeur.role_set.all()[0].administration_id,
-                    user_instructeur.role_set.all()[1].administration_id,
-                ]
-            },
+            list(user_instructeur.programmes().values_list("uuid", flat=True)),
+            list(
+                Programme.objects.filter(
+                    administration_id__in=[
+                        user_instructeur.role_set.all()[0].administration_id,
+                        user_instructeur.role_set.all()[1].administration_id,
+                    ]
+                ).values_list("uuid", flat=True)
+            ),
         )
         user_bailleur = User.objects.get(username="raph")
-        self.assertEqual(
-            user_bailleur.programme_filter(),
-            {
-                "bailleur_id__in": [
+        programme_id_list = list(
+            Programme.objects.filter(
+                bailleur_id__in=[
                     user_bailleur.role_set.all()[0].bailleur_id,
                     user_bailleur.role_set.all()[1].bailleur_id,
                 ]
-            },
+            ).values_list("uuid", flat=True)
         )
         self.assertEqual(
-            user_bailleur.programme_filter(prefix="programme__"),
-            {
-                "programme__bailleur_id__in": [
+            list(user_bailleur.programmes().values_list("uuid", flat=True)),
+            programme_id_list,
+        )
+        user_bailleur.filtre_departements.add(Departement.objects.get(code_insee="13"))
+        programme_id_list_with_filters = list(
+            Programme.objects.annotate(departement=Substr("code_postal", 1, 2))
+            .filter(
+                bailleur_id__in=[
                     user_bailleur.role_set.all()[0].bailleur_id,
                     user_bailleur.role_set.all()[1].bailleur_id,
-                ]
-            },
+                ],
+                departement="13",
+            )
+            .values_list("uuid", flat=True)
+        )
+        self.assertEqual(
+            list(user_bailleur.programmes().values_list("uuid", flat=True)),
+            programme_id_list_with_filters,
+        )
+        self.assertNotEqual(
+            programme_id_list,
+            programme_id_list_with_filters,
         )
 
     def test_administration_filter(self):
@@ -232,26 +250,53 @@ class AdministrationsModelsTest(TestCase):
             },
         )
 
-    def test_convention_filter(self):
+    def test_conventions(self):
         user_instructeur = User.objects.get(username="sabine")
         self.assertEqual(
-            user_instructeur.convention_filter(),
-            {
-                "programme__administration_id__in": [
-                    user_instructeur.role_set.all()[0].administration_id,
-                    user_instructeur.role_set.all()[1].administration_id,
-                ]
-            },
+            list(user_instructeur.conventions().values_list("uuid", flat=True)),
+            list(
+                Convention.objects.filter(
+                    programme__administration_id__in=[
+                        user_instructeur.role_set.all()[0].administration_id,
+                        user_instructeur.role_set.all()[1].administration_id,
+                    ]
+                ).values_list("uuid", flat=True)
+            ),
         )
         user_bailleur = User.objects.get(username="raph")
-        self.assertEqual(
-            user_bailleur.convention_filter(),
-            {
-                "bailleur_id__in": [
+        convention_id_list = list(
+            Convention.objects.filter(
+                bailleur_id__in=[
                     user_bailleur.role_set.all()[0].bailleur_id,
                     user_bailleur.role_set.all()[1].bailleur_id,
                 ]
-            },
+            ).values_list("uuid", flat=True)
+        )
+        self.assertEqual(
+            list(user_bailleur.conventions().values_list("uuid", flat=True)),
+            convention_id_list,
+        )
+        user_bailleur.filtre_departements.add(Departement.objects.get(code_insee="13"))
+        convention_id_list_with_filters = list(
+            Convention.objects.annotate(
+                departement=Substr("programme__code_postal", 1, 2)
+            )
+            .filter(
+                bailleur_id__in=[
+                    user_bailleur.role_set.all()[0].bailleur_id,
+                    user_bailleur.role_set.all()[1].bailleur_id,
+                ],
+                departement="13",
+            )
+            .values_list("uuid", flat=True)
+        )
+        self.assertEqual(
+            list(user_bailleur.conventions().values_list("uuid", flat=True)),
+            convention_id_list_with_filters,
+        )
+        self.assertNotEqual(
+            convention_id_list,
+            convention_id_list_with_filters,
         )
 
     def test_user_list(self):

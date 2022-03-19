@@ -76,7 +76,7 @@ def select_programme_create(request):
             }
         )
 
-    programmes = _conventions_selection(request, {})
+    programmes = _conventions_selection(request)
     return {
         "success": utils.ReturnStatus.ERROR,
         "programmes": programmes,
@@ -147,7 +147,7 @@ def select_programme_update(request, convention_uuid):
                 "existing_programme": "selection",
             }
         )
-    programmes = _conventions_selection(request, {})
+    programmes = _conventions_selection(request)
     return {
         **utils.base_convention_response_error(request, convention),
         "programmes": programmes,
@@ -733,12 +733,11 @@ def _save_programme_logement_edd(formset, convention, programme):
         logementedd.save()
 
 
-def _conventions_selection(request, infilter):
-    infilter.update(request.user.programme_filter("programme__"))
+def _conventions_selection(request):
     return (
-        Lot.objects.prefetch_related("programme")
+        request.user.lots()
+        .prefetch_related("programme")
         .prefetch_related("convention_set")
-        .filter(**infilter)
         .order_by("programme__ville", "programme__nom", "nb_logements", "financement")
     )
 
@@ -767,7 +766,7 @@ def display_operation(request, programme_uuid, financement):
             initial={"existing_programme": "selection", "lot_uuid": f"{lot.uuid}"}
         )
 
-        programmes = _conventions_selection(request, {})
+        programmes = _conventions_selection(request)
         return {
             "success": utils.ReturnStatus.WARNING,
             "programmes": programmes,

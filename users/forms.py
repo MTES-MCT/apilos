@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from apilos_settings.models import Departement
 
 from users.models import User
 from users.type_models import TypeRole, EmailPreferences
@@ -73,6 +74,11 @@ class UserForm(forms.Form):
         required=False,
         label="Option d'envoi d'e-mail",
         choices=EmailPreferences.choices,
+    )
+
+    filtre_departements = forms.ModelMultipleChoiceField(
+        queryset=Departement.objects.all(),
+        required=False,
     )
 
     def clean_email(self):

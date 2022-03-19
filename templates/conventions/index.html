@@ -111,11 +111,15 @@
                                         {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='lot__financement' url_target='conventions:index' %}
                                     </th>
                                     <th scope="col">
-                                        Ville
+                                        Code postal
                                         {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__ville' url_target='conventions:index' %}
                                     </th>
                                     <th scope="col">
-                                        Nombre de logements à conventionner
+                                        Ville
+                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__ville' url_target='conventions:index' %}
+                                    </th>
+                                    <th title="Nombre de logements à conventionner" scope="col">
+                                        Nb Lgts
                                         {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='lot__nb_logements' url_target='conventions:index' %}
                                     </th>
                                     <th scope="col">
@@ -135,6 +139,7 @@
                                         <td>{{convention.programme.date_achevement_compile|default_if_none:'-'}}</td>
                                         <td>{{convention.programme.nom}}</td>
                                         <td>{{convention.financement}}</td>
+                                        <td>{{convention.programme.code_postal}}</td>
                                         <td>{{convention.programme.ville}}</td>
                                         <td>{{convention.lot.nb_logements}}</td>
                                         <td>{{convention.get_statut_display}}</td>

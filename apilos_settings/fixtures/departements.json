@@ -1,0 +1,810 @@
+[
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Ain",
+        "code_insee": "01",
+        "code_postal": "01"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Aisne",
+        "code_insee": "02",
+        "code_postal": "02"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Allier",
+        "code_insee": "03",
+        "code_postal": "03"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Alpes-de-Haute-Provence",
+        "code_insee": "04",
+        "code_postal": "04"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Hautes-Alpes",
+        "code_insee": "05",
+        "code_postal": "05"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Alpes-Maritimes",
+        "code_insee": "06",
+        "code_postal": "06"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Ardèche",
+        "code_insee": "07",
+        "code_postal": "07"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Ardennes",
+        "code_insee": "08",
+        "code_postal": "08"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Ariège",
+        "code_insee": "09",
+        "code_postal": "09"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Aube",
+        "code_insee": "10",
+        "code_postal": "10"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Aude",
+        "code_insee": "11",
+        "code_postal": "11"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Aveyron",
+        "code_insee": "12",
+        "code_postal": "12"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Bouches-du-Rhône",
+        "code_insee": "13",
+        "code_postal": "13"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Calvados",
+        "code_insee": "14",
+        "code_postal": "14"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Cantal",
+        "code_insee": "15",
+        "code_postal": "15"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Charente",
+        "code_insee": "16",
+        "code_postal": "16"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Charente-Maritime",
+        "code_insee": "17",
+        "code_postal": "17"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Cher",
+        "code_insee": "18",
+        "code_postal": "18"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Corrèze",
+        "code_insee": "19",
+        "code_postal": "19"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Corse-du-Sud",
+        "code_insee": "2A",
+        "code_postal": "20"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Haute-Corse",
+        "code_insee": "2B",
+        "code_postal": "20"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Côte-d-Or",
+        "code_insee": "21",
+        "code_postal": "21"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Côtes-d-Armor",
+        "code_insee": "22",
+        "code_postal": "22"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Creuse",
+        "code_insee": "23",
+        "code_postal": "23"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Dordogne",
+        "code_insee": "24",
+        "code_postal": "24"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Doubs",
+        "code_insee": "25",
+        "code_postal": "25"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Drôme",
+        "code_insee": "26",
+        "code_postal": "26"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Eure",
+        "code_insee": "27",
+        "code_postal": "27"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Eure-et-Loir",
+        "code_insee": "28",
+        "code_postal": "28"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Finistère",
+        "code_insee": "29",
+        "code_postal": "29"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Gard",
+        "code_insee": "30",
+        "code_postal": "30"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Haute-Garonne",
+        "code_insee": "31",
+        "code_postal": "31"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Gers",
+        "code_insee": "32",
+        "code_postal": "32"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Gironde",
+        "code_insee": "33",
+        "code_postal": "33"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Hérault",
+        "code_insee": "34",
+        "code_postal": "34"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Ille-et-Vilaine",
+        "code_insee": "35",
+        "code_postal": "35"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Indre",
+        "code_insee": "36",
+        "code_postal": "36"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Indre-et-Loire",
+        "code_insee": "37",
+        "code_postal": "37"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Isère",
+        "code_insee": "38",
+        "code_postal": "38"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Jura",
+        "code_insee": "39",
+        "code_postal": "39"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Landes",
+        "code_insee": "40",
+        "code_postal": "40"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Loir-et-Cher",
+        "code_insee": "41",
+        "code_postal": "41"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Loire",
+        "code_insee": "42",
+        "code_postal": "42"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Haute-Loire",
+        "code_insee": "43",
+        "code_postal": "43"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Loire-Atlantique",
+        "code_insee": "44",
+        "code_postal": "44"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Loiret",
+        "code_insee": "45",
+        "code_postal": "45"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Lot",
+        "code_insee": "46",
+        "code_postal": "46"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Lot-et-Garonne",
+        "code_insee": "47",
+        "code_postal": "47"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Lozère",
+        "code_insee": "48",
+        "code_postal": "48"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Maine-et-Loire",
+        "code_insee": "49",
+        "code_postal": "49"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Manche",
+        "code_insee": "50",
+        "code_postal": "50"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Marne",
+        "code_insee": "51",
+        "code_postal": "51"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Haute-Marne",
+        "code_insee": "52",
+        "code_postal": "52"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Mayenne",
+        "code_insee": "53",
+        "code_postal": "53"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Meurthe-et-Moselle",
+        "code_insee": "54",
+        "code_postal": "54"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Meuse",
+        "code_insee": "55",
+        "code_postal": "55"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Morbihan",
+        "code_insee": "56",
+        "code_postal": "56"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Moselle",
+        "code_insee": "57",
+        "code_postal": "57"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Nièvre",
+        "code_insee": "58",
+        "code_postal": "58"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Nord",
+        "code_insee": "59",
+        "code_postal": "59"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Oise",
+        "code_insee": "60",
+        "code_postal": "60"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Orne",
+        "code_insee": "61",
+        "code_postal": "61"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Pas-de-Calais",
+        "code_insee": "62",
+        "code_postal": "62"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Puy-de-Dôme",
+        "code_insee": "63",
+        "code_postal": "63"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Pyrénées-Atlantiques",
+        "code_insee": "64",
+        "code_postal": "64"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Hautes-Pyrénées",
+        "code_insee": "65",
+        "code_postal": "65"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Pyrénées-Orientales",
+        "code_insee": "66",
+        "code_postal": "66"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Bas-Rhin",
+        "code_insee": "67",
+        "code_postal": "67"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Haut-Rhin",
+        "code_insee": "68",
+        "code_postal": "68"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Rhône",
+        "code_insee": "69",
+        "code_postal": "69"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Haute-Saône",
+        "code_insee": "70",
+        "code_postal": "70"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Saône-et-Loire",
+        "code_insee": "71",
+        "code_postal": "71"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Sarthe",
+        "code_insee": "72",
+        "code_postal": "72"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Savoie",
+        "code_insee": "73",
+        "code_postal": "73"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Haute-Savoie",
+        "code_insee": "74",
+        "code_postal": "74"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Paris",
+        "code_insee": "75",
+        "code_postal": "75"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Seine-Maritime",
+        "code_insee": "76",
+        "code_postal": "76"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Seine-et-Marne",
+        "code_insee": "77",
+        "code_postal": "77"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Yvelines",
+        "code_insee": "78",
+        "code_postal": "78"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Deux-Sèvres",
+        "code_insee": "79",
+        "code_postal": "79"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Somme",
+        "code_insee": "80",
+        "code_postal": "80"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Tarn",
+        "code_insee": "81",
+        "code_postal": "81"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Tarn-et-Garonne",
+        "code_insee": "82",
+        "code_postal": "82"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Var",
+        "code_insee": "83",
+        "code_postal": "83"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Vaucluse",
+        "code_insee": "84",
+        "code_postal": "84"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Vendée",
+        "code_insee": "85",
+        "code_postal": "85"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Vienne",
+        "code_insee": "86",
+        "code_postal": "86"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Haute-Vienne",
+        "code_insee": "87",
+        "code_postal": "87"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Vosges",
+        "code_insee": "88",
+        "code_postal": "88"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Yonne",
+        "code_insee": "89",
+        "code_postal": "89"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Territoire de Belfort",
+        "code_insee": "90",
+        "code_postal": "90"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Essonne",
+        "code_insee": "91",
+        "code_postal": "91"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Hauts-de-Seine",
+        "code_insee": "92",
+        "code_postal": "92"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Seine-St-Denis",
+        "code_insee": "93",
+        "code_postal": "93"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Val-de-Marne",
+        "code_insee": "94",
+        "code_postal": "94"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Val-D-Oise",
+        "code_insee": "95",
+        "code_postal": "95"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Guadeloupe",
+        "code_insee": "971",
+        "code_postal": "971"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Martinique",
+        "code_insee": "972",
+        "code_postal": "972"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Guyane",
+        "code_insee": "973",
+        "code_postal": "973"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "La Réunion",
+        "code_insee": "974",
+        "code_postal": "974"
+    }
+},
+{
+    "model": "apilos_settings.departement",
+    "fields": {
+        "nom": "Mayotte",
+        "code_insee": "976",
+        "code_postal": "976"
+    }
+}
+]

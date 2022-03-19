@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from apilos_settings import services
+from apilos_settings.models import Departement
 
 
 @login_required
@@ -67,7 +68,10 @@ def profile(request):
     return render(
         request,
         "settings/user_profile.html",
-        {**result},
+        {
+            **result,
+            "departements": Departement.objects.all(),
+        },
     )
 
 
@@ -95,7 +99,10 @@ def edit_user(request, username):
     return render(
         request,
         "settings/edit_user.html",
-        {**result},
+        {
+            **result,
+            "departements": Departement.objects.all(),
+        },
     )
 
 
@@ -107,5 +114,8 @@ def add_user(request):
     return render(
         request,
         "settings/add_user.html",
-        {**result},
+        {
+            **result,
+            "departements": Departement.objects.all(),
+        },
     )

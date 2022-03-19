@@ -67,6 +67,7 @@ class ApilosSettingsViewTests(TestCase):
         )
         response = self.client.get(reverse("settings:profile"))
         self.assertNotContains(response, "Option d&#x27;envoi d&#x27;e-mail")
+        self.assertNotContains(response, "Filtrer par departements")
         self.assertContains(response, "Administrateur de compte")
         self.assertContains(response, "Super Utilisateur")
 
@@ -75,6 +76,7 @@ class ApilosSettingsViewTests(TestCase):
         )
         response = self.client.get(reverse("settings:profile"))
         self.assertContains(response, "Option d&#x27;envoi d&#x27;e-mail")
+        self.assertNotContains(response, "Filtrer par departements")
         self.assertContains(response, "Administrateur de compte")
         self.assertNotContains(response, "Super Utilisateur")
 
@@ -83,5 +85,6 @@ class ApilosSettingsViewTests(TestCase):
         )
         response = self.client.get(reverse("settings:profile"))
         self.assertContains(response, "Option d&#x27;envoi d&#x27;e-mail")
+        self.assertContains(response, "Filtrer par departements")
         self.assertContains(response, "Administrateur de compte")
         self.assertNotContains(response, "Super Utilisateur")

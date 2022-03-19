@@ -39,6 +39,11 @@ def user_profile(request):
                     if request.user.is_superuser
                     else request.user.is_superuser
                 ),
+                "filtre_departements": (
+                    [int(num) for num in request.POST["filtre_departements"].split(",")]
+                    if request.POST["filtre_departements"]
+                    else []
+                ),
             }
         )
         if userform.is_valid():
@@ -55,9 +60,15 @@ def user_profile(request):
             ]
             request.user.is_superuser = userform.cleaned_data["is_superuser"]
             request.user.save()
+            if userform.cleaned_data["filtre_departements"] is not None:
+                request.user.filtre_departements.clear()
+                request.user.filtre_departements.add(
+                    *userform.cleaned_data["filtre_departements"]
+                )
             success = True
     else:
         userform = UserForm(initial=model_to_dict(request.user))
+
     return {
         "form": userform,
         "editable": True,
@@ -325,6 +336,14 @@ def edit_user(request, username):
                         if request.user.is_superuser
                         else user.is_superuser
                     ),
+                    "filtre_departements": (
+                        [
+                            int(num)
+                            for num in request.POST["filtre_departements"].split(",")
+                        ]
+                        if request.POST["filtre_departements"]
+                        else []
+                    ),
                 }
             )
 
@@ -340,11 +359,14 @@ def edit_user(request, username):
                 ]
                 user.is_superuser = form.cleaned_data["is_superuser"]
                 user.save()
+                if form.cleaned_data["filtre_departements"] is not None:
+                    user.filtre_departements.clear()
+                    user.filtre_departements.add(
+                        *form.cleaned_data["filtre_departements"]
+                    )
                 status = "user_updated"
     else:
-        form = UserForm(initial=model_to_dict(user))
-        form_add_bailleur = AddBailleurForm()
-        form_add_administration = AddAdministrationForm()
+        (form, form_add_bailleur, form_add_administration) = _init_user_form(user)
     return {
         "form": form,
         "user": user,
@@ -355,10 +377,27 @@ def edit_user(request, username):
     }
 
 
+def _init_user_form(user):
+    return (
+        UserForm(initial=model_to_dict(user)),
+        AddBailleurForm(),
+        AddAdministrationForm(),
+    )
+
+
 def add_user(request):
     status = ""
     if request.method == "POST" and request.user.is_administrator():
-        form = AddUserForm(request.POST)
+        form = AddUserForm(
+            {
+                **request.POST.dict(),
+                "filtre_departements": (
+                    [int(num) for num in request.POST["filtre_departements"].split(",")]
+                    if request.POST["filtre_departements"]
+                    else []
+                ),
+            }
+        )
         if form.is_valid():
             user = User.objects.create(
                 email=form.cleaned_data["email"],
@@ -377,6 +416,10 @@ def add_user(request):
             password = User.objects.make_random_password()
             user.set_password(password)
             user.save()
+            if form.cleaned_data["filtre_departements"] is not None:
+                user.filtre_departements.clear()
+                user.filtre_departements.add(*form.cleaned_data["filtre_departements"])
+
             _send_welcome_email(
                 user, password, request.build_absolute_uri("/accounts/login/")
             )
