@@ -61,11 +61,7 @@ class ConventionList(
                 uuid=self.request.query_params["bailleur_uuid"]
             )
             convention_filter["bailleur_id"] = bailleur.id
-        return (
-            self.request.user.conventions()
-            .filter(**convention_filter)
-            .order_by("programme__nom")
-        )
+        return self.request.user.conventions().order_by("programme__nom")
 
     @swagger_auto_schema(
         manual_parameters=[

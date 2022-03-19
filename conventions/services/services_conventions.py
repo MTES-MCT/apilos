@@ -27,16 +27,15 @@ from . import convention_generator
 
 
 @require_GET
-def conventions_index(request, infilter):
+def conventions_index(request):
     order_by = request.GET.get("order_by", "programme__date_achevement_compile")
     search = request.GET.get("search_input", "")
     cstatut = request.GET.get("cstatut", "")
     cfinancement = request.GET.get("financement", "")
-    infilter.update(request.user.convention_filter())
     conventions = (
-        Convention.objects.prefetch_related("programme")
+        request.user.conventions()
+        .prefetch_related("programme")
         .prefetch_related("lot")
-        .filter(**infilter)
         .order_by(order_by)
     )
     if search:
