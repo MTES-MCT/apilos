@@ -1,5 +1,5 @@
 #!/bin/env bash
 
 python manage.py migrate
-python manage.py loaddata auth.json
+python manage.py loaddata auth.json departements.json
 python manage.py clearsessions
