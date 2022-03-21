@@ -11,6 +11,8 @@ from docx.shared import Inches
 from django.conf import settings
 from django.core.files.storage import default_storage
 
+from core.utils import round_half_up
+
 from bailleurs.models import TypeBailleur
 from programmes.models import (
     Financement,
@@ -294,14 +296,16 @@ def _compute_mixte(convention):
         "mixPLUS_10pc": 0,
     }
     if convention.lot.financement == Financement.PLUS:
-        mixite["mixPLUS_10pc"] = round(convention.lot.nb_logements * 0.1)
+        mixite["mixPLUS_10pc"] = round_half_up(convention.lot.nb_logements * 0.1)
         # cf. convention : 30 % au moins des logements
         mixite["mixPLUS_30pc"] = math.ceil(convention.lot.nb_logements * 0.3)
         if convention.lot.nb_logements < 10:
             # cf. convention : 30 % au moins des logements
             mixite["mixPLUSinf10_30pc"] = math.ceil(convention.lot.nb_logements * 0.3)
             # cf. convention : 10 % des logements
-            mixite["mixPLUSinf10_10pc"] = round(convention.lot.nb_logements * 0.1)
+            mixite["mixPLUSinf10_10pc"] = round_half_up(
+                convention.lot.nb_logements * 0.1
+            )
         else:
             # cf. convention : 30 % au moins des logements
             mixite["mixPLUSsup10_30pc"] = math.ceil(convention.lot.nb_logements * 0.3)
