@@ -248,15 +248,21 @@ def create_bailleur():
     )
 
 
-def create_programme(bailleur, administration=None, nom="Programme"):
+def create_programme(
+    bailleur,
+    administration=None,
+    nom="Programme",
+    numero_galion="12345",
+    code_postal="75007",
+):
     return Programme.objects.create(
         nom=nom,
         administration=administration,
         bailleur=bailleur,
-        code_postal="75007",
+        code_postal=code_postal,
         ville="Paris",
         adresse="22 rue segur",
-        numero_galion="12345",
+        numero_galion=numero_galion,
         annee_gestion_programmation=2018,
         zone_123_bis="3",
         zone_abc_bis="B1",
@@ -381,8 +387,21 @@ def create_all():
         user=user_instructeur_paris,
         group=group_instructeur,
     )
-    programme = create_programme(bailleur, administration, nom="Programe 1")
-    lot_plai = create_lot(programme, Financement.PLAI)
-    lot_plus = create_lot(programme, Financement.PLUS)
+
+    programme_75 = create_programme(bailleur, administration, nom="Programe 1")
+    lot_plai = create_lot(programme_75, Financement.PLAI)
+    lot_plus = create_lot(programme_75, Financement.PLUS)
     create_convention(lot_plus, numero="0001")
     create_convention(lot_plai, numero="0002")
+
+    programme_13 = create_programme(
+        bailleur,
+        administration,
+        nom="Programe 1",
+        numero_galion="98765",
+        code_postal="13001",
+    )
+    lot_plai = create_lot(programme_13, Financement.PLAI)
+    lot_plus = create_lot(programme_13, Financement.PLUS)
+    create_convention(lot_plus, numero="0003")
+    create_convention(lot_plai, numero="0004")

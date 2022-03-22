@@ -2,30 +2,39 @@ import datetime
 
 from django.test import TestCase
 from core.tests import utils_assertions, utils_fixtures
-from conventions.models import Convention, ConventionStatut, Pret, Preteur
-from programmes.models import Lot, Financement
+from conventions.models import (
+    Convention,
+    ConventionHistory,
+    ConventionStatut,
+    Pret,
+    Preteur,
+)
+from users.models import User
+from users.type_models import EmailPreferences
 
 
 class ConventionModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        bailleur = utils_fixtures.create_bailleur()
-        programme = utils_fixtures.create_programme(bailleur)
-        lot = Lot.objects.create(
-            programme=programme,
-            bailleur=bailleur,
-            financement=Financement.PLUS,
-        )
-        convention = Convention.objects.create(
-            numero=1,
-            lot=lot,
-            programme=programme,
-            bailleur=bailleur,
-            financement=Financement.PLUS,
-        )
+        utils_fixtures.create_all()
+        # bailleur = utils_fixtures.create_bailleur()
+        # programme = utils_fixtures.create_programme(bailleur)
+        # lot = Lot.objects.create(
+        #     programme=programme,
+        #     bailleur=bailleur,
+        #     financement=Financement.PLUS,
+        # )
+        # convention = Convention.objects.create(
+        #     numero=1,
+        #     lot=lot,
+        #     programme=programme,
+        #     bailleur=bailleur,
+        #     financement=Financement.PLUS,
+        # )
+        convention = Convention.objects.get(numero="0001")
         Pret.objects.create(
             convention=convention,
-            bailleur=bailleur,
+            bailleur=convention.bailleur,
             preteur=Preteur.CDCF,
             date_octroi=datetime.datetime.today(),
             autre="test autre",
@@ -35,7 +44,7 @@ class ConventionModelsTest(TestCase):
         )
 
     def test_object_str(self):
-        convention = Convention.objects.get(numero=1)
+        convention = Convention.objects.get(numero="0001")
         lot = convention.lot
         type_habitat = lot.get_type_habitat_display()
         programme = convention.programme
@@ -46,7 +55,7 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(str(convention), expected_object_name)
 
     def test_is_functions(self):
-        convention = Convention.objects.get(numero=1)
+        convention = Convention.objects.get(numero="0001")
         self.assertTrue(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
@@ -97,6 +106,47 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(pret.p_full(), "Etat")
         pret.preteur = Preteur.REGION
         self.assertEqual(pret.p_full(), "Région")
+
+    def test_get_email_bailleur_users(self):
+        convention = Convention.objects.get(numero="0001")
+        raph = User.objects.get(username="raph")
+        self.assertEqual(convention.get_email_bailleur_users(), [raph.email])
+        raph.preferences_email = EmailPreferences.AUCUN
+        raph.save()
+        self.assertEqual(convention.get_email_bailleur_users(), [])
+        raph.preferences_email = EmailPreferences.PARTIEL
+        raph.save()
+        self.assertEqual(convention.get_email_bailleur_users(), [])
+        ConventionHistory.objects.create(
+            bailleur=convention.bailleur,
+            convention=convention,
+            statut_convention=ConventionStatut.INSTRUCTION,
+            statut_convention_precedent=ConventionStatut.BROUILLON,
+            user=raph,
+        ).save()
+        self.assertEqual(convention.get_email_bailleur_users(), [raph.email])
+
+    def test_get_email_inctructeur_users(self):
+        convention = Convention.objects.get(numero="0001")
+        sabine = User.objects.get(username="sabine")
+        self.assertEqual(convention.get_email_instructeur_users(), [sabine.email])
+        sabine.preferences_email = EmailPreferences.AUCUN
+        sabine.save()
+        self.assertEqual(convention.get_email_instructeur_users(), [])
+        sabine.preferences_email = EmailPreferences.PARTIEL
+        sabine.save()
+        self.assertEqual(convention.get_email_instructeur_users(), [])
+        self.assertEqual(
+            convention.get_email_instructeur_users(include_partial=True), [sabine.email]
+        )
+        ConventionHistory.objects.create(
+            bailleur=convention.bailleur,
+            convention=convention,
+            statut_convention=ConventionStatut.INSTRUCTION,
+            statut_convention_precedent=ConventionStatut.BROUILLON,
+            user=sabine,
+        ).save()
+        self.assertEqual(convention.get_email_instructeur_users(), [sabine.email])
 
     def test_xlsx(self):
         utils_assertions.assert_xlsx(self, Pret, "financement")

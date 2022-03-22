@@ -1,9 +1,10 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from apilos_settings.models import Departement
 
 from users.models import User
-from users.type_models import TypeRole
+from users.type_models import TypeRole, EmailPreferences
 
 
 class UserForm(forms.Form):
@@ -59,7 +60,7 @@ class UserForm(forms.Form):
         help_text=(
             "L'administrateur de compte peut gérer les utilisateurs de ses entités."
             + " Si vous renoncez à être administrateur,vous ne pourez plus gérer les utilisateurs"
-            + " de vos entité ou vous ré-attribuer les droits d'administration"
+            + " de vos entités ou vous ré-attribuer les droits d'administration"
         ),
     )
 
@@ -67,6 +68,17 @@ class UserForm(forms.Form):
         required=False,
         label="Super Utilisateur",
         help_text="Un super utilisateur a tous les droits",
+    )
+
+    preferences_email = forms.TypedChoiceField(
+        required=False,
+        label="Option d'envoi d'e-mail",
+        choices=EmailPreferences.choices,
+    )
+
+    filtre_departements = forms.ModelMultipleChoiceField(
+        queryset=Departement.objects.all(),
+        required=False,
     )
 
     def clean_email(self):

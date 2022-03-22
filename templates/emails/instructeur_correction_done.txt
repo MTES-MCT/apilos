@@ -9,7 +9,7 @@ Vous pouvez instruire à nouveau cette convention.
 > {{line}}{% endfor %}
 {% endif %}
 
-Si toutes les modifications demandées ont été apportées, vous pourrez valider la convention.
+Si toutes les modifications demandées ont été apportées, vous pourez valider la convention.
 
 N'hésitez pas à vous faire part de tout retour ou suggestion d'amiloration sur la plateforme à contact@apilos.beta.gouv.fr
 

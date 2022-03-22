@@ -67,7 +67,7 @@
                                                         id="{{form.uuid.id_for_label}}"
                                                         name="{{form.uuid.html_name}}"
                                                         value="{{ form.uuid.value|default_if_none:'' }}">
-                                                    {% include "common/form/select_enum.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_select.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
                                                     {% include "common/form/input_number.html" with form_input=form.nb_stationnements parent_object_field=main_object_field editable=editable_upload %}

@@ -83,9 +83,9 @@
                                         </script>
                                         <div id='programme_creation' {% if form.existing_programme.value != 'creation' %}hidden{% endif %}>
                                             {% if bailleurs.length == 1 %}
-                                                {% include "common/form/select_enum.html" with form_input=form.bailleur enum=bailleurs without_empty_option=True %}
+                                                {% include "common/form/input_select.html" with form_input=form.bailleur enum=bailleurs without_empty_option=True %}
                                             {% else %}
-                                                {% include "common/form/select_enum.html" with form_input=form.bailleur enum=bailleurs without_empty_option=False %}
+                                                {% include "common/form/input_select.html" with form_input=form.bailleur enum=bailleurs without_empty_option=False %}
                                             {% endif %}
                                             {% include "common/form/input_text.html" with form_input=form.nom %}
 
@@ -94,10 +94,10 @@
                                                     {% include "common/form/input_number.html" with form_input=form.nb_logements %}
                                                 </div>
                                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
-                                                    {% include "common/form/select_enum.html" with form_input=form.type_habitat %}
+                                                    {% include "common/form/input_select.html" with form_input=form.type_habitat %}
                                                 </div>
                                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
-                                                    {% include "common/form/select_enum.html" with form_input=form.financement enum=financements %}
+                                                    {% include "common/form/input_select.html" with form_input=form.financement enum=financements %}
                                                 </div>
                                             </div>
 

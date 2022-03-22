@@ -428,3 +428,38 @@ table.fullwidth {
 .fr-link--sm:before {
   margin: 0.1rem!important;
 }
+
+/*  */
+.apilos-multiselect {
+  --blend: 0deg,0%,68.3%; /*var(--background-contrast-grey-blend);*/
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background-color: #eee!important; /*var(--background-contrast-grey)*/
+  /* background-image: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' viewBox='0 0 24 24' ><path fill='%23161616' d='M12,13.1l5-4.9l1.4,1.4L12,15.9L5.6,9.5l1.4-1.4L12,13.1z'/></svg>); */
+  background-position: calc(100% - 0.5rem) 50%;
+  background-repeat: no-repeat;
+  background-size: 1.5rem 1.5rem;
+  border-radius: 0.25rem 0.25rem 0 0;
+  box-shadow: inset 0 -2px 0 0 #3a3a3a; /* var(--border-plain-grey); */
+  color: var(--text-title-grey);
+  display: block;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  padding: 0.25rem 0rem 0.25rem 0rem;
+  width: 100%;
+}
+
+.vscomp-toggle-button {
+  /* padding: 7px 30px 7px 10px; */
+  border: none!important;
+  background-color: #eee!important;
+}
+
+.vscomp-ele {
+  max-width: 100%!important;
+}
+
+.apilos-text--normal {
+  font-weight: normal;
+}

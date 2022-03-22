@@ -1,0 +1,71 @@
+{% if not user.is_superuser %}
+    <div class="fr-form-group">
+        <fieldset class="fr-fieldset">
+            <legend class="fr-fieldset__legend fr-h4" id='radio-legend'>
+                {{ form_input.label }}
+            </legend>
+            <div class="fr-fieldset__content">
+                <div class="fr-radio-group">
+                    <input
+                        type="radio"
+                        id="tous"
+                        value="TOUS"
+                        {% if form_input.value == "TOUS" %}checked{% endif %}
+                        name="{{ form_input.html_name }}">
+                    <label class="fr-label" for="tous">
+                        {% if user.is_bailleur %}
+                            Toutes les conventions
+                            <span class="fr-hint-text">Vous recevrez tous les emails concernant les conventions appartenant à votre(vos) bailleur(s) (selon vos filtres géographiques s'ils sont configurés)</span>
+                        {% elif user.is_instructeur %}
+                            Toutes les conventions
+                            <span class="fr-hint-text">Vous recevrez tous les emails concernant les conventions appartenant à votre(vos) administration(s) (selon vos filtres géographiques s'ils sont configurés)</span>
+                        {% else %}
+                            Toutes les conventions
+                            <span class="fr-hint-text">Vous recevrez tous les emails concernant les conventions auquel vous avez accès</span>
+                        {% endif %}
+                    </label>
+                </div>
+                <div class="fr-radio-group">
+                    <input
+                        type="radio"
+                        id="partiel"
+                        value="PARTIEL"
+                        {% if form_input.value == "PARTIEL" %}checked{% endif %}
+                        name="{{ form_input.html_name }}">
+                    <label class="fr-label" for="partiel">
+                        {% if user.is_bailleur %}
+                            Les conventions que vous avez soumises à l'instruction
+                            <span class="fr-hint-text">Vous recevrez seulement les emails concernant les conventions que vous avez soumises à l'instruction, cela prend en compte les conventions soumises après une demande de correction</span>
+                        {% elif user.is_instructeur %}
+                            Les conventions que vous avez instruites
+                            <span class="fr-hint-text">Vous recevrez les emails de toutes les conventions soumises pour la première fois à l'instruction dans votre périmètre, puis que les emails relatifs aux conventions que vous avez instruites (dont vous avez notifié le bailleur ou que vous avez validées)</span>
+                        {% else %}
+                            Les conventions que vous avez instruites
+                            <span class="fr-hint-text">Vous recevrez les emails de toutes les conventions que vous instruisez</span>
+                        {% endif %}
+                    </label>
+                </div>
+                <div class="fr-radio-group">
+                    <input
+                        type="radio"
+                        id="aucun"
+                        value="AUCUN"
+                        {% if form_input.value == "AUCUN" %}checked{% endif %}
+                        name="{{ form_input.html_name }}">
+                    <label class="fr-label" for="aucun">
+                        {% if user.is_bailleur %}
+                            Aucun email
+                            <span class="fr-hint-text">Aucun email ne vous sera envoyé concernant les conventions de votre(vos) bailleur(s)</span>
+                        {% elif user.is_instructeur %}
+                            Aucun email
+                            <span class="fr-hint-text">Aucun email ne vous sera envoyé concernant les conventions de votre(vos) administration(s)</span>
+                        {% else %}
+                            Aucun email
+                            <span class="fr-hint-text">Aucun email ne vous sera envoyé concernant les conventions</span>
+                        {% endif %}
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+{% endif %}

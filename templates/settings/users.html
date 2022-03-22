@@ -13,74 +13,7 @@
                 </div>
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
 
-                    <form class="fr-my-3w" method="get" action="" id="search_table">
-                        <input type="hidden" id="page" name="page" value="{{users.number}}">
-                        <input type="hidden" id="order_by" name="order_by" value="{{order_by}}">
-
-                        {% if total_user > 3 %}
-                            <div class="fr-search-bar" id="header-search" role="search">
-                                <label class="fr-label" for="search_input">
-                                    Recherche
-                                </label>
-                                <input class="fr-input" placeholder="Rechercher" type="search" id="search_input" name="search_input" value="{{search_input}}">
-                                <button class="fr-btn" title="Rechercher">
-                                    Rechercher
-                                </button>
-                            </div>
-                        {% endif %}
-                    </form>
-
-                    <div class="fr-table fr-table--bordered table--layout-fixed">
-                        <table>
-                            <caption>{{users.paginator.count}}{% if users.paginator.count != total_user %} / {{total_user}}{% endif %} user{{ users.paginator.count|pluralize }}</caption>
-
-                            <thead>
-                                <tr>
-                                    <th scope="col">
-                                        Identifiant
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='username' url_target='settings:user' %}
-                                    </th>
-                                    <th scope="col">
-                                        Prénom
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='first_name' url_target='settings:user' %}
-                                    </th>
-                                    <th scope="col">
-                                        Nom
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='last_name' url_target='settings:user' %}
-                                    </th>
-                                    <th scope="col">
-                                        email
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='email' url_target='settings:user' %}
-                                    </th>
-                                    <th scope="col"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for user in users %}
-                                    <tr>
-                                        <td>
-                                            {{ user.username}}
-                                            {% if user.is_administrator %}
-                                                <i class="fr-text--light fr-text--sm">(Admin)</i>
-                                            {% endif %}
-                                        </td>
-                                        <td>{{ user.first_name}}</td>
-                                        <td>{{ user.last_name}}</td>
-                                        <td>{{ user.email}}</td>
-                                        <td>
-                                            {% if request.user|is_administrator:user %}
-                                                <a class="fr-link fr-mb-1w" href="{% url 'settings:edit_user' username=user.username %}" >
-                                                    <span class="fr-fi-edit-line" aria-hidden="true"></span>
-                                                </a>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {% include 'common/table/pagination.html' with paginate_list=users %}
+                    {% include 'settings/user_list.html' with users=paginated_users %}
 
                     {% if request.user.is_administrator %}
                         <button class="fr-btn fr-fi-add-circle-line fr-btn--icon-left fr-mt-3w" type="button" id="add_user">

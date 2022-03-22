@@ -144,13 +144,13 @@
                                                         id="{{form_edd.uuid.id_for_label}}"
                                                         name="{{form_edd.uuid.html_name}}"
                                                         value="{{ form_edd.uuid.value|default_if_none:'' }}">
-                                                    {% include "common/form/select_enum.html" with form_input=form_edd.financement parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_select.html" with form_input=form_edd.financement parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
                                                     {% include "common/form/input_text.html" with form_input=form_edd.designation parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/select_enum.html" with form_input=form_edd.typologie parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_select.html" with form_input=form_edd.typologie parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                             </tr>
                                         {% endwith %}
