@@ -51,7 +51,26 @@ Enfin, pour afficher les logs :
 docker-compose logs -f --tail=10
 ```
 
+### Via pyenv
+
+
+
+#### Installation
 #### Lancement des tests
+
+... todo
+
+## Qualité de code
+
+### Tests
+
+Les tests sont organisés comme suit :
+* Tests unitaires : APPNAME/tests/test_models.py
+* Tests integration : APPNAME/tests/test_view.py
+* Tests api : APPNAME/api/tests/test_apis.py
+
+
+#### Lancement des tests avec docker-compose
 
 L'application prend en charge des test unitaire et des tests d'intégration. Pour les lancer:
 
@@ -65,17 +84,6 @@ et pour les lancer avec un test de coverage et afficher le rapport :
 docker-compose exec apilos coverage run --source='.' manage.py test
 docker-compose exec apilos coverage report
 ```
-
-### Via pyenv
-
-
-
-#### Installation
-#### Lancement des tests
-
-... todo
-
-## Qualité de code
 
 ### Installer les hooks de pre-commit
 

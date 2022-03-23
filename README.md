@@ -114,33 +114,49 @@ Nous utilisons mailjet. Si les variables d'environnements MAILJET_API_KEY et MAI
 
 ### DNS
 
-Les DNS sont configurés dans always data
+Les DNS sont configurés dans [Alwaysdata](https://admin.alwaysdata.com/)
+les emails et mailing list sous le domaine apilos.beta.gouv.fr sont aussi géré avec Alwaysdata : contact@apilos.beta.gouv.fr, recrutement@apilos.beta.gouv.fr, staff@apilos.beta.gouv.fr
 
-### Mailing list
+### Bases de données
 
-Les mailing lists sont configurées dans alwaysdata. Nous utilisons uniquement la mailing list contact@apilos.beta.gouv.fr.
+![apilos_db](static/img/apilos_db.svg)
+
+### Stockage de fichiers
+
+Les documents sont stockés sur un répertoire distant et souverain compuatible avec le protocole S3 sur [Scaleway](https://console.scaleway.com/object-storage/buckets)
+
+La librairie python boto en combinaison avec le package default_storage de Django
+
+Ce stockage est activé lorsque les variable d'environnement AWS... sont définit. La configuration est faite dans core/settings.yml
+
+```
+   DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+```
+
+### Analytics
+
+APilos utilise [Matomo](https://stats.data.gouv.fr/index.php?module=CoreHome&action=index&idSite=188&period=day&date=yesterday#?idSite=188&period=day&date=yesterday&segment=&category=Dashboard_Dashboard&subcategory=1) comme outils d'analytics sous le domaine stats.data.gouv.fr
+
+### Monitoring logiciel
+
+Nous utilisons [Sentry](https://sentry.io/organizations/betagouv-f7/issues/?project=5852556) fournit par beta.gouv.fr
+
+### Monitoring système
+
+APiLos est monitoré par l'outils [Dashlord](https://dashlord.mte.incubateur.net/dashlord/url/apilos-beta-gouv-fr/) de la fabrique du numérique du ministère de la transition écologique
+
+Monitoring système : updownio ?
+
+## Protection des données :
+
+Les CGU sont publiés [sur le site APiLos](https://apilos.beta.gouv.fr/cgu) et inclus les obligations relatives au RGPD
+Le rapport d'accessibilité est publié [sur le site APiLos](https://apilos.beta.gouv.fr/accessibilite)
+
+## Statistique de la plateforme
+
+Les statistiques d'usage et le suivi des KPIs de la start up d'état sont disponibles sur la [page de statistique](https://apilos.beta.gouv.fr/stats)
 
 ## liens utils
 
 https://fabrique-numerique.gitbook.io/guide/developpement/etat-de-lart-de-lincubateur
 https://doc.incubateur.net/startups/la-vie-dune-se/construction/kit-de-demarrage
-
-
-
-## Pense-bête environnement technique
-
-
-Tests unitaires et integration
-Base documentaire : S3 avec scaleway
-Analytics : Matomo
-Monitoring logiciel : Sentry
-Monitoring système : updownio ?
-Monitoring securité : dashloard
-
-Protection des données :
-Pensez aux CGU et compatibilité RGPD
-
-Etape du projet à venir (plus tard) : Audit de securité des données
-
-Monitoring des métriques métiers :
-Statistique projet : path /stats - statistiques faisant preuve de la réussite du projet
