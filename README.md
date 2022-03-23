@@ -39,49 +39,6 @@ Plusieurs outils sont utilisés pour gérer la qualité de code:
 
 [DEPLOIEMENT.md](DEPLOIEMENT.md)
 
-### CI/CD et branch git
-
-Les "User Stories" (US) sont développées sur des "feature branches" (convention de nommage sNUM-US_DESCRIPTION) à partir de la branch `develop`.
-les `feature branches` font l'objet de `pull request` à merger sur `develop`.
-les `releases` sont préparées et déployées à partir de ma branch `master`
-
-La solution circleci est utilisée: [CircleCI:Apilos](https://app.circleci.com/pipelines/github/MTES-MCT/apilos?filter=all)
-La config est ici : [.circleci/config.yaml](.circleci/config.yaml)
-
-#### CI
-
-A chaque push sur github, le projet est buildé et les tests sont passés
-
-#### CD
-
-A chaque push sur la branche `develop`, le projet est déployé en [staging](https://staging.apilos.incubateur.net/)
-
-### Déploiement
-
-Lors du déploiement, les étapes définient dans le script [bin/post_deploy](bin/post_deploy) sont éxécutées:
-
-1. Execution des migrations de la base de données
-2. Population des roles et des permissions
-3. Suppression des sessions expirées
-
-### Déploiement en staging
-
-Pour déployer en staging, il suffit de pousser le code sur le repository git de scalingo dans le projet de staging
-
-```git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master```
-
-### Déploiement en production
-
-A faire : intégrer le process de mise en prod dans circle ci
-
-Pour pousser en production, la version à pousser en production doit être préparée sur la branche `master` soit en mergeant les développements de la branche `develop`, soit à l'aide de la commande `cherry-pick`
-
-La branche `master` doit-être pousser sur le repo origin pour que les tests soient executés avant que la branche soit déployée
-
-Puis la la branche `master` peut-être déployée sur l'environnement de `production` sur scalingo avec la commande :
-
-```git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master```
-
 ### import SISAL
 
 SISAL est le datawarehouse des APL dont nous exportons les données des agréments nécessaires au conventionnement APL
@@ -94,7 +51,7 @@ Pour executer cet import en local:
 
 Sur Scalingo
 
-```scalingo --app apilos-staging/fabnum-apilos run  python3 manage.py import_galion```
+```scalingo --app apilos-staging/fabnum-apilos run python3 manage.py import_galion```
 
 ### Populer les permissions
 
