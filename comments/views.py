@@ -1,12 +1,14 @@
 import json
 
 from django.http.response import JsonResponse
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST, require_GET
 
 from comments.models import Comment
 from conventions.models import Convention
 
 
+@login_required
 @require_POST
 def add_comment(request):
     post_data = json.loads(request.body.decode("utf-8"))
@@ -42,6 +44,7 @@ def add_comment(request):
     return JsonResponse({"success": False})
 
 
+@login_required
 @require_POST
 def update_comment(request, comment_uuid):
     post_data = json.loads(request.body.decode("utf-8"))
@@ -72,6 +75,7 @@ def update_comment(request, comment_uuid):
     return JsonResponse({"success": False})
 
 
+@login_required
 @require_GET
 def get_comment(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)

@@ -393,7 +393,8 @@ def add_user(request):
                 **request.POST.dict(),
                 "filtre_departements": (
                     [int(num) for num in request.POST["filtre_departements"].split(",")]
-                    if request.POST["filtre_departements"]
+                    if "filtre_departements" in request.POST
+                    and request.POST["filtre_departements"]
                     else []
                 ),
             }
