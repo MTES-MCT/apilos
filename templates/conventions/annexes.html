@@ -7,7 +7,6 @@
 {% block page_title %}Annexes - APiLos{% endblock%}
 
 {% block javascript_extras %}
-    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
@@ -57,7 +56,7 @@
                                 <thead>
                                     <tr>
                                         {% if convention.statut != 'BROUILLON' %}
-                                            {% include 'common/utils/comments_header.html' with object_name='annexe' %}
+                                            {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" %}
                                         {% endif %}
                                         <th scope="col" class="col__width--150">Type d'annexe {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                                         <th scope="col" class="col__width--200">Désignation des logements {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -70,11 +69,10 @@
                                 <tbody>
                                     {% for form_annexe in formset %}
                                         {% with main_object_field="annexe__uuid__"|add:form_annexe.uuid.value %}
-                                            <tr>
+                                            <tr id="{{form_annexe.uuid.id_for_label}}_group">
                                                 {% if convention.statut != 'BROUILLON' %}
                                                     <td id="{{form_annexe.uuid.id_for_label}}_div">
-                                                        {% include "common/comment_icon.html" with form_input_id=form_annexe.uuid.id_for_label object_field=main_object_field comments=comments %}
-                                                        {% include "common/comment_dialog.html" with form_input_id=form_annexe.uuid.id_for_label form_input_html=form_annexe.uuid.html_name convention=convention object_field=main_object_field comments=comments %}
+                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_annexe.uuid %}
                                                     </td>
                                                 {% endif %}
                                                 <td>

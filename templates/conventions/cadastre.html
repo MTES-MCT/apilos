@@ -8,7 +8,6 @@
     <script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
-    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
@@ -101,7 +100,7 @@
                                 <thead>
                                     <tr>
                                         {% if convention.statut != 'BROUILLON' %}
-                                            {% include 'common/utils/comments_header.html' with object_name='reference_cadastrale' %}
+                                            {% include 'common/utils/comments_header.html' with object_name='reference_cadastrale' label='Références cadastrales' %}
                                         {% endif %}
                                         <th scope="col">Section {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                                         <th scope="col">Numéro {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -112,11 +111,10 @@
                                 <tbody>
                                     {% for form_cadastre in formset %}
                                         {% with main_object_field="reference_cadastrale__uuid__"|add:form_cadastre.uuid.value %}
-                                            <tr>
+                                            <tr id="{{form_cadastre.uuid.id_for_label}}_group">
                                                 {% if convention.statut != 'BROUILLON' %}
                                                     <td id="{{form_cadastre.uuid.id_for_label}}_div">
-                                                        {% include "common/comment_icon.html" with form_input_id=form_cadastre.uuid.id_for_label object_field=main_object_field comments=comments %}
-                                                        {% include "common/comment_dialog.html" with form_input_id=form_cadastre.uuid.id_for_label form_input_html=form_cadastre.uuid.html_name convention=convention object_field=main_object_field comments=comments %}
+                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_cadastre.uuid %}
                                                     </td>
                                                 {% endif %}
                                                 <td>

@@ -75,15 +75,23 @@ def update_comment(request, comment_uuid):
 @require_GET
 def get_comment(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
-    object_name = request.GET.get("object_name", None)
+    nom_objet = request.GET.get("object_name", None)
+    champ_objet = request.GET.get("object_field", None)
+    uuid_objet = request.GET.get("object_uuid", None)
     result = {
         "comments": [],
         "success": True,
         "user": {"is_instructeur": request.user.is_instructeur()},
     }
     comments = Comment.objects.filter(
-        convention=convention, nom_objet=object_name
-    ).order_by("cree_le")
+        convention=convention,
+        nom_objet=nom_objet,
+    )
+    if champ_objet:
+        comments = comments.filter(champ_objet=champ_objet)
+    if uuid_objet:
+        comments = comments.filter(uuid_objet=uuid_objet)
+    comments = comments.order_by("cree_le")
     for comment in comments:
         result["comments"].append(
             {

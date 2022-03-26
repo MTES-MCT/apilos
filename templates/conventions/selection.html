@@ -4,10 +4,6 @@
 
 {% block page_title %}Selection - APiLos{% endblock%}
 
-{% block javascript_extras %}
-    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
-
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html" with convention=convention %}
@@ -39,7 +35,11 @@
                                     </script>
                                     <div id='programme_selection' class="fr-ml-4w fr-select-group {% if form.lot_uuid.errors %}fr-select-group--error{% endif %}"  {% if form.existing_programme.value != 'selection' %}hidden{% endif %}>
                                         <div class="fr-mt-1w block--row-strech" id="{{form.lot_uuid.id_for_label}}_div">
-                                            <select class="fr-select {% if form.lot_uuid.errors %}fr-select--error{% endif %}" id="lot_uuid" name="lot_uuid" {% if not editable %}disabled{% endif %}>
+                                            <select
+                                                class="fr-select {% if form.lot_uuid.errors %}fr-select--error{% endif %}"
+                                                id="lot_uuid"
+                                                name="lot_uuid"
+                                                {% if convention %}disabled{% endif %} >
                                                 <option value="" selected disabled hidden>Selectionnez une option</option>
                                                 {% for lot in programmes %}
                                                     <option
@@ -50,18 +50,12 @@
                                                     </option>
                                                 {% endfor %}
                                             </select>
-                                            {% if convention %}
-                                                {% include "common/comment_icon.html" with form_input_id=form.lot_uuid.id_for_label object_field="lot__uuid__"|add:form.lot_uuid.value comments=comments %}
-                                            {% endif %}
                                         </div>
                                         {% for error in form.lot_uuid.errors %}
                                             <p id="select-error-desc-error" class="fr-error-text">
                                                 {{ error }}
                                             </p>
                                         {% endfor %}
-                                        {% if convention %}
-                                            {% include "common/comment_dialog.html" with form_input_id=form.lot_uuid.id_for_label form_input_html=form.lot_uuid.html_name convention=convention object_field="lot__uuid__"|add:form.lot_uuid.value comments=comments %}
-                                        {% endif %}
                                     </div>
 
                                     {% if not convention.uuid %}
