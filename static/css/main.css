@@ -270,42 +270,44 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   text-overflow: ellipsis;
 }
 
-
 /* SVG ikonate */
 .content__icons {
   width: 32px;
   height: 32px;
+  border-radius: 4px;
+  display: inline-block;
+  margin: 0.1rem 0.2rem;
+}
+
+.content__icons--checkbox {
   stroke-width: 1.5;
   stroke-linecap: square;
   stroke-linejoin: miter;
+  stroke: #161616;
   fill: none;
   border-radius: 4px;
   display: inline-block;
-  margin: 0.25rem;
+  margin: 0rem 0.2rem;
 }
 
-.content__icons--small {
-  margin: 0rem 0.25rem !important;
+/* Add and orange #FF6F4C */
+.content__icons--blue {
+  background-image: url('data:image/svg+xml;utf8,<svg role="img" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="32" height="32" stroke="rgb(255,111,76)" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" fill="none" aria-labelledby="chatIconTitle"><path d="M8.82388455,18.5880577 L4,21 L4.65322944,16.4273939 C3.00629211,15.0013 2,13.0946628 2,11 C2,6.581722 6.4771525,3 12,3 C17.5228475,3 22,6.581722 22,11 C22,15.418278 17.5228475,19 12,19 C10.8897425,19 9.82174472,18.8552518 8.82388455,18.5880577 Z"></path><circle cx="12" cy="11" r="1"></circle><circle cx="7" cy="11" r="1"></circle><circle cx="17" cy="11" r="1"></circle></svg>');
 }
 
-.content__icons--blue svg {
-  stroke: #0762C8;
-  color: #0762C8;
+/* Opened and green #00a34d*/
+.content__icons--green {
+  background-image: url('data:image/svg+xml;utf8,<svg role="img" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="32" height="32" stroke="rgb(0,163,77)" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" fill="none" aria-labelledby="chatIconTitle"><path d="M8.82388455,18.5880577 L4,21 L4.65322944,16.4273939 C3.00629211,15.0013 2,13.0946628 2,11 C2,6.581722 6.4771525,3 12,3 C17.5228475,3 22,6.581722 22,11 C22,15.418278 17.5228475,19 12,19 C10.8897425,19 9.82174472,18.8552518 8.82388455,18.5880577 Z"></path><path d="M8 11L10.5 14L16 9"></path></svg>');
 }
 
-.content__icons--green svg {
-  stroke: #008941;
-  color: #008941;
+/* Closed and grey #9C9C9C */
+.apilos-dropdown-menu {
+  background-image: url('data:image/svg+xml;utf8,<svg role="img" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="32" height="32" stroke="rgb(156,156,156)" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" fill="none" aria-labelledby="chatIconTitle"><path d="M8.82388455,18.5880577 L4,21 L4.65322944,16.4273939 C3.00629211,15.0013 2,13.0946628 2,11 C2,6.581722 6.4771525,3 12,3 C17.5228475,3 22,6.581722 22,11 C22,15.418278 17.5228475,19 12,19 C10.8897425,19 9.82174472,18.8552518 8.82388455,18.5880577 Z"></path><path d="M8 11L10.5 14L16 9"></path></svg>');
 }
 
-.content__icons--grey svg {
-  stroke: #9C9C9C;
-  color: #9C9C9C;
-}
-
-.content__icons--darkgrey svg {
-  stroke: #161616;
-  color: #161616;
+/* Add and blue #0762C8 */
+.content__icons--darkgrey {
+  background-image: url('data:image/svg+xml;utf8,<svg role="img" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="32" height="32" stroke="rgb(7,98,200)" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" fill="none" aria-labelledby="chatIconTitle"><path d="M8.82388455,18.5880577 L4,21 L4.65322944,16.4273939 C3.00629211,15.0013 2,13.0946628 2,11 C2,6.581722 6.4771525,3 12,3 C17.5228475,3 22,6.581722 22,11 C22,15.418278 17.5228475,19 12,19 C10.8897425,19 9.82174472,18.8552518 8.82388455,18.5880577 Z"></path><path d="M16 11L8 11M12 7L12 15"></path></svg>');
 }
 
 .fr-btn--green {
