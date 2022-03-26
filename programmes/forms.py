@@ -24,7 +24,6 @@ class ProgrammeSelectionForm(forms.Form):
             "required": "La selection du programme et de son financement est obligatoire"
         },
     )
-
     existing_programme = forms.ChoiceField(
         choices=[("selection", "selection"), ("creation", "creation")]
     )
@@ -111,7 +110,10 @@ class ProgrammeSelectionForm(forms.Form):
 class ProgrammeForm(forms.Form):
     object_name = "programme"
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Programme",
+    )
     nom = forms.CharField(
         label="Nom",
         max_length=255,
@@ -168,7 +170,10 @@ class ProgrammeCadastralForm(forms.Form):
     * Cadastral references
     """
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Informations cadastrales",
+    )
     permis_construire = forms.CharField(
         required=False,
         label="Numéro de permis construire",
@@ -276,7 +281,10 @@ class ProgrammeCadastralForm(forms.Form):
 
 class ReferenceCadastraleForm(forms.Form):
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Référence Cadastrale",
+    )
     section = forms.CharField(
         required=True,
         label="",
@@ -323,7 +331,10 @@ ReferenceCadastraleFormSet = formset_factory(
 
 class ProgrammeEDDForm(forms.Form):
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Logement du programme",
+    )
     lot_uuid = forms.UUIDField(required=False)
     edd_volumetrique = forms.CharField(
         required=False,
@@ -379,7 +390,10 @@ class ProgrammeEDDForm(forms.Form):
 
 class LogementForm(forms.Form):
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Logement",
+    )
     designation = forms.CharField(
         label="",
         max_length=255,
@@ -610,6 +624,7 @@ class AnnexeForm(forms.Form):
 
     uuid = forms.UUIDField(
         required=False,
+        label="Annexe",
     )
     typologie = forms.TypedChoiceField(
         required=True,
@@ -681,7 +696,10 @@ AnnexeFormSet = formset_factory(AnnexeForm, formset=BaseAnnexeFormSet, extra=0)
 
 class TypeStationnementForm(forms.Form):
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Type de stationnement",
+    )
     typologie = forms.TypedChoiceField(
         required=True,
         label="",
@@ -718,7 +736,7 @@ TypeStationnementFormSet = formset_factory(
 
 class LogementEDDForm(forms.Form):
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(required=False, label="Logement de l'EDD")
     designation = forms.CharField(
         label="",
         max_length=255,

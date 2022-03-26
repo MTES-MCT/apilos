@@ -1,5 +1,5 @@
 {% if object_field %}
-    <div class="block--row-strech" id="{{object_field}}_div">
+    <div class="block--row-strech" id="{{object_field}}_group">
         <div class="block--row-strech-1">
             <div class="fr-mt-1w content__fileblock">
                 <div class="content__icons content__icons--small content__icons--darkgrey">
@@ -16,9 +16,8 @@
                 </div>
             </div>
         </div>
-        {% include "common/comment_icon.html" with form_input_id=object_field object_field=object_field comments=comments small=True %}
+        {% include "common/utils/comments_field.html" %}
     </div>
-    {% include "common/comment_dialog.html" with form_input_id=object_field form_input_html=object_field convention=convention object_field=object_field comments=comments %}
 {% else %}
     <div class="fr-mb-1w content__fileblock">
         <div class="content__icons content__icons--small content__icons--darkgrey">
