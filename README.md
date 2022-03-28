@@ -39,49 +39,6 @@ Plusieurs outils sont utilisés pour gérer la qualité de code:
 
 [DEPLOIEMENT.md](DEPLOIEMENT.md)
 
-### CI/CD et branch git
-
-Les "User Stories" (US) sont développées sur des "feature branches" (convention de nommage sNUM-US_DESCRIPTION) à partir de la branch `develop`.
-les `feature branches` font l'objet de `pull request` à merger sur `develop`.
-les `releases` sont préparées et déployées à partir de ma branch `master`
-
-La solution circleci est utilisée: [CircleCI:Apilos](https://app.circleci.com/pipelines/github/MTES-MCT/apilos?filter=all)
-La config est ici : [.circleci/config.yaml](.circleci/config.yaml)
-
-#### CI
-
-A chaque push sur github, le projet est buildé et les tests sont passés
-
-#### CD
-
-A chaque push sur la branche `develop`, le projet est déployé en [staging](https://staging.apilos.incubateur.net/)
-
-### Déploiement
-
-Lors du déploiement, les étapes définient dans le script [bin/post_deploy](bin/post_deploy) sont éxécutées:
-
-1. Execution des migrations de la base de données
-2. Population des roles et des permissions
-3. Suppression des sessions expirées
-
-### Déploiement en staging
-
-Pour déployer en staging, il suffit de pousser le code sur le repository git de scalingo dans le projet de staging
-
-```git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master```
-
-### Déploiement en production
-
-A faire : intégrer le process de mise en prod dans circle ci
-
-Pour pousser en production, la version à pousser en production doit être préparée sur la branche `master` soit en mergeant les développements de la branche `develop`, soit à l'aide de la commande `cherry-pick`
-
-La branche `master` doit-être pousser sur le repo origin pour que les tests soient executés avant que la branche soit déployée
-
-Puis la la branche `master` peut-être déployée sur l'environnement de `production` sur scalingo avec la commande :
-
-```git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master```
-
 ### import SISAL
 
 SISAL est le datawarehouse des APL dont nous exportons les données des agréments nécessaires au conventionnement APL
@@ -94,7 +51,7 @@ Pour executer cet import en local:
 
 Sur Scalingo
 
-```scalingo --app apilos-staging/fabnum-apilos run  python3 manage.py import_galion```
+```scalingo --app apilos-staging/fabnum-apilos run python3 manage.py import_galion```
 
 ### Populer les permissions
 
@@ -114,33 +71,49 @@ Nous utilisons mailjet. Si les variables d'environnements MAILJET_API_KEY et MAI
 
 ### DNS
 
-Les DNS sont configurés dans always data
+Les DNS sont configurés dans [Alwaysdata](https://admin.alwaysdata.com/)
+les emails et mailing list sous le domaine apilos.beta.gouv.fr sont aussi géré avec Alwaysdata : contact@apilos.beta.gouv.fr, recrutement@apilos.beta.gouv.fr, staff@apilos.beta.gouv.fr
 
-### Mailing list
+### Bases de données
 
-Les mailing lists sont configurées dans alwaysdata. Nous utilisons uniquement la mailing list contact@apilos.beta.gouv.fr.
+![apilos_db](static/img/apilos_db.svg)
+
+### Stockage de fichiers
+
+Les documents sont stockés sur un répertoire distant et souverain compuatible avec le protocole S3 sur [Scaleway](https://console.scaleway.com/object-storage/buckets)
+
+La librairie python boto en combinaison avec le package default_storage de Django
+
+Ce stockage est activé lorsque les variable d'environnement AWS... sont définit. La configuration est faite dans core/settings.yml
+
+```
+   DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+```
+
+### Analytics
+
+APilos utilise [Matomo](https://stats.data.gouv.fr/index.php?module=CoreHome&action=index&idSite=188&period=day&date=yesterday#?idSite=188&period=day&date=yesterday&segment=&category=Dashboard_Dashboard&subcategory=1) comme outils d'analytics sous le domaine stats.data.gouv.fr
+
+### Monitoring logiciel
+
+Nous utilisons [Sentry](https://sentry.io/organizations/betagouv-f7/issues/?project=5852556) fournit par beta.gouv.fr
+
+### Monitoring système
+
+APiLos est monitoré par l'outils [Dashlord](https://dashlord.mte.incubateur.net/dashlord/url/apilos-beta-gouv-fr/) de la fabrique du numérique du ministère de la transition écologique
+
+Monitoring système : updownio ?
+
+## Protection des données :
+
+Les CGU sont publiés [sur le site APiLos](https://apilos.beta.gouv.fr/cgu) et inclus les obligations relatives au RGPD
+Le rapport d'accessibilité est publié [sur le site APiLos](https://apilos.beta.gouv.fr/accessibilite)
+
+## Statistique de la plateforme
+
+Les statistiques d'usage et le suivi des KPIs de la start up d'état sont disponibles sur la [page de statistique](https://apilos.beta.gouv.fr/stats)
 
 ## liens utils
 
 https://fabrique-numerique.gitbook.io/guide/developpement/etat-de-lart-de-lincubateur
 https://doc.incubateur.net/startups/la-vie-dune-se/construction/kit-de-demarrage
-
-
-
-## Pense-bête environnement technique
-
-
-Tests unitaires et integration
-Base documentaire : S3 avec scaleway
-Analytics : Matomo
-Monitoring logiciel : Sentry
-Monitoring système : updownio ?
-Monitoring securité : dashloard
-
-Protection des données :
-Pensez aux CGU et compatibilité RGPD
-
-Etape du projet à venir (plus tard) : Audit de securité des données
-
-Monitoring des métriques métiers :
-Statistique projet : path /stats - statistiques faisant preuve de la réussite du projet
