@@ -30,6 +30,7 @@ from . import signals
 
 
 urlpatterns = [
+    path("admin/doc/", include("django.contrib.admindocs.urls")),
     path("admin/", admin.site.urls),
     path("bailleurs/", include(("bailleurs.urls", "bailleurs"), namespace="bailleurs")),
     path(

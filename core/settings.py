@@ -116,6 +116,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "django_filters",
     "django_cas_ng",
+    "django.contrib.admindocs",
 ]
 
 MIDDLEWARE = [
