@@ -245,9 +245,6 @@ class CommentFactory {
         }
     }
 
-    _hide_textarea_comment(comment_uuid) {
-    }
-
     display_comment_icon() {
         var status_name = this.comment_icon_id + "_comment_statut"
         var statuts = document.getElementsByName(status_name)
@@ -356,6 +353,7 @@ class CommentFactory {
 
         }
         else if (nb_clos && !nb_resolu && !nb_open) { // grey & displayed
+            console.log('grey & displayed')
             comment_icon = document.getElementById(this.comment_icon_id)
             comment_icon.classList.remove('content__icons--opened')
             comment_icon.classList.remove('content__icons--resolved')
