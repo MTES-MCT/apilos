@@ -26,7 +26,7 @@ class CommentFactory {
         icon_div.setAttribute('data-fr-opened', 'false')
         icon_div.setAttribute('aria-controls', this.comment_dialog_id + '-dialog')
         icon_div.classList.add('content__icons')
-        icon_div.classList.add('content__icons--darkgrey')
+        icon_div.classList.add('content__icons--add')
         icon_div.hidden = true
         this.container.appendChild(icon_div)
 
@@ -150,8 +150,8 @@ class CommentFactory {
 
         this.init_comment_button(comment.uuid, comment.statut, comment.is_owner, is_instructeur)
 
-        if (comment.statut == 'CLOS') {
-            this._hide_textarea_for_close_comment(comment.uuid)
+        if (comment.statut == 'CLOS' || comment.statut == 'RESOLU') {
+            this._hide_textarea_comment(comment.uuid)
         }
     }
 
@@ -235,7 +235,7 @@ class CommentFactory {
         }
     }
 
-    _hide_textarea_for_close_comment(comment_uuid) {
+    _hide_textarea_comment(comment_uuid) {
         var common_textarea_div = document.getElementById("comment_textarea_div_" + this.comment_icon_id + '_' + comment_uuid)
         var comment_container = document.getElementById("comment_container_" + this.comment_icon_id + '_' + comment_uuid)
         common_textarea_div.hidden = true
@@ -295,10 +295,10 @@ class CommentFactory {
         var comment_icon = document.getElementById(this.comment_icon_id)
         if (nb_open) { // blue & displayed
             console.log('blue & displayed')
-            comment_icon.classList.add('content__icons--blue')
-            comment_icon.classList.remove('content__icons--green')
-            comment_icon.classList.remove('content__icons--grey')
-            comment_icon.classList.remove('content__icons--darkgrey')
+            comment_icon.classList.add('content__icons--opened')
+            comment_icon.classList.remove('content__icons--resolved')
+            comment_icon.classList.remove('content__icons--closed')
+            comment_icon.classList.remove('content__icons--add')
             comment_icon.hidden = false
             if (this.empty_toggle_on) {
                 this.empty_toggle_on.onclick = null
@@ -337,10 +337,10 @@ class CommentFactory {
             }
         }
         else if (nb_resolu && !nb_open) { // green & displayed
-            comment_icon.classList.remove('content__icons--blue')
-            comment_icon.classList.add('content__icons--green')
-            comment_icon.classList.remove('content__icons--grey')
-            comment_icon.classList.remove('content__icons--darkgrey')
+            comment_icon.classList.remove('content__icons--opened')
+            comment_icon.classList.add('content__icons--resolved')
+            comment_icon.classList.remove('content__icons--closed')
+            comment_icon.classList.remove('content__icons--add')
             comment_icon.hidden = false
             var parent_parent = comment_icon.parentNode.parentNode
             if ((parent_parent.tagName == 'TR' || parent_parent.tagName == 'TH') && document.getElementById('download_upload_block') !== null) {
@@ -356,10 +356,10 @@ class CommentFactory {
         else if (nb_clos && !nb_resolu && !nb_open) { // grey & displayed
             console.log('grey & displayed')
             comment_icon = document.getElementById(this.comment_icon_id)
-            comment_icon.classList.remove('content__icons--blue')
-            comment_icon.classList.remove('content__icons--green')
-            comment_icon.classList.add('content__icons--grey')
-            comment_icon.classList.remove('content__icons--darkgrey')
+            comment_icon.classList.remove('content__icons--opened')
+            comment_icon.classList.remove('content__icons--resolved')
+            comment_icon.classList.add('content__icons--closed')
+            comment_icon.classList.remove('content__icons--add')
             comment_icon.hidden = false
             var parent_parent = comment_icon.parentNode.parentNode
             if ((parent_parent.tagName == 'TR' || parent_parent.tagName == 'TH') && document.getElementById('download_upload_block') !== null) {
@@ -375,10 +375,10 @@ class CommentFactory {
         }
         else { // darkgrey & hidden
             comment_icon = document.getElementById(this.comment_icon_id)
-            comment_icon.classList.remove('content__icons--blue')
-            comment_icon.classList.remove('content__icons--green')
-            comment_icon.classList.remove('content__icons--grey')
-            comment_icon.classList.add('content__icons--darkgrey')
+            comment_icon.classList.remove('content__icons--opened')
+            comment_icon.classList.remove('content__icons--resolved')
+            comment_icon.classList.remove('content__icons--closed')
+            comment_icon.classList.add('content__icons--add')
             if (this.empty_toggle_on) {
                 comment_icon.hidden = true
                 this.empty_toggle_on.onmouseover = e => {
@@ -503,8 +503,8 @@ class CommentFactory {
                 if (comment.is_owner && comment.statut == 'CLOS') {
                     document.getElementById('textarea_' + this.comment_dialog_id).value = ''
                 }
-                if (status == 'CLOS') {
-                    this._hide_textarea_for_close_comment(comment.uuid)
+                if (status == 'CLOS' || status == 'RESOLU') {
+                    this._hide_textarea_comment(comment.uuid)
                 }
                 this.display_comment_icon()
 
