@@ -33,6 +33,7 @@ djhtml = "*"
 pylint-django = "*"
 drf-spectacular = "*"
 djangorestframework-simplejwt = "*"
+docutils = "*"
 
 [dev-packages]
 

@@ -118,6 +118,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "django_filters",
     "django_cas_ng",
+    "django.contrib.admindocs",
 ]
 
 MIDDLEWARE = [
