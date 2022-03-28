@@ -134,10 +134,15 @@ class CommentFactory {
 
         var comments_block = document.getElementById(inside_id)
         const container_div = this.create_comment_container(comment.uuid)
+        const comment_header = this.create_comment_header(comment.uuid)
+
         const owner_div = this.create_comment_owner(comment.uuid,comment.username, comment.is_owner, comment.statut);
-        container_div.appendChild(owner_div)
+        comment_header.appendChild(owner_div)
         const date_div = this.create_comment_date(comment.uuid,comment.mis_a_jour_le);
-        container_div.appendChild(date_div)
+        comment_header.appendChild(date_div)
+
+        container_div.appendChild(comment_header)
+
         const uuid_div = this.create_comment_uuid(comment.uuid);
         container_div.appendChild(uuid_div)
         const statut_div = this.create_comment_statut(comment.uuid, comment.statut);
@@ -151,8 +156,13 @@ class CommentFactory {
         this.init_comment_button(comment.uuid, comment.statut, comment.is_owner, is_instructeur)
 
         if (comment.statut == 'CLOS' || comment.statut == 'RESOLU') {
-            this._hide_textarea_comment(comment.uuid)
+            textarea_div.hidden = true
         }
+
+        comment_header.classList.add('clickable')
+        comment_header.addEventListener('click', function(){
+            textarea_div.hidden = !textarea_div.hidden
+        })
     }
 
 
@@ -236,13 +246,6 @@ class CommentFactory {
     }
 
     _hide_textarea_comment(comment_uuid) {
-        var common_textarea_div = document.getElementById("comment_textarea_div_" + this.comment_icon_id + '_' + comment_uuid)
-        var comment_container = document.getElementById("comment_container_" + this.comment_icon_id + '_' + comment_uuid)
-        common_textarea_div.hidden = true
-        comment_container.classList.add('clickable')
-        comment_container.addEventListener('click', function(){
-            common_textarea_div.hidden = !common_textarea_div.hidden
-        })
     }
 
     display_comment_icon() {
@@ -294,7 +297,6 @@ class CommentFactory {
     update_comment_icon(nb_open, nb_resolu, nb_clos){
         var comment_icon = document.getElementById(this.comment_icon_id)
         if (nb_open) { // blue & displayed
-            console.log('blue & displayed')
             comment_icon.classList.add('content__icons--opened')
             comment_icon.classList.remove('content__icons--resolved')
             comment_icon.classList.remove('content__icons--closed')
@@ -354,7 +356,6 @@ class CommentFactory {
 
         }
         else if (nb_clos && !nb_resolu && !nb_open) { // grey & displayed
-            console.log('grey & displayed')
             comment_icon = document.getElementById(this.comment_icon_id)
             comment_icon.classList.remove('content__icons--opened')
             comment_icon.classList.remove('content__icons--resolved')
@@ -500,11 +501,15 @@ class CommentFactory {
                 this.init_comment_button(comment.uuid, comment.statut, comment.is_owner, res.user.is_instructeur)
                 this.disable_textarea(comment.uuid, comment.statut, comment.is_owner)
                 this.update_status(comment.uuid, comment.statut)
-                if (comment.is_owner && comment.statut == 'CLOS') {
-                    document.getElementById('textarea_' + this.comment_dialog_id).value = ''
-                }
+                // if (comment.is_owner && comment.statut == 'CLOS') {
+                //     document.getElementById('textarea_' + this.comment_dialog_id).value = ''
+                // }
+                var common_textarea_div = document.getElementById("comment_textarea_div_" + this.comment_icon_id + '_' + comment.uuid)
                 if (status == 'CLOS' || status == 'RESOLU') {
-                    this._hide_textarea_comment(comment.uuid)
+                    common_textarea_div.hidden = true
+                }
+                else {
+                    common_textarea_div.hidden = false
                 }
                 this.display_comment_icon()
 
@@ -531,11 +536,19 @@ class CommentFactory {
      * Create html blocks
      */
 
-    //div container
+    //div comment container
     create_comment_container(uuid) {
         const container_div = document.createElement('div');
         container_div.setAttribute('id','comment_container_' + this.comment_icon_id + '_' + uuid)
         return container_div
+    }
+
+    //div comment container header (clickable)
+    create_comment_header(uuid) {
+        const comment_header_div = document.createElement('div');
+        comment_header_div.setAttribute('id','comment_container_header_' + this.comment_icon_id + '_' + uuid)
+
+        return comment_header_div
     }
 
     //<div class="fr-mt-3w"><b>Raphaëlle Neyton (vous) :</b></div>
