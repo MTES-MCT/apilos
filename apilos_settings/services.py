@@ -41,7 +41,8 @@ def user_profile(request):
                 ),
                 "filtre_departements": (
                     [int(num) for num in request.POST["filtre_departements"].split(",")]
-                    if request.POST["filtre_departements"]
+                    if "filtre_departements" in request.POST
+                    and request.POST["filtre_departements"]
                     else []
                 ),
             }
@@ -341,7 +342,8 @@ def edit_user(request, username):
                             int(num)
                             for num in request.POST["filtre_departements"].split(",")
                         ]
-                        if request.POST["filtre_departements"]
+                        if "filtre_departements" in request.POST
+                        and request.POST["filtre_departements"]
                         else []
                     ),
                 }
