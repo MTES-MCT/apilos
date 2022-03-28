@@ -1,0 +1,17 @@
+{% load static %}
+{% if object_field %}
+    <div id="{{object_field}}_comment_factory"></div>
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+        var [object_name, object_field, object_uuid] = '{{object_field}}'.split('__');
+        new CommentFactory({
+            container_id : '{{object_field}}_comment_factory',
+            convention_uuid : '{{convention.uuid}}',
+            object_name : object_name,
+            object_field : object_field,
+            object_uuid : object_uuid,
+            dialog_title : "{% if form_input.label %}{{form_input.label|safe}}{% elif label %}{{ label }}{% else %}Commentaires{% endif %}",
+            empty_toggle_on : "{% if form_input.label %}{{form_input.id_for_label}}{% else %}{{ object_field }}{% endif %}_group",
+            loading_img : '{% static "icons/loading.gif" %}'
+        })
+    </script>
+{% endif %}

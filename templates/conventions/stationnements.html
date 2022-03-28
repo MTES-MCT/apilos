@@ -5,7 +5,6 @@
 {% block page_title %}Type de stationnements - APiLos{% endblock%}
 
 {% block javascript_extras %}
-    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
@@ -44,7 +43,7 @@
                                 <thead>
                                     <tr>
                                         {% if convention.statut != 'BROUILLON' %}
-                                            {% include 'common/utils/comments_header.html' with object_name='type_stationnement' %}
+                                            {% include 'common/utils/comments_header.html' with object_name='type_stationnement' label='Types de stationnement' %}
                                         {% endif %}
                                         <th scope="col" class="col__width--150">Type de stationnement {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                                         <th scope="col" class="col__width--200">Nombre de stationnements {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -54,11 +53,10 @@
                                 <tbody>
                                     {% for form in formset %}
                                         {% with main_object_field="type_stationnement__uuid__"|add:form.uuid.value %}
-                                            <tr>
+                                            <tr id="{{form.uuid.id_for_label}}_group">
                                                 {% if convention.statut != 'BROUILLON' %}
                                                     <td id="{{form.uuid.id_for_label}}_div">
-                                                        {% include "common/comment_icon.html" with form_input_id=form.uuid.id_for_label object_field=main_object_field comments=comments %}
-                                                        {% include "common/comment_dialog.html" with form_input_id=form.uuid.id_for_label form_input_html=form.uuid.html_name convention=convention object_field=main_object_field comments=comments %}
+                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form.uuid %}
                                                     </td>
                                                 {% endif %}
                                                 <td>

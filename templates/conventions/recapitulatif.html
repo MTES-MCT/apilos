@@ -10,7 +10,6 @@
 {% endblock %}
 
 {% block javascript_extras %}
-    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
@@ -49,7 +48,7 @@
                                             </a>
                                         </div>
                                         <div class="table--limited-height">
-                                            {% include "common/display_field_if_exists.html" with label="Nom du programme" value=programme.nom object_field="lot__uuid__"|add:lot_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Nom du programme" value=programme.nom %}
                                             {% include "common/display_field_if_exists.html" with label="Financement" value=lot.financement %}
                                             {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville %}
                                             {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements %}
@@ -170,7 +169,7 @@
                                                 <thead>
                                                     <tr>
                                                         {% if convention.statut != 'BROUILLON' %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='reference_cadastrale' %}
+                                                            {% include 'common/utils/comments_header.html' with object_name='reference_cadastrale' label='Références cadastrales' %}
                                                         {% endif %}
                                                         <th scope="col">Section {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col">Numéro {% include "common/form/required_field_star.html" %}</th>
@@ -180,30 +179,29 @@
                                                 </thead>
                                                 <tbody>
                                                     {% for reference in reference_cadastrales %}
-                                                        <tr>
-                                                            {% if convention.statut != 'BROUILLON' %}
-                                                                {% with reference_uuid=reference.uuid|slugify %}
-                                                                    {% with main_object_field="reference_cadastrale__uuid__"|add:reference_uuid %}
+                                                        {% with reference_uuid=reference.uuid|slugify %}
+                                                            {% with main_object_field="reference_cadastrale__uuid__"|add:reference_uuid %}
+                                                                <tr id="{{main_object_field}}_group">
+                                                                    {% if convention.statut != 'BROUILLON' %}
                                                                         <td id="{{main_object_field}}_div">
-                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
-                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Référence cadastrale" %}
                                                                         </td>
-                                                                    {% endwith %}
-                                                                {% endwith %}
-                                                            {% endif %}
-                                                            <td>
-                                                                {{ reference.section }}
-                                                            </td>
-                                                            <td>
-                                                                {{ reference.numero }}
-                                                            </td>
-                                                            <td>
-                                                                {{ reference.lieudit }}
-                                                            </td>
-                                                            <td>
-                                                                {{ reference.surface }}
-                                                            </td>
-                                                        </tr>
+                                                                    {% endif %}
+                                                                    <td>
+                                                                        {{ reference.section }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ reference.numero }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ reference.lieudit }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ reference.surface }}
+                                                                    </td>
+                                                                </tr>
+                                                            {% endwith %}
+                                                        {% endwith %}
                                                     {% endfor %}
                                                 </tbody>
                                             </table>
@@ -239,7 +237,7 @@
                                                 <thead>
                                                     <tr>
                                                         {% if convention.statut != 'BROUILLON' %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='logement_edd' %}
+                                                            {% include 'common/utils/comments_header.html' with object_name='logement_edd' label="Logements de l'EDD" %}
                                                         {% endif %}
                                                         <th scope="col">Financement {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col">Désignation {% include "common/form/required_field_star.html" %}</th>
@@ -248,27 +246,26 @@
                                                 </thead>
                                                 <tbody>
                                                     {% for lgt in logement_edds %}
-                                                        <tr>
-                                                            {% if convention.statut != 'BROUILLON' %}
-                                                                {% with lgt_uuid=lgt.uuid|slugify %}
-                                                                    {% with main_object_field="logement_edd__uuid__"|add:lgt_uuid %}
+                                                        {% with lgt_uuid=lgt.uuid|slugify %}
+                                                            {% with main_object_field="logement_edd__uuid__"|add:lgt_uuid %}
+                                                                <tr id="{{main_object_field}}_group">
+                                                                    {% if convention.statut != 'BROUILLON' %}
                                                                         <td id="{{main_object_field}}_div">
-                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
-                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement de l'EDD" %}
                                                                         </td>
-                                                                    {% endwith %}
-                                                                {% endwith %}
-                                                            {% endif %}
-                                                            <td>
-                                                                {{lgt.financement}}
-                                                            </td>
-                                                            <td>
-                                                                {{lgt.designation}}
-                                                            </td>
-                                                            <td>
-                                                                {{lgt.typologie}}
-                                                            </td>
-                                                        </tr>
+                                                                    {% endif %}
+                                                                    <td>
+                                                                        {{lgt.financement}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{lgt.designation}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{lgt.typologie}}
+                                                                    </td>
+                                                                </tr>
+                                                            {% endwith %}
+                                                        {% endwith %}
                                                     {% endfor %}
                                                 </tbody>
                                             </table>
@@ -298,7 +295,7 @@
                                                 <thead>
                                                     <tr>
                                                         {% if convention.statut != 'BROUILLON' %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='pret' %}
+                                                            {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et Financements'%}
                                                         {% endif %}
                                                         <th scope="col">Numéro</th>
                                                         <th scope="col">Date d'octroi</th>
@@ -310,36 +307,35 @@
                                                 </thead>
                                                 <tbody>
                                                     {% for pret in convention.pret_set.all %}
-                                                        <tr>
-                                                            {% if convention.statut != 'BROUILLON' %}
-                                                                {% with pret_uuid=pret.uuid|slugify %}
-                                                                    {% with main_object_field="pret__uuid__"|add:pret_uuid %}
+                                                        {% with pret_uuid=pret.uuid|slugify %}
+                                                            {% with main_object_field="pret__uuid__"|add:pret_uuid %}
+                                                                <tr id="{{main_object_field}}_group">
+                                                                    {% if convention.statut != 'BROUILLON' %}
                                                                         <td id="{{main_object_field}}_div">
-                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
-                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Prêt ou financement" %}
                                                                         </td>
-                                                                    {% endwith %}
-                                                                {% endwith %}
-                                                            {% endif %}
-                                                            <td>
-                                                                {{ pret.numero }}
-                                                            </td>
-                                                            <td>
-                                                                {{ pret.date_octroi }}
-                                                            </td>
-                                                            <td>
-                                                                {{ pret.duree }}
-                                                            </td>
-                                                            <td>
-                                                                {{ pret.montant }}
-                                                            </td>
-                                                            <td>
-                                                                {{ pret.preteur }}
-                                                            </td>
-                                                            <td>
-                                                                {{ pret.autre }}
-                                                            </td>
-                                                        </tr>
+                                                                    {% endif %}
+                                                                    <td>
+                                                                        {{ pret.numero }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ pret.date_octroi }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ pret.duree }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ pret.montant }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ pret.preteur }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ pret.autre }}
+                                                                    </td>
+                                                                </tr>
+                                                            {% endwith %}
+                                                        {% endwith %}
                                                     {% endfor %}
                                                 </tbody>
                                             </table>
@@ -370,7 +366,7 @@
                                                 <thead>
                                                     <tr>
                                                         {% if convention.statut != 'BROUILLON' %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='logement' %}
+                                                            {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' %}
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
@@ -385,45 +381,44 @@
                                                 </thead>
                                                 <tbody>
                                                     {% for logement in logements %}
-                                                        <tr>
-                                                            {% if convention.statut != 'BROUILLON' %}
-                                                                {% with logement_uuid=logement.uuid|slugify %}
-                                                                    {% with main_object_field="logement__uuid__"|add:logement_uuid %}
+                                                        {% with logement_uuid=logement.uuid|slugify %}
+                                                            {% with main_object_field="logement__uuid__"|add:logement_uuid %}
+                                                                <tr id="{{main_object_field}}_group">
+                                                                    {% if convention.statut != 'BROUILLON' %}
                                                                         <td id="{{main_object_field}}_div">
-                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
-                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement" %}
                                                                         </td>
-                                                                    {% endwith %}
-                                                                {% endwith %}
-                                                            {% endif %}
-                                                            <td>
-                                                                {{ logement.designation }}
-                                                            </td>
-                                                            <td>
-                                                                {{ logement.typologie }}
-                                                            </td>
-                                                            <td id="lgt_sh">
-                                                                {{ logement.surface_habitable|floatformat:2 }}
-                                                            </td>
-                                                            <td id="lgt_sa">
-                                                                {{ logement.surface_annexes|floatformat:2 }}
-                                                            </td>
-                                                            <td id="lgt_sar">
-                                                                {{ logement.surface_annexes_retenue|floatformat:2 }}
-                                                            </td>
-                                                            <td id="lgt_su">
-                                                                {{ logement.surface_utile|floatformat:2 }}
-                                                            </td>
-                                                            <td>
-                                                                {{ logement.loyer_par_metre_carre|floatformat:2 }}
-                                                            </td>
-                                                            <td>
-                                                                {{ logement.coeficient|floatformat:4 }}
-                                                            </td>
-                                                            <td id="lgt_loyer">
-                                                                {{ logement.loyer|floatformat:2 }}
-                                                            </td>
-                                                        </tr>
+                                                                    {% endif %}
+                                                                    <td>
+                                                                        {{ logement.designation }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ logement.typologie }}
+                                                                    </td>
+                                                                    <td id="lgt_sh">
+                                                                        {{ logement.surface_habitable|floatformat:2 }}
+                                                                    </td>
+                                                                    <td id="lgt_sa">
+                                                                        {{ logement.surface_annexes|floatformat:2 }}
+                                                                    </td>
+                                                                    <td id="lgt_sar">
+                                                                        {{ logement.surface_annexes_retenue|floatformat:2 }}
+                                                                    </td>
+                                                                    <td id="lgt_su">
+                                                                        {{ logement.surface_utile|floatformat:2 }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ logement.loyer_par_metre_carre|floatformat:2 }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ logement.coeficient|floatformat:4 }}
+                                                                    </td>
+                                                                    <td id="lgt_loyer">
+                                                                        {{ logement.loyer|floatformat:2 }}
+                                                                    </td>
+                                                                </tr>
+                                                            {% endwith %}
+                                                        {% endwith %}
                                                     {% endfor %}
                                                     <tr>
                                                         <td colspan="{% if convention.statut != 'BROUILLON' %}3{% else %}2{% endif %}" class="fr-text--lg">
@@ -471,7 +466,7 @@
                                                 <thead>
                                                     <tr>
                                                         {% if convention.statut != 'BROUILLON' %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='annexe' %}
+                                                            {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" %}
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Type d'annexe {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--200">Désignation des logements {% include "common/form/required_field_star.html" %}</th>
@@ -483,36 +478,35 @@
                                                 </thead>
                                                 <tbody>
                                                     {% for annexe in annexes %}
-                                                        <tr>
-                                                            {% if convention.statut != 'BROUILLON' %}
-                                                                {% with annexe_uuid=annexe.uuid|slugify %}
-                                                                    {% with main_object_field="annexe__uuid__"|add:annexe_uuid %}
+                                                        {% with annexe_uuid=annexe.uuid|slugify %}
+                                                            {% with main_object_field="annexe__uuid__"|add:annexe_uuid %}
+                                                                <tr id="{{main_object_field}}_group">
+                                                                    {% if convention.statut != 'BROUILLON' %}
                                                                         <td id="{{main_object_field}}_div">
-                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
-                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Annexe" %}
                                                                         </td>
-                                                                    {% endwith %}
-                                                                {% endwith %}
-                                                            {% endif %}
-                                                            <td>
-                                                                {{ annexe.get_typologie_display }}
-                                                            </td>
-                                                            <td>
-                                                                {{ annexe.logement.designation }}
-                                                            </td>
-                                                            <td>
-                                                                {{ annexe.logement.get_typologie_display }}
-                                                            </td>
-                                                            <td>
-                                                                {{ annexe.surface_hors_surface_retenue|floatformat:2 }}
-                                                            </td>
-                                                            <td>
-                                                                {{ annexe.loyer_par_metre_carre|floatformat:2 }}
-                                                            </td>
-                                                            <td>
-                                                                {{ annexe.loyer|floatformat:2 }}
-                                                            </td>
-                                                        </tr>
+                                                                    {% endif %}
+                                                                    <td>
+                                                                        {{ annexe.get_typologie_display }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ annexe.logement.designation }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ annexe.logement.get_typologie_display }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ annexe.surface_hors_surface_retenue|floatformat:2 }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ annexe.loyer_par_metre_carre|floatformat:2 }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ annexe.loyer|floatformat:2 }}
+                                                                    </td>
+                                                                </tr>
+                                                            {% endwith %}
+                                                        {% endwith %}
                                                     {% endfor %}
                                                 </tbody>
                                             </table>
@@ -563,7 +557,7 @@
                                                 <thead>
                                                     <tr>
                                                         {% if convention.statut != 'BROUILLON' %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='type_stationnement' %}
+                                                            {% include 'common/utils/comments_header.html' with object_name='type_stationnement' label="Type de stationnements" %}
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Type de stationnement {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--200">Nombre de stationnements {% include "common/form/required_field_star.html" %}</th>
@@ -572,27 +566,26 @@
                                                 </thead>
                                                 <tbody>
                                                     {% for stationnement in stationnements %}
-                                                        <tr>
-                                                            {% if convention.statut != 'BROUILLON' %}
-                                                                {% with stationnement_uuid=stationnement.uuid|slugify %}
-                                                                    {% with main_object_field="type_stationnement__uuid__"|add:stationnement_uuid %}
+                                                        {% with stationnement_uuid=stationnement.uuid|slugify %}
+                                                            {% with main_object_field="type_stationnement__uuid__"|add:stationnement_uuid %}
+                                                                <tr id="{{main_object_field}}_group">
+                                                                    {% if convention.statut != 'BROUILLON' %}
                                                                         <td id="{{main_object_field}}_div">
-                                                                            {% include "common/comment_icon.html" with form_input_id=main_object_field object_field=main_object_field comments=comments small=True %}
-                                                                            {% include "common/comment_dialog.html" with form_input_id=main_object_field form_input_html=main_object_field convention=convention object_field=main_object_field comments=comments %}
+                                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Type de stationnement" %}
                                                                         </td>
-                                                                    {% endwith %}
-                                                                {% endwith %}
-                                                            {% endif %}
-                                                            <td>
-                                                                {{ stationnement.get_typologie_display }}
-                                                            </td>
-                                                            <td>
-                                                                {{ stationnement.nb_stationnements }}
-                                                            </td>
-                                                            <td>
-                                                                {{ stationnement.loyer|floatformat:2 }}
-                                                            </td>
-                                                        </tr>
+                                                                    {% endif %}
+                                                                    <td>
+                                                                        {{ stationnement.get_typologie_display }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ stationnement.nb_stationnements }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ stationnement.loyer|floatformat:2 }}
+                                                                    </td>
+                                                                </tr>
+                                                            {% endwith %}
+                                                        {% endwith %}
                                                     {% endfor %}
                                                 </tbody>
                                             </table>
