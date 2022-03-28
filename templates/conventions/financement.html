@@ -5,7 +5,6 @@
 {% block page_title %}Financements - APiLos{% endblock%}
 
 {% block javascript_extras %}
-    <script src="{% static "js/comment-block.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
@@ -50,7 +49,7 @@
                                 <thead>
                                     <tr>
                                         {% if convention.statut != 'BROUILLON' %}
-                                            {% include 'common/utils/comments_header.html' with object_name='pret' %}
+                                            {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et financements' %}
                                         {% endif %}
                                         <th scope="col">Numéro</th>
                                         <th scope="col">Date d'octroi</th>
@@ -63,11 +62,10 @@
                                 <tbody>
                                     {% for form_pret in formset %}
                                         {% with main_object_field="pret__uuid__"|add:form_pret.uuid.value %}
-                                            <tr>
+                                            <tr id="{{form_pret.uuid.id_for_label}}_group">
                                                 {% if convention.statut != 'BROUILLON' %}
                                                     <td id="{{form_pret.uuid.id_for_label}}_div">
-                                                        {% include "common/comment_icon.html" with form_input_id=form_pret.uuid.id_for_label object_field=main_object_field comments=comments %}
-                                                        {% include "common/comment_dialog.html" with form_input_id=form_pret.uuid.id_for_label form_input_html=form_pret.uuid.html_name convention=convention object_field=main_object_field comments=comments %}
+                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_pret.uuid %}
                                                     </td>
                                                 {% endif %}
                                                 <td>
@@ -117,7 +115,7 @@
                                             <div class="day-and-month">
                                                 <span>30&nbsp;/&nbsp;06&nbsp;/&nbsp;</span>
                                             </div>
-                                            <div class="year">
+                                            <div class="year" id="{{form.annee_fin_conventionnement.id_for_label}}_group">
                                                 <div class="block--row-strech" id="{{form.annee_fin_conventionnement.id_for_label}}_div">
                                                     <select
                                                         class="fr-select {% if form.annee_fin_conventionnement.errors %}fr-select--error{% endif %}"
@@ -132,9 +130,10 @@
                                                             </option>
                                                         {% endfor %}
                                                     </select>
-                                                    {% include "common/comment_icon.html" with form_input_id=form.annee_fin_conventionnement.id_for_label object_field="convention__annee_fin_conventionnement__"|add:form.uuid.value comments=comments %}
+
+                                                    {% include "common/utils/comments_field.html" with form_input=form.annee_fin_conventionnement object_field="convention__annee_fin_conventionnement__"|add:form.uuid.value %}
+
                                                 </div>
-                                                {% include "common/comment_dialog.html" with form_input_id=form.annee_fin_conventionnement.id_for_label form_input_html=form.annee_fin_conventionnement.html_name convention=convention object_field="convention__annee_fin_conventionnement__"|add:form.uuid.value comments=comments %}
                                             </div>
                                         </div>
                                         {% for error in form.annee_fin_conventionnement.errors %}

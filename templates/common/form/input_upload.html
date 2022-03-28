@@ -2,7 +2,7 @@
 
 {% load custom_filters %}
 
-<div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}">
+<div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{form_input.id_for_label}}_group">
     <div class="fr-mb-2w">
         {% if textarea and not verticalDisplay %}
             <div class="fr-grid-row fr-grid-row--gutters">
@@ -19,7 +19,7 @@
                     {% include "common/additional_informations.html" with form_input=form_input %}
                 {% endif %}
             </label>
-            {% include "common/comment_icon.html" with form_input_id=form_input.id_for_label object_field=object_field comments=comments %}
+            {% include "common/utils/comments_field.html" %}
         </div>
 
         {% if textarea %}
@@ -110,4 +110,3 @@
     {% endfor %}
 </div>
 
-{% include "common/comment_dialog.html" with form_input_id=form_input.id_for_label form_input_html=form_input.html_name  convention=convention object_field=object_field comments=comments %}

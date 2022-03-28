@@ -12,7 +12,10 @@ from .models import Preteur
 
 class ConventionCommentForm(forms.Form):
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Commentaires",
+    )
     comments = forms.CharField(
         required=False,
         label="Ajoutez vos commentaires à l'attention de l'instructeur",
@@ -33,7 +36,10 @@ class ConventionFinancementForm(forms.Form):
     prets = []
     convention = None
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Prêts et financements",
+    )
     annee_fin_conventionnement = forms.IntegerField(
         required=True,
         label="Date de fin de la convention",
@@ -125,7 +131,10 @@ class ConventionFinancementForm(forms.Form):
 
 class PretForm(forms.Form):
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Prêt ou financement",
+    )
     numero = forms.CharField(
         required=False,
         label="",

@@ -8,6 +8,7 @@
             convention_uuid : '{{convention.uuid}}',
             object_name : '{{object_name}}',
             object_field : 'all',
+            dialog_title : "{% if form_input.label %}{{form_input.label|safe}}{% elif label %}{{ label }}{% else %}Commentaires{% endif %}",
             loading_img : '{% static "icons/loading.gif" %}'
         })
     </script>

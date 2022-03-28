@@ -126,27 +126,15 @@ def _send_email_staff(request, convention):
 def select_programme_update(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     if request.method == "POST":
-        request.user.check_perm("convention.change_convention", convention)
-        #        if request.POST['convention_uuid'] is None:
-        form = ProgrammeSelectionForm(request.POST)
-        if form.is_valid():
-            lot = Lot.objects.get(uuid=form.cleaned_data["lot_uuid"])
-            convention.lot = lot
-            convention.programme_id = lot.programme_id
-            convention.bailleur_id = lot.bailleur_id
-            convention.financement = lot.financement
-            convention.save()
-            # All is OK -> Next:
-            return utils.base_response_success(convention)
+        return utils.base_response_success(convention)
     # If this is a GET (or any other method) create the default form.
-    else:
-        request.user.check_perm("convention.view_convention", convention)
-        form = ProgrammeSelectionForm(
-            initial={
-                "lot_uuid": str(convention.lot.uuid),
-                "existing_programme": "selection",
-            }
-        )
+    request.user.check_perm("convention.view_convention", convention)
+    form = ProgrammeSelectionForm(
+        initial={
+            "lot_uuid": str(convention.lot.uuid),
+            "existing_programme": "selection",
+        }
+    )
     programmes = _conventions_selection(request)
     return {
         **utils.base_convention_response_error(request, convention),
