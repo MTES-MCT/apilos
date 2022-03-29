@@ -38,7 +38,7 @@
                     <div class="fr-grid-row fr-grid-row--gutters">
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
                             <label class="fr-label" for="search_input">
-                                Nom ou ville du programme
+                                Nom, numéro ou ville du programme
                             </label>
                             <input class="fr-input" placeholder="Rechercher" type="search" id="search_input" name="search_input" value="{{search}}">
                         </div>
@@ -93,11 +93,11 @@
                                             Bailleur
                                             {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='bailleur__nom' url_target='conventions:index' %}
                                         </th>
-                                        <th scope="col">
-                                            Numéro Galion
-                                            {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__numero_galion' url_target='conventions:index' %}
-                                        </th>
                                     {% endif %}
+                                    <th scope="col">
+                                        Numéro Galion
+                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__numero_galion' url_target='conventions:index' %}
+                                    </th>
                                     <th scope="col">
                                         Mise en service
                                         {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' %}
@@ -134,8 +134,8 @@
                                     <tr>
                                         {% if request.session.is_instructeur %}
                                             <td>{{convention.bailleur.nom}}</td>
-                                            <td>{{convention.programme.numero_galion}}</td>
                                         {% endif %}
+                                        <td>{{convention.programme.numero_galion}}</td>
                                         <td>{{convention.programme.date_achevement_compile|default_if_none:'-'}}</td>
                                         <td>{{convention.programme.nom}}</td>
                                         <td>{{convention.financement}}</td>
