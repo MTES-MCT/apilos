@@ -84,7 +84,6 @@ class CommentFactory {
                 this.setAttribute('rows', rows)
             })
         }
-        console.log(this.load_initial_status)
         if (this.load_initial_status) {
             this.display_global_comment_icon('{{convention.uuid}}','{{main_comment_id}}')
         }
@@ -359,7 +358,6 @@ class CommentFactory {
 
         }
         else if (nb_clos && !nb_resolu && !nb_open) { // grey & displayed
-            console.log('grey & displayed')
             comment_icon = document.getElementById(this.comment_icon_id)
             comment_icon.classList.remove('content__icons--opened')
             comment_icon.classList.remove('content__icons--resolved')
