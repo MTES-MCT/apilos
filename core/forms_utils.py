@@ -13,6 +13,11 @@ def address_form_fields():
                 "max_length": "L'adresse ne doit pas excéder 255 caractères",
             },
         ),
+    ) + ville_codepostal_form_fields()
+
+
+def ville_codepostal_form_fields():
+    return (
         forms.CharField(
             label="Code postal",
             max_length=255,

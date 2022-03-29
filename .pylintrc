@@ -3,6 +3,7 @@ ignore-paths=
     bailleurs/migrations,
     conventions/migrations,
     programmes/migrations,
+    users/migrations,
 disable=
     C0103, # invalid-name
     C0114, # missing-module-docstring

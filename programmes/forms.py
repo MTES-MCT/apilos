@@ -124,7 +124,17 @@ class ProgrammeForm(forms.Form):
             "max_length": "Le nom du programme ne doit pas excéder 255 caractères",
         },
     )
-    adresse, code_postal, ville = forms_utils.address_form_fields()
+    adresse = forms.CharField(
+        label="Adresse",
+        max_length=5000,
+        min_length=1,
+        error_messages={
+            "required": "L'adresse est obligatoire",
+            "min_length": "L'adresse est obligatoire",
+            "max_length": "L'adresse ne doit pas excéder 5000 caractères",
+        },
+    )
+    code_postal, ville = forms_utils.ville_codepostal_form_fields()
     nb_logements = forms.IntegerField(
         label="Nb logements à conventionner",
         error_messages={
