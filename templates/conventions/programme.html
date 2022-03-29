@@ -22,7 +22,7 @@
                         <h4>Adresse du programme</h4>
 
                         {% include "common/form/input_text.html" with form_input=form.nom object_field="programme__nom__"|add:form.uuid.value %}
-                        {% include "common/form/input_text.html" with form_input=form.adresse object_field="programme__adresse__"|add:form.uuid.value %}
+                        {% include "common/form/input_textarea.html" with form_input=form.adresse object_field="programme__adresse__"|add:form.uuid.value %}
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">

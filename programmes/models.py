@@ -129,7 +129,7 @@ class Programme(IngestableModel):
     )
     code_postal = models.CharField(max_length=10, null=True)
     ville = models.CharField(max_length=255, null=True)
-    adresse = models.CharField(max_length=255, null=True)
+    adresse = models.TextField(null=True)
     numero_galion = models.CharField(max_length=255, null=True)
     annee_gestion_programmation = models.IntegerField(null=True)
 
