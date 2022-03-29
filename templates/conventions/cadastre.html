@@ -68,7 +68,7 @@
                                 {% include "common/form/input_upload.html" with additional_informations=True form_input=form.acte_de_propriete form_input_files=form.acte_de_propriete_files object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_de_propriete_files.values object_field="programme__acte_de_propriete__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_upload.html" with additional_informations=True form_input=form.acte_notarial form_input_files=form.acte_notarial_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_notarial_files.values object_field="programme__acte_notarial__"|add:form.uuid.value %}
+                                {% include "common/form/input_upload.html" with additional_informations=True form_input=form.certificat_adressage form_input_files=form.certificat_adressage_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.certificat_adressage_files.values object_field="programme__certificat_adressage__"|add:form.uuid.value %}
                             </div>
                         </div>
 
