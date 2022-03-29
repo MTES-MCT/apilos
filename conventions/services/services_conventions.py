@@ -40,7 +40,9 @@ def conventions_index(request):
     )
     if search:
         conventions = conventions.filter(
-            Q(programme__ville__icontains=search) | Q(programme__nom__icontains=search)
+            Q(programme__ville__icontains=search)
+            | Q(programme__nom__icontains=search)
+            | Q(programme__numero_galion__icontains=search)
         )
     if cstatut:
         conventions = conventions.filter(statut=cstatut)
