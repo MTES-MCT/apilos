@@ -1,6 +1,6 @@
 // class to manage the comment behaviour
 class CommentFactory {
-    constructor({container_id, convention_uuid, object_name, object_field, object_uuid=null, loading_img, dialog_title='Title', input_div_id, empty_toggle_on} = {}) {
+    constructor({container_id, convention_uuid, object_name, object_field, object_uuid=null, loading_img, dialog_title='Title', input_div_id, empty_toggle_on, load_initial_status=false} = {}) {
         this.container_id = container_id
         this.container = document.getElementById(container_id)
         this.convention_uuid = convention_uuid
@@ -9,6 +9,7 @@ class CommentFactory {
         this.object_uuid = object_uuid
         this.loading_img = loading_img
         this.dialog_title = decodeURI(dialog_title)
+        this.load_initial_status = load_initial_status
         if (empty_toggle_on !== undefined)
         {
             this.empty_toggle_on = document.getElementById(empty_toggle_on)
@@ -83,8 +84,13 @@ class CommentFactory {
                 this.setAttribute('rows', rows)
             })
         }
-
-        this.display_global_comment_icon('{{convention.uuid}}','{{main_comment_id}}')
+        console.log(this.load_initial_status)
+        if (this.load_initial_status) {
+            this.display_global_comment_icon('{{convention.uuid}}','{{main_comment_id}}')
+        }
+        else {
+            this.update_comment_icon(0,0,0)
+        }
 
         this.container.onclick = e => {
             this.display_modal_comments()

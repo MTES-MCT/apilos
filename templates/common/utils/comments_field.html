@@ -6,6 +6,7 @@
         new CommentFactory({
             container_id : '{{object_field}}_comment_factory',
             convention_uuid : '{{convention.uuid}}',
+            load_initial_status : {% if object_field in comments %}true{% else %}false{% endif %},
             object_name : object_name,
             object_field : object_field,
             object_uuid : object_uuid,

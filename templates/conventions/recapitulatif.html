@@ -4,11 +4,6 @@
 
 {% load static %}
 
-{% block css_extras %}
-    <link rel="stylesheet" href="{% static "dropzonejs/min/basic.min.css" %}">
-    <link rel="stylesheet" href="{% static "dropzonejs/min/dropzone.min.css" %}">
-{% endblock %}
-
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
