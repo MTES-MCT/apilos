@@ -42,6 +42,13 @@ def has_comments_with_prefix(comments, prefix):
 
 
 @register.filter
+def inline_text_multiline(text):
+    if isinstance(text, str):
+        return ", ".join(list(map(lambda t: t.strip().rstrip(","), text.split("\n"))))
+    return text
+
+
+@register.filter
 def is_administrator(current_user, user):
     return current_user.is_administrator(user)
 

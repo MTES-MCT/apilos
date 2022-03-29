@@ -20,6 +20,8 @@ from programmes.models import (
 )
 from upload.models import UploadedFile
 
+from conventions.templatetags.custom_filters import inline_text_multiline
+
 
 class NotHandleConventionType(Exception):
     pass
@@ -99,6 +101,8 @@ def generate_convention_doc(convention):
     jinja_env.filters["f"] = _to_fr_float
     jinja_env.filters["pl"] = _pluralize
     jinja_env.filters["len"] = len
+    jinja_env.filters["inline_text_multiline"] = inline_text_multiline
+
     doc.render(context, jinja_env)
     file_stream = io.BytesIO()
     doc.save(file_stream)
