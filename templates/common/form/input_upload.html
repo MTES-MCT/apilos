@@ -16,7 +16,7 @@
                 {% endif %}
                 {% include "common/help_field.html" with form_input=form_input %}
                 {% if additional_informations %}
-                    {% include "common/additional_informations.html" with form_input=form_input %}
+                    <br>{% include "common/additional_informations.html" with form_input=form_input %}
                 {% endif %}
             </label>
             {% include "common/utils/comments_field.html" %}

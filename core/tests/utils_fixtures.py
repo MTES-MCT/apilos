@@ -277,7 +277,9 @@ def create_programme(
             [files_and_text, "", "n'importe quoi", None]
         ),
         acte_de_propriete=random.choice([files_and_text, "", "n'importe quoi", None]),
-        acte_notarial=random.choice([files_and_text, "", "n'importe quoi", None]),
+        certificat_adressage=random.choice(
+            [files_and_text, "", "n'importe quoi", None]
+        ),
         reference_cadastrale=random.choice(
             [files_and_text, "", "n'importe quoi", None]
         ),

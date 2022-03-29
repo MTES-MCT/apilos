@@ -253,7 +253,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     acte_de_propriete = forms.CharField(
         required=False,
-        label="Acte de propriété",
+        label="Acte de propriété / Acte notarial",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
@@ -263,15 +263,15 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )
-    acte_notarial = forms.CharField(
+    certificat_adressage = forms.CharField(
         required=False,
-        label="Acte notarial",
+        label="Certificat d'adressage / Autres",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
     )
-    acte_notarial_files = forms.CharField(
+    certificat_adressage_files = forms.CharField(
         required=False,
         help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )
