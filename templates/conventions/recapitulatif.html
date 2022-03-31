@@ -94,9 +94,7 @@
                                             </a>
                                         </div>
                                         <div class="table--limited-height">
-                                            {% if request.session.is_instructeur %}
-                                                <b>{% include "common/display_field_if_exists.html" with label="Numero Galion" value=programme.numero_galion %}</b>
-                                            {% endif %}
+                                            <b>{% include "common/display_field_if_exists.html" with label="Numéro de décision" value=programme.numero_galion %}</b>
                                             {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom object_field="programme__nom__"|add:programme_uuid %}
                                             {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse object_field="programme__adresse__"|add:programme_uuid %}
                                             {% include "common/display_field_if_exists.html" with label="Code postal" value=programme.code_postal object_field="programme__code_postal__"|add:programme_uuid %}
