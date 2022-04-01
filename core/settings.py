@@ -285,7 +285,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ],
 }
-APILOS_PAGINATION_PER_PAGE = 20
+APILOS_PAGINATION_PER_PAGE = 5
 
 SWAGGER_SETTINGS = {
     "DEFAULT_AUTO_SCHEMA_CLASS": "api.auto_schema.ReadWriteAutoSchema",

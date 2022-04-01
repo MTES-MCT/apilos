@@ -43,7 +43,7 @@
                                             </a>
                                         </div>
                                         <div class="table--limited-height">
-                                            {% include "common/display_field_if_exists.html" with label="Nom du programme" value=programme.nom %}
+                                            {% include "common/display_field_if_exists.html" with label="Nom de l'opération" value=programme.nom %}
                                             {% include "common/display_field_if_exists.html" with label="Financement" value=lot.financement %}
                                             {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville %}
                                             {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements %}
@@ -86,7 +86,7 @@
                                         <div class="block--row-strech" id="{{object_field}}_div">
                                             <div class="block--row-strech-1">
                                                 <h4 class="fr-card__title">
-                                                    Programme
+                                                    Opération
                                                 </h4>
                                             </div>
                                             <a class="fr-link fr-mb-1w" href="{% url 'conventions:programme' convention_uuid=convention.uuid %}" >
@@ -116,7 +116,7 @@
                                         <div class="block--row-strech" id="{{object_field}}_div">
                                             <div class="block--row-strech-1">
                                                 <h4 class="fr-card__title">
-                                                    Programme - informations cadastrales
+                                                    Opération - informations cadastrales
                                                 </h4>
                                             </div>
                                             <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}" >
@@ -211,7 +211,7 @@
                                         <div class="block--row-strech" id="{{object_field}}_div">
                                             <div class="block--row-strech-1">
                                                 <h4 class="fr-card__title">
-                                                    Programme - EDD
+                                                    Opération - EDD
                                                 </h4>
                                             </div>
                                             <a class="fr-link fr-mb-1w" href="{% url 'conventions:edd' convention_uuid=convention.uuid %}" >

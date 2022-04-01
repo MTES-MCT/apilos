@@ -1,4 +1,5 @@
 import datetime
+from typing import Any
 
 from django.core.files.storage import default_storage
 from django.core.mail import EmailMultiAlternatives
@@ -6,7 +7,9 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from django.conf import settings
 
 from programmes.models import (
     Annexe,
@@ -28,33 +31,22 @@ from . import convention_generator
 
 @require_GET
 def conventions_index(request):
-    order_by = request.GET.get("order_by", "programme__date_achevement_compile")
-    search = request.GET.get("search_input", "")
-    cstatut = request.GET.get("cstatut", "")
-    cfinancement = request.GET.get("financement", "")
-    conventions = (
-        request.user.conventions()
+
+    convention_list_service = ConventionListService(
+        search_input=request.GET.get("search_input", ""),
+        order_by=request.GET.get("order_by", "programme__date_achevement_compile"),
+        page=request.GET.get("page", 1),
+        statut_filter=request.GET.get("cstatut", ""),
+        financement_filter=request.GET.get("financement", ""),
+        my_convention_list=request.user.conventions()
         .prefetch_related("programme")
-        .prefetch_related("lot")
-        .order_by(order_by)
+        .prefetch_related("lot"),
     )
-    if search:
-        conventions = conventions.filter(
-            Q(programme__ville__icontains=search)
-            | Q(programme__nom__icontains=search)
-            | Q(programme__numero_galion__icontains=search)
-        )
-    if cstatut:
-        conventions = conventions.filter(statut=cstatut)
-    if cfinancement:
-        conventions = conventions.filter(financement=cfinancement)
+    convention_list_service.paginate()
+
     return {
-        "conventions": conventions,
-        "order_by": order_by,
-        "search": search,
-        "convention_statut": cstatut,
+        "conventions": convention_list_service,
         "statuts": ConventionStatut,
-        "convention_financement": cfinancement,
         "financements": Financement,
     }
 
@@ -633,3 +625,64 @@ def generate_convention(request, convention_uuid):
     file_stream = convention_generator.generate_convention_doc(convention)
 
     return file_stream, f"{convention}"
+
+
+class ConventionListService:
+    # pylint: disable=R0902,R0903,R0913
+    search_input: str
+    order_by: str
+    page: str
+    statut_filter: str
+    financement_filter: str
+    my_convention_list: Any  # list[Convention]
+    paginated_conventions: Any  # list[Convention]
+    total_conventions: int
+
+    def __init__(
+        self,
+        search_input: str,
+        statut_filter: str,
+        financement_filter: str,
+        order_by: str,
+        page: str,
+        my_convention_list: Any,
+    ):
+        self.search_input = search_input
+        self.statut_filter = statut_filter
+        self.financement_filter = financement_filter
+        self.order_by = order_by
+        self.page = page
+        self.my_convention_list = my_convention_list
+
+    def paginate(self) -> None:
+        total_user = self.my_convention_list.count()
+        if self.search_input:
+            self.my_convention_list = self.my_convention_list.filter(
+                Q(programme__ville__icontains=self.search_input)
+                | Q(programme__nom__icontains=self.search_input)
+                | Q(programme__numero_galion__icontains=self.search_input)
+            )
+        if self.statut_filter:
+            self.my_convention_list = self.my_convention_list.filter(
+                statut=self.statut_filter
+            )
+        if self.financement_filter:
+            self.my_convention_list = self.my_convention_list.filter(
+                financement=self.financement_filter
+            )
+
+        if self.order_by:
+            self.my_convention_list = self.my_convention_list.order_by(self.order_by)
+
+        paginator = Paginator(
+            self.my_convention_list, settings.APILOS_PAGINATION_PER_PAGE
+        )
+        try:
+            conventions = paginator.page(self.page)
+        except PageNotAnInteger:
+            conventions = paginator.page(1)
+        except EmptyPage:
+            conventions = paginator.page(paginator.num_pages)
+
+        self.paginated_conventions = conventions
+        self.total_conventions = total_user

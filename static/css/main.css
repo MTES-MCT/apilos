@@ -2,6 +2,11 @@
   background-color: #F9F8F6;
 }
 
+.apilos-subtitle {
+  font-size: 1.5rem;
+  font-style: italic;
+}
+
 .fr-fi--xxl:after, .fr-fi--xxl:before {
   font-size: 4rem!important;
 }
