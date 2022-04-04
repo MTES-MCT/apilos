@@ -60,22 +60,22 @@ class ConventionModelsTest(TestCase):
         self.assertTrue(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_submitted())
-        convention.statut = ConventionStatut.INSTRUCTION
+        convention.statut = ConventionStatut.B1_INSTRUCTION
         self.assertFalse(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instructeur_editable())
         self.assertTrue(convention.is_instruction_ongoing())
         self.assertTrue(convention.is_submitted())
-        convention.statut = ConventionStatut.CORRECTION
+        convention.statut = ConventionStatut.B2_CORRECTION
         self.assertTrue(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instructeur_editable())
         self.assertTrue(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_submitted())
-        convention.statut = ConventionStatut.VALIDE
+        convention.statut = ConventionStatut.C_A_SIGNER
         self.assertFalse(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
         self.assertTrue(convention.is_submitted())
-        convention.statut = ConventionStatut.CLOS
+        convention.statut = ConventionStatut.D_TRANSMISE
         self.assertFalse(convention.is_bailleur_editable())
         self.assertFalse(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
@@ -120,8 +120,8 @@ class ConventionModelsTest(TestCase):
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
             convention=convention,
-            statut_convention=ConventionStatut.INSTRUCTION,
-            statut_convention_precedent=ConventionStatut.BROUILLON,
+            statut_convention=ConventionStatut.B1_INSTRUCTION,
+            statut_convention_precedent=ConventionStatut.A_PROJET,
             user=raph,
         ).save()
         self.assertEqual(convention.get_email_bailleur_users(), [raph.email])
@@ -142,11 +142,64 @@ class ConventionModelsTest(TestCase):
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
             convention=convention,
-            statut_convention=ConventionStatut.INSTRUCTION,
-            statut_convention_precedent=ConventionStatut.BROUILLON,
+            statut_convention=ConventionStatut.B1_INSTRUCTION,
+            statut_convention_precedent=ConventionStatut.A_PROJET,
             user=sabine,
         ).save()
         self.assertEqual(convention.get_email_instructeur_users(), [sabine.email])
+
+    def test_statut_for_template(self):
+        convention = Convention.objects.order_by("uuid").first()
+        convention.statut = ConventionStatut.A_PROJET
+        self.assertEqual(convention.statut_for_template()["statut"], "1. Projet")
+        self.assertEqual(
+            convention.statut_for_template()["statut_display"],
+            "Création d'un projet de convention",
+        )
+        self.assertEqual(convention.statut_for_template()["short_statut"], "Projet")
+        self.assertEqual(convention.statut_for_template()["key_statut"], "Projet")
+        convention.statut = ConventionStatut.B1_INSTRUCTION
+        self.assertEqual(
+            convention.statut_for_template()["statut"], "2. Instruction requise"
+        )
+        self.assertEqual(
+            convention.statut_for_template()["statut_display"],
+            "Projet de convention soumis à l'instruction",
+        )
+        self.assertEqual(
+            convention.statut_for_template()["short_statut"], "Instruction requise"
+        )
+        self.assertEqual(
+            convention.statut_for_template()["key_statut"], "Instruction_requise"
+        )
+        convention.statut = ConventionStatut.B2_CORRECTION
+        self.assertEqual(
+            convention.statut_for_template()["statut"], "3. Corrections requises"
+        )
+        self.assertEqual(
+            convention.statut_for_template()["statut_display"],
+            "Projet de convention à modifier par le bailleur",
+        )
+        self.assertEqual(
+            convention.statut_for_template()["short_statut"], "Corrections requises"
+        )
+        self.assertEqual(
+            convention.statut_for_template()["key_statut"], "Corrections_requises"
+        )
+        convention.statut = ConventionStatut.C_A_SIGNER
+        self.assertEqual(convention.statut_for_template()["statut"], "4. A signer")
+        self.assertEqual(
+            convention.statut_for_template()["statut_display"], "Convention à signer"
+        )
+        self.assertEqual(convention.statut_for_template()["short_statut"], "A signer")
+        self.assertEqual(convention.statut_for_template()["key_statut"], "A_signer")
+        convention.statut = ConventionStatut.D_TRANSMISE
+        self.assertEqual(convention.statut_for_template()["statut"], "5. Transmise")
+        self.assertEqual(
+            convention.statut_for_template()["statut_display"], "Convention transmise"
+        )
+        self.assertEqual(convention.statut_for_template()["short_statut"], "Transmise")
+        self.assertEqual(convention.statut_for_template()["key_statut"], "Transmise")
 
     def test_xlsx(self):
         utils_assertions.assert_xlsx(self, Pret, "financement")

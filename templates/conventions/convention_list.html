@@ -1,0 +1,158 @@
+<div class="fr-container">
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-md-12 ">
+
+            <form class="fr-my-3w" method="get" action="" id="search_table">
+                <input type="hidden" id="order_by" name="order_by" value="{{conventions.order_by}}">
+                <input type="hidden" id="page" name="page" value="{{conventions.page}}">
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                        <label class="fr-label" for="search_input">
+                            Nom, numéro de décision, code postal ou ville de l'opération
+                        </label>
+                        <input class="fr-input" placeholder="Rechercher" type="search" id="search_input" name="search_input" value="{{conventions.search_input}}">
+                    </div>
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                        <div class="fr-select-group">
+                            <label class="fr-label" for="cstatut">
+                                Statut de la convention
+                            </label>
+                            <select class="fr-select" id="cstatut" name="cstatut">
+                                <option value="">Tous les statuts</option>
+                                {% for statut in statuts %}
+                                    <option value="{{statut.value}}"
+                                        {% if statut.value  == conventions.statut_filter %}selected{% endif %}>
+                                        {{statut.label}}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                        <div class="fr-select-group">
+                            <label class="fr-label" for="financement">
+                                Type de financement
+                            </label>
+                            <select class="fr-select" id="financment" name="financement">
+                                <option value="">Tous les financements</option>
+                                {% for financement in financements %}
+                                    <option value="{{financement.value}}"
+                                        {% if financement.value  == conventions.financement_filter %}selected{% endif %}>
+                                        {{financement.label}}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fr-col-12 fr-grid-row fr-grid-row--right">
+                    <button class="fr-btn fr-fi-search-line fr-btn--icon-left" title="Rechercher" id="search_btn">
+                        Rechercher dans les conventions existantes
+                    </button>
+                </div>
+            </form>
+
+            {% if conventions.paginated_conventions %}
+                <div class="fr-table fr-table--bordered table--layout-fixed">
+                    <table>
+                        {% if conventions.paginated_conventions.paginator.count != conventions.total_conventions %}
+                            <caption><i>{{ conventions.paginated_conventions.paginator.count }} convention{{ conventions.paginated_conventions.paginator.count|pluralize }} correspondent à votre recherche</i></caption>
+                        {% endif %}
+                        <thead>
+                            <tr class="th_inline">
+                                {% if request.session.is_instructeur %}
+                                    <th scope="col" class="th_inline">
+                                        Bailleur
+                                        {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='bailleur__nom' url_target='conventions:index' %}
+                                    </th>
+                                {% endif %}
+                                <th title="Numéro de décision" scope="col">
+                                    Numéro
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='programme__numero_galion' url_target='conventions:index' %}
+                                </th>
+                                <th title="Mise en service" scope="col">
+                                    MES
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' %}
+                                </th>
+                                <th title="Nom de l'opération" scope="col">
+                                    Opération
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='programme__nom' url_target='conventions:index' %}
+                                </th>
+                                <th title="Financement" scope="col">
+                                    Fin.
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='lot__financement' url_target='conventions:index' %}
+                                </th>
+                                <th title="Code postal" scope="col">
+                                    CP
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='programme__ville' url_target='conventions:index' %}
+                                </th>
+                                <th title="Ville" scope="col">
+                                    Ville
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='programme__ville' url_target='conventions:index' %}
+                                </th>
+                                <th title="Nombre de logements à conventionner" scope="col">
+                                    Nb Lgts
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='lot__nb_logements' url_target='conventions:index' %}
+                                </th>
+                                <th title="Statut de la convention" scope="col">
+                                    Statut
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='statut' url_target='conventions:index' %}
+                                </th>
+                                <th title="Action" scope="col" class="col__width--140">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for convention in conventions.paginated_conventions %}
+                                <tr>
+                                    {% if request.session.is_instructeur %}
+                                        <td>{{convention.bailleur.nom}}</td>
+                                    {% endif %}
+                                    <td>{{convention.programme.numero_galion}}</td>
+                                    <td>{{convention.programme.date_achevement_compile|default_if_none:'-'}}</td>
+                                    <td>{{convention.programme.nom}}</td>
+                                    <td>{{convention.financement}}</td>
+                                    <td>{{convention.programme.code_postal}}</td>
+                                    <td>{{convention.programme.ville}}</td>
+                                    <td>{{convention.lot.nb_logements}}</td>
+                                    <td title="{{convention.statut_for_template.statut_display}}">
+                                        <div class="fr-p-1w conv_statut_{{convention.statut_for_template.key_statut}}">
+                                            <b>
+                                                {{convention.statut_for_template.short_statut}}
+                                            </b>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if request.session.is_bailleur %}
+                                            {% if convention.is_bailleur_editable %}
+                                                <a class="fr-link fr-mb-1w" href="{% url 'conventions:selection_update' convention_uuid=convention.uuid %}" >
+                                                    <span class="fr-fi-edit-line" aria-hidden="true"></span>
+                                                </a>
+                                                {% include "conventions/actions/delete.html" with convention=convention %}
+                                            {% else %}
+                                                <a class="fr-link fr-mb-1w" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" >
+                                                    <span class="fr-fi-eye-line" aria-hidden="true"></span>
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if request.session.is_instructeur %}
+                                            {% if convention.is_instructeur_editable %}
+                                                <a class="fr-link fr-mb-1w" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" >
+                                                    <span class="fr-fi-edit-line" aria-hidden="true"></span>
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% include 'common/table/pagination.html' with paginate_list=conventions.paginated_conventions %}
+
+            {% else %}
+                <p>Aucune convention ne correspond à votre recherche...</p>
+            {% endif %}
+        </div>
+    </div>
+</div>

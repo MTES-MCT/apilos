@@ -5,10 +5,13 @@
                 <div class="fr-highlight">
                     <h1>{{convention.programme.nom}}</h1>
                 </div>
-                <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
-                    <div class="fr-col-12">
-                        <span class="{{convention.get_status_class}} fr-px-1w fr-h3">
-                            {{convention.get_statut_display}}
+                <div class="fr-grid-row fr-pl-9w">
+                    <div class="fr-py-1w conv_statut_{{convention.statut_for_template.key_statut}}">
+                        <span class="fr-px-1w fr-h3">
+                            {{convention.statut_for_template.short_statut}}
+                        </span><br>
+                        <span class="fr-px-1w">
+                            {{convention.statut_for_template.statut_display}}
                         </span>
                     </div>
                 </div>

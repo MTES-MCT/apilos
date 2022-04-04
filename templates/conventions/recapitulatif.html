@@ -43,7 +43,7 @@
                                             </a>
                                         </div>
                                         <div class="table--limited-height">
-                                            {% include "common/display_field_if_exists.html" with label="Nom du programme" value=programme.nom %}
+                                            {% include "common/display_field_if_exists.html" with label="Nom de l'opération" value=programme.nom %}
                                             {% include "common/display_field_if_exists.html" with label="Financement" value=lot.financement %}
                                             {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville %}
                                             {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements %}
@@ -86,7 +86,7 @@
                                         <div class="block--row-strech" id="{{object_field}}_div">
                                             <div class="block--row-strech-1">
                                                 <h4 class="fr-card__title">
-                                                    Programme
+                                                    Opération
                                                 </h4>
                                             </div>
                                             <a class="fr-link fr-mb-1w" href="{% url 'conventions:programme' convention_uuid=convention.uuid %}" >
@@ -116,7 +116,7 @@
                                         <div class="block--row-strech" id="{{object_field}}_div">
                                             <div class="block--row-strech-1">
                                                 <h4 class="fr-card__title">
-                                                    Programme - informations cadastrales
+                                                    Opération - informations cadastrales
                                                 </h4>
                                             </div>
                                             <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}" >
@@ -161,7 +161,7 @@
                                             <table>
                                                 <thead>
                                                     <tr>
-                                                        {% if convention.statut != 'BROUILLON' %}
+                                                        {% if convention.statut != '1. Projet' %}
                                                             {% include 'common/utils/comments_header.html' with object_name='reference_cadastrale' label='Références cadastrales' %}
                                                         {% endif %}
                                                         <th scope="col">Section {% include "common/form/required_field_star.html" %}</th>
@@ -175,7 +175,7 @@
                                                         {% with reference_uuid=reference.uuid|slugify %}
                                                             {% with main_object_field="reference_cadastrale__uuid__"|add:reference_uuid %}
                                                                 <tr id="{{main_object_field}}_group">
-                                                                    {% if convention.statut != 'BROUILLON' %}
+                                                                    {% if convention.statut != '1. Projet' %}
                                                                         <td id="{{main_object_field}}_div">
                                                                             {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Référence cadastrale" %}
                                                                         </td>
@@ -211,7 +211,7 @@
                                         <div class="block--row-strech" id="{{object_field}}_div">
                                             <div class="block--row-strech-1">
                                                 <h4 class="fr-card__title">
-                                                    Programme - EDD
+                                                    Opération - EDD
                                                 </h4>
                                             </div>
                                             <a class="fr-link fr-mb-1w" href="{% url 'conventions:edd' convention_uuid=convention.uuid %}" >
@@ -229,7 +229,7 @@
                                             <table>
                                                 <thead>
                                                     <tr>
-                                                        {% if convention.statut != 'BROUILLON' %}
+                                                        {% if convention.statut != '1. Projet' %}
                                                             {% include 'common/utils/comments_header.html' with object_name='logement_edd' label="Logements de l'EDD" %}
                                                         {% endif %}
                                                         <th scope="col">Financement {% include "common/form/required_field_star.html" %}</th>
@@ -242,7 +242,7 @@
                                                         {% with lgt_uuid=lgt.uuid|slugify %}
                                                             {% with main_object_field="logement_edd__uuid__"|add:lgt_uuid %}
                                                                 <tr id="{{main_object_field}}_group">
-                                                                    {% if convention.statut != 'BROUILLON' %}
+                                                                    {% if convention.statut != '1. Projet' %}
                                                                         <td id="{{main_object_field}}_div">
                                                                             {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement de l'EDD" %}
                                                                         </td>
@@ -287,7 +287,7 @@
                                             <table>
                                                 <thead>
                                                     <tr>
-                                                        {% if convention.statut != 'BROUILLON' %}
+                                                        {% if convention.statut != '1. Projet' %}
                                                             {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et Financements'%}
                                                         {% endif %}
                                                         <th scope="col">Numéro</th>
@@ -303,7 +303,7 @@
                                                         {% with pret_uuid=pret.uuid|slugify %}
                                                             {% with main_object_field="pret__uuid__"|add:pret_uuid %}
                                                                 <tr id="{{main_object_field}}_group">
-                                                                    {% if convention.statut != 'BROUILLON' %}
+                                                                    {% if convention.statut != '1. Projet' %}
                                                                         <td id="{{main_object_field}}_div">
                                                                             {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Prêt ou financement" %}
                                                                         </td>
@@ -358,7 +358,7 @@
                                             <table>
                                                 <thead>
                                                     <tr>
-                                                        {% if convention.statut != 'BROUILLON' %}
+                                                        {% if convention.statut != '1. Projet' %}
                                                             {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' %}
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
@@ -377,7 +377,7 @@
                                                         {% with logement_uuid=logement.uuid|slugify %}
                                                             {% with main_object_field="logement__uuid__"|add:logement_uuid %}
                                                                 <tr id="{{main_object_field}}_group">
-                                                                    {% if convention.statut != 'BROUILLON' %}
+                                                                    {% if convention.statut != '1. Projet' %}
                                                                         <td id="{{main_object_field}}_div">
                                                                             {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement" %}
                                                                         </td>
@@ -414,7 +414,7 @@
                                                         {% endwith %}
                                                     {% endfor %}
                                                     <tr>
-                                                        <td colspan="{% if convention.statut != 'BROUILLON' %}3{% else %}2{% endif %}" class="fr-text--lg">
+                                                        <td colspan="{% if convention.statut != '1. Projet' %}3{% else %}2{% endif %}" class="fr-text--lg">
                                                             Total
                                                         </td>
                                                         <td id="total_sh" class="fr-text--lg">
@@ -458,7 +458,7 @@
                                             <table>
                                                 <thead>
                                                     <tr>
-                                                        {% if convention.statut != 'BROUILLON' %}
+                                                        {% if convention.statut != '1. Projet' %}
                                                             {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" %}
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Type d'annexe {% include "common/form/required_field_star.html" %}</th>
@@ -474,7 +474,7 @@
                                                         {% with annexe_uuid=annexe.uuid|slugify %}
                                                             {% with main_object_field="annexe__uuid__"|add:annexe_uuid %}
                                                                 <tr id="{{main_object_field}}_group">
-                                                                    {% if convention.statut != 'BROUILLON' %}
+                                                                    {% if convention.statut != '1. Projet' %}
                                                                         <td id="{{main_object_field}}_div">
                                                                             {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Annexe" %}
                                                                         </td>
@@ -549,7 +549,7 @@
                                             <table>
                                                 <thead>
                                                     <tr>
-                                                        {% if convention.statut != 'BROUILLON' %}
+                                                        {% if convention.statut != '1. Projet' %}
                                                             {% include 'common/utils/comments_header.html' with object_name='type_stationnement' label="Type de stationnements" %}
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Type de stationnement {% include "common/form/required_field_star.html" %}</th>
@@ -562,7 +562,7 @@
                                                         {% with stationnement_uuid=stationnement.uuid|slugify %}
                                                             {% with main_object_field="type_stationnement__uuid__"|add:stationnement_uuid %}
                                                                 <tr id="{{main_object_field}}_group">
-                                                                    {% if convention.statut != 'BROUILLON' %}
+                                                                    {% if convention.statut != '1. Projet' %}
                                                                         <td id="{{main_object_field}}_div">
                                                                             {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Type de stationnement" %}
                                                                         </td>

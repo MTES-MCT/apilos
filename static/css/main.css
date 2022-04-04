@@ -2,6 +2,11 @@
   background-color: #F9F8F6;
 }
 
+.apilos-subtitle {
+  font-size: 1.5rem;
+  font-style: italic;
+}
+
 .fr-fi--xxl:after, .fr-fi--xxl:before {
   font-size: 4rem!important;
 }
@@ -372,6 +377,51 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   color: white;
 }
 
+.conv_statut_Projet {
+  background-color: #FF6F4C;
+  color: white;
+}
+
+.conv_statut_Projet span{
+    color: white;
+}
+
+.conv_statut_Instruction_requise {
+  background-color: #000091; /* blue-france-sun-113 */
+  color: white;
+}
+
+.conv_statut_Instruction_requise span{
+  color: white;
+}
+
+.conv_statut_Corrections_requises {
+  background-color: #000091; /* blue-france-sun-113 */
+  color: white;
+}
+
+.conv_statut_Corrections_requises span{
+  color: white;
+}
+
+.conv_statut_A_signer {
+  background-color: #18753c;  /* success-425 */
+  color: white;
+}
+
+.conv_statut_A_signer span{
+  color: white;
+}
+
+.conv_statut_Transmise {
+  background-color: #666666; /* grey-425 */
+  color: white;
+}
+
+.conv_statut_Transmise span{
+  color: white;
+}
+
 .background-contrast-grey950 {
   background-color: #EEEEEE;
 }
@@ -474,4 +524,11 @@ table.fullwidth {
 
 .apilos-text--normal {
   font-weight: normal;
+}
+
+
+.th_inline th {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
