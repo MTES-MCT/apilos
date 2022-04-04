@@ -156,7 +156,9 @@ class ConventionModelsTest(TestCase):
             convention.statut_for_template()["statut_display"],
             "Création d'un projet de convention",
         )
-        self.assertEqual(convention.statut_for_template()["short_statut"], "Projet")
+        self.assertEqual(
+            convention.statut_for_template()["short_statut"], "Projet (Brouillon)"
+        )
         self.assertEqual(convention.statut_for_template()["key_statut"], "Projet")
         convention.statut = ConventionStatut.B1_INSTRUCTION
         self.assertEqual(

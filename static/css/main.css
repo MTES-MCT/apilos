@@ -532,3 +532,8 @@ table.fullwidth {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+
+.apilos-btn--red {
+  background-color: #dc3545;
+}

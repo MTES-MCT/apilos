@@ -611,6 +611,9 @@
                         </div>
                     </div>
                 </div>
+                {% if request.session.is_bailleur and convention.is_bailleur_editable %}
+                    {% include "conventions/actions/delete.html" with convention=convention %}
+                {% endif %}
 
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if request.session.is_bailleur %}
