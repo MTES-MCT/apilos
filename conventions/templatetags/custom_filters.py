@@ -1,5 +1,7 @@
 from django.template.defaulttags import register
 
+from conventions.models import ConventionStatut
+
 
 @register.filter
 def get_item(dictionary, key):
@@ -13,7 +15,9 @@ def has_own_active_comment(comments, user_id):
     return user_id in list(
         map(
             lambda x: x.user_id,
-            filter(lambda comment: comment.statut != "CLOS", comments),
+            filter(
+                lambda comment: comment.statut != ConventionStatut.D_TRANSMISE, comments
+            ),
         )
     )
 
@@ -24,7 +28,12 @@ def hasnt_active_comments(comments, object_field):
     if object_comments is None:
         return True
     return not (
-        list(filter(lambda comment: (comment.statut != "CLOS"), object_comments))
+        list(
+            filter(
+                lambda comment: (comment.statut != ConventionStatut.D_TRANSMISE),
+                object_comments,
+            )
+        )
     )
 
 

@@ -62,20 +62,20 @@
                                 }
                             },
                             series: [{
-                                name: 'Brouillon',
-                                data: {{ conv_bydept.BROUILLON }}
+                                name: 'Projet',
+                                data: {{ conv_bydept.Projet }}
                             }, {
-                                name: "En cours d'instruction",
-                                data: {{ conv_bydept.INSTRUCTION }}
+                                name: "Instruction requise",
+                                data: {{ conv_bydept.Instruction_requise }}
                             }, {
-                                name: "Correction requise",
-                                data: {{ conv_bydept.CORRECTION }}
+                                name: "Corrections requises",
+                                data: {{ conv_bydept.Corrections_requises }}
                             }, {
-                                name: "Validée",
-                                data: {{ conv_bydept.VALIDE }}
+                                name: "A signer",
+                                data: {{ conv_bydept.A_signer }}
                             }, {
-                                name: "Clos",
-                                data: {{ conv_bydept.CLOS }}
+                                name: "Transmise",
+                                data: {{ conv_bydept.Transmise }}
                             }]
                         });
                     });
@@ -83,26 +83,26 @@
 
                 <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
                     <div class="fr-m-3w statcard statcard--color1">
-                        <div class="statcard__title">BROUILLON</div>
-                        <p class="statcard__indicateur">{{ conventions_by_status.BROUILLON }}</p>
+                        <div class="statcard__title">Projet</div>
+                        <p class="statcard__indicateur">{{ conventions_by_status.Projet }}</p>
                     </div>
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
                     <div class="fr-m-3w statcard statcard--color2">
-                        <div class="statcard__title">EN COURS D'INSTRUCTION</div>
-                        <p class="statcard__indicateur">{{ conventions_by_status.INSTRUCTION }}</p>
+                        <div class="statcard__title">Instruction requise</div>
+                        <p class="statcard__indicateur">{{ conventions_by_status.Instruction_requise }}</p>
                     </div>
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
                     <div class="fr-m-3w statcard statcard--color3">
-                        <div class="statcard__title">EN COURS DE CORRECTION</div>
-                        <p class="statcard__indicateur">{{ conventions_by_status.CORRECTION }}</p>
+                        <div class="statcard__title">Corrections requises</div>
+                        <p class="statcard__indicateur">{{ conventions_by_status.Corrections_requises }}</p>
                     </div>
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
                     <div class="fr-m-3w statcard statcard--color4">
-                        <div class="statcard__title">VALIDÉ</div>
-                        <p class="statcard__indicateur">{{ conventions_by_status.VALIDE }}</p>
+                        <div class="statcard__title">A signer</div>
+                        <p class="statcard__indicateur">{{ conventions_by_status.A_signer }}</p>
                     </div>
                 </div>
             </div>

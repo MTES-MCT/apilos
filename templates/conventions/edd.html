@@ -33,7 +33,7 @@
                         <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - État descriptif de division</h2> -->
 
                         <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
-                            <p>Pour rappel, l'état descriptif de division est quand un programme comporte plusieurs financements et donc plusieurs conventions. </p>
+                            <p>Pour rappel, l'état descriptif de division est quand une opération comporte plusieurs financements et donc plusieurs conventions. </p>
                             <p>Il existe 3 types d’EDD: EDD volumétrique, EDD classique & EDD simplifié</p>
                         </div>
 
@@ -119,7 +119,7 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        {% if convention.statut != 'BROUILLON' %}
+                                        {% if convention.statut != '1. Projet' %}
                                             {% include 'common/utils/comments_header.html' with object_name='logement_edd' label="Logements de l'EDD" %}
                                         {% endif %}
                                         <th scope="col">Financement {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -131,7 +131,7 @@
                                     {% for form_edd in formset %}
                                         {% with input_id="logement_edd_"|add:form_edd.uuid.value main_object_field="logement_edd__uuid__"|add:form_edd.uuid.value %}
                                             <tr id="{{form_edd.uuid.id_for_label}}_group">
-                                                {% if convention.statut != 'BROUILLON' %}
+                                                {% if convention.statut != '1. Projet' %}
                                                     <td id="{{form_edd.uuid.id_for_label}}_div">
                                                         {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_edd.uuid %}
                                                     </td>

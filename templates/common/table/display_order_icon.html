@@ -1,10 +1,37 @@
 <a class="fr-link fr-link--sm" id='{{order_by_column}}' href='#'>
     {% if '-'|add:order_by_column == order_by%}
-        <b><span class="fr-fi-arrow-down-s-line table__icons--blue fr-fi--sm-active" aria-hidden="true"></span></b>
+        <div class="table__icons--blue table__icons--active">
+            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="sortDownIconTitle">
+                <title id="sortDownIconTitle">Tri descendant</title>
+                <path d="M11 9H17"></path>
+                <path d="M11 5H19"></path>
+                <path d="M11 13H15"></path>
+                <path d="M10 17L7 20L4 17"></path>
+                <path d="M7 5V19"></path>
+            </svg>
+        </div>
     {% elif order_by_column == order_by %}
-        <b><span class="fr-fi-arrow-up-s-line table__icons--blue fr-fi--sm-active" aria-hidden="true"></span></b>
+        <div class="table__icons--blue table__icons--active">
+            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="sortUpIconTitle">
+                <title id="sortUpIconTitle">Tri ascendant</title>
+                <path d="M11 16H17"></path>
+                <path d="M11 20H19"></path>
+                <path d="M11 12H15"></path>
+                <path d="M4 8L7 5L10 8"></path>
+                <path d="M7 20L7 6"></path>
+            </svg>
+        </div>
     {% else %}
-        <span class="fr-fi-arrow-up-s-line grey table__icons--darkgrey fr-fi--sm" aria-hidden="true"></span>
+        <div class="table__icons--darkgrey">
+            <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="sortUpIconTitle">
+                <title id="sortUpIconTitle">Tri ascendant</title>
+                <path d="M11 16H17"></path>
+                <path d="M11 20H19"></path>
+                <path d="M11 12H15"></path>
+                <path d="M4 8L7 5L10 8"></path>
+                <path d="M7 20L7 6"></path>
+            </svg>
+        </div>
     {% endif %}
 </a>
 
@@ -15,6 +42,8 @@
             if (document.getElementById('page') !== null) {
                 document.getElementById('page').value = "1"
             }
+            console.log('order_by : {{order_by}}')
+            console.log('order_by_column : {{order_by_column}}')
             document.getElementById('order_by').value = "{% if order_by == order_by_column %}-{% endif %}{{ order_by_column }}"
             document.getElementById('search_table').submit()
         });

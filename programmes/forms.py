@@ -125,7 +125,11 @@ class ProgrammeForm(forms.Form):
         },
     )
     adresse = forms.CharField(
-        label="Adresse",
+        label="Adresse(s)",
+        help_text=(
+            "Si le programme comporte plusieurs adresses,"
+            + " renseignez une adresse par ligne dans le champ texte ci-dessous"
+        ),
         max_length=5000,
         min_length=1,
         error_messages={
@@ -150,7 +154,7 @@ class ProgrammeForm(forms.Form):
     anru = forms.BooleanField(
         required=False,
         label="ANRU",
-        help_text="Le programme bénéficie d'un financement ANRU",
+        help_text="L'opération bénéficie d'un financement ANRU",
     )
     nb_locaux_commerciaux = forms.IntegerField(
         required=False,

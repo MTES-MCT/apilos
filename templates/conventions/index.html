@@ -5,174 +5,162 @@
 {% block page_title %}Conventions - APiLos{% endblock%}
 
 {% block content %}
-    <div class="fr-container-fluid ds_banner">
-        <div class="fr-container">
-            <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-my-5w">
-                    {% if request.session.is_bailleur %}
-                        <h2 class="fr-mb-3w">Créez une nouvelle convention ou gérez vos conventions en cours</h2>
 
-                        <h4 class="fr-mb-3w">
-                            Commencer une nouvelle convention dès à présent
-                        </h4>
-                        <button class="fr-btn" id="new_convention">
-                            <span class="fr-fi-edit-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
-                        </button>
-                        {% include "common/utils/onclick_redirect.html" with id='new_convention' url_target='conventions:selection' %}
-                    {% elif request.session.is_instructeur or request.user.is_superuser %}
-                        <h2 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h2>
-                    {% else %}
-                        <p class="fr-mb-3w">Votre profil n'est pas bien configuré, merci de vous rapprocher de votre instructeur</p>
-                    {% endif %}
+    {% if conventions.total_conventions > 0 %}
+
+        <div class="fr-container-fluid ds_banner">
+            <div class="fr-container">
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-my-5w block--row-strech">
+                        {% if request.session.is_bailleur %}
+                            <div class="block--row-strech-1">
+                                <h1>Gérer mes conventions APL</h1>
+                                <p class="apilos-subtitle">{{conventions.total_conventions}} convention{{ conventions.total_conventions|pluralize }} liée{{ conventions.total_conventions|pluralize }} à votre bailleur trouvée{{ conventions.total_conventions|pluralize }} dans APiLos</p>
+                            </div>
+                            <div>
+                                <button class="fr-btn" id="new_convention">
+                                    <span class="fr-fi-add-circle-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
+                                </button>
+                                {% include "common/utils/onclick_redirect.html" with id='new_convention' url_target='conventions:selection' %}
+                            </div>
+                        {% elif request.session.is_instructeur or request.user.is_superuser %}
+                            <h2 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h2>
+                            <p class="apilos-subtitle">{{conventions.total_conventions}} convention{{ conventions.total_conventions|pluralize }} liée{{ conventions.total_conventions|pluralize }} à votre administration trouvée{{ conventions.total_conventions|pluralize }} dans APiLos</p>
+                        {% else %}
+                            <p class="fr-mb-3w">Votre profil n'est pas bien configuré, merci de vous rapprocher de votre instructeur</p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="fr-container">
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-md-12 ">
+        {% include "conventions/convention_list.html" %}
 
-                <form class="fr-my-3w" method="get" action="" id="search_table">
-                    <input type="hidden" id="order_by" name="order_by" value="{{order_by}}">
-                    <div class="fr-grid-row fr-grid-row--gutters">
-                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
-                            <label class="fr-label" for="search_input">
-                                Nom, numéro ou ville du programme
-                            </label>
-                            <input class="fr-input" placeholder="Rechercher" type="search" id="search_input" name="search_input" value="{{search}}">
-                        </div>
-                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
-                            <div class="fr-select-group">
-                                <label class="fr-label" for="cstatut">
-                                    Statut de la convention
-                                </label>
-                                <select class="fr-select" id="cstatut" name="cstatut">
-                                    <option value="">Tous les statuts</option>
-                                    {% for statut in statuts %}
-                                        <option value="{{statut.value}}"
-                                            {% if statut.value  == convention_statut %}selected{% endif %}>
-                                            {{statut.label}}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
-                            <div class="fr-select-group">
-                                <label class="fr-label" for="financement">
-                                    Type de financement
-                                </label>
-                                <select class="fr-select" id="financment" name="financement">
-                                    <option value="">Tous les financements</option>
-                                    {% for financement in financements %}
-                                        <option value="{{financement.value}}"
-                                            {% if financement.value  == convention_financement %}selected{% endif %}>
-                                            {{financement.label}}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
+        <div class="fr-container-fluid">
+            <div class="fr-container">
+                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+                    <div class="fr-my-5w">
+                        <button class="fr-btn" id="new_convention_bottom">
+                            <span class="fr-fi-add-circle-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
+                        </button>
+                        {% include "common/utils/onclick_redirect.html" with id='new_convention_bottom' url_target='conventions:selection' %}
                     </div>
-
-                    <button class="fr-btn fr-fi-search-line fr-btn--icon-left" title="Rechercher" id="search_btn">
-                        Rechercher
-                    </button>
-                </form>
-
-                {% if conventions %}
-                    <div class="fr-table fr-table--bordered">
-                        <table>
-                            <caption>Gérez vos conventions</caption>
-
-                            <thead>
-                                <tr>
-                                    {% if request.session.is_instructeur %}
-                                        <th scope="col">
-                                            Bailleur
-                                            {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='bailleur__nom' url_target='conventions:index' %}
-                                        </th>
-                                    {% endif %}
-                                    <th scope="col">
-                                        Numéro Galion
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__numero_galion' url_target='conventions:index' %}
-                                    </th>
-                                    <th scope="col">
-                                        Mise en service
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' %}
-                                    </th>
-                                    <th scope="col">
-                                        Programme
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__nom' url_target='conventions:index' %}
-                                    </th>
-                                    <th scope="col">
-                                        Financement
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='lot__financement' url_target='conventions:index' %}
-                                    </th>
-                                    <th scope="col">
-                                        Code postal
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__ville' url_target='conventions:index' %}
-                                    </th>
-                                    <th scope="col">
-                                        Ville
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__ville' url_target='conventions:index' %}
-                                    </th>
-                                    <th title="Nombre de logements à conventionner" scope="col">
-                                        Nb Lgts
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='lot__nb_logements' url_target='conventions:index' %}
-                                    </th>
-                                    <th scope="col">
-                                        Statut
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='statut' url_target='conventions:index' %}
-                                    </th>
-                                    <th scope="col" class="col__width--140">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for convention in conventions %}
-                                    <tr>
-                                        {% if request.session.is_instructeur %}
-                                            <td>{{convention.bailleur.nom}}</td>
-                                        {% endif %}
-                                        <td>{{convention.programme.numero_galion}}</td>
-                                        <td>{{convention.programme.date_achevement_compile|default_if_none:'-'}}</td>
-                                        <td>{{convention.programme.nom}}</td>
-                                        <td>{{convention.financement}}</td>
-                                        <td>{{convention.programme.code_postal}}</td>
-                                        <td>{{convention.programme.ville}}</td>
-                                        <td>{{convention.lot.nb_logements}}</td>
-                                        <td>{{convention.get_statut_display}}</td>
-                                        <td>
-                                            {% if request.session.is_bailleur %}
-                                                {% if convention.is_bailleur_editable %}
-                                                    <a class="fr-link fr-mb-1w" href="{% url 'conventions:selection_update' convention_uuid=convention.uuid %}" >
-                                                        <span class="fr-fi-edit-line" aria-hidden="true"></span>
-                                                    </a>
-                                                    {% include "conventions/actions/delete.html" with convention=convention %}
-                                                {% else %}
-                                                    <a class="fr-link fr-mb-1w" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" >
-                                                        <span class="fr-fi-eye-line" aria-hidden="true"></span>
-                                                    </a>
-                                                {% endif %}
-                                            {% endif %}
-                                            {% if request.session.is_instructeur %}
-                                                {% if convention.is_instructeur_editable %}
-                                                    <a class="fr-link fr-mb-1w" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" >
-                                                        <span class="fr-fi-edit-line" aria-hidden="true"></span>
-                                                    </a>
-                                                {% endif %}
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <p>Aucune convention ne correspond à votre recherche ou vous n'avez pas encore de conventions...</p>
-                {% endif %}
+                </div>
             </div>
         </div>
-    </div>
+
+    {% else %}
+        <div class="fr-container-fluid ds_banner">
+            <div class="fr-container">
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-my-5w">
+                        {% if request.session.is_bailleur %}
+                            <h1>Benvenue sur APiLos !</h1>
+                            <p class="apilos-subtitle">Vous travaillez pour un bailleur de logements sociaux et souhaitez créer votre première convention APL.</p>
+                            <p class="apilos-subtitle">Nous vous accompagnons tout au long de la procédure !</p>
+                        {% elif request.session.is_instructeur or request.user.is_superuser %}
+                            <h1 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h1>
+                            <p class="apilos-subtitle">Vous n'avez pas de conventions à instruire</p>
+                            <p class="apilos-subtitle">Nous vous accompagnons lors des prochaines étapes pour utiliser APiLos au sein de votre administration</p>
+                        {% else %}
+                            <p class="fr-mb-3w">Votre profil n'est pas bien configuré, merci de vous rapprocher de votre instructeur</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if request.session.is_bailleur %}
+            <div class="fr-container">
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-mt-5w fr-mb-3w">
+                        <div class="fr-grid-row">
+                            <div class="fr-col-3 fr-col-md-3">
+                                <h2 class="fr-mt-2w">Je me prépare</h2>
+                            </div>
+                            <div class="fr-col-9 fr-col-md-9">
+                                <div class="fr-mb-3w">
+                                    <h3>Je récupère le(s) document(s) suivant(s)</h3>
+                                    <p>Il vous sera demandé de nous communiquer l'un des documents suivants concernant l'opération que vous souhaitez conventionner : </p>
+                                    <ul class="fr-col-offset-1">
+                                        <li>Acte de vente</li>
+                                        <li>OU acte de propriété</li>
+                                        <li>OU acte notarial</li>
+                                    </ul>
+                                </div>
+                                <div class="fr-mb-3w">
+                                    <h3>Je prépare mes tableaux</h3>
+                                    <p>Vous pouvez télécharger et remplir les tableaux nécessaires à la création de votre convention. Ces modèle vous seront aussi proposés à chaque étape.</p>
+                                    <div class="fr-col-offset-1">
+                                        <button type="button" class="fr-btn fr-btn--secondary" id='download_model'>
+                                            <img class="apilos-fi-btn--secondary fr-mr-1w" src="{% static "icons/download.svg" %}">Télécharger les modèles de tableaux
+                                        </button>
+                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                document.getElementById('download_model')
+                                                    .addEventListener('click', function(){ location.href="{% url 'conventions:load_xlsx_model' file_type='all' %}" });
+                                            });
+                                        </script>
+                                    </div>
+                                </div>
+                                <div class="fr-mb-3w">
+                                    <h3>Je consulte l'aide en ligne</h3>
+                                    <p>Pour approfondir votre compréhension d'APiLos, référez-vous à tout moment à notre
+                                        <a href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noopener">
+                                            Aide en ligne
+                                        </a>.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mb-5w">
+                    <div class="fr-col-12">
+                        <div class="fr-alert fr-alert--info">
+                            <p>Vous pouvez créer un brouillon de convention
+                                avant d'avoir réuni l'ensemble de ces documents
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mb-5w">
+                    <button class="fr-btn" id="new_convention">
+                        <span class="fr-fi-add-circle-line fr-mr-1w" aria-hidden="true"></span>Je suis prêt à commencer ma convention
+                    </button>
+                    {% include "common/utils/onclick_redirect.html" with id='new_convention' url_target='conventions:selection' %}
+
+                </div>
+            </div>
+        {% elif request.session.is_instructeur %}
+            <div class="fr-container">
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-mt-5w fr-mb-3w">
+                        <div class="fr-grid-row">
+                            <div class="fr-col-3 fr-col-md-3">
+                                <h2 class="fr-mt-2w">Comment démarrer sur APiLos</h2>
+                            </div>
+                            <div class="fr-col-9 fr-col-md-9">
+                                <div class="fr-mb-3w">
+                                    <h3>Je prends contact avec l'équipe APiLos</h3>
+                                    <p>Toute l'équipe APiLos est à votre disposition, n'hésitez pas à nous envoyer un email à l'adresse <a href="mailto:contact@apilos.beta.gouv.fr" target="_blank">contact@apilos.beta.gouv.fr</a></p>
+                                </div>
+                                <div class="fr-mb-3w">
+                                    <h3>Je consulte l'aide en ligne</h3>
+                                    <p>Pour approfondir votre compréhension d'APiLos, référez-vous à tout moment à notre
+                                        <a href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noopener">
+                                            Aide en ligne
+                                        </a>.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% endif %}
+    {% endif %}
+
+
 {% endblock %}

@@ -19,18 +19,47 @@ class Preteur(models.TextChoices):
 
 
 class ConventionStatut(models.TextChoices):
-    # La convention n'est pas ecore soumise à l'instruction
-    BROUILLON = "BROUILLON", "Brouillon"
-    # La convention est soumise à l'instruction et n'est pas encore validée par l'instructeur
-    INSTRUCTION = "INSTRUCTION", "En cours d'instruction"
-    # L'instructeur a demandé des corrections au bailleur.
-    # Après correction, la convention devra être à nouveau soumise
-    CORRECTION = "CORRECTION", "Corrections requises"
-    # L'instructeur a validé la convention,
-    # le document de convention est édité et il n'a plus qu'à être signé
-    VALIDE = "VALIDE", "Validé"
-    # La convention est signée et archivée. disponible pour les autres services de l'état
-    CLOS = "CLOS", "Convention close"
+    """
+    A/ PROJET : Projet - Création d'un projet de convention
+        Le bailleur crée un projet de convention APL, il ajoute à ce projet des documents
+        et des informations concernant les logements de l'opération.
+        Anciennement BROUILLON
+
+    B/ Instruction (2 sous-statuts) : Instruction du projet de convention
+        Le bailleur et l'instructeur échangent et s'alignent sur le contenu de la convention
+
+        B1/ INSTRUCTION : Instruction requise - Projet de convention soumis à l'instruction
+            L'instructeur vérifie le contenu du projet de convention et, si nécessaire,
+            transmet au bailleur ses demandes de modifications
+            Anciennement INSTRUCTION
+
+        B2/ CORRECTION : Corrections requises - Projet de convention à modifier par le bailleur
+            Le bailleur intègre les demandes de modification et soumet à nouveau le projet de
+            convention à l'instructeur
+            Anciennement CORRECTION
+
+    C/ A_SIGNER : A signer - Convention à signer
+        Le bailleur et l'instructeur sont d'accord sur le projet de convention. Les parties
+        procèdent à la signature.
+        Anciennement VALIDE
+
+    D/ TRANSMISE : Transmise - Convention transmise
+        La convention signée est mise à disposition et automatiquement transmise aux parties et
+        partenaires via la plateforme APiLos.
+        Anciennement CLOS
+    """
+
+    A_PROJET = "1. Projet", "Création d'un projet de convention"
+    B1_INSTRUCTION = (
+        "2. Instruction requise",
+        "Projet de convention soumis à l'instruction",
+    )
+    B2_CORRECTION = (
+        "3. Corrections requises",
+        "Projet de convention à modifier par le bailleur",
+    )
+    C_A_SIGNER = "4. A signer", "Convention à signer"
+    D_TRANSMISE = "5. Transmise", "Convention transmise"
 
 
 class Convention(models.Model):
@@ -56,7 +85,7 @@ class Convention(models.Model):
     statut = models.CharField(
         max_length=25,
         choices=ConventionStatut.choices,
-        default=ConventionStatut.BROUILLON,
+        default=ConventionStatut.A_PROJET,
     )
     soumis_le = models.DateTimeField(null=True)
     premiere_soumission_le = models.DateTimeField(null=True)
@@ -77,15 +106,18 @@ class Convention(models.Model):
     # https://docs.djangoproject.com/en/dev/howto/custom-template-tags/#howto-custom-template-tags
     # Ou créé un champ statut
     def is_bailleur_editable(self):
-        return self.statut in (ConventionStatut.BROUILLON, ConventionStatut.CORRECTION)
+        return self.statut in (
+            ConventionStatut.A_PROJET,
+            ConventionStatut.B2_CORRECTION,
+        )
 
     def is_instructeur_editable(self):
-        return self.statut != ConventionStatut.CLOS
+        return self.statut != ConventionStatut.D_TRANSMISE
 
     def is_submitted(self):
         return self.statut not in [
-            ConventionStatut.BROUILLON,
-            ConventionStatut.CORRECTION,
+            ConventionStatut.A_PROJET,
+            ConventionStatut.B2_CORRECTION,
         ]
 
     def comments_text(self):
@@ -116,8 +148,8 @@ class Convention(models.Model):
                 .prefetch_related("user__role_set")
                 .filter(
                     statut_convention__in=[
-                        ConventionStatut.INSTRUCTION,
-                        ConventionStatut.CORRECTION,
+                        ConventionStatut.B1_INSTRUCTION,
+                        ConventionStatut.B2_CORRECTION,
                     ],
                     user__role__typologie=role,
                 )
@@ -136,8 +168,8 @@ class Convention(models.Model):
         try:
             return self.conventionhistory_set.filter(
                 statut_convention__in=[
-                    ConventionStatut.INSTRUCTION,
-                    ConventionStatut.CORRECTION,
+                    ConventionStatut.B1_INSTRUCTION,
+                    ConventionStatut.B2_CORRECTION,
                 ],
             ).latest("cree_le")
         except ConventionHistory.DoesNotExist:
@@ -225,9 +257,9 @@ class Convention(models.Model):
         if (
             self.statut
             in [
-                ConventionStatut.BROUILLON,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
+                ConventionStatut.A_PROJET,
+                ConventionStatut.B1_INSTRUCTION,
+                ConventionStatut.B2_CORRECTION,
             ]
             or self.numero is None
         ):
@@ -235,7 +267,7 @@ class Convention(models.Model):
             # decret 80.416 pour les HLM
             # operation = "2"  # pour une opération de construction neuve (2)
             # code opération non appliqué dans le 13
-            code_organisme = "075.050"  # par l’ OPAC-VP (n° de code : 075.050).
+            code_organisme = "075.050"  # par l' OPAC-VP (n° de code : 075.050).
             return "/".join(
                 [
                     str(self.programme.code_postal[:-3]),
@@ -252,31 +284,34 @@ class Convention(models.Model):
         if (
             self.statut
             not in [
-                ConventionStatut.BROUILLON,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
+                ConventionStatut.A_PROJET,
+                ConventionStatut.B1_INSTRUCTION,
+                ConventionStatut.B2_CORRECTION,
             ]
             and self.numero is not None
         ):
             return self.numero.rsplit("/", maxsplit=1)[-1]
         return None
 
-    def get_status_class(self):
-        if self.statut in [
-            ConventionStatut.BROUILLON,
-            ConventionStatut.INSTRUCTION,
-            ConventionStatut.CORRECTION,
-        ]:
-            return "convention_ongoing_status"
-        if self.statut == ConventionStatut.VALIDE:
-            return "convention_valid_status"
-        return "convention_ended_status"
-
     def is_instruction_ongoing(self):
-        return self.statut in ["INSTRUCTION", "CORRECTION"]
+        return self.statut in [
+            ConventionStatut.B1_INSTRUCTION,
+            ConventionStatut.B2_CORRECTION,
+        ]
 
     def is_validated(self):
-        return self.statut in ["VALIDE", "CLOS"]
+        return self.statut in [
+            ConventionStatut.C_A_SIGNER,
+            ConventionStatut.D_TRANSMISE,
+        ]
+
+    def statut_for_template(self):
+        return {
+            "statut": self.statut,
+            "statut_display": self.get_statut_display(),
+            "short_statut": self.statut[3:],
+            "key_statut": self.statut[3:].replace(" ", "_"),
+        }
 
 
 class ConventionHistory(models.Model):
@@ -289,12 +324,12 @@ class ConventionHistory(models.Model):
     statut_convention = models.CharField(
         max_length=25,
         choices=ConventionStatut.choices,
-        default=ConventionStatut.BROUILLON,
+        default=ConventionStatut.A_PROJET,
     )
     statut_convention_precedent = models.CharField(
         max_length=25,
         choices=ConventionStatut.choices,
-        default=ConventionStatut.BROUILLON,
+        default=ConventionStatut.A_PROJET,
     )
     commentaire = models.TextField(null=True)
     user = models.ForeignKey(

@@ -48,7 +48,7 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        {% if convention.statut != 'BROUILLON' %}
+                                        {% if convention.statut != '1. Projet' %}
                                             {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et financements' %}
                                         {% endif %}
                                         <th scope="col">Numéro</th>
@@ -63,7 +63,7 @@
                                     {% for form_pret in formset %}
                                         {% with main_object_field="pret__uuid__"|add:form_pret.uuid.value %}
                                             <tr id="{{form_pret.uuid.id_for_label}}_group">
-                                                {% if convention.statut != 'BROUILLON' %}
+                                                {% if convention.statut != '1. Projet' %}
                                                     <td id="{{form_pret.uuid.id_for_label}}_div">
                                                         {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_pret.uuid %}
                                                     </td>
