@@ -43,7 +43,7 @@
                             <table id="lgts_table">
                                 <thead>
                                     <tr>
-                                        {% if convention.statut != 'BROUILLON' %}
+                                        {% if convention.statut != '1. Projet' %}
                                             {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' %}
                                         {% endif %}
                                         <th scope="col" class="col__width--200">Désignation {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -61,7 +61,7 @@
                                     {% for form in formset %}
                                         {% with main_object_field="logement__uuid__"|add:form.uuid.value %}
                                             <tr id="{{form.uuid.id_for_label}}_group">
-                                                {% if convention.statut != 'BROUILLON' %}
+                                                {% if convention.statut != '1. Projet' %}
                                                     <td id="{{form.uuid.id_for_label}}_div">
                                                         {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form.uuid %}
                                                     </td>
@@ -102,7 +102,7 @@
                                         {% endwith %}
                                     {% endfor %}
                                     <tr>
-                                        <td colspan="{% if convention.statut != 'BROUILLON' %}3{% else %}2{% endif %}" class="fr-text--lg">
+                                        <td colspan="{% if convention.statut != '1. Projet' %}3{% else %}2{% endif %}" class="fr-text--lg">
                                             Total
                                         </td>
                                         <td id="total_sh" class="fr-text--lg text--center">

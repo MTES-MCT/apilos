@@ -1,5 +1,5 @@
 {% load static %}
-{% if object_field and convention.statut != 'BROUILLON' %}
+{% if object_field and convention.statut != '1. Projet' %}
     <div id="{{object_field}}_comment_factory"></div>
     <script type="text/javascript" nonce="{{request.csp_nonce}}">
         var [object_name, object_field, object_uuid] = '{{object_field}}'.split('__');

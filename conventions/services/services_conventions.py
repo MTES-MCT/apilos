@@ -318,7 +318,7 @@ def convention_submit(request, convention_uuid):
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
             convention=convention,
-            statut_convention=ConventionStatut.INSTRUCTION,
+            statut_convention=ConventionStatut.B1_INSTRUCTION,
             statut_convention_precedent=convention.statut,
             user=request.user,
         ).save()
@@ -326,7 +326,7 @@ def convention_submit(request, convention_uuid):
         if convention.premiere_soumission_le is None:
             convention.premiere_soumission_le = timezone.now()
         convention.soumis_le = timezone.now()
-        convention.statut = ConventionStatut.INSTRUCTION
+        convention.statut = ConventionStatut.B1_INSTRUCTION
         convention.save()
         _send_email_instruction(request, convention)
         submitted = utils.ReturnStatus.SUCCESS
@@ -410,21 +410,19 @@ def convention_feedback(request, convention_uuid):
     notification_form = NotificationForm(request.POST)
     if notification_form.is_valid():
         _send_email_correction(request, convention, notification_form)
-
+        target_status = ConventionStatut.B1_INSTRUCTION
+        if notification_form.cleaned_data["from_instructeur"]:
+            target_status = ConventionStatut.B2_CORRECTION
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
             convention=convention,
-            statut_convention=ConventionStatut.CORRECTION,
+            statut_convention=target_status,
             statut_convention_precedent=convention.statut,
             user=request.user,
             commentaire=notification_form.cleaned_data["comment"],
         ).save()
-        if (
-            convention.statut != ConventionStatut.CORRECTION
-            and request.user.is_instructeur()
-        ):
-            convention.statut = ConventionStatut.CORRECTION
-            convention.save()
+        convention.statut = target_status
+        convention.save()
 
         return utils.base_response_redirect_recap_success(convention)
     return {
@@ -517,13 +515,13 @@ def convention_validate(request, convention_uuid):
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
             convention=convention,
-            statut_convention=ConventionStatut.VALIDE,
+            statut_convention=ConventionStatut.C_A_SIGNER,
             statut_convention_precedent=convention.statut,
             user=request.user,
         ).save()
         if not convention.valide_le:
             convention.valide_le = timezone.now()
-        convention.statut = ConventionStatut.VALIDE
+        convention.statut = ConventionStatut.C_A_SIGNER
         convention.save()
         _send_email_valide(request, convention, local_pdf_path)
         return {

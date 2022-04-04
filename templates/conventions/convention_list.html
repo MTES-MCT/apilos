@@ -60,44 +60,44 @@
                             <caption><i>{{ conventions.paginated_conventions.paginator.count }} convention{{ conventions.paginated_conventions.paginator.count|pluralize }} correspondent à votre recherche</i></caption>
                         {% endif %}
                         <thead>
-                            <tr>
+                            <tr class="th_inline">
                                 {% if request.session.is_instructeur %}
                                     <th scope="col" class="th_inline">
                                         Bailleur
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='bailleur__nom' url_target='conventions:index' %}
+                                        {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='bailleur__nom' url_target='conventions:index' %}
                                     </th>
                                 {% endif %}
                                 <th title="Numéro de décision" scope="col">
                                     Numéro
-                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__numero_galion' url_target='conventions:index' %}
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='programme__numero_galion' url_target='conventions:index' %}
                                 </th>
                                 <th title="Mise en service" scope="col">
                                     MES
-                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' %}
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' %}
                                 </th>
                                 <th title="Nom de l'opération" scope="col">
                                     Opération
-                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__nom' url_target='conventions:index' %}
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='programme__nom' url_target='conventions:index' %}
                                 </th>
                                 <th title="Financement" scope="col">
                                     Fin.
-                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='lot__financement' url_target='conventions:index' %}
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='lot__financement' url_target='conventions:index' %}
                                 </th>
                                 <th title="Code postal" scope="col">
                                     CP
-                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__ville' url_target='conventions:index' %}
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='programme__ville' url_target='conventions:index' %}
                                 </th>
                                 <th title="Ville" scope="col">
                                     Ville
-                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='programme__ville' url_target='conventions:index' %}
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='programme__ville' url_target='conventions:index' %}
                                 </th>
                                 <th title="Nombre de logements à conventionner" scope="col">
                                     Nb Lgts
-                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='lot__nb_logements' url_target='conventions:index' %}
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='lot__nb_logements' url_target='conventions:index' %}
                                 </th>
                                 <th title="Statut de la convention" scope="col">
                                     Statut
-                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='statut' url_target='conventions:index' %}
+                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='statut' url_target='conventions:index' %}
                                 </th>
                                 <th title="Action" scope="col" class="col__width--140">Action</th>
                             </tr>
@@ -115,7 +115,13 @@
                                     <td>{{convention.programme.code_postal}}</td>
                                     <td>{{convention.programme.ville}}</td>
                                     <td>{{convention.lot.nb_logements}}</td>
-                                    <td>{{convention.get_statut_display}}</td>
+                                    <td title="{{convention.statut_for_template.statut_display}}">
+                                        <div class="fr-p-1w conv_statut_{{convention.statut_for_template.key_statut}}">
+                                            <b>
+                                                {{convention.statut_for_template.short_statut}}
+                                            </b>
+                                        </div>
+                                    </td>
                                     <td>
                                         {% if request.session.is_bailleur %}
                                             {% if convention.is_bailleur_editable %}
