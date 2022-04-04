@@ -99,7 +99,6 @@
                                     Statut
                                     {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='statut' url_target='conventions:index' %}
                                 </th>
-                                <th title="Action" scope="col" class="col__width--140">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -116,32 +115,17 @@
                                     <td>{{convention.programme.ville}}</td>
                                     <td>{{convention.lot.nb_logements}}</td>
                                     <td title="{{convention.statut_for_template.statut_display}}">
-                                        <div class="fr-p-1w conv_statut_{{convention.statut_for_template.key_statut}}">
+                                        <div id="convention_redirect_{{convention.uuid}}" class="fr-p-1w conv_statut_{{convention.statut_for_template.key_statut}} clickable">
                                             <b>
                                                 {{convention.statut_for_template.short_statut}}
                                             </b>
                                         </div>
-                                    </td>
-                                    <td>
-                                        {% if request.session.is_bailleur %}
-                                            {% if convention.is_bailleur_editable %}
-                                                <a class="fr-link fr-mb-1w" href="{% url 'conventions:selection_update' convention_uuid=convention.uuid %}" >
-                                                    <span class="fr-fi-edit-line" aria-hidden="true"></span>
-                                                </a>
-                                                {% include "conventions/actions/delete.html" with convention=convention %}
-                                            {% else %}
-                                                <a class="fr-link fr-mb-1w" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" >
-                                                    <span class="fr-fi-eye-line" aria-hidden="true"></span>
-                                                </a>
-                                            {% endif %}
-                                        {% endif %}
-                                        {% if request.session.is_instructeur %}
-                                            {% if convention.is_instructeur_editable %}
-                                                <a class="fr-link fr-mb-1w" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" >
-                                                    <span class="fr-fi-edit-line" aria-hidden="true"></span>
-                                                </a>
-                                            {% endif %}
-                                        {% endif %}
+                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                document.getElementById('convention_redirect_{{convention.uuid}}')
+                                                    .addEventListener('click', function(){ location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" });
+                                            });
+                                        </script>
                                     </td>
                                 </tr>
                             {% endfor %}

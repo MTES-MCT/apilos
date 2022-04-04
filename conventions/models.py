@@ -309,7 +309,11 @@ class Convention(models.Model):
         return {
             "statut": self.statut,
             "statut_display": self.get_statut_display(),
-            "short_statut": self.statut[3:],
+            "short_statut": (
+                "Projet (Brouillon)"
+                if self.statut == ConventionStatut.A_PROJET
+                else self.statut[3:]
+            ),
             "key_statut": self.statut[3:].replace(" ", "_"),
         }
 
