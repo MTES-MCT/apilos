@@ -1,5 +1,7 @@
 {% if convention.statut == '1. Projet' %}
-    <a class="fr-link" href="#" data-fr-opened="false" aria-controls="fr-modal-{{convention.uuid}}"><span class="fr-fi-delete-line" aria-hidden="true"></span></a>
+    <button type="button" class="fr-btn apilos-btn--red fr-btn--icon-left fr-fi-delete-line" data-fr-opened="false" aria-controls="fr-modal-{{convention.uuid}}">
+        Supprimer cette convention
+    </button>
     <dialog aria-labelledby="fr-modal-{{convention.uuid}}-title" id="fr-modal-{{convention.uuid}}" class="fr-modal" role="dialog" >
         <div class="fr-container fr-container--fluid fr-container-md">
             <div class="fr-grid-row fr-grid-row--center">
