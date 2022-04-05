@@ -377,51 +377,6 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   color: white;
 }
 
-.conv_statut_Projet {
-  background-color: #FF6F4C;
-  color: white;
-}
-
-.conv_statut_Projet span{
-    color: white;
-}
-
-.conv_statut_Instruction_requise {
-  background-color: #000091; /* blue-france-sun-113 */
-  color: white;
-}
-
-.conv_statut_Instruction_requise span{
-  color: white;
-}
-
-.conv_statut_Corrections_requises {
-  background-color: #000091; /* blue-france-sun-113 */
-  color: white;
-}
-
-.conv_statut_Corrections_requises span{
-  color: white;
-}
-
-.conv_statut_A_signer {
-  background-color: #18753c;  /* success-425 */
-  color: white;
-}
-
-.conv_statut_A_signer span{
-  color: white;
-}
-
-.conv_statut_Transmise {
-  background-color: #666666; /* grey-425 */
-  color: white;
-}
-
-.conv_statut_Transmise span{
-  color: white;
-}
-
 .background-contrast-grey950 {
   background-color: #EEEEEE;
 }
@@ -537,3 +492,39 @@ table.fullwidth {
 .apilos-btn--red {
   background-color: #dc3545;
 }
+
+/*
+ * Display convention status
+ */
+
+ .apilos-colored_status {
+  border-radius: 0.25rem;
+}
+
+.apilos-colored_status span{
+    color: white;
+}
+
+.apilos-colored_status--Projet {
+  background-color: #FF6F4C;
+}
+
+.apilos-colored_status--Instruction_requise {
+  background-color: #6a6af4; /* blue-france-main-525 */
+}
+
+.apilos-colored_status--Corrections_requises {
+  background-color: #000091; /* blue-france-sun-113 */
+}
+
+.apilos-colored_status--A_signer {
+  background-color: #18753c;  /* success-425 */
+}
+
+.apilos-colored_status--Transmise {
+  background-color: #666666; /* grey-425 */
+}
+
+/*
+ * End display convention status
+ */

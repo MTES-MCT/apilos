@@ -71,8 +71,8 @@
                                     Numéro
                                     {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='programme__numero_galion' url_target='conventions:index' %}
                                 </th>
-                                <th title="Mise en service" scope="col">
-                                    MES
+                                <th title="Date de livraison et mise en service" scope="col">
+                                    Livraison
                                     {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' %}
                                 </th>
                                 <th title="Nom de l'opération" scope="col">
@@ -103,7 +103,7 @@
                         </thead>
                         <tbody>
                             {% for convention in conventions.paginated_conventions %}
-                                <tr>
+                                <tr id="convention_redirect_{{convention.uuid}}" class="clickable">
                                     {% if request.session.is_instructeur %}
                                         <td>{{convention.bailleur.nom}}</td>
                                     {% endif %}
@@ -115,10 +115,10 @@
                                     <td>{{convention.programme.ville}}</td>
                                     <td>{{convention.lot.nb_logements}}</td>
                                     <td title="{{convention.statut_for_template.statut_display}}">
-                                        <div id="convention_redirect_{{convention.uuid}}" class="fr-p-1w conv_statut_{{convention.statut_for_template.key_statut}} clickable">
-                                            <b>
+                                        <div class="fr-p-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
+                                            <span><b>
                                                 {{convention.statut_for_template.short_statut}}
-                                            </b>
+                                            </b></span>
                                         </div>
                                         <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                             document.addEventListener('DOMContentLoaded', function () {

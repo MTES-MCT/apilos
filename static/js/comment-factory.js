@@ -24,6 +24,7 @@ class CommentFactory {
     _add_comment_icon() {
         const icon_div = document.createElement('div');
         icon_div.setAttribute('id', this.comment_icon_id)
+        icon_div.setAttribute('title', 'Cliquez pour ajouter un commentaire')
         icon_div.setAttribute('data-fr-opened', 'false')
         icon_div.setAttribute('aria-controls', this.comment_dialog_id + '-dialog')
         icon_div.classList.add('content__icons')
@@ -298,11 +299,12 @@ class CommentFactory {
 
     update_comment_icon(nb_open, nb_resolu, nb_clos){
         var comment_icon = document.getElementById(this.comment_icon_id)
-        if (nb_open) { // blue & displayed
+        if (nb_open) { // orange & displayed
             comment_icon.classList.add('content__icons--opened')
             comment_icon.classList.remove('content__icons--resolved')
             comment_icon.classList.remove('content__icons--closed')
             comment_icon.classList.remove('content__icons--add')
+            comment_icon.removeAttribute('title')
             comment_icon.hidden = false
             if (this.empty_toggle_on) {
                 this.empty_toggle_on.onclick = null
@@ -345,6 +347,7 @@ class CommentFactory {
             comment_icon.classList.add('content__icons--resolved')
             comment_icon.classList.remove('content__icons--closed')
             comment_icon.classList.remove('content__icons--add')
+            comment_icon.removeAttribute('title')
             comment_icon.hidden = false
             var parent_parent = comment_icon.parentNode.parentNode
             if ((parent_parent.tagName == 'TR' || parent_parent.tagName == 'TH') && document.getElementById('download_upload_block') !== null) {
@@ -363,6 +366,7 @@ class CommentFactory {
             comment_icon.classList.remove('content__icons--resolved')
             comment_icon.classList.add('content__icons--closed')
             comment_icon.classList.remove('content__icons--add')
+            comment_icon.removeAttribute('title')
             comment_icon.hidden = false
             var parent_parent = comment_icon.parentNode.parentNode
             if ((parent_parent.tagName == 'TR' || parent_parent.tagName == 'TH') && document.getElementById('download_upload_block') !== null) {
@@ -376,12 +380,13 @@ class CommentFactory {
             }
             // parent_parent = comment_icon.parentNode.parentNode
         }
-        else { // darkgrey & hidden
+        else { // blue & hidden
             comment_icon = document.getElementById(this.comment_icon_id)
             comment_icon.classList.remove('content__icons--opened')
             comment_icon.classList.remove('content__icons--resolved')
             comment_icon.classList.remove('content__icons--closed')
             comment_icon.classList.add('content__icons--add')
+            comment_icon.setAttribute('title', 'Cliquez pour ajouter un commentaire')
             if (this.empty_toggle_on) {
                 comment_icon.hidden = true
                 this.empty_toggle_on.onmouseover = e => {
