@@ -24,8 +24,10 @@
                                 {% include "common/utils/onclick_redirect.html" with id='new_convention' url_target='conventions:selection' %}
                             </div>
                         {% elif request.session.is_instructeur or request.user.is_superuser %}
-                            <h2 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h2>
-                            <p class="apilos-subtitle">{{conventions.total_conventions}} convention{{ conventions.total_conventions|pluralize }} liée{{ conventions.total_conventions|pluralize }} à votre administration trouvée{{ conventions.total_conventions|pluralize }} dans APiLos</p>
+                            <div>
+                                <h2 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h2>
+                                <p class="apilos-subtitle">{{conventions.total_conventions}} convention{{ conventions.total_conventions|pluralize }} liée{{ conventions.total_conventions|pluralize }} à votre administration trouvée{{ conventions.total_conventions|pluralize }} dans APiLos</p>
+                            </div>
                         {% else %}
                             <p class="fr-mb-3w">Votre profil n'est pas bien configuré, merci de vous rapprocher de votre instructeur</p>
                         {% endif %}
@@ -36,18 +38,20 @@
 
         {% include "conventions/convention_list.html" %}
 
-        <div class="fr-container-fluid">
-            <div class="fr-container">
-                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-                    <div class="fr-my-5w">
-                        <button class="fr-btn" id="new_convention_bottom">
-                            <span class="fr-fi-add-circle-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
-                        </button>
-                        {% include "common/utils/onclick_redirect.html" with id='new_convention_bottom' url_target='conventions:selection' %}
+        {% if request.session.is_bailleur %}
+            <div class="fr-container-fluid">
+                <div class="fr-container">
+                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+                        <div class="fr-my-5w">
+                            <button class="fr-btn" id="new_convention_bottom">
+                                <span class="fr-fi-add-circle-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
+                            </button>
+                            {% include "common/utils/onclick_redirect.html" with id='new_convention_bottom' url_target='conventions:selection' %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
 
     {% else %}
         <div class="fr-container-fluid ds_banner">
