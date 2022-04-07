@@ -59,27 +59,27 @@ class ConventionModelsTest(TestCase):
         self.assertTrue(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
-        self.assertFalse(convention.is_submitted())
+        self.assertTrue(convention.is_project())
         convention.statut = ConventionStatut.B1_INSTRUCTION
         self.assertFalse(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instructeur_editable())
         self.assertTrue(convention.is_instruction_ongoing())
-        self.assertTrue(convention.is_submitted())
+        self.assertFalse(convention.is_project())
         convention.statut = ConventionStatut.B2_CORRECTION
         self.assertTrue(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instructeur_editable())
         self.assertTrue(convention.is_instruction_ongoing())
-        self.assertFalse(convention.is_submitted())
+        self.assertFalse(convention.is_project())
         convention.statut = ConventionStatut.C_A_SIGNER
         self.assertFalse(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
-        self.assertTrue(convention.is_submitted())
+        self.assertFalse(convention.is_project())
         convention.statut = ConventionStatut.D_TRANSMISE
         self.assertFalse(convention.is_bailleur_editable())
         self.assertFalse(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
-        self.assertTrue(convention.is_submitted())
+        self.assertFalse(convention.is_project())
 
     def test_properties(self):
         pret = Pret.objects.first()
