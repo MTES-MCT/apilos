@@ -1,47 +1,48 @@
-{% if opened_comments.count %}
-    <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-12 fr-col-lg-12">
-            <div class="fr-card fr-card--no-arrow fr-card--grey">
-                <div class="fr-card__body ">
-                    <div class="block--row-strech" id="{{object_field}}_div">
-                        <div class="block--row-strech-1">
-                            <h4 class="fr-card__title">
-                                {{opened_comments.count}} Commentaire{{ opened_comments|pluralize }} Ouvert{{ opened_comments|pluralize }} (Non-résolu{{ opened_comments|pluralize }})
-                            </h4>
-                        </div>
-                        <a class="fr-link fr-mb-1w" href="{% url 'comments:opened_comments' convention_uuid=convention.uuid %}" id="refresh_opened_comments">
-                            <span class="fr-fi-refresh-line" aria-hidden="true">Rafraichir</span>
-                        </a>
-                    </div>
-                    <div class="fr-table  fr-table--bordered table--layout-fixed table--limited-height fr-table--no-caption">
-                        <table>
-                            <caption>Commentaires ouverts liés à la convention</caption>
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="col__width--150">Élements de la convention commentés </th>
-                                    <th scope="col">Message</th>
-                                    <th scope="col" class="col__width--120">Créé le</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for opened_comment in opened_comments %}
-                                    <tr>
-                                        <td>
-                                            {{opened_comment.object_detail}}
-                                        </td>
-                                        <td>
-                                            {{opened_comment.message}}
-                                        </td>
-                                        <td>
-                                            {{opened_comment.cree_le}}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+
+{% if convention.is_instruction_ongoing and opened_comments.count %}
+    <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
+        <div class="block--row-strech" id="{{object_field}}_div">
+            <div class="block--row-strech-1">
+                <p class="fr-alert__title">
+                    {{opened_comments.count}} Commentaire{{ opened_comments|pluralize }} Ouvert{{ opened_comments|pluralize }} (Non-résolu{{ opened_comments|pluralize }})
+                </p>
             </div>
+            <a class="fr-link fr-mb-1w" href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' id="refresh_opened_comments">
+                <span class="fr-fi-refresh-line" aria-hidden="true">Rafraichir</span>
+            </a>
         </div>
+
+        <div class="fr-table  fr-table--bordered table--layout-fixed table--limited-height fr-table--no-caption">
+            <table>
+                <caption>Commentaires ouverts liés à la convention</caption>
+                <thead>
+                    <tr>
+                        <th scope="col" class="col__width--150">Élements de la convention commentés </th>
+                        <th scope="col">Message</th>
+                        <th scope="col" class="col__width--150">Créé le</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for opened_comment in opened_comments %}
+                        <tr>
+                            <td>
+                                {{opened_comment.object_detail}}
+                            </td>
+                            <td>
+                                {{opened_comment.message}}
+                            </td>
+                            <td>
+                                {{ opened_comment.cree_le|date:"d/m/Y" }} {{ opened_comment.cree_le|time:"H:i" }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
     </div>
+{% else %}
+    <a class="fr-link fr-mb-1w" href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' id="refresh_opened_comments" hidden>
+        <span class="fr-fi-refresh-line" aria-hidden="true">Rafraichir</span>
+    </a>
 {% endif %}

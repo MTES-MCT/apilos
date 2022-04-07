@@ -114,11 +114,8 @@ class Convention(models.Model):
     def is_instructeur_editable(self):
         return self.statut != ConventionStatut.D_TRANSMISE
 
-    def is_submitted(self):
-        return self.statut not in [
-            ConventionStatut.A_PROJET,
-            ConventionStatut.B2_CORRECTION,
-        ]
+    def is_project(self):
+        return self.statut == ConventionStatut.A_PROJET
 
     def comments_text(self):
         return model_utils.get_field_key(self, "comments", "text")

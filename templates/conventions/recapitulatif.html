@@ -7,6 +7,9 @@
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/turbo.es2017-umd.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script nonce="{{request.csp_nonce}}">
+        Turbo.session.drive = false
+    </script>
 {% endblock %}
 
 
@@ -19,16 +22,16 @@
                 {% csrf_token %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12 fr-mb-5w">
-                        {% if not convention.is_submitted %}
-                            <div role="alert" class="fr-alert fr-alert--error fr-mb-3w">
-                                <p class="fr-alert__title">Attention</p>
+                        {% if convention.is_project %}
+                            <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
                                 <p>le document de convention n'est pas encore soumis à l'instruction{% if user.is_bailleur %},
                                     pour finaliser votre demande de conventionnement, vous devez clicker sur le bouton
-                                    <b>"Soumettre au service instructeur"</b>{% endif %}</p>
+                                    <b>"Soumettre au service instructeur"</b> en bas de page{% endif %}</p>
                             </div>
                         {% endif %}
 
-                        <turbo-frame id="opened_comments_block" src="{% url 'comments:opened_comments' convention_uuid=convention.uuid %}">
+                        <turbo-frame id="opened_comments_block" data-turbo="true">
+                            {% include "comments/opened_comments.html" %}
                         </turbo-frame>
 
                         <div class="fr-grid-row fr-grid-row--gutters">

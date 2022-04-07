@@ -1,12 +1,10 @@
 import json
 
-from turbo.shortcuts import render_frame
-
 from django.http.response import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST, require_GET
 
-from comments.models import Comment, CommentStatut
+from comments.models import Comment
 from conventions.models import Convention
 
 
@@ -111,32 +109,3 @@ def get_comment(request, convention_uuid):
             }
         )
     return JsonResponse(result, safe=False)
-
-
-def test_turbo(request, count):
-    return (
-        render_frame(request, "comments/test.html", {"count": int(count) + 1})
-        .update(id="turbo_div")
-        .response
-    )
-
-
-def opened_comments(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
-    comments = Comment.objects.filter(
-        convention=convention,
-        statut=CommentStatut.OUVERT,
-    )
-    comments = comments.order_by("cree_le")
-    return (
-        render_frame(
-            request,
-            "comments/opened_comments.html",
-            {
-                "opened_comments": comments,
-                "convention": convention,
-            },
-        )
-        .update(id="opened_comments_block")
-        .response
-    )
