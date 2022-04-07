@@ -586,7 +586,8 @@ class BaseLogementFormSet(BaseFormSet):
             for form in self.forms:
                 try:
                     lgt_edd = lgts_edd.get(
-                        designation=form.cleaned_data.get("designation")
+                        designation=form.cleaned_data.get("designation"),
+                        financement=lot.financement,
                     )
                     if lgt_edd.financement != lot.financement:
                         form.add_error(
@@ -599,6 +600,11 @@ class BaseLogementFormSet(BaseFormSet):
                 except LogementEDD.DoesNotExist:
                     form.add_error(
                         "designation", "Ce logement n'est pas dans l'EDD simplifié"
+                    )
+                except LogementEDD.MultipleObjectsReturned:
+                    form.add_error(
+                        "designation",
+                        "Ce logement est présent plusieurs fois dans l'EDD simplifié",
                     )
 
     def manage_nb_logement_consistency(self):
