@@ -5,4 +5,10 @@ urlpatterns = [
     path("", views.add_comment, name="add_comment"),
     path("convention/<convention_uuid>", views.get_comment, name="get_comment"),
     path("<comment_uuid>", views.update_comment, name="update_comment"),
+    path("turbo/<count>", views.test_turbo, name="test_turbo"),
+    path(
+        "convention/<convention_uuid>/opened",
+        views.opened_comments,
+        name="opened_comments",
+    ),
 ]

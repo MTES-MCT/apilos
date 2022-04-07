@@ -1,6 +1,6 @@
 // class to manage the comment behaviour
 class CommentFactory {
-    constructor({container_id, convention_uuid, object_name, object_field, object_uuid=null, loading_img, dialog_title='Title', input_div_id, empty_toggle_on, load_initial_status=false} = {}) {
+    constructor({container_id, convention_uuid, object_name, object_field, object_uuid=null, loading_img, dialog_title='Title', input_div_id, empty_toggle_on, load_initial_status=false, callback_click} = {}) {
         this.container_id = container_id
         this.container = document.getElementById(container_id)
         this.convention_uuid = convention_uuid
@@ -15,6 +15,7 @@ class CommentFactory {
             this.empty_toggle_on = document.getElementById(empty_toggle_on)
         }
         this.input_div_id = input_div_id
+        this.callback_click = callback_click
         this.comment_dialog_id = 'main_comment_modal'
         this.comment_icon_id = this.object_name + '__' + this.object_field + '__' + this.object_uuid + '_comment'
         this._add_comment_icon()
@@ -469,6 +470,9 @@ class CommentFactory {
             if (res.success) {
                 this.create_global_comment_input(res.comment, res.user.is_instructeur)
                 this.display_comment_icon()
+                if (this.callback_click) {
+                    document.getElementById(this.callback_click).click()
+                }
             }
             comment.value = ''
         });
@@ -524,8 +528,9 @@ class CommentFactory {
                 setTimeout(e => {
                     document.getElementById('comment_date_' + this.comment_icon_id + '_' + uuid).innerText = 'le ' + this.format_french_date(res.comment.mis_a_jour_le)
                 }, 5000);
-
-
+                if (this.callback_click) {
+                    document.getElementById(this.callback_click).click()
+                }
             }
         });
     }

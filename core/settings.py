@@ -116,6 +116,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "django_filters",
     "django_cas_ng",
+    "turbo",
 ]
 
 MIDDLEWARE = [
@@ -264,7 +265,11 @@ CSP_IMG_SRC = ("'self'", "data:")
 CSP_OBJECT_SRC = "'none'"
 CSP_FONT_SRC = "'self'", "data:"
 CSP_CONNECT_SRC = ("'self'", "https://stats.data.gouv.fr/piwik.php")
-CSP_STYLE_SRC = ("'self'", "https://code.highcharts.com/css/highcharts.css")
+CSP_STYLE_SRC = (
+    "'self'",
+    "https://code.highcharts.com/css/highcharts.css",
+    "'unsafe-inline'",
+)
 CSP_MANIFEST_SRC = "'self'"
 CSP_INCLUDE_NONCE_IN = [
     "script-src",
