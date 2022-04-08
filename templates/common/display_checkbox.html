@@ -16,7 +16,7 @@
                 </div>
             </div>
         </div>
-        {% include "common/utils/comments_field.html" %}
+        {% include "common/utils/comments_field.html" with callback_click="refresh_opened_comments" %}
     </div>
 {% else %}
     <div class="fr-mb-1w content__fileblock">

@@ -108,7 +108,7 @@
                                         <td>{{convention.bailleur.nom}}</td>
                                     {% endif %}
                                     <td>{{convention.programme.numero_galion}}</td>
-                                    <td>{{convention.programme.date_achevement_compile|default_if_none:'-'}}</td>
+                                    <td>{{convention.programme.date_achevement_compile|date:"d/m/Y"|default_if_none:'-' }}</td>
                                     <td>{{convention.programme.nom}}</td>
                                     <td>{{convention.financement}}</td>
                                     <td>{{convention.programme.code_postal}}</td>

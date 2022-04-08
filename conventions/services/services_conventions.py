@@ -10,6 +10,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.conf import settings
+from comments.models import Comment, CommentStatut
 
 from programmes.models import (
     Annexe,
@@ -293,8 +294,14 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
                 "suffixe_numero": convention.suffixe_numero(),
             }
         )
+    opened_comments = Comment.objects.filter(
+        convention=convention,
+        statut=CommentStatut.OUVERT,
+    )
+    opened_comments = opened_comments.order_by("cree_le")
     return {
         **utils.base_convention_response_error(request, convention),
+        "opened_comments": opened_comments,
         "bailleur": convention.bailleur,
         "lot": convention.lot,
         "programme": convention.programme,

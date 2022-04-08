@@ -10,6 +10,7 @@
             object_name : '{{object_name}}',
             object_field : 'all',
             dialog_title : "{% if form_input.label %}{{form_input.label|safe}}{% elif label %}{{ label }}{% else %}Commentaires{% endif %}",
+            {% if callback_click %}callback_click: "{{ callback_click }}", {% endif %}
             loading_img : '{% static "icons/loading.gif" %}'
         })
     </script>
