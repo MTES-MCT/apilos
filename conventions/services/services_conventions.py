@@ -335,7 +335,12 @@ def convention_submit(request, convention_uuid):
         convention.soumis_le = timezone.now()
         convention.statut = ConventionStatut.B1_INSTRUCTION
         convention.save()
-        _send_email_instruction(request, convention)
+        _send_email_instruction(
+            request.build_absolute_uri(
+                reverse("conventions:recapitulatif", args=[convention.uuid])
+            ),
+            convention,
+        )
         submitted = utils.ReturnStatus.SUCCESS
     return {
         "success": submitted,
@@ -350,16 +355,13 @@ def convention_delete(request, convention_uuid):
     convention.delete()
 
 
-def _send_email_instruction(request, convention):
+def _send_email_instruction(convention_url, convention):
     """
     Send email "convention à instruire" when bailleur submit the convention
     Send an email to the bailleur who click and bailleur TOUS
     Send an email to all instructeur (except the ones who select AUCUN as email preference)
     """
     # envoi au bailleur
-    convention_url = request.build_absolute_uri(
-        reverse("conventions:recapitulatif", args=[convention.uuid])
-    )
     from_email = "contact@apilos.beta.gouv.fr"
 
     # All bailleur users from convention
@@ -385,6 +387,15 @@ def _send_email_instruction(request, convention):
         )
         msg.attach_alternative(html_content, "text/html")
         msg.send()
+    else:
+        msg = EmailMultiAlternatives(
+            f"[ATTENTION pas de destinataire à cet email] Convention à instruire ({convention})",
+            text_content,
+            from_email,
+            ("contact@apilos.beta.gouv.fr",),
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
 
     # envoie à l'instructeur
     to = convention.get_email_instructeur_users(include_partial=True)
@@ -406,6 +417,15 @@ def _send_email_instruction(request, convention):
     if to:
         msg = EmailMultiAlternatives(
             f"Convention à instruire ({convention})", text_content, from_email, to
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+    else:
+        msg = EmailMultiAlternatives(
+            f"[ATTENTION pas de destinataire à cet email] Convention à instruire ({convention})",
+            text_content,
+            from_email,
+            ("contact@apilos.beta.gouv.fr",),
         )
         msg.attach_alternative(html_content, "text/html")
         msg.send()
@@ -487,6 +507,15 @@ def _send_email_correction(request, convention, notification_form):
 
     if to:
         msg = EmailMultiAlternatives(subject, text_content, from_email, to, cc=cc)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+    else:
+        msg = EmailMultiAlternatives(
+            f"[ATTENTION pas de destinataire à cet email] {subject}",
+            text_content,
+            from_email,
+            ("contact@apilos.beta.gouv.fr",),
+        )
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
@@ -610,6 +639,15 @@ def _send_email_valide(request, convention, local_pdf_path=None):
             pdf_file_handler.close()
             msg.content_subtype = "html"
 
+        msg.send()
+    else:
+        msg = EmailMultiAlternatives(
+            f"[ATTENTION pas de destinataire à cet email] Convention validé ({convention})",
+            text_content,
+            from_email,
+            ("contact@apilos.beta.gouv.fr",),
+        )
+        msg.attach_alternative(html_content, "text/html")
         msg.send()
 
 
