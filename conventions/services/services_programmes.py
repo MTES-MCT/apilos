@@ -92,7 +92,6 @@ def _send_email_staff(request, convention):
         reverse("conventions:recapitulatif", args=[convention.uuid])
     )
     from_email = "contact@apilos.beta.gouv.fr"
-    to = ("contact@apilos.beta.gouv.fr",)
     text_content = render_to_string(
         "emails/alert_create_convention.txt",
         {
@@ -112,15 +111,14 @@ def _send_email_staff(request, convention):
         },
     )
 
-    if to:
-        msg = EmailMultiAlternatives(
-            f"[{settings.ENVIRONMENT.upper()}] Nouvelle convention créée de zéro ({convention})",
-            text_content,
-            from_email,
-            to,
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
+    msg = EmailMultiAlternatives(
+        f"[{settings.ENVIRONMENT.upper()}] Nouvelle convention créée de zéro ({convention})",
+        text_content,
+        from_email,
+        ("contact@apilos.beta.gouv.fr",),
+    )
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 
 def select_programme_update(request, convention_uuid):
