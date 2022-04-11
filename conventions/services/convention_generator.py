@@ -20,7 +20,11 @@ from programmes.models import (
 )
 from upload.models import UploadedFile
 
-from conventions.templatetags.custom_filters import inline_text_multiline
+from conventions.templatetags.custom_filters import (
+    inline_text_multiline,
+    to_fr_date,
+    to_fr_short_date,
+)
 
 
 class NotHandleConventionType(Exception):
@@ -97,7 +101,8 @@ def generate_convention_doc(convention):
     }
 
     jinja_env = jinja2.Environment()
-    jinja_env.filters["d"] = _to_fr_date
+    jinja_env.filters["d"] = to_fr_date
+    jinja_env.filters["sd"] = to_fr_short_date
     jinja_env.filters["f"] = _to_fr_float
     jinja_env.filters["pl"] = _pluralize
     jinja_env.filters["len"] = len
@@ -167,12 +172,6 @@ def _save_io_as_file(file_io, convention_dirpath, convention_filename):
     destination.close()
 
     return pdf_path
-
-
-def _to_fr_date(date):
-    if date is None:
-        return ""
-    return date.strftime("%d/%m/%Y")
 
 
 def _to_fr_float(value, d=2):
