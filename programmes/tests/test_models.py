@@ -232,3 +232,23 @@ class ProgrammeModelsTest(TestCase):
         programme.date_achevement_previsible = date(2022, 12, 31)
         programme.save()
         self.assertEqual(programme.date_achevement_compile, date(2022, 12, 31))
+
+
+class LotModelsTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        utils_fixtures.create_all()
+
+    def test_mixity_option(self):
+        lot = Lot.objects.order_by("uuid").first()
+        lot.financement = Financement.PLUS
+        lot.lgts_mixite_sociale_negocies = random.randint(1, 10)
+        self.assertTrue(lot.mixity_option())
+        self.assertEqual(
+            lot.lgts_mixite_sociale_negocies, lot.lgts_mixite_sociale_negocies_display()
+        )
+        for k, _ in Financement.choices:
+            if k != Financement.PLUS:
+                lot.financement = k
+                self.assertFalse(lot.mixity_option())
+                self.assertEqual(0, lot.lgts_mixite_sociale_negocies_display())

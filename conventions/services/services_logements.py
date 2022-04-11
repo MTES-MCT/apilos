@@ -5,6 +5,7 @@ from programmes.models import (
 )
 from programmes.forms import (
     LogementFormSet,
+    LotLgtsOptionForm,
     TypeStationnementFormSet,
     AnnexeFormSet,
     LotAnnexeForm,
@@ -27,6 +28,7 @@ def logements_update(request, convention_uuid):
     import_warnings = None
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
+        form = LotLgtsOptionForm(request.POST)
         if request.POST.get("Upload", False):
             formset, upform, import_warnings, editable_upload = _upload_logements(
                 request, convention, import_warnings, editable_upload
@@ -65,9 +67,18 @@ def logements_update(request, convention_uuid):
             )
         upform = UploadForm()
         formset = LogementFormSet(initial=initial)
+        form = LotLgtsOptionForm(
+            initial={
+                "uuid": convention.lot.uuid,
+                "lgts_mixite_sociale_negocies": convention.lot.lgts_mixite_sociale_negocies,
+                "loyer_derogatoire": convention.lot.loyer_derogatoire,
+            }
+        )
+
     return {
         **utils.base_convention_response_error(request, convention),
         "formset": formset,
+        "form": form,
         "upform": upform,
         "import_warnings": import_warnings,
         "editable_upload": request.user.full_editable_convention(convention)
@@ -101,6 +112,22 @@ def _upload_logements(request, convention, import_warnings, editable_upload):
 
 
 def _logements_atomic_update(request, convention):
+
+    form = LotLgtsOptionForm(
+        {
+            "uuid": convention.lot.uuid,
+            **utils.build_partial_form(
+                request,
+                convention.lot,
+                [
+                    "lgts_mixite_sociale_negocies",
+                    "loyer_derogatoire",
+                ],
+            ),
+        }
+    )
+    form_is_valid = form.is_valid()
+
     formset = LogementFormSet(request.POST)
     initformset = {
         "form-TOTAL_FORMS": request.POST.get("form-TOTAL_FORMS", len(formset)),
@@ -140,7 +167,6 @@ def _logements_atomic_update(request, convention):
                     form_logement, logement, "loyer"
                 ),
             }
-            print(utils.get_form_value(form_logement, logement, "coeficient"))
         else:
             initformset = {
                 **initformset,
@@ -163,9 +189,11 @@ def _logements_atomic_update(request, convention):
     formset = LogementFormSet(initformset)
     formset.programme_id = convention.programme_id
     formset.lot_id = convention.lot_id
+    formset_is_valid = formset.is_valid()
 
-    if formset.is_valid():
+    if form_is_valid and formset_is_valid:
         _save_logements(formset, convention)
+        _save_lot_lgts_option(form, convention.lot)
         return {
             "success": utils.ReturnStatus.SUCCESS,
             "convention": convention,
@@ -173,8 +201,15 @@ def _logements_atomic_update(request, convention):
     return {
         **utils.base_convention_response_error(request, convention),
         "formset": formset,
+        "form": form,
         "upform": UploadForm(),
     }
+
+
+def _save_lot_lgts_option(form, lot):
+    lot.lgts_mixite_sociale_negocies = form.cleaned_data["lgts_mixite_sociale_negocies"]
+    lot.loyer_derogatoire = form.cleaned_data["loyer_derogatoire"]
+    lot.save()
 
 
 def _save_logements(formset, convention):

@@ -9,6 +9,7 @@ from conventions.models import (
     Pret,
     Preteur,
 )
+from programmes.models import Financement
 from users.models import User
 from users.type_models import EmailPreferences
 
@@ -17,20 +18,6 @@ class ConventionModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         utils_fixtures.create_all()
-        # bailleur = utils_fixtures.create_bailleur()
-        # programme = utils_fixtures.create_programme(bailleur)
-        # lot = Lot.objects.create(
-        #     programme=programme,
-        #     bailleur=bailleur,
-        #     financement=Financement.PLUS,
-        # )
-        # convention = Convention.objects.create(
-        #     numero=1,
-        #     lot=lot,
-        #     programme=programme,
-        #     bailleur=bailleur,
-        #     financement=Financement.PLUS,
-        # )
         convention = Convention.objects.get(numero="0001")
         Pret.objects.create(
             convention=convention,
@@ -202,6 +189,15 @@ class ConventionModelsTest(TestCase):
         )
         self.assertEqual(convention.statut_for_template()["short_statut"], "Transmise")
         self.assertEqual(convention.statut_for_template()["key_statut"], "Transmise")
+
+    def test_mixity_option(self):
+        convention = Convention.objects.order_by("uuid").first()
+        convention.financement = Financement.PLUS
+        self.assertTrue(convention.mixity_option())
+        for k, _ in Financement.choices:
+            if k != Financement.PLUS:
+                convention.financement = k
+                self.assertFalse(convention.mixity_option())
 
     def test_xlsx(self):
         utils_assertions.assert_xlsx(self, Pret, "financement")
