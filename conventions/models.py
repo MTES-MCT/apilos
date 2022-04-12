@@ -413,3 +413,8 @@ class Pret(models.Model):
         return self.get_preteur_display().replace(
             "CDC", "Caisse de Dépôts et Consignation"
         )
+
+    def preteur_display(self):
+        if self.preteur == Preteur.AUTRE:
+            return self.autre
+        return self.p_full()

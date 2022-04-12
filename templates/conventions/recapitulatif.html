@@ -315,13 +315,13 @@
                                                                         </td>
                                                                     {% endif %}
                                                                     <td>
-                                                                        {{ pret.numero }}
+                                                                        {{ pret.numero|default_if_none:'-' }}
                                                                     </td>
                                                                     <td>
-                                                                        {{ pret.date_octroi }}
+                                                                        {{ pret.date_octroi|default_if_none:'-' }}
                                                                     </td>
                                                                     <td>
-                                                                        {{ pret.duree }}
+                                                                        {{ pret.duree|default_if_none:'-' }}
                                                                     </td>
                                                                     <td>
                                                                         {{ pret.montant }}
