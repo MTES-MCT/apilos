@@ -350,6 +350,14 @@ class Lot(IngestableModel):
     annexe_balcons = models.BooleanField(default=False)
     annexe_loggias = models.BooleanField(default=False)
     annexe_terrasses = models.BooleanField(default=False)
+    lgts_mixite_sociale_negocies = models.IntegerField(default=0)
+    loyer_derogatoire = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        null=True,
+        verbose_name="Loyer dérogatoire",
+    )
+
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
@@ -373,6 +381,18 @@ class Lot(IngestableModel):
             if self.type_habitat
             else ""
         )
+
+    def lgts_mixite_sociale_negocies_display(self):
+        print(self.lgts_mixite_sociale_negocies if self.mixity_option() else 0)
+        return self.lgts_mixite_sociale_negocies if self.mixity_option() else 0
+
+    def mixity_option(self):
+        """
+        return True if the option regarding the number of lodging in addition to loan to people
+        with low revenu should be displayed in the interface and fill in the convention document
+        Should be editable when it is a PLUS convention
+        """
+        return self.financement == Financement.PLUS
 
     def __str__(self):
         return f"{self.programme.nom} - {self.financement}"

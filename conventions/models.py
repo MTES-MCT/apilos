@@ -314,6 +314,14 @@ class Convention(models.Model):
             "key_statut": self.statut[3:].replace(" ", "_"),
         }
 
+    def mixity_option(self):
+        """
+        return True if the option regarding the number of lodging in addition to loan to people
+        with low revenu should be displayed in the interface and fill in the convention document
+        Should be editable when it is a PLUS convention
+        """
+        return self.financement == Financement.PLUS
+
 
 class ConventionHistory(models.Model):
     id = models.AutoField(primary_key=True)

@@ -528,3 +528,11 @@ table.fullwidth {
 /*
  * End display convention status
  */
+
+
+.apilos-input-group--inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}

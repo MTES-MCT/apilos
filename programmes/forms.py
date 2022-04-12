@@ -343,6 +343,40 @@ ReferenceCadastraleFormSet = formset_factory(
 )
 
 
+class LotLgtsOptionForm(forms.Form):
+
+    uuid = forms.UUIDField(
+        required=False,
+        label="Logement du programme",
+    )
+    lgts_mixite_sociale_negocies = forms.IntegerField(
+        required=False,
+        label=(
+            "Nombre de logements à louer en plus à des à des ménages dont les ressources"
+            + " n'excèdent pas le plafond"
+        ),
+        help_text="""
+            Plafond fixé au I de l'article D. 331-12. Ce nombre de logements doit-être
+            négocié avec les services instructeurs et n'est pas obligatoire. Il sera
+            reporté sur l'article de mixité sociale correspondant su le document de convention.
+        """,
+    )
+    loyer_derogatoire = forms.DecimalField(
+        required=False,
+        label="Loyer dérogatoire",
+        help_text="""
+            Montant de loyer d'une opération d'acquisition ou n'est pas liée à la réalisation de travaux mais
+            fait suite à une nouvelle acquisition pour un locataire ou un occupant de bonne foi dont les
+            ressources excèdent les plafonds de ressources par dérogation et à titre transitoire
+        """,
+        max_digits=6,
+        decimal_places=2,
+        error_messages={
+            "max_digits": "La loyer dérogatoire par m² doit-être inférieur à 10000 €",
+        },
+    )
+
+
 class ProgrammeEDDForm(forms.Form):
 
     uuid = forms.UUIDField(

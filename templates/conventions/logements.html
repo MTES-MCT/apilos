@@ -126,6 +126,28 @@
                     </div>
                 </div>
 
+                <input
+                    type="hidden"
+                    id="{{form.uuid.id_for_label}}"
+                    name="{{form.uuid.html_name}}"
+                    value="{{ form.uuid.value|default_if_none:'' }}">
+
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-mb-2w">
+                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_derogatoire object_field="lot__loyer_derogatoire__"|add:form.uuid.value %}
+                    </div>
+                </div>
+
+                {% if convention.mixity_option %}
+                    <h4>Option de l'article sur la close de mixité sociale</h4>
+
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-mb-2w">
+                            {% include "common/form/input_number.html" with display_inline=True form_input=form.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:form.uuid.value %}
+                        </div>
+                    </div>
+                {% endif %}
+
                 {% include "common/required_fields_info.html" %}
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}

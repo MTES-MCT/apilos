@@ -1,3 +1,5 @@
+# https://docs.djangoproject.com/fr/4.0/ref/templates/builtins/#date
+from django.template.defaultfilters import date as _date
 from django.template.defaulttags import register
 
 from conventions.models import ConventionStatut
@@ -70,3 +72,27 @@ def is_administration_administrator(current_user, administration):
 @register.filter
 def is_bailleur_administrator(current_user, bailleur):
     return current_user.is_bailleur_administrator(bailleur)
+
+
+@register.filter
+def to_fr_date(date):
+    """
+    Display french date using the date function from django.template.defaultfilters
+    Write the date in letter (ex : 5 janvier 2021). More about format syntax here :
+    https://docs.djangoproject.com/fr/4.0/ref/templates/builtins/#date
+    """
+    if date is None:
+        return ""
+    return _date(date, "j F Y")
+
+
+@register.filter
+def to_fr_short_date(date):
+    """
+    Display french date using the date function from django.template.defaultfilters
+    Write the date in number (ex : 05/01/2021). More about format syntax here :
+    https://docs.djangoproject.com/fr/4.0/ref/templates/builtins/#date
+    """
+    if date is None:
+        return ""
+    return _date(date, "d/m/Y")
