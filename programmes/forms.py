@@ -536,12 +536,13 @@ class LogementForm(forms.Form):
                 round_half_up(loyer, 2)
                 - round_half_up(surface_utile * loyer_par_metre_carre * coeficient, 2)
             )
-            > 0.04
+            > 1
         ):
             raise ValidationError(
                 "Le loyer doit-être le produit de la surface utile,"
                 + " du loyer par mètre carré et du coéficient. valeur attendue :"
-                + f" {round_half_up(surface_utile*loyer_par_metre_carre*coeficient,2)}"
+                + f" {round_half_up(surface_utile*loyer_par_metre_carre*coeficient,2)} €"
+                + " (tolérance de 1 €)"
             )
 
         return loyer
@@ -651,6 +652,7 @@ class BaseLogementFormSet(BaseFormSet):
             self._non_form_errors.append(error)
 
     def manage_coefficient_propre(self):
+        lot = Lot.objects.get(id=self.lot_id)
         loyer_with_coef = 0
         loyer_without_coef = 0
         for form in self.forms:
@@ -662,11 +664,14 @@ class BaseLogementFormSet(BaseFormSet):
                 return
             loyer_with_coef += coeficient * surface_utile * loyer_par_metre_carre
             loyer_without_coef += surface_utile * loyer_par_metre_carre
-        if round_half_up(loyer_with_coef, 2) > round_half_up(loyer_without_coef, 2) + 1:
+        if (
+            round_half_up(loyer_with_coef, 2)
+            > round_half_up(loyer_without_coef, 2) + lot.nb_logements
+        ):
             error = ValidationError(
                 "La somme des loyers après application des coéficients ne peut excéder "
                 + "la somme des loyers sans application des coéficients, c'est à dire "
-                + f"{round_half_up(loyer_without_coef,2)} € (tolérence de 1 €)"
+                + f"{round_half_up(loyer_without_coef,2)} € (tolérance de {lot.nb_logements} €)"
             )
             self._non_form_errors.append(error)
 
