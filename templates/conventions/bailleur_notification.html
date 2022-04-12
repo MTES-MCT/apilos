@@ -5,7 +5,13 @@
             {% if convention.get_last_instructeur_notification %}
                 <p>Denière notification du bailleur : {{ convention.get_last_instructeur_notification.cree_le }}</p>
             {% endif %}
-            <p class='fr-h4'>Vous avez ajouté des commentaires et des demandes de modification, notifier le bailleur </p>
+            {% if convention.statut == '2. Instruction requise' %}
+                <h4>Vous avez ajouté des commentaires à l'attention du bailleur<br>
+                    Demandez des corrections ou précisions</h4>
+            {% else %}
+                <h4>Vous avez ajouté des commentaires à l'attention du bailleur<br>
+                    Faites en part au bailleur</h4>
+            {% endif %}
             <div>
                 <form method="post" action="{% url 'conventions:feedback' convention_uuid=convention.uuid %}">
                     {% csrf_token %}
@@ -24,9 +30,15 @@
                         </label>
                     </div>
                     {% include "common/form/input_textarea.html" with label="Ajouter un commentaire à l'attention du bailleur (optionnel)" form_input=notificationForm.comment %}
-                    <button class="fr-btn">
-                        Notifier le bailleur
-                    </button>
+                    {% if convention.statut == '2. Instruction requise' %}
+                        <button class="fr-btn">
+                            Demander des corrections au bailleur
+                        </button>
+                    {% else %}
+                        <button class="fr-btn">
+                            Notifier le bailleur
+                        </button>
+                    {% endif %}
                 </form>
             </div>
         </div>

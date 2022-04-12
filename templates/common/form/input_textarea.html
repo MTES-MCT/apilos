@@ -1,11 +1,15 @@
-<div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}">
+<div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{form_input.id_for_label}}_group">
     {% if label %}
         <label class="fr-label" for="{{form_input.id_for_label}}">
             {{ label }}
+            {% include "common/form/required_field.html" with form_input=form_input %}
+            {% include "common/help_field.html" with form_input=form_input %}
         </label>
     {% elif form_input.label %}
         <label class="fr-label" for="{{form_input.id_for_label}}">
             {{ form_input.label }}
+            {% include "common/form/required_field.html" with form_input=form_input %}
+            {% include "common/help_field.html" with form_input=form_input %}
         </label>
     {% endif %}
     <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
@@ -17,13 +21,11 @@
             name="{{form_input.html_name}}"
             rows="{% if rows %}{{rows}}{% else %}3{% endif %}"
             {% if not editable %}disabled{% endif %}>{{ form_input.value|default_if_none:'' }}</textarea>
-        {% for error in form_input.errors %}
-            <p id="text-input-error-desc-error" class="fr-error-text">
-                {{ error }}
-            </p>
-        {% endfor %}
-        {% include "common/comment_icon.html" with form_input_id=form_input.id_for_label object_field=object_field comments=comments %}
+        {% include "common/utils/comments_field.html" %}
     </div>
+    {% for error in form_input.errors %}
+        <p id="text-input-error-desc-error" class="fr-error-text">
+            {{ error }}
+        </p>
+    {% endfor %}
 </div>
-
-{% include "common/comment_dialog.html" with form_input_id=form_input.id_for_label form_input_html=form_input.html_name  convention=convention object_field=object_field comments=comments %}

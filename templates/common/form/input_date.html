@@ -1,4 +1,4 @@
-<div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}">
+<div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{form_input.id_for_label}}_group">
     {% if form_input.label %}
         <label class="fr-label fr-mb-1w" for="{{form_input.id_for_label}}">
             {{ form_input.label }}
@@ -16,7 +16,7 @@
                 value="{{ form_input.value }}"
                 {% include "common/form/disable_form_input.html" %}>
         </div>
-        {% include "common/comment_icon.html" with form_input_id=form_input.id_for_label object_field=object_field comments=comments %}
+        {% include "common/utils/comments_field.html" %}
     </div>
     {% for error in form_input.errors %}
         <p id="text-input-error-desc-error" class="fr-error-text">
@@ -24,5 +24,3 @@
         </p>
     {% endfor %}
 </div>
-
-{% include "common/comment_dialog.html" with form_input_id=form_input.id_for_label form_input_html=form_input.html_name convention=convention object_field=object_field comments=comments %}

@@ -18,7 +18,7 @@
             .addEventListener('click', function(){ location.href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' });
     });
 
-    comments = document.getElementsByClassName('content__icons--blue')
+    comments = document.getElementsByClassName('content__icons--opened')
     has_comments = false
     for (var i=0;i<comments.length; i++) {
         has_comments ||= !(comments[i].hidden)

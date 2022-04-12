@@ -56,7 +56,7 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
             "reference_notaire",
             "reference_publication_acte",
             "acte_de_propriete",
-            "acte_notarial",
+            "certificat_adressage",
             "reference_cadastrale",
             "edd_volumetrique",
             "edd_classique",

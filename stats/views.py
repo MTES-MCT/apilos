@@ -27,22 +27,31 @@ def index(request):
         ] = result_query["total"]
     result = {
         "departement": [],
-        "BROUILLON": [],
-        "INSTRUCTION": [],
-        "CORRECTION": [],
-        "VALIDE": [],
-        "CLOS": [],
+        "Projet": [],
+        "Instruction_requise": [],
+        "Corrections_requises": [],
+        "A_signer": [],
+        "Transmise": [],
     }
     for dept, statut_value in conv_bydept_bystatut.items():
         result["departement"].append(dept)
-        for statut in ["BROUILLON", "INSTRUCTION", "CORRECTION", "VALIDE", "CLOS"]:
-            result[statut].append(statut_value[statut] if statut in statut_value else 0)
+        for statut in [
+            "1. Projet",
+            "2. Instruction requise",
+            "3. Corrections requises",
+            "4. A signer",
+            "5. Transmise",
+        ]:
+            result[statut[3:].replace(" ", "_")].append(
+                statut_value[statut] if statut in statut_value else 0
+            )
+    print(result)
 
     convention_by_status = {
-        "BROUILLON": 0,
-        "INSTRUCTION": 0,
-        "CORRECTION": 0,
-        "VALIDE": 0,
+        "Projet": 0,
+        "Instruction_requise": 0,
+        "Corrections_requises": 0,
+        "A_signer": 0,
     }
 
     users = User.objects.prefetch_related("role_set").all()
@@ -50,7 +59,8 @@ def index(request):
     instructeurs = users.filter(role__typologie="INSTRUCTEUR").distinct()
 
     for query in query_by_statuses:
-        convention_by_status[query["statut"]] = query["total"]
+        convention_by_status[query["statut"][3:].replace(" ", "_")] = query["total"]
+    print(convention_by_status)
     return render(
         request,
         "stats/index.html",

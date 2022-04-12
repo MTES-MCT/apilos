@@ -92,7 +92,6 @@ def _send_email_staff(request, convention):
         reverse("conventions:recapitulatif", args=[convention.uuid])
     )
     from_email = "contact@apilos.beta.gouv.fr"
-    to = ("contact@apilos.beta.gouv.fr",)
     text_content = render_to_string(
         "emails/alert_create_convention.txt",
         {
@@ -112,41 +111,28 @@ def _send_email_staff(request, convention):
         },
     )
 
-    if to:
-        msg = EmailMultiAlternatives(
-            f"[{settings.ENVIRONMENT.upper()}] Nouvelle convention créée de zéro ({convention})",
-            text_content,
-            from_email,
-            to,
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
+    msg = EmailMultiAlternatives(
+        f"[{settings.ENVIRONMENT.upper()}] Nouvelle convention créée de zéro ({convention})",
+        text_content,
+        from_email,
+        ("contact@apilos.beta.gouv.fr",),
+    )
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 
 def select_programme_update(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     if request.method == "POST":
-        request.user.check_perm("convention.change_convention", convention)
-        #        if request.POST['convention_uuid'] is None:
-        form = ProgrammeSelectionForm(request.POST)
-        if form.is_valid():
-            lot = Lot.objects.get(uuid=form.cleaned_data["lot_uuid"])
-            convention.lot = lot
-            convention.programme_id = lot.programme_id
-            convention.bailleur_id = lot.bailleur_id
-            convention.financement = lot.financement
-            convention.save()
-            # All is OK -> Next:
-            return utils.base_response_success(convention)
+        return utils.base_response_success(convention)
     # If this is a GET (or any other method) create the default form.
-    else:
-        request.user.check_perm("convention.view_convention", convention)
-        form = ProgrammeSelectionForm(
-            initial={
-                "lot_uuid": str(convention.lot.uuid),
-                "existing_programme": "selection",
-            }
-        )
+    request.user.check_perm("convention.view_convention", convention)
+    form = ProgrammeSelectionForm(
+        initial={
+            "lot_uuid": str(convention.lot.uuid),
+            "existing_programme": "selection",
+        }
+    )
     programmes = _conventions_selection(request)
     return {
         **utils.base_convention_response_error(request, convention),
@@ -321,7 +307,7 @@ def programme_cadastral_update(request, convention_uuid):
                     "acte_de_propriete", programme.acte_de_propriete
                 ),
                 **utils.get_text_and_files_from_field(
-                    "acte_notarial", programme.acte_notarial
+                    "certificat_adressage", programme.certificat_adressage
                 ),
                 **utils.get_text_and_files_from_field(
                     "reference_cadastrale", programme.reference_cadastrale
@@ -394,8 +380,8 @@ def _save_programme_cadastrale(form, programme):
     programme.acte_de_propriete = utils.set_files_and_text_field(
         form.cleaned_data["acte_de_propriete_files"],
     )
-    programme.acte_notarial = utils.set_files_and_text_field(
-        form.cleaned_data["acte_notarial_files"],
+    programme.certificat_adressage = utils.set_files_and_text_field(
+        form.cleaned_data["certificat_adressage_files"],
     )
     programme.reference_cadastrale = utils.set_files_and_text_field(
         form.cleaned_data["reference_cadastrale_files"],
@@ -452,7 +438,7 @@ def _programme_cadastrale_atomic_update(request, convention, programme):
                     "reference_notaire",
                     "reference_publication_acte",
                     "acte_de_propriete",
-                    "acte_notarial",
+                    "certificat_adressage",
                     "reference_cadastrale",
                 ],
             ),

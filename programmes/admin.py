@@ -23,7 +23,7 @@ class ProgrammeAdmin(admin.ModelAdmin):
         "reference_notaire",
         "reference_publication_acte",
         "acte_de_propriete",
-        "acte_notarial",
+        "certificat_adressage",
         "reference_cadastrale",
         "edd_volumetrique",
         "mention_publication_edd_volumetrique",

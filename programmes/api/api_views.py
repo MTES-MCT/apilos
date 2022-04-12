@@ -54,7 +54,7 @@ class ProgrammeList(
     numero_galion_param = openapi.Parameter(
         "numero_galion",
         openapi.IN_QUERY,
-        description="Numéro galion du programme",
+        description="Numéro de décision du programme",
         required=False,
         type=openapi.TYPE_STRING,
     )

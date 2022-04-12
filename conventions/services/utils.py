@@ -16,7 +16,7 @@ class ReturnStatus(Enum):
 def set_files_and_text_field(files_field, text_field=""):
     files = []
     if files_field and files_field != "None" and isinstance(files_field, str):
-        files = json.loads(files_field.replace("'", '"'))
+        files = json.loads(files_field)
     field = {"files": files, "text": text_field}
     return json.dumps(field)
 

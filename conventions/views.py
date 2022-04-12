@@ -1,3 +1,5 @@
+from zipfile import ZipFile
+
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
@@ -387,8 +389,36 @@ def load_xlsx_model(request, file_type):
         "logements_edd",
         "logements",
         "stationnements",
+        "all",
     ]:
         raise PermissionDenied
+
+    if file_type == "all":
+        filepath = f"{settings.BASE_DIR}/static/files/tous_les_templates_xlsx.zip"
+        with ZipFile(filepath, "w") as zipObj:
+            # Add multiple files to the zip
+            for each_file in [
+                "annexes",
+                "cadastre",
+                "financement",
+                "logements_edd",
+                "logements",
+                "stationnements",
+            ]:
+                zipObj.write(
+                    f"{settings.BASE_DIR}/static/files/{each_file}.xlsx",
+                    arcname=f"{each_file}.xlsx",
+                )
+            zipObj.close()
+        with open(filepath, "rb") as zip_file:
+            # close the Zip File
+            response = HttpResponse(zip_file, content_type="application/force-download")
+            zip_file.close()
+        response[
+            "Content-Disposition"
+        ] = 'attachment; filename="tous_les_templates_xlsx.zip"'
+        return response
+
     filepath = f"{settings.BASE_DIR}/static/files/{file_type}.xlsx"
 
     with open(filepath, "rb") as excel:

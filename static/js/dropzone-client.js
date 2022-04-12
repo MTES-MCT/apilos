@@ -29,14 +29,16 @@ function init_dropzone_from_file(form_id, accepted_files) {
                 console.log('all_files_uploaded');
             });
             this.on("success", function (file, response) {
-                    if (document.querySelector('img[alt="'+file.name+'"]') != null ) {
-                    file.thumbnail = document.querySelector('img[alt="'+file.name+'"]').src;
+                filename = file.name.replace('"','%22')
+                if (document.querySelector('img[alt="'+filename+'"]') != null) {
+                    file.thumbnail = document.querySelector('img[alt="'+filename+'"]').src;
                 }
                 for (var i = 0; i < response.uploaded_file.length; i++) {
-                    if (response.uploaded_file[i].filename == file.name) {
+                    if (response.uploaded_file[i].filename == filename) {
                         file.uuid = response.uploaded_file[i].uuid
                     }
                 }
+
                 let files = {};
                 if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
                 if (files.constructor !== Object) files = {}

@@ -24,7 +24,6 @@ class ProgrammeSelectionForm(forms.Form):
             "required": "La selection du programme et de son financement est obligatoire"
         },
     )
-
     existing_programme = forms.ChoiceField(
         choices=[("selection", "selection"), ("creation", "creation")]
     )
@@ -111,7 +110,10 @@ class ProgrammeSelectionForm(forms.Form):
 class ProgrammeForm(forms.Form):
     object_name = "programme"
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Programme",
+    )
     nom = forms.CharField(
         label="Nom",
         max_length=255,
@@ -122,7 +124,21 @@ class ProgrammeForm(forms.Form):
             "max_length": "Le nom du programme ne doit pas excéder 255 caractères",
         },
     )
-    adresse, code_postal, ville = forms_utils.address_form_fields()
+    adresse = forms.CharField(
+        label="Adresse(s)",
+        help_text=(
+            "Si le programme comporte plusieurs adresses,"
+            + " renseignez une adresse par ligne dans le champ texte ci-dessous"
+        ),
+        max_length=5000,
+        min_length=1,
+        error_messages={
+            "required": "L'adresse est obligatoire",
+            "min_length": "L'adresse est obligatoire",
+            "max_length": "L'adresse ne doit pas excéder 5000 caractères",
+        },
+    )
+    code_postal, ville = forms_utils.ville_codepostal_form_fields()
     nb_logements = forms.IntegerField(
         label="Nb logements à conventionner",
         error_messages={
@@ -138,7 +154,7 @@ class ProgrammeForm(forms.Form):
     anru = forms.BooleanField(
         required=False,
         label="ANRU",
-        help_text="Le programme bénéficie d'un financement ANRU",
+        help_text="L'opération bénéficie d'un financement ANRU",
     )
     nb_locaux_commerciaux = forms.IntegerField(
         required=False,
@@ -168,7 +184,10 @@ class ProgrammeCadastralForm(forms.Form):
     * Cadastral references
     """
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Informations cadastrales",
+    )
     permis_construire = forms.CharField(
         required=False,
         label="Numéro de permis construire",
@@ -238,7 +257,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     acte_de_propriete = forms.CharField(
         required=False,
-        label="Acte de propriété",
+        label="Acte de propriété / Acte notarial",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
@@ -248,15 +267,15 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )
-    acte_notarial = forms.CharField(
+    certificat_adressage = forms.CharField(
         required=False,
-        label="Acte notarial",
+        label="Certificat d'adressage / Autres",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
     )
-    acte_notarial_files = forms.CharField(
+    certificat_adressage_files = forms.CharField(
         required=False,
         help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )
@@ -276,7 +295,10 @@ class ProgrammeCadastralForm(forms.Form):
 
 class ReferenceCadastraleForm(forms.Form):
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Référence Cadastrale",
+    )
     section = forms.CharField(
         required=True,
         label="",
@@ -323,7 +345,10 @@ ReferenceCadastraleFormSet = formset_factory(
 
 class ProgrammeEDDForm(forms.Form):
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Logement du programme",
+    )
     lot_uuid = forms.UUIDField(required=False)
     edd_volumetrique = forms.CharField(
         required=False,
@@ -379,7 +404,10 @@ class ProgrammeEDDForm(forms.Form):
 
 class LogementForm(forms.Form):
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Logement",
+    )
     designation = forms.CharField(
         label="",
         max_length=255,
@@ -616,6 +644,7 @@ class AnnexeForm(forms.Form):
 
     uuid = forms.UUIDField(
         required=False,
+        label="Annexe",
     )
     typologie = forms.TypedChoiceField(
         required=True,
@@ -687,7 +716,10 @@ AnnexeFormSet = formset_factory(AnnexeForm, formset=BaseAnnexeFormSet, extra=0)
 
 class TypeStationnementForm(forms.Form):
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(
+        required=False,
+        label="Type de stationnement",
+    )
     typologie = forms.TypedChoiceField(
         required=True,
         label="",
@@ -724,7 +756,7 @@ TypeStationnementFormSet = formset_factory(
 
 class LogementEDDForm(forms.Form):
 
-    uuid = forms.UUIDField(required=False)
+    uuid = forms.UUIDField(required=False, label="Logement de l'EDD")
     designation = forms.CharField(
         label="",
         max_length=255,

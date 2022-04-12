@@ -1,6 +1,6 @@
 // class to manage the comment behaviour
 class CommentFactory {
-    constructor({container_id, convention_uuid, object_name, object_field, object_uuid=null, loading_img, dialog_title='Title', input_div_id} = {}) {
+    constructor({container_id, convention_uuid, object_name, object_field, object_uuid=null, loading_img, dialog_title='Title', input_div_id, empty_toggle_on, load_initial_status=false, callback_click} = {}) {
         this.container_id = container_id
         this.container = document.getElementById(container_id)
         this.convention_uuid = convention_uuid
@@ -8,8 +8,14 @@ class CommentFactory {
         this.object_field = object_field
         this.object_uuid = object_uuid
         this.loading_img = loading_img
-        this.dialog_title = dialog_title
+        this.dialog_title = decodeURI(dialog_title)
+        this.load_initial_status = load_initial_status
+        if (empty_toggle_on !== undefined)
+        {
+            this.empty_toggle_on = document.getElementById(empty_toggle_on)
+        }
         this.input_div_id = input_div_id
+        this.callback_click = callback_click
         this.comment_dialog_id = 'main_comment_modal'
         this.comment_icon_id = this.object_name + '__' + this.object_field + '__' + this.object_uuid + '_comment'
         this._add_comment_icon()
@@ -17,19 +23,16 @@ class CommentFactory {
 
     // add the icon in the container
     _add_comment_icon() {
-        this.container.innerHTML = '\
-<div id="' + this.comment_icon_id + '" class="content__icons--darkgrey">\
-    <div class="content__icons"\
-        id="' + this.comment_icon_id + '-img"\
-        data-fr-opened="false"\
-        aria-controls="' + this.comment_dialog_id + '-dialog">\
-        <svg role="img" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24" aria-labelledby="chatIconTitle">\
-            <title id="chatIconTitle">Annexes comments</title>\
-            <path d="M8.82388455,18.5880577 L4,21 L4.65322944,16.4273939 C3.00629211,15.0013 2,13.0946628 2,11 C2,6.581722 6.4771525,3 12,3 C17.5228475,3 22,6.581722 22,11 C22,15.418278 17.5228475,19 12,19 C10.8897425,19 9.82174472,18.8552518 8.82388455,18.5880577 Z"></path>\
-        </svg>\
-    </div>\
-</div>\
-'
+        const icon_div = document.createElement('div');
+        icon_div.setAttribute('id', this.comment_icon_id)
+        icon_div.setAttribute('title', 'Cliquez pour ajouter un commentaire')
+        icon_div.setAttribute('data-fr-opened', 'false')
+        icon_div.setAttribute('aria-controls', this.comment_dialog_id + '-dialog')
+        icon_div.classList.add('content__icons')
+        icon_div.classList.add('content__icons--add')
+        icon_div.hidden = true
+        this.container.appendChild(icon_div)
+
         if (document.getElementById(this.comment_dialog_id) === null) {
             //create dialog: Can be improved
             const dialog_modal = document.createElement('dialog');
@@ -83,8 +86,12 @@ class CommentFactory {
                 this.setAttribute('rows', rows)
             })
         }
-
-        this.display_global_comment_icon('{{convention.uuid}}','{{main_comment_id}}')
+        if (this.load_initial_status) {
+            this.display_global_comment_icon('{{convention.uuid}}','{{main_comment_id}}')
+        }
+        else {
+            this.update_comment_icon(0,0,0)
+        }
 
         this.container.onclick = e => {
             this.display_modal_comments()
@@ -134,10 +141,15 @@ class CommentFactory {
 
         var comments_block = document.getElementById(inside_id)
         const container_div = this.create_comment_container(comment.uuid)
+        const comment_header = this.create_comment_header(comment.uuid)
+
         const owner_div = this.create_comment_owner(comment.uuid,comment.username, comment.is_owner, comment.statut);
-        container_div.appendChild(owner_div)
+        comment_header.appendChild(owner_div)
         const date_div = this.create_comment_date(comment.uuid,comment.mis_a_jour_le);
-        container_div.appendChild(date_div)
+        comment_header.appendChild(date_div)
+
+        container_div.appendChild(comment_header)
+
         const uuid_div = this.create_comment_uuid(comment.uuid);
         container_div.appendChild(uuid_div)
         const statut_div = this.create_comment_statut(comment.uuid, comment.statut);
@@ -150,9 +162,14 @@ class CommentFactory {
 
         this.init_comment_button(comment.uuid, comment.statut, comment.is_owner, is_instructeur)
 
-        if (comment.statut == 'CLOS') {
-            this._hide_textarea_for_close_comment(comment.uuid)
+        if (comment.statut == 'CLOS' || comment.statut == 'RESOLU') {
+            textarea_div.hidden = true
         }
+
+        comment_header.classList.add('clickable')
+        comment_header.addEventListener('click', function(){
+            textarea_div.hidden = !textarea_div.hidden
+        })
     }
 
 
@@ -203,8 +220,6 @@ class CommentFactory {
         }
     }
 
-
-
     disable_textarea(uuid, status, is_owner) {
         const textarea_div = document.getElementById("comment_" + this.comment_icon_id + '_' + uuid)
         if (is_owner && is_owner != 'False' && status == 'OUVERT') {
@@ -237,19 +252,9 @@ class CommentFactory {
         }
     }
 
-    _hide_textarea_for_close_comment(comment_uuid) {
-        var common_textarea_div = document.getElementById("comment_textarea_div_" + this.comment_icon_id + '_' + comment_uuid)
-        var comment_container = document.getElementById("comment_container_" + this.comment_icon_id + '_' + comment_uuid)
-        common_textarea_div.hidden = true
-        comment_container.classList.add('clickable')
-        comment_container.addEventListener('click', function(){
-            common_textarea_div.hidden = !common_textarea_div.hidden
-        })
-    }
-
     display_comment_icon() {
-        status_name = this.comment_icon_id + "_comment_statut"
-        statuts = document.getElementsByName(status_name)
+        var status_name = this.comment_icon_id + "_comment_statut"
+        var statuts = document.getElementsByName(status_name)
         var nb_open = 0
         var nb_resolu = 0
         var nb_clos = 0
@@ -295,14 +300,20 @@ class CommentFactory {
 
     update_comment_icon(nb_open, nb_resolu, nb_clos){
         var comment_icon = document.getElementById(this.comment_icon_id)
-        var parent_parent = comment_icon.parentNode.parentNode
-        if (nb_open) { // blue & displayed
-            comment_icon.classList.add('content__icons--blue')
-            comment_icon.classList.remove('content__icons--green')
-            comment_icon.classList.remove('content__icons--grey')
-            comment_icon.classList.remove('content__icons--darkgrey')
+        if (nb_open) { // orange & displayed
+            comment_icon.classList.add('content__icons--opened')
+            comment_icon.classList.remove('content__icons--resolved')
+            comment_icon.classList.remove('content__icons--closed')
+            comment_icon.classList.remove('content__icons--add')
+            comment_icon.removeAttribute('title')
             comment_icon.hidden = false
+            if (this.empty_toggle_on) {
+                this.empty_toggle_on.onclick = null
+                this.empty_toggle_on.onmouseover = null
+                this.empty_toggle_on.onmouseleave = null
+            }
             // specific, pourrait être passé en callback
+            var parent_parent = comment_icon.parentNode.parentNode
             if ((parent_parent.tagName == 'TR' || parent_parent.tagName == 'TH') && document.getElementById('download_upload_block') !== null) {
                     document.getElementById('download_upload_block').hidden = false
             }
@@ -312,90 +323,86 @@ class CommentFactory {
             }
 
             // NOT APPLICABLE FOR GLOBAL COMMENT
-            // if (document.getElementById(input_id) !== null) {
-            //     document.getElementById(input_id).disabled = false
-            // }
-            // else {
-            //     // manage checkbox
-            //     inputs = comment_icon.parentNode.getElementsByTagName('input')
-            //     for (var i = 0; i< inputs.length;i++) {
-            //         inputs[i].disabled = false
-            //     }
-            // }
-
-            // // row in a table
-            // parent_parent = comment_icon.parentNode.parentNode
-            // if (parent_parent.tagName == 'TR') {
-            //     inputs = parent_parent.getElementsByTagName('input')
-            //     for (var i = 0; i< inputs.length;i++) {
-            //         inputs[i].disabled = false
-            //     }
-            //     inputs = parent_parent.getElementsByTagName('select')
-            //     for (var i = 0; i< inputs.length;i++) {
-            //         inputs[i].disabled = false
-            //     }
-            //     if (document.getElementById('download_upload_block') !== null) {
-            //         document.getElementById('download_upload_block').hidden = false
-            //     }
-            // }
-            // if (document.getElementById(this.input_div_id) !== null) {
-            //     document.getElementById(this.input_div_id).onclick = null
-            //     document.getElementById(this.input_div_id).onmouseover = null
-            //     document.getElementById(this.input_div_id).onmouseleave = null
-            // }
-
+            if (this.empty_toggle_on) {
+                var inputs = this.empty_toggle_on.getElementsByTagName('input')
+                for (var i = 0; i< inputs.length;i++) {
+                    inputs[i].disabled = false
+                }
+                var selects = this.empty_toggle_on.getElementsByTagName('select')
+                for (var i = 0; i< selects.length;i++) {
+                    selects[i].disabled = false
+                }
+                var textareas = this.empty_toggle_on.getElementsByTagName('textarea')
+                for (var i = 0; i< textareas.length;i++) {
+                    textareas[i].disabled = false
+                }
+                if (this.empty_toggle_on.tagName == 'TR' ) {
+                    if (document.getElementById('download_upload_block') !== null) {
+                        document.getElementById('download_upload_block').hidden = false
+                    }
+                }
+            }
         }
         else if (nb_resolu && !nb_open) { // green & displayed
-            comment_icon.classList.remove('content__icons--blue')
-            comment_icon.classList.add('content__icons--green')
-            comment_icon.classList.remove('content__icons--grey')
-            comment_icon.classList.remove('content__icons--darkgrey')
+            comment_icon.classList.remove('content__icons--opened')
+            comment_icon.classList.add('content__icons--resolved')
+            comment_icon.classList.remove('content__icons--closed')
+            comment_icon.classList.remove('content__icons--add')
+            comment_icon.removeAttribute('title')
             comment_icon.hidden = false
+            var parent_parent = comment_icon.parentNode.parentNode
             if ((parent_parent.tagName == 'TR' || parent_parent.tagName == 'TH') && document.getElementById('download_upload_block') !== null) {
                 document.getElementById('download_upload_block').hidden = false
             }
-            // NOT APPLICABLE FOR GLOBAL COMMENT
-            // parent_parent = comment_icon.parentNode.parentNode
-            // if (document.getElementById(this.input_div_id) !== null) {
-            //     document.getElementById(this.input_div_id).onclick = null
-            //     document.getElementById(this.input_div_id).onmouseover = null
-            //     document.getElementById(this.input_div_id).onmouseleave = null
-            // }
+            if (this.empty_toggle_on) {
+                this.empty_toggle_on.onclick = null
+                this.empty_toggle_on.onmouseover = null
+                this.empty_toggle_on.onmouseleave = null
+            }
 
         }
         else if (nb_clos && !nb_resolu && !nb_open) { // grey & displayed
             comment_icon = document.getElementById(this.comment_icon_id)
-            comment_icon.classList.remove('content__icons--blue')
-            comment_icon.classList.remove('content__icons--green')
-            comment_icon.classList.add('content__icons--grey')
-            comment_icon.classList.remove('content__icons--darkgrey')
+            comment_icon.classList.remove('content__icons--opened')
+            comment_icon.classList.remove('content__icons--resolved')
+            comment_icon.classList.add('content__icons--closed')
+            comment_icon.classList.remove('content__icons--add')
+            comment_icon.removeAttribute('title')
             comment_icon.hidden = false
+            var parent_parent = comment_icon.parentNode.parentNode
+            if ((parent_parent.tagName == 'TR' || parent_parent.tagName == 'TH') && document.getElementById('download_upload_block') !== null) {
+                document.getElementById('download_upload_block').hidden = false
+            }
             // NOT APPLICABLE FOR GLOBAL COMMENT
+            if (this.empty_toggle_on) {
+                this.empty_toggle_on.onclick = null
+                this.empty_toggle_on.onmouseover = null
+                this.empty_toggle_on.onmouseleave = null
+            }
             // parent_parent = comment_icon.parentNode.parentNode
-            // if (document.getElementById(this.input_div_id) !== null) {
-            //     document.getElementById(this.input_div_id).onclick = null
-            //     document.getElementById(this.input_div_id).onmouseover = null
-            //     document.getElementById(this.input_div_id).onmouseleave = null
-            // }
         }
         else { // blue & hidden
             comment_icon = document.getElementById(this.comment_icon_id)
-            comment_icon.classList.add('content__icons--blue')
-            comment_icon.classList.remove('content__icons--green')
-            comment_icon.classList.remove('content__icons--grey')
-            comment_icon.classList.remove('content__icons--darkgrey')
-            // NOT APPLICABLE FOR GLOBAL COMMENT
-            // if (document.getElementById(this.input_div_id) !== null) {
-            //     document.getElementById(this.input_div_id).onclick = e => {
-            //         document.getElementById(this.comment_icon_id).hidden=false
-            //     }
-            //     document.getElementById(this.input_div_id).onmouseover = e => {
-            //         document.getElementById(this.comment_icon_id).hidden=false
-            //     }
-            //     document.getElementById(this.input_div_id).onmouseleave = function(){
-            //         document.getElementById(this.comment_icon_id).hidden=true
-            //     }
-            // }
+            comment_icon.classList.remove('content__icons--opened')
+            comment_icon.classList.remove('content__icons--resolved')
+            comment_icon.classList.remove('content__icons--closed')
+            comment_icon.classList.add('content__icons--add')
+            comment_icon.setAttribute('title', 'Cliquez pour ajouter un commentaire')
+            if (this.empty_toggle_on) {
+                comment_icon.hidden = true
+                this.empty_toggle_on.onmouseover = e => {
+                    comment_icon.hidden=false
+                }
+                this.empty_toggle_on.onclick = e => {
+                    comment_icon.hidden=false
+                }
+                this.empty_toggle_on.onmouseleave = e => {
+                    comment_icon.hidden=true
+                }
+            }
+            else {
+                comment_icon.hidden = false
+            }
         }
     }
 
@@ -409,9 +416,17 @@ class CommentFactory {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }
-        fetch('/comments/convention/'+this.convention_uuid+'?'+ new URLSearchParams({
+        var params = {
             object_name: this.object_name,
-        }) , {
+        }
+        if (this.object_field && this.object_field != 'all') {
+            params['object_field'] = this.object_field
+        }
+        if (this.object_uuid) {
+            params['object_uuid'] = this.object_uuid
+        }
+
+        fetch('/comments/convention/'+this.convention_uuid+'?'+ new URLSearchParams(params) , {
             method: 'get',
             headers: headers,
         }).then(function(response) {
@@ -455,6 +470,9 @@ class CommentFactory {
             if (res.success) {
                 this.create_global_comment_input(res.comment, res.user.is_instructeur)
                 this.display_comment_icon()
+                if (this.callback_click) {
+                    document.getElementById(this.callback_click).click()
+                }
             }
             comment.value = ''
         });
@@ -494,11 +512,15 @@ class CommentFactory {
                 this.init_comment_button(comment.uuid, comment.statut, comment.is_owner, res.user.is_instructeur)
                 this.disable_textarea(comment.uuid, comment.statut, comment.is_owner)
                 this.update_status(comment.uuid, comment.statut)
-                if (comment.is_owner && comment.statut == 'CLOS') {
-                    document.getElementById('textarea_' + this.comment_dialog_id).value = ''
+                // if (comment.is_owner && comment.statut == 'CLOS') {
+                //     document.getElementById('textarea_' + this.comment_dialog_id).value = ''
+                // }
+                var common_textarea_div = document.getElementById("comment_textarea_div_" + this.comment_icon_id + '_' + comment.uuid)
+                if (status == 'CLOS' || status == 'RESOLU') {
+                    common_textarea_div.hidden = true
                 }
-                if (status == 'CLOS') {
-                    this._hide_textarea_for_close_comment(comment.uuid)
+                else {
+                    common_textarea_div.hidden = false
                 }
                 this.display_comment_icon()
 
@@ -506,8 +528,9 @@ class CommentFactory {
                 setTimeout(e => {
                     document.getElementById('comment_date_' + this.comment_icon_id + '_' + uuid).innerText = 'le ' + this.format_french_date(res.comment.mis_a_jour_le)
                 }, 5000);
-
-
+                if (this.callback_click) {
+                    document.getElementById(this.callback_click).click()
+                }
             }
         });
     }
@@ -525,11 +548,19 @@ class CommentFactory {
      * Create html blocks
      */
 
-    //div container
+    //div comment container
     create_comment_container(uuid) {
         const container_div = document.createElement('div');
         container_div.setAttribute('id','comment_container_' + this.comment_icon_id + '_' + uuid)
         return container_div
+    }
+
+    //div comment container header (clickable)
+    create_comment_header(uuid) {
+        const comment_header_div = document.createElement('div');
+        comment_header_div.setAttribute('id','comment_container_header_' + this.comment_icon_id + '_' + uuid)
+
+        return comment_header_div
     }
 
     //<div class="fr-mt-3w"><b>Raphaëlle Neyton (vous) :</b></div>

@@ -60,7 +60,7 @@ class AdministrationsModelsTest(TestCase):
         self.assertFalse(user_instructeur.has_perm("bailleur.delete_bailleur"))
 
         convention = Convention.objects.get(numero="0001")
-        convention.statut = ConventionStatut.BROUILLON
+        convention.statut = ConventionStatut.A_PROJET
         self.assertFalse(user_instructeur.full_editable_convention(convention))
         self.assertFalse(
             user_instructeur_metropole.full_editable_convention(convention)
@@ -96,7 +96,7 @@ class AdministrationsModelsTest(TestCase):
                 "convention.add_convention", convention.lot
             )
         )
-        for statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
+        for statut in [ConventionStatut.B1_INSTRUCTION, ConventionStatut.B2_CORRECTION]:
             convention.statut = statut
             self.assertTrue(user_instructeur.full_editable_convention(convention))
             self.assertFalse(
@@ -126,7 +126,7 @@ class AdministrationsModelsTest(TestCase):
         self.assertFalse(user_bailleur.has_perm("bailleur.delete_bailleur"))
 
         convention = Convention.objects.get(numero="0001")
-        convention.statut = ConventionStatut.BROUILLON
+        convention.statut = ConventionStatut.A_PROJET
         self.assertTrue(user_bailleur.full_editable_convention(convention))
         self.assertFalse(user_bailleur_hlm.full_editable_convention(convention))
         self.assertTrue(
@@ -149,7 +149,7 @@ class AdministrationsModelsTest(TestCase):
         self.assertFalse(
             user_bailleur_hlm.has_perm("convention.add_convention", convention.lot)
         )
-        for statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
+        for statut in [ConventionStatut.B1_INSTRUCTION, ConventionStatut.B2_CORRECTION]:
             convention.statut = statut
             self.assertFalse(user_bailleur.full_editable_convention(convention))
             self.assertFalse(user_bailleur_hlm.full_editable_convention(convention))
