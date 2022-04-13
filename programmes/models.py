@@ -383,7 +383,6 @@ class Lot(IngestableModel):
         )
 
     def lgts_mixite_sociale_negocies_display(self):
-        print(self.lgts_mixite_sociale_negocies if self.mixity_option() else 0)
         return self.lgts_mixite_sociale_negocies if self.mixity_option() else 0
 
     def mixity_option(self):
