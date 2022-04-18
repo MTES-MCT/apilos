@@ -7,7 +7,7 @@ from django.forms.fields import FileField
 from django.core.exceptions import ValidationError
 
 from programmes.models import Financement, TypeOperation
-from .models import Preteur
+from conventions.models import ConventionType1and2, Preteur
 
 
 class ConventionCommentForm(forms.Form):
@@ -271,4 +271,17 @@ class ConventionNumberForm(forms.Form):
             "max_length": "La longueur du numéro de convention ne peut pas excéder 10 caractères",
             "required": "Le numéro de convention en obligatoire",
         },
+    )
+
+
+class ConventionType1and2Form(forms.Form):
+
+    uuid = forms.UUIDField(
+        required=False,
+        label="Convention de type I et II",
+    )
+    type1and2 = forms.TypedChoiceField(
+        required=False,
+        choices=ConventionType1and2.choices,
+        label="Type de convention I ou II",
     )

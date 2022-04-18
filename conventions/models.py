@@ -49,17 +49,22 @@ class ConventionStatut(models.TextChoices):
         Anciennement CLOS
     """
 
-    A_PROJET = "1. Projet", "Création d'un projet de convention"
-    B1_INSTRUCTION = (
+    PROJET = "1. Projet", "Création d'un projet de convention"
+    INSTRUCTION = (
         "2. Instruction requise",
         "Projet de convention soumis à l'instruction",
     )
-    B2_CORRECTION = (
+    CORRECTION = (
         "3. Corrections requises",
         "Projet de convention à modifier par le bailleur",
     )
-    C_A_SIGNER = "4. A signer", "Convention à signer"
-    D_TRANSMISE = "5. Transmise", "Convention transmise"
+    A_SIGNER = "4. A signer", "Convention à signer"
+    TRANSMISE = "5. Transmise", "Convention transmise"
+
+
+class ConventionType1and2(models.TextChoices):
+    TYPE1 = "Type1", "Type I"
+    TYPE2 = "Type2", "Type II"
 
 
 class Convention(models.Model):
@@ -85,13 +90,16 @@ class Convention(models.Model):
     statut = models.CharField(
         max_length=25,
         choices=ConventionStatut.choices,
-        default=ConventionStatut.A_PROJET,
+        default=ConventionStatut.PROJET,
     )
     soumis_le = models.DateTimeField(null=True)
     premiere_soumission_le = models.DateTimeField(null=True)
     valide_le = models.DateTimeField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+    type1and2 = models.CharField(
+        max_length=25, choices=ConventionType1and2.choices, null=True
+    )
 
     def __str__(self):
         programme = self.programme
@@ -101,21 +109,17 @@ class Convention(models.Model):
             + f"{lot.nb_logements} lgts - {lot.get_type_habitat_display()} - {lot.financement}"
         )
 
-    # to do:
-    # gérer un decorateur :
-    # https://docs.djangoproject.com/en/dev/howto/custom-template-tags/#howto-custom-template-tags
-    # Ou créé un champ statut
     def is_bailleur_editable(self):
         return self.statut in (
-            ConventionStatut.A_PROJET,
-            ConventionStatut.B2_CORRECTION,
+            ConventionStatut.PROJET,
+            ConventionStatut.CORRECTION,
         )
 
     def is_instructeur_editable(self):
-        return self.statut != ConventionStatut.D_TRANSMISE
+        return self.statut != ConventionStatut.TRANSMISE
 
     def is_project(self):
-        return self.statut == ConventionStatut.A_PROJET
+        return self.statut == ConventionStatut.PROJET
 
     def comments_text(self):
         return model_utils.get_field_key(self, "comments", "text")
@@ -145,8 +149,8 @@ class Convention(models.Model):
                 .prefetch_related("user__role_set")
                 .filter(
                     statut_convention__in=[
-                        ConventionStatut.B1_INSTRUCTION,
-                        ConventionStatut.B2_CORRECTION,
+                        ConventionStatut.INSTRUCTION,
+                        ConventionStatut.CORRECTION,
                     ],
                     user__role__typologie=role,
                 )
@@ -165,8 +169,8 @@ class Convention(models.Model):
         try:
             return self.conventionhistory_set.filter(
                 statut_convention__in=[
-                    ConventionStatut.B1_INSTRUCTION,
-                    ConventionStatut.B2_CORRECTION,
+                    ConventionStatut.INSTRUCTION,
+                    ConventionStatut.CORRECTION,
                 ],
             ).latest("cree_le")
         except ConventionHistory.DoesNotExist:
@@ -254,9 +258,9 @@ class Convention(models.Model):
         if (
             self.statut
             in [
-                ConventionStatut.A_PROJET,
-                ConventionStatut.B1_INSTRUCTION,
-                ConventionStatut.B2_CORRECTION,
+                ConventionStatut.PROJET,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
             ]
             or self.numero is None
         ):
@@ -281,9 +285,9 @@ class Convention(models.Model):
         if (
             self.statut
             not in [
-                ConventionStatut.A_PROJET,
-                ConventionStatut.B1_INSTRUCTION,
-                ConventionStatut.B2_CORRECTION,
+                ConventionStatut.PROJET,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
             ]
             and self.numero is not None
         ):
@@ -292,14 +296,14 @@ class Convention(models.Model):
 
     def is_instruction_ongoing(self):
         return self.statut in [
-            ConventionStatut.B1_INSTRUCTION,
-            ConventionStatut.B2_CORRECTION,
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
         ]
 
     def is_validated(self):
         return self.statut in [
-            ConventionStatut.C_A_SIGNER,
-            ConventionStatut.D_TRANSMISE,
+            ConventionStatut.A_SIGNER,
+            ConventionStatut.TRANSMISE,
         ]
 
     def statut_for_template(self):
@@ -308,7 +312,7 @@ class Convention(models.Model):
             "statut_display": self.get_statut_display(),
             "short_statut": (
                 "Projet (Brouillon)"
-                if self.statut == ConventionStatut.A_PROJET
+                if self.statut == ConventionStatut.PROJET
                 else self.statut[3:]
             ),
             "key_statut": self.statut[3:].replace(" ", "_"),
@@ -322,6 +326,12 @@ class Convention(models.Model):
         """
         return self.financement == Financement.PLUS
 
+    def type1and2_configuration_needed(self):
+        return self.bailleur.is_type1and2() and not self.type1and2
+
+    def type1and2_configuration_not_needed(self):
+        return not self.type1and2_configuration_needed()
+
 
 class ConventionHistory(models.Model):
     id = models.AutoField(primary_key=True)
@@ -333,12 +343,12 @@ class ConventionHistory(models.Model):
     statut_convention = models.CharField(
         max_length=25,
         choices=ConventionStatut.choices,
-        default=ConventionStatut.A_PROJET,
+        default=ConventionStatut.PROJET,
     )
     statut_convention_precedent = models.CharField(
         max_length=25,
         choices=ConventionStatut.choices,
-        default=ConventionStatut.A_PROJET,
+        default=ConventionStatut.PROJET,
     )
     commentaire = models.TextField(null=True)
     user = models.ForeignKey(

@@ -1,0 +1,35 @@
+
+{% if convention.bailleur.is_type1and2 %}
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-lg-12">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body">
+                    <div class="block--row-strech" id="{{object_field}}_div">
+                        <div class="block--row-strech-1">
+                            <h4 class="fr-card__title">
+                                Conventon de type I & II
+                            </h4>
+                        </div>
+                    </div>
+                    {% if request.user.is_instructeur %}
+                        <form method="post" action="" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-lg-6">
+                                    {% include "common/form/input_select.html" with form_input=ConventionType1and2Form.type1and2 with_empty_option=True editable=True %}
+                                </div>
+                            </div>
+                            <button class="fr-btn fr-my-1w">
+                                Enregistrer
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="table--limited-height">
+                            {% include "common/display_field_if_exists.html" with label="Type de convention I ou II" value=convention.get_type1and2_display %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
