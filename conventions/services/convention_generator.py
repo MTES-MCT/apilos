@@ -18,6 +18,7 @@ from programmes.models import (
     Annexe,
 )
 from upload.models import UploadedFile
+from conventions.models import ConventionType1and2
 
 from conventions.templatetags.custom_filters import (
     inline_text_multiline,
@@ -27,6 +28,10 @@ from conventions.templatetags.custom_filters import (
 
 
 class NotHandleConventionType(Exception):
+    pass
+
+
+class ConventionTypeConfigurationError(Exception):
     pass
 
 
@@ -42,8 +47,15 @@ def generate_convention_doc(convention):
     elif convention.bailleur.is_sem():
         filepath = f"{settings.BASE_DIR}/documents/SEM-template.docx"
     elif convention.bailleur.is_type1and2():
-        filepath = f"{settings.BASE_DIR}/documents/Type1-template.docx"
-    #        filepath = f"{settings.BASE_DIR}/documents/Type2-template.docx"
+        if convention.type1and2 == ConventionType1and2.TYPE1:
+            filepath = f"{settings.BASE_DIR}/documents/Type1-template.docx"
+        elif convention.type1and2 == ConventionType1and2.TYPE2:
+            filepath = f"{settings.BASE_DIR}/documents/Type2-template.docx"
+        else:
+            raise ConventionTypeConfigurationError(
+                "Le type de convention I ou II doit-être configuré pour les bailleurs non SEM ou"
+                + f" HLM. Bailleur de type : {convention.bailleur.get_type_bailleur_display()}"
+            )
     else:
         raise NotHandleConventionType(
             "La génération de convention n'est pas disponible pour ce type de"
