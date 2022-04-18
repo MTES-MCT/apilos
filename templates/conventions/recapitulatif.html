@@ -622,7 +622,7 @@
                     </div>
                 </div>
 
-                <div id="convention_type1and2_options_block">
+                <turbo-frame id="convention_type1and2_options_block" data-turbo="true">
                     {% include "conventions/type1and2_options.html" %}
 
                     {% if request.session.is_instructeur and convention.is_instructeur_editable %}
@@ -642,7 +642,7 @@
                     {% include "conventions/actions/instructeur_notification.html" %}
 
                     {% include "conventions/actions/instructeur_validation.html" %}
-                </div>
+                </turbo-frame>
 
 
                 <div class="fr-grid-row fr-grid-row--gutters">
