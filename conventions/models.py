@@ -100,6 +100,24 @@ class Convention(models.Model):
     type1and2 = models.CharField(
         max_length=25, choices=ConventionType1and2.choices, null=True
     )
+    type2_lgts_concernes_option1 = models.BooleanField(default=True)
+    type2_lgts_concernes_option2 = models.BooleanField(default=True)
+    type2_lgts_concernes_option3 = models.BooleanField(default=True)
+    type2_lgts_concernes_option4 = models.BooleanField(default=True)
+    type2_lgts_concernes_option5 = models.BooleanField(default=True)
+    type2_lgts_concernes_option6 = models.BooleanField(default=True)
+    type2_lgts_concernes_option7 = models.BooleanField(default=True)
+    type2_lgts_concernes_option8 = models.BooleanField(default=True)
+
+    # Missing option for :
+
+    # La présente convention ne prévoyant pas de travaux, le bail entre en vigueur à la date de
+    # son acceptation par l'occupant de bonne foi après publication de la convention au fichier
+    # immobilier ou son inscription au livre foncier. (7)
+    #   OR
+    # La présente convention prévoyant des travaux, le bail et, notamment, la clause relative au
+    # montant du loyer entre en vigueur à compter de la date d'achèvement des travaux concernant
+    # la tranche dans laquelle est compris le logement concerné. (7)
 
     def __str__(self):
         programme = self.programme

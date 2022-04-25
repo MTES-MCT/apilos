@@ -476,7 +476,7 @@ def _send_welcome_email(user, password, login_url):
     )
 
     msg = EmailMultiAlternatives(
-        "Bienvenue sur la platefrome APiLos", text_content, from_email, to
+        "Bienvenue sur la plateforme APiLos", text_content, from_email, to
     )
     msg.attach_alternative(html_content, "text/html")
     msg.send()

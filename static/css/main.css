@@ -536,3 +536,7 @@ table.fullwidth {
   align-items: center;
   justify-content: space-between;
 }
+
+.apilos-form-label--strike {
+  text-decoration: line-through;
+}

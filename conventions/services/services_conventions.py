@@ -307,12 +307,92 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
                 if convention_type1_and_2_form.cleaned_data["type1and2"]
                 else None
             )
+            if (
+                "type2_lgts_concernes_option1"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option1 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option1"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option2"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option2 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option2"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option3"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option3 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option3"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option4"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option4 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option4"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option5"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option5 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option5"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option6"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option6 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option6"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option7"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option7 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option7"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option8"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option8 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option8"
+                    ]
+                )
             convention.save()
     else:
         convention_type1_and_2_form = ConventionType1and2Form(
             initial={
                 "uuid": convention.uuid,
                 "type1and2": convention.type1and2,
+                "type2_lgts_concernes_option1": convention.type2_lgts_concernes_option1,
+                "type2_lgts_concernes_option2": convention.type2_lgts_concernes_option2,
+                "type2_lgts_concernes_option3": convention.type2_lgts_concernes_option3,
+                "type2_lgts_concernes_option4": convention.type2_lgts_concernes_option4,
+                "type2_lgts_concernes_option5": convention.type2_lgts_concernes_option5,
+                "type2_lgts_concernes_option6": convention.type2_lgts_concernes_option6,
+                "type2_lgts_concernes_option7": convention.type2_lgts_concernes_option7,
+                "type2_lgts_concernes_option8": convention.type2_lgts_concernes_option8,
             }
         )
     return {
