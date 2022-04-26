@@ -47,7 +47,7 @@ Pour faire cet import nous avons ajouté une commande django `import_galion` éd
 
 Pour executer cet import en local:
 
-```docker-compose exec apilos pipenv run python3 manage.py import_galion```
+```(docker-compose exec apilos) pipenv run python3 manage.py import_galion```
 
 Sur Scalingo
 
@@ -57,11 +57,11 @@ Sur Scalingo
 
 Pour modifier les permissions, il suffit de modifier dans l'interface d'administration puis d'exporter les données d'authentification :
 
-```docker-compose exec apilos pipenv run python manage.py dumpdata auth --natural-foreign --natural-primary > users/fixtures/auth.json```
+```(docker-compose exec apilos) pipenv run python manage.py dumpdata auth --natural-foreign --natural-primary > users/fixtures/auth.json```
 
 et pour populer ces données :
 
-```docker-compose exec apilos pipenv run python manage.py loaddata auth.json```
+```(docker-compose exec apilos) pipenv run python manage.py loaddata auth.json```
 
 Cette commande est excutée lors du déploiement de l'application juste après la migration
 
