@@ -2,8 +2,12 @@ import string
 import random
 
 from django.core.management.base import BaseCommand
+from django.conf import settings
+from django.contrib.auth.models import Group
+
 from instructeurs.models import Administration
 from bailleurs.models import Bailleur, TypeBailleur
+from conventions.models import Convention
 from programmes.models import (
     Programme,
     Financement,
@@ -12,6 +16,8 @@ from programmes.models import (
     Zone123bis,
     ZoneABCbis,
 )
+from users.models import User, Role
+from users.type_models import TypeRole
 
 
 bailleur = {
@@ -80,6 +86,68 @@ class Command(BaseCommand):
 
         administration_test, _ = Administration.objects.get_or_create(**administration)
         bailleur_test, _ = Bailleur.objects.get_or_create(**bailleur)
+
+        if settings.ENVIRONMENT != "production":
+            # Remove conventions and operation and lot
+            truncate_programme = False
+            inp = input("Do you want to truncate Conventions/Operations/Lots (N/y) ?")
+            if inp.lower() in ["y", "yes", "oui"]:
+                truncate_programme = True
+            elif inp.lower() in ["n", "no", "non"]:
+                truncate_programme = False
+            else:
+                print("Using default option: Operation won't be truncate")
+            if truncate_programme:
+                Programme.objects.all().delete()
+                Lot.objects.all().delete()
+                Convention.objects.all().delete()
+
+            # Remove user
+            truncate_users = False
+            inp = input("Do you want to truncate Users (N/y) ?")
+            if inp.lower() in ["y", "yes", "oui"]:
+                truncate_users = True
+            elif inp.lower() in ["n", "no", "non"]:
+                truncate_users = False
+            else:
+                print("Using default option: Users won't be truncate")
+            if truncate_users:
+                User.objects.exclude(email__contains="beta.gouv.fr").delete()
+
+        if not User.objects.filter(username="demo.bailleur").exists():
+            user_bailleur = User.objects.create_user(
+                "demo.bailleur", "demo.bailleur@oudard.org", "demo.12345"
+            )
+            user_bailleur.first_name = "DEMO"
+            user_bailleur.last_name = "Bailleur"
+            user_bailleur.save()
+            group_bailleur = Group.objects.get(
+                name="bailleur",
+            )
+            Role.objects.create(
+                typologie=TypeRole.BAILLEUR,
+                bailleur=bailleur_test,
+                user=user_bailleur,
+                group=group_bailleur,
+            )
+
+        if not User.objects.filter(username="demo.instructeur").exists():
+            user_instructeur = User.objects.create_user(
+                "demo.instructeur", "demo.instructeur@oudard.org", "instru12345"
+            )
+            user_instructeur.first_name = "DEMO"
+            user_instructeur.last_name = "Instructeur"
+            user_instructeur.save()
+            group_instructeur = Group.objects.get(
+                name="instructeur",
+            )
+            Role.objects.create(
+                typologie=TypeRole.INSTRUCTEUR,
+                administration=administration_test,
+                user=user_instructeur,
+                group=group_instructeur,
+            )
+
         for programme in generate_programmes(30):
             lots = programme.pop("lots")
             programme_test, _ = Programme.objects.get_or_create(
