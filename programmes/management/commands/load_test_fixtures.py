@@ -84,8 +84,13 @@ class Command(BaseCommand):
     # pylint: disable=R0912,R0914,R0915
     def handle(self, *args, **options):
 
-        administration_test, _ = Administration.objects.get_or_create(**administration)
-        bailleur_test, _ = Bailleur.objects.get_or_create(**bailleur)
+        administration_test, _ = Administration.objects.get_or_create(
+            code=administration["code"], defaults=administration
+        )
+
+        bailleur_test, _ = Bailleur.objects.get_or_create(
+            siret=bailleur["siret"], defaults=bailleur
+        )
 
         if settings.ENVIRONMENT != "production":
             # Remove conventions and operation and lot
@@ -99,7 +104,6 @@ class Command(BaseCommand):
                 print("Using default option: Operation won't be truncate")
             if truncate_programme:
                 Programme.objects.all().delete()
-                Lot.objects.all().delete()
                 Convention.objects.all().delete()
 
             # Remove user
