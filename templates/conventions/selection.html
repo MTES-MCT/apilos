@@ -24,7 +24,7 @@
                                             name="{{form.existing_programme.html_name}}"
                                             {% if form.existing_programme.value == 'selection' %}checked{% endif %}/>
                                         <label class="fr-label" for="selection">
-                                            Séléctionnez votre programme et son financement {% include "common/form/required_field.html" with form_input=form.lot_uuid %}
+                                            Sélectionnez votre programme et son financement {% include "common/form/required_field.html" with form_input=form.lot_uuid %}
                                         </label>
                                     </div>
                                     <script type="text/javascript" nonce="{{request.csp_nonce}}">
@@ -113,8 +113,6 @@
                         </div>
                     </div>
                 </div>
-
-                {% include "common/required_fields_info.html" %}
 
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}

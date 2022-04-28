@@ -19,9 +19,10 @@
                     <div class="fr-col-md-12">
 
                         <h4>Adresse(s) de l'opération</h4>
+                        {% include "common/editable_fields_info.html" %}
 
                         {% include "common/form/input_text.html" with form_input=form.nom object_field="programme__nom__"|add:form.uuid.value %}
-                        {% include "common/form/input_textarea.html" with form_input=form.adresse object_field="programme__adresse__"|add:form.uuid.value %}
+                        {% include "common/form/input_textarea_helptext_visible.html" with form_input=form.adresse object_field="programme__adresse__"|add:form.uuid.value %}
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
@@ -53,7 +54,7 @@
                         </div>
 
                         <h4 class="fr-mt-2w">
-                            Locaux auxquels ne s'appliquent pas la présente convention
+                            Locaux auxquels ne s'applique pas la présente convention
                         </h4>
 
                         <div class="fr-grid-row fr-grid-row--gutters">

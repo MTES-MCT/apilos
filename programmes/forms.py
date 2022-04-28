@@ -116,6 +116,9 @@ class ProgrammeForm(forms.Form):
     )
     nom = forms.CharField(
         label="Nom",
+        help_text=(
+            "Indiquez uniquement le nom du programme. Le type de financement sera automatiquement mentionné via notre logiciel"
+        ),
         max_length=255,
         min_length=1,
         error_messages={
@@ -127,8 +130,8 @@ class ProgrammeForm(forms.Form):
     adresse = forms.CharField(
         label="Adresse(s)",
         help_text=(
-            "Si le programme comporte plusieurs adresses,"
-            + " renseignez une adresse par ligne dans le champ texte ci-dessous"
+            "Si le programme comporte plusieurs adresses (exemple : plusieurs bâtiments),"
+            + " renseignez chaque adresse en allant à la ligne entre chaque nouvelle adresse"
         ),
         max_length=5000,
         min_length=1,
@@ -140,7 +143,7 @@ class ProgrammeForm(forms.Form):
     )
     code_postal, ville = forms_utils.ville_codepostal_form_fields()
     nb_logements = forms.IntegerField(
-        label="Nb logements à conventionner",
+        label="Nombre de logements à conventionner",
         error_messages={
             "required": "Le nombre de logements à conventionner est obligatoire",
         },
