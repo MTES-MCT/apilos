@@ -454,6 +454,10 @@ def add_user(request):
     }
 
 
+def delete_user(request, username):
+    User.objects.get(username=username).delete()
+
+
 def _send_welcome_email(user, password, login_url):
     # envoi au bailleur
     from_email = "contact@apilos.beta.gouv.fr"
