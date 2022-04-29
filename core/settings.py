@@ -262,10 +262,11 @@ CSP_DEFAULT_SRC = "'none'"
 CSP_SCRIPT_SRC = (
     "https://stats.data.gouv.fr/piwik.js",
     "'self'",
-    "'sha256-928U3JmFf9xytJJBtEU5V1FVGcqsTfwaVnI2vmHmamA='",
-    "'sha256-lkrKw/baCFdnI+tB9T+0yFMewpXSk9yct2ZbWEGPDhY='",
-    "'sha256-J71e5kr85q2XGRl+qwOA/tpMsXmKDjeTnvlzBhBsz/0='",
-    "'sha256-4KAvgH8IwNvDGTztViNPLQRD4LovY/SWjGQTPvbZJHA='",
+    "'sha256-zaYxlJmjbzgo2YczX5XHFlvamZUNy264d7XlOOUwMME='",
+    # "'sha256-928U3JmFf9xytJJBtEU5V1FVGcqsTfwaVnI2vmHmamA='",
+    # "'sha256-lkrKw/baCFdnI+tB9T+0yFMewpXSk9yct2ZbWEGPDhY='",
+    # "'sha256-J71e5kr85q2XGRl+qwOA/tpMsXmKDjeTnvlzBhBsz/0='",
+    # "'sha256-4KAvgH8IwNvDGTztViNPLQRD4LovY/SWjGQTPvbZJHA='",
 )
 CSP_IMG_SRC = ("'self'", "data:")
 CSP_OBJECT_SRC = "'none'"

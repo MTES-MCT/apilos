@@ -11,62 +11,31 @@
                             </h4>
                         </div>
                     </div>
-                    {% if request.user.is_instructeur %}
-                        <form method="post" action="" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <div class="fr-grid-row fr-grid-row--gutters">
-                                <div class="fr-col-12 fr-col-lg-6">
-                                    {% include "common/form/input_select.html" with form_input=ConventionType1and2Form.type1and2 with_empty_option=True editable=True %}
-                                </div>
-                                <div class="fr-col-12" id="type2_options" {% if ConventionType1and2Form.type1and2.value != 'Type2'%}hidden{% endif %}>
-                                    <h4 class="fr-card__title">Options de la convention de type II</h4>
-
-                                    <p><i>Décochez pour rayer les mentions inutiles</i></p>
-                                    {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option1 strike_unchecked=True editable=True %}
-                                    {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option2 strike_unchecked=True editable=True %}
-                                    {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option3 strike_unchecked=True editable=True %}
-                                    {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option4 strike_unchecked=True editable=True %}
-                                    {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option5 strike_unchecked=True editable=True %}
-                                    {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option6 strike_unchecked=True editable=True %}
-                                    {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option7 strike_unchecked=True editable=True %}
-                                    {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option8 strike_unchecked=True editable=True %}
-                                </div>
+                    <form method="post" action="" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-lg-6">
+                                {% include "common/form/input_select.html" with form_input=ConventionType1and2Form.type1and2 with_empty_option=True editable=True %}
                             </div>
-                            <button class="fr-btn fr-my-1w">
-                                Enregistrer
-                            </button>
-                        </form>
-                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                            document.getElementById('id_type1and2').addEventListener('change', e => {
-                                if (e.target.value == 'Type2') {
-                                    document.getElementById('type2_options').hidden = false
-                                }
-                                else {
-                                    document.getElementById('type2_options').hidden = true
-                                }
-                            });
-                            function strike_checked_option(e) {
-                                if (!e.target.checked) {
-                                    e.target.parentElement.getElementsByTagName('label')[0].classList.add('apilos-form-label--strike')
-                                }
-                                else {
-                                    e.target.parentElement.getElementsByTagName('label')[0].classList.remove('apilos-form-label--strike')
-                                }
-                            }
-                            document.getElementById('type2_lgts_concernes_option1').addEventListener('change', e => strike_checked_option(e));
-                            document.getElementById('type2_lgts_concernes_option2').addEventListener('change', e => strike_checked_option(e));
-                            document.getElementById('type2_lgts_concernes_option3').addEventListener('change', e => strike_checked_option(e));
-                            document.getElementById('type2_lgts_concernes_option4').addEventListener('change', e => strike_checked_option(e));
-                            document.getElementById('type2_lgts_concernes_option5').addEventListener('change', e => strike_checked_option(e));
-                            document.getElementById('type2_lgts_concernes_option6').addEventListener('change', e => strike_checked_option(e));
-                            document.getElementById('type2_lgts_concernes_option7').addEventListener('change', e => strike_checked_option(e));
-                            document.getElementById('type2_lgts_concernes_option8').addEventListener('change', e => strike_checked_option(e));
-                        </script>
-                    {% else %}
-                        <div class="table--limited-height">
-                            {% include "common/display_field_if_exists.html" with label="Type de convention I ou II" value=convention.get_type1and2_display %}
+                            <div class="fr-col-12" id="type2_options" {% if ConventionType1and2Form.type1and2.value != 'Type2'%}hidden{% endif %}>
+                                <h4 class="fr-card__title">Options de la convention de type II</h4>
+
+                                <p><i>Décochez pour rayer les mentions inutiles</i></p>
+                                {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option1 strike_unchecked=True editable=True %}
+                                {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option2 strike_unchecked=True editable=True %}
+                                {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option3 strike_unchecked=True editable=True %}
+                                {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option4 strike_unchecked=True editable=True %}
+                                {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option5 strike_unchecked=True editable=True %}
+                                {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option6 strike_unchecked=True editable=True %}
+                                {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option7 strike_unchecked=True editable=True %}
+                                {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option8 strike_unchecked=True editable=True %}
+                            </div>
                         </div>
-                    {% endif %}
+                        <button class="fr-btn fr-my-1w">
+                            Enregistrer
+                        </button>
+                    </form>
+                    <script type="text/javascript" nonce="{{request.csp_nonce}}">init_type_two_options()</script>
                 </div>
             </div>
         </div>
