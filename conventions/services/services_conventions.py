@@ -417,6 +417,19 @@ def convention_submit(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     submitted = utils.ReturnStatus.WARNING
     request.user.check_perm("convention.change_convention", convention)
+    # Set back the onvention to the instruction
+    if request.POST.get("BackToInstruction", False):
+        ConventionHistory.objects.create(
+            bailleur=convention.bailleur,
+            convention=convention,
+            statut_convention=ConventionStatut.INSTRUCTION,
+            statut_convention_precedent=convention.statut,
+            user=request.user,
+        ).save()
+        convention.statut = ConventionStatut.INSTRUCTION
+        convention.save()
+        submitted = utils.ReturnStatus.ERROR
+    # Submit the convention to the instruction
     if request.POST.get("SubmitConvention", False):
 
         ConventionHistory.objects.create(

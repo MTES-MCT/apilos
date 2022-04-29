@@ -9,7 +9,7 @@
         <p>
             Si vous avez encore des modifications à apporter au projet de convention, vous pouvez enregistrer la convention et y revenir plus tard.
         </p>
-        <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}">
+        <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
             {% csrf_token %}
             <button class="fr-btn fr-btn--secondary fr-my-1w">
                 Enregistrer le projet de convention

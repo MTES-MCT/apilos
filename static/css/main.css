@@ -381,9 +381,9 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   background-color: #EEEEEE;
 }
 
-.background-contrast-grey950:hover {
+/* .background-contrast-grey950:hover {
   background-color: #DDDDDD;
-}
+} */
 
 table.fullwidth {
   width: 100%;

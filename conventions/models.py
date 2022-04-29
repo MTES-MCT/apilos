@@ -133,12 +133,6 @@ class Convention(models.Model):
             ConventionStatut.CORRECTION,
         )
 
-    def is_instructeur_editable(self):
-        return self.statut != ConventionStatut.TRANSMISE
-
-    def is_project(self):
-        return self.statut == ConventionStatut.PROJET
-
     def comments_text(self):
         return model_utils.get_field_key(self, "comments", "text")
 
@@ -312,11 +306,17 @@ class Convention(models.Model):
             return self.numero.rsplit("/", maxsplit=1)[-1]
         return None
 
+    def is_project(self):
+        return self.statut == ConventionStatut.PROJET
+
     def is_instruction_ongoing(self):
         return self.statut in [
             ConventionStatut.INSTRUCTION,
             ConventionStatut.CORRECTION,
         ]
+
+    def is_a_signer(self):
+        return self.statut == ConventionStatut.A_SIGNER
 
     def is_validated(self):
         return self.statut in [

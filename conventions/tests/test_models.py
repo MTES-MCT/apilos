@@ -35,29 +35,34 @@ class ConventionModelsTest(TestCase):
     def test_is_functions(self):
         convention = Convention.objects.get(numero="0001")
         self.assertTrue(convention.is_bailleur_editable())
-        self.assertTrue(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
         self.assertTrue(convention.is_project())
+        self.assertFalse(convention.is_a_signer())
+        self.assertFalse(convention.is_validated())
         convention.statut = ConventionStatut.INSTRUCTION
         self.assertFalse(convention.is_bailleur_editable())
-        self.assertTrue(convention.is_instructeur_editable())
         self.assertTrue(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
+        self.assertFalse(convention.is_a_signer())
+        self.assertFalse(convention.is_validated())
         convention.statut = ConventionStatut.CORRECTION
         self.assertTrue(convention.is_bailleur_editable())
-        self.assertTrue(convention.is_instructeur_editable())
         self.assertTrue(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
+        self.assertFalse(convention.is_a_signer())
+        self.assertFalse(convention.is_validated())
         convention.statut = ConventionStatut.A_SIGNER
         self.assertFalse(convention.is_bailleur_editable())
-        self.assertTrue(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
+        self.assertTrue(convention.is_a_signer())
+        self.assertTrue(convention.is_validated())
         convention.statut = ConventionStatut.TRANSMISE
         self.assertFalse(convention.is_bailleur_editable())
-        self.assertFalse(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
+        self.assertFalse(convention.is_a_signer())
+        self.assertTrue(convention.is_validated())
 
     def test_get_email_bailleur_users(self):
         convention = Convention.objects.get(numero="0001")
