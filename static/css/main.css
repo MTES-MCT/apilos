@@ -281,7 +281,7 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   height: 32px;
   border-radius: 4px;
   display: inline-block;
-  margin: 0.1rem 0.2rem;
+  margin: 0rem 0.2rem;
 }
 
 .content__icons--checkbox {

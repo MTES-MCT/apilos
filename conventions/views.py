@@ -39,33 +39,6 @@ def select_programme_create(request):
         "conventions/selection.html",
         {
             **result,
-            "nb_steps": NB_STEPS,
-            "convention_form_step": 1,
-        },
-    )
-
-
-# Handle in service.py
-# @permission_required("convention.change_convention")
-@login_required
-def select_programme_update(request, convention_uuid):
-    # STEP 1
-    result = services.select_programme_update(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        if result.get("redirect", False) == "recapitulatif":
-            return HttpResponseRedirect(
-                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
-            )
-        return HttpResponseRedirect(
-            reverse("conventions:bailleur", args=[result["convention"].uuid])
-        )
-    return render(
-        request,
-        "conventions/selection.html",
-        {
-            **result,
-            "nb_steps": NB_STEPS,
-            "convention_form_step": 1,
         },
     )
 
@@ -89,8 +62,7 @@ def bailleur(request, convention_uuid):
         "conventions/bailleur.html",
         {
             **result,
-            "nb_steps": NB_STEPS,
-            "convention_form_step": 2,
+            "convention_form_step": 1,
         },
     )
 
@@ -114,8 +86,7 @@ def programme(request, convention_uuid):
         "conventions/programme.html",
         {
             **result,
-            "nb_steps": NB_STEPS,
-            "convention_form_step": 3,
+            "convention_form_step": 2,
         },
     )
 
@@ -139,8 +110,7 @@ def cadastre(request, convention_uuid):
         "conventions/cadastre.html",
         {
             **result,
-            "nb_steps": NB_STEPS,
-            "convention_form_step": 4,
+            "convention_form_step": 3,
         },
     )
 
@@ -164,8 +134,7 @@ def edd(request, convention_uuid):
         "conventions/edd.html",
         {
             **result,
-            "nb_steps": NB_STEPS,
-            "convention_form_step": 5,
+            "convention_form_step": 4,
         },
     )
 
@@ -188,8 +157,7 @@ def financement(request, convention_uuid):
         "conventions/financement.html",
         {
             **result,
-            "nb_steps": NB_STEPS,
-            "convention_form_step": 6,
+            "convention_form_step": 5,
             "years": range(2021, 2121),
         },
     )
@@ -213,8 +181,7 @@ def logements(request, convention_uuid):
         "conventions/logements.html",
         {
             **result,
-            "nb_steps": NB_STEPS,
-            "convention_form_step": 7,
+            "convention_form_step": 6,
         },
     )
 
@@ -237,8 +204,7 @@ def annexes(request, convention_uuid):
         "conventions/annexes.html",
         {
             **result,
-            "nb_steps": NB_STEPS,
-            "convention_form_step": 8,
+            "convention_form_step": 7,
         },
     )
 
@@ -261,8 +227,7 @@ def stationnements(request, convention_uuid):
         "conventions/stationnements.html",
         {
             **result,
-            "nb_steps": NB_STEPS,
-            "convention_form_step": 9,
+            "convention_form_step": 8,
         },
     )
 
@@ -285,8 +250,7 @@ def comments(request, convention_uuid):
         "conventions/comments.html",
         {
             **result,
-            "nb_steps": NB_STEPS,
-            "convention_form_step": 10,
+            "convention_form_step": 9,
         },
     )
 
@@ -302,8 +266,7 @@ def recapitulatif(request, convention_uuid):
         "conventions/recapitulatif.html",
         {
             **result,
-            "nb_steps": NB_STEPS,
-            "convention_form_step": 11,
+            "convention_form_step": 10,
         },
     )
 
@@ -360,8 +323,7 @@ def validate_convention(request, convention_uuid):
         "conventions/recapitulatif.html",
         {
             **result,
-            "nb_steps": NB_STEPS,
-            "convention_form_step": 11,
+            "convention_form_step": 10,
         },
     )
 
@@ -445,8 +407,6 @@ def display_operation(request, programme_uuid, programme_financement):
             "conventions/selection.html",
             {
                 **result,
-                "nb_steps": NB_STEPS,
-                "convention_form_step": 1,
                 "financements": FinancementEDD,
                 "redirect_action": "/conventions/selection",
             },

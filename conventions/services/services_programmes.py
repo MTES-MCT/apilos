@@ -121,26 +121,6 @@ def _send_email_staff(request, convention):
     msg.send()
 
 
-def select_programme_update(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
-    if request.method == "POST":
-        return utils.base_response_success(convention)
-    # If this is a GET (or any other method) create the default form.
-    request.user.check_perm("convention.view_convention", convention)
-    form = ProgrammeSelectionForm(
-        initial={
-            "lot_uuid": str(convention.lot.uuid),
-            "existing_programme": "selection",
-        }
-    )
-    programmes = _conventions_selection(request)
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "programmes": programmes,
-        "form": form,
-    }
-
-
 def programme_update(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme")
