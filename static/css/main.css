@@ -53,6 +53,10 @@
   filter: invert(14%) sepia(62%) saturate(6699%) hue-rotate(244deg) brightness(56%) contrast(131%);
 }
 
+.bordered {
+  border: solid 1px #ccc;
+}
+
 .dz {
   border: dashed !important;
   border-color: #ccc !important;

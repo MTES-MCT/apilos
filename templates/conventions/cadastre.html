@@ -53,28 +53,19 @@
                             </div>
                         </div>
 
-                        {% include "common/form/input_upload.html" with form_input=form.vendeur form_input_files=form.vendeur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.vendeur_files.values object_field="programme__vendeur__"|add:form.uuid.value %}
-
-                        {% include "common/form/input_upload.html" with form_input=form.acquereur form_input_files=form.acquereur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.acquereur_files.values object_field="programme__acquereur__"|add:form.uuid.value %}
-
-                        {% include "common/form/input_upload.html" with form_input=form.reference_notaire form_input_files=form.reference_notaire_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.reference_notaire_files.values object_field="programme__reference_notaire__"|add:form.uuid.value %}
-
-                        {% include "common/form/input_upload.html" with form_input=form.reference_publication_acte form_input_files=form.reference_publication_acte_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.reference_publication_acte_files.values object_field="programme__reference_publication_acte__"|add:form.uuid.value %}
-
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_upload.html" with additional_informations=True form_input=form.acte_de_propriete form_input_files=form.acte_de_propriete_files object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_de_propriete_files.values object_field="programme__acte_de_propriete__"|add:form.uuid.value %}
-                            </div>
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_upload.html" with additional_informations=True form_input=form.certificat_adressage form_input_files=form.certificat_adressage_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.certificat_adressage_files.values object_field="programme__certificat_adressage__"|add:form.uuid.value %}
-                            </div>
+                        <div class="bordered fr-my-3w">
+                            <p class="fr-text--xs notes">
+                                <i>Pour toutes les sections ci-dessous, vous avez la possibilité de renseigner les champs en saisissant les informations ou en téléversant des images.</i>
+                            </p>
+                            {% include "common/form/input_upload.html" with form_input=form.vendeur form_input_files=form.vendeur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.vendeur_files.values object_field="programme__vendeur__"|add:form.uuid.value %}
+                            
+                            {% include "common/form/input_upload.html" with form_input=form.acquereur form_input_files=form.acquereur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.acquereur_files.values object_field="programme__acquereur__"|add:form.uuid.value %}
+                            
+                            {% include "common/form/input_upload.html" with form_input=form.reference_notaire form_input_files=form.reference_notaire_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.reference_notaire_files.values object_field="programme__reference_notaire__"|add:form.uuid.value %}
+                            
+                            {% include "common/form/input_upload.html" with form_input=form.reference_publication_acte form_input_files=form.reference_publication_acte_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.reference_publication_acte_files.values object_field="programme__reference_publication_acte__"|add:form.uuid.value %}
                         </div>
-
-
-                        <hr class="fr-col-12 fr-my-3w">
-
-                        {% include "common/form/input_upload.html" with form_input=form.reference_cadastrale form_input_files=form.reference_cadastrale_files object_name='programme' object_uuid=convention.programme.uuid image_only=True file_list=convention.programme.reference_cadastrale_files.values object_field="programme__reference_cadastrale__"|add:form.uuid.value %}
-
+                        <div class="block--row-strech-1 fr-label fr-mt-1w fr-mb-2w fr-h4 fr-mt-3w">Références cadastrales</div>
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
                             {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='cadastre' upform=upform  what="références cadastrales"%}
                             <hr class="fr-col-12 fr-my-3w">
@@ -138,8 +129,21 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="bordered fr-my-3w">
+                            <p class="fr-text--xs notes">
+                                <i>Ces informations sont complémentaires et à destination de l’instructeur. Elles ne figureront pas dans le document final de la convention.</i>
+                            </p>
 
-                        <hr class="fr-col-12 fr-my-3w">
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_upload.html" with additional_informations=True form_input=form.acte_de_propriete form_input_files=form.acte_de_propriete_files object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_de_propriete_files.values object_field="programme__acte_de_propriete__"|add:form.uuid.value %}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_upload.html" with additional_informations=True form_input=form.certificat_adressage form_input_files=form.certificat_adressage_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.certificat_adressage_files.values object_field="programme__certificat_adressage__"|add:form.uuid.value %}
+                                </div>
+                            </div>
+                            {% include "common/form/input_upload.html" with form_input=form.reference_cadastrale form_input_files=form.reference_cadastrale_files object_name='programme' object_uuid=convention.programme.uuid image_only=True file_list=convention.programme.reference_cadastrale_files.values object_field="programme__reference_cadastrale__"|add:form.uuid.value %}
+                        </div>
 
                     </div>
                 </div>

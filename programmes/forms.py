@@ -198,6 +198,7 @@ class ProgrammeCadastralForm(forms.Form):
     date_acte_notarie = forms.DateField(
         required=False,
         label="Date de l'acte notarié",
+        help_text="Champ à remplir si différent de la date d’achat",
     )
     date_achevement_previsible = forms.DateField(
         required=False,
@@ -284,7 +285,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     reference_cadastrale = forms.CharField(
         required=False,
-        label="Références cadastrales et effet relatif",
+        label="Effet relatif",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
