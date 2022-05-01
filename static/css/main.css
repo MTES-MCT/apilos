@@ -540,3 +540,12 @@ table.fullwidth {
 .apilos-form-label--strike {
   text-decoration: line-through;
 }
+
+
+#boxThis.box {
+  margin-top: 0;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 9999;
+}

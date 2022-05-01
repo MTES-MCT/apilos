@@ -39,30 +39,35 @@ class ConventionModelsTest(TestCase):
         self.assertTrue(convention.is_project())
         self.assertFalse(convention.is_a_signer())
         self.assertFalse(convention.is_validated())
+        self.assertTrue(convention.isnt_validated())
         convention.statut = ConventionStatut.INSTRUCTION
         self.assertFalse(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
         self.assertFalse(convention.is_a_signer())
         self.assertFalse(convention.is_validated())
+        self.assertTrue(convention.isnt_validated())
         convention.statut = ConventionStatut.CORRECTION
         self.assertTrue(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
         self.assertFalse(convention.is_a_signer())
         self.assertFalse(convention.is_validated())
+        self.assertTrue(convention.isnt_validated())
         convention.statut = ConventionStatut.A_SIGNER
         self.assertFalse(convention.is_bailleur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
         self.assertTrue(convention.is_a_signer())
         self.assertTrue(convention.is_validated())
+        self.assertFalse(convention.isnt_validated())
         convention.statut = ConventionStatut.TRANSMISE
         self.assertFalse(convention.is_bailleur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
         self.assertFalse(convention.is_a_signer())
         self.assertTrue(convention.is_validated())
+        self.assertFalse(convention.isnt_validated())
 
     def test_get_email_bailleur_users(self):
         convention = Convention.objects.get(numero="0001")
@@ -169,7 +174,7 @@ class ConventionModelsTest(TestCase):
                 convention.financement = k
                 self.assertFalse(convention.mixity_option())
 
-    def test_type1and2_configuration_needed(self):
+    def test_type1and2_configuration_not_needed(self):
         convention = Convention.objects.order_by("uuid").first()
         for type_bailleur in [
             TypeBailleur.OFFICE_PUBLIC_HLM,
@@ -184,7 +189,6 @@ class ConventionModelsTest(TestCase):
                 None,
             ]:
                 convention.type1and2 = type1andtype2
-                self.assertFalse(convention.type1and2_configuration_needed())
                 self.assertTrue(convention.type1and2_configuration_not_needed())
         for k, _ in TypeBailleur.choices:
             if k not in [
@@ -195,14 +199,12 @@ class ConventionModelsTest(TestCase):
             ]:
                 convention.bailleur.type_bailleur = k
                 convention.type1and2 = None
-                self.assertTrue(convention.type1and2_configuration_needed())
                 self.assertFalse(convention.type1and2_configuration_not_needed())
                 for type1andtype2 in [
                     ConventionType1and2.TYPE1,
                     ConventionType1and2.TYPE2,
                 ]:
                     convention.type1and2 = type1andtype2
-                    self.assertFalse(convention.type1and2_configuration_needed())
                     self.assertTrue(convention.type1and2_configuration_not_needed())
         convention.financement = Financement.PLUS
         self.assertTrue(convention.mixity_option())

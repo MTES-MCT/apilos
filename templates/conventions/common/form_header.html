@@ -1,5 +1,7 @@
 {% if convention %}
-    <div class='background-contrast-grey950'>
+
+    <div id="boxHere"></div>
+    <div class='background-contrast-grey950' id="boxThis">
         <div class="fr-container">
             <div class="fr-col-12 fr-pt-3w fr-pb-2w">
                 <div class="fr-highlight">
@@ -55,4 +57,24 @@
             </div>
         </div>
     </div>
+
+    {% if False %}
+        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+            function boxtothetop() {
+                var windowTop = window.scrollY;
+                var top = document.getElementById('boxHere').offsetTop;
+                if(windowTop > top) {
+                    document.getElementById('boxHere').style.height = document.getElementById('boxThis').offsetHeight + "px";
+                    document.getElementById('boxThis').classList.add('box')
+                } else {
+                    document.getElementById('boxThis').classList.remove('box')
+                    document.getElementById('boxHere').style.height = "0px";
+                }
+            }
+            window.onscroll = function(e) {
+                boxtothetop();
+            };
+        </script>
+    {% endif %}
+
 {% endif %}

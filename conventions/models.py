@@ -324,6 +324,9 @@ class Convention(models.Model):
             ConventionStatut.TRANSMISE,
         ]
 
+    def isnt_validated(self):
+        return not self.is_validated()
+
     def statut_for_template(self):
         return {
             "statut": self.statut,
@@ -344,11 +347,8 @@ class Convention(models.Model):
         """
         return self.financement == Financement.PLUS
 
-    def type1and2_configuration_needed(self):
-        return self.bailleur.is_type1and2() and not self.type1and2
-
     def type1and2_configuration_not_needed(self):
-        return not self.type1and2_configuration_needed()
+        return not (self.bailleur.is_type1and2() and not self.type1and2)
 
 
 class ConventionHistory(models.Model):

@@ -3,7 +3,7 @@
         <p class="fr-alert__title">
             Générer et Télécharger la convention
         </p>
-        {% if convention.type1and2_configuration_needed %}
+        {% if not convention.type1and2_configuration_not_needed %}
             <p>
                 Avant de pouvoir générer un document de convention, il vous faut préciser le type de convention I ou II et les options associées dans la section <b>Convention de type I & II</b>
             </p>

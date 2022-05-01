@@ -54,6 +54,8 @@ def has_comments_with_prefix(comments, prefix):
 
 @register.filter
 def inline_text_multiline(text):
+    if text is None:
+        return ""
     if isinstance(text, str):
         return ", ".join(list(map(lambda t: t.strip().rstrip(","), text.split("\n"))))
     return text
