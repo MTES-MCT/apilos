@@ -268,8 +268,9 @@ CSP_SCRIPT_SRC = (
     # Convention > récapitilatif > manage type I and type II options
     "'sha256-J71e5kr85q2XGRl+qwOA/tpMsXmKDjeTnvlzBhBsz/0='",
     "'sha256-h7boyH6dI/JQnsm6Iw1sAtEbdb/+638kREPj4sfWmMs='",  # ???
-    # Convention > Récapitulatif > Validate convention
-    # "'sha256-Td7JCJfYS+TbBRki7m5Xm0ivBWDPhgojli7Z3NWNWds='",
+    # Convention > Récapitulatif > Comment type1and2
+    "'sha256-7uHmVaAHWxl0RElSoWED7kK+9kRSQ+E6SQ3aBK1prkU='",
+    #
 )
 CSP_IMG_SRC = ("'self'", "data:")
 CSP_OBJECT_SRC = "'none'"

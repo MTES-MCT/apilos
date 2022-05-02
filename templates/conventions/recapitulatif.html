@@ -16,6 +16,7 @@
 
 {% block content %}
     {% with programme_uuid=programme.uuid|slugify convention_uuid=convention.uuid|slugify lot_uuid=lot.uuid|slugify %}
+        <input type="hidden" id="convention_uuid" value="{{convention.uuid}}">
         <div class="fr-container-fluid ds_banner">
             {% include "conventions/common/form_header.html" with convention=convention %}
             {% if not convention.is_validated %}
