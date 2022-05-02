@@ -18,7 +18,7 @@ def has_own_active_comment(comments, user_id):
         map(
             lambda x: x.user_id,
             filter(
-                lambda comment: comment.statut != ConventionStatut.D_TRANSMISE, comments
+                lambda comment: comment.statut != ConventionStatut.TRANSMISE, comments
             ),
         )
     )
@@ -32,7 +32,7 @@ def hasnt_active_comments(comments, object_field):
     return not (
         list(
             filter(
-                lambda comment: (comment.statut != ConventionStatut.D_TRANSMISE),
+                lambda comment: (comment.statut != ConventionStatut.TRANSMISE),
                 object_comments,
             )
         )
@@ -54,6 +54,8 @@ def has_comments_with_prefix(comments, prefix):
 
 @register.filter
 def inline_text_multiline(text):
+    if text is None:
+        return ""
     if isinstance(text, str):
         return ", ".join(list(map(lambda t: t.strip().rstrip(","), text.split("\n"))))
     return text
