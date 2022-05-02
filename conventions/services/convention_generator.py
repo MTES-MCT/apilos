@@ -13,12 +13,12 @@ from django.core.files.storage import default_storage
 
 from core.utils import round_half_up
 
-from bailleurs.models import TypeBailleur
 from programmes.models import (
     Financement,
     Annexe,
 )
 from upload.models import UploadedFile
+from conventions.models import ConventionType1and2
 
 from conventions.templatetags.custom_filters import (
     inline_text_multiline,
@@ -31,6 +31,10 @@ class NotHandleConventionType(Exception):
     pass
 
 
+class ConventionTypeConfigurationError(Exception):
+    pass
+
+
 def generate_convention_doc(convention):
     # pylint: disable=R0914
     annexes = (
@@ -38,14 +42,20 @@ def generate_convention_doc(convention):
         .filter(logement__lot_id=convention.lot.id)
         .all()
     )
-    if convention.bailleur.type_bailleur in [
-        TypeBailleur.OFFICE_PUBLIC_HLM,
-        TypeBailleur.SA_HLM_ESH,
-        TypeBailleur.COOPERATIVE_HLM_SCIC,
-    ]:
+    if convention.bailleur.is_hlm():
         filepath = f"{settings.BASE_DIR}/documents/HLM-template.docx"
-    elif convention.bailleur.type_bailleur in [TypeBailleur.SEM_EPL]:
+    elif convention.bailleur.is_sem():
         filepath = f"{settings.BASE_DIR}/documents/SEM-template.docx"
+    elif convention.bailleur.is_type1and2():
+        if convention.type1and2 == ConventionType1and2.TYPE1:
+            filepath = f"{settings.BASE_DIR}/documents/Type1-template.docx"
+        elif convention.type1and2 == ConventionType1and2.TYPE2:
+            filepath = f"{settings.BASE_DIR}/documents/Type2-template.docx"
+        else:
+            raise ConventionTypeConfigurationError(
+                "Le type de convention I ou II doit-être configuré pour les bailleurs non SEM ou"
+                + f" HLM. Bailleur de type : {convention.bailleur.get_type_bailleur_display()}"
+            )
     else:
         raise NotHandleConventionType(
             "La génération de convention n'est pas disponible pour ce type de"

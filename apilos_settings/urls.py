@@ -47,4 +47,9 @@ urlpatterns = [
         views.add_user,
         name="add_user",
     ),
+    path(
+        "users/delete/<username>",
+        views.delete_user,
+        name="delete_user",
+    ),
 ]

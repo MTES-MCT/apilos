@@ -356,7 +356,7 @@ class LotLgtsOptionForm(forms.Form):
     lgts_mixite_sociale_negocies = forms.IntegerField(
         required=False,
         label=(
-            "Nombre de logements à louer en plus à des à des ménages dont les ressources"
+            "Nombre de logements à louer en plus à des ménages dont les ressources"
             + " n'excèdent pas le plafond"
         ),
         help_text="""

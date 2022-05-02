@@ -19,7 +19,7 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
         {% include "conventions/common/form_header.html" with convention=convention %}
-        {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
+        {% include "common/step_progressbar.html" with convention=convention %}
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -30,7 +30,6 @@
                     value="{{ form.uuid.value|default_if_none:'' }}">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12">
-                        <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - État descriptif de division</h2> -->
 
                         <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
                             <p>L’ajout des états descriptifs de division (EDD) est facultatif et dépend des spécificités locales des services des hypothèques. </p>

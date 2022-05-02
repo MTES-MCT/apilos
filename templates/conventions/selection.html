@@ -7,11 +7,10 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html" with convention=convention %}
-        {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
         <div class="fr-container">
             <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
                 {% csrf_token %}
-                <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-grid-row fr-grid-row--gutters fr-pt-5w">
                     <div class="fr-col-md-12">
                         <div class="fr-mb-3w fr-form-group">
                             <fieldset class="fr-fieldset">
@@ -115,28 +114,10 @@
                 </div>
 
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
-                    {% if editable %}
-                        {% if convention.uuid %}
-                            {% include "common/button/next_and_save.html" with suivant='conventions:selection_update' convention_uuid=convention.uuid %}
-                        {% else %}
-                            {% include "common/button/next_and_save.html" with suivant='conventions:selection' %}
-                        {% endif %}
-                        <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
-                            Revenir à la liste des conventions
-                        </a>
-                    {% else %}
-                        <div id="back_to_recap">
-                            <button type='button' class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" type="button" id="return_recap">
-                                Retour au Récapitulatif
-                            </button>
-                        </div>
-                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                            document.addEventListener('DOMContentLoaded', function () {
-                                document.getElementById('return_recap')
-                                    .addEventListener('click', function(){ location.href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' });
-                            });
-                        </script>
-                    {% endif %}
+                    {% include "common/button/next_and_save.html" with suivant='conventions:selection' %}
+                    <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
+                        Revenir à la liste des conventions
+                    </a>
                 </div>
             </form>
         </div>

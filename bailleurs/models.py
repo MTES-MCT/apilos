@@ -75,3 +75,16 @@ class Bailleur(IngestableModel):
         return self.nom
 
     label = property(_get_nom)
+
+    def is_hlm(self):
+        return self.type_bailleur in [
+            TypeBailleur.OFFICE_PUBLIC_HLM,
+            TypeBailleur.SA_HLM_ESH,
+            TypeBailleur.COOPERATIVE_HLM_SCIC,
+        ]
+
+    def is_sem(self):
+        return self.type_bailleur in [TypeBailleur.SEM_EPL]
+
+    def is_type1and2(self):
+        return not self.is_hlm() and not self.is_sem()
