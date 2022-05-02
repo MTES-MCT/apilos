@@ -206,12 +206,6 @@ class ConventionModelsTest(TestCase):
                 ]:
                     convention.type1and2 = type1andtype2
                     self.assertTrue(convention.type1and2_configuration_not_needed())
-        convention.financement = Financement.PLUS
-        self.assertTrue(convention.mixity_option())
-        for k, _ in Financement.choices:
-            if k != Financement.PLUS:
-                convention.financement = k
-                self.assertFalse(convention.mixity_option())
 
     def test_xlsx(self):
         utils_assertions.assert_xlsx(self, Pret, "financement")
