@@ -259,7 +259,19 @@ SESSION_COOKIE_SAMESITE = "Lax"
 
 # https://django-csp.readthedocs.io/en/latest/configuration.html
 CSP_DEFAULT_SRC = "'none'"
-CSP_SCRIPT_SRC = ("https://stats.data.gouv.fr/piwik.js", "'self'")
+CSP_SCRIPT_SRC = (
+    "https://stats.data.gouv.fr/piwik.js",
+    "'self'",
+    "'sha256-zaYxlJmjbzgo2YczX5XHFlvamZUNy264d7XlOOUwMME='",
+    "'sha256-928U3JmFf9xytJJBtEU5V1FVGcqsTfwaVnI2vmHmamA='",
+    "'sha256-lkrKw/baCFdnI+tB9T+0yFMewpXSk9yct2ZbWEGPDhY='",
+    # Convention > récapitilatif > manage type I and type II options
+    "'sha256-J71e5kr85q2XGRl+qwOA/tpMsXmKDjeTnvlzBhBsz/0='",
+    "'sha256-h7boyH6dI/JQnsm6Iw1sAtEbdb/+638kREPj4sfWmMs='",  # ???
+    # Convention > Récapitulatif > Comment type1and2
+    "'sha256-7uHmVaAHWxl0RElSoWED7kK+9kRSQ+E6SQ3aBK1prkU='",
+    #
+)
 CSP_IMG_SRC = ("'self'", "data:")
 CSP_OBJECT_SRC = "'none'"
 CSP_FONT_SRC = "'self'", "data:"

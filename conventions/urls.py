@@ -4,11 +4,6 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("selection", views.select_programme_create, name="selection"),
-    path(
-        "selection/<convention_uuid>",
-        views.select_programme_update,
-        name="selection_update",
-    ),
     path("bailleur/<convention_uuid>", views.bailleur, name="bailleur"),
     path("programme/<convention_uuid>", views.programme, name="programme"),
     path("cadastre/<convention_uuid>", views.cadastre, name="cadastre"),

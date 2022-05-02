@@ -68,7 +68,7 @@ class User(AbstractUser):
                 return False
             # forbid to change close convention
             if perm == "convention.change_convention" and isinstance(obj, Convention):
-                if obj.statut == ConventionStatut.D_TRANSMISE:
+                if obj.statut == ConventionStatut.TRANSMISE:
                     return False
         # check permission itself
         permissions = []
@@ -251,14 +251,14 @@ class User(AbstractUser):
     def full_editable_convention(self, convention):
         # is bailleur of the convention
         if self.role_set.filter(bailleur_id=convention.bailleur_id):
-            return convention.statut == ConventionStatut.A_PROJET
+            return convention.statut == ConventionStatut.PROJET
         # is instructeur of the convention
         if self.role_set.filter(
             administration_id=convention.programme.administration_id
         ):
             return convention.statut in [
-                ConventionStatut.B1_INSTRUCTION,
-                ConventionStatut.B2_CORRECTION,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
             ]
         return False
 

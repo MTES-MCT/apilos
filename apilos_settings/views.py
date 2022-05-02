@@ -1,4 +1,5 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.views.decorators.http import require_POST
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -119,3 +120,11 @@ def add_user(request):
             "departements": Departement.objects.all(),
         },
     )
+
+
+@require_POST
+@login_required
+@permission_required("users.delete_user")
+def delete_user(request, username):
+    services.delete_user(request, username)
+    return HttpResponseRedirect(reverse("settings:users"))

@@ -20,7 +20,7 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
         {% include "conventions/common/form_header.html" with convention=convention %}
-        {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
+        {% include "common/step_progressbar.html" with convention=convention %}
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}

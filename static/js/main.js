@@ -22,6 +22,10 @@ function clean_windows_loc() {
     return window.location.protocol + '//' + window.location.host + window.location.pathname
 }
 
+load_page()
+
+// Additional functions
+
 function toggle(element_id) {
     element = document.getElementById(element_id);
     element.hidden = !element.hidden;
@@ -33,5 +37,3 @@ function convention_mode(is_select) {
         document.getElementById('programme_creation').hidden = is_select
     }
 }
-
-load_page()

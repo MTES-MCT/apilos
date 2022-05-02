@@ -13,17 +13,25 @@ from django.core.files.storage import default_storage
 
 from core.utils import round_half_up
 
-from bailleurs.models import TypeBailleur
 from programmes.models import (
     Financement,
     Annexe,
 )
 from upload.models import UploadedFile
+from conventions.models import ConventionType1and2
 
-from conventions.templatetags.custom_filters import inline_text_multiline
+from conventions.templatetags.custom_filters import (
+    inline_text_multiline,
+    to_fr_date,
+    to_fr_short_date,
+)
 
 
 class NotHandleConventionType(Exception):
+    pass
+
+
+class ConventionTypeConfigurationError(Exception):
     pass
 
 
@@ -34,14 +42,20 @@ def generate_convention_doc(convention):
         .filter(logement__lot_id=convention.lot.id)
         .all()
     )
-    if convention.bailleur.type_bailleur in [
-        TypeBailleur.OFFICE_PUBLIC_HLM,
-        TypeBailleur.SA_HLM_ESH,
-        TypeBailleur.COOPERATIVE_HLM_SCIC,
-    ]:
+    if convention.bailleur.is_hlm():
         filepath = f"{settings.BASE_DIR}/documents/HLM-template.docx"
-    elif convention.bailleur.type_bailleur in [TypeBailleur.SEM_EPL]:
+    elif convention.bailleur.is_sem():
         filepath = f"{settings.BASE_DIR}/documents/SEM-template.docx"
+    elif convention.bailleur.is_type1and2():
+        if convention.type1and2 == ConventionType1and2.TYPE1:
+            filepath = f"{settings.BASE_DIR}/documents/Type1-template.docx"
+        elif convention.type1and2 == ConventionType1and2.TYPE2:
+            filepath = f"{settings.BASE_DIR}/documents/Type2-template.docx"
+        else:
+            raise ConventionTypeConfigurationError(
+                "Le type de convention I ou II doit-être configuré pour les bailleurs non SEM ou"
+                + f" HLM. Bailleur de type : {convention.bailleur.get_type_bailleur_display()}"
+            )
     else:
         raise NotHandleConventionType(
             "La génération de convention n'est pas disponible pour ce type de"
@@ -97,7 +111,8 @@ def generate_convention_doc(convention):
     }
 
     jinja_env = jinja2.Environment()
-    jinja_env.filters["d"] = _to_fr_date
+    jinja_env.filters["d"] = to_fr_date
+    jinja_env.filters["sd"] = to_fr_short_date
     jinja_env.filters["f"] = _to_fr_float
     jinja_env.filters["pl"] = _pluralize
     jinja_env.filters["len"] = len
@@ -167,12 +182,6 @@ def _save_io_as_file(file_io, convention_dirpath, convention_filename):
     destination.close()
 
     return pdf_path
-
-
-def _to_fr_date(date):
-    if date is None:
-        return ""
-    return date.strftime("%d/%m/%Y")
 
 
 def _to_fr_float(value, d=2):

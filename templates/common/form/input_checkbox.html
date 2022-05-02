@@ -9,7 +9,7 @@
                 {% if form_input.value %}checked="checked"{% endif %}
                 name="{{form_input.html_name}}"
                 {% include "common/form/disable_form_input.html" %}>
-            <label class="fr-label" for="{{form_input.html_name}}">
+            <label class="fr-label {% if strike_unchecked and not form_input.value %}apilos-form-label--strike{% endif %}" for="{{form_input.html_name}}">
                 {% if form_input.label %}
                     {{ form_input.label }}
                 {% endif %}

@@ -1,14 +1,17 @@
 import datetime
 
 from django.test import TestCase
+from bailleurs.models import TypeBailleur
 from core.tests import utils_assertions, utils_fixtures
 from conventions.models import (
     Convention,
     ConventionHistory,
     ConventionStatut,
+    ConventionType1and2,
     Pret,
     Preteur,
 )
+from programmes.models import Financement
 from users.models import User
 from users.type_models import EmailPreferences
 
@@ -17,31 +20,6 @@ class ConventionModelsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         utils_fixtures.create_all()
-        # bailleur = utils_fixtures.create_bailleur()
-        # programme = utils_fixtures.create_programme(bailleur)
-        # lot = Lot.objects.create(
-        #     programme=programme,
-        #     bailleur=bailleur,
-        #     financement=Financement.PLUS,
-        # )
-        # convention = Convention.objects.create(
-        #     numero=1,
-        #     lot=lot,
-        #     programme=programme,
-        #     bailleur=bailleur,
-        #     financement=Financement.PLUS,
-        # )
-        convention = Convention.objects.get(numero="0001")
-        Pret.objects.create(
-            convention=convention,
-            bailleur=convention.bailleur,
-            preteur=Preteur.CDCF,
-            date_octroi=datetime.datetime.today(),
-            autre="test autre",
-            numero="mon numero",
-            duree=50,
-            montant=123456.789,
-        )
 
     def test_object_str(self):
         convention = Convention.objects.get(numero="0001")
@@ -57,55 +35,39 @@ class ConventionModelsTest(TestCase):
     def test_is_functions(self):
         convention = Convention.objects.get(numero="0001")
         self.assertTrue(convention.is_bailleur_editable())
-        self.assertTrue(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
         self.assertTrue(convention.is_project())
-        convention.statut = ConventionStatut.B1_INSTRUCTION
+        self.assertFalse(convention.is_a_signer())
+        self.assertFalse(convention.is_validated())
+        self.assertTrue(convention.isnt_validated())
+        convention.statut = ConventionStatut.INSTRUCTION
         self.assertFalse(convention.is_bailleur_editable())
-        self.assertTrue(convention.is_instructeur_editable())
         self.assertTrue(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
-        convention.statut = ConventionStatut.B2_CORRECTION
+        self.assertFalse(convention.is_a_signer())
+        self.assertFalse(convention.is_validated())
+        self.assertTrue(convention.isnt_validated())
+        convention.statut = ConventionStatut.CORRECTION
         self.assertTrue(convention.is_bailleur_editable())
-        self.assertTrue(convention.is_instructeur_editable())
         self.assertTrue(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
-        convention.statut = ConventionStatut.C_A_SIGNER
+        self.assertFalse(convention.is_a_signer())
+        self.assertFalse(convention.is_validated())
+        self.assertTrue(convention.isnt_validated())
+        convention.statut = ConventionStatut.A_SIGNER
         self.assertFalse(convention.is_bailleur_editable())
-        self.assertTrue(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
-        convention.statut = ConventionStatut.D_TRANSMISE
+        self.assertTrue(convention.is_a_signer())
+        self.assertTrue(convention.is_validated())
+        self.assertFalse(convention.isnt_validated())
+        convention.statut = ConventionStatut.TRANSMISE
         self.assertFalse(convention.is_bailleur_editable())
-        self.assertFalse(convention.is_instructeur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
-
-    def test_properties(self):
-        pret = Pret.objects.first()
-        self.assertEqual(pret.get_preteur_display(), pret.p)
-        self.assertEqual(pret.autre, pret.a)
-        self.assertEqual(pret.date_octroi, pret.do)
-        self.assertEqual(pret.numero, pret.n)
-        self.assertEqual(pret.duree, pret.d)
-        self.assertEqual(pret.montant, pret.m)
-
-    def test_p_full(self):
-        pret = Pret.objects.first()
-        pret.preteur = Preteur.CDCF
-        self.assertEqual(
-            pret.p_full(), "Caisse de Dépôts et Consignation pour le foncier"
-        )
-        pret.preteur = Preteur.CDCL
-        self.assertEqual(
-            pret.p_full(), "Caisse de Dépôts et Consignation pour le logement"
-        )
-        pret.preteur = Preteur.AUTRE
-        self.assertEqual(pret.p_full(), "Autre")
-        pret.preteur = Preteur.ETAT
-        self.assertEqual(pret.p_full(), "Etat")
-        pret.preteur = Preteur.REGION
-        self.assertEqual(pret.p_full(), "Région")
+        self.assertFalse(convention.is_a_signer())
+        self.assertTrue(convention.is_validated())
+        self.assertFalse(convention.isnt_validated())
 
     def test_get_email_bailleur_users(self):
         convention = Convention.objects.get(numero="0001")
@@ -120,8 +82,8 @@ class ConventionModelsTest(TestCase):
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
             convention=convention,
-            statut_convention=ConventionStatut.B1_INSTRUCTION,
-            statut_convention_precedent=ConventionStatut.A_PROJET,
+            statut_convention=ConventionStatut.INSTRUCTION,
+            statut_convention_precedent=ConventionStatut.PROJET,
             user=raph,
         ).save()
         self.assertEqual(convention.get_email_bailleur_users(), [raph.email])
@@ -142,15 +104,15 @@ class ConventionModelsTest(TestCase):
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
             convention=convention,
-            statut_convention=ConventionStatut.B1_INSTRUCTION,
-            statut_convention_precedent=ConventionStatut.A_PROJET,
+            statut_convention=ConventionStatut.INSTRUCTION,
+            statut_convention_precedent=ConventionStatut.PROJET,
             user=sabine,
         ).save()
         self.assertEqual(convention.get_email_instructeur_users(), [sabine.email])
 
     def test_statut_for_template(self):
         convention = Convention.objects.order_by("uuid").first()
-        convention.statut = ConventionStatut.A_PROJET
+        convention.statut = ConventionStatut.PROJET
         self.assertEqual(convention.statut_for_template()["statut"], "1. Projet")
         self.assertEqual(
             convention.statut_for_template()["statut_display"],
@@ -160,7 +122,7 @@ class ConventionModelsTest(TestCase):
             convention.statut_for_template()["short_statut"], "Projet (Brouillon)"
         )
         self.assertEqual(convention.statut_for_template()["key_statut"], "Projet")
-        convention.statut = ConventionStatut.B1_INSTRUCTION
+        convention.statut = ConventionStatut.INSTRUCTION
         self.assertEqual(
             convention.statut_for_template()["statut"], "2. Instruction requise"
         )
@@ -174,7 +136,7 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(
             convention.statut_for_template()["key_statut"], "Instruction_requise"
         )
-        convention.statut = ConventionStatut.B2_CORRECTION
+        convention.statut = ConventionStatut.CORRECTION
         self.assertEqual(
             convention.statut_for_template()["statut"], "3. Corrections requises"
         )
@@ -188,14 +150,14 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(
             convention.statut_for_template()["key_statut"], "Corrections_requises"
         )
-        convention.statut = ConventionStatut.C_A_SIGNER
+        convention.statut = ConventionStatut.A_SIGNER
         self.assertEqual(convention.statut_for_template()["statut"], "4. A signer")
         self.assertEqual(
             convention.statut_for_template()["statut_display"], "Convention à signer"
         )
         self.assertEqual(convention.statut_for_template()["short_statut"], "A signer")
         self.assertEqual(convention.statut_for_template()["key_statut"], "A_signer")
-        convention.statut = ConventionStatut.D_TRANSMISE
+        convention.statut = ConventionStatut.TRANSMISE
         self.assertEqual(convention.statut_for_template()["statut"], "5. Transmise")
         self.assertEqual(
             convention.statut_for_template()["statut_display"], "Convention transmise"
@@ -203,5 +165,101 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(convention.statut_for_template()["short_statut"], "Transmise")
         self.assertEqual(convention.statut_for_template()["key_statut"], "Transmise")
 
+    def test_mixity_option(self):
+        convention = Convention.objects.order_by("uuid").first()
+        convention.financement = Financement.PLUS
+        self.assertTrue(convention.mixity_option())
+        for k, _ in Financement.choices:
+            if k != Financement.PLUS:
+                convention.financement = k
+                self.assertFalse(convention.mixity_option())
+
+    def test_type1and2_configuration_not_needed(self):
+        convention = Convention.objects.order_by("uuid").first()
+        for type_bailleur in [
+            TypeBailleur.OFFICE_PUBLIC_HLM,
+            TypeBailleur.SA_HLM_ESH,
+            TypeBailleur.COOPERATIVE_HLM_SCIC,
+            TypeBailleur.SEM_EPL,
+        ]:
+            convention.bailleur.type_bailleur = type_bailleur
+            for type1andtype2 in [
+                ConventionType1and2.TYPE1,
+                ConventionType1and2.TYPE2,
+                None,
+            ]:
+                convention.type1and2 = type1andtype2
+                self.assertTrue(convention.type1and2_configuration_not_needed())
+        for k, _ in TypeBailleur.choices:
+            if k not in [
+                TypeBailleur.OFFICE_PUBLIC_HLM,
+                TypeBailleur.SA_HLM_ESH,
+                TypeBailleur.COOPERATIVE_HLM_SCIC,
+                TypeBailleur.SEM_EPL,
+            ]:
+                convention.bailleur.type_bailleur = k
+                convention.type1and2 = None
+                self.assertFalse(convention.type1and2_configuration_not_needed())
+                for type1andtype2 in [
+                    ConventionType1and2.TYPE1,
+                    ConventionType1and2.TYPE2,
+                ]:
+                    convention.type1and2 = type1andtype2
+                    self.assertTrue(convention.type1and2_configuration_not_needed())
+
     def test_xlsx(self):
         utils_assertions.assert_xlsx(self, Pret, "financement")
+
+
+class PretModelsTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        utils_fixtures.create_all()
+        convention = Convention.objects.get(numero="0001")
+        Pret.objects.create(
+            convention=convention,
+            bailleur=convention.bailleur,
+            preteur=Preteur.CDCF,
+            date_octroi=datetime.datetime.today(),
+            autre="test autre",
+            numero="mon numero",
+            duree=50,
+            montant=123456.789,
+        )
+
+    def test_p_full(self):
+        pret = Pret.objects.first()
+        pret.preteur = Preteur.CDCF
+        self.assertEqual(
+            pret.p_full(), "Caisse de Dépôts et Consignation pour le foncier"
+        )
+        pret.preteur = Preteur.CDCL
+        self.assertEqual(
+            pret.p_full(), "Caisse de Dépôts et Consignation pour le logement"
+        )
+        pret.preteur = Preteur.AUTRE
+        self.assertEqual(pret.p_full(), "Autre")
+        pret.preteur = Preteur.ETAT
+        self.assertEqual(pret.p_full(), "Etat")
+        pret.preteur = Preteur.REGION
+        self.assertEqual(pret.p_full(), "Région")
+
+    def test_properties(self):
+        pret = Pret.objects.first()
+        self.assertEqual(pret.get_preteur_display(), pret.p)
+        self.assertEqual(pret.autre, pret.a)
+        self.assertEqual(pret.date_octroi, pret.do)
+        self.assertEqual(pret.numero, pret.n)
+        self.assertEqual(pret.duree, pret.d)
+        self.assertEqual(pret.montant, pret.m)
+
+    def test_preteur_display(self):
+        pret = Pret.objects.first()
+
+        for k, _ in Preteur.choices:
+            if k != Preteur.AUTRE:
+                pret.preteur = k
+                self.assertEqual(pret.p_full(), pret.preteur_display())
+        pret.preteur = Preteur.AUTRE
+        pret.autre = "n'importe quoi"
+        self.assertEqual(pret.preteur_display(), "n'importe quoi")

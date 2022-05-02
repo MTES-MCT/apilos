@@ -3,7 +3,6 @@
 from .services_bailleurs import bailleur_update
 from .services_programmes import (
     select_programme_create,
-    select_programme_update,
     programme_update,
     programme_cadastral_update,
     programme_edd_update,

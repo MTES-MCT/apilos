@@ -24,6 +24,7 @@ from conventions.forms import (
     NotificationForm,
     PretFormSet,
     UploadForm,
+    ConventionType1and2Form,
 )
 from . import utils
 from . import upload_objects
@@ -274,7 +275,6 @@ def convention_comments(request, convention_uuid):
     }
 
 
-@require_GET
 def convention_summary(request, convention_uuid, convention_number_form=None):
     convention = (
         Convention.objects.prefetch_related("bailleur")
@@ -299,6 +299,102 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
         statut=CommentStatut.OUVERT,
     )
     opened_comments = opened_comments.order_by("cree_le")
+    if request.method == "POST":
+        convention_type1_and_2_form = ConventionType1and2Form(request.POST)
+        if convention_type1_and_2_form.is_valid():
+            convention.type1and2 = (
+                convention_type1_and_2_form.cleaned_data["type1and2"]
+                if convention_type1_and_2_form.cleaned_data["type1and2"]
+                else None
+            )
+            if (
+                "type2_lgts_concernes_option1"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option1 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option1"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option2"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option2 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option2"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option3"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option3 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option3"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option4"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option4 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option4"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option5"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option5 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option5"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option6"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option6 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option6"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option7"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option7 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option7"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option8"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                convention.type2_lgts_concernes_option8 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option8"
+                    ]
+                )
+            convention.save()
+    else:
+        convention_type1_and_2_form = ConventionType1and2Form(
+            initial={
+                "uuid": convention.uuid,
+                "type1and2": convention.type1and2,
+                "type2_lgts_concernes_option1": convention.type2_lgts_concernes_option1,
+                "type2_lgts_concernes_option2": convention.type2_lgts_concernes_option2,
+                "type2_lgts_concernes_option3": convention.type2_lgts_concernes_option3,
+                "type2_lgts_concernes_option4": convention.type2_lgts_concernes_option4,
+                "type2_lgts_concernes_option5": convention.type2_lgts_concernes_option5,
+                "type2_lgts_concernes_option6": convention.type2_lgts_concernes_option6,
+                "type2_lgts_concernes_option7": convention.type2_lgts_concernes_option7,
+                "type2_lgts_concernes_option8": convention.type2_lgts_concernes_option8,
+            }
+        )
     return {
         **utils.base_convention_response_error(request, convention),
         "opened_comments": opened_comments,
@@ -312,6 +408,7 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
         "conventionNumberForm": convention_number_form,
+        "ConventionType1and2Form": convention_type1_and_2_form,
     }
 
 
@@ -320,12 +417,25 @@ def convention_submit(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     submitted = utils.ReturnStatus.WARNING
     request.user.check_perm("convention.change_convention", convention)
+    # Set back the onvention to the instruction
+    if request.POST.get("BackToInstruction", False):
+        ConventionHistory.objects.create(
+            bailleur=convention.bailleur,
+            convention=convention,
+            statut_convention=ConventionStatut.INSTRUCTION,
+            statut_convention_precedent=convention.statut,
+            user=request.user,
+        ).save()
+        convention.statut = ConventionStatut.INSTRUCTION
+        convention.save()
+        submitted = utils.ReturnStatus.ERROR
+    # Submit the convention to the instruction
     if request.POST.get("SubmitConvention", False):
 
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
             convention=convention,
-            statut_convention=ConventionStatut.B1_INSTRUCTION,
+            statut_convention=ConventionStatut.INSTRUCTION,
             statut_convention_precedent=convention.statut,
             user=request.user,
         ).save()
@@ -333,7 +443,7 @@ def convention_submit(request, convention_uuid):
         if convention.premiere_soumission_le is None:
             convention.premiere_soumission_le = timezone.now()
         convention.soumis_le = timezone.now()
-        convention.statut = ConventionStatut.B1_INSTRUCTION
+        convention.statut = ConventionStatut.INSTRUCTION
         convention.save()
         send_email_instruction(
             request.build_absolute_uri(
@@ -450,9 +560,9 @@ def convention_feedback(request, convention_uuid):
             notification_form.cleaned_data["from_instructeur"],
             notification_form.cleaned_data["comment"],
         )
-        target_status = ConventionStatut.B1_INSTRUCTION
+        target_status = ConventionStatut.INSTRUCTION
         if notification_form.cleaned_data["from_instructeur"]:
-            target_status = ConventionStatut.B2_CORRECTION
+            target_status = ConventionStatut.CORRECTION
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
             convention=convention,
@@ -486,13 +596,6 @@ def send_email_correction(
         subject = f"Convention à modifier ({convention})"
         template_label = "bailleur_correction_needed"
     else:
-        # last_notification_from_instructeur = (
-        #     convention.get_last_instructeur_notification()
-        # )
-        # if last_notification_from_instructeur:
-        #     to = [last_notification_from_instructeur.user.email]
-        # else:
-        #     # All instructeur users from convention
         # Get instructeurs list following email preferences and interaction with the convention
         to = convention.get_email_instructeur_users()
         subject = f"Convention modifiée ({convention})"
@@ -563,13 +666,13 @@ def convention_validate(request, convention_uuid):
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
             convention=convention,
-            statut_convention=ConventionStatut.C_A_SIGNER,
+            statut_convention=ConventionStatut.A_SIGNER,
             statut_convention_precedent=convention.statut,
             user=request.user,
         ).save()
         if not convention.valide_le:
             convention.valide_le = timezone.now()
-        convention.statut = ConventionStatut.C_A_SIGNER
+        convention.statut = ConventionStatut.A_SIGNER
         convention.save()
         send_email_valide(
             request.build_absolute_uri(

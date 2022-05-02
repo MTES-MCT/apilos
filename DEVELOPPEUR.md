@@ -36,13 +36,13 @@ le code local est attaché au volume `/code/` à l'interieur du docker apilos. u
 Pour Lancer un script django, vous devrez l'éxecuter dans l'environnement docker en utilisant pipenv
 
 ```
-docker-compose exec apilos pipenv run python manage.py ...
+(docker-compose exec apilos) pipenv run python manage.py ...
 ```
 
 Par exemple pour lancer les migrations :
 
 ```
-docker-compose exec apilos pipenv run python manage.py migrate
+(docker-compose exec apilos) pipenv run python manage.py migrate
 ```
 
 Enfin, pour afficher les logs :
@@ -53,12 +53,60 @@ docker-compose logs -f --tail=10
 
 ### Via pyenv
 
+#### Prérequis
 
+* APiLos marche sur un distribution python 3.10
+* Il est conseillé d'installer pyenv pour isoler l'environnement python d'APiLos
+* pipenv est nécessaire pour la gestion de dépendance
 
 #### Installation
-#### Lancement des tests
 
-... todo
+Lancer de la base de données en utilisant une installation local de postgresql ou en lançant l'instance via docker-compose
+
+```
+docker-compose -f docker-compose.db.yml up -d
+```
+
+Puis, mettre à jour les variable d'environnement dans le fichier [~/.env](~/.env), ci-dessous un exemple compatible avec la configuration docker-compose.db.yml
+
+```
+DB_USER=appel
+DB_NAME=appel
+DB_HOST=localhost
+DB_PASSWORD=appel
+DB_PORT=5433
+```
+
+Installer les dépendances
+
+```
+pipenv install
+```
+
+## Finalisation de l'installation
+
+Ajouter `docker-compose exec apilos` en prefix de vos commande lorsque vous avez installé via `docker-compose`
+
+### Executer les migrations
+
+```
+(docker-compose exec apilos) pipenv run python manage.py migrate
+```
+
+### Populer les permissions et les roles et les departements
+
+```
+(docker-compose exec apilos) pipenv run python manage.py loaddata auth.json departements.json
+```
+
+## Lancer de l'application
+
+```
+(docker-compose exec apilos) pipenv run python manage.py runserver 0.0.0.0:8001
+```
+
+L'application est désormais disponible [http://localhost:8001](http://localhost:8001)
+
 
 ## Qualité de code
 
@@ -70,19 +118,19 @@ Les tests sont organisés comme suit :
 * Tests api : APPNAME/api/tests/test_apis.py
 
 
-#### Lancement des tests avec docker-compose
+### Lancement des tests
 
 L'application prend en charge des test unitaire et des tests d'intégration. Pour les lancer:
 
 ```
-docker-compose exec apilos python manage.py test
+(docker-compose exec apilos) pipenv run python manage.py test
 ```
 
 et pour les lancer avec un test de coverage et afficher le rapport :
 
 ```
-docker-compose exec apilos coverage run --source='.' manage.py test
-docker-compose exec apilos coverage report
+(docker-compose exec apilos) pipenv run coverage run --source='.' manage.py test
+(docker-compose exec apilos) pipenv run coverage report
 ```
 
 ### Installer les hooks de pre-commit
