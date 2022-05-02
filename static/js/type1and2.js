@@ -17,12 +17,8 @@ function init_type_two_options(){
             e.target.parentElement.getElementsByTagName('label')[0].classList.remove('apilos-form-label--strike')
         }
     }
-    document.getElementById('type2_lgts_concernes_option1').addEventListener('change', e => strike_checked_option(e));
-    document.getElementById('type2_lgts_concernes_option2').addEventListener('change', e => strike_checked_option(e));
-    document.getElementById('type2_lgts_concernes_option3').addEventListener('change', e => strike_checked_option(e));
-    document.getElementById('type2_lgts_concernes_option4').addEventListener('change', e => strike_checked_option(e));
-    document.getElementById('type2_lgts_concernes_option5').addEventListener('change', e => strike_checked_option(e));
-    document.getElementById('type2_lgts_concernes_option6').addEventListener('change', e => strike_checked_option(e));
-    document.getElementById('type2_lgts_concernes_option7').addEventListener('change', e => strike_checked_option(e));
-    document.getElementById('type2_lgts_concernes_option8').addEventListener('change', e => strike_checked_option(e));
+    for (i = 1; i<=8; i++) {
+        document.getElementById('type2_lgts_concernes_option' + i).addEventListener('change', e => strike_checked_option(e));
+
+    }
 }
