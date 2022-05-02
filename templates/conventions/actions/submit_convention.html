@@ -1,0 +1,22 @@
+<div class="fr-col-12 fr-col-lg-6">
+    <div role="alert" class="fr-alert fr-alert--info">
+        <p class="fr-alert__title">
+            Soumettre au service instructeur
+        </p>
+        <p>
+            Votre projet de convention est terminé ? Soumettez-le à l'instruction. Le service instructeur en sera informé et vous tiendra au courant de l'évolution de l'instruction.
+        </p>
+        <p>
+            Si vous avez encore des modifications à apporter au projet de convention, vous pouvez enregistrer la convention et y revenir plus tard.
+        </p>
+        <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
+            {% csrf_token %}
+            <button class="fr-btn fr-btn--secondary fr-my-1w">
+                Enregistrer le projet de convention
+            </button>
+            <button name="SubmitConvention" value=True class="fr-btn fr-my-1w">
+                Soumettre au service instructeur
+            </button>
+        </form>
+    </div>
+</div>

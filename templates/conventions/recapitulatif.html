@@ -7,6 +7,7 @@
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/turbo.es2017-umd.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script type="text/javascript" src="{% static "js/type1and2.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script nonce="{{request.csp_nonce}}">
         Turbo.session.drive = false
     </script>
@@ -15,658 +16,722 @@
 
 {% block content %}
     {% with programme_uuid=programme.uuid|slugify convention_uuid=convention.uuid|slugify lot_uuid=lot.uuid|slugify %}
+        <input type="hidden" id="convention_uuid" value="{{convention.uuid}}">
         <div class="fr-container-fluid ds_banner">
             {% include "conventions/common/form_header.html" with convention=convention %}
-            {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
+            {% if not convention.is_validated %}
+                {% include "common/step_progressbar.html" with convention=convention %}
+            {% endif %}
             <div class="fr-container">
                 {% csrf_token %}
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-md-12 fr-mb-5w">
-                        {% if convention.is_project %}
+                {% if convention.is_project %}
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12">
                             <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
                                 <p>le document de convention n'est pas encore soumis à l'instruction{% if user.is_bailleur %},
                                     pour finaliser votre demande de conventionnement, vous devez clicker sur le bouton
                                     <b>"Soumettre au service instructeur"</b> en bas de page{% endif %}</p>
                             </div>
-                        {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
 
-                        <turbo-frame id="opened_comments_block" data-turbo="true">
-                            {% include "comments/opened_comments.html" %}
-                        </turbo-frame>
+                <turbo-frame id="opened_comments_block" data-turbo="true">
+                    {% include "comments/opened_comments.html" %}
+                </turbo-frame>
 
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-lg-6">
-                                <div class="fr-card fr-card--no-arrow">
-                                    <div class="fr-card__body">
-                                        <div class="block--row-strech" id="{{object_field}}_div">
-                                            <div class="block--row-strech-1">
-                                                <h4 class="fr-card__title">
-                                                    Convention
-                                                </h4>
-                                            </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:selection_update' convention_uuid=convention.uuid %}" >
-                                                <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
-                                            </a>
-                                        </div>
-                                        <div class="table--limited-height">
-                                            {% include "common/display_field_if_exists.html" with label="Nom de l'opération" value=programme.nom %}
-                                            {% include "common/display_field_if_exists.html" with label="Financement" value=lot.financement %}
-                                            {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville %}
-                                            {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements %}
-                                        </div>
+                <div class="fr-grid-row fr-grid-row--gutters fr-mt-1w">
+                    {% if False %}
+                        <div class="fr-col-12 fr-col-lg-6">
+                            <div class="fr-card fr-card--no-arrow">
+                                <div class="fr-card__body">
+                                    <h4 class="fr-card__title">
+                                        Convention
+                                    </h4>
+                                    <div class="table--limited-height">
+                                        {% include "common/display_field_if_exists.html" with label="Nom de l'opération" value=programme.nom %}
+                                        {% include "common/display_field_if_exists.html" with label="Financement" value=lot.financement %}
+                                        {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville %}
+                                        {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements %}
                                     </div>
                                 </div>
                             </div>
-                            <div class="fr-col-12 fr-col-lg-6">
-                                <div class="fr-card fr-card--no-arrow">
-                                    <div class="fr-card__body">
-                                        <div class="block--row-strech" id="{{object_field}}_div">
-                                            <div class="block--row-strech-1">
-                                                <h4 class="fr-card__title">
-                                                    Bailleur
-                                                </h4>
-                                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-lg-6">
+                            <div class="fr-card fr-card--no-arrow">
+                                <div class="fr-card__body">
+                                    <div class="block--row-strech" id="{{object_field}}_div">
+                                        <div class="block--row-strech-1">
+                                            <h4 class="fr-card__title">
+                                                Bailleur
+                                            </h4>
+                                        </div>
+                                        {% if not convention.is_validated %}
                                             <a class="fr-link fr-mb-1w" href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}" >
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                             </a>
-                                        </div>
-                                        <div class="table--limited-height">
-                                            {% with bailleur_uuid=bailleur.uuid|slugify %}
-                                                {% include "common/display_field_if_exists.html" with label="Nom" value=bailleur.nom object_field="bailleur__nom__"|add:bailleur_uuid %}
-                                                {% include "common/display_field_if_exists.html" with label="SIRET" value=bailleur.siret object_field="bailleur__siret__"|add:bailleur_uuid %}
-                                                {% include "common/display_field_if_exists.html" with label="Capital social" value=bailleur.capital_social object_field="bailleur__capital_social__"|add:bailleur_uuid %}
-                                                {% include "common/display_field_if_exists.html" with label="Adresse" value=bailleur.adresse object_field="bailleur__adresse__"|add:bailleur_uuid %}
-                                                {% include "common/display_field_if_exists.html" with label="Code postal" value=bailleur.code_postal object_field="bailleur__code_postal__"|add:bailleur_uuid %}
-                                                {% include "common/display_field_if_exists.html" with label="Ville" value=bailleur.ville object_field="bailleur__ville__"|add:bailleur_uuid %}
-                                                {% include "common/display_field_if_exists.html" with label="Nom du signataire de la convention" value=bailleur.signataire_nom object_field="bailleur__signataire_nom__"|add:bailleur_uuid %}
-                                                {% include "common/display_field_if_exists.html" with label="Fonction du signataire de la convention" value=bailleur.signataire_fonction object_field="bailleur__signataire_fonction__"|add:bailleur_uuid %}
-                                                {% include "common/display_field_if_exists.html" with label="Date de délibération" value=bailleur.signataire_date_deliberation object_field="bailleur__signataire_date_deliberation__"|add:bailleur_uuid %}
-                                            {% endwith %}
-                                        </div>
+                                        {% endif %}
                                     </div>
-                                </div>
-                            </div>
-                            <div class="fr-col-12 fr-col-lg-6">
-                                <div class="fr-card fr-card--no-arrow">
-                                    <div class="fr-card__body">
-                                        <div class="block--row-strech" id="{{object_field}}_div">
-                                            <div class="block--row-strech-1">
-                                                <h4 class="fr-card__title">
-                                                    Opération
-                                                </h4>
-                                            </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:programme' convention_uuid=convention.uuid %}" >
-                                                <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
-                                            </a>
-                                        </div>
-                                        <div class="table--limited-height">
-                                            <b>{% include "common/display_field_if_exists.html" with label="Numéro de décision" value=programme.numero_galion %}</b>
-                                            {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom object_field="programme__nom__"|add:programme_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse object_field="programme__adresse__"|add:programme_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Code postal" value=programme.code_postal object_field="programme__code_postal__"|add:programme_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville object_field="programme__ville__"|add:programme_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements object_field="programme__nb_logements__"|add:programme_uuid %}
-                                            {% include "common/display_checkbox.html" with label="ANRU" value=programme.anru object_field="programme__anru__"|add:programme_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Type d'habitat" value=programme.get_type_habitat_display object_field="programme__type_habitat__"|add:programme_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Type d'opération" value=programme.get_type_operation_display object_field="programme__type_operation__"|add:programme_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Nombre de locaux commerciaux (non-conventionnés)" value=programme.nb_locaux_commerciaux object_field="programme__nb_locaux_commerciaux__"|add:programme_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Nombre de bureaux (non-conventionnés)" value=programme.nb_bureaux object_field="programme__nb_bureaux__"|add:programme_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Autres logements non-conventionnés" value=programme.autres_locaux_hors_convention object_field="programme__autres_locaux_hors_convention__"|add:programme_uuid %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="fr-col-12 fr-col-lg-6">
-                                <div class="fr-card fr-card--no-arrow">
-                                    <div class="fr-card__body">
-                                        <div class="block--row-strech" id="{{object_field}}_div">
-                                            <div class="block--row-strech-1">
-                                                <h4 class="fr-card__title">
-                                                    Opération - informations cadastrales
-                                                </h4>
-                                            </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}" >
-                                                <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
-                                            </a>
-                                        </div>
-                                        <div class="table--limited-height">
-                                            {% include "common/display_field_if_exists.html" with label="Numéro de permis construire" value=programme.permis_construire object_field="programme__permis_construire__"|add:programme_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Date de l'acte notarié" value=programme.date_acte_notarie object_field="programme__date_acte_notarie__"|add:programme_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Date d'achat" value=programme.date_achat object_field="programme__date_achat__"|add:programme_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Date d'achèvement previsible" value=programme.date_achevement_previsible object_field="programme__date_achevement_previsible__"|add:programme_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Date d'achèvement ou d'obtention de certificat de conformité" value=programme.date_achevement object_field="programme__date_achevement__"|add:programme_uuid %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="Vendeur" text=programme.vendeur_text file_list=programme.vendeur_files.values object_field="programme__vendeur__"|add:programme_uuid %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="Acquéreur" text=programme.acquereur_text file_list=programme.acquereur_files.values object_field="programme__acquereur__"|add:programme_uuid %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="Référence du notaire" text=programme.reference_notaire_text file_list=programme.reference_notaire_files.values object_field="programme__reference_notaire__"|add:programme_uuid %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="Référence de publication de l'acte" text=programme.reference_publication_acte_text file_list=programme.reference_publication_acte_files.values object_field="programme__reference_publication_acte__"|add:programme_uuid %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="Acte de propriété / Acte notarial" text=programme.acte_de_propriete_text file_list=programme.acte_de_propriete_files.values object_field="programme__acte_de_propriete__"|add:programme_uuid %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="Certificat d'adressage / Autres" text=programme.certificat_adressage_text file_list=programme.certificat_adressage_files.values object_field="programme__certificat_adressage__"|add:programme_uuid %}
-                                        </div>
+                                    <div class="table--limited-height">
+                                        {% with bailleur_uuid=bailleur.uuid|slugify %}
+                                            {% include "common/display_field_if_exists.html" with label="Nom" value=bailleur.nom object_field="bailleur__nom__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="SIRET" value=bailleur.siret object_field="bailleur__siret__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Capital social" value=bailleur.capital_social object_field="bailleur__capital_social__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Adresse" value=bailleur.adresse object_field="bailleur__adresse__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Code postal" value=bailleur.code_postal object_field="bailleur__code_postal__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Ville" value=bailleur.ville object_field="bailleur__ville__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Nom du signataire de la convention" value=bailleur.signataire_nom object_field="bailleur__signataire_nom__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Fonction du signataire de la convention" value=bailleur.signataire_fonction object_field="bailleur__signataire_fonction__"|add:bailleur_uuid %}
+                                            {% include "common/display_field_if_exists.html" with label="Date de délibération" value=bailleur.signataire_date_deliberation object_field="bailleur__signataire_date_deliberation__"|add:bailleur_uuid %}
+                                        {% endwith %}
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-lg-12">
-                                <div class="fr-card fr-card--no-arrow">
-                                    <div class="fr-card__body">
-                                        <div class="block--row-strech" id="{{object_field}}_div">
-                                            <div class="block--row-strech-1">
-                                                <h4 class="fr-card__title">
-                                                    Références cadastrales et effet relatif
-                                                </h4>
-                                            </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                    {% else %}
+                        <div class="fr-col-12">
+                            <div class="fr-card fr-card--no-arrow">
+                                <div class="fr-card__body">
+                                    <div class="block--row-strech" id="{{object_field}}_div">
+                                        <div class="block--row-strech-1">
+                                            <h4 class="fr-card__title">
+                                                Bailleur
+                                            </h4>
+                                        </div>
+                                        {% if not convention.is_validated %}
+                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}" >
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                             </a>
-                                        </div>
-                                        {% include "common/display_text_and_files_if_exists.html" with text=programme.reference_cadastrale_text file_list=programme.reference_cadastrale_files.values %}
-                                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        {% if convention.statut != '1. Projet' %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='reference_cadastrale' label='Références cadastrales' callback_click="refresh_opened_comments" %}
-                                                        {% endif %}
-                                                        <th scope="col">Section {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col">Numéro {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col">Lieudit {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col">Surface {% include "common/form/required_field_star.html" %}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for reference in reference_cadastrales %}
-                                                        {% with reference_uuid=reference.uuid|slugify %}
-                                                            {% with main_object_field="reference_cadastrale__uuid__"|add:reference_uuid %}
-                                                                <tr id="{{main_object_field}}_group">
-                                                                    {% if convention.statut != '1. Projet' %}
-                                                                        <td id="{{main_object_field}}_div">
-                                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Référence cadastrale" callback_click="refresh_opened_comments" %}
-                                                                        </td>
-                                                                    {% endif %}
-                                                                    <td>
-                                                                        {{ reference.section }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ reference.numero }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ reference.lieudit }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ reference.surface }}
-                                                                    </td>
-                                                                </tr>
-                                                            {% endwith %}
-                                                        {% endwith %}
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                        {% endif %}
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-lg-12">
-                                <div class="fr-card fr-card--no-arrow">
-                                    <div class="fr-card__body">
-                                        <div class="block--row-strech" id="{{object_field}}_div">
-                                            <div class="block--row-strech-1">
-                                                <h4 class="fr-card__title">
-                                                    Opération - EDD
-                                                </h4>
-                                            </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:edd' convention_uuid=convention.uuid %}" >
-                                                <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
-                                            </a>
-                                        </div>
-                                        <div class="table--limited-height">
-                                            {% include "common/display_text_and_files_if_exists.html" with label="EDD volumétrique" text=lot.edd_volumetrique_text file_list=lot.edd_volumetrique_files.values object_field="lot__edd_volumetrique__"|add:lot_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Mention de publication de l'EDD volumétrique" value=programme.mention_publication_edd_volumetrique object_field="programme__mention_publication_edd_volumetrique__"|add:programme_uuid %}
-                                            {% include "common/display_text_and_files_if_exists.html" with label="EDD classique" text=lot.edd_classique_text file_list=lot.edd_classique_files.values object_field="lot__edd_classique__"|add:lot_uuid %}
-                                            {% include "common/display_field_if_exists.html" with label="Mention de publication de l'EDD classique" value=programme.mention_publication_edd_classique object_field="programme__mention_publication_edd_classique__"|add:programme_uuid %}
-                                        </div>
-                                        <p class="fr-my-1w">EDD Simplifé : </p>
-                                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        {% if convention.statut != '1. Projet' %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='logement_edd' label="Logements de l'EDD" callback_click="refresh_opened_comments" %}
-                                                        {% endif %}
-                                                        <th scope="col">Financement {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col">Désignation {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col">Type {% include "common/form/required_field_star.html" %}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for lgt in logement_edds %}
-                                                        {% with lgt_uuid=lgt.uuid|slugify %}
-                                                            {% with main_object_field="logement_edd__uuid__"|add:lgt_uuid %}
-                                                                <tr id="{{main_object_field}}_group">
-                                                                    {% if convention.statut != '1. Projet' %}
-                                                                        <td id="{{main_object_field}}_div">
-                                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement de l'EDD" callback_click="refresh_opened_comments" %}
-                                                                        </td>
-                                                                    {% endif %}
-                                                                    <td>
-                                                                        {{lgt.financement}}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{lgt.designation}}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{lgt.typologie}}
-                                                                    </td>
-                                                                </tr>
-                                                            {% endwith %}
-                                                        {% endwith %}
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-lg-12">
-                                <div class="fr-card fr-card--no-arrow">
-                                    <div class="fr-card__body">
-                                        <div class="block--row-strech" id="{{object_field}}_div">
-                                            <div class="block--row-strech-1">
-                                                <h4 class="fr-card__title">
-                                                    Financements
-                                                </h4>
-                                            </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:financement' convention_uuid=convention.uuid %}" >
-                                                <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
-                                            </a>
-                                        </div>
-                                        <p class="fr-my-1w">Prêts & Subventions : </p>
-                                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        {% if convention.statut != '1. Projet' %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et Financements' callback_click="refresh_opened_comments" %}
-                                                        {% endif %}
-                                                        <th scope="col">Numéro</th>
-                                                        <th scope="col">Date d'octroi</th>
-                                                        <th scope="col">Durée (en années)</th>
-                                                        <th scope="col">Montant (en €) {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col">Préteur</th>
-                                                        <th scope="col">Préciser le prêteur si 'Autre'</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for pret in convention.pret_set.all %}
-                                                        {% with pret_uuid=pret.uuid|slugify %}
-                                                            {% with main_object_field="pret__uuid__"|add:pret_uuid %}
-                                                                <tr id="{{main_object_field}}_group">
-                                                                    {% if convention.statut != '1. Projet' %}
-                                                                        <td id="{{main_object_field}}_div">
-                                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Prêt ou financement" callback_click="refresh_opened_comments" %}
-                                                                        </td>
-                                                                    {% endif %}
-                                                                    <td>
-                                                                        {{ pret.numero|default_if_none:'-' }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ pret.date_octroi|default_if_none:'-' }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ pret.duree|default_if_none:'-' }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ pret.montant }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ pret.preteur }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ pret.autre }}
-                                                                    </td>
-                                                                </tr>
-                                                            {% endwith %}
-                                                        {% endwith %}
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        {% include "common/display_field_if_exists.html" with label="Date de fin de la convention" value=convention.date_fin_conventionnement object_field="convention__annee_fin_conventionnement__"|add:convention_uuid %}
-                                        {% include "common/display_field_if_exists.html" with label="Fonds propres" value=convention.fond_propre object_field="convention__fond_propre__"|add:convention_uuid %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-lg-12">
-                                <div class="fr-card fr-card--no-arrow">
-                                    <div class="fr-card__body">
-                                        <div class="block--row-strech" id="{{object_field}}_div">
-                                            <div class="block--row-strech-1">
-                                                <h4 class="fr-card__title">
-                                                    Logements
-                                                </h4>
-                                            </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:logements' convention_uuid=convention.uuid %}" >
-                                                <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
-                                            </a>
-                                        </div>
-                                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        {% if convention.statut != '1. Projet' %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' callback_click="refresh_opened_comments" %}
-                                                        {% endif %}
-                                                        <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Surface habitable {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Surface des annexes réelle {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Surface des annexes retenue dans la SU {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Surface Utile {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Loyer maximum en € par m² de surface utile {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Coefficient propre au logement {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Loyer maximum du logement en € {% include "common/form/required_field_star.html" %}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for logement in logements %}
-                                                        {% with logement_uuid=logement.uuid|slugify %}
-                                                            {% with main_object_field="logement__uuid__"|add:logement_uuid %}
-                                                                <tr id="{{main_object_field}}_group">
-                                                                    {% if convention.statut != '1. Projet' %}
-                                                                        <td id="{{main_object_field}}_div">
-                                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement" callback_click="refresh_opened_comments" %}
-                                                                        </td>
-                                                                    {% endif %}
-                                                                    <td>
-                                                                        {{ logement.designation }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ logement.typologie }}
-                                                                    </td>
-                                                                    <td id="lgt_sh">
-                                                                        {{ logement.surface_habitable|floatformat:2 }}
-                                                                    </td>
-                                                                    <td id="lgt_sa">
-                                                                        {{ logement.surface_annexes|floatformat:2 }}
-                                                                    </td>
-                                                                    <td id="lgt_sar">
-                                                                        {{ logement.surface_annexes_retenue|floatformat:2 }}
-                                                                    </td>
-                                                                    <td id="lgt_su">
-                                                                        {{ logement.surface_utile|floatformat:2 }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ logement.loyer_par_metre_carre|floatformat:2 }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ logement.coeficient|floatformat:4 }}
-                                                                    </td>
-                                                                    <td id="lgt_loyer">
-                                                                        {{ logement.loyer|floatformat:2 }}
-                                                                    </td>
-                                                                </tr>
-                                                            {% endwith %}
-                                                        {% endwith %}
-                                                    {% endfor %}
-                                                    <tr>
-                                                        <td colspan="{% if convention.statut != '1. Projet' %}3{% else %}2{% endif %}" class="fr-text--lg">
-                                                            Total
-                                                        </td>
-                                                        <td id="total_sh" class="fr-text--lg">
-                                                        </td>
-                                                        <td id="total_sa" class="fr-text--lg">
-                                                        </td>
-                                                        <td id="total_sar" class="fr-text--lg">
-                                                        </td>
-                                                        <td id="total_su" class="fr-text--lg">
-                                                        </td>
-                                                        <td>
-                                                        </td>
-                                                        <td>
-                                                        </td>
-                                                        <td id="total_loyer" class="fr-text--lg">
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-                                        {% include "common/display_field_if_exists.html" with label="loyer dérogatoire" value=lot.loyer_derogatoire object_field="lot__loyer_derogatoire__"|add:lot_uuid %}
-                                        {% include "common/display_field_if_exists.html" with label="Nombre de logements à louer en plus à des à des ménages dont les ressources n'excèdent pas le plafond" value=lot.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:lot_uuid %}
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-lg-12">
-                                <div class="fr-card fr-card--no-arrow">
-                                    <div class="fr-card__body">
-                                        <div class="block--row-strech" id="{{object_field}}_div">
-                                            <div class="block--row-strech-1">
-                                                <h4 class="fr-card__title">
-                                                    Annexes
-                                                </h4>
-                                            </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:annexes' convention_uuid=convention.uuid %}" >
-                                                <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
-                                            </a>
-                                        </div>
-                                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        {% if convention.statut != '1. Projet' %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" callback_click="refresh_opened_comments" %}
-                                                        {% endif %}
-                                                        <th scope="col" class="col__width--150">Type d'annexe {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--200">Désignation des logements {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--150">Typologie des logements {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Surface de l'annexe {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Loyer unitaire en € {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--120">Loyer maximum du logement en € {% include "common/form/required_field_star.html" %}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for annexe in annexes %}
-                                                        {% with annexe_uuid=annexe.uuid|slugify %}
-                                                            {% with main_object_field="annexe__uuid__"|add:annexe_uuid %}
-                                                                <tr id="{{main_object_field}}_group">
-                                                                    {% if convention.statut != '1. Projet' %}
-                                                                        <td id="{{main_object_field}}_div">
-                                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Annexe" callback_click="refresh_opened_comments" %}
-                                                                        </td>
-                                                                    {% endif %}
-                                                                    <td>
-                                                                        {{ annexe.get_typologie_display }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ annexe.logement.designation }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ annexe.logement.get_typologie_display }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ annexe.surface_hors_surface_retenue|floatformat:2 }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ annexe.loyer_par_metre_carre|floatformat:2 }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ annexe.loyer|floatformat:2 }}
-                                                                    </td>
-                                                                </tr>
-                                                            {% endwith %}
-                                                        {% endwith %}
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                    {% with bailleur_uuid=bailleur.uuid|slugify %}
                                         <div class="fr-grid-row fr-grid-row--gutters">
-                                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_caves label="Caves" object_field="lot__annexe_caves__"|add:lot_uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_soussols label="Sous-sols" object_field="lot__annexe_soussols__"|add:lot_uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_remises label="Remises" object_field="lot__annexe_remises__"|add:lot_uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_ateliers label="Ateliers" object_field="lot__annexe_ateliers__"|add:lot_uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_sechoirs label="Séchoirs" object_field="lot__annexe_sechoirs__"|add:lot_uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_celliers label="Celliers extérieurs au logement" object_field="lot__annexe_celliers__"|add:lot_uuid %}
+                                            <div class="fr-col-12 fr-col-lg-6">
+                                                <div class="fr-mb-2w">
+                                                    <b>{% include "common/display_field_if_exists.html" with value=bailleur.nom object_field="bailleur__nom__"|add:bailleur_uuid %}</b>
+                                                    <div class="fr-ml-3w">
+                                                        {% include "common/display_field_if_exists.html" with value=bailleur.adresse object_field="bailleur__adresse__"|add:bailleur_uuid %}
+                                                        <div class="fr-grid-row fr-grid-row--gutters">
+                                                            <div class="fr-col-6">
+                                                                {% include "common/display_field_if_exists.html" with value=bailleur.code_postal object_field="bailleur__code_postal__"|add:bailleur_uuid %}
+                                                            </div>
+                                                            <div class="fr-col-6">
+                                                                {% include "common/display_field_if_exists.html" with value=bailleur.ville object_field="bailleur__ville__"|add:bailleur_uuid %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    {% include "common/display_field_if_exists.html" with label="SIRET" value=bailleur.siret object_field="bailleur__siret__"|add:bailleur_uuid %}
+                                                    {% include "common/display_field_if_exists.html" with label="Capital social" value=bailleur.capital_social object_field="bailleur__capital_social__"|add:bailleur_uuid %}
+                                                </div>
                                             </div>
-                                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_resserres label="Resserres" object_field="lot__annexe_resserres__"|add:lot_uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_combles label="Combles et greniers aménageables" object_field="lot__annexe_combles__"|add:lot_uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_balcons label="Balcons" object_field="lot__annexe_balcons__"|add:lot_uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_loggias label="Loggias et Vérandas" object_field="lot__annexe_loggias__"|add:lot_uuid %}
-                                                {% include "common/display_checkbox.html" with value=lot.annexe_terrasses label="Terrasses" sublabel="Dans la limite de 9 m2, les parties de terrasses accessibles en étage ou aménagées sur ouvrage enterré ou à moitié enterré" object_field="lot__annexe_terrasses__"|add:lot_uuid %}
+                                            <div class="fr-col-12 fr-col-lg-6">
+                                                <p class="fr-my-1w"><b>Signataire de la convention</b></p>
+                                                <div class="fr-ml-3w">
+                                                    {% include "common/display_field_if_exists.html" with value=bailleur.signataire_nom object_field="bailleur__signataire_nom__"|add:bailleur_uuid %}
+                                                    <i>{% include "common/display_field_if_exists.html" with value=bailleur.signataire_fonction object_field="bailleur__signataire_fonction__"|add:bailleur_uuid %}</i>
+                                                    {% include "common/display_field_if_exists.html" with label="Date de délibération" value=bailleur.signataire_date_deliberation object_field="bailleur__signataire_date_deliberation__"|add:bailleur_uuid %}
+                                                </div>
                                             </div>
                                         </div>
-
-
-
-
-                                    </div>
+                                    {% endwith %}
                                 </div>
                             </div>
                         </div>
-
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-lg-12">
-                                <div class="fr-card fr-card--no-arrow">
-                                    <div class="fr-card__body">
-                                        <div class="block--row-strech" id="{{object_field}}_div">
-                                            <div class="block--row-strech-1">
-                                                <h4 class="fr-card__title">
-                                                    Stationnements
-                                                </h4>
-                                            </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:stationnements' convention_uuid=convention.uuid %}" >
-                                                <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
-                                            </a>
-                                        </div>
-                                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        {% if convention.statut != '1. Projet' %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='type_stationnement' label="Type de stationnements" callback_click="refresh_opened_comments" %}
-                                                        {% endif %}
-                                                        <th scope="col" class="col__width--150">Type de stationnement {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--200">Nombre de stationnements {% include "common/form/required_field_star.html" %}</th>
-                                                        <th scope="col" class="col__width--150">Loyer maximum en € {% include "common/form/required_field_star.html" %}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for stationnement in stationnements %}
-                                                        {% with stationnement_uuid=stationnement.uuid|slugify %}
-                                                            {% with main_object_field="type_stationnement__uuid__"|add:stationnement_uuid %}
-                                                                <tr id="{{main_object_field}}_group">
-                                                                    {% if convention.statut != '1. Projet' %}
-                                                                        <td id="{{main_object_field}}_div">
-                                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Type de stationnement" callback_click="refresh_opened_comments" %}
-                                                                        </td>
-                                                                    {% endif %}
-                                                                    <td>
-                                                                        {{ stationnement.get_typologie_display }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ stationnement.nb_stationnements }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ stationnement.loyer|floatformat:2 }}
-                                                                    </td>
-                                                                </tr>
-                                                            {% endwith %}
-                                                        {% endwith %}
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                    {% endif %}
+                    <div class="fr-col-12 fr-col-lg-6">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body">
+                                <div class="block--row-strech" id="{{object_field}}_div">
+                                    <div class="block--row-strech-1">
+                                        <h4 class="fr-card__title">
+                                            Opération
+                                        </h4>
                                     </div>
+                                    {% if not convention.is_validated %}
+                                        <a class="fr-link fr-mb-1w" href="{% url 'conventions:programme' convention_uuid=convention.uuid %}" >
+                                            <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                <div class="table--limited-height">
+                                    <b>{% include "common/display_field_if_exists.html" with label="Numéro de décision" value=programme.numero_galion %}</b>
+                                    {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom object_field="programme__nom__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse object_field="programme__adresse__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Code postal" value=programme.code_postal object_field="programme__code_postal__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville object_field="programme__ville__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements object_field="programme__nb_logements__"|add:programme_uuid %}
+                                    {% include "common/display_checkbox.html" with label="ANRU" value=programme.anru object_field="programme__anru__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Type d'habitat" value=programme.get_type_habitat_display object_field="programme__type_habitat__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Type d'opération" value=programme.get_type_operation_display object_field="programme__type_operation__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Nombre de locaux commerciaux (non-conventionnés)" value=programme.nb_locaux_commerciaux object_field="programme__nb_locaux_commerciaux__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Nombre de bureaux (non-conventionnés)" value=programme.nb_bureaux object_field="programme__nb_bureaux__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Autres logements non-conventionnés" value=programme.autres_locaux_hors_convention object_field="programme__autres_locaux_hors_convention__"|add:programme_uuid %}
                                 </div>
                             </div>
                         </div>
-
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-lg-12">
-                                <div class="fr-card fr-card--no-arrow">
-                                    <div class="fr-card__body">
-                                        <div class="block--row-strech" id="{{object_field}}_div">
-                                            <div class="block--row-strech-1">
-                                                <h4 class="fr-card__title">
-                                                    Informations à l'attention du service instructeur
-                                                </h4>
-                                            </div>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:comments' convention_uuid=convention.uuid %}" >
-                                                <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
-                                            </a>
-                                        </div>
-                                        <div class="table--limited-height">
-                                            {% include "common/display_text_and_files_if_exists.html" with text=convention.comments_text file_list=convention.comments_files.values %}
-                                        </div>
+                    </div>
+                    <div class="fr-col-12 fr-col-lg-6">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body">
+                                <div class="block--row-strech" id="{{object_field}}_div">
+                                    <div class="block--row-strech-1">
+                                        <h4 class="fr-card__title">
+                                            Opération - informations cadastrales
+                                        </h4>
                                     </div>
+                                    {% if not convention.is_validated %}
+                                        <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}" >
+                                            <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                <div class="table--limited-height">
+                                    {% include "common/display_field_if_exists.html" with label="Numéro de permis construire" value=programme.permis_construire object_field="programme__permis_construire__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Date de l'acte notarié" value=programme.date_acte_notarie object_field="programme__date_acte_notarie__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Date d'achat" value=programme.date_achat object_field="programme__date_achat__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Date d'achèvement previsible" value=programme.date_achevement_previsible object_field="programme__date_achevement_previsible__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Date d'achèvement ou d'obtention de certificat de conformité" value=programme.date_achevement object_field="programme__date_achevement__"|add:programme_uuid %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Vendeur" text=programme.vendeur_text file_list=programme.vendeur_files.values object_field="programme__vendeur__"|add:programme_uuid %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Acquéreur" text=programme.acquereur_text file_list=programme.acquereur_files.values object_field="programme__acquereur__"|add:programme_uuid %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Référence du notaire" text=programme.reference_notaire_text file_list=programme.reference_notaire_files.values object_field="programme__reference_notaire__"|add:programme_uuid %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Référence de publication de l'acte" text=programme.reference_publication_acte_text file_list=programme.reference_publication_acte_files.values object_field="programme__reference_publication_acte__"|add:programme_uuid %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Acte de propriété / Acte notarial" text=programme.acte_de_propriete_text file_list=programme.acte_de_propriete_files.values object_field="programme__acte_de_propriete__"|add:programme_uuid %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Certificat d'adressage / Autres" text=programme.certificat_adressage_text file_list=programme.certificat_adressage_files.values object_field="programme__certificat_adressage__"|add:programme_uuid %}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                {% if request.session.is_bailleur and convention.is_bailleur_editable %}
-                    {% include "conventions/actions/delete.html" with convention=convention %}
-                {% endif %}
 
-                <div class="form-button-footer fr-col-md-12 fr-py-5w">
-                    {% if request.session.is_bailleur %}
-                        {% if convention.is_bailleur_editable %}
-                            <div>
-                                <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}">
-                                    {% csrf_token %}
-                                    <button class="fr-btn fr-btn--secondary">
-                                        Enregistrer le Brouillon
-                                    </button>
-                                    <button name="SubmitConvention" value=True class="fr-btn">
-                                        Soumettre au service instructeur
-                                    </button>
-                                </form>
-                            </div>
-                            {% include "common/button/previous.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
-                        {% else %}
-                            {% include "common/button/return_convention_index.html" %}
-                        {% endif %}
-                    {% endif %}
-                    {% if request.session.is_instructeur %}
-                        {% if convention.is_instructeur_editable %}
-                            <div>
-                                <form method="post" action="{% url 'conventions:generate' convention_uuid=convention.uuid %}">
-                                    {% csrf_token %}
-                                    <button class="fr-btn">
-                                        Générer et Télécharger la convention
-                                    </button>
-                                    <a class="fr-link fr-fi-information-line" href="https://docs.apilos.beta.gouv.fr/utiliser-la-plateforme/comment-signer-une-convention#generer-la-convention-au-format-word-ou-openoffice" target="_blank"></a>
 
-                                </form>
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-col-lg-12">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body">
+                                <div class="block--row-strech" id="{{object_field}}_div">
+                                    <div class="block--row-strech-1">
+                                        <h4 class="fr-card__title">
+                                            Références cadastrales et effet relatif
+                                        </h4>
+                                    </div>
+                                    {% if not convention.is_validated %}
+                                        <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
+                                            <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                {% include "common/display_text_and_files_if_exists.html" with text=programme.reference_cadastrale_text file_list=programme.reference_cadastrale_files.values %}
+                                <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                {% if convention.statut != '1. Projet' %}
+                                                    {% include 'common/utils/comments_header.html' with object_name='reference_cadastrale' label='Références cadastrales' callback_click="refresh_opened_comments" %}
+                                                {% endif %}
+                                                <th scope="col">Section {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col">Numéro {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col">Lieudit {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col">Surface {% include "common/form/required_field_star.html" %}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for reference in reference_cadastrales %}
+                                                {% with reference_uuid=reference.uuid|slugify %}
+                                                    {% with main_object_field="reference_cadastrale__uuid__"|add:reference_uuid %}
+                                                        <tr id="{{main_object_field}}_group">
+                                                            {% if convention.statut != '1. Projet' %}
+                                                                <td id="{{main_object_field}}_div">
+                                                                    {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Référence cadastrale" callback_click="refresh_opened_comments" %}
+                                                                </td>
+                                                            {% endif %}
+                                                            <td>
+                                                                {{ reference.section }}
+                                                            </td>
+                                                            <td>
+                                                                {{ reference.numero }}
+                                                            </td>
+                                                            <td>
+                                                                {{ reference.lieudit }}
+                                                            </td>
+                                                            <td>
+                                                                {{ reference.surface }}
+                                                            </td>
+                                                        </tr>
+                                                    {% endwith %}
+                                                {% endwith %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        {% else %}
-                            {% include "common/button/return_convention_index.html" %}
-                        {% endif %}
-                    {% endif %}
+                        </div>
+                    </div>
                 </div>
 
-                {% include "conventions/bailleur_notification.html" %}
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-col-lg-12">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body">
+                                <div class="block--row-strech" id="{{object_field}}_div">
+                                    <div class="block--row-strech-1">
+                                        <h4 class="fr-card__title">
+                                            Opération - EDD
+                                        </h4>
+                                    </div>
+                                    {% if not convention.is_validated %}
+                                        <a class="fr-link fr-mb-1w" href="{% url 'conventions:edd' convention_uuid=convention.uuid %}" >
+                                            <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                <div class="table--limited-height">
+                                    {% include "common/display_text_and_files_if_exists.html" with label="EDD volumétrique" text=lot.edd_volumetrique_text file_list=lot.edd_volumetrique_files.values object_field="lot__edd_volumetrique__"|add:lot_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Mention de publication de l'EDD volumétrique" value=programme.mention_publication_edd_volumetrique object_field="programme__mention_publication_edd_volumetrique__"|add:programme_uuid %}
+                                    {% include "common/display_text_and_files_if_exists.html" with label="EDD classique" text=lot.edd_classique_text file_list=lot.edd_classique_files.values object_field="lot__edd_classique__"|add:lot_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Mention de publication de l'EDD classique" value=programme.mention_publication_edd_classique object_field="programme__mention_publication_edd_classique__"|add:programme_uuid %}
+                                </div>
+                                <p class="fr-my-1w">EDD Simplifé : </p>
+                                <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                {% if convention.statut != '1. Projet' %}
+                                                    {% include 'common/utils/comments_header.html' with object_name='logement_edd' label="Logements de l'EDD" callback_click="refresh_opened_comments" %}
+                                                {% endif %}
+                                                <th scope="col">Financement {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col">Désignation {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col">Type {% include "common/form/required_field_star.html" %}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for lgt in logement_edds %}
+                                                {% with lgt_uuid=lgt.uuid|slugify %}
+                                                    {% with main_object_field="logement_edd__uuid__"|add:lgt_uuid %}
+                                                        <tr id="{{main_object_field}}_group">
+                                                            {% if convention.statut != '1. Projet' %}
+                                                                <td id="{{main_object_field}}_div">
+                                                                    {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement de l'EDD" callback_click="refresh_opened_comments" %}
+                                                                </td>
+                                                            {% endif %}
+                                                            <td>
+                                                                {{lgt.financement}}
+                                                            </td>
+                                                            <td>
+                                                                {{lgt.designation}}
+                                                            </td>
+                                                            <td>
+                                                                {{lgt.typologie}}
+                                                            </td>
+                                                        </tr>
+                                                    {% endwith %}
+                                                {% endwith %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                {% include "conventions/instructeur_notification.html" %}
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-col-lg-12">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body">
+                                <div class="block--row-strech" id="{{object_field}}_div">
+                                    <div class="block--row-strech-1">
+                                        <h4 class="fr-card__title">
+                                            Financements
+                                        </h4>
+                                    </div>
+                                    {% if not convention.is_validated %}
+                                        <a class="fr-link fr-mb-1w" href="{% url 'conventions:financement' convention_uuid=convention.uuid %}" >
+                                            <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                <p class="fr-my-1w">Prêts & Subventions : </p>
+                                <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                {% if convention.statut != '1. Projet' %}
+                                                    {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et Financements' callback_click="refresh_opened_comments" %}
+                                                {% endif %}
+                                                <th scope="col">Numéro</th>
+                                                <th scope="col">Date d'octroi</th>
+                                                <th scope="col">Durée (en années)</th>
+                                                <th scope="col">Montant (en €) {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col">Préteur</th>
+                                                <th scope="col">Préciser le prêteur si 'Autre'</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for pret in convention.pret_set.all %}
+                                                {% with pret_uuid=pret.uuid|slugify %}
+                                                    {% with main_object_field="pret__uuid__"|add:pret_uuid %}
+                                                        <tr id="{{main_object_field}}_group">
+                                                            {% if convention.statut != '1. Projet' %}
+                                                                <td id="{{main_object_field}}_div">
+                                                                    {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Prêt ou financement" callback_click="refresh_opened_comments" %}
+                                                                </td>
+                                                            {% endif %}
+                                                            <td>
+                                                                {{ pret.numero|default_if_none:'-' }}
+                                                            </td>
+                                                            <td>
+                                                                {{ pret.date_octroi|default_if_none:'-' }}
+                                                            </td>
+                                                            <td>
+                                                                {{ pret.duree|default_if_none:'-' }}
+                                                            </td>
+                                                            <td>
+                                                                {{ pret.montant }}
+                                                            </td>
+                                                            <td>
+                                                                {{ pret.preteur }}
+                                                            </td>
+                                                            <td>
+                                                                {{ pret.autre }}
+                                                            </td>
+                                                        </tr>
+                                                    {% endwith %}
+                                                {% endwith %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% include "common/display_field_if_exists.html" with label="Date de fin de la convention" value=convention.date_fin_conventionnement object_field="convention__annee_fin_conventionnement__"|add:convention_uuid %}
+                                {% include "common/display_field_if_exists.html" with label="Fonds propres" value=convention.fond_propre object_field="convention__fond_propre__"|add:convention_uuid %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                {% include "conventions/instructeur_validation.html" %}
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-col-lg-12">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body">
+                                <div class="block--row-strech" id="{{object_field}}_div">
+                                    <div class="block--row-strech-1">
+                                        <h4 class="fr-card__title">
+                                            Logements
+                                        </h4>
+                                    </div>
+                                    {% if not convention.is_validated %}
+                                        <a class="fr-link fr-mb-1w" href="{% url 'conventions:logements' convention_uuid=convention.uuid %}" >
+                                            <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                {% if convention.statut != '1. Projet' %}
+                                                    {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' callback_click="refresh_opened_comments" %}
+                                                {% endif %}
+                                                <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--120">Surface habitable {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--120">Surface des annexes réelle {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--120">Surface des annexes retenue dans la SU {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--120">Surface Utile {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--120">Loyer maximum en € par m² de surface utile {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--120">Coefficient propre au logement {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--120">Loyer maximum du logement en € {% include "common/form/required_field_star.html" %}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for logement in logements %}
+                                                {% with logement_uuid=logement.uuid|slugify %}
+                                                    {% with main_object_field="logement__uuid__"|add:logement_uuid %}
+                                                        <tr id="{{main_object_field}}_group">
+                                                            {% if convention.statut != '1. Projet' %}
+                                                                <td id="{{main_object_field}}_div">
+                                                                    {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement" callback_click="refresh_opened_comments" %}
+                                                                </td>
+                                                            {% endif %}
+                                                            <td>
+                                                                {{ logement.designation }}
+                                                            </td>
+                                                            <td>
+                                                                {{ logement.typologie }}
+                                                            </td>
+                                                            <td id="lgt_sh">
+                                                                {{ logement.surface_habitable|floatformat:2 }}
+                                                            </td>
+                                                            <td id="lgt_sa">
+                                                                {{ logement.surface_annexes|floatformat:2 }}
+                                                            </td>
+                                                            <td id="lgt_sar">
+                                                                {{ logement.surface_annexes_retenue|floatformat:2 }}
+                                                            </td>
+                                                            <td id="lgt_su">
+                                                                {{ logement.surface_utile|floatformat:2 }}
+                                                            </td>
+                                                            <td>
+                                                                {{ logement.loyer_par_metre_carre|floatformat:2 }}
+                                                            </td>
+                                                            <td>
+                                                                {{ logement.coeficient|floatformat:4 }}
+                                                            </td>
+                                                            <td id="lgt_loyer">
+                                                                {{ logement.loyer|floatformat:2 }}
+                                                            </td>
+                                                        </tr>
+                                                    {% endwith %}
+                                                {% endwith %}
+                                            {% endfor %}
+                                            <tr>
+                                                <td colspan="{% if convention.statut != '1. Projet' %}3{% else %}2{% endif %}" class="fr-text--lg">
+                                                    Total
+                                                </td>
+                                                <td id="total_sh" class="fr-text--lg">
+                                                </td>
+                                                <td id="total_sa" class="fr-text--lg">
+                                                </td>
+                                                <td id="total_sar" class="fr-text--lg">
+                                                </td>
+                                                <td id="total_su" class="fr-text--lg">
+                                                </td>
+                                                <td>
+                                                </td>
+                                                <td>
+                                                </td>
+                                                <td id="total_loyer" class="fr-text--lg">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {% include "common/display_field_if_exists.html" with label="loyer dérogatoire" value=lot.loyer_derogatoire object_field="lot__loyer_derogatoire__"|add:lot_uuid %}
+                                {% include "common/display_field_if_exists.html" with label="Nombre de logements à louer en plus à des ménages dont les ressources n'excèdent pas le plafond" value=lot.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:lot_uuid %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-col-lg-12">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body">
+                                <div class="block--row-strech" id="{{object_field}}_div">
+                                    <div class="block--row-strech-1">
+                                        <h4 class="fr-card__title">
+                                            Annexes
+                                        </h4>
+                                    </div>
+                                    {% if not convention.is_validated %}
+                                        <a class="fr-link fr-mb-1w" href="{% url 'conventions:annexes' convention_uuid=convention.uuid %}" >
+                                            <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                {% if convention.statut != '1. Projet' %}
+                                                    {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" callback_click="refresh_opened_comments" %}
+                                                {% endif %}
+                                                <th scope="col" class="col__width--150">Type d'annexe {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--200">Désignation des logements {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--150">Typologie des logements {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--120">Surface de l'annexe {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--120">Loyer unitaire en € {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--120">Loyer maximum du logement en € {% include "common/form/required_field_star.html" %}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for annexe in annexes %}
+                                                {% with annexe_uuid=annexe.uuid|slugify %}
+                                                    {% with main_object_field="annexe__uuid__"|add:annexe_uuid %}
+                                                        <tr id="{{main_object_field}}_group">
+                                                            {% if convention.statut != '1. Projet' %}
+                                                                <td id="{{main_object_field}}_div">
+                                                                    {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Annexe" callback_click="refresh_opened_comments" %}
+                                                                </td>
+                                                            {% endif %}
+                                                            <td>
+                                                                {{ annexe.get_typologie_display }}
+                                                            </td>
+                                                            <td>
+                                                                {{ annexe.logement.designation }}
+                                                            </td>
+                                                            <td>
+                                                                {{ annexe.logement.get_typologie_display }}
+                                                            </td>
+                                                            <td>
+                                                                {{ annexe.surface_hors_surface_retenue|floatformat:2 }}
+                                                            </td>
+                                                            <td>
+                                                                {{ annexe.loyer_par_metre_carre|floatformat:2 }}
+                                                            </td>
+                                                            <td>
+                                                                {{ annexe.loyer|floatformat:2 }}
+                                                            </td>
+                                                        </tr>
+                                                    {% endwith %}
+                                                {% endwith %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="fr-grid-row fr-grid-row--gutters">
+                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+
+                                        {% include "common/display_checkbox.html" with value=lot.annexe_caves label="Caves" object_field="lot__annexe_caves__"|add:lot_uuid %}
+                                        {% include "common/display_checkbox.html" with value=lot.annexe_soussols label="Sous-sols" object_field="lot__annexe_soussols__"|add:lot_uuid %}
+                                        {% include "common/display_checkbox.html" with value=lot.annexe_remises label="Remises" object_field="lot__annexe_remises__"|add:lot_uuid %}
+                                        {% include "common/display_checkbox.html" with value=lot.annexe_ateliers label="Ateliers" object_field="lot__annexe_ateliers__"|add:lot_uuid %}
+                                        {% include "common/display_checkbox.html" with value=lot.annexe_sechoirs label="Séchoirs" object_field="lot__annexe_sechoirs__"|add:lot_uuid %}
+                                        {% include "common/display_checkbox.html" with value=lot.annexe_celliers label="Celliers extérieurs au logement" object_field="lot__annexe_celliers__"|add:lot_uuid %}
+                                    </div>
+                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                        {% include "common/display_checkbox.html" with value=lot.annexe_resserres label="Resserres" object_field="lot__annexe_resserres__"|add:lot_uuid %}
+                                        {% include "common/display_checkbox.html" with value=lot.annexe_combles label="Combles et greniers aménageables" object_field="lot__annexe_combles__"|add:lot_uuid %}
+                                        {% include "common/display_checkbox.html" with value=lot.annexe_balcons label="Balcons" object_field="lot__annexe_balcons__"|add:lot_uuid %}
+                                        {% include "common/display_checkbox.html" with value=lot.annexe_loggias label="Loggias et Vérandas" object_field="lot__annexe_loggias__"|add:lot_uuid %}
+                                        {% include "common/display_checkbox.html" with value=lot.annexe_terrasses label="Terrasses" sublabel="Dans la limite de 9 m2, les parties de terrasses accessibles en étage ou aménagées sur ouvrage enterré ou à moitié enterré" object_field="lot__annexe_terrasses__"|add:lot_uuid %}
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-col-lg-12">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body">
+                                <div class="block--row-strech" id="{{object_field}}_div">
+                                    <div class="block--row-strech-1">
+                                        <h4 class="fr-card__title">
+                                            Stationnements
+                                        </h4>
+                                    </div>
+                                    {% if not convention.is_validated %}
+                                        <a class="fr-link fr-mb-1w" href="{% url 'conventions:stationnements' convention_uuid=convention.uuid %}" >
+                                            <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                {% if convention.statut != '1. Projet' %}
+                                                    {% include 'common/utils/comments_header.html' with object_name='type_stationnement' label="Type de stationnements" callback_click="refresh_opened_comments" %}
+                                                {% endif %}
+                                                <th scope="col" class="col__width--150">Type de stationnement {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--200">Nombre de stationnements {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col" class="col__width--150">Loyer maximum en € {% include "common/form/required_field_star.html" %}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for stationnement in stationnements %}
+                                                {% with stationnement_uuid=stationnement.uuid|slugify %}
+                                                    {% with main_object_field="type_stationnement__uuid__"|add:stationnement_uuid %}
+                                                        <tr id="{{main_object_field}}_group">
+                                                            {% if convention.statut != '1. Projet' %}
+                                                                <td id="{{main_object_field}}_div">
+                                                                    {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Type de stationnement" callback_click="refresh_opened_comments" %}
+                                                                </td>
+                                                            {% endif %}
+                                                            <td>
+                                                                {{ stationnement.get_typologie_display }}
+                                                            </td>
+                                                            <td>
+                                                                {{ stationnement.nb_stationnements }}
+                                                            </td>
+                                                            <td>
+                                                                {{ stationnement.loyer|floatformat:2 }}
+                                                            </td>
+                                                        </tr>
+                                                    {% endwith %}
+                                                {% endwith %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-col-lg-12">
+                        <div class="fr-card fr-card--no-arrow">
+                            <div class="fr-card__body">
+                                <div class="block--row-strech" id="{{object_field}}_div">
+                                    <div class="block--row-strech-1">
+                                        <h4 class="fr-card__title">
+                                            Informations à l'attention du service instructeur
+                                        </h4>
+                                    </div>
+                                    {% if not convention.is_validated %}
+                                        <a class="fr-link fr-mb-1w" href="{% url 'conventions:comments' convention_uuid=convention.uuid %}" >
+                                            <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                <div class="table--limited-height">
+                                    {% include "common/display_text_and_files_if_exists.html" with text=convention.comments_text file_list=convention.comments_files.values %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <turbo-frame id="convention_type1and2_options_block" data-turbo="true">
+                    {% include "conventions/type1and2_options.html" %}
+
+                    <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
+                        {% if request.session.is_instructeur and convention.is_instruction_ongoing %}
+                            {% include "conventions/actions/generate_convention.html" %}
+                        {% endif %}
+                        {% if request.session.is_instructeur and convention.is_a_signer %}
+                            {% include "conventions/actions/back_to_instruction.html" %}
+                        {% endif %}
+                    </div>
+                    {% if request.session.is_bailleur and convention.is_project %}
+                        <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
+                            {% include "conventions/actions/delete.html" with convention=convention %}
+                            {% include "conventions/actions/submit_convention.html" %}
+                        </div>
+                    {% endif %}
+
+                    {% include "conventions/actions/bailleur_notification.html" %}
+
+                    {% include "conventions/actions/instructeur_notification.html" %}
+
+                    {% include "conventions/actions/instructeur_validation.html" %}
+                </turbo-frame>
+
+
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12">
+
+                        <div class="form-button-footer fr-col-md-12 fr-py-5w">
+                            {% if request.session.is_bailleur %}
+                                {% if convention.is_bailleur_editable %}
+                                    {% include "common/button/previous.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
+                                {% else %}
+                                    {% include "common/button/return_convention_index.html" %}
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>

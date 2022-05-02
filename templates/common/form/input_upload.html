@@ -88,10 +88,8 @@
                 value="{{ object_uuid }}">
 
             <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                //        document.addEventListener("DOMContentLoaded", function() {
                 let {{form_input.id_for_label}} = init_dropzone_from_file("{{form_input_files.id_for_label}}" {% if image_only %}, 'image/*'{% endif %});
                 init_dropzone_list({{form_input.id_for_label}},"{{form_input_files.id_for_label}}")
-                //        });
             </script>
 
         {% endif %}
