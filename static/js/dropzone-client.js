@@ -84,4 +84,14 @@ function init_dropzone_list(myDropzone,form_id) {
         var file = files[file_uuid]
         init_dropzone_thumbnail(myDropzone, file.filename, file.size, file.uuid, file.thumbnail)
     });
+    // Add event onpaste listener
+    document.onpaste = function(event){
+        const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+        items.forEach((item) => {
+            if (item.kind === 'file') {
+                // adds the file to your dropzone instance
+                myDropzone.addFile(item.getAsFile())
+            }
+        })
+    }
 }
