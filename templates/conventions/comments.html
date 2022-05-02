@@ -27,7 +27,7 @@
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12">
                         <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Informations complémentaires</h2> -->
-                        {% include "common/form/input_upload.html" with additional_informations=True form_input=form.comments form_input_files=form.comments_files object_name='convention' object_uuid=convention.uuid file_list=convention.comments_files.values textarea=True verticalDisplay=True object_field="convention__comments__"|add:form.uuid.value %}
+                        {% include "common/form/input_upload.html" with additional_informations_tooltip=True form_input=form.comments form_input_files=form.comments_files object_name='convention' object_uuid=convention.uuid file_list=convention.comments_files.values textarea=True verticalDisplay=True object_field="convention__comments__"|add:form.uuid.value %}
                     </div>
                 </div>
 

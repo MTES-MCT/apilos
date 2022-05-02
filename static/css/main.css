@@ -27,6 +27,24 @@
   color: #6A6A6A;
 }
 
+details {
+  display: inline;
+}
+details[open] {
+  display: block;
+}
+details > summary {
+  list-style: none;
+}
+details > summary::marker,
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details span.fr-hint-text {
+  display: inline;
+}
+
+
 .warning-notification {
   color: #E10600;
 }

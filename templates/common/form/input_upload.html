@@ -15,8 +15,12 @@
                     &nbsp;{% include "common/form/required_field_star.html" %}
                 {% endif %}
                 {% include "common/help_field.html" with form_input=form_input %}
-                {% if additional_informations %}
+                {% if additional_informations_tooltip %}
                     <br>{% include "common/additional_informations.html" with form_input=form_input %}
+                {% endif %}
+                {% if additional_informations %}
+                    <br>
+                    <div class="fr-hint-text">informations complémentaires à destination de l’instructeur</div>
                 {% endif %}
             </label>
             {% include "common/utils/comments_field.html" %}

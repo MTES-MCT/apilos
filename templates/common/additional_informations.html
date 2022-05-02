@@ -1,12 +1,7 @@
-
-<span class="fr-text--sm">(informations complémentaires<button class="fr-link fr-link--sm fr-fi-information-line content__helpicon" type='button' id="{{form_input.id_for_label}}_infocomp_button"></button>)
-    <div id="{{form_input.id_for_label}}_infocomp" hidden>
-        <span class="fr-hint-text">Cette information n'est pas utile pour générer le document de convention mais peut-être utile pour l'instruction</span>
-    </div>
-    <script type="text/javascript" nonce="{{request.csp_nonce}}">
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById("{{form_input.id_for_label}}_infocomp_button")
-                .addEventListener('click', function(){ toggle('{{form_input.id_for_label}}_infocomp') });
-        });
-    </script>
-</span>
+<details>
+    <summary class="fr-text--sm">
+        (informations complémentaires
+        <span class="fr-link fr-link--sm fr-fi-information-line content__helpicon"></span>)
+    </summary>
+    <span class="fr-hint-text">Cette information n'est pas utile pour générer le document de convention mais peut-être utile pour l'instruction</span>
+</details>

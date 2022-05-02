@@ -3,13 +3,21 @@
         <label class="fr-label" for="{{form_input.id_for_label}}">
             {{ label }}
             {% include "common/form/required_field.html" with form_input=form_input %}
-            {% include "common/help_field.html" with form_input=form_input %}
+            {% if helptext_visible %}
+                {% include "common/help_field.html" with form_input=form_input helptext_visible=True %}
+            {% else %}
+                {% include "common/help_field.html" with form_input=form_input %}
+            {% endif %}
         </label>
     {% elif form_input.label %}
         <label class="fr-label" for="{{form_input.id_for_label}}">
             {{ form_input.label }}
             {% include "common/form/required_field.html" with form_input=form_input %}
-            {% include "common/help_field.html" with form_input=form_input %}
+            {% if helptext_visible %}
+                {% include "common/help_field.html" with form_input=form_input helptext_visible=True %}
+            {% else %}
+                {% include "common/help_field.html" with form_input=form_input %}
+            {% endif %}
         </label>
     {% endif %}
     <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
