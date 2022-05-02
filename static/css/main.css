@@ -161,6 +161,16 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .header__logo {
   width:5rem;
 }
+.fr-header .fr-links-group > li {
+  flex-wrap: wrap;
+}
+.fr-header .fr-links-group > li.fr-mx-2w div {
+  display: block;
+}
+.width-100 {
+  width: 100%;
+}
+
 
 .text--center {
   text-align: center;
