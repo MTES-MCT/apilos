@@ -25,7 +25,7 @@ bailleur = {
     "siret": "12345678900000",
     "type_bailleur": TypeBailleur.OFFICE_PUBLIC_HLM,
     "capital_social": 10000.01,
-    "adresse": "1 place de la répubique",
+    "adresse": "1 place de la république",
     "code_postal": "00100",
     "ville": "Ma Ville",
     "signataire_nom": "John Doe",

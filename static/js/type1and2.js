@@ -39,7 +39,7 @@ function init_type_two_options(){
         object_field : 'type1and2',
         object_uuid : object_uuid,
         dialog_title : "Type de convention I ou II",
-        empty_toggle_on : "type1and2_group",
+        empty_toggle_on : "id_type1and2_group",
         callback_click: 'refresh_opened_comments',
         loading_img : '/static/icons/loading.gif'
     })
