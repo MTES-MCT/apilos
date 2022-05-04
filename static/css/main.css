@@ -75,7 +75,7 @@ details > summary::-webkit-details-marker {
   filter: invert(14%) sepia(62%) saturate(6699%) hue-rotate(244deg) brightness(56%) contrast(131%);
 }
 
-.bordered {
+.apilos-bordered {
   border: solid 1px #ccc;
 }
 
