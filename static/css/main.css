@@ -7,6 +7,18 @@
   font-style: italic;
 }
 
+.apilos-flex-wrap {
+  flex-wrap: wrap;
+}
+
+.apilos-d-inline {
+  display: inline;
+}
+
+.apilos-d-block {
+  display: block;
+}
+
 .fr-fi--xxl:after, .fr-fi--xxl:before {
   font-size: 4rem!important;
 }
@@ -27,12 +39,6 @@
   color: #6A6A6A;
 }
 
-details {
-  display: inline;
-}
-details[open] {
-  display: block;
-}
 details > summary {
   list-style: none;
 }
@@ -40,9 +46,7 @@ details > summary::marker,
 details > summary::-webkit-details-marker {
   display: none;
 }
-details span.fr-hint-text {
-  display: inline;
-}
+
 
 
 .warning-notification {
@@ -160,12 +164,6 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 
 .header__logo {
   width:5rem;
-}
-.fr-header .fr-links-group > li {
-  flex-wrap: wrap;
-}
-.fr-header .fr-links-group > li.fr-mx-2w div {
-  display: block;
 }
 .width-100 {
   width: 100%;
