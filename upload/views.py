@@ -60,27 +60,26 @@ def upload_file(request):
             dirpath=dirpath,
             content_type=file.content_type,
         )
-        handle_uploaded_file(uploaded_file, file)
+
+        if (
+            settings.DEFAULT_FILE_STORAGE
+            == "django.core.files.storage.FileSystemStorage"
+        ):
+            if not os.path.exists(settings.MEDIA_URL + dirpath):
+                try:
+                    os.makedirs(settings.MEDIA_URL + dirpath)
+                except OSError as exc:  # Guard against race condition
+                    if exc.errno != errno.EEXIST:
+                        raise
+
+        destination = default_storage.open(
+            f"{uploaded_file.dirpath}/{uploaded_file.uuid}_{uploaded_file.filename}",
+            "bw",
+        )
+        for chunk in file.chunks():
+            destination.write(chunk)
+        destination.close()
+
         uploaded_file.save()
         uploaded_files.append(UploadedFileSerializer(uploaded_file).data)
     return JsonResponse({"success": "true", "uploaded_file": uploaded_files})
-
-
-def handle_uploaded_file(uploaded_file, file):
-    # with default_storage.open(f'media/{uploaded_file.uuid}', 'w') as destination:
-
-    if settings.DEFAULT_FILE_STORAGE == "django.core.files.storage.FileSystemStorage":
-        if not os.path.exists(settings.MEDIA_URL + uploaded_file.dirpath):
-            try:
-                os.makedirs(settings.MEDIA_URL + uploaded_file.dirpath)
-            except OSError as exc:  # Guard against race condition
-                if exc.errno != errno.EEXIST:
-                    raise
-
-    destination = default_storage.open(
-        f"{uploaded_file.dirpath}/{uploaded_file.uuid}_{uploaded_file.filename}",
-        "bw",
-    )
-    for chunk in file.chunks():
-        destination.write(chunk)
-    destination.close()
