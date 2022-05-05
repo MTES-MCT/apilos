@@ -15,10 +15,11 @@
     color: #fff;
     transition: width 0.7s;
   }
-
+  
   .cta:hover {
     width: 270px;
     transition: width 0.7s;
+    color: #000091;
   }
 
   .cta .apilos-icon{
@@ -37,9 +38,11 @@
     position: absolute;
     width: 100%;
     left: 0;
-   }
-
+    font-size: 5px;
+  }
+  
   .cta:hover .button-text {
     opacity: 1;
-    transition: opacity 0.5s
+    transition: opacity 0.5s, font-size 1s;
+    font-size: 16px;
   }

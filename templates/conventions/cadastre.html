@@ -54,7 +54,7 @@
                         </div>
 
                         <div class="apilos-bordered fr-my-3w">
-                            <p class="fr-text--xs notes">
+                            <p class="notes">
                                 <i>Pour toutes les sections ci-dessous, vous avez la possibilité de renseigner les champs en saisissant les informations ou en téléversant des images.</i>
                             </p>
                             {% include "common/form/input_upload.html" with form_input=form.vendeur form_input_files=form.vendeur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.vendeur_files.values object_field="programme__vendeur__"|add:form.uuid.value %}
@@ -129,20 +129,20 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-my-2w">
+                            {% include "common/form/input_upload.html" with form_input=form.effet_relatif form_input_files=form.effet_relatif_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.effet_relatif_files.values object_field="programme__effet_relatif__"|add:form.uuid.value %}
+                        </div>
                         <div class="apilos-bordered fr-my-3w">
-                            <p class="fr-text--xs notes">
+                            <p class="notes">
                                 <i>Ces informations sont complémentaires et à destination de l’instructeur. Elles ne figureront pas dans le document final de la convention.</i>
                             </p>
 
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_upload.html" with additional_informations=True form_input=form.acte_de_propriete form_input_files=form.acte_de_propriete_files object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_de_propriete_files.values object_field="programme__acte_de_propriete__"|add:form.uuid.value %}
+                                    {% include "common/form/input_upload.html" with form_input=form.acte_de_propriete form_input_files=form.acte_de_propriete_files object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_de_propriete_files.values object_field="programme__acte_de_propriete__"|add:form.uuid.value %}
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_upload.html" with additional_informations=True form_input=form.certificat_adressage form_input_files=form.certificat_adressage_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.certificat_adressage_files.values object_field="programme__certificat_adressage__"|add:form.uuid.value %}
-                                </div>
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_upload.html" with additional_informations=True form_input=form.effet_relatif form_input_files=form.effet_relatif_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.effet_relatif_files.values object_field="programme__effet_relatif__"|add:form.uuid.value %}
+                                    {% include "common/form/input_upload.html" with form_input=form.certificat_adressage form_input_files=form.certificat_adressage_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.certificat_adressage_files.values object_field="programme__certificat_adressage__"|add:form.uuid.value %}
                                 </div>
                             </div>
                         </div>

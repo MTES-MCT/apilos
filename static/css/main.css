@@ -77,6 +77,7 @@ details > summary::-webkit-details-marker {
 
 .apilos-bordered {
   border: solid 1px #ccc;
+  padding: 15px;
 }
 
 .dz {
