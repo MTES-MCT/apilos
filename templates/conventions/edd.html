@@ -32,8 +32,8 @@
                     <div class="fr-col-md-12">
 
                         <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
-                            <p>Pour rappel, l'état descriptif de division est quand une opération comporte plusieurs financements et donc plusieurs conventions. </p>
-                            <p>Il existe 3 types d’EDD: EDD volumétrique, EDD classique & EDD simplifié</p>
+                            <p>L’ajout des états descriptifs de division (EDD) est facultatif et dépend des spécificités locales des services des hypothèques. </p>
+                            <p>Pour rappel, l’EDD peut être demandé quand une opération comporte plusieurs financements et donc plusieurs conventions.</p>
                         </div>
 
                         {% include "common/form/input_upload.html" with form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files object_name='lot' object_uuid=convention.lot.uuid textarea=True image_only=True file_list=convention.lot.edd_volumetrique_files.values object_field="lot__edd_volumetrique__"|add:form.lot_uuid.value %}
@@ -45,6 +45,9 @@
                         {% include "common/form/input_text.html" with form_input=form.mention_publication_edd_classique object_field="programme__mention_publication_edd_classique__"|add:form.uuid.value %}
 
                         <h4 class="fr-mb-1w">EDD Simplifié</h4>
+                        <p class="fr-text--xs notes fr-mb-1w">
+                            <i>L’EDD simplifié doit comporter tous les logements du programme quels que soient leurs financements.</i>
+                        </p>
 
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
                             {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='logements_edd' upform=upform  what="logements pour l'EDD simplifié"%}
