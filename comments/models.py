@@ -80,8 +80,9 @@ class Comment(models.Model):
             "programme__reference_publication_acte": "Référence de publication de l'acte notarié",
             "programme__acte_de_propriete": "Acte de propriété ou acte notarial",
             "programme__certificat_adressage": "Certificat d'adressage ou autres",
+            "programme__effet_relatif": "Effet relatif de l'opération",
             "programme__reference_cadastrale": (
-                "Références cadastrales et effet relatif de l'opération"
+                "Références cadastrales de l'opération"
             ),
             "convention__annee_fin_conventionnement": "Date de fin de la convention",
             "convention__fond_propre": "Fonds propres finançant l'opération",

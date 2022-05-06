@@ -280,6 +280,9 @@ def create_programme(
         certificat_adressage=random.choice(
             [files_and_text, "", "n'importe quoi", None]
         ),
+        effet_relatif=random.choice(
+            [files_and_text, "", "n'importe quoi", None]
+        ),
         reference_cadastrale=random.choice(
             [files_and_text, "", "n'importe quoi", None]
         ),
