@@ -85,7 +85,7 @@ def handle_uploaded_xlsx(upform, my_file, myClass, convention, file_name):
 def get_object_from_worksheet(my_ws, column_from_index, myClass, import_warnings):
     my_objects = []
     for row in my_ws.iter_rows(
-        min_row=3, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
+        min_row=4, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
     ):
         my_row, empty_line, new_warnings = extract_row(row, column_from_index, myClass)
 

@@ -264,11 +264,7 @@ class LogementEDD(models.Model):
         choices=FinancementEDD.choices,
         default=FinancementEDD.PLUS,
     )
-    typologie = models.CharField(
-        max_length=25,
-        choices=TypologieLogement.choices,
-        default=TypologieLogement.T1,
-    )
+    numero_lot = models.CharField(max_length=255, null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
     lot_num = 0
@@ -276,7 +272,7 @@ class LogementEDD(models.Model):
     import_mapping = {
         "Désignation des logements": designation,
         "Financement": financement,
-        "Type des logements": typologie,
+        "Numéro de lot des logements": numero_lot,
     }
     sheet_name = "EDD Simplifié"
 
