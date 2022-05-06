@@ -307,7 +307,7 @@ SWAGGER_SETTINGS = {
     "DEFAULT_AUTO_SCHEMA_CLASS": "api.auto_schema.ReadWriteAutoSchema",
 }
 
-CERBERE_AUTH = get_env_variable("CERBERE_AUTH", cast=bool)
+CERBERE_AUTH = get_env_variable("CERBERE_AUTH")
 
 if CERBERE_AUTH:
     MIDDLEWARE = MIDDLEWARE + [
@@ -320,9 +320,7 @@ if CERBERE_AUTH:
     ]  # custom backend CAS
 
     # CAS config
-    CAS_SERVER_URL = (
-        "https://authentification.din.developpement-durable.gouv.fr/cas/public"
-    )
+    CAS_SERVER_URL = CERBERE_AUTH
     CAS_VERSION = "CAS_2_SAML_1_0"
     CAS_USERNAME_ATTRIBUTE = "username"
     CAS_APPLY_ATTRIBUTES_TO_USER = True
