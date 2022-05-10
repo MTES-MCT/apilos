@@ -114,7 +114,6 @@ INSTALLED_APPS = [
     "comments.apps.CommentsConfig",
     "rest_framework",
     "drf_yasg",
-    "drf_spectacular",
     "django_filters",
     "django_cas_ng",
 ]
@@ -271,22 +270,15 @@ CSP_SCRIPT_SRC = (
     "'sha256-h7boyH6dI/JQnsm6Iw1sAtEbdb/+638kREPj4sfWmMs='",  # ???
     # Convention > Récapitulatif > Comment type1and2
     "'sha256-7uHmVaAHWxl0RElSoWED7kK+9kRSQ+E6SQ3aBK1prkU='",
-    # Swagger UI
-    "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.js",
-    "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-standalone-preset.js",
+    #
 )
-CSP_IMG_SRC = (
-    "'self'",
-    "data:",
-    "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png",
-)
+CSP_IMG_SRC = ("'self'", "data:")
 CSP_OBJECT_SRC = "'none'"
 CSP_FONT_SRC = "'self'", "data:"
 CSP_CONNECT_SRC = ("'self'", "https://stats.data.gouv.fr/piwik.php")
 CSP_STYLE_SRC = (
     "'self'",
     "https://code.highcharts.com/css/highcharts.css",
-    "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui.css",
     "'unsafe-inline'",
 )
 CSP_MANIFEST_SRC = "'self'"
@@ -308,20 +300,9 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
-SPECTACULAR_SETTINGS = {
-    "TITLE": "API APiLos",
-    "DESCRIPTION": "Documentation de l'API APiLos consommée par SIAP",
-    "VERSION": "0.0.1",
-    "SERVE_INCLUDE_SCHEMA": False,
-    "TAGS": [{"name": "config-resource", "description": "Config Resource"}],
-    # OTHER SETTINGS
-}
-
 APILOS_PAGINATION_PER_PAGE = 20
 
-# to do : deprecate drf_yasg
 SWAGGER_SETTINGS = {
     "DEFAULT_AUTO_SCHEMA_CLASS": "api.auto_schema.ReadWriteAutoSchema",
 }
