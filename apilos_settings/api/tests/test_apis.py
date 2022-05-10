@@ -36,7 +36,7 @@ class ConfigurationAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         expected = {
             "racine_url_acces_web": "http://testserver",
-            "url_acces_web_operation": "/operations/{NUMERO_OPEPERATION_SIAP}",
+            "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}",
             "url_acces_web_recherche": "/conventions",
             "version": "0.0",
         }
