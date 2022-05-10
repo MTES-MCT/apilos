@@ -66,6 +66,9 @@ urlpatterns = [
     ),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("api/v1/", include(("api.v1.urls", "api"), namespace="apis")),
+    path(
+        "api-siap/v0/", include(("api.siap.v0.urls", "api-siap"), namespace="api-siap")
+    ),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.CERBERE_AUTH:
