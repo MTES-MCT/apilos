@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework import serializers
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_spectacular.utils import (
     extend_schema,
     OpenApiResponse,
@@ -13,15 +13,13 @@ from drf_spectacular.utils import (
 
 from django.conf import settings
 
-from api.csrf_exempt_session_authentication import CsrfExemptSessionAuthentication
-
 
 class ApilosConfiguration(APIView):
     """
     return the main configutations of the application
     """
 
-    authentication_classes = [CsrfExemptSessionAuthentication, BasicAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     renderer_classes = [JSONRenderer]
