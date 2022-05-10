@@ -145,4 +145,7 @@ pip install pre-commit
 pre-commit install
 ```
 
+## Les API
+
+Plus de détails sur la doc dédiée [API.md](API.md)
 
