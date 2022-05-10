@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework import serializers
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_spectacular.utils import (
     extend_schema,
     OpenApiResponse,
@@ -13,15 +13,13 @@ from drf_spectacular.utils import (
 
 from django.conf import settings
 
-from api.csrf_exempt_session_authentication import CsrfExemptSessionAuthentication
-
 
 class ApilosConfiguration(APIView):
     """
     return the main configutations of the application
     """
 
-    authentication_classes = [CsrfExemptSessionAuthentication, BasicAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     renderer_classes = [JSONRenderer]
@@ -35,7 +33,6 @@ class ApilosConfiguration(APIView):
                     "racine_url_acces_web": serializers.CharField(
                         max_length=2000,
                         help_text="Racine de l'URL d'accès web à l'application avec son protocole",
-                        #   example: https://staging.apilos.incubateur.net
                     ),
                     "url_acces_web_operation": serializers.CharField(
                         max_length=2000,
@@ -43,7 +40,6 @@ class ApilosConfiguration(APIView):
                             "URL d'accès web à l'application sur la page d'une opération"
                             + " (en relatif)"
                         ),
-                        #   example: /operations/<NUM_OPE_SIAP>
                     ),
                     "url_acces_web_recherche": serializers.CharField(
                         max_length=2000,
@@ -51,15 +47,13 @@ class ApilosConfiguration(APIView):
                             "URL d'accès web à la page de recherche des conventions"
                             + " (en relatif)"
                         ),
-                        #   example: /conventions
                     ),
                     "version": serializers.CharField(
                         max_length=20,
                         help_text=(
                             "version API x.y, La version majeure sera indentée seulement en cas"
                             + " de non compatibilité"
-                        )
-                        #   example: v1.2
+                        ),
                     ),
                 },
             ),
@@ -75,7 +69,7 @@ class ApilosConfiguration(APIView):
                 description="Example of returned configuration when /config url is called",
                 value={
                     "racine_url_acces_web": "https://apilos.beta.gouv.fr",
-                    "url_acces_web_operation": "/operations/{NUMERO_OPEPERATION_SIAP}",
+                    "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}",
                     "url_acces_web_recherche": "/conventions",
                     "version": "0.1",
                 },
@@ -97,7 +91,7 @@ class ApilosConfiguration(APIView):
         return Response(
             {
                 "racine_url_acces_web": protocol + request.get_host(),
-                "url_acces_web_operation": "/operations/{NUMERO_OPEPERATION_SIAP}",
+                "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}",
                 "url_acces_web_recherche": "/conventions",
                 "version": version,
             }
