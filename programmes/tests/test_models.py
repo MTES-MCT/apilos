@@ -55,7 +55,6 @@ class ProgrammeModelsTest(TestCase):
                     bailleur=bailleur,
                     programme=programme,
                     financement=financement,
-                    typologie=typologie,
                 )
                 logement = Logement.objects.create(
                     designation=("A" if financement == Financement.PLAI else "B")
