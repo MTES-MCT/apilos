@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from django.db.models import Count
-from django.db.models.functions import Substr
+from django.db.models import Count, CharField, Value
+from django.db.models.functions import Substr, Concat
 
+from comments.models import Comment
 from conventions.models import Convention
 from users.models import User
 
@@ -54,6 +55,22 @@ def index(request):
         "A_signer": 0,
     }
 
+    
+    comments_champ = (
+        Comment.objects.all()
+        .annotate(name=Concat("nom_objet", Value('-'), "champ_objet" ))
+        .values("name")
+        .annotate(data=Count("champ_objet"))
+        .order_by("-data", "nom_objet", "champ_objet")
+    )
+    comment_fields = []
+    for qs in comments_champ:
+        comment_fields.append(qs["name"])
+    comment_data = []
+    for qs in comments_champ:
+        comment_data.append(qs["data"])
+
+
     users = User.objects.prefetch_related("role_set").all()
     bailleurs = users.filter(role__typologie="BAILLEUR").distinct()
     instructeurs = users.filter(role__typologie="INSTRUCTEUR").distinct()
@@ -78,5 +95,8 @@ def index(request):
             },
             "conv_bydept": result,
             "dept": str(result["departement"]),
+            "comment_fields": comment_fields, 
+            "comment_data": comment_data, 
         },
     )
+    
