@@ -19,19 +19,22 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html" with convention=convention %}
-        {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
+        {% include "common/step_progressbar.html" with convention=convention %}
         <div class="fr-container">
             <form method="post" action="">
                 {% csrf_token %}
 
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12">
-                        <!-- <h2>Etape {{convention_form_step}}/{{ nb_steps }} - Informations complémentaires</h2> -->
-                        {% include "common/form/input_upload.html" with additional_informations=True form_input=form.comments form_input_files=form.comments_files object_name='convention' object_uuid=convention.uuid file_list=convention.comments_files.values textarea=True verticalDisplay=True object_field="convention__comments__"|add:form.uuid.value %}
+                        <div class="apilos-bordered fr-my-3w">
+                            <p class="notes">
+                                <i>Ces informations sont complémentaires et à destination de l’instructeur. Elles ne figureront pas dans le document final de la convention.</i>
+                            </p>
+                            {% include "common/form/input_upload.html" with form_input=form.comments form_input_files=form.comments_files object_name='convention' object_uuid=convention.uuid file_list=convention.comments_files.values textarea=True verticalDisplay=True object_field="convention__comments__"|add:form.uuid.value %}
+                        </div>
                     </div>
                 </div>
 
-                {% include "common/required_fields_info.html" %}
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
                         {% include "common/button/next_and_save.html" with suivant='conventions:comments' convention_uuid=convention.uuid editable=editable %}

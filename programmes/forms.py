@@ -116,6 +116,9 @@ class ProgrammeForm(forms.Form):
     )
     nom = forms.CharField(
         label="Nom",
+        help_text=(
+            "Indiquez uniquement le nom du programme. Le type de financement sera automatiquement mentionné via notre logiciel"
+        ),
         max_length=255,
         min_length=1,
         error_messages={
@@ -127,8 +130,8 @@ class ProgrammeForm(forms.Form):
     adresse = forms.CharField(
         label="Adresse(s)",
         help_text=(
-            "Si le programme comporte plusieurs adresses,"
-            + " renseignez une adresse par ligne dans le champ texte ci-dessous"
+            "Si le programme comporte plusieurs adresses (exemple : plusieurs bâtiments),"
+            + " renseignez chaque adresse en allant à la ligne entre chaque nouvelle adresse"
         ),
         max_length=5000,
         min_length=1,
@@ -140,7 +143,7 @@ class ProgrammeForm(forms.Form):
     )
     code_postal, ville = forms_utils.ville_codepostal_form_fields()
     nb_logements = forms.IntegerField(
-        label="Nb logements à conventionner",
+        label="Nombre de logements à conventionner",
         error_messages={
             "required": "Le nombre de logements à conventionner est obligatoire",
         },
@@ -195,6 +198,7 @@ class ProgrammeCadastralForm(forms.Form):
     date_acte_notarie = forms.DateField(
         required=False,
         label="Date de l'acte notarié",
+        help_text="Champ à remplir si différent de la date d’achat",
     )
     date_achevement_previsible = forms.DateField(
         required=False,
@@ -279,9 +283,21 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )
+    effet_relatif = forms.CharField(
+        required=False,
+        label="Effet relatif",
+        max_length=5000,
+        error_messages={
+            "max_length": "Le message ne doit pas excéder 5000 caractères",
+        },
+    )
+    effet_relatif_files = forms.CharField(
+        required=False,
+        help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
+    )
     reference_cadastrale = forms.CharField(
         required=False,
-        label="Références cadastrales et effet relatif",
+        label="Références cadastrales",
         max_length=5000,
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
@@ -352,7 +368,7 @@ class LotLgtsOptionForm(forms.Form):
     lgts_mixite_sociale_negocies = forms.IntegerField(
         required=False,
         label=(
-            "Nombre de logements à louer en plus à des à des ménages dont les ressources"
+            "Nombre de logements à louer en plus à des ménages dont les ressources"
             + " n'excèdent pas le plafond"
         ),
         help_text="""

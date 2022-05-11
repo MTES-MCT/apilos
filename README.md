@@ -47,7 +47,7 @@ Pour faire cet import nous avons ajouté une commande django `import_galion` éd
 
 Pour executer cet import en local:
 
-```docker-compose exec apilos pipenv run python3 manage.py import_galion```
+```(docker-compose exec apilos) pipenv run python3 manage.py import_galion```
 
 Sur Scalingo
 
@@ -57,11 +57,11 @@ Sur Scalingo
 
 Pour modifier les permissions, il suffit de modifier dans l'interface d'administration puis d'exporter les données d'authentification :
 
-```docker-compose exec apilos pipenv run python manage.py dumpdata auth --natural-foreign --natural-primary > users/fixtures/auth.json```
+```(docker-compose exec apilos) pipenv run python manage.py dumpdata auth --natural-foreign --natural-primary > users/fixtures/auth.json```
 
 et pour populer ces données :
 
-```docker-compose exec apilos pipenv run python manage.py loaddata auth.json```
+```(docker-compose exec apilos) pipenv run python manage.py loaddata auth.json```
 
 Cette commande est excutée lors du déploiement de l'application juste après la migration
 
@@ -112,6 +112,15 @@ Le rapport d'accessibilité est publié [sur le site APiLos](https://apilos.beta
 ## Statistique de la plateforme
 
 Les statistiques d'usage et le suivi des KPIs de la start up d'état sont disponibles sur la [page de statistique](https://apilos.beta.gouv.fr/stats)
+
+## Utilisation du SSO CERBERE pour se logger à l'application
+
+2 modes d'authentification à l'interface sont possibles mais ne cohabite pas :
+  * soit l'authentification Basic de django est utilisé (par défaut)
+  * soit le SSO CERBERE est utilisé
+
+Pour utiliser le SSO Cerbere, il suffit de déterminer sont url en tant que variable d'environnement CERBERE_AUTH. \
+Dans ce cas, l'utilisateur est directement redirigé vers CERBERE lors de l'accès à la plateforme
 
 ## liens utils
 

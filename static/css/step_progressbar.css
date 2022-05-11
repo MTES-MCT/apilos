@@ -3,15 +3,16 @@
     width: 100%;
 }
 
-.progressbar {
+ul.progressbar {
     counter-reset: step;
+    padding-inline-start: 0!important;
 }
 
 .progressbar li {
     list-style-type: none;
-    width: 8%;
+    width: 10%;
     float: left;
-    font-size: 12px;
+    font-size: 0.75rem;
     position: relative;
     text-align: center;
     color: #666666;
@@ -19,20 +20,10 @@
 }
 
 .progressbar li.current_step {
-    font-size: 1rem !important;
+    font-size: 0.9rem !important;
     font-weight: bold;
     color: #000091;
-    width: 16% !important;
-}
-
-.progressbar li.current_step:after {
-    width: 75%;
-    left: calc(-25% + 15px) !important;
-}
-
-.progressbar li.after_step:after {
-    width: 150%;
-    left: calc(-100% + 15px) !important;
+    width: 10% !important;
 }
 
 .progressbar li div {

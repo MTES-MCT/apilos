@@ -1,16 +1,56 @@
 <div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{form_input.id_for_label}}_group">
     {% if label %}
-        <label class="fr-label" for="{{form_input.id_for_label}}">
-            {{ label }}
-            {% include "common/form/required_field.html" with form_input=form_input %}
-            {% include "common/help_field.html" with form_input=form_input %}
-        </label>
+        {% if form_input.help_text %}
+            {% if not helptext_visible %}
+                <detailS>
+                    <summary>
+                        <label class="fr-label fr-mb-1w apilos-d-inline" for="{{form_input.id_for_label}}">
+                            {{ label }}
+                            {% include "common/form/required_field.html" with form_input=form_input %}
+                        </label>
+                        <span class="fr-link fr-link--sm fr-fi-information-line content__helpicon"></span>
+                    </summary>
+                    {% include "common/help_field.html" with form_input=form_input %}
+                </detailS>
+            {% else %}
+                <label class="fr-label fr-mb-1w" for="{{form_input.id_for_label}}">
+                    {{ label }}
+                    {% include "common/form/required_field.html" with form_input=form_input %}
+                    {% include "common/help_field.html" with form_input=form_input %}
+                </label>
+            {% endif %}
+            {% else %}
+            <label class="fr-label fr-mb-1w" for="{{form_input.id_for_label}}">
+                {{ form_input.label }}
+                {% include "common/form/required_field.html" with form_input=form_input %}
+            </label>
+        {% endif %}
     {% elif form_input.label %}
-        <label class="fr-label" for="{{form_input.id_for_label}}">
-            {{ form_input.label }}
-            {% include "common/form/required_field.html" with form_input=form_input %}
-            {% include "common/help_field.html" with form_input=form_input %}
-        </label>
+        {% if form_input.help_text %}
+            {% if not helptext_visible %}
+                <detailS>
+                    <summary>
+                        <label class="fr-label fr-mb-1w apilos-d-inline" for="{{form_input.id_for_label}}">
+                            {{ form_input.label }}
+                            {% include "common/form/required_field.html" with form_input=form_input %}
+                        </label>
+                        <span class="fr-link fr-link--sm fr-fi-information-line content__helpicon"></span>
+                    </summary>
+                    {% include "common/help_field.html" with form_input=form_input %}
+                </detailS>
+            {% else %}
+                <label class="fr-label fr-mb-1w" for="{{form_input.id_for_label}}">
+                    {{ form_input.label }}
+                    {% include "common/form/required_field.html" with form_input=form_input %}
+                    {% include "common/help_field.html" with form_input=form_input %}
+                </label>
+            {% endif %}
+        {% else %}
+            <label class="fr-label fr-mb-1w" for="{{form_input.id_for_label}}">
+                {{ form_input.label }}
+                {% include "common/form/required_field.html" with form_input=form_input %}
+            </label>
+        {% endif %}
     {% endif %}
     <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
         <textarea

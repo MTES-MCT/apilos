@@ -24,6 +24,7 @@ class ProgrammeAdmin(admin.ModelAdmin):
         "reference_publication_acte",
         "acte_de_propriete",
         "certificat_adressage",
+        "effet_relatif",
         "reference_cadastrale",
         "edd_volumetrique",
         "mention_publication_edd_volumetrique",

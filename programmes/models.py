@@ -164,6 +164,7 @@ class Programme(IngestableModel):
     reference_notaire = models.TextField(null=True)
     reference_publication_acte = models.TextField(null=True)
     acte_de_propriete = models.TextField(null=True)
+    effet_relatif = models.TextField(null=True)
     certificat_adressage = models.TextField(null=True)
     reference_cadastrale = models.TextField(null=True)
     edd_volumetrique = models.TextField(max_length=5000, null=True)
@@ -223,6 +224,11 @@ class Programme(IngestableModel):
     def certificat_adressage_files(self):
         return model_utils.get_field_key(
             self, "certificat_adressage", "files", default={}
+        )
+
+    def effet_relatif_files(self):
+        return model_utils.get_field_key(
+            self, "effet_relatif", "files", default={}
         )
 
     def reference_cadastrale_files(self):

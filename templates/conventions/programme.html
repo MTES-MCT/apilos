@@ -11,7 +11,7 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html" with convention=convention %}
-        {% include "common/step_progressbar.html" with convention=convention convention_form_step=convention_form_step %}
+        {% include "common/step_progressbar.html" with convention=convention %}
         <div class="fr-container">
             <form method="post" action="">
                 {% csrf_token %}
@@ -19,9 +19,10 @@
                     <div class="fr-col-md-12">
 
                         <h4>Adresse(s) de l'opération</h4>
+                        {% include "common/editable_fields_info.html" %}
 
                         {% include "common/form/input_text.html" with form_input=form.nom object_field="programme__nom__"|add:form.uuid.value %}
-                        {% include "common/form/input_textarea.html" with form_input=form.adresse object_field="programme__adresse__"|add:form.uuid.value %}
+                        {% include "common/form/input_textarea.html" with form_input=form.adresse helptext_visible="True" object_field="programme__adresse__"|add:form.uuid.value %}
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
@@ -53,7 +54,7 @@
                         </div>
 
                         <h4 class="fr-mt-2w">
-                            Locaux auxquels ne s'appliquent pas la présente convention
+                            Locaux auxquels ne s'applique pas la présente convention
                         </h4>
 
                         <div class="fr-grid-row fr-grid-row--gutters">

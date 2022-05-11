@@ -1,0 +1,23 @@
+<div class="fr-col-12 fr-col-lg-6">
+    <div role="alert" class="fr-alert fr-alert--warning">
+        <p class="fr-alert__title">
+            Repasser cette convention en "Instruction requise"
+        </p>
+        <p>
+            Cette convention est en attente de signature, cependant,
+            s'il reste des modifications à apporter, vous avez la possibilité de la repasser en statut "Instruction requise".
+            en cliquant sur le bouton ci-dessous
+        </p>
+        <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
+            {% csrf_token %}
+            <button name="BackToInstruction" value=True class="fr-btn fr-my-1w">
+                Retour à l'instruction
+            </button>
+        </form>
+        <p>
+            <span class="fr-icon-warning-line" aria-hidden="true"></span>
+            Une fois la convention en statut "Instruction requise", c'est l'instructeur qui aura la main sur la convention (c'est à dire vous-même).
+            Si l'intervention du bailleur est nécéssaire, vous devrez alors lui renvoyer en cliquant sur le bouton "Demander des corrections au bailleur"
+        </p>
+    </div>
+</div>

@@ -454,6 +454,10 @@ def add_user(request):
     }
 
 
+def delete_user(request, username):
+    User.objects.get(username=username).delete()
+
+
 def _send_welcome_email(user, password, login_url):
     # envoi au bailleur
     from_email = "contact@apilos.beta.gouv.fr"
@@ -472,7 +476,7 @@ def _send_welcome_email(user, password, login_url):
     )
 
     msg = EmailMultiAlternatives(
-        "Bienvenue sur la platefrome APiLos", text_content, from_email, to
+        "Bienvenue sur la plateforme APiLos", text_content, from_email, to
     )
     msg.attach_alternative(html_content, "text/html")
     msg.send()
