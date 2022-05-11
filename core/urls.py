@@ -30,6 +30,7 @@ from . import signals
 
 
 urlpatterns = [
+    path("admin/doc/", include("django.contrib.admindocs.urls")),
     path("admin/", admin.site.urls),
     path("bailleurs/", include(("bailleurs.urls", "bailleurs"), namespace="bailleurs")),
     path(
@@ -66,6 +67,9 @@ urlpatterns = [
     ),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("api/v1/", include(("api.v1.urls", "api"), namespace="apis")),
+    path(
+        "api-siap/v0/", include(("api.siap.v0.urls", "api-siap"), namespace="api-siap")
+    ),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.CERBERE_AUTH:

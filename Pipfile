@@ -31,6 +31,9 @@ Jinja2 = ">=3.0.2"
 Pillow = ">=8.3.2"
 djhtml = "*"
 pylint-django = "*"
+drf-spectacular = "*"
+djangorestframework-simplejwt = "*"
+docutils = "*"
 
 [dev-packages]
 
