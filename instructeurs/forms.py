@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 
 from instructeurs.models import Administration
 
@@ -59,4 +60,19 @@ class AdministrationForm(forms.Form):
         error_messages={
             "max_length": "La ville de signature ne doit pas excéder 255 caractères",
         },
+    )
+    prefix_convention = forms.CharField(
+        required=False,
+        label="Préfixe du numéro de convention",
+        max_length=255,
+        error_messages={
+            "max_length": "Le préfixe du numérp de convention ne doit pas excéder 255 caractères",
+        },
+          help_text=mark_safe(
+            "Pour remplir le préfixe dynamiquement, vous pouvez utiliser les caractères automatiques suivants : <br/>"
+            + " <b>{département}</b> : numéro du département <br/>"
+            + " <b>{zone}</b> : numéro de la zone <br/>"
+            + " <b>{mois} et {année}</b> : mois et année en cours. <br/>"
+            + "Vous pouvez également choisir les séparateurs de votre choix entre ces caractères ainsi qu'ajouter le texte qui vous convient."
+        ),
     )
