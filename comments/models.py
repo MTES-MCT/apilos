@@ -108,6 +108,15 @@ class Comment(models.Model):
             "programme__mention_publication_edd_classique": (
                 "Mention de publication de l'edd classique"
             ),
+            "convention__type1and2": "Selection du type I ou II de la convention",
+            "convention__type2_lgts_concernes_option1": "Option 1 pour les convention de type II",
+            "convention__type2_lgts_concernes_option2": "Option 2 pour les convention de type II",
+            "convention__type2_lgts_concernes_option3": "Option 3 pour les convention de type II",
+            "convention__type2_lgts_concernes_option4": "Option 4 pour les convention de type II",
+            "convention__type2_lgts_concernes_option5": "Option 5 pour les convention de type II",
+            "convention__type2_lgts_concernes_option6": "Option 6 pour les convention de type II",
+            "convention__type2_lgts_concernes_option7": "Option 7 pour les convention de type II",
+            "convention__type2_lgts_concernes_option8": "Option 8 pour les convention de type II",
         }
         if f"{self.nom_objet}__{self.champ_objet}" in mapping_champ_objet:
             return mapping_champ_objet[f"{self.nom_objet}__{self.champ_objet}"]
