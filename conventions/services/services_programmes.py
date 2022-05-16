@@ -284,6 +284,9 @@ def programme_cadastral_update(request, convention_uuid):
                     "reference_publication_acte", programme.reference_publication_acte
                 ),
                 **utils.get_text_and_files_from_field(
+                    "effet_relatif", programme.effet_relatif
+                ),
+                **utils.get_text_and_files_from_field(
                     "acte_de_propriete", programme.acte_de_propriete
                 ),
                 **utils.get_text_and_files_from_field(
@@ -357,6 +360,9 @@ def _save_programme_cadastrale(form, programme):
         form.cleaned_data["reference_publication_acte_files"],
         form.cleaned_data["reference_publication_acte"],
     )
+    programme.effet_relatif = utils.set_files_and_text_field(
+        form.cleaned_data["effet_relatif_files"],
+    )
     programme.acte_de_propriete = utils.set_files_and_text_field(
         form.cleaned_data["acte_de_propriete_files"],
     )
@@ -418,6 +424,7 @@ def _programme_cadastrale_atomic_update(request, convention, programme):
                     "reference_notaire",
                     "reference_publication_acte",
                     "acte_de_propriete",
+                    "effet_relatif",
                     "certificat_adressage",
                     "reference_cadastrale",
                 ],

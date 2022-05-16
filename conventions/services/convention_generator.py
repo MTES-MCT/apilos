@@ -251,6 +251,11 @@ def _get_object_images(doc, convention):
     )
     object_images["reference_cadastrale_images"] = reference_cadastrale_images
     local_pathes += tmp_local_path
+    effet_relatif_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.effet_relatif_files()
+    )
+    object_images["effet_relatif_images"] = effet_relatif_images
+    local_pathes += tmp_local_path
     edd_volumetrique_images, tmp_local_path = _build_files_for_docx(
         doc, convention.uuid, convention.lot.edd_volumetrique_files()
     )
@@ -313,8 +318,11 @@ def _compute_mixte(convention):
         # cf. convention : 30 % au moins des logements
         mixite["mixPLUS_30pc"] = math.ceil(convention.lot.nb_logements * 0.3)
         if convention.lot.nb_logements < 10:
-            # cf. convention : 30 % au moins des logements
-            mixite["mixPLUSinf10_30pc"] = math.ceil(convention.lot.nb_logements * 0.3)
+            # cf. convention : 30 % au moins des logements (ce nombre s'obtenant en arrondissant
+            # à l'unité la plus proche le résultat de l'application du pourcentage)
+            mixite["mixPLUSinf10_30pc"] = round_half_up(
+                convention.lot.nb_logements * 0.3
+            )
             # cf. convention : 10 % des logements
             mixite["mixPLUSinf10_10pc"] = round_half_up(
                 convention.lot.nb_logements * 0.1

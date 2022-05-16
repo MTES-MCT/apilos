@@ -7,6 +7,18 @@
   font-style: italic;
 }
 
+.apilos-flex-wrap {
+  flex-wrap: wrap;
+}
+
+.apilos-d-inline {
+  display: inline;
+}
+
+.apilos-d-block {
+  display: block;
+}
+
 .fr-fi--xxl:after, .fr-fi--xxl:before {
   font-size: 4rem!important;
 }
@@ -26,6 +38,16 @@
 .notes {
   color: #6A6A6A;
 }
+
+details > summary {
+  list-style: none;
+}
+details > summary::marker,
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+
 
 .warning-notification {
   color: #E10600;
@@ -51,6 +73,11 @@
 .apilos-fi-btn--secondary {
   width: 16px;
   filter: invert(14%) sepia(62%) saturate(6699%) hue-rotate(244deg) brightness(56%) contrast(131%);
+}
+
+.apilos-bordered {
+  border: solid 1px #ccc;
+  padding: 15px;
 }
 
 .dz {
@@ -139,6 +166,10 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .header__logo {
   width:5rem;
 }
+.width-100 {
+  width: 100%;
+}
+
 
 .text--center {
   text-align: center;

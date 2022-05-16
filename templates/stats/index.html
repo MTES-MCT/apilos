@@ -79,6 +79,41 @@
                             }]
                         });
                     });
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const chart = Highcharts.chart('correct_by_field', {
+                            chart: {
+                                type: 'bar',
+                                styledMode: true
+                            },
+                            colors: ['#8085e9'],
+                            title: {
+                                text: 'Nombre de commentaires par champ'
+                            },
+                            xAxis: {
+                                categories: {{comment_fields|safe}},
+                                title: {
+                                    text: null
+                                },
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: null
+                                },
+                            },
+                            plotOptions: {
+                                bar: {
+                                        dataLabels: {
+                                            enabled: true
+                                        }
+                                    }
+                            },
+                            series: [{
+                                name: 'nombre de commentaires',
+                                data: {{ comment_data }}
+                            }]
+                        });
+                    });
                 </script>
 
                 <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
@@ -107,7 +142,7 @@
                 </div>
             </div>
 
-            <h1 class="fr-pt-5w">Users</h1>
+            <h1 class="fr-pt-5w">Utilisateurs</h1>
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6">
                     <div class="fr-m-3w statcard statcard--color6">
@@ -122,8 +157,11 @@
                     </div>
                 </div>
             </div>
-
-
+            <h1 class="fr-pt-5w">Utilisation</h1>
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12" id="correct_by_field">
+                </div>
+            </div>
 
         </div>
     </div>

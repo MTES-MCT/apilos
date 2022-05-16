@@ -14,9 +14,9 @@
                 {% if mandatory %}
                     &nbsp;{% include "common/form/required_field_star.html" %}
                 {% endif %}
-                {% include "common/help_field.html" with form_input=form_input %}
                 {% if additional_informations %}
-                    <br>{% include "common/additional_informations.html" with form_input=form_input %}
+                    <br>
+                    <div class="fr-hint-text">informations complémentaires à destination de l’instructeur</div>
                 {% endif %}
             </label>
             {% include "common/utils/comments_field.html" %}
@@ -61,17 +61,17 @@
                     });
                 </script>
 
-                {% include "common/help_field.html" with form_input=form_input_files %}
             </div>
             <div
-                class="fr-col-12 dropzone dz"
-                id="{{form_input_files.id_for_label}}_dropzone">
+            class="fr-col-12 dropzone dz"
+            id="{{form_input_files.id_for_label}}_dropzone">
                 <div class="fallback">
                     Votre navigateur ne permet pas de téléverser des documents.
                     Nous vous conseillons de modifier vos paramètres concernant
                     l'application des scripts javascript ou d'utiliser un autre navigateur.
                 </div>
             </div>
+            {% include "common/help_field.html" with form_input=form_input_files %}
             <input
                 type="hidden"
                 id="{{form_input_files.id_for_label}}"

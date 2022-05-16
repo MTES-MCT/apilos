@@ -208,6 +208,7 @@ class ProgrammeModelsTest(TestCase):
         )
         utils_assertions.assert_get_files(self, programme, "acte_de_propriete")
         utils_assertions.assert_get_files(self, programme, "certificat_adressage")
+        utils_assertions.assert_get_files(self, programme, "effet_relatif")
         utils_assertions.assert_get_files(self, programme, "reference_cadastrale")
 
         lot = Lot.objects.order_by("-uuid").first()

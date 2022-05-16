@@ -13,7 +13,7 @@
                     Faites en part au bailleur</h4>
             {% endif %}
             <div>
-                <form method="post" action="{% url 'conventions:feedback' convention_uuid=convention.uuid %}">
+                <form method="post" action="{% url 'conventions:feedback' convention_uuid=convention.uuid %}" data-turbo="false">
                     {% csrf_token %}
                     <div class="fr-checkbox-group">
                         <input
