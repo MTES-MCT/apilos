@@ -14,7 +14,7 @@ from django.db.models.functions import Substr, Concat
 from bailleurs.models import Bailleur
 from comments.models import Comment
 from conventions.models import Convention
-from programmes.models import Programme
+from programmes.models import Lot, Programme
 from users.models import User
 
 
@@ -148,7 +148,10 @@ def get_null_fields():
 
     programmes_qs = Programme.objects.filter(
         Exists(Convention.objects.filter(programme_id=OuterRef("pk")))
-    ).annotate(count_references_cadastrales=Count("referencecadastrale"))
+    ).annotate(
+        count_referencecadastrale=Count("referencecadastrale"),
+        count_logementedd=Count("logementedd"),
+    )
     programmes = programmes_qs.aggregate(
         #
         # Opération
@@ -265,18 +268,56 @@ def get_null_fields():
                 When(reference_cadastrale__isnull=False, then=0),
             )
         ),
+        # mention_publication_edd_volumetrique
+        mention_publication_edd_volumetrique_count_null=Sum(
+            Case(
+                When(mention_publication_edd_volumetrique__isnull=True, then=1),
+                When(mention_publication_edd_volumetrique__isnull=False, then=0),
+            )
+        ),
+        # mention_publication_edd_classique
+        mention_publication_edd_classique_count_null=Sum(
+            Case(
+                When(mention_publication_edd_classique__isnull=True, then=1),
+                When(mention_publication_edd_classique__isnull=False, then=0),
+            )
+        ),
         # reference_cadastrale
         # references_cadastrales_count_null=Sum(
         #     Case(
-        #         When(count_references_cadastrales__lt=1, then=1),
-        #         When(count_references_cadastrales__gt=0, then=0),
+        #         When(count_referencecadastrale__lt=1, then=1),
+        #         When(count_referencecadastrale__gt=0, then=0),
         #     )
         # ),
         count=Count("pk", distinct=True),
     )
-    null_referencecadastrale = programmes_qs.filter(
-        count_references_cadastrales=0
-    ).count()
+
+    lots_qs = Lot.objects.filter(
+        Exists(Convention.objects.filter(lot_id=OuterRef("pk")))
+    ).annotate(
+        count_logement=Count("logement"),
+        #        count_annexe=Count("logement__annexe"),
+    )
+    lots = lots_qs.aggregate(
+        # edd_volumetrique
+        edd_volumetrique_count_null=Sum(
+            Case(
+                When(edd_volumetrique__isnull=True, then=1),
+                When(edd_volumetrique__isnull=False, then=0),
+            )
+        ),
+        # edd_classique
+        edd_classique_count_null=Sum(
+            Case(
+                When(edd_classique__isnull=True, then=1),
+                When(edd_classique__isnull=False, then=0),
+            )
+        ),
+        count=Count("pk", distinct=True),
+    )
+
+    # edd_volumetrique
+    # edd_classique
 
     null_fields = {
         "Bailleur - Capital Social": bailleurs["capital_social_count_null"]
@@ -354,8 +395,34 @@ def get_null_fields():
         "Cadastre - reference_cadastrale": programmes["reference_cadastrale_count_null"]
         / programmes["count"]
         * 100,
-        # references_cadastrales
-        "Cadastre - Tableau des références cadastrales": null_referencecadastrale
+        # referencecadastrale
+        "Cadastre - Tableau des références cadastrales": programmes_qs.filter(
+            count_referencecadastrale=0
+        ).count()
+        / programmes["count"]
+        * 100,
+        # mention_publication_edd_volumetrique
+        "EDD - mention_publication_edd_volumetrique": programmes[
+            "mention_publication_edd_volumetrique_count_null"
+        ]
+        / programmes["count"]
+        * 100,
+        # mention_publication_edd_classique
+        "EDD - mention_publication_edd_classique": programmes[
+            "mention_publication_edd_classique_count_null"
+        ]
+        / programmes["count"]
+        * 100,
+        # edd_volumetrique
+        "EDD - edd_volumetrique": lots["edd_volumetrique_count_null"]
+        / lots["count"]
+        * 100,
+        # edd_classique
+        "EDD - edd_classique": lots["edd_classique_count_null"] / lots["count"] * 100,
+        # logementedd
+        "Cadastre - Tableau des logements dans l'EDD simplifié": programmes_qs.filter(
+            count_logementedd=0
+        ).count()
         / programmes["count"]
         * 100,
     }
