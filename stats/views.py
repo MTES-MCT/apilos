@@ -10,10 +10,18 @@ from django.db.models import (
     OuterRef,
 )
 from django.db.models.functions import Substr, Concat
+from bailleurs.forms import BailleurForm
 
 from bailleurs.models import Bailleur
 from comments.models import Comment
+from conventions.forms import ConventionFinancementForm
 from conventions.models import Convention
+from programmes.forms import (
+    LotLgtsOptionForm,
+    ProgrammeCadastralForm,
+    ProgrammeEDDForm,
+    ProgrammeForm,
+)
 from programmes.models import Lot, Programme
 from users.models import User
 
@@ -215,6 +223,7 @@ def get_null_fields():
         # vendeur
         vendeur_count_null=Sum(
             Case(
+                When(edd_volumetrique='{"files": {}, "text": ""}', then=1),
                 When(vendeur__isnull=True, then=1),
                 When(vendeur__isnull=False, then=0),
             )
@@ -222,6 +231,7 @@ def get_null_fields():
         # acquereur
         acquereur_count_null=Sum(
             Case(
+                When(acquereur='{"files": {}, "text": ""}', then=1),
                 When(acquereur__isnull=True, then=1),
                 When(acquereur__isnull=False, then=0),
             )
@@ -229,6 +239,7 @@ def get_null_fields():
         # reference_notaire
         reference_notaire_count_null=Sum(
             Case(
+                When(reference_notaire='{"files": {}, "text": ""}', then=1),
                 When(reference_notaire__isnull=True, then=1),
                 When(reference_notaire__isnull=False, then=0),
             )
@@ -236,6 +247,7 @@ def get_null_fields():
         # reference_publication_acte
         reference_publication_acte_count_null=Sum(
             Case(
+                When(reference_publication_acte='{"files": {}, "text": ""}', then=1),
                 When(reference_publication_acte__isnull=True, then=1),
                 When(reference_publication_acte__isnull=False, then=0),
             )
@@ -243,6 +255,7 @@ def get_null_fields():
         # acte_de_propriete
         acte_de_propriete_count_null=Sum(
             Case(
+                When(acte_de_propriete='{"files": {}, "text": ""}', then=1),
                 When(acte_de_propriete__isnull=True, then=1),
                 When(acte_de_propriete__isnull=False, then=0),
             )
@@ -250,6 +263,7 @@ def get_null_fields():
         # certificat_adressage
         certificat_adressage_count_null=Sum(
             Case(
+                When(certificat_adressage='{"files": {}, "text": ""}', then=1),
                 When(certificat_adressage__isnull=True, then=1),
                 When(certificat_adressage__isnull=False, then=0),
             )
@@ -257,6 +271,7 @@ def get_null_fields():
         # effet_relatif
         effet_relatif_count_null=Sum(
             Case(
+                When(effet_relatif='{"files": {}, "text": ""}', then=1),
                 When(effet_relatif__isnull=True, then=1),
                 When(effet_relatif__isnull=False, then=0),
             )
@@ -264,6 +279,7 @@ def get_null_fields():
         # reference_cadastrale
         reference_cadastrale_count_null=Sum(
             Case(
+                When(reference_cadastrale='{"files": {}, "text": ""}', then=1),
                 When(reference_cadastrale__isnull=True, then=1),
                 When(reference_cadastrale__isnull=False, then=0),
             )
@@ -292,16 +308,13 @@ def get_null_fields():
         count=Count("pk", distinct=True),
     )
 
-    lots_qs = Lot.objects.filter(
+    lots = Lot.objects.filter(
         Exists(Convention.objects.filter(lot_id=OuterRef("pk")))
-    ).annotate(
-        count_logement=Count("logement"),
-        #        count_annexe=Count("logement__annexe"),
-    )
-    lots = lots_qs.aggregate(
+    ).aggregate(
         # edd_volumetrique
         edd_volumetrique_count_null=Sum(
             Case(
+                When(edd_volumetrique='{"files": {}, "text": ""}', then=1),
                 When(edd_volumetrique__isnull=True, then=1),
                 When(edd_volumetrique__isnull=False, then=0),
             )
@@ -309,92 +322,130 @@ def get_null_fields():
         # edd_classique
         edd_classique_count_null=Sum(
             Case(
+                When(edd_classique='{"files": {}, "text": ""}', then=1),
                 When(edd_classique__isnull=True, then=1),
                 When(edd_classique__isnull=False, then=0),
+            )
+        ),
+        # lgts_mixite_sociale_negocies
+        lgts_mixite_sociale_negocies_count_null=Sum(
+            Case(
+                When(lgts_mixite_sociale_negocies=0, then=1),
+                When(lgts_mixite_sociale_negocies__isnull=True, then=1),
+                When(lgts_mixite_sociale_negocies__isnull=False, then=0),
+            )
+        ),
+        # loyer_derogatoire
+        loyer_derogatoire_count_null=Sum(
+            Case(
+                When(loyer_derogatoire__isnull=True, then=1),
+                When(loyer_derogatoire__isnull=False, then=0),
             )
         ),
         count=Count("pk", distinct=True),
     )
 
-    # edd_volumetrique
-    # edd_classique
+    conventions = Convention.objects.aggregate(
+        # fond_propre
+        fond_propre_count_null=Sum(
+            Case(
+                When(fond_propre=0, then=1),
+                When(fond_propre__isnull=True, then=1),
+                When(fond_propre__isnull=False, then=0),
+            )
+        ),
+        count=Count("pk", distinct=True),
+    )
 
     null_fields = {
-        "Bailleur - Capital Social": bailleurs["capital_social_count_null"]
+        # capital_social
+        f"Bailleur: {BailleurForm.declared_fields['capital_social'].label}": bailleurs[
+            "capital_social_count_null"
+        ]
         / bailleurs["count"]
         * 100,
-        "Programme - Nombre de bureaux commerciaux": programmes[
+        # nb_locaux_commerciaux
+        f"Programme: {ProgrammeForm.declared_fields['nb_locaux_commerciaux'].label}": programmes[
             "nb_locaux_commerciaux_count_null"
         ]
         / programmes["count"]
         * 100,
-        "Programme - Nombre de bureaux": programmes["nb_bureaux_count_null"]
-        / programmes["count"]
-        * 100,
-        "Programme - Autres locaux hors convention": programmes[
-            "autres_locaux_hors_convention_count_null"
+        # nb_bureaux
+        f"Programme: {ProgrammeForm.declared_fields['nb_bureaux'].label}": programmes[
+            "nb_bureaux_count_null"
         ]
         / programmes["count"]
         * 100,
-        #
-        # Cadastre
-        #
+        # autres_locaux_hors_convention
+        f"Programme: {ProgrammeForm.declared_fields['autres_locaux_hors_convention'].label}": (
+            programmes["autres_locaux_hors_convention_count_null"]
+            / programmes["count"]
+            * 100
+        ),
         # permis_construire
-        "Cadastre - permis_construire": programmes["permis_construire_count_null"]
-        / programmes["count"]
-        * 100,
+        f"Cadastre: {ProgrammeCadastralForm.declared_fields['permis_construire'].label}": (
+            programmes["permis_construire_count_null"] / programmes["count"] * 100
+        ),
         # date_acte_notarie
-        "Cadastre - date_acte_notarie": programmes["date_acte_notarie_count_null"]
-        / programmes["count"]
-        * 100,
+        f"Cadastre: {ProgrammeCadastralForm.declared_fields['date_acte_notarie'].label}": (
+            programmes["date_acte_notarie_count_null"] / programmes["count"] * 100
+        ),
         # date_achevement_previsible
-        "Cadastre - date_achevement_previsible": programmes[
-            "date_achevement_previsible_count_null"
-        ]
-        / programmes["count"]
-        * 100,
+        f"Cadastre: {ProgrammeCadastralForm.declared_fields['date_achevement_previsible'].label}": (
+            programmes["date_achevement_previsible_count_null"]
+            / programmes["count"]
+            * 100
+        ),
         # date_achat
-        "Cadastre - date_achat": programmes["date_achat_count_null"]
+        f"Cadastre: {ProgrammeCadastralForm.declared_fields['date_achat'].label}": programmes[
+            "date_achat_count_null"
+        ]
         / programmes["count"]
         * 100,
         # date_achevement
-        "Cadastre - date_achevement": programmes["date_achevement_count_null"]
-        / programmes["count"]
-        * 100,
+        f"Cadastre: {ProgrammeCadastralForm.declared_fields['date_achevement'].label}": (
+            programmes["date_achevement_count_null"] / programmes["count"] * 100
+        ),
         # vendeur
-        "Cadastre - vendeur": programmes["vendeur_count_null"]
-        / programmes["count"]
-        * 100,
-        # acquereur
-        "Cadastre - acquereur": programmes["acquereur_count_null"]
-        / programmes["count"]
-        * 100,
-        # reference_notaire
-        "Cadastre - reference_notaire": programmes["reference_notaire_count_null"]
-        / programmes["count"]
-        * 100,
-        # reference_publication_acte
-        "Cadastre - reference_publication_acte": programmes[
-            "reference_publication_acte_count_null"
+        f"Cadastre: {ProgrammeCadastralForm.declared_fields['vendeur'].label}": programmes[
+            "vendeur_count_null"
         ]
         / programmes["count"]
         * 100,
+        # acquereur
+        f"Cadastre: {ProgrammeCadastralForm.declared_fields['acquereur'].label}": programmes[
+            "acquereur_count_null"
+        ]
+        / programmes["count"]
+        * 100,
+        # reference_notaire
+        f"Cadastre: {ProgrammeCadastralForm.declared_fields['reference_notaire'].label}": (
+            programmes["reference_notaire_count_null"] / programmes["count"] * 100
+        ),
+        # reference_publication_acte
+        f"Cadastre: {ProgrammeCadastralForm.declared_fields['reference_publication_acte'].label}": (
+            programmes["reference_publication_acte_count_null"]
+            / programmes["count"]
+            * 100
+        ),
         # acte_de_propriete
-        "Cadastre - acte_de_propriete": programmes["acte_de_propriete_count_null"]
-        / programmes["count"]
-        * 100,
+        f"Cadastre: {ProgrammeCadastralForm.declared_fields['acte_de_propriete'].label}": (
+            programmes["acte_de_propriete_count_null"] / programmes["count"] * 100
+        ),
         # certificat_adressage
-        "Cadastre - certificat_adressage": programmes["certificat_adressage_count_null"]
-        / programmes["count"]
-        * 100,
+        f"Cadastre: {ProgrammeCadastralForm.declared_fields['certificat_adressage'].label}": (
+            programmes["certificat_adressage_count_null"] / programmes["count"] * 100
+        ),
         # effet_relatif
-        "Cadastre - effet_relatif": programmes["effet_relatif_count_null"]
+        f"Cadastre: {ProgrammeCadastralForm.declared_fields['effet_relatif'].label}": programmes[
+            "effet_relatif_count_null"
+        ]
         / programmes["count"]
         * 100,
         # reference_cadastrale
-        "Cadastre - reference_cadastrale": programmes["reference_cadastrale_count_null"]
-        / programmes["count"]
-        * 100,
+        f"Cadastre: {ProgrammeCadastralForm.declared_fields['reference_cadastrale'].label}": (
+            programmes["reference_cadastrale_count_null"] / programmes["count"] * 100
+        ),
         # referencecadastrale
         "Cadastre - Tableau des références cadastrales": programmes_qs.filter(
             count_referencecadastrale=0
@@ -402,28 +453,48 @@ def get_null_fields():
         / programmes["count"]
         * 100,
         # mention_publication_edd_volumetrique
-        "EDD - mention_publication_edd_volumetrique": programmes[
-            "mention_publication_edd_volumetrique_count_null"
-        ]
-        / programmes["count"]
-        * 100,
+        f"EDD: {ProgrammeEDDForm.declared_fields['mention_publication_edd_volumetrique'].label}": (
+            programmes["mention_publication_edd_volumetrique_count_null"]
+            / programmes["count"]
+            * 100
+        ),
         # mention_publication_edd_classique
-        "EDD - mention_publication_edd_classique": programmes[
-            "mention_publication_edd_classique_count_null"
-        ]
-        / programmes["count"]
-        * 100,
+        f"EDD: {ProgrammeEDDForm.declared_fields['mention_publication_edd_classique'].label}": (
+            programmes["mention_publication_edd_classique_count_null"]
+            / programmes["count"]
+            * 100
+        ),
         # edd_volumetrique
-        "EDD - edd_volumetrique": lots["edd_volumetrique_count_null"]
+        f"EDD: {ProgrammeEDDForm.declared_fields['edd_volumetrique'].label}": lots[
+            "edd_volumetrique_count_null"
+        ]
         / lots["count"]
         * 100,
         # edd_classique
-        "EDD - edd_classique": lots["edd_classique_count_null"] / lots["count"] * 100,
+        f"EDD: {ProgrammeEDDForm.declared_fields['edd_classique'].label}": lots[
+            "edd_classique_count_null"
+        ]
+        / lots["count"]
+        * 100,
         # logementedd
-        "Cadastre - Tableau des logements dans l'EDD simplifié": programmes_qs.filter(
+        "EDD - Tableau des logements dans l'EDD simplifié": programmes_qs.filter(
             count_logementedd=0
         ).count()
         / programmes["count"]
+        * 100,
+        # fond_propre
+        f"Financement: {ConventionFinancementForm.declared_fields['fond_propre'].label}": (
+            conventions["fond_propre_count_null"] / conventions["count"] * 100
+        ),
+        # lgts_mixite_sociale_negocies
+        f"Logements: {LotLgtsOptionForm.declared_fields['lgts_mixite_sociale_negocies'].label}": (
+            lots["lgts_mixite_sociale_negocies_count_null"] / lots["count"] * 100
+        ),
+        # loyer_derogatoire
+        f"Logements: {LotLgtsOptionForm.declared_fields['loyer_derogatoire'].label}": lots[
+            "loyer_derogatoire_count_null"
+        ]
+        / lots["count"]
         * 100,
     }
 
