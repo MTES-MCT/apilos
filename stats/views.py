@@ -1,9 +1,19 @@
 from django.shortcuts import render
-from django.db.models import Count, Value
+from django.db.models import (
+    Count,
+    Value,
+    Sum,
+    Case,
+    When,
+    Exists,
+    OuterRef,
+)
 from django.db.models.functions import Substr, Concat
 
+from bailleurs.models import Bailleur
 from comments.models import Comment
 from conventions.models import Convention
+from programmes.models import Programme
 from users.models import User
 
 
@@ -108,3 +118,50 @@ def _get_conventions_by_dept():
                 statut_value[statut] if statut in statut_value else 0
             )
     return result
+
+
+def get_null_fields():
+    """
+    Count null fields on not mandatory fields
+    Bailleurs (with conventions):
+    * capital_social
+    Programmes (with conventions):
+    * nb_locaux_commerciaux
+    * nb_bureaux
+    * autres_locaux_hors_convention
+    """
+    bailleurs = Bailleur.objects.filter(
+        Exists(Convention.objects.filter(bailleur_id=OuterRef("pk")))
+    ).aggregate(
+        capital_social_count_null=Sum(
+            Case(
+                When(capital_social__isnull=True, then=1),
+                When(capital_social__isnull=False, then=0),
+            )
+        ),
+        count=Count("pk", distinct=True),
+    )
+
+    programmes = Programme.objects.filter(
+        Exists(Convention.objects.filter(programme_id=OuterRef("pk")))
+    ).aggregate(
+        nb_locaux_commerciaux_count_null=Sum(
+            Case(
+                When(nb_locaux_commerciaux__isnull=True, then=1),
+                When(nb_locaux_commerciaux__isnull=False, then=0),
+            )
+        ),
+        nb_bureaux_count_null=Sum(
+            Case(
+                When(nb_bureaux__isnull=True, then=1),
+                When(nb_bureaux__isnull=False, then=0),
+            )
+        ),
+        autres_locaux_hors_convention_count_null=Sum(
+            Case(
+                When(autres_locaux_hors_convention__isnull=True, then=1),
+                When(autres_locaux_hors_convention__isnull=False, then=0),
+            )
+        ),
+        count=Count("pk", distinct=True),
+    )
