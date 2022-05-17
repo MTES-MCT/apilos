@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -12,6 +12,8 @@
  * Ce groupe contient également le texte d'aide (optionnels)
  */
 .fr-radio-group {
+  position: relative;
+
   /**
    * Dans le cas d'un groupe de radios, on supprime l'espacement du premier groupe
    */
@@ -46,6 +48,7 @@
 
 .fr-radio-group input[type="radio"] {
   position: absolute;
+  margin: 0;
   opacity: 0;
   top: 50%;
   transform: translateY(-50%);

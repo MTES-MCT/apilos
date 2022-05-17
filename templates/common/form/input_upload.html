@@ -50,8 +50,8 @@
                     <i class="fr-text--sm">et/ou </i>
                 {% endif %}
 
-                <button type="button" class="fr-btn fr-mb-1w" id="{{form_input_files.id_for_label}}_dz_button">
-                    <img class="apilos-fi-btn fr-mr-1w" src="{% static "icons/upload.svg" %}" ></img>Téléverser une image{% if not image_only %} ou un document{% endif %}
+                <button type="button" class="fr-btn  fr-icon-upload-line fr-btn--icon-left fr-mb-1w" id="{{form_input_files.id_for_label}}_dz_button">
+                    Téléverser une image{% if not image_only %} ou un document{% endif %}
                 </button>
 
                 <script type="text/javascript" nonce="{{request.csp_nonce}}">

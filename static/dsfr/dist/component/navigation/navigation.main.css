@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -8,7 +8,6 @@
 \* ˍˍˍˍˍˍˍˍˍ */
 .fr-nav {
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --ul-type: none;
   --ol-type: none;
@@ -115,9 +114,18 @@
 }
 
 .fr-nav__btn::after {
-  font: normal 700 normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../../icons/system/arrow-down-s-line.svg");
+  mask-image: url("../../icons/system/arrow-down-s-line.svg");
+  --icon-size: 1rem;
   margin-left: 0.5rem;
   margin-right: 0;
   transition: transform 0.3s;

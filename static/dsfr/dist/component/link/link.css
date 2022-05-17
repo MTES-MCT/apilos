@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -33,9 +33,9 @@
 .fr-link--icon-left[class*=" fr-icon-"]::before,
 .fr-link--icon-left[class^="fr-fi-"]::before,
 .fr-link--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-link--icon-right[class^="fr-icon-"],
@@ -52,9 +52,9 @@
 .fr-link--icon-right[class*=" fr-icon-"]::before,
 .fr-link--icon-right[class^="fr-fi-"]::before,
 .fr-link--icon-right[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-link--sm {
@@ -77,9 +77,9 @@
 .fr-link--sm.fr-link--icon-left[class*=" fr-icon-"]::before,
 .fr-link--sm.fr-link--icon-left[class^="fr-fi-"]::before,
 .fr-link--sm.fr-link--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-link--sm.fr-link--icon-right[class^="fr-icon-"],
@@ -96,9 +96,9 @@
 .fr-link--sm.fr-link--icon-right[class*=" fr-icon-"]::before,
 .fr-link--sm.fr-link--icon-right[class^="fr-fi-"]::before,
 .fr-link--sm.fr-link--icon-right[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-link--lg {
@@ -121,9 +121,9 @@
 .fr-link--lg.fr-link--icon-left[class*=" fr-icon-"]::before,
 .fr-link--lg.fr-link--icon-left[class^="fr-fi-"]::before,
 .fr-link--lg.fr-link--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1.5rem;
   margin-left: -0.25rem;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-link--lg.fr-link--icon-right[class^="fr-icon-"],
@@ -140,16 +140,59 @@
 .fr-link--lg.fr-link--icon-right[class*=" fr-icon-"]::before,
 .fr-link--lg.fr-link--icon-right[class^="fr-fi-"]::before,
 .fr-link--lg.fr-link--icon-right[class*=" fr-fi-"]::before {
+  --icon-size: 1.5rem;
   margin-right: -0.25rem;
   margin-left: 0.5rem;
-  font-size: 1.5rem;
+}
+
+.fr-links-group {
+  --ul-type: none;
+  --ol-type: none;
+  --ul-start: 0;
+  --ol-start: 0;
+  --xl-block: 0;
+  --li-bottom: 0;
+  --ol-content: none;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.fr-links-group > li {
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.fr-links-group .fr-link {
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+}
+
+.fr-links-group--sm .fr-link {
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  padding: 0 0;
+}
+
+.fr-links-group--sm .fr-link::before {
+  content: none;
+}
+
+.fr-links-group--lg .fr-link {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  padding: 0 0;
+}
+
+.fr-links-group--lg .fr-link::before {
+  content: none;
 }
 
 .fr-link--close {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
@@ -166,19 +209,27 @@
 }
 
 .fr-link--close::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../../icons/system/close-line.svg");
+  mask-image: url("../../icons/system/close-line.svg");
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-link.fr-link--icon-left.fr-fi-theme-fill {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -187,10 +238,9 @@
 }
 
 .fr-link.fr-link--icon-left.fr-fi-theme-fill::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-link--close:disabled,
@@ -203,20 +253,49 @@ a.fr-link--close:not([href]) {
 }
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-  ns-link {
+  .fr-link {
     background-image: none;
     text-decoration: underline;
-  }
-
-  /**
-  * Reset liste à puce
-  */
-  .fr-links-group > li {
-    list-style: none;
-  }
-
-  .fr-link {
     color: #000091;
+  }
+
+  .fr-link::before {
+    background-color: transparent;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .fr-link--sm::before {
+    background-color: transparent;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .fr-link--lg::before {
+    background-color: transparent;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  ul.fr-links-group {
+    list-style-type: none;
+  }
+
+  ol.fr-links-group {
+    list-style-type: none;
+  }
+
+  ul.fr-links-group,
+  ol.fr-links-group {
+    padding-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   .fr-link--close {
@@ -224,9 +303,27 @@ a.fr-link--close:not([href]) {
     color: #000091;
   }
 
+  .fr-link--close:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .fr-link--close:active {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
   .fr-link--close:disabled,
   a.fr-link--close:not([href]) {
     color: #929292;
     background-color: transparent;
+  }
+
+  .fr-link--close:disabled:hover,
+  a.fr-link--close:not([href]):hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .fr-link--close:disabled:active,
+  a.fr-link--close:not([href]):active {
+    background-color: rgba(0, 0, 0, 0.1);
   }
 }

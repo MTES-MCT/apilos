@@ -1,8 +1,6 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
-@charset "UTF-8";
-
 /* ------------------------------------ *\
   Badge
 \* ------------------------------------ */
@@ -14,7 +12,6 @@
   z-index: 1;
 
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --hover-tint: var(--hover);
   font-size: 0.875rem;
@@ -49,9 +46,9 @@
 .fr-badge--icon-left[class*=" fr-icon-"]::before,
 .fr-badge--icon-left[class^="fr-fi-"]::before,
 .fr-badge--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.25rem;
-  font-size: 1rem;
 }
 
 .fr-badge--sm {
@@ -79,53 +76,64 @@
 .fr-badge--sm.fr-badge--icon-left[class*=" fr-icon-"]::before,
 .fr-badge--sm.fr-badge--icon-left[class^="fr-fi-"]::before,
 .fr-badge--sm.fr-badge--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 0.75rem;
   margin-left: -0.125rem;
   margin-right: 0.25rem;
-  font-size: 0.75rem;
 }
 
 .fr-badge::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.25rem;
-  font-size: 1rem;
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .fr-badge--sm::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 0.75rem;
   margin-left: -0.125rem;
   margin-right: 0.25rem;
-  font-size: 0.75rem;
 }
 
 .fr-badge.fr-badge--info::before,
 .fr-badge--sm.fr-badge--info::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../../icons/system/fr--info-fill.svg");
+  mask-image: url("../../icons/system/fr--info-fill.svg");
 }
 
 .fr-badge.fr-badge--success::before,
 .fr-badge--sm.fr-badge--success::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../../icons/system/fr--success-fill.svg");
+  mask-image: url("../../icons/system/fr--success-fill.svg");
 }
 
 .fr-badge.fr-badge--error::before,
 .fr-badge--sm.fr-badge--error::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../../icons/system/fr--error-fill.svg");
+  mask-image: url("../../icons/system/fr--error-fill.svg");
 }
 
 .fr-badge.fr-badge--warning::before,
 .fr-badge--sm.fr-badge--warning::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../../icons/system/fr--warning-fill.svg");
+  mask-image: url("../../icons/system/fr--warning-fill.svg");
 }
 
 .fr-badge.fr-badge--new::before,
 .fr-badge--sm.fr-badge--new::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../../icons/weather/flashlight-fill.svg");
+  mask-image: url("../../icons/weather/flashlight-fill.svg");
 }
 
 .fr-badge.fr-badge--no-icon::before,
@@ -133,7 +141,7 @@
   content: none;
 }
 
-.fr-badge-group {
+.fr-badges-group {
   --ul-type: none;
   --ol-type: none;
   --ul-start: 0;
@@ -146,14 +154,25 @@
   margin-bottom: 0;
 }
 
-.fr-badge-group > li {
+.fr-badges-group > li {
   display: inline-flex;
   max-width: 100%;
 }
 
-.fr-badge-group .fr-badge {
+.fr-badges-group .fr-badge {
   margin-right: 0.5rem;
   margin-bottom: 0.5rem;
+}
+
+.fr-badges-group--sm .fr-badge {
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  min-height: 1.125rem;
+  padding: 0 0.375rem;
+}
+
+.fr-badges-group--sm .fr-badge::before {
+  content: none;
 }
 
 .fr-badge--info {
@@ -330,4 +349,27 @@
 
   --hover: var(--background-contrast-beige-gris-galet-hover);
   --active: var(--background-contrast-beige-gris-galet-active);
+}
+
+.fr-badge-group {
+  --ul-type: none;
+  --ol-type: none;
+  --ul-start: 0;
+  --ol-start: 0;
+  --xl-block: 0;
+  --li-bottom: 0;
+  --ol-content: none;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.fr-badge-group > li {
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.fr-badge-group .fr-badge {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
 }
