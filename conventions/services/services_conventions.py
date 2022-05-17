@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.conf import settings
 from comments.models import Comment, CommentStatut
 
+from instructeurs.models import Administration
 from programmes.models import (
     Annexe,
     Financement,
@@ -284,16 +285,16 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
         .prefetch_related("lot")
         .prefetch_related("lot__typestationnement_set")
         .prefetch_related("lot__logement_set")
+        .prefetch_related("programme__administration")
         .get(uuid=convention_uuid)
     )
     request.user.check_perm("convention.view_convention", convention)
     if convention_number_form is None:
         convention_number_form = ConventionNumberForm(
             initial={
-                "prefixe_numero": convention.prefixe_numero(),
-                "suffixe_numero": convention.suffixe_numero(),
-            }
-        )
+                "convention_numero": convention.programme.administration.prefix_convention if convention.programme.administration else ""
+            })
+
     opened_comments = Comment.objects.filter(
         convention=convention,
         statut=CommentStatut.OUVERT,
@@ -642,20 +643,8 @@ def convention_validate(request, convention_uuid):
 
     convention_number_form = ConventionNumberForm(request.POST)
     if convention_number_form.is_valid():
-        prefix_numero = "/".join(
-            list(
-                filter(
-                    None,
-                    convention_number_form.cleaned_data["prefixe_numero"].split("/"),
-                )
-            )
-        )
-        convention.numero = "/".join(
-            [
-                prefix_numero,
-                convention_number_form.cleaned_data["suffixe_numero"],
-            ]
-        )
+        convention.numero = convention_number_form.cleaned_data["convention_numero"]
+
         convention.save()
 
     if convention_number_form.is_valid() or request.POST.get("Force"):
