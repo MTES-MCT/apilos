@@ -79,41 +79,6 @@
                             }]
                         });
                     });
-                    document.addEventListener('DOMContentLoaded', function () {
-                        const chart = Highcharts.chart('correct_by_field', {
-                            chart: {
-                                type: 'bar',
-                                styledMode: true
-                            },
-                            colors: ['#8085e9'],
-                            title: {
-                                text: 'Nombre de commentaires par champ'
-                            },
-                            xAxis: {
-                                categories: {{comment_fields|safe}},
-                                title: {
-                                    text: null
-                                },
-                            },
-                            yAxis: {
-                                min: 0,
-                                title: {
-                                    text: null
-                                },
-                            },
-                            plotOptions: {
-                                bar: {
-                                        dataLabels: {
-                                            enabled: true
-                                        }
-                                    }
-                            },
-                            series: [{
-                                name: 'nombre de commentaires',
-                                data: {{ comment_data }}
-                            }]
-                        });
-                    });
                 </script>
 
                 <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
@@ -161,8 +126,87 @@
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12" id="correct_by_field">
                 </div>
+                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const chart = Highcharts.chart('correct_by_field', {
+                            chart: {
+                                type: 'bar',
+                                height: 800,
+                                styledMode: true
+                            },
+                            colors: ['#8085e9'],
+                            title: {
+                                text: 'Nombre de commentaires par champ'
+                            },
+                            xAxis: {
+                                categories: {{comment_fields|safe}},
+                                title: {
+                                    text: null
+                                },
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: null
+                                },
+                            },
+                            plotOptions: {
+                                bar: {
+                                    dataLabels: {
+                                        enabled: true
+                                    }
+                                }
+                            },
+                            series: [{
+                                name: 'nombre de commentaires',
+                                data: {{ comment_data }}
+                            }]
+                        });
+                    });
+                </script>
             </div>
 
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12" id="null_fields">
+                </div>
+                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const chart = Highcharts.chart('null_fields', {
+                            chart: {
+                                type: 'bar',
+                                styledMode: true
+                            },
+                            colors: ['#8085e9'],
+                            title: {
+                                text: 'Pourcentage de champ non rempli'
+                            },
+                            xAxis: {
+                                categories: {{null_fields_keys|safe}},
+                                title: {
+                                    text: null
+                                },
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: null
+                                },
+                            },
+                            plotOptions: {
+                                bar: {
+                                    dataLabels: {
+                                        enabled: true
+                                    }
+                                }
+                            },
+                            series: [{
+                                name: 'Champs à null',
+                                data: {{ null_fields_values }}
+                            }]
+                        });
+                    });
+                </script>
+            </div>
         </div>
     </div>
 {% endblock %}

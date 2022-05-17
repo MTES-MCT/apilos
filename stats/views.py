@@ -1,3 +1,4 @@
+import operator
 from django.shortcuts import render
 from django.db.models import (
     Count,
@@ -56,6 +57,7 @@ def index(request):
     for query in query_by_statuses:
         convention_by_status[query["statut"][3:].replace(" ", "_")] = query["total"]
 
+    null_fields = get_null_fields()
     return render(
         request,
         "stats/index.html",
@@ -75,6 +77,8 @@ def index(request):
             "dept": str(result["departement"]),
             "comment_fields": comment_fields,
             "comment_data": comment_data,
+            "null_fields_keys": list(null_fields.keys()),
+            "null_fields_values": list(null_fields.values()),
         },
     )
 
@@ -165,3 +169,28 @@ def get_null_fields():
         ),
         count=Count("pk", distinct=True),
     )
+
+    null_fields = {
+        "Bailleur - Capital Social": bailleurs["capital_social_count_null"]
+        / bailleurs["count"]
+        * 100,
+        "Programme - Nombre de bureaux commerciaux": programmes[
+            "nb_locaux_commerciaux_count_null"
+        ]
+        / programmes["count"]
+        * 100,
+        "Programme - Nombre de bureaux": programmes["nb_bureaux_count_null"]
+        / programmes["count"]
+        * 100,
+        "Programme - Autres locaux hors convention": programmes[
+            "autres_locaux_hors_convention_count_null"
+        ]
+        / programmes["count"]
+        * 100,
+    }
+
+    sorted_null_fields = dict(
+        sorted(null_fields.items(), key=operator.itemgetter(1), reverse=True)
+    )
+
+    return sorted_null_fields
