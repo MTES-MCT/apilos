@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from instructeurs.models import Administration
 from programmes.models import Financement
 from core import model_utils
 from users.type_models import TypeRole, EmailPreferences
@@ -266,7 +267,7 @@ class Convention(models.Model):
         )
         return users_partial + users_all_email
 
-    def prefixe_numero(self):
+    def convention_numero(self):
         if (
             self.statut
             in [
@@ -276,35 +277,7 @@ class Convention(models.Model):
             ]
             or self.numero is None
         ):
-            decret = "80.416"  # en application du décret n° 80.416
-            # decret 80.416 pour les HLM
-            # operation = "2"  # pour une opération de construction neuve (2)
-            # code opération non appliqué dans le 13
-            code_organisme = "075.050"  # par l' OPAC-VP (n° de code : 075.050).
-            return "/".join(
-                [
-                    str(self.programme.code_postal[:-3]),
-                    str(self.programme.zone_123_bis),
-                    str(timezone.now().month),
-                    str(timezone.now().year),
-                    decret,
-                    code_organisme,
-                ]
-            )
-        return "/".join(self.numero.split("/")[:-1])
-
-    def suffixe_numero(self):
-        if (
-            self.statut
-            not in [
-                ConventionStatut.PROJET,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ]
-            and self.numero is not None
-        ):
-            return self.numero.rsplit("/", maxsplit=1)[-1]
-        return None
+            return self.Administrations.prefix_convention
 
     def is_project(self):
         return self.statut == ConventionStatut.PROJET
