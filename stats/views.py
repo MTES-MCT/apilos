@@ -146,9 +146,13 @@ def get_null_fields():
         count=Count("pk", distinct=True),
     )
 
-    programmes = Programme.objects.filter(
+    programmes_qs = Programme.objects.filter(
         Exists(Convention.objects.filter(programme_id=OuterRef("pk")))
-    ).aggregate(
+    ).annotate(count_references_cadastrales=Count("referencecadastrale"))
+    programmes = programmes_qs.aggregate(
+        #
+        # Opération
+        #
         nb_locaux_commerciaux_count_null=Sum(
             Case(
                 When(nb_locaux_commerciaux__isnull=True, then=1),
@@ -167,8 +171,112 @@ def get_null_fields():
                 When(autres_locaux_hors_convention__isnull=False, then=0),
             )
         ),
+        #
+        # Référence Cadastrale
+        #
+        # permis_construire
+        permis_construire_count_null=Sum(
+            Case(
+                When(permis_construire__isnull=True, then=1),
+                When(permis_construire__isnull=False, then=0),
+            )
+        ),
+        # date_acte_notarie
+        date_acte_notarie_count_null=Sum(
+            Case(
+                When(date_acte_notarie__isnull=True, then=1),
+                When(date_acte_notarie__isnull=False, then=0),
+            )
+        ),
+        # date_achevement_previsible
+        date_achevement_previsible_count_null=Sum(
+            Case(
+                When(date_achevement_previsible__isnull=True, then=1),
+                When(date_achevement_previsible__isnull=False, then=0),
+            )
+        ),
+        # date_achat
+        date_achat_count_null=Sum(
+            Case(
+                When(date_achat__isnull=True, then=1),
+                When(date_achat__isnull=False, then=0),
+            )
+        ),
+        # date_achevement
+        date_achevement_count_null=Sum(
+            Case(
+                When(date_achevement__isnull=True, then=1),
+                When(date_achevement__isnull=False, then=0),
+            )
+        ),
+        # vendeur
+        vendeur_count_null=Sum(
+            Case(
+                When(vendeur__isnull=True, then=1),
+                When(vendeur__isnull=False, then=0),
+            )
+        ),
+        # acquereur
+        acquereur_count_null=Sum(
+            Case(
+                When(acquereur__isnull=True, then=1),
+                When(acquereur__isnull=False, then=0),
+            )
+        ),
+        # reference_notaire
+        reference_notaire_count_null=Sum(
+            Case(
+                When(reference_notaire__isnull=True, then=1),
+                When(reference_notaire__isnull=False, then=0),
+            )
+        ),
+        # reference_publication_acte
+        reference_publication_acte_count_null=Sum(
+            Case(
+                When(reference_publication_acte__isnull=True, then=1),
+                When(reference_publication_acte__isnull=False, then=0),
+            )
+        ),
+        # acte_de_propriete
+        acte_de_propriete_count_null=Sum(
+            Case(
+                When(acte_de_propriete__isnull=True, then=1),
+                When(acte_de_propriete__isnull=False, then=0),
+            )
+        ),
+        # certificat_adressage
+        certificat_adressage_count_null=Sum(
+            Case(
+                When(certificat_adressage__isnull=True, then=1),
+                When(certificat_adressage__isnull=False, then=0),
+            )
+        ),
+        # effet_relatif
+        effet_relatif_count_null=Sum(
+            Case(
+                When(effet_relatif__isnull=True, then=1),
+                When(effet_relatif__isnull=False, then=0),
+            )
+        ),
+        # reference_cadastrale
+        reference_cadastrale_count_null=Sum(
+            Case(
+                When(reference_cadastrale__isnull=True, then=1),
+                When(reference_cadastrale__isnull=False, then=0),
+            )
+        ),
+        # reference_cadastrale
+        # references_cadastrales_count_null=Sum(
+        #     Case(
+        #         When(count_references_cadastrales__lt=1, then=1),
+        #         When(count_references_cadastrales__gt=0, then=0),
+        #     )
+        # ),
         count=Count("pk", distinct=True),
     )
+    null_referencecadastrale = programmes_qs.filter(
+        count_references_cadastrales=0
+    ).count()
 
     null_fields = {
         "Bailleur - Capital Social": bailleurs["capital_social_count_null"]
@@ -185,6 +293,69 @@ def get_null_fields():
         "Programme - Autres locaux hors convention": programmes[
             "autres_locaux_hors_convention_count_null"
         ]
+        / programmes["count"]
+        * 100,
+        #
+        # Cadastre
+        #
+        # permis_construire
+        "Cadastre - permis_construire": programmes["permis_construire_count_null"]
+        / programmes["count"]
+        * 100,
+        # date_acte_notarie
+        "Cadastre - date_acte_notarie": programmes["date_acte_notarie_count_null"]
+        / programmes["count"]
+        * 100,
+        # date_achevement_previsible
+        "Cadastre - date_achevement_previsible": programmes[
+            "date_achevement_previsible_count_null"
+        ]
+        / programmes["count"]
+        * 100,
+        # date_achat
+        "Cadastre - date_achat": programmes["date_achat_count_null"]
+        / programmes["count"]
+        * 100,
+        # date_achevement
+        "Cadastre - date_achevement": programmes["date_achevement_count_null"]
+        / programmes["count"]
+        * 100,
+        # vendeur
+        "Cadastre - vendeur": programmes["vendeur_count_null"]
+        / programmes["count"]
+        * 100,
+        # acquereur
+        "Cadastre - acquereur": programmes["acquereur_count_null"]
+        / programmes["count"]
+        * 100,
+        # reference_notaire
+        "Cadastre - reference_notaire": programmes["reference_notaire_count_null"]
+        / programmes["count"]
+        * 100,
+        # reference_publication_acte
+        "Cadastre - reference_publication_acte": programmes[
+            "reference_publication_acte_count_null"
+        ]
+        / programmes["count"]
+        * 100,
+        # acte_de_propriete
+        "Cadastre - acte_de_propriete": programmes["acte_de_propriete_count_null"]
+        / programmes["count"]
+        * 100,
+        # certificat_adressage
+        "Cadastre - certificat_adressage": programmes["certificat_adressage_count_null"]
+        / programmes["count"]
+        * 100,
+        # effet_relatif
+        "Cadastre - effet_relatif": programmes["effet_relatif_count_null"]
+        / programmes["count"]
+        * 100,
+        # reference_cadastrale
+        "Cadastre - reference_cadastrale": programmes["reference_cadastrale_count_null"]
+        / programmes["count"]
+        * 100,
+        # references_cadastrales
+        "Cadastre - Tableau des références cadastrales": null_referencecadastrale
         / programmes["count"]
         * 100,
     }
