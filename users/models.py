@@ -26,6 +26,10 @@ class User(AbstractUser):
         null=True,
         max_length=25,
     )
+    cerbere_login = models.CharField(
+        null=True,
+        max_length=255,
+    )
     preferences_email = models.CharField(
         max_length=25,
         choices=EmailPreferences.choices,
