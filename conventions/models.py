@@ -356,7 +356,7 @@ class Convention(models.Model):
                 ConventionStatut.INSTRUCTION,
                 ConventionStatut.CORRECTION,
             ]:
-            return "Projet (Brouillon)"
+            return self.statut
         return ""
 
 
