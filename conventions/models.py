@@ -3,7 +3,6 @@ import uuid
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
-from instructeurs.models import Administration
 from programmes.models import Financement
 from core import model_utils
 from users.type_models import TypeRole, EmailPreferences
@@ -267,7 +266,7 @@ class Convention(models.Model):
         )
         return users_partial + users_all_email
 
-    def convention_numero(self):
+    def get_convention_prefix(self):
         if (
             self.statut
             in [
@@ -277,7 +276,8 @@ class Convention(models.Model):
             ]
             or self.numero is None
         ):
-            return self.Administrations.prefix_convention
+            if self.programme.administration : 
+                return self.programme.administration.prefix_convention.replace("{département}", str(self.programme.code_postal[:-3])).replace("{zone}", str(self.programme.zone_123_bis)).replace("{mois}",str(timezone.now().month)).replace("{année}",str(timezone.now().year))
 
     def is_project(self):
         return self.statut == ConventionStatut.PROJET

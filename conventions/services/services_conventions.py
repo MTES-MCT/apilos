@@ -292,7 +292,8 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
     if convention_number_form is None:
         convention_number_form = ConventionNumberForm(
             initial={
-                "convention_numero": convention.programme.administration.prefix_convention if convention.programme.administration else ""
+                "uuid" : convention.uuid,
+                "convention_numero": convention.get_convention_prefix() if convention.programme.administration else ""
             })
 
     opened_comments = Comment.objects.filter(
