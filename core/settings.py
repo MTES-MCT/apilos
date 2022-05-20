@@ -131,6 +131,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
 ]
+
 if not TESTING:
     MIDDLEWARE = MIDDLEWARE + [
         "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -225,8 +226,9 @@ STAGING = False
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
+
 AUTHENTICATION_BACKENDS = [
-    "users.backends.EmailBackend",
+    "core.backends.EmailBackend",
 ]
 
 # Redirect to home URL after login
@@ -317,9 +319,14 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ALGORITHM": "HS256",
-    "SIGNING_KEY": get_env_variable("JWT_SIGN_KEY"),
+    "ALGORITHM": get_env_variable("JWT_ALGORITHM", default="HS256"),
+    "SIGNING_KEY": get_env_variable("JWT_SIGN_KEY", default=None),
 }
+
+SIAP_CLIENT_JWT_SIGN_KEY = get_env_variable("SIAP_CLIENT_JWT_SIGN_KEY", default=None)
+SIAP_CLIENT_ALGORITHM = get_env_variable("SIAP_CLIENT_ALGORITHM", default="HS256")
+SIAP_CLIENT_HOST = get_env_variable("SIAP_CLIENT_HOST", default=None)
+SIAP_CLIENT_PATH = get_env_variable("SIAP_CLIENT_PATH", default=None)
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "API APiLos",
@@ -342,10 +349,10 @@ CERBERE_AUTH = get_env_variable("CERBERE_AUTH")
 if CERBERE_AUTH:
     MIDDLEWARE = MIDDLEWARE + [
         "django_cas_ng.middleware.CASMiddleware",
+        "core.custom_middleware.CerbereSessionMiddleware",
     ]
 
-    AUTHENTICATION_BACKENDS = [
-        "users.backends.EmailBackend",
+    AUTHENTICATION_BACKENDS = AUTHENTICATION_BACKENDS + [
         "core.backends.CerbereCASBackend",
     ]  # custom backend CAS
 
@@ -356,6 +363,7 @@ if CERBERE_AUTH:
     CAS_APPLY_ATTRIBUTES_TO_USER = True
     CAS_RENAME_ATTRIBUTES = {
         "UTILISATEUR.ID": "username",
+        "UTILISATEUR.LOGIN": "cerbere_login",
         "UTILISATEUR.NOM": "last_name",
         "UTILISATEUR.PRENOM": "first_name",
         "UTILISATEUR.MEL": "email",
