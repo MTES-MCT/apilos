@@ -350,6 +350,15 @@ class Convention(models.Model):
     def type1and2_configuration_not_needed(self):
         return not (self.bailleur.is_type1and2() and not self.type1and2)
 
+    def display_not_validated_status(self):
+        if self.statut in [
+                ConventionStatut.PROJET,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+            ]:
+            return "Projet (Brouillon)"
+        return ""
+
 
 class ConventionHistory(models.Model):
     id = models.AutoField(primary_key=True)
