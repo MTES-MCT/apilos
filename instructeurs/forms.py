@@ -4,6 +4,8 @@ from django.utils.safestring import mark_safe
 
 from instructeurs.models import Administration
 
+import re
+
 
 class AdministrationForm(forms.Form):
     uuid = forms.UUIDField(required=False)
@@ -76,3 +78,14 @@ class AdministrationForm(forms.Form):
             + "Vous pouvez également choisir les séparateurs de votre choix entre ces caractères ainsi qu'ajouter le texte qui vous convient."
         ),
     )
+    def clean_prefix_convention(self):
+        prefix_convention = self.cleaned_data.get("prefix_convention", 0)
+
+        test=re.findall(r"\{\w+\}", prefix_convention)
+        for element in test : 
+            if element not in ["{département}","{zone}","{mois}","{année}"]:
+                raise ValidationError(
+                    "Vous ne pouvez pas utiliser {} comme élement dynamique. Seuls {{département}}, {{zone}}, {{mois}} et {{année}} sont autorisés".format(element)
+                )
+        return prefix_convention
+

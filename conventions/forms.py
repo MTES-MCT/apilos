@@ -7,7 +7,7 @@ from django.forms.fields import FileField
 from django.core.exceptions import ValidationError
 
 from programmes.models import Financement, TypeOperation
-from conventions.models import ConventionType1and2, Preteur
+from conventions.models import Convention, ConventionType1and2, Preteur
 
 
 class ConventionCommentForm(forms.Form):
@@ -252,6 +252,9 @@ class NotificationForm(forms.Form):
 
 
 class ConventionNumberForm(forms.Form):
+    uuid = forms.UUIDField(
+        required=False,
+    )
     convention_numero = forms.CharField(
         max_length=250,
         error_messages={
@@ -262,6 +265,15 @@ class ConventionNumberForm(forms.Form):
             "required": "Le numéro de convention est obligatoire",
         }
     )
+    def clean_convention_numero(self):
+        convention_numero = self.cleaned_data.get("convention_numero", 0)
+        uuid =  self.cleaned_data.get("uuid")
+        convention = Convention.objects.get(uuid=uuid)
+        if (convention_numero == convention.get_convention_prefix()):
+            raise ValidationError(
+                f"Le numéro de convention que vous avez indiqué est identique au préfixe défini pour votre administration."
+            )
+        return convention_numero
 
 
 class ConventionType1and2Form(forms.Form):
