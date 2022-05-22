@@ -322,6 +322,9 @@ class User(AbstractUser):
             return True
         return False
 
+    def is_cerbere_user(self):
+        return self.cerbere_login is not None
+
     def __str__(self):
         return (
             f"{self.first_name} {self.last_name}".strip()
