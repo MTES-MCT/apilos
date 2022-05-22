@@ -318,14 +318,11 @@ class Convention(models.Model):
     def is_a_signer(self):
         return self.statut == ConventionStatut.A_SIGNER
 
-    def is_validated(self):
-        return self.statut in [
+    def isnt_validated(self):
+        return self.statut not in [
             ConventionStatut.A_SIGNER,
             ConventionStatut.TRANSMISE,
         ]
-
-    def isnt_validated(self):
-        return not self.is_validated()
 
     def statut_for_template(self):
         return {
@@ -351,12 +348,16 @@ class Convention(models.Model):
         return not (self.bailleur.is_type1and2() and not self.type1and2)
 
     def display_not_validated_status(self):
+        """
+        Text display as Watermark when the convention is in project or instruction status
+        """
+        if self.statut == ConventionStatut.PROJET:
+            return "Projet de convention"
         if self.statut in [
-                ConventionStatut.PROJET,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ]:
-            return self.statut
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+        ]:
+            return "Convention en cours d'instruction"
         return ""
 
 
