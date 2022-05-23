@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -20,13 +20,7 @@
 .fr-content-media__img {
   width: 100%;
   position: relative;
-}
-
-.fr-content-media__img::before {
-  content: "";
-  display: block;
-  width: 100%;
-  padding-bottom: 56.25%;
+  aspect-ratio: 1.77778;
 }
 
 .fr-content-media__img > *,
@@ -62,7 +56,7 @@
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
@@ -76,12 +70,20 @@
 }
 
 .fr-content-media__transcription .fr-btn::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../../icons/system/menu-2-fill.svg");
+  mask-image: url("../../icons/system/menu-2-fill.svg");
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-content-media--sm .fr-content-media__img,
@@ -112,7 +114,7 @@
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
@@ -120,7 +122,6 @@
   font-weight: 500;
 
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --hover-tint: var(--hover);
   background-color: transparent;
@@ -131,12 +132,20 @@
 }
 
 .fr-content-media__transcription .fr-link::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../../icons/system/menu-2-fill.svg");
+  mask-image: url("../../icons/system/menu-2-fill.svg");
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-content-media__transcription .fr-btn:disabled,

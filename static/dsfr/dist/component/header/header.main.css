@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -9,7 +9,6 @@
 
 .fr-header {
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --ul-type: none;
   --ol-type: none;
@@ -113,6 +112,11 @@
   line-height: 1.5rem;
 }
 
+.fr-header__service-title .fr-badge {
+  vertical-align: middle;
+  margin: -0.25rem 0 0 0.25rem;
+}
+
 .fr-header .fr-modal {
   overflow: auto;
   justify-content: initial;
@@ -161,7 +165,7 @@
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   max-width: 2.5rem;
@@ -179,22 +183,39 @@
 }
 
 .fr-header__navbar .fr-btn::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-header__navbar .fr-btn--menu::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../../icons/system/menu-fill.svg");
+  mask-image: url("../../icons/system/menu-fill.svg");
+  --icon-size: 1.5rem;
 }
 
 .fr-header__navbar .fr-btn--search::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../../icons/system/search-line.svg");
+  mask-image: url("../../icons/system/search-line.svg");
+  --icon-size: 1.5rem;
 }
 
 .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn {
@@ -205,12 +226,11 @@
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   font-weight: 500;
 }
 
 .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"]):not(.fr-btn--display)::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
   content: none;
 }
 
@@ -221,7 +241,7 @@
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -233,17 +253,16 @@
 .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-icon-"]::before,
 .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-fi-"]::before,
 .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn.fr-btn--display {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -252,10 +271,9 @@
 }
 
 .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn.fr-btn--display::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-header__tools-links {
@@ -332,7 +350,6 @@
 
 .fr-header .fr-links-group .fr-link {
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --hover-tint: var(--hover);
   --active-tint: var(--active);
@@ -343,12 +360,11 @@
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   font-weight: 500;
 }
 
 .fr-header .fr-links-group .fr-link:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"])::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
   content: none;
 }
 
@@ -359,7 +375,7 @@
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -371,10 +387,9 @@
 .fr-header .fr-links-group .fr-link[class*=" fr-icon-"]::before,
 .fr-header .fr-links-group .fr-link[class^="fr-fi-"]::before,
 .fr-header .fr-links-group .fr-link[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-header .fr-header__menu-links .fr-links-group .fr-link {

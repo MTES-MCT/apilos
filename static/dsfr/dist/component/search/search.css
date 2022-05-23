@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -61,7 +61,7 @@
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -75,12 +75,20 @@
 }
 
 .fr-search-bar .fr-btn::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../../icons/system/search-line.svg");
+  mask-image: url("../../icons/system/search-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-search-bar .fr-input--valid {
@@ -96,7 +104,7 @@
     font-size: 1.125rem;
     line-height: 1.75rem;
     min-height: 3rem;
-    padding: 0.5rem 2rem;
+    padding: 0.5rem 1.5rem;
     flex-direction: row;
     overflow: initial;
     max-width: 100%;
@@ -105,14 +113,26 @@
   }
 
   .fr-search-bar--lg .fr-btn::before {
-    font: normal 700 normal 2rem/1 dsfr-icon;
+    --icon-size: 1.5rem;
     margin-left: -0.25rem;
     margin-right: 0.5rem;
-    font-size: 1.5rem;
   }
 }
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .fr-search-bar .fr-btn {
+    content: '';
+  }
+
+  .fr-search-bar .fr-btn::before {
+    background-color: transparent;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-image: url("../../icons/system/search-line.svg");
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
   .fr-search-bar .fr-input {
     box-shadow: inset 0 -2px 0 0 #000091;
   }

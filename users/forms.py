@@ -59,7 +59,7 @@ class UserForm(forms.Form):
         label="Administrateur de compte",
         help_text=(
             "L'administrateur de compte peut gérer les utilisateurs de ses entités."
-            + " Si vous renoncez à être administrateur,vous ne pourez plus gérer les utilisateurs"
+            + " Si vous renoncez à être administrateur,vous ne pourrez plus gérer les utilisateurs"
             + " de vos entités ou vous ré-attribuer les droits d'administration"
         ),
     )

@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -17,15 +17,44 @@
   /**
   * Correctif de la hauteur de la navigation latérale
   */
-  .fr-sidenav {
+  .fr-sidemenu {
     height: auto;
   }
 
-  /**
-  * Reset de la liste à puce
-  */
-  .fr-sidemenu__item {
-    list-style: none;
+  .fr-sidemenu ul {
+    list-style-type: none;
+  }
+
+  .fr-sidemenu ol {
+    list-style-type: none;
+  }
+
+  .fr-sidemenu ul,
+  .fr-sidemenu ol {
+    padding-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .fr-sidemenu [href] {
+    text-decoration: none;
+  }
+
+  .fr-sidemenu [target='_blank']::after {
+    content: none;
+  }
+
+  .fr-sidemenu__btn[aria-expanded] {
+    content: '';
+  }
+
+  .fr-sidemenu__btn[aria-expanded]::before {
+    background-color: transparent;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-image: url("../../icons/system/arrow-down-s-line.svg");
+    width: 1rem;
+    height: 1rem;
   }
 
   .fr-sidemenu__title {
@@ -60,26 +89,8 @@
     background-color: #000091;
   }
 
-  .fr-sidemenu__link[aria-current]::after:hover,
-  .fr-sidemenu__btn[aria-current]::after:hover {
-    background-color: #1212ff;
-  }
-
-  .fr-sidemenu__link[aria-current]::after:active,
-  .fr-sidemenu__btn[aria-current]::after:active {
-    background-color: #2323ff;
-  }
-
   .fr-sidemenu__inner > .fr-sidemenu__btn {
     background-color: #fff;
-  }
-
-  .fr-sidemenu__inner > .fr-sidemenu__btn:hover {
-    background-color: #f6f6f6;
-  }
-
-  .fr-sidemenu__inner > .fr-sidemenu__btn:active {
-    background-color: #ededed;
   }
 }
 

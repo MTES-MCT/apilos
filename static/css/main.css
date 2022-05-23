@@ -108,7 +108,7 @@ details > summary::-webkit-details-marker {
 }
 
 .dz-error-message {
-  z-index: 100000 !important;
+  z-index: 997 !important;
   width:auto !important;
   height: auto !important;
   top:150px !important;
@@ -443,9 +443,11 @@ table.fullwidth {
 .apilos-dropdown-menu a {
   float: none;
   padding: 12px 16px;
+  min-width: 250px;
   text-decoration: none;
   display: block;
   text-align: left;
+
 }
 
 #loading {
@@ -577,5 +579,5 @@ table.fullwidth {
   position: -webkit-sticky; /* Safari */
   position: sticky;
   top: 0;
-  z-index: 9999;
+  z-index: 998;
 }

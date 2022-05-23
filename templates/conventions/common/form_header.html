@@ -1,20 +1,26 @@
 {% if convention %}
 
     <div class='background-contrast-grey950 fr-pt-2w'></div>
-    <div class='background-contrast-grey950{% if False %} apilos-sticky-top{% endif %} fr-pt-2w'>
+    <div class='background-contrast-grey950 apilos-sticky-top fr-pt-2w'>
         <div class="fr-container">
             <div class="fr-col-12 fr-pb-2w">
-                <div class="fr-highlight">
-                    <h1>{{convention.programme.nom}}</h1>
-                </div>
-                <div class="fr-grid-row fr-pl-9w">
-                    <div class="fr-py-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
-                        <span class="fr-px-1w fr-h3">
-                            {{convention.statut_for_template.short_statut}}
-                        </span><br>
-                        <span class="fr-px-1w">
-                            {{convention.statut_for_template.statut_display}}
-                        </span>
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-col-lg-6">
+                        <div class="fr-highlight">
+                            <h1>{{convention.programme.nom}}</h1>
+                        </div>
+                    </div>
+                    <div class="fr-col-12 fr-col-lg-6">
+                        <div class="fr-grid-row fr-pl-9w">
+                            <div class="fr-py-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
+                                <span class="fr-px-1w fr-h3">
+                                    {{convention.statut_for_template.short_statut}}
+                                </span><br>
+                                <span class="fr-px-1w">
+                                    {{convention.statut_for_template.statut_display}}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

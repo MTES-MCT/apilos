@@ -38,35 +38,30 @@ class ConventionModelsTest(TestCase):
         self.assertFalse(convention.is_instruction_ongoing())
         self.assertTrue(convention.is_project())
         self.assertFalse(convention.is_a_signer())
-        self.assertFalse(convention.is_validated())
         self.assertTrue(convention.isnt_validated())
         convention.statut = ConventionStatut.INSTRUCTION
         self.assertFalse(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
         self.assertFalse(convention.is_a_signer())
-        self.assertFalse(convention.is_validated())
         self.assertTrue(convention.isnt_validated())
         convention.statut = ConventionStatut.CORRECTION
         self.assertTrue(convention.is_bailleur_editable())
         self.assertTrue(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
         self.assertFalse(convention.is_a_signer())
-        self.assertFalse(convention.is_validated())
         self.assertTrue(convention.isnt_validated())
         convention.statut = ConventionStatut.A_SIGNER
         self.assertFalse(convention.is_bailleur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
         self.assertTrue(convention.is_a_signer())
-        self.assertTrue(convention.is_validated())
         self.assertFalse(convention.isnt_validated())
         convention.statut = ConventionStatut.TRANSMISE
         self.assertFalse(convention.is_bailleur_editable())
         self.assertFalse(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
         self.assertFalse(convention.is_a_signer())
-        self.assertTrue(convention.is_validated())
         self.assertFalse(convention.isnt_validated())
 
     def test_get_email_bailleur_users(self):
@@ -206,6 +201,27 @@ class ConventionModelsTest(TestCase):
                 ]:
                     convention.type1and2 = type1andtype2
                     self.assertTrue(convention.type1and2_configuration_not_needed())
+
+    def test_display_not_validated_status(self):
+        convention = Convention.objects.order_by("uuid").first()
+        convention.statut = ConventionStatut.PROJET
+        self.assertEqual(
+            convention.display_not_validated_status(), "Projet de convention"
+        )
+        convention.statut = ConventionStatut.INSTRUCTION
+        self.assertEqual(
+            convention.display_not_validated_status(),
+            "Convention en cours d'instruction",
+        )
+        convention.statut = ConventionStatut.CORRECTION
+        self.assertEqual(
+            convention.display_not_validated_status(),
+            "Convention en cours d'instruction",
+        )
+        convention.statut = ConventionStatut.A_SIGNER
+        self.assertEqual(convention.display_not_validated_status(), "")
+        convention.statut = ConventionStatut.TRANSMISE
+        self.assertEqual(convention.display_not_validated_status(), "")
 
     def test_xlsx(self):
         utils_assertions.assert_xlsx(self, Pret, "financement")

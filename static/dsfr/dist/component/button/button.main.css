@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -15,14 +15,13 @@
   z-index: 1;
 
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --hover-tint: var(--hover);
   font-weight: 500;
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   background-color: var(--background-action-high-blue-france);
 
   --hover: var(--background-action-high-blue-france-hover);
@@ -47,9 +46,9 @@
 .fr-btn:not([class*="fr-btn--icon-"])[class*=" fr-icon-"]::before,
 .fr-btn:not([class*="fr-btn--icon-"])[class^="fr-fi-"]::before,
 .fr-btn:not([class*="fr-btn--icon-"])[class*=" fr-fi-"]::before {
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btn--icon-left[class^="fr-icon-"],
@@ -66,9 +65,9 @@
 .fr-btn--icon-left[class*=" fr-icon-"]::before,
 .fr-btn--icon-left[class^="fr-fi-"]::before,
 .fr-btn--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn--icon-right[class^="fr-icon-"],
@@ -85,16 +84,16 @@
 .fr-btn--icon-right[class*=" fr-icon-"]::before,
 .fr-btn--icon-right[class^="fr-fi-"]::before,
 .fr-btn--icon-right[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn--sm {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
 }
 
 .fr-btn--sm:not([class*="fr-btn--icon-"])[class^="fr-icon-"],
@@ -114,9 +113,9 @@
 .fr-btn--sm:not([class*="fr-btn--icon-"])[class*=" fr-icon-"]::before,
 .fr-btn--sm:not([class*="fr-btn--icon-"])[class^="fr-fi-"]::before,
 .fr-btn--sm:not([class*="fr-btn--icon-"])[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn--sm.fr-btn--icon-left[class^="fr-icon-"],
@@ -133,9 +132,9 @@
 .fr-btn--sm.fr-btn--icon-left[class*=" fr-icon-"]::before,
 .fr-btn--sm.fr-btn--icon-left[class^="fr-fi-"]::before,
 .fr-btn--sm.fr-btn--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn--sm.fr-btn--icon-right[class^="fr-icon-"],
@@ -152,16 +151,16 @@
 .fr-btn--sm.fr-btn--icon-right[class*=" fr-icon-"]::before,
 .fr-btn--sm.fr-btn--icon-right[class^="fr-fi-"]::before,
 .fr-btn--sm.fr-btn--icon-right[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn--lg {
   font-size: 1.125rem;
   line-height: 1.75rem;
   min-height: 3rem;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 1.5rem;
 }
 
 .fr-btn--lg:not([class*="fr-btn--icon-"])[class^="fr-icon-"],
@@ -181,9 +180,9 @@
 .fr-btn--lg:not([class*="fr-btn--icon-"])[class*=" fr-icon-"]::before,
 .fr-btn--lg:not([class*="fr-btn--icon-"])[class^="fr-fi-"]::before,
 .fr-btn--lg:not([class*="fr-btn--icon-"])[class*=" fr-fi-"]::before {
+  --icon-size: 2rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 2rem;
 }
 
 .fr-btn--lg.fr-btn--icon-left[class^="fr-icon-"],
@@ -200,9 +199,9 @@
 .fr-btn--lg.fr-btn--icon-left[class*=" fr-icon-"]::before,
 .fr-btn--lg.fr-btn--icon-left[class^="fr-fi-"]::before,
 .fr-btn--lg.fr-btn--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1.5rem;
   margin-left: -0.25rem;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btn--lg.fr-btn--icon-right[class^="fr-icon-"],
@@ -219,9 +218,9 @@
 .fr-btn--lg.fr-btn--icon-right[class*=" fr-icon-"]::before,
 .fr-btn--lg.fr-btn--icon-right[class^="fr-fi-"]::before,
 .fr-btn--lg.fr-btn--icon-right[class*=" fr-fi-"]::before {
+  --icon-size: 1.5rem;
   margin-right: -0.25rem;
   margin-left: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btns-group {
@@ -361,13 +360,13 @@
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   font-weight: 500;
 }
 
 .fr-btns-group--sm .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"])::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
 }
 
 .fr-btns-group--sm:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-icon-"],
@@ -377,7 +376,7 @@
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -393,10 +392,9 @@
 .fr-btns-group--sm:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-icon-"]::before,
 .fr-btns-group--sm:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-fi-"]::before,
 .fr-btns-group--sm:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btns-group--sm.fr-btns-group--icon-left .fr-btn[class^="fr-icon-"],
@@ -406,7 +404,7 @@
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -418,10 +416,9 @@
 .fr-btns-group--sm.fr-btns-group--icon-left .fr-btn[class*=" fr-icon-"]::before,
 .fr-btns-group--sm.fr-btns-group--icon-left .fr-btn[class^="fr-fi-"]::before,
 .fr-btns-group--sm.fr-btns-group--icon-left .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btns-group--sm.fr-btns-group--icon-right .fr-btn[class^="fr-icon-"],
@@ -431,7 +428,7 @@
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
@@ -443,23 +440,22 @@
 .fr-btns-group--sm.fr-btns-group--icon-right .fr-btn[class*=" fr-icon-"]::before,
 .fr-btns-group--sm.fr-btns-group--icon-right .fr-btn[class^="fr-fi-"]::before,
 .fr-btns-group--sm.fr-btns-group--icon-right .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg) .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"]) {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   font-weight: 500;
 }
 
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg) .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"])::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1rem;
 }
 
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-icon-"],
@@ -469,7 +465,7 @@
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -485,10 +481,9 @@
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-icon-"]::before,
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-fi-"]::before,
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-left .fr-btn[class^="fr-icon-"],
@@ -498,7 +493,7 @@
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -510,10 +505,9 @@
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-left .fr-btn[class*=" fr-icon-"]::before,
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-left .fr-btn[class^="fr-fi-"]::before,
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-left .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-right .fr-btn[class^="fr-icon-"],
@@ -523,7 +517,7 @@
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
@@ -535,23 +529,22 @@
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-right .fr-btn[class*=" fr-icon-"]::before,
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-right .fr-btn[class^="fr-fi-"]::before,
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-right .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btns-group--lg .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"]) {
   font-size: 1.125rem;
   line-height: 1.75rem;
   min-height: 3rem;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 1.5rem;
   flex-direction: row;
   font-weight: 500;
 }
 
 .fr-btns-group--lg .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"])::before {
-  font: normal 700 normal 2rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
 }
 
 .fr-btns-group--lg:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-icon-"],
@@ -561,7 +554,7 @@
   font-size: 1.125rem;
   line-height: 1.75rem;
   min-height: 3rem;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 1.5rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -577,10 +570,9 @@
 .fr-btns-group--lg:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-icon-"]::before,
 .fr-btns-group--lg:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-fi-"]::before,
 .fr-btns-group--lg:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 2rem/1 dsfr-icon;
+  --icon-size: 2rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 2rem;
 }
 
 .fr-btns-group--lg.fr-btns-group--icon-left .fr-btn[class^="fr-icon-"],
@@ -590,7 +582,7 @@
   font-size: 1.125rem;
   line-height: 1.75rem;
   min-height: 3rem;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 1.5rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -602,10 +594,9 @@
 .fr-btns-group--lg.fr-btns-group--icon-left .fr-btn[class*=" fr-icon-"]::before,
 .fr-btns-group--lg.fr-btns-group--icon-left .fr-btn[class^="fr-fi-"]::before,
 .fr-btns-group--lg.fr-btns-group--icon-left .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 2rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
   margin-left: -0.25rem;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btns-group--lg.fr-btns-group--icon-right .fr-btn[class^="fr-icon-"],
@@ -615,7 +606,7 @@
   font-size: 1.125rem;
   line-height: 1.75rem;
   min-height: 3rem;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 1.5rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
@@ -627,17 +618,16 @@
 .fr-btns-group--lg.fr-btns-group--icon-right .fr-btn[class*=" fr-icon-"]::before,
 .fr-btns-group--lg.fr-btns-group--icon-right .fr-btn[class^="fr-fi-"]::before,
 .fr-btns-group--lg.fr-btns-group--icon-right .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 2rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
   margin-right: -0.25rem;
   margin-left: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btn--close {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
@@ -649,19 +639,27 @@
 }
 
 .fr-btn--close::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../../icons/system/close-line.svg");
+  mask-image: url("../../icons/system/close-line.svg");
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn--display {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -670,12 +668,20 @@
 }
 
 .fr-btn--display::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../../icons/system/fr--theme-fill.svg");
+  mask-image: url("../../icons/system/fr--theme-fill.svg");
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn:disabled,

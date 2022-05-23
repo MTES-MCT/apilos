@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -13,8 +13,42 @@
   /**
   * Reset liste à puce
   */
-  .fr-tabs__list {
-    list-style: none;
+  .fr-tabs ul {
+    list-style-type: none;
+  }
+
+  .fr-tabs ol {
+    list-style-type: none;
+  }
+
+  .fr-tabs ul,
+  .fr-tabs ol {
+    padding-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  ul,
+  ol {
+    padding-left: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .fr-tabs__panel [href] {
+    text-decoration: underline;
+  }
+
+  .fr-tabs__panel [target='_blank']::after {
+    content: '';
   }
 
   .fr-tabs::after {
@@ -30,37 +64,13 @@
     color: #161616;
   }
 
-  .fr-tabs__tab:not([aria-selected=true]):hover {
-    background-color: #c1c1fb;
-  }
-
-  .fr-tabs__tab:not([aria-selected=true]):active {
-    background-color: #adadf9;
-  }
-
   .fr-tabs__tab[aria-selected=true] {
     color: #000091;
     background-color: #fff;
   }
 
-  .fr-tabs__tab[aria-selected=true]:hover {
-    background-color: #f6f6f6;
-  }
-
-  .fr-tabs__tab[aria-selected=true]:active {
-    background-color: #ededed;
-  }
-
   .fr-tabs__tab:disabled {
     color: #929292;
     background-color: #e5e5e5;
-  }
-
-  .fr-tabs__tab:disabled:hover {
-    background-color: #c5c5c5;
-  }
-
-  .fr-tabs__tab:disabled:active {
-    background-color: #b2b2b2;
   }
 }

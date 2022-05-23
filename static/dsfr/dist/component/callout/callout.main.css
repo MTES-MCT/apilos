@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -32,6 +32,7 @@
 .fr-callout[class*=" fr-icon-"]::before,
 .fr-callout[class^="fr-fi-"]::before,
 .fr-callout[class*=" fr-fi-"]::before {
+  --icon-size: 1.5rem;
   display: block;
   margin: -0.5rem 0 0.5rem;
 }

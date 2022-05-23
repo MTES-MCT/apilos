@@ -117,7 +117,8 @@ class ProgrammeForm(forms.Form):
     nom = forms.CharField(
         label="Nom",
         help_text=(
-            "Indiquez uniquement le nom du programme. Le type de financement sera automatiquement mentionné via notre logiciel"
+            "Indiquez uniquement le nom du programme. Le type de financement sera automatiquement"
+            + " mentionné via notre logiciel"
         ),
         max_length=255,
         min_length=1,
@@ -325,6 +326,7 @@ class ReferenceCadastraleForm(forms.Form):
         },
     )
     numero = forms.IntegerField(
+        required=True,
         label="",
         error_messages={
             "required": "Le numéro est obligatoire",

@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -54,12 +54,20 @@
 }
 
 .fr-accordion__btn::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../../icons/system/add-line.svg");
+  mask-image: url("../../icons/system/add-line.svg");
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.25rem;
-  font-size: 1rem;
   margin-right: 0;
   margin-left: auto;
 }
@@ -69,12 +77,12 @@
 }
 
 .fr-accordion__btn[aria-expanded="true"]::before {
-  content: "";
-  font-weight: 700;
+  -webkit-mask-image: url("../../icons/system/subtract-line.svg");
+  mask-image: url("../../icons/system/subtract-line.svg");
 }
 
 .fr-accordion .fr-collapse {
-  --ul-type: "●\00a0\00a0";
+  --ul-type: disc;
   --ol-type: decimal;
   --ul-start: 1rem;
   --ol-start: 1.5rem;

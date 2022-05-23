@@ -45,7 +45,7 @@
                     </div>
                 {% endwith %}
             </div>
-        {% elif convention.is_validated %}
+        {% elif not convention.isnt_validated %}
             <div role="alert" class="fr-alert fr-alert--success">
 
                 <p class="fr-alert__title">La convention a été validée le {{ convention.valide_le|date:"j F Y" }}</p>

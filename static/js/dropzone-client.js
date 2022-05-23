@@ -5,7 +5,21 @@ function init_dropzone_from_file(form_id, accepted_files) {
     object_uuid = document.getElementById(form_id + "_object_uuid").value
     parameters = {}
     parameters[object_name]= object_uuid
-    if (accepted_files == undefined ) accepted_files = 'image/*,application/pdf'
+    if (accepted_files == undefined ) {
+        accepted_files = 'image/*'
+        accepted_files = accepted_files + ',application/pdf'
+        // MS: doc, ppt, xls
+        accepted_files = accepted_files + ',application/msword,application/vnd.ms-powerpoint,application/vnd.ms-excel'
+        // MS openxmlformats : pptx, docx, xlsx
+        accepted_files = accepted_files + ',application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        accepted_files = accepted_files + ',application/vnd.openxmlformats-officedocument.presentationml.presentation'
+        accepted_files = accepted_files + ',application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        // Opendocument : odp, ods, odt
+        accepted_files = accepted_files + ',application/vnd.oasis.opendocument.presentation'
+        accepted_files = accepted_files + ',application/vnd.oasis.opendocument.spreadsheet'
+        accepted_files = accepted_files + ',application/vnd.oasis.opendocument.text'
+
+    }
     let myDropzone = new Dropzone("div#"+form_id+"_dropzone", {
         url: "/upload/",
         uploadMultiple: true,

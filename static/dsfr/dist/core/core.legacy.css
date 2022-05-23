@@ -1,18 +1,127 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
+@media all and (-ms-high-contrast: none) and (-ms-high-contrast: none), all and (-ms-high-contrast: active) and (-ms-high-contrast: none), all and (-ms-high-contrast: none) and (-ms-high-contrast: active), (-ms-high-contrast: active) and (-ms-high-contrast: active) {
+  .fr-enlarge-link {
+    background-color: transparent;
+  }
+
+  .fr-enlarge-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .fr-enlarge-link:active {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .fr-enlarge-link [href] {
+    text-decoration: none;
+  }
+
+  .fr-enlarge-link [target='_blank']::after {
+    content: none;
+  }
+
+  [href],
+  .fr-reset-link {
+    text-decoration: underline;
+  }
+
+  .fr-raw-link {
+    text-decoration: none;
+  }
+
+  .fr-reset-link::after {
+    content: none;
+  }
+
+  [target="_blank"] {
+    content: '';
+  }
+
+  [target="_blank"]::after {
+    background-color: transparent;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-image: url("../icons/system/external-link-line.svg");
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .fr-responsive-vid::before {
+    content: "";
+    display: block;
+    padding-bottom: 56.25%;
+  }
+
+  .fr-responsive-vid--16x9::before {
+    content: "";
+    display: block;
+    padding-bottom: 56.25% !important;
+  }
+
+  .fr-responsive-vid--4x3::before {
+    content: "";
+    display: block;
+    padding-bottom: 75% !important;
+  }
+
+  .fr-responsive-vid--1x1::before {
+    content: "";
+    display: block;
+    padding-bottom: 100% !important;
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  ul,
+  ol {
+    padding-left: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  [class^="fr-icon-"]::before,
+  [class*=" fr-icon-"]::before,
+  [class^="fr-fi-"]::before,
+  [class*=" fr-fi-"]::before {
+    background-color: transparent;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .fr-icon--xs::before {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  .fr-icon--sm::before {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .fr-icon--md::before {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .fr-icon--lg::before {
+    width: 2rem;
+    height: 2rem;
+  }
+
   body {
     background-color: #fff;
     color: #3a3a3a;
-  }
-
-  body:hover {
-    background-color: #f6f6f6;
-  }
-
-  body:active {
-    background-color: #ededed;
   }
 
   a:not([href]),
