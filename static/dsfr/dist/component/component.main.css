@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -40,7 +40,6 @@
 .fr-logo {
   --text-spacing: 0;
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   display: inline-block;
   padding: 1em;
@@ -245,106 +244,6 @@
 }
 
 /* ¯¯¯¯¯¯¯¯¯ *\
-  CARD
-\* ˍˍˍˍˍˍˍˍˍ */
-.fr-card {
-  display: flex;
-  flex-direction: column-reverse;
-  position: relative;
-  --text-spacing: 0 0 1rem;
-  --title-spacing: 0 0 0.5rem;
-  background-color: var(--background-default-grey);
-  --hover: var(--background-default-grey-hover);
-  --active: var(--background-default-grey-active);
-  box-shadow: 0 0 0 1px var(--border-default-grey);
-}
-
-.fr-grid-row .fr-card {
-  height: 100%;
-}
-
-.fr-card:not(.fr-card--no-arrow) .fr-card__body::after {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-top: auto;
-  margin-left: auto;
-  color: var(--text-action-high-blue-france);
-}
-
-.fr-card.fr-enlarge-link:hover .fr-card__img {
-  --brightness: calc(100% + var(--brighten) * 10%);
-}
-
-.fr-card.fr-enlarge-link:active .fr-card__img {
-  --brightness: calc(100% + var(--brighten) * 20%);
-}
-
-.fr-card__img {
-  position: relative;
-  width: 100%;
-  filter: brightness(var(--brightness));
-}
-
-.fr-card__img::before {
-  content: "";
-  display: block;
-  width: 100%;
-  padding-bottom: 56.25%;
-}
-
-.fr-card__img img {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 50%;
-}
-
-.fr-card__body {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  padding: 1.5rem;
-}
-
-.fr-card__detail {
-  font-size:  0.75rem ;
-  line-height:  1.25rem ;
-  order: -1;
-  color: var(--text-mention-grey);
-}
-
-.fr-card__title {
-  font-size:  1.125rem ;
-  line-height:  1.5rem ;
-  font-weight: 700;
-  color: var(--text-title-grey);
-}
-
-.fr-card__desc {
-  font-size:  0.875rem ;
-  line-height:  1.5rem ;
-}
-
-.fr-card__link {
-  width: 100%;
-  margin-top: auto;
-}
-
-.fr-card--grey {
-  background-color: var(--background-contrast-grey);
-  --hover: var(--background-contrast-grey-hover);
-  --active: var(--background-contrast-grey-active);
-}
-
-/* ¯¯¯¯¯¯¯¯¯ *\
   QUOTE
 \* ˍˍˍˍˍˍˍˍˍ */
 .fr-quote {
@@ -358,11 +257,20 @@
 }
 
 .fr-quote::before {
-  font: normal 700 normal 2rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/editor/fr--quote-line.svg");
+  mask-image: url("../icons/editor/fr--quote-line.svg");
+  --icon-size: 2rem;
   display: block;
-  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
   color: var(--artwork-minor-blue-france);
 }
 
@@ -549,10 +457,10 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 
 .fr-breadcrumb__button {
   background-image: var(--underline-img), var(--underline-img);
-  background-position: 50% calc(50% + 0.71875em), 50% calc(50% + 0.65625em);
+  background-position: 50% calc(50% + 0.65625em), 50% calc(50% + 0.65625em);
   background-repeat: no-repeat, no-repeat;
   transition: background-size 0s;
-  background-size: 0 0.0625em, 100% 0.0625em;
+  background-size: 0 0.125em, 100% 0.0625em;
   font-size:  0.75rem ;
   line-height:  1.25rem ;
   margin: 0;
@@ -602,9 +510,18 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-breadcrumb__link:not([aria-current])::after {
-  font: normal 700 normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/arrow-right-s-line.svg");
+  mask-image: url("../icons/system/arrow-right-s-line.svg");
+  --icon-size: 1rem;
   position: absolute;
   top: 0.125rem;
   right: -1.25rem;
@@ -684,9 +601,17 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-error-text::before {
-  font: normal normal normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 400;
+  content: "";
+  flex: 0 0 auto;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/fr--error-fill.svg");
+  mask-image: url("../icons/system/fr--error-fill.svg");
+  --icon-size: 1rem;
   display: inline-block;
   margin-right: 0.25rem;
 }
@@ -706,9 +631,17 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-valid-text::before {
-  font: normal normal normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 400;
+  content: "";
+  flex: 0 0 auto;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/fr--success-fill.svg");
+  mask-image: url("../icons/system/fr--success-fill.svg");
+  --icon-size: 1rem;
   display: inline-block;
   margin-right: 0.25rem;
 }
@@ -923,9 +856,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-link--icon-left[class^="fr-icon-"]::before, .fr-link--icon-left[class*=" fr-icon-"]::before, .fr-link--icon-left[class^="fr-fi-"]::before, .fr-link--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-link--icon-right[class^="fr-icon-"], .fr-link--icon-right[class*=" fr-icon-"], .fr-link--icon-right[class^="fr-fi-"], .fr-link--icon-right[class*=" fr-fi-"] {
@@ -936,9 +869,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-link--icon-right[class^="fr-icon-"]::before, .fr-link--icon-right[class*=" fr-icon-"]::before, .fr-link--icon-right[class^="fr-fi-"]::before, .fr-link--icon-right[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-link--sm {
@@ -955,9 +888,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-link--sm.fr-link--icon-left[class^="fr-icon-"]::before, .fr-link--sm.fr-link--icon-left[class*=" fr-icon-"]::before, .fr-link--sm.fr-link--icon-left[class^="fr-fi-"]::before, .fr-link--sm.fr-link--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-link--sm.fr-link--icon-right[class^="fr-icon-"], .fr-link--sm.fr-link--icon-right[class*=" fr-icon-"], .fr-link--sm.fr-link--icon-right[class^="fr-fi-"], .fr-link--sm.fr-link--icon-right[class*=" fr-fi-"] {
@@ -968,9 +901,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-link--sm.fr-link--icon-right[class^="fr-icon-"]::before, .fr-link--sm.fr-link--icon-right[class*=" fr-icon-"]::before, .fr-link--sm.fr-link--icon-right[class^="fr-fi-"]::before, .fr-link--sm.fr-link--icon-right[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-link--lg {
@@ -987,9 +920,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-link--lg.fr-link--icon-left[class^="fr-icon-"]::before, .fr-link--lg.fr-link--icon-left[class*=" fr-icon-"]::before, .fr-link--lg.fr-link--icon-left[class^="fr-fi-"]::before, .fr-link--lg.fr-link--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1.5rem;
   margin-left: -0.25rem;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-link--lg.fr-link--icon-right[class^="fr-icon-"], .fr-link--lg.fr-link--icon-right[class*=" fr-icon-"], .fr-link--lg.fr-link--icon-right[class^="fr-fi-"], .fr-link--lg.fr-link--icon-right[class*=" fr-fi-"] {
@@ -1000,16 +933,59 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-link--lg.fr-link--icon-right[class^="fr-icon-"]::before, .fr-link--lg.fr-link--icon-right[class*=" fr-icon-"]::before, .fr-link--lg.fr-link--icon-right[class^="fr-fi-"]::before, .fr-link--lg.fr-link--icon-right[class*=" fr-fi-"]::before {
+  --icon-size: 1.5rem;
   margin-right: -0.25rem;
   margin-left: 0.5rem;
-  font-size: 1.5rem;
+}
+
+.fr-links-group {
+  --ul-type: none;
+  --ol-type: none;
+  --ul-start: 0;
+  --ol-start: 0;
+  --xl-block: 0;
+  --li-bottom: 0;
+  --ol-content: none;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.fr-links-group > li {
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.fr-links-group .fr-link {
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+}
+
+.fr-links-group--sm .fr-link {
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  padding: 0 0;
+}
+
+.fr-links-group--sm .fr-link::before {
+  content: none;
+}
+
+.fr-links-group--lg .fr-link {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  padding: 0 0;
+}
+
+.fr-links-group--lg .fr-link::before {
+  content: none;
 }
 
 .fr-link--close {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
@@ -1025,19 +1001,27 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-link--close::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/close-line.svg");
+  mask-image: url("../icons/system/close-line.svg");
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-link.fr-link--icon-left.fr-fi-theme-fill {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -1046,10 +1030,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-link.fr-link--icon-left.fr-fi-theme-fill::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-link--close:disabled, a.fr-link--close:not([href]) {
@@ -1071,7 +1054,6 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   --li-bottom: 0;
   --ol-content: none;
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --text-spacing: 0;
   --title-spacing: 0;
@@ -1080,22 +1062,11 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   margin-left: -1rem;
   margin-right: -1rem;
   /**
-* Titre facultatif
- */
+  * Titre facultatif
+   */
   /**
- * Variantes du sidemenu proposées juste à partir du breakpoint md
- */
-  /**
- * Styles du bouton et du lien d'accès direct du sidemnu
- */
-  /**
- * Style du bouton du sidemnenu pour ouvrir/refermer les listes de niveaux 1 et 2
- * Bouton pour la version mobile pour ouvrir/refermer le sidemenu
- */
-  /**
- * Modificateur pour le bouton en version mobile permettant d'ouvrir/refermer le sidemenu
- * L'icône de gauche est défini dans _sidemenu.scss (provisoire)
- */
+   * Variantes du sidemenu proposées juste à partir du breakpoint md
+   */
   /*
     @include scheme-element-bg-color(default grey);
 
@@ -1169,9 +1140,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 
 .fr-sidemenu__inner {
   /**
-  * Ce wrapper ne sert que pour la version mobile
-  * On l'utilise pour l'ouverture/fermeture du sidemenu entier
-  */
+    * Ce wrapper ne sert que pour la version mobile
+    * On l'utilise pour l'ouverture/fermeture du sidemenu entier
+    */
 }
 
 .fr-sidemenu__inner > .fr-collapse {
@@ -1179,8 +1150,11 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   padding: 0.25rem 0.25rem 0;
 }
 
-.fr-sidemenu .fr-sidemenu__link,
-.fr-sidemenu .fr-sidemenu__btn {
+/**
+ * Styles du bouton et du lien d'accès direct du sidemnu
+ */
+.fr-sidemenu__link,
+.fr-sidemenu__btn {
   position: relative;
   display: flex;
   flex-direction: row;
@@ -1194,62 +1168,95 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   font-weight: 700;
   --hover-tint: var(--hover);
   --active-tint: var(--active);
+  color: var(--text-action-high-grey);
 }
 
-.fr-sidemenu .fr-sidemenu__link[aria-current]::after,
-.fr-sidemenu .fr-sidemenu__btn[aria-current]::after {
+.fr-sidemenu__link[aria-current]::after,
+.fr-sidemenu__btn[aria-current]::after {
   content: "";
   position: absolute;
   top: 0.75rem;
   bottom: 0.75rem;
   left: 0;
   width: 2px;
+  background-color: var(--border-active-blue-france);
+  --hover: var(--border-active-blue-france-hover);
+  --active: var(--border-active-blue-france-active);
 }
 
-.fr-sidemenu .fr-sidemenu__link[aria-current]:not([href]) {
+.fr-sidemenu__link[aria-current]:not([href]) {
   pointer-events: none;
   cursor: default;
 }
 
-.fr-sidemenu .fr-sidemenu__btn[aria-expanded] {
+/**
+ * Style du bouton du sidemnenu pour ouvrir/refermer les listes de niveaux 1 et 2
+ * Bouton pour la version mobile pour ouvrir/refermer le sidemenu
+ */
+.fr-sidemenu__btn[aria-expanded] {
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
 }
 
-.fr-sidemenu .fr-sidemenu__btn[aria-expanded]::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+.fr-sidemenu__btn[aria-expanded]::before {
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/arrow-down-s-line.svg");
+  mask-image: url("../icons/system/arrow-down-s-line.svg");
+  --icon-size: 1rem;
   margin-left: auto;
   margin-right: 0;
   transition: transform 0.3s;
 }
 
-.fr-sidemenu .fr-sidemenu__btn[aria-expanded="true"] {
+.fr-sidemenu__btn[aria-expanded="true"] {
   box-shadow: none;
 }
 
-.fr-sidemenu .fr-sidemenu__btn[aria-expanded="true"]::before {
+.fr-sidemenu__btn[aria-expanded="true"]::before {
   transform: rotate(-180deg);
 }
 
-.fr-sidemenu .fr-sidemenu__inner > .fr-sidemenu__btn {
+/**
+ * Modificateur pour le bouton en version mobile permettant d'ouvrir/refermer le sidemenu
+ * L'icône de gauche est défini dans _sidemenu.scss (provisoire)
+ */
+.fr-sidemenu__inner > .fr-sidemenu__btn {
   width: 100%;
   font-weight: normal;
   /**
   * Ajout de l'icône de menu en mode mobile (provisoire)
   */
+  background-color: var(--background-default-grey);
+  --hover: var(--background-default-grey-hover);
+  --active: var(--background-default-grey-active);
 }
 
-.fr-sidemenu .fr-sidemenu__inner > .fr-sidemenu__btn::before {
+.fr-sidemenu__inner > .fr-sidemenu__btn::before {
   margin-right: 1rem;
 }
 
-.fr-sidemenu .fr-sidemenu__inner > .fr-sidemenu__btn::after {
-  font: normal 700 normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+.fr-sidemenu__inner > .fr-sidemenu__btn::after {
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/menu-2-fill.svg");
+  mask-image: url("../icons/system/menu-2-fill.svg");
+  --icon-size: 1rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
 }
@@ -1262,24 +1269,8 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   box-shadow: 0 -1px 0 0 var(--border-default-grey);
 }
 
-.fr-sidemenu__link, .fr-sidemenu__btn {
-  color: var(--text-action-high-grey);
-}
-
 .fr-sidemenu__link[aria-current], .fr-sidemenu__btn[aria-current] {
   color: var(--text-active-blue-france);
-}
-
-.fr-sidemenu__link[aria-current]::after, .fr-sidemenu__btn[aria-current]::after {
-  background-color: var(--border-active-blue-france);
-  --hover: var(--border-active-blue-france-hover);
-  --active: var(--border-active-blue-france-active);
-}
-
-.fr-sidemenu__inner > .fr-sidemenu__btn {
-  background-color: var(--background-default-grey);
-  --hover: var(--background-default-grey-hover);
-  --active: var(--background-default-grey-active);
 }
 
 /* ¯¯¯¯¯¯¯¯¯ *\
@@ -1410,7 +1401,7 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-summary__link:not(:hover):not(:active) {
-  background-size: 0 0.0625em, 0 0.0625em;
+  background-size: 0 0.125em, 0 0.0625em;
 }
 
 .fr-summary li > a {
@@ -2121,6 +2112,134 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 /* ¯¯¯¯¯¯¯¯¯ *\
+  Download
+\* ˍˍˍˍˍˍˍˍˍ */
+.fr-download {
+  --text-spacing: 0;
+  --title-spacing: 0;
+  position: relative;
+  padding-bottom: 1.5rem;
+  margin: 0 0 1rem 0;
+}
+
+.fr-download__link {
+  padding: 0;
+  color: var(--text-action-high-blue-france);
+}
+
+.fr-download__link::after {
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/download-line.svg");
+  mask-image: url("../icons/system/download-line.svg");
+  --icon-size: 1rem;
+  margin-left: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.fr-download__desc {
+  font-size:  0.875rem ;
+  line-height:  1.5rem ;
+  font-weight: 400;
+  display: none;
+}
+
+.fr-download__detail {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  font-size:  0.75rem ;
+  line-height:  1.25rem ;
+  font-weight: 400;
+  max-width: 100%;
+  white-space: nowrap;
+  pointer-events: none;
+  cursor: text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-mention-grey);
+}
+
+.fr-download__detail abbr {
+  text-decoration: none;
+}
+
+.fr-download--card {
+  padding: 1.5rem 1.5rem 4rem 1.5rem;
+  --text-spacing: 0;
+  --title-spacing: 0;
+  background-color: var(--background-default-grey);
+  --hover: var(--background-default-grey-hover);
+  --active: var(--background-default-grey-active);
+  box-shadow: inset 0 0 0 1px var(--border-default-grey);
+}
+
+.fr-download--card .fr-download__link {
+  font-weight:  700 ;
+  font-size:  1.25rem ;
+  line-height:  1.75rem ;
+  color: var(--text-title-grey);
+}
+
+.fr-download--card .fr-download__link::after {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  --icon-size: 1rem;
+  margin: 0;
+  color: var(--text-action-high-blue-france);
+}
+
+.fr-download--card .fr-download__desc {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.fr-download--card .fr-download__detail {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  max-width: calc(100% - 6.25rem);
+}
+
+.fr-download--card .fr-download__detail[class^="fr-icon-"]::before, .fr-download--card .fr-download__detail[class*=" fr-icon-"]::before, .fr-download--card .fr-download__detail[class^="fr-fi-"]::before, .fr-download--card .fr-download__detail[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
+  margin-right: 0.5rem;
+}
+
+.fr-downloads-group__title {
+  font-weight:  700 ;
+  font-size:  1.375rem ;
+  line-height:  1.75rem ;
+  margin: var(--title-spacing);
+}
+
+.fr-downloads-group--bordered {
+  padding: 1.5rem 1.5rem 0.5rem;
+  box-shadow: inset 0 0 0 1px var(--border-default-grey);
+}
+
+.fr-downloads-group > ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.fr-downloads-group > ul > li {
+  padding-bottom: 0;
+}
+
+.fr-downloads-group .fr-download {
+  margin-bottom: 1rem;
+}
+
+/* ¯¯¯¯¯¯¯¯¯ *\
   TILE
 \* ˍˍˍˍˍˍˍˍˍ */
 .fr-tile {
@@ -2169,7 +2288,6 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 .fr-tile__link {
   display: inline-flex;
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   width: 100%;
 }
@@ -2336,12 +2454,20 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-accordion__btn::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/add-line.svg");
+  mask-image: url("../icons/system/add-line.svg");
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.25rem;
-  font-size: 1rem;
   margin-right: 0;
   margin-left: auto;
 }
@@ -2351,12 +2477,12 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-accordion__btn[aria-expanded="true"]::before {
-  content: "";
-  font-weight: 700;
+  -webkit-mask-image: url("../icons/system/subtract-line.svg");
+  mask-image: url("../icons/system/subtract-line.svg");
 }
 
 .fr-accordion .fr-collapse {
-  --ul-type: "●\00a0\00a0";
+  --ul-type: disc;
   --ol-type: decimal;
   --ul-start: 1rem;
   --ol-start: 1.5rem;
@@ -2392,7 +2518,6 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   align-items: center;
   z-index: 1;
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --hover-tint: var(--hover);
   font-size: 0.875rem;
@@ -2420,9 +2545,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-badge--icon-left[class^="fr-icon-"]::before, .fr-badge--icon-left[class*=" fr-icon-"]::before, .fr-badge--icon-left[class^="fr-fi-"]::before, .fr-badge--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.25rem;
-  font-size: 1rem;
 }
 
 .fr-badge--sm {
@@ -2444,55 +2569,66 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-badge--sm.fr-badge--icon-left[class^="fr-icon-"]::before, .fr-badge--sm.fr-badge--icon-left[class*=" fr-icon-"]::before, .fr-badge--sm.fr-badge--icon-left[class^="fr-fi-"]::before, .fr-badge--sm.fr-badge--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 0.75rem;
   margin-left: -0.125rem;
   margin-right: 0.25rem;
-  font-size: 0.75rem;
 }
 
 .fr-badge::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.25rem;
-  font-size: 1rem;
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .fr-badge--sm::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 0.75rem;
   margin-left: -0.125rem;
   margin-right: 0.25rem;
-  font-size: 0.75rem;
 }
 
 .fr-badge.fr-badge--info::before, .fr-badge--sm.fr-badge--info::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../icons/system/fr--info-fill.svg");
+  mask-image: url("../icons/system/fr--info-fill.svg");
 }
 
 .fr-badge.fr-badge--success::before, .fr-badge--sm.fr-badge--success::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../icons/system/fr--success-fill.svg");
+  mask-image: url("../icons/system/fr--success-fill.svg");
 }
 
 .fr-badge.fr-badge--error::before, .fr-badge--sm.fr-badge--error::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../icons/system/fr--error-fill.svg");
+  mask-image: url("../icons/system/fr--error-fill.svg");
 }
 
 .fr-badge.fr-badge--warning::before, .fr-badge--sm.fr-badge--warning::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../icons/system/fr--warning-fill.svg");
+  mask-image: url("../icons/system/fr--warning-fill.svg");
 }
 
 .fr-badge.fr-badge--new::before, .fr-badge--sm.fr-badge--new::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../icons/weather/flashlight-fill.svg");
+  mask-image: url("../icons/weather/flashlight-fill.svg");
 }
 
 .fr-badge.fr-badge--no-icon::before, .fr-badge--sm.fr-badge--no-icon::before {
   content: none;
 }
 
-.fr-badge-group {
+.fr-badges-group {
   --ul-type: none;
   --ol-type: none;
   --ul-start: 0;
@@ -2505,14 +2641,25 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   margin-bottom: 0;
 }
 
-.fr-badge-group > li {
+.fr-badges-group > li {
   display: inline-flex;
   max-width: 100%;
 }
 
-.fr-badge-group .fr-badge {
+.fr-badges-group .fr-badge {
   margin-right: 0.5rem;
   margin-bottom: 0.5rem;
+}
+
+.fr-badges-group--sm .fr-badge {
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  min-height: 1.125rem;
+  padding: 0 0.375rem;
+}
+
+.fr-badges-group--sm .fr-badge::before {
+  content: none;
 }
 
 .fr-badge--info {
@@ -2669,6 +2816,29 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   --active: var(--background-contrast-beige-gris-galet-active);
 }
 
+.fr-badge-group {
+  --ul-type: none;
+  --ol-type: none;
+  --ul-start: 0;
+  --ol-start: 0;
+  --xl-block: 0;
+  --li-bottom: 0;
+  --ol-content: none;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.fr-badge-group > li {
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.fr-badge-group .fr-badge {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 /* ¯¯¯¯¯¯¯¯¯ *\
   BUTTON
 \* ˍˍˍˍˍˍˍˍˍ */
@@ -2680,14 +2850,13 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   align-items: center;
   z-index: 1;
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --hover-tint: var(--hover);
   font-weight: 500;
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   background-color: var(--background-action-high-blue-france);
   --hover: var(--background-action-high-blue-france-hover);
   --active: var(--background-action-high-blue-france-active);
@@ -2705,9 +2874,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btn:not([class*="fr-btn--icon-"])[class^="fr-icon-"]::before, .fr-btn:not([class*="fr-btn--icon-"])[class*=" fr-icon-"]::before, .fr-btn:not([class*="fr-btn--icon-"])[class^="fr-fi-"]::before, .fr-btn:not([class*="fr-btn--icon-"])[class*=" fr-fi-"]::before {
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btn--icon-left[class^="fr-icon-"], .fr-btn--icon-left[class*=" fr-icon-"], .fr-btn--icon-left[class^="fr-fi-"], .fr-btn--icon-left[class*=" fr-fi-"] {
@@ -2718,9 +2887,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btn--icon-left[class^="fr-icon-"]::before, .fr-btn--icon-left[class*=" fr-icon-"]::before, .fr-btn--icon-left[class^="fr-fi-"]::before, .fr-btn--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn--icon-right[class^="fr-icon-"], .fr-btn--icon-right[class*=" fr-icon-"], .fr-btn--icon-right[class^="fr-fi-"], .fr-btn--icon-right[class*=" fr-fi-"] {
@@ -2731,16 +2900,16 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btn--icon-right[class^="fr-icon-"]::before, .fr-btn--icon-right[class*=" fr-icon-"]::before, .fr-btn--icon-right[class^="fr-fi-"]::before, .fr-btn--icon-right[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn--sm {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
 }
 
 .fr-btn--sm:not([class*="fr-btn--icon-"])[class^="fr-icon-"], .fr-btn--sm:not([class*="fr-btn--icon-"])[class*=" fr-icon-"], .fr-btn--sm:not([class*="fr-btn--icon-"])[class^="fr-fi-"], .fr-btn--sm:not([class*="fr-btn--icon-"])[class*=" fr-fi-"] {
@@ -2754,9 +2923,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btn--sm:not([class*="fr-btn--icon-"])[class^="fr-icon-"]::before, .fr-btn--sm:not([class*="fr-btn--icon-"])[class*=" fr-icon-"]::before, .fr-btn--sm:not([class*="fr-btn--icon-"])[class^="fr-fi-"]::before, .fr-btn--sm:not([class*="fr-btn--icon-"])[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn--sm.fr-btn--icon-left[class^="fr-icon-"], .fr-btn--sm.fr-btn--icon-left[class*=" fr-icon-"], .fr-btn--sm.fr-btn--icon-left[class^="fr-fi-"], .fr-btn--sm.fr-btn--icon-left[class*=" fr-fi-"] {
@@ -2767,9 +2936,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btn--sm.fr-btn--icon-left[class^="fr-icon-"]::before, .fr-btn--sm.fr-btn--icon-left[class*=" fr-icon-"]::before, .fr-btn--sm.fr-btn--icon-left[class^="fr-fi-"]::before, .fr-btn--sm.fr-btn--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn--sm.fr-btn--icon-right[class^="fr-icon-"], .fr-btn--sm.fr-btn--icon-right[class*=" fr-icon-"], .fr-btn--sm.fr-btn--icon-right[class^="fr-fi-"], .fr-btn--sm.fr-btn--icon-right[class*=" fr-fi-"] {
@@ -2780,16 +2949,16 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btn--sm.fr-btn--icon-right[class^="fr-icon-"]::before, .fr-btn--sm.fr-btn--icon-right[class*=" fr-icon-"]::before, .fr-btn--sm.fr-btn--icon-right[class^="fr-fi-"]::before, .fr-btn--sm.fr-btn--icon-right[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn--lg {
   font-size: 1.125rem;
   line-height: 1.75rem;
   min-height: 3rem;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 1.5rem;
 }
 
 .fr-btn--lg:not([class*="fr-btn--icon-"])[class^="fr-icon-"], .fr-btn--lg:not([class*="fr-btn--icon-"])[class*=" fr-icon-"], .fr-btn--lg:not([class*="fr-btn--icon-"])[class^="fr-fi-"], .fr-btn--lg:not([class*="fr-btn--icon-"])[class*=" fr-fi-"] {
@@ -2803,9 +2972,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btn--lg:not([class*="fr-btn--icon-"])[class^="fr-icon-"]::before, .fr-btn--lg:not([class*="fr-btn--icon-"])[class*=" fr-icon-"]::before, .fr-btn--lg:not([class*="fr-btn--icon-"])[class^="fr-fi-"]::before, .fr-btn--lg:not([class*="fr-btn--icon-"])[class*=" fr-fi-"]::before {
+  --icon-size: 2rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 2rem;
 }
 
 .fr-btn--lg.fr-btn--icon-left[class^="fr-icon-"], .fr-btn--lg.fr-btn--icon-left[class*=" fr-icon-"], .fr-btn--lg.fr-btn--icon-left[class^="fr-fi-"], .fr-btn--lg.fr-btn--icon-left[class*=" fr-fi-"] {
@@ -2816,9 +2985,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btn--lg.fr-btn--icon-left[class^="fr-icon-"]::before, .fr-btn--lg.fr-btn--icon-left[class*=" fr-icon-"]::before, .fr-btn--lg.fr-btn--icon-left[class^="fr-fi-"]::before, .fr-btn--lg.fr-btn--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1.5rem;
   margin-left: -0.25rem;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btn--lg.fr-btn--icon-right[class^="fr-icon-"], .fr-btn--lg.fr-btn--icon-right[class*=" fr-icon-"], .fr-btn--lg.fr-btn--icon-right[class^="fr-fi-"], .fr-btn--lg.fr-btn--icon-right[class*=" fr-fi-"] {
@@ -2829,9 +2998,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btn--lg.fr-btn--icon-right[class^="fr-icon-"]::before, .fr-btn--lg.fr-btn--icon-right[class*=" fr-icon-"]::before, .fr-btn--lg.fr-btn--icon-right[class^="fr-fi-"]::before, .fr-btn--lg.fr-btn--icon-right[class*=" fr-fi-"]::before {
+  --icon-size: 1.5rem;
   margin-right: -0.25rem;
   margin-left: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btns-group {
@@ -2961,20 +3130,20 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   font-weight: 500;
 }
 
 .fr-btns-group--sm .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"])::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
 }
 
 .fr-btns-group--sm:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-icon-"], .fr-btns-group--sm:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-icon-"], .fr-btns-group--sm:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-fi-"], .fr-btns-group--sm:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-fi-"] {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -2987,17 +3156,16 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btns-group--sm:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-icon-"]::before, .fr-btns-group--sm:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-icon-"]::before, .fr-btns-group--sm:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-fi-"]::before, .fr-btns-group--sm:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btns-group--sm.fr-btns-group--icon-left .fr-btn[class^="fr-icon-"], .fr-btns-group--sm.fr-btns-group--icon-left .fr-btn[class*=" fr-icon-"], .fr-btns-group--sm.fr-btns-group--icon-left .fr-btn[class^="fr-fi-"], .fr-btns-group--sm.fr-btns-group--icon-left .fr-btn[class*=" fr-fi-"] {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -3006,17 +3174,16 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btns-group--sm.fr-btns-group--icon-left .fr-btn[class^="fr-icon-"]::before, .fr-btns-group--sm.fr-btns-group--icon-left .fr-btn[class*=" fr-icon-"]::before, .fr-btns-group--sm.fr-btns-group--icon-left .fr-btn[class^="fr-fi-"]::before, .fr-btns-group--sm.fr-btns-group--icon-left .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btns-group--sm.fr-btns-group--icon-right .fr-btn[class^="fr-icon-"], .fr-btns-group--sm.fr-btns-group--icon-right .fr-btn[class*=" fr-icon-"], .fr-btns-group--sm.fr-btns-group--icon-right .fr-btn[class^="fr-fi-"], .fr-btns-group--sm.fr-btns-group--icon-right .fr-btn[class*=" fr-fi-"] {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
@@ -3025,30 +3192,29 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btns-group--sm.fr-btns-group--icon-right .fr-btn[class^="fr-icon-"]::before, .fr-btns-group--sm.fr-btns-group--icon-right .fr-btn[class*=" fr-icon-"]::before, .fr-btns-group--sm.fr-btns-group--icon-right .fr-btn[class^="fr-fi-"]::before, .fr-btns-group--sm.fr-btns-group--icon-right .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg) .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"]) {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   font-weight: 500;
 }
 
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg) .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"])::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1rem;
 }
 
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-icon-"], .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-icon-"], .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-fi-"], .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-fi-"] {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -3061,17 +3227,16 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-icon-"]::before, .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-icon-"]::before, .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-fi-"]::before, .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-left .fr-btn[class^="fr-icon-"], .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-left .fr-btn[class*=" fr-icon-"], .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-left .fr-btn[class^="fr-fi-"], .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-left .fr-btn[class*=" fr-fi-"] {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -3080,17 +3245,16 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-left .fr-btn[class^="fr-icon-"]::before, .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-left .fr-btn[class*=" fr-icon-"]::before, .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-left .fr-btn[class^="fr-fi-"]::before, .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-left .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-right .fr-btn[class^="fr-icon-"], .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-right .fr-btn[class*=" fr-icon-"], .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-right .fr-btn[class^="fr-fi-"], .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-right .fr-btn[class*=" fr-fi-"] {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
@@ -3099,30 +3263,29 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-right .fr-btn[class^="fr-icon-"]::before, .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-right .fr-btn[class*=" fr-icon-"]::before, .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-right .fr-btn[class^="fr-fi-"]::before, .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg).fr-btns-group--icon-right .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btns-group--lg .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"]) {
   font-size: 1.125rem;
   line-height: 1.75rem;
   min-height: 3rem;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 1.5rem;
   flex-direction: row;
   font-weight: 500;
 }
 
 .fr-btns-group--lg .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"])::before {
-  font: normal 700 normal 2rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
 }
 
 .fr-btns-group--lg:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-icon-"], .fr-btns-group--lg:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-icon-"], .fr-btns-group--lg:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-fi-"], .fr-btns-group--lg:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-fi-"] {
   font-size: 1.125rem;
   line-height: 1.75rem;
   min-height: 3rem;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 1.5rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -3135,17 +3298,16 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btns-group--lg:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-icon-"]::before, .fr-btns-group--lg:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-icon-"]::before, .fr-btns-group--lg:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-fi-"]::before, .fr-btns-group--lg:not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 2rem/1 dsfr-icon;
+  --icon-size: 2rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 2rem;
 }
 
 .fr-btns-group--lg.fr-btns-group--icon-left .fr-btn[class^="fr-icon-"], .fr-btns-group--lg.fr-btns-group--icon-left .fr-btn[class*=" fr-icon-"], .fr-btns-group--lg.fr-btns-group--icon-left .fr-btn[class^="fr-fi-"], .fr-btns-group--lg.fr-btns-group--icon-left .fr-btn[class*=" fr-fi-"] {
   font-size: 1.125rem;
   line-height: 1.75rem;
   min-height: 3rem;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 1.5rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -3154,17 +3316,16 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btns-group--lg.fr-btns-group--icon-left .fr-btn[class^="fr-icon-"]::before, .fr-btns-group--lg.fr-btns-group--icon-left .fr-btn[class*=" fr-icon-"]::before, .fr-btns-group--lg.fr-btns-group--icon-left .fr-btn[class^="fr-fi-"]::before, .fr-btns-group--lg.fr-btns-group--icon-left .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 2rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
   margin-left: -0.25rem;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btns-group--lg.fr-btns-group--icon-right .fr-btn[class^="fr-icon-"], .fr-btns-group--lg.fr-btns-group--icon-right .fr-btn[class*=" fr-icon-"], .fr-btns-group--lg.fr-btns-group--icon-right .fr-btn[class^="fr-fi-"], .fr-btns-group--lg.fr-btns-group--icon-right .fr-btn[class*=" fr-fi-"] {
   font-size: 1.125rem;
   line-height: 1.75rem;
   min-height: 3rem;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 1.5rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
@@ -3173,17 +3334,16 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btns-group--lg.fr-btns-group--icon-right .fr-btn[class^="fr-icon-"]::before, .fr-btns-group--lg.fr-btns-group--icon-right .fr-btn[class*=" fr-icon-"]::before, .fr-btns-group--lg.fr-btns-group--icon-right .fr-btn[class^="fr-fi-"]::before, .fr-btns-group--lg.fr-btns-group--icon-right .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 2rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
   margin-right: -0.25rem;
   margin-left: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btn--close {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
@@ -3195,19 +3355,27 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btn--close::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/close-line.svg");
+  mask-image: url("../icons/system/close-line.svg");
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn--display {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -3216,12 +3384,20 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-btn--display::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/fr--theme-fill.svg");
+  mask-image: url("../icons/system/fr--theme-fill.svg");
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-btn:disabled, a.fr-btn:not([href]) {
@@ -3285,6 +3461,7 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
  * Ce groupe contient également le texte d'aide (optionnels)
  */
 .fr-radio-group {
+  position: relative;
   /**
    * Dans le cas d'un groupe de radios, on supprime l'espacement du premier groupe
    */
@@ -3317,6 +3494,7 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 
 .fr-radio-group input[type="radio"] {
   position: absolute;
+  margin: 0;
   opacity: 0;
   top: 50%;
   transform: translateY(-50%);
@@ -3659,13 +3837,8 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-checkbox-group input[type="checkbox"] + label::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  content: "";
+  display: block;
   position: absolute;
   top: 0;
   left: -2rem;
@@ -3673,7 +3846,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   width: 1.5rem;
   height: 1.5rem;
   margin-right: 0.5rem;
-  color: transparent;
+  background-size: 1rem;
+  background-position: center;
+  background-repeat: no-repeat;
   border-radius: 0.25rem;
   box-shadow: inset 0 0 0 1px var(--border-action-high-grey);
 }
@@ -3727,7 +3902,12 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   background-color: var(--background-active-blue-france);
   --hover: var(--background-active-blue-france-hover);
   --active: var(--background-active-blue-france-active);
-  color: var(--text-inverted-grey);
+  --data-uri-svg: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23fff' d='M10 15.17l9.2-9.2 1.4 1.42L10 18l-6.36-6.36 1.4-1.42z'/></svg>");
+  background-image: var(--data-uri-svg);
+}
+
+:root[data-fr-theme="dark"] .fr-checkbox-group input[type="checkbox"]:checked + label::before, :root[data-fr-theme="dark"] .fr-checkbox-group input[type="checkbox"]:active:not(:disabled) + label::before {
+  --data-uri-svg: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23161616' d='M10 15.17l9.2-9.2 1.4 1.42L10 18l-6.36-6.36 1.4-1.42z'/></svg>");
 }
 
 .fr-checkbox-group input[type="checkbox"]:disabled + label::before {
@@ -3739,6 +3919,12 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   background-color: var(--background-disabled-grey);
   --hover: var(--background-disabled-grey-hover);
   --active: var(--background-disabled-grey-active);
+  --data-uri-svg: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23929292' d='M10 15.17l9.2-9.2 1.4 1.42L10 18l-6.36-6.36 1.4-1.42z'/></svg>");
+  background-image: var(--data-uri-svg);
+}
+
+:root[data-fr-theme="dark"] .fr-checkbox-group input[type="checkbox"]:disabled:checked + label::before {
+  --data-uri-svg: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23666' d='M10 15.17l9.2-9.2 1.4 1.42L10 18l-6.36-6.36 1.4-1.42z'/></svg>");
 }
 
 .fr-checkbox-group--error input[type="checkbox"] + label {
@@ -3792,8 +3978,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 
 .fr-toggle input[type="checkbox"]:checked ~ .fr-toggle__label::after {
   transform: translateX(1rem);
-  text-indent: 0;
   z-index: 1000;
+  --data-uri-svg: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000091' d='M10 15.17l9.2-9.2 1.4 1.42L10 18l-6.36-6.36 1.4-1.42z'/></svg>");
+  background-image: var(--data-uri-svg);
 }
 
 .fr-toggle label {
@@ -3813,8 +4000,8 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
      * On récupère le text via l'attribut [data-fr-unchecked-label]
      */
   /*
-     * On inclut l'icône check dans un pseudo-element after
-     * On la cache via un text-indent quand l'input n'est pas check
+     * On inclut l'icône check en background dans un pseudo-element after
+     *
      */
 }
 
@@ -3847,9 +4034,7 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-toggle label::after {
-  font: normal 700 normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3859,7 +4044,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
-  text-indent: -9999px;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+  background-position: center;
   color: var(--text-active-blue-france);
   box-shadow: inset 0 0 0 1px var(--border-action-high-blue-france);
   background-color: var(--background-default-grey);
@@ -3931,6 +4118,10 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   --active: var(--background-active-blue-france-active);
 }
 
+:root[data-fr-theme="dark"] .fr-toggle input[type="checkbox"]:checked ~ .fr-toggle__label::after {
+  --data-uri-svg: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%238585f6' d='M10 15.17l9.2-9.2 1.4 1.42L10 18l-6.36-6.36 1.4-1.42z'/></svg>");
+}
+
 .fr-toggle input[type="checkbox"]:disabled {
   box-shadow: inset 0 0 0 1px var(--border-disabled-grey);
 }
@@ -3941,11 +4132,20 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   --active: var(--background-disabled-grey-active);
 }
 
-.fr-toggle input[type="checkbox"]:disabled + label::before {
+.fr-toggle input[type="checkbox"]:disabled:checked ~ .fr-toggle__label::after {
+  --data-uri-svg: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23929292' d='M10 15.17l9.2-9.2 1.4 1.42L10 18l-6.36-6.36 1.4-1.42z'/></svg>");
+  background-image: var(--data-uri-svg);
+}
+
+:root[data-fr-theme="dark"] .fr-toggle input[type="checkbox"]:disabled:checked ~ .fr-toggle__label::after {
+  --data-uri-svg: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23666' d='M10 15.17l9.2-9.2 1.4 1.42L10 18l-6.36-6.36 1.4-1.42z'/></svg>");
+}
+
+.fr-toggle input[type="checkbox"]:disabled ~ .fr-toggle__label::before {
   color: var(--text-disabled-grey);
 }
 
-.fr-toggle input[type="checkbox"]:disabled + label::after {
+.fr-toggle input[type="checkbox"]:disabled ~ .fr-toggle__label::after {
   color: var(--text-disabled-grey);
   box-shadow: inset 0 0 0 1px var(--border-disabled-grey);
 }
@@ -4000,7 +4200,6 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-skiplinks__list > li .fr-link::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
   content: none;
 }
 
@@ -4085,7 +4284,6 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   flex-direction: row;
   align-items: center;
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --hover-tint: var(--hover);
   font-size: 1rem;
@@ -4111,9 +4309,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-tabs__tab:not([class*="fr-tabs__tab--icon-"])[class^="fr-icon-"]::before, .fr-tabs__tab:not([class*="fr-tabs__tab--icon-"])[class*=" fr-icon-"]::before, .fr-tabs__tab:not([class*="fr-tabs__tab--icon-"])[class^="fr-fi-"]::before, .fr-tabs__tab:not([class*="fr-tabs__tab--icon-"])[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: 0;
   margin-right: 0.75rem;
-  font-size: 1rem;
 }
 
 .fr-tabs__tab--icon-left[class^="fr-icon-"], .fr-tabs__tab--icon-left[class*=" fr-icon-"], .fr-tabs__tab--icon-left[class^="fr-fi-"], .fr-tabs__tab--icon-left[class*=" fr-fi-"] {
@@ -4124,9 +4322,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-tabs__tab--icon-left[class^="fr-icon-"]::before, .fr-tabs__tab--icon-left[class*=" fr-icon-"]::before, .fr-tabs__tab--icon-left[class^="fr-fi-"]::before, .fr-tabs__tab--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-tabs {
@@ -4139,7 +4337,6 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   --li-bottom: 0;
   --ol-content: none;
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   position: relative;
   overflow: hidden;
@@ -4230,9 +4427,8 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 
 .fr-tabs__panel {
   --underline-img: linear-gradient(0deg, currentColor, currentColor);
-  --link-blank-font: normal 700 normal 1rem/1 dsfr-icon;
-  --link-blank-content: "\00a0";
-  --ul-type: "●\00a0\00a0";
+  --link-blank-content: '';
+  --ul-type: disc;
   --ol-type: decimal;
   --ul-start: 1rem;
   --ol-start: 1.5rem;
@@ -4363,14 +4559,12 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   margin-right: 0.125rem;
   margin-bottom: 1rem;
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   position: relative;
 }
 
 .fr-pagination {
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --ul-type: none;
   --ol-type: none;
@@ -4420,12 +4614,20 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-pagination__link--first::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/fr--arrow-left-s-first-line.svg");
+  mask-image: url("../icons/system/fr--arrow-left-s-first-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.25rem;
-  font-size: 1.5rem;
 }
 
 .fr-pagination__link--prev {
@@ -4443,12 +4645,20 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-pagination__link--prev::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/arrow-left-s-line.svg");
+  mask-image: url("../icons/system/arrow-left-s-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.25rem;
-  font-size: 1.5rem;
 }
 
 .fr-pagination__link--next {
@@ -4466,12 +4676,20 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-pagination__link--next::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/arrow-right-s-line.svg");
+  mask-image: url("../icons/system/arrow-right-s-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.25rem;
-  font-size: 1.5rem;
 }
 
 .fr-pagination__link--last {
@@ -4489,12 +4707,20 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-pagination__link--last::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/fr--arrow-right-s-last-line.svg");
+  mask-image: url("../icons/system/fr--arrow-right-s-last-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.25rem;
-  font-size: 1.5rem;
 }
 
 .fr-pagination__link--first, .fr-pagination__link--prev {
@@ -4514,10 +4740,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-pagination__link--first.fr-pagination__link--label::before, .fr-pagination__link--prev.fr-pagination__link--label::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
   margin-left: -0.25rem;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-pagination__link--next, .fr-pagination__link--last {
@@ -4537,10 +4762,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-pagination__link--next.fr-pagination__link--label::before, .fr-pagination__link--last.fr-pagination__link--label::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
   margin-right: -0.25rem;
   margin-left: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-pagination__link[aria-current] {
@@ -4696,8 +4920,7 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 
 .fr-footer__content-desc {
   --underline-img: linear-gradient(0deg, currentColor, currentColor);
-  --link-blank-font: normal 700 normal 1rem/1 dsfr-icon;
-  --link-blank-content: "\00a0";
+  --link-blank-content: '';
   --text-spacing: 0 0 0.5rem 0;
   width: 100%;
   font-size:  0.875rem ;
@@ -4732,7 +4955,7 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-footer__content-link:not(:hover):not(:active) {
-  background-size: 0 0.0625em, 0 0.0625em;
+  background-size: 0 0.125em, 0 0.0625em;
 }
 
 .fr-footer__top {
@@ -4767,7 +4990,7 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-footer__top-link:not(:hover):not(:active) {
-  background-size: 0 0.0625em, 0 0.0625em;
+  background-size: 0 0.125em, 0 0.0625em;
 }
 
 .fr-footer__bottom {
@@ -4792,10 +5015,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-footer__bottom .fr-btn::before {
-  font: normal 700 normal 0.75rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-footer__bottom-list {
@@ -4840,7 +5062,7 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-footer__bottom-link:not(:hover):not(:active) {
-  background-size: 0 0.0625em, 0 0.0625em;
+  background-size: 0 0.125em, 0 0.0625em;
 }
 
 .fr-footer__bottom-copy {
@@ -4877,7 +5099,7 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 .fr-footer__partners .fr-footer__logo {
   width: auto;
   height: auto;
-  margin: 0.25rem;
+  padding: 0.25rem;
 }
 
 .fr-footer__partners + .fr-footer__bottom {
@@ -4885,9 +5107,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-footer__partners-title {
+  --title-spacing: 0 0 0.5rem 0;
   font-size:  0.875rem ;
   line-height:  1.5rem ;
-  margin: 0;
   flex-basis: 100%;
   text-align: center;
 }
@@ -4896,7 +5118,7 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  margin: 0.25rem 0 -0.25rem 0;
+  margin: 0 0 -0.5rem 0;
 }
 
 .fr-footer__partners-main {
@@ -4905,7 +5127,7 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   justify-content: center;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 0.5rem;
+  margin-bottom: 2rem;
 }
 
 .fr-footer__partners-sub {
@@ -4925,6 +5147,7 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 
 .fr-footer__partners-sub .fr-footer__partners-link {
   box-shadow: none;
+  margin-bottom: 0.5rem;
 }
 
 .fr-footer__content-link, .fr-footer__top-cat {
@@ -4942,7 +5165,6 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
   align-items: center;
   z-index: 1;
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --hover-tint: var(--hover);
   font-size: 0.875rem;
@@ -4964,9 +5186,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-tag--icon-left[class^="fr-icon-"]::before, .fr-tag--icon-left[class*=" fr-icon-"]::before, .fr-tag--icon-left[class^="fr-fi-"]::before, .fr-tag--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.25rem;
-  font-size: 1rem;
 }
 
 .fr-tag--sm {
@@ -4985,9 +5207,9 @@ un padding de 4px et une marge négative en compensation sont mis en place afin 
 }
 
 .fr-tag--sm.fr-tag--icon-left[class^="fr-icon-"]::before, .fr-tag--sm.fr-tag--icon-left[class*=" fr-icon-"]::before, .fr-tag--sm.fr-tag--icon-left[class^="fr-fi-"]::before, .fr-tag--sm.fr-tag--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 0.75rem;
   margin-left: -0.125rem;
   margin-right: 0.25rem;
-  font-size: 0.75rem;
 }
 
 a.fr-tag[aria-pressed="true"], button.fr-tag[aria-pressed="true"], input[type="button"].fr-tag[aria-pressed="true"], input[type="image"].fr-tag[aria-pressed="true"], input[type="reset"].fr-tag[aria-pressed="true"], input[type="submit"].fr-tag[aria-pressed="true"] {
@@ -5002,9 +5224,18 @@ a.fr-tag[aria-pressed="true"], button.fr-tag[aria-pressed="true"], input[type="b
 }
 
 a.fr-tag[aria-pressed="true"]::after, button.fr-tag[aria-pressed="true"]::after, input[type="button"].fr-tag[aria-pressed="true"]::after, input[type="image"].fr-tag[aria-pressed="true"]::after, input[type="reset"].fr-tag[aria-pressed="true"]::after, input[type="submit"].fr-tag[aria-pressed="true"]::after {
-  font: normal 700 normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/checkbox-circle-line.svg");
+  mask-image: url("../icons/system/checkbox-circle-line.svg");
+  --icon-size: 1rem;
   position: absolute;
   top: 4px;
   right: 0;
@@ -5013,7 +5244,7 @@ a.fr-tag[aria-pressed="true"]::after, button.fr-tag[aria-pressed="true"]::after,
 }
 
 a.fr-tag[aria-pressed="true"].fr-tag--sm::after, button.fr-tag[aria-pressed="true"].fr-tag--sm::after, input[type="button"].fr-tag[aria-pressed="true"].fr-tag--sm::after, input[type="image"].fr-tag[aria-pressed="true"].fr-tag--sm::after, input[type="reset"].fr-tag[aria-pressed="true"].fr-tag--sm::after, input[type="submit"].fr-tag[aria-pressed="true"].fr-tag--sm::after {
-  font: normal 700 normal 0.75rem/1 dsfr-icon;
+  --icon-size: 0.75rem;
   position: absolute;
   top: 3px;
   right: 0;
@@ -5025,15 +5256,32 @@ a.fr-tag--dismiss::before, button.fr-tag--dismiss::before, input[type="button"].
 }
 
 a.fr-tag--dismiss::after, button.fr-tag--dismiss::after, input[type="button"].fr-tag--dismiss::after, input[type="image"].fr-tag--dismiss::after, input[type="reset"].fr-tag--dismiss::after, input[type="submit"].fr-tag--dismiss::after {
-  font: normal 700 normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/close-line.svg");
+  mask-image: url("../icons/system/close-line.svg");
+  --icon-size: 1rem;
   margin-left: 0.25rem;
   margin-right: -0.25rem;
 }
 
 a.fr-tag--dismiss.fr-tag--sm::after, button.fr-tag--dismiss.fr-tag--sm::after, input[type="button"].fr-tag--dismiss.fr-tag--sm::after, input[type="image"].fr-tag--dismiss.fr-tag--sm::after, input[type="reset"].fr-tag--dismiss.fr-tag--sm::after, input[type="submit"].fr-tag--dismiss.fr-tag--sm::after {
-  font: normal 700 normal 0.75rem/1 dsfr-icon;
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  --icon-size: 0.75rem;
   margin-right: -0.1875rem;
   margin-left: 0.125rem;
 }
@@ -5071,7 +5319,6 @@ a.fr-tag--dismiss.fr-tag--sm::after, button.fr-tag--dismiss.fr-tag--sm::after, i
 }
 
 .fr-tags-group.fr-tags-group--sm .fr-tag::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
   content: none;
 }
 
@@ -5081,12 +5328,28 @@ a.fr-tag--dismiss.fr-tag--sm::after, button.fr-tag--dismiss.fr-tag--sm::after, i
 }
 
 .fr-tags-group.fr-tags-group--sm a.fr-tag.fr-tag--dismiss::after, .fr-tags-group.fr-tags-group--sm button.fr-tag.fr-tag--dismiss::after, .fr-tags-group.fr-tags-group--sm input[type="button"].fr-tag.fr-tag--dismiss::after, .fr-tags-group.fr-tags-group--sm input[type="image"].fr-tag.fr-tag--dismiss::after, .fr-tags-group.fr-tags-group--sm input[type="reset"].fr-tag.fr-tag--dismiss::after, .fr-tags-group.fr-tags-group--sm input[type="submit"].fr-tag.fr-tag--dismiss::after {
-  font: normal 700 normal 0.75rem/1 dsfr-icon;
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  --icon-size: 0.75rem;
   margin-right: -0.1875rem;
 }
 
 .fr-tags-group.fr-tags-group--sm a.fr-tag[aria-pressed="true"]::after, .fr-tags-group.fr-tags-group--sm button.fr-tag[aria-pressed="true"]::after, .fr-tags-group.fr-tags-group--sm input[type="button"].fr-tag[aria-pressed="true"]::after, .fr-tags-group.fr-tags-group--sm input[type="image"].fr-tag[aria-pressed="true"]::after, .fr-tags-group.fr-tags-group--sm input[type="reset"].fr-tag[aria-pressed="true"]::after, .fr-tags-group.fr-tags-group--sm input[type="submit"].fr-tag[aria-pressed="true"]::after {
-  font: normal 700 normal 0.75rem/1 dsfr-icon;
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  --icon-size: 0.75rem;
   position: absolute;
   top: 3px;
   right: 0;
@@ -5298,12 +5561,19 @@ a.fr-tag:disabled, a.fr-tag:not([href]), button.fr-tag:disabled, input[type="but
 }
 
 .fr-alert::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  --icon-size: 1.5rem;
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
-  padding: 1rem 0.5rem;
+  margin: 1rem 0.5rem;
   color: var(--text-inverted-grey);
 }
 
@@ -5320,7 +5590,7 @@ a.fr-tag:disabled, a.fr-tag:not([href]), button.fr-tag:disabled, input[type="but
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -5332,10 +5602,9 @@ a.fr-tag:disabled, a.fr-tag:not([href]), button.fr-tag:disabled, input[type="but
 }
 
 .fr-alert .fr-btn--close::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-alert + .fr-alert {
@@ -5343,23 +5612,27 @@ a.fr-tag:disabled, a.fr-tag:not([href]), button.fr-tag:disabled, input[type="but
 }
 
 .fr-alert--info::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../icons/system/fr--info-fill.svg");
+  mask-image: url("../icons/system/fr--info-fill.svg");
 }
 
 .fr-alert--success::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../icons/system/fr--success-fill.svg");
+  mask-image: url("../icons/system/fr--success-fill.svg");
 }
 
 .fr-alert--error::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../icons/system/fr--error-fill.svg");
+  mask-image: url("../icons/system/fr--error-fill.svg");
 }
 
 .fr-alert--warning::before {
-  content: "";
-  font-weight: 400;
+  content: "";
+  -webkit-mask-image: url("../icons/system/fr--warning-fill.svg");
+  mask-image: url("../icons/system/fr--warning-fill.svg");
 }
 
 .fr-alert--sm {
@@ -5367,7 +5640,7 @@ a.fr-tag:disabled, a.fr-tag:not([href]), button.fr-tag:disabled, input[type="but
 }
 
 .fr-alert--sm::before {
-  padding: 0.5rem 0.5rem;
+  margin: 0.5rem 0.5rem;
 }
 
 .fr-alert .fr-link--close {
@@ -5377,7 +5650,7 @@ a.fr-tag:disabled, a.fr-tag:not([href]), button.fr-tag:disabled, input[type="but
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -5389,10 +5662,9 @@ a.fr-tag:disabled, a.fr-tag:not([href]), button.fr-tag:disabled, input[type="but
 }
 
 .fr-alert .fr-link--close::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-alert--info {
@@ -5409,6 +5681,364 @@ a.fr-tag:disabled, a.fr-tag:not([href]), button.fr-tag:disabled, input[type="but
 
 .fr-alert--warning {
   box-shadow: inset 0 0 0 1px var(--border-plain-warning), inset 2.5rem 0 0 0 var(--background-flat-warning);
+}
+
+/* ¯¯¯¯¯¯¯¯¯ *\
+  CARD
+\* ˍˍˍˍˍˍˍˍˍ */
+.fr-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: var(--background-default-grey);
+  --hover: var(--background-default-grey-hover);
+  --active: var(--background-default-grey-active);
+}
+
+.fr-card::before {
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/arrow-right-line.svg");
+  mask-image: url("../icons/system/arrow-right-line.svg");
+  position: absolute;
+  right: 2rem;
+  bottom: 2rem;
+  --icon-size: 1.5rem;
+  color: var(--text-action-high-blue-france);
+}
+
+.fr-card--no-icon::before, .fr-card:not(.fr-enlarge-link)::before {
+  content: none;
+}
+
+.fr-card--shadow {
+  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.1), 0 8px 16px -16px rgba(0, 0, 0, 0.32);
+  background-color: var(--background-elevated-grey);
+  --hover: var(--background-elevated-grey-hover);
+  --active: var(--background-elevated-grey-active);
+}
+
+.fr-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  order: 2;
+  padding: 0 2rem;
+}
+
+.fr-grid-row .fr-card {
+  height: 100%;
+}
+
+.fr-card__header {
+  order: 1;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.fr-card__header .fr-badges-group {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.75rem;
+}
+
+.fr-card.fr-enlarge-link:hover .fr-card__img, .fr-card.fr-enlarge-link:hover .fr-card__vid {
+  --brightness: calc(100% + var(--brighten) * 10%);
+}
+
+.fr-card.fr-enlarge-link:active .fr-card__img, .fr-card.fr-enlarge-link:active .fr-card__vid {
+  --brightness: calc(100% + var(--brighten) * 20%);
+}
+
+.fr-card__img, .fr-card__vid {
+  filter: brightness(var(--brightness));
+}
+
+.fr-card__img img {
+  aspect-ratio: 1.77778;
+  display: block;
+}
+
+.fr-card__content {
+  order: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  height: 100%;
+  margin: 0 -2rem;
+}
+
+.fr-card__content .fr-tag {
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  min-height: 1.5rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.75rem;
+}
+
+.fr-card__content .fr-tag::before {
+  content: none;
+}
+
+.fr-card__title {
+  order: 2;
+  font-size:  1.25rem ;
+  line-height:  1.75rem ;
+  font-weight: 700;
+  margin-bottom: 0;
+  color: var(--text-title-grey);
+}
+
+.fr-card__desc {
+  order: 3;
+  font-size:  0.875rem ;
+  line-height:  1.5rem ;
+  margin-top: 0.75rem;
+  margin-bottom: 0;
+}
+
+.fr-card__start {
+  order: 1;
+  margin-bottom: 0.25rem;
+}
+
+.fr-card__start .fr-badges-group,
+.fr-card__start .fr-tags-group {
+  margin-bottom: 0.25rem;
+}
+
+.fr-card__start .fr-card__detail {
+  margin-bottom: 0.75rem;
+}
+
+.fr-card__end {
+  order: 4;
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+  height: 100%;
+}
+
+.fr-card__detail {
+  font-size:  0.75rem ;
+  line-height:  1.25rem ;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-bottom: 0;
+  color: var(--text-mention-grey);
+}
+
+.fr-card__detail[class^="fr-icon-"]::before, .fr-card__detail[class*=" fr-icon-"]::before, .fr-card__detail[class^="fr-fi-"]::before, .fr-card__detail[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
+  margin-right: 0.5rem;
+}
+
+.fr-card.fr-enlarge-link:not(.fr-card--no-icon) .fr-card__end {
+  margin-bottom: -3rem;
+  min-height: 2rem;
+  padding-right: 2rem;
+  justify-content: flex-end;
+}
+
+.fr-card.fr-enlarge-link:not(.fr-card--no-icon) .fr-card__content {
+  padding-bottom: 5rem;
+}
+
+.fr-card__footer {
+  order: 2;
+  padding: 0.5rem 2rem 2rem;
+  margin: 0 -2rem;
+}
+
+.fr-card__footer .fr-btns-group,
+.fr-card__footer .fr-links-group {
+  margin-bottom: -1rem;
+}
+
+.fr-card--sm::before {
+  --icon-size: 1rem;
+  right: 1.5rem;
+  bottom: 1.5rem;
+}
+
+.fr-card--sm .fr-card__header .fr-badge {
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  min-height: 1.125rem;
+  padding: 0 0.375rem;
+}
+
+.fr-card--sm .fr-card__header .fr-badge::before {
+  content: none;
+}
+
+.fr-card--sm .fr-card__content {
+  padding: 1.5rem;
+}
+
+.fr-card--sm .fr-card__content .fr-badge {
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  min-height: 1.125rem;
+  padding: 0 0.375rem;
+}
+
+.fr-card--sm .fr-card__content .fr-badge::before {
+  content: none;
+}
+
+.fr-card--sm .fr-card__title {
+  font-weight:  700 ;
+  font-size:  1.125rem ;
+  line-height:  1.5rem ;
+}
+
+.fr-card--sm .fr-card__desc {
+  margin-top: 0.5rem;
+}
+
+.fr-card--sm .fr-card__start .fr-badges-group,
+.fr-card--sm .fr-card__start .fr-tags-group {
+  margin-bottom: 0;
+}
+
+.fr-card--sm .fr-card__start .fr-card__detail {
+  margin-bottom: 0.5rem;
+}
+
+.fr-card--sm .fr-card__end {
+  margin-top: 0.75rem;
+  padding-top: 0.25rem;
+  margin-top: 1.5rem;
+  padding-top: 0.5rem;
+}
+
+.fr-card--sm.fr-enlarge-link:not(.fr-card--no-icon) .fr-card__end {
+  margin-bottom: -2rem;
+  min-height: 1.25rem;
+  padding-right: 1.5rem;
+}
+
+.fr-card--sm.fr-enlarge-link:not(.fr-card--no-icon) .fr-card__content {
+  padding-bottom: 3.5rem;
+}
+
+.fr-card--sm .fr-card__footer {
+  padding: 0.5rem 1.5rem 1.5rem;
+}
+
+.fr-card--lg::before {
+  --icon-size: 2rem;
+  right: 2.5rem;
+  bottom: 2.5rem;
+}
+
+.fr-card--lg .fr-card__content {
+  padding: 2.5rem;
+}
+
+.fr-card--lg .fr-card__content .fr-tag {
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  min-height: 2rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+}
+
+.fr-card--lg .fr-card__content .fr-tag::before {
+  content: none;
+}
+
+.fr-card--lg .fr-card__title {
+  font-weight:  700 ;
+  font-size:  1.375rem ;
+  line-height:  1.75rem ;
+}
+
+.fr-card--lg .fr-card__desc {
+  font-size:  1rem ;
+  line-height:  1.5rem ;
+  margin-top: 1rem;
+}
+
+.fr-card--lg .fr-card__start {
+  margin-bottom: 0.5rem;
+}
+
+.fr-card--lg .fr-card__start .fr-badges-group,
+.fr-card--lg .fr-card__start .fr-tags-group {
+  margin-bottom: 0.5rem;
+}
+
+.fr-card--lg .fr-card__start .fr-card__detail {
+  margin-bottom: 1rem;
+}
+
+.fr-card--lg.fr-enlarge-link:not(.fr-card--no-icon) .fr-card__end {
+  margin-bottom: -4rem;
+  min-height: 2.5rem;
+  padding-right: 2.5rem;
+}
+
+.fr-card--lg.fr-enlarge-link:not(.fr-card--no-icon) .fr-card__content {
+  padding-bottom: 6.5rem;
+}
+
+.fr-card--lg .fr-card__footer {
+  padding: 0.5rem 2.5rem 2.5rem;
+}
+
+.fr-card__body > .fr-card__detail,
+.fr-card__body > .fr-card__title {
+  margin-top: 2rem;
+}
+
+.fr-card__body > .fr-card__detail {
+  margin-bottom: -1rem;
+}
+
+.fr-card__body > .fr-card__desc,
+.fr-card__body > .fr-card__title {
+  margin-bottom: 2rem;
+}
+
+.fr-card__body > .fr-card__desc {
+  margin-top: -1rem;
+}
+
+.fr-card.fr-enlarge-link:not(.fr-card--no-arrow) .fr-card__body > .fr-card__desc,
+.fr-card.fr-enlarge-link:not(.fr-card--no-arrow) .fr-card__body > .fr-card__title {
+  margin-bottom: 4.5rem;
+}
+
+.fr-card.fr-enlarge-link:not(.fr-card--no-arrow) .fr-card__body > .fr-card__desc {
+  margin-top: -3.5rem;
+}
+
+.fr-card:not(.fr-card--no-border):not(.fr-card--shadow) {
+  box-shadow: 0 0 0 1px var(--border-default-grey);
+}
+
+.fr-card--grey {
+  background-color: var(--background-contrast-grey);
+  --hover: var(--background-contrast-grey-hover);
+  --active: var(--background-contrast-grey-active);
+}
+
+.fr-card--no-background {
+  background-color: transparent;
+  --hover: inherit;
+  --active: inherit;
 }
 
 /* ¯¯¯¯¯¯¯¯¯ *\
@@ -5481,10 +6111,17 @@ a.fr-tag:disabled, a.fr-tag:not([href]), button.fr-tag:disabled, input[type="but
 
 .fr-input[type=date] {
   min-height: 2.5rem;
+  background-repeat: no-repeat;
+  background-position: calc(100% - 0.75rem) 50%;
+  background-size: 1rem 1rem;
+  --data-uri-svg: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' viewBox='0 0 24 24'><path fill='%23161616' d='M17 3h4c.55 0 1 .45 1 1v16c0 .55-.45 1-1 1H3c-.55 0-1-.45-1-1V4c0-.55.45-1 1-1h4V1h2v2h6V1h2v2zm-2 2H9v2H7V5H4v4h16V5h-3v2h-2V5zm5 6H4v8h16v-8z'/></svg>");
+  background-image: var(--data-uri-svg);
 }
 
 .fr-input[type=date]::-webkit-calendar-picker-indicator {
-  display: none;
+  display: block;
+  margin-right: -0.375rem;
+  opacity: 0;
 }
 
 /**
@@ -5496,25 +6133,19 @@ a.fr-tag:disabled, a.fr-tag:not([href]), button.fr-tag:disabled, input[type="but
 }
 
 .fr-input-wrap[class^="fr-icon-"]::before, .fr-input-wrap[class*=" fr-icon-"]::before, .fr-input-wrap[class^="fr-fi-"]::before, .fr-input-wrap[class*=" fr-fi-"]::before {
-  font-size: 1rem !important;
+  --icon-size: 1rem;
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
   bottom: 0.75rem;
   margin: auto;
+  pointer-events: none;
 }
 
 .fr-input-wrap--addon {
   display: flex;
   flex-direction: row;
   width: 100%;
-}
-
-.fr-input-wrap.fr-fi-calendar-line > .fr-input[type=date]::-webkit-calendar-picker-indicator {
-  display: block;
-  margin-right: -2rem;
-  z-index: 1;
-  opacity: 0;
 }
 
 .fr-input-wrap .fr-input {
@@ -5551,6 +6182,21 @@ textarea.fr-input {
   -webkit-text-fill-color: var(--text-label-grey);
 }
 
+:root[data-fr-theme="dark"] .fr-input[type=date] {
+  --data-uri-svg: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' viewBox='0 0 24 24'><path fill='%23fff' d='M17 3h4c.55 0 1 .45 1 1v16c0 .55-.45 1-1 1H3c-.55 0-1-.45-1-1V4c0-.55.45-1 1-1h4V1h2v2h6V1h2v2zm-2 2H9v2H7V5H4v4h16V5h-3v2h-2V5zm5 6H4v8h16v-8z'/></svg>");
+}
+
+.fr-input[type=date]:disabled {
+  color: var(--text-disabled-grey);
+  box-shadow: inset 0 -2px 0 0 var(--border-disabled-grey);
+  --data-uri-svg: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' viewBox='0 0 24 24'><path fill='%23929292' d='M17 3h4c.55 0 1 .45 1 1v16c0 .55-.45 1-1 1H3c-.55 0-1-.45-1-1V4c0-.55.45-1 1-1h4V1h2v2h6V1h2v2zm-2 2H9v2H7V5H4v4h16V5h-3v2h-2V5zm5 6H4v8h16v-8z'/></svg>");
+  background-image: var(--data-uri-svg);
+}
+
+:root[data-fr-theme="dark"] .fr-input[type=date]:disabled {
+  --data-uri-svg: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' viewBox='0 0 24 24'><path fill='%23666' d='M17 3h4c.55 0 1 .45 1 1v16c0 .55-.45 1-1 1H3c-.55 0-1-.45-1-1V4c0-.55.45-1 1-1h4V1h2v2h6V1h2v2zm-2 2H9v2H7V5H4v4h16V5h-3v2h-2V5zm5 6H4v8h16v-8z'/></svg>");
+}
+
 .fr-input-wrap > *:not(:last-child).fr-input:not(.fr-input--valid):not(.fr-input--error) {
   box-shadow: inset 0 -2px 0 0 var(--border-action-high-blue-france);
 }
@@ -5571,13 +6217,7 @@ textarea.fr-input {
 .fr-content-media__img {
   width: 100%;
   position: relative;
-}
-
-.fr-content-media__img::before {
-  content: "";
-  display: block;
-  width: 100%;
-  padding-bottom: 56.25%;
+  aspect-ratio: 1.77778;
 }
 
 .fr-content-media__img > *, .fr-content-media__asset {
@@ -5611,7 +6251,7 @@ textarea.fr-input {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
@@ -5624,12 +6264,20 @@ textarea.fr-input {
 }
 
 .fr-content-media__transcription .fr-btn::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/menu-2-fill.svg");
+  mask-image: url("../icons/system/menu-2-fill.svg");
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-content-media--sm .fr-content-media__img, .fr-content-media--sm .fr-responsive-vid,
@@ -5654,14 +6302,13 @@ textarea.fr-input {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row-reverse;
   overflow: initial;
   max-width: 100%;
   max-height: none;
   font-weight: 500;
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --hover-tint: var(--hover);
   background-color: transparent;
@@ -5671,12 +6318,20 @@ textarea.fr-input {
 }
 
 .fr-content-media__transcription .fr-link::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/menu-2-fill.svg");
+  mask-image: url("../icons/system/menu-2-fill.svg");
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-content-media__transcription .fr-btn:disabled, .fr-content-media__transcription a.fr-btn:not([href]) {
@@ -5715,6 +6370,7 @@ textarea.fr-input {
 }
 
 .fr-callout[class^="fr-icon-"]::before, .fr-callout[class*=" fr-icon-"]::before, .fr-callout[class^="fr-fi-"]::before, .fr-callout[class*=" fr-fi-"]::before {
+  --icon-size: 1.5rem;
   display: block;
   margin: -0.5rem 0 0.5rem;
 }
@@ -5996,7 +6652,6 @@ textarea.fr-input {
 \* ˍˍˍˍˍˍˍˍˍ */
 .fr-nav {
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --ul-type: none;
   --ol-type: none;
@@ -6098,9 +6753,18 @@ textarea.fr-input {
 }
 
 .fr-nav__btn::after {
-  font: normal 700 normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/arrow-down-s-line.svg");
+  mask-image: url("../icons/system/arrow-down-s-line.svg");
+  --icon-size: 1rem;
   margin-left: 0.5rem;
   margin-right: 0;
   transition: transform 0.3s;
@@ -6272,7 +6936,7 @@ textarea.fr-input {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -6284,17 +6948,16 @@ textarea.fr-input {
 }
 
 .fr-share .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg) .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"])::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btn--facebook {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -6306,19 +6969,27 @@ textarea.fr-input {
 }
 
 .fr-btn--facebook::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/logo/facebook-circle-line.svg");
+  mask-image: url("../icons/logo/facebook-circle-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btn--twitter {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -6330,19 +7001,27 @@ textarea.fr-input {
 }
 
 .fr-btn--twitter::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/logo/twitter-line.svg");
+  mask-image: url("../icons/logo/twitter-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btn--linkedin {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -6354,19 +7033,27 @@ textarea.fr-input {
 }
 
 .fr-btn--linkedin::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/logo/linkedin-box-line.svg");
+  mask-image: url("../icons/logo/linkedin-box-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btn--mail {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -6378,19 +7065,27 @@ textarea.fr-input {
 }
 
 .fr-btn--mail::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/business/mail-line.svg");
+  mask-image: url("../icons/business/mail-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-btn--copy {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -6402,12 +7097,20 @@ textarea.fr-input {
 }
 
 .fr-btn--copy::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/business/links-fill.svg");
+  mask-image: url("../icons/business/links-fill.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-share__group {
@@ -6444,7 +7147,6 @@ textarea.fr-input {
 
 .fr-share__link {
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --hover-tint: var(--hover);
   display: inline-flex;
@@ -6461,7 +7163,7 @@ textarea.fr-input {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -6473,19 +7175,27 @@ textarea.fr-input {
 }
 
 .fr-share__link--facebook::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/logo/facebook-circle-line.svg");
+  mask-image: url("../icons/logo/facebook-circle-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-share__link--twitter {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -6497,19 +7207,27 @@ textarea.fr-input {
 }
 
 .fr-share__link--twitter::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/logo/twitter-line.svg");
+  mask-image: url("../icons/logo/twitter-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-share__link--linkedin {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -6521,19 +7239,27 @@ textarea.fr-input {
 }
 
 .fr-share__link--linkedin::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/logo/linkedin-box-line.svg");
+  mask-image: url("../icons/logo/linkedin-box-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-share__link--mail {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -6545,19 +7271,27 @@ textarea.fr-input {
 }
 
 .fr-share__link--mail::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/business/mail-line.svg");
+  mask-image: url("../icons/business/mail-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-share__link--copy {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -6569,12 +7303,20 @@ textarea.fr-input {
 }
 
 .fr-share__link--copy::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/business/links-fill.svg");
+  mask-image: url("../icons/business/links-fill.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-share .fr-btn {
@@ -6648,7 +7390,7 @@ textarea.fr-input {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -6662,12 +7404,20 @@ textarea.fr-input {
 }
 
 .fr-search-bar .fr-btn::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/search-line.svg");
+  mask-image: url("../icons/system/search-line.svg");
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-search-bar .fr-input--valid {
@@ -6799,18 +7549,35 @@ textarea.fr-input {
 }
 
 .fr-consent-service__collapse .fr-consent-service__collapse-btn::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/arrow-down-s-line.svg");
+  mask-image: url("../icons/system/arrow-down-s-line.svg");
+  --icon-size: 1rem;
   margin-right: -0.16667rem;
   margin-left: 0.25rem;
-  font-size: 1rem;
 }
 
 .fr-consent-service__collapse .fr-consent-service__collapse-btn[aria-expanded="true"]::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/arrow-up-s-line.svg");
+  mask-image: url("../icons/system/arrow-up-s-line.svg");
+  --icon-size: 1rem;
 }
 
 .fr-consent-service__collapse-btn {
@@ -6833,10 +7600,10 @@ textarea.fr-input {
   width: calc(100% - 1rem);
   height: calc(100% - 0.25rem);
   background-image: var(--underline-img), var(--underline-img);
-  background-position: 50% calc(50% + 0.71875em), 50% calc(50% + 0.65625em);
+  background-position: 50% calc(50% + 0.65625em), 50% calc(50% + 0.65625em);
   background-repeat: no-repeat, no-repeat;
   transition: background-size 0s;
-  background-size: 0 0.0625em, 100% 0.0625em;
+  background-size: 0 0.125em, 100% 0.0625em;
 }
 
 .fr-consent-service__radios {
@@ -7027,7 +7794,7 @@ textarea.fr-input {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -7039,17 +7806,16 @@ textarea.fr-input {
 }
 
 .fr-follow__social .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg) .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"])::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-follow__social .fr-btns-group--lg .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"]) {
   font-size: 1.125rem;
   line-height: 1.75rem;
   min-height: 3rem;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 1.5rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -7061,10 +7827,9 @@ textarea.fr-input {
 }
 
 .fr-follow__social .fr-btns-group--lg .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"])::before {
-  font: normal 700 normal 2rem/1 dsfr-icon;
+  --icon-size: 2rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 2rem;
 }
 
 .fr-follow .fr-grid-row > *:not(:first-child) {
@@ -7074,28 +7839,78 @@ textarea.fr-input {
 }
 
 .fr-follow .fr-btn--facebook::before {
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/logo/facebook-circle-fill.svg");
+  mask-image: url("../icons/logo/facebook-circle-fill.svg");
+  --icon-size: 1.5rem;
 }
 
 .fr-follow .fr-btn--twitter::before {
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/logo/twitter-fill.svg");
+  mask-image: url("../icons/logo/twitter-fill.svg");
+  --icon-size: 1.5rem;
 }
 
 .fr-follow .fr-btn--instagram::before {
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/logo/instagram-fill.svg");
+  mask-image: url("../icons/logo/instagram-fill.svg");
+  --icon-size: 1.5rem;
 }
 
 .fr-follow .fr-btn--linkedin::before {
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/logo/linkedin-box-fill.svg");
+  mask-image: url("../icons/logo/linkedin-box-fill.svg");
+  --icon-size: 1.5rem;
 }
 
 .fr-follow .fr-btn--youtube::before {
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/logo/youtube-fill.svg");
+  mask-image: url("../icons/logo/youtube-fill.svg");
+  --icon-size: 1.5rem;
 }
 
 .fr-follow .fr-links-group {
@@ -7132,7 +7947,6 @@ textarea.fr-input {
 
 .fr-follow__social .fr-link {
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --hover-tint: var(--hover);
   display: inline-flex;
@@ -7141,7 +7955,7 @@ textarea.fr-input {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -7157,17 +7971,16 @@ textarea.fr-input {
 }
 
 .fr-follow__social .fr-link::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-follow__social .fr-links-group--lg .fr-link {
   font-size: 1.125rem;
   line-height: 1.75rem;
   min-height: 3rem;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 1.5rem;
   flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
@@ -7179,35 +7992,34 @@ textarea.fr-input {
 }
 
 .fr-follow__social .fr-links-group--lg .fr-link::before {
-  font: normal 700 normal 2rem/1 dsfr-icon;
+  --icon-size: 2rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 2rem;
 }
 
-.fr-follow .fr-link--facebook::before {
-  content: "";
-  font-weight: 700;
+.fr-follow .fr-link--facebook::before::before {
+  -webkit-mask-image: url("../icons/logo/facebook-circle-fill.svg");
+  mask-image: url("../icons/logo/facebook-circle-fill.svg");
 }
 
-.fr-follow .fr-link--twitter::before {
-  content: "";
-  font-weight: 700;
+.fr-follow .fr-link--twitter::before::before {
+  -webkit-mask-image: url("../icons/logo/twitter-fill.svg");
+  mask-image: url("../icons/logo/twitter-fill.svg");
 }
 
-.fr-follow .fr-link--instagram::before {
-  content: "";
-  font-weight: 700;
+.fr-follow .fr-link--instagram::before::before {
+  -webkit-mask-image: url("../icons/logo/instagram-fill.svg");
+  mask-image: url("../icons/logo/instagram-fill.svg");
 }
 
-.fr-follow .fr-link--linkedin::before {
-  content: "";
-  font-weight: 700;
+.fr-follow .fr-link--linkedin::before::before {
+  -webkit-mask-image: url("../icons/logo/linkedin-box-fill.svg");
+  mask-image: url("../icons/logo/linkedin-box-fill.svg");
 }
 
-.fr-follow .fr-link--youtube::before {
-  content: "";
-  font-weight: 700;
+.fr-follow .fr-link--youtube::before::before {
+  -webkit-mask-image: url("../icons/logo/youtube-fill.svg");
+  mask-image: url("../icons/logo/youtube-fill.svg");
 }
 
 .fr-follow .fr-input {
@@ -7250,7 +8062,6 @@ textarea.fr-input {
 \* ˍˍˍˍˍˍˍˍˍ */
 .fr-header {
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --ul-type: none;
   --ol-type: none;
@@ -7353,6 +8164,11 @@ textarea.fr-input {
   line-height:  1.5rem ;
 }
 
+.fr-header__service-title .fr-badge {
+  vertical-align: middle;
+  margin: -0.25rem 0 0 0.25rem;
+}
+
 .fr-header .fr-modal {
   overflow: auto;
   justify-content: initial;
@@ -7400,7 +8216,7 @@ textarea.fr-input {
   font-size: 1rem;
   line-height: 1.5rem;
   min-height: 2.5rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   flex-direction: row;
   overflow: hidden;
   max-width: 2.5rem;
@@ -7417,22 +8233,39 @@ textarea.fr-input {
 }
 
 .fr-header__navbar .fr-btn::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
+  --icon-size: 1.5rem;
   margin-left: 0;
   margin-right: 0.5rem;
-  font-size: 1.5rem;
 }
 
 .fr-header__navbar .fr-btn--menu::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/menu-fill.svg");
+  mask-image: url("../icons/system/menu-fill.svg");
+  --icon-size: 1.5rem;
 }
 
 .fr-header__navbar .fr-btn--search::before {
-  font: normal 700 normal 1.5rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../icons/system/search-line.svg");
+  mask-image: url("../icons/system/search-line.svg");
+  --icon-size: 1.5rem;
 }
 
 .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn {
@@ -7443,12 +8276,11 @@ textarea.fr-input {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   font-weight: 500;
 }
 
 .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"]):not(.fr-btn--display)::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
   content: none;
 }
 
@@ -7456,7 +8288,7 @@ textarea.fr-input {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -7465,17 +8297,16 @@ textarea.fr-input {
 }
 
 .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-icon-"]::before, .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-icon-"]::before, .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class^="fr-fi-"]::before, .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn.fr-btn--display {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -7484,10 +8315,9 @@ textarea.fr-input {
 }
 
 .fr-header .fr-btns-group:not(.fr-btns-group--sm):not(.fr-btns-group--lg):not([class^="fr-btns-group--icon-"]):not([class*=" fr-btns-group--icon-"]) .fr-btn.fr-btn--display::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-header__tools-links {
@@ -7564,7 +8394,6 @@ textarea.fr-input {
 
 .fr-header .fr-links-group .fr-link {
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --hover-tint: var(--hover);
   --active-tint: var(--active);
@@ -7575,12 +8404,11 @@ textarea.fr-input {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   font-weight: 500;
 }
 
 .fr-header .fr-links-group .fr-link:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"])::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
   content: none;
 }
 
@@ -7588,7 +8416,7 @@ textarea.fr-input {
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 2rem;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.75rem;
   flex-direction: row;
   overflow: initial;
   max-width: 100%;
@@ -7597,10 +8425,9 @@ textarea.fr-input {
 }
 
 .fr-header .fr-links-group .fr-link[class^="fr-icon-"]::before, .fr-header .fr-links-group .fr-link[class*=" fr-icon-"]::before, .fr-header .fr-links-group .fr-link[class^="fr-fi-"]::before, .fr-header .fr-links-group .fr-link[class*=" fr-fi-"]::before {
-  font: normal 700 normal 1rem/1 dsfr-icon;
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-header .fr-header__menu-links .fr-links-group .fr-link {
@@ -7741,7 +8568,7 @@ textarea.fr-input {
     flex-direction: row;
     align-items: flex-start;
     justify-content: flex-start;
-    margin: 0.25rem 0 -0.25rem -0.25rem;
+    margin-right: -0.5rem;
   }
   .fr-footer__partners-logos::before {
     content: "";
@@ -7750,7 +8577,11 @@ textarea.fr-input {
     flex: 1;
   }
   .fr-footer__partners-main {
+    margin-bottom: 1rem;
     order: 1;
+  }
+  .fr-footer__partners-main + .fr-footer__partners-sub > ul > li {
+    margin: 0 0.5rem 0 0.5rem;
   }
   .fr-footer__partners-sub,
   .fr-footer__partners-sub > ul {
@@ -7781,17 +8612,6 @@ textarea.fr-input {
 
 @media (min-width: 48em) {
   /*! media md */
-  .fr-card__title {
-    font-size:  1.25rem ;
-    line-height:  1.75rem ;
-  }
-  .fr-card--horizontal {
-    flex-direction: row-reverse;
-  }
-  .fr-card--horizontal .fr-card__img {
-    max-width: 41.666%;
-    flex: 1 0 auto;
-  }
   .fr-quote {
     padding: 0 0 0 2rem;
     background-size: 1px 100%;
@@ -7846,18 +8666,18 @@ textarea.fr-input {
     margin-right: 0;
     padding-right: 2rem;
     /**
-   * Modificateur pour que le sidemenu s'adapte à un affichage à droite du contenu
-   * La bordure se met sur la gauche
-   */
+     * Modificateur pour que le sidemenu s'adapte à un affichage à droite du contenu
+     * La bordure se met sur la gauche
+     */
     /**
-   * Modificateur pour que le sidemenu soit sticky
-   */
+     * Modificateur pour que le sidemenu soit sticky
+     */
     /**
-   * Modificateur pour que le sidemenu soit à la fois sticky et prenne toute la hauteur de la page
-   */
+     * Modificateur pour que le sidemenu soit à la fois sticky et prenne toute la hauteur de la page
+     */
     /**
-   * Modificateur pour avoir une bordure tout autour du sidemenu
-   */
+     * Modificateur pour avoir une bordure tout autour du sidemenu
+     */
   }
   .fr-sidemenu .fr-collapse {
     margin-left: -0.25rem;
@@ -7934,18 +8754,18 @@ textarea.fr-input {
     padding: 0 0.25rem;
     box-shadow: inset 0 0 0 1px var(--border-default-grey);
   }
-  .fr-sidemenu .fr-sidemenu__link,
-  .fr-sidemenu .fr-sidemenu__btn {
+  .fr-sidemenu__link,
+  .fr-sidemenu__btn {
     margin: 0;
     width: 100%;
   }
-  .fr-sidemenu .fr-sidemenu__btn[aria-expanded] {
+  .fr-sidemenu__btn[aria-expanded] {
     padding: 0.75rem 2rem 0.75rem 0.5rem;
   }
-  .fr-sidemenu .fr-sidemenu__btn[aria-expanded]::before {
+  .fr-sidemenu__btn[aria-expanded]::before {
     margin-right: -1.5rem;
   }
-  .fr-sidemenu .fr-sidemenu__inner > .fr-sidemenu__btn {
+  .fr-sidemenu__inner > .fr-sidemenu__btn {
     display: none;
   }
   .fr-highlight {
@@ -7966,6 +8786,35 @@ textarea.fr-input {
   .fr-table thead td,
   .fr-table thead th {
     padding-bottom: 1.125rem;
+  }
+  .fr-download--card {
+    padding: 2rem 2rem 5rem 2rem;
+  }
+  .fr-download--card .fr-download__link {
+    font-size:  1.375rem ;
+    line-height:  1.75rem ;
+  }
+  .fr-download--card .fr-download__link::after {
+    --icon-size: 1.5rem;
+    bottom: 2rem;
+    right: 2rem;
+  }
+  .fr-download--card .fr-download__desc {
+    margin-top: 0.75rem;
+  }
+  .fr-download--card .fr-download__detail {
+    bottom: 2rem;
+    left: 2rem;
+  }
+  .fr-downloads-group__title {
+    font-size:  1.5rem ;
+    line-height:  2rem ;
+  }
+  .fr-downloads-group--bordered {
+    padding: 2rem 2rem 0.5rem;
+  }
+  .fr-downloads-group .fr-download {
+    margin-bottom: 1.5rem;
   }
   .fr-tile__body {
     padding: 1.5rem;
@@ -8118,22 +8967,60 @@ textarea.fr-input {
     margin-top: 0.25rem;
   }
   .fr-footer__partners-logos {
+    margin-right: -1rem;
     flex-wrap: nowrap;
-    margin: 0.25rem -0.75rem -0.25rem -0.25rem;
+  }
+  .fr-footer__partners-main + .fr-footer__partners-sub > ul > li {
+    margin: 0 1rem 0 1rem;
   }
   .fr-footer__partners-main + .fr-footer__partners-sub {
-    padding-left: 2rem;
+    padding-left: 1rem;
     padding-top: 0;
   }
   .fr-footer__partners-main + .fr-footer__partners-sub > ul {
     justify-content: flex-end;
   }
-  .fr-footer__partners-main + .fr-footer__partners-sub > ul > li {
-    margin: 0 0.5rem 0 0;
-  }
   .fr-alert__title {
     font-size:  1.25rem ;
     line-height:  1.75rem ;
+  }
+  .fr-card__title {
+    font-size:  1.375rem ;
+    line-height:  1.75rem ;
+  }
+  .fr-card--sm .fr-card__title {
+    font-size:  1.25rem ;
+    line-height:  1.75rem ;
+  }
+  .fr-card--lg .fr-card__title {
+    font-size:  1.5rem ;
+    line-height:  2rem ;
+  }
+  .fr-card--horizontal, .fr-card--horizontal-half, .fr-card--horizontal-tier {
+    flex-direction: row;
+  }
+  .fr-card--horizontal .fr-card__img,
+  .fr-card--horizontal-half .fr-card__img,
+  .fr-card--horizontal-tier .fr-card__img {
+    height: 100%;
+  }
+  .fr-card--horizontal .fr-card__img img,
+  .fr-card--horizontal-half .fr-card__img img,
+  .fr-card--horizontal-tier .fr-card__img img {
+    height: 100%;
+    object-fit: cover;
+  }
+  .fr-card--horizontal .fr-card__header {
+    width: 40%;
+    flex: 1 0 40%;
+  }
+  .fr-card--horizontal-half .fr-card__header {
+    width: 50%;
+    flex: 1 0 50%;
+  }
+  .fr-card--horizontal-tier .fr-card__header {
+    width: 33.33333%;
+    flex: 1 0 33.33333%;
   }
   .fr-input-wrap > *:first-child:not(:last-child) {
     border-radius: 0.25rem 0 0 0;
@@ -8199,7 +9086,7 @@ textarea.fr-input {
     font-size: 1.125rem;
     line-height: 1.75rem;
     min-height: 3rem;
-    padding: 0.5rem 2rem;
+    padding: 0.5rem 1.5rem;
     flex-direction: row;
     overflow: initial;
     max-width: 100%;
@@ -8207,10 +9094,9 @@ textarea.fr-input {
     font-weight: 500;
   }
   .fr-search-bar--lg .fr-btn::before {
-    font: normal 700 normal 2rem/1 dsfr-icon;
+    --icon-size: 1.5rem;
     margin-left: -0.25rem;
     margin-right: 0.5rem;
-    font-size: 1.5rem;
   }
   .fr-consent-banner {
     padding: 2rem;
@@ -8362,10 +9248,9 @@ textarea.fr-input {
     max-height: none;
   }
   .fr-pagination__link--first.fr-pagination__link--lg-label::before, .fr-pagination__link--prev.fr-pagination__link--lg-label::before {
-    font: normal 700 normal 1.5rem/1 dsfr-icon;
+    --icon-size: 1.5rem;
     margin-left: -0.25rem;
     margin-right: 0.5rem;
-    font-size: 1.5rem;
   }
   .fr-pagination__link--next.fr-pagination__link--lg-label, .fr-pagination__link--last.fr-pagination__link--lg-label {
     font-size: 1rem;
@@ -8378,10 +9263,9 @@ textarea.fr-input {
     max-height: none;
   }
   .fr-pagination__link--next.fr-pagination__link--lg-label::before, .fr-pagination__link--last.fr-pagination__link--lg-label::before {
-    font: normal 700 normal 1.5rem/1 dsfr-icon;
+    --icon-size: 1.5rem;
     margin-right: -0.25rem;
     margin-left: 0.5rem;
-    font-size: 1.5rem;
   }
   .fr-footer__content {
     margin-top: 0;

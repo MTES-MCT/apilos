@@ -19,7 +19,7 @@
         <input type="hidden" id="convention_uuid" value="{{convention.uuid}}">
         <div class="fr-container-fluid ds_banner">
             {% include "conventions/common/form_header.html" with convention=convention %}
-            {% if not convention.is_validated %}
+            {% if convention.isnt_validated %}
                 {% include "common/step_progressbar.html" with convention=convention %}
             {% endif %}
             <div class="fr-container">
@@ -66,7 +66,7 @@
                                                 Bailleur
                                             </h4>
                                         </div>
-                                        {% if not convention.is_validated %}
+                                        {% if convention.isnt_validated %}
                                             <a class="fr-link fr-mb-1w" href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}" >
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                             </a>
@@ -98,7 +98,7 @@
                                                 Bailleur
                                             </h4>
                                         </div>
-                                        {% if not convention.is_validated %}
+                                        {% if convention.isnt_validated %}
                                             <a class="fr-link fr-mb-1w" href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}" >
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                             </a>
@@ -149,7 +149,7 @@
                                             Opération
                                         </h4>
                                     </div>
-                                    {% if not convention.is_validated %}
+                                    {% if convention.isnt_validated %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:programme' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -181,7 +181,7 @@
                                             Opération - informations cadastrales
                                         </h4>
                                     </div>
-                                    {% if not convention.is_validated %}
+                                    {% if convention.isnt_validated %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -216,7 +216,7 @@
                                             Références cadastrales et effet relatif
                                         </h4>
                                     </div>
-                                    {% if not convention.is_validated %}
+                                    {% if convention.isnt_validated %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -281,7 +281,7 @@
                                             Opération - EDD
                                         </h4>
                                     </div>
-                                    {% if not convention.is_validated %}
+                                    {% if convention.isnt_validated %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:edd' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -347,7 +347,7 @@
                                             Financements
                                         </h4>
                                     </div>
-                                    {% if not convention.is_validated %}
+                                    {% if convention.isnt_validated %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:financement' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -421,7 +421,7 @@
                                             Logements
                                         </h4>
                                     </div>
-                                    {% if not convention.is_validated %}
+                                    {% if convention.isnt_validated %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:logements' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -527,7 +527,7 @@
                                             Annexes
                                         </h4>
                                     </div>
-                                    {% if not convention.is_validated %}
+                                    {% if convention.isnt_validated %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:annexes' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -620,7 +620,7 @@
                                             Stationnements
                                         </h4>
                                     </div>
-                                    {% if not convention.is_validated %}
+                                    {% if convention.isnt_validated %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:stationnements' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -679,7 +679,7 @@
                                             Informations à l'attention du service instructeur
                                         </h4>
                                     </div>
-                                    {% if not convention.is_validated %}
+                                    {% if convention.isnt_validated %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:comments' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
