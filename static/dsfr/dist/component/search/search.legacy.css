@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -12,7 +12,21 @@
       * Modificateur pour le champ présentant des erreurs
       */
 }
+
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .fr-search-bar .fr-btn {
+    content: '';
+  }
+
+  .fr-search-bar .fr-btn::before {
+    background-color: transparent;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-image: url("../../icons/system/search-line.svg");
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
   .fr-search-bar .fr-input {
     box-shadow: inset 0 -2px 0 0 #000091;
   }

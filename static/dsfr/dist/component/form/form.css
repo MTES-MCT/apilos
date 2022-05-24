@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -78,9 +78,17 @@
 }
 
 .fr-error-text::before {
-  font: normal normal normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 400;
+  content: "";
+  flex: 0 0 auto;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../../icons/system/fr--error-fill.svg");
+  mask-image: url("../../icons/system/fr--error-fill.svg");
+  --icon-size: 1rem;
   display: inline-block;
   margin-right: 0.25rem;
 }
@@ -100,9 +108,17 @@
 }
 
 .fr-valid-text::before {
-  font: normal normal normal 1rem/1 dsfr-icon;
-  content: "";
-  font-weight: 400;
+  content: "";
+  flex: 0 0 auto;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../../icons/system/fr--success-fill.svg");
+  mask-image: url("../../icons/system/fr--success-fill.svg");
+  --icon-size: 1rem;
   display: inline-block;
   margin-right: 0.25rem;
 }
@@ -347,6 +363,34 @@
     color: #161616;
   }
 
+  .fr-error-text {
+    content: '';
+    color: #ce0500;
+  }
+
+  .fr-error-text::before {
+    background-color: transparent;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-image: url("../../icons/system/fr--error-fill.svg");
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .fr-valid-text {
+    content: '';
+    color: #18753c;
+  }
+
+  .fr-valid-text::before {
+    background-color: transparent;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-image: url("../../icons/system/fr--success-fill.svg");
+    width: 1rem;
+    height: 1rem;
+  }
+
   .fr-select-group--valid label,
   .fr-input-group--valid label {
     color: #18753c;
@@ -376,14 +420,6 @@
 
   .fr-hint-text {
     color: #666;
-  }
-
-  .fr-error-text {
-    color: #ce0500;
-  }
-
-  .fr-valid-text {
-    color: #18753c;
   }
 
   .fr-fieldset:disabled label {

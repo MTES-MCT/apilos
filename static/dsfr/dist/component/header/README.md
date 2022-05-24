@@ -8,6 +8,7 @@ header
 └─ core
 └─ link
 └─ logo
+└─ badge
 └─ button
 └─ search
 └─ navigation
@@ -24,6 +25,7 @@ Afin d’utiliser le composant `header`, il est nécessaire d’ajouter les fich
     <link href="css/logo/logo.min.css" rel="stylesheet">
     <link href="css/form/form.min.css" rel="stylesheet">
     <link href="css/button/button.min.css" rel="stylesheet">
+    <link href="css/badge/badge.min.css" rel="stylesheet">
     <link href="css/navigation/navigation.min.css" rel="stylesheet">
     <link href="css/modal/modal.min.css" rel="stylesheet">
     <link href="css/input/input.min.css" rel="stylesheet">
