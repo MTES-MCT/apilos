@@ -12,7 +12,6 @@ from django.db.models import Q
 from django.conf import settings
 from comments.models import Comment, CommentStatut
 
-from instructeurs.models import Administration
 from programmes.models import (
     Annexe,
     Financement,
@@ -292,9 +291,13 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
     if convention_number_form is None:
         convention_number_form = ConventionNumberForm(
             initial={
-                "uuid" : convention.uuid,
-                "convention_numero": convention.get_convention_prefix() if convention.programme.administration else ""
-            })
+                "convention_numero": convention.numero
+                if convention.numero
+                else convention.get_convention_prefix()
+                if convention.programme.administration
+                else ""
+            }
+        )
 
     opened_comments = Comment.objects.filter(
         convention=convention,
@@ -643,6 +646,7 @@ def convention_validate(request, convention_uuid):
     request.user.check_perm("convention.change_convention", convention)
 
     convention_number_form = ConventionNumberForm(request.POST)
+    convention_number_form.convention = convention
     if convention_number_form.is_valid():
         convention.numero = convention_number_form.cleaned_data["convention_numero"]
 

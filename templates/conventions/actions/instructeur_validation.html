@@ -33,11 +33,6 @@
                                     <div class="block--row-strech">
                                         <div class="block--row-strech-1">
                                             {% include "common/form/input_text.html" with form_input=conventionNumberForm.convention_numero editable=editable_validation %}
-                                            <input
-                                                type="hidden"
-                                                id="{{conventionNumberForm.uuid.id_for_label}}"
-                                                name="{{conventionNumberForm.uuid.html_name}}"
-                                                value="{{ conventionNumberForm.uuid.value|default_if_none:'' }}">
                                         </div>
                                     </div>
                                 </div>
@@ -56,6 +51,15 @@
                                 });
                             </script>
                         </form>
+                        <div class="fr-col-md-12 fr-mt-4w">
+                            <p><i>Le préfixe du numéro de convention est modifiable dans <a class="fr-link fr-mb-1w" href="{% url 'settings:administrations' %}" >les paramètres de votre administration</a>
+                            </i></p>
+
+
+
+
+
+                        </div>
                     </div>
                 {% endwith %}
             </div>

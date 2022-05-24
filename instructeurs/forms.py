@@ -1,10 +1,9 @@
+import re
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 
 from instructeurs.models import Administration
-
-import re
 
 
 class AdministrationForm(forms.Form):
@@ -68,24 +67,27 @@ class AdministrationForm(forms.Form):
         label="Préfixe du numéro de convention",
         max_length=255,
         error_messages={
-            "max_length": "Le préfixe du numérp de convention ne doit pas excéder 255 caractères",
+            "max_length": "Le préfixe du numéro de convention ne doit pas excéder 255 caractères",
         },
-          help_text=mark_safe(
-            "Pour remplir le préfixe dynamiquement, vous pouvez utiliser les caractères automatiques suivants : <br/>"
+        help_text=mark_safe(
+            "Pour remplir le préfixe dynamiquement, vous pouvez utiliser les caractères "
+            + "automatiques suivants : <br/>"
             + " <b>{département}</b> : numéro du département <br/>"
             + " <b>{zone}</b> : numéro de la zone <br/>"
             + " <b>{mois} et {année}</b> : mois et année en cours. <br/>"
-            + "Vous pouvez également choisir les séparateurs de votre choix entre ces caractères ainsi qu'ajouter le texte qui vous convient."
+            + "Vous pouvez également choisir les séparateurs de votre choix entre ces caractères "
+            + "ainsi qu'ajouter le texte qui vous convient."
         ),
     )
+
     def clean_prefix_convention(self):
         prefix_convention = self.cleaned_data.get("prefix_convention", 0)
 
-        test=re.findall(r"\{\w+\}", prefix_convention)
-        for element in test : 
-            if element not in ["{département}","{zone}","{mois}","{année}"]:
+        test_prefix = re.findall(r"\{\w+\}", prefix_convention)
+        for element in test_prefix:
+            if element not in ["{département}", "{zone}", "{mois}", "{année}"]:
                 raise ValidationError(
-                    "Vous ne pouvez pas utiliser {} comme élement dynamique. Seuls {{département}}, {{zone}}, {{mois}} et {{année}} sont autorisés".format(element)
+                    "Vous ne pouvez pas utiliser {} comme élement dynamique. Seuls "
+                    + "{{département}}, {{zone}}, {{mois}} et {{année}} sont autorisés"
                 )
         return prefix_convention
-

@@ -267,17 +267,16 @@ class Convention(models.Model):
         return users_partial + users_all_email
 
     def get_convention_prefix(self):
-        if (
-            self.statut
-            in [
-                ConventionStatut.PROJET,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ]
-            or self.numero is None
-        ):
-            if self.programme.administration : 
-                return self.programme.administration.prefix_convention.replace("{département}", str(self.programme.code_postal[:-3])).replace("{zone}", str(self.programme.zone_123_bis)).replace("{mois}",str(timezone.now().month)).replace("{année}",str(timezone.now().year))
+        if self.programme.administration:
+            return (
+                self.programme.administration.prefix_convention.replace(
+                    "{département}", str(self.programme.code_postal[:-3])
+                )
+                .replace("{zone}", str(self.programme.zone_123_bis))
+                .replace("{mois}", str(timezone.now().month))
+                .replace("{année}", str(timezone.now().year))
+            )
+        return None
 
     def is_project(self):
         return self.statut == ConventionStatut.PROJET
