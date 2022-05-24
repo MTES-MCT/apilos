@@ -87,7 +87,7 @@ class AdministrationForm(forms.Form):
         for element in test_prefix:
             if element not in ["{département}", "{zone}", "{mois}", "{année}"]:
                 raise ValidationError(
-                    "Vous ne pouvez pas utiliser {} comme élement dynamique. Seuls "
-                    + "{{département}}, {{zone}}, {{mois}} et {{année}} sont autorisés"
+                    f"Vous ne pouvez pas utiliser {element} comme élement dynamique."
+                    + "Seuls {département}, {zone}, {mois} et {année} sont autorisés"
                 )
         return prefix_convention
