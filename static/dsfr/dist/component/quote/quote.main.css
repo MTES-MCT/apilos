@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -17,11 +17,20 @@
 }
 
 .fr-quote::before {
-  font: normal 700 normal 2rem/1 dsfr-icon;
-  content: "";
-  font-weight: 700;
+  content: "";
+  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("../../icons/editor/fr--quote-line.svg");
+  mask-image: url("../../icons/editor/fr--quote-line.svg");
+  --icon-size: 2rem;
   display: block;
-  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
   color: var(--artwork-minor-blue-france);
 }
 

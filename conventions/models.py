@@ -266,44 +266,16 @@ class Convention(models.Model):
         )
         return users_partial + users_all_email
 
-    def prefixe_numero(self):
-        if (
-            self.statut
-            in [
-                ConventionStatut.PROJET,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ]
-            or self.numero is None
-        ):
-            decret = "80.416"  # en application du décret n° 80.416
-            # decret 80.416 pour les HLM
-            # operation = "2"  # pour une opération de construction neuve (2)
-            # code opération non appliqué dans le 13
-            code_organisme = "075.050"  # par l' OPAC-VP (n° de code : 075.050).
-            return "/".join(
-                [
-                    str(self.programme.code_postal[:-3]),
-                    str(self.programme.zone_123_bis),
-                    str(timezone.now().month),
-                    str(timezone.now().year),
-                    decret,
-                    code_organisme,
-                ]
+    def get_convention_prefix(self):
+        if self.programme.administration:
+            return (
+                self.programme.administration.prefix_convention.replace(
+                    "{département}", str(self.programme.code_postal[:-3])
+                )
+                .replace("{zone}", str(self.programme.zone_123_bis))
+                .replace("{mois}", str(timezone.now().month))
+                .replace("{année}", str(timezone.now().year))
             )
-        return "/".join(self.numero.split("/")[:-1])
-
-    def suffixe_numero(self):
-        if (
-            self.statut
-            not in [
-                ConventionStatut.PROJET,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ]
-            and self.numero is not None
-        ):
-            return self.numero.rsplit("/", maxsplit=1)[-1]
         return None
 
     def is_project(self):
@@ -318,14 +290,11 @@ class Convention(models.Model):
     def is_a_signer(self):
         return self.statut == ConventionStatut.A_SIGNER
 
-    def is_validated(self):
-        return self.statut in [
+    def isnt_validated(self):
+        return self.statut not in [
             ConventionStatut.A_SIGNER,
             ConventionStatut.TRANSMISE,
         ]
-
-    def isnt_validated(self):
-        return not self.is_validated()
 
     def statut_for_template(self):
         return {
@@ -349,6 +318,19 @@ class Convention(models.Model):
 
     def type1and2_configuration_not_needed(self):
         return not (self.bailleur.is_type1and2() and not self.type1and2)
+
+    def display_not_validated_status(self):
+        """
+        Text display as Watermark when the convention is in project or instruction status
+        """
+        if self.statut == ConventionStatut.PROJET:
+            return "Projet de convention"
+        if self.statut in [
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+        ]:
+            return "Convention en cours d'instruction"
+        return ""
 
 
 class ConventionHistory(models.Model):

@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.4.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 @charset "UTF-8";
 
@@ -14,7 +14,6 @@
   align-items: center;
 
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   --hover-tint: var(--hover);
   font-size: 1rem;
@@ -46,9 +45,9 @@
 .fr-tabs__tab:not([class*="fr-tabs__tab--icon-"])[class*=" fr-icon-"]::before,
 .fr-tabs__tab:not([class*="fr-tabs__tab--icon-"])[class^="fr-fi-"]::before,
 .fr-tabs__tab:not([class*="fr-tabs__tab--icon-"])[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: 0;
   margin-right: 0.75rem;
-  font-size: 1rem;
 }
 
 .fr-tabs__tab--icon-left[class^="fr-icon-"],
@@ -65,9 +64,9 @@
 .fr-tabs__tab--icon-left[class*=" fr-icon-"]::before,
 .fr-tabs__tab--icon-left[class^="fr-fi-"]::before,
 .fr-tabs__tab--icon-left[class*=" fr-fi-"]::before {
+  --icon-size: 1rem;
   margin-left: -0.16667rem;
   margin-right: 0.5rem;
-  font-size: 1rem;
 }
 
 .fr-tabs {
@@ -80,7 +79,6 @@
   --li-bottom: 0;
   --ol-content: none;
   --underline-img: none;
-  --link-blank-font: none;
   --link-blank-content: none;
   position: relative;
   overflow: hidden;
@@ -177,9 +175,8 @@
 
 .fr-tabs__panel {
   --underline-img: linear-gradient(0deg, currentColor, currentColor);
-  --link-blank-font: normal 700 normal 1rem/1 dsfr-icon;
-  --link-blank-content: "\00a0";
-  --ul-type: "●\00a0\00a0";
+  --link-blank-content: '';
+  --ul-type: disc;
   --ol-type: decimal;
   --ul-start: 1rem;
   --ol-start: 1.5rem;
