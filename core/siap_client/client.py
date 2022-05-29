@@ -52,15 +52,19 @@ class SIAPClient:
     def __init__(self) -> None:
         pass
 
-    def get_config(self) -> requests.Response:
-        return _call_siap_api("/config")
+    def get_siap_config(self) -> requests.Response:
+        response = _call_siap_api("/config")
+        return response.json()
 
     def get_habilitations(
         self, user_login: str, habilitation_id: int = 0
     ) -> requests.Response:
-        return _call_siap_api(
+        response = _call_siap_api(
             "/habilitations",
             base_route="/services/habilitation",
             user_login=user_login,
             habilitation_id=habilitation_id,
         )
+        if response.status_code >= 200 and response.status_code < 300:
+            return response.json()
+        raise Exception("user doesn't have SAP habilitation")
