@@ -581,3 +581,11 @@ table.fullwidth {
   top: 0;
   z-index: 998;
 }
+
+/*
+ * SIAP
+ */
+
+ .apilos-active-habilitation {
+   background-color: pink;
+ }
