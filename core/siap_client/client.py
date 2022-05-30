@@ -1,5 +1,6 @@
 import datetime
 import uuid
+import threading
 import requests
 import jwt
 
@@ -43,8 +44,34 @@ def _call_siap_api(
     return response
 
 
-# Manage singleton ?
-class SIAPClient:
+class SingletonDoubleChecked:
+
+    # resources shared by each and every
+    # instance
+
+    __singleton_lock = threading.Lock()
+    __singleton_instance = None
+
+    # define the classmethod
+    @classmethod
+    def get_instance(cls):
+
+        # check for the singleton instance
+        if not cls.__singleton_instance:
+            with cls.__singleton_lock:
+                if not cls.__singleton_instance:
+                    cls.__singleton_instance = cls()
+
+        # return the singleton instance
+        return cls.__singleton_instance
+
+    @classmethod
+    def has_instance(cls):
+        return bool(cls.__singleton_instance)
+
+
+# Manage SiapClient as a Singleton
+class SIAPClient(SingletonDoubleChecked):
     # pylint: disable=R0201
 
     siap_url = None
@@ -62,6 +89,16 @@ class SIAPClient:
         response = _call_siap_api(
             "/habilitations",
             base_route="/services/habilitation",
+            user_login=user_login,
+            habilitation_id=habilitation_id,
+        )
+        if response.status_code >= 200 and response.status_code < 300:
+            return response.json()
+        raise Exception("user doesn't have SAP habilitation")
+
+    def get_menu(self, user_login: str, habilitation_id: int = 0) -> requests.Response:
+        response = _call_siap_api(
+            "/menu",
             user_login=user_login,
             habilitation_id=habilitation_id,
         )
