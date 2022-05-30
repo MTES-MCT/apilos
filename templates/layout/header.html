@@ -128,26 +128,74 @@
                     </div>
                 {% endif %}
             </div>
-            <nav class="fr-nav" id="header-navigation" role="navigation" aria-label="Menu principal">
-                <ul class="fr-nav__list">
-
-                    {% for menu in request.session.menu %}
-
-                        <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="#" target="_self" aria-current="page">{{ menu.libelle }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </nav>
         </div>
     </div>
-    <!-- TODO : voir si on a besoin de ce block ou si c'est un relicat -->
-    <!-- <div class="fr-header__menu fr-modal" id="modal-404" aria-labelledby="button-405">
-        <div class="fr-container">
-            <button class="fr-link--close fr-link" aria-controls="modal-404">Fermer</button>
-            <div class="fr-header__menu-links">
+
+    {% if request.session.menu %}
+        <div class="fr-header__menu">
+            <div class="fr-container">
+                <nav class="fr-nav" id="navigation-773" role="navigation" aria-label="Menu principal">
+                    <ul class="fr-nav__list">
+                        <li class="fr-nav__item">
+                            <button class="fr-nav__btn" aria-expanded="false" aria-controls="menu-776" aria-current="true">Entrée menu active</button>
+                            <div class="fr-collapse fr-menu" id="menu-776">
+                                <ul class="fr-menu__list">
+                                    <li>
+                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
+                                    </li>
+                                    <li>
+                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
+                                    </li>
+                                    <li>
+                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
+                                    </li>
+                                    <li>
+                                        <a class="fr-nav__link" href="#" target="_self" aria-current="page">Lien de navigation</a>
+                                    </li>
+                                    <li>
+                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
+                                    </li>
+                                    <li>
+                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="fr-nav__item">
+                            <button class="fr-nav__btn" aria-expanded="false" aria-controls="menu-774">Entrée menu</button>
+                            <div class="fr-collapse fr-menu" id="menu-774">
+                                <ul class="fr-menu__list">
+                                    <li>
+                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
+                                    </li>
+                                    <li>
+                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
+                                    </li>
+                                    <li>
+                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
+                                    </li>
+                                    <li>
+                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
+                                    </li>
+                                    <li>
+                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
+                                    </li>
+                                    <li>
+                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="fr-nav__item">
+                            <a class="fr-nav__link" href="#" target="_self">accès direct</a>
+                        </li>
+                        <li class="fr-nav__item">
+                            <a class="fr-nav__link" href="#" target="_self">accès direct</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
-    </div> -->
+    {% endif %}
 
 </header>
