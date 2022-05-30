@@ -15,7 +15,7 @@
                             {% csrf_token %}
                             <p class="fr-h4">Associer un numéro de convention</p>
 
-                            <div class="fr-grid-row fr-grid-row--gutters">
+                            <!--                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
                                     <div class="block--row-strech">
                                         <div class="block--row-strech-1">
@@ -26,6 +26,15 @@
                                 </div>
                                 <div class="fr-col-12 fr-col-md-3 fr-col-lg-2 fr-pl-md-1w">
                                     {% include "common/form/input_number.html" with form_input=conventionNumberForm.suffixe_numero editable=editable_validation %}
+                                </div>
+                            </div> -->
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <div class="block--row-strech">
+                                        <div class="block--row-strech-1">
+                                            {% include "common/form/input_text.html" with form_input=conventionNumberForm.convention_numero editable=editable_validation %}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -42,6 +51,15 @@
                                 });
                             </script>
                         </form>
+                        <div class="fr-col-md-12 fr-mt-4w">
+                            <p><i>Le préfixe du numéro de convention est modifiable dans <a class="fr-link fr-mb-1w" href="{% url 'settings:administrations' %}" data-turbo="false">les paramètres de votre administration</a>
+                            </i></p>
+
+
+
+
+
+                        </div>
                     </div>
                 {% endwith %}
             </div>

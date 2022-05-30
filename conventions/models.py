@@ -266,44 +266,16 @@ class Convention(models.Model):
         )
         return users_partial + users_all_email
 
-    def prefixe_numero(self):
-        if (
-            self.statut
-            in [
-                ConventionStatut.PROJET,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ]
-            or self.numero is None
-        ):
-            decret = "80.416"  # en application du décret n° 80.416
-            # decret 80.416 pour les HLM
-            # operation = "2"  # pour une opération de construction neuve (2)
-            # code opération non appliqué dans le 13
-            code_organisme = "075.050"  # par l' OPAC-VP (n° de code : 075.050).
-            return "/".join(
-                [
-                    str(self.programme.code_postal[:-3]),
-                    str(self.programme.zone_123_bis),
-                    str(timezone.now().month),
-                    str(timezone.now().year),
-                    decret,
-                    code_organisme,
-                ]
+    def get_convention_prefix(self):
+        if self.programme.administration:
+            return (
+                self.programme.administration.prefix_convention.replace(
+                    "{département}", str(self.programme.code_postal[:-3])
+                )
+                .replace("{zone}", str(self.programme.zone_123_bis))
+                .replace("{mois}", str(timezone.now().month))
+                .replace("{année}", str(timezone.now().year))
             )
-        return "/".join(self.numero.split("/")[:-1])
-
-    def suffixe_numero(self):
-        if (
-            self.statut
-            not in [
-                ConventionStatut.PROJET,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ]
-            and self.numero is not None
-        ):
-            return self.numero.rsplit("/", maxsplit=1)[-1]
         return None
 
     def is_project(self):
