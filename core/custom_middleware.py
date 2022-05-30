@@ -9,7 +9,7 @@ class CerbereSessionMiddleware:
     def __call__(self, request):
 
         # test if user is a siap user
-        if request.user.is_cerbere_user():
+        if request.user.is_authenticated and request.user.is_cerbere_user():
             # test if habilitations are set for the current user
             # if not, get it from SIAPClient
             if "habilitations" not in request.session:
@@ -23,7 +23,7 @@ class CerbereSessionMiddleware:
                     else:
                         habilitation_id = request.session["habilitation_id"]
 
-                client = SIAPClient()
+                client = SIAPClient.get_instance()
 
                 # Set habilitation in session
                 response = client.get_habilitations(
@@ -42,6 +42,14 @@ class CerbereSessionMiddleware:
                 else:
                     raise Exception("Pas d'habilitation associéé à l'utilisateur")
                 # Set habilitation in session
+
+            if "menu" not in request.session:
+                client = SIAPClient.get_instance()
+                response = client.get_menu(
+                    user_login=request.user.cerbere_login,
+                    habilitation_id=request.session["habilitation_id"],
+                )
+                request.session["menu"] = response["menuItems"]
 
         for key, value in request.session.items():
             print(f"{key} => {value}")
