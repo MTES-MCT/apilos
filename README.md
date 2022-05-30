@@ -100,7 +100,7 @@ Nous utilisons [Sentry](https://sentry.io/organizations/betagouv-f7/issues/?proj
 
 ### Monitoring système
 
-APiLos est monitoré par l'outils [Dashlord](https://dashlord.mte.incubateur.net/dashlord/url/apilos-beta-gouv-fr/) de la fabrique du numérique du ministère de la transition écologique
+APiLos est monitoré par l'outils [Dashlord](https://dashlord.mte.incubateur.net/dashlord/url/apilos-beta-gouv-fr/) de la fabrique du numérique du Ministère de la Transition écologique et de la Cohésion des territoires
 
 Monitoring système : updownio ?
 
