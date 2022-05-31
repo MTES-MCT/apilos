@@ -526,7 +526,7 @@ def programme_edd_update(request, convention_uuid):
                     "uuid": logementedd.uuid,
                     "financement": logementedd.financement,
                     "designation": logementedd.designation,
-                    "typologie": logementedd.typologie,
+                    "numero_lot": logementedd.numero_lot,
                 }
             )
         formset = LogementEDDFormSet(initial=initial)
@@ -632,8 +632,8 @@ def _programme_edd_atomic_update(request, convention, programme):
                 f"form-{idx}-financement": utils.get_form_value(
                     form_logementedd, logementedd, "financement"
                 ),
-                f"form-{idx}-typologie": utils.get_form_value(
-                    form_logementedd, logementedd, "typologie"
+                f"form-{idx}-numero_lot": utils.get_form_value(
+                    form_logementedd, logementedd, "numero_lot"
                 ),
             }
         else:
@@ -641,7 +641,7 @@ def _programme_edd_atomic_update(request, convention, programme):
                 **initformset,
                 f"form-{idx}-designation": form_logementedd["designation"].value(),
                 f"form-{idx}-financement": form_logementedd["financement"].value(),
-                f"form-{idx}-typologie": form_logementedd["typologie"].value(),
+                f"form-{idx}-numero_lot": form_logementedd["numero_lot"].value(),
             }
     formset = LogementEDDFormSet(initformset)
     formset.programme_id = convention.programme_id
@@ -694,14 +694,14 @@ def _save_programme_logement_edd(formset, convention, programme):
             )
             logementedd.financement = form_logementedd.cleaned_data["financement"]
             logementedd.designation = form_logementedd.cleaned_data["designation"]
-            logementedd.typologie = form_logementedd.cleaned_data["typologie"]
+            logementedd.numero_lot = form_logementedd.cleaned_data["numero_lot"]
         else:
             logementedd = LogementEDD.objects.create(
                 programme=programme,
                 bailleur=convention.bailleur,
                 financement=form_logementedd.cleaned_data["financement"],
                 designation=form_logementedd.cleaned_data["designation"],
-                typologie=form_logementedd.cleaned_data["typologie"],
+                numero_lot=form_logementedd.cleaned_data["numero_lot"],
             )
         logementedd.save()
 

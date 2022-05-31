@@ -12,9 +12,11 @@ class Preteur(models.TextChoices):
     ETAT = "ETAT", "Etat"
     EPCI = "EPCI", "EPCI"
     REGION = "REGION", "Région"
+    VILLE = "VILLE", "Ville"
     CDCF = "CDCF", "CDC pour le foncier"
     CDCL = "CDCL", "CDC pour le logement"
     COMMUNE = "COMMUNE", "Commune et action logement"
+    ANRU = "ANRU", "ANRU"
     AUTRE = "AUTRE", "Autre"
 
 

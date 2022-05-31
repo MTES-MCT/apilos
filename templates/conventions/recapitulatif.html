@@ -303,7 +303,7 @@
                                                 {% endif %}
                                                 <th scope="col">Financement {% include "common/form/required_field_star.html" %}</th>
                                                 <th scope="col">Désignation {% include "common/form/required_field_star.html" %}</th>
-                                                <th scope="col">Type {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col">Numéro de lot {% include "common/form/required_field_star.html" %}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -323,7 +323,7 @@
                                                                 {{lgt.designation}}
                                                             </td>
                                                             <td>
-                                                                {{lgt.typologie}}
+                                                                {{lgt.numero_lot}}
                                                             </td>
                                                         </tr>
                                                     {% endwith %}
