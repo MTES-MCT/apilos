@@ -252,26 +252,27 @@ class NotificationForm(forms.Form):
 
 
 class ConventionNumberForm(forms.Form):
-    prefixe_numero = forms.CharField(
-        label="Prefix",
+    convention = None
+    convention_numero = forms.CharField(
         max_length=250,
         error_messages={
             "max_length": (
                 "La longueur totale du numéro de convention ne peut pas excéder"
                 + " 250 caractères"
             ),
-            "required": "Le préfixe du numéro de convention en obligatoire",
-        },
-        help_text="département/zone/mois.année/decret/daei/",
-    )
-    suffixe_numero = forms.CharField(
-        label="Numéro",
-        max_length=10,
-        error_messages={
-            "max_length": "La longueur du numéro de convention ne peut pas excéder 10 caractères",
-            "required": "Le numéro de convention en obligatoire",
+            "required": "Le numéro de convention est obligatoire",
         },
     )
+
+    def clean_convention_numero(self):
+        convention_numero = self.cleaned_data.get("convention_numero", 0)
+        if convention_numero == self.convention.get_convention_prefix():
+            raise ValidationError(
+                "Attention, le champ est uniquement prérempli avec le préfixe du numéro de "
+                + "convention déterminé pour votre administration. Il semble que vous n'ayez pas "
+                + "ajouté, à la suite de ce préfixe, de numéro d'ordre de la convention."
+            )
+        return convention_numero
 
 
 class ConventionType1and2Form(forms.Form):

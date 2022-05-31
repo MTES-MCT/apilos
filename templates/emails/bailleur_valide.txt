@@ -3,7 +3,7 @@ Bonjour
 La convention {{convention}} ({{convention_url}})  a été validée.
 
 Vous pouvez dès maintenant :
-- L’imprimer en 3 exemplaires en recto (1 page par feuille)
+-L’imprimer en 3 exemplaires en recto verso (conformément à la Politique d’impression des services de l’Etat).
 - Parapher toutes les pages
 - Signer à la fin de la convention. Attention à ne pas dater.
 

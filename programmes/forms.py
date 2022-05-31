@@ -824,12 +824,12 @@ class LogementEDDForm(forms.Form):
             "max_length": "La designation du logement ne doit pas excéder 255 caractères",
         },
     )
-    typologie = forms.TypedChoiceField(
-        required=True,
+    numero_lot = forms.CharField(
         label="",
-        choices=TypologieLogement.choices,
+        max_length=255,
+        min_length=1,
         error_messages={
-            "required": "Le type de logement est obligatoire",
+            "max_length": "Le numéro de lot ne doit pas excéder 255 caractères",
         },
     )
     financement = forms.TypedChoiceField(

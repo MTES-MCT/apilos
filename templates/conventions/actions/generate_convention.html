@@ -14,6 +14,10 @@
             <p>
                 Le document de convention sera généré en format docx et téléchargé automatiquement. Pour plus d'information, n'hésitez pas à consulter l'<a class="fr-link" href="https://docs.apilos.beta.gouv.fr/utiliser-la-plateforme/comment-signer-une-convention#generer-la-convention-au-format-word-ou-openoffice" target="_blank">aide en ligne</a>
             </p>
+            <p class="fr-my-2w">
+                <span class="fr-icon-warning-line fr-mr-1w" aria-hidden="true"></span>
+                <strong>Attention, la convention n'est pas encore validée. Ce document ne peut être téléchargé qu'à titre informatif et ne saurait être utilisé comme document finalisé.</strong>
+            </p>
             <form method="post" action="{% url 'conventions:generate' convention_uuid=convention.uuid %}" data-turbo="false">
                 {% csrf_token %}
                 <button class="fr-btn fr-my-1w">

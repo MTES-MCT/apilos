@@ -126,7 +126,7 @@
                                         {% endif %}
                                         <th scope="col">Financement {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                                         <th scope="col">Désignation {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                        <th scope="col">Type {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                        <th scope="col">Numéro de lot {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -150,7 +150,7 @@
                                                     {% include "common/form/input_text.html" with form_input=form_edd.designation parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_select.html" with form_input=form_edd.typologie parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_text.html" with form_input=form_edd.numero_lot parent_object_field=main_object_field editable=editable_upload %}
                                                 </td>
                                             </tr>
                                         {% endwith %}

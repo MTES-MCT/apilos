@@ -18,6 +18,7 @@
                         {% include "common/form/input_text.html" with form_input=form.nom  %}
                         {% include "common/form/input_text.html" with form_input=form.code editable=request.user.is_superuser %}
                         {% include "common/form/input_text.html" with form_input=form.ville_signature %}
+                        {% include "common/form/input_text.html" with form_input=form.prefix_convention %}
 
                         <button class="fr-btn fr-fi-save-line fr-btn--icon-left" type="submit">
                             Enregistrer

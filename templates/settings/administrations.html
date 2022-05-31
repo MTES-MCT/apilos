@@ -49,6 +49,10 @@
                                         {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='ville_signature' url_target='settings:administration' %}
                                     </th>
                                     <th scope="col">
+                                        Préfixe
+                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='prefix_convention' url_target='settings:administration' %}
+                                    </th>
+                                    <th scope="col">
                                     </th>
                                 </tr>
                             </thead>
@@ -58,6 +62,7 @@
                                         <td>{{ administration.nom }}</td>
                                         <td>{{ administration.code }}</td>
                                         <td>{{ administration.ville_signature }}</td>
+                                        <td>{{ administration.prefix_convention }}</td>
                                         <td>
                                             <a class="fr-link fr-mb-1w" href="{% url 'settings:edit_administration' administration_uuid=administration.uuid %}" >
                                                 <span class="fr-fi-edit-line" aria-hidden="true"></span>
