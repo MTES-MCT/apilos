@@ -100,6 +100,11 @@ class TypologieStationnement(models.TextChoices):
     PARKING_SOUSSOL = "PARKING_SOUSSOL", "Parking en sous-sol ou en superstructure"
     GARAGE_BOXE_SIMPLE = "GARAGE_BOXE_SIMPLE", "Garage boxé simple"
     GARAGE_BOXE_DOUBLE = "GARAGE_BOXE_DOUBLE", "Garage boxé double"
+    EXTERIEUR_BOXE = "EXTERIEUR_BOXE", "extérieur boxé"
+    SOUSSOL_BOXE = "SOUSSOL_BOXE", "en sous-sol boxé"
+    CARPORT = "CARPORT", "Carport"
+    DEUX_ROUES_EXTERIEUR = "DEUX_ROUES_EXTERIEUR", "2 roues en extérieur"
+    DEUX_ROUES_SOUSSOL = "DEUX_ROUES_SOUSSOL", "2 roues en sous-sol"
 
 
 class Programme(IngestableModel):
@@ -227,9 +232,7 @@ class Programme(IngestableModel):
         )
 
     def effet_relatif_files(self):
-        return model_utils.get_field_key(
-            self, "effet_relatif", "files", default={}
-        )
+        return model_utils.get_field_key(self, "effet_relatif", "files", default={})
 
     def reference_cadastrale_files(self):
         return model_utils.get_field_key(

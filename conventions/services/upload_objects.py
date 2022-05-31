@@ -36,6 +36,10 @@ def handle_uploaded_xlsx(upform, my_file, myClass, convention, file_name):
             f"Le fichier importé doit avoir une feuille nommée '{myClass.sheet_name}'",
         )
         return {"success": utils.ReturnStatus.ERROR}
+    min_row = 3
+    if "Data" in my_wb:
+        if my_wb["Data"]["E2"].value:
+            min_row = my_wb["Data"]["E2"].value
 
     save_uploaded_file(my_file, convention, file_name)
 
@@ -70,7 +74,7 @@ def handle_uploaded_xlsx(upform, my_file, myClass, convention, file_name):
 
     # transform each line into object
     my_objects, import_warnings = get_object_from_worksheet(
-        my_ws, column_from_index, myClass, import_warnings
+        my_ws, column_from_index, myClass, import_warnings, min_row
     )
 
     return {
@@ -82,10 +86,13 @@ def handle_uploaded_xlsx(upform, my_file, myClass, convention, file_name):
     }
 
 
-def get_object_from_worksheet(my_ws, column_from_index, myClass, import_warnings):
+def get_object_from_worksheet(
+    my_ws, column_from_index, myClass, import_warnings, min_row=3
+):
     my_objects = []
+
     for row in my_ws.iter_rows(
-        min_row=4, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
+        min_row=min_row, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
     ):
         my_row, empty_line, new_warnings = extract_row(row, column_from_index, myClass)
 

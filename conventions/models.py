@@ -9,13 +9,15 @@ from users.type_models import TypeRole, EmailPreferences
 
 
 class Preteur(models.TextChoices):
-    ETAT = "ETAT", "Etat"
+    ETAT = "ETAT", "Subvention Etat"
     EPCI = "EPCI", "EPCI"
-    REGION = "REGION", "Région"
+    REGION = "REGION", "Subvention Région"
+    VILLE = "VILLE", "Subvention Ville"
     CDCF = "CDCF", "CDC pour le foncier"
     CDCL = "CDCL", "CDC pour le logement"
-    COMMUNE = "COMMUNE", "Commune et action logement"
-    AUTRE = "AUTRE", "Autre"
+    COMMUNE = "COMMUNE", "Subvention Action Logement"
+    ANRU = "ANRU", "ANRU"
+    AUTRE = "AUTRE", "Autre (prêt ou subvention)"
 
 
 class ConventionStatut(models.TextChoices):
