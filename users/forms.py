@@ -71,9 +71,13 @@ class UserForm(forms.Form):
     )
 
     preferences_email = forms.TypedChoiceField(
-        required=False,
+        required=True,
+        initial=EmailPreferences.PARTIEL,
         label="Option d'envoi d'e-mail",
         choices=EmailPreferences.choices,
+        error_messages={
+            "required": "Les préférences emails sont obligatoires",
+        },
     )
 
     filtre_departements = forms.ModelMultipleChoiceField(
