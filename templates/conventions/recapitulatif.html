@@ -28,8 +28,8 @@
                     <div class="fr-grid-row fr-grid-row--gutters">
                         <div class="fr-col-12">
                             <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
-                                <p>le document de convention n'est pas encore soumis à l'instruction{% if user.is_bailleur %},
-                                    pour finaliser votre demande de conventionnement, vous devez clicker sur le bouton
+                                <p>Le document de convention n'est pas encore soumis à l'instruction{% if user.is_bailleur %},
+                                    pour finaliser votre demande de conventionnement, vous devez cliquer sur le bouton
                                     <b>"Soumettre au service instructeur"</b> en bas de page{% endif %}</p>
                             </div>
                         </div>
@@ -303,7 +303,7 @@
                                                 {% endif %}
                                                 <th scope="col">Financement {% include "common/form/required_field_star.html" %}</th>
                                                 <th scope="col">Désignation {% include "common/form/required_field_star.html" %}</th>
-                                                <th scope="col">Type {% include "common/form/required_field_star.html" %}</th>
+                                                <th scope="col">Numéro de lot {% include "common/form/required_field_star.html" %}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -323,7 +323,7 @@
                                                                 {{lgt.designation}}
                                                             </td>
                                                             <td>
-                                                                {{lgt.typologie}}
+                                                                {{lgt.numero_lot}}
                                                             </td>
                                                         </tr>
                                                     {% endwith %}
@@ -697,7 +697,7 @@
                     {% include "conventions/type1and2_options.html" %}
 
                     <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
-                        {% if request.session.is_instructeur and convention.is_instruction_ongoing %}
+                        {% if convention.isnt_validated %}
                             {% include "conventions/actions/generate_convention.html" %}
                         {% endif %}
                         {% if request.session.is_instructeur and convention.is_a_signer %}

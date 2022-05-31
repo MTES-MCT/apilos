@@ -100,6 +100,11 @@ class TypologieStationnement(models.TextChoices):
     PARKING_SOUSSOL = "PARKING_SOUSSOL", "Parking en sous-sol ou en superstructure"
     GARAGE_BOXE_SIMPLE = "GARAGE_BOXE_SIMPLE", "Garage boxé simple"
     GARAGE_BOXE_DOUBLE = "GARAGE_BOXE_DOUBLE", "Garage boxé double"
+    EXTERIEUR_BOXE = "EXTERIEUR_BOXE", "extérieur boxé"
+    SOUSSOL_BOXE = "SOUSSOL_BOXE", "en sous-sol boxé"
+    CARPORT = "CARPORT", "Carport"
+    DEUX_ROUES_EXTERIEUR = "DEUX_ROUES_EXTERIEUR", "2 roues en extérieur"
+    DEUX_ROUES_SOUSSOL = "DEUX_ROUES_SOUSSOL", "2 roues en sous-sol"
 
 
 class Programme(IngestableModel):
@@ -227,9 +232,7 @@ class Programme(IngestableModel):
         )
 
     def effet_relatif_files(self):
-        return model_utils.get_field_key(
-            self, "effet_relatif", "files", default={}
-        )
+        return model_utils.get_field_key(self, "effet_relatif", "files", default={})
 
     def reference_cadastrale_files(self):
         return model_utils.get_field_key(
@@ -270,11 +273,7 @@ class LogementEDD(models.Model):
         choices=FinancementEDD.choices,
         default=FinancementEDD.PLUS,
     )
-    typologie = models.CharField(
-        max_length=25,
-        choices=TypologieLogement.choices,
-        default=TypologieLogement.T1,
-    )
+    numero_lot = models.CharField(max_length=255, null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
     lot_num = 0
@@ -282,7 +281,7 @@ class LogementEDD(models.Model):
     import_mapping = {
         "Désignation des logements": designation,
         "Financement": financement,
-        "Type des logements": typologie,
+        "Numéro de lot des logements": numero_lot,
     }
     sheet_name = "EDD Simplifié"
 
