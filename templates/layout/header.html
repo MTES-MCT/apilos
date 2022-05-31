@@ -136,66 +136,38 @@
             <div class="fr-container">
                 <nav class="fr-nav" id="navigation-773" role="navigation" aria-label="Menu principal">
                     <ul class="fr-nav__list">
-                        <li class="fr-nav__item">
-                            <button class="fr-nav__btn" aria-expanded="false" aria-controls="menu-776" aria-current="true">Entrée menu active</button>
-                            <div class="fr-collapse fr-menu" id="menu-776">
-                                <ul class="fr-menu__list">
-                                    <li>
-                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
-                                    </li>
-                                    <li>
-                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
-                                    </li>
-                                    <li>
-                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
-                                    </li>
-                                    <li>
-                                        <a class="fr-nav__link" href="#" target="_self" aria-current="page">Lien de navigation</a>
-                                    </li>
-                                    <li>
-                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
-                                    </li>
-                                    <li>
-                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="fr-nav__item">
-                            <button class="fr-nav__btn" aria-expanded="false" aria-controls="menu-774">Entrée menu</button>
-                            <div class="fr-collapse fr-menu" id="menu-774">
-                                <ul class="fr-menu__list">
-                                    <li>
-                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
-                                    </li>
-                                    <li>
-                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
-                                    </li>
-                                    <li>
-                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
-                                    </li>
-                                    <li>
-                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
-                                    </li>
-                                    <li>
-                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
-                                    </li>
-                                    <li>
-                                        <a class="fr-nav__link" href="#" target="_self">Lien de navigation</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="#" target="_self">accès direct</a>
-                        </li>
-                        <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="#" target="_self">accès direct</a>
-                        </li>
+                        {% for menu in request.session.menu %}
+                            {% if menu.menuItems %}
+                                <li class="fr-nav__item">
+                                    <button class="fr-nav__btn" aria-expanded="false" aria-controls="menu-776" aria-current="true">{{ menu.libelle }}</button>
+                                    <div class="fr-collapse fr-menu" id="menu-776">
+                                        <ul class="fr-menu__list">
+                                            {% for submenu in menu.menuItems %}
+                                                <li>
+                                                    <a class="fr-nav__link" href="#" target="_self">{{submenu.libelle}}</a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </li>
+                            {% else %}
+                                <li class="fr-nav__item">
+                                    <a class="fr-nav__link" href="#" target="_self">{{menu.libelle}}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
                     </ul>
                 </nav>
             </div>
         </div>
     {% endif %}
+
+    <div class="fr-header__menu fr-modal">
+        <div class="fr-container">
+            <button class="fr-link--close fr-link" aria-controls="modal-404">Fermer</button>
+            <div class="fr-header__menu-links">
+            </div>
+        </div>
+    </div>
 
 </header>

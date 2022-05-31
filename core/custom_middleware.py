@@ -51,8 +51,8 @@ class CerbereSessionMiddleware:
                 )
                 request.session["menu"] = response["menuItems"]
 
-        for key, value in request.session.items():
-            print(f"{key} => {value}")
+        # for key, value in request.session.items():
+        #     print(f"{key} => {value}")
 
         response = self.get_response(request)
 
