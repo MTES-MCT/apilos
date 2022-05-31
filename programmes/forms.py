@@ -825,12 +825,11 @@ class LogementEDDForm(forms.Form):
         },
     )
     numero_lot = forms.CharField(
-        required=True,
         label="",
         max_length=255,
         min_length=1,
         error_messages={
-            "required": "Le numéro de lots de logement est obligatoire",
+            "max_length": "Le numéro de lot ne doit pas excéder 255 caractères",
         },
     )
     financement = forms.TypedChoiceField(
