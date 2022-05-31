@@ -697,7 +697,7 @@
                     {% include "conventions/type1and2_options.html" %}
 
                     <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
-                        {% if request.session.is_instructeur and convention.is_instruction_ongoing %}
+                        {% if convention.isnt_validated %}
                             {% include "conventions/actions/generate_convention.html" %}
                         {% endif %}
                         {% if request.session.is_instructeur and convention.is_a_signer %}
