@@ -239,45 +239,62 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   border-color: rgba(242, 143, 67, 1)!important;
 }
 
-/* color1 : #2f7ed8*/
+/* color2 : #0d233a*/
 .statcard--color1 {
+  border-color: rgba(13, 35, 58, 1)!important;
+  background-color: rgba(13, 35, 58, 0.3)!important;
+}
+.statcard--color1 .statcard__title {
+  border-color: rgba(13, 35, 58, 1)!important;
+}
+#conv_by_departement .highcharts-color-0,
+#conv_by_departement .highcharts-legend-item.highcharts-color-0 .highcharts-point {
+  fill: #0d233a !important;
+}
+
+/* color1 : #2f7ed8*/
+.statcard--color2 {
   border-color: rgba(47, 126, 216, 1)!important;
   background-color: rgba(47, 126, 216, 0.3)!important;
 }
 
-.statcard--color1 .statcard__title {
+.statcard--color2.statcard__title {
   border-color: rgba(47, 126, 216, 1)!important;
 }
 
-/* color2 : #0d233a*/
-.statcard--color2 {
-  border-color: rgba(13, 35, 58, 1)!important;
-  background-color: rgba(13, 35, 58, 0.3)!important;
+#conv_by_departement .highcharts-color-1,
+#conv_by_departement .highcharts-legend-item.highcharts-color-1 .highcharts-point {
+  fill: #2f7ed8 !important;
 }
 
-.statcard--color2 .statcard__title {
-  border-color: rgba(13, 35, 58, 1)!important;
-}
-
-/* color3 : #8bbc21*/
+/* color3 : #910000*/
 .statcard--color3 {
-  border-color: rgba(139, 188, 33, 1)!important;
-  background-color: rgba(139, 188, 33, 0.3)!important;
-}
-
-.statcard--color3 .statcard__title {
-  border-color: rgba(139, 188, 33, 1)!important;
-}
-
-/* color4 : #910000*/
-.statcard--color4 {
   border-color: rgba(145, 0, 0, 1)!important;
   background-color: rgba(145, 0, 0, 0.3)!important;
 }
 
-.statcard--color4 .statcard__title {
+.statcard--color3 .statcard__title {
   border-color: rgba(145, 0, 0, 1)!important;
 }
+#conv_by_departement .highcharts-color-2,
+#conv_by_departement .highcharts-legend-item.highcharts-color-2 .highcharts-point {
+  fill: #910000 !important;
+}
+
+/* color4 : #8bbc21*/
+.statcard--color4 {
+  border-color: rgba(139, 188, 33, 1)!important;
+  background-color: rgba(139, 188, 33, 0.3)!important;
+}
+
+.statcard--color4 .statcard__title {
+  border-color: rgba(139, 188, 33, 1)!important;
+}
+#conv_by_departement .highcharts-color-3,
+#conv_by_departement .highcharts-legend-item.highcharts-color-3 .highcharts-point {
+  fill: #8bbc21 !important;
+}
+
 
 /* color5 : #1aadce*/
 .statcard--color5 {
@@ -304,6 +321,13 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+#correct_by_field .highcharts-color-0 {
+  fill: #265FB5;
+}
+#null_fields .highcharts-color-0 {
+  fill: #8085e9;
 }
 
 /* SVG ikonate */

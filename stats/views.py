@@ -84,9 +84,11 @@ def index(request):
             "conv_bydept": result,
             "dept": str(result["departement"]),
             "comment_fields": comment_fields,
-            "comment_data": comment_data,
+            "comment_data": comment_data[0:20],
             "null_fields_keys": list(null_fields.keys()),
-            "null_fields_values": list(null_fields.values()),
+            "null_fields_values": list(
+                round(value, 1) for value in null_fields.values()
+            ),
         },
     )
 

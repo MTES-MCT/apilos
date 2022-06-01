@@ -18,16 +18,13 @@
         <div class="fr-container fr-pb-3w">
             <h1 class="fr-pt-5w">Conventions</h1>
             <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12" id="conv_by_departement">s</div>
+                <div class="fr-col-12" id="conv_by_departement"></div>
                 <script type="text/javascript" nonce="{{request.csp_nonce}}">
                     document.addEventListener('DOMContentLoaded', function () {
                         const chart = Highcharts.chart('conv_by_departement', {
                             chart: {
-                                type: 'column',
-                                styledMode: true
+                                type: 'column'
                             },
-                            colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce',
-                                '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
                             title: {
                                 text: 'Nombre de conventions par statut et par département'
                             },
@@ -45,14 +42,11 @@
                                 stackLabels: {
                                     enabled: true,
                                     style: {
-                                        fontWeight: 'bold',
-                                        color: ( // theme
-                                            Highcharts.defaultOptions.title.style &&
-                                            Highcharts.defaultOptions.title.style.color
-                                        ) || 'gray'
+                                        fontWeight: 'bold'
                                     }
                                 }
                             },
+
                             plotOptions: {
                                 column: {
                                     stacking: 'normal',
@@ -112,13 +106,13 @@
                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6">
                     <div class="fr-m-3w statcard statcard--color6">
                         <div class="statcard__title">BAILLEURS</div>
-                        <p class="statcard__indicateur">{{ users_by_role.nb_bailleurs_actifs }} actifs / {{ users_by_role.nb_bailleurs }}</p>
+                        <p class="statcard__indicateur">{{ users_by_role.nb_bailleurs }}</p>
                     </div>
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-col-lg-6">
                     <div class="fr-m-3w statcard statcard--color7">
                         <div class="statcard__title">INSTRUCTEURS</div>
-                        <p class="statcard__indicateur">{{ users_by_role.nb_instructeurs_actifs }} actifs / {{ users_by_role.nb_instructeurs }}</p>
+                        <p class="statcard__indicateur">{{ users_by_role.nb_instructeurs }}</p>
                     </div>
                 </div>
             </div>
@@ -131,10 +125,8 @@
                         const chart = Highcharts.chart('correct_by_field', {
                             chart: {
                                 type: 'bar',
-                                height: 800,
-                                styledMode: true
+                                height: 800
                             },
-                            colors: ['#8085e9'],
                             title: {
                                 text: 'Nombre de commentaires par champ'
                             },
@@ -179,7 +171,7 @@
                             },
                             colors: ['#8085e9'],
                             title: {
-                                text: 'Pourcentage de champ non rempli'
+                                text: 'Pourcentage de champs non remplis'
                             },
                             xAxis: {
                                 categories: {{null_fields_keys|safe}},
@@ -189,6 +181,7 @@
                             },
                             yAxis: {
                                 min: 0,
+                                max:100,
                                 title: {
                                     text: null
                                 },
@@ -201,7 +194,7 @@
                                 }
                             },
                             series: [{
-                                name: 'Champs à null',
+                                name: 'Pourcentage des fois où le champ est vide',
                                 data: {{ null_fields_values }}
                             }]
                         });
