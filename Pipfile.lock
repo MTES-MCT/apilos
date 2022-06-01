@@ -50,19 +50,11 @@
         },
         "botocore": {
             "hashes": [
-<<<<<<< HEAD
-                "sha256:79b7773b48c9c59acd42ceba0a05b27ab9e326e9ed9b0ca35f41ad8abad61808",
-                "sha256:d99381bda4eed5896b74f6250132e2e6484c2d6e406b1def862113ffdb41c523"
-            ],
-            "markers": "python_version >= '3.6'",
-            "version": "==1.25.13"
-=======
                 "sha256:b818986c2dde395f117829d7206f775f5bfb37ef84eb05c94d3952f8e3d7fe8d",
                 "sha256:bd436455310f8876dfab1a27760afffa5e34dced24b4ea6a9f6b20fec082e47e"
             ],
             "markers": "python_version >= '3.6'",
             "version": "==1.26.4"
->>>>>>> 146868c (first Client API to call SIAP API)
         },
         "certifi": {
             "hashes": [
@@ -165,19 +157,11 @@
         },
         "dill": {
             "hashes": [
-<<<<<<< HEAD
                 "sha256:33501d03270bbe410c72639b350e941882a8b0fd55357580fbc873fba0c59302",
                 "sha256:d75e41f3eff1eee599d738e76ba8f4ad98ea229db8b085318aa2b3333a208c86"
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6'",
             "version": "==0.3.5.1"
-=======
-                "sha256:3a11d19c15d409296a2ee714b1dbd5efb733a329f0d89c0e58aad6154ab6f2f5",
-                "sha256:6eb4bb70a98509e69204e621942c4306580d5bf2229f450f04fcf2efca3908e5"
-            ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6'",
-            "version": "==0.3.5"
->>>>>>> 146868c (first Client API to call SIAP API)
         },
         "distlib": {
             "hashes": [
