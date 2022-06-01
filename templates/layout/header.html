@@ -139,12 +139,12 @@
                         {% for menu in request.session.menu %}
                             {% if menu.menuItems %}
                                 <li class="fr-nav__item">
-                                    <button class="fr-nav__btn" aria-expanded="false" aria-controls="menu-776" aria-current="true">{{ menu.libelle }}</button>
-                                    <div class="fr-collapse fr-menu" id="menu-776">
+                                    <button class="fr-nav__btn" aria-expanded="false" aria-controls="menu-{{menu.url}}">{{ menu.libelle }}</button>
+                                    <div class="fr-collapse fr-menu" id="menu-{{menu.url}}">
                                         <ul class="fr-menu__list">
                                             {% for submenu in menu.menuItems %}
                                                 <li>
-                                                    <a class="fr-nav__link" href="#" target="_self">{{submenu.libelle}}</a>
+                                                    <a class="fr-nav__link" href="{{RACINE_URL_ACCES_WEB}}{{submenu.url}}" target="_self">{{submenu.libelle}}</a>
                                                 </li>
                                             {% endfor %}
                                         </ul>
@@ -152,7 +152,7 @@
                                 </li>
                             {% else %}
                                 <li class="fr-nav__item">
-                                    <a class="fr-nav__link" href="#" target="_self">{{menu.libelle}}</a>
+                                    <a class="fr-nav__link" href="{{RACINE_URL_ACCES_WEB}}{{menu.url}}" target="_self">{{menu.libelle}}</a>
                                 </li>
                             {% endif %}
                         {% endfor %}

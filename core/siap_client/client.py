@@ -6,6 +6,140 @@ import jwt
 
 from django.conf import settings
 
+habilitation_mock = {
+    "habilitations": [
+        {
+            "id": 9,
+            "groupe": {
+                "id": 28,
+                "profil": {
+                    "code": "MO_PERS_MORALE",
+                    "libelle": "Maître d’ouvrage personne morale",
+                },
+                "codeRole": "MO_MORAL_REG_ADMIN",
+                "libelleRole": "Administrateur délégué",
+                "codePorteeTerrit": "REG",
+                "isSignataire": False,
+                "typeDelegation": None,
+            },
+            "gestionnaire": {"id": None, "libelle": None, "typeDelegation": None},
+            "sirenMo": "782855696",
+            "dateExpiration": "2028-05-17",
+            "dateDemande": "2022-05-17",
+            "favori": False,
+            "porteeTerritComp": {
+                "id": 17,
+                "codePortee": "REG",
+                "regComp": {"id": 15, "libelle": "Provence-Alpes-Côte d'Azur"},
+                "depComp": None,
+                "epciComp": None,
+                "comComp": None,
+                "libellee": "Provence-Alpes-Côte d'Azur",
+            },
+            "territComp": None,
+            "statut": "VALIDEE",
+            "titre": None,
+            "adresse": None,
+            "utilisateur": {
+                "nom": "OUDARD",
+                "prenom": "Nicolas",
+                "email": "nicolas.oudard@beta.gouv.fr",
+            },
+            "sousTitre1": "SIREN 782855696",
+            "sousTitre2": "Provence-Alpes-Côte d'Azur",
+        },
+        {
+            "id": 8,
+            "groupe": {
+                "id": 1,
+                "profil": {
+                    "code": "ADM_CENTRALE",
+                    "libelle": "Administration centrale",
+                },
+                "codeRole": "ADM_CENTRALE_ADMIN",
+                "libelleRole": "Administrateur national",
+                "codePorteeTerrit": "NAT",
+                "isSignataire": False,
+                "typeDelegation": None,
+            },
+            "gestionnaire": {"id": None, "libelle": None, "typeDelegation": None},
+            "sirenMo": None,
+            "dateExpiration": "2028-05-17",
+            "dateDemande": "2022-05-17",
+            "favori": False,
+            "porteeTerritComp": {
+                "id": 15,
+                "codePortee": "NAT",
+                "regComp": None,
+                "depComp": None,
+                "epciComp": None,
+                "comComp": None,
+                "libellee": "France entière",
+            },
+            "territComp": None,
+            "statut": "VALIDEE",
+            "titre": None,
+            "adresse": None,
+            "utilisateur": {
+                "nom": "OUDARD",
+                "prenom": "Nicolas",
+                "email": "nicolas.oudard@beta.gouv.fr",
+            },
+            "sousTitre1": None,
+            "sousTitre2": "France entière",
+        },
+    ]
+}
+
+menu_mock = {
+    "menuItems": [
+        {
+            "libelle": "Tableau de bord",
+            "active": True,
+            "url": "/tableau-bord",
+            "menuItems": [],
+        },
+        {
+            "libelle": "Habilitation",
+            "active": True,
+            "url": "/admin-habilitation",
+            "menuItems": [
+                {
+                    "libelle": "Gestion des demandes",
+                    "active": True,
+                    "url": "/admin-habilitation/gestion-demandes-habilitation",
+                    "menuItems": [],
+                },
+                {
+                    "libelle": "Gestion des utilisateurs",
+                    "active": True,
+                    "url": "/admin-habilitation/gestion-utilisateurs",
+                    "menuItems": [],
+                },
+            ],
+        },
+        {
+            "libelle": "Mes opérations",
+            "active": True,
+            "url": "/operation",
+            "menuItems": [
+                {
+                    "libelle": "Financement",
+                    "active": True,
+                    "url": "/operation/mes-operations",
+                    "menuItems": [],
+                },
+                {
+                    "libelle": "Conventionnement",
+                    "active": True,
+                    "url": "https://preprod.apilos.beta.gouv.fr/conventions",
+                    "menuItems": [],
+                },
+            ],
+        },
+    ]
+}
+
 
 def _build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
     dt_iat = datetime.datetime.now()
@@ -19,7 +153,6 @@ def _build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
         "user-login": user_login,
         "habilitation-id": habilitation_id,
     }
-    print(payload)
     return jwt.encode(
         payload,
         settings.SIAP_CLIENT_JWT_SIGN_KEY,
@@ -70,22 +203,39 @@ class SingletonDoubleChecked:
         return bool(cls.__singleton_instance)
 
 
-# Manage SiapClient as a Singleton
-class SIAPClient(SingletonDoubleChecked):
-    # pylint: disable=R0201
-
-    siap_url = None
-
+class SIAPClientInterface(SingletonDoubleChecked):
     def __init__(self) -> None:
+        # pylint: disable=E1111
+        config = self.get_siap_config()
+        # {
+        #     'racineUrlAccesWeb': 'http://siap-local.sully-group.fr/',
+        #     'urlAccesWeb': '/tableau-bord',
+        #     'urlAccesWebOperation':
+        #       '/operation/mes-operations/editer/<NUM_OPE_SIAP>/informations-generales'
+        # }
+        self.racine_url_acces_web = config["racineUrlAccesWeb"].rstrip("/")
+        self.url_acces_web = config["urlAccesWeb"]
+        self.url_acces_web_operation = config["urlAccesWebOperation"]
+
+    def get_siap_config(self) -> dict:
         pass
 
-    def get_siap_config(self) -> requests.Response:
+    def get_habilitations(self, user_login: str, habilitation_id: int = 0) -> dict:
+        pass
+
+    def get_menu(self, user_login: str, habilitation_id: int = 0) -> dict:
+        pass
+
+
+# Manage SiapClient as a Singleton
+class SIAPClient(SIAPClientInterface):
+    # pylint: disable=R0201
+
+    def get_siap_config(self) -> dict:
         response = _call_siap_api("/config")
         return response.json()
 
-    def get_habilitations(
-        self, user_login: str, habilitation_id: int = 0
-    ) -> requests.Response:
+    def get_habilitations(self, user_login: str, habilitation_id: int = 0) -> dict:
         response = _call_siap_api(
             "/habilitations",
             base_route="/services/habilitation",
@@ -94,9 +244,9 @@ class SIAPClient(SingletonDoubleChecked):
         )
         if response.status_code >= 200 and response.status_code < 300:
             return response.json()
-        raise Exception("user doesn't have SAP habilitation")
+        raise Exception("user doesn't have SIAP habilitation")
 
-    def get_menu(self, user_login: str, habilitation_id: int = 0) -> requests.Response:
+    def get_menu(self, user_login: str, habilitation_id: int = 0) -> dict:
         response = _call_siap_api(
             "/menu",
             user_login=user_login,
@@ -105,3 +255,23 @@ class SIAPClient(SingletonDoubleChecked):
         if response.status_code >= 200 and response.status_code < 300:
             return response.json()
         raise Exception("user doesn't have SAP habilitation")
+
+
+# Manage SiapClient as a Singleton
+class SIAPClientMock(SIAPClientInterface):
+    # pylint: disable=R0201
+
+    def get_siap_config(self) -> dict:
+        return {
+            "racineUrlAccesWeb": "http://siap-local.sully-group.fr/",
+            "urlAccesWeb": "/tableau-bord",
+            "urlAccesWebOperation": (
+                "/operation/mes-operations/editer/<NUM_OPE_SIAP>/informations-generales"
+            ),
+        }
+
+    def get_habilitations(self, user_login: str, habilitation_id: int = 0) -> dict:
+        return habilitation_mock
+
+    def get_menu(self, user_login: str, habilitation_id: int = 0) -> dict:
+        return menu_mock
