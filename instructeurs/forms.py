@@ -91,3 +91,28 @@ class AdministrationForm(forms.Form):
                     + "Seuls {département}, {zone}, {mois} et {année} sont autorisés"
                 )
         return prefix_convention
+
+    adresse = forms.CharField(
+        required=False,
+        label="Adresse de l'administration",
+        max_length=255,
+        error_messages={
+            "max_length": "L'adresse ne doit pas excéder 255 caractères",
+        },
+    )
+    code_postal = forms.CharField(
+        required=False,
+        label="Code postal",
+        max_length=255,
+        error_messages={
+            "max_length": "Le code postal ne doit pas excéder 255 caractères",
+        },
+    )
+    ville = forms.CharField(
+        required=False,
+        label="Ville",
+        max_length=255,
+        error_messages={
+            "max_length": "La ville ne doit pas excéder 255 caractères",
+        },
+    )

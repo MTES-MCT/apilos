@@ -19,6 +19,9 @@
                         {% include "common/form/input_text.html" with form_input=form.code editable=request.user.is_superuser %}
                         {% include "common/form/input_text.html" with form_input=form.ville_signature %}
                         {% include "common/form/input_text.html" with form_input=form.prefix_convention %}
+                        {% include "common/form/input_text.html" with form_input=form.adresse %}
+                        {% include "common/form/input_text.html" with form_input=form.code_postal %}
+                        {% include "common/form/input_text.html" with form_input=form.ville %}
 
                         <button class="fr-btn fr-fi-save-line fr-btn--icon-left" type="submit">
                             Enregistrer
