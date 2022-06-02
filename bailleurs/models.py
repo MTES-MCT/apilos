@@ -88,3 +88,18 @@ class Bailleur(IngestableModel):
 
     def is_type1and2(self):
         return not self.is_hlm() and not self.is_sem()
+
+
+class Signataire(models.Model):
+    bailleur = models.ForeignKey("Bailleur", on_delete=models.CASCADE, null=False)
+    nom = models.CharField(max_length=255, null=True)
+    fonction = models.CharField(max_length=255, null=True)
+    date_deliberation = models.DateField(null=True)
+
+    def __str__(self):
+        return self.nom
+
+
+class SignatairePardefaut(models.Model):
+    bailleur = models.OneToOneField("Bailleur", on_delete=models.CASCADE, null=False)
+    signataire = models.ForeignKey("Signataire", on_delete=models.CASCADE, null=False)
