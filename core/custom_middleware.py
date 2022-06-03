@@ -12,17 +12,17 @@ class CerbereSessionMiddleware:
         if request.user.is_authenticated and request.user.is_cerbere_user():
             # test if habilitations are set for the current user
             # if not, get it from SIAPClient
-            if "habilitations" not in request.session:
+            if (
+                "habilitation_id" in request.GET
+                or "habilitations" not in request.session
+            ):
 
                 # get habilitation_id from params if exists
-                try:
-                    habilitation_id = request.GET.get("habilitation_id")
-                except KeyError:
-                    if not request.session["habilitation_id"]:
-                        habilitation_id = 0
-                    else:
-                        habilitation_id = request.session["habilitation_id"]
-
+                habilitation_id = 0
+                if "habilitation_id" in request.GET:
+                    habilitation_id = int(request.GET.get("habilitation_id"))
+                elif "habilitation_id" in request.session:
+                    habilitation_id = request.session["habilitation_id"]
                 client = SIAPClient.get_instance()
 
                 # Set habilitation in session
@@ -33,9 +33,7 @@ class CerbereSessionMiddleware:
                 habilitations = response["habilitations"]
                 request.session["habilitations"] = habilitations
 
-                if habilitation_id and habilitation_id in map(
-                    lambda x: x["id"], habilitations
-                ):
+                if habilitation_id in map(lambda x: x["id"], habilitations):
                     request.session["habilitation_id"] = habilitation_id
                 elif len(habilitations):
                     request.session["habilitation_id"] = habilitations[0]["id"]

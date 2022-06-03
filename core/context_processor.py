@@ -9,5 +9,6 @@ def get_environment(request):
     if settings.CERBERE_AUTH:
         client = SIAPClient.get_instance()
         data["RACINE_URL_ACCES_WEB"] = client.racine_url_acces_web
-
+        data["URL_ACCES_WEB"] = client.url_acces_web
+        data["URL_ACCES_WEB_OPERATION"] = client.url_acces_web_operation
     return data
