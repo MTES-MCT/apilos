@@ -654,6 +654,10 @@ def convention_validate(request, convention_uuid):
 
     if convention_number_form.is_valid() or request.POST.get("Force"):
 
+        # Generate the doc should be placed after the status update
+        # because the watermark report the status of the convention
+        previous_status = convention.statut
+        convention.statut = ConventionStatut.A_SIGNER
         file_stream = convention_generator.generate_convention_doc(convention)
         local_pdf_path = convention_generator.generate_pdf(file_stream, convention)
 
@@ -661,12 +665,11 @@ def convention_validate(request, convention_uuid):
             bailleur=convention.bailleur,
             convention=convention,
             statut_convention=ConventionStatut.A_SIGNER,
-            statut_convention_precedent=convention.statut,
+            statut_convention_precedent=previous_status,
             user=request.user,
         ).save()
         if not convention.valide_le:
             convention.valide_le = timezone.now()
-        convention.statut = ConventionStatut.A_SIGNER
         convention.save()
         send_email_valide(
             request.build_absolute_uri(
