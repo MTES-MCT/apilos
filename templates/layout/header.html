@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load custom_filters %}
 <header role="banner" class="fr-header">
     {% if ENVIRONMENT == 'staging' %}
         <div role="alert" class="fr-alert fr-alert--info">
@@ -74,7 +74,7 @@
                                             <div class="dropdown-menu dropdown-menu-right apilos-dropdown-menu">
                                                 {% if CERBERE_AUTH %}
                                                     {% for habilitation in request.session.habilitations %}
-                                                        <a href="#" class="{% if habilitation.id == request.session.habilitation_id %}apilos-active-habilitation{% endif %}">
+                                                        <a href="{{ request|get_change_habilitation_url:habilitation.id }}" class="{% if habilitation.id == request.session.habilitation_id %}apilos-active-habilitation{% endif %}">
                                                             <b>{{ habilitation.groupe.libelleRole }}</b><br>
                                                             {% if habilitation.sousTitre1 %}
                                                                 {{ habilitation.sousTitre1 }}<br>
@@ -82,6 +82,11 @@
                                                             {{ habilitation.sousTitre2 }}
                                                         </a>
                                                     {% endfor %}
+
+                                                    <a href="{{ request|get_manage_habilitation_url }}">
+                                                        <span class="fr-fi-logout-box-r-line fr-mr-1w" aria-hidden="true">
+                                                        </span>Gérer mes habilitations
+                                                    </a>
                                                     <a href="{% url 'cas_ng_logout' %}?next=/">
                                                         <span class="fr-fi-logout-box-r-line fr-mr-1w" aria-hidden="true">
                                                         </span>Déconnexion
