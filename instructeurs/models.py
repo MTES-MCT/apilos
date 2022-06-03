@@ -17,9 +17,10 @@ class Administration(IngestableModel):
     nom = models.CharField(max_length=255, unique=True)
     code = models.CharField(max_length=255, unique=True)
     ville_signature = models.CharField(max_length=255, null=True)
-    adresse = models.CharField(max_length=255, null=True)
+    adresse = models.TextField(null=True)
     code_postal = models.CharField(max_length=255, null=True)
     ville = models.CharField(max_length=255, null=True)
+    nb_convention_exemplaires = models.IntegerField(default=3)
     prefix_convention = models.CharField(
         max_length=255, default="{département}/{zone}/{mois}/{année}/80.416/", null=True
     )

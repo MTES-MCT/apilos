@@ -116,3 +116,14 @@ class AdministrationForm(forms.Form):
             "max_length": "La ville ne doit pas excéder 255 caractères",
         },
     )
+
+    nb_convention_exemplaires = forms.IntegerField(
+        required=True,
+        label=(
+            "Nombre d'exemplaire de la convention que le bailleur doit envoyer au service"
+            + " instructeur"
+        ),
+        help_text="""
+            Ce nombre d'exemplaire est utilisé pour customiser l'email envoyé au bailleur lorsque la convention est validée.
+        """,
+    )

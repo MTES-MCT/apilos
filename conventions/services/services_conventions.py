@@ -721,6 +721,7 @@ def send_email_valide(convention_url, convention, cc, local_pdf_path=None):
         {
             "convention_url": convention_url,
             "convention": convention,
+            "administration": convention.programme.administration,
         },
     )
     html_content = render_to_string(
@@ -728,6 +729,7 @@ def send_email_valide(convention_url, convention, cc, local_pdf_path=None):
         {
             "convention_url": convention_url,
             "convention": convention,
+            "administration": convention.programme.administration,
         },
     )
 
