@@ -20,8 +20,8 @@ whitenoise>=5.3.0
 Django>=3.2.11,<4.0
 Jinja2>=3.0.2
 Pillow>=8.3.2
-pylint-django
-drf-spectacular
-djangorestframework-simplejwt
-docutils
-pyjwt
+pylint-django>=2.5.3
+drf-spectacular>=0.22.1
+djangorestframework-simplejwt>=5.2.0
+docutils>=0.18.1
+pyjwt>=2.4.0
