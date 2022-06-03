@@ -22,7 +22,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pipenv install
+            pip install -r requirements.txt
       - save_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
           paths:
@@ -39,7 +39,7 @@ jobs:
           name: Running tests
           command: |
             . venv/bin/activate
-            pipenv run python3 manage.py test
+            python3 manage.py test
       - store_artifacts:
           path: test-reports/
           destination: python_app
