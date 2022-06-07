@@ -64,6 +64,32 @@ class ServicesConventionsTests(TestCase):
         self.assertEqual(email_sent.from_email, "contact@apilos.beta.gouv.fr")
         self.assertEqual(email_sent.subject, f"Convention validé ({convention})")
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
+        self.assertIn(
+            "transmettre les exemplaires signés à votre service instructeur.",
+            email_sent.body,
+        )
+        self.assertIn("Imprimer 3 exemplaires en recto verso", email_sent.body)
+        self.assertNotIn("1 rue du bois", email_sent.body)
+        self.assertNotIn("13001", email_sent.body)
+        self.assertNotIn("Marseille", email_sent.body)
+
+        administration = convention.programme.administration
+        administration.nb_convention_exemplaires = 1
+        administration.adresse = "1 rue du bois"
+        administration.code_postal = "13001"
+        administration.ville = "Marseilles"
+        administration.save()
+        email_sent = services_conventions.send_email_valide(
+            "https://apilos.beta.gouv.fr/my_convention", convention, ["me@apilos.com"]
+        )
+        self.assertIn(
+            "les exemplaires signés à votre service instructeur à l‘adresse suivante :",
+            email_sent.body,
+        )
+        self.assertIn("Imprimer 1 exemplaire en recto verso", email_sent.body)
+        self.assertIn("1 rue du bois", email_sent.body)
+        self.assertIn("13001", email_sent.body)
+        self.assertIn("Marseille", email_sent.body)
 
         User.objects.filter(username="raph").update(
             preferences_email=EmailPreferences.AUCUN
