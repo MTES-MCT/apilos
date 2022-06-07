@@ -2,6 +2,8 @@ from django.test import TestCase
 
 from core.tests import utils_fixtures
 from conventions.services import services_conventions
+from conventions.services import email as service_email
+
 from conventions.models import Convention
 from users.models import User
 from users.type_models import EmailPreferences
@@ -56,7 +58,7 @@ class ServicesConventionsTests(TestCase):
 
     def test_send_email_validation(self):
         convention = Convention.objects.get(numero="0001")
-        email_sent = services_conventions.send_email_valide(
+        email_sent = service_email.send_email_valide(
             "https://apilos.beta.gouv.fr/my_convention", convention, ["me@apilos.com"]
         )
         self.assertEqual(email_sent.to, ["raph@apilos.com"])
@@ -98,7 +100,7 @@ class ServicesConventionsTests(TestCase):
             preferences_email=EmailPreferences.AUCUN
         )
 
-        email_sent = services_conventions.send_email_valide(
+        email_sent = service_email.send_email_valide(
             "https://apilos.beta.gouv.fr/my_convention", convention, ["me@apilos.com"]
         )
 
