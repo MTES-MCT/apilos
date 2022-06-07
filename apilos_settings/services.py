@@ -128,6 +128,12 @@ def edit_administration(request, administration_uuid):
             administration.nom = form.cleaned_data["nom"]
             administration.code = form.cleaned_data["code"]
             administration.ville_signature = form.cleaned_data["ville_signature"]
+            administration.adresse = form.cleaned_data["adresse"]
+            administration.code_postal = form.cleaned_data["code_postal"]
+            administration.ville = form.cleaned_data["ville"]
+            administration.nb_convention_exemplaires = form.cleaned_data[
+                "nb_convention_exemplaires"
+            ]
             administration.prefix_convention = form.cleaned_data["prefix_convention"]
             administration.save()
             success = True
