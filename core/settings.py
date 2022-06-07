@@ -377,7 +377,7 @@ if SENTRY_URL:
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
     "OPTIONS": {
-        "url": config("REDIS_URL"),
+        "url": config("REDIS_URL", default="redis://redis:6379"),
     },
     "MIDDLEWARE": [
         "django_dramatiq.middleware.AdminMiddleware",
