@@ -3,12 +3,17 @@ Bonjour
 La convention {{convention}} ({{convention_url}})  a été validée.
 
 Vous pouvez dès maintenant :
--L’imprimer en 3 exemplaires en recto verso (conformément à la Politique d’impression des services de l’Etat).
+- Imprimer {{ administration.nb_convention_exemplaires }} exemplaire{{ administration.nb_convention_exemplaires|pluralize }} en recto verso (conformément à la Politique d’impression des services de l’Etat).
 - Parapher toutes les pages
 - Signer à la fin de la convention. Attention à ne pas dater.
+{% if administration.adresse and administration.code_postal and administration.ville %}
+Vous pourrez ensuite transmettre les exemplaires signés à votre service instructeur à l‘adresse suivante :
 
-Vous pourrez ensuite transmettre les 3 exemplaire signés à votre service instructeur.
-
+{{ administration.adresse }}
+{{ administration.code_postal }} {{ administration.ville }}
+{% else %}
+Vous pourrez ensuite transmettre les exemplaires signés à votre service instructeur.
+{% endif %}
 N'hésitez pas à nous faire part de tout retour ou suggestion d'amélioration sur la plateforme à l'adresse contact@apilos.beta.gouv.fr.
 
 Dans l'attente de vous retrouver sur APiLos pour une nouvelle convention, nous restons à votre disposition.
