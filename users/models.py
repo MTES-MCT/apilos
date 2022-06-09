@@ -20,7 +20,7 @@ class slist(list):
 
 class User(AbstractUser):
     # pylint: disable=R0904
-
+    siap_habilitation = None
     administrateur_de_compte = models.BooleanField(default=False)
     telephone = models.CharField(
         null=True,
@@ -225,6 +225,8 @@ class User(AbstractUser):
         """
         if self.is_superuser:
             return Convention.objects.all()
+
+        print(self.siap_habilitation)
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
