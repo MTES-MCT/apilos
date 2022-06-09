@@ -35,11 +35,16 @@ class CerbereSessionMiddleware:
 
                 if habilitation_id in map(lambda x: x["id"], habilitations):
                     request.session["habilitation_id"] = habilitation_id
+                    request.session["habilitation"] = list(
+                        filter(lambda x: x.get("id") == habilitation_id, habilitations)
+                    )[0]
                 elif len(habilitations):
                     request.session["habilitation_id"] = habilitations[0]["id"]
+                    request.session["habilitation"] = habilitations[0]
                 else:
                     raise Exception("Pas d'habilitation associéé à l'utilisateur")
                 # Set habilitation in session
+                _find_or_create_entity(request.session["habilitation"])
 
             if "menu" not in request.session:
                 client = SIAPClient.get_instance()
@@ -48,7 +53,7 @@ class CerbereSessionMiddleware:
                     habilitation_id=request.session["habilitation_id"],
                 )
                 request.session["menu"] = response["menuItems"]
-
+            request.user.siap_habilitation = request.session["habilitation"]
         # for key, value in request.session.items():
         #     print(f"{key} => {value}")
 
@@ -57,3 +62,7 @@ class CerbereSessionMiddleware:
         # print("custom middleware after response or previous middleware")
 
         return response
+
+
+def _find_or_create_entity(habilitation):
+    print(habilitation)
