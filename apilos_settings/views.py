@@ -64,6 +64,16 @@ def edit_bailleur(request, bailleur_uuid):
 
 
 @login_required
+def signataires(request):
+    result = services.signataire_list(request)
+    return render(
+        request,
+        "settings/signataires.html",
+        {**result},
+    )
+
+
+@login_required
 def profile(request):
     result = services.user_profile(request)
     return render(

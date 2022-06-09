@@ -257,6 +257,34 @@ def edit_bailleur(request, bailleur_uuid):
 
 
 @require_GET
+def signataire_list(request):
+    search_input = request.GET.get("search_input", "")
+    order_by = request.GET.get("order_by", "nom")
+    page = request.GET.get("page", 1)
+
+    my_signataire_list = request.user.bailleurs().order_by(order_by)
+    total_signataire = my_signataire_list.count()
+    if search_input:
+        my_signataire_list = my_signataire_list.filter(
+            Q(nom__icontains=search_input) | Q(fonction__icontains=search_input)
+        )
+    paginator = Paginator(my_signataire_list, settings.APILOS_PAGINATION_PER_PAGE)
+    try:
+        signataires = paginator.page(page)
+    except PageNotAnInteger:
+        signataires = paginator.page(1)
+    except EmptyPage:
+        signataires = paginator.page(paginator.num_pages)
+
+    return {
+        "signataires": signataires,
+        "total_signataire": total_signataire,
+        "order_by": order_by,
+        "search_input": search_input,
+    }
+
+
+@require_GET
 def user_list(request):
 
     user_list_service = UserListService(

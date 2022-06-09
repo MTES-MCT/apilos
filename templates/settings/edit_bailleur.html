@@ -73,6 +73,15 @@
                             Enregistrer
                         </button>
                     </form>
+                    {% for signataire in signataires %}
+                        {{ signataire.nom }}
+                        pouet
+                    {% endfor %}
+                    {% for pub in bailleur.signataire_set.all %}
+                        print(pub.nom)
+                    {% endfor %}
+
+                    {% include 'settings/signataire_list.html' with signataires=signataires %}
 
                     <h3 class="fr-mt-3w">Utilisateurs du bailleur ‹‹{{ form.nom.value }}››</h3>
 

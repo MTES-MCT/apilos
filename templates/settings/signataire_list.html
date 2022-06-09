@@ -1,0 +1,52 @@
+{% load static %}
+
+<form class="fr-my-3w" method="get" action="" id="search_table">
+    <input type="hidden" id="page" name="page" value="{{signataires.number}}">
+    <input type="hidden" id="order_by" name="order_by" value="{{order_by}}">
+</form>
+
+<div class="fr-table fr-table--bordered table--layout-fixed">
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">
+                    Nom
+                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='nom' url_target='settings:bailleur' %}
+                </th>
+                <th scope="col">
+                    Fonction
+                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='fonction' url_target='settings:bailleur' %}
+                </th>
+                <th scope="col">
+                    Date de délibération
+                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='date_deliberation' url_target='settings:bailleur' %}
+                </th>
+                {% if not read_only%}
+                    <th scope="col"></th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for signataire in bailleur.signataire %}
+                <tr>
+                    <td>
+                        {{ signataire.nom }}
+                    </td>
+                    <td>{{ signataire.fonction }}</td>
+                    <td>{{ signataire.date_deliberation }}</td>
+                    {% if not read_only%}
+                        <td>
+                            {% if request.user|is_administrator:user %}
+                                <a class="fr-link fr-mb-1w" href="{% url 'settings:edit_signataire' nom=signataire.nom %}" >
+                                    <span class="fr-fi-edit-line" aria-hidden="true"></span>
+                                </a>
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% include 'common/table/pagination.html' with paginate_list=users %}

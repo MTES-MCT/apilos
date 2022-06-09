@@ -28,6 +28,11 @@ urlpatterns = [
         name="edit_bailleur",
     ),
     path(
+        "signataires/",
+        views.signataires,
+        name="signataires",
+    ),
+    path(
         "profile/",
         views.profile,
         name="profile",
