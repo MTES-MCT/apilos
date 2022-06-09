@@ -14,27 +14,86 @@
 {% endblock %}
 
 {% block content %}
-    <div class="fr-container-fluid ds_banner">
-        <div class="fr-container fr-pb-3w">
-            <h1 class="fr-pt-5w">Conventions</h1>
+    <div class="fr-container fr-py-5w">
+        <div class="background-alt-blue-france fr-px-1w fr-py-3w fr-mb-3w">
+            <h2 class="fr-pt-5w text-center">Impact du service APiLos</h2>
+            <div class="fr-text--bold border-bottom-default-grey">Indicateurs qui décrivent notre impact auprès de nos utilisateurs</div>
             <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12" id="conv_by_departement"></div>
+                <div class="fr-col-12 fr-col-md-6">
+                    <div class="fr-my-3w fr-px-2w">
+                        <div class="background-white fr-p-2w">
+                            <div class="text-title-blue-france text-center"><span class="fr-h1"> </span> jours</div>
+                            <p class="text-center fr-mb-1w">Temps moyen d’instruction d’une convention sur APiLos</p>
+                            <p class="fr-text--bold text-center text-success-main ">(vs. 83 jours précédemment)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-md-6">
+                    <div class="fr-my-3w fr-px-2w">
+                        <div class="background-white fr-p-2w">
+                            <div class="text-title-blue-france text-center"><span class="fr-h1"> </span> logements</div>
+                            <p class="text-center">Couverts par le service depuis décembre 2021
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="background-alt-blue-france fr-px-1w fr-py-3w fr-mb-3w">
+            <h2 class="fr-pt-5w text-center">Suivi du déploiement national</h2>
+            <div class="fr-text--bold border-bottom-default-grey">Indicateurs qui nous permettent de piloter notre déploiement national</div>
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-4">
+                    <div class="fr-my-3w fr-pl-3w fr-pr-1w">
+                        <div class="background-white fr-p-2w">
+                            <div class="text-title-blue-france fr-h1 text-center fr-mb-1w">{{ conventions_count }}</div>
+                            <div class="text-title-blue-france fr-text--xl text-center fr-mb-1w">Conventions</div>
+                            <p class="text-center">Réalisées via APiLos</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-md-4">
+                    <div class="fr-my-3w fr-pl-3w fr-pr-1w">
+                        <div class="background-white fr-p-2w">
+                            <div class="text-title-blue-france fr-h1 text-center fr-mb-1w">{{ users_by_role.nb_bailleurs }}</div>
+                            <div class="text-title-blue-france fr-text--xl text-center fr-mb-1w">Bailleurs</div>
+                            <p class="text-center">Utilisateurs de la plateforme</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-md-4">
+                    <div class="fr-my-3w fr-pr-3w fr-pl-1w">
+                        <div class="background-white fr-p-2w">
+                            <div class="text-title-blue-france fr-h1 text-center fr-mb-1w">{{ users_by_role.nb_instructeurs }}</div>
+                            <div class="text-title-blue-france fr-text--xl text-center fr-mb-1w">Instructeurs</div>
+                            <p class="text-center">Utilisateurs de la plateforme</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-col-12">
+                    <div class="fr-my-3w fr-px-3w">
+                        <div class="background-white fr-p-2w" id="conv_by_departement">
+                        </div>
+                    </div>
+                </div>
                 <script type="text/javascript" nonce="{{request.csp_nonce}}">
                     document.addEventListener('DOMContentLoaded', function () {
                         const chart = Highcharts.chart('conv_by_departement', {
                             chart: {
-                                type: 'column'
+                                type: 'bar'
                             },
                             title: {
-                                text: 'Nombre de conventions par statut et par département'
+                                text: 'Répartition des conventions sur APiLos par département et par statut'
                             },
                             xAxis: {
+                                allowDecimals: false,
                                 title: {
                                     text: 'Départements'
                                 },
                                 categories: [{{ conv_bydept.departement|join:',' }}]
                             },
                             yAxis: {
+                                allowDecimals: false,
                                 min: 0,
                                 title: {
                                     text: 'Conventions par département'
@@ -46,9 +105,12 @@
                                     }
                                 }
                             },
+                            legend: {
+                                reversed: true
+                            },
 
                             plotOptions: {
-                                column: {
+                                series: {
                                     stacking: 'normal',
                                     dataLabels: {
                                         enabled: true
@@ -56,9 +118,6 @@
                                 }
                             },
                             series: [{
-                                name: "Transmise",
-                                data: {{ conv_bydept.Transmise }}
-                            }, {
                                 name: "A signer",
                                 data: {{ conv_bydept.A_signer }}
                             }, {
@@ -75,132 +134,98 @@
                     });
                 </script>
 
-                <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
-                    <div class="fr-m-3w statcard statcard--color1">
-                        <div class="statcard__title">Projet</div>
-                        <p class="statcard__indicateur">{{ conventions_by_status.Projet }}</p>
-                    </div>
-                </div>
-                <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
-                    <div class="fr-m-3w statcard statcard--color2">
-                        <div class="statcard__title">Instruction requise</div>
-                        <p class="statcard__indicateur">{{ conventions_by_status.Instruction_requise }}</p>
-                    </div>
-                </div>
-                <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
-                    <div class="fr-m-3w statcard statcard--color3">
-                        <div class="statcard__title">Corrections requises</div>
-                        <p class="statcard__indicateur">{{ conventions_by_status.Corrections_requises }}</p>
-                    </div>
-                </div>
-                <div class="fr-col-12 fr-col-md-6 fr-col-lg-3">
-                    <div class="fr-m-3w statcard statcard--color4">
-                        <div class="statcard__title">A signer</div>
-                        <p class="statcard__indicateur">{{ conventions_by_status.A_signer }}</p>
+            </div>
+        </div>
+        <div class="background-alt-blue-france fr-px-1w fr-py-3w fr-mb-3w">
+            <h2 class="fr-pt-5w text-center">Chantier de simplification</h2>
+            <div class="fr-text--bold border-bottom-default-grey">Champs à cibler en priorité dans une démarche de simplification des conventions</div>
+            <div class="fr-col-12">
+                <div class="fr-my-3w fr-px-3w">
+                    <div class="background-white fr-p-2w" id="correct_by_field">
                     </div>
                 </div>
             </div>
-
-            <h1 class="fr-pt-5w">Utilisateurs</h1>
-            <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6">
-                    <div class="fr-m-3w statcard statcard--color6">
-                        <div class="statcard__title">BAILLEURS</div>
-                        <p class="statcard__indicateur">{{ users_by_role.nb_bailleurs }}</p>
-                    </div>
-                </div>
-                <div class="fr-col-12 fr-col-md-6 fr-col-lg-6">
-                    <div class="fr-m-3w statcard statcard--color7">
-                        <div class="statcard__title">INSTRUCTEURS</div>
-                        <p class="statcard__indicateur">{{ users_by_role.nb_instructeurs }}</p>
-                    </div>
-                </div>
-            </div>
-            <h1 class="fr-pt-5w">Utilisation</h1>
-            <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12" id="correct_by_field">
-                </div>
-                <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                    document.addEventListener('DOMContentLoaded', function () {
-                        const chart = Highcharts.chart('correct_by_field', {
-                            chart: {
-                                type: 'bar',
-                                height: 800
-                            },
+            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                document.addEventListener('DOMContentLoaded', function () {
+                    const chart = Highcharts.chart('correct_by_field', {
+                        chart: {
+                            type: 'bar',
+                            height: 800
+                        },
+                        title: {
+                            text: "Champs donnant lieu au plus d'échange entre les bailleurs et les instructeurs"
+                        },
+                        xAxis: {
+                            categories: {{comment_fields|safe}},
                             title: {
-                                text: 'Nombre de commentaires par champ'
+                                text: null
                             },
-                            xAxis: {
-                                categories: {{comment_fields|safe}},
-                                title: {
-                                    text: null
-                                },
-                            },
-                            yAxis: {
-                                min: 0,
-                                title: {
-                                    text: null
-                                },
-                            },
-                            plotOptions: {
-                                bar: {
-                                    dataLabels: {
-                                        enabled: true
-                                    }
-                                }
-                            },
-                            series: [{
-                                name: 'nombre de commentaires',
-                                data: {{ comment_data }}
-                            }]
-                        });
-                    });
-                </script>
-            </div>
-
-            <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12" id="null_fields">
-                </div>
-                <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                    document.addEventListener('DOMContentLoaded', function () {
-                        const chart = Highcharts.chart('null_fields', {
-                            chart: {
-                                type: 'bar',
-                                height: 800,
-                                styledMode: true
-                            },
-                            colors: ['#8085e9'],
+                        },
+                        yAxis: {
+                            min: 0,
                             title: {
-                                text: 'Pourcentage de champs non remplis'
+                                text: null
                             },
-                            xAxis: {
-                                categories: {{null_fields_keys|safe}},
-                                title: {
-                                    text: null
-                                },
-                            },
-                            yAxis: {
-                                min: 0,
-                                max:100,
-                                title: {
-                                    text: null
-                                },
-                            },
-                            plotOptions: {
-                                bar: {
-                                    dataLabels: {
-                                        enabled: true
-                                    }
+                        },
+                        plotOptions: {
+                            bar: {
+                                dataLabels: {
+                                    enabled: true
                                 }
-                            },
-                            series: [{
-                                name: 'Pourcentage des fois où le champ est vide',
-                                data: {{ null_fields_values }}
-                            }]
-                        });
+                            }
+                        },
+                        series: [{
+                            name: 'nombre de commentaires',
+                            data: {{ comment_data }}
+                        }]
                     });
-                </script>
+                });
+            </script>
+            <div class="fr-col-12">
+                <div class="fr-my-3w fr-px-3w">
+                    <div class="background-white fr-p-2w" id="null_fields">
+                    </div>
+                </div>
             </div>
+            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                document.addEventListener('DOMContentLoaded', function () {
+                    const chart = Highcharts.chart('null_fields', {
+                        chart: {
+                            type: 'bar',
+                            height: 800,
+                            styledMode: true
+                        },
+                        colors: ['#8085e9'],
+                        title: {
+                            text: "Fréquence à laquelle les champs ci-dessous sont laissés vides par les bailleurs"
+                        },
+                        xAxis: {
+                            categories: {{null_fields_keys|safe}},
+                            title: {
+                                text: null
+                            },
+                        },
+                        yAxis: {
+                            min: 0,
+                            max:100,
+                            title: {
+                                text: null
+                            },
+                        },
+                        plotOptions: {
+                            bar: {
+                                dataLabels: {
+                                    enabled: true
+                                }
+                            }
+                        },
+                        series: [{
+                            name: 'Pourcentage des fois où le champ est vide',
+                            data: {{ null_fields_values }}
+                        }]
+                    });
+                });
+            </script>
         </div>
     </div>
 {% endblock %}

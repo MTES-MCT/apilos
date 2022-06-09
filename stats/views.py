@@ -32,6 +32,9 @@ def index(request):
     )
 
     result = _get_conventions_by_dept()
+
+    conventions = Convention.objects.all().count()
+
     convention_by_status = {
         "Projet": 0,
         "Instruction_requise": 0,
@@ -70,6 +73,7 @@ def index(request):
         request,
         "stats/index.html",
         {
+            "conventions_count": conventions,
             "conventions_by_status": convention_by_status,
             "users_by_role": {
                 "nb_instructeurs": instructeurs.count(),
