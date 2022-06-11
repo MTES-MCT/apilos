@@ -73,24 +73,8 @@
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-right apilos-dropdown-menu">
                                                 {% if CERBERE_AUTH %}
-                                                    {% for habilitation in request.session.habilitations %}
-                                                        <a href="{{ request|get_change_habilitation_url:habilitation.id }}" class="{% if habilitation.id == request.session.habilitation_id %}apilos-active-habilitation{% endif %}">
-                                                            <b>{{ habilitation.groupe.libelleRole }}</b><br>
-                                                            {% if habilitation.sousTitre1 %}
-                                                                {{ habilitation.sousTitre1 }}<br>
-                                                            {% endif %}
-                                                            {{ habilitation.sousTitre2 }}
-                                                        </a>
-                                                    {% endfor %}
+                                                    {% include "layout/siap/habilitations.html" %}
 
-                                                    <a href="{{ request|get_manage_habilitation_url }}">
-                                                        <span class="fr-fi-logout-box-r-line fr-mr-1w" aria-hidden="true">
-                                                        </span>Gérer mes habilitations
-                                                    </a>
-                                                    <a href="{% url 'cas_ng_logout' %}?next=/">
-                                                        <span class="fr-fi-logout-box-r-line fr-mr-1w" aria-hidden="true">
-                                                        </span>Déconnexion
-                                                    </a>
                                                 {% else %}
                                                     <a href="{% url 'settings:profile' %}">
                                                         <span class="fr-fi-equalizer-line fr-mr-1w" aria-hidden="true"></span>Paramètres
@@ -136,36 +120,7 @@
         </div>
     </div>
 
-    {% if request.session.menu %}
-        <div class="fr-header__menu">
-            <div class="fr-container">
-                <nav class="fr-nav" id="navigation-773" role="navigation" aria-label="Menu principal">
-                    <ul class="fr-nav__list">
-                        {% for menu in request.session.menu %}
-                            {% if menu.menuItems %}
-                                <li class="fr-nav__item">
-                                    <button class="fr-nav__btn" aria-expanded="false" aria-controls="menu-{{menu.url}}">{{ menu.libelle }}</button>
-                                    <div class="fr-collapse fr-menu" id="menu-{{menu.url}}">
-                                        <ul class="fr-menu__list">
-                                            {% for submenu in menu.menuItems %}
-                                                <li>
-                                                    <a class="fr-nav__link" href="{{RACINE_URL_ACCES_WEB}}{{submenu.url}}" target="_self">{{submenu.libelle}}</a>
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                </li>
-                            {% else %}
-                                <li class="fr-nav__item">
-                                    <a class="fr-nav__link" href="{{RACINE_URL_ACCES_WEB}}{{menu.url}}" target="_self">{{menu.libelle}}</a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    {% endif %}
+    {% include "layout/siap/menu.html" %}
 
     <div class="fr-header__menu fr-modal">
         <div class="fr-container">

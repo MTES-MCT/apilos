@@ -177,10 +177,7 @@ def _call_siap_api(
     return response
 
 
-class SingletonDoubleChecked:
-
-    # resources shared by each and every
-    # instance
+class SIAPClient:
 
     __singleton_lock = threading.Lock()
     __singleton_instance = None
@@ -193,7 +190,12 @@ class SingletonDoubleChecked:
         if not cls.__singleton_instance:
             with cls.__singleton_lock:
                 if not cls.__singleton_instance:
-                    cls.__singleton_instance = cls()
+                    if settings.USE_MOCKED_SIAP_CLIENT:
+                        print("SIAPClientMock")
+                        cls.__singleton_instance = SIAPClientMock()
+                    else:
+                        print("SIAPClientRemote")
+                        cls.__singleton_instance = SIAPClientRemote()
 
         # return the singleton instance
         return cls.__singleton_instance
@@ -203,7 +205,7 @@ class SingletonDoubleChecked:
         return bool(cls.__singleton_instance)
 
 
-class SIAPClientInterface(SingletonDoubleChecked):
+class SIAPClientInterface:
     def __init__(self) -> None:
         # pylint: disable=E1111
         config = self.get_siap_config()
@@ -223,15 +225,21 @@ class SIAPClientInterface(SingletonDoubleChecked):
     def get_habilitations(self, user_login: str, habilitation_id: int = 0) -> dict:
         pass
 
-    def get_menu(self, user_login: str, habilitation_id: int = 0) -> dict:
+    def get_menu(self, user_login: str, habilitation_id: int) -> dict:
+        pass
+
+    def get_operation(
+        self, user_login: str, habilitation_id: int, operation_identifier: str
+    ) -> dict:
         pass
 
 
 # Manage SiapClient as a Singleton
-class SIAPClient(SIAPClientInterface):
+class SIAPClientRemote(SIAPClientInterface):
     # pylint: disable=R0201
 
     def get_siap_config(self) -> dict:
+        print("SIAPClientRemote")
         response = _call_siap_api("/config")
         return response.json()
 
@@ -254,7 +262,23 @@ class SIAPClient(SIAPClientInterface):
         )
         if response.status_code >= 200 and response.status_code < 300:
             return response.json()
-        raise Exception("user doesn't have SAP habilitation")
+        raise Exception(f"user doesn't have SIAP habilitation {response}")
+
+    # /services/operation/api-int/v0/operation/{numeroOperation}
+    def get_operation(
+        self, user_login: str, habilitation_id: int, operation_identifier: str
+    ) -> dict:
+        response = _call_siap_api(
+            f"/operation/{operation_identifier}",
+            base_route="/services/operation",
+            user_login=user_login,
+            habilitation_id=habilitation_id,
+        )
+        if response.status_code >= 200 and response.status_code < 300:
+            return response.json()
+        raise Exception(
+            f"user doesn't have enough rights to display operation {response}"
+        )
 
 
 # Manage SiapClient as a Singleton
@@ -262,8 +286,9 @@ class SIAPClientMock(SIAPClientInterface):
     # pylint: disable=R0201
 
     def get_siap_config(self) -> dict:
+        print("SIAPClientMock")
         return {
-            "racineUrlAccesWeb": "http://siap-local.sully-group.fr/",
+            "racineUrlAccesWeb": "https://minlog-siap.gateway.intapi.recette.sully-group.fr",
             "urlAccesWeb": "/tableau-bord",
             "urlAccesWebOperation": (
                 "/operation/mes-operations/editer/<NUM_OPE_SIAP>/informations-generales"

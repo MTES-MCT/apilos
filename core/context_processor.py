@@ -1,4 +1,4 @@
-from core.siap_client.client import SIAPClientMock as SIAPClient
+from core.siap_client.client import SIAPClient
 from core import settings
 
 
