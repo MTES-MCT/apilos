@@ -300,3 +300,8 @@ class SIAPClientMock(SIAPClientInterface):
 
     def get_menu(self, user_login: str, habilitation_id: int = 0) -> dict:
         return menu_mock
+
+    def get_operation(
+        self, user_login: str, habilitation_id: int, operation_identifier: str
+    ) -> dict:
+        return {}
