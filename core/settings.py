@@ -345,6 +345,7 @@ SWAGGER_SETTINGS = {
 }
 
 CERBERE_AUTH = get_env_variable("CERBERE_AUTH")
+USE_MOCKED_SIAP_CLIENT = get_env_variable("USE_MOCKED_SIAP_CLIENT", cast=bool)
 
 if CERBERE_AUTH:
     MIDDLEWARE = MIDDLEWARE + [

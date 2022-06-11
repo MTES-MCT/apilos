@@ -2,7 +2,7 @@ from django.http.request import HttpRequest
 from django.conf import settings
 from django.template.defaultfilters import date as _date
 from django.template.defaulttags import register
-from core.siap_client.client import SIAPClientMock as SIAPClient
+from core.siap_client.client import SIAPClient
 from conventions.models import ConventionStatut
 
 
@@ -15,6 +15,17 @@ def get_manage_habilitation_url(request: HttpRequest) -> str:
             f"{client.racine_url_acces_web}/gerer-habilitations"
             + f"?habilitation_id={request.session['habilitation_id']}"
         )
+    return ""
+
+
+@register.filter
+def get_menu_url(request: HttpRequest, menu_url: str) -> str:
+    if settings.CERBERE_AUTH:
+        client = SIAPClient.get_instance()
+        target_url = ""
+        if not menu_url.startswith("//") and not menu_url.startswith("http"):
+            target_url = f"{client.racine_url_acces_web}"
+        return f"{target_url}{menu_url}?habilitation_id={request.session['habilitation_id']}"
     return ""
 
 

@@ -1,4 +1,4 @@
-from core.siap_client.client import SIAPClientMock as SIAPClient
+from core.siap_client.client import SIAPClient
 
 
 class CerbereSessionMiddleware:
@@ -45,24 +45,18 @@ class CerbereSessionMiddleware:
                     raise Exception("Pas d'habilitation associéé à l'utilisateur")
                 # Set habilitation in session
                 _find_or_create_entity(request.session["habilitation"])
-
-            if "menu" not in request.session:
-                client = SIAPClient.get_instance()
                 response = client.get_menu(
                     user_login=request.user.cerbere_login,
                     habilitation_id=request.session["habilitation_id"],
                 )
                 request.session["menu"] = response["menuItems"]
+
             request.user.siap_habilitation = request.session["habilitation"]
-        # for key, value in request.session.items():
-        #     print(f"{key} => {value}")
 
         response = self.get_response(request)
-
-        # print("custom middleware after response or previous middleware")
 
         return response
 
 
 def _find_or_create_entity(habilitation):
-    print(habilitation)
+    print(f"habilitation : {habilitation}")
