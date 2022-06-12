@@ -51,10 +51,10 @@ class CerbereSessionMiddleware:
 #                _find_or_create_entity(request.session["habilitation"])
 
                 logging.warn(f"1. get_menu ?")
-                # response = client.get_menu(
-                #     user_login=request.user.cerbere_login,
-                #     habilitation_id=request.session["habilitation_id"],
-                # )
+                response = client.get_menu(
+                    user_login=request.user.cerbere_login,
+                    habilitation_id=request.session["habilitation_id"],
+                )
                 request.session["menu"] = [] #response["menuItems"]
 
             request.user.siap_habilitation = request.session["habilitation"]
