@@ -256,7 +256,7 @@ class SIAPClientRemote(SIAPClientInterface):
 
     def get_menu(self, user_login: str, habilitation_id: int = 0) -> dict:
         response = _call_siap_api(
-            "/menu",
+            "/menu2",
             user_login=user_login,
             habilitation_id=habilitation_id,
         )
