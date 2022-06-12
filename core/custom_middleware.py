@@ -34,18 +34,23 @@ class CerbereSessionMiddleware:
                 habilitations = response["habilitations"]
                 request.session["habilitations"] = habilitations
 
+                logging.warn(f"habilitation_id")
                 if habilitation_id in map(lambda x: x["id"], habilitations):
+                    logging.warn(f"habilitation_id in list")
                     request.session["habilitation_id"] = habilitation_id
                     request.session["habilitation"] = list(
                         filter(lambda x: x.get("id") == habilitation_id, habilitations)
                     )[0]
                 elif len(habilitations):
+                    logging.warn(f"habilitation_id not in list")
                     request.session["habilitation_id"] = habilitations[0]["id"]
                     request.session["habilitation"] = habilitations[0]
                 else:
                     raise Exception("Pas d'habilitation associéé à l'utilisateur")
                 # Set habilitation in session
 #                _find_or_create_entity(request.session["habilitation"])
+
+                logging.warn(f"get_menu ?")
                 response = client.get_menu(
                     user_login=request.user.cerbere_login,
                     habilitation_id=request.session["habilitation_id"],
