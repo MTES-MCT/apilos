@@ -50,10 +50,7 @@ class CerbereSessionMiddleware:
                 # Set habilitation in session
 #                _find_or_create_entity(request.session["habilitation"])
 
-                logging.warn(f"2. get_menu ?")
-                logging.warn(request.user.cerbere_login)
-                logging.warn(request.session["habilitation_id"])
-                response = client.get_menu(
+                response = SIAPClient().get_menu(
                     user_login=request.user.cerbere_login,
                     habilitation_id=request.session["habilitation_id"],
                 )
