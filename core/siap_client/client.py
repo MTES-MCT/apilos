@@ -1,7 +1,6 @@
 import logging
 import datetime
 import uuid
-import threading
 import requests
 import jwt
 
@@ -183,7 +182,6 @@ def _call_siap_api(
 
 class SIAPClient:
 
-    __singleton_lock = threading.Lock()
     __singleton_instance = None
 
     # define the classmethod
@@ -192,14 +190,12 @@ class SIAPClient:
 
         # check for the singleton instance
         if not cls.__singleton_instance:
-            with cls.__singleton_lock:
-                if not cls.__singleton_instance:
-                    if settings.USE_MOCKED_SIAP_CLIENT:
-                        logging.warn("SIAPClientMock")
-                        cls.__singleton_instance = SIAPClientMock()
-                    else:
-                        logging.warn("SIAPClientRemote")
-                        cls.__singleton_instance = SIAPClientRemote()
+            if settings.USE_MOCKED_SIAP_CLIENT:
+                logging.warn("SIAPClientMock")
+                cls.__singleton_instance = SIAPClientMock()
+            else:
+                logging.warn("SIAPClientRemote")
+                cls.__singleton_instance = SIAPClientRemote()
 
         # return the singleton instance
         return cls.__singleton_instance
