@@ -1,6 +1,6 @@
 import logging
 from core.siap_client.client import SIAPClient
-
+import http.client as http_client
 
 class CerbereSessionMiddleware:
     # pylint: disable=R0903
@@ -8,7 +8,6 @@ class CerbereSessionMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-
         # test if user is a siap user
         if request.user.is_authenticated and request.user.is_cerbere_user():
             # test if habilitations are set for the current user
@@ -50,7 +49,9 @@ class CerbereSessionMiddleware:
                 # Set habilitation in session
 #                _find_or_create_entity(request.session["habilitation"])
 
-                logging.warn(f"1. get_menu ?")
+                logging.warn(f"2. get_menu ?")
+                logging.warn(request.user.cerbere_login)
+                logging.warn(request.session["habilitation_id"])
                 response = client.get_menu(
                     user_login=request.user.cerbere_login,
                     habilitation_id=request.session["habilitation_id"],
