@@ -171,6 +171,7 @@ def _call_siap_api(
     )
     myjwt = _build_jwt(user_login=user_login, habilitation_id=habilitation_id)
     logging.warn(f"API call : {siap_url_config}")
+    logging.warn(f"JWT : {myjwt}")
     response = requests.get(
         siap_url_config,
         headers={"siap-Authorization": f"Bearer {myjwt}"},

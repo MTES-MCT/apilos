@@ -12,6 +12,7 @@ class CerbereSessionMiddleware:
         if request.user.is_authenticated and request.user.is_cerbere_user():
             # test if habilitations are set for the current user
             # if not, get it from SIAPClient
+            
             if (
                 "habilitation_id" in request.GET
                 or "habilitations" not in request.session
