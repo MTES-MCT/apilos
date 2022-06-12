@@ -1,5 +1,5 @@
 import logging
-from core.siap_client.client import SIAPClient, SIAPClientRemote
+from core.siap_client.client import SIAPClient
 import http.client as http_client
 
 class CerbereSessionMiddleware:
@@ -50,10 +50,13 @@ class CerbereSessionMiddleware:
                 # Set habilitation in session
 #                _find_or_create_entity(request.session["habilitation"])
 
-                response = SIAPClientRemote().get_menu(
-                    user_login=request.user.cerbere_login,
-                    habilitation_id=request.session["habilitation_id"],
-                )
+                logging.warn(f"2. get_menu ?")
+                logging.warn(request.user.cerbere_login)
+                logging.warn(request.session["habilitation_id"])
+                # response = client.get_menu(
+                #     user_login=request.user.cerbere_login,
+                #     habilitation_id=request.session["habilitation_id"],
+                # )
                 request.session["menu"] = [] #response["menuItems"]
 
             request.user.siap_habilitation = request.session["habilitation"]
