@@ -1,3 +1,4 @@
+import logging
 from core.siap_client.client import SIAPClient
 
 
@@ -44,7 +45,7 @@ class CerbereSessionMiddleware:
                 else:
                     raise Exception("Pas d'habilitation associéé à l'utilisateur")
                 # Set habilitation in session
-                _find_or_create_entity(request.session["habilitation"])
+#                _find_or_create_entity(request.session["habilitation"])
                 response = client.get_menu(
                     user_login=request.user.cerbere_login,
                     habilitation_id=request.session["habilitation_id"],
@@ -58,5 +59,5 @@ class CerbereSessionMiddleware:
         return response
 
 
-def _find_or_create_entity(habilitation):
-    print(f"habilitation : {habilitation}")
+# def _find_or_create_entity(habilitation):
+#     logging.warn(f"habilitation : {habilitation}")
