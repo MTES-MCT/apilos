@@ -1,3 +1,4 @@
+import logging
 import datetime
 import uuid
 import threading
@@ -170,6 +171,8 @@ def _call_siap_api(
         settings.SIAP_CLIENT_HOST + base_route + settings.SIAP_CLIENT_PATH + route
     )
     myjwt = _build_jwt(user_login=user_login, habilitation_id=habilitation_id)
+    logging.warning(siap_url_config)
+    logging.warning(myjwt)
     response = requests.get(
         siap_url_config,
         headers={"siap-Authorization": f"Bearer {myjwt}"},

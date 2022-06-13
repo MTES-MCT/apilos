@@ -47,7 +47,7 @@ class CerbereSessionMiddleware:
                 #                _find_or_create_entity(request.session["habilitation"])
 
                 response = client.get_menu(
-                    user_login="nicolas.oudard@beta.gouv.fr",
+                    user_login=request.user.cerbere_login,
                     habilitation_id=request.session["habilitation_id"],
                 )
                 request.session["menu"] = response["menuItems"]
