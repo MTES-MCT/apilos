@@ -1,6 +1,6 @@
-import logging
 import datetime
 import uuid
+import threading
 import requests
 import jwt
 
@@ -170,20 +170,17 @@ def _call_siap_api(
         settings.SIAP_CLIENT_HOST + base_route + settings.SIAP_CLIENT_PATH + route
     )
     myjwt = _build_jwt(user_login=user_login, habilitation_id=habilitation_id)
-    logging.warn(f"API call : {siap_url_config}")
-    logging.warn(f"JWT : {myjwt}")
     response = requests.get(
         siap_url_config,
         headers={"siap-Authorization": f"Bearer {myjwt}"},
         timeout=5,
     )
-    logging.warn(f"API response : {response}")
-    logging.warn(f"API response content : {response.content}")
     return response
 
 
 class SIAPClient:
 
+    __singleton_lock = threading.Lock()
     __singleton_instance = None
 
     # define the classmethod
@@ -192,12 +189,14 @@ class SIAPClient:
 
         # check for the singleton instance
         if not cls.__singleton_instance:
-            if settings.USE_MOCKED_SIAP_CLIENT:
-                logging.warn("SIAPClientMock")
-                cls.__singleton_instance = SIAPClientMock()
-            else:
-                logging.warn("SIAPClientRemote")
-                cls.__singleton_instance = SIAPClientRemote()
+            with cls.__singleton_lock:
+                if not cls.__singleton_instance:
+                    if settings.USE_MOCKED_SIAP_CLIENT:
+                        print("SIAPClientMock")
+                        cls.__singleton_instance = SIAPClientMock()
+                    else:
+                        print("SIAPClientRemote")
+                        cls.__singleton_instance = SIAPClientRemote()
 
         # return the singleton instance
         return cls.__singleton_instance
@@ -238,8 +237,6 @@ class SIAPClientInterface:
 
 # Manage SiapClient as a Singleton
 class SIAPClientRemote(SIAPClientInterface):
-    # pylint: disable=R0201
-
     def get_siap_config(self) -> dict:
         response = _call_siap_api("/config")
         return response.json()
@@ -284,8 +281,6 @@ class SIAPClientRemote(SIAPClientInterface):
 
 # Manage SiapClient as a Singleton
 class SIAPClientMock(SIAPClientInterface):
-    # pylint: disable=R0201
-
     def get_siap_config(self) -> dict:
         return {
             "racineUrlAccesWeb": "https://minlog-siap.gateway.intapi.recette.sully-group.fr",
