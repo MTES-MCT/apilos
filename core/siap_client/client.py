@@ -175,6 +175,7 @@ def _call_siap_api(
     response = requests.get(
         siap_url_config,
         headers={"siap-Authorization": f"Bearer {myjwt}"},
+        timeout=5,
     )
     logging.warn(f"API response : {response}")
     logging.warn(f"API response content : {response.content}")

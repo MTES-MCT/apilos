@@ -53,11 +53,11 @@ class CerbereSessionMiddleware:
                 logging.warn(f"2. get_menu ?")
                 logging.warn(request.user.cerbere_login)
                 logging.warn(request.session["habilitation_id"])
-                # response = client.get_menu(
-                #     user_login=request.user.cerbere_login,
-                #     habilitation_id=request.session["habilitation_id"],
-                # )
-                request.session["menu"] = [] #response["menuItems"]
+                response = client.get_menu(
+                    user_login=request.user.cerbere_login,
+                    habilitation_id=request.session["habilitation_id"],
+                )
+                request.session["menu"] = response["menuItems"]
 
             request.user.siap_habilitation = request.session["habilitation"]
 
