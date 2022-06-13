@@ -8,11 +8,11 @@ Les règles et standards de codage y sont décrits
 
 La plateforme APiLos est open source et la gestion de version est assuré via Github. La première étape est donc de cloner ce repository github.
 
-La gestion de dépendance est assurée via pipenv (cf. [Pipfile](Pipfile)).
+La gestion de dépendance est assurée via le fichier requirements.
 
 Pour installer APiLos sur votre système en local, vous avez 2 possibilités :
 * utiliser docker-compose
-* utiliser pyenv
+* utiliser un environnement virtuel python (pyenv, asdf...)
 
 ### Via docker-compose
 
@@ -33,16 +33,16 @@ Pensez à rebuilder le container docker lorsque vous ajouter une dépendance. le
 
 le code local est attaché au volume `/code/` à l'interieur du docker apilos. une seconde instance docker est executée pour la base de données. de même, les données de la base de données sont persisté car le dossier de données de la base de donnée est attaché en local dans un répéertoire pgdata ignoré par git.
 
-Pour Lancer un script django, vous devrez l'éxecuter dans l'environnement docker en utilisant pipenv
+Pour Lancer un script django, vous devrez l'éxecuter dans l'environnement docker
 
 ```
-(docker-compose exec apilos) pipenv run python manage.py ...
+(docker-compose exec apilos) python manage.py ...
 ```
 
 Par exemple pour lancer les migrations :
 
 ```
-(docker-compose exec apilos) pipenv run python manage.py migrate
+(docker-compose exec apilos) python manage.py migrate
 ```
 
 Enfin, pour afficher les logs :
@@ -51,13 +51,19 @@ Enfin, pour afficher les logs :
 docker-compose logs -f --tail=10
 ```
 
-### Via pyenv
+### Via l'environnement virtuel
 
 #### Prérequis
 
 * APiLos marche sur un distribution python 3.10
-* Il est conseillé d'installer pyenv pour isoler l'environnement python d'APiLos
-* pipenv est nécessaire pour la gestion de dépendance
+* Il est conseillé d'installer un environnment virtuel pour isoler l'environnement python d'APiLos
+
+Ex:
+
+```sh
+python -m venv .venv --prompt $(basename $(pwd))
+source .venv/bin/activate
+```
 
 #### Installation
 
@@ -79,8 +85,9 @@ DB_PORT=5433
 
 Installer les dépendances
 
-```
-pipenv install
+```sh
+pip install pip-tools
+pip-sync requirements.txt dev-requirements.txt
 ```
 
 ## Finalisation de l'installation
@@ -90,19 +97,19 @@ Ajouter `docker-compose exec apilos` en prefix de vos commande lorsque vous avez
 ### Executer les migrations
 
 ```
-(docker-compose exec apilos) pipenv run python manage.py migrate
+(docker-compose exec apilos) python manage.py migrate
 ```
 
 ### Populer les permissions et les roles et les departements
 
 ```
-(docker-compose exec apilos) pipenv run python manage.py loaddata auth.json departements.json
+(docker-compose exec apilos) python manage.py loaddata auth.json departements.json
 ```
 
 ## Lancer de l'application
 
 ```
-(docker-compose exec apilos) pipenv run python manage.py runserver 0.0.0.0:8001
+(docker-compose exec apilos) python manage.py runserver 0.0.0.0:8001
 ```
 
 L'application est désormais disponible [http://localhost:8001](http://localhost:8001)
@@ -123,14 +130,14 @@ Les tests sont organisés comme suit :
 L'application prend en charge des test unitaire et des tests d'intégration. Pour les lancer:
 
 ```
-(docker-compose exec apilos) pipenv run python manage.py test
+(docker-compose exec apilos) python manage.py test
 ```
 
 et pour les lancer avec un test de coverage et afficher le rapport :
 
 ```
-(docker-compose exec apilos) pipenv run coverage run --source='.' manage.py test
-(docker-compose exec apilos) pipenv run coverage report
+(docker-compose exec apilos) coverage run --source='.' manage.py test
+(docker-compose exec apilos) coverage report
 ```
 
 ### Installer les hooks de pre-commit
@@ -149,3 +156,19 @@ pre-commit install
 
 Plus de détails sur la doc dédiée [API.md](API.md)
 
+## Ajouter des dépendance avec pip-tools
+
+Ajouter les dépendances dans requirements.in ou dev-requirements.in
+
+Puis compiler :
+
+```sh
+pip-compile requirements.in --generate-hashes
+pip-compile dev-requirements.in --generate-hashes
+```
+
+Et installer
+
+```sh
+pip-sync requirements.txt dev-requirements.txt
+```
