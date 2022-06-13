@@ -81,7 +81,7 @@ class ServicesConventionsTests(TestCase):
         administration.code_postal = "13001"
         administration.ville = "Marseilles"
         administration.save()
-        email_sent = services_conventions.send_email_valide(
+        email_sent = service_email.send_email_valide(
             "https://apilos.beta.gouv.fr/my_convention", convention, ["me@apilos.com"]
         )
         self.assertIn(
