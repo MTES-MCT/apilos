@@ -141,9 +141,9 @@ pre-commit==2.19.0 \
     --hash=sha256:10c62741aa5704faea2ad69cb550ca78082efe5697d6f04e5710c3c229afdd10 \
     --hash=sha256:4233a1e38621c87d9dda9808c6606d7e7ba0e087cd56d3fe03202a01d2919615
     # via -r dev-requirements.in
-pylint==2.14.0 \
-    --hash=sha256:10d291ea5133645f73fc1b51ca137ad6531223c1461a5632a1db029a9bc033b5 \
-    --hash=sha256:ef64ce5d4c17b8906caeaf2c2914ef3036a3a1b7f4a86f5fbf6caff9067c5f63
+pylint==2.14.1 \
+    --hash=sha256:549261e0762c3466cc001024c4419c08252cb8c8d40f5c2c6966fea690e7fe2a \
+    --hash=sha256:bb71e6d169506de585edea997e48d9ff20c0dc0e2fbc1d166bad6b640120326b
     # via -r dev-requirements.in
 pyyaml==6.0 \
     --hash=sha256:0283c35a6a9fbf047493e3a0ce8d79ef5030852c51e9d911a27badfde0605293 \
