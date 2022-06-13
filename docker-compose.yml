@@ -33,7 +33,7 @@ services:
 
   dramatiq:
     <<: *apilos
-    command: pipenv run python manage.py rundramatiq
+    command: python manage.py rundramatiq
     ports: []
 
 
