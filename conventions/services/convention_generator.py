@@ -2,6 +2,7 @@ import os
 import errno
 import io
 import math
+import json
 import jinja2
 import convertapi
 
@@ -10,6 +11,7 @@ from docx.shared import Inches
 
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.forms.models import model_to_dict
 
 from core.utils import round_half_up
 
@@ -35,7 +37,7 @@ class ConventionTypeConfigurationError(Exception):
     pass
 
 
-def generate_convention_doc(convention):
+def generate_convention_doc(convention, save_data=False):
     # pylint: disable=R0914
     annexes = (
         Annexe.objects.prefetch_related("logement")
@@ -99,16 +101,16 @@ def generate_convention_doc(convention):
         "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF", "CDCL"]),
         "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF", "CDCL"]),
         "references_cadastrales": convention.programme.referencecadastrale_set.all(),
-        **object_images,
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
-        **_compute_mixte(convention),
         "loyer_m2": _get_loyer_par_metre_carre(convention),
-        **logements_totale,
         "liste_des_annexes": _compute_liste_des_annexes(
             convention.lot.typestationnement_set.all(), annexes
         ),
     }
+    context.update(_compute_mixte(convention))
+    context.update(logements_totale)
+    context.update(object_images)
 
     jinja_env = jinja2.Environment()
     jinja_env.filters["d"] = to_fr_date
@@ -126,7 +128,79 @@ def generate_convention_doc(convention):
     for local_path in list(set(local_pathes)):
         os.remove(local_path)
 
+    if save_data:
+        _save_convention_donnees_validees(
+            convention,
+            logement_edds,
+            nb_logements_par_type,
+            lot_num,
+            logements_totale,
+        )
+
     return file_stream
+
+
+def _save_convention_donnees_validees(
+    convention,
+    logement_edds,
+    nb_logements_par_type,
+    lot_num,
+    logements_totale,
+):
+
+    annexes = (
+        Annexe.objects.prefetch_related("logement")
+        .filter(logement__lot_id=convention.lot.id)
+        .all()
+    )
+
+    context_to_save = {
+        "convention": model_to_dict(convention),
+        "bailleur": model_to_dict(convention.bailleur),
+        "programme": model_to_dict(convention.programme),
+        "lot": model_to_dict(convention.lot),
+        "administration": model_to_dict(convention.programme.administration),
+        "logement_edds": _list_to_dict(logement_edds),
+        "logements": _list_to_dict(convention.lot.logement_set.all()),
+        "annexes": _list_to_dict(annexes),
+        "stationnements": _list_to_dict(convention.lot.typestationnement_set.all()),
+        "prets_cdc": _list_to_dict(
+            convention.pret_set.filter(preteur__in=["CDCF", "CDCL"])
+        ),
+        "autres_prets": _list_to_dict(
+            convention.pret_set.exclude(preteur__in=["CDCF", "CDCL"])
+        ),
+        "references_cadastrales": _list_to_dict(
+            convention.programme.referencecadastrale_set.all()
+        ),
+        "nb_logements_par_type": nb_logements_par_type,
+        "lot_num": lot_num,
+        "loyer_m2": _get_loyer_par_metre_carre(convention),
+        "liste_des_annexes": _compute_liste_des_annexes(
+            convention.lot.typestationnement_set.all(), annexes
+        ),
+    }
+    context_to_save.update(_compute_mixte(convention))
+    context_to_save.update(logements_totale)
+    object_files = {}
+    object_files["vendeur_files"] = convention.programme.vendeur_files()
+    object_files["acquereur_files"] = convention.programme.acquereur_files()
+    object_files[
+        "reference_notaire_files"
+    ] = convention.programme.reference_notaire_files()
+    object_files[
+        "reference_publication_acte_files"
+    ] = convention.programme.reference_publication_acte_files()
+    object_files[
+        "reference_cadastrale_files"
+    ] = convention.programme.reference_cadastrale_files()
+    object_files["effet_relatif_files"] = convention.programme.effet_relatif_files()
+    object_files["edd_volumetrique_files"] = convention.lot.edd_volumetrique_files()
+    object_files["edd_classique_files"] = convention.lot.edd_classique_files()
+    convention.donnees_validees = json.dumps(
+        {**context_to_save, **object_files}, default=str
+    )
+    convention.save()
 
 
 def generate_pdf(file_stream, convention):
@@ -349,3 +423,7 @@ def _prepare_logement_edds(convention):
                 lot_num = count
         logement_edd.lot_num = count
     return logement_edds, lot_num
+
+
+def _list_to_dict(object_list):
+    return list(map(model_to_dict, object_list))

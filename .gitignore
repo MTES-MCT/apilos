@@ -12,7 +12,8 @@ __pycache__
 #local repo to store DB data
 pgdata/
 /media/
-staticfiles
+staticfiles/
+redis-data/
 
 #IDE
 .vscode/
