@@ -324,11 +324,17 @@ def _upload_cadastre(request, convention, import_warnings, editable_upload):
             for refcad in ReferenceCadastrale.objects.filter(
                 programme_id=convention.programme_id
             ):
-                refcads_by_section[refcad.section] = refcad.uuid
+                refcads_by_section[f"{refcad.section}__{refcad.numero}"] = refcad.uuid
 
             for obj in result["objects"]:
-                if "section" in obj and obj["section"] in refcads_by_section:
-                    obj["uuid"] = refcads_by_section[obj["section"]]
+                if (
+                    "section" in obj
+                    and "object" in obj
+                    and f"{obj['section']}__{obj['numero']}" in refcads_by_section
+                ):
+                    obj["uuid"] = refcads_by_section[
+                        f"{obj['section']}__{obj['numero']}"
+                    ]
 
             formset = ReferenceCadastraleFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
