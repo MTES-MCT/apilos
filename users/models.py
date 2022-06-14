@@ -20,11 +20,15 @@ class slist(list):
 
 class User(AbstractUser):
     # pylint: disable=R0904
-
+    siap_habilitation = None
     administrateur_de_compte = models.BooleanField(default=False)
     telephone = models.CharField(
         null=True,
         max_length=25,
+    )
+    cerbere_login = models.CharField(
+        null=True,
+        max_length=255,
     )
     preferences_email = models.CharField(
         max_length=25,
@@ -222,6 +226,8 @@ class User(AbstractUser):
         if self.is_superuser:
             return Convention.objects.all()
 
+        print(self.siap_habilitation)
+
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
             return Convention.objects.filter(
@@ -317,6 +323,9 @@ class User(AbstractUser):
         if bailleur in self.bailleurs():
             return True
         return False
+
+    def is_cerbere_user(self):
+        return self.cerbere_login is not None
 
     def __str__(self):
         return (

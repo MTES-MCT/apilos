@@ -1,8 +1,39 @@
-# https://docs.djangoproject.com/fr/4.0/ref/templates/builtins/#date
+from django.http.request import HttpRequest
+from django.conf import settings
 from django.template.defaultfilters import date as _date
 from django.template.defaulttags import register
-
+from core.siap_client.client import SIAPClient
 from conventions.models import ConventionStatut
+
+
+@register.filter
+def get_manage_habilitation_url(request: HttpRequest) -> str:
+    if settings.CERBERE_AUTH:
+        client = SIAPClient.get_instance()
+        # https://minlog-siap.gateway.intapi.recette.sully-group.fr/gerer-habilitations
+        return (
+            f"{client.racine_url_acces_web}/gerer-habilitations"
+            + f"?habilitation_id={request.session['habilitation_id']}"
+        )
+    return ""
+
+
+@register.filter
+def get_menu_url(request: HttpRequest, menu_url: str) -> str:
+    if settings.CERBERE_AUTH:
+        client = SIAPClient.get_instance()
+        target_url = ""
+        if not menu_url.startswith("//") and not menu_url.startswith("http"):
+            target_url = f"{client.racine_url_acces_web}"
+        return f"{target_url}{menu_url}?habilitation_id={request.session['habilitation_id']}"
+    return ""
+
+
+@register.filter
+def get_change_habilitation_url(request: HttpRequest, habilitation_id: int) -> str:
+    if settings.CERBERE_AUTH:
+        return f"{request.build_absolute_uri('?')}?habilitation_id={habilitation_id}"
+    return ""
 
 
 @register.filter
