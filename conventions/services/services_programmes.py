@@ -329,7 +329,7 @@ def _upload_cadastre(request, convention, import_warnings, editable_upload):
             for obj in result["objects"]:
                 if (
                     "section" in obj
-                    and "object" in obj
+                    and "numero" in obj
                     and f"{obj['section']}__{obj['numero']}" in refcads_by_section
                 ):
                     obj["uuid"] = refcads_by_section[
