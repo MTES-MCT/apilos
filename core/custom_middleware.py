@@ -1,3 +1,4 @@
+from django.conf import settings
 from core.siap_client.client import SIAPClient
 
 
@@ -46,11 +47,14 @@ class CerbereSessionMiddleware:
                 # Set habilitation in session
                 #                _find_or_create_entity(request.session["habilitation"])
 
-                response = client.get_menu(
-                    user_login=request.user.cerbere_login,
-                    habilitation_id=request.session["habilitation_id"],
-                )
-                request.session["menu"] = response["menuItems"]
+                if settings.NO_SIAP_MENU:
+                    request.session["menu"] = None
+                else:
+                    response = client.get_menu(
+                        user_login=request.user.cerbere_login,
+                        habilitation_id=request.session["habilitation_id"],
+                    )
+                    request.session["menu"] = response["menuItems"]
 
             request.user.siap_habilitation = request.session["habilitation"]
 
