@@ -151,8 +151,10 @@ def _build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
         "exp": ts_exp,
         "jti": str(uuid.uuid4()),
         "user-login": user_login,
-        "habilitation-id": habilitation_id,
     }
+    if habilitation_id:
+        payload["habilitation-id"] = habilitation_id
+
     return jwt.encode(
         payload,
         settings.SIAP_CLIENT_JWT_SIGN_KEY,
@@ -250,6 +252,9 @@ class SIAPClientRemote(SIAPClientInterface):
         )
         if response.status_code >= 200 and response.status_code < 300:
             return response.json()
+        print(f"response content {user_login}")
+        print(f"response content {habilitation_id}")
+        print(f"response content {response}")
         raise Exception("user doesn't have SIAP habilitation")
 
     def get_menu(self, user_login: str, habilitation_id: int = 0) -> dict:
