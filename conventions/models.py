@@ -77,7 +77,10 @@ class Convention(models.Model):
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
     programme = models.ForeignKey(
-        "programmes.Programme", on_delete=models.CASCADE, null=False
+        "programmes.Programme",
+        related_name="conventions",
+        on_delete=models.CASCADE,
+        null=False,
     )
     lot = models.ForeignKey("programmes.Lot", on_delete=models.CASCADE, null=False)
     date_fin_conventionnement = models.DateField(null=True)

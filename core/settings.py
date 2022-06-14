@@ -317,7 +317,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ALGORITHM": get_env_variable("JWT_ALGORITHM", default="HS256"),
     "SIGNING_KEY": get_env_variable("JWT_SIGN_KEY", default=None),
@@ -334,6 +334,7 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "0.0.1",
     "SERVE_INCLUDE_SCHEMA": False,
     "TAGS": [{"name": "config-resource", "description": "Config Resource"}],
+    "DISABLE_ERRORS_AND_WARNINGS": False,
     # OTHER SETTINGS
 }
 
