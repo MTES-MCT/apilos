@@ -1,3 +1,5 @@
+import logging
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -87,7 +89,7 @@ class ApilosConfiguration(APIView):
         else:
             protocol = "http://"
         version = ".".join(settings.SPECTACULAR_SETTINGS["VERSION"].split(".")[:-1])
-
+        logging.warning("[SIAP API] /configuration route called")
         return Response(
             {
                 "racine_url_acces_web": protocol + request.get_host(),
@@ -96,3 +98,51 @@ class ApilosConfiguration(APIView):
                 "version": version,
             }
         )
+
+
+class ConvKPI:
+    # pylint: disable=R0903
+    def __init__(self, indicateur_redirection_url, indicateur_valeur, indicateur_label):
+        self.indicateur_redirection_url = indicateur_redirection_url
+        self.indicateur_valeur = indicateur_valeur
+        self.indicateur_label = indicateur_label
+
+
+class ConventionKPISerializer(serializers.Serializer):
+    # pylint: disable=W0223
+    indicateur_redirection_url = serializers.CharField(max_length=200)
+    indicateur_valeur = serializers.IntegerField()
+    indicateur_label = serializers.CharField(max_length=100)
+
+
+class ConventionKPI(APIView):
+    """
+    return the main configutations of the application
+    """
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["statistics"],
+        responses={
+            200: ConventionKPISerializer(many=True),
+            400: OpenApiResponse(description="Bad request (something invalid)"),
+            401: OpenApiResponse(description="Unauthorized"),
+            403: OpenApiResponse(description="Forbidden"),
+            404: OpenApiResponse(description="Not Found"),
+        },
+    )
+    def get(self, request):
+        """
+        Return main settings of the application.
+        """
+        list_conv_kpi = [
+            ConvKPI("indicateur_redirection_url1", 1, "indicateur_label"),
+            ConvKPI("indicateur_redirection_url2", 2, "indicateur_label"),
+            ConvKPI("indicateur_redirection_url3", 3, "indicateur_label"),
+        ]
+
+        serializer = ConventionKPISerializer(list_conv_kpi, many=True)
+
+        return Response(serializer.data)
