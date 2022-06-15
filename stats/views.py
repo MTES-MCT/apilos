@@ -10,6 +10,7 @@ from django.db.models import (
     OuterRef,
 )
 from django.db.models.functions import Substr, Concat
+
 from bailleurs.forms import BailleurForm
 
 from bailleurs.models import Bailleur
@@ -23,9 +24,10 @@ from programmes.forms import (
     ProgrammeForm,
 )
 from programmes.models import Lot, Programme
+from stats.raw import average_delay_sql
 from users.models import User
 
-
+# pylint: disable=R0914
 def index(request):
     query_by_statuses = (
         Convention.objects.all().values("statut").annotate(total=Count("statut"))
@@ -33,7 +35,14 @@ def index(request):
 
     result = _get_conventions_by_dept()
 
+    delay = average_delay_sql()
+
     conventions = Convention.objects.all().count()
+    logements = (
+        Convention.objects.all()
+        .aggregate(Sum("lot__nb_logements"))
+        .get("lot__nb_logements__sum")
+    )
 
     convention_by_status = {
         "Projet": 0,
@@ -51,12 +60,13 @@ def index(request):
         .order_by("-data", "nom_objet", "champ_objet")
     )
     comment_fields = []
+    count = 0
     for qs in comments_champ:
-        comment_fields.append(
-            Comment(
-                nom_objet=qs["nom_objet"], champ_objet=qs["champ_objet"]
-            ).object_detail()
-        )
+        count = count + 1
+        label = Comment(
+            nom_objet=qs["nom_objet"], champ_objet=qs["champ_objet"]
+        ).object_detail()
+        comment_fields.append(f"{count} - {label}")
     comment_data = []
     for qs in comments_champ:
         comment_data.append(qs["data"])
@@ -74,7 +84,9 @@ def index(request):
         "stats/index.html",
         {
             "conventions_count": conventions,
+            "delay": delay,
             "conventions_by_status": convention_by_status,
+            "nb_logements": logements,
             "users_by_role": {
                 "nb_instructeurs": instructeurs.count(),
                 "nb_instructeurs_actifs": instructeurs.filter(
@@ -507,5 +519,10 @@ def get_null_fields():
     sorted_null_fields = dict(
         sorted(null_fields.items(), key=operator.itemgetter(1), reverse=True)
     )
+    null_fields_result = {}
+    count = 0
+    for key, value in sorted_null_fields.items():
+        count = count + 1
+        null_fields_result[f"{count} - {key}"] = value
 
-    return sorted_null_fields
+    return null_fields_result
