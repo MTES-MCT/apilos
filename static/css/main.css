@@ -324,10 +324,10 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 }
 
 #correct_by_field .highcharts-color-0 {
-  fill: #265FB5;
+  fill: #0063cb;
 }
 #null_fields .highcharts-color-0 {
-  fill: #8085e9;
+  fill: #009081;
 }
 
 /* SVG ikonate */
