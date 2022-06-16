@@ -2,7 +2,7 @@ from django.db import connection
 from conventions.models import ConventionStatut
 
 
-def average_delay_sql():
+def average_instruction_delay():
     with connection.cursor() as cursor:
         cursor.execute(
             f"""
