@@ -24,7 +24,7 @@ from programmes.forms import (
     ProgrammeForm,
 )
 from programmes.models import Lot, Programme
-from stats.raw import average_instruction_delay
+from stats.stats_from_sql_raw import average_instruction_delay
 from users.models import User
 
 
@@ -65,7 +65,7 @@ def index(request):
                 ).count(),
             },
             "conv_bydept": conventions_by_dept,
-            "dept": str(conventions_by_dept["departement"]),
+            "depts": str(conventions_by_dept["departement"]),
             "comment_fields": comment_fields,
             "comment_data": comment_data[0:20],
             "null_fields_keys": list(null_fields.keys()),
@@ -132,15 +132,23 @@ def _get_conventions_by_dept():
         .order_by("departement")
     )
     conv_bydept_bystatut = {}
-    departements = Departement.objects.all().values("code_postal", "nom")
-    print(departements)
+    departements_by_code_postale = {
+        d.code_postal: d.nom for d in Departement.objects.all()
+    }
+    # Special case for Corse
+    departements_by_code_postale["20"] = "Corse"
 
     for result_query in queryset_bydept_bystatut:
-        if result_query["departement"] not in conv_bydept_bystatut:
-            conv_bydept_bystatut[result_query["departement"]] = {}
-        conv_bydept_bystatut[result_query["departement"]][
-            result_query["statut"]
-        ] = result_query["total"]
+        departement_code = result_query["departement"]
+        if departement_code in departements_by_code_postale:
+            departement_code = (
+                f"{departement_code} - {departements_by_code_postale[departement_code]}"
+            )
+        if departement_code not in conv_bydept_bystatut:
+            conv_bydept_bystatut[departement_code] = {}
+        conv_bydept_bystatut[departement_code][result_query["statut"]] = result_query[
+            "total"
+        ]
     result = {
         "departement": [],
         "Projet": [],

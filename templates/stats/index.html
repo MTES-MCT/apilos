@@ -90,7 +90,7 @@
                                 title: {
                                     text: 'Départements'
                                 },
-                                categories: [{{ conv_bydept.departement|join:',' }}]
+                                categories: {{depts|safe}}
                             },
                             yAxis: {
                                 allowDecimals: false,
