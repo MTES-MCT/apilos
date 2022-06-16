@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.conf import settings
 
 from core.tests import utils_fixtures
 
@@ -9,6 +10,7 @@ class UserViewTests(TestCase):
     def setUpTestData(cls):
         # pylint: disable=R0914
         utils_fixtures.create_all()
+        settings.CERBERE = None
 
     def test_no_login(self):
         """

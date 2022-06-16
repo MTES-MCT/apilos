@@ -1,7 +1,6 @@
 import datetime
 from typing import Any
 
-from django.core.files.storage import default_storage
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -26,6 +25,8 @@ from conventions.forms import (
     UploadForm,
     ConventionType1and2Form,
 )
+from conventions.tasks import generate_and_send
+
 from . import utils
 from . import upload_objects
 from . import convention_generator
@@ -658,8 +659,6 @@ def convention_validate(request, convention_uuid):
         # because the watermark report the status of the convention
         previous_status = convention.statut
         convention.statut = ConventionStatut.A_SIGNER
-        file_stream = convention_generator.generate_convention_doc(convention)
-        local_pdf_path = convention_generator.generate_pdf(file_stream, convention)
 
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
@@ -668,17 +667,20 @@ def convention_validate(request, convention_uuid):
             statut_convention_precedent=previous_status,
             user=request.user,
         ).save()
+
+        generate_and_send.send(
+            {
+                "convention_uuid": str(convention.uuid),
+                "convention_recapitulatif_uri": request.build_absolute_uri(
+                    reverse("conventions:recapitulatif", args=[convention.uuid])
+                ),
+                "convention_email_validator": request.user.email,
+            }
+        )
         if not convention.valide_le:
             convention.valide_le = timezone.now()
         convention.save()
-        send_email_valide(
-            request.build_absolute_uri(
-                reverse("conventions:recapitulatif", args=[convention.uuid])
-            ),
-            convention,
-            [request.user.email],
-            local_pdf_path,
-        )
+
         return {
             "success": utils.ReturnStatus.SUCCESS,
             "convention": convention,
@@ -707,67 +709,6 @@ def convention_validate(request, convention_uuid):
         "notificationForm": NotificationForm(),
         "conventionNumberForm": convention_number_form,
     }
-
-
-def send_email_valide(convention_url, convention, cc, local_pdf_path=None):
-
-    if local_pdf_path is not None:
-        extention = local_pdf_path.split(".")[-1]
-
-    from_email = "contact@apilos.beta.gouv.fr"
-
-    # All bailleur users from convention
-    to = convention.get_email_bailleur_users()
-
-    text_content = render_to_string(
-        "emails/bailleur_valide.txt",
-        {
-            "convention_url": convention_url,
-            "convention": convention,
-            "administration": convention.programme.administration,
-        },
-    )
-    html_content = render_to_string(
-        "emails/bailleur_valide.html",
-        {
-            "convention_url": convention_url,
-            "convention": convention,
-            "administration": convention.programme.administration,
-        },
-    )
-
-    if to:
-        msg = EmailMultiAlternatives(
-            f"Convention validé ({convention})", text_content, from_email, to, cc=cc
-        )
-        msg.attach_alternative(html_content, "text/html")
-
-        if local_pdf_path is not None:
-            pdf_file_handler = default_storage.open(local_pdf_path, "rb")
-            if extention == "pdf":
-                msg.attach(
-                    f"{convention}.pdf", pdf_file_handler.read(), "application/pdf"
-                )
-            if extention == "docx":
-                msg.attach(
-                    f"{convention}.docx",
-                    pdf_file_handler.read(),
-                    "application/vnd.openxmlformats-officedocument.wordprocessingm",
-                )
-            pdf_file_handler.close()
-            msg.content_subtype = "html"
-
-        msg.send()
-    else:
-        msg = EmailMultiAlternatives(
-            f"[ATTENTION pas de destinataire à cet email] Convention validé ({convention})",
-            text_content,
-            from_email,
-            ("contact@apilos.beta.gouv.fr",),
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-    return msg
 
 
 @require_POST
