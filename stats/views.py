@@ -10,6 +10,7 @@ from django.db.models import (
     OuterRef,
 )
 from django.db.models.functions import Substr, Concat
+from apilos_settings.models import Departement
 from bailleurs.forms import BailleurForm
 
 from bailleurs.models import Bailleur
@@ -23,54 +24,36 @@ from programmes.forms import (
     ProgrammeForm,
 )
 from programmes.models import Lot, Programme
+from stats.stats_from_sql_raw import average_instruction_delay
 from users.models import User
 
 
 def index(request):
-    query_by_statuses = (
-        Convention.objects.all().values("statut").annotate(total=Count("statut"))
+
+    conventions_by_dept = _get_conventions_by_dept()
+
+    nb_logements = (
+        Convention.objects.all()
+        .aggregate(Sum("lot__nb_logements"))
+        .get("lot__nb_logements__sum")
     )
 
-    result = _get_conventions_by_dept()
-    convention_by_status = {
-        "Projet": 0,
-        "Instruction_requise": 0,
-        "Corrections_requises": 0,
-        "A_signer": 0,
-    }
-
-    comments_champ = (
-        Comment.objects.all()
-        .values("nom_objet")
-        .annotate(name=Concat("nom_objet", Value("-"), "champ_objet"))
-        .values("name", "nom_objet", "champ_objet")
-        .annotate(data=Count("champ_objet"))
-        .order_by("-data", "nom_objet", "champ_objet")
-    )
-    comment_fields = []
-    for qs in comments_champ:
-        comment_fields.append(
-            Comment(
-                nom_objet=qs["nom_objet"], champ_objet=qs["champ_objet"]
-            ).object_detail()
-        )
-    comment_data = []
-    for qs in comments_champ:
-        comment_data.append(qs["data"])
+    comment_fields, comment_data = _nb_comment_by_field()
 
     users = User.objects.prefetch_related("role_set").all()
     bailleurs = users.filter(role__typologie="BAILLEUR").distinct()
     instructeurs = users.filter(role__typologie="INSTRUCTEUR").distinct()
 
-    for query in query_by_statuses:
-        convention_by_status[query["statut"][3:].replace(" ", "_")] = query["total"]
-
     null_fields = get_null_fields()
+
     return render(
         request,
         "stats/index.html",
         {
-            "conventions_by_status": convention_by_status,
+            "conventions_count": Convention.objects.all().count(),
+            "delay": average_instruction_delay(),
+            "conventions_by_status": _convention_by_statut(),
+            "nb_logements": nb_logements,
             "users_by_role": {
                 "nb_instructeurs": instructeurs.count(),
                 "nb_instructeurs_actifs": instructeurs.filter(
@@ -81,14 +64,60 @@ def index(request):
                     last_login__isnull=False
                 ).count(),
             },
-            "conv_bydept": result,
-            "dept": str(result["departement"]),
+            "conv_bydept": conventions_by_dept,
+            "depts": str(conventions_by_dept["departement"]),
             "comment_fields": comment_fields,
-            "comment_data": comment_data,
+            "comment_data": comment_data[0:20],
             "null_fields_keys": list(null_fields.keys()),
-            "null_fields_values": list(null_fields.values()),
+            "null_fields_values": list(
+                round(value, 1) for value in null_fields.values()
+            ),
         },
     )
+
+
+def _nb_comment_by_field():
+    comment_fields = []
+    comment_data = []
+
+    comments_champ = (
+        Comment.objects.all()
+        .values("nom_objet")
+        .annotate(name=Concat("nom_objet", Value("-"), "champ_objet"))
+        .values("name", "nom_objet", "champ_objet")
+        .annotate(data=Count("champ_objet"))
+        .order_by("-data", "nom_objet", "champ_objet")
+    )
+
+    count = 0
+    for qs in comments_champ:
+        count = count + 1
+        label = Comment(
+            nom_objet=qs["nom_objet"], champ_objet=qs["champ_objet"]
+        ).object_detail()
+        comment_fields.append(f"{count} - {label}")
+
+    for qs in comments_champ:
+        comment_data.append(qs["data"])
+
+    return comment_fields, comment_data
+
+
+def _convention_by_statut():
+    convention_by_status = {
+        "Projet": 0,
+        "Instruction_requise": 0,
+        "Corrections_requises": 0,
+        "A_signer": 0,
+    }
+
+    query_convention_by_status = (
+        Convention.objects.all().values("statut").annotate(total=Count("statut"))
+    )
+    for query in query_convention_by_status:
+        convention_by_status[query["statut"][3:].replace(" ", "_")] = query["total"]
+
+    return convention_by_status
 
 
 def _get_conventions_by_dept():
@@ -103,12 +132,23 @@ def _get_conventions_by_dept():
         .order_by("departement")
     )
     conv_bydept_bystatut = {}
+    departements_by_code_postale = {
+        d.code_postal: d.nom for d in Departement.objects.all()
+    }
+    # Special case for Corse
+    departements_by_code_postale["20"] = "Corse"
+
     for result_query in queryset_bydept_bystatut:
-        if result_query["departement"] not in conv_bydept_bystatut:
-            conv_bydept_bystatut[result_query["departement"]] = {}
-        conv_bydept_bystatut[result_query["departement"]][
-            result_query["statut"]
-        ] = result_query["total"]
+        departement_code = result_query["departement"]
+        if departement_code in departements_by_code_postale:
+            departement_code = (
+                f"{departement_code} - {departements_by_code_postale[departement_code]}"
+            )
+        if departement_code not in conv_bydept_bystatut:
+            conv_bydept_bystatut[departement_code] = {}
+        conv_bydept_bystatut[departement_code][result_query["statut"]] = result_query[
+            "total"
+        ]
     result = {
         "departement": [],
         "Projet": [],
@@ -501,5 +541,10 @@ def get_null_fields():
     sorted_null_fields = dict(
         sorted(null_fields.items(), key=operator.itemgetter(1), reverse=True)
     )
+    null_fields_result = {}
+    count = 0
+    for key, value in sorted_null_fields.items():
+        count = count + 1
+        null_fields_result[f"{count} - {key}"] = value
 
-    return sorted_null_fields
+    return null_fields_result
