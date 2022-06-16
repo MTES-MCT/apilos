@@ -624,3 +624,30 @@ table.fullwidth {
   top: 0;
   z-index: 998;
 }
+
+/*
+ * SIAP
+ */
+
+.apilos-active-habilitation {
+  background-color: pink;
+}
+
+
+.apilos-links-group {
+  justify-content: flex-end;
+  width: calc(100% + 1rem);
+  --ul-type: none;
+  --ol-type: none;
+  --ul-start: 0;
+  --ol-start: 0;
+  --xl-block: 0;
+  --li-bottom: 0;
+  --ol-content: none;
+  align-items: stretch;
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+}
