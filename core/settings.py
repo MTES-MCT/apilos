@@ -53,25 +53,17 @@ ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
 TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 
 # LOGGING = {
-#     'version': 1,
-#     'filters': {
-#         'require_debug_true': {
-#             '()': 'django.utils.log.RequireDebugTrue',
-#         }
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "handlers": {
+#         "console": {
+#             "class": "logging.StreamHandler",
+#         },
 #     },
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'filters': ['require_debug_true'],
-#             'class': 'logging.StreamHandler',
-#         }
+#     "root": {
+#         "handlers": ["console"],
+#         "level": "WARNING",
 #     },
-#     'loggers': {
-#         'django.db.backends': {
-#             'level': 'DEBUG',
-#             'handlers': ['console'],
-#         }
-#     }
 # }
 
 mailjet_api_key = get_env_variable("MAILJET_API_KEY")
@@ -104,6 +96,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
+    "django_dramatiq",
     "bailleurs.apps.BailleursConfig",
     "conventions.apps.ConventionsConfig",
     "instructeurs.apps.InstructeursConfig",
@@ -157,7 +150,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "core.wsgi.application"
-
 
 try:
     database_url = os.environ["DATABASE_URL"]
@@ -381,3 +373,13 @@ if SENTRY_URL:
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
     )
+
+DRAMATIQ_BROKER = {
+    "BROKER": "dramatiq.brokers.redis.RedisBroker",
+    "OPTIONS": {
+        "url": config("REDIS_URL", default="redis://redis:6379"),
+    },
+    "MIDDLEWARE": [
+        "django_dramatiq.middleware.AdminMiddleware",
+    ],
+}
