@@ -50,3 +50,14 @@ La branche `master` doit-être pousser sur le repo origin pour que les tests soi
 Puis la la branche `master` peut-être déployée sur l'environnement de `production` sur scalingo avec la commande :
 
 ```git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master```
+
+## Déployer un nouvel environnement
+
+1. ajout d'une application dans scalingo
+1. Ajout d'addons : postgresql, redis
+1. Ajout des variable d'environnement (Scalingo > Environnement)
+1. Ajout du nom de domaine dans scalingo (Scalingo > Settings > Domain/SSL)
+1. Ajout d'un enregistrement DNS CNAME vers l'APP Scalingo (Alwaysdata > Domains > DNS Records)
+1. Forcer HTTPS (Scalingo > Settings > Routing)
+1. Scale les APPs (Scalingo > Resources)
+
