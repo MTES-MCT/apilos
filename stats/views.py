@@ -10,7 +10,7 @@ from django.db.models import (
     OuterRef,
 )
 from django.db.models.functions import Substr, Concat
-
+from apilos_settings.models import Departement
 from bailleurs.forms import BailleurForm
 
 from bailleurs.models import Bailleur
@@ -121,6 +121,9 @@ def _get_conventions_by_dept():
         .order_by("departement")
     )
     conv_bydept_bystatut = {}
+    departements = Departement.objects.all().values("code_postal", "nom")
+    print(departements)
+
     for result_query in queryset_bydept_bystatut:
         if result_query["departement"] not in conv_bydept_bystatut:
             conv_bydept_bystatut[result_query["departement"]] = {}
