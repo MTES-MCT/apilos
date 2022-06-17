@@ -106,7 +106,30 @@ Ouvrir un shell django
 
 Puis test de quelques appels:
 
+```python
 >>> from core.siap_client.client import SIAPClient
 >>> SIAPClient.get_instance().get_habilitations(user_login='nicolas.oudard@beta.gouv.fr')
 >>> SIAPClient.get_instance().get_menu(user_login='nicolas.oudard@beta.gouv.fr', habilitation_id=5)
 >>> SIAPClient.get_instance().get_operation(user_login='nicolas.oudard@beta.gouv.fr', habilitation_id=5, operation_identifier='20220600002')
+```
+
+## Todo
+
+- [x] Affichage des habilitations dans l’en-tête
+- [x] Affichage du menu dans l’entête
+- [x] Création des environnements integration recette preprod
+- [x] Résoudre les pb d’appel aux API menu et opération
+- [x] Création d’une route API permettant au SIAP de récupérer le détail des conventions
+- [x] Création d’une route API permettant d’afficher les indicateurs
+- [ ] Intégration du design de l’entête
+- [ ] Création de l’entité de l'utilisateur (Administration ou Bailleur) si elle n’existe pas
+- [ ] Retourner les indicateurs selon l'habilitation active de l'utilisateur
+- [ ] Affichage de la liste des conventions selon l’habilitation
+- [ ] Création des conventions et affichage des conventions à faire pour un opération données
+- [ ] **Démarrage de l'expérimentation**
+- [ ] Affichage des convention en lecture seule (selon l'habilitation)
+
+Questions ouvertes pour plus tard :
+
+- [ ] Comment retrouver les paramètres propres à APiLos dans la version SIAP
+- [ ] Vérifier l'habilitation de l'utilisateur avvant de renvoyer la liste des conventions d'une opération
