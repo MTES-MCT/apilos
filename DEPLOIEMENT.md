@@ -61,3 +61,6 @@ Puis la la branche `master` peut-être déployée sur l'environnement de `produc
 1. Forcer HTTPS (Scalingo > Settings > Routing)
 1. Scale les APPs (Scalingo > Resources)
 
+Pour le SIAP,
+
+8. Créer un utilisateur siap et transmettre son id au équipe du SIAP

@@ -122,14 +122,30 @@ Puis test de quelques appels:
 - [x] Création d’une route API permettant au SIAP de récupérer le détail des conventions
 - [x] Création d’une route API permettant d’afficher les indicateurs
 - [ ] Intégration du design de l’entête
+- [ ] Mapping SIAP / APiLos en utilisant les routes SIAP>opération et APiLos>opération
 - [ ] Création de l’entité de l'utilisateur (Administration ou Bailleur) si elle n’existe pas
 - [ ] Retourner les indicateurs selon l'habilitation active de l'utilisateur
 - [ ] Affichage de la liste des conventions selon l’habilitation
 - [ ] Création des conventions et affichage des conventions à faire pour un opération données
 - [ ] **Démarrage de l'expérimentation**
-- [ ] Affichage des convention en lecture seule (selon l'habilitation)
+- [ ] Affichage des conventions en lecture seule (selon l'habilitation)
+- [ ] Affichage des statistiques du conventionnement
+- [ ] Miror du repo github dans [gitlab](https://gitlab-forge.din.developpement-durable.gouv.fr/dgaln/dhup/apilos) pour le SNUM
 
 Questions ouvertes pour plus tard :
 
 - [ ] Comment retrouver les paramètres propres à APiLos dans la version SIAP
 - [ ] Vérifier l'habilitation de l'utilisateur avvant de renvoyer la liste des conventions d'une opération
+
+
+## token exemple
+
+```json
+{
+  "iat": 1655458148,
+  "exp": 1655458448,
+  "jti": "9f192912-426b-41c2-a8a5-ab51077a27fd",
+  "user-login": "nicolas.oudard@beta.gouv.fr",
+  "habilitation-id": 5
+}
+```

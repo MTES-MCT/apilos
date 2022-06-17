@@ -140,6 +140,202 @@ menu_mock = {
     ]
 }
 
+operation_mock = {
+    "donneesMo": {
+        "raisonSociale": "13 HABITAT",
+        "siren": "782855696",
+        "adresseL3Siege": None,
+        "adresseL4Siege": "80 RUE ALBE",
+        "adresseL6Siege": "13004 MARSEILLE 4",
+        "codeFamilleMO": None,
+    },
+    "donneesLocalisation": {
+        "region": {"codeInsee": "93", "libelle": None},
+        "departement": {"codeInsee": "13", "libelle": None},
+        "commune": {"codeInsee": "13210", "libelle": "Marseille - 10e arrondissement"},
+        "adresse": " Allée de l’Aubepine 13010 Marseille",
+        "zonage123": "02",
+        "zonageABC": None,
+    },
+    "donneesOperation": {
+        "nomOperation": "test",
+        "numeroOperation": "20220600005",
+        "aides": [
+            {"code": "PLUS", "libelle": "PLUS"},
+            {"code": "PLS", "libelle": "PLS"},
+        ],
+        "sousNatureOperation": "CNE",
+        "typeConstruction": "TC_I",
+        "natureLogement": "LOO",
+    },
+    "detailsOperation": [
+        {
+            "aide": {"code": "PLUS", "libelle": "PLUS"},
+            "logement": {"nbLogementsIndividuels": 10, "nbLogementsCollectifs": None},
+            "detailsTypeLogement": [
+                {
+                    "typeLogement": "T1",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T1BIS",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T1P",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T2",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T3",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T4",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T5",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T6",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+            ],
+            "garages": [
+                {
+                    "type": "Enterrés / Sous-sol",
+                    "nbGaragesIndividuels": 0,
+                    "nbGaragesCollectifs": None,
+                },
+                {
+                    "type": "Superstructure",
+                    "nbGaragesIndividuels": 0,
+                    "nbGaragesCollectifs": None,
+                },
+            ],
+            "loyers": [
+                {
+                    "type": "Individuel",
+                    "loyerZone": 0.0,
+                    "loyerBase": 0.0,
+                    "loyerReglementaire": 0.0,
+                    "loyerPratique": 0,
+                    "loyerGarages": [
+                        {"type": "Enterrés / Sous-sol", "loyer": 0},
+                        {"type": "Superstructure", "loyer": 0},
+                    ],
+                }
+            ],
+        },
+        {
+            "aide": {"code": "PLS", "libelle": "PLS"},
+            "logement": {"nbLogementsIndividuels": 12, "nbLogementsCollectifs": None},
+            "detailsTypeLogement": [
+                {
+                    "typeLogement": "T1",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T1BIS",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T1P",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T2",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T3",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T4",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T5",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T6",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+            ],
+            "garages": [
+                {
+                    "type": "Enterrés / Sous-sol",
+                    "nbGaragesIndividuels": 0,
+                    "nbGaragesCollectifs": None,
+                },
+                {
+                    "type": "Superstructure",
+                    "nbGaragesIndividuels": 0,
+                    "nbGaragesCollectifs": None,
+                },
+            ],
+            "loyers": [
+                {
+                    "type": "Individuel",
+                    "loyerZone": 0.0,
+                    "loyerBase": 0.0,
+                    "loyerReglementaire": 0.0,
+                    "loyerPratique": 0,
+                    "loyerGarages": [
+                        {"type": "Enterrés / Sous-sol", "loyer": 0},
+                        {"type": "Superstructure", "loyer": 0},
+                    ],
+                }
+            ],
+        },
+    ],
+    "planFinancement": {
+        "subventions": [{"type": "PLUS", "montant": None}],
+        "prets": [],
+        "fondsPropres": 0.0,
+    },
+    "gestionnaire": None,
+}
+
 
 def _build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
     dt_iat = datetime.datetime.now()
@@ -252,7 +448,9 @@ class SIAPClientRemote(SIAPClientInterface):
         )
         if response.status_code >= 200 and response.status_code < 300:
             return response.json()
-        raise Exception("user doesn't have SIAP habilitation")
+        raise Exception(
+            f"user doesn't have SIAP habilitation, SIAP error returned {response.content}"
+        )
 
     def get_menu(self, user_login: str, habilitation_id: int = 0) -> dict:
         response = _call_siap_api(
@@ -301,4 +499,4 @@ class SIAPClientMock(SIAPClientInterface):
     def get_operation(
         self, user_login: str, habilitation_id: int, operation_identifier: str
     ) -> dict:
-        return {}
+        return operation_mock
