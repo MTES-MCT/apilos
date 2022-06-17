@@ -248,39 +248,19 @@ def edit_bailleur(request, bailleur_uuid):
     )
     user_list_service.paginate()
 
+    signataire_list_service = SignataireListService(
+        search_input=request.GET.get("search_input", ""),
+        order_by=request.GET.get("order_by", "nom"),
+        page=request.GET.get("page", 1),
+        my_signataire_list=bailleur.signataire_set.all().all(),
+    )
+    signataire_list_service.paginate()
+
     return {
-        **user_list_service.as_dict(),
+        **signataire_list_service.as_dict(),
         "form": form,
         "editable": True,
         "success": success,
-    }
-
-
-@require_GET
-def signataire_list(request):
-    search_input = request.GET.get("search_input", "")
-    order_by = request.GET.get("order_by", "nom")
-    page = request.GET.get("page", 1)
-
-    my_signataire_list = request.user.bailleurs().order_by(order_by)
-    total_signataire = my_signataire_list.count()
-    if search_input:
-        my_signataire_list = my_signataire_list.filter(
-            Q(nom__icontains=search_input) | Q(fonction__icontains=search_input)
-        )
-    paginator = Paginator(my_signataire_list, settings.APILOS_PAGINATION_PER_PAGE)
-    try:
-        signataires = paginator.page(page)
-    except PageNotAnInteger:
-        signataires = paginator.page(1)
-    except EmptyPage:
-        signataires = paginator.page(paginator.num_pages)
-
-    return {
-        "signataires": signataires,
-        "total_signataire": total_signataire,
-        "order_by": order_by,
-        "search_input": search_input,
     }
 
 
@@ -568,4 +548,59 @@ class UserListService:
             "my_user_list": self.my_user_list,
             "paginated_users": self.paginated_users,
             "total_users": self.total_users,
+        }
+
+
+class SignataireListService:
+    search_input: str
+    order_by: str
+    page: str
+    my_signataire_list: Any
+    paginated_signataires: Any
+    total_signataires: int
+
+    def __init__(
+        self,
+        search_input: str,
+        order_by: str,
+        page: str,
+        my_signataire_list: Any,
+    ):
+        self.search_input = search_input
+        self.order_by = order_by
+        self.page = page
+        self.my_signataire_list = my_signataire_list
+
+    def paginate(self) -> None:
+        total_signataire = self.my_signataire_list.count()
+        if self.search_input:
+            self.my_signataire_list = self.my_signataire_list.filter(
+                Q(nom__icontains=self.search_input)
+                | Q(fonction_name__icontains=self.search_input)
+                | Q(date_deliberation__icontains=self.search_input)
+            )
+        if self.order_by:
+            self.my_signataire_list = self.my_signataire_list.order_by(self.order_by)
+
+        paginator = Paginator(
+            self.my_signataire_list, settings.APILOS_PAGINATION_PER_PAGE
+        )
+        try:
+            signataires = paginator.page(self.page)
+        except PageNotAnInteger:
+            signataires = paginator.page(1)
+        except EmptyPage:
+            signataires = paginator.page(paginator.num_pages)
+
+        self.paginated_signataires = signataires
+        self.total_signataires = total_signataire
+
+    def as_dict(self):
+        return {
+            "search_input": self.search_input,
+            "order_by": self.order_by,
+            "page": self.page,
+            "my_signataire_list": self.my_signataire_list,
+            "paginated_signataires": self.paginated_signataires,
+            "total_signataires": self.total_signataires,
         }
