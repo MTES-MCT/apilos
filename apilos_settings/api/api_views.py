@@ -14,6 +14,9 @@ from drf_spectacular.utils import (
 )
 
 from django.conf import settings
+from django.db.models import Count
+
+from conventions.models import Convention, ConventionStatut
 
 
 class ApilosConfiguration(APIView):
@@ -137,10 +140,34 @@ class ConventionKPI(APIView):
         """
         Return main settings of the application.
         """
+        query_by_statuses = (
+            Convention.objects.all().values("statut").annotate(total=Count("statut"))
+        )
+        print(query_by_statuses)
+        print(ConventionStatut.A_SIGNER)
+        instruction = 0
+        a_signer = 0
+        transmise = 0
+        for q in query_by_statuses:
+            if q["statut"] in [
+                ConventionStatut.PROJET,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+            ]:
+                instruction = instruction + q["total"]
+            if q["statut"] == ConventionStatut.A_SIGNER:
+                a_signer = q["total"]
+            if q["statut"] == ConventionStatut.TRANSMISE:
+                transmise = q["total"]
+
         list_conv_kpi = [
-            ConvKPI("indicateur_redirection_url1", 1, "indicateur_label"),
-            ConvKPI("indicateur_redirection_url2", 2, "indicateur_label"),
-            ConvKPI("indicateur_redirection_url3", 3, "indicateur_label"),
+            ConvKPI(
+                "/conventions/?cstatut=2.+Instruction+requise",
+                instruction,
+                "En instruction",
+            ),
+            ConvKPI("/conventions/?cstatut=4.+A+signer", a_signer, "A signer"),
+            ConvKPI("/conventions/?cstatut=5.+Transmise", transmise, "Transmises"),
         ]
 
         serializer = ConventionKPISerializer(list_conv_kpi, many=True)
