@@ -52,27 +52,27 @@ DEBUG = get_env_variable("DEBUG", cast=bool)
 ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
 TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 
-# LOGGING = {
-#     'version': 1,
-#     'filters': {
-#         'require_debug_true': {
-#             '()': 'django.utils.log.RequireDebugTrue',
-#         }
-#     },
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'filters': ['require_debug_true'],
-#             'class': 'logging.StreamHandler',
-#         }
-#     },
-#     'loggers': {
-#         'django.db.backends': {
-#             'level': 'DEBUG',
-#             'handlers': ['console'],
-#         }
-#     }
-# }
+LOGGING = {
+    "version": 1,
+    "filters": {
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        }
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "filters": ["require_debug_true"],
+            "class": "logging.StreamHandler",
+        }
+    },
+    # 'loggers': {
+    #     'django.db.backends': {
+    #         'level': 'DEBUG',
+    #         'handlers': ['console'],
+    #     }
+    # }
+}
 
 mailjet_api_key = get_env_variable("MAILJET_API_KEY")
 mailjet_api_secret = get_env_variable("MAILJET_API_SECRET")
@@ -104,6 +104,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
+    "django_dramatiq",
     "bailleurs.apps.BailleursConfig",
     "conventions.apps.ConventionsConfig",
     "instructeurs.apps.InstructeursConfig",
@@ -131,6 +132,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
 ]
+
 if not TESTING:
     MIDDLEWARE = MIDDLEWARE + [
         "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -157,7 +159,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "core.wsgi.application"
-
 
 try:
     database_url = os.environ["DATABASE_URL"]
@@ -225,8 +226,9 @@ STAGING = False
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
+
 AUTHENTICATION_BACKENDS = [
-    "users.backends.EmailBackend",
+    "core.backends.EmailBackend",
 ]
 
 # Redirect to home URL after login
@@ -317,9 +319,14 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ALGORITHM": "HS256",
-    "SIGNING_KEY": get_env_variable("JWT_SIGN_KEY"),
+    "ALGORITHM": get_env_variable("JWT_ALGORITHM", default="HS256"),
+    "SIGNING_KEY": get_env_variable("JWT_SIGN_KEY", default=None),
 }
+
+SIAP_CLIENT_JWT_SIGN_KEY = get_env_variable("SIAP_CLIENT_JWT_SIGN_KEY", default=None)
+SIAP_CLIENT_ALGORITHM = get_env_variable("SIAP_CLIENT_ALGORITHM", default="HS256")
+SIAP_CLIENT_HOST = get_env_variable("SIAP_CLIENT_HOST", default=None)
+SIAP_CLIENT_PATH = get_env_variable("SIAP_CLIENT_PATH", default=None)
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "API APiLos",
@@ -338,14 +345,15 @@ SWAGGER_SETTINGS = {
 }
 
 CERBERE_AUTH = get_env_variable("CERBERE_AUTH")
+USE_MOCKED_SIAP_CLIENT = get_env_variable("USE_MOCKED_SIAP_CLIENT", cast=bool)
 
 if CERBERE_AUTH:
     MIDDLEWARE = MIDDLEWARE + [
         "django_cas_ng.middleware.CASMiddleware",
+        "core.custom_middleware.CerbereSessionMiddleware",
     ]
 
-    AUTHENTICATION_BACKENDS = [
-        "users.backends.EmailBackend",
+    AUTHENTICATION_BACKENDS = AUTHENTICATION_BACKENDS + [
         "core.backends.CerbereCASBackend",
     ]  # custom backend CAS
 
@@ -356,6 +364,7 @@ if CERBERE_AUTH:
     CAS_APPLY_ATTRIBUTES_TO_USER = True
     CAS_RENAME_ATTRIBUTES = {
         "UTILISATEUR.ID": "username",
+        "UTILISATEUR.LOGIN": "cerbere_login",
         "UTILISATEUR.NOM": "last_name",
         "UTILISATEUR.PRENOM": "first_name",
         "UTILISATEUR.MEL": "email",
@@ -381,3 +390,13 @@ if SENTRY_URL:
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
     )
+
+DRAMATIQ_BROKER = {
+    "BROKER": "dramatiq.brokers.redis.RedisBroker",
+    "OPTIONS": {
+        "url": config("REDIS_URL", default="redis://redis:6379"),
+    },
+    "MIDDLEWARE": [
+        "django_dramatiq.middleware.AdminMiddleware",
+    ],
+}

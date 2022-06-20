@@ -11,16 +11,6 @@ services:
       - ./pgdata:/var/lib/postgresql/data
     ports:
       - 5433:5432
-#   apilos:
-#     build: .
-# #    command: tail -f README.md
-#     command: pipenv run python manage.py runserver 0.0.0.0:8000
-#     volumes:
-#       - .:/code
-#     ports:
-#       - "8001:8000"
-#     depends_on:
-#       - postgres
 
 volumes:
   data:

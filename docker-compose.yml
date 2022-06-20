@@ -11,17 +11,35 @@ services:
       - ./pgdata:/var/lib/postgresql/data
     ports:
       - 5433:5432
-  apilos:
+  redis:
+    image: redis:7.0
+    restart: always
+    expose:
+      - 6379
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+  apilos: &apilos
     build: .
-    command: pipenv run python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
     ports:
       - "8001:8000"
     depends_on:
       - postgres
+      - redis
+
+  dramatiq:
+    <<: *apilos
+    command: python manage.py rundramatiq
+    ports: []
+
 
 volumes:
+  cache:
+    driver: local
   data:
     driver: local
   pgdata:

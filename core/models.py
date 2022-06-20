@@ -191,7 +191,8 @@ class IngestableModel(models.Model):
             cls._meta.get_field(each_field),
             models.fields.related.ForeignKey,
         ):
-            my_object.__setattr__(
+            setattr(
+                my_object,
                 each_field,
                 cls._meta.get_field(each_field)
                 .related_model.objects.filter(
@@ -205,7 +206,7 @@ class IngestableModel(models.Model):
 
         elif isinstance(cls._meta.get_field(each_field), models.fields.IntegerField):
             try:
-                my_object.__setattr__(each_field, int(element[each_field]))
+                setattr(my_object, each_field, int(element[each_field]))
             except ValueError:
                 print(
                     f"IGNORED field {each_field} because value is not"
@@ -217,8 +218,8 @@ class IngestableModel(models.Model):
         ):
             filter_on_value = filter_choices_on_key(cls, element, each_field)
             if filter_on_value:
-                my_object.__setattr__(each_field, filter_on_value[0][0])
+                setattr(my_object, each_field, filter_on_value[0][0])
             else:
-                my_object.__setattr__(each_field, element[each_field])
+                setattr(my_object, each_field, element[each_field])
         else:
-            my_object.__setattr__(each_field, element[each_field])
+            setattr(my_object, each_field, element[each_field])
