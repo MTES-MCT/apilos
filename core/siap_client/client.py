@@ -497,6 +497,27 @@ class SIAPClientInterface:
         pass
 
 
+def create_gestionnaire_if_not_exists(gestionnaire):
+    return gestionnaire
+
+
+def create_mo_if_not_exists(mo):
+    return mo
+
+
+def create_entity_from_habilitation_if_not_exists(habilitation):
+    entity = None
+    try:
+        if habilitation["groupe"]["profil"]["code"] == "SER_GEST":
+            create_gestionnaire_if_not_exists(habilitation["gestionnaire"])
+        if habilitation["groupe"]["profil"]["code"] == "MO_PERS_MORALE":
+            create_gestionnaire_if_not_exists(habilitation)
+    except KeyError as e:
+        raise KeyError("habilitation is not well formed")
+
+    return entity
+
+
 # Manage SiapClient as a Singleton
 class SIAPClientRemote(SIAPClientInterface):
     def get_siap_config(self) -> dict:
