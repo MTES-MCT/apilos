@@ -80,7 +80,8 @@
                     document.addEventListener('DOMContentLoaded', function () {
                         const chart = Highcharts.chart('conv_by_departement', {
                             chart: {
-                                type: 'bar'
+                                type: 'bar',
+                                height: 600
                             },
                             title: {
                                 text: 'Répartition des conventions sur APiLos par département et par statut'
@@ -150,7 +151,7 @@
                     const chart = Highcharts.chart('correct_by_field', {
                         chart: {
                             type: 'bar',
-                            height: 800
+                            height: 600
                         },
                         title: {
                             text: "Champs donnant lieu au plus d'échange entre les bailleurs et les instructeurs"
