@@ -1,6 +1,8 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %}Téléversement - APiLos{% endblock%}
+{% block page_title %}
+    {% if convention.statut == '5. Transmise' %}Avenants{% else %}Téléversement{% endif %} - APiLos
+{% endblock%}
 
 {% load static %}
 
@@ -9,8 +11,12 @@
         {% include "conventions/common/form_header.html" with convention=convention %}
         {% include "common/step_progressbar.html" with convention=convention %}
         <div class="fr-container">
-            <h2>pouet pouet</h2>
-            <div>ici bientôt la possibiltié de téléverser la convention finalisée</div>
+            <h2>Votre convention signée</h2>
+            {% if convention.statut == '5. Transmise' %}
+                <div class="fr-col-md-12 fr-py-5w">Votre convention signée à déjà été téléversée et a été transmise aux services concernés. Vous pouvez maintenant créer des avenants si besoin.</div>
+            {% else %}
+                <div class="fr-col-md-12 fr-py-5w">ici bientôt la possibilité de téléverser la convention finalisée</div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
