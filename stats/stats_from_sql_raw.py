@@ -17,7 +17,8 @@ def average_instruction_delay():
             join conventions_conventionhistory as ch_inst
             on ch_inst.convention_id = c.id
             and ch_inst.statut_convention = '{ConventionStatut.INSTRUCTION}'
-            where statut = '{ConventionStatut.A_SIGNER}' group by c.uuid, c.cree_le)
+            where statut = '{ConventionStatut.A_SIGNER}' and c.cree_le > '2022-01-01'
+            group by c.uuid, c.cree_le)
     select AVG(delay) from tmp_conv;"""
         )
         delay = cursor.fetchone()
