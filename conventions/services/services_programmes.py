@@ -473,7 +473,6 @@ def _programme_cadastrale_atomic_update(request, convention, programme):
                 f"form-{idx}-lieudit": form_reference_cadastrale["lieudit"].value(),
                 f"form-{idx}-surface": form_reference_cadastrale["surface"].value(),
             }
-    print(initformset)
     formset = ReferenceCadastraleFormSet(initformset)
     formset_is_valid = formset.is_valid()
 
