@@ -11,7 +11,7 @@ from programmes.models import FinancementEDD
 from conventions.services import services
 from conventions.services.utils import ReturnStatus
 
-NB_STEPS = 11
+NB_STEPS = 12
 
 
 # @permission_required("convention.view_convention")
@@ -412,3 +412,33 @@ def display_operation(request, programme_uuid, programme_financement):
             },
         )
     return PermissionDenied
+
+
+# @permission_required("convention.change_convention", raise_exception=True)
+@login_required
+def preview(request, convention_uuid):
+    # Step 11/12
+    result = services.convention_preview(convention_uuid)
+    return render(
+        request,
+        "conventions/preview.html",
+        {
+            **result,
+            "convention_form_step": 11,
+        },
+    )
+
+
+# @permission_required("convention.change_convention", raise_exception=True)
+@login_required
+def sent(request, convention_uuid):
+    # Step 12/12
+    result = services.convention_sent(convention_uuid)
+    return render(
+        request,
+        "conventions/sent.html",
+        {
+            **result,
+            "convention_form_step": 12,
+        },
+    )

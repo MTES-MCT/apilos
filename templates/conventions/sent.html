@@ -1,0 +1,16 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %}Téléversement - APiLos{% endblock%}
+
+{% load static %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        {% include "conventions/common/form_header.html" with convention=convention %}
+        {% include "common/step_progressbar.html" with convention=convention %}
+        <div class="fr-container">
+            <h2>pouet pouet</h2>
+            <div>ici bientôt la possibiltié de téléverser la convention finalisée</div>
+        </div>
+    </div>
+{% endblock %}

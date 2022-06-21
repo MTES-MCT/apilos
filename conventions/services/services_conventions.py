@@ -789,3 +789,13 @@ class ConventionListService:
 
         self.paginated_conventions = conventions
         self.total_conventions = total_user
+
+
+def convention_preview(convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    return {"convention": convention}
+
+
+def convention_sent(convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    return {"convention": convention}
