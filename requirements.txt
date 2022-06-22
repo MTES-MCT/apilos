@@ -8,9 +8,9 @@ asgiref==3.5.2 \
     --hash=sha256:1d2880b792ae8757289136f1db2b7b99100ce959b2aa57fd69dab783d05afac4 \
     --hash=sha256:4a29362a6acebe09bf1d6640db38c1dc3d9217c68e6f9f6204d72667fc19a424
     # via django
-astroid==2.11.5 \
-    --hash=sha256:14ffbb4f6aa2cf474a0834014005487f7ecd8924996083ab411e7fa0b508ce0b \
-    --hash=sha256:f4e4ec5294c4b07ac38bab9ca5ddd3914d4bf46f9006eb5c0ae755755061044e
+astroid==2.11.6 \
+    --hash=sha256:4f933d0bf5e408b03a6feb5d23793740c27e07340605f236496cd6ce552043d6 \
+    --hash=sha256:ba33a82a9a9c06a5ceed98180c5aab16e29c285b828d94696bf32d6015ea82a9
     # via pylint
 async-timeout==4.0.2 \
     --hash=sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15 \
@@ -559,9 +559,9 @@ pyjwt==2.4.0 \
     # via
     #   -r requirements.in
     #   djangorestframework-simplejwt
-pylint==2.14.1 \
-    --hash=sha256:549261e0762c3466cc001024c4419c08252cb8c8d40f5c2c6966fea690e7fe2a \
-    --hash=sha256:bb71e6d169506de585edea997e48d9ff20c0dc0e2fbc1d166bad6b640120326b
+pylint==2.14.3 \
+    --hash=sha256:4e1378f815c63e7e44590d0d339ed6435f5281d0a0cc357d29a86ea0365ef868 \
+    --hash=sha256:6757a027e15816be23625b079ebc45464e4c9d9dde0c826d18beee53fe22a2e7
     # via
     #   pylint-django
     #   pylint-plugin-utils
