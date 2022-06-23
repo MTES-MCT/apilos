@@ -38,7 +38,11 @@ class CerbereSessionMiddleware:
                     user_login=request.user.cerbere_login,
                     habilitation_id=habilitation_id,
                 )
-                habilitations = response["habilitations"]
+                habilitations = list(
+                    filter(
+                        lambda x: x["statut"] == "VALIDEE", response["habilitations"]
+                    )
+                )
                 request.session["habilitations"] = habilitations
 
                 if habilitation_id in map(lambda x: x["id"], habilitations):
@@ -46,7 +50,7 @@ class CerbereSessionMiddleware:
                     request.session["habilitation"] = list(
                         filter(lambda x: x.get("id") == habilitation_id, habilitations)
                     )[0]
-                elif len(habilitations):
+                elif habilitations:
                     request.session["habilitation_id"] = habilitations[0]["id"]
                     request.session["habilitation"] = habilitations[0]
                 else:
