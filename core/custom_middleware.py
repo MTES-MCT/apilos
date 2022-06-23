@@ -63,11 +63,10 @@ class CerbereSessionMiddleware:
                     )
                     request.session["menu"] = response["menuItems"]
 
-            request.user.siap_habilitation = {
-                "is_bailleur": request.session["is_bailleur"],
-                "bailleur": request.session["bailleur"],
-                "currently": request.session["currently"],
-            }
+            for key in ["bailleur", "currently", "administration"]:
+                request.user.siap_habilitation[key] = (
+                    request.session[key] if key in request.session else None
+                )
             # request.session["habilitation"]
 
         response = self.get_response(request)
