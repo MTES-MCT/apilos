@@ -605,6 +605,10 @@ table.fullwidth {
  * End display convention status
  */
 
+.fr-btn:hover {
+  color:white;
+  text-decoration: none;
+}
 
 .apilos-input-group--inline {
   display: flex;
@@ -616,7 +620,6 @@ table.fullwidth {
 .apilos-form-label--strike {
   text-decoration: line-through;
 }
-
 
 .apilos-sticky-top {
   position: -webkit-sticky; /* Safari */

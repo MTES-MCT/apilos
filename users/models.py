@@ -12,15 +12,21 @@ from programmes.models import Lot, Programme
 from users.type_models import TypeRole, EmailPreferences
 
 
-class slist(list):
-    @property
-    def length(self):
-        return len(self)
+class GroupProfile(models.TextChoices):
+    BAILLEUR = "BAILLEUR", "Bailleur"
+    INSTRUCTEUR = "INSTRUCTEUR", "Instructeur"
+    SIAP_ADM_CENTRALE = "ADM_CENTRALE", "Administration Centrale"
+    SIAP_DIR_REG = "DIR_REG", "Service régional"
+    SIAP_SER_DEP = "SER_DEP", "Service départemental"
+    SIAP_SER_GEST = "SER_GEST", "Service de gestion - délégataire des aides à la pierre"
+    SIAP_ASS_HLM = "ASS_HLM", "Association HLM"
+    SIAP_MO_PERS_MORALE = "MO_PERS_MORALE", "Maitre d'ouvrage - personne morale"
+    SIAP_MO_PERS_PHYS = "MO_PERS_PHYS", "Maitre d'ouvrage - personne physique"
 
 
 class User(AbstractUser):
     # pylint: disable=R0904
-    siap_habilitation = None
+    siap_habilitation = {}
     administrateur_de_compte = models.BooleanField(default=False)
     telephone = models.CharField(
         null=True,
@@ -90,11 +96,22 @@ class User(AbstractUser):
             raise PermissionDenied
 
     def is_bailleur(self, bailleur_id=None):
+        if self.is_cerbere_user():
+            return (
+                "currently" in self.siap_habilitation
+                and self.siap_habilitation["currently"]
+                == GroupProfile.SIAP_MO_PERS_MORALE
+            )
         if bailleur_id is not None:
             return self.roles.filter(bailleur_id=bailleur_id)
         return self._is_role(TypeRole.BAILLEUR) or self.is_superuser
 
     def is_instructeur(self):
+        if self.is_cerbere_user():
+            return (
+                "currently" in self.siap_habilitation
+                and self.siap_habilitation["currently"] == GroupProfile.SIAP_SER_GEST
+            )
         return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
 
     def _is_role(self, role):
@@ -206,6 +223,9 @@ class User(AbstractUser):
         )
 
     def _bailleur_ids(self) -> list:
+        if self.is_cerbere_user():
+            return [self.siap_habilitation["bailleur"]["id"]]
+
         return list(
             map(
                 lambda role: role.bailleur_id,
@@ -223,6 +243,7 @@ class User(AbstractUser):
         For a `bailleur`, it returns the conventions of its bailleur entities in the limit of its
         geographic filter
         """
+
         if self.is_superuser:
             return Convention.objects.all()
 

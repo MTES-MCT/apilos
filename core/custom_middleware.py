@@ -1,5 +1,12 @@
+from django.contrib.auth.models import Group
 from django.conf import settings
+from django.forms import model_to_dict
+from django.http import HttpRequest
+from bailleurs.models import Bailleur
 from core.siap_client.client import SIAPClient
+from instructeurs.models import Administration
+from users.models import Role, GroupProfile
+from users.type_models import TypeRole
 
 
 class CerbereSessionMiddleware:
@@ -45,7 +52,7 @@ class CerbereSessionMiddleware:
                 else:
                     raise Exception("Pas d'habilitation associéé à l'utilisateur")
                 # Set habilitation in session
-                #                _find_or_create_entity(request.session["habilitation"])
+                _find_or_create_entity(request, request.session["habilitation"])
 
                 if settings.NO_SIAP_MENU:
                     request.session["menu"] = None
@@ -56,8 +63,67 @@ class CerbereSessionMiddleware:
                     )
                     request.session["menu"] = response["menuItems"]
 
-            request.user.siap_habilitation = request.session["habilitation"]
+            request.user.siap_habilitation = {
+                "is_bailleur": request.session["is_bailleur"],
+                "bailleur": request.session["bailleur"],
+                "currently": request.session["currently"],
+            }
+            # request.session["habilitation"]
 
         response = self.get_response(request)
 
         return response
+
+
+def _find_or_create_entity(request: HttpRequest, habilitation: dict):
+    request.session["currently"] = habilitation["groupe"]["profil"]["code"]
+    if habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_MO_PERS_MORALE:
+        (bailleur, _) = Bailleur.objects.get_or_create(
+            siren=habilitation["entiteMorale"]["siren"],
+            defaults={
+                "siret": habilitation["entiteMorale"]["siren"],
+                "nom": habilitation["entiteMorale"]["nom"],
+                "adresse": habilitation["entiteMorale"]["adresseLigne4"],
+                "code_postal": habilitation["entiteMorale"]["adresseLigne6"][:5],
+                "ville": habilitation["entiteMorale"]["adresseLigne6"][6:],
+            },
+        )
+        request.session["bailleur"] = model_to_dict(
+            bailleur,
+            fields=[
+                "id",
+                "uuid",
+                "siren",
+                "nom",
+            ],
+        )
+        # Manage Role following the habilitation["groupe"]["codeRole"]
+        Role.objects.get_or_create(
+            typologie=TypeRole.BAILLEUR,
+            bailleur=bailleur,
+            user=request.user,
+            group=Group.objects.get(name="bailleur"),
+        )
+    if habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_SER_GEST:
+        # create if not exists gestionnaire
+        (administration, _) = Administration.objects.get_or_create(
+            code=habilitation["gestionnaire"]["code"],
+            defaults={
+                "nom": habilitation["gestionnaire"]["libelle"],
+            },
+        )
+        request.session["administration"] = model_to_dict(
+            administration,
+            fields=[
+                "id",
+                "uuid",
+                "code",
+                "nom",
+            ],
+        )
+        Role.objects.get_or_create(
+            typologie=TypeRole.INSTRUCTEUR,
+            administration=administration,
+            user=request.user,
+            group=Group.objects.get(name="instructeur"),
+        )

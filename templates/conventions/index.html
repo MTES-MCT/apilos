@@ -2,6 +2,8 @@
 
 {% load static %}
 
+{% load custom_filters %}
+
 {% block page_title %}Conventions - APiLos{% endblock%}
 
 {% block content %}
@@ -12,18 +14,17 @@
             <div class="fr-container">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-12 fr-my-5w block--row-strech">
-                        {% if request.session.is_bailleur %}
+                        {% if request|is_bailleur %}
                             <div class="block--row-strech-1">
                                 <h1>Gérer mes conventions APL</h1>
                                 <p class="apilos-subtitle">{{conventions.total_conventions}} convention{{ conventions.total_conventions|pluralize }} liée{{ conventions.total_conventions|pluralize }} à votre bailleur trouvée{{ conventions.total_conventions|pluralize }} dans APiLos</p>
                             </div>
                             <div>
-                                <button class="fr-btn" id="new_convention">
+                                <a class="fr-btn" href="{% url 'conventions:selection' %}">
                                     <span class="fr-fi-add-circle-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
-                                </button>
-                                {% include "common/utils/onclick_redirect.html" with id='new_convention' url_target='conventions:selection' %}
+                                </a>
                             </div>
-                        {% elif request.session.is_instructeur or request.user.is_superuser %}
+                        {% elif request|is_instructeur or request.user.is_superuser %}
                             <div>
                                 <h2 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h2>
                                 <p class="apilos-subtitle">{{conventions.total_conventions}} convention{{ conventions.total_conventions|pluralize }} liée{{ conventions.total_conventions|pluralize }} à votre administration trouvée{{ conventions.total_conventions|pluralize }} dans APiLos</p>
@@ -38,15 +39,14 @@
 
         {% include "conventions/convention_list.html" %}
 
-        {% if request.session.is_bailleur %}
+        {% if request|is_bailleur %}
             <div class="fr-container-fluid">
                 <div class="fr-container">
                     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
                         <div class="fr-my-5w">
-                            <button class="fr-btn" id="new_convention_bottom">
+                            <a class="fr-btn" href="{% url 'conventions:selection' %}">
                                 <span class="fr-fi-add-circle-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
-                            </button>
-                            {% include "common/utils/onclick_redirect.html" with id='new_convention_bottom' url_target='conventions:selection' %}
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -58,11 +58,11 @@
             <div class="fr-container">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-my-5w">
-                        {% if request.session.is_bailleur %}
+                        {% if request|is_bailleur %}
                             <h1>Bienvenue sur APiLos !</h1>
                             <p class="apilos-subtitle">Vous travaillez pour un bailleur de logements sociaux et souhaitez créer votre première convention APL.</p>
                             <p class="apilos-subtitle">Nous vous accompagnons tout au long de la procédure !</p>
-                        {% elif request.session.is_instructeur or request.user.is_superuser %}
+                        {% elif request|is_instructeur or request.user.is_superuser %}
                             <h1 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h1>
                             <p class="apilos-subtitle">Vous n'avez pas de conventions à instruire</p>
                             <p class="apilos-subtitle">Nous vous accompagnons lors des prochaines étapes pour utiliser APiLos au sein de votre administration</p>
@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        {% if request.session.is_bailleur %}
+        {% if request|is_bailleur %}
             <div class="fr-container">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-12 fr-mt-5w fr-mb-3w">
@@ -136,7 +136,7 @@
 
                 </div>
             </div>
-        {% elif request.session.is_instructeur %}
+        {% elif request|is_instructeur %}
             <div class="fr-container">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-12 fr-mt-5w fr-mb-3w">

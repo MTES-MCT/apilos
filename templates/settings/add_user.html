@@ -2,6 +2,8 @@
 
 {% load static %}
 
+{% load custom_filters %}
+
 {% block page_title %}Utilisateurs - APiLos{% endblock%}
 
 {% block content %}
@@ -62,7 +64,7 @@
                                     {% include "settings/form/select_bailleur.html" with form_input=form.bailleur %}
                                 </div>
                             {% else %}
-                                {% if request.session.is_bailleur %}
+                                {% if request|is_bailleur %}
                                     <input
                                         type="hidden"
                                         id="{{form.user_type.id_for_label}}"
@@ -70,7 +72,7 @@
                                         value="BAILLEUR">
                                     {% include "settings/form/select_bailleur.html" with form_input=form.bailleur%}
                                 {% endif %}
-                                {% if request.session.is_instructeur %}
+                                {% if request|is_instructeur %}
                                     <input
                                         type="hidden"
                                         id="{{form.user_type.id_for_label}}"

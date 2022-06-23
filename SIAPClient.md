@@ -122,10 +122,10 @@ Puis test de quelques appels:
 - [x] Création d’une route API permettant au SIAP de récupérer le détail des conventions
 - [x] Création d’une route API permettant d’afficher les indicateurs
 - [ ] Intégration du design de l’entête
-- [ ] Mapping SIAP / APiLos en utilisant les routes SIAP>opération et APiLos>opération
-- [ ] Création de l’entité de l'utilisateur (Administration ou Bailleur) si elle n’existe pas
+- [x] Mapping SIAP / APiLos en utilisant les routes SIAP>opération et APiLos>opération
+- [x] Création de l’entité de l'utilisateur (Administration ou Bailleur) si elle n’existe pas
 - [ ] Retourner les indicateurs selon l'habilitation active de l'utilisateur
-- [ ] Affichage de la liste des conventions selon l’habilitation
+- [x] Affichage de la liste des conventions selon l’habilitation
 - [ ] Création des conventions et affichage des conventions à faire pour un opération données
 - [ ] **Démarrage de l'expérimentation**
 - [ ] Affichage des conventions en lecture seule (selon l'habilitation)

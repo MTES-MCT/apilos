@@ -54,24 +54,19 @@ TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 
 LOGGING = {
     "version": 1,
-    "filters": {
-        "require_debug_true": {
-            "()": "django.utils.log.RequireDebugTrue",
-        }
-    },
+    "disable_existing_loggers": False,
     "handlers": {
         "console": {
             "level": "DEBUG",
-            "filters": ["require_debug_true"],
             "class": "logging.StreamHandler",
         }
     },
-    # 'loggers': {
-    #     'django.db.backends': {
-    #         'level': 'DEBUG',
-    #         'handlers': ['console'],
-    #     }
-    # }
+    "loggers": {
+        "django.db.backends": {
+            "level": "INFO",
+            "handlers": ["console"],
+        }
+    },
 }
 
 mailjet_api_key = get_env_variable("MAILJET_API_KEY")

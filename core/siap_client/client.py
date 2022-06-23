@@ -1,3 +1,4 @@
+import logging
 import datetime
 import uuid
 import threading
@@ -30,7 +31,17 @@ habilitation_mock = {
                 "typeDelegataire": None,
                 "typeLocalisation": None,
             },
-            "sirenMo": "782855696",
+            "entiteMorale": {
+                "nom": "13 HABITAT",
+                "siren": "782855696",
+                "commune": {
+                    "id": 4527,
+                    "libelle": "Marseille - 4e arrondissement (13)",
+                },
+                "adresseLigne3": None,
+                "adresseLigne4": "80 RUE ALBE",
+                "adresseLigne6": "13004 MARSEILLE 4",
+            },
             "dateExpiration": "2028-06-10",
             "dateDemande": "2022-06-10",
             "favori": False,
@@ -78,7 +89,7 @@ habilitation_mock = {
                 "typeDelegataire": None,
                 "typeLocalisation": None,
             },
-            "sirenMo": None,
+            "entiteMorale": None,
             "dateExpiration": "2028-06-10",
             "dateDemande": "2022-06-10",
             "favori": False,
@@ -123,7 +134,7 @@ habilitation_mock = {
                 "typeDelegataire": "1",
                 "typeLocalisation": None,
             },
-            "sirenMo": None,
+            "entiteMorale": None,
             "dateExpiration": "2028-06-20",
             "dateDemande": "2022-06-20",
             "favori": False,
@@ -437,6 +448,8 @@ def _call_siap_api(
         headers={"siap-Authorization": f"Bearer {myjwt}"},
         timeout=5,
     )
+    if response.status_code >= 400:
+        logging.warning("error from SIAP API: %s", response.content)
     return response
 
 
@@ -513,7 +526,7 @@ def create_entity_from_habilitation_if_not_exists(habilitation):
         if habilitation["groupe"]["profil"]["code"] == "MO_PERS_MORALE":
             create_gestionnaire_if_not_exists(habilitation)
     except KeyError as e:
-        raise KeyError("habilitation is not well formed")
+        raise KeyError("habilitation is not well formed") from e
 
     return entity
 
