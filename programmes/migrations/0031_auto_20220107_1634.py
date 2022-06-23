@@ -15,7 +15,7 @@ def update_fields_zone_bis(apps, schema_editor):
 
 
 def nothing_to_do(apps, schema_editor):
-    print("nothing to do")
+    pass
 
 
 class Migration(migrations.Migration):

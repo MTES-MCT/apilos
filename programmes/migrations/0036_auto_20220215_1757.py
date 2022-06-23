@@ -15,7 +15,7 @@ def copy_edd_to_lot(apps, schema_editor):
 
 
 def nothing_to_do(apps, schema_editor):
-    print("nothing to do")
+    pass
 
 
 class Migration(migrations.Migration):

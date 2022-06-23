@@ -11,11 +11,11 @@ from bailleurs.models import TypeBailleur
 
 
 def update_type_bailleur(apps, schema_editor):
-    print("nothing to do")
+    pass
 
 
 def nothing_to_do(apps, schema_editor):
-    print("nothing to do")
+    pass
 
 
 class Migration(migrations.Migration):

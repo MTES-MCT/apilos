@@ -78,7 +78,6 @@ class Convention(models.Model):
     )
     programme = models.ForeignKey(
         "programmes.Programme",
-        related_name="conventions",
         on_delete=models.CASCADE,
         null=False,
     )
