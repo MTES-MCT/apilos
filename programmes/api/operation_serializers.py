@@ -83,7 +83,6 @@ class OperationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Programme
         fields = (
-            "uuid",
             "nom",
             "bailleur",
             "administration",
@@ -101,9 +100,6 @@ class OperationSerializer(serializers.HyperlinkedModelSerializer):
             "nb_locaux_commerciaux",
             "nb_bureaux",
             "autres_locaux_hors_convention",
-            "date_acte_notarie",
-            "mention_publication_edd_volumetrique",
-            "mention_publication_edd_classique",
             "permis_construire",
             "date_achevement_previsible",
             "date_achat",

@@ -1,5 +1,3 @@
-import logging
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -92,7 +90,6 @@ class ApilosConfiguration(APIView):
         else:
             protocol = "http://"
         version = ".".join(settings.SPECTACULAR_SETTINGS["VERSION"].split(".")[:-1])
-        logging.warning("[SIAP API] /configuration route called")
         return Response(
             {
                 "racine_url_acces_web": protocol + request.get_host(),

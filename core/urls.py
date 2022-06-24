@@ -32,17 +32,13 @@ from . import signals
 urlpatterns = [
     path("admin/doc/", include("django.contrib.admindocs.urls")),
     path("admin/", admin.site.urls),
-    path("bailleurs/", include(("bailleurs.urls", "bailleurs"), namespace="bailleurs")),
+    path("", include(("users.urls", "users"), namespace="users")),
     path(
         "conventions/",
         include(("conventions.urls", "conventions"), namespace="conventions"),
     ),
     path(
-        "instructeurs/",
-        include(("instructeurs.urls", "instructeurs"), namespace="instructeurs"),
-    ),
-    path(
-        "programmes/",
+        "operations/",
         include(("programmes.urls", "programmes"), namespace="programmes"),
     ),
     path(
@@ -50,7 +46,6 @@ urlpatterns = [
         include(("apilos_settings.urls", "settings"), namespace="settings"),
     ),
     path("stats/", include(("stats.urls", "stats"), namespace="stats")),
-    path("", include(("users.urls", "users"), namespace="users")),
     path("upload/", include(("upload.urls", "upload"), namespace="upload")),
     path("comments/", include(("comments.urls", "comments"), namespace="comments")),
     path("cgu", TemplateView.as_view(template_name="editorial/cgu.html"), name="cgu"),
