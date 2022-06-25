@@ -19,8 +19,8 @@
   display: block;
 }
 
-.fr-fi--xxl:after, .fr-fi--xxl:before {
-  font-size: 4rem!important;
+.fr-fi--xxl {
+  --icon-size: 4rem;
 }
 
 .fr-fi--sm:after, .fr-fi--sm:before {
@@ -605,10 +605,27 @@ table.fullwidth {
  * End display convention status
  */
 
+/*
+ * Adapt button color when it is a link 'a'
+ */
+
 .fr-btn:hover {
   color:white;
   text-decoration: none;
 }
+
+.fr-btn--secondary:hover {
+  color:#000091!important;
+  text-decoration: none;
+}
+
+.fr-header__tools-links .fr-btn:hover {
+  color:#000091!important;
+}
+
+/*
+ * End Adapt button color when it is a link 'a'
+ */
 
 .apilos-input-group--inline {
   display: flex;
