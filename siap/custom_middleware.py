@@ -2,9 +2,8 @@ from django.contrib.auth.models import Group
 from django.conf import settings
 from django.forms import model_to_dict
 from django.http import HttpRequest
-from bailleurs.models import Bailleur
-from core.siap_client.client import SIAPClient
-from instructeurs.models import Administration
+from siap.siap_client.utils import get_or_create_bailleur, get_or_create_administration
+from siap.siap_client.client import SIAPClient
 from users.models import Role, GroupProfile
 from users.type_models import TypeRole
 
@@ -81,16 +80,7 @@ class CerbereSessionMiddleware:
 def _find_or_create_entity(request: HttpRequest, habilitation: dict):
     request.session["currently"] = habilitation["groupe"]["profil"]["code"]
     if habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_MO_PERS_MORALE:
-        (bailleur, _) = Bailleur.objects.get_or_create(
-            siren=habilitation["entiteMorale"]["siren"],
-            defaults={
-                "siret": habilitation["entiteMorale"]["siren"],
-                "nom": habilitation["entiteMorale"]["nom"],
-                "adresse": habilitation["entiteMorale"]["adresseLigne4"],
-                "code_postal": habilitation["entiteMorale"]["adresseLigne6"][:5],
-                "ville": habilitation["entiteMorale"]["adresseLigne6"][6:],
-            },
-        )
+        bailleur = get_or_create_bailleur(habilitation["entiteMorale"])
         request.session["bailleur"] = model_to_dict(
             bailleur,
             fields=[
@@ -109,12 +99,7 @@ def _find_or_create_entity(request: HttpRequest, habilitation: dict):
         )
     if habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_SER_GEST:
         # create if not exists gestionnaire
-        (administration, _) = Administration.objects.get_or_create(
-            code=habilitation["gestionnaire"]["code"],
-            defaults={
-                "nom": habilitation["gestionnaire"]["libelle"],
-            },
-        )
+        administration = get_or_create_administration(habilitation["gestionnaire"])
         request.session["administration"] = model_to_dict(
             administration,
             fields=[

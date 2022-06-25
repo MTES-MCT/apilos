@@ -2,7 +2,7 @@ from django.http.request import HttpRequest
 from django.conf import settings
 from django.template.defaultfilters import date as _date
 from django.template.defaulttags import register
-from core.siap_client.client import SIAPClient
+from siap.siap_client.client import SIAPClient
 from conventions.models import ConventionStatut
 from users.models import GroupProfile
 

@@ -7,7 +7,12 @@ import jwt
 
 from django.conf import settings
 
-from core.siap_client.mock_data import habilitations_mock, menu_mock, operation_mock
+from siap.siap_client.mock_data import (
+    config_mock,
+    habilitations_mock,
+    menu_mock,
+    operation_mock,
+)
 
 
 def _build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
@@ -83,12 +88,6 @@ class SIAPClientInterface:
     def __init__(self) -> None:
         # pylint: disable=E1111
         config = self.get_siap_config()
-        # {
-        #     'racineUrlAccesWeb': 'http://siap-local.sully-group.fr/',
-        #     'urlAccesWeb': '/tableau-bord',
-        #     'urlAccesWebOperation':
-        #       '/operation/mes-operations/editer/<NUM_OPE_SIAP>/informations-generales'
-        # }
         self.racine_url_acces_web = config["racineUrlAccesWeb"].rstrip("/")
         self.url_acces_web = config["urlAccesWeb"]
         self.url_acces_web_operation = config["urlAccesWebOperation"]
@@ -178,13 +177,7 @@ class SIAPClientRemote(SIAPClientInterface):
 # Manage SiapClient as a Singleton
 class SIAPClientMock(SIAPClientInterface):
     def get_siap_config(self) -> dict:
-        return {
-            "racineUrlAccesWeb": "https://minlog-siap.gateway.intapi.recette.sully-group.fr",
-            "urlAccesWeb": "/tableau-bord",
-            "urlAccesWebOperation": (
-                "/operation/mes-operations/editer/<NUM_OPE_SIAP>/informations-generales"
-            ),
-        }
+        return config_mock
 
     def get_habilitations(self, user_login: str, habilitation_id: int = 0) -> dict:
         return habilitations_mock

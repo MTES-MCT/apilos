@@ -1,3 +1,11 @@
+config_mock = {
+    "racineUrlAccesWeb": "https://minlog-siap.gateway.intapi.recette.sully-group.fr",
+    "urlAccesWeb": "/tableau-bord",
+    "urlAccesWebOperation": (
+        "/operation/mes-operations/editer/<NUM_OPE_SIAP>/informations-generales"
+    ),
+}
+
 habilitations_mock = {
     "habilitations": [
         {

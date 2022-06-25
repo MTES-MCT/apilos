@@ -106,6 +106,7 @@ INSTALLED_APPS = [
     "programmes.apps.ProgrammesConfig",
     "apilos_settings.apps.ApilosSettingsConfig",
     "stats.apps.StatsConfig",
+    "siap.apps.SiapConfig",
     "users.apps.UsersConfig",
     "upload.apps.UploadConfig",
     "comments.apps.CommentsConfig",
@@ -347,7 +348,7 @@ NO_SIAP_MENU = get_env_variable("NO_SIAP_MENU", cast=bool)
 if CERBERE_AUTH:
     MIDDLEWARE = MIDDLEWARE + [
         "django_cas_ng.middleware.CASMiddleware",
-        "core.custom_middleware.CerbereSessionMiddleware",
+        "siap.custom_middleware.CerbereSessionMiddleware",
     ]
 
     AUTHENTICATION_BACKENDS = AUTHENTICATION_BACKENDS + [

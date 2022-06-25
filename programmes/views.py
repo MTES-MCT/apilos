@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from core.siap_client.client import SIAPClient
+from siap.siap_client.client import SIAPClient
+from siap.siap_client.utils import get_or_create_conventions
 
 
 @login_required
@@ -16,6 +17,7 @@ def operation_conventions(request, numero_operation):
         habilitation_id=request.session["habilitation_id"],
         operation_identifier=numero_operation,
     )
+    get_or_create_conventions(operation)
 
     return render(
         request,
