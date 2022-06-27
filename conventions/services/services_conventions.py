@@ -24,6 +24,7 @@ from conventions.forms import (
     PretFormSet,
     UploadForm,
     ConventionType1and2Form,
+    ConventionSignedFileForm,
 )
 from conventions.tasks import generate_and_send
 
@@ -798,4 +799,8 @@ def convention_preview(convention_uuid):
 
 def convention_sent(convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
-    return {"convention": convention}
+    form = ConventionSignedFileForm(initial={"signed": "", "signed_files": {}})
+    return {
+        "convention": convention,
+        "form": form,
+    }

@@ -31,6 +31,15 @@ class ConventionCommentForm(forms.Form):
     )
 
 
+class ConventionSignedFileForm(forms.Form):
+
+    signed_files = forms.CharField(
+        required=True,
+        label="Téléversez votre convention signée",
+        help_text="Les fichiers de type pdf sont acceptés dans la limite de 100 Mo",
+    )
+
+
 class ConventionFinancementForm(forms.Form):
 
     prets = []

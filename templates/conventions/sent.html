@@ -6,6 +6,17 @@
 
 {% load static %}
 
+{% block javascript_extras %}
+    <script src="{% static 'dropzonejs/min/dropzone.min.js' %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static 'dropzonejs/min/dropzone-amd-module.min.js' %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static 'js/dropzone-client-signed.js' %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
+
+{% block css_extras %}
+    <link rel="stylesheet" href="{% static 'dropzonejs/min/basic.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dropzonejs/min/dropzone.min.css' %}">
+{% endblock %}
+
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html" with convention=convention %}
@@ -14,9 +25,23 @@
             <h2>Votre convention signée</h2>
             {% if convention.statut == '5. Transmise' %}
                 <div class="fr-col-md-12 fr-py-5w">Votre convention signée à déjà été téléversée et a été transmise aux services concernés. Vous pouvez maintenant créer des avenants si besoin.</div>
+                <div class="hidden">
             {% else %}
-                <div class="fr-col-md-12 fr-py-5w">ici bientôt la possibilité de téléverser la convention finalisée</div>
+                <div>
             {% endif %}
+
+            <form method="post" action="{% url 'conventions:sent' convention_uuid=convention.uuid %}" method='post' enctype='multipart/form-data' class="dropzone" id="my-awesome-dropzone">
+                {% csrf_token %}
+                <div class="block--row-strech" id="{{form.signed_files.id_for_label}}_div">
+                    <label class="block--row-strech-1 fr-label fr-mt-1w fr-mb-2w fr-h4" for="{{form_input.id_for_label}}">
+                        {{form.signed_files.label }}
+                    </label>
+                    <div class="fr-mt-1w">
+                        <input type="file" name="file" />
+                    </div>
+                    <button class="fr-btn">enregistrer</button>
+                </div>
+            </form>
         </div>
     </div>
 {% endblock %}
