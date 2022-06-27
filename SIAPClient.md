@@ -127,15 +127,21 @@ Puis test de quelques appels:
 - [ ] Retourner les indicateurs selon l'habilitation active de l'utilisateur
 - [x] Affichage de la liste des conventions selon l’habilitation
 - [ ] Création des conventions et affichage des conventions à faire pour un opération données
+- [ ] Ajout d'un lien vers l'opération du SIAP à partir de la convention
 - [ ] **Démarrage de l'expérimentation**
-- [ ] Affichage des conventions en lecture seule (selon l'habilitation)
+- [ ] Application des autres type d'habilitation (autre que Bailleur et Instructeur)
+    - [ ] Affichage des conventions en lecture seule
+    - [ ] Affichage des conventions selon la géographie
+- [ ] Gestion des conventions sans travaux à partir du SIAP
+- [ ] Envoi de mail à partir d'une convention SIAP
 - [ ] Affichage des statistiques du conventionnement
 - [ ] Miror du repo github dans [gitlab](https://gitlab-forge.din.developpement-durable.gouv.fr/dgaln/dhup/apilos) pour le SNUM
+- [ ] Deloguer sur le SIAP / Apilos doit délogguer des 2 plateformes
 
 Questions ouvertes pour plus tard :
 
 - [ ] Comment retrouver les paramètres propres à APiLos dans la version SIAP
-- [ ] Vérifier l'habilitation de l'utilisateur avvant de renvoyer la liste des conventions d'une opération
+- [ ] Vérifier l'habilitation de l'utilisateur avant de renvoyer la liste des conventions d'une opération
 
 
 ## token exemple

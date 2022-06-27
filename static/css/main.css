@@ -463,6 +463,10 @@ table.fullwidth {
   width: 100%;
 }
 
+.table--layout-fixed {
+  width: 100%;
+}
+
 .table--layout-fixed table {
   display: table;
   /* table-layout: fixed; */

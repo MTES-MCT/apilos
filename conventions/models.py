@@ -275,7 +275,10 @@ class Convention(models.Model):
         if self.programme.administration:
             return (
                 self.programme.administration.prefix_convention.replace(
-                    "{département}", str(self.programme.code_postal[:-3])
+                    "{département}",
+                    self.programme.code_postal[:-3]
+                    if self.programme.code_postal
+                    else "",
                 )
                 .replace("{zone}", str(self.programme.zone_123_bis))
                 .replace("{mois}", str(timezone.now().month))

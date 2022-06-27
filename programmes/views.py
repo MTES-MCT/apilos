@@ -17,10 +17,15 @@ def operation_conventions(request, numero_operation):
         habilitation_id=request.session["habilitation_id"],
         operation_identifier=numero_operation,
     )
-    get_or_create_conventions(operation)
+    (programme, lots, conventions) = get_or_create_conventions(operation)
 
     return render(
         request,
         "operations/conventions.html",
-        {"numero_operation": numero_operation, "operation": operation},
+        {
+            "numero_operation": numero_operation,
+            "programme": programme,
+            "lots": lots,
+            "conventions": conventions,
+        },
     )
