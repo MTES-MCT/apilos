@@ -419,11 +419,13 @@ def display_operation(request, programme_uuid, programme_financement):
 def preview(request, convention_uuid):
     # Step 11/12
     result = services.convention_preview(convention_uuid)
+    filepath = f"{settings.BASE_DIR}"
     return render(
         request,
         "conventions/preview.html",
         {
             **result,
+            "filepath": filepath,
             "convention_form_step": 11,
         },
     )
@@ -433,7 +435,7 @@ def preview(request, convention_uuid):
 @login_required
 def sent(request, convention_uuid):
     # Step 12/12
-    result = services.convention_sent(convention_uuid)
+    result = services.convention_sent(request, convention_uuid)
     return render(
         request,
         "conventions/sent.html",

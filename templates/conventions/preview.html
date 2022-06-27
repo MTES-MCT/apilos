@@ -11,13 +11,22 @@
         <div class="fr-container fr-mb-2w">
             <h2>Visualiser votre convention</h2>
             {% if convention.statut == '5. Transmise' %}
-                <div class="fr-col-md-12 fr-py-5w">ici bientôt une superbe prévisualisation de la convention finalisée</div>
+                toto
+                <div class="fr-col-md-12 fr-py-5w h-80vh">
+                    <iframe src="/conventions/{{ convention.uuid}}/{{convention.fichier_signe}}" width="100%" height="1000px" nonce="{{request.csp_nonce}}"></iframe>
+                </div>
             {% else %}
-                <div class="h-80vh">
-                    <iframe src="https://apilos-prod.s3.fr-par.scw.cloud/conventions/b4cfcaa2-8441-477b-9257-afd4ef2051e2/convention_docs/b4cfcaa2-8441-477b-9257-afd4ef2051e2.pdf"  width="100%" height="1000px" nonce="{{request.csp_nonce}}"></iframe>
+                pouet
+                <div class="fr-col-md-12 fr-py-5w h-80vh">
+                    <iframe src="{{ STORAGE_LOCATION }}/conventions/{{ convention.uuid }}/convention_docs/{{ convention.uuid}}.pdf"  width="100%" height="1000px" nonce="{{request.csp_nonce}}"></iframe>
                 </div>
             {% endif %}
 
         </div>
+        /conventions/{{ convention.uuid }}/convention_docs/{{ convention.uuid}}.pdf<br/>
+        {{convention.fichier_signe}}
+        {{ STORAGE_LOCATION }}
+
     </div>
 {% endblock %}
+

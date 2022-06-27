@@ -1,1 +1,0 @@
-//let myDropzone = new Dropzone("d_dropzone", { url: "/upload/"});

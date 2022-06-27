@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
+from django.core.files.storage import default_storage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.conf import settings
@@ -24,7 +25,6 @@ from conventions.forms import (
     PretFormSet,
     UploadForm,
     ConventionType1and2Form,
-    ConventionSignedFileForm,
 )
 from conventions.tasks import generate_and_send
 
@@ -794,13 +794,32 @@ class ConventionListService:
 
 def convention_preview(convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
-    return {"convention": convention}
-
-
-def convention_sent(convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
-    form = ConventionSignedFileForm(initial={"signed": "", "signed_files": {}})
     return {
         "convention": convention,
-        "form": form,
+    }
+
+
+def convention_sent(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    if request.method == "POST":
+        upform = UploadForm(request.POST, request.FILES)
+        uuid = convention_uuid
+        if upform.is_valid():
+            file = request.FILES["file"]
+            now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+            destination = default_storage.open(
+                f"conventions/{uuid}/{now}_convention_{uuid}_signed.pdf",
+                "bw",
+            )
+            for chunk in file.chunks():
+                destination.write(chunk)
+            destination.close()
+            convention.statut = ConventionStatut.TRANSMISE
+            convention.fichier_signe = f"{now}_convention_{uuid}_signed.pdf"
+            convention.save()
+    else:
+        upform = UploadForm()
+    return {
+        "convention": convention,
+        "upform": upform,
     }
