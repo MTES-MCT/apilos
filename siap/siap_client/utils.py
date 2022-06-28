@@ -1,5 +1,3 @@
-import logging
-
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
 from programmes.models import (
@@ -18,27 +16,22 @@ def get_or_create_conventions(operation: dict):
         bailleur = get_or_create_bailleur(operation["donneesMo"])
     except KeyError as ke:
         raise KeyError("Operation not well formatted, missing `donneesMo`") from ke
-    logging.warning(bailleur)
     try:
         administration = get_or_create_administration(operation["gestionnaire"])
     except KeyError as ke:
         raise KeyError("Operation not well formatted, missing `gestionnaire`") from ke
-    logging.warning(administration)
     try:
         programme = get_or_create_programme(operation, bailleur, administration)
     except KeyError as ke:
         raise KeyError(
             "Operation not well formatted, missing programme's informations"
         ) from ke
-    logging.warning(programme)
     try:
         (lots, conventions) = get_or_create_lots_and_conventions(operation, programme)
     except KeyError as ke:
         raise KeyError(
             "Operation not well formatted, missing lot and convention informations"
         ) from ke
-    logging.warning(lots)
-    logging.warning(conventions)
     return (programme, lots, conventions)
 
 
@@ -85,21 +78,6 @@ def get_or_create_administration(administration_from_siap: dict):
 def get_or_create_programme(
     programme_from_siap: dict, bailleur: Bailleur, administration: Administration
 ) -> Programme:
-
-    # "donneesLocalisation": {
-    #     "region": {"codeInsee": "93", "libelle": None},
-    #     "departement": {"codeInsee": "13", "libelle": None},
-    #     "commune": {"codeInsee": "13210", "libelle": "Marseille - 10e arrondissement"},
-    #     "adresse": " Allée de l’Aubepine 13010 Marseille",
-    #     "zonage123": "02",
-    #     "zonageABC": None,
-    # },
-
-    # "donneesOperation": {
-    #     "sousNatureOperation": "CNE",
-    #     "natureLogement": "LOO",
-    # },
-
     (programme, _) = Programme.objects.get_or_create(
         numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"],
         bailleur=bailleur,

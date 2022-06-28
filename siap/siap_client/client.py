@@ -70,10 +70,8 @@ class SIAPClient:
             with cls.__singleton_lock:
                 if not cls.__singleton_instance:
                     if settings.USE_MOCKED_SIAP_CLIENT:
-                        print("SIAPClientMock")
                         cls.__singleton_instance = SIAPClientMock()
                     else:
-                        print("SIAPClientRemote")
                         cls.__singleton_instance = SIAPClientRemote()
 
         # return the singleton instance

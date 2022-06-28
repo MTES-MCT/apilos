@@ -188,6 +188,9 @@ class User(AbstractUser):
         )
 
     def _administration_ids(self):
+        if self.is_cerbere_user():
+            return [self.siap_habilitation["administration"]["id"]]
+
         return list(
             map(
                 lambda role: role.administration_id,
