@@ -16,7 +16,6 @@ from conventions.services.utils import ReturnStatus
 NB_STEPS = 12
 
 
-# @permission_required("convention.view_convention")
 @login_required
 def index(request):
     result = services.conventions_index(request)
@@ -45,8 +44,6 @@ def select_programme_create(request):
     )
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention")
 @login_required
 def bailleur(request, convention_uuid):
     # STEP 2
@@ -69,8 +66,6 @@ def bailleur(request, convention_uuid):
     )
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention")
 @login_required
 def programme(request, convention_uuid):
     # STEP 3
@@ -93,8 +88,6 @@ def programme(request, convention_uuid):
     )
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention")
 @login_required
 def cadastre(request, convention_uuid):
     # STEP 4
@@ -117,8 +110,6 @@ def cadastre(request, convention_uuid):
     )
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention")
 @login_required
 def edd(request, convention_uuid):
     # STEP 5
@@ -141,8 +132,6 @@ def edd(request, convention_uuid):
     )
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention")
 @login_required
 def financement(request, convention_uuid):
     result = services.convention_financement(request, convention_uuid)
@@ -165,8 +154,6 @@ def financement(request, convention_uuid):
     )
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention")
 @login_required
 def logements(request, convention_uuid):
     result = services.logements_update(request, convention_uuid)
@@ -188,8 +175,6 @@ def logements(request, convention_uuid):
     )
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention")
 @login_required
 def annexes(request, convention_uuid):
     result = services.annexes_update(request, convention_uuid)
@@ -211,8 +196,6 @@ def annexes(request, convention_uuid):
     )
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention")
 @login_required
 def stationnements(request, convention_uuid):
     result = services.stationnements_update(request, convention_uuid)
@@ -234,8 +217,6 @@ def stationnements(request, convention_uuid):
     )
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention")
 @login_required
 def comments(request, convention_uuid):
     result = services.convention_comments(request, convention_uuid)
@@ -257,8 +238,6 @@ def comments(request, convention_uuid):
     )
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention", raise_exception=True)
 @login_required
 def recapitulatif(request, convention_uuid):
     # Step 11/11
@@ -273,8 +252,6 @@ def recapitulatif(request, convention_uuid):
     )
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention")
 @login_required
 def save_convention(request, convention_uuid):
     result = services.convention_submit(request, convention_uuid)
@@ -301,8 +278,6 @@ def delete_convention(request, convention_uuid):
     return HttpResponseRedirect(reverse("conventions:index"))
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention")
 @login_required
 def feedback_convention(request, convention_uuid):
     result = services.convention_feedback(request, convention_uuid)
@@ -311,8 +286,6 @@ def feedback_convention(request, convention_uuid):
     )
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention")
 @login_required
 def validate_convention(request, convention_uuid):
     result = services.convention_validate(request, convention_uuid)
@@ -330,8 +303,6 @@ def validate_convention(request, convention_uuid):
     )
 
 
-# Handle in service.py
-# @permission_required("convention.change_convention")
 @login_required
 def generate_convention(request, convention_uuid):
     data, file_name = services.generate_convention(request, convention_uuid)
@@ -416,7 +387,6 @@ def display_operation(request, programme_uuid, programme_financement):
     return PermissionDenied
 
 
-# @permission_required("convention.change_convention", raise_exception=True)
 @login_required
 def preview(request, convention_uuid):
     # Step 11/12
@@ -433,7 +403,6 @@ def preview(request, convention_uuid):
     )
 
 
-# @permission_required("convention.change_convention", raise_exception=True)
 @login_required
 def sent(request, convention_uuid):
     # Step 12/12

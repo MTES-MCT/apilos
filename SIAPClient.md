@@ -128,7 +128,7 @@ Puis test de quelques appels:
 - [x] Affichage de la liste des conventions selon l’habilitation
 - [x] Création des conventions et affichage des conventions à faire pour un opération données
 - [ ] Ajout d'un lien vers l'opération du SIAP à partir de la convention
-- [ ] Adaptation
+- [ ] Adaptation de l'interface pour le SIAP
 - [ ] **Démarrage de l'expérimentation**
 - [ ] Application des autres type d'habilitation (autre que Bailleur et Instructeur)
     - [ ] Affichage des conventions en lecture seule
