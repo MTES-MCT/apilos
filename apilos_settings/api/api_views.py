@@ -51,6 +51,13 @@ class ApilosConfiguration(APIView):
                             + " (en relatif)"
                         ),
                     ),
+                    "url_acces_api_kpi": serializers.CharField(
+                        max_length=2000,
+                        help_text=(
+                            "URL d'accès API aux indicateurs de conventionnement à afficher"
+                            + " sur le tableau de bord (en relatif)"
+                        ),
+                    ),
                     "version": serializers.CharField(
                         max_length=20,
                         help_text=(
@@ -72,8 +79,9 @@ class ApilosConfiguration(APIView):
                 description="Example of returned configuration when /config url is called",
                 value={
                     "racine_url_acces_web": "https://apilos.beta.gouv.fr",
-                    "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}",
-                    "url_acces_web_recherche": "/conventions",
+                    "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}/",
+                    "url_acces_web_recherche": "/conventions/",
+                    "url_acces_api_kpi": "/convention_kpi/",
                     "version": "0.1",
                 },
                 request_only=False,  # signal that example only applies to requests
@@ -140,16 +148,12 @@ class ConventionKPI(APIView):
         query_by_statuses = (
             Convention.objects.all().values("statut").annotate(total=Count("statut"))
         )
-        print(query_by_statuses)
-        print(ConventionStatut.A_SIGNER)
         instruction = 0
         a_signer = 0
         transmise = 0
         for q in query_by_statuses:
             if q["statut"] in [
-                ConventionStatut.PROJET,
                 ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
             ]:
                 instruction = instruction + q["total"]
             if q["statut"] == ConventionStatut.A_SIGNER:
