@@ -38,6 +38,7 @@ class ConfigurationAPITest(APITestCase):
             "racine_url_acces_web": "http://testserver",
             "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}",
             "url_acces_web_recherche": "/conventions",
+            "url_acces_api_kpi": "/convention_kpi/",
             "version": "0.0",
         }
         self.assertEqual(response.data, expected)

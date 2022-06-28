@@ -103,6 +103,7 @@ class ApilosConfiguration(APIView):
                 "racine_url_acces_web": protocol + request.get_host(),
                 "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}",
                 "url_acces_web_recherche": "/conventions",
+                "url_acces_api_kpi": "/convention_kpi/",
                 "version": version,
             }
         )
