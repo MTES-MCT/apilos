@@ -105,30 +105,40 @@
                         </thead>
                         <tbody>
                             {% for convention in conventions.paginated_conventions %}
-                                <tr id="convention_redirect_{{convention.uuid}}" class="clickable">
-                                    {% if request|is_instructeur %}
-                                        <td>{{convention.bailleur.nom}}</td>
-                                    {% endif %}
-                                    <td>{{convention.programme.numero_galion}}</td>
-                                    <td>{{convention.programme.date_achevement_compile|date:"d/m/Y"|default_if_none:'-' }}</td>
-                                    <td>{{convention.programme.nom}}</td>
-                                    <td>{{convention.financement}}</td>
-                                    <td>{{convention.programme.code_postal}}</td>
-                                    <td>{{convention.programme.ville}}</td>
-                                    <td>{{convention.lot.nb_logements}}</td>
-                                    <td title="{{convention.statut_for_template.statut_display}}">
-                                        <div class="fr-p-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
-                                            <span><b>
-                                                {{convention.statut_for_template.short_statut}}
-                                            </b></span>
-                                        </div>
-                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                            document.addEventListener('DOMContentLoaded', function () {
-                                                document.getElementById('convention_redirect_{{convention.uuid}}')
-                                                    .addEventListener('click', function(){ location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" });
+                                {% if convention.isnt_validated %}
+                                    <tr id="convention_redirect_{{convention.uuid}}" class="clickable">
+                                {% else %}
+                                    <tr id="convention_redirect_{{convention.uuid}}" class="clickable validated">
+                                {% endif %}
+                                {% if request|is_instructeur %}
+                                    <td>{{convention.bailleur.nom}}</td>
+                                {% endif %}
+                                <td>{{convention.programme.numero_galion}}</td>
+                                <td>{{convention.programme.date_achevement_compile|date:"d/m/Y"|default_if_none:'-' }}</td>
+                                <td>{{convention.programme.nom}}</td>
+                                <td>{{convention.financement}}</td>
+                                <td>{{convention.programme.code_postal}}</td>
+                                <td>{{convention.programme.ville}}</td>
+                                <td>{{convention.lot.nb_logements}}</td>
+                                <td title="{{convention.statut_for_template.statut_display}}">
+                                    <div class="fr-p-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
+                                        <span><b>
+                                            {{convention.statut_for_template.short_statut}}
+                                        </b></span>
+                                    </div>
+                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                            document.getElementById('convention_redirect_{{convention.uuid}}').addEventListener('click', function(){
+                                                if (this.classList.contains("validated")) {
+                                                    location.href="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
+                                                }
+                                                else {
+                                                    location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
+                                                }
                                             });
-                                        </script>
-                                    </td>
+                                        });
+                                    </script>
+                                </td>
                                 </tr>
                             {% endfor %}
                         </tbody>

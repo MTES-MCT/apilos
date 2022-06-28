@@ -123,6 +123,7 @@ class Convention(models.Model):
     # la tranche dans laquelle est compris le logement concerné. (7)
 
     donnees_validees = models.TextField(null=True)
+    fichier_signe = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         programme = self.programme

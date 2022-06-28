@@ -21,9 +21,7 @@
         <input type="hidden" id="convention_uuid" value="{{convention.uuid}}">
         <div class="fr-container-fluid ds_banner">
             {% include "conventions/common/form_header.html" with convention=convention %}
-            {% if convention.isnt_validated %}
-                {% include "common/step_progressbar.html" with convention=convention %}
-            {% endif %}
+            {% include "common/step_progressbar.html" with convention=convention %}
             <div class="fr-container">
                 {% csrf_token %}
                 {% if convention.is_project %}

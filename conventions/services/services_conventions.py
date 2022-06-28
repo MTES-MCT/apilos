@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
+from django.core.files.storage import default_storage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.conf import settings
@@ -789,3 +790,37 @@ class ConventionListService:
 
         self.paginated_conventions = conventions
         self.total_conventions = total_user
+
+
+def convention_preview(convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    return {
+        "convention": convention,
+    }
+
+
+def convention_sent(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    if request.method == "POST":
+        upform = UploadForm(request.POST, request.FILES)
+        uuid = convention_uuid
+        if upform.is_valid():
+            file = request.FILES["file"]
+            now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+            filename = f"{now}_convention_{uuid}_signed.pdf"
+            destination = default_storage.open(
+                f"conventions/{uuid}/convention_docs/{filename}",
+                "bw",
+            )
+            for chunk in file.chunks():
+                destination.write(chunk)
+            destination.close()
+            convention.statut = ConventionStatut.TRANSMISE
+            convention.fichier_signe = filename
+            convention.save()
+    else:
+        upform = UploadForm()
+    return {
+        "convention": convention,
+        "upform": upform,
+    }

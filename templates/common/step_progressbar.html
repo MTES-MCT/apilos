@@ -2,16 +2,28 @@
     <div class="fr-grid-row fr-grid-row--center">
         <div class="container-progressbar fr-col-12 fr-my-5w">
             <ul id="step_progressbar" class="progressbar" width="100%">
-                <li class="{% if convention_form_step > 1  %}active{% endif %} {% if convention_form_step == 1  %}current_step{% endif %}" role="bailleur"><div>Bailleur</div></li>
-                <li class="{% if convention_form_step > 2  %}active{% endif %} {% if convention_form_step == 2  %}current_step{% endif %} {% if convention_form_step == 1 %}after_step{% endif %}" role="programme"><div>Opération</div></li>
-                <li class="{% if convention_form_step > 3  %}active{% endif %} {% if convention_form_step == 3  %}current_step{% endif %} {% if convention_form_step == 2 %}after_step{% endif %}" role="cadastre"><div>Cadastre</div></li>
-                <li class="{% if convention_form_step > 4  %}active{% endif %} {% if convention_form_step == 4  %}current_step{% endif %} {% if convention_form_step == 3 %}after_step{% endif %}" role="edd"><div>EDD</div></li>
-                <li class="{% if convention_form_step > 5  %}active{% endif %} {% if convention_form_step == 5  %}current_step{% endif %} {% if convention_form_step == 4 %}after_step{% endif %}" role="financement"><div>Financement</div></li>
-                <li class="{% if convention_form_step > 6  %}active{% endif %} {% if convention_form_step == 6  %}current_step{% endif %} {% if convention_form_step == 5 %}after_step{% endif %}" role="logements"><div>Logements</div></li>
-                <li class="{% if convention_form_step > 7  %}active{% endif %} {% if convention_form_step == 7  %}current_step{% endif %} {% if convention_form_step == 6 %}after_step{% endif %}" role="annexes"><div>Annexes</div></li>
-                <li class="{% if convention_form_step > 8  %}active{% endif %} {% if convention_form_step == 8  %}current_step{% endif %} {% if convention_form_step == 7 %}after_step{% endif %}" role="stationnements"><div>Stationnements</div></li>
-                <li class="{% if convention_form_step > 9  %}active{% endif %} {% if convention_form_step == 9  %}current_step{% endif %} {% if convention_form_step == 8 %}after_step{% endif %}" role="comments"><div>Commentaires</div></li>
-                <li class="{% if convention_form_step > 10 %}active{% endif %} {% if convention_form_step == 10 %}current_step{% endif %} {% if convention_form_step == 9 %}after_step{% endif %}" role="recapitulatif"><div>Recapitulatif</div></li>
+                {% if convention.isnt_validated %}
+                    <li class="{% if convention_form_step > 1  %}active{% endif %} {% if convention_form_step == 1  %}current_step{% endif %}" role="bailleur"><div>Bailleur</div></li>
+                    <li class="{% if convention_form_step > 2  %}active{% endif %} {% if convention_form_step == 2  %}current_step{% endif %} {% if convention_form_step == 1 %}after_step{% endif %}" role="programme"><div>Opération</div></li>
+                    <li class="{% if convention_form_step > 3  %}active{% endif %} {% if convention_form_step == 3  %}current_step{% endif %} {% if convention_form_step == 2 %}after_step{% endif %}" role="cadastre"><div>Cadastre</div></li>
+                    <li class="{% if convention_form_step > 4  %}active{% endif %} {% if convention_form_step == 4  %}current_step{% endif %} {% if convention_form_step == 3 %}after_step{% endif %}" role="edd"><div>EDD</div></li>
+                    <li class="{% if convention_form_step > 5  %}active{% endif %} {% if convention_form_step == 5  %}current_step{% endif %} {% if convention_form_step == 4 %}after_step{% endif %}" role="financement"><div>Financement</div></li>
+                    <li class="{% if convention_form_step > 6  %}active{% endif %} {% if convention_form_step == 6  %}current_step{% endif %} {% if convention_form_step == 5 %}after_step{% endif %}" role="logements"><div>Logements</div></li>
+                    <li class="{% if convention_form_step > 7  %}active{% endif %} {% if convention_form_step == 7  %}current_step{% endif %} {% if convention_form_step == 6 %}after_step{% endif %}" role="annexes"><div>Annexes</div></li>
+                    <li class="{% if convention_form_step > 8  %}active{% endif %} {% if convention_form_step == 8  %}current_step{% endif %} {% if convention_form_step == 7 %}after_step{% endif %}" role="stationnements"><div>Stationnements</div></li>
+                    <li class="{% if convention_form_step > 9  %}active{% endif %} {% if convention_form_step == 9  %}current_step{% endif %} {% if convention_form_step == 8 %}after_step{% endif %}" role="comments"><div>Commentaires</div></li>
+                    <li class="{% if convention_form_step > 10 %}active{% endif %} {% if convention_form_step == 10 %}current_step{% endif %} {% if convention_form_step == 9 %}after_step{% endif %}" role="recapitulatif"><div>Récapitulatif</div></li>
+                {%  else %}
+                    <li class="{% if convention_form_step > 10 %}active{% endif %} {% if convention_form_step == 10 %}current_step{% endif %} {% if convention_form_step == 9 %}after_step{% endif %}" role="recapitulatif"><div>Récapitulatif</div></li>
+                    <li class="{% if convention_form_step > 11 %}active{% endif %} {% if convention_form_step == 11 %}current_step{% endif %} {% if convention_form_step == 10 %}after_step{% endif %}" role="preview"><div>Prévisualisation</div></li>
+                    <li class="{% if convention_form_step > 12 %}active{% endif %} {% if convention_form_step == 12 %}current_step{% endif %} {% if convention_form_step == 11 %}after_step{% endif %}" role="sent">
+                        {% if convention.statut == '5. Transmise' %}
+                            <div>Actions</div>
+                        {% else %}
+                            <div>Téléversement</div>
+                        {% endif %}
+                    </li>
+                {% endif %}
             </ul>
 
         </div>

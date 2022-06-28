@@ -152,10 +152,8 @@ class ConventionKPI(APIView):
         a_signer = 0
         transmise = 0
         for q in query_by_statuses:
-            if q["statut"] in [
-                ConventionStatut.INSTRUCTION,
-            ]:
-                instruction = instruction + q["total"]
+            if q["statut"] == ConventionStatut.INSTRUCTION:
+                instruction = q["total"]
             if q["statut"] == ConventionStatut.A_SIGNER:
                 a_signer = q["total"]
             if q["statut"] == ConventionStatut.TRANSMISE:

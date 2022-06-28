@@ -281,6 +281,9 @@ CSP_IMG_SRC = (
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png",
 )
 CSP_OBJECT_SRC = "'none'"
+
+X_FRAME_OPTIONS = "SAMEORIGIN"
+CSP_FRAME_SRC = "'self'"
 CSP_FONT_SRC = "'self'", "data:"
 CSP_CONNECT_SRC = ("'self'", "https://stats.data.gouv.fr/piwik.php")
 CSP_STYLE_SRC = (
