@@ -35,11 +35,9 @@
                             <div class="fr-header__navbar">
                                 {% if user.is_authenticated %}
                                     </li>
-                                    <button class="fr-btn fr-fi-close-circle-line" id='logout'></button>
-                                    {% include "common/utils/onclick_redirect.html" with id='logout' url_target='logout' %}
+                                    <a class="fr-btn fr-fi-close-circle-line" href="{% url 'logout' %}"></a>
                                 {% else %}
-                                    <button class="fr-btn fr-fi-edit-line" id='login'></button>
-                                    {% include "common/utils/onclick_redirect.html" with id='login' url_target='login' %}
+                                    <a class="fr-btn fr-fi-edit-line" href="{% url 'login' %}"></a>
                                 {% endif %}
                             </div>
                         {% endif %}
@@ -92,18 +90,15 @@
                                 <ul class="fr-links-group">
                                     {% if not CERBERE_AUTH %}
                                         <li class="fr-mx-3w">
-                                            <button class="fr-btn" id='espace_bailleur'>
-                                                <span class="fr-fi-account-line fr-mr-1w" aria-hidden="true">
-                                                </span>Espace bailleur
-                                            </button>
-                                            {% include "common/utils/onclick_redirect.html" with id='espace_bailleur' url_target='login' %}
+                                            <a class="fr-btn fr-btn--icon-left fr-fi-account-line" href="{% url 'login' %}">
+                                            </span>Espace bailleur
+                                        </a>
                                         </li>
                                         <li>
-                                            <button class="fr-btn fr-btn--secondary" id='espace_instructeur'>
-                                                <span class="fr-fi-account-line fr-mr-1w" aria-hidden="true">
+                                            <a class="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-account-line" href="{% url 'login' %}?instructeur=1">
+                                                <span class=" fr-mr-1w" aria-hidden="true">
                                                 </span>Espace instructeur
-                                            </button>
-                                            {% include "common/utils/onclick_redirect.html" with id='espace_instructeur' url_target='login' url_params='?instructeur=1'%}
+                                            </a>
                                         </li>
                                     {% endif %}
                                     <li>

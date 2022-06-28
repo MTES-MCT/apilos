@@ -23,7 +23,7 @@ def normalize_enum_data(apps, schema_editor):
 
 
 def nothing_to_do(apps, schema_editor):
-    print("nothing to do")
+    pass
 
 
 class Migration(migrations.Migration):
