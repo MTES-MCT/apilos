@@ -807,15 +807,16 @@ def convention_sent(request, convention_uuid):
         if upform.is_valid():
             file = request.FILES["file"]
             now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+            filename = f"{now}_convention_{uuid}_signed.pdf"
             destination = default_storage.open(
-                f"conventions/{uuid}/{now}_convention_{uuid}_signed.pdf",
+                f"conventions/{uuid}/convention_docs/{filename}",
                 "bw",
             )
             for chunk in file.chunks():
                 destination.write(chunk)
             destination.close()
             convention.statut = ConventionStatut.TRANSMISE
-            convention.fichier_signe = f"{now}_convention_{uuid}_signed.pdf"
+            convention.fichier_signe = filename
             convention.save()
     else:
         upform = UploadForm()

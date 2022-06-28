@@ -2,12 +2,14 @@ from zipfile import ZipFile
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
+from django.core.files.storage import default_storage
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import FileResponse, Http404, HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.conf import settings
 
 from programmes.models import FinancementEDD
+from conventions.models import Convention
 from conventions.services import services
 from conventions.services.utils import ReturnStatus
 
@@ -444,3 +446,42 @@ def sent(request, convention_uuid):
             "convention_form_step": 12,
         },
     )
+
+
+@login_required
+def display_pdf(request, convention_uuid):
+    # récupérer le doc PDF
+    convention = Convention.objects.get(uuid=convention_uuid)
+    if convention.fichier_signe:
+        filename = convention.fichier_signe
+        return FileResponse(
+            default_storage.open(
+                f"conventions/{convention.uuid}/convention_docs/{filename}",
+                "rb",
+            ),
+            filename=filename,
+        )
+    if default_storage.exists(
+        f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.pdf"
+    ):
+        filename = f"{convention.uuid}.pdf"
+        return FileResponse(
+            default_storage.open(
+                f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.pdf",
+                "rb",
+            ),
+            filename=filename,
+        )
+    if default_storage.exists(
+        f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.docx"
+    ):
+        filename = f"{convention.uuid}.docx"
+        return FileResponse(
+            default_storage.open(
+                f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.docx",
+                "rb",
+            ),
+            filename=filename,
+        )
+
+    raise Http404

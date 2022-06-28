@@ -61,4 +61,9 @@ urlpatterns = [
         views.sent,
         name="sent",
     ),
+    path(
+        "display_pdf/<convention_uuid>",
+        views.display_pdf,
+        name="display_pdf",
+    ),
 ]
