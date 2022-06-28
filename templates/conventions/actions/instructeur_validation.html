@@ -1,4 +1,5 @@
-{% if request.session.is_instructeur and convention.statut != '1. Projet' %}
+{% load custom_filters %}
+{% if request|is_instructeur and convention.statut != '1. Projet' %}
     <div class="fr-col-md-12  fr-py-5w">
         {% if convention.is_instruction_ongoing %}
             <div role="alert" class="fr-alert fr-alert--warning">

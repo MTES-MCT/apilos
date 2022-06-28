@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 <div class="fr-container">
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-md-12 ">
@@ -61,7 +63,7 @@
                         {% endif %}
                         <thead>
                             <tr class="th_inline">
-                                {% if request.session.is_instructeur %}
+                                {% if request|is_instructeur %}
                                     <th scope="col" class="th_inline">
                                         Bailleur
                                         {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='bailleur__nom' url_target='conventions:index' %}
@@ -104,7 +106,7 @@
                         <tbody>
                             {% for convention in conventions.paginated_conventions %}
                                 <tr id="convention_redirect_{{convention.uuid}}" class="clickable">
-                                    {% if request.session.is_instructeur %}
+                                    {% if request|is_instructeur %}
                                         <td>{{convention.bailleur.nom}}</td>
                                     {% endif %}
                                     <td>{{convention.programme.numero_galion}}</td>

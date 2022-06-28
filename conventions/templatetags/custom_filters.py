@@ -2,8 +2,26 @@ from django.http.request import HttpRequest
 from django.conf import settings
 from django.template.defaultfilters import date as _date
 from django.template.defaulttags import register
-from core.siap_client.client import SIAPClient
+from siap.siap_client.client import SIAPClient
 from conventions.models import ConventionStatut
+from users.models import GroupProfile
+
+
+@register.filter
+def is_bailleur(request: HttpRequest) -> bool:
+    return request.session["currently"] in [
+        GroupProfile.BAILLEUR,
+        GroupProfile.SIAP_MO_PERS_MORALE,
+        GroupProfile.SIAP_MO_PERS_PHYS,
+    ]
+
+
+@register.filter
+def is_instructeur(request: HttpRequest) -> bool:
+    return request.session["currently"] in [
+        GroupProfile.INSTRUCTEUR,
+        GroupProfile.SIAP_SER_GEST,
+    ]
 
 
 @register.filter

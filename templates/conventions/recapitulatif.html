@@ -4,6 +4,8 @@
 
 {% load static %}
 
+{% load custom_filters %}
+
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "js/turbo.es2017-umd.js" %}" nonce="{{request.csp_nonce}}"></script>
@@ -700,11 +702,11 @@
                         {% if convention.isnt_validated %}
                             {% include "conventions/actions/generate_convention.html" %}
                         {% endif %}
-                        {% if request.session.is_instructeur and convention.is_a_signer %}
+                        {% if request|is_instructeur and convention.is_a_signer %}
                             {% include "conventions/actions/back_to_instruction.html" %}
                         {% endif %}
                     </div>
-                    {% if request.session.is_bailleur and convention.is_project %}
+                    {% if request|is_bailleur and convention.is_project %}
                         <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
                             {% include "conventions/actions/delete.html" with convention=convention %}
                             {% include "conventions/actions/submit_convention.html" %}
@@ -723,7 +725,7 @@
                     <div class="fr-col-12">
 
                         <div class="form-button-footer fr-col-md-12 fr-py-5w">
-                            {% if request.session.is_bailleur %}
+                            {% if request|is_bailleur %}
                                 {% if convention.is_bailleur_editable %}
                                     {% include "common/button/previous.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
                                 {% else %}
