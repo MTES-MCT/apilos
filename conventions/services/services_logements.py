@@ -207,7 +207,9 @@ def _logements_atomic_update(request, convention):
 
 
 def _save_lot_lgts_option(form, lot):
-    lot.lgts_mixite_sociale_negocies = form.cleaned_data["lgts_mixite_sociale_negocies"]
+    lot.lgts_mixite_sociale_negocies = (
+        form.cleaned_data["lgts_mixite_sociale_negocies"] or 0
+    )
     lot.loyer_derogatoire = form.cleaned_data["loyer_derogatoire"]
     lot.save()
 
