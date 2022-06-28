@@ -784,9 +784,9 @@ watchdog-gevent==0.1.1 \
     --hash=sha256:71dced5ec451b3deafd1dc73baaf52a7ce4d54d9a1eb606f9370235125f2424a \
     --hash=sha256:dcebd07668b472790ad0e7a7b40ad8c365e156c40cf54ffd5499c65c65c4f66f
     # via dramatiq
-whitenoise==6.1.0 \
-    --hash=sha256:2067fe9008a3cd7d0d75f75c9240b54f5f59996ca285cbeab18fc1e89949e30d \
-    --hash=sha256:6ccc6d1ad6fb688a398ea65d97db47f018ea0be7da75e146e8f2e837a04ba590
+whitenoise==6.2.0 \
+    --hash=sha256:8e9c600a5c18bd17655ef668ad55b5edf6c24ce9bdca5bf607649ca4b1e8e2c2 \
+    --hash=sha256:8fa943c6d4cd9e27673b70c21a07b0aa120873901e099cd46cab40f7cc96d567
     # via -r requirements.in
 wrapt==1.14.1 \
     --hash=sha256:00b6d4ea20a906c0ca56d84f93065b398ab74b927a7a3dbd470f6fc503f95dc3 \
