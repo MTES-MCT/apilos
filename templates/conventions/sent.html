@@ -21,6 +21,40 @@
                         <li>résilier la convention</li>
                     </ul>
                 </div>
+                <div class="fr-col-12 fr-col-lg-6">
+                    <div role="alert" class="fr-alert fr-alert--warning">
+                        <p class="fr-alert__title">
+                            Résiliation/dénonciation de la convention
+                        </p>
+                        <p>Vous pouvez ici procéder à la résiliation/dénonciation de la convention dans APiLos.</p>
+                        <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" id="validation_form" data-turbo="false">
+                            {% csrf_token %}
+                            <p class="fr-h4">Spécifier la date de résiliation/dénonciation de la convention</p>
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-md-6">
+                                    <div class="block--row-strech">
+                                        <div class="block--row-strech-1">
+                                            {% include "common/form/input_text.html" with form_input=conventionNumberForm.convention_numero editable=editable_validation %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="fr-btn fr-mt-3w" id="validation_button" {% if not editable_validation %}disabled{% endif %}>
+                                Résilier/Dénoncer la convention
+                            </button>
+                            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    document.getElementById("validation_form")
+                                        .addEventListener('submit', function(){
+                                        document.getElementById("validation_button").disabled = true
+                                        return true
+                                    });
+                                });
+                            </script>
+                        </form>
+                    </div>
+                </div>
                 <div class="fr-accordion fr-mt-5w">
                     <div class="fr-accordion__title">
                         <div class="fr-accordion__btn clickable " aria-expanded="false" aria-controls="accordion-106"><i>Si nécessaire, vous pouvez téléverser une nouvelle version de la convention signée ici.</i></div>
