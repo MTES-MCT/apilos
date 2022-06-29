@@ -1,0 +1,110 @@
+{% load static %}
+BAILLEUR CERBERE
+<div class="fr-container-fluid ds_banner">
+    <div class="fr-container">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-my-5w">
+                {% if request|is_bailleur %}
+                    <h1>Bienvenue sur APiLos !</h1>
+                    <p class="apilos-subtitle">Vous travaillez pour un bailleur de logements sociaux et souhaitez créer votre première convention APL.</p>
+                    <p class="apilos-subtitle">Nous vous accompagnons tout au long de la procédure !</p>
+                {% elif request|is_instructeur or request.user.is_superuser %}
+                    <h1 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h1>
+                    <p class="apilos-subtitle">Vous n'avez pas de conventions à instruire</p>
+                    <p class="apilos-subtitle">Nous vous accompagnons lors des prochaines étapes pour utiliser APiLos au sein de votre administration</p>
+                {% else %}
+                    <p class="fr-mb-3w">Votre profil n'est pas bien configuré, merci de vous rapprocher de votre instructeur</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if request|is_bailleur %}
+    <div class="fr-container">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-mt-5w fr-mb-3w">
+                <div class="fr-grid-row">
+                    <div class="fr-col-3 fr-col-md-3">
+                        <h2 class="fr-mt-2w">Je me prépare</h2>
+                    </div>
+                    <div class="fr-col-9 fr-col-md-9">
+                        <div class="fr-mb-3w">
+                            <h3>Je récupère le(s) document(s) suivant(s)</h3>
+                            <p>Il vous sera demandé de nous communiquer l'un des documents suivants concernant l'opération que vous souhaitez conventionner : </p>
+                            <ul class="fr-col-offset-1">
+                                <li>Acte de vente</li>
+                                <li>OU acte de propriété</li>
+                                <li>OU acte notarial</li>
+                            </ul>
+                        </div>
+                        <div class="fr-mb-3w">
+                            <h3>Je prépare mes tableaux</h3>
+                            <p>Vous pouvez télécharger et remplir les tableaux nécessaires à la création de votre convention. Ces modèle vous seront aussi proposés à chaque étape.</p>
+                            <div class="fr-col-offset-1">
+                                <button type="button" class="fr-btn fr-btn--secondary" id='download_model'>
+                                    <img class="apilos-fi-btn--secondary fr-mr-1w" src="{% static "icons/download.svg" %}">Télécharger les modèles de tableaux
+                                </button>
+                                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        document.getElementById('download_model')
+                                            .addEventListener('click', function(){ location.href="{% url 'conventions:load_xlsx_model' file_type='all' %}" });
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <div class="fr-mb-3w">
+                            <h3>Je consulte l'aide en ligne</h3>
+                            <p>Pour approfondir votre compréhension d'APiLos, référez-vous à tout moment à notre
+                                <a href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noopener">
+                                    Aide en ligne
+                                </a>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mb-5w">
+            <div class="fr-col-12">
+                <div class="fr-alert fr-alert--info">
+                    <p>Vous pouvez créer un brouillon de convention
+                        avant d'avoir réuni l'ensemble de ces documents
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mb-5w">
+            <a class="fr-btn" href="{% url 'conventions:selection' %}">
+                <span class="fr-fi-add-circle-line fr-mr-1w" aria-hidden="true"></span>Je suis prêt à commencer ma convention
+            </a>
+        </div>
+    </div>
+{% elif request|is_instructeur %}
+    <div class="fr-container">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-mt-5w fr-mb-3w">
+                <div class="fr-grid-row">
+                    <div class="fr-col-3 fr-col-md-3">
+                        <h2 class="fr-mt-2w">Comment démarrer sur APiLos</h2>
+                    </div>
+                    <div class="fr-col-9 fr-col-md-9">
+                        <div class="fr-mb-3w">
+                            <h3>Je prends contact avec l'équipe APiLos</h3>
+                            <p>Toute l'équipe APiLos est à votre disposition, n'hésitez pas à nous envoyer un email à l'adresse <a href="mailto:contact@apilos.beta.gouv.fr" target="_blank">contact@apilos.beta.gouv.fr</a></p>
+                        </div>
+                        <div class="fr-mb-3w">
+                            <h3>Je consulte l'aide en ligne</h3>
+                            <p>Pour approfondir votre compréhension d'APiLos, référez-vous à tout moment à notre
+                                <a href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noopener">
+                                    Aide en ligne
+                                </a>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endif %}
