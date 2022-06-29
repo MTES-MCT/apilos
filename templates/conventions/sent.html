@@ -29,18 +29,18 @@
                         <p>Vous pouvez ici procéder à la résiliation/dénonciation de la convention dans APiLos.</p>
                         <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" id="validation_form" data-turbo="false">
                             {% csrf_token %}
-                            <p class="fr-h4">Spécifier la date de résiliation/dénonciation de la convention</p>
+                            <p>Spécifier la date de résiliation/dénonciation</p>
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-6">
                                     <div class="block--row-strech">
                                         <div class="block--row-strech-1">
-                                            {% include "common/form/input_text.html" with form_input=conventionNumberForm.convention_numero editable=editable_validation %}
+                                            {% include "common/form/input_date.html" with form_input=conventionNumberForm.convention_numero editable=editable_validation %}
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <button class="fr-btn fr-mt-3w" id="validation_button" {% if not editable_validation %}disabled{% endif %}>
+                            <button type="button" class="fr-btn apilos-btn--red fr-btn--icon-left fr-fi-delete-line fr-my-1w" id="validation_button">
                                 Résilier/Dénoncer la convention
                             </button>
                             <script type="text/javascript" nonce="{{request.csp_nonce}}">
