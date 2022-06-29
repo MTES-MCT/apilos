@@ -13,6 +13,7 @@ from drf_spectacular.utils import (
 from django.conf import settings
 from django.db.models import Count
 
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from siap.siap_authentication import SIAPJWTAuthentication
 from conventions.models import ConventionStatut
 
@@ -22,7 +23,7 @@ class ApilosConfiguration(APIView):
     return the main configutations of the application
     """
 
-    authentication_classes = [SIAPJWTAuthentication]
+    authentication_classes = [SIAPJWTAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     renderer_classes = [JSONRenderer]
@@ -129,7 +130,7 @@ class ConventionKPI(APIView):
     return the main configutations of the application
     """
 
-    authentication_classes = [SIAPJWTAuthentication]
+    authentication_classes = [SIAPJWTAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(

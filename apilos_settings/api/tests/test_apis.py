@@ -1,8 +1,9 @@
-from django.urls import reverse
+from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
 from users.models import User
+from siap.siap_client.client import build_jwt
 
 
 class ConfigurationAPITest(APITestCase):
@@ -11,7 +12,12 @@ class ConfigurationAPITest(APITestCase):
     """
 
     def setUp(self):
-        User.objects.create_superuser("super.user", "super.user@apilos.com", "12345")
+        settings.USE_MOCKED_SIAP_CLIENT = True
+        user = User.objects.create_superuser(
+            "super.user", "super.user@apilos.com", "12345"
+        )
+        user.cerbere_login = "nicolas.oudard@beta.gouv.fr"
+        user.save()
 
     def test_get_config_route(self):
         response = self.client.get("/api-siap/v0/config/")
@@ -21,15 +27,9 @@ class ConfigurationAPITest(APITestCase):
         response = self.client.get("/api-siap/v0/config/")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-        response = self.client.post(
-            reverse("api-siap:token_obtain_pair"),
-            {"username": "super.user", "password": "12345"},
-            format="json",
+        accesstoken = build_jwt(
+            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
         )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue("access" in response.data)
-        accesstoken = response.data["access"]
-
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
         response = client.get("/api-siap/v0/config/")

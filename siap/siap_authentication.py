@@ -18,46 +18,56 @@ class SIAPJWTAuthentication(JWTAuthentication):
 
         validated_token = self.get_validated_token(raw_token)
         client = SIAPClient.get_instance()
-        habilitations = client.get_habilitations(
-            user_login=validated_token["user-login"],
-            habilitation_id=validated_token["habilitation-id"],
-        )
-        habilitation = list(
-            filter(
-                lambda x: x.get("id") == validated_token["habilitation-id"],
-                habilitations["habilitations"],
+        try:
+            habilitations = client.get_habilitations(
+                user_login=validated_token["user-login"],
+                habilitation_id=validated_token["habilitation-id"],
             )
-        )[0]
+            habilitation = list(
+                filter(
+                    lambda x: x.get("id") == validated_token["habilitation-id"],
+                    habilitations["habilitations"],
+                )
+            )[0]
 
-        # try:
-        #     user = User.objects.get(cerbere_login=validated_token["user-login"])
-        # except:
-        user = User(cerbere_login=validated_token["user-login"])
+            # try:
+            #     user = User.objects.get(cerbere_login=validated_token["user-login"])
+            # except:
+            user = User(cerbere_login=validated_token["user-login"])
 
-        user.siap_habilitation["currently"] = habilitation["groupe"]["profil"]["code"]
-        if habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_MO_PERS_MORALE:
-            bailleur = get_or_create_bailleur(habilitation["entiteMorale"])
-            user.siap_habilitation["bailleur"] = model_to_dict(
-                bailleur,
-                fields=[
-                    "id",
-                    "uuid",
-                    "siren",
-                    "nom",
-                ],
-            )
+            user.siap_habilitation["currently"] = habilitation["groupe"]["profil"][
+                "code"
+            ]
+            if (
+                habilitation["groupe"]["profil"]["code"]
+                == GroupProfile.SIAP_MO_PERS_MORALE
+            ):
+                bailleur = get_or_create_bailleur(habilitation["entiteMorale"])
+                user.siap_habilitation["bailleur"] = model_to_dict(
+                    bailleur,
+                    fields=[
+                        "id",
+                        "uuid",
+                        "siren",
+                        "nom",
+                    ],
+                )
 
-        if habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_SER_GEST:
-            # create if not exists gestionnaire
-            administration = get_or_create_administration(habilitation["gestionnaire"])
-            user.siap_habilitation["administration"] = model_to_dict(
-                administration,
-                fields=[
-                    "id",
-                    "uuid",
-                    "code",
-                    "nom",
-                ],
-            )
+            if habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_SER_GEST:
+                # create if not exists gestionnaire
+                administration = get_or_create_administration(
+                    habilitation["gestionnaire"]
+                )
+                user.siap_habilitation["administration"] = model_to_dict(
+                    administration,
+                    fields=[
+                        "id",
+                        "uuid",
+                        "code",
+                        "nom",
+                    ],
+                )
+        except KeyError:
+            return None
 
         return user, validated_token
