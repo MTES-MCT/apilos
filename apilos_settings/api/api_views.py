@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework import serializers
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_spectacular.utils import (
     extend_schema,
     OpenApiResponse,
@@ -14,7 +13,8 @@ from drf_spectacular.utils import (
 from django.conf import settings
 from django.db.models import Count
 
-from conventions.models import Convention, ConventionStatut
+from siap.siap_authentication import SIAPJWTAuthentication
+from conventions.models import ConventionStatut
 
 
 class ApilosConfiguration(APIView):
@@ -22,7 +22,7 @@ class ApilosConfiguration(APIView):
     return the main configutations of the application
     """
 
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SIAPJWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     renderer_classes = [JSONRenderer]
@@ -129,7 +129,7 @@ class ConventionKPI(APIView):
     return the main configutations of the application
     """
 
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SIAPJWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -147,7 +147,7 @@ class ConventionKPI(APIView):
         Return main settings of the application.
         """
         query_by_statuses = (
-            Convention.objects.all().values("statut").annotate(total=Count("statut"))
+            request.user.conventions().values("statut").annotate(total=Count("statut"))
         )
         instruction = 0
         a_signer = 0
