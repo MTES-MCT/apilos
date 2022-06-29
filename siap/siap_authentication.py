@@ -28,6 +28,10 @@ class SIAPJWTAuthentication(JWTAuthentication):
                 habilitations["habilitations"],
             )
         )[0]
+
+        # try:
+        #     user = User.objects.get(cerbere_login=validated_token["user-login"])
+        # except:
         user = User(cerbere_login=validated_token["user-login"])
 
         user.siap_habilitation["currently"] = habilitation["groupe"]["profil"]["code"]
