@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.renderers import JSONRenderer
 from rest_framework import serializers
 from drf_spectacular.utils import (
@@ -23,8 +23,8 @@ class ApilosConfiguration(APIView):
     return the main configutations of the application
     """
 
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = []
+    permission_classes = [AllowAny]
 
     renderer_classes = [JSONRenderer]
 
