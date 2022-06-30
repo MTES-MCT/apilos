@@ -23,8 +23,8 @@ class ApilosConfiguration(APIView):
     return the main configutations of the application
     """
 
-    authentication_classes = [SIAPJWTAuthentication, JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     renderer_classes = [JSONRenderer]
 
