@@ -18,6 +18,8 @@ from .services_conventions import (
     convention_validate,
     generate_convention,
     convention_delete,
+    convention_preview,
+    convention_sent,
 )
 from .services_logements import (
     logements_update,

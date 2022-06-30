@@ -13,7 +13,7 @@ class ConfigurationAPITest(APITestCase):
     def setUp(self):
         User.objects.create_superuser("super.user", "super.user@apilos.com", "12345")
 
-    def test_can_get_bailleur_list(self):
+    def test_get_config_route(self):
         response = self.client.get("/api-siap/v0/config/")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 

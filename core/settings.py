@@ -54,24 +54,19 @@ TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 
 LOGGING = {
     "version": 1,
-    "filters": {
-        "require_debug_true": {
-            "()": "django.utils.log.RequireDebugTrue",
-        }
-    },
+    "disable_existing_loggers": False,
     "handlers": {
         "console": {
             "level": "DEBUG",
-            "filters": ["require_debug_true"],
             "class": "logging.StreamHandler",
         }
     },
-    # 'loggers': {
-    #     'django.db.backends': {
-    #         'level': 'DEBUG',
-    #         'handlers': ['console'],
-    #     }
-    # }
+    "loggers": {
+        "django.db.backends": {
+            "level": "INFO",
+            "handlers": ["console"],
+        }
+    },
 }
 
 mailjet_api_key = get_env_variable("MAILJET_API_KEY")
@@ -111,6 +106,7 @@ INSTALLED_APPS = [
     "programmes.apps.ProgrammesConfig",
     "apilos_settings.apps.ApilosSettingsConfig",
     "stats.apps.StatsConfig",
+    "siap.apps.SiapConfig",
     "users.apps.UsersConfig",
     "upload.apps.UploadConfig",
     "comments.apps.CommentsConfig",
@@ -285,6 +281,9 @@ CSP_IMG_SRC = (
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png",
 )
 CSP_OBJECT_SRC = "'none'"
+
+X_FRAME_OPTIONS = "SAMEORIGIN"
+CSP_FRAME_SRC = "'self'"
 CSP_FONT_SRC = "'self'", "data:"
 CSP_CONNECT_SRC = ("'self'", "https://stats.data.gouv.fr/piwik.php")
 CSP_STYLE_SRC = (
@@ -334,6 +333,7 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "0.0.1",
     "SERVE_INCLUDE_SCHEMA": False,
     "TAGS": [{"name": "config-resource", "description": "Config Resource"}],
+    "DISABLE_ERRORS_AND_WARNINGS": False,
     # OTHER SETTINGS
 }
 
@@ -346,11 +346,12 @@ SWAGGER_SETTINGS = {
 
 CERBERE_AUTH = get_env_variable("CERBERE_AUTH")
 USE_MOCKED_SIAP_CLIENT = get_env_variable("USE_MOCKED_SIAP_CLIENT", cast=bool)
+NO_SIAP_MENU = get_env_variable("NO_SIAP_MENU", cast=bool)
 
 if CERBERE_AUTH:
     MIDDLEWARE = MIDDLEWARE + [
         "django_cas_ng.middleware.CASMiddleware",
-        "core.custom_middleware.CerbereSessionMiddleware",
+        "siap.custom_middleware.CerbereSessionMiddleware",
     ]
 
     AUTHENTICATION_BACKENDS = AUTHENTICATION_BACKENDS + [

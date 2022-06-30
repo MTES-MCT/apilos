@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 {% if convention %}
 
     <div class='background-contrast-grey950 fr-pt-2w'></div>
@@ -29,14 +31,14 @@
     <div class='background-contrast-grey950'>
         <div class="fr-container">
             <div class="fr-col-12 fr-pb-3w">
-                {% if request.session.is_instructeur %}
+                {% if request|is_instructeur %}
                     <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
                             Entreprise bailleur : {{ convention.bailleur }}
                         </div>
                     </div>
                 {% endif %}
-                {% if request.session.is_bailleur %}
+                {% if request|is_bailleur %}
                     <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
                             Service instructeur : {{ convention.programme.administration }}

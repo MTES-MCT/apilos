@@ -77,7 +77,9 @@ class Convention(models.Model):
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
     programme = models.ForeignKey(
-        "programmes.Programme", on_delete=models.CASCADE, null=False
+        "programmes.Programme",
+        on_delete=models.CASCADE,
+        null=False,
     )
     lot = models.ForeignKey("programmes.Lot", on_delete=models.CASCADE, null=False)
     date_fin_conventionnement = models.DateField(null=True)
@@ -121,6 +123,7 @@ class Convention(models.Model):
     # la tranche dans laquelle est compris le logement concerné. (7)
 
     donnees_validees = models.TextField(null=True)
+    fichier_signe = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         programme = self.programme
@@ -273,7 +276,10 @@ class Convention(models.Model):
         if self.programme.administration:
             return (
                 self.programme.administration.prefix_convention.replace(
-                    "{département}", str(self.programme.code_postal[:-3])
+                    "{département}",
+                    self.programme.code_postal[:-3]
+                    if self.programme.code_postal
+                    else "",
                 )
                 .replace("{zone}", str(self.programme.zone_123_bis))
                 .replace("{mois}", str(timezone.now().month))

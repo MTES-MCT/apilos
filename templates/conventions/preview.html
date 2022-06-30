@@ -1,0 +1,21 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %}Prévisualisation - APiLos{% endblock%}
+
+{% load static %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        {% include "conventions/common/form_header.html" with convention=convention %}
+        {% include "common/step_progressbar.html" with convention=convention %}
+        <div class="fr-container fr-mb-2w">
+            <h2>Visualiser votre convention</h2>
+            <div class="fr-col-md-12 fr-py-5w h-80vh">
+
+                <iframe src="{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'conventions:display_pdf' convention_uuid=convention.uuid %}" width="100%" height="1000px" nonce="{{request.csp_nonce}}"></iframe>
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}

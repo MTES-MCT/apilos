@@ -66,6 +66,18 @@ class TypologieLogement(models.TextChoices):
         return value
 
 
+class NatureLogement(models.TextChoices):
+    SANSOBJET = "SANSOBJET", "Sans Objet"
+    LOGEMENTSORDINAIRES = "LOGEMENTSORDINAIRES", "Logements ordinaires"
+    AUTRE = "AUTRE", "Autres logements foyers"
+    HEBERGEMENT = "HEBERGEMENT", "Hébergement"
+    RESISDENCESOCIALE = "RESISDENCESOCIALE", "Résidence sociale"
+    PENSIONSDEFAMILLE = "PENSIONSDEFAMILLE", "Pensions de famille (Maisons relais)"
+    RESIDENCEDACCUEIL = "RESIDENCEDACCUEIL", "Résidence d'accueil"
+    RESIDENCEUNIVERSITAIRE = "RESIDENCEUNIVERSITAIRE", "Résidence universitaire"
+    RHVS = "RHVS", "RHVS"
+
+
 class TypeOperation(models.TextChoices):
     SANSOBJET = "SANSOBJET", "Sans Objet"
     NEUF = "NEUF", "Construction Neuve"
@@ -73,6 +85,7 @@ class TypeOperation(models.TextChoices):
     ACQUIS = "ACQUIS", "Acquisition"
     ACQUISAMELIORATION = "ACQUISAMELIORATION", "Acquisition-Amélioration"
     REHABILITATION = "REHABILITATION", "Réhabilitation"
+    ACQUISSANSTRAVAUX = "ACQUISSANSTRAVAUX", "Acquisition sans travaux"
     SANSTRAVAUX = "SANSTRAVAUX", "Sans aide financière (sans travaux)"
     USUFRUIT = "USUFRUIT", "Usufruit"
 
@@ -126,16 +139,19 @@ class Programme(IngestableModel):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=255)
+    numero_galion = models.CharField(max_length=255, null=True)
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
     administration = models.ForeignKey(
         "instructeurs.Administration", on_delete=models.SET_NULL, null=True
     )
+    adresse = models.TextField(null=True)
     code_postal = models.CharField(max_length=10, null=True)
     ville = models.CharField(max_length=255, null=True)
-    adresse = models.TextField(null=True)
-    numero_galion = models.CharField(max_length=255, null=True)
+    code_insee_commune = models.CharField(max_length=10, null=True)
+    code_insee_departement = models.CharField(max_length=10, null=True)
+    code_insee_region = models.CharField(max_length=10, null=True)
     annee_gestion_programmation = models.IntegerField(null=True)
 
     zone_123_bis = models.CharField(
@@ -158,6 +174,11 @@ class Programme(IngestableModel):
         max_length=25,
         choices=TypeOperation.choices,
         default=TypeOperation.NEUF,
+    )
+    nature_logement = models.CharField(
+        max_length=25,
+        choices=NatureLogement.choices,
+        default=NatureLogement.LOGEMENTSORDINAIRES,
     )
     anru = models.BooleanField(default=False)
     nb_locaux_commerciaux = models.IntegerField(null=True)

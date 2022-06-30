@@ -51,4 +51,19 @@ urlpatterns = [
         views.display_operation,
         name="display_operation",
     ),
+    path(
+        "preview/<convention_uuid>",
+        views.preview,
+        name="preview",
+    ),
+    path(
+        "sent/<convention_uuid>",
+        views.sent,
+        name="sent",
+    ),
+    path(
+        "display_pdf/<convention_uuid>",
+        views.display_pdf,
+        name="display_pdf",
+    ),
 ]

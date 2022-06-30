@@ -7,6 +7,8 @@ from django.db.models import Q
 
 from django_cas_ng.backends import CASBackend
 
+from users.models import GroupProfile
+
 
 class CerbereCASBackend(CASBackend):
     """
@@ -46,7 +48,9 @@ class EmailBackend(ModelBackend):
         if user.check_password(password) and self.user_can_authenticate(user):
             if request is not None:
                 request.session["is_staff"] = user.is_staff
-                request.session["is_instructeur"] = user.is_instructeur()
-                request.session["is_bailleur"] = user.is_bailleur()
+                if user.is_bailleur():
+                    request.session["currently"] = GroupProfile.BAILLEUR
+                if user.is_instructeur():
+                    request.session["currently"] = GroupProfile.INSTRUCTEUR
             return user
         return None

@@ -16,11 +16,10 @@
                     {% include 'settings/user_list.html' with users=paginated_users %}
 
                     {% if request.user.is_administrator %}
-                        <button class="fr-btn fr-fi-add-circle-line fr-btn--icon-left fr-mt-3w" type="button" id="add_user">
+                        <a class="fr-btn fr-fi-add-circle-line fr-btn--icon-left fr-mt-3w" type="button" href="{% url 'settings:add_user'%}">
                             Ajouter un utilisateur
-                        </button>
+                        </a>
                     {% endif %}
-                    {% include "common/utils/onclick_redirect.html" with id='add_user' url_target='settings:add_user' url_params='?instructeur=1'%}
 
                 </div>
             </div>
