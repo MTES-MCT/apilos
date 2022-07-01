@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.renderers import JSONRenderer
 from rest_framework import serializers
 from drf_spectacular.utils import (
@@ -23,8 +23,8 @@ class ApilosConfiguration(APIView):
     return the main configutations of the application
     """
 
-    authentication_classes = [SIAPJWTAuthentication, JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = []
+    permission_classes = [AllowAny]
 
     renderer_classes = [JSONRenderer]
 
@@ -82,7 +82,7 @@ class ApilosConfiguration(APIView):
                     "racine_url_acces_web": "https://apilos.beta.gouv.fr",
                     "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}/",
                     "url_acces_web_recherche": "/conventions/",
-                    "url_acces_api_kpi": "/convention_kpi/",
+                    "url_acces_api_kpi": "/api-siap/v0/convention_kpi/",
                     "version": "0.1",
                 },
                 request_only=False,  # signal that example only applies to requests
@@ -104,7 +104,7 @@ class ApilosConfiguration(APIView):
                 "racine_url_acces_web": protocol + request.get_host(),
                 "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}",
                 "url_acces_web_recherche": "/conventions",
-                "url_acces_api_kpi": "/convention_kpi/",
+                "url_acces_api_kpi": "/api-siap/v0/convention_kpi/",
                 "version": version,
             }
         )
