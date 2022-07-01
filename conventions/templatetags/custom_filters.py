@@ -48,9 +48,39 @@ def get_menu_url(request: HttpRequest, menu_url: str) -> str:
 
 
 @register.filter
+def is_conventionnement_menu_url(menu_url: str) -> str:
+    print(menu_url)
+    if settings.CERBERE_AUTH and (
+        menu_url.endswith("/conventions") or menu_url == "/operation"
+    ):
+        print(menu_url)
+
+        return True
+    return False
+
+
+@register.filter
 def get_change_habilitation_url(request: HttpRequest, habilitation_id: int) -> str:
+    client = SIAPClient.get_instance()
     if settings.CERBERE_AUTH:
-        return f"{request.build_absolute_uri('?')}?habilitation_id={habilitation_id}"
+        return (
+            f"{client.racine_url_acces_web}{client.url_acces_web}"
+            + f"?habilitation_id={habilitation_id}"
+        )
+    return ""
+
+
+@register.filter
+def get_siap_operation_url(request: HttpRequest, numero_galion: str) -> str:
+    client = SIAPClient.get_instance()
+    relative_path = client.url_acces_web_operation.replace(
+        "<NUM_OPE_SIAP>", numero_galion
+    )
+    if settings.CERBERE_AUTH:
+        return (
+            f"{client.racine_url_acces_web}{relative_path}"
+            + f"?habilitation_id={request.session['habilitation_id']}"
+        )
     return ""
 
 

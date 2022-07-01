@@ -6,13 +6,13 @@
                     {% for menu in request.session.menu %}
                         {% if menu.menuItems %}
                             <li class="fr-nav__item">
-                                <button class="fr-nav__btn" aria-expanded="false" aria-controls="menu-{{menu.url}}">{{ menu.libelle }}</button>
+                                <button class="fr-nav__btn" aria-expanded="false" aria-controls="menu-{{menu.url}}" {% if menu.url|is_conventionnement_menu_url %}aria-current="page"{% endif %} >{{ menu.libelle }}</button>
                                 <div class="fr-collapse fr-menu" id="menu-{{menu.url}}">
                                     <ul class="fr-menu__list">
                                         {% for submenu in menu.menuItems %}
                                             <li>
 
-                                                <a class="fr-nav__link" href="{{ request|get_menu_url:submenu.url }}" target="_self">{{submenu.libelle}}</a>
+                                                <a class="fr-nav__link" href="{{ request|get_menu_url:submenu.url }}" target="_self" {% if submenu.url|is_conventionnement_menu_url %}aria-current="page"{% endif %}>{{submenu.libelle}}</a>
                                             </li>
                                         {% endfor %}
                                     </ul>
