@@ -1,12 +1,35 @@
 {% load custom_filters %}
 
+
+
+
+
+
+
 <div class='background-contrast-grey950 apilos-sticky-top fr-pt-2w'>
     <div class="fr-container">
         <div class="fr-col-12 fr-pb-2w">
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12 fr-col-lg-6">
                     <div class="fr-highlight">
-                        <h1>{{programme.numero_galion}} - {{programme.nom}}</h1>
+                        {% if CERBERE_AUTH %}
+                            <h1>Opération n°{{programme.numero_galion}}</h1>
+                            <h2>{{programme.nom}}</h2>
+                        {% else %}
+                            <h1>{{programme.nom}}</h1>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-lg-6 fr-grid-row fr-grid-row--right">
+                    <div>
+                        {% if CERBERE_AUTH %}
+                            <div class="fr-grid-row fr-grid-row--right fr-my-2w">
+                                <a href="{{ request|get_siap_operation_url:programme.numero_galion }}">
+                                    Financement
+                                    <span class="fr-icon-arrow-right-line" aria-hidden="true"></span>
+                                </a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

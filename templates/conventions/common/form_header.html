@@ -2,7 +2,6 @@
 
 {% if convention %}
 
-    <div class='background-contrast-grey950 fr-pt-2w'></div>
     <div class='background-contrast-grey950 apilos-sticky-top fr-pt-2w'>
         <div class="fr-container">
             <div class="fr-col-12 fr-pb-2w">
@@ -10,8 +9,10 @@
                     <div class="fr-col-12 fr-col-lg-6">
                         <div class="fr-highlight">
                             {% if CERBERE_AUTH %}
-                                <h1>Opération n°{{convention.programme.numero_galion}}</h1>
-                                <h2>{{convention.programme.nom}}</h2>
+                                <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
+                                    <h1>Opération n°{{convention.programme.numero_galion}}</h1>
+                                    <h2>{{convention.programme.nom}}</h2>
+                                </a>
                             {% else %}
                                 <h1>{{convention.programme.nom}}</h1>
                             {% endif %}
