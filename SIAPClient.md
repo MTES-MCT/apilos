@@ -121,15 +121,18 @@ Puis test de quelques appels:
 - [x] Résoudre les pb d’appel aux API menu et opération
 - [x] Création d’une route API permettant au SIAP de récupérer le détail des conventions
 - [x] Création d’une route API permettant d’afficher les indicateurs
-- [ ] Intégration du design de l’entête
+- [x] Intégration du design de l’entête
 - [x] Mapping SIAP / APiLos en utilisant les routes SIAP>opération et APiLos>opération
 - [x] Création de l’entité de l'utilisateur (Administration ou Bailleur) si elle n’existe pas
-- [ ] Retourner les indicateurs selon l'habilitation active de l'utilisateur
+- [x] Retourner les indicateurs selon l'habilitation active de l'utilisateur
 - [x] Affichage de la liste des conventions selon l’habilitation
 - [x] Création des conventions et affichage des conventions à faire pour un opération données
-- [ ] Ajout d'un lien vers l'opération du SIAP à partir de la convention
-- [ ] Adaptation de l'interface pour le SIAP
+- [x] Ajout d'un lien vers l'opération du SIAP à partir de la convention
+- [x] Adaptation de l'interface pour le SIAP
 - [ ] **Démarrage de l'expérimentation**
+- [ ] Recharger régulièrement la configuration du client SIAP
+- [ ] Controle de la signature JWT sur la route config
+- [ ] Mis à jour du client suivant les évolution de l'API SIAP (habilitation valide, bailleur...)
 - [ ] Application des autres type d'habilitation (autre que Bailleur et Instructeur)
     - [ ] Affichage des conventions en lecture seule
     - [ ] Affichage des conventions selon la géographie
