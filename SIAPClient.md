@@ -138,6 +138,7 @@ Puis test de quelques appels:
 - [ ] Affichage des statistiques du conventionnement
 - [ ] Miror du repo github dans [gitlab](https://gitlab-forge.din.developpement-durable.gouv.fr/dgaln/dhup/apilos) pour le SNUM
 - [ ] Deloguer sur le SIAP / Apilos doit délogguer des 2 plateformes
+- [ ] Mis à jour des Roles de l'utilisateur pour supprimer les roles obsolètes (à faire lors de la récup des habilitations ?)
 
 Questions ouvertes pour plus tard :
 
