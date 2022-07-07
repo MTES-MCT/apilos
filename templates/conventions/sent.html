@@ -13,7 +13,7 @@
         <div class="fr-container fr-pb-5w">
             <h2>Votre convention signée</h2>
             {% if convention.statut == '5. Transmise' %}
-                <div class="fr-col-md-12 fr-pt-5w">Votre convention signée à déjà été téléversée.</div>
+                <div class="fr-col-md-12 fr-py-3w">Votre convention signée à déjà été téléversée.</div>
                 <div class="fr-col-md-12 fr-pt-2w">Prochainement, vous pourrez :
                     <ul>
                         <li>créer des avenants</li>
@@ -27,30 +27,31 @@
                             Résiliation/dénonciation de la convention
                         </p>
                         <p>Vous pouvez ici procéder à la résiliation/dénonciation de la convention dans APiLos.</p>
-                        <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" id="validation_form" data-turbo="false">
+                        <form method="post" action="" id="{{resiliation_form.date_resiliation.id_for_label}}_validation_form" data-turbo="false">
                             {% csrf_token %}
-                            <p>Spécifier la date de résiliation/dénonciation</p>
+                            <p class="fr-mt-2w"><strong>Spécifier la date de résiliation/dénonciation</strong></p>
                             <div class="fr-grid-row fr-grid-row--gutters">
-                                <div class="fr-col-12 fr-col-md-6">
-                                    <div class="block--row-strech">
-                                        <div class="block--row-strech-1">
-                                            {% include "common/form/input_date.html" with form_input=conventionNumberForm.convention_numero editable=editable_validation %}
+                                <div class="fr-col-12">
+                                    <div class="fr-mt-1w block--row-strech" id="{{resiliation_form.date_resiliation.id_for_label}}_div">
+                                        <div class="fr-input fr-input-wrap fr-fi-calendar-line block--row-strech-1">
+                                            <input
+                                                type="date"
+                                                class="dateinput"
+                                                id="{{resiliation_form.date_resiliation.id_for_label}}"
+                                                name="{{resiliation_form.date_resiliation.html_name}}">
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <button type="button" class="fr-btn apilos-btn--red fr-btn--icon-left fr-fi-delete-line fr-my-1w" id="validation_button">
+                            <button type="button" class="fr-btn apilos-btn--red fr-btn--icon-left fr-fi-delete-line fr-my-2w" id="{{resiliation_form.date_resiliation.id_for_label}}_validation_button">
                                 Résilier/Dénoncer la convention
                             </button>
                             <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    document.getElementById("validation_form")
-                                        .addEventListener('submit', function(){
-                                        document.getElementById("validation_button").disabled = true
-                                        return true
-                                    });
-                                });
+                                document.getElementById("{{resiliation_form.date_resiliation.id_for_label}}_validation_button").onclick = function() {
+                                    document.getElementById('{{resiliation_form.date_resiliation.id_for_label}}_validation_form').submit();
+                                    event.stopPropagation;
+                                };
                             </script>
                         </form>
                     </div>
@@ -65,7 +66,7 @@
                 <div class="fr-py-3w">
             {% endif %}
 
-            <form method="post" action="" enctype="multipart/form-data">
+            <form method="post" action="" enctype="multipart/form-data" id="{{upform.file.id_for_label}}_form">
                 {% csrf_token %}
                 <input
                     class="fileinput--hidden"
@@ -91,7 +92,8 @@
                         document.getElementById('{{upform.file.id_for_label}}').click();
                     };
                     document.getElementById('{{upform.file.id_for_label}}').onchange = function() {
-                        this.form.submit()
+                        document.getElementById("{{upform.file.id_for_label}}_form").submit();
+                        event.stopPropagation;
                     }
                 </script>
             </form>

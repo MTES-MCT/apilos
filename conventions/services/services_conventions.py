@@ -25,6 +25,7 @@ from conventions.forms import (
     PretFormSet,
     UploadForm,
     ConventionType1and2Form,
+    ConventionResiliationForm,
 )
 from conventions.tasks import generate_and_send
 
@@ -803,7 +804,9 @@ def convention_sent(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     if request.method == "POST":
         upform = UploadForm(request.POST, request.FILES)
+        resiliation_form = ConventionResiliationForm(request.POST)
         uuid = convention_uuid
+
         if upform.is_valid():
             file = request.FILES["file"]
             now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
@@ -818,9 +821,19 @@ def convention_sent(request, convention_uuid):
             convention.statut = ConventionStatut.TRANSMISE
             convention.fichier_signe = filename
             convention.save()
+
+        if resiliation_form.is_valid():
+            convention.statut = ConventionStatut.RESILIEE
+            convention.date_resiliation = resiliation_form.cleaned_data[
+                "date_resiliation"
+            ]
+            convention.save()
     else:
         upform = UploadForm()
+        resiliation_form = ConventionResiliationForm()
+
     return {
         "convention": convention,
+        "resiliation_form": resiliation_form,
         "upform": upform,
     }

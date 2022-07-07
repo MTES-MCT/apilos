@@ -610,6 +610,9 @@ table.fullwidth {
 .apilos-colored_status--Transmise {
   background-color: #666666; /* grey-425 */
 }
+.apilos-colored_status--Résiliée {
+  background-color: #bebebe; /* grey-425 */
+}
 
 /*
  * End display convention status
