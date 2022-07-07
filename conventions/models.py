@@ -305,6 +305,7 @@ class Convention(models.Model):
         return self.statut not in [
             ConventionStatut.A_SIGNER,
             ConventionStatut.TRANSMISE,
+            ConventionStatut.RESILIEE,
         ]
 
     def statut_for_template(self):
