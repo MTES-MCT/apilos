@@ -37,7 +37,7 @@ class ProgrammeSelectionForm(forms.Form):
     administration = forms.IntegerField(
         required=False,
         label="Administration",
-        help_text="délégataire des aides à la pierre du territoire de l'opération",
+        help_text="Délégataire des aides à la pierre du territoire de l'opération",
         error_messages={
             "required": "L'administration est obligatoire",
         },

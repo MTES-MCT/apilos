@@ -2,6 +2,7 @@
     {% if form_input.label %}
         <label class="fr-label {{ label_class }}" for="{{form_input.id_for_label}}">
             {{ form_input.label }}
+            {% include "common/help_field.html" with form_input=form_input %}
         </label>
     {% endif %}
 
