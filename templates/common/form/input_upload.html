@@ -11,9 +11,6 @@
         <div class="block--row-strech" id="{{form_input.id_for_label}}_div">
             <label class="block--row-strech-1 fr-label fr-mt-1w fr-mb-2w fr-h4" for="{{form_input.id_for_label}}">
                 {{ form_input.label }}
-                {% if mandatory %}
-                    &nbsp;{% include "common/form/required_field_star.html" %}
-                {% endif %}
                 {% if additional_informations %}
                     <br>
                     <div class="fr-hint-text">informations complémentaires à destination de l’instructeur</div>
