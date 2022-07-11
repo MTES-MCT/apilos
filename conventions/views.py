@@ -407,6 +407,14 @@ def preview(request, convention_uuid):
 def sent(request, convention_uuid):
     # Step 12/12
     result = services.convention_sent(request, convention_uuid)
+    if result["action"] == "upload":
+        return HttpResponseRedirect(
+            reverse("conventions:preview", args=[convention_uuid])
+        )
+    if result["action"] == "resiliation":
+        return HttpResponseRedirect(
+            reverse("conventions:recapitulatif", args=[convention_uuid])
+        )
     return render(
         request,
         "conventions/sent.html",

@@ -44,15 +44,14 @@
                                 </div>
                             </div>
 
-                            <button type="button" class="fr-btn apilos-btn--red fr-btn--icon-left fr-fi-delete-line fr-my-2w" id="{{resiliation_form.date_resiliation.id_for_label}}_validation_button">
+                            <button class="fr-btn apilos-btn--red fr-btn--icon-left fr-fi-delete-line fr-my-2w" id="{{resiliation_form.date_resiliation.id_for_label}}_validation_button">
                                 Résilier/Dénoncer la convention
                             </button>
-                            <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                document.getElementById("{{resiliation_form.date_resiliation.id_for_label}}_validation_button").onclick = function() {
-                                    document.getElementById('{{resiliation_form.date_resiliation.id_for_label}}_validation_form').submit();
-                                    event.stopPropagation;
-                                };
-                            </script>
+                            {% for error in resiliation_form.date_resiliation.errors %}
+                                <p id="text-input-error-desc-error" class="fr-error-text">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
                         </form>
                     </div>
                 </div>
@@ -92,8 +91,11 @@
                         document.getElementById('{{upform.file.id_for_label}}').click();
                     };
                     document.getElementById('{{upform.file.id_for_label}}').onchange = function() {
+                        var input = document.createElement('input');
+                        input.setAttribute('name', 'Upload');//set the param name
+                        input.setAttribute('value', 'True');//set the value
+                        this.form.appendChild(input)
                         document.getElementById("{{upform.file.id_for_label}}_form").submit();
-                        event.stopPropagation;
                     }
                 </script>
             </form>
