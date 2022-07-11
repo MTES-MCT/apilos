@@ -35,7 +35,7 @@
                             <label class="fr-label" for="financement">
                                 Type de financement
                             </label>
-                            <select class="fr-select" id="financment" name="financement">
+                            <select class="fr-select" name="financement">
                                 <option value="">Tous les financements</option>
                                 {% for financement in financements %}
                                     <option value="{{financement.value}}"
@@ -47,6 +47,21 @@
                         </div>
                     </div>
                 </div>
+                {% if request.user.is_staff %}
+                    <div class="apilos-bordered fr-my-3w">
+                        <p class="notes">
+                            <i>Les paramètres de recherche encadré ci-dessous sont disponible pour les utilisateurs avancés.</i>
+                        </p>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                                <label class="fr-label" for="search_input">
+                                    Préciser un département
+                                </label>
+                                <input class="fr-input" placeholder="Ex : 13" type="recherche" name="deptartement_input" value="{{conventions.deptartement_input}}">
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
 
                 <div class="fr-col-12 fr-grid-row fr-grid-row--right">
                     <button class="fr-btn fr-fi-search-line fr-btn--icon-left fr-mt-1w" title="Rechercher" id="search_btn">
