@@ -1,18 +1,40 @@
-{% for habilitation in request.session.habilitations %}
-    <a href="{{ request|get_change_habilitation_url:habilitation.id }}" class="{% if habilitation.id == request.session.habilitation_id %}apilos-active-habilitation{% endif %}">
-        <b>{{ habilitation.groupe.libelleRole }}</b><br>
-        {% if habilitation.sousTitre1 %}
-            {{ habilitation.sousTitre1 }}<br>
+<button class="fr-nav__btn orange-background" aria-expanded="false" aria-controls="list-habilitation" aria-current="true">
+    {% for habilitation in request.session.habilitations %}
+        {% if habilitation.id == request.session.habilitation_id %}
+            {{ habilitation.groupe.libelleRole }}<br>
+            {% if habilitation.sousTitre1 %}
+                {{ habilitation.sousTitre1 }}<br>
+            {% endif %}
+            {% if habilitation.sousTitre2 %}
+                {{ habilitation.sousTitre2 }}
+            {% endif %}
         {% endif %}
-        {{ habilitation.sousTitre2 }}
-    </a>
-{% endfor %}
+    {% endfor %}
+</button>
+<div class="fr-collapse fr-menu habilitation-bloc" id="list-habilitation">
+    <ul class="fr-menu__list">
+        {% for habilitation in request.session.habilitations %}
+            {% if habilitation.id != request.session.habilitation_id %}
+                <li>
+                    <a class="fr-nav__link fr-p-1w" href="{{ request|get_change_habilitation_url:habilitation.id }}"><b>{{ habilitation.groupe.libelleRole }}</b><br>
+                        {% if habilitation.sousTitre1 %}
+                            {{ habilitation.sousTitre1 }}<br>
+                        {% endif %}
+                        {% if habilitation.sousTitre2 %}
+                            {{ habilitation.sousTitre2 }}
+                        {% endif %}
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        <li class="navy-background fr-px-2w fr-py-3v fr-text--md">
+            <a href="{{ request|get_manage_habilitation_url }}">
+                <span aria-hidden="true">Gérer mes habilitations </span>
+            </a>
+        </li>
+    </ul>
+</div>
 
-<a href="{{ request|get_manage_habilitation_url }}">
-    <span class="fr-fi-logout-box-r-line fr-mr-1w" aria-hidden="true">
-    </span>Gérer mes habilitations
-</a>
-<a href="{% url 'cas_ng_logout' %}?next=/">
-    <span class="fr-fi-logout-box-r-line fr-mr-1w" aria-hidden="true">
-    </span>Déconnexion
-</a>
+
+
+
