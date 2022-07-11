@@ -128,12 +128,12 @@
                                 {% if request|is_instructeur %}
                                     <td>{{convention.bailleur.nom}}</td>
                                 {% endif %}
-                                <td>{{convention.programme.numero_galion}}</td>
+                                <td>{{convention.programme.numero_galion|default_if_none:'-'}}</td>
                                 <td>{{convention.programme.date_achevement_compile|date:"d/m/Y"|default_if_none:'-' }}</td>
                                 <td>{{convention.programme.nom}}</td>
                                 <td>{{convention.financement}}</td>
-                                <td>{{convention.programme.code_postal}}</td>
-                                <td>{{convention.programme.ville}}</td>
+                                <td>{{convention.programme.code_postal|default_if_none:'-'}}</td>
+                                <td>{{convention.programme.ville|default_if_none:'-'}}</td>
                                 <td>{{convention.lot.nb_logements}}</td>
                                 <td title="{{convention.statut_for_template.statut_display}}">
                                     <div class="fr-p-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
