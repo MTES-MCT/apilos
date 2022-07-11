@@ -4,6 +4,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.conf import settings
+from instructeurs.models import Administration
 
 from programmes.models import (
     Programme,
@@ -42,6 +43,7 @@ def select_programme_create(request):
                     code_postal=form.cleaned_data["code_postal"],
                     ville=form.cleaned_data["ville"],
                     bailleur_id=form.cleaned_data["bailleur"],
+                    administration_id=form.cleaned_data["administration"],
                 )
                 programme.save()
                 lot = Lot.objects.create(
@@ -83,7 +85,8 @@ def select_programme_create(request):
         "form": form,
         "editable": request.user.has_perm("convention.add_convention"),
         "bailleurs": request.user.bailleurs(),
-    }  # render(request, "conventions/selection.html", {'form': form, 'programmes': programmes})
+        "administrations": Administration.objects.all().order_by("nom"),
+    }
 
 
 def _send_email_staff(request, convention):

@@ -35,7 +35,7 @@
                             <label class="fr-label" for="financement">
                                 Type de financement
                             </label>
-                            <select class="fr-select" id="financment" name="financement">
+                            <select class="fr-select" name="financement">
                                 <option value="">Tous les financements</option>
                                 {% for financement in financements %}
                                     <option value="{{financement.value}}"
@@ -47,6 +47,21 @@
                         </div>
                     </div>
                 </div>
+                {% if request.user.is_staff %}
+                    <div class="apilos-bordered fr-my-3w">
+                        <p class="notes">
+                            <em>Les paramètres de recherche dans cet encadré sont disponibles uniquement pour les utilisateurs avancés.</em>
+                        </p>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                                <label class="fr-label" for="search_input">
+                                    Préciser un département
+                                </label>
+                                <input class="fr-input" placeholder="Ex : 13" type="recherche" name="departement_input" value="{{conventions.departement_input}}">
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
 
                 <div class="fr-col-12 fr-grid-row fr-grid-row--right">
                     <button class="fr-btn fr-fi-search-line fr-btn--icon-left fr-mt-1w" title="Rechercher" id="search_btn">
@@ -59,7 +74,7 @@
                 <div class="fr-table fr-table--bordered table--layout-fixed">
                     <table>
                         {% if conventions.paginated_conventions.paginator.count != conventions.total_conventions %}
-                            <caption><i>{{ conventions.paginated_conventions.paginator.count }} convention{{ conventions.paginated_conventions.paginator.count|pluralize }} correspondent à votre recherche</i></caption>
+                            <caption><em>{{ conventions.paginated_conventions.paginator.count }} convention{{ conventions.paginated_conventions.paginator.count|pluralize }} correspondent à votre recherche</em></caption>
                         {% endif %}
                         <thead>
                             <tr class="th_inline">
@@ -113,12 +128,12 @@
                                 {% if request|is_instructeur %}
                                     <td>{{convention.bailleur.nom}}</td>
                                 {% endif %}
-                                <td>{{convention.programme.numero_galion}}</td>
+                                <td>{{convention.programme.numero_galion|default_if_none:'-'}}</td>
                                 <td>{{convention.programme.date_achevement_compile|date:"d/m/Y"|default_if_none:'-' }}</td>
                                 <td>{{convention.programme.nom}}</td>
                                 <td>{{convention.financement}}</td>
-                                <td>{{convention.programme.code_postal}}</td>
-                                <td>{{convention.programme.ville}}</td>
+                                <td>{{convention.programme.code_postal|default_if_none:'-'}}</td>
+                                <td>{{convention.programme.ville|default_if_none:'-'}}</td>
                                 <td>{{convention.lot.nb_logements}}</td>
                                 <td title="{{convention.statut_for_template.statut_display}}">
                                     <div class="fr-p-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
