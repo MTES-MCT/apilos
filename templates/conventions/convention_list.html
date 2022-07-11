@@ -50,7 +50,7 @@
                 {% if request.user.is_staff %}
                     <div class="apilos-bordered fr-my-3w">
                         <p class="notes">
-                            <i>Les paramètres de recherche encadré ci-dessous sont disponible pour les utilisateurs avancés.</i>
+                            <em>Les paramètres de recherche dans cet encadré sont disponibles uniquement pour les utilisateurs avancés.</em>
                         </p>
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
@@ -74,7 +74,7 @@
                 <div class="fr-table fr-table--bordered table--layout-fixed">
                     <table>
                         {% if conventions.paginated_conventions.paginator.count != conventions.total_conventions %}
-                            <caption><i>{{ conventions.paginated_conventions.paginator.count }} convention{{ conventions.paginated_conventions.paginator.count|pluralize }} correspondent à votre recherche</i></caption>
+                            <caption><em>{{ conventions.paginated_conventions.paginator.count }} convention{{ conventions.paginated_conventions.paginator.count|pluralize }} correspondent à votre recherche</em></caption>
                         {% endif %}
                         <thead>
                             <tr class="th_inline">
