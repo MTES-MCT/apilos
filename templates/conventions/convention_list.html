@@ -105,7 +105,7 @@
                         </thead>
                         <tbody>
                             {% for convention in conventions.paginated_conventions %}
-                                {% if convention.isnt_validated or convention.statut == "6. Résiliée" %}
+                                {% if convention.isnt_validated %}
                                     <tr id="convention_redirect_{{convention.uuid}}" class="clickable">
                                 {% else %}
                                     <tr id="convention_redirect_{{convention.uuid}}" class="clickable validated">

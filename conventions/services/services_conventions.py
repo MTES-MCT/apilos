@@ -832,6 +832,8 @@ def convention_sent(request, convention_uuid):
                 ]
                 convention.save()
     else:
+        if convention.statut == ConventionStatut.RESILIEE:
+            action = "resiliation"
         upform = UploadForm()
         resiliation_form = ConventionResiliationForm()
 

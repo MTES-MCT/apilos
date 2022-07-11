@@ -62,7 +62,7 @@ class ConventionStatut(models.TextChoices):
     )
     A_SIGNER = "4. A signer", "Convention à signer"
     TRANSMISE = "5. Transmise", "Convention transmise"
-    RESILIEE = "6. Résiliée", "Convention résiliée"
+    RESILIEE = "6. Resiliee", "Convention résiliée"
 
 
 class ConventionType1and2(models.TextChoices):
