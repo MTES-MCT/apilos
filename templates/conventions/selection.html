@@ -80,6 +80,9 @@
                                             {% else %}
                                                 {% include "common/form/input_select.html" with form_input=form.bailleur enum=bailleurs without_empty_option=False %}
                                             {% endif %}
+
+                                            {% include "common/form/input_select.html" with form_input=form.administration enum=administrations without_empty_option=False %}
+
                                             {% include "common/form/input_text.html" with form_input=form.nom %}
 
                                             <div class="fr-grid-row fr-grid-row--gutters">

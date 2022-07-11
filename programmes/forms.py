@@ -30,6 +30,17 @@ class ProgrammeSelectionForm(forms.Form):
     bailleur = forms.IntegerField(
         required=False,
         label="Bailleur",
+        error_messages={
+            "required": "Le bailleur est obligatoire",
+        },
+    )
+    administration = forms.IntegerField(
+        required=False,
+        label="Administration",
+        help_text="délégataire des aides à la pierre du territoire de l'opération",
+        error_messages={
+            "required": "L'administration est obligatoire",
+        },
     )
     nom = forms.CharField(
         required=False,
@@ -99,6 +110,7 @@ class ProgrammeSelectionForm(forms.Form):
             self.validate_required_field(cleaned_data, "lot_uuid")
         if cleaned_data["existing_programme"] == "creation":
             self.validate_required_field(cleaned_data, "bailleur")
+            self.validate_required_field(cleaned_data, "administration")
             self.validate_required_field(cleaned_data, "nom")
             self.validate_required_field(cleaned_data, "nb_logements")
             self.validate_required_field(cleaned_data, "financement")
