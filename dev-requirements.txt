@@ -63,8 +63,8 @@ distlib==0.3.4 \
     --hash=sha256:6564fe0a8f51e734df6333d08b8b94d4ea8ee6b99b5ed50613f731fd4089f34b \
     --hash=sha256:e4b58818180336dc9c529bfb9a0b58728ffc09ad92027a3f30b7cd91e3458579
     # via virtualenv
-djhtml==1.5.0 \
-    --hash=sha256:eeccc5e5cc6d1371e8434903de5043b24efa1000b6857b9bf342e1868aa995ae
+djhtml==1.5.1 \
+    --hash=sha256:d3b9060e9c45e2a56125203f2508ae591aba41a2f14ed2fa8bafb99b0fc15eb3
     # via -r dev-requirements.in
 filelock==3.7.1 \
     --hash=sha256:37def7b658813cda163b56fc564cdc75e86d338246458c4c28ae84cabefa2404 \
