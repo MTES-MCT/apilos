@@ -76,30 +76,33 @@
                                         </script>
                                         <div id='programme_creation' {% if form.existing_programme.value != 'creation' %}hidden{% endif %}>
                                             {% if bailleurs.length == 1 %}
-                                                {% include "common/form/input_select.html" with form_input=form.bailleur enum=bailleurs without_empty_option=True %}
+                                                {% include "common/form/input_select.html" with form_input=form.bailleur enum=bailleurs without_empty_option=True mandatory_input=True %}
                                             {% else %}
-                                                {% include "common/form/input_select.html" with form_input=form.bailleur enum=bailleurs without_empty_option=False %}
+                                                {% include "common/form/input_select.html" with form_input=form.bailleur enum=bailleurs without_empty_option=False mandatory_input=True %}
                                             {% endif %}
-                                            {% include "common/form/input_text.html" with form_input=form.nom %}
+
+                                            {% include "common/form/input_select.html" with form_input=form.administration enum=administrations without_empty_option=False mandatory_input=True %}
+
+                                            {% include "common/form/input_text.html" with form_input=form.nom  mandatory_input=True %}
 
                                             <div class="fr-grid-row fr-grid-row--gutters">
                                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
-                                                    {% include "common/form/input_number.html" with form_input=form.nb_logements %}
+                                                    {% include "common/form/input_number.html" with form_input=form.nb_logements mandatory_input=True %}
                                                 </div>
                                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
-                                                    {% include "common/form/input_select.html" with form_input=form.type_habitat %}
+                                                    {% include "common/form/input_select.html" with form_input=form.type_habitat mandatory_input=True %}
                                                 </div>
                                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
-                                                    {% include "common/form/input_select.html" with form_input=form.financement enum=financements %}
+                                                    {% include "common/form/input_select.html" with form_input=form.financement enum=financements mandatory_input=True %}
                                                 </div>
                                             </div>
 
                                             <div class="fr-grid-row fr-grid-row--gutters">
                                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                                    {% include "common/form/input_text.html" with form_input=form.code_postal %}
+                                                    {% include "common/form/input_text.html" with form_input=form.code_postal mandatory_input=True %}
                                                 </div>
                                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                                    {% include "common/form/input_text.html" with form_input=form.ville %}
+                                                    {% include "common/form/input_text.html" with form_input=form.ville mandatory_input=True %}
                                                 </div>
                                             </div>
 
