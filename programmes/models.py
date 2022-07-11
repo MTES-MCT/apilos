@@ -29,6 +29,8 @@ class Financement(models.TextChoices):
     PLAI_ADP = "PLAI_ADP", "PLAI_ADP"
     PLUS_PLAI = "PLUS-PLAI", "PLUS-PLAI"
     PLS = "PLS", "PLS"
+    PSH = "PSH", "PSH"
+    PALULOS = "PALULOS", "PALULOS"
 
 
 class FinancementEDD(models.TextChoices):
