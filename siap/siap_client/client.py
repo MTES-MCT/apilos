@@ -15,12 +15,13 @@ from siap.siap_client.mock_data import (
 )
 
 
-def _build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
+def build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
     dt_iat = datetime.datetime.now()
     dt_exp = dt_iat + datetime.timedelta(minutes=5)
     ts_iat = int(dt_iat.timestamp())
     ts_exp = int(dt_exp.timestamp())
     payload = {
+        "token_type": "access",
         "iat": ts_iat,
         "exp": ts_exp,
         "jti": str(uuid.uuid4()),
@@ -45,7 +46,7 @@ def _call_siap_api(
     siap_url_config = (
         settings.SIAP_CLIENT_HOST + base_route + settings.SIAP_CLIENT_PATH + route
     )
-    myjwt = _build_jwt(user_login=user_login, habilitation_id=habilitation_id)
+    myjwt = build_jwt(user_login=user_login, habilitation_id=habilitation_id)
     response = requests.get(
         siap_url_config,
         headers={"siap-Authorization": f"Bearer {myjwt}"},

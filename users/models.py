@@ -260,7 +260,7 @@ class User(AbstractUser):
             conventions_result = Convention.objects.filter(
                 bailleur_id__in=self._bailleur_ids()
             )
-            if self.filtre_departements.exists():
+            if self.id and self.filtre_departements.exists():
                 conventions_result = conventions_result.annotate(
                     departement=Substr("programme__code_postal", 1, 2)
                 ).filter(
