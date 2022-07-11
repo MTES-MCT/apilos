@@ -49,12 +49,9 @@ def get_menu_url(request: HttpRequest, menu_url: str) -> str:
 
 @register.filter
 def is_conventionnement_menu_url(menu_url: str) -> str:
-    print(menu_url)
     if settings.CERBERE_AUTH and (
         menu_url.endswith("/conventions") or menu_url == "/operation"
     ):
-        print(menu_url)
-
         return True
     return False
 

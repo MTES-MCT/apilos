@@ -1,5 +1,5 @@
+from datetime import datetime, timedelta
 import logging
-import datetime
 import uuid
 import threading
 import requests
@@ -14,10 +14,13 @@ from siap.siap_client.mock_data import (
     operation_mock,
 )
 
+# The SIAP configuration will be refresh every REFRESH_SIAP_CONFIG minutes
+REFRESH_SIAP_CONFIG = 60
+
 
 def build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
-    dt_iat = datetime.datetime.now()
-    dt_exp = dt_iat + datetime.timedelta(minutes=5)
+    dt_iat = datetime.now()
+    dt_exp = dt_iat + timedelta(minutes=5)
     ts_iat = int(dt_iat.timestamp())
     ts_exp = int(dt_exp.timestamp())
     payload = {
@@ -61,6 +64,7 @@ class SIAPClient:
 
     __singleton_lock = threading.Lock()
     __singleton_instance = None
+    __should_update_at = datetime.now() + timedelta(minutes=REFRESH_SIAP_CONFIG)
 
     # define the classmethod
     @classmethod
@@ -74,6 +78,11 @@ class SIAPClient:
                         cls.__singleton_instance = SIAPClientMock()
                     else:
                         cls.__singleton_instance = SIAPClientRemote()
+        if cls.__should_update_at < datetime.now():
+            cls.__singleton_instance.update_siap_config()
+            cls.__should_update_at = datetime.now() + timedelta(
+                minutes=REFRESH_SIAP_CONFIG
+            )
 
         # return the singleton instance
         return cls.__singleton_instance
@@ -86,10 +95,10 @@ class SIAPClient:
 class SIAPClientInterface:
     def __init__(self) -> None:
         # pylint: disable=E1111
-        config = self.get_siap_config()
-        self.racine_url_acces_web = config["racineUrlAccesWeb"].rstrip("/")
-        self.url_acces_web = config["urlAccesWeb"]
-        self.url_acces_web_operation = config["urlAccesWebOperation"]
+        self.update_siap_config()
+
+    def update_siap_config(self) -> None:
+        pass
 
     def get_siap_config(self) -> dict:
         pass
@@ -132,6 +141,12 @@ class SIAPClientRemote(SIAPClientInterface):
     def get_siap_config(self) -> dict:
         response = _call_siap_api("/config")
         return response.json()
+
+    def update_siap_config(self) -> None:
+        config = self.get_siap_config()
+        self.racine_url_acces_web = config["racineUrlAccesWeb"].rstrip("/")
+        self.url_acces_web = config["urlAccesWeb"]
+        self.url_acces_web_operation = config["urlAccesWebOperation"]
 
     def get_habilitations(self, user_login: str, habilitation_id: int = 0) -> dict:
         response = _call_siap_api(
@@ -177,6 +192,12 @@ class SIAPClientRemote(SIAPClientInterface):
 class SIAPClientMock(SIAPClientInterface):
     def get_siap_config(self) -> dict:
         return config_mock
+
+    def update_siap_config(self) -> None:
+        config = self.get_siap_config()
+        self.racine_url_acces_web = config["racineUrlAccesWeb"].rstrip("/")
+        self.url_acces_web = config["urlAccesWeb"]
+        self.url_acces_web_operation = config["urlAccesWebOperation"]
 
     def get_habilitations(self, user_login: str, habilitation_id: int = 0) -> dict:
         return habilitations_mock
