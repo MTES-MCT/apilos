@@ -44,7 +44,7 @@
                                 </div>
                             </div>
 
-                            <button class="fr-btn apilos-btn--red fr-btn--icon-left fr-fi-delete-line fr-my-2w" id="{{resiliation_form.date_resiliation.id_for_label}}_validation_button">
+                            <button class="fr-btn apilos-btn--red fr-btn--icon-left fr-fi-delete-line fr-my-2w" data-fr-opened="false" type="button" aria-controls="fr-modal-resiliate-{{convention.uuid}}">
                                 Résilier/Dénoncer la convention
                             </button>
                             {% for error in resiliation_form.date_resiliation.errors %}
@@ -54,6 +54,43 @@
                             {% endfor %}
                         </form>
                     </div>
+                    <dialog aria-labelledby="fr-modal-resiliate-{{convention.uuid}}-title" id="fr-modal-resiliate-{{convention.uuid}}" class="fr-modal" role="dialog">
+                        <div class="fr-container fr-container--fluid fr-container-md">
+                            <div class="fr-grid-row fr-grid-row--center">
+                                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                                    <div class="fr-modal__body">
+                                        <div class="fr-modal__header">
+                                            <button class="fr-link--close fr-link" aria-controls="fr-modal-resiliate-{{convention.uuid}}">Fermer</button>
+                                        </div>
+                                        <div class="fr-modal__content">
+                                            <h1 id="fr-modal-resiliate-{{convention.uuid}}-title" class="fr-modal__title">
+                                                <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+                                                {{ convention }}
+                                            </h1>
+                                            <p>Vous vous apprétez à résilier/dénoncer la convention "{{convention}}", êtes-vous sûr ?</p>
+                                        </div>
+                                        <div class="fr-modal__footer">
+                                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                                <li>
+                                                    <button type="button" class="fr-btn fr-btn--icon-left fr-fi-delete-line" id='resiliate_{{convention.uuid}}'>
+                                                        Résilier/dénoncer la convention
+                                                    </button>
+                                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                                        document.getElementById('resiliate_{{convention.uuid}}').addEventListener('click', function(){
+                                                            document.getElementById('{{resiliation_form.date_resiliation.id_for_label}}_validation_form').submit();
+                                                        });
+                                                    </script>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="fr-btn fr-btn--secondary" aria-controls="fr-modal-resiliate-{{convention.uuid}}">Annuler</button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </dialog>
                 </div>
                 <div class="fr-accordion fr-mt-5w">
                     <div class="fr-accordion__title">
