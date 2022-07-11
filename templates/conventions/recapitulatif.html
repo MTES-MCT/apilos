@@ -130,7 +130,7 @@
                                                 <p class="fr-my-1w"><b>Signataire de la convention</b></p>
                                                 <div class="fr-ml-3w">
                                                     {% include "common/display_field_if_exists.html" with value=bailleur.signataire_nom object_field="bailleur__signataire_nom__"|add:bailleur_uuid %}
-                                                    <i>{% include "common/display_field_if_exists.html" with value=bailleur.signataire_fonction object_field="bailleur__signataire_fonction__"|add:bailleur_uuid %}</i>
+                                                    <em>{% include "common/display_field_if_exists.html" with value=bailleur.signataire_fonction object_field="bailleur__signataire_fonction__"|add:bailleur_uuid %}</em>
                                                     {% include "common/display_field_if_exists.html" with label="Date de délibération" value=bailleur.signataire_date_deliberation object_field="bailleur__signataire_date_deliberation__"|add:bailleur_uuid %}
                                                 </div>
                                             </div>

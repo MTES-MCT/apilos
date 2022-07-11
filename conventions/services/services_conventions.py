@@ -43,7 +43,7 @@ def conventions_index(request):
         page=request.GET.get("page", 1),
         statut_filter=request.GET.get("cstatut", ""),
         financement_filter=request.GET.get("financement", ""),
-        deptartement_input=request.GET.get("deptartement_input", ""),
+        departement_input=request.GET.get("departement_input", ""),
         my_convention_list=request.user.conventions()
         .prefetch_related("programme")
         .prefetch_related("lot"),
@@ -740,7 +740,7 @@ class ConventionListService:
     page: str
     statut_filter: str
     financement_filter: str
-    deptartement_input: str
+    departement_input: str
     my_convention_list: Any  # list[Convention]
     paginated_conventions: Any  # list[Convention]
     total_conventions: int
@@ -750,7 +750,7 @@ class ConventionListService:
         search_input: str,
         statut_filter: str,
         financement_filter: str,
-        deptartement_input: str,
+        departement_input: str,
         order_by: str,
         page: str,
         my_convention_list: Any,
@@ -758,8 +758,8 @@ class ConventionListService:
         self.search_input = search_input
         self.statut_filter = statut_filter
         self.financement_filter = financement_filter
-        print(deptartement_input)
-        self.deptartement_input = deptartement_input
+        print(departement_input)
+        self.departement_input = departement_input
         self.order_by = order_by
         self.page = page
         self.my_convention_list = my_convention_list
@@ -780,10 +780,10 @@ class ConventionListService:
             self.my_convention_list = self.my_convention_list.filter(
                 financement=self.financement_filter
             )
-        if self.deptartement_input:
+        if self.departement_input:
             self.my_convention_list = self.my_convention_list.annotate(
                 departement=Substr("programme__code_postal", 1, 2)
-            ).filter(departement=self.deptartement_input)
+            ).filter(departement=self.departement_input)
 
         if self.order_by:
             self.my_convention_list = self.my_convention_list.order_by(self.order_by)

@@ -25,7 +25,7 @@
                                 <div class="fr-col-12" id="type2_options" {% if ConventionType1and2Form.type1and2.value != 'Type2'%}hidden{% endif %}>
                                     <h4 class="fr-card__title">Options de la convention de type II</h4>
 
-                                    <p><i>Décochez pour rayer les mentions inutiles</i></p>
+                                    <p><em>Décochez pour rayer les mentions inutiles</em></p>
                                     {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option1 strike_unchecked=True editable=type1and2editable %}
                                     {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option2 strike_unchecked=True editable=type1and2editable %}
                                     {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option3 strike_unchecked=True editable=type1and2editable %}
