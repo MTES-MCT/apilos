@@ -55,7 +55,7 @@
 
                         <div class="apilos-bordered fr-my-3w">
                             <p class="notes">
-                                <i>Pour toutes les sections ci-dessous, vous avez la possibilité de renseigner les champs en saisissant les informations ou en téléversant des images.</i>
+                                <em>Pour toutes les sections ci-dessous, vous avez la possibilité de renseigner les champs en saisissant les informations ou en téléversant des images.</em>
                             </p>
                             {% include "common/form/input_upload.html" with form_input=form.vendeur form_input_files=form.vendeur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.vendeur_files.values object_field="programme__vendeur__"|add:form.uuid.value %}
 
@@ -134,7 +134,7 @@
                         </div>
                         <div class="apilos-bordered fr-my-3w">
                             <p class="notes">
-                                <i>Ces informations sont complémentaires et à destination de l’instructeur. Elles ne figureront pas dans le document final de la convention.</i>
+                                <em>Ces informations sont complémentaires et à destination de l’instructeur. Elles ne figureront pas dans le document final de la convention.</em>
                             </p>
 
                             <div class="fr-grid-row fr-grid-row--gutters">

@@ -6,6 +6,20 @@ from siap.siap_client.utils import get_or_create_bailleur, get_or_create_adminis
 from users.models import GroupProfile, User
 
 
+class SIAPSimpleJWTAuthentication(JWTAuthentication):
+    def authenticate(self, request):
+        header = self.get_header(request)
+        if header is None:
+            return None
+
+        raw_token = self.get_raw_token(header)
+        if raw_token is None:
+            return None
+
+        validated_token = self.get_validated_token(raw_token)
+        return User(), validated_token
+
+
 class SIAPJWTAuthentication(JWTAuthentication):
     def authenticate(self, request):
         header = self.get_header(request)

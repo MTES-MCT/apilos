@@ -371,7 +371,7 @@ class Convention(models.Model):
                 if self.statut == ConventionStatut.PROJET
                 else self.statut[3:]
             ),
-            "key_statut": self.statut[3:].replace(" ", "_"),
+            "key_statut": self.statut[3:].replace(" ", "_").replace("é", "e"),
         }
 
     def mixity_option(self):

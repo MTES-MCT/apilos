@@ -11,9 +11,6 @@
         <div class="block--row-strech" id="{{form_input.id_for_label}}_div">
             <label class="block--row-strech-1 fr-label fr-mt-1w fr-mb-2w fr-h4" for="{{form_input.id_for_label}}">
                 {{ form_input.label }}
-                {% if mandatory %}
-                    &nbsp;{% include "common/form/required_field_star.html" %}
-                {% endif %}
                 {% if additional_informations %}
                     <br>
                     <div class="fr-hint-text">informations complémentaires à destination de l’instructeur</div>
@@ -47,7 +44,7 @@
         {% else %}
             <div class="fr-mt-1w">
                 {% if textarea %}
-                    <i class="fr-text--sm">et/ou </i>
+                    <em class="fr-text--sm">et/ou </em>
                 {% endif %}
 
                 <button type="button" class="fr-btn  fr-icon-upload-line fr-btn--icon-left fr-mb-1w" id="{{form_input_files.id_for_label}}_dz_button">

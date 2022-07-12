@@ -9,6 +9,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from django.db.models.functions import Substr
 from django.conf import settings
 from comments.models import Comment, CommentStatut
 
@@ -43,6 +44,7 @@ def conventions_index(request):
         page=request.GET.get("page", 1),
         statut_filter=request.GET.get("cstatut", ""),
         financement_filter=request.GET.get("financement", ""),
+        departement_input=request.GET.get("departement_input", ""),
         my_convention_list=request.user.conventions()
         .prefetch_related("programme")
         .prefetch_related("lot"),
@@ -739,6 +741,7 @@ class ConventionListService:
     page: str
     statut_filter: str
     financement_filter: str
+    departement_input: str
     my_convention_list: Any  # list[Convention]
     paginated_conventions: Any  # list[Convention]
     total_conventions: int
@@ -748,6 +751,7 @@ class ConventionListService:
         search_input: str,
         statut_filter: str,
         financement_filter: str,
+        departement_input: str,
         order_by: str,
         page: str,
         my_convention_list: Any,
@@ -755,6 +759,8 @@ class ConventionListService:
         self.search_input = search_input
         self.statut_filter = statut_filter
         self.financement_filter = financement_filter
+        print(departement_input)
+        self.departement_input = departement_input
         self.order_by = order_by
         self.page = page
         self.my_convention_list = my_convention_list
@@ -775,6 +781,10 @@ class ConventionListService:
             self.my_convention_list = self.my_convention_list.filter(
                 financement=self.financement_filter
             )
+        if self.departement_input:
+            self.my_convention_list = self.my_convention_list.annotate(
+                departement=Substr("programme__code_postal", 1, 2)
+            ).filter(departement=self.departement_input)
 
         if self.order_by:
             self.my_convention_list = self.my_convention_list.order_by(self.order_by)
@@ -832,6 +842,8 @@ def convention_sent(request, convention_uuid):
                 ]
                 convention.save()
     else:
+        if convention.statut == ConventionStatut.RESILIEE:
+            action = "resiliation"
         upform = UploadForm()
         resiliation_form = ConventionResiliationForm()
 

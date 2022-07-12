@@ -130,9 +130,9 @@ Puis test de quelques appels:
 - [x] Ajout d'un lien vers l'opération du SIAP à partir de la convention
 - [x] Adaptation de l'interface pour le SIAP
 - [ ] **Démarrage de l'expérimentation**
-- [ ] Recharger régulièrement la configuration du client SIAP
-- [ ] Controle de la signature JWT sur la route config
-- [ ] Mis à jour du client suivant les évolution de l'API SIAP (habilitation valide, bailleur...)
+- [x] Recharger régulièrement la configuration du client SIAP
+- [x] Controle de la signature JWT sur la route config
+- [ ] Mis à jour du client suivant les évolutions de l'API SIAP (habilitation valide, bailleur...)
 - [ ] Application des autres type d'habilitation (autre que Bailleur et Instructeur)
     - [ ] Affichage des conventions en lecture seule
     - [ ] Affichage des conventions selon la géographie

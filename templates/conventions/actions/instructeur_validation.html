@@ -36,6 +36,23 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <button class="fr-btn fr-mt-3w" id="validation_button" {% if not editable_validation %}disabled{% endif %}>
+                                Valider la convention
+                            </button>
+                            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    document.getElementById("validation_form")
+                                        .addEventListener('submit', function(){
+                                        document.getElementById("validation_button").disabled = true
+                                        return true
+                                    });
+                                });
+                            </script>
+                        </form>
+                        <div class="fr-col-md-12 fr-mt-4w">
+                            <p><em>Le préfixe du numéro de convention est modifiable dans <a class="fr-link fr-mb-1w" href="{% url 'settings:administrations' %}" data-turbo="false">les paramètres de votre administration</a>
+                            </em></p>
                         </div>
 
                         <button class="fr-btn fr-mt-3w" id="validation_button" {% if not editable_validation %}disabled{% endif %}>

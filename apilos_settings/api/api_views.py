@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework import serializers
 from drf_spectacular.utils import (
@@ -14,7 +14,7 @@ from django.conf import settings
 from django.db.models import Count
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from siap.siap_authentication import SIAPJWTAuthentication
+from siap.siap_authentication import SIAPJWTAuthentication, SIAPSimpleJWTAuthentication
 from conventions.models import ConventionStatut
 
 
@@ -23,8 +23,8 @@ class ApilosConfiguration(APIView):
     return the main configutations of the application
     """
 
-    authentication_classes = []
-    permission_classes = [AllowAny]
+    authentication_classes = [SIAPSimpleJWTAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     renderer_classes = [JSONRenderer]
 

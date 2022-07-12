@@ -36,3 +36,13 @@ class Administration(IngestableModel):
             if self.ville_signature
             else "                              "
         )
+
+    def _get_id(self):
+        return self.id
+
+    value = property(_get_id)
+
+    def _get_nom(self):
+        return self.nom
+
+    label = property(_get_nom)
