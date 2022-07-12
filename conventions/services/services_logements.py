@@ -42,7 +42,7 @@ def logements_update(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": request.user.full_editable_convention(convention)
+                "editable_upload": utils.editable_convention(request, convention)
                 or editable_upload,
             }
     # When display the file for the first time
@@ -81,7 +81,7 @@ def logements_update(request, convention_uuid):
         "form": form,
         "upform": upform,
         "import_warnings": import_warnings,
-        "editable_upload": request.user.full_editable_convention(convention)
+        "editable_upload": utils.editable_convention(request, convention)
         or editable_upload,
     }
 
@@ -281,7 +281,7 @@ def annexes_update(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": request.user.full_editable_convention(convention)
+                "editable_upload": utils.editable_convention(request, convention)
                 or editable_upload,
             }
 
@@ -326,7 +326,7 @@ def annexes_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
-        "editable_upload": request.user.full_editable_convention(convention)
+        "editable_upload": utils.editable_convention(request, convention)
         or editable_upload,
     }
 
@@ -539,7 +539,7 @@ def stationnements_update(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": request.user.full_editable_convention(convention)
+                "editable_upload": utils.editable_convention(request, convention)
                 or editable_upload,
             }
     # When display the file for the first time
@@ -563,7 +563,7 @@ def stationnements_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
-        "editable_upload": request.user.full_editable_convention(convention)
+        "editable_upload": utils.editable_convention(request, convention)
         or editable_upload,
     }
 

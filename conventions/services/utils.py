@@ -1,6 +1,11 @@
 import json
+
 from enum import Enum
+from django.http import HttpRequest
+
 from upload.models import UploadedFile
+from conventions.models import Convention, ConventionStatut
+from conventions.templatetags.custom_filters import is_bailleur, is_instructeur
 
 
 def format_date_for_form(date):
@@ -95,7 +100,7 @@ def base_convention_response_error(request, convention):
         "success": ReturnStatus.ERROR,
         "convention": convention,
         "comments": convention.get_comments_dict(),
-        "editable": request.user.full_editable_convention(convention),
+        "editable": editable_convention(request, convention),
     }
 
 
@@ -112,3 +117,20 @@ def base_response_redirect_recap_success(convention):
         "convention": convention,
         "redirect": "recapitulatif",
     }
+
+
+def editable_convention(request: HttpRequest, convention: Convention):
+    if is_bailleur(request) and is_instructeur(request):
+        return convention.statut in [
+            ConventionStatut.PROJET,
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+        ]
+    if is_bailleur(request):
+        return convention.statut == ConventionStatut.PROJET
+    if is_instructeur(request):
+        return convention.statut in [
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+        ]
+    return False
