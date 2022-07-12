@@ -80,7 +80,7 @@ def convention_financement(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": request.user.full_editable_convention(convention)
+                "editable_upload": utils.editable_convention(request, convention)
                 or editable_upload,
             }
     # When display the file for the first time
@@ -117,7 +117,7 @@ def convention_financement(request, convention_uuid):
         "form": form,
         "formset": formset,
         "upform": upform,
-        "editable_upload": request.user.full_editable_convention(convention)
+        "editable_upload": utils.editable_convention(request, convention)
         or editable_upload,
     }
 

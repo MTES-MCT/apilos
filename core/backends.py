@@ -47,10 +47,12 @@ class EmailBackend(ModelBackend):
 
         if user.check_password(password) and self.user_can_authenticate(user):
             if request is not None:
-                request.session["is_staff"] = user.is_staff
-                if user.is_bailleur():
+                if user.is_staff or user.is_superuser:
+                    request.session["currently"] = GroupProfile.STAFF
+                    request.session["is_staff"] = True
+                elif user.is_bailleur():
                     request.session["currently"] = GroupProfile.BAILLEUR
-                if user.is_instructeur():
+                elif user.is_instructeur():
                     request.session["currently"] = GroupProfile.INSTRUCTEUR
             return user
         return None

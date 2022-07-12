@@ -13,6 +13,7 @@ from users.type_models import TypeRole, EmailPreferences
 
 
 class GroupProfile(models.TextChoices):
+    STAFF = "STAFF", "Staff"
     BAILLEUR = "BAILLEUR", "Bailleur"
     INSTRUCTEUR = "INSTRUCTEUR", "Instructeur"
     SIAP_ADM_CENTRALE = "ADM_CENTRALE", "Administration Centrale"
@@ -275,20 +276,6 @@ class User(AbstractUser):
         raise PermissionDenied(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les bailleurs"
         )
-
-    def full_editable_convention(self, convention):
-        # is bailleur of the convention
-        if self.role_set.filter(bailleur_id=convention.bailleur_id):
-            return convention.statut == ConventionStatut.PROJET
-        # is instructeur of the convention
-        if self.role_set.filter(
-            administration_id=convention.programme.administration_id
-        ):
-            return convention.statut in [
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ]
-        return False
 
     def user_list(self, order_by="username"):
         if self.is_superuser:

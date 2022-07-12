@@ -132,7 +132,10 @@ Puis test de quelques appels:
 - [ ] **Démarrage de l'expérimentation**
 - [x] Recharger régulièrement la configuration du client SIAP
 - [x] Controle de la signature JWT sur la route config
+- [ ] Ajouter logements, annexes et stationnements à l'API /opération de APiLos
 - [ ] Mis à jour du client suivant les évolutions de l'API SIAP (habilitation valide, bailleur...)
+    - [ ] Affichage des habilitations selon un paramètre "display"
+    - [ ] siret / siren
 - [ ] Application des autres type d'habilitation (autre que Bailleur et Instructeur)
     - [ ] Affichage des conventions en lecture seule
     - [ ] Affichage des conventions selon la géographie
