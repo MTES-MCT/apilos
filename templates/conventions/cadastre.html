@@ -58,11 +58,11 @@
                                 <i>Pour toutes les sections ci-dessous, vous avez la possibilité de renseigner les champs en saisissant les informations ou en téléversant des images.</i>
                             </p>
                             {% include "common/form/input_upload.html" with form_input=form.vendeur form_input_files=form.vendeur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.vendeur_files.values object_field="programme__vendeur__"|add:form.uuid.value %}
-                            
+
                             {% include "common/form/input_upload.html" with form_input=form.acquereur form_input_files=form.acquereur_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.acquereur_files.values object_field="programme__acquereur__"|add:form.uuid.value %}
-                            
+
                             {% include "common/form/input_upload.html" with form_input=form.reference_notaire form_input_files=form.reference_notaire_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.reference_notaire_files.values object_field="programme__reference_notaire__"|add:form.uuid.value %}
-                            
+
                             {% include "common/form/input_upload.html" with form_input=form.reference_publication_acte form_input_files=form.reference_publication_acte_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.reference_publication_acte_files.values object_field="programme__reference_publication_acte__"|add:form.uuid.value %}
                         </div>
                         {% include "common/form/input_upload.html" with form_input=form.reference_cadastrale form_input_files=form.reference_cadastrale_files object_name='programme' object_uuid=convention.programme.uuid image_only=True file_list=convention.programme.reference_cadastrale_files.values object_field="programme__reference_cadastrale__"|add:form.uuid.value %}
@@ -88,7 +88,7 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        {% if convention.statut != '1. Projet' %}
+                                        {% if convention.display_options.display_comments %}
                                             {% include 'common/utils/comments_header.html' with object_name='reference_cadastrale' label='Références cadastrales' %}
                                         {% endif %}
                                         <th scope="col">Section {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -101,7 +101,7 @@
                                     {% for form_cadastre in formset %}
                                         {% with main_object_field="reference_cadastrale__uuid__"|add:form_cadastre.uuid.value %}
                                             <tr id="{{form_cadastre.uuid.id_for_label}}_group">
-                                                {% if convention.statut != '1. Projet' %}
+                                                {% if convention.display_options.display_comments %}
                                                     <td id="{{form_cadastre.uuid.id_for_label}}_div">
                                                         {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_cadastre.uuid %}
                                                     </td>

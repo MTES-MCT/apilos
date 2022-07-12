@@ -21,15 +21,13 @@
         <input type="hidden" id="convention_uuid" value="{{convention.uuid}}">
         <div class="fr-container-fluid ds_banner">
             {% include "conventions/common/form_header.html" with convention=convention %}
-            {% if convention.statut != "6. Résiliée" %}
-                {% include "common/step_progressbar.html" with convention=convention %}
-            {% endif %}
+            {% include "common/step_progressbar.html" with convention=convention %}
             <div class="fr-container">
                 {% csrf_token %}
                 {% if convention.is_project %}
                     <div class="fr-grid-row fr-grid-row--gutters">
                         <div class="fr-col-12">
-                            <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
+                            <div role="alert" class="fr-alert fr-alert--info fr-my-3w">
                                 <p>Le document de convention n'est pas encore soumis à l'instruction{% if user.is_bailleur %},
                                     pour finaliser votre demande de conventionnement, vous devez cliquer sur le bouton
                                     <b>"Soumettre au service instructeur"</b> en bas de page{% endif %}</p>
@@ -37,7 +35,7 @@
                         </div>
                     </div>
                 {% endif %}
-                {% if convention.statut != "6. Résiliée" %}
+                {% if convention.display_options.display_comments %}
                     <turbo-frame id="opened_comments_block" data-turbo="true">
                         {% include "comments/opened_comments.html" %}
                     </turbo-frame>
@@ -69,7 +67,7 @@
                                                 Bailleur
                                             </h4>
                                         </div>
-                                        {% if convention.isnt_validated %}
+                                        {% if convention.display_options.display_progress_bar_1 %}
                                             <a class="fr-link fr-mb-1w" href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}" >
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                             </a>
@@ -101,7 +99,7 @@
                                                 Bailleur
                                             </h4>
                                         </div>
-                                        {% if convention.isnt_validated %}
+                                        {% if convention.display_options.display_progress_bar_1 %}
                                             <a class="fr-link fr-mb-1w" href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}" >
                                                 <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                             </a>
@@ -152,7 +150,7 @@
                                             Opération
                                         </h4>
                                     </div>
-                                    {% if convention.isnt_validated %}
+                                    {% if convention.display_options.display_progress_bar_1 %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:programme' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -184,7 +182,7 @@
                                             Opération - informations cadastrales
                                         </h4>
                                     </div>
-                                    {% if convention.isnt_validated %}
+                                    {% if convention.display_options.display_progress_bar_1 %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -219,7 +217,7 @@
                                             Références cadastrales et effet relatif
                                         </h4>
                                     </div>
-                                    {% if convention.isnt_validated %}
+                                    {% if convention.display_options.display_progress_bar_1 %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -230,7 +228,7 @@
                                     <table>
                                         <thead>
                                             <tr>
-                                                {% if convention.statut != '1. Projet' and convention.statut != '6. Résiliée' %}
+                                                {% if convention.display_options.display_comments %}
                                                     {% include 'common/utils/comments_header.html' with object_name='reference_cadastrale' label='Références cadastrales' callback_click="refresh_opened_comments" %}
                                                 {% endif %}
                                                 <th scope="col">Section {% include "common/form/required_field_star.html" %}</th>
@@ -244,7 +242,7 @@
                                                 {% with reference_uuid=reference.uuid|slugify %}
                                                     {% with main_object_field="reference_cadastrale__uuid__"|add:reference_uuid %}
                                                         <tr id="{{main_object_field}}_group">
-                                                            {% if convention.statut != '1. Projet' and convention.statut != '6. Résiliée' %}
+                                                            {% if convention.display_options.display_comments %}
                                                                 <td id="{{main_object_field}}_div">
                                                                     {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Référence cadastrale" callback_click="refresh_opened_comments" %}
                                                                 </td>
@@ -284,7 +282,7 @@
                                             Opération - EDD
                                         </h4>
                                     </div>
-                                    {% if convention.isnt_validated %}
+                                    {% if convention.display_options.display_progress_bar_1 %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:edd' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -301,7 +299,7 @@
                                     <table>
                                         <thead>
                                             <tr>
-                                                {% if convention.statut != '1. Projet' and convention.statut != '6. Résiliée' %}
+                                                {% if convention.display_options.display_comments %}
                                                     {% include 'common/utils/comments_header.html' with object_name='logement_edd' label="Logements de l'EDD" callback_click="refresh_opened_comments" %}
                                                 {% endif %}
                                                 <th scope="col">Financement {% include "common/form/required_field_star.html" %}</th>
@@ -314,7 +312,7 @@
                                                 {% with lgt_uuid=lgt.uuid|slugify %}
                                                     {% with main_object_field="logement_edd__uuid__"|add:lgt_uuid %}
                                                         <tr id="{{main_object_field}}_group">
-                                                            {% if convention.statut != '1. Projet' and convention.statut != '6. Résiliée' %}
+                                                            {% if convention.display_options.display_comments %}
                                                                 <td id="{{main_object_field}}_div">
                                                                     {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement de l'EDD" callback_click="refresh_opened_comments" %}
                                                                 </td>
@@ -350,7 +348,7 @@
                                             Financements
                                         </h4>
                                     </div>
-                                    {% if convention.isnt_validated %}
+                                    {% if convention.display_options.display_progress_bar_1 %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:financement' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -361,7 +359,7 @@
                                     <table>
                                         <thead>
                                             <tr>
-                                                {% if convention.statut != '1. Projet' and convention.statut != '6. Résiliée' %}
+                                                {% if convention.display_options.display_comments %}
                                                     {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et Financements' callback_click="refresh_opened_comments" %}
                                                 {% endif %}
                                                 <th scope="col">Numéro</th>
@@ -377,7 +375,7 @@
                                                 {% with pret_uuid=pret.uuid|slugify %}
                                                     {% with main_object_field="pret__uuid__"|add:pret_uuid %}
                                                         <tr id="{{main_object_field}}_group">
-                                                            {% if convention.statut != '1. Projet' and convention.statut != '6. Résiliée' %}
+                                                            {% if convention.display_options.display_comments %}
                                                                 <td id="{{main_object_field}}_div">
                                                                     {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Prêt ou financement" callback_click="refresh_opened_comments" %}
                                                                 </td>
@@ -424,7 +422,7 @@
                                             Logements
                                         </h4>
                                     </div>
-                                    {% if convention.isnt_validated %}
+                                    {% if convention.display_options.display_progress_bar_1 %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:logements' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -434,7 +432,7 @@
                                     <table>
                                         <thead>
                                             <tr>
-                                                {% if convention.statut != '1. Projet' and convention.statut != '6. Résiliée' %}
+                                                {% if convention.display_options.display_comments %}
                                                     {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' callback_click="refresh_opened_comments" %}
                                                 {% endif %}
                                                 <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
@@ -453,7 +451,7 @@
                                                 {% with logement_uuid=logement.uuid|slugify %}
                                                     {% with main_object_field="logement__uuid__"|add:logement_uuid %}
                                                         <tr id="{{main_object_field}}_group">
-                                                            {% if convention.statut != '1. Projet' and convention.statut != '6. Résiliée' %}
+                                                            {% if convention.display_options.display_comments %}
                                                                 <td id="{{main_object_field}}_div">
                                                                     {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement" callback_click="refresh_opened_comments" %}
                                                                 </td>
@@ -490,7 +488,7 @@
                                                 {% endwith %}
                                             {% endfor %}
                                             <tr>
-                                                <td colspan=" {% if convention.statut != '1. Projet' and convention.statut != '6. Résiliée' %}3{% else %}2{% endif %}" class="fr-text--lg">
+                                                <td colspan=" {% if convention.display_options.display_comments %}3{% else %}2{% endif %}" class="fr-text--lg">
                                                     Total
                                                 </td>
                                                 <td id="total_sh" class="fr-text--lg">
@@ -530,7 +528,7 @@
                                             Annexes
                                         </h4>
                                     </div>
-                                    {% if convention.isnt_validated %}
+                                    {% if convention.display_options.display_progress_bar_1 %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:annexes' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -540,7 +538,7 @@
                                     <table>
                                         <thead>
                                             <tr>
-                                                {% if convention.statut != '1. Projet' and convention.statut != '6. Résiliée' %}
+                                                {% if convention.display_options.display_comments %}
                                                     {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" callback_click="refresh_opened_comments" %}
                                                 {% endif %}
                                                 <th scope="col" class="col__width--150">Type d'annexe {% include "common/form/required_field_star.html" %}</th>
@@ -556,7 +554,7 @@
                                                 {% with annexe_uuid=annexe.uuid|slugify %}
                                                     {% with main_object_field="annexe__uuid__"|add:annexe_uuid %}
                                                         <tr id="{{main_object_field}}_group">
-                                                            {% if convention.statut != '1. Projet' and convention.statut != '6. Résiliée' %}
+                                                            {% if convention.display_options.display_comments %}
                                                                 <td id="{{main_object_field}}_div">
                                                                     {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Annexe" callback_click="refresh_opened_comments" %}
                                                                 </td>
@@ -623,7 +621,7 @@
                                             Stationnements
                                         </h4>
                                     </div>
-                                    {% if convention.isnt_validated %}
+                                    {% if convention.display_options.display_progress_bar_1 %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:stationnements' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -633,7 +631,7 @@
                                     <table>
                                         <thead>
                                             <tr>
-                                                {% if convention.statut != '1. Projet' and convention.statut != '6. Résiliée' %}
+                                                {% if convention.display_options.display_comments %}
                                                     {% include 'common/utils/comments_header.html' with object_name='type_stationnement' label="Type de stationnements" callback_click="refresh_opened_comments" %}
                                                 {% endif %}
                                                 <th scope="col" class="col__width--150">Type de stationnement {% include "common/form/required_field_star.html" %}</th>
@@ -646,7 +644,7 @@
                                                 {% with stationnement_uuid=stationnement.uuid|slugify %}
                                                     {% with main_object_field="type_stationnement__uuid__"|add:stationnement_uuid %}
                                                         <tr id="{{main_object_field}}_group">
-                                                            {% if convention.statut != '1. Projet' and convention.statut != '6. Résiliée' %}
+                                                            {% if convention.display_options.display_comments %}
                                                                 <td id="{{main_object_field}}_div">
                                                                     {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Type de stationnement" callback_click="refresh_opened_comments" %}
                                                                 </td>
@@ -682,7 +680,7 @@
                                             Informations à l'attention du service instructeur
                                         </h4>
                                     </div>
-                                    {% if convention.isnt_validated %}
+                                    {% if convention.display_options.display_progress_bar_1 %}
                                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:comments' convention_uuid=convention.uuid %}" >
                                             <span class="fr-fi-edit-line" aria-hidden="true">Aller à cette étape</span>
                                         </a>
@@ -700,10 +698,10 @@
                     {% include "conventions/type1and2_options.html" %}
 
                     <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
-                        {% if convention.isnt_validated %}
+                        {% if convention.display_options.display_progress_bar_1 %}
                             {% include "conventions/actions/generate_convention.html" %}
                         {% endif %}
-                        {% if request|is_instructeur and convention.is_a_signer %}
+                        {% if request|is_instructeur and convention.display_options.display_back_to_instruction %}
                             {% include "conventions/actions/back_to_instruction.html" %}
                         {% endif %}
                     </div>

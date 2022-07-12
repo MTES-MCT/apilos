@@ -59,13 +59,9 @@
             {% endwith %}
         </div>
     </div>
-{% endif %}
-
-{% if request|is_instructeur and convention.display_options.display_is_validated %}
-
+{% elif request|is_instructeur and convention.display_options.display_is_validated %}
     <div class="fr-col-md-12  fr-py-5w">
         <div role="alert" class="fr-alert fr-alert--success">
-
             <p class="fr-alert__title">La convention a été validée le {{ convention.valide_le|date:"j F Y" }}</p>
             <p class="fr-alert__title">avec le numéro {{convention.numero}}</p>
 

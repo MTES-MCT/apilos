@@ -1,7 +1,7 @@
 {% extends "layout/base.html" %}
 
 {% block page_title %}
-    {% if convention.statut == '5. Transmise' %}Actions{% else %}Téléversement{% endif %} - APiLos
+    {% if convention.display_options.display_progress_bar_3 %}Actions{% else %}Téléversement{% endif %} - APiLos
 {% endblock%}
 
 {% load static %}
@@ -12,7 +12,7 @@
         {% include "common/step_progressbar.html" with convention=convention %}
         <div class="fr-container fr-pb-5w">
             <h2>Votre convention signée</h2>
-            {% if convention.statut == '5. Transmise' %}
+            {% if convention.display_options.display_progress_bar_3 %}
                 <div class="fr-col-md-12 fr-py-3w">Votre convention signée à déjà été téléversée.</div>
                 <div class="fr-col-md-12 fr-pt-2w">Prochainement, vous pourrez :
                     <ul>
@@ -137,7 +137,7 @@
                 </script>
             </form>
         </div>
-        {% if convention.statut == '5. Transmise' %}
+        {% if convention.display_options.display_progress_bar_3 %}
             </div>
         {% endif %}
     </div>
