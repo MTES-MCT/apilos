@@ -30,7 +30,7 @@
                             <div role="alert" class="fr-alert fr-alert--info fr-my-3w">
                                 <p>Le document de convention n'est pas encore soumis à l'instruction{% if user.is_bailleur %},
                                     pour finaliser votre demande de conventionnement, vous devez cliquer sur le bouton
-                                    <b>"Soumettre au service instructeur"</b> en bas de page{% endif %}</p>
+                                    <strong>"Soumettre au service instructeur"</strong> en bas de page{% endif %}</p>
                             </div>
                         </div>
                     </div>
@@ -109,7 +109,7 @@
                                         <div class="fr-grid-row fr-grid-row--gutters">
                                             <div class="fr-col-12 fr-col-lg-6">
                                                 <div class="fr-mb-2w">
-                                                    <b>{% include "common/display_field_if_exists.html" with value=bailleur.nom object_field="bailleur__nom__"|add:bailleur_uuid %}</b>
+                                                    <strong>{% include "common/display_field_if_exists.html" with value=bailleur.nom object_field="bailleur__nom__"|add:bailleur_uuid %}</strong>
                                                     <div class="fr-ml-3w">
                                                         {% include "common/display_field_if_exists.html" with value=bailleur.adresse object_field="bailleur__adresse__"|add:bailleur_uuid %}
                                                         <div class="fr-grid-row fr-grid-row--gutters">
@@ -128,7 +128,7 @@
                                                 </div>
                                             </div>
                                             <div class="fr-col-12 fr-col-lg-6">
-                                                <p class="fr-my-1w"><b>Signataire de la convention</b></p>
+                                                <p class="fr-my-1w"><strong>Signataire de la convention</strong></p>
                                                 <div class="fr-ml-3w">
                                                     {% include "common/display_field_if_exists.html" with value=bailleur.signataire_nom object_field="bailleur__signataire_nom__"|add:bailleur_uuid %}
                                                     <em>{% include "common/display_field_if_exists.html" with value=bailleur.signataire_fonction object_field="bailleur__signataire_fonction__"|add:bailleur_uuid %}</em>
@@ -157,7 +157,7 @@
                                     {% endif %}
                                 </div>
                                 <div class="table--limited-height">
-                                    <b>{% include "common/display_field_if_exists.html" with label="Numéro de décision" value=programme.numero_galion %}</b>
+                                    <strong>{% include "common/display_field_if_exists.html" with label="Numéro de décision" value=programme.numero_galion %}</strong>
                                     {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom object_field="programme__nom__"|add:programme_uuid %}
                                     {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse object_field="programme__adresse__"|add:programme_uuid %}
                                     {% include "common/display_field_if_exists.html" with label="Code postal" value=programme.code_postal object_field="programme__code_postal__"|add:programme_uuid %}

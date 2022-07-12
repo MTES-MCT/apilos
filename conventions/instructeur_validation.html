@@ -8,7 +8,7 @@
                         Cela nous permet de suivre le statut de la convention en temps réel.</p>
                 {% else %}
                     <p class="fr-mb-3w">Avant de pouvoir valider la convention, il vous faut préciser le type de convention I ou II et les options associées dans la section
-                        <b>Convention de type I & II</b></p>
+                        <strong>Convention de type I & II</strong></p>
                 {% endif %}
                 <div>
                     <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" id="validation_form" data-turbo="false">
