@@ -435,7 +435,12 @@ class Logement(models.Model):
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
-    lot = models.ForeignKey("Lot", on_delete=models.CASCADE, null=False)
+    lot = models.ForeignKey(
+        "Lot",
+        on_delete=models.CASCADE,
+        related_name="logements",
+        null=False,
+    )
     typologie = models.CharField(
         max_length=25,
         choices=TypologieLogement.choices,
@@ -545,7 +550,12 @@ class Annexe(models.Model):
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
-    logement = models.ForeignKey("Logement", on_delete=models.CASCADE, null=False)
+    logement = models.ForeignKey(
+        "Logement",
+        on_delete=models.CASCADE,
+        related_name="annexes",
+        null=False,
+    )
     typologie = models.CharField(
         max_length=25,
         choices=TypologieAnnexe.choices,
@@ -611,7 +621,12 @@ class TypeStationnement(IngestableModel):
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
-    lot = models.ForeignKey("Lot", on_delete=models.CASCADE, null=False)
+    lot = models.ForeignKey(
+        "Lot",
+        related_name="type_stationnements",
+        on_delete=models.CASCADE,
+        null=False,
+    )
     typologie = models.CharField(
         max_length=35,
         choices=TypologieStationnement.choices,

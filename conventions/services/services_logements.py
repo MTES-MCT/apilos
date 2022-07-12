@@ -22,7 +22,7 @@ def logements_update(request, convention_uuid):
     editable_upload = request.POST.get("editable_upload", False)
     convention = (
         Convention.objects.prefetch_related("lot")
-        .prefetch_related("lot__logement_set")
+        .prefetch_related("lot__logements")
         .get(uuid=convention_uuid)
     )
     import_warnings = None
@@ -49,7 +49,7 @@ def logements_update(request, convention_uuid):
     else:
         request.user.check_perm("convention.view_convention", convention)
         initial = []
-        logements = convention.lot.logement_set.all()
+        logements = convention.lot.logements.all()
         for logement in logements:
             initial.append(
                 {
@@ -217,7 +217,7 @@ def _save_lot_lgts_option(form, lot):
 def _save_logements(formset, convention):
     lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], formset))
     lgt_uuids = list(filter(None, lgt_uuids1))
-    convention.lot.logement_set.exclude(uuid__in=lgt_uuids).delete()
+    convention.lot.logements.exclude(uuid__in=lgt_uuids).delete()
     for form_logement in formset:
         if form_logement.cleaned_data["uuid"]:
             logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
@@ -258,8 +258,8 @@ def _save_logements(formset, convention):
 def annexes_update(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("lot")
-        .prefetch_related("lot__logement_set")
-        .prefetch_related("lot__logement_set__annexe_set")
+        .prefetch_related("lot__logements")
+        .prefetch_related("lot__logements__annexes")
         .get(uuid=convention_uuid)
     )
     import_warnings = None
@@ -518,7 +518,7 @@ def _save_annexes(formset, convention):
 def stationnements_update(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("lot")
-        .prefetch_related("lot__typestationnement_set")
+        .prefetch_related("lot__type_stationnements")
         .get(uuid=convention_uuid)
     )
     import_warnings = None
@@ -546,7 +546,7 @@ def stationnements_update(request, convention_uuid):
     else:
         request.user.check_perm("convention.view_convention", convention)
         initial = []
-        stationnements = convention.lot.typestationnement_set.all()
+        stationnements = convention.lot.type_stationnements.all()
         for stationnement in stationnements:
             initial.append(
                 {

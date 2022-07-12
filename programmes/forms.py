@@ -770,7 +770,7 @@ class BaseAnnexeFormSet(BaseFormSet):
 
     def manage_logement_exists_validation(self):
         if self.convention:
-            lgts = self.convention.lot.logement_set.all()
+            lgts = self.convention.lot.logements.all()
             for form in self.forms:
                 try:
                     lgts.get(designation=form.cleaned_data.get("logement_designation"))

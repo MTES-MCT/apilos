@@ -26,7 +26,6 @@ class AdministrationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Administration
         fields = (
-            "uuid",
             "nom",
             "code",
             "ville_signature",

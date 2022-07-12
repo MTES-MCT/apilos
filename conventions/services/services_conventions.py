@@ -287,8 +287,8 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
         .prefetch_related("programme__referencecadastrale_set")
         .prefetch_related("programme__logementedd_set")
         .prefetch_related("lot")
-        .prefetch_related("lot__typestationnement_set")
-        .prefetch_related("lot__logement_set")
+        .prefetch_related("lot__type_stationnements")
+        .prefetch_related("lot__logements")
         .prefetch_related("programme__administration")
         .get(uuid=convention_uuid)
     )
@@ -412,8 +412,8 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
         "lot": convention.lot,
         "programme": convention.programme,
         "logement_edds": convention.programme.logementedd_set.all(),
-        "logements": convention.lot.logement_set.all(),
-        "stationnements": convention.lot.typestationnement_set.all(),
+        "logements": convention.lot.logements.all(),
+        "stationnements": convention.lot.type_stationnements.all(),
         "reference_cadastrales": convention.programme.referencecadastrale_set.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
@@ -696,8 +696,8 @@ def convention_validate(request, convention_uuid):
         .prefetch_related("programme__referencecadastrale_set")
         .prefetch_related("programme__logementedd_set")
         .prefetch_related("lot")
-        .prefetch_related("lot__typestationnement_set")
-        .prefetch_related("lot__logement_set")
+        .prefetch_related("lot__type_stationnements")
+        .prefetch_related("lot__logements")
         .get(uuid=convention_uuid)
     )
     return {
@@ -706,8 +706,8 @@ def convention_validate(request, convention_uuid):
         "lot": convention.lot,
         "programme": convention.programme,
         "logement_edds": convention.programme.logementedd_set.all(),
-        "logements": convention.lot.logement_set.all(),
-        "stationnements": convention.lot.typestationnement_set.all(),
+        "logements": convention.lot.logements.all(),
+        "stationnements": convention.lot.type_stationnements.all(),
         "reference_cadastrales": convention.programme.referencecadastrale_set.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
@@ -720,8 +720,8 @@ def generate_convention(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("bailleur")
         .prefetch_related("lot")
-        .prefetch_related("lot__typestationnement_set")
-        .prefetch_related("lot__logement_set")
+        .prefetch_related("lot__type_stationnements")
+        .prefetch_related("lot__logements")
         .prefetch_related("pret_set")
         .prefetch_related("programme")
         .prefetch_related("programme__administration")

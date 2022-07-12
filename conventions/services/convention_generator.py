@@ -73,7 +73,7 @@ def generate_convention_doc(convention, save_data=False):
         "loyer_total": 0,
     }
     nb_logements_par_type = {}
-    for logement in convention.lot.logement_set.order_by("typologie").all():
+    for logement in convention.lot.logements.order_by("typologie").all():
         logements_totale["sh_totale"] += logement.surface_habitable
         logements_totale["sa_totale"] += logement.surface_annexes
         logements_totale["sar_totale"] += logement.surface_annexes_retenue
@@ -95,9 +95,9 @@ def generate_convention_doc(convention, save_data=False):
         "lot": convention.lot,
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
-        "logements": convention.lot.logement_set.all(),
+        "logements": convention.lot.logements.all(),
         "annexes": annexes,
-        "stationnements": convention.lot.typestationnement_set.all(),
+        "stationnements": convention.lot.type_stationnements.all(),
         "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF", "CDCL"]),
         "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF", "CDCL"]),
         "references_cadastrales": convention.programme.referencecadastrale_set.all(),
@@ -105,7 +105,7 @@ def generate_convention_doc(convention, save_data=False):
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),
         "liste_des_annexes": _compute_liste_des_annexes(
-            convention.lot.typestationnement_set.all(), annexes
+            convention.lot.type_stationnements.all(), annexes
         ),
     }
     context.update(_compute_mixte(convention))
@@ -161,9 +161,9 @@ def _save_convention_donnees_validees(
         "lot": model_to_dict(convention.lot),
         "administration": model_to_dict(convention.programme.administration),
         "logement_edds": _list_to_dict(logement_edds),
-        "logements": _list_to_dict(convention.lot.logement_set.all()),
+        "logements": _list_to_dict(convention.lot.logements.all()),
         "annexes": _list_to_dict(annexes),
-        "stationnements": _list_to_dict(convention.lot.typestationnement_set.all()),
+        "stationnements": _list_to_dict(convention.lot.type_stationnements.all()),
         "prets_cdc": _list_to_dict(
             convention.pret_set.filter(preteur__in=["CDCF", "CDCL"])
         ),
@@ -177,7 +177,7 @@ def _save_convention_donnees_validees(
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),
         "liste_des_annexes": _compute_liste_des_annexes(
-            convention.lot.typestationnement_set.all(), annexes
+            convention.lot.type_stationnements.all(), annexes
         ),
     }
     context_to_save.update(_compute_mixte(convention))
@@ -345,9 +345,9 @@ def _get_object_images(doc, convention):
 
 
 def _get_loyer_par_metre_carre(convention):
-    logement = convention.lot.logement_set.first()
+    logement = convention.lot.logements.first()
     if logement:
-        return convention.lot.logement_set.first().loyer_par_metre_carre
+        return convention.lot.logements.first().loyer_par_metre_carre
     return 0
 
 

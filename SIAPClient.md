@@ -110,7 +110,7 @@ Puis test de quelques appels:
 >>> from siap.siap_client.client import SIAPClient
 >>> SIAPClient.get_instance().get_habilitations(user_login='nicolas.oudard@beta.gouv.fr')
 >>> SIAPClient.get_instance().get_menu(user_login='nicolas.oudard@beta.gouv.fr', habilitation_id=5)
->>> SIAPClient.get_instance().get_operation(user_login='nicolas.oudard@beta.gouv.fr', habilitation_id=5, operation_identifier='20220600002')
+>>> SIAPClient.get_instance().get_operation(user_login='nicolas.oudard@beta.gouv.fr', habilitation_id=5, operation_identifier='20220600005')
 ```
 
 ## Todo
@@ -134,7 +134,7 @@ Puis test de quelques appels:
 - [x] Controle de la signature JWT sur la route config
 - [ ] BUG : Opération créée de zero -> erreur avant l'appel à l'API SIAP
 - [ ] Route operation_modifiee notifie APiLos de la modification d'une opération (utilisé pour les opérations engagées et plus si besoin selon les évolutions métiers)
-- [ ] Ajouter logements, annexes et stationnements à l'API /opération de APiLos
+- [x] Ajouter logements, annexes et stationnements à l'API /opération de APiLos
 - [ ] Gestion des conventions sans travaux à partir du SIAP
 - [ ] Mis à jour du client suivant les évolutions de l'API SIAP (habilitation valide, bailleur...)
     - [ ] Affichage des habilitations selon un paramètre `"valide": True,`
