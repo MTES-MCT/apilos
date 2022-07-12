@@ -275,6 +275,17 @@ class ConventionNumberForm(forms.Form):
         return convention_numero
 
 
+class ConventionResiliationForm(forms.Form):
+
+    date_resiliation = forms.DateField(
+        required=True,
+        label="Date de résiliation",
+        error_messages={
+            "required": "Vous devez saisir une date de résiliation",
+        },
+    )
+
+
 class ConventionType1and2Form(forms.Form):
 
     uuid = forms.UUIDField(

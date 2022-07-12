@@ -26,6 +26,7 @@ from conventions.forms import (
     PretFormSet,
     UploadForm,
     ConventionType1and2Form,
+    ConventionResiliationForm,
 )
 from conventions.tasks import generate_and_send
 
@@ -811,26 +812,44 @@ def convention_preview(convention_uuid):
 
 def convention_sent(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
+    action = "navigation"
     if request.method == "POST":
         upform = UploadForm(request.POST, request.FILES)
+        resiliation_form = ConventionResiliationForm(request.POST)
         uuid = convention_uuid
-        if upform.is_valid():
-            file = request.FILES["file"]
-            now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-            filename = f"{now}_convention_{uuid}_signed.pdf"
-            destination = default_storage.open(
-                f"conventions/{uuid}/convention_docs/{filename}",
-                "bw",
-            )
-            for chunk in file.chunks():
-                destination.write(chunk)
-            destination.close()
-            convention.statut = ConventionStatut.TRANSMISE
-            convention.fichier_signe = filename
-            convention.save()
+        if request.POST.get("Upload", False):
+            if upform.is_valid():
+                action = "upload"
+                file = request.FILES["file"]
+                now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+                filename = f"{now}_convention_{uuid}_signed.pdf"
+                destination = default_storage.open(
+                    f"conventions/{uuid}/convention_docs/{filename}",
+                    "bw",
+                )
+                for chunk in file.chunks():
+                    destination.write(chunk)
+                destination.close()
+                convention.statut = ConventionStatut.TRANSMISE
+                convention.fichier_signe = filename
+                convention.save()
+        else:
+            if resiliation_form.is_valid():
+                action = "resiliation"
+                convention.statut = ConventionStatut.RESILIEE
+                convention.date_resiliation = resiliation_form.cleaned_data[
+                    "date_resiliation"
+                ]
+                convention.save()
     else:
+        if convention.statut == ConventionStatut.RESILIEE:
+            action = "resiliation"
         upform = UploadForm()
+        resiliation_form = ConventionResiliationForm()
+
     return {
+        "action": action,
         "convention": convention,
+        "resiliation_form": resiliation_form,
         "upform": upform,
     }

@@ -58,7 +58,7 @@ class CommentFactory {
                     <div id="' + this.comment_dialog_id + '_comments">\
                     </div>\
                     <div id="global_in_page_new_comment">\
-                        <div class="fr-mt-3w fr-mb-1w"><b>Ajouter un commentaire :</b></div>\
+                        <div class="fr-mt-3w fr-mb-1w"><strong>Ajouter un commentaire :</strong></div>\
                         <textarea\
                             class="fr-input"\
                             aria-describedby="text-input-error-desc-error"\
@@ -563,7 +563,7 @@ class CommentFactory {
         return comment_header_div
     }
 
-    //<div class="fr-mt-3w"><b>Raphaëlle Neyton (vous) :</b></div>
+    //<div class="fr-mt-3w"><strong>Raphaëlle Neyton (vous) :</strong></div>
     create_comment_owner(uuid, username, is_owner, status) {
         const owner_div = document.createElement('div');
         owner_div.classList.add('fr-mt-3w')

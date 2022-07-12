@@ -1,6 +1,6 @@
 {% load static %}
 {% if convention.bailleur.is_type1and2 %}
-    {% with type1and2editable=convention.isnt_validated %}
+    {% with type1and2editable=convention.display_options.display_type1and2_editable %}
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-12">
                 <div class="fr-card fr-card--no-arrow">

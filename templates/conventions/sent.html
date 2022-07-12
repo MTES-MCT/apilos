@@ -1,7 +1,7 @@
 {% extends "layout/base.html" %}
 
 {% block page_title %}
-    {% if convention.statut == '5. Transmise' %}Actions{% else %}Téléversement{% endif %} - APiLos
+    {% if convention.display_options.display_progress_bar_3 %}Actions{% else %}Téléversement{% endif %} - APiLos
 {% endblock%}
 
 {% load static %}
@@ -12,14 +12,85 @@
         {% include "common/step_progressbar.html" with convention=convention %}
         <div class="fr-container fr-pb-5w">
             <h2>Votre convention signée</h2>
-            {% if convention.statut == '5. Transmise' %}
-                <div class="fr-col-md-12 fr-pt-5w">Votre convention signée à déjà été téléversée.</div>
+            {% if convention.display_options.display_progress_bar_3 %}
+                <div class="fr-col-md-12 fr-py-3w">Votre convention signée à déjà été téléversée.</div>
                 <div class="fr-col-md-12 fr-pt-2w">Prochainement, vous pourrez :
                     <ul>
                         <li>créer des avenants</li>
                         <li>éditer une fiche CAF</li>
                         <li>résilier la convention</li>
                     </ul>
+                </div>
+                <div class="fr-col-12 fr-col-lg-6">
+                    <div role="alert" class="fr-alert fr-alert--warning">
+                        <p class="fr-alert__title">
+                            Résiliation/dénonciation de la convention
+                        </p>
+                        <p>Vous pouvez ici procéder à la résiliation/dénonciation de la convention dans APiLos.</p>
+                        <form method="post" action="" id="{{resiliation_form.date_resiliation.id_for_label}}_validation_form" data-turbo="false">
+                            {% csrf_token %}
+                            <p class="fr-mt-2w"><strong>Spécifier la date de résiliation/dénonciation</strong></p>
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12">
+                                    <div class="fr-mt-1w block--row-strech" id="{{resiliation_form.date_resiliation.id_for_label}}_div">
+                                        <div class="fr-input fr-input-wrap fr-fi-calendar-line block--row-strech-1">
+                                            <input
+                                                type="date"
+                                                class="dateinput"
+                                                id="{{resiliation_form.date_resiliation.id_for_label}}"
+                                                name="{{resiliation_form.date_resiliation.html_name}}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="fr-btn apilos-btn--red fr-btn--icon-left fr-fi-delete-line fr-my-2w" data-fr-opened="false" type="button" aria-controls="fr-modal-resiliate-{{convention.uuid}}">
+                                Résilier/Dénoncer la convention
+                            </button>
+                            {% for error in resiliation_form.date_resiliation.errors %}
+                                <p id="text-input-error-desc-error" class="fr-error-text">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </form>
+                    </div>
+                    <dialog aria-labelledby="fr-modal-resiliate-{{convention.uuid}}-title" id="fr-modal-resiliate-{{convention.uuid}}" class="fr-modal" role="dialog">
+                        <div class="fr-container fr-container--fluid fr-container-md">
+                            <div class="fr-grid-row fr-grid-row--center">
+                                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                                    <div class="fr-modal__body">
+                                        <div class="fr-modal__header">
+                                            <button class="fr-link--close fr-link" aria-controls="fr-modal-resiliate-{{convention.uuid}}">Fermer</button>
+                                        </div>
+                                        <div class="fr-modal__content">
+                                            <h1 id="fr-modal-resiliate-{{convention.uuid}}-title" class="fr-modal__title">
+                                                <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+                                                {{ convention }}
+                                            </h1>
+                                            <p>Vous vous apprétez à résilier/dénoncer la convention "{{convention}}", êtes-vous sûr ?</p>
+                                        </div>
+                                        <div class="fr-modal__footer">
+                                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                                <li>
+                                                    <button type="button" class="fr-btn fr-btn--icon-left fr-fi-delete-line" id='resiliate_{{convention.uuid}}'>
+                                                        Résilier/dénoncer la convention
+                                                    </button>
+                                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                                        document.getElementById('resiliate_{{convention.uuid}}').addEventListener('click', function(){
+                                                            document.getElementById('{{resiliation_form.date_resiliation.id_for_label}}_validation_form').submit();
+                                                        });
+                                                    </script>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="fr-btn fr-btn--secondary" aria-controls="fr-modal-resiliate-{{convention.uuid}}">Annuler</button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </dialog>
                 </div>
                 <div class="fr-accordion fr-mt-5w">
                     <div class="fr-accordion__title">
@@ -31,7 +102,7 @@
                 <div class="fr-py-3w">
             {% endif %}
 
-            <form method="post" action="" enctype="multipart/form-data">
+            <form method="post" action="" enctype="multipart/form-data" id="{{upform.file.id_for_label}}_form">
                 {% csrf_token %}
                 <input
                     class="fileinput--hidden"
@@ -57,12 +128,16 @@
                         document.getElementById('{{upform.file.id_for_label}}').click();
                     };
                     document.getElementById('{{upform.file.id_for_label}}').onchange = function() {
-                        this.form.submit()
+                        var input = document.createElement('input');
+                        input.setAttribute('name', 'Upload');//set the param name
+                        input.setAttribute('value', 'True');//set the value
+                        this.form.appendChild(input)
+                        document.getElementById("{{upform.file.id_for_label}}_form").submit();
                     }
                 </script>
             </form>
         </div>
-        {% if convention.statut == '5. Transmise' %}
+        {% if convention.display_options.display_progress_bar_3 %}
             </div>
         {% endif %}
     </div>
