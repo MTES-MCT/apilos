@@ -62,7 +62,7 @@ class ConventionStatut(models.TextChoices):
     )
     A_SIGNER = "4. A signer", "Convention à signer"
     TRANSMISE = "5. Transmise", "Convention transmise"
-    RESILIEE = "6. Resiliee", "Convention résiliée"
+    RESILIEE = "6. Résiliée", "Convention résiliée"
 
 
 class ConventionType1and2(models.TextChoices):
@@ -309,6 +309,12 @@ class Convention(models.Model):
             ConventionStatut.RESILIEE,
         ]
 
+    def has_comment(self):
+        return self.statut in [
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+        ]
+
     def statut_for_template(self):
         return {
             "statut": self.statut,
@@ -318,7 +324,7 @@ class Convention(models.Model):
                 if self.statut == ConventionStatut.PROJET
                 else self.statut[3:]
             ),
-            "key_statut": self.statut[3:].replace(" ", "_"),
+            "key_statut": self.statut[3:].replace(" ", "_").replace("é", "e"),
         }
 
     def mixity_option(self):
