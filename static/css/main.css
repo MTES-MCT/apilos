@@ -253,8 +253,8 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .statcard--color1 .statcard__title {
   border-color: rgba(13, 35, 58, 1)!important;
 }
-#conv_by_departement .highcharts-color-3,
-#conv_by_departement .highcharts-legend-item.highcharts-color-3 .highcharts-point {
+#conv_by_departement .highcharts-color-4,
+#conv_by_departement .highcharts-legend-item.highcharts-color-4 .highcharts-point {
   fill: rgb(255, 111, 76) !important;
 }
 
@@ -268,8 +268,8 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   border-color: rgba(106, 106, 244, 1)!important;
 }
 
-#conv_by_departement .highcharts-color-2,
-#conv_by_departement .highcharts-legend-item.highcharts-color-2 .highcharts-point {
+#conv_by_departement .highcharts-color-3,
+#conv_by_departement .highcharts-legend-item.highcharts-color-3 .highcharts-point {
   fill: rgb(106, 106, 244) !important;
 }
 
@@ -282,8 +282,8 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .statcard--color3 .statcard__title {
   border-color: rgba(0, 0, 145, 1)!important;
 }
-#conv_by_departement .highcharts-color-1,
-#conv_by_departement .highcharts-legend-item.highcharts-color-1 .highcharts-point {
+#conv_by_departement .highcharts-color-2,
+#conv_by_departement .highcharts-legend-item.highcharts-color-2 .highcharts-point {
   fill: rgb(0, 0, 145) !important;
 }
 
@@ -296,9 +296,14 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .statcard--color4 .statcard__title {
   border-color: rgba(24, 117, 60, 1)!important;
 }
+#conv_by_departement .highcharts-color-1,
+#conv_by_departement .highcharts-legend-item.highcharts-color-1 .highcharts-point {
+  fill: rgb(24, 117, 60) !important;
+}
+
 #conv_by_departement .highcharts-color-0,
 #conv_by_departement .highcharts-legend-item.highcharts-color-0 .highcharts-point {
-  fill: rgb(24, 117, 60) !important;
+  fill: rgb(102, 102, 102) !important;
 }
 
 
