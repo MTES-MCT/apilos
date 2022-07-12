@@ -284,7 +284,7 @@ class Convention(models.Model):
                     if self.programme.code_postal
                     else "",
                 )
-                .replace("{zone}", str(self.programme.zone_123_bis))
+                .replace("{zone}", str(self.programme.zone_123))
                 .replace("{mois}", str(timezone.now().month))
                 .replace("{année}", str(timezone.now().year))
             )

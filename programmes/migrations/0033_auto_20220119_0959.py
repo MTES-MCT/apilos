@@ -2,7 +2,7 @@
 
 from django.db import migrations
 
-from programmes.models import TypeHabitat, TypeOperation, Zone123bis, ZoneABCbis
+from programmes.models import TypeHabitat, TypeOperation, Zone123, ZoneABC
 
 
 def normalize_enum_data(apps, schema_editor):
@@ -13,22 +13,22 @@ def normalize_enum_data(apps, schema_editor):
 
     for prog in Programme.objects.all():
 
-        for value, label in ZoneABCbis.choices:
+        for value, label in ZoneABC.choices:
             if (
                 prog.zone_abc_bis is not None
                 and prog.zone_abc_bis.lower() == label.lower()
             ):
                 prog.zone_abc_bis = value
-        if prog.zone_abc_bis not in ZoneABCbis.values:
+        if prog.zone_abc_bis not in ZoneABC.values:
             prog.zone_abc_bis = Programme.zone_abc_bis.field.default
 
-        for value, label in Zone123bis.choices:
+        for value, label in Zone123.choices:
             if (
                 prog.zone_123_bis is not None
                 and prog.zone_123_bis.lower() == label.lower()
             ):
                 prog.zone_123_bis = value
-        if prog.zone_123_bis not in Zone123bis.values:
+        if prog.zone_123_bis not in Zone123.values:
             prog.zone_123_bis = Programme.zone_123_bis.field.default
 
         for value, label in TypeHabitat.choices:

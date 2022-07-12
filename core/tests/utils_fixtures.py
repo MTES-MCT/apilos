@@ -264,8 +264,8 @@ def create_programme(
         adresse="22 rue segur",
         numero_galion=numero_galion,
         annee_gestion_programmation=2018,
-        zone_123_bis="3",
-        zone_abc_bis="B1",
+        zone_123="3",
+        zone_abc="B1",
         surface_utile_totale=5243.21,
         nb_locaux_commerciaux=5,
         nb_bureaux=25,
@@ -280,9 +280,7 @@ def create_programme(
         certificat_adressage=random.choice(
             [files_and_text, "", "n'importe quoi", None]
         ),
-        effet_relatif=random.choice(
-            [files_and_text, "", "n'importe quoi", None]
-        ),
+        effet_relatif=random.choice([files_and_text, "", "n'importe quoi", None]),
         reference_cadastrale=random.choice(
             [files_and_text, "", "n'importe quoi", None]
         ),

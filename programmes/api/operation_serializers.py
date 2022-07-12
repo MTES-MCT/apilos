@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from programmes.models import Programme, Lot
+from programmes.models import Annexe, Logement, Programme, Lot, TypeStationnement
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
 from conventions.models import Convention
@@ -34,13 +34,61 @@ class AdministrationSerializer(serializers.HyperlinkedModelSerializer):
         ref_name = "Administration"
 
 
+class AnnexeSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Annexe
+        fields = (
+            "typologie",
+            "surface_hors_surface_retenue",
+            "loyer_par_metre_carre",
+            "loyer",
+        )
+        ref_name = "Annexe"
+
+
+class LogementSerializer(serializers.HyperlinkedModelSerializer):
+    annexes = AnnexeSerializer(many=True)
+
+    class Meta:
+        model = Logement
+        fields = (
+            "designation",
+            "typologie",
+            "surface_habitable",
+            "surface_annexes",
+            "surface_annexes_retenue",
+            "surface_utile",
+            "loyer_par_metre_carre",
+            "coeficient",
+            "loyer",
+            "annexes",
+        )
+        ref_name = "Logement"
+
+
+class TypeStationnementSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = TypeStationnement
+        fields = (
+            "typologie",
+            "nb_stationnements",
+            "loyer",
+        )
+        ref_name = "TypeStationnement"
+
+
 class LotSerializer(serializers.HyperlinkedModelSerializer):
+    logements = LogementSerializer(many=True)
+    type_stationnements = TypeStationnementSerializer(many=True)
+
     class Meta:
         model = Lot
         fields = (
             "nb_logements",
             "financement",
             "type_habitat",
+            "logements",
+            "type_stationnements",
         )
         ref_name = "Lot"
 
@@ -77,8 +125,8 @@ class OperationSerializer(serializers.HyperlinkedModelSerializer):
             "ville",
             "adresse",
             "numero_galion",
-            "zone_123_bis",
-            "zone_abc_bis",
+            "zone_123",
+            "zone_abc",
             "type_operation",
             "anru",
             "date_achevement_previsible",

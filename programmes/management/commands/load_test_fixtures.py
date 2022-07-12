@@ -13,8 +13,8 @@ from programmes.models import (
     Financement,
     Lot,
     TypeOperation,
-    Zone123bis,
-    ZoneABCbis,
+    Zone123,
+    ZoneABC,
 )
 from users.models import User, Role
 from users.type_models import TypeRole
@@ -62,15 +62,15 @@ def generate_programmes(num):
                 + f"{random.randint(0,9)}{random.randint(0,9)}"
                 + f"{random.randint(0,9)}{random.randint(0,9)}",
                 "annee_gestion_programmation": 2022,
-                "zone_123_bis": random.choice(
-                    [Zone123bis.Zone1, Zone123bis.Zone2, Zone123bis.Zone3]
+                "zone_123": random.choice(
+                    [Zone123.Zone1, Zone123.Zone2, Zone123.Zone3]
                 ).value,
-                "zone_abc_bis": random.choice(
+                "zone_abc": random.choice(
                     [
-                        ZoneABCbis.ZoneA,
-                        ZoneABCbis.ZoneB1,
-                        ZoneABCbis.ZoneB2,
-                        ZoneABCbis.ZoneC,
+                        ZoneABC.ZoneA,
+                        ZoneABC.ZoneB1,
+                        ZoneABC.ZoneB2,
+                        ZoneABC.ZoneC,
                     ]
                 ).value,
                 "type_operation": random.choice(TypeOperation.choices)[0],
