@@ -1,8 +1,7 @@
 {% if request.user.is_staff or request.user.is_superuser %}
     <form action="{% url 'users:update_currently' %}" method="POST">
-        <div class="fr-grid-row">
+        <div class="fr-grid-row fr-mb-2w">
             <div>
-
                 {% csrf_token %}
                 <select
                     class="fr-select"
@@ -22,7 +21,6 @@
                 </select>
             </div>
             <div>
-
                 <button class="fr-btn">
                     OK
                 </button>
