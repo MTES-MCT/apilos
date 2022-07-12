@@ -132,24 +132,43 @@ Puis test de quelques appels:
 - [ ] **Démarrage de l'expérimentation**
 - [x] Recharger régulièrement la configuration du client SIAP
 - [x] Controle de la signature JWT sur la route config
+- [ ] BUG : Opération créée de zero -> erreur avant l'appel à l'API SIAP
+- [ ] Route operation_modifiee notifie APiLos de la modification d'une opération (utilisé pour les opérations engagées et plus si besoin selon les évolutions métiers)
 - [ ] Ajouter logements, annexes et stationnements à l'API /opération de APiLos
+- [ ] Gestion des conventions sans travaux à partir du SIAP
 - [ ] Mis à jour du client suivant les évolutions de l'API SIAP (habilitation valide, bailleur...)
-    - [ ] Affichage des habilitations selon un paramètre "display"
+    - [ ] Affichage des habilitations selon un paramètre `"valide": True,`
     - [ ] siret / siren
+
+```
+            "entiteMorale": {
+                "nom": "3F GRAND EST",
+                "siren": "498273556",
+                "siret": "49827355600123", ???
+```
+
+    - [ ] adresse sur 2 lignes
+
+```
+        "adresse": " Allée de l’Aubepine 13010 Marseille",
+VERS
+        "adresseLigne4": "80 RUE ALBE",
+        "adresseLigne6": "13004 MARSEILLE 4",
+```
+
 - [ ] Application des autres type d'habilitation (autre que Bailleur et Instructeur)
     - [ ] Affichage des conventions en lecture seule
     - [ ] Affichage des conventions selon la géographie
-- [ ] Gestion des conventions sans travaux à partir du SIAP
 - [ ] Envoi de mail à partir d'une convention SIAP
 - [ ] Affichage des statistiques du conventionnement
 - [ ] Miror du repo github dans [gitlab](https://gitlab-forge.din.developpement-durable.gouv.fr/dgaln/dhup/apilos) pour le SNUM
-- [ ] Deloguer sur le SIAP / Apilos doit délogguer des 2 plateformes
 - [ ] Mis à jour des Roles de l'utilisateur pour supprimer les roles obsolètes (à faire lors de la récup des habilitations ?)
+
 
 Questions ouvertes pour plus tard :
 
 - [ ] Comment retrouver les paramètres propres à APiLos dans la version SIAP
-- [ ] Vérifier l'habilitation de l'utilisateur avant de renvoyer la liste des conventions d'une opération
+- [ ] Deloguer sur le SIAP / Apilos doit délogguer des 2 plateformes
 
 
 ## token exemple

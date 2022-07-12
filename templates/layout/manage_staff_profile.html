@@ -1,0 +1,32 @@
+{% if request.user.is_staff or request.user.is_superuser %}
+    <form action="{% url 'users:update_currently' %}" method="POST">
+        <div class="fr-grid-row">
+            <div>
+
+                {% csrf_token %}
+                <select
+                    class="fr-select"
+                    name="currently">
+                    <option value="STAFF"
+                        {% if request.session.currently  == "STAFF" %}selected{% endif %}>
+                        STAFF
+                    </option>
+                    <option value="BAILLEUR"
+                        {% if request.session.currently  == "BAILLEUR" %}selected{% endif %}>
+                        BAILLEUR
+                    </option>
+                    <option value="INSTRUCTEUR"
+                        {% if request.session.currently  == "INSTRUCTEUR" %}selected{% endif %}>
+                        INSTRUCTEUR
+                    </option>
+                </select>
+            </div>
+            <div>
+
+                <button class="fr-btn">
+                    OK
+                </button>
+            </div>
+        </div>
+    </form>
+{% endif %}

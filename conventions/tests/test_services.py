@@ -1,11 +1,11 @@
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
+from django.contrib.sessions.middleware import SessionMiddleware
 
 from core.tests import utils_fixtures
-from conventions.services import services_conventions
+from conventions.services import services_conventions, utils
 from conventions.services import email as service_email
-
-from conventions.models import Convention
-from users.models import User
+from conventions.models import Convention, ConventionStatut
+from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
 
 
@@ -183,3 +183,45 @@ class ServicesConventionsTests(TestCase):
         )
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
         self.assertNotIn("Toto à un vélo", email_sent.body)
+
+
+class ServicesUtilsTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        utils_fixtures.create_all()
+
+    # set session in request object
+    def setUp(self):
+        self.request = RequestFactory().get("/conventions")
+        middleware = SessionMiddleware()
+        middleware.process_request(self.request)
+        self.request.session.save()
+
+    def test_editable_convention(self):
+
+        convention = Convention.objects.get(numero="0001")
+        convention.statut = ConventionStatut.PROJET
+        self.request.session["currently"] = GroupProfile.INSTRUCTEUR
+        self.assertFalse(utils.editable_convention(self.request, convention))
+        self.request.session["currently"] = GroupProfile.BAILLEUR
+        self.assertTrue(utils.editable_convention(self.request, convention))
+        self.request.session["currently"] = GroupProfile.STAFF
+        self.assertTrue(utils.editable_convention(self.request, convention))
+
+        for statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
+            convention.statut = statut
+            self.request.session["currently"] = GroupProfile.INSTRUCTEUR
+            self.assertTrue(utils.editable_convention(self.request, convention))
+            self.request.session["currently"] = GroupProfile.BAILLEUR
+            self.assertFalse(utils.editable_convention(self.request, convention))
+            self.request.session["currently"] = GroupProfile.STAFF
+            self.assertTrue(utils.editable_convention(self.request, convention))
+
+        for statut in [ConventionStatut.A_SIGNER, ConventionStatut.TRANSMISE]:
+            convention.statut = statut
+            self.request.session["currently"] = GroupProfile.INSTRUCTEUR
+            self.assertFalse(utils.editable_convention(self.request, convention))
+            self.request.session["currently"] = GroupProfile.BAILLEUR
+            self.assertFalse(utils.editable_convention(self.request, convention))
+            self.request.session["currently"] = GroupProfile.STAFF
+            self.assertFalse(utils.editable_convention(self.request, convention))
