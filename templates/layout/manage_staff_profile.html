@@ -3,6 +3,7 @@
         <div class="fr-grid-row fr-mb-2w">
             <div>
                 {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path_info }}">
                 <select
                     class="fr-select"
                     name="currently">

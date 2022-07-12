@@ -26,5 +26,5 @@ def home(request):
 def update_currently(request):
     if request.user.is_staff or request.user.is_superuser:
         request.session["currently"] = request.POST.get("currently")
-        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+        return HttpResponseRedirect(request.POST.get("next"))
     raise PermissionError("This function is available only for staff")
