@@ -61,10 +61,6 @@ class AdministrationsModelsTest(TestCase):
 
         convention = Convention.objects.get(numero="0001")
         convention.statut = ConventionStatut.PROJET
-        self.assertFalse(user_instructeur.full_editable_convention(convention))
-        self.assertFalse(
-            user_instructeur_metropole.full_editable_convention(convention)
-        )
         self.assertTrue(
             user_instructeur.has_perm("convention.change_convention", convention)
         )
@@ -98,10 +94,6 @@ class AdministrationsModelsTest(TestCase):
         )
         for statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
             convention.statut = statut
-            self.assertTrue(user_instructeur.full_editable_convention(convention))
-            self.assertFalse(
-                user_instructeur_metropole.full_editable_convention(convention)
-            )
             self.assertTrue(
                 user_instructeur.has_perm("convention.change_convention", convention)
             )
@@ -127,11 +119,6 @@ class AdministrationsModelsTest(TestCase):
 
         convention = Convention.objects.get(numero="0001")
         convention.statut = ConventionStatut.PROJET
-        self.assertTrue(user_bailleur.full_editable_convention(convention))
-        self.assertFalse(user_bailleur_hlm.full_editable_convention(convention))
-        self.assertTrue(
-            user_bailleur.has_perm("convention.change_convention", convention)
-        )
         self.assertFalse(
             user_bailleur_hlm.has_perm("convention.change_convention", convention)
         )
@@ -151,8 +138,6 @@ class AdministrationsModelsTest(TestCase):
         )
         for statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
             convention.statut = statut
-            self.assertFalse(user_bailleur.full_editable_convention(convention))
-            self.assertFalse(user_bailleur_hlm.full_editable_convention(convention))
             self.assertTrue(
                 user_bailleur.has_perm("convention.change_convention", convention)
             )

@@ -10,6 +10,7 @@ from users.models import GroupProfile
 @register.filter
 def is_bailleur(request: HttpRequest) -> bool:
     return "currently" in request.session and request.session["currently"] in [
+        GroupProfile.STAFF,
         GroupProfile.BAILLEUR,
         GroupProfile.SIAP_MO_PERS_MORALE,
         GroupProfile.SIAP_MO_PERS_PHYS,
@@ -19,6 +20,7 @@ def is_bailleur(request: HttpRequest) -> bool:
 @register.filter
 def is_instructeur(request: HttpRequest) -> bool:
     return "currently" in request.session and request.session["currently"] in [
+        GroupProfile.STAFF,
         GroupProfile.INSTRUCTEUR,
         GroupProfile.SIAP_SER_GEST,
     ]
