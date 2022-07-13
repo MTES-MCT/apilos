@@ -47,6 +47,20 @@ class ConfigurationAPITest(APITestCase):
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
         response = client.get("/api-siap/v0/operation/20220600005/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        annexes = [
+            {
+                "typologie": "CAVE",
+                "surface_hors_surface_retenue": "5.00",
+                "loyer_par_metre_carre": "0.10",
+                "loyer": "0.50",
+            },
+            {
+                "typologie": "JARDIN",
+                "surface_hors_surface_retenue": "5.00",
+                "loyer_par_metre_carre": "0.10",
+                "loyer": "0.50",
+            },
+        ]
         expected_data = {
             "nom": "Programe 1",
             "bailleur": OrderedDict(
@@ -142,42 +156,7 @@ class ConfigurationAPITest(APITestCase):
                                                     ("loyer", "297.00"),
                                                     (
                                                         "annexes",
-                                                        [
-                                                            OrderedDict(
-                                                                [
-                                                                    (
-                                                                        "typologie",
-                                                                        "CAVE",
-                                                                    ),
-                                                                    (
-                                                                        "surface_hors_surface_retenue",
-                                                                        "5.00",
-                                                                    ),
-                                                                    (
-                                                                        "loyer_par_metre_carre",
-                                                                        "0.10",
-                                                                    ),
-                                                                    ("loyer", "0.50"),
-                                                                ]
-                                                            ),
-                                                            OrderedDict(
-                                                                [
-                                                                    (
-                                                                        "typologie",
-                                                                        "JARDIN",
-                                                                    ),
-                                                                    (
-                                                                        "surface_hors_surface_retenue",
-                                                                        "5.00",
-                                                                    ),
-                                                                    (
-                                                                        "loyer_par_metre_carre",
-                                                                        "0.10",
-                                                                    ),
-                                                                    ("loyer", "0.50"),
-                                                                ]
-                                                            ),
-                                                        ],
+                                                        annexes,
                                                     ),
                                                 ]
                                             ),
