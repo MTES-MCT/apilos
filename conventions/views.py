@@ -464,3 +464,15 @@ def display_pdf(request, convention_uuid):
         )
 
     raise Http404
+
+
+@login_required
+def fiche_caf(request, convention_uuid):
+    data, file_name = services.fiche_caf(request, convention_uuid)
+
+    response = HttpResponse(
+        data,
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingm",
+    )
+    response["Content-Disposition"] = f"attachment; filename=ficheCAF_{file_name}.docx"
+    return response

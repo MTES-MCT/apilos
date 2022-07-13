@@ -428,3 +428,60 @@ def _prepare_logement_edds(convention):
 
 def _list_to_dict(object_list):
     return list(map(model_to_dict, object_list))
+
+
+def fiche_caf_doc(convention):
+    # pylint: disable=R0914
+
+    filepath = f"{settings.BASE_DIR}/documents/FicheCAF-template.docx"
+
+    doc = DocxTemplate(filepath)
+
+    logements_totale = {
+        "sh_totale": 0,
+        "sa_totale": 0,
+        "sar_totale": 0,
+        "su_totale": 0,
+        "loyer_total": 0,
+    }
+    nb_logements_par_type = {}
+    for logement in convention.lot.logement_set.order_by("typologie").all():
+        logements_totale["sh_totale"] += logement.surface_habitable
+        logements_totale["sa_totale"] += logement.surface_annexes
+        logements_totale["sar_totale"] += logement.surface_annexes_retenue
+        logements_totale["su_totale"] += logement.surface_utile
+        logements_totale["loyer_total"] += logement.loyer
+        if logement.get_typologie_display() not in nb_logements_par_type:
+            nb_logements_par_type[logement.get_typologie_display()] = 0
+        nb_logements_par_type[logement.get_typologie_display()] += 1
+
+    lot_num = _prepare_logement_edds(convention)
+    # tester si il logement exists avant de commencer
+
+    context = {
+        "convention": convention,
+        "bailleur": convention.bailleur,
+        "programme": convention.programme,
+        "lot": convention.lot,
+        "administration": convention.programme.administration,
+        "logements": convention.lot.logement_set.all(),
+        "nb_logements_par_type": nb_logements_par_type,
+        "lot_num": lot_num,
+        "loyer_m2": _get_loyer_par_metre_carre(convention),
+    }
+    context.update(logements_totale)
+
+    jinja_env = jinja2.Environment()
+    jinja_env.filters["d"] = to_fr_date
+    jinja_env.filters["sd"] = to_fr_short_date
+    jinja_env.filters["f"] = _to_fr_float
+    jinja_env.filters["pl"] = _pluralize
+    jinja_env.filters["len"] = len
+    jinja_env.filters["inline_text_multiline"] = inline_text_multiline
+
+    doc.render(context, jinja_env)
+    file_stream = io.BytesIO()
+    doc.save(file_stream)
+    file_stream.seek(0)
+
+    return file_stream

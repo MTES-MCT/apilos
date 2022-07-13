@@ -853,3 +853,18 @@ def convention_sent(request, convention_uuid):
         "resiliation_form": resiliation_form,
         "upform": upform,
     }
+
+
+@require_POST
+def fiche_caf(request, convention_uuid):
+    convention = (
+        Convention.objects.prefetch_related("bailleur")
+        .prefetch_related("lot")
+        .prefetch_related("lot__logement_set")
+        .prefetch_related("programme")
+        .prefetch_related("programme__administration")
+        .get(uuid=convention_uuid)
+    )
+    file_stream = convention_generator.fiche_caf_doc(convention)
+
+    return file_stream, f"{convention}"
