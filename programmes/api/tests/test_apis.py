@@ -218,15 +218,3 @@ class ConfigurationAPITest(APITestCase):
             self.assertEqual(response.data[key], value)
         for key in ["date_achevement_previsible", "date_achat", "date_achevement"]:
             self.assertTrue(response.data[key])
-
-        # client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
-        # response = client.get("/api-siap/v0/config/")
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # expected = {
-        #     "racine_url_acces_web": "http://testserver",
-        #     "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}",
-        #     "url_acces_web_recherche": "/conventions",
-        #     "url_acces_api_kpi": "/api-siap/v0/convention_kpi/",
-        #     "version": "0.0",
-        # }
-        # self.assertEqual(response.data, expected)
