@@ -20,7 +20,6 @@ from .services_conventions import (
     convention_delete,
     convention_preview,
     convention_sent,
-    fiche_caf,
 )
 from .services_logements import (
     logements_update,

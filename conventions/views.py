@@ -1,6 +1,7 @@
 from zipfile import ZipFile
 
 from django.contrib.auth.decorators import login_required, permission_required
+from django.views.decorators.http import require_GET
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
 from django.shortcuts import render
@@ -10,10 +11,8 @@ from django.conf import settings
 
 from programmes.models import FinancementEDD
 from conventions.models import Convention
-from conventions.services import services
+from conventions.services import services, convention_generator
 from conventions.services.utils import ReturnStatus
-
-NB_STEPS = 12
 
 
 @login_required
@@ -431,8 +430,8 @@ def sent(request, convention_uuid):
 def display_pdf(request, convention_uuid):
     # récupérer le doc PDF
     convention = Convention.objects.get(uuid=convention_uuid)
-    if convention.fichier_signe:
-        filename = convention.fichier_signe
+    if convention.nom_fichier_signe:
+        filename = convention.nom_fichier_signe
         return FileResponse(
             default_storage.open(
                 f"conventions/{convention.uuid}/convention_docs/{filename}",
@@ -467,12 +466,27 @@ def display_pdf(request, convention_uuid):
 
 
 @login_required
+@require_GET
 def fiche_caf(request, convention_uuid):
-    data, file_name = services.fiche_caf(request, convention_uuid)
+    print(request)
+    print(convention_uuid)
+    convention = (
+        Convention.objects.prefetch_related("bailleur")
+        .prefetch_related("lot")
+        .prefetch_related("lot__logements")
+        .prefetch_related("programme")
+        .prefetch_related("programme__administration")
+        .get(uuid=convention_uuid)
+    )
+    file_stream = convention_generator.fiche_caf_doc(convention)
+
+    #    return file_stream, f"{convention}"
+
+    #   data, file_name = services.fiche_caf(request, convention_uuid)
 
     response = HttpResponse(
-        data,
+        file_stream,
         content_type="application/vnd.openxmlformats-officedocument.wordprocessingm",
     )
-    response["Content-Disposition"] = f"attachment; filename=ficheCAF_{file_name}.docx"
+    response["Content-Disposition"] = f"attachment; filename=ficheCAF_{convention}.docx"
     return response

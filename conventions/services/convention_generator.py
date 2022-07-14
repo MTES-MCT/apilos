@@ -431,8 +431,6 @@ def _list_to_dict(object_list):
 
 
 def fiche_caf_doc(convention):
-    # pylint: disable=R0914
-
     filepath = f"{settings.BASE_DIR}/documents/FicheCAF-template.docx"
 
     doc = DocxTemplate(filepath)
@@ -445,7 +443,7 @@ def fiche_caf_doc(convention):
         "loyer_total": 0,
     }
     nb_logements_par_type = {}
-    for logement in convention.lot.logement_set.order_by("typologie").all():
+    for logement in convention.lot.logements.order_by("typologie").all():
         logements_totale["sh_totale"] += logement.surface_habitable
         logements_totale["sa_totale"] += logement.surface_annexes
         logements_totale["sar_totale"] += logement.surface_annexes_retenue
@@ -464,7 +462,7 @@ def fiche_caf_doc(convention):
         "programme": convention.programme,
         "lot": convention.lot,
         "administration": convention.programme.administration,
-        "logements": convention.lot.logement_set.all(),
+        "logements": convention.lot.logements.all(),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),
