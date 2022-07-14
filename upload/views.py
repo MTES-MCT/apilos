@@ -1,12 +1,8 @@
-import os
-import errno
-
-from django.http.response import HttpResponse, JsonResponse
+from django.http.response import JsonResponse, FileResponse
 from django.views.decorators.http import require_POST, require_GET
-from django.core.files.storage import default_storage
 
-from core import settings
-from .models import UploadedFile, UploadedFileSerializer
+from upload.services import UploadService
+from upload.models import UploadedFile, UploadedFileSerializer
 
 
 def _compute_dirpath(request):
@@ -29,21 +25,13 @@ def _compute_dirpath(request):
 @require_GET
 def display_file(request, convention_uuid, uploaded_file_uuid):
     uploaded_file = UploadedFile.objects.get(uuid=uploaded_file_uuid)
+    file = UploadService().get_file(uploaded_file.filepath(convention_uuid))
 
-    file = default_storage.open(
-        uploaded_file.filepath(convention_uuid),
-        "rb",
+    return FileResponse(
+        file,
+        filename=uploaded_file.filename,
+        as_attachment=True,
     )
-
-    data = file.read()
-    file.close()
-
-    response = HttpResponse(
-        data,
-        content_type=uploaded_file.content_type,
-    )
-    response["Content-Disposition"] = f"attachment; filename={uploaded_file.filename}"
-    return response
 
 
 @require_POST
@@ -61,24 +49,11 @@ def upload_file(request):
             content_type=file.content_type,
         )
 
-        if (
-            settings.DEFAULT_FILE_STORAGE
-            == "django.core.files.storage.FileSystemStorage"
-        ):
-            if not os.path.exists(settings.MEDIA_URL + dirpath):
-                try:
-                    os.makedirs(settings.MEDIA_URL + dirpath)
-                except OSError as exc:  # Guard against race condition
-                    if exc.errno != errno.EEXIST:
-                        raise
-
-        destination = default_storage.open(
-            f"{uploaded_file.dirpath}/{uploaded_file.uuid}_{uploaded_file.filename}",
-            "bw",
+        upload_service = UploadService(
+            convention_dirpath=uploaded_file.dirpath,
+            filename=f"{uploaded_file.uuid}_{uploaded_file.filename}",
         )
-        for chunk in file.chunks():
-            destination.write(chunk)
-        destination.close()
+        upload_service.upload_file(file)
 
         uploaded_file.save()
         uploaded_files.append(UploadedFileSerializer(uploaded_file).data)

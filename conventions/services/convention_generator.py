@@ -1,5 +1,4 @@
 import os
-import errno
 import io
 import math
 import json
@@ -10,18 +9,17 @@ from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Inches
 
 from django.conf import settings
-from django.core.files.storage import default_storage
 from django.forms.models import model_to_dict
 
 from core.utils import round_half_up
-
 from programmes.models import (
     Financement,
     Annexe,
 )
 from upload.models import UploadedFile
-from conventions.models import ConventionType1and2
+from upload.services import UploadService
 
+from conventions.models import ConventionType1and2
 from conventions.templatetags.custom_filters import (
     inline_text_multiline,
     to_fr_date,
@@ -239,23 +237,11 @@ def generate_pdf(file_stream, convention):
 
 def _save_io_as_file(file_io, convention_dirpath, convention_filename):
 
-    if settings.DEFAULT_FILE_STORAGE == "django.core.files.storage.FileSystemStorage":
-        if not os.path.exists(f"{settings.MEDIA_ROOT}/{convention_dirpath}"):
-            try:
-                os.makedirs(f"{settings.MEDIA_ROOT}/{convention_dirpath}")
-            except OSError as exc:  # Guard against race condition
-                if exc.errno != errno.EEXIST:
-                    raise
-
-    pdf_path = f"{convention_dirpath}/{convention_filename}"
-    destination = default_storage.open(
-        pdf_path,
-        "bw",
+    upload_service = UploadService(
+        convention_dirpath=convention_dirpath, filename=convention_filename
     )
-    destination.write(file_io.getbuffer())
-    destination.close()
-
-    return pdf_path
+    upload_service.upload_file_io(file_io)
+    return f"{convention_dirpath}/{convention_filename}"
 
 
 def _to_fr_float(value, d=2):
@@ -277,10 +263,7 @@ def _build_files_for_docx(doc, convention_uuid, file_list):
     files = UploadedFile.objects.filter(uuid__in=file_list)
     for object_file in files:  # convention.programme.vendeur_files().values():
         if "image" in object_file.content_type:
-            file = default_storage.open(
-                object_file.filepath(convention_uuid),
-                "rb",
-            )
+            file = UploadService().get_file(object_file.filepath(convention_uuid))
             local_path = (
                 settings.MEDIA_ROOT / f"{object_file.uuid}_{object_file.filename}"
             )

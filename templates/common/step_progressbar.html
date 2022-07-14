@@ -21,7 +21,7 @@
                     {% elif convention.display_options.display_progress_bar_3 %}
                         <li class="{% if convention_form_step > 10 %}active{% endif %} {% if convention_form_step == 10 %}current_step{% endif %} {% if convention_form_step == 9 %}after_step{% endif %}" role="recapitulatif"><div>Récapitulatif</div></li>
                         <li class="{% if convention_form_step > 11 %}active{% endif %} {% if convention_form_step == 11 %}current_step{% endif %} {% if convention_form_step == 10 %}after_step{% endif %}" role="preview"><div>Prévisualisation</div></li>
-                        <li class="{% if convention_form_step > 12 %}active{% endif %} {% if convention_form_step == 12 %}current_step{% endif %} {% if convention_form_step == 11 %}after_step{% endif %}" role="sent"><div>Actions</div></li>
+                        <li class="{% if convention_form_step > 12 %}active{% endif %} {% if convention_form_step == 12 %}current_step{% endif %} {% if convention_form_step == 11 %}after_step{% endif %}" role="post_action"><div>Actions</div></li>
                     {% endif %}
                 </ul>
             </div>

@@ -13,6 +13,7 @@ from programmes.models import FinancementEDD
 from conventions.models import Convention
 from conventions.services import services, convention_generator
 from conventions.services.utils import ReturnStatus
+from upload.services import UploadService
 
 
 @login_required
@@ -408,17 +409,30 @@ def preview(request, convention_uuid):
 def sent(request, convention_uuid):
     # Step 12/12
     result = services.convention_sent(request, convention_uuid)
-    if result["action"] == "upload":
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:preview", args=[convention_uuid])
         )
-    if result["action"] == "resiliation":
+    return render(
+        request,
+        "conventions/sent.html",
+        {
+            **result,
+            "convention_form_step": 12,
+        },
+    )
+
+
+def post_action(request, convention_uuid):
+    # Step 12/12
+    result = services.convention_post_action(request, convention_uuid)
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:recapitulatif", args=[convention_uuid])
         )
     return render(
         request,
-        "conventions/sent.html",
+        "conventions/post_action.html",
         {
             **result,
             "convention_form_step": 12,
@@ -432,33 +446,20 @@ def display_pdf(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     if convention.nom_fichier_signe:
         filename = convention.nom_fichier_signe
-        return FileResponse(
-            default_storage.open(
-                f"conventions/{convention.uuid}/convention_docs/{filename}",
-                "rb",
-            ),
-            filename=filename,
-        )
-    if default_storage.exists(
+    elif default_storage.exists(
         f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.pdf"
     ):
         filename = f"{convention.uuid}.pdf"
-        return FileResponse(
-            default_storage.open(
-                f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.pdf",
-                "rb",
-            ),
-            filename=filename,
-        )
-    if default_storage.exists(
+    elif default_storage.exists(
         f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.docx"
     ):
         filename = f"{convention.uuid}.docx"
+    if filename:
         return FileResponse(
-            default_storage.open(
-                f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.docx",
-                "rb",
-            ),
+            UploadService(
+                convention_dirpath=f"conventions/{convention.uuid}/convention_docs",
+                filename=filename,
+            ).get_file(),
             filename=filename,
         )
 
@@ -468,8 +469,6 @@ def display_pdf(request, convention_uuid):
 @login_required
 @require_GET
 def fiche_caf(request, convention_uuid):
-    print(request)
-    print(convention_uuid)
     convention = (
         Convention.objects.prefetch_related("bailleur")
         .prefetch_related("lot")

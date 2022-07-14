@@ -20,6 +20,7 @@ from .services_conventions import (
     convention_delete,
     convention_preview,
     convention_sent,
+    convention_post_action,
 )
 from .services_logements import (
     logements_update,

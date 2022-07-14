@@ -11,67 +11,25 @@
                         <strong>Convention de type I & II</strong></p>
                 {% endif %}
                 <div>
-                    <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" id="validation_form" data-turbo="false">
+                    <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
                         {% csrf_token %}
                         <p class="fr-h4">Associer un numéro de convention</p>
-
-                        <!--                             <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
-                                <div class="block--row-strech">
-                                    <div class="block--row-strech-1">
-                                        {% include "common/form/input_text.html" with form_input=conventionNumberForm.prefixe_numero editable=editable_validation %}
-                                    </div>
-                                    <p class="fr-mt-4w fr-ml-2w fr-h4">/</p>
-                                </div>
-                            </div>
-                            <div class="fr-col-12 fr-col-md-3 fr-col-lg-2 fr-pl-md-1w">
-                                {% include "common/form/input_number.html" with form_input=conventionNumberForm.suffixe_numero editable=editable_validation %}
-                            </div>
-                        </div> -->
-                        <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
                             <div class="fr-col-12 fr-col-md-6">
-                                <div class="block--row-strech">
-                                    <div class="block--row-strech-1">
-                                        {% include "common/form/input_text.html" with form_input=conventionNumberForm.convention_numero editable=editable_validation %}
-                                    </div>
-                                </div>
+                                {% include "common/form/input_text.html" with form_input=conventionNumberForm.convention_numero editable=editable_validation %}
                             </div>
-
-                            <button class="fr-btn fr-mt-3w" id="validation_button" {% if not editable_validation %}disabled{% endif %}>
-                                Valider la convention
-                            </button>
-                            <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    document.getElementById("validation_form")
-                                        .addEventListener('submit', function(){
-                                        document.getElementById("validation_button").disabled = true
-                                        return true
-                                    });
-                                });
-                            </script>
-                        </form>
-                        <div class="fr-col-md-12 fr-mt-4w">
-                            <p><em>Le préfixe du numéro de convention est modifiable dans <a class="fr-link fr-mb-1w" href="{% url 'settings:administrations' %}" data-turbo="false">les paramètres de votre administration</a>
-                            </em></p>
+                            <div class="fr-col-12 fr-col-md-6">
+                                <button class="fr-btn" {% if not editable_validation %}disabled{% endif %}>
+                                    Valider la convention
+                                </button>
+                            </div>
                         </div>
 
-                        <button class="fr-btn fr-mt-3w" id="validation_button" {% if not editable_validation %}disabled{% endif %}>
-                            Valider la convention
-                        </button>
-                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                            document.addEventListener('DOMContentLoaded', function () {
-                                document.getElementById("validation_form")
-                                    .addEventListener('submit', function(){
-                                    document.getElementById("validation_button").disabled = true
-                                    return true
-                                });
-                            });
-                        </script>
+                        <div class="fr-col-12">
+                            <em>Le préfixe du numéro de convention est modifiable dans <a class="fr-link fr-mb-1w" href="{% url 'settings:administrations' %}" data-turbo="false">les paramètres de votre administration</a>
+                            </em>
+                        </div>
                     </form>
-                    <div class="fr-col-md-12 fr-mt-4w">
-                        <p><em>Le préfixe du numéro de convention est modifiable dans <a class="fr-link fr-mb-1w" href="{% url 'settings:administrations' %}" data-turbo="false">les paramètres de votre administration</a>
-                        </em></p>
-                    </div>
                 </div>
             {% endwith %}
         </div>
