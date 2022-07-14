@@ -8,14 +8,14 @@ from core.models import IngestableModel
 from core import model_utils
 
 
-class Zone123bis(models.TextChoices):
+class Zone123(models.TextChoices):
     Zone1 = "1", "01"
     Zone2 = "2", "02"
     Zone3 = "3", "03"
     Zone1bis = "1bis", "1bis"
 
 
-class ZoneABCbis(models.TextChoices):
+class ZoneABC(models.TextChoices):
     ZoneA = "A", "A"
     ZoneAbis = "Abis", "Abis"
     ZoneB1 = "B1", "B1"
@@ -129,8 +129,8 @@ class Programme(IngestableModel):
         "code_postal": "Opération code postal",
         "ville": "Commune",
         "adresse": "Adresse Opération 1",
-        "zone_123_bis": "Zone 123",
-        "zone_abc_bis": "Zone ABC",
+        "zone_123": "Zone 123",
+        "zone_abc": "Zone ABC",
         "surface_utile_totale": "SU totale",
         "annee_gestion_programmation": "Année Programmation retenue",
         "numero_galion": "N° Opération GALION",
@@ -156,15 +156,15 @@ class Programme(IngestableModel):
     code_insee_region = models.CharField(max_length=10, null=True)
     annee_gestion_programmation = models.IntegerField(null=True)
 
-    zone_123_bis = models.CharField(
+    zone_123 = models.CharField(
         max_length=25,
-        choices=Zone123bis.choices,
+        choices=Zone123.choices,
         default=None,
         null=True,
     )
-    zone_abc_bis = models.CharField(
+    zone_abc = models.CharField(
         max_length=25,
-        choices=ZoneABCbis.choices,
+        choices=ZoneABC.choices,
         default=None,
         null=True,
     )
@@ -435,7 +435,12 @@ class Logement(models.Model):
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
-    lot = models.ForeignKey("Lot", on_delete=models.CASCADE, null=False)
+    lot = models.ForeignKey(
+        "Lot",
+        on_delete=models.CASCADE,
+        related_name="logements",
+        null=False,
+    )
     typologie = models.CharField(
         max_length=25,
         choices=TypologieLogement.choices,
@@ -545,7 +550,12 @@ class Annexe(models.Model):
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
-    logement = models.ForeignKey("Logement", on_delete=models.CASCADE, null=False)
+    logement = models.ForeignKey(
+        "Logement",
+        on_delete=models.CASCADE,
+        related_name="annexes",
+        null=False,
+    )
     typologie = models.CharField(
         max_length=25,
         choices=TypologieAnnexe.choices,
@@ -611,7 +621,12 @@ class TypeStationnement(IngestableModel):
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
-    lot = models.ForeignKey("Lot", on_delete=models.CASCADE, null=False)
+    lot = models.ForeignKey(
+        "Lot",
+        related_name="type_stationnements",
+        on_delete=models.CASCADE,
+        null=False,
+    )
     typologie = models.CharField(
         max_length=35,
         choices=TypologieStationnement.choices,
