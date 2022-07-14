@@ -112,7 +112,7 @@ def generate_convention_doc(convention, save_data=False):
     context.update(logements_totale)
     context.update(object_images)
 
-    jinja_env = jinja2.Environment(autoescape=False)
+    jinja_env = jinja2.Environment(autoescape=True)
     jinja_env.filters["d"] = to_fr_date
     jinja_env.filters["sd"] = to_fr_short_date
     jinja_env.filters["f"] = _to_fr_float
@@ -469,7 +469,7 @@ def fiche_caf_doc(convention):
     }
     context.update(logements_totale)
 
-    jinja_env = jinja2.Environment(autoescape=False)
+    jinja_env = jinja2.Environment(autoescape=True)
     jinja_env.filters["d"] = to_fr_date
     jinja_env.filters["sd"] = to_fr_short_date
     jinja_env.filters["f"] = _to_fr_float
