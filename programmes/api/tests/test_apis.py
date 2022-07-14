@@ -1,4 +1,3 @@
-from typing import OrderedDict
 from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
@@ -7,6 +6,7 @@ from users.models import User
 from siap.siap_client.client import build_jwt
 
 from core.tests import utils_fixtures
+from . import test_fixtures
 
 
 class ConfigurationAPITest(APITestCase):
@@ -47,164 +47,12 @@ class ConfigurationAPITest(APITestCase):
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
         response = client.get("/api-siap/v0/operation/20220600005/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        annexes = [
-            {
-                "typologie": "CAVE",
-                "surface_hors_surface_retenue": "5.00",
-                "loyer_par_metre_carre": "0.10",
-                "loyer": "0.50",
-            },
-            {
-                "typologie": "JARDIN",
-                "surface_hors_surface_retenue": "5.00",
-                "loyer_par_metre_carre": "0.10",
-                "loyer": "0.50",
-            },
-        ]
+
         expected_data = {
             "nom": "Programe 1",
-            "bailleur": OrderedDict(
-                [
-                    ("nom", "3F"),
-                    ("siren", None),
-                    ("siret", "12345678901234"),
-                    ("adresse", None),
-                    ("code_postal", None),
-                    ("ville", "Marseille"),
-                    ("capital_social", 123000.5),
-                    ("type_bailleur", "NONRENSEIGNE"),
-                ]
-            ),
-            "administration": OrderedDict(
-                [
-                    ("nom", "CA d'Arles-Crau-Camargue-Montagnette"),
-                    ("code", "12345"),
-                    ("ville_signature", None),
-                ]
-            ),
-            "conventions": [
-                OrderedDict(
-                    [
-                        ("date_fin_conventionnement", None),
-                        ("financement", "PLUS"),
-                        ("fond_propre", None),
-                        (
-                            "lot",
-                            OrderedDict(
-                                [
-                                    ("nb_logements", None),
-                                    ("financement", "PLUS"),
-                                    ("type_habitat", "COLLECTIF"),
-                                    (
-                                        "logements",
-                                        [
-                                            OrderedDict(
-                                                [
-                                                    ("designation", "PLUS 1"),
-                                                    ("typologie", "T1"),
-                                                    ("surface_habitable", "50.00"),
-                                                    ("surface_annexes", "20.00"),
-                                                    (
-                                                        "surface_annexes_retenue",
-                                                        "10.00",
-                                                    ),
-                                                    ("surface_utile", "60.00"),
-                                                    ("loyer_par_metre_carre", "5.50"),
-                                                    ("coeficient", "0.9000"),
-                                                    ("loyer", "297.00"),
-                                                    ("annexes", []),
-                                                ]
-                                            )
-                                        ],
-                                    ),
-                                    ("type_stationnements", []),
-                                ]
-                            ),
-                        ),
-                        ("numero", "0001"),
-                        ("statut", "1. Projet"),
-                    ]
-                ),
-                OrderedDict(
-                    [
-                        ("date_fin_conventionnement", None),
-                        ("financement", "PLAI"),
-                        ("fond_propre", None),
-                        (
-                            "lot",
-                            OrderedDict(
-                                [
-                                    ("nb_logements", None),
-                                    ("financement", "PLAI"),
-                                    ("type_habitat", "MIXTE"),
-                                    (
-                                        "logements",
-                                        [
-                                            OrderedDict(
-                                                [
-                                                    ("designation", "PLAI 1"),
-                                                    ("typologie", "T1"),
-                                                    ("surface_habitable", "50.00"),
-                                                    ("surface_annexes", "20.00"),
-                                                    (
-                                                        "surface_annexes_retenue",
-                                                        "10.00",
-                                                    ),
-                                                    ("surface_utile", "60.00"),
-                                                    ("loyer_par_metre_carre", "5.50"),
-                                                    ("coeficient", "0.9000"),
-                                                    ("loyer", "297.00"),
-                                                    (
-                                                        "annexes",
-                                                        annexes,
-                                                    ),
-                                                ]
-                                            ),
-                                            OrderedDict(
-                                                [
-                                                    ("designation", "PLAI 2"),
-                                                    ("typologie", "T2"),
-                                                    ("surface_habitable", "50.00"),
-                                                    ("surface_annexes", "20.00"),
-                                                    (
-                                                        "surface_annexes_retenue",
-                                                        "10.00",
-                                                    ),
-                                                    ("surface_utile", "60.00"),
-                                                    ("loyer_par_metre_carre", "5.50"),
-                                                    ("coeficient", "0.9000"),
-                                                    ("loyer", "297.00"),
-                                                    ("annexes", []),
-                                                ]
-                                            ),
-                                            OrderedDict(
-                                                [
-                                                    ("designation", "PLAI 3"),
-                                                    ("typologie", "T3"),
-                                                    ("surface_habitable", "50.00"),
-                                                    ("surface_annexes", "20.00"),
-                                                    (
-                                                        "surface_annexes_retenue",
-                                                        "10.00",
-                                                    ),
-                                                    ("surface_utile", "60.00"),
-                                                    ("loyer_par_metre_carre", "5.50"),
-                                                    ("coeficient", "0.9000"),
-                                                    ("loyer", "297.00"),
-                                                    ("annexes", []),
-                                                ]
-                                            ),
-                                        ],
-                                    ),
-                                    ("type_stationnements", []),
-                                ]
-                            ),
-                        ),
-                        ("numero", "0002"),
-                        ("statut", "1. Projet"),
-                    ]
-                ),
-            ],
+            "bailleur": test_fixtures.bailleur,
+            "administration": test_fixtures.administration,
+            "conventions": [test_fixtures.convention1, test_fixtures.convention2],
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
