@@ -279,7 +279,7 @@ class ConventionResiliationForm(forms.Form):
 
     date_resiliation = forms.DateField(
         required=True,
-        label="Date de résiliation",
+        label="Spécifier la date de résiliation/dénonciation",
         error_messages={
             "required": "Vous devez saisir une date de résiliation",
         },

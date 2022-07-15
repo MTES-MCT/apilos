@@ -62,8 +62,18 @@ urlpatterns = [
         name="sent",
     ),
     path(
+        "post_action/<convention_uuid>",
+        views.post_action,
+        name="post_action",
+    ),
+    path(
         "display_pdf/<convention_uuid>",
         views.display_pdf,
         name="display_pdf",
+    ),
+    path(
+        "fiche_caf/<convention_uuid>",
+        views.fiche_caf,
+        name="fiche_caf",
     ),
 ]
