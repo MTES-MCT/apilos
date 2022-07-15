@@ -2,7 +2,6 @@ import datetime
 
 from typing import Any
 
-from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -12,6 +11,7 @@ from django.db.models import Q
 from django.db.models.functions import Substr
 from django.conf import settings
 from comments.models import Comment, CommentStatut
+from core.services import EmailService
 
 from programmes.models import (
     Annexe,
@@ -482,11 +482,9 @@ def send_email_instruction(convention_url, convention):
     Send an email to the bailleur who click and bailleur TOUS
     Send an email to all instructeur (except the ones who select AUCUN as email preference)
     """
-    # envoi au bailleur
-    from_email = "contact@apilos.beta.gouv.fr"
+    email_sent = []
 
-    # All bailleur users from convention
-    to = convention.get_email_bailleur_users()
+    # envoi au bailleur
     text_content = render_to_string(
         "emails/bailleur_instruction.txt",
         {
@@ -501,26 +499,17 @@ def send_email_instruction(convention_url, convention):
             "convention": convention,
         },
     )
-    email_sent = []
-    if to:
-        msg = EmailMultiAlternatives(
-            f"Convention à instruire ({convention})", text_content, from_email, to
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-    else:
-        msg = EmailMultiAlternatives(
-            f"[ATTENTION pas de destinataire à cet email] Convention à instruire ({convention})",
-            text_content,
-            from_email,
-            ("contact@apilos.beta.gouv.fr",),
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-    email_sent.append(msg)
+
+    email_service = EmailService(
+        subject=f"Convention à instruire ({convention})",
+        to_emails=convention.get_email_bailleur_users(),
+        text_content=text_content,
+        html_content=html_content,
+    )
+    email_service.send()
+    email_sent.append(email_service.msg)
 
     # envoie à l'instructeur
-    to = convention.get_email_instructeur_users(include_partial=True)
     text_content = render_to_string(
         "emails/instructeur_instruction.txt",
         {
@@ -536,22 +525,14 @@ def send_email_instruction(convention_url, convention):
         },
     )
 
-    if to:
-        msg = EmailMultiAlternatives(
-            f"Convention à instruire ({convention})", text_content, from_email, to
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-    else:
-        msg = EmailMultiAlternatives(
-            f"[ATTENTION pas de destinataire à cet email] Convention à instruire ({convention})",
-            text_content,
-            from_email,
-            ("contact@apilos.beta.gouv.fr",),
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-    email_sent.append(msg)
+    email_service = EmailService(
+        subject=f"Convention à instruire ({convention})",
+        to_emails=convention.get_email_instructeur_users(include_partial=True),
+        text_content=text_content,
+        html_content=html_content,
+    )
+    email_service.send()
+    email_sent.append(email_service.msg)
 
     return email_sent
 
@@ -612,7 +593,6 @@ def send_email_correction(
         subject = f"Convention modifiée ({convention})"
         template_label = "instructeur_correction_done"
 
-    from_email = "contact@apilos.beta.gouv.fr"
     text_content = render_to_string(
         f"emails/{template_label}.txt",
         {
@@ -630,20 +610,16 @@ def send_email_correction(
         },
     )
 
-    if to:
-        msg = EmailMultiAlternatives(subject, text_content, from_email, to, cc=cc)
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-    else:
-        msg = EmailMultiAlternatives(
-            f"[ATTENTION pas de destinataire à cet email] {subject}",
-            text_content,
-            from_email,
-            ("contact@apilos.beta.gouv.fr",),
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-    return msg
+    email_service = EmailService(
+        subject=subject,
+        to_emails=to,
+        cc_emails=cc,
+        text_content=text_content,
+        html_content=html_content,
+    )
+    email_service.send()
+
+    return email_service.msg
 
 
 @require_POST

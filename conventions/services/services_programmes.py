@@ -1,9 +1,9 @@
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_GET
-from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.conf import settings
+from core.services import EmailService
 from instructeurs.models import Administration
 
 from programmes.models import (
@@ -94,7 +94,6 @@ def _send_email_staff(request, convention):
     convention_url = request.build_absolute_uri(
         reverse("conventions:recapitulatif", args=[convention.uuid])
     )
-    from_email = "contact@apilos.beta.gouv.fr"
     text_content = render_to_string(
         "emails/alert_create_convention.txt",
         {
@@ -114,14 +113,13 @@ def _send_email_staff(request, convention):
         },
     )
 
-    msg = EmailMultiAlternatives(
-        f"[{settings.ENVIRONMENT.upper()}] Nouvelle convention créée de zéro ({convention})",
-        text_content,
-        from_email,
-        ("contact@apilos.beta.gouv.fr",),
-    )
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    subject = f"[{settings.ENVIRONMENT.upper()}] "
+    subject += f"Nouvelle convention créée de zéro ({convention})"
+    EmailService(
+        subject=subject,
+        text_content=text_content,
+        html_content=html_content,
+    ).send_to_devs()
 
 
 def programme_update(request, convention_uuid):

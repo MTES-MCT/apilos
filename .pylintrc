@@ -12,3 +12,4 @@ disable=
 load-plugins=pylint_django
 django-settings-module=core.settings
 min-similarity-lines=20
+max-args = 10
