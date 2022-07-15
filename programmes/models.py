@@ -31,6 +31,7 @@ class Financement(models.TextChoices):
     PLS = "PLS", "PLS"
     PSH = "PSH", "PSH"
     PALULOS = "PALULOS", "PALULOS"
+    SANS_FINANCEMENT = "SANS_FINANCEMENT", "Sans Financement"
 
 
 class FinancementEDD(models.TextChoices):
@@ -38,6 +39,7 @@ class FinancementEDD(models.TextChoices):
     PLAI = "PLAI", "PLAI"
     PLAI_ADP = "PLAI_ADP", "PLAI_ADP"
     PLS = "PLS", "PLS"
+    SANS_FINANCEMENT = "SANS_FINANCEMENT", "Sans Financement"
 
 
 class TypologieLogement(models.TextChoices):

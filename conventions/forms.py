@@ -48,8 +48,9 @@ class ConventionFinancementForm(forms.Form):
         },
         help_text=(
             "Année de signature de la convention + au moins la durée du prêt"
-            + " le plus long. Elle ne peut être inférieure à 9 ans. Spécificité"
-            + " pour le PLS: comprise entre 15 et 40 ans.Si la convention est"
+            + " le plus long. Elle ne peut être inférieure à 9 ans. Spécificités :"
+            + " pour le PLS comprise entre 15 et 40 ans, pour les opérations sans"
+            + " financement, supérieur à 9 ans. Si la convention est"
             + " signée après le 30 juin, la durée de la convention à prendre en"
             + " compte débute à l'année N+1."
         ),
@@ -68,15 +69,14 @@ class ConventionFinancementForm(forms.Form):
             and self.convention is not None
             and annee_fin_conventionnement is not None
         ):
-            if (
-                self.convention.financement == Financement.PLS
-                or self.convention.programme.type_operation == TypeOperation.SANSTRAVAUX
-            ):
-                self._pls_sans_travaux_end_date_validation(annee_fin_conventionnement)
+            if self.convention.financement == Financement.PLS:
+                self._pls_end_date_validation(annee_fin_conventionnement)
+            elif self.convention.programme.type_operation == TypeOperation.SANSTRAVAUX:
+                self._sans_travaux_end_date_validation(annee_fin_conventionnement)
             else:
                 self._other_end_date_validation(annee_fin_conventionnement)
 
-    def _pls_sans_travaux_end_date_validation(self, annee_fin_conventionnement):
+    def _pls_end_date_validation(self, annee_fin_conventionnement):
         today = datetime.date.today()
 
         min_years = today.year + 15
@@ -98,6 +98,21 @@ class ConventionFinancementForm(forms.Form):
                 (
                     "L'année de fin de conventionnement ne peut être supérieur à "
                     + f"{max_years}"
+                ),
+            )
+
+    def _sans_travaux_end_date_validation(self, annee_fin_conventionnement):
+        today = datetime.date.today()
+
+        min_years = today.year + 9
+        if today.month > 6:
+            min_years = min_years + 1
+        if annee_fin_conventionnement < min_years:
+            self.add_error(
+                "annee_fin_conventionnement",
+                (
+                    "L'année de fin de conventionnement ne peut être inférieur à "
+                    + f"{min_years}"
                 ),
             )
 
