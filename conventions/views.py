@@ -1,7 +1,7 @@
 from zipfile import ZipFile
 
 from django.contrib.auth.decorators import login_required, permission_required
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_http_methods
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
 from django.shortcuts import render
@@ -423,6 +423,7 @@ def sent(request, convention_uuid):
     )
 
 
+@require_http_methods(["GET", "POST"])
 def post_action(request, convention_uuid):
     # Step 12/12
     result = services.convention_post_action(request, convention_uuid)
