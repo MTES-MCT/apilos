@@ -1,6 +1,7 @@
 from django.template.loader import render_to_string
-from django.core.files.storage import default_storage
 from django.core.mail import EmailMultiAlternatives
+
+from upload.services import UploadService
 
 
 def send_email_valide(convention_url, convention, cc, local_pdf_path=None):
@@ -37,7 +38,7 @@ def send_email_valide(convention_url, convention, cc, local_pdf_path=None):
         msg.attach_alternative(html_content, "text/html")
 
         if local_pdf_path is not None:
-            pdf_file_handler = default_storage.open(local_pdf_path, "rb")
+            pdf_file_handler = UploadService().get_file(local_pdf_path)
             if extention == "pdf":
                 msg.attach(
                     f"{convention}.pdf", pdf_file_handler.read(), "application/pdf"

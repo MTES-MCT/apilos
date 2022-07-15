@@ -131,13 +131,13 @@ platformdirs==2.5.2 \
     # via
     #   pylint
     #   virtualenv
-pre-commit==2.19.0 \
-    --hash=sha256:10c62741aa5704faea2ad69cb550ca78082efe5697d6f04e5710c3c229afdd10 \
-    --hash=sha256:4233a1e38621c87d9dda9808c6606d7e7ba0e087cd56d3fe03202a01d2919615
+pre-commit==2.20.0 \
+    --hash=sha256:51a5ba7c480ae8072ecdb6933df22d2f812dc897d5fe848778116129a681aac7 \
+    --hash=sha256:a978dac7bc9ec0bcee55c18a277d553b0f419d259dadb4b9418ff2d00eb43959
     # via -r dev-requirements.in
-pylint==2.14.3 \
-    --hash=sha256:4e1378f815c63e7e44590d0d339ed6435f5281d0a0cc357d29a86ea0365ef868 \
-    --hash=sha256:6757a027e15816be23625b079ebc45464e4c9d9dde0c826d18beee53fe22a2e7
+pylint==2.14.4 \
+    --hash=sha256:47705453aa9dce520e123a7d51843d5f0032cbfa06870f89f00927aa1f735a4a \
+    --hash=sha256:89b61867db16eefb7b3c5b84afc94081edaf11544189e2b238154677529ad69f
     # via -r dev-requirements.in
 pyyaml==6.0 \
     --hash=sha256:0283c35a6a9fbf047493e3a0ce8d79ef5030852c51e9d911a27badfde0605293 \
