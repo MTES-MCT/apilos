@@ -1,5 +1,7 @@
 from django.http.response import JsonResponse, FileResponse
 from django.views.decorators.http import require_POST, require_GET
+from conventions.models import Convention
+from programmes.models import Lot, Programme
 
 from upload.services import UploadService
 from upload.models import UploadedFile, UploadedFileSerializer
@@ -7,13 +9,16 @@ from upload.models import UploadedFile, UploadedFileSerializer
 
 def _compute_dirpath(request):
     if "convention" in request.POST:
-        uuid = request.POST["convention"]
+        convention = Convention.objects.get(uuid=request.POST["convention"])
+        uuid = convention.uuid
         object_name = "conventions"
     elif "programme" in request.POST:
-        uuid = request.POST["programme"]
+        programme = Programme.objects.get(uuid=request.POST["programme"])
+        uuid = programme.uuid
         object_name = "programmes"
     elif "lot" in request.POST:
-        uuid = request.POST["lot"]
+        lot = Lot.objects.get(uuid=request.POST["lot"])
+        uuid = lot.uuid
         object_name = "lots"
     else:
         raise Exception(
