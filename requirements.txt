@@ -20,13 +20,13 @@ attrs==21.4.0 \
     --hash=sha256:2d27e3784d7a565d36ab851fe94887c5eccd6a463168875832a1be79c82828b4 \
     --hash=sha256:626ba8234211db98e869df76230a137c4c40a12d72445c45d5f5b716f076e2fd
     # via jsonschema
-boto3==1.24.23 \
-    --hash=sha256:25d0e3bce0d8bb79d15ff5018af5867bbaef25e0aa20d21a1d616e8c754127c7 \
-    --hash=sha256:5d3b8c5b84f38f9c24dd4330f36a796a2dedc8289c427e830e939ba6e7a41ccc
+boto3==1.24.28 \
+    --hash=sha256:af12023bb8f3059bb72697bcf9be860c492760c8201ec09246bd0b04cea88573 \
+    --hash=sha256:efce6dcf0b708cf609b2583f0134b1896f4e76c8b1e25702d50c81719a213664
     # via -r requirements.in
-botocore==1.27.23 \
-    --hash=sha256:2536f1c416b7a3e27cb012b9fad052cd991eb7d17bbaa4ca1702a4ee0d964014 \
-    --hash=sha256:4581f80de78147cb32333aae1bd8d0842360a85138221dd5c79b48eab72d5f99
+botocore==1.27.28 \
+    --hash=sha256:b00da6290d8d42c6c3048b045d6537421e8b83e03b4f24bb44c5ea9f37ab6258 \
+    --hash=sha256:cd4dff88419c7b6865f91551db3eb526283ebc56dc99f1d9b7adb5aa080674f8
     # via
     #   boto3
     #   s3transfer
