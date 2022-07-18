@@ -68,6 +68,7 @@ class ConventionModelsTest(TestCase):
         self.assertFalse(display_options["display_progress_bar_2"])
         self.assertFalse(display_options["display_progress_bar_3"])
         self.assertFalse(display_options["display_back_to_instruction"])
+        self.assertFalse(display_options["display_redirect_post_action"])
         self.assertTrue(display_options["display_progress_bar_1"])
         self.assertTrue(display_options["display_type1and2_editable"])
         convention.statut = ConventionStatut.INSTRUCTION
@@ -78,6 +79,7 @@ class ConventionModelsTest(TestCase):
         self.assertFalse(display_options["display_progress_bar_2"])
         self.assertFalse(display_options["display_progress_bar_3"])
         self.assertFalse(display_options["display_back_to_instruction"])
+        self.assertFalse(display_options["display_redirect_post_action"])
         self.assertTrue(display_options["display_comments"])
         self.assertTrue(display_options["display_comments_summary"])
         self.assertTrue(display_options["display_validation"])
@@ -93,6 +95,7 @@ class ConventionModelsTest(TestCase):
         self.assertFalse(display_options["display_progress_bar_2"])
         self.assertFalse(display_options["display_progress_bar_3"])
         self.assertFalse(display_options["display_back_to_instruction"])
+        self.assertFalse(display_options["display_redirect_post_action"])
         self.assertTrue(display_options["display_comments"])
         self.assertTrue(display_options["display_comments_summary"])
         self.assertTrue(display_options["display_validation"])
@@ -110,6 +113,7 @@ class ConventionModelsTest(TestCase):
         self.assertFalse(display_options["display_progress_bar_1"])
         self.assertFalse(display_options["display_progress_bar_3"])
         self.assertFalse(display_options["display_type1and2_editable"])
+        self.assertFalse(display_options["display_redirect_post_action"])
         self.assertTrue(display_options["display_comments"])
         self.assertTrue(display_options["display_is_validated"])
         self.assertTrue(display_options["display_redirect_sent"])
@@ -125,10 +129,11 @@ class ConventionModelsTest(TestCase):
         self.assertFalse(display_options["display_progress_bar_1"])
         self.assertFalse(display_options["display_progress_bar_2"])
         self.assertFalse(display_options["display_type1and2_editable"])
+        self.assertFalse(display_options["display_redirect_sent"])
         self.assertTrue(display_options["display_back_to_instruction"])
         self.assertTrue(display_options["display_comments"])
         self.assertTrue(display_options["display_is_validated"])
-        self.assertTrue(display_options["display_redirect_sent"])
+        self.assertTrue(display_options["display_redirect_post_action"])
         self.assertTrue(display_options["display_progress_bar_3"])
         convention.statut = ConventionStatut.RESILIEE
         display_options = convention.display_options()
@@ -144,6 +149,7 @@ class ConventionModelsTest(TestCase):
         self.assertFalse(display_options["display_type1and2_editable"])
         self.assertFalse(display_options["display_back_to_instruction"])
         self.assertFalse(display_options["display_redirect_sent"])
+        self.assertFalse(display_options["display_redirect_post_action"])
         self.assertTrue(display_options["display_is_validated"])
 
     def test_get_email_bailleur_users(self):
