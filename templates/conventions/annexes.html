@@ -53,7 +53,7 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        {% if convention.statut != '1. Projet' %}
+                                        {% if convention.display_options.display_comments %}
                                             {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" %}
                                         {% endif %}
                                         <th scope="col" class="col__width--150">Type d'annexe {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -68,7 +68,7 @@
                                     {% for form_annexe in formset %}
                                         {% with main_object_field="annexe__uuid__"|add:form_annexe.uuid.value %}
                                             <tr id="{{form_annexe.uuid.id_for_label}}_group">
-                                                {% if convention.statut != '1. Projet' %}
+                                                {% if convention.display_options.display_comments %}
                                                     <td id="{{form_annexe.uuid.id_for_label}}_div">
                                                         {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_annexe.uuid %}
                                                     </td>

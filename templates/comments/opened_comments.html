@@ -1,6 +1,6 @@
 
-{% if convention.is_instruction_ongoing and opened_comments.count %}
-    <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
+{% if convention.display_options.display_comments_summary and opened_comments.count %}
+    <div role="alert" class="fr-alert fr-alert--info fr-my-3w">
         <div class="block--row-strech" id="{{object_field}}_div">
             <div class="block--row-strech-1">
                 <p class="fr-alert__title">

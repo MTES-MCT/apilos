@@ -1,15 +1,18 @@
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_GET
-from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.conf import settings
+from core.services import EmailService
+from instructeurs.models import Administration
 
 from programmes.models import (
+    Financement,
     Programme,
     Lot,
     LogementEDD,
     ReferenceCadastrale,
+    TypeOperation,
 )
 from programmes.forms import (
     ProgrammeSelectionForm,
@@ -42,6 +45,13 @@ def select_programme_create(request):
                     code_postal=form.cleaned_data["code_postal"],
                     ville=form.cleaned_data["ville"],
                     bailleur_id=form.cleaned_data["bailleur"],
+                    administration_id=form.cleaned_data["administration"],
+                    type_operation=(
+                        TypeOperation.SANSTRAVAUX
+                        if form.cleaned_data["financement"]
+                        == Financement.SANS_FINANCEMENT
+                        else TypeOperation.NEUF
+                    ),
                 )
                 programme.save()
                 lot = Lot.objects.create(
@@ -83,7 +93,8 @@ def select_programme_create(request):
         "form": form,
         "editable": request.user.has_perm("convention.add_convention"),
         "bailleurs": request.user.bailleurs(),
-    }  # render(request, "conventions/selection.html", {'form': form, 'programmes': programmes})
+        "administrations": Administration.objects.all().order_by("nom"),
+    }
 
 
 def _send_email_staff(request, convention):
@@ -91,7 +102,6 @@ def _send_email_staff(request, convention):
     convention_url = request.build_absolute_uri(
         reverse("conventions:recapitulatif", args=[convention.uuid])
     )
-    from_email = "contact@apilos.beta.gouv.fr"
     text_content = render_to_string(
         "emails/alert_create_convention.txt",
         {
@@ -111,14 +121,13 @@ def _send_email_staff(request, convention):
         },
     )
 
-    msg = EmailMultiAlternatives(
-        f"[{settings.ENVIRONMENT.upper()}] Nouvelle convention créée de zéro ({convention})",
-        text_content,
-        from_email,
-        ("contact@apilos.beta.gouv.fr",),
-    )
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    subject = f"[{settings.ENVIRONMENT.upper()}] "
+    subject += f"Nouvelle convention créée de zéro ({convention})"
+    EmailService(
+        subject=subject,
+        text_content=text_content,
+        html_content=html_content,
+    ).send_to_devs()
 
 
 def programme_update(request, convention_uuid):
@@ -159,6 +168,7 @@ def programme_update(request, convention_uuid):
     return {
         **utils.base_convention_response_error(request, convention),
         "form": form,
+        "avecfinancement": convention.lot.financement != Financement.SANS_FINANCEMENT,
     }
 
 
@@ -199,7 +209,8 @@ def _save_programme_and_lot(programme, lot, form):
     programme.adresse = form.cleaned_data["adresse"]
     programme.code_postal = form.cleaned_data["code_postal"]
     programme.ville = form.cleaned_data["ville"]
-    programme.type_operation = form.cleaned_data["type_operation"]
+    if form.cleaned_data["type_operation"]:
+        programme.type_operation = form.cleaned_data["type_operation"]
     programme.anru = form.cleaned_data["anru"]
     programme.autres_locaux_hors_convention = form.cleaned_data[
         "autres_locaux_hors_convention"
@@ -239,7 +250,7 @@ def programme_cadastral_update(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": request.user.full_editable_convention(convention)
+                "editable_upload": utils.editable_convention(request, convention)
                 or editable_upload,
             }
     # When display the file for the first time
@@ -303,7 +314,7 @@ def programme_cadastral_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
-        "editable_upload": request.user.full_editable_convention(convention)
+        "editable_upload": utils.editable_convention(request, convention)
         or editable_upload,
     }
 
@@ -519,7 +530,7 @@ def programme_edd_update(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": request.user.full_editable_convention(convention)
+                "editable_upload": utils.editable_convention(request, convention)
                 or request.POST.get("redirect_to_recap", False),
             }
     # When display the file for the first time
@@ -559,7 +570,7 @@ def programme_edd_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
-        "editable_upload": request.user.full_editable_convention(convention)
+        "editable_upload": utils.editable_convention(request, convention)
         or editable_upload,
     }
 

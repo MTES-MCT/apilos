@@ -72,9 +72,9 @@ class AdministrationForm(forms.Form):
         help_text=mark_safe(
             "Pour remplir le préfixe dynamiquement, vous pouvez utiliser les caractères "
             + "automatiques suivants : <br/>"
-            + " <b>{département}</b> : numéro du département <br/>"
-            + " <b>{zone}</b> : numéro de la zone <br/>"
-            + " <b>{mois} et {année}</b> : mois et année en cours. <br/>"
+            + " <strong>{département}</strong> : numéro du département <br/>"
+            + " <strong>{zone}</strong> : numéro de la zone <br/>"
+            + " <strong>{mois} et {année}</strong> : mois et année en cours. <br/>"
             + "Vous pouvez également choisir les séparateurs de votre choix entre ces caractères "
             + "ainsi qu'ajouter le texte qui vous convient."
         ),

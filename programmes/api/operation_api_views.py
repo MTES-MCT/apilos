@@ -9,6 +9,7 @@ from drf_spectacular.utils import (
     OpenApiResponse,
 )
 
+from siap.siap_authentication import SIAPJWTAuthentication
 from programmes.models import Programme
 from programmes.api.operation_serializers import OperationSerializer as MySerializer
 
@@ -18,7 +19,7 @@ class OperationDetails(generics.GenericAPIView):
     Retrieve, update or delete a programme instance.
     """
 
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SIAPJWTAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     serializer_class = MySerializer

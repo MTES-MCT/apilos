@@ -155,7 +155,7 @@ def _get_conventions_by_dept():
         "Instruction_requise": [],
         "Corrections_requises": [],
         "A_signer": [],
-        "Transmise": [],
+        "Signée": [],
     }
     for dept, statut_value in conv_bydept_bystatut.items():
         result["departement"].append(dept)
@@ -164,7 +164,7 @@ def _get_conventions_by_dept():
             "2. Instruction requise",
             "3. Corrections requises",
             "4. A signer",
-            "5. Transmise",
+            "5. Signée",
         ]:
             result[statut[3:].replace(" ", "_")].append(
                 statut_value[statut] if statut in statut_value else 0

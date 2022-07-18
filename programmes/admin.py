@@ -15,8 +15,8 @@ from .models import (
 
 class ProgrammeAdmin(admin.ModelAdmin):
     exclude = (
-        "zone_123_bis",
-        "zone_abc_bis",
+        "zone_123",
+        "zone_abc",
         "vendeur",
         "acquereur",
         "date_acte_notarie",

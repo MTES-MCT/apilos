@@ -94,8 +94,8 @@ def get_or_create_programme(
             "code_insee_region": programme_from_siap["donneesLocalisation"]["region"][
                 "codeInsee"
             ],
-            "zone_abc_bis": programme_from_siap["donneesLocalisation"]["zonage123"],
-            "zone_123_bis": programme_from_siap["donneesLocalisation"]["zonageABC"],
+            "zone_abc": programme_from_siap["donneesLocalisation"]["zonage123"],
+            "zone_123": programme_from_siap["donneesLocalisation"]["zonageABC"],
             "type_operation": _type_operation(
                 programme_from_siap["donneesOperation"]["sousNatureOperation"]
             ),

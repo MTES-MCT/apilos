@@ -1,16 +1,17 @@
 import datetime
+
 from typing import Any
 
-from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
-from django.core.files.storage import default_storage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from django.db.models.functions import Substr
 from django.conf import settings
 from comments.models import Comment, CommentStatut
+from core.services import EmailService
 
 from programmes.models import (
     Annexe,
@@ -25,8 +26,10 @@ from conventions.forms import (
     PretFormSet,
     UploadForm,
     ConventionType1and2Form,
+    ConventionResiliationForm,
 )
 from conventions.tasks import generate_and_send
+from upload.services import UploadService
 
 from . import utils
 from . import upload_objects
@@ -42,6 +45,7 @@ def conventions_index(request):
         page=request.GET.get("page", 1),
         statut_filter=request.GET.get("cstatut", ""),
         financement_filter=request.GET.get("financement", ""),
+        departement_input=request.GET.get("departement_input", ""),
         my_convention_list=request.user.conventions()
         .prefetch_related("programme")
         .prefetch_related("lot"),
@@ -78,7 +82,7 @@ def convention_financement(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": request.user.full_editable_convention(convention)
+                "editable_upload": utils.editable_convention(request, convention)
                 or editable_upload,
             }
     # When display the file for the first time
@@ -115,7 +119,7 @@ def convention_financement(request, convention_uuid):
         "form": form,
         "formset": formset,
         "upform": upform,
-        "editable_upload": request.user.full_editable_convention(convention)
+        "editable_upload": utils.editable_convention(request, convention)
         or editable_upload,
     }
 
@@ -284,8 +288,8 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
         .prefetch_related("programme__referencecadastrale_set")
         .prefetch_related("programme__logementedd_set")
         .prefetch_related("lot")
-        .prefetch_related("lot__typestationnement_set")
-        .prefetch_related("lot__logement_set")
+        .prefetch_related("lot__type_stationnements")
+        .prefetch_related("lot__logements")
         .prefetch_related("programme__administration")
         .get(uuid=convention_uuid)
     )
@@ -409,8 +413,8 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
         "lot": convention.lot,
         "programme": convention.programme,
         "logement_edds": convention.programme.logementedd_set.all(),
-        "logements": convention.lot.logement_set.all(),
-        "stationnements": convention.lot.typestationnement_set.all(),
+        "logements": convention.lot.logements.all(),
+        "stationnements": convention.lot.type_stationnements.all(),
         "reference_cadastrales": convention.programme.referencecadastrale_set.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
@@ -478,11 +482,9 @@ def send_email_instruction(convention_url, convention):
     Send an email to the bailleur who click and bailleur TOUS
     Send an email to all instructeur (except the ones who select AUCUN as email preference)
     """
-    # envoi au bailleur
-    from_email = "contact@apilos.beta.gouv.fr"
+    email_sent = []
 
-    # All bailleur users from convention
-    to = convention.get_email_bailleur_users()
+    # envoi au bailleur
     text_content = render_to_string(
         "emails/bailleur_instruction.txt",
         {
@@ -497,26 +499,17 @@ def send_email_instruction(convention_url, convention):
             "convention": convention,
         },
     )
-    email_sent = []
-    if to:
-        msg = EmailMultiAlternatives(
-            f"Convention à instruire ({convention})", text_content, from_email, to
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-    else:
-        msg = EmailMultiAlternatives(
-            f"[ATTENTION pas de destinataire à cet email] Convention à instruire ({convention})",
-            text_content,
-            from_email,
-            ("contact@apilos.beta.gouv.fr",),
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-    email_sent.append(msg)
+
+    email_service = EmailService(
+        subject=f"Convention à instruire ({convention})",
+        to_emails=convention.get_email_bailleur_users(),
+        text_content=text_content,
+        html_content=html_content,
+    )
+    email_service.send()
+    email_sent.append(email_service.msg)
 
     # envoie à l'instructeur
-    to = convention.get_email_instructeur_users(include_partial=True)
     text_content = render_to_string(
         "emails/instructeur_instruction.txt",
         {
@@ -532,22 +525,14 @@ def send_email_instruction(convention_url, convention):
         },
     )
 
-    if to:
-        msg = EmailMultiAlternatives(
-            f"Convention à instruire ({convention})", text_content, from_email, to
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-    else:
-        msg = EmailMultiAlternatives(
-            f"[ATTENTION pas de destinataire à cet email] Convention à instruire ({convention})",
-            text_content,
-            from_email,
-            ("contact@apilos.beta.gouv.fr",),
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-    email_sent.append(msg)
+    email_service = EmailService(
+        subject=f"Convention à instruire ({convention})",
+        to_emails=convention.get_email_instructeur_users(include_partial=True),
+        text_content=text_content,
+        html_content=html_content,
+    )
+    email_service.send()
+    email_sent.append(email_service.msg)
 
     return email_sent
 
@@ -608,7 +593,6 @@ def send_email_correction(
         subject = f"Convention modifiée ({convention})"
         template_label = "instructeur_correction_done"
 
-    from_email = "contact@apilos.beta.gouv.fr"
     text_content = render_to_string(
         f"emails/{template_label}.txt",
         {
@@ -626,20 +610,16 @@ def send_email_correction(
         },
     )
 
-    if to:
-        msg = EmailMultiAlternatives(subject, text_content, from_email, to, cc=cc)
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-    else:
-        msg = EmailMultiAlternatives(
-            f"[ATTENTION pas de destinataire à cet email] {subject}",
-            text_content,
-            from_email,
-            ("contact@apilos.beta.gouv.fr",),
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-    return msg
+    email_service = EmailService(
+        subject=subject,
+        to_emails=to,
+        cc_emails=cc,
+        text_content=text_content,
+        html_content=html_content,
+    )
+    email_service.send()
+
+    return email_service.msg
 
 
 @require_POST
@@ -693,8 +673,8 @@ def convention_validate(request, convention_uuid):
         .prefetch_related("programme__referencecadastrale_set")
         .prefetch_related("programme__logementedd_set")
         .prefetch_related("lot")
-        .prefetch_related("lot__typestationnement_set")
-        .prefetch_related("lot__logement_set")
+        .prefetch_related("lot__type_stationnements")
+        .prefetch_related("lot__logements")
         .get(uuid=convention_uuid)
     )
     return {
@@ -703,8 +683,8 @@ def convention_validate(request, convention_uuid):
         "lot": convention.lot,
         "programme": convention.programme,
         "logement_edds": convention.programme.logementedd_set.all(),
-        "logements": convention.lot.logement_set.all(),
-        "stationnements": convention.lot.typestationnement_set.all(),
+        "logements": convention.lot.logements.all(),
+        "stationnements": convention.lot.type_stationnements.all(),
         "reference_cadastrales": convention.programme.referencecadastrale_set.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
@@ -717,8 +697,8 @@ def generate_convention(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("bailleur")
         .prefetch_related("lot")
-        .prefetch_related("lot__typestationnement_set")
-        .prefetch_related("lot__logement_set")
+        .prefetch_related("lot__type_stationnements")
+        .prefetch_related("lot__logements")
         .prefetch_related("pret_set")
         .prefetch_related("programme")
         .prefetch_related("programme__administration")
@@ -738,6 +718,7 @@ class ConventionListService:
     page: str
     statut_filter: str
     financement_filter: str
+    departement_input: str
     my_convention_list: Any  # list[Convention]
     paginated_conventions: Any  # list[Convention]
     total_conventions: int
@@ -747,6 +728,7 @@ class ConventionListService:
         search_input: str,
         statut_filter: str,
         financement_filter: str,
+        departement_input: str,
         order_by: str,
         page: str,
         my_convention_list: Any,
@@ -754,6 +736,7 @@ class ConventionListService:
         self.search_input = search_input
         self.statut_filter = statut_filter
         self.financement_filter = financement_filter
+        self.departement_input = departement_input
         self.order_by = order_by
         self.page = page
         self.my_convention_list = my_convention_list
@@ -774,6 +757,10 @@ class ConventionListService:
             self.my_convention_list = self.my_convention_list.filter(
                 financement=self.financement_filter
             )
+        if self.departement_input:
+            self.my_convention_list = self.my_convention_list.annotate(
+                departement=Substr("programme__code_postal", 1, 2)
+            ).filter(departement=self.departement_input)
 
         if self.order_by:
             self.my_convention_list = self.my_convention_list.order_by(self.order_by)
@@ -801,26 +788,56 @@ def convention_preview(convention_uuid):
 
 def convention_sent(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
+    result_status = None
     if request.method == "POST":
         upform = UploadForm(request.POST, request.FILES)
-        uuid = convention_uuid
         if upform.is_valid():
             file = request.FILES["file"]
             now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-            filename = f"{now}_convention_{uuid}_signed.pdf"
-            destination = default_storage.open(
-                f"conventions/{uuid}/convention_docs/{filename}",
-                "bw",
+            filename = f"{now}_convention_{convention_uuid}_signed.pdf"
+            upload_service = UploadService(
+                convention_dirpath=f"conventions/{convention_uuid}/convention_docs",
+                filename=filename,
             )
-            for chunk in file.chunks():
-                destination.write(chunk)
-            destination.close()
-            convention.statut = ConventionStatut.TRANSMISE
-            convention.fichier_signe = filename
+            upload_service.upload_file(file)
+
+            convention.statut = ConventionStatut.SIGNEE
+            convention.nom_fichier_signe = filename
+            convention.televersement_convention_signee_le = timezone.now()
             convention.save()
+            result_status = utils.ReturnStatus.SUCCESS
     else:
         upform = UploadForm()
+
     return {
+        "success": result_status,
         "convention": convention,
         "upform": upform,
+    }
+
+
+def convention_post_action(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    result_status = None
+    if request.method == "POST":
+        resiliation_form = ConventionResiliationForm(request.POST)
+        if resiliation_form.is_valid():
+            convention.statut = ConventionStatut.RESILIEE
+            convention.date_resiliation = resiliation_form.cleaned_data[
+                "date_resiliation"
+            ]
+            convention.save()
+            # SUCCESS
+            result_status = utils.ReturnStatus.SUCCESS
+
+    else:
+        resiliation_form = ConventionResiliationForm()
+
+    upform = UploadForm()
+
+    return {
+        "success": result_status,
+        "upform": upform,
+        "convention": convention,
+        "resiliation_form": resiliation_form,
     }

@@ -2,18 +2,32 @@
 
 {% if convention %}
 
-    <div class='background-contrast-grey950 fr-pt-2w'></div>
     <div class='background-contrast-grey950 apilos-sticky-top fr-pt-2w'>
         <div class="fr-container">
             <div class="fr-col-12 fr-pb-2w">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-12 fr-col-lg-6">
                         <div class="fr-highlight">
-                            <h1>{{convention.programme.nom}}</h1>
+                            {% if CERBERE_AUTH %}
+                                <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
+                                    <h1>Opération n°{{convention.programme.numero_galion}}</h1>
+                                    <h2>{{convention.programme.nom}}</h2>
+                                </a>
+                            {% else %}
+                                <h1>{{convention.programme.nom}}</h1>
+                            {% endif %}
                         </div>
                     </div>
-                    <div class="fr-col-12 fr-col-lg-6">
-                        <div class="fr-grid-row fr-pl-9w">
+                    <div class="fr-col-12 fr-col-lg-6 fr-grid-row fr-grid-row--right">
+                        <div>
+                            {% if CERBERE_AUTH %}
+                                <div class="fr-grid-row fr-grid-row--right fr-my-2w">
+                                    <a href="{{ request|get_siap_operation_url:convention.programme.numero_galion }}">
+                                        Financement
+                                        <span class="fr-icon-arrow-right-line" aria-hidden="true"></span>
+                                    </a>
+                                </div>
+                            {% endif %}
                             <div class="fr-py-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
                                 <span class="fr-px-1w fr-h3">
                                     {{convention.statut_for_template.short_statut}}

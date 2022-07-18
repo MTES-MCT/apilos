@@ -10,6 +10,7 @@ from users.models import GroupProfile
 @register.filter
 def is_bailleur(request: HttpRequest) -> bool:
     return "currently" in request.session and request.session["currently"] in [
+        GroupProfile.STAFF,
         GroupProfile.BAILLEUR,
         GroupProfile.SIAP_MO_PERS_MORALE,
         GroupProfile.SIAP_MO_PERS_PHYS,
@@ -19,6 +20,7 @@ def is_bailleur(request: HttpRequest) -> bool:
 @register.filter
 def is_instructeur(request: HttpRequest) -> bool:
     return "currently" in request.session and request.session["currently"] in [
+        GroupProfile.STAFF,
         GroupProfile.INSTRUCTEUR,
         GroupProfile.SIAP_SER_GEST,
     ]
@@ -48,9 +50,36 @@ def get_menu_url(request: HttpRequest, menu_url: str) -> str:
 
 
 @register.filter
+def is_conventionnement_menu_url(menu_url: str) -> str:
+    if settings.CERBERE_AUTH and (
+        menu_url.endswith("/conventions") or menu_url == "/operation"
+    ):
+        return True
+    return False
+
+
+@register.filter
 def get_change_habilitation_url(request: HttpRequest, habilitation_id: int) -> str:
+    client = SIAPClient.get_instance()
     if settings.CERBERE_AUTH:
-        return f"{request.build_absolute_uri('?')}?habilitation_id={habilitation_id}"
+        return (
+            f"{client.racine_url_acces_web}{client.url_acces_web}"
+            + f"?habilitation_id={habilitation_id}"
+        )
+    return ""
+
+
+@register.filter
+def get_siap_operation_url(request: HttpRequest, numero_galion: str) -> str:
+    client = SIAPClient.get_instance()
+    relative_path = client.url_acces_web_operation.replace(
+        "<NUM_OPE_SIAP>", numero_galion
+    )
+    if settings.CERBERE_AUTH:
+        return (
+            f"{client.racine_url_acces_web}{relative_path}"
+            + f"?habilitation_id={request.session['habilitation_id']}"
+        )
     return ""
 
 
@@ -66,9 +95,7 @@ def has_own_active_comment(comments, user_id):
     return user_id in list(
         map(
             lambda x: x.user_id,
-            filter(
-                lambda comment: comment.statut != ConventionStatut.TRANSMISE, comments
-            ),
+            filter(lambda comment: comment.statut != ConventionStatut.SIGNEE, comments),
         )
     )
 
@@ -81,7 +108,7 @@ def hasnt_active_comments(comments, object_field):
     return not (
         list(
             filter(
-                lambda comment: (comment.statut != ConventionStatut.TRANSMISE),
+                lambda comment: (comment.statut != ConventionStatut.SIGNEE),
                 object_comments,
             )
         )

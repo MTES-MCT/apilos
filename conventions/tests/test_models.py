@@ -35,34 +35,122 @@ class ConventionModelsTest(TestCase):
     def test_is_functions(self):
         convention = Convention.objects.get(numero="0001")
         self.assertTrue(convention.is_bailleur_editable())
-        self.assertFalse(convention.is_instruction_ongoing())
         self.assertTrue(convention.is_project())
-        self.assertFalse(convention.is_a_signer())
-        self.assertTrue(convention.isnt_validated())
         convention.statut = ConventionStatut.INSTRUCTION
         self.assertFalse(convention.is_bailleur_editable())
-        self.assertTrue(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
-        self.assertFalse(convention.is_a_signer())
-        self.assertTrue(convention.isnt_validated())
         convention.statut = ConventionStatut.CORRECTION
         self.assertTrue(convention.is_bailleur_editable())
-        self.assertTrue(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
-        self.assertFalse(convention.is_a_signer())
-        self.assertTrue(convention.isnt_validated())
         convention.statut = ConventionStatut.A_SIGNER
         self.assertFalse(convention.is_bailleur_editable())
-        self.assertFalse(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
-        self.assertTrue(convention.is_a_signer())
-        self.assertFalse(convention.isnt_validated())
-        convention.statut = ConventionStatut.TRANSMISE
+        convention.statut = ConventionStatut.SIGNEE
         self.assertFalse(convention.is_bailleur_editable())
-        self.assertFalse(convention.is_instruction_ongoing())
         self.assertFalse(convention.is_project())
-        self.assertFalse(convention.is_a_signer())
-        self.assertFalse(convention.isnt_validated())
+        convention.statut = ConventionStatut.RESILIEE
+        self.assertFalse(convention.is_bailleur_editable())
+        self.assertFalse(convention.is_project())
+
+    def test_display_options(self):
+        # pylint: disable=R0915
+        convention = Convention.objects.get(numero="0001")
+        convention.statut = ConventionStatut.PROJET
+        display_options = convention.display_options()
+        self.assertFalse(display_options["display_comments"])
+        self.assertFalse(display_options["display_comments_summary"])
+        self.assertFalse(display_options["display_validation"])
+        self.assertFalse(display_options["display_is_validated"])
+        self.assertFalse(display_options["display_notification"])
+        self.assertFalse(display_options["display_demande_correction"])
+        self.assertFalse(display_options["display_demande_instruction"])
+        self.assertFalse(display_options["display_redirect_sent"])
+        self.assertFalse(display_options["display_progress_bar_2"])
+        self.assertFalse(display_options["display_progress_bar_3"])
+        self.assertFalse(display_options["display_back_to_instruction"])
+        self.assertFalse(display_options["display_redirect_post_action"])
+        self.assertTrue(display_options["display_progress_bar_1"])
+        self.assertTrue(display_options["display_type1and2_editable"])
+        convention.statut = ConventionStatut.INSTRUCTION
+        display_options = convention.display_options()
+        self.assertFalse(display_options["display_is_validated"])
+        self.assertFalse(display_options["display_demande_instruction"])
+        self.assertFalse(display_options["display_redirect_sent"])
+        self.assertFalse(display_options["display_progress_bar_2"])
+        self.assertFalse(display_options["display_progress_bar_3"])
+        self.assertFalse(display_options["display_back_to_instruction"])
+        self.assertFalse(display_options["display_redirect_post_action"])
+        self.assertTrue(display_options["display_comments"])
+        self.assertTrue(display_options["display_comments_summary"])
+        self.assertTrue(display_options["display_validation"])
+        self.assertTrue(display_options["display_notification"])
+        self.assertTrue(display_options["display_demande_correction"])
+        self.assertTrue(display_options["display_progress_bar_1"])
+        self.assertTrue(display_options["display_type1and2_editable"])
+        convention.statut = ConventionStatut.CORRECTION
+        display_options = convention.display_options()
+        self.assertFalse(display_options["display_is_validated"])
+        self.assertFalse(display_options["display_demande_correction"])
+        self.assertFalse(display_options["display_redirect_sent"])
+        self.assertFalse(display_options["display_progress_bar_2"])
+        self.assertFalse(display_options["display_progress_bar_3"])
+        self.assertFalse(display_options["display_back_to_instruction"])
+        self.assertFalse(display_options["display_redirect_post_action"])
+        self.assertTrue(display_options["display_comments"])
+        self.assertTrue(display_options["display_comments_summary"])
+        self.assertTrue(display_options["display_validation"])
+        self.assertTrue(display_options["display_notification"])
+        self.assertTrue(display_options["display_demande_instruction"])
+        self.assertTrue(display_options["display_progress_bar_1"])
+        self.assertTrue(display_options["display_type1and2_editable"])
+        convention.statut = ConventionStatut.A_SIGNER
+        display_options = convention.display_options()
+        self.assertFalse(display_options["display_comments_summary"])
+        self.assertFalse(display_options["display_validation"])
+        self.assertFalse(display_options["display_notification"])
+        self.assertFalse(display_options["display_demande_correction"])
+        self.assertFalse(display_options["display_demande_instruction"])
+        self.assertFalse(display_options["display_progress_bar_1"])
+        self.assertFalse(display_options["display_progress_bar_3"])
+        self.assertFalse(display_options["display_type1and2_editable"])
+        self.assertFalse(display_options["display_redirect_post_action"])
+        self.assertTrue(display_options["display_comments"])
+        self.assertTrue(display_options["display_is_validated"])
+        self.assertTrue(display_options["display_redirect_sent"])
+        self.assertTrue(display_options["display_progress_bar_2"])
+        self.assertTrue(display_options["display_back_to_instruction"])
+        convention.statut = ConventionStatut.SIGNEE
+        display_options = convention.display_options()
+        self.assertFalse(display_options["display_comments_summary"])
+        self.assertFalse(display_options["display_validation"])
+        self.assertFalse(display_options["display_notification"])
+        self.assertFalse(display_options["display_demande_correction"])
+        self.assertFalse(display_options["display_demande_instruction"])
+        self.assertFalse(display_options["display_progress_bar_1"])
+        self.assertFalse(display_options["display_progress_bar_2"])
+        self.assertFalse(display_options["display_type1and2_editable"])
+        self.assertFalse(display_options["display_redirect_sent"])
+        self.assertTrue(display_options["display_back_to_instruction"])
+        self.assertTrue(display_options["display_comments"])
+        self.assertTrue(display_options["display_is_validated"])
+        self.assertTrue(display_options["display_redirect_post_action"])
+        self.assertTrue(display_options["display_progress_bar_3"])
+        convention.statut = ConventionStatut.RESILIEE
+        display_options = convention.display_options()
+        self.assertFalse(display_options["display_comments"])
+        self.assertFalse(display_options["display_comments_summary"])
+        self.assertFalse(display_options["display_validation"])
+        self.assertFalse(display_options["display_notification"])
+        self.assertFalse(display_options["display_demande_correction"])
+        self.assertFalse(display_options["display_demande_instruction"])
+        self.assertFalse(display_options["display_progress_bar_1"])
+        self.assertFalse(display_options["display_progress_bar_2"])
+        self.assertFalse(display_options["display_progress_bar_3"])
+        self.assertFalse(display_options["display_type1and2_editable"])
+        self.assertFalse(display_options["display_back_to_instruction"])
+        self.assertFalse(display_options["display_redirect_sent"])
+        self.assertFalse(display_options["display_redirect_post_action"])
+        self.assertTrue(display_options["display_is_validated"])
 
     def test_get_email_bailleur_users(self):
         convention = Convention.objects.get(numero="0001")
@@ -152,13 +240,13 @@ class ConventionModelsTest(TestCase):
         )
         self.assertEqual(convention.statut_for_template()["short_statut"], "A signer")
         self.assertEqual(convention.statut_for_template()["key_statut"], "A_signer")
-        convention.statut = ConventionStatut.TRANSMISE
-        self.assertEqual(convention.statut_for_template()["statut"], "5. Transmise")
+        convention.statut = ConventionStatut.SIGNEE
+        self.assertEqual(convention.statut_for_template()["statut"], "5. Signée")
         self.assertEqual(
-            convention.statut_for_template()["statut_display"], "Convention transmise"
+            convention.statut_for_template()["statut_display"], "Convention signée"
         )
-        self.assertEqual(convention.statut_for_template()["short_statut"], "Transmise")
-        self.assertEqual(convention.statut_for_template()["key_statut"], "Transmise")
+        self.assertEqual(convention.statut_for_template()["short_statut"], "Signée")
+        self.assertEqual(convention.statut_for_template()["key_statut"], "Signee")
 
     def test_mixity_option(self):
         convention = Convention.objects.order_by("uuid").first()
@@ -220,7 +308,7 @@ class ConventionModelsTest(TestCase):
         )
         convention.statut = ConventionStatut.A_SIGNER
         self.assertEqual(convention.display_not_validated_status(), "")
-        convention.statut = ConventionStatut.TRANSMISE
+        convention.statut = ConventionStatut.SIGNEE
         self.assertEqual(convention.display_not_validated_status(), "")
 
     def test_xlsx(self):

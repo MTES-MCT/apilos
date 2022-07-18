@@ -19,7 +19,7 @@
                             <form method="post" action="{% url 'settings:edit_user' username=form.username.value %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="administration" value="{{administration.uuid}}">
-                                <p>Êtes vous certain de vouloir supprimer l'accès au conventions de l'administration ‹‹<i>{{administration}}</i>›› à l'utilisateur ‹‹{{ form.username.value }}››</p>
+                                <p>Êtes vous certain de vouloir supprimer l'accès au conventions de l'administration ‹‹<em>{{administration}}</em>›› à l'utilisateur ‹‹{{ form.username.value }}››</p>
 
                                 <button class="fr-btn fr-mt-3w" name="action_type", value="remove_administration">
                                     Supprimer

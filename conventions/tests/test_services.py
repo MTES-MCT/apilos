@@ -1,11 +1,11 @@
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
+from django.contrib.sessions.middleware import SessionMiddleware
+from core.services import EmailService
 
 from core.tests import utils_fixtures
-from conventions.services import services_conventions
-from conventions.services import email as service_email
-
-from conventions.models import Convention
-from users.models import User
+from conventions.services import services_conventions, utils
+from conventions.models import Convention, ConventionStatut
+from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
 
 
@@ -58,13 +58,18 @@ class ServicesConventionsTests(TestCase):
 
     def test_send_email_validation(self):
         convention = Convention.objects.get(numero="0001")
-        email_sent = service_email.send_email_valide(
-            "https://apilos.beta.gouv.fr/my_convention", convention, ["me@apilos.com"]
+        email_service = EmailService()
+        email_service.send_email_valide(
+            "https://apilos.beta.gouv.fr/my_convention",
+            convention,
+            convention.get_email_bailleur_users(),
+            ["me@apilos.com"],
         )
+        email_sent = email_service.msg
         self.assertEqual(email_sent.to, ["raph@apilos.com"])
         self.assertEqual(email_sent.cc, ["me@apilos.com"])
         self.assertEqual(email_sent.from_email, "contact@apilos.beta.gouv.fr")
-        self.assertEqual(email_sent.subject, f"Convention validé ({convention})")
+        self.assertEqual(email_sent.subject, f"Convention validée ({convention})")
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
         self.assertIn(
             "transmettre les exemplaires signés à votre service instructeur.",
@@ -81,9 +86,14 @@ class ServicesConventionsTests(TestCase):
         administration.code_postal = "13001"
         administration.ville = "Marseilles"
         administration.save()
-        email_sent = service_email.send_email_valide(
-            "https://apilos.beta.gouv.fr/my_convention", convention, ["me@apilos.com"]
+        email_service = EmailService()
+        email_service.send_email_valide(
+            "https://apilos.beta.gouv.fr/my_convention",
+            convention,
+            convention.get_email_bailleur_users(),
+            ["me@apilos.com"],
         )
+        email_sent = email_service.msg
         self.assertIn(
             "les exemplaires signés à votre service instructeur à l‘adresse suivante :",
             email_sent.body,
@@ -100,16 +110,20 @@ class ServicesConventionsTests(TestCase):
             preferences_email=EmailPreferences.AUCUN
         )
 
-        email_sent = service_email.send_email_valide(
-            "https://apilos.beta.gouv.fr/my_convention", convention, ["me@apilos.com"]
+        email_service = EmailService()
+        email_service.send_email_valide(
+            "https://apilos.beta.gouv.fr/my_convention",
+            convention,
+            convention.get_email_bailleur_users(),
+            ["me@apilos.com"],
         )
-
+        email_sent = email_service.msg
         self.assertEqual(email_sent.to, ["contact@apilos.beta.gouv.fr"])
         self.assertEqual(email_sent.cc, [])
         self.assertEqual(email_sent.from_email, "contact@apilos.beta.gouv.fr")
         self.assertEqual(
             email_sent.subject,
-            f"[ATTENTION pas de destinataire à cet email] Convention validé ({convention})",
+            f"[ATTENTION pas de destinataire à cet email] Convention validée ({convention})",
         )
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
 
@@ -183,3 +197,45 @@ class ServicesConventionsTests(TestCase):
         )
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
         self.assertNotIn("Toto à un vélo", email_sent.body)
+
+
+class ServicesUtilsTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        utils_fixtures.create_all()
+
+    # set session in request object
+    def setUp(self):
+        self.request = RequestFactory().get("/conventions")
+        middleware = SessionMiddleware(None)
+        middleware.process_request(self.request)
+        self.request.session.save()
+
+    def test_editable_convention(self):
+
+        convention = Convention.objects.get(numero="0001")
+        convention.statut = ConventionStatut.PROJET
+        self.request.session["currently"] = GroupProfile.INSTRUCTEUR
+        self.assertFalse(utils.editable_convention(self.request, convention))
+        self.request.session["currently"] = GroupProfile.BAILLEUR
+        self.assertTrue(utils.editable_convention(self.request, convention))
+        self.request.session["currently"] = GroupProfile.STAFF
+        self.assertTrue(utils.editable_convention(self.request, convention))
+
+        for statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
+            convention.statut = statut
+            self.request.session["currently"] = GroupProfile.INSTRUCTEUR
+            self.assertTrue(utils.editable_convention(self.request, convention))
+            self.request.session["currently"] = GroupProfile.BAILLEUR
+            self.assertFalse(utils.editable_convention(self.request, convention))
+            self.request.session["currently"] = GroupProfile.STAFF
+            self.assertTrue(utils.editable_convention(self.request, convention))
+
+        for statut in [ConventionStatut.A_SIGNER, ConventionStatut.SIGNEE]:
+            convention.statut = statut
+            self.request.session["currently"] = GroupProfile.INSTRUCTEUR
+            self.assertFalse(utils.editable_convention(self.request, convention))
+            self.request.session["currently"] = GroupProfile.BAILLEUR
+            self.assertFalse(utils.editable_convention(self.request, convention))
+            self.request.session["currently"] = GroupProfile.STAFF
+            self.assertFalse(utils.editable_convention(self.request, convention))

@@ -60,7 +60,8 @@ Puis la la branche `master` peut-être déployée sur l'environnement de `produc
 1. Ajout d'un enregistrement DNS CNAME vers l'APP Scalingo (Alwaysdata > Domains > DNS Records)
 1. Forcer HTTPS (Scalingo > Settings > Routing)
 1. Scale les APPs (Scalingo > Resources)
+1. Créer le bucket sur scaleway
 
 Pour le SIAP,
 
-8. Créer un utilisateur siap et transmettre son id au équipe du SIAP
+9. Créer un utilisateur siap et transmettre son id au équipe du SIAP

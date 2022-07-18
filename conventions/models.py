@@ -45,9 +45,8 @@ class ConventionStatut(models.TextChoices):
         procèdent à la signature.
         Anciennement VALIDE
 
-    D/ TRANSMISE : Transmise - Convention transmise
-        La convention signée est mise à disposition et automatiquement transmise aux parties et
-        partenaires via la plateforme APiLos.
+    D/ SIGNEE : Signée - Convention signée
+        La convention signée est mise à disposition via la plateforme APiLos.
         Anciennement CLOS
     """
 
@@ -61,7 +60,8 @@ class ConventionStatut(models.TextChoices):
         "Projet de convention à modifier par le bailleur",
     )
     A_SIGNER = "4. A signer", "Convention à signer"
-    TRANSMISE = "5. Transmise", "Convention transmise"
+    SIGNEE = "5. Signée", "Convention signée"
+    RESILIEE = "6. Résiliée", "Convention résiliée"
 
 
 class ConventionType1and2(models.TextChoices):
@@ -78,6 +78,7 @@ class Convention(models.Model):
     )
     programme = models.ForeignKey(
         "programmes.Programme",
+        related_name="conventions",
         on_delete=models.CASCADE,
         null=False,
     )
@@ -123,7 +124,9 @@ class Convention(models.Model):
     # la tranche dans laquelle est compris le logement concerné. (7)
 
     donnees_validees = models.TextField(null=True)
-    fichier_signe = models.CharField(max_length=255, null=True)
+    nom_fichier_signe = models.CharField(max_length=255, null=True)
+    televersement_convention_signee_le = models.DateTimeField(null=True)
+    date_resiliation = models.DateField(null=True)
 
     def __str__(self):
         programme = self.programme
@@ -281,7 +284,7 @@ class Convention(models.Model):
                     if self.programme.code_postal
                     else "",
                 )
-                .replace("{zone}", str(self.programme.zone_123_bis))
+                .replace("{zone}", str(self.programme.zone_123))
                 .replace("{mois}", str(timezone.now().month))
                 .replace("{année}", str(timezone.now().year))
             )
@@ -290,20 +293,82 @@ class Convention(models.Model):
     def is_project(self):
         return self.statut == ConventionStatut.PROJET
 
-    def is_instruction_ongoing(self):
-        return self.statut in [
-            ConventionStatut.INSTRUCTION,
-            ConventionStatut.CORRECTION,
-        ]
-
-    def is_a_signer(self):
-        return self.statut == ConventionStatut.A_SIGNER
-
-    def isnt_validated(self):
-        return self.statut not in [
-            ConventionStatut.A_SIGNER,
-            ConventionStatut.TRANSMISE,
-        ]
+    def display_options(self):
+        return {
+            "display_comments": self.statut
+            in [
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+                ConventionStatut.A_SIGNER,
+                ConventionStatut.SIGNEE,
+            ],
+            "display_comments_summary": self.statut
+            in [
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+            ],
+            "display_validation": self.statut
+            in [
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+            ],
+            "display_is_validated": self.statut
+            in [
+                ConventionStatut.A_SIGNER,
+                ConventionStatut.SIGNEE,
+                ConventionStatut.RESILIEE,
+            ],
+            "display_is_resiliated": self.statut
+            in [
+                ConventionStatut.RESILIEE,
+            ],
+            "display_notification": self.statut
+            in [
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+            ],
+            "display_demande_correction": self.statut
+            in [
+                ConventionStatut.INSTRUCTION,
+            ],
+            "display_demande_instruction": self.statut
+            in [
+                ConventionStatut.CORRECTION,
+            ],
+            "display_redirect_sent": self.statut
+            in [
+                ConventionStatut.A_SIGNER,
+            ],
+            "display_redirect_post_action": self.statut
+            in [
+                ConventionStatut.SIGNEE,
+            ],
+            "display_progress_bar_1": self.statut
+            in [
+                ConventionStatut.PROJET,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+            ],
+            "display_progress_bar_2": self.statut
+            in [
+                ConventionStatut.A_SIGNER,
+            ],
+            "display_progress_bar_3": self.statut
+            in [
+                ConventionStatut.SIGNEE,
+            ],
+            "display_type1and2_editable": self.statut
+            in [
+                ConventionStatut.PROJET,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+            ],
+            "display_back_to_instruction": self.statut
+            in [
+                ConventionStatut.A_SIGNER,
+                ConventionStatut.SIGNEE,
+            ],
+        }
 
     def statut_for_template(self):
         return {
@@ -314,7 +379,7 @@ class Convention(models.Model):
                 if self.statut == ConventionStatut.PROJET
                 else self.statut[3:]
             ),
-            "key_statut": self.statut[3:].replace(" ", "_"),
+            "key_statut": self.statut[3:].replace(" ", "_").replace("é", "e"),
         }
 
     def mixity_option(self):

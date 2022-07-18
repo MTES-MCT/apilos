@@ -18,7 +18,7 @@
 
             <div class="fr-my-5w fr-table fr-table--bordered table--layout-fixed">
                 <table>
-                    <caption><i>{{ conventions|length }} convention{{ conventions|length|pluralize }} associée{{ conventions|length|pluralize }}</i></caption>
+                    <caption><em>{{ conventions|length }} convention{{ conventions|length|pluralize }} associée{{ conventions|length|pluralize }}</em></caption>
                     <thead>
                         <tr class="th_inline">
                             <th title="Date de livraison et mise en service" scope="col">
@@ -55,9 +55,9 @@
                                 <td>{{convention.lot.nb_logements}}</td>
                                 <td title="{{convention.statut_for_template.statut_display}}">
                                     <div class="fr-p-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
-                                        <span><b>
+                                        <span><strong>
                                             {{convention.statut_for_template.short_statut}}
-                                        </b></span>
+                                        </strong></span>
                                     </div>
                                     {% if convention.is_project %}
                                         <script type="text/javascript" nonce="{{request.csp_nonce}}">

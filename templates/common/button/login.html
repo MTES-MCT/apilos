@@ -1,9 +1,3 @@
-<button class="fr-btn fr-fi-edit-line fr-btn--icon-left" id='{{button_id}}'>
+<a class="fr-btn fr-fi-edit-line fr-btn--icon-left" href="{% url 'login' %}?next={{ request.path }}">
     Créer une convention APL
-</button>
-<script type="text/javascript" nonce="{{request.csp_nonce}}">
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('{{button_id}}')
-            .addEventListener('click', function(){ location.href='{% url 'login' %}?next={{ request.path }}' });
-    });
-</script>
+</a>

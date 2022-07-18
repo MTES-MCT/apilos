@@ -308,6 +308,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 100,
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "siap.siap_authentication.SIAPJWTAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
@@ -320,6 +321,8 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ALGORITHM": get_env_variable("JWT_ALGORITHM", default="HS256"),
     "SIGNING_KEY": get_env_variable("JWT_SIGN_KEY", default=None),
+    "USER_ID_CLAIM": "user-login",
+    "USER_ID_FIELD": "cerbere_login",
 }
 
 SIAP_CLIENT_JWT_SIGN_KEY = get_env_variable("SIAP_CLIENT_JWT_SIGN_KEY", default=None)

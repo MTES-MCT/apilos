@@ -1,5 +1,4 @@
 import os
-import errno
 import io
 import math
 import json
@@ -10,18 +9,17 @@ from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Inches
 
 from django.conf import settings
-from django.core.files.storage import default_storage
 from django.forms.models import model_to_dict
 
 from core.utils import round_half_up
-
 from programmes.models import (
     Financement,
     Annexe,
 )
 from upload.models import UploadedFile
-from conventions.models import ConventionType1and2
+from upload.services import UploadService
 
+from conventions.models import ConventionType1and2
 from conventions.templatetags.custom_filters import (
     inline_text_multiline,
     to_fr_date,
@@ -73,7 +71,7 @@ def generate_convention_doc(convention, save_data=False):
         "loyer_total": 0,
     }
     nb_logements_par_type = {}
-    for logement in convention.lot.logement_set.order_by("typologie").all():
+    for logement in convention.lot.logements.order_by("typologie").all():
         logements_totale["sh_totale"] += logement.surface_habitable
         logements_totale["sa_totale"] += logement.surface_annexes
         logements_totale["sar_totale"] += logement.surface_annexes_retenue
@@ -95,9 +93,9 @@ def generate_convention_doc(convention, save_data=False):
         "lot": convention.lot,
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
-        "logements": convention.lot.logement_set.all(),
+        "logements": convention.lot.logements.all(),
         "annexes": annexes,
-        "stationnements": convention.lot.typestationnement_set.all(),
+        "stationnements": convention.lot.type_stationnements.all(),
         "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF", "CDCL"]),
         "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF", "CDCL"]),
         "references_cadastrales": convention.programme.referencecadastrale_set.all(),
@@ -105,14 +103,14 @@ def generate_convention_doc(convention, save_data=False):
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),
         "liste_des_annexes": _compute_liste_des_annexes(
-            convention.lot.typestationnement_set.all(), annexes
+            convention.lot.type_stationnements.all(), annexes
         ),
     }
     context.update(_compute_mixte(convention))
     context.update(logements_totale)
     context.update(object_images)
 
-    jinja_env = jinja2.Environment()
+    jinja_env = jinja2.Environment(autoescape=True)
     jinja_env.filters["d"] = to_fr_date
     jinja_env.filters["sd"] = to_fr_short_date
     jinja_env.filters["f"] = _to_fr_float
@@ -161,9 +159,9 @@ def _save_convention_donnees_validees(
         "lot": model_to_dict(convention.lot),
         "administration": model_to_dict(convention.programme.administration),
         "logement_edds": _list_to_dict(logement_edds),
-        "logements": _list_to_dict(convention.lot.logement_set.all()),
+        "logements": _list_to_dict(convention.lot.logements.all()),
         "annexes": _list_to_dict(annexes),
-        "stationnements": _list_to_dict(convention.lot.typestationnement_set.all()),
+        "stationnements": _list_to_dict(convention.lot.type_stationnements.all()),
         "prets_cdc": _list_to_dict(
             convention.pret_set.filter(preteur__in=["CDCF", "CDCL"])
         ),
@@ -177,7 +175,7 @@ def _save_convention_donnees_validees(
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),
         "liste_des_annexes": _compute_liste_des_annexes(
-            convention.lot.typestationnement_set.all(), annexes
+            convention.lot.type_stationnements.all(), annexes
         ),
     }
     context_to_save.update(_compute_mixte(convention))
@@ -239,23 +237,11 @@ def generate_pdf(file_stream, convention):
 
 def _save_io_as_file(file_io, convention_dirpath, convention_filename):
 
-    if settings.DEFAULT_FILE_STORAGE == "django.core.files.storage.FileSystemStorage":
-        if not os.path.exists(f"{settings.MEDIA_ROOT}/{convention_dirpath}"):
-            try:
-                os.makedirs(f"{settings.MEDIA_ROOT}/{convention_dirpath}")
-            except OSError as exc:  # Guard against race condition
-                if exc.errno != errno.EEXIST:
-                    raise
-
-    pdf_path = f"{convention_dirpath}/{convention_filename}"
-    destination = default_storage.open(
-        pdf_path,
-        "bw",
+    upload_service = UploadService(
+        convention_dirpath=convention_dirpath, filename=convention_filename
     )
-    destination.write(file_io.getbuffer())
-    destination.close()
-
-    return pdf_path
+    upload_service.upload_file_io(file_io)
+    return f"{convention_dirpath}/{convention_filename}"
 
 
 def _to_fr_float(value, d=2):
@@ -277,10 +263,7 @@ def _build_files_for_docx(doc, convention_uuid, file_list):
     files = UploadedFile.objects.filter(uuid__in=file_list)
     for object_file in files:  # convention.programme.vendeur_files().values():
         if "image" in object_file.content_type:
-            file = default_storage.open(
-                object_file.filepath(convention_uuid),
-                "rb",
-            )
+            file = UploadService().get_file(object_file.filepath(convention_uuid))
             local_path = (
                 settings.MEDIA_ROOT / f"{object_file.uuid}_{object_file.filename}"
             )
@@ -345,9 +328,9 @@ def _get_object_images(doc, convention):
 
 
 def _get_loyer_par_metre_carre(convention):
-    logement = convention.lot.logement_set.first()
+    logement = convention.lot.logements.first()
     if logement:
-        return convention.lot.logement_set.first().loyer_par_metre_carre
+        return convention.lot.logements.first().loyer_par_metre_carre
     return 0
 
 
@@ -428,3 +411,58 @@ def _prepare_logement_edds(convention):
 
 def _list_to_dict(object_list):
     return list(map(model_to_dict, object_list))
+
+
+def fiche_caf_doc(convention):
+    filepath = f"{settings.BASE_DIR}/documents/FicheCAF-template.docx"
+
+    doc = DocxTemplate(filepath)
+
+    logements_totale = {
+        "sh_totale": 0,
+        "sa_totale": 0,
+        "sar_totale": 0,
+        "su_totale": 0,
+        "loyer_total": 0,
+    }
+    nb_logements_par_type = {}
+    for logement in convention.lot.logements.order_by("typologie").all():
+        logements_totale["sh_totale"] += logement.surface_habitable
+        logements_totale["sa_totale"] += logement.surface_annexes
+        logements_totale["sar_totale"] += logement.surface_annexes_retenue
+        logements_totale["su_totale"] += logement.surface_utile
+        logements_totale["loyer_total"] += logement.loyer
+        if logement.get_typologie_display() not in nb_logements_par_type:
+            nb_logements_par_type[logement.get_typologie_display()] = 0
+        nb_logements_par_type[logement.get_typologie_display()] += 1
+
+    lot_num = _prepare_logement_edds(convention)
+    # tester si il logement exists avant de commencer
+
+    context = {
+        "convention": convention,
+        "bailleur": convention.bailleur,
+        "programme": convention.programme,
+        "lot": convention.lot,
+        "administration": convention.programme.administration,
+        "logements": convention.lot.logements.all(),
+        "nb_logements_par_type": nb_logements_par_type,
+        "lot_num": lot_num,
+        "loyer_m2": _get_loyer_par_metre_carre(convention),
+    }
+    context.update(logements_totale)
+
+    jinja_env = jinja2.Environment(autoescape=True)
+    jinja_env.filters["d"] = to_fr_date
+    jinja_env.filters["sd"] = to_fr_short_date
+    jinja_env.filters["f"] = _to_fr_float
+    jinja_env.filters["pl"] = _pluralize
+    jinja_env.filters["len"] = len
+    jinja_env.filters["inline_text_multiline"] = inline_text_multiline
+
+    doc.render(context, jinja_env)
+    file_stream = io.BytesIO()
+    doc.save(file_stream)
+    file_stream.seek(0)
+
+    return file_stream
