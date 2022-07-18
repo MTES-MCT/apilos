@@ -207,7 +207,7 @@ class ServicesUtilsTests(TestCase):
     # set session in request object
     def setUp(self):
         self.request = RequestFactory().get("/conventions")
-        middleware = SessionMiddleware()
+        middleware = SessionMiddleware(None)
         middleware.process_request(self.request)
         self.request.session.save()
 
@@ -231,7 +231,7 @@ class ServicesUtilsTests(TestCase):
             self.request.session["currently"] = GroupProfile.STAFF
             self.assertTrue(utils.editable_convention(self.request, convention))
 
-        for statut in [ConventionStatut.A_SIGNER, ConventionStatut.TRANSMISE]:
+        for statut in [ConventionStatut.A_SIGNER, ConventionStatut.SIGNEE]:
             convention.statut = statut
             self.request.session["currently"] = GroupProfile.INSTRUCTEUR
             self.assertFalse(utils.editable_convention(self.request, convention))
