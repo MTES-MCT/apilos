@@ -801,7 +801,7 @@ def convention_sent(request, convention_uuid):
             )
             upload_service.upload_file(file)
 
-            convention.statut = ConventionStatut.TRANSMISE
+            convention.statut = ConventionStatut.SIGNEE
             convention.nom_fichier_signe = filename
             convention.televersement_convention_signee_le = timezone.now()
             convention.save()

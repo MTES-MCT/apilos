@@ -79,7 +79,7 @@ class User(AbstractUser):
                 return False
             # forbid to change close convention
             if perm == "convention.change_convention" and isinstance(obj, Convention):
-                if obj.statut == ConventionStatut.TRANSMISE:
+                if obj.statut == ConventionStatut.SIGNEE:
                     return False
         # check permission itself
         permissions = []

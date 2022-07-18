@@ -95,9 +95,7 @@ def has_own_active_comment(comments, user_id):
     return user_id in list(
         map(
             lambda x: x.user_id,
-            filter(
-                lambda comment: comment.statut != ConventionStatut.TRANSMISE, comments
-            ),
+            filter(lambda comment: comment.statut != ConventionStatut.SIGNEE, comments),
         )
     )
 
@@ -110,7 +108,7 @@ def hasnt_active_comments(comments, object_field):
     return not (
         list(
             filter(
-                lambda comment: (comment.statut != ConventionStatut.TRANSMISE),
+                lambda comment: (comment.statut != ConventionStatut.SIGNEE),
                 object_comments,
             )
         )
