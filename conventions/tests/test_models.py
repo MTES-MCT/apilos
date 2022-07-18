@@ -125,7 +125,7 @@ class ConventionModelsTest(TestCase):
         self.assertFalse(display_options["display_progress_bar_1"])
         self.assertFalse(display_options["display_progress_bar_2"])
         self.assertFalse(display_options["display_type1and2_editable"])
-        self.assertFalse(display_options["display_back_to_instruction"])
+        self.assertTrue(display_options["display_back_to_instruction"])
         self.assertTrue(display_options["display_comments"])
         self.assertTrue(display_options["display_is_validated"])
         self.assertTrue(display_options["display_redirect_sent"])
