@@ -335,6 +335,9 @@ class Convention(models.Model):
             "display_redirect_sent": self.statut
             in [
                 ConventionStatut.A_SIGNER,
+            ],
+            "display_redirect_post_action": self.statut
+            in [
                 ConventionStatut.TRANSMISE,
             ],
             "display_progress_bar_1": self.statut
