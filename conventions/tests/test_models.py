@@ -237,7 +237,7 @@ class ConventionModelsTest(TestCase):
         convention.statut = ConventionStatut.SIGNEE
         self.assertEqual(convention.statut_for_template()["statut"], "5. Signée")
         self.assertEqual(
-            convention.statut_for_template()["statut_display"], "Convention Signée"
+            convention.statut_for_template()["statut_display"], "Convention signée"
         )
         self.assertEqual(convention.statut_for_template()["short_statut"], "Signée")
         self.assertEqual(convention.statut_for_template()["key_statut"], "Signee")
