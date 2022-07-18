@@ -318,6 +318,10 @@ class Convention(models.Model):
                 ConventionStatut.SIGNEE,
                 ConventionStatut.RESILIEE,
             ],
+            "display_is_resiliated": self.statut
+            in [
+                ConventionStatut.RESILIEE,
+            ],
             "display_notification": self.statut
             in [
                 ConventionStatut.INSTRUCTION,
