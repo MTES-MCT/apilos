@@ -50,7 +50,7 @@ class EmailService:
         self.msg.send()
 
     def send_to_devs(self) -> None:
-        self.to_emails = ["devs@apilos.beta.gouv.fr"]
+        self.to_emails = ["dev@apilos.beta.gouv.fr"]
         self.build_msg()
         self.msg.send()
 
