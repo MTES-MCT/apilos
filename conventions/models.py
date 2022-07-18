@@ -366,6 +366,7 @@ class Convention(models.Model):
             "display_back_to_instruction": self.statut
             in [
                 ConventionStatut.A_SIGNER,
+                ConventionStatut.SIGNEE,
             ],
         }
 

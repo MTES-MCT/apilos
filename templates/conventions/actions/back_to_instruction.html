@@ -4,7 +4,7 @@
             Repasser cette convention en "Instruction requise"
         </p>
         <p>
-            Cette convention est en attente de signature, cependant,
+            Cette convention est {% if convention.display_options.display_redirect_sent %}en attente de signature{% else %}déjà signée{% endif %}, cependant,
             s'il reste des modifications à apporter, vous avez la possibilité de la repasser en statut "Instruction requise".
             en cliquant sur le bouton ci-dessous
         </p>
