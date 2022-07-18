@@ -7,10 +7,12 @@ from django.conf import settings
 from instructeurs.models import Administration
 
 from programmes.models import (
+    Financement,
     Programme,
     Lot,
     LogementEDD,
     ReferenceCadastrale,
+    TypeOperation,
 )
 from programmes.forms import (
     ProgrammeSelectionForm,
@@ -44,6 +46,12 @@ def select_programme_create(request):
                     ville=form.cleaned_data["ville"],
                     bailleur_id=form.cleaned_data["bailleur"],
                     administration_id=form.cleaned_data["administration"],
+                    type_operation=(
+                        TypeOperation.SANSTRAVAUX
+                        if form.cleaned_data["financement"]
+                        == Financement.SANS_FINANCEMENT
+                        else TypeOperation.NEUF
+                    ),
                 )
                 programme.save()
                 lot = Lot.objects.create(
@@ -162,6 +170,7 @@ def programme_update(request, convention_uuid):
     return {
         **utils.base_convention_response_error(request, convention),
         "form": form,
+        "avecfinancement": convention.lot.financement != Financement.SANS_FINANCEMENT,
     }
 
 
@@ -202,7 +211,8 @@ def _save_programme_and_lot(programme, lot, form):
     programme.adresse = form.cleaned_data["adresse"]
     programme.code_postal = form.cleaned_data["code_postal"]
     programme.ville = form.cleaned_data["ville"]
-    programme.type_operation = form.cleaned_data["type_operation"]
+    if form.cleaned_data["type_operation"]:
+        programme.type_operation = form.cleaned_data["type_operation"]
     programme.anru = form.cleaned_data["anru"]
     programme.autres_locaux_hors_convention = form.cleaned_data[
         "autres_locaux_hors_convention"
