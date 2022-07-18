@@ -152,14 +152,14 @@ class ConventionKPI(APIView):
         )
         instruction = 0
         a_signer = 0
-        transmise = 0
+        signee = 0
         for q in query_by_statuses:
             if q["statut"] == ConventionStatut.INSTRUCTION:
                 instruction = q["total"]
             if q["statut"] == ConventionStatut.A_SIGNER:
                 a_signer = q["total"]
-            if q["statut"] == ConventionStatut.TRANSMISE:
-                transmise = q["total"]
+            if q["statut"] == ConventionStatut.SIGNEE:
+                signee = q["total"]
 
         list_conv_kpi = [
             ConvKPI(
@@ -168,7 +168,7 @@ class ConventionKPI(APIView):
                 "En instruction",
             ),
             ConvKPI("/conventions/?cstatut=4.+A+signer", a_signer, "A signer"),
-            ConvKPI("/conventions/?cstatut=5.+Transmise", transmise, "Transmises"),
+            ConvKPI("/conventions/?cstatut=5.+Signée", signee, "Signées"),
         ]
 
         serializer = ConventionKPISerializer(list_conv_kpi, many=True)

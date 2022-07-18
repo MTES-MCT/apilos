@@ -45,7 +45,7 @@ class ConventionModelsTest(TestCase):
         convention.statut = ConventionStatut.A_SIGNER
         self.assertFalse(convention.is_bailleur_editable())
         self.assertFalse(convention.is_project())
-        convention.statut = ConventionStatut.TRANSMISE
+        convention.statut = ConventionStatut.SIGNEE
         self.assertFalse(convention.is_bailleur_editable())
         self.assertFalse(convention.is_project())
         convention.statut = ConventionStatut.RESILIEE
@@ -115,7 +115,7 @@ class ConventionModelsTest(TestCase):
         self.assertTrue(display_options["display_redirect_sent"])
         self.assertTrue(display_options["display_progress_bar_2"])
         self.assertTrue(display_options["display_back_to_instruction"])
-        convention.statut = ConventionStatut.TRANSMISE
+        convention.statut = ConventionStatut.SIGNEE
         display_options = convention.display_options()
         self.assertFalse(display_options["display_comments_summary"])
         self.assertFalse(display_options["display_validation"])
@@ -234,13 +234,13 @@ class ConventionModelsTest(TestCase):
         )
         self.assertEqual(convention.statut_for_template()["short_statut"], "A signer")
         self.assertEqual(convention.statut_for_template()["key_statut"], "A_signer")
-        convention.statut = ConventionStatut.TRANSMISE
-        self.assertEqual(convention.statut_for_template()["statut"], "5. Transmise")
+        convention.statut = ConventionStatut.SIGNEE
+        self.assertEqual(convention.statut_for_template()["statut"], "5. Signée")
         self.assertEqual(
-            convention.statut_for_template()["statut_display"], "Convention transmise"
+            convention.statut_for_template()["statut_display"], "Convention Signée"
         )
-        self.assertEqual(convention.statut_for_template()["short_statut"], "Transmise")
-        self.assertEqual(convention.statut_for_template()["key_statut"], "Transmise")
+        self.assertEqual(convention.statut_for_template()["short_statut"], "Signée")
+        self.assertEqual(convention.statut_for_template()["key_statut"], "Signee")
 
     def test_mixity_option(self):
         convention = Convention.objects.order_by("uuid").first()
@@ -302,7 +302,7 @@ class ConventionModelsTest(TestCase):
         )
         convention.statut = ConventionStatut.A_SIGNER
         self.assertEqual(convention.display_not_validated_status(), "")
-        convention.statut = ConventionStatut.TRANSMISE
+        convention.statut = ConventionStatut.SIGNEE
         self.assertEqual(convention.display_not_validated_status(), "")
 
     def test_xlsx(self):

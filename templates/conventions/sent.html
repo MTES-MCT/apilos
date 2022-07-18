@@ -12,7 +12,7 @@
         {% include "common/step_progressbar.html" with convention=convention %}
         <div class="fr-container fr-pb-5w">
 
-            <p class="fr-h2">Ici, vous pouvez téléverser votre convention signée afin  qu'elle puisse être transmise. </p>
+            <p class="fr-h2">Ici, vous pouvez téléverser votre convention signée afin qu'elle puisse être transmise. </p>
 
             <form method="post" action="" enctype="multipart/form-data" id="{{upform.file.id_for_label}}_form">
                 {% csrf_token %}
