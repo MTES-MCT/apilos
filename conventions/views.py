@@ -1,6 +1,7 @@
 from zipfile import ZipFile
 
 from django.contrib.auth.decorators import login_required, permission_required
+from django.views.decorators.http import require_GET, require_http_methods
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
 from django.shortcuts import render
@@ -10,10 +11,9 @@ from django.conf import settings
 
 from programmes.models import FinancementEDD
 from conventions.models import Convention
-from conventions.services import services
+from conventions.services import services, convention_generator
 from conventions.services.utils import ReturnStatus
-
-NB_STEPS = 12
+from upload.services import UploadService
 
 
 @login_required
@@ -409,13 +409,9 @@ def preview(request, convention_uuid):
 def sent(request, convention_uuid):
     # Step 12/12
     result = services.convention_sent(request, convention_uuid)
-    if result["action"] == "upload":
+    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:preview", args=[convention_uuid])
-        )
-    if result["action"] == "resiliation":
-        return HttpResponseRedirect(
-            reverse("conventions:recapitulatif", args=[convention_uuid])
         )
     return render(
         request,
@@ -427,40 +423,70 @@ def sent(request, convention_uuid):
     )
 
 
+@require_http_methods(["GET", "POST"])
+def post_action(request, convention_uuid):
+    # Step 12/12
+    result = services.convention_post_action(request, convention_uuid)
+    if result["success"] == ReturnStatus.SUCCESS:
+        return HttpResponseRedirect(
+            reverse("conventions:recapitulatif", args=[convention_uuid])
+        )
+    return render(
+        request,
+        "conventions/post_action.html",
+        {
+            **result,
+            "convention_form_step": 12,
+        },
+    )
+
+
 @login_required
 def display_pdf(request, convention_uuid):
     # récupérer le doc PDF
     convention = Convention.objects.get(uuid=convention_uuid)
-    if convention.fichier_signe:
-        filename = convention.fichier_signe
-        return FileResponse(
-            default_storage.open(
-                f"conventions/{convention.uuid}/convention_docs/{filename}",
-                "rb",
-            ),
-            filename=filename,
-        )
-    if default_storage.exists(
+    if convention.nom_fichier_signe:
+        filename = convention.nom_fichier_signe
+    elif default_storage.exists(
         f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.pdf"
     ):
         filename = f"{convention.uuid}.pdf"
-        return FileResponse(
-            default_storage.open(
-                f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.pdf",
-                "rb",
-            ),
-            filename=filename,
-        )
-    if default_storage.exists(
+    elif default_storage.exists(
         f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.docx"
     ):
         filename = f"{convention.uuid}.docx"
+    if filename:
         return FileResponse(
-            default_storage.open(
-                f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.docx",
-                "rb",
-            ),
+            UploadService(
+                convention_dirpath=f"conventions/{convention.uuid}/convention_docs",
+                filename=filename,
+            ).get_file(),
             filename=filename,
         )
 
     raise Http404
+
+
+@login_required
+@require_GET
+def fiche_caf(request, convention_uuid):
+    convention = (
+        Convention.objects.prefetch_related("bailleur")
+        .prefetch_related("lot")
+        .prefetch_related("lot__logements")
+        .prefetch_related("programme")
+        .prefetch_related("programme__administration")
+        .get(uuid=convention_uuid)
+    )
+    file_stream = convention_generator.fiche_caf_doc(convention)
+
+    #    return file_stream, f"{convention}"
+
+    #   data, file_name = services.fiche_caf(request, convention_uuid)
+
+    response = HttpResponse(
+        file_stream,
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingm",
+    )
+    response["Content-Disposition"] = f"attachment; filename=ficheCAF_{convention}.docx"
+    return response

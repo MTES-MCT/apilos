@@ -125,7 +125,8 @@ class Convention(models.Model):
     # la tranche dans laquelle est compris le logement concerné. (7)
 
     donnees_validees = models.TextField(null=True)
-    fichier_signe = models.CharField(max_length=255, null=True)
+    nom_fichier_signe = models.CharField(max_length=255, null=True)
+    televersement_convention_signee_le = models.DateTimeField(null=True)
     date_resiliation = models.DateField(null=True)
 
     def __str__(self):

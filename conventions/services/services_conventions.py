@@ -1,4 +1,5 @@
 import datetime
+
 from typing import Any
 
 from django.core.mail import EmailMultiAlternatives
@@ -6,7 +7,6 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
-from django.core.files.storage import default_storage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.db.models.functions import Substr
@@ -29,6 +29,7 @@ from conventions.forms import (
     ConventionResiliationForm,
 )
 from conventions.tasks import generate_and_send
+from upload.services import UploadService
 
 from . import utils
 from . import upload_objects
@@ -759,7 +760,6 @@ class ConventionListService:
         self.search_input = search_input
         self.statut_filter = statut_filter
         self.financement_filter = financement_filter
-        print(departement_input)
         self.departement_input = departement_input
         self.order_by = order_by
         self.page = page
@@ -812,44 +812,56 @@ def convention_preview(convention_uuid):
 
 def convention_sent(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
-    action = "navigation"
+    result_status = None
     if request.method == "POST":
         upform = UploadForm(request.POST, request.FILES)
-        resiliation_form = ConventionResiliationForm(request.POST)
-        uuid = convention_uuid
-        if request.POST.get("Upload", False):
-            if upform.is_valid():
-                action = "upload"
-                file = request.FILES["file"]
-                now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-                filename = f"{now}_convention_{uuid}_signed.pdf"
-                destination = default_storage.open(
-                    f"conventions/{uuid}/convention_docs/{filename}",
-                    "bw",
-                )
-                for chunk in file.chunks():
-                    destination.write(chunk)
-                destination.close()
-                convention.statut = ConventionStatut.TRANSMISE
-                convention.fichier_signe = filename
-                convention.save()
-        else:
-            if resiliation_form.is_valid():
-                action = "resiliation"
-                convention.statut = ConventionStatut.RESILIEE
-                convention.date_resiliation = resiliation_form.cleaned_data[
-                    "date_resiliation"
-                ]
-                convention.save()
+        if upform.is_valid():
+            file = request.FILES["file"]
+            now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+            filename = f"{now}_convention_{convention_uuid}_signed.pdf"
+            upload_service = UploadService(
+                convention_dirpath=f"conventions/{convention_uuid}/convention_docs",
+                filename=filename,
+            )
+            upload_service.upload_file(file)
+
+            convention.statut = ConventionStatut.TRANSMISE
+            convention.nom_fichier_signe = filename
+            convention.televersement_convention_signee_le = timezone.now()
+            convention.save()
+            result_status = utils.ReturnStatus.SUCCESS
     else:
-        if convention.statut == ConventionStatut.RESILIEE:
-            action = "resiliation"
         upform = UploadForm()
-        resiliation_form = ConventionResiliationForm()
 
     return {
-        "action": action,
+        "success": result_status,
+        "convention": convention,
+        "upform": upform,
+    }
+
+
+def convention_post_action(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    result_status = None
+    if request.method == "POST":
+        resiliation_form = ConventionResiliationForm(request.POST)
+        if resiliation_form.is_valid():
+            convention.statut = ConventionStatut.RESILIEE
+            convention.date_resiliation = resiliation_form.cleaned_data[
+                "date_resiliation"
+            ]
+            convention.save()
+            # SUCCESS
+            result_status = utils.ReturnStatus.SUCCESS
+
+    else:
+        resiliation_form = ConventionResiliationForm()
+
+    upform = UploadForm()
+
+    return {
+        "success": result_status,
+        "upform": upform,
         "convention": convention,
         "resiliation_form": resiliation_form,
-        "upform": upform,
     }
