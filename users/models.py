@@ -74,9 +74,8 @@ class User(AbstractUser):
         if self.is_superuser:
             return True
         # check object permission
-        if obj is not None:
-            if not self.has_object_permission(obj):
-                return False
+        if obj is not None and not self.has_object_permission(obj):
+            return False
         # check permission itself
         permissions = []
         for role in self.role_set.all():
