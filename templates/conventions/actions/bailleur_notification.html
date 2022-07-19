@@ -1,5 +1,5 @@
 {% load custom_filters %}
-{% if request|is_instructeur and convention.display_notification %}
+{% if request|is_instructeur and convention.display_options.display_notification %}
     <div class="fr-col-md-12  fr-py-5w">
         <div role="alert" class="fr-alert fr-alert--info">
             <!-- <p class="fr-alert__title">Convention à valider</p> -->
