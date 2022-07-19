@@ -76,4 +76,5 @@ urlpatterns = [
         views.fiche_caf,
         name="fiche_caf",
     ),
+    path("new_avenant/<convention_uuid>", views.new_avenant, name="new_avenant"),
 ]

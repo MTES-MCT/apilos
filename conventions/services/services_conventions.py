@@ -16,6 +16,7 @@ from core.services import EmailService
 from programmes.models import (
     Annexe,
     Financement,
+    Lot,
 )
 from conventions.models import Convention, ConventionHistory, ConventionStatut, Pret
 from conventions.forms import (
@@ -27,6 +28,7 @@ from conventions.forms import (
     UploadForm,
     ConventionType1and2Form,
     ConventionResiliationForm,
+    NewAvenantForm,
 )
 from conventions.tasks import generate_and_send
 from upload.services import UploadService
@@ -840,4 +842,24 @@ def convention_post_action(request, convention_uuid):
         "upform": upform,
         "convention": convention,
         "resiliation_form": resiliation_form,
+    }
+
+
+def create_avenant(request, convention_uuid):
+    parent_convention = Convention.objects.get(uuid=convention_uuid)
+    new_avenant_form = NewAvenantForm(request.POST)
+    if new_avenant_form.is_valid():
+        convention.parent_id = parent_convention.id
+        lot = Lot.objects.get(uuid=parent_convention.cleaned_data["lot_uuid"])
+        convention = Convention.objects.create(
+            lot=lot,
+            programme_id=lot.programme_id,
+            bailleur_id=lot.bailleur_id,
+            financement=lot.financement,
+            parent_id=convention.parent_id,
+        )
+        convention.save()
+    return {
+        "success": utils.ReturnStatus.SUCCESS,
+        "convention": convention,
     }

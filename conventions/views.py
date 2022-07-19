@@ -490,3 +490,20 @@ def fiche_caf(request, convention_uuid):
     )
     response["Content-Disposition"] = f"attachment; filename=ficheCAF_{convention}.docx"
     return response
+
+
+@login_required
+@permission_required("convention.add_convention")
+def new_avenant(request, convention_uuid):
+    result = services.create_avenant(request, convention_uuid)
+    if result["success"] == ReturnStatus.SUCCESS:
+        return HttpResponseRedirect(
+            reverse("conventions:bailleur", args=[result["convention"].uuid])
+        )
+    return render(
+        request,
+        "conventions/new_avenant.html",
+        {
+            **result,
+        },
+    )

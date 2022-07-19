@@ -1,0 +1,37 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}Selection - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        {% include "conventions/common/form_header.html" with convention=convention %}
+        <div class="fr-container">
+            <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
+                {% csrf_token %}
+
+                {% for error in form.lot_uuid.errors %}
+                    <p id="select-error-desc-error" class="fr-error-text">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </div>
+
+
+        </div>
+    </fieldset>
+    </div>
+    </div>
+    </div>
+
+    <div class="form-button-footer fr-col-md-12 fr-py-5w">
+        {% include "common/button/next_and_save.html" with suivant='conventions:selection' %}
+        <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
+            Revenir à la liste des conventions
+        </a>
+    </div>
+    </form>
+    </div>
+    </div>
+{% endblock %}

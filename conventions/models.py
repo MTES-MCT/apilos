@@ -64,6 +64,20 @@ class ConventionStatut(models.TextChoices):
     RESILIEE = "6. Résiliée", "Convention résiliée"
 
 
+class AvenantType(models.TextChoices):
+
+    PROGRAMME = "1. Programme", "Modification du programme"
+    TRAVAUX = "2. Travaux", "Travaux, réhabilitation totale"
+    PROROGATION = (
+        "3. Prorogation",
+        "Prorogation de la durée de la convention suite à travaux financés",
+    )
+    MUTATION = "4. Mutation", "Vente ou changement de dénomination du propriétaire"
+    GESTIONNAIRE = "5. Gestionnaire", "Changement de gestionnaire (pour les foyers)"
+    LOYER_MAX = "6. Loyer Maximum", "Modification du loyer maximum"
+    DENONCITAION = "7. Dénonciation", "Dénonciation partielle"
+
+
 class ConventionType1and2(models.TextChoices):
     TYPE1 = "Type1", "Type I"
     TYPE2 = "Type2", "Type II"
@@ -72,6 +86,13 @@ class ConventionType1and2(models.TextChoices):
 class Convention(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    parent_id = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="avenants",
+    )
     numero = models.CharField(max_length=255, null=True)
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
@@ -113,6 +134,12 @@ class Convention(models.Model):
     type2_lgts_concernes_option6 = models.BooleanField(default=True)
     type2_lgts_concernes_option7 = models.BooleanField(default=True)
     type2_lgts_concernes_option8 = models.BooleanField(default=True)
+    avenant_type = models.CharField(
+        max_length=25,
+        choices=AvenantType.choices,
+        default=AvenantType.PROGRAMME,
+        null=True,
+    )
     # Missing option for :
 
     # La présente convention ne prévoyant pas de travaux, le bail entre en vigueur à la date de
