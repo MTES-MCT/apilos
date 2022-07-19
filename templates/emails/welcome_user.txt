@@ -14,4 +14,4 @@ Pour vous aider à saisir vos conventions sur APiLos, retrouvez les tutoriels su
 Avec l’équipe APiLos, nous restons à votre disposition sur contact@apilos.beta.gouv.fr
 
 Cordialement,
-L'équipe APiLos
+L'équipe APiLos, un service du SIAP
