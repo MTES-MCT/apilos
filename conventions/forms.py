@@ -417,9 +417,6 @@ class NewAvenantForm(forms.Form):
             "required": "La selection du programme et de son financement est obligatoire"
         },
     )
-    existing_programme = forms.ChoiceField(
-        choices=[("selection", "selection"), ("creation", "creation")]
-    )
     bailleur = forms.IntegerField(
         required=False,
         label="Bailleur",
@@ -502,7 +499,3 @@ class NewAvenantForm(forms.Form):
             "required": "L'id de la convention-mère' est obligatoire",
         },
     )
-
-    def clean(self):
-        cleaned_data = super().clean()
-        self.validate_required_field(cleaned_data, "lot_uuid")

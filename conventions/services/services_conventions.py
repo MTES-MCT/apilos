@@ -848,18 +848,26 @@ def convention_post_action(request, convention_uuid):
 def create_avenant(request, convention_uuid):
     parent_convention = Convention.objects.get(uuid=convention_uuid)
     new_avenant_form = NewAvenantForm(request.POST)
-    if new_avenant_form.is_valid():
-        convention.parent_id = parent_convention.id
-        lot = Lot.objects.get(uuid=parent_convention.cleaned_data["lot_uuid"])
-        convention = Convention.objects.create(
-            lot=lot,
-            programme_id=lot.programme_id,
-            bailleur_id=lot.bailleur_id,
-            financement=lot.financement,
-            parent_id=convention.parent_id,
-        )
-        convention.save()
+    avenant_type = new_avenant_form["avenant_type"]
+    if request.method == "POST":
+        if new_avenant_form.is_valid():
+            lot = Lot.objects.get(uuid=parent_convention["lot_uuid"])
+            convention = Convention.objects.create(
+                lot=lot,
+                programme_id=lot.programme_id,
+                bailleur_id=lot.bailleur_id,
+                financement=lot.financement,
+                parent_id=parent_convention.id,
+            )
+            convention.save()
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "convention": convention,
+            }
     return {
-        "success": utils.ReturnStatus.SUCCESS,
-        "convention": convention,
+        "success": utils.ReturnStatus.ERROR,
+        "editable": request.user.has_perm("convention.add_convention"),
+        "bailleurs": request.user.bailleurs(),
+        "avenant_type": avenant_type,
+        "form": new_avenant_form,
     }
