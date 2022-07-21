@@ -45,9 +45,8 @@ class ConventionStatut(models.TextChoices):
         procèdent à la signature.
         Anciennement VALIDE
 
-    D/ TRANSMISE : Transmise - Convention transmise
-        La convention signée est mise à disposition et automatiquement transmise aux parties et
-        partenaires via la plateforme APiLos.
+    D/ SIGNEE : Signée - Convention signée
+        La convention signée est mise à disposition via la plateforme APiLos.
         Anciennement CLOS
     """
 
@@ -61,7 +60,7 @@ class ConventionStatut(models.TextChoices):
         "Projet de convention à modifier par le bailleur",
     )
     A_SIGNER = "4. A signer", "Convention à signer"
-    TRANSMISE = "5. Transmise", "Convention transmise"
+    SIGNEE = "5. Signée", "Convention signée"
     RESILIEE = "6. Résiliée", "Convention résiliée"
 
 
@@ -301,7 +300,7 @@ class Convention(models.Model):
                 ConventionStatut.INSTRUCTION,
                 ConventionStatut.CORRECTION,
                 ConventionStatut.A_SIGNER,
-                ConventionStatut.TRANSMISE,
+                ConventionStatut.SIGNEE,
             ],
             "display_comments_summary": self.statut
             in [
@@ -316,7 +315,11 @@ class Convention(models.Model):
             "display_is_validated": self.statut
             in [
                 ConventionStatut.A_SIGNER,
-                ConventionStatut.TRANSMISE,
+                ConventionStatut.SIGNEE,
+                ConventionStatut.RESILIEE,
+            ],
+            "display_is_resiliated": self.statut
+            in [
                 ConventionStatut.RESILIEE,
             ],
             "display_notification": self.statut
@@ -335,7 +338,10 @@ class Convention(models.Model):
             "display_redirect_sent": self.statut
             in [
                 ConventionStatut.A_SIGNER,
-                ConventionStatut.TRANSMISE,
+            ],
+            "display_redirect_post_action": self.statut
+            in [
+                ConventionStatut.SIGNEE,
             ],
             "display_progress_bar_1": self.statut
             in [
@@ -349,7 +355,7 @@ class Convention(models.Model):
             ],
             "display_progress_bar_3": self.statut
             in [
-                ConventionStatut.TRANSMISE,
+                ConventionStatut.SIGNEE,
             ],
             "display_type1and2_editable": self.statut
             in [
@@ -360,6 +366,7 @@ class Convention(models.Model):
             "display_back_to_instruction": self.statut
             in [
                 ConventionStatut.A_SIGNER,
+                ConventionStatut.SIGNEE,
             ],
         }
 

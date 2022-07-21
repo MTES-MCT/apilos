@@ -5,7 +5,7 @@ from django.db.models.functions import Substr
 
 from apilos_settings.models import Departement
 from bailleurs.models import Bailleur
-from conventions.models import Convention, ConventionStatut
+from conventions.models import Convention
 from instructeurs.models import Administration
 from programmes.models import Lot, Programme
 
@@ -74,13 +74,8 @@ class User(AbstractUser):
         if self.is_superuser:
             return True
         # check object permission
-        if obj is not None:
-            if not self.has_object_permission(obj):
-                return False
-            # forbid to change close convention
-            if perm == "convention.change_convention" and isinstance(obj, Convention):
-                if obj.statut == ConventionStatut.TRANSMISE:
-                    return False
+        if obj is not None and not self.has_object_permission(obj):
+            return False
         # check permission itself
         permissions = []
         for role in self.role_set.all():

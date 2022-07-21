@@ -122,6 +122,8 @@ class TypologieStationnement(models.TextChoices):
     CARPORT = "CARPORT", "Carport"
     DEUX_ROUES_EXTERIEUR = "DEUX_ROUES_EXTERIEUR", "2 roues en extérieur"
     DEUX_ROUES_SOUSSOL = "DEUX_ROUES_SOUSSOL", "2 roues en sous-sol"
+    DOUBLE_SOUSSOL = "DOUBLE_SOUSSOL", "Parking double en sous-sol"
+    DOUBLE_SUPERSTRUCTURE = "DOUBLE_SUPERSTRUCTURE", "Parking double en superstructure"
 
 
 class Programme(IngestableModel):

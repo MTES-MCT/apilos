@@ -121,7 +121,7 @@
                         <tbody>
                             {% for convention in conventions.paginated_conventions %}
 
-                                <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention.display_options.display_redirect_sent %}validated{% endif %}">
+                                <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention.display_options.display_redirect_sent %}sent{% elif convention.display_options.display_redirect_post_action %}signed{% endif %}">
 
                                     {% if request|is_instructeur %}
                                         <td>{{convention.bailleur.nom}}</td>
@@ -142,8 +142,11 @@
                                         <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                             document.addEventListener('DOMContentLoaded', function () {
                                                 document.getElementById('convention_redirect_{{convention.uuid}}').addEventListener('click', function(){
-                                                    if (this.classList.contains("validated")) {
+                                                    if (this.classList.contains("sent")) {
                                                         location.href="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
+                                                    }
+                                                    else if (this.classList.contains("signed")) {
+                                                        location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
                                                     }
                                                     else {
                                                         location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
