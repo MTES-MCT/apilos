@@ -40,7 +40,6 @@
                                     document.addEventListener('DOMContentLoaded', function () {
                                         document.getElementById('{{form.user_type.id_for_label}}')
                                             .addEventListener('change', function(event){
-                                            console.log(event.target.value)
                                             if (event.target.value == "BAILLEUR") {
                                                 document.getElementById('select_administration').hidden = true
                                                 document.getElementById('select_bailleur').hidden = false
