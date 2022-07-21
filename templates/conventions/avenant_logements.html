@@ -25,8 +25,7 @@
                 {% include "conventions/common/form_logements.html" with convention=convention %}
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
-                        {% include "common/button/next_and_save.html" with suivant='conventions:logements' convention_uuid=convention.uuid editable=editable %}
-                        {% include "common/button/previous.html" with precedent='conventions:financement' convention_uuid=convention.uuid %}
+                        {% include "common/button/next_and_save.html" with suivant='conventions:avenant_logements' convention_uuid=convention.uuid editable=editable %}
                     {% else %}
                         {% include "common/button/noteditable_button.html" with convention=convention %}
                     {% endif %}
