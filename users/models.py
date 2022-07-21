@@ -126,7 +126,7 @@ class User(AbstractUser):
 
         if self.is_instructeur():
             return Programme.objects.filter(
-                administration_id__in=self._administration_ids()
+                administration_id__in=self.administration_ids()
             )
 
         if self.is_bailleur():
@@ -172,7 +172,7 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return {"id__in": self._administration_ids()}
+            return {"id__in": self.administration_ids()}
 
         # to do : manage programme related to geo for bailleur
         if self.is_bailleur():
@@ -183,7 +183,7 @@ class User(AbstractUser):
             + "filtre sur les administrations"
         )
 
-    def _administration_ids(self):
+    def administration_ids(self):
         if self.is_cerbere_user():
             return [self.siap_habilitation["administration"]["id"]]
 
@@ -249,7 +249,7 @@ class User(AbstractUser):
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
             return Convention.objects.filter(
-                programme__administration_id__in=self._administration_ids()
+                programme__administration_id__in=self.administration_ids()
             )
 
         if self.is_bailleur():
@@ -285,7 +285,7 @@ class User(AbstractUser):
         if self.is_instructeur():
             return (
                 User.objects.all()
-                .filter(role__administration_id__in=self._administration_ids())
+                .filter(role__administration_id__in=self.administration_ids())
                 .order_by(order_by)
                 .distinct()
             )

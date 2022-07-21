@@ -52,7 +52,7 @@
                         </div>
                     </div>
                 {% endif %}
-                {% if request|is_bailleur %}
+                {% if request|display_administration  %}
                     <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
                             Service instructeur : {{ convention.programme.administration }}

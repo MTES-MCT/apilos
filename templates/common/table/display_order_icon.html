@@ -42,8 +42,6 @@
             if (document.getElementById('page') !== null) {
                 document.getElementById('page').value = "1"
             }
-            console.log('order_by : {{order_by}}')
-            console.log('order_by_column : {{order_by_column}}')
             document.getElementById('order_by').value = "{% if order_by == order_by_column %}-{% endif %}{{ order_by_column }}"
             document.getElementById('search_table').submit()
         });
