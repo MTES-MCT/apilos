@@ -66,16 +66,16 @@ class ConventionStatut(models.TextChoices):
 
 class AvenantType(models.TextChoices):
 
-    PROGRAMME = "1. Programme", "Modification du programme"
-    TRAVAUX = "2. Travaux", "Travaux, réhabilitation totale"
+    PROGRAMME = "Logements", "Modification des logements"
+    """TRAVAUX = "Travaux", "Travaux, réhabilitation totale"
     PROROGATION = (
-        "3. Prorogation",
+        "Prorogation",
         "Prorogation de la durée de la convention suite à travaux financés",
     )
-    MUTATION = "4. Mutation", "Vente ou changement de dénomination du propriétaire"
-    GESTIONNAIRE = "5. Gestionnaire", "Changement de gestionnaire (pour les foyers)"
-    LOYER_MAX = "6. Loyer Maximum", "Modification du loyer maximum"
-    DENONCITAION = "7. Dénonciation", "Dénonciation partielle"
+    MUTATION = "Mutation", "Vente ou changement de dénomination du propriétaire"
+    GESTIONNAIRE = "Gestionnaire", "Changement de gestionnaire (pour les foyers)"
+    LOYER_MAX = "Loyer Maximum", "Modification du loyer maximum"
+    DENONCITAION = "Dénonciation", "Dénonciation partielle" """
 
 
 class ConventionType1and2(models.TextChoices):
@@ -320,6 +320,12 @@ class Convention(models.Model):
     def is_project(self):
         return self.statut == ConventionStatut.PROJET
 
+    def is_avenant(self):
+        return self.parent_id is not None
+
+    def type_avenant(self):
+        return {"programme": self.avenant_type == AvenantType.PROGRAMME}
+
     def display_options(self):
         return {
             "display_comments": self.statut
@@ -375,7 +381,8 @@ class Convention(models.Model):
                 ConventionStatut.PROJET,
                 ConventionStatut.INSTRUCTION,
                 ConventionStatut.CORRECTION,
-            ],
+            ]
+            and self.parent_id is None,
             "display_progress_bar_2": self.statut
             in [
                 ConventionStatut.A_SIGNER,

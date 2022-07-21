@@ -16,7 +16,6 @@ from core.services import EmailService
 from programmes.models import (
     Annexe,
     Financement,
-    Lot,
 )
 from conventions.models import Convention, ConventionHistory, ConventionStatut, Pret
 from conventions.forms import (
@@ -851,18 +850,19 @@ def create_avenant(request, convention_uuid):
     avenant_type = new_avenant_form["avenant_type"]
     if request.method == "POST":
         if new_avenant_form.is_valid():
-            lot = Lot.objects.get(uuid=parent_convention["lot_uuid"])
+            lot = parent_convention.lot
             convention = Convention.objects.create(
                 lot=lot,
                 programme_id=lot.programme_id,
                 bailleur_id=lot.bailleur_id,
                 financement=lot.financement,
-                parent_id=parent_convention.id,
+                parent_id=parent_convention,
             )
             convention.save()
             return {
                 "success": utils.ReturnStatus.SUCCESS,
                 "convention": convention,
+                "parent_convention": parent_convention,
             }
     return {
         "success": utils.ReturnStatus.ERROR,
@@ -870,4 +870,5 @@ def create_avenant(request, convention_uuid):
         "bailleurs": request.user.bailleurs(),
         "avenant_type": avenant_type,
         "form": new_avenant_form,
+        "parent_convention": parent_convention,
     }

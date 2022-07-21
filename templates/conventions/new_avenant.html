@@ -1,17 +1,16 @@
 {% extends "layout/base.html" %}
 
-{% load static %}
-
 {% block page_title %}Nouvel avenant - APiLos{% endblock%}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% include "conventions/common/form_header.html" with convention=convention %}
-        <div class="fr-container">
+        {% include "conventions/common/form_header.html" with convention=parent_convention %}
+        <div class="fr-container  fr-mt-5w fr-pb-5w">
+            <h4 class="fr-mb-2w">Créer un nouvel avenant</h4>
             <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
                 {% csrf_token %}
                 <div class="fr-mt-1w block--row-strech" >
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                    <div class="fr-col-12 fr-mb-2w">
                         {% include "common/form/input_select.html" with form_input=form.avenant_type mandatory_input=True %}
                     </div>
                 </div>

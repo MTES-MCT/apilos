@@ -72,6 +72,7 @@ def logements_update(request, convention_uuid):
                 "uuid": convention.lot.uuid,
                 "lgts_mixite_sociale_negocies": convention.lot.lgts_mixite_sociale_negocies,
                 "loyer_derogatoire": convention.lot.loyer_derogatoire,
+                "nb_logements": convention.lot.nb_logements,
             }
         )
 

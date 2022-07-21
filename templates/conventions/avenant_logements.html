@@ -16,6 +16,12 @@
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
 
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-mb-2w">
+                        {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements object_field="lot__nb_logements__"|add:form.uuid.value %}
+                    </div>
+                </div>
+
                 {% include "conventions/common/form_logements.html" with convention=convention %}
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
