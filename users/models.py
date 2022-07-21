@@ -242,20 +242,18 @@ class User(AbstractUser):
         For a `bailleur`, it returns the conventions of its bailleur entities in the limit of its
         geographic filter
         """
-
+        convs = Convention.objects.filter(parent_id__isnull=True)
         if self.is_superuser:
-            return Convention.objects.all()
+            return convs.all()
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return Convention.objects.filter(
+            return convs.filter(
                 programme__administration_id__in=self.administration_ids()
             )
 
         if self.is_bailleur():
-            conventions_result = Convention.objects.filter(
-                bailleur_id__in=self._bailleur_ids()
-            )
+            conventions_result = convs.filter(bailleur_id__in=self._bailleur_ids())
             if self.id and self.filtre_departements.exists():
                 conventions_result = conventions_result.annotate(
                     departement=Substr("programme__code_postal", 1, 2)

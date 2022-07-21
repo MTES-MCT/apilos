@@ -405,6 +405,10 @@ class LotLgtsOptionForm(forms.Form):
             "max_digits": "La loyer dérogatoire par m² doit-être inférieur à 10000 €",
         },
     )
+    nb_logements = forms.IntegerField(
+        required=False,
+        label="Nombre de logements",
+    )
 
 
 class ProgrammeEDDForm(forms.Form):
