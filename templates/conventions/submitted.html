@@ -4,26 +4,37 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
+        {% include "conventions/common/form_header.html"%}
         <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-md-12  fr-my-5w">
                     <h2>Félicitation</h2>
-                    <p class="fr-mb-3w">
-                        <span class="content__headline">Référence de la convention : {{convention}}</span>
-                    </p>
-                    <h4 class="fr-mb-3w">Bravo, vous venez de soumettre votre convention à l'instruction en date du {{convention.soumis_le}}</h4>
-                    <p class="fr-mb-3w">La présente convention ne peut plus être modifiée. Le service instructeur a été notifié et instruira cette convention dans les plus bref délais.
-                        Il reviendra ensuite vers vous pour finaliser cette convention.
-                    </p>
-                    <p class="fr-mb-3w">Vous pouvez cependant consulter à tout moment les données saisies ainsi que le statut d'instruction de votre convention sur la plateforme APiLos</p>
+                    <h4 class="fr-mb-3w">Bravo, vous venez de soumettre votre {% if convention.is_avenant %}avenant de {% endif %}convention à l'instruction en date du {{convention.soumis_le}}</h4>
+                    {% if convention.is_avenant %}
+                        <p class="fr-mb-3w">Le présent avenant ne peut plus être modifié. Le service instructeur a été notifié et instruira cet avenant dans les plus bref délais.
+                            Il reviendra ensuite vers vous pour finaliser cet avenant.
+                        </p>
+                    {% else %}
+                        <p class="fr-mb-3w">La présente convention ne peut plus être modifiée. Le service instructeur a été notifié et instruira cette convention dans les plus bref délais.
+                            Il reviendra ensuite vers vous pour finaliser cette convention.
+                        </p>
+                    {% endif %}
+                    <p class="fr-mb-3w">Vous pouvez cependant consulter à tout moment les données saisies ainsi que le statut d'instruction sur la plateforme APiLos</p>
                     <p class="fr-mb-3w">Nous restons à votre disposition pour toute information et question.</p>
                     <p class="fr-mb-3w">En vous remerciant, nous vous souhaitons une bonne journée</p>
                     <p class="fr-mb-3w">L'équipe <a href="mailto:contact@apilos.beta.gouv.fr" target="_blank">APiLos</a></p>
-
                 </div>
             </div>
+
             <div class="form-button-footer fr-col-md-12  fr-py-5w">
                 {% include "common/button/return_convention_index.html" %}
+                <a class="fr-btn fr-btn--icon-left fr-fi-arrow-left-s-line" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
+                    {% if convention.is_avenant %}
+                        Retour à l'avenant de la convention
+                    {% else %}
+                        Retour à la convention
+                    {% endif %}
+                </a>
             </div>
         </div>
     </div>

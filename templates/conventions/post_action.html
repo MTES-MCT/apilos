@@ -6,8 +6,8 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% include "conventions/common/form_header.html" with convention=convention %}
-        {% include "common/step_progressbar.html" with convention=convention %}
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/step_progressbar.html"%}
         <div class="fr-container fr-pb-5w">
             {% if convention.televersement_convention_signee_le %}
                 <p class="fr-h3">Votre convention signée a été téléversée le {{convention.televersement_convention_signee_le}}

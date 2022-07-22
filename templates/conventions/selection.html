@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% include "conventions/common/form_header.html" with convention=convention %}
+        {% include "conventions/common/form_header.html"%}
         <div class="fr-container">
             <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
                 {% csrf_token %}

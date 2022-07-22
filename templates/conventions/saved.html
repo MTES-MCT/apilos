@@ -4,6 +4,7 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
+        {% include "conventions/common/form_header.html"%}
         <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-md-12  fr-my-5w">
@@ -11,23 +12,27 @@
                     <p class="fr-mb-3w">
                         <span class="content__headline">Référence de la convention : {{convention}}</span>
                     </p>
-                    <div role="alert" class="fr-alert fr-alert--info">
-                        <p class="fr-alert__title">ATTENTION</p>
-                        <p>le document de convention n'est pas encore soumis à l'instruction</p>
-                        <p>La convention est enregistrée mais n'est pas encore soumise au service instructeur,
-                            vous pouvez la soumettre à n'importe quel moment en l'éditant de nouveau et en cliquant sur le bouton
-                            <strong>"Soumettre au service instructeur"</strong> sur l'écran de récapitulatif.
-                        </p>
-                        <p>Nous restons à votre disposition pour toute information et question.</p>
-                        <p>En vous remerciant, nous vous souhaitons une bonne journée</p>
-                        <p>L'équipe <a href="mailto:contact@apilos.beta.gouv.fr" target="_blank">APiLos</a></p>
-                    </div>
 
+                    {% include "conventions/recapitulatif/alert_convention.html" %}
+
+                    {% if request|is_bailleur and convention.is_project %}
+                        <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
+                            {% include "conventions/actions/delete.html"%}
+                            {% include "conventions/actions/submit_convention.html" %}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 
             <div class="form-button-footer fr-col-md-12  fr-py-5w">
                 {% include "common/button/return_convention_index.html" %}
+                <a class="fr-btn fr-btn--icon-left fr-fi-arrow-left-s-line" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
+                    {% if convention.is_avenant %}
+                        Retour à l'avenant de la convention
+                    {% else %}
+                        Retour à la convention
+                    {% endif %}
+                </a>
             </div>
 
         </div>

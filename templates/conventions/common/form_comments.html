@@ -1,0 +1,12 @@
+{% csrf_token %}
+
+<div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-md-12">
+        <div class="apilos-bordered fr-my-3w">
+            <p class="notes">
+                <em>Ces informations sont complémentaires et à destination de l’instructeur. Elles ne figureront pas dans le document final de la convention.</em>
+            </p>
+            {% include "common/form/input_upload.html" with form_input=form.comments form_input_files=form.comments_files object_name='convention' object_uuid=convention.uuid file_list=convention.comments_files.values textarea=True verticalDisplay=True object_field="convention__comments__"|add:form.uuid.value %}
+        </div>
+    </div>
+</div>

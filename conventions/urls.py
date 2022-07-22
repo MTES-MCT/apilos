@@ -32,11 +32,6 @@ urlpatterns = [
     ),
     path("recapitulatif/<convention_uuid>", views.recapitulatif, name="recapitulatif"),
     path(
-        "avenant_recapitulatif/<convention_uuid>",
-        views.avenant_recapitulatif,
-        name="avenant_recapitulatif",
-    ),
-    path(
         "save/<convention_uuid>",
         views.save_convention,
         name="save",

@@ -1,7 +1,6 @@
 import datetime
 
 from typing import Any
-import uuid
 
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -486,16 +485,21 @@ def send_email_instruction(convention_url, convention):
     """
     email_sent = []
 
+    if convention.is_avenant():
+        template_label = "avenants/toB_instruction"
+    else:
+        template_label = "conventions/toB_instruction"
+
     # envoi au bailleur
     text_content = render_to_string(
-        "emails/bailleur_instruction.txt",
+        f"emails/{template_label}.txt",
         {
             "convention_url": convention_url,
             "convention": convention,
         },
     )
     html_content = render_to_string(
-        "emails/bailleur_instruction.html",
+        f"emails/{template_label}.html",
         {
             "convention_url": convention_url,
             "convention": convention,
@@ -511,16 +515,21 @@ def send_email_instruction(convention_url, convention):
     email_service.send()
     email_sent.append(email_service.msg)
 
+    if convention.is_avenant():
+        template_label = "avenants/BtoI_convention_to_instruction"
+    else:
+        template_label = "conventions/BtoI_convention_to_instruction"
+
     # envoie à l'instructeur
     text_content = render_to_string(
-        "emails/instructeur_instruction.txt",
+        f"emails/{template_label}.txt",
         {
             "convention_url": convention_url,
             "convention": convention,
         },
     )
     html_content = render_to_string(
-        "emails/instructeur_instruction.html",
+        f"emails/{template_label}.html",
         {
             "convention_url": convention_url,
             "convention": convention,
@@ -588,12 +597,19 @@ def send_email_correction(
         # Get bailleurs list following email preferences and interaction with the convention
         to = convention.get_email_bailleur_users()
         subject = f"Convention à modifier ({convention})"
-        template_label = "bailleur_correction_needed"
+        if convention.is_avenant():
+            template_label = "avenants/ItoB_correction_needed"
+        else:
+            template_label = "conventions/ItoB_correction_needed"
+
     else:
         # Get instructeurs list following email preferences and interaction with the convention
         to = convention.get_email_instructeur_users()
         subject = f"Convention modifiée ({convention})"
-        template_label = "instructeur_correction_done"
+        if convention.is_avenant():
+            template_label = "avenants/BtoI_correction_done"
+        else:
+            template_label = "conventions/BtoI_correction_done"
 
     text_content = render_to_string(
         f"emails/{template_label}.txt",
@@ -852,34 +868,6 @@ def convention_post_action(request, convention_uuid):
     }
 
 
-def _clone_convention(convention):
-    programme_id = convention.programme.id
-    cloned_programme = convention.programme
-    cloned_programme.id = None
-    cloned_programme.uuid = uuid.uuid4()
-    cloned_programme.parent_id = programme_id
-    cloned_programme.save()
-
-    lot_id = convention.lot.id
-    cloned_lot = convention.lot
-    cloned_lot.id = None
-    cloned_lot.uuid = uuid.uuid4()
-    cloned_lot.parent_id = lot_id
-    cloned_lot.programme = cloned_programme
-    cloned_lot.save()
-
-    convention_id = convention.id
-    cloned_convention = convention
-    cloned_convention.id = None
-    cloned_convention.uuid = uuid.uuid4()
-    cloned_convention.parent_id = convention_id
-    cloned_convention.programme = cloned_programme
-    cloned_convention.lot = cloned_lot
-    cloned_convention.statut = ConventionStatut.PROJET
-    cloned_convention.save()
-    return cloned_convention
-
-
 def create_avenant(request, convention_uuid):
     parent_convention = (
         Convention.objects.prefetch_related("programme")
@@ -889,9 +877,8 @@ def create_avenant(request, convention_uuid):
     if request.method == "POST":
         new_avenant_form = NewAvenantForm(request.POST)
         if new_avenant_form.is_valid():
-            avenant = _clone_convention(parent_convention)
+            avenant = parent_convention.clone()
             avenant.avenant_type = new_avenant_form.cleaned_data["avenant_type"]
-            print(new_avenant_form.cleaned_data["avenant_type"])
             avenant.save()
             return {
                 "success": utils.ReturnStatus.SUCCESS,

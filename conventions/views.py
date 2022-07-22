@@ -184,7 +184,7 @@ def avenant_logements(request, convention_uuid):
         if result.get("redirect", False) == "recapitulatif":
             return HttpResponseRedirect(
                 reverse(
-                    "conventions:avenant_recapitulatif",
+                    "conventions:recapitulatif",
                     args=[result["convention"].uuid],
                 )
             )
@@ -229,7 +229,7 @@ def avenant_annexes(request, convention_uuid):
         if result.get("redirect", False) == "recapitulatif":
             return HttpResponseRedirect(
                 reverse(
-                    "conventions:avenant_recapitulatif",
+                    "conventions:recapitulatif",
                     args=[result["convention"].uuid],
                 )
             )
@@ -292,17 +292,8 @@ def comments(request, convention_uuid):
 def avenant_comments(request, convention_uuid):
     result = services.convention_comments(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
-        if result.get("redirect", False) == "recapitulatif":
-            return HttpResponseRedirect(
-                reverse(
-                    "conventions:avenant_recapitulatif",
-                    args=[result["convention"].uuid],
-                )
-            )
         return HttpResponseRedirect(
-            reverse(
-                "conventions:avenant_recapitulatif", args=[result["convention"].uuid]
-            )
+            reverse("conventions:recapitulatif", args=[result["convention"].uuid])
         )
     return render(
         request,
@@ -318,26 +309,21 @@ def avenant_comments(request, convention_uuid):
 def recapitulatif(request, convention_uuid):
     # Step 11/11
     result = services.convention_summary(request, convention_uuid)
+    if result["convention"].is_avenant():
+        return render(
+            request,
+            "conventions/avenant_recapitulatif.html",
+            {
+                **result,
+                "convention_form_step": 100,
+            },
+        )
     return render(
         request,
         "conventions/recapitulatif.html",
         {
             **result,
             "convention_form_step": 10,
-        },
-    )
-
-
-@login_required
-def avenant_recapitulatif(request, convention_uuid):
-    # Step 11/11
-    result = services.convention_summary(request, convention_uuid)
-    return render(
-        request,
-        "conventions/avenant_recapitulatif.html",
-        {
-            **result,
-            "convention_form_step": 100,
         },
     )
 
