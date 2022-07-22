@@ -1,6 +1,7 @@
 import datetime
 
 from typing import Any
+import uuid
 
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -726,13 +727,13 @@ class ConventionListService:
 
     def __init__(
         self,
-        search_input: str,
-        statut_filter: str,
-        financement_filter: str,
-        departement_input: str,
-        order_by: str,
-        page: str,
         my_convention_list: Any,
+        search_input: str = "",
+        statut_filter: str = "",
+        financement_filter: str = "",
+        departement_input: str = "",
+        order_by: str = "",
+        page: str = 1,
     ):
         self.search_input = search_input
         self.statut_filter = statut_filter
@@ -835,40 +836,75 @@ def convention_post_action(request, convention_uuid):
         resiliation_form = ConventionResiliationForm()
 
     upform = UploadForm()
+    avenant_list_service = ConventionListService(
+        my_convention_list=convention.avenants.all()
+        .prefetch_related("programme")
+        .prefetch_related("lot"),
+    )
+    avenant_list_service.paginate()
 
     return {
         "success": result_status,
         "upform": upform,
         "convention": convention,
+        "avenants": avenant_list_service,
         "resiliation_form": resiliation_form,
     }
 
 
+def _clone_convention(convention):
+    programme_id = convention.programme.id
+    cloned_programme = convention.programme
+    cloned_programme.id = None
+    cloned_programme.uuid = uuid.uuid4()
+    cloned_programme.parent_id = programme_id
+    cloned_programme.save()
+
+    lot_id = convention.lot.id
+    cloned_lot = convention.lot
+    cloned_lot.id = None
+    cloned_lot.uuid = uuid.uuid4()
+    cloned_lot.parent_id = lot_id
+    cloned_lot.programme = cloned_programme
+    cloned_lot.save()
+
+    convention_id = convention.id
+    cloned_convention = convention
+    cloned_convention.id = None
+    cloned_convention.uuid = uuid.uuid4()
+    cloned_convention.parent_id = convention_id
+    cloned_convention.programme = cloned_programme
+    cloned_convention.lot = cloned_lot
+    cloned_convention.statut = ConventionStatut.PROJET
+    cloned_convention.save()
+    return cloned_convention
+
+
 def create_avenant(request, convention_uuid):
-    parent_convention = Convention.objects.get(uuid=convention_uuid)
-    new_avenant_form = NewAvenantForm(request.POST)
-    avenant_type = new_avenant_form["avenant_type"]
+    parent_convention = (
+        Convention.objects.prefetch_related("programme")
+        .prefetch_related("lot")
+        .get(uuid=convention_uuid)
+    )
     if request.method == "POST":
+        new_avenant_form = NewAvenantForm(request.POST)
         if new_avenant_form.is_valid():
-            lot = parent_convention.lot
-            convention = Convention.objects.create(
-                lot=lot,
-                programme_id=lot.programme_id,
-                bailleur_id=lot.bailleur_id,
-                financement=lot.financement,
-                parent_id=parent_convention,
-            )
-            convention.save()
+            avenant = _clone_convention(parent_convention)
+            avenant.avenant_type = new_avenant_form.cleaned_data["avenant_type"]
+            print(new_avenant_form.cleaned_data["avenant_type"])
+            avenant.save()
             return {
                 "success": utils.ReturnStatus.SUCCESS,
-                "convention": convention,
+                "convention": avenant,
                 "parent_convention": parent_convention,
             }
+    else:
+        new_avenant_form = NewAvenantForm()
+
     return {
         "success": utils.ReturnStatus.ERROR,
         "editable": request.user.has_perm("convention.add_convention"),
         "bailleurs": request.user.bailleurs(),
-        "avenant_type": avenant_type,
         "form": new_avenant_form,
         "parent_convention": parent_convention,
     }

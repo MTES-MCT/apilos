@@ -86,11 +86,10 @@ class ConventionType1and2(models.TextChoices):
 class Convention(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    parent_id = models.ForeignKey(
+    parent = models.ForeignKey(
         "self",
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
-        blank=True,
         related_name="avenants",
     )
     numero = models.CharField(max_length=255, null=True)
@@ -382,14 +381,20 @@ class Convention(models.Model):
                 ConventionStatut.INSTRUCTION,
                 ConventionStatut.CORRECTION,
             ]
-            and self.parent_id is None,
+            and not self.is_avenant(),
             "display_progress_bar_2": self.statut
             in [
                 ConventionStatut.A_SIGNER,
-            ],
+            ]
+            and not self.is_avenant(),
             "display_progress_bar_3": self.statut
             in [
                 ConventionStatut.SIGNEE,
+            ]
+            and not self.is_avenant(),
+            "display_progress_bar_4": self.avenant_type
+            in [
+                AvenantType.PROGRAMME,
             ],
             "display_type1and2_editable": self.statut
             in [
