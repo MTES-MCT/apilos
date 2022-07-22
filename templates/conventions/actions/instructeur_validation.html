@@ -4,8 +4,13 @@
         <div role="alert" class="fr-alert fr-alert--warning">
             {% with editable_validation=convention.type1and2_configuration_not_needed %}
                 {% if editable_validation %}
-                    <p class="fr-mb-3w">Une fois la convention générée, si celle-ci correspond aux attendus, vous pouvez l'envoyer au bailleur par email et cliquer sur la bouton ci-dessous.
-                        Cela nous permet de suivre le statut de la convention en temps réel.</p>
+                    {% if convention.is_avenant %}
+                        <p class="fr-mb-3w">Une fois l'avenant de la convention généré, si celui-ci correspond aux attendus, vous pouvez l'envoyer au bailleur par email et cliquer sur la bouton ci-dessous.
+                            Cela nous permet de suivre le statut de la convention en temps réel.</p>
+                    {% else %}
+                        <p class="fr-mb-3w">Une fois la convention générée, si celle-ci correspond aux attendus, vous pouvez l'envoyer au bailleur par email et cliquer sur la bouton ci-dessous.
+                            Cela nous permet de suivre le statut de la convention en temps réel.</p>
+                    {% endif %}
                 {% else %}
                     <p class="fr-mb-3w">Avant de pouvoir valider la convention, il vous faut préciser le type de convention I ou II et les options associées dans la section
                         <strong>Convention de type I & II</strong></p>
@@ -13,14 +18,14 @@
                 <div>
                     <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
                         {% csrf_token %}
-                        <p class="fr-h4">Associer un numéro de convention</p>
+                        <p class="fr-h4">Associer un numéro {% if convention.is_avenant %}d'avenant{% else %}de convention{% endif %}</p>
                         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
                             <div class="fr-col-12 fr-col-md-6">
                                 {% include "common/form/input_text.html" with form_input=conventionNumberForm.convention_numero editable=editable_validation %}
                             </div>
                             <div class="fr-col-12 fr-col-md-6">
                                 <button class="fr-btn" {% if not editable_validation %}disabled{% endif %}>
-                                    Valider la convention
+                                    Valider {% if convention.is_avenant %}l'avenant de {% endif %}la convention
                                 </button>
                             </div>
                         </div>
@@ -36,3 +41,11 @@
     </div>
 {% endif %}
 
+{% if convention.display_options.display_is_validated %}
+    <div class="fr-col-md-12  fr-py-5w">
+        <div role="alert" class="fr-alert fr-alert--success">
+            <p class="fr-alert__title">{% if convention.is_avenant %}L'avenant a été validé{% else %}La convention a été validée{% endif %} le {{ convention.valide_le|date:"j F Y" }}</p>
+            <p class="fr-alert__title">avec le numéro {{convention.numero}}</p>
+        </div>
+    </div>
+{% endif %}

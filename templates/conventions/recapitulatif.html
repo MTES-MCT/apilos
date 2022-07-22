@@ -20,21 +20,11 @@
     {% with programme_uuid=programme.uuid|slugify convention_uuid=convention.uuid|slugify lot_uuid=lot.uuid|slugify %}
         <input type="hidden" id="convention_uuid" value="{{convention.uuid}}">
         <div class="fr-container-fluid ds_banner">
-            {% include "conventions/common/form_header.html" with convention=convention %}
-            {% include "common/step_progressbar.html" with convention=convention %}
+            {% include "conventions/common/form_header.html"%}
+            {% include "common/step_progressbar.html"%}
             <div class="fr-container">
                 {% csrf_token %}
-                {% if convention.is_project %}
-                    <div class="fr-grid-row fr-grid-row--gutters">
-                        <div class="fr-col-12">
-                            <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
-                                <p>Le document de convention n'est pas encore soumis à l'instruction{% if request|is_bailleur %},
-                                    pour finaliser votre demande de conventionnement, vous devez cliquer sur le bouton
-                                    <strong>"Soumettre au service instructeur"</strong> en bas de page{% endif %}</p>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
+                {% include "conventions/recapitulatif/alert_convention.html" %}
                 {% if convention.display_options.display_comments %}
                     <turbo-frame id="opened_comments_block" data-turbo="true">
                         {% include "comments/opened_comments.html" %}
@@ -489,7 +479,7 @@
                     </div>
                     {% if request|is_bailleur and convention.is_project %}
                         <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
-                            {% include "conventions/actions/delete.html" with convention=convention %}
+                            {% include "conventions/actions/delete.html"%}
                             {% include "conventions/actions/submit_convention.html" %}
                         </div>
                     {% endif %}
@@ -499,16 +489,7 @@
                     {% include "conventions/actions/instructeur_notification.html" %}
 
                     {% include "conventions/actions/instructeur_validation.html" %}
-                    {% if convention.display_options.display_is_validated %}
 
-                        <div class="fr-col-md-12  fr-py-5w">
-                            <div role="alert" class="fr-alert fr-alert--success">
-
-                                <p class="fr-alert__title">La convention a été validée le {{ convention.valide_le|date:"j F Y" }}</p>
-                                <p class="fr-alert__title">avec le numéro {{convention.numero}}</p>
-                            </div>
-                        </div>
-                    {% endif %}
                     {% if convention.display_options.display_is_resiliated %}
 
                         <div class="fr-col-md-12 fr-py-5w">

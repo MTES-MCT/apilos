@@ -123,6 +123,7 @@ def _logements_atomic_update(request, convention):
                 [
                     "lgts_mixite_sociale_negocies",
                     "loyer_derogatoire",
+                    "nb_logements",
                 ],
             ),
         }
@@ -190,6 +191,7 @@ def _logements_atomic_update(request, convention):
     formset = LogementFormSet(initformset)
     formset.programme_id = convention.programme_id
     formset.lot_id = convention.lot_id
+    formset.nb_logements = request.POST.get("nb_logements", None)
     formset_is_valid = formset.is_valid()
 
     if form_is_valid and formset_is_valid:
@@ -212,6 +214,8 @@ def _save_lot_lgts_option(form, lot):
         form.cleaned_data["lgts_mixite_sociale_negocies"] or 0
     )
     lot.loyer_derogatoire = form.cleaned_data["loyer_derogatoire"]
+    if "nb_logements" in form.cleaned_data:
+        lot.nb_logements = form.cleaned_data["nb_logements"]
     lot.save()
 
 

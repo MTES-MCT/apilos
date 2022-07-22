@@ -10,8 +10,8 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
-        {% include "conventions/common/form_header.html" with convention=convention %}
-        {% include "common/step_progressbar.html" with convention=convention %}
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/step_progressbar.html"%}
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -22,12 +22,12 @@
                     </div>
                 </div>
 
-                {% include "conventions/common/form_logements.html" with convention=convention %}
+                {% include "conventions/common/form_logements.html"%}
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
-                        {% include "common/button/next_and_save.html" with suivant='conventions:avenant_logements' convention_uuid=convention.uuid editable=editable %}
+                        {% include "common/button/next_and_save.html" with suivant='conventions:avenant_logements' convention_uuid=convention.uuid %}
                     {% else %}
-                        {% include "common/button/noteditable_button.html" with convention=convention %}
+                        {% include "common/button/noteditable_button.html" %}
                     {% endif %}
                 </div>
             </form>

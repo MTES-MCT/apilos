@@ -2,8 +2,16 @@ import uuid
 
 from django.db import models
 from django.db.models import Q
+from django.forms import model_to_dict
 from django.utils import timezone
-from programmes.models import Financement
+from programmes.models import (
+    Annexe,
+    Financement,
+    Logement,
+    Lot,
+    Programme,
+    TypeStationnement,
+)
 from core import model_utils
 from users.type_models import TypeRole, EmailPreferences
 
@@ -430,7 +438,9 @@ class Convention(models.Model):
         return self.financement == Financement.PLUS
 
     def type1and2_configuration_not_needed(self):
-        return not (self.bailleur.is_type1and2() and not self.type1and2)
+        return self.is_avenant() or not (
+            self.bailleur.is_type1and2() and not self.type1and2
+        )
 
     def display_not_validated_status(self):
         """
@@ -444,6 +454,82 @@ class Convention(models.Model):
         ]:
             return "Convention en cours d'instruction"
         return ""
+
+    def clone(self):
+        # pylint: disable=R0914
+        programme_fields = model_to_dict(self.programme)
+        programme_fields.update(
+            {
+                "bailleur": self.bailleur,
+                "administration_id": programme_fields.pop("administration"),
+                "parent_id": programme_fields.pop("id"),
+            }
+        )
+        cloned_programme = Programme(**programme_fields)
+        cloned_programme.save()
+
+        lot_fields = model_to_dict(self.lot)
+        lot_fields.update(
+            {
+                "bailleur": self.bailleur,
+                "programme": cloned_programme,
+                "parent_id": lot_fields.pop("id"),
+            }
+        )
+        cloned_lot = Lot(**lot_fields)
+        cloned_lot.save()
+
+        convention_fields = model_to_dict(self)
+        convention_fields.update(
+            {
+                "bailleur": self.bailleur,
+                "programme": cloned_programme,
+                "lot": cloned_lot,
+                "parent_id": convention_fields.pop("id"),
+                "statut": ConventionStatut.PROJET,
+            }
+        )
+        convention_fields.pop("comments")
+        convention_fields.pop("numero")
+        cloned_convention = Convention(**convention_fields)
+        cloned_convention.save()
+
+        for logement in self.lot.logements.all():
+            logement_fields = model_to_dict(logement)
+            logement_fields.pop("id")
+            logement_fields.update(
+                {
+                    "bailleur": self.bailleur,
+                    "lot": cloned_lot,
+                }
+            )
+            cloned_logement = Logement(**logement_fields)
+            cloned_logement.save()
+            for annexe in logement.annexes.all():
+                annexe_fields = model_to_dict(annexe)
+                annexe_fields.pop("id")
+                annexe_fields.update(
+                    {
+                        "bailleur": self.bailleur,
+                        "logement": cloned_logement,
+                    }
+                )
+                cloned_annexe = Annexe(**annexe_fields)
+                cloned_annexe.save()
+
+        for type_stationnement in self.lot.type_stationnements.all():
+            type_stationnement_fields = model_to_dict(type_stationnement)
+            type_stationnement_fields.pop("id")
+            type_stationnement_fields.update(
+                {
+                    "bailleur": self.bailleur,
+                    "lot": cloned_lot,
+                }
+            )
+            cloned_type_stationnement = TypeStationnement(**type_stationnement_fields)
+            cloned_type_stationnement.save()
+
+        return cloned_convention
 
 
 class ConventionHistory(models.Model):

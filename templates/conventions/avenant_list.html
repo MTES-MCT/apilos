@@ -54,7 +54,7 @@
                                         <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                             document.addEventListener('DOMContentLoaded', function () {
                                                 document.getElementById('convention_redirect_{{convention.uuid}}').addEventListener('click', function(){
-                                                    location.href="{% url 'conventions:avenant_recapitulatif' convention_uuid=convention.uuid %}"
+                                                    location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
                                                 });
                                             });
                                         </script>
@@ -67,7 +67,7 @@
                 {% include 'common/table/pagination.html' with paginate_list=conventions.paginated_conventions %}
 
             {% else %}
-                <p>Aucune convention ne correspond à votre recherche...</p>
+                <p>Aucun avenant à cette convention...</p>
             {% endif %}
         </div>
     </div>
