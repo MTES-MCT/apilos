@@ -107,6 +107,8 @@
                     </div>
                 </div>
             {% endif %}
+            {% include "conventions/avenant_list.html" with conventions=avenants %}
+
             {% if request|is_instructeur %}
                 <div class="fr-accordion fr-mt-5w">
                     <div class="fr-accordion__title">

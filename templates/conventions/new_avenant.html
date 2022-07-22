@@ -11,18 +11,9 @@
                 {% csrf_token %}
                 <div class="fr-mt-1w block--row-strech" >
                     <div class="fr-col-12 fr-mb-2w">
-                        {% include "common/form/input_select.html" with form_input=form.avenant_type mandatory_input=True %}
+                        {% include "common/form/input_select.html" with form_input=form.avenant_type %}
                     </div>
                 </div>
-                {% for error in form.lot_uuid.errors %}
-                    <p id="select-error-desc-error" class="fr-error-text">
-                        {{ error }}
-                    </p>
-                {% endfor %}
-
-
-
-
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% include "common/button/next_and_save.html" with suivant='conventions:selection' %}
                     <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>

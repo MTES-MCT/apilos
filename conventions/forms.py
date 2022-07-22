@@ -9,7 +9,6 @@ from django.core.exceptions import ValidationError
 from programmes.models import (
     Financement,
     TypeOperation,
-    TypeHabitat,
 )
 from conventions.models import ConventionType1and2, Preteur, AvenantType
 
@@ -411,91 +410,10 @@ class ConventionType1and2Form(forms.Form):
 
 
 class NewAvenantForm(forms.Form):
-    lot_uuid = forms.CharField(
-        required=False,
-        error_messages={
-            "required": "La selection du programme et de son financement est obligatoire"
-        },
-    )
-    bailleur = forms.IntegerField(
-        required=False,
-        label="Bailleur",
-        error_messages={
-            "required": "Le bailleur est obligatoire",
-        },
-    )
-    administration = forms.IntegerField(
-        required=False,
-        label="Administration",
-        help_text="Délégataire des aides à la pierre du territoire de l'opération",
-        error_messages={
-            "required": "L'administration est obligatoire",
-        },
-    )
-    nom = forms.CharField(
-        required=False,
-        label="Nom du programme",
-        max_length=255,
-        min_length=1,
-        error_messages={
-            "required": "Le nom du programme est obligatoire",
-            "min_length": "Le nom du programme est obligatoire",
-            "max_length": "Le nom du programme ne doit pas excéder 255 caractères",
-        },
-    )
-    nb_logements = forms.IntegerField(
-        required=False,
-        label="Nb logements à conventionner",
-        error_messages={
-            "required": "Le nombre de logements à conventionner est obligatoire",
-        },
-    )
-    type_habitat = forms.TypedChoiceField(
-        required=False,
-        label="Type d'habitat",
-        choices=TypeHabitat.choices,
-        error_messages={
-            "required": "Le type d'habitat est obligatoire",
-        },
-    )
-    financement = forms.TypedChoiceField(
-        required=False,
-        label="Financement",
-        choices=Financement.choices,
-        error_messages={
-            "required": "Le financement est obligatoire",
-        },
-    )
-    code_postal = forms.CharField(
-        required=False,
-        label="Code postal",
-        max_length=255,
-        error_messages={
-            "required": "Le code postal est obligatoire",
-            "max_length": "Le code postal ne doit pas excéder 255 caractères",
-        },
-    )
-    ville = forms.CharField(
-        required=False,
-        label="Ville",
-        max_length=255,
-        error_messages={
-            "required": "La ville est obligatoire",
-            "max_length": "La ville ne doit pas excéder 255 caractères",
-        },
-    )
     avenant_type = forms.TypedChoiceField(
-        required=False,
         label="Type d'avenant",
         choices=AvenantType.choices,
         error_messages={
             "required": "Le type d'avenant est obligatoire",
-        },
-    )
-    parent_id = forms.IntegerField(
-        required=False,
-        label="Id convention mère",
-        error_messages={
-            "required": "L'id de la convention-mère' est obligatoire",
         },
     )
