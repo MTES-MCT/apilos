@@ -18,6 +18,16 @@ def is_bailleur(request: HttpRequest) -> bool:
 
 
 @register.filter
+def display_administration(request: HttpRequest) -> bool:
+    if (
+        "multi_administration" in request.session
+        and request.session["multi_administration"]
+    ):
+        return True
+    return is_bailleur(request)
+
+
+@register.filter
 def is_instructeur(request: HttpRequest) -> bool:
     return "currently" in request.session and request.session["currently"] in [
         GroupProfile.STAFF,
