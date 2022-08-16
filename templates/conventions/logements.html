@@ -10,150 +10,19 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
-        {% include "conventions/common/form_header.html" with convention=convention %}
-        {% include "common/step_progressbar.html" with convention=convention %}
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/step_progressbar.html"%}
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-md-12">
 
-                        <h4>Logements associés à la convention</h4>
-
-                        <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-                            {% include "common/form/download_upload_form.html" with convention_uuid=convention.uuid file_type='logements' upform=upform  what='logements'%}
-                            <hr class="fr-col-12 fr-my-3w">
-                        </div>
-
-                        {% for error in import_warnings %}
-                            <p id="text-input-error-desc-error" class="fr-error-text">
-                                {{ error }}
-                            </p>
-                        {% endfor %}
-
-                        {% for error in formset.non_form_errors %}
-                            <p id="text-input-error-desc-error" class="fr-error-text">
-                                {{ error }}
-                            </p>
-                        {% endfor %}
-
-                        {{ formset.management_form }}
-                        <div class="fr-table fr-table--bordered table--layout-fixed">
-                            <table id="lgts_table">
-                                <thead>
-                                    <tr>
-                                        {% if convention.display_options.display_comments %}
-                                            {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' %}
-                                        {% endif %}
-                                        <th scope="col" class="col__width--200">Désignation {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                        <th scope="col" class="col__width--150">Type {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                        <th scope="col" class="col__width--120">Surface habitable {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                        <th scope="col" class="col__width--120">Surface des annexes réelle {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                        <th scope="col" class="col__width--120">Surface des annexes retenue dans la SU {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                        <th scope="col" class="col__width--120">Surface Utile {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                        <th scope="col" class="col__width--120">Loyer maximum en € par m² de surface utile {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                        <th scope="col" class="col__width--120">Coefficient propre au logement {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                        <th scope="col" class="col__width--120">Loyer maximum du logement en € {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for form in formset %}
-                                        {% with main_object_field="logement__uuid__"|add:form.uuid.value %}
-                                            <tr id="{{form.uuid.id_for_label}}_group">
-                                                {% if convention.display_options.display_comments %}
-                                                    <td id="{{form.uuid.id_for_label}}_div">
-                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form.uuid %}
-                                                    </td>
-                                                {% endif %}
-                                                <td>
-                                                    <input
-                                                        type="hidden"
-                                                        id="{{form.uuid.id_for_label}}"
-                                                        name="{{form.uuid.html_name}}"
-                                                        value="{{ form.uuid.value|default_if_none:'' }}">
-                                                    {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field editable=editable_upload %}
-                                                </td>
-                                                <td>
-                                                    {% include "common/form/input_select.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_upload %}
-                                                </td>
-                                                <td id="lgt_sh">
-                                                    {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" onchange="compute_total_value('sh')" parent_object_field=main_object_field editable=editable_upload %}
-                                                </td>
-                                                <td id="lgt_sa">
-                                                    {% include "common/form/input_number.html" with form_input=form.surface_annexes step="0.01" onchange="compute_total_value('sa')" parent_object_field=main_object_field editable=editable_upload %}
-                                                </td>
-                                                <td id="lgt_sar">
-                                                    {% include "common/form/input_number.html" with form_input=form.surface_annexes_retenue step="0.01" onchange="compute_total_value('sar')" parent_object_field=main_object_field editable=editable_upload %}
-                                                </td>
-                                                <td id="lgt_su">
-                                                    {% include "common/form/input_number.html" with form_input=form.surface_utile step="0.01" onchange="compute_total_value('su')" parent_object_field=main_object_field editable=editable_upload %}
-                                                </td>
-                                                <td>
-                                                    {% include "common/form/input_number.html" with form_input=form.loyer_par_metre_carre step="0.01" parent_object_field=main_object_field editable=editable_upload %}
-                                                </td>
-                                                <td>
-                                                    {% include "common/form/input_number.html" with form_input=form.coeficient step="0.0001" parent_object_field=main_object_field editable=editable_upload %}
-                                                </td>
-                                                <td id="lgt_loyer">
-                                                    {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" onchange="compute_total_value('loyer')" parent_object_field=main_object_field editable=editable_upload %}
-                                                </td>
-                                            </tr>
-                                        {% endwith %}
-                                    {% endfor %}
-                                    <tr>
-                                        <td colspan="{% if convention.display_options.display_comments %}3{% else %}2{% endif %}" class="fr-text--lg">
-                                            Total
-                                        </td>
-                                        <td id="total_sh" class="fr-text--lg text--center">
-                                        </td>
-                                        <td id="total_sa" class="fr-text--lg text--center">
-                                        </td>
-                                        <td id="total_sar" class="fr-text--lg text--center">
-                                        </td>
-                                        <td id="total_su" class="fr-text--lg text--center">
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td id="total_loyer" class="fr-text--lg text--center">
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <input
-                    type="hidden"
-                    id="{{form.uuid.id_for_label}}"
-                    name="{{form.uuid.html_name}}"
-                    value="{{ form.uuid.value|default_if_none:'' }}">
-
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-12 fr-mb-2w">
-                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_derogatoire object_field="lot__loyer_derogatoire__"|add:form.uuid.value %}
-                    </div>
-                </div>
-
-                {% if convention.mixity_option %}
-                    <h4>Option de l'article sur la close de mixité sociale</h4>
-
-                    <div class="fr-grid-row fr-grid-row--gutters">
-                        <div class="fr-col-12 fr-mb-2w">
-                            {% include "common/form/input_number.html" with display_inline=True form_input=form.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:form.uuid.value %}
-                        </div>
-                    </div>
-                {% endif %}
-
-                {% include "common/required_fields_info.html" %}
+                {% include "conventions/common/form_logements.html"%}
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
-                        {% include "common/button/next_and_save.html" with suivant='conventions:logements' convention_uuid=convention.uuid editable=editable %}
+                        {% include "common/button/next_and_save.html" with suivant='conventions:logements' convention_uuid=convention.uuid %}
                         {% include "common/button/previous.html" with precedent='conventions:financement' convention_uuid=convention.uuid %}
                     {% else %}
-                        {% include "common/button/noteditable_button.html" with convention=convention %}
+                        {% include "common/button/noteditable_button.html"%}
                     {% endif %}
                 </div>
             </form>

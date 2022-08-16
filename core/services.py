@@ -86,8 +86,13 @@ class EmailService:
         self.to_emails = to
         self.cc_emails = cc
 
+        if convention.is_avenant():
+            template_label = "avenants/ItoB_validated_convention"
+        else:
+            template_label = "conventions/ItoB_validated_convention"
+
         self.text_content = render_to_string(
-            "emails/bailleur_valide.txt",
+            f"emails/{template_label}.txt",
             {
                 "convention_url": convention_url,
                 "convention": convention,
@@ -95,7 +100,7 @@ class EmailService:
             },
         )
         self.html_content = render_to_string(
-            "emails/bailleur_valide.html",
+            f"emails/{template_label}.html",
             {
                 "convention_url": convention_url,
                 "convention": convention,

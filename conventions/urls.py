@@ -10,11 +10,26 @@ urlpatterns = [
     path("edd/<convention_uuid>", views.edd, name="edd"),
     path("financement/<convention_uuid>", views.financement, name="financement"),
     path("logements/<convention_uuid>", views.logements, name="logements"),
+    path(
+        "avenant_logements/<convention_uuid>",
+        views.avenant_logements,
+        name="avenant_logements",
+    ),
     path("annexes/<convention_uuid>", views.annexes, name="annexes"),
+    path(
+        "avenant_annexes/<convention_uuid>",
+        views.avenant_annexes,
+        name="avenant_annexes",
+    ),
     path(
         "stationnements/<convention_uuid>", views.stationnements, name="stationnements"
     ),
     path("comments/<convention_uuid>", views.comments, name="comments"),
+    path(
+        "avenant_comments/<convention_uuid>",
+        views.avenant_comments,
+        name="avenant_comments",
+    ),
     path("recapitulatif/<convention_uuid>", views.recapitulatif, name="recapitulatif"),
     path(
         "save/<convention_uuid>",
@@ -76,4 +91,5 @@ urlpatterns = [
         views.fiche_caf,
         name="fiche_caf",
     ),
+    path("new_avenant/<convention_uuid>", views.new_avenant, name="new_avenant"),
 ]

@@ -11,8 +11,8 @@
 {% block content %}
 
     <div class="fr-container-fluid ds_banner">
-        {% include "conventions/common/form_header.html" with convention=convention %}
-        {% include "common/step_progressbar.html" with convention=convention %}
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/step_progressbar.html"%}
         <div class="fr-container">
             <form method="post" action="">
                 {% csrf_token %}
@@ -72,7 +72,7 @@
                     {% if editable %}
                         {% include "common/button/next_and_save.html" with suivant='conventions:bailleur' convention_uuid=convention.uuid %}
                     {% else %}
-                        {% include "common/button/noteditable_button.html" with convention=convention %}
+                        {% include "common/button/noteditable_button.html"%}
                     {% endif %}
                 </div>
             </form>

@@ -27,6 +27,7 @@ from conventions.forms import (
     UploadForm,
     ConventionType1and2Form,
     ConventionResiliationForm,
+    NewAvenantForm,
 )
 from conventions.tasks import generate_and_send
 from upload.services import UploadService
@@ -484,16 +485,21 @@ def send_email_instruction(convention_url, convention):
     """
     email_sent = []
 
+    if convention.is_avenant():
+        template_label = "avenants/toB_instruction"
+    else:
+        template_label = "conventions/toB_instruction"
+
     # envoi au bailleur
     text_content = render_to_string(
-        "emails/bailleur_instruction.txt",
+        f"emails/{template_label}.txt",
         {
             "convention_url": convention_url,
             "convention": convention,
         },
     )
     html_content = render_to_string(
-        "emails/bailleur_instruction.html",
+        f"emails/{template_label}.html",
         {
             "convention_url": convention_url,
             "convention": convention,
@@ -509,16 +515,21 @@ def send_email_instruction(convention_url, convention):
     email_service.send()
     email_sent.append(email_service.msg)
 
+    if convention.is_avenant():
+        template_label = "avenants/BtoI_convention_to_instruction"
+    else:
+        template_label = "conventions/BtoI_convention_to_instruction"
+
     # envoie à l'instructeur
     text_content = render_to_string(
-        "emails/instructeur_instruction.txt",
+        f"emails/{template_label}.txt",
         {
             "convention_url": convention_url,
             "convention": convention,
         },
     )
     html_content = render_to_string(
-        "emails/instructeur_instruction.html",
+        f"emails/{template_label}.html",
         {
             "convention_url": convention_url,
             "convention": convention,
@@ -586,12 +597,19 @@ def send_email_correction(
         # Get bailleurs list following email preferences and interaction with the convention
         to = convention.get_email_bailleur_users()
         subject = f"Convention à modifier ({convention})"
-        template_label = "bailleur_correction_needed"
+        if convention.is_avenant():
+            template_label = "avenants/ItoB_correction_needed"
+        else:
+            template_label = "conventions/ItoB_correction_needed"
+
     else:
         # Get instructeurs list following email preferences and interaction with the convention
         to = convention.get_email_instructeur_users()
         subject = f"Convention modifiée ({convention})"
-        template_label = "instructeur_correction_done"
+        if convention.is_avenant():
+            template_label = "avenants/BtoI_correction_done"
+        else:
+            template_label = "conventions/BtoI_correction_done"
 
     text_content = render_to_string(
         f"emails/{template_label}.txt",
@@ -725,13 +743,13 @@ class ConventionListService:
 
     def __init__(
         self,
-        search_input: str,
-        statut_filter: str,
-        financement_filter: str,
-        departement_input: str,
-        order_by: str,
-        page: str,
         my_convention_list: Any,
+        search_input: str = "",
+        statut_filter: str = "",
+        financement_filter: str = "",
+        departement_input: str = "",
+        order_by: str = "",
+        page: str = 1,
     ):
         self.search_input = search_input
         self.statut_filter = statut_filter
@@ -834,10 +852,46 @@ def convention_post_action(request, convention_uuid):
         resiliation_form = ConventionResiliationForm()
 
     upform = UploadForm()
+    avenant_list_service = ConventionListService(
+        my_convention_list=convention.avenants.all()
+        .prefetch_related("programme")
+        .prefetch_related("lot"),
+    )
+    avenant_list_service.paginate()
 
     return {
         "success": result_status,
         "upform": upform,
         "convention": convention,
+        "avenants": avenant_list_service,
         "resiliation_form": resiliation_form,
+    }
+
+
+def create_avenant(request, convention_uuid):
+    parent_convention = (
+        Convention.objects.prefetch_related("programme")
+        .prefetch_related("lot")
+        .get(uuid=convention_uuid)
+    )
+    if request.method == "POST":
+        new_avenant_form = NewAvenantForm(request.POST)
+        if new_avenant_form.is_valid():
+            avenant = parent_convention.clone()
+            avenant.avenant_type = new_avenant_form.cleaned_data["avenant_type"]
+            avenant.save()
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "convention": avenant,
+                "parent_convention": parent_convention,
+            }
+    else:
+        new_avenant_form = NewAvenantForm()
+
+    return {
+        "success": utils.ReturnStatus.ERROR,
+        "editable": request.user.has_perm("convention.add_convention"),
+        "bailleurs": request.user.bailleurs(),
+        "form": new_avenant_form,
+        "parent_convention": parent_convention,
     }

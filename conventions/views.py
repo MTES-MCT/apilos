@@ -178,6 +178,30 @@ def logements(request, convention_uuid):
 
 
 @login_required
+def avenant_logements(request, convention_uuid):
+    result = services.logements_update(request, convention_uuid)
+    if result["success"] == ReturnStatus.SUCCESS:
+        if result.get("redirect", False) == "recapitulatif":
+            return HttpResponseRedirect(
+                reverse(
+                    "conventions:recapitulatif",
+                    args=[result["convention"].uuid],
+                )
+            )
+        return HttpResponseRedirect(
+            reverse("conventions:avenant_annexes", args=[result["convention"].uuid])
+        )
+    return render(
+        request,
+        "conventions/avenant_logements.html",
+        {
+            **result,
+            "convention_form_step": 60,
+        },
+    )
+
+
+@login_required
 def annexes(request, convention_uuid):
     result = services.annexes_update(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
@@ -194,6 +218,30 @@ def annexes(request, convention_uuid):
         {
             **result,
             "convention_form_step": 7,
+        },
+    )
+
+
+@login_required
+def avenant_annexes(request, convention_uuid):
+    result = services.annexes_update(request, convention_uuid)
+    if result["success"] == ReturnStatus.SUCCESS:
+        if result.get("redirect", False) == "recapitulatif":
+            return HttpResponseRedirect(
+                reverse(
+                    "conventions:recapitulatif",
+                    args=[result["convention"].uuid],
+                )
+            )
+        return HttpResponseRedirect(
+            reverse("conventions:avenant_comments", args=[result["convention"].uuid])
+        )
+    return render(
+        request,
+        "conventions/avenant_annexes.html",
+        {
+            **result,
+            "convention_form_step": 70,
         },
     )
 
@@ -241,9 +289,35 @@ def comments(request, convention_uuid):
 
 
 @login_required
+def avenant_comments(request, convention_uuid):
+    result = services.convention_comments(request, convention_uuid)
+    if result["success"] == ReturnStatus.SUCCESS:
+        return HttpResponseRedirect(
+            reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+        )
+    return render(
+        request,
+        "conventions/avenant_comments.html",
+        {
+            **result,
+            "convention_form_step": 90,
+        },
+    )
+
+
+@login_required
 def recapitulatif(request, convention_uuid):
     # Step 11/11
     result = services.convention_summary(request, convention_uuid)
+    if result["convention"].is_avenant():
+        return render(
+            request,
+            "conventions/avenant_recapitulatif.html",
+            {
+                **result,
+                "convention_form_step": 100,
+            },
+        )
     return render(
         request,
         "conventions/recapitulatif.html",
@@ -490,3 +564,20 @@ def fiche_caf(request, convention_uuid):
     )
     response["Content-Disposition"] = f"attachment; filename=ficheCAF_{convention}.docx"
     return response
+
+
+@login_required
+@permission_required("convention.add_convention")
+def new_avenant(request, convention_uuid):
+    result = services.create_avenant(request, convention_uuid)
+    if result["success"] == ReturnStatus.SUCCESS:
+        return HttpResponseRedirect(
+            reverse("conventions:avenant_logements", args=[result["convention"].uuid])
+        )
+    return render(
+        request,
+        "conventions/new_avenant.html",
+        {
+            **result,
+        },
+    )

@@ -19,7 +19,7 @@ from programmes.models import (
 from upload.models import UploadedFile
 from upload.services import UploadService
 
-from conventions.models import ConventionType1and2
+from conventions.models import AvenantType, ConventionType1and2
 from conventions.templatetags.custom_filters import (
     inline_text_multiline,
     to_fr_date,
@@ -36,13 +36,23 @@ class ConventionTypeConfigurationError(Exception):
 
 
 def generate_convention_doc(convention, save_data=False):
-    # pylint: disable=R0914
+    # pylint: disable=R0912,R0914,R0915
     annexes = (
         Annexe.objects.prefetch_related("logement")
         .filter(logement__lot_id=convention.lot.id)
         .all()
     )
-    if convention.bailleur.is_hlm():
+    # It is an avenant
+    if convention.is_avenant():
+        if convention.avenant_type == AvenantType.PROGRAMME:
+            filepath = f"{settings.BASE_DIR}/documents/Avenant-Logements-template.docx"
+        else:
+            raise NotHandleConventionType(
+                "La génération de convention n'est pas disponible pour ce type de"
+                + f" bailleur : {convention.bailleur.get_type_bailleur_display()}"
+            )
+    # It is a convention
+    elif convention.bailleur.is_hlm():
         filepath = f"{settings.BASE_DIR}/documents/HLM-template.docx"
     elif convention.bailleur.is_sem():
         filepath = f"{settings.BASE_DIR}/documents/SEM-template.docx"

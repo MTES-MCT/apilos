@@ -6,8 +6,11 @@ from django.forms import BaseFormSet, formset_factory
 from django.forms.fields import FileField
 from django.core.exceptions import ValidationError
 
-from programmes.models import Financement, TypeOperation
-from conventions.models import ConventionType1and2, Preteur
+from programmes.models import (
+    Financement,
+    TypeOperation,
+)
+from conventions.models import ConventionType1and2, Preteur, AvenantType
 
 
 class ConventionCommentForm(forms.Form):
@@ -403,4 +406,14 @@ class ConventionType1and2Form(forms.Form):
             "Autres logements construits, acquis ou améliorés sans le concours financier"
             + " de l'Etat"
         ),
+    )
+
+
+class NewAvenantForm(forms.Form):
+    avenant_type = forms.TypedChoiceField(
+        label="Type d'avenant",
+        choices=AvenantType.choices,
+        error_messages={
+            "required": "Le type d'avenant est obligatoire",
+        },
     )

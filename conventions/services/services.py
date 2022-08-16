@@ -21,6 +21,7 @@ from .services_conventions import (
     convention_preview,
     convention_sent,
     convention_post_action,
+    create_avenant,
 )
 from .services_logements import (
     logements_update,

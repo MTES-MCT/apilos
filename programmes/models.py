@@ -143,6 +143,11 @@ class Programme(IngestableModel):
     }
 
     id = models.AutoField(primary_key=True)
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+    )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=255)
     numero_galion = models.CharField(max_length=255, null=True)
@@ -353,6 +358,11 @@ class Lot(IngestableModel):
     }
 
     id = models.AutoField(primary_key=True)
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+    )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nb_logements = models.IntegerField(null=True)
     bailleur = models.ForeignKey(

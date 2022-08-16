@@ -1,0 +1,26 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %}Nouvel avenant - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        {% include "conventions/common/form_header.html" with convention=parent_convention %}
+        <div class="fr-container  fr-mt-5w fr-pb-5w">
+            <h4 class="fr-mb-2w">Créer un nouvel avenant</h4>
+            <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
+                {% csrf_token %}
+                <div class="fr-mt-1w block--row-strech" >
+                    <div class="fr-col-12 fr-mb-2w">
+                        {% include "common/form/input_select.html" with form_input=form.avenant_type %}
+                    </div>
+                </div>
+                <div class="form-button-footer fr-col-md-12 fr-py-5w">
+                    {% include "common/button/next_and_save.html" with suivant='conventions:selection' %}
+                    <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
+                        Revenir à la liste des conventions
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -7,17 +7,13 @@
         </button>
     </div>
     <div id="back_to_recap" hidden>
-        <button type='button' class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" type="button" id="return_recap">
+        <a class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right" id="return_recap"
+            href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
             Retour au Récapitulatif
-        </button>
+        </a>
     </div>
 </div>
 <script type="text/javascript" nonce="{{request.csp_nonce}}">
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('return_recap')
-            .addEventListener('click', function(){ location.href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' });
-    });
-
     comments = document.getElementsByClassName('content__icons--opened')
     has_comments = false
     for (var i=0;i<comments.length; i++) {

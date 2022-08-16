@@ -1,0 +1,38 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %}Commentaires - APiLos{% endblock%}
+
+{% load static %}
+
+{% block javascript_extras %}
+    <script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
+
+{% block css_extras %}
+    <link rel="stylesheet" href="{% static "dropzonejs/min/basic.min.css" %}">
+    <link rel="stylesheet" href="{% static "dropzonejs/min/dropzone.min.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/step_progressbar.html"%}
+        <div class="fr-container">
+            <form method="post" action="">
+                {% include "conventions/common/form_comments.html" %}
+
+                <div class="form-button-footer fr-col-md-12 fr-py-5w">
+                    {% if editable %}
+                        {% include "common/button/next_and_save.html" with suivant='conventions:avenant_comments' convention_uuid=convention.uuid %}
+                        {% include "common/button/previous.html" with precedent='conventions:avenant_annexes' convention_uuid=convention.uuid %}
+                    {% else %}
+                        {% include "common/button/noteditable_button.html"%}
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

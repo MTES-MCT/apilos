@@ -10,11 +10,23 @@
                         <div class="fr-highlight">
                             {% if CERBERE_AUTH %}
                                 <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
-                                    <h1>Opération n°{{convention.programme.numero_galion}}</h1>
+                                    <h1>Opération n°{{convention.programme.numero_galion}}{% if convention.is_avenant %} - Avenant{% endif %}</h1>
                                     <h2>{{convention.programme.nom}}</h2>
                                 </a>
                             {% else %}
-                                <h1>{{convention.programme.nom}}</h1>
+                                {% if convention.is_avenant %}
+                                    <h1>
+                                        Avenant de la convention <a class='fr-link apilos-link fr-h1' href="{% url 'conventions:recapitulatif' convention_uuid=convention.parent.uuid %}"">{{convention.parent.numero}}</a>
+                                    </h1>
+                                    <h2>
+                                        {{convention.programme.nom}}
+                                    </h2>
+                                {% else %}
+                                    <h1>
+                                        {{convention.programme.nom}}
+                                    </h1>
+                                {% endif %}
+                                </h1>
                             {% endif %}
                         </div>
                     </div>

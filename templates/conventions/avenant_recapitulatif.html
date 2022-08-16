@@ -1,0 +1,99 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %}Recapitulatif - APiLos{% endblock%}
+
+{% load static %}
+
+{% load custom_filters %}
+
+{% block javascript_extras %}
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/turbo.es2017-umd.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script type="text/javascript" src="{% static "js/type1and2.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script nonce="{{request.csp_nonce}}">
+        Turbo.session.drive = false
+    </script>
+{% endblock %}
+
+
+{% block content %}
+    {% with programme_uuid=programme.uuid|slugify convention_uuid=convention.uuid|slugify lot_uuid=lot.uuid|slugify %}
+        <input type="hidden" id="convention_uuid" value="{{convention.uuid}}">
+        <div class="fr-container-fluid ds_banner">
+            {% include "conventions/common/form_header.html"%}
+            {% include "common/step_progressbar.html"%}
+            <div class="fr-container">
+                {% csrf_token %}
+                {% include "conventions/recapitulatif/alert_convention.html" %}
+                {% if convention.display_options.display_comments %}
+                    <turbo-frame id="opened_comments_block" data-turbo="true">
+                        {% include "comments/opened_comments.html" %}
+                    </turbo-frame>
+                {% endif %}
+
+                {% include "conventions/recapitulatif/logements.html" %}
+                {% include "conventions/recapitulatif/annexes.html" %}
+                {% include "conventions/recapitulatif/comments.html" %}
+
+
+                <turbo-frame id="convention_actions" data-turbo="true">
+
+                    <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
+                        {% if convention.display_options.display_progress_bar_1 or convention.display_options.display_progress_bar_4 %}
+                            {% include "conventions/actions/generate_convention.html" %}
+                        {% endif %}
+                        {% if request|is_instructeur and convention.display_options.display_back_to_instruction %}
+                            {% include "conventions/actions/back_to_instruction.html" %}
+                        {% endif %}
+                    </div>
+                    {% if request|is_bailleur and convention.is_project %}
+                        <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
+                            {% include "conventions/actions/delete.html"%}
+                            {% include "conventions/actions/submit_convention.html" %}
+                        </div>
+                    {% endif %}
+
+                    {% include "conventions/actions/bailleur_notification.html" %}
+
+                    {% include "conventions/actions/instructeur_notification.html" %}
+
+                    {% include "conventions/actions/instructeur_validation.html" %}
+
+                    {% if convention.display_options.display_is_resiliated %}
+
+                        <div class="fr-col-md-12 fr-py-5w">
+                            <div role="alert" class="fr-alert fr-alert--warning">
+
+                                <p class="fr-alert__title">La convention a été résiliée le {{ convention.date_resiliation|date:"j F Y" }}</p>
+
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </turbo-frame>
+
+
+
+
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12">
+
+                        <div class="form-button-footer fr-col-md-12 fr-py-5w">
+                            {% if request|is_bailleur %}
+                                {% if convention.is_bailleur_editable %}
+                                    {% include "common/button/previous.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
+                                {% else %}
+                                    {% include "common/button/return_convention_index.html" %}
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <script type="text/javascript" src="{% static "js/recap-logements-table.js" %}" nonce="{{request.csp_nonce}}"></script>
+
+    {% endwith %}
+{% endblock %}
