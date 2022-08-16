@@ -15,7 +15,7 @@ from datetime import timedelta
 import os
 import sys
 
-from decouple import config
+import decouple
 import dj_database_url
 
 import sentry_sdk
@@ -39,7 +39,7 @@ def get_env_variable(name, cast=str, default=""):
         return cast(os.environ[name])
     # pylint: disable=W0702, bare-except
     except:
-        return config(name, cast=cast, default=default)
+        return decouple.config(name, cast=cast, default=default)
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -157,18 +157,21 @@ TEMPLATES = [
 WSGI_APPLICATION = "core.wsgi.application"
 
 try:
-    database_url = os.environ["DATABASE_URL"]
+    # dj_database_url is used in scalingo environment to interpret the
+    # connection configuration to the DB from a single URL with all path
+    # and credentials
+    database_url = decouple.config("DATABASE_URL")
     default_settings = dj_database_url.config()
-except KeyError:
+except decouple.UndefinedValueError:
     default_settings = {
         "ENGINE": "django.db.backends.postgresql",
-        "USER": config("DB_USER"),
-        "NAME": config("DB_NAME"),
-        "HOST": config("DB_HOST"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "PORT": config("DB_PORT", default="5432"),
+        "USER": get_env_variable("DB_USER"),
+        "NAME": get_env_variable("DB_NAME"),
+        "HOST": get_env_variable("DB_HOST"),
+        "PASSWORD": get_env_variable("DB_PASSWORD"),
+        "PORT": get_env_variable("DB_PORT", default="5432"),
         "TEST": {
-            "NAME": config("DB_NAME") + "-test",
+            "NAME": get_env_variable("DB_NAME") + "-test",
         },
         "ATOMIC_REQUESTS": True,
     }
@@ -372,7 +375,7 @@ if CERBERE_AUTH:
         "UTILISATEUR.NOM": "last_name",
         "UTILISATEUR.PRENOM": "first_name",
         "UTILISATEUR.MEL": "email",
-    }  # ,'UTILISATEUR.UNITE':'unite'
+    }
 
     LOGIN_URL = "/accounts/cerbere-login"
 
@@ -398,7 +401,7 @@ if SENTRY_URL:
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
     "OPTIONS": {
-        "url": config("REDIS_URL", default="redis://redis:6379"),
+        "url": decouple.config("REDIS_URL", default="redis://redis:6379"),
     },
     "MIDDLEWARE": [
         "django_dramatiq.middleware.AdminMiddleware",
