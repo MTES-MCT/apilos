@@ -70,6 +70,8 @@ class EmailService:
             {"password": password, "user": user, "login_url": login_url},
         )
         self.subject = "Bienvenue sur la plateforme APiLos"
+        self.build_msg()
+        self.msg.send()
 
     def send_email_valide(
         self,

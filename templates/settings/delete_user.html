@@ -23,7 +23,7 @@
                                 <li>
                                     <form method="post" action="{% url 'settings:delete_user' username=user.username %}">
                                         {% csrf_token %}
-                                        <button class="fr-btn fr-btn--icon-left fr-fi-alert-line" id='delete_{{user.id}}'>
+                                        <button class="fr-btn apilos-btn--red fr-btn--icon-left fr-fi-delete-line" id='delete_{{user.id}}'>
                                             Supprimer l'utilisateur
                                         </button>
                                     </form>
