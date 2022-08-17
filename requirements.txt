@@ -133,9 +133,9 @@ dramatiq[redis,watch]==1.13.0 \
     # via
     #   -r requirements.in
     #   django-dramatiq
-drf-spectacular==0.22.1 \
-    --hash=sha256:17ac5e31e5d6150dd5fa10843b429202f4f38069202acc44394cc5a771de63d9 \
-    --hash=sha256:866e16ddaae167a1234c76cd8c351161373551db994ce9665b347b32d5daf38b
+drf-spectacular==0.23.1 \
+    --hash=sha256:2e42ae16717a5c3b2ae8632ac2b92f7eeb7b4fb9a941bc7879a92343e50ddeb6 \
+    --hash=sha256:d1724da1fd4ae99d66333b1c8530f3c51788d87b380f5951830bf8405f234120
     # via -r requirements.in
 drf-yasg==1.21.3 \
     --hash=sha256:85899b8b173cac7d39af3fea205bdc1a599aed8de3389a3bcccc29b37b9b983e \
