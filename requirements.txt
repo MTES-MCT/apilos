@@ -123,9 +123,9 @@ djangorestframework-simplejwt==5.2.0 \
 docxcompose==1.3.4 \
     --hash=sha256:b1a40d4f95751565822350174971012875f82a32b83a9d1be098edd965047029
     # via docxtpl
-docxtpl==0.16.3 \
-    --hash=sha256:238e6b9ac23f231d5031b939c0950ab609ce34e6c2c1b862bd0cab0399b3a8d9 \
-    --hash=sha256:b8c5cd679877007a8fec55f28aa472d88b583b66cb779c72a966ac2ada0eca53
+docxtpl==0.16.4 \
+    --hash=sha256:a823396053cf49fb9ed2ca2b75c2f3da9f87496eac4fdc6f1d1ba830b543402d \
+    --hash=sha256:ffaa08b76a01577e22eef731553c55d3048fe96cc2dc99950e6448e68922cb2e
     # via -r requirements.in
 dramatiq[redis,watch]==1.13.0 \
     --hash=sha256:8ef7509ca62bc45c3f1e3b1a0248e9f774337100e32ba1502cfcca15df79ad61 \
