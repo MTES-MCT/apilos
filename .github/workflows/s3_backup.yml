@@ -1,0 +1,31 @@
+#fixme : we will need to do it for production and siap-production
+name: Backup S3 Production Bucket
+
+on:
+  schedule:
+    # At 01:27 UTC every Monday
+    - cron: '27 1 * * 1'
+
+env:
+  S3_HOST: s3.fr-par.scw.cloud
+  S3_BUCKET: s3://apilos-prod
+  BACKUP_NAME: s3_production
+
+jobs:
+  backup-production:
+    name: Backup S3 in Production environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Backup
+        run: |
+          pip install s3cmd
+          mkdir ${{ env.BACKUP_NAME }}
+          echo 's3cmd --host=${{ env.S3_HOST }} --host-bucket= --access_key=${{ secrets.S3_ACCESS_KEY }} --secret_key=${{ secrets.S3_SECRET_KEY }} sync --dry-run ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}'
+          s3cmd --host=${{ env.S3_HOST }} --host-bucket= --access_key=${{ secrets.S3_ACCESS_KEY }} --secret_key=${{ secrets.S3_SECRET_KEY }} sync ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}
+          tar cfz ${{ env.BACKUP_NAME }}.tar.gz ${{ env.BACKUP_NAME }}
+      - name: Upload Backup as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.BACKUP_NAME }}
+          path: ${{ env.BACKUP_NAME }}.tar.gz
