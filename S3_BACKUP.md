@@ -11,3 +11,8 @@ Ajouter les `Repository secrets` :
 * S3_ACCESS_KEY
 * S3_SECRET_KEY
 
+## Execution
+
+Le backup est exécuté régulièrement selon la configuraton du [workflow](.github/workflows/s3_backup.yml)
+
+Le résultat du backup est stocké dans les artefacts du workflow executé et est conservé 90 jours
