@@ -95,9 +95,9 @@ class AdministrationForm(forms.Form):
     adresse = forms.CharField(
         required=False,
         label="Adresse de l'administration",
-        max_length=255,
+        max_length=5000,
         error_messages={
-            "max_length": "L'adresse ne doit pas excéder 255 caractères",
+            "max_length": "L'adresse ne doit pas excéder 5000 caractères",
         },
     )
     code_postal = forms.CharField(
