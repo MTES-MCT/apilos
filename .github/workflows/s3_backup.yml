@@ -1,29 +1,26 @@
 #fixme : we will need to do it for production and siap-production
-name: Backup S3 Staging bucket
+name: Backup S3 Production Bucket
 
 on:
-  # Any push to test, fixme : to be removed
-  push:
   schedule:
     # At 1:31 every Monday
-    - cron: '31 1 * * 1'
+    # test : le vendredi à 17 h 15
+    - cron: '1 15 * * 5'
 
 env:
   S3_HOST: s3.fr-par.scw.cloud
-  S3_BUCKET: s3://apilos-staging
-  BACKUP_NAME: staging
+  S3_BUCKET: s3://apilos-prod
+  BACKUP_NAME: s3_production
 
 jobs:
-  backup-staging:
-    name: Backup S3 in Staging environment
+  backup-production:
+    name: Backup S3 in Production environment
     runs-on: ubuntu-latest
-
 
     steps:
       - name: Backup
         run: |
           pip install s3cmd
-          s3cmd --host=${{ env.S3_HOST }} --access_key=${{ secrets.S3_ACCESS_KEY }} --secret_key=${{ secrets.S3_SECRET_KEY }} ls
           mkdir ${{ env.BACKUP_NAME }}
           echo 's3cmd --host=${{ env.S3_HOST }} --host-bucket= --access_key=${{ secrets.S3_ACCESS_KEY }} --secret_key=${{ secrets.S3_SECRET_KEY }} sync --dry-run ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}'
           s3cmd --host=${{ env.S3_HOST }} --host-bucket= --access_key=${{ secrets.S3_ACCESS_KEY }} --secret_key=${{ secrets.S3_SECRET_KEY }} sync ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}
