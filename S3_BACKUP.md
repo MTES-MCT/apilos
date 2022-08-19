@@ -7,7 +7,7 @@ Pour executer ce back up on utilise github action
 
 Pour s'exécuter, github action a besoin des identifiants s3 à configurer dans [Settings](https://github.com/MTES-MCT/apilos/settings) > Secrete > [Actions](https://github.com/MTES-MCT/apilos/settings/secrets/actions).
 
-Dans la section environnement secrets, ajouter les clés:
+Ajouter les `Repository secrets` :
 * S3_ACCESS_KEY
 * S3_SECRET_KEY
 

@@ -24,5 +24,6 @@ jobs:
         run: |
           pip install s3cmd
           s3cmd --host=${{ env.S3_HOST }} --access_key=${{ secrets.S3_ACCESS_KEY }} --secret_key=${{ secrets.S3_SECRET_KEY }} ls
+          mkdir ${{ env.BACKUP_NAME }}
           s3cmd --host=${{ env.S3_HOST }} --access_key=${{ secrets.S3_ACCESS_KEY }} --secret_key=${{ secrets.S3_SECRET_KEY }} sync --dry-run ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}
 #          tar cfz ${{ env.BACKUP_NAME }}.tar.gz ${{ env.BACKUP_NAME }}
