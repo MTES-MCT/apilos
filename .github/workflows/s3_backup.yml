@@ -4,8 +4,8 @@ name: Backup S3 Production Bucket
 on:
   schedule:
     # At 1:31 every Monday
-    # test : toutes les heures à l minute 7
-    - cron: '7 * * * *'
+    # test : à 17 h 23 tous les jours
+    - cron: '23 15 * * *'
 
 env:
   S3_HOST: s3.fr-par.scw.cloud
