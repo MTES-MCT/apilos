@@ -5,6 +5,7 @@ from typing import Any
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
+from django.http.request import HttpRequest
 from django.views.decorators.http import require_GET, require_POST
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
@@ -895,3 +896,40 @@ def create_avenant(request, convention_uuid):
         "form": new_avenant_form,
         "parent_convention": parent_convention,
     }
+
+
+class ConventionCommentsService:
+    convention: Convention
+    request: HttpRequest
+    form: ConventionCommentForm
+    return_status: utils.ReturnStatus
+
+    def __init__(
+        self,
+        convention: Convention,
+        request: HttpRequest,
+    ):
+        self.convention = convention
+        self.request = request
+
+    def get_comments(self):
+        self.form = ConventionCommentForm(
+            initial={
+                "uuid": self.convention.uuid,
+                "comments": self.convention.comments,
+                **utils.get_text_and_files_from_field(
+                    "comments", self.convention.comments
+                ),
+            }
+        )
+
+    def save_comments(self):
+        self.request.user.check_perm("convention.change_convention", self.convention)
+        self.form = ConventionCommentForm(self.request.POST)
+        if self.form.is_valid():
+            self.convention.comments = utils.set_files_and_text_field(
+                self.form.cleaned_data["comments_files"],
+                self.form.cleaned_data["comments"],
+            )
+            self.convention.save()
+            self.return_status = utils.ReturnStatus.SUCCESS

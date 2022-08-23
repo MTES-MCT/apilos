@@ -27,7 +27,7 @@ urlpatterns = [
     path("comments/<convention_uuid>", views.comments, name="comments"),
     path(
         "avenant_comments/<convention_uuid>",
-        views.avenant_comments,
+        views.AvenantCommentsView.as_view(),
         name="avenant_comments",
     ),
     path("recapitulatif/<convention_uuid>", views.recapitulatif, name="recapitulatif"),

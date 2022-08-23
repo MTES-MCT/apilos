@@ -1,18 +1,21 @@
 from zipfile import ZipFile
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
-from django.views.decorators.http import require_GET, require_http_methods
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
-from django.shortcuts import render
 from django.http import FileResponse, Http404, HttpResponseRedirect, HttpResponse
+from django.shortcuts import render
 from django.urls import reverse
-from django.conf import settings
+from django.views import View
+from django.views.decorators.http import require_GET, require_http_methods
 
-from programmes.models import FinancementEDD
 from conventions.models import Convention
-from conventions.services import services, convention_generator
+from conventions.services import services, convention_generator, utils
+from conventions.services.services_conventions import ConventionCommentsService
 from conventions.services.utils import ReturnStatus
+from programmes.models import FinancementEDD
 from upload.services import UploadService
 
 
@@ -581,3 +584,65 @@ def new_avenant(request, convention_uuid):
             **result,
         },
     )
+
+
+# Decorator that check the user has permission and scope to handle action
+# for a given convention
+def has_scoped_permission(permission):
+    def has_permission(function):
+        def wrapper(view, request, **kwargs):
+            convention_uuid = kwargs.get("convention_uuid", None)
+            if convention_uuid:
+                convention = Convention.objects.get(uuid=convention_uuid)
+                request.user.check_perm(permission, convention)
+            else:
+                request.user.check_perm(permission)
+            return function(view, request, **kwargs)
+
+        return wrapper
+
+    return has_permission
+
+
+class AvenantCommentsView(LoginRequiredMixin, View):
+    @has_scoped_permission("convention.view_convention")
+    def get(self, request, convention_uuid):
+        convention = Convention.objects.get(uuid=convention_uuid)
+        convention_comment_service = ConventionCommentsService(
+            convention=convention, request=request
+        )
+        convention_comment_service.get_comments()
+        return render(
+            request,
+            "conventions/avenant_comments.html",
+            {
+                **utils.base_convention_response_error(
+                    request, convention_comment_service.convention
+                ),
+                "form": convention_comment_service.form,
+                "convention_form_step": 90,
+            },
+        )
+
+    @has_scoped_permission("convention.change_convention")
+    def post(self, request, convention_uuid):
+        convention = Convention.objects.get(uuid=convention_uuid)
+        convention_comment_service = ConventionCommentsService(
+            convention=convention, request=request
+        )
+        convention_comment_service.save_comments()
+        if convention_comment_service.return_status == utils.ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[convention_uuid])
+            )
+        return render(
+            request,
+            "conventions/avenant_comments.html",
+            {
+                **utils.base_convention_response_error(
+                    request, convention_comment_service.convention
+                ),
+                "form": convention_comment_service.form,
+                "convention_form_step": 90,
+            },
+        )

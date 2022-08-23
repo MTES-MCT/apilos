@@ -25,7 +25,7 @@ class ServicesConventionsTests(TestCase):
             email_sent[0].subject, f"Convention à instruire ({convention})"
         )
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent[0].body)
-        self.assertEqual(email_sent[1].to, ["sabine@apilos.com"])
+        self.assertEqual(email_sent[1].to, ["fix@apilos.com"])
         self.assertEqual(email_sent[1].from_email, "contact@apilos.beta.gouv.fr")
         self.assertEqual(
             email_sent[1].subject, f"Convention à instruire ({convention})"
@@ -35,7 +35,7 @@ class ServicesConventionsTests(TestCase):
         User.objects.filter(username="raph").update(
             preferences_email=EmailPreferences.AUCUN
         )
-        User.objects.filter(username="sabine").update(
+        User.objects.filter(username="fix").update(
             preferences_email=EmailPreferences.AUCUN
         )
         email_sent = services_conventions.send_email_instruction(
@@ -106,7 +106,7 @@ class ServicesConventionsTests(TestCase):
         User.objects.filter(username="raph").update(
             preferences_email=EmailPreferences.AUCUN
         )
-        User.objects.filter(username="sabine").update(
+        User.objects.filter(username="fix").update(
             preferences_email=EmailPreferences.AUCUN
         )
 
@@ -149,7 +149,7 @@ class ServicesConventionsTests(TestCase):
             "https://apilos.beta.gouv.fr/my_convention", convention, [], False
         )
 
-        self.assertEqual(email_sent.to, ["sabine@apilos.com"])
+        self.assertEqual(email_sent.to, ["fix@apilos.com"])
         self.assertEqual(email_sent.cc, [])
         self.assertEqual(email_sent.from_email, "contact@apilos.beta.gouv.fr")
         self.assertEqual(email_sent.subject, f"Convention modifiée ({convention})")
@@ -159,7 +159,7 @@ class ServicesConventionsTests(TestCase):
         User.objects.filter(username="raph").update(
             preferences_email=EmailPreferences.AUCUN
         )
-        User.objects.filter(username="sabine").update(
+        User.objects.filter(username="fix").update(
             preferences_email=EmailPreferences.AUCUN
         )
 
