@@ -46,6 +46,17 @@ class AvenantCommentsViewTests(TestCase):
             self.convention_75.comments, '{"files": [], "text": "This is a comment"}'
         )
 
+        response = self.client.post(
+            self.target_path,
+            {"comments": "O" * 5001},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "conventions/avenant_comments.html")
+        self.convention_75.refresh_from_db()
+        self.assertEqual(
+            self.convention_75.comments, '{"files": [], "text": "This is a comment"}'
+        )
+
     def test_AvenantCommentsView_instructeur_ok(self):
         # login as user_instructeur_paris
         response = self.client.post(

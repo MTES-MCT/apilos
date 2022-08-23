@@ -5,7 +5,12 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
-from django.http import FileResponse, Http404, HttpResponseRedirect, HttpResponse
+from django.http import (
+    FileResponse,
+    Http404,
+    HttpResponseRedirect,
+    HttpResponse,
+)
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
@@ -605,6 +610,9 @@ def has_scoped_permission(permission):
 
 
 class AvenantCommentsView(LoginRequiredMixin, View):
+
+    target_template: str = "conventions/avenant_comments.html"
+
     @has_scoped_permission("convention.view_convention")
     def get(self, request, convention_uuid):
         convention = Convention.objects.get(uuid=convention_uuid)
@@ -614,7 +622,7 @@ class AvenantCommentsView(LoginRequiredMixin, View):
         convention_comment_service.get_comments()
         return render(
             request,
-            "conventions/avenant_comments.html",
+            self.target_template,
             {
                 **utils.base_convention_response_error(
                     request, convention_comment_service.convention
@@ -637,7 +645,7 @@ class AvenantCommentsView(LoginRequiredMixin, View):
             )
         return render(
             request,
-            "conventions/avenant_comments.html",
+            self.target_template,
             {
                 **utils.base_convention_response_error(
                     request, convention_comment_service.convention

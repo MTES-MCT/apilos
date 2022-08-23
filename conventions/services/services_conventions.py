@@ -902,7 +902,7 @@ class ConventionCommentsService:
     convention: Convention
     request: HttpRequest
     form: ConventionCommentForm
-    return_status: utils.ReturnStatus
+    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
 
     def __init__(
         self,
