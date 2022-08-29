@@ -39,7 +39,6 @@ def get_text_and_files_from_field(name, field):
                 "text": field if isinstance(field, str) else "",
             }
         files = object_field["files"]
-
     returned_files = {}
     for file in UploadedFile.objects.filter(uuid__in=files):
         returned_files[str(file.uuid)] = {
