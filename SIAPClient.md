@@ -113,63 +113,10 @@ Puis test de quelques appels:
 >>> SIAPClient.get_instance().get_operation(user_login='nicolas.oudard@beta.gouv.fr', habilitation_id=5, operation_identifier='20220600005')
 ```
 
-## Todo
-
-- [x] Affichage des habilitations dans l’en-tête
-- [x] Affichage du menu dans l’entête
-- [x] Création des environnements integration recette preprod
-- [x] Résoudre les pb d’appel aux API menu et opération
-- [x] Création d’une route API permettant au SIAP de récupérer le détail des conventions
-- [x] Création d’une route API permettant d’afficher les indicateurs
-- [x] Intégration du design de l’entête
-- [x] Mapping SIAP / APiLos en utilisant les routes SIAP>opération et APiLos>opération
-- [x] Création de l’entité de l'utilisateur (Administration ou Bailleur) si elle n’existe pas
-- [x] Retourner les indicateurs selon l'habilitation active de l'utilisateur
-- [x] Affichage de la liste des conventions selon l’habilitation
-- [x] Création des conventions et affichage des conventions à faire pour un opération données
-- [x] Ajout d'un lien vers l'opération du SIAP à partir de la convention
-- [x] Adaptation de l'interface pour le SIAP
-- [ ] **Démarrage de l'expérimentation**
-- [x] Recharger régulièrement la configuration du client SIAP
-- [x] Controle de la signature JWT sur la route config
-- [ ] BUG : Opération créée de zero -> erreur avant l'appel à l'API SIAP
-- [ ] Route operation_modifiee notifie APiLos de la modification d'une opération (utilisé pour les opérations engagées et plus si besoin selon les évolutions métiers)
-- [x] Ajouter logements, annexes et stationnements à l'API /opération de APiLos
-- [ ] Gestion des conventions sans travaux à partir du SIAP
-- [ ] Mis à jour du client suivant les évolutions de l'API SIAP (habilitation valide, bailleur...)
-    - [ ] Affichage des habilitations selon un paramètre `"valide": True,`
-    - [ ] siret / siren
-
-```
-            "entiteMorale": {
-                "nom": "3F GRAND EST",
-                "siren": "498273556",
-                "siret": "49827355600123", ???
-```
-
-    - [ ] adresse sur 2 lignes
-
-```
-        "adresse": " Allée de l’Aubepine 13010 Marseille",
-VERS
-        "adresseLigne4": "80 RUE ALBE",
-        "adresseLigne6": "13004 MARSEILLE 4",
-```
-
-- [ ] Application des autres type d'habilitation (autre que Bailleur et Instructeur)
-    - [ ] Affichage des conventions en lecture seule
-    - [ ] Affichage des conventions selon la géographie
-- [ ] Envoi de mail à partir d'une convention SIAP
-- [ ] Affichage des statistiques du conventionnement
-- [ ] Miror du repo github dans [gitlab](https://gitlab-forge.din.developpement-durable.gouv.fr/dgaln/dhup/apilos) pour le SNUM
-- [ ] Mis à jour des Roles de l'utilisateur pour supprimer les roles obsolètes (à faire lors de la récup des habilitations ?)
-
-
-Questions ouvertes pour plus tard :
+## Questions ouvertes pour plus tard :
 
 - [ ] Comment retrouver les paramètres propres à APiLos dans la version SIAP
 - [ ] Deloguer sur le SIAP / Apilos doit délogguer des 2 plateformes
-
 
 ## token exemple
 

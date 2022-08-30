@@ -22,9 +22,15 @@ urlpatterns = [
         name="avenant_annexes",
     ),
     path(
-        "stationnements/<convention_uuid>", views.stationnements, name="stationnements"
+        "stationnements/<convention_uuid>",
+        views.ConventionTypeStationnementView.as_view(),
+        name="stationnements",
     ),
-    path("comments/<convention_uuid>", views.comments, name="comments"),
+    path(
+        "comments/<convention_uuid>",
+        views.ConventionCommentsView.as_view(),
+        name="comments",
+    ),
     path(
         "avenant_comments/<convention_uuid>",
         views.AvenantCommentsView.as_view(),

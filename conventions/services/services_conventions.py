@@ -251,38 +251,6 @@ def _save_convention_financement_prets(formset, convention):
         pret.save()
 
 
-def convention_comments(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
-    if request.method == "POST":
-        request.user.check_perm("convention.change_convention", convention)
-        form = ConventionCommentForm(request.POST)
-        if form.is_valid():
-            convention.comments = utils.set_files_and_text_field(
-                form.cleaned_data["comments_files"],
-                form.cleaned_data["comments"],
-            )
-            convention.save()
-            # All is OK -> Next:
-            return {
-                "success": utils.ReturnStatus.SUCCESS,
-                "convention": convention,
-                "form": form,
-            }
-    else:
-        request.user.check_perm("convention.view_convention", convention)
-        form = ConventionCommentForm(
-            initial={
-                "uuid": convention.uuid,
-                "comments": convention.comments,
-                **utils.get_text_and_files_from_field("comments", convention.comments),
-            }
-        )
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "form": form,
-    }
-
-
 def convention_summary(request, convention_uuid, convention_number_form=None):
     convention = (
         Convention.objects.prefetch_related("bailleur")

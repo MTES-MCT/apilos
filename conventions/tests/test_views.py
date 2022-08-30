@@ -14,6 +14,7 @@ class AvenantCommentsViewTests(TestCase):
         self.target_path = reverse(
             "conventions:avenant_comments", args=[self.convention_75.uuid]
         )
+        self.target_template = "conventions/avenant_comments.html"
 
     def test_AvenantCommentsView_not_logged(self):
         # user not logged -> redirect to login
@@ -51,7 +52,7 @@ class AvenantCommentsViewTests(TestCase):
             {"comments": "O" * 5001},
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "conventions/avenant_comments.html")
+        self.assertTemplateUsed(response, self.target_template)
         self.convention_75.refresh_from_db()
         self.assertEqual(
             self.convention_75.comments, '{"files": [], "text": "This is a comment"}'
@@ -110,3 +111,16 @@ class AvenantCommentsViewTests(TestCase):
 
         response = self.client.post(self.target_path)
         self.assertEqual(response.status_code, 403)
+
+
+class ConventionCommentsViewTests(AvenantCommentsViewTests):
+    @classmethod
+    def setUpTestData(cls):
+        utils_fixtures.create_all()
+
+    def setUp(self):
+        self.convention_75 = Convention.objects.filter(numero="0001").first()
+        self.target_path = reverse(
+            "conventions:comments", args=[self.convention_75.uuid]
+        )
+        self.target_template = "conventions/comments.html"
