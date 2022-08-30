@@ -439,7 +439,7 @@ class ProgrammeEDDForm(forms.Form):
         },
         help_text=(
             "Référence légale de dépôt de l'état descriptif de division "
-            + "volumétrique aux services des hypothèques comportant "
+            + "volumétrique aux services de la publicité foncière comportant "
             + "le numéro, le service, la date et les volumes du dépôt"
         ),
     )
@@ -464,7 +464,7 @@ class ProgrammeEDDForm(forms.Form):
         },
         help_text=(
             "Référence légale de dépôt de l'état descriptif de division "
-            + "classique aux services des hypothèques comportant "
+            + "classique aux services de la publicité foncière comportant "
             + "le numéro, le service, la date et les volumes du dépôt"
         ),
     )
