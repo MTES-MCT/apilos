@@ -20,7 +20,12 @@ def assert_xlsx(self, my_class, file_name):
                 column_values.append(cell.value)
 
         for key in my_class.import_mapping:
-            self.assertIn(key, column_values)
+            words = key.split()
+            exists_in_list = False
+            for value in column_values:
+                if value is not None and all(word in value for word in words):
+                    exists_in_list = True
+            self.assertTrue(exists_in_list, f"not found ${key} in column ")
 
 
 def assert_get_text_and_files(self, object_to_test, field) -> None:

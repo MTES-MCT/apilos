@@ -51,22 +51,28 @@ def handle_uploaded_xlsx(upform, my_file, myClass, convention, file_name):
         for cell in col:
             if cell.value is None:
                 continue
-            if cell.value not in myClass.import_mapping:
+            key = all_words_in_key_of_dict(cell.value, myClass.import_mapping)
+            if key is None:
                 import_warnings.append(
                     Exception(
                         f"La colonne nommée '{cell.value}' est inconnue, "
-                        + "elle sera ignorée. Les colonnes attendues sont : "
+                        + "elle sera ignorée. Le contenu des colonnes "
+                        + "attendus est dans la liste : "
                         + f"{', '.join(myClass.import_mapping.keys())}"
                     )
                 )
                 continue
-            column_from_index[cell.column] = str(cell.value).strip()
+            column_from_index[cell.column] = key
 
     error_column = False
     for key in myClass.import_mapping:
-        if key not in list(column_from_index.values()):
+        if not all_words_in_key_of_dict(key, list(column_from_index.values())):
             upform.add_error(
-                "file", f"Le fichier importé doit avoir une colonne nommée '{key}'"
+                "file",
+                (
+                    "Le fichier importé doit avoir une colonne avec "
+                    + f"le contenu '{key}'"
+                ),
             )
             error_column = True
     if error_column:
@@ -269,3 +275,11 @@ def _extract_float_from_string(my_string: str):
         else:
             break
     return float(my_string[:i])
+
+
+def all_words_in_key_of_dict(value, dict_keys):
+    for key in dict_keys:
+        words = key.split()
+        if all(word in value for word in words):
+            return key
+    return None
