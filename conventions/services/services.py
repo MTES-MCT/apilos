@@ -11,7 +11,6 @@ from .services_programmes import (
 from .services_conventions import (
     conventions_index,
     convention_financement,
-    convention_comments,
     convention_summary,
     convention_submit,
     convention_feedback,
@@ -26,5 +25,4 @@ from .services_conventions import (
 from .services_logements import (
     logements_update,
     annexes_update,
-    stationnements_update,
 )

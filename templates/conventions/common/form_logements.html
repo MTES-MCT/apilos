@@ -84,31 +84,31 @@
                                 <td>
                                     <input type="hidden" id="{{form.uuid.id_for_label}}" name="{{form.uuid.html_name}}"
                                         value="{{ form.uuid.value|default_if_none:'' }}">
-                                    {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td>
-                                    {% include "common/form/input_select.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_select.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td id="lgt_sh">
-                                    {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" onchange="compute_total_value('sh')" parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" onchange="compute_total_value('sh')" parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td id="lgt_sa">
-                                    {% include "common/form/input_number.html" with form_input=form.surface_annexes step="0.01" onchange="compute_total_value('sa')" parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_number.html" with form_input=form.surface_annexes step="0.01" onchange="compute_total_value('sa')" parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td id="lgt_sar">
-                                    {% include "common/form/input_number.html" with form_input=form.surface_annexes_retenue step="0.01" onchange="compute_total_value('sar')" parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_number.html" with form_input=form.surface_annexes_retenue step="0.01" onchange="compute_total_value('sar')" parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td id="lgt_su">
-                                    {% include "common/form/input_number.html" with form_input=form.surface_utile step="0.01" onchange="compute_total_value('su')" parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_number.html" with form_input=form.surface_utile step="0.01" onchange="compute_total_value('su')" parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td>
-                                    {% include "common/form/input_number.html" with form_input=form.loyer_par_metre_carre step="0.01" parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_number.html" with form_input=form.loyer_par_metre_carre step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td>
-                                    {% include "common/form/input_number.html" with form_input=form.coeficient step="0.0001" parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_number.html" with form_input=form.coeficient step="0.0001" parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td id="lgt_loyer">
-                                    {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" onchange="compute_total_value('loyer')" parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" onchange="compute_total_value('loyer')" parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                             </tr>
                         {% endwith %}

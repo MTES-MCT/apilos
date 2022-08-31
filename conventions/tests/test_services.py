@@ -1,12 +1,168 @@
-from django.test import RequestFactory, TestCase
-from django.contrib.sessions.middleware import SessionMiddleware
-from core.services import EmailService
+import json
 
-from core.tests import utils_fixtures
-from conventions.services import services_conventions, utils
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.http import HttpRequest
+from django.test import RequestFactory, TestCase
+
+from conventions.forms import ConventionCommentForm
 from conventions.models import Convention, ConventionStatut
+from conventions.services import services_conventions, services_logements, utils
+from core.services import EmailService
+from core.tests import utils_fixtures
+from programmes.forms import TypeStationnementFormSet
+from programmes.models import TypeStationnement
 from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
+
+
+class ConventionTypeStationnementServiceTests(TestCase):
+    service_class = services_logements.ConventionTypeStationnementService
+
+    @classmethod
+    def setUpTestData(cls):
+        utils_fixtures.create_all()
+
+    def setUp(self):
+        request = HttpRequest()
+        convention = Convention.objects.get(numero="0001")
+        request.user = User.objects.get(username="fix")
+        self.service = self.service_class(convention=convention, request=request)
+
+    def test_get(self):
+        self.service.get()
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertIsInstance(self.service.formset, TypeStationnementFormSet)
+
+    def test_save(self):
+        self.service.request.POST = {
+            "form-TOTAL_FORMS": 2,
+            "form-INITIAL_FORMS": 2,
+            "form-0-uuid": "",
+            "form-0-typologie": "GARAGE_AERIEN",
+            "form-0-nb_stationnements": 30,
+            "form-0-loyer": "",
+            "form-1-uuid": "",
+            "form-1-typologie": "GARAGE_ENTERRE",
+            "form-1-nb_stationnements": "",
+            "form-1-loyer": 100.00,
+        }
+        self.service.save()
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        for form in self.service.formset.forms:
+            self.assertTrue(
+                form.has_error("loyer") or form.has_error("nb_stationnements")
+            )
+
+        self.service.request.POST = {
+            "form-TOTAL_FORMS": 2,
+            "form-INITIAL_FORMS": 2,
+            "form-0-uuid": "",
+            "form-0-typologie": "GARAGE_AERIEN",
+            "form-0-nb_stationnements": 30,
+            "form-0-loyer": 12,
+            "form-1-uuid": "",
+            "form-1-typologie": "GARAGE_ENTERRE",
+            "form-1-nb_stationnements": 5,
+            "form-1-loyer": 10.00,
+        }
+
+        self.service.save()
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
+        garage_aerien = TypeStationnement.objects.get(
+            lot=self.service.convention.lot, typologie="GARAGE_AERIEN"
+        )
+        self.assertEqual(garage_aerien.nb_stationnements, 30)
+        self.assertEqual(garage_aerien.loyer, 12)
+        garage_enterre = TypeStationnement.objects.get(
+            lot=self.service.convention.lot, typologie="GARAGE_ENTERRE"
+        )
+        self.assertEqual(garage_enterre.nb_stationnements, 5)
+        self.assertEqual(garage_enterre.loyer, 10)
+
+
+class ConventionCommentsServiceTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        utils_fixtures.create_all()
+
+    def setUp(self):
+        request = HttpRequest()
+        convention = Convention.objects.get(numero="0001")
+        request.user = User.objects.get(username="fix")
+        self.convention_comments_service = (
+            services_conventions.ConventionCommentsService(
+                convention=convention, request=request
+            )
+        )
+
+    def test_get_comments(self):
+        self.convention_comments_service.get_comments()
+        self.assertEqual(
+            self.convention_comments_service.return_status, utils.ReturnStatus.ERROR
+        )
+        self.assertIsInstance(
+            self.convention_comments_service.form, ConventionCommentForm
+        )
+        self.assertEqual(
+            self.convention_comments_service.form.initial["uuid"],
+            self.convention_comments_service.convention.uuid,
+        )
+        comments = json.loads(self.convention_comments_service.convention.comments)
+        text = comments["text"] if "text" in comments else None
+        self.assertEqual(
+            self.convention_comments_service.form.initial["comments"], text
+        )
+        files = comments["files"] if "files" in comments else None
+        self.assertEqual(
+            json.loads(self.convention_comments_service.form.initial["comments_files"]),
+            files,
+        )
+
+    def test_save_comments(self):
+        self.convention_comments_service.request.POST["comments"] = ("E" * 5001,)
+        self.convention_comments_service.save_comments()
+        self.assertEqual(
+            self.convention_comments_service.return_status, utils.ReturnStatus.ERROR
+        )
+        self.assertTrue(self.convention_comments_service.form.has_error("comments"))
+
+        self.convention_comments_service.request.POST = {
+            "comments": "this is a new comment",
+            "comments_files": (
+                '{"bbfc7e3a-e0e7-4899-a1e1-fc632c3ea6b0": {"uuid": "bbfc7e3a-e0e7'
+                + '-4899-a1e1-fc632c3ea6b0", "thumbnail": "data:image/png;base64,'
+                + 'BLAH...BLAH...==", "size": 31185, "filename": "acquereur1.png"'
+                + '}, "9e69e766-0167-4638-b1ce-f8f0b033e03a": {"uuid": "9e69e766-'
+                + '0167-4638-b1ce-f8f0b033e03a", "thumbnail": "data:image/png;bas'
+                + 'e64,BLAH...BLAH...==", "size": 69076, "filename": "acquereur2.'
+                + 'png"}}'
+            ),
+        }
+
+        self.convention_comments_service.save_comments()
+        self.convention_comments_service.convention.refresh_from_db()
+        comments = json.loads(self.convention_comments_service.convention.comments)
+        self.assertEqual(
+            self.convention_comments_service.return_status, utils.ReturnStatus.SUCCESS
+        )
+        self.assertEqual(comments["text"], "this is a new comment")
+        self.assertEqual(
+            comments["files"],
+            {
+                "bbfc7e3a-e0e7-4899-a1e1-fc632c3ea6b0": {
+                    "uuid": "bbfc7e3a-e0e7-4899-a1e1-fc632c3ea6b0",
+                    "thumbnail": "data:image/png;base64,BLAH...BLAH...==",
+                    "size": 31185,
+                    "filename": "acquereur1.png",
+                },
+                "9e69e766-0167-4638-b1ce-f8f0b033e03a": {
+                    "uuid": "9e69e766-0167-4638-b1ce-f8f0b033e03a",
+                    "thumbnail": "data:image/png;base64,BLAH...BLAH...==",
+                    "size": 69076,
+                    "filename": "acquereur2.png",
+                },
+            },
+        )
 
 
 class ServicesConventionsTests(TestCase):
@@ -25,7 +181,7 @@ class ServicesConventionsTests(TestCase):
             email_sent[0].subject, f"Convention à instruire ({convention})"
         )
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent[0].body)
-        self.assertEqual(email_sent[1].to, ["sabine@apilos.com"])
+        self.assertEqual(email_sent[1].to, ["fix@apilos.com"])
         self.assertEqual(email_sent[1].from_email, "contact@apilos.beta.gouv.fr")
         self.assertEqual(
             email_sent[1].subject, f"Convention à instruire ({convention})"
@@ -35,7 +191,7 @@ class ServicesConventionsTests(TestCase):
         User.objects.filter(username="raph").update(
             preferences_email=EmailPreferences.AUCUN
         )
-        User.objects.filter(username="sabine").update(
+        User.objects.filter(username="fix").update(
             preferences_email=EmailPreferences.AUCUN
         )
         email_sent = services_conventions.send_email_instruction(
@@ -106,7 +262,7 @@ class ServicesConventionsTests(TestCase):
         User.objects.filter(username="raph").update(
             preferences_email=EmailPreferences.AUCUN
         )
-        User.objects.filter(username="sabine").update(
+        User.objects.filter(username="fix").update(
             preferences_email=EmailPreferences.AUCUN
         )
 
@@ -149,7 +305,7 @@ class ServicesConventionsTests(TestCase):
             "https://apilos.beta.gouv.fr/my_convention", convention, [], False
         )
 
-        self.assertEqual(email_sent.to, ["sabine@apilos.com"])
+        self.assertEqual(email_sent.to, ["fix@apilos.com"])
         self.assertEqual(email_sent.cc, [])
         self.assertEqual(email_sent.from_email, "contact@apilos.beta.gouv.fr")
         self.assertEqual(email_sent.subject, f"Convention modifiée ({convention})")
@@ -159,7 +315,7 @@ class ServicesConventionsTests(TestCase):
         User.objects.filter(username="raph").update(
             preferences_email=EmailPreferences.AUCUN
         )
-        User.objects.filter(username="sabine").update(
+        User.objects.filter(username="fix").update(
             preferences_email=EmailPreferences.AUCUN
         )
 

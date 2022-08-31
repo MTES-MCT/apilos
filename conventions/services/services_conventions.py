@@ -5,6 +5,7 @@ from typing import Any
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
+from django.http.request import HttpRequest
 from django.views.decorators.http import require_GET, require_POST
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
@@ -65,14 +66,14 @@ def convention_financement(request, convention_uuid):
         uuid=convention_uuid
     )
     import_warnings = None
-    editable_upload = request.POST.get("editable_upload", False)
+    editable_after_upload = request.POST.get("editable_after_upload", False)
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
             form = ConventionFinancementForm(request.POST)
-            formset, upform, import_warnings, editable_upload = _upload_prets(
-                request, convention, import_warnings, editable_upload
+            formset, upform, import_warnings, editable_after_upload = _upload_prets(
+                request, convention, import_warnings, editable_after_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
         else:
@@ -83,8 +84,8 @@ def convention_financement(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": utils.editable_convention(request, convention)
-                or editable_upload,
+                "editable_after_upload": utils.editable_convention(request, convention)
+                or editable_after_upload,
             }
     # When display the file for the first time
     else:
@@ -120,12 +121,12 @@ def convention_financement(request, convention_uuid):
         "form": form,
         "formset": formset,
         "upform": upform,
-        "editable_upload": utils.editable_convention(request, convention)
-        or editable_upload,
+        "editable_after_upload": utils.editable_convention(request, convention)
+        or editable_after_upload,
     }
 
 
-def _upload_prets(request, convention, import_warnings, editable_upload):
+def _upload_prets(request, convention, import_warnings, editable_after_upload):
     formset = PretFormSet(request.POST)
     upform = UploadForm(request.POST, request.FILES)
     if upform.is_valid():
@@ -144,8 +145,8 @@ def _upload_prets(request, convention, import_warnings, editable_upload):
 
             formset = PretFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
-            editable_upload = True
-    return formset, upform, import_warnings, editable_upload
+            editable_after_upload = True
+    return formset, upform, import_warnings, editable_after_upload
 
 
 def _convention_financement_atomic_update(request, convention):
@@ -248,38 +249,6 @@ def _save_convention_financement_prets(formset, convention):
                 autre=form_pret.cleaned_data["autre"],
             )
         pret.save()
-
-
-def convention_comments(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
-    if request.method == "POST":
-        request.user.check_perm("convention.change_convention", convention)
-        form = ConventionCommentForm(request.POST)
-        if form.is_valid():
-            convention.comments = utils.set_files_and_text_field(
-                form.cleaned_data["comments_files"],
-                form.cleaned_data["comments"],
-            )
-            convention.save()
-            # All is OK -> Next:
-            return {
-                "success": utils.ReturnStatus.SUCCESS,
-                "convention": convention,
-                "form": form,
-            }
-    else:
-        request.user.check_perm("convention.view_convention", convention)
-        form = ConventionCommentForm(
-            initial={
-                "uuid": convention.uuid,
-                "comments": convention.comments,
-                **utils.get_text_and_files_from_field("comments", convention.comments),
-            }
-        )
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "form": form,
-    }
 
 
 def convention_summary(request, convention_uuid, convention_number_form=None):
@@ -895,3 +864,40 @@ def create_avenant(request, convention_uuid):
         "form": new_avenant_form,
         "parent_convention": parent_convention,
     }
+
+
+class ConventionCommentsService:
+    convention: Convention
+    request: HttpRequest
+    form: ConventionCommentForm
+    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
+
+    def __init__(
+        self,
+        convention: Convention,
+        request: HttpRequest,
+    ):
+        self.convention = convention
+        self.request = request
+
+    def get_comments(self):
+        self.form = ConventionCommentForm(
+            initial={
+                "uuid": self.convention.uuid,
+                "comments": self.convention.comments,
+                **utils.get_text_and_files_from_field(
+                    "comments", self.convention.comments
+                ),
+            }
+        )
+
+    def save_comments(self):
+        self.request.user.check_perm("convention.change_convention", self.convention)
+        self.form = ConventionCommentForm(self.request.POST)
+        if self.form.is_valid():
+            self.convention.comments = utils.set_files_and_text_field(
+                self.form.cleaned_data["comments_files"],
+                self.form.cleaned_data["comments"],
+            )
+            self.convention.save()
+            self.return_status = utils.ReturnStatus.SUCCESS

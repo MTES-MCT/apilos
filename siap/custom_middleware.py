@@ -79,6 +79,13 @@ class CerbereSessionMiddleware:
 
 def _find_or_create_entity(request: HttpRequest, habilitation: dict):
     request.session["currently"] = habilitation["groupe"]["profil"]["code"]
+    if habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_ADM_CENTRALE:
+        # Manage Role following the habilitation["groupe"]["codeRole"]
+        Role.objects.get_or_create(
+            typologie=TypeRole.ADMINISTRATEUR,
+            user=request.user,
+            group=Group.objects.get(name="administrateur"),
+        )
     if habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_MO_PERS_MORALE:
         bailleur = get_or_create_bailleur(habilitation["entiteMorale"])
         request.session["bailleur"] = model_to_dict(

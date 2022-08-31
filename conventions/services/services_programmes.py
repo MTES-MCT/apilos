@@ -232,14 +232,14 @@ def programme_cadastral_update(request, convention_uuid):
     )
     programme = convention.programme
     import_warnings = None
-    editable_upload = request.POST.get("editable_upload", False)
+    editable_after_upload = request.POST.get("editable_after_upload", False)
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
             form = ProgrammeCadastralForm(request.POST)
-            formset, upform, import_warnings, editable_upload = _upload_cadastre(
-                request, convention, import_warnings, editable_upload
+            formset, upform, import_warnings, editable_after_upload = _upload_cadastre(
+                request, convention, import_warnings, editable_after_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
         else:
@@ -250,8 +250,8 @@ def programme_cadastral_update(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": utils.editable_convention(request, convention)
-                or editable_upload,
+                "editable_after_upload": utils.editable_convention(request, convention)
+                or editable_after_upload,
             }
     # When display the file for the first time
     else:
@@ -314,12 +314,12 @@ def programme_cadastral_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
-        "editable_upload": utils.editable_convention(request, convention)
-        or editable_upload,
+        "editable_after_upload": utils.editable_convention(request, convention)
+        or editable_after_upload,
     }
 
 
-def _upload_cadastre(request, convention, import_warnings, editable_upload):
+def _upload_cadastre(request, convention, import_warnings, editable_after_upload):
     formset = ReferenceCadastraleFormSet(request.POST)
     upform = UploadForm(request.POST, request.FILES)
     if upform.is_valid():
@@ -349,8 +349,8 @@ def _upload_cadastre(request, convention, import_warnings, editable_upload):
 
             formset = ReferenceCadastraleFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
-            editable_upload = True
-    return formset, upform, import_warnings, editable_upload
+            editable_after_upload = True
+    return formset, upform, import_warnings, editable_after_upload
 
 
 def _save_programme_cadastrale(form, programme):
@@ -512,14 +512,19 @@ def programme_edd_update(request, convention_uuid):
     )
     programme = convention.programme
     import_warnings = None
-    editable_upload = request.POST.get("editable_upload", False)
+    editable_after_upload = request.POST.get("editable_after_upload", False)
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
             form = ProgrammeEDDForm(request.POST)
-            formset, upform, import_warnings, editable_upload = _upload_logements_edd(
-                request, convention, import_warnings, editable_upload
+            (
+                formset,
+                upform,
+                import_warnings,
+                editable_after_upload,
+            ) = _upload_logements_edd(
+                request, convention, import_warnings, editable_after_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
         else:
@@ -530,7 +535,7 @@ def programme_edd_update(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": utils.editable_convention(request, convention)
+                "editable_after_upload": utils.editable_convention(request, convention)
                 or request.POST.get("redirect_to_recap", False),
             }
     # When display the file for the first time
@@ -570,12 +575,12 @@ def programme_edd_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
-        "editable_upload": utils.editable_convention(request, convention)
-        or editable_upload,
+        "editable_after_upload": utils.editable_convention(request, convention)
+        or editable_after_upload,
     }
 
 
-def _upload_logements_edd(request, convention, import_warnings, editable_upload):
+def _upload_logements_edd(request, convention, import_warnings, editable_after_upload):
     formset = LogementEDDFormSet(request.POST)
     upform = UploadForm(request.POST, request.FILES)
     if upform.is_valid():
@@ -602,8 +607,8 @@ def _upload_logements_edd(request, convention, import_warnings, editable_upload)
 
             formset = LogementEDDFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
-            editable_upload = True
-    return formset, upform, import_warnings, editable_upload
+            editable_after_upload = True
+    return formset, upform, import_warnings, editable_after_upload
 
 
 def _programme_edd_atomic_update(request, convention, programme):

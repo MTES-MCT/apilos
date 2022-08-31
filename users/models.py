@@ -54,12 +54,14 @@ class User(AbstractUser):
     )
 
     def has_object_permission(self, obj):
-        if isinstance(obj, Convention):
-            # is bailleur of the convention or is instructeur of the convention
-            return self.role_set.filter(
-                bailleur_id=obj.bailleur_id
-            ) or self.role_set.filter(administration_id=obj.programme.administration_id)
-        if isinstance(obj, Lot):
+        if isinstance(obj, (Convention, Lot)):
+            # is administrateur of the convention
+            if (
+                "currently" in self.siap_habilitation
+                and self.siap_habilitation["currently"]
+                == GroupProfile.SIAP_ADM_CENTRALE
+            ):
+                return True
             # is bailleur of the convention or is instructeur of the convention
             return self.role_set.filter(
                 bailleur_id=obj.bailleur_id
@@ -104,10 +106,9 @@ class User(AbstractUser):
 
     def is_instructeur(self):
         if self.is_cerbere_user():
-            return (
-                "currently" in self.siap_habilitation
-                and self.siap_habilitation["currently"] == GroupProfile.SIAP_SER_GEST
-            )
+            return "currently" in self.siap_habilitation and self.siap_habilitation[
+                "currently"
+            ] in [GroupProfile.SIAP_SER_GEST, GroupProfile.SIAP_ADM_CENTRALE]
         return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
 
     def _is_role(self, role):
@@ -245,6 +246,13 @@ class User(AbstractUser):
         convs = Convention.objects.filter(parent_id__isnull=True)
         if self.is_superuser:
             return convs.all()
+
+        # to do : manage programme related to geo for instructeur
+        if (
+            self.is_cerbere_user()
+            and self.siap_habilitation["currently"] == GroupProfile.SIAP_ADM_CENTRALE
+        ):
+            return convs
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():

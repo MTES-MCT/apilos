@@ -173,25 +173,25 @@ class ConventionModelsTest(TestCase):
 
     def test_get_email_inctructeur_users(self):
         convention = Convention.objects.get(numero="0001")
-        sabine = User.objects.get(username="sabine")
-        self.assertEqual(convention.get_email_instructeur_users(), [sabine.email])
-        sabine.preferences_email = EmailPreferences.AUCUN
-        sabine.save()
+        fix = User.objects.get(username="fix")
+        self.assertEqual(convention.get_email_instructeur_users(), [fix.email])
+        fix.preferences_email = EmailPreferences.AUCUN
+        fix.save()
         self.assertEqual(convention.get_email_instructeur_users(), [])
-        sabine.preferences_email = EmailPreferences.PARTIEL
-        sabine.save()
+        fix.preferences_email = EmailPreferences.PARTIEL
+        fix.save()
         self.assertEqual(convention.get_email_instructeur_users(), [])
         self.assertEqual(
-            convention.get_email_instructeur_users(include_partial=True), [sabine.email]
+            convention.get_email_instructeur_users(include_partial=True), [fix.email]
         )
         ConventionHistory.objects.create(
             bailleur=convention.bailleur,
             convention=convention,
             statut_convention=ConventionStatut.INSTRUCTION,
             statut_convention_precedent=ConventionStatut.PROJET,
-            user=sabine,
+            user=fix,
         ).save()
-        self.assertEqual(convention.get_email_instructeur_users(), [sabine.email])
+        self.assertEqual(convention.get_email_instructeur_users(), [fix.email])
 
     def test_statut_for_template(self):
         convention = Convention.objects.order_by("uuid").first()
