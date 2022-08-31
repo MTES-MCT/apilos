@@ -112,16 +112,16 @@
                                                         id="{{form_cadastre.uuid.id_for_label}}"
                                                         name="{{form_cadastre.uuid.html_name}}"
                                                         value="{{ form_cadastre.uuid.value|default_if_none:'' }}">
-                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.section parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.section parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.numero parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.numero parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.lieudit parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.lieudit parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.surface parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_text.html" with form_input=form_cadastre.surface parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                             </tr>
                                         {% endwith %}

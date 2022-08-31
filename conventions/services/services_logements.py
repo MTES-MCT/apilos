@@ -22,7 +22,7 @@ from . import upload_objects
 
 
 def logements_update(request, convention_uuid):
-    editable_upload = request.POST.get("editable_upload", False)
+    editable_after_upload = request.POST.get("editable_after_upload", False)
     convention = (
         Convention.objects.prefetch_related("lot")
         .prefetch_related("lot__logements")
@@ -33,8 +33,8 @@ def logements_update(request, convention_uuid):
         request.user.check_perm("convention.change_convention", convention)
         form = LotLgtsOptionForm(request.POST)
         if request.POST.get("Upload", False):
-            formset, upform, import_warnings, editable_upload = _upload_logements(
-                request, convention, import_warnings, editable_upload
+            formset, upform, import_warnings, editable_after_upload = _upload_logements(
+                request, convention, import_warnings, editable_after_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
         else:
@@ -45,8 +45,8 @@ def logements_update(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": utils.editable_convention(request, convention)
-                or editable_upload,
+                "editable_after_upload": utils.editable_convention(request, convention)
+                or editable_after_upload,
             }
     # When display the file for the first time
     else:
@@ -85,12 +85,12 @@ def logements_update(request, convention_uuid):
         "form": form,
         "upform": upform,
         "import_warnings": import_warnings,
-        "editable_upload": utils.editable_convention(request, convention)
-        or editable_upload,
+        "editable_after_upload": utils.editable_convention(request, convention)
+        or editable_after_upload,
     }
 
 
-def _upload_logements(request, convention, import_warnings, editable_upload):
+def _upload_logements(request, convention, import_warnings, editable_after_upload):
     import_warnings = None
     formset = LogementFormSet(request.POST)
     upform = UploadForm(request.POST, request.FILES)
@@ -111,8 +111,8 @@ def _upload_logements(request, convention, import_warnings, editable_upload):
                     obj["uuid"] = lgts_by_designation[obj["designation"]]
             formset = LogementFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
-            editable_upload = True
-    return formset, upform, import_warnings, editable_upload
+            editable_after_upload = True
+    return formset, upform, import_warnings, editable_after_upload
 
 
 def _logements_atomic_update(request, convention):
@@ -271,14 +271,14 @@ def annexes_update(request, convention_uuid):
         .get(uuid=convention_uuid)
     )
     import_warnings = None
-    editable_upload = request.POST.get("editable_upload", False)
+    editable_after_upload = request.POST.get("editable_after_upload", False)
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
             form = LotAnnexeForm(request.POST)
-            formset, upform, import_warnings, editable_upload = _upload_annexes(
-                request, convention, import_warnings, editable_upload
+            formset, upform, import_warnings, editable_after_upload = _upload_annexes(
+                request, convention, import_warnings, editable_after_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
         else:
@@ -289,8 +289,8 @@ def annexes_update(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": utils.editable_convention(request, convention)
-                or editable_upload,
+                "editable_after_upload": utils.editable_convention(request, convention)
+                or editable_after_upload,
             }
 
     # When display the file for the first time
@@ -334,12 +334,12 @@ def annexes_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
-        "editable_upload": utils.editable_convention(request, convention)
-        or editable_upload,
+        "editable_after_upload": utils.editable_convention(request, convention)
+        or editable_after_upload,
     }
 
 
-def _upload_annexes(request, convention, import_warnings, editable_upload):
+def _upload_annexes(request, convention, import_warnings, editable_after_upload):
     formset = AnnexeFormSet(request.POST)
     upform = UploadForm(request.POST, request.FILES)
     if upform.is_valid():
@@ -369,8 +369,8 @@ def _upload_annexes(request, convention, import_warnings, editable_upload):
 
             formset = AnnexeFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
-            editable_upload = True
-    return formset, upform, import_warnings, editable_upload
+            editable_after_upload = True
+    return formset, upform, import_warnings, editable_after_upload
 
 
 def _save_lot_annexes(form, lot):
@@ -529,7 +529,7 @@ class ConventionTypeStationnementService:
     request: HttpRequest
     formset: TypeStationnementFormSet
     upform: UploadForm = UploadForm()
-    editable_upload: bool
+    editable_after_upload: bool
     redirect_recap: bool = False
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
     import_warnings: None | List = None
@@ -543,7 +543,9 @@ class ConventionTypeStationnementService:
         self.request = request
 
     def get(self):
-        self.editable_upload = bool(self.request.POST.get("editable_upload", False))
+        self.editable_after_upload = bool(
+            self.request.POST.get("editable_after_upload", False)
+        )
         initial = []
         stationnements = self.convention.lot.type_stationnements.all()
         for stationnement in stationnements:
@@ -559,7 +561,9 @@ class ConventionTypeStationnementService:
         self.formset = TypeStationnementFormSet(initial=initial)
 
     def save(self):
-        self.editable_upload = self.request.POST.get("editable_upload", False)
+        self.editable_after_upload = self.request.POST.get(
+            "editable_after_upload", False
+        )
         # When the user cliked on "Téléverser" button
         if self.request.POST.get("Upload", False):
             self._upload_stationnements()
@@ -604,7 +608,7 @@ class ConventionTypeStationnementService:
 
                 self.formset = TypeStationnementFormSet(initial=result["objects"])
                 self.import_warnings = result["import_warnings"]
-                self.editable_upload = True
+                self.editable_after_upload = True
 
     def _stationnements_atomic_update(self):
         self.formset = TypeStationnementFormSet(self.request.POST)

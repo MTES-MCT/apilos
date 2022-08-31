@@ -563,9 +563,9 @@ class ConventionTypeStationnementView(LoginRequiredMixin, View):
                 ),
                 "formset": convention_type_stationnement_service.formset,
                 "upform": convention_type_stationnement_service.upform,
-                "editable_upload": (
+                "editable_after_upload": (
                     utils.editable_convention(request, convention)
-                    or convention_type_stationnement_service.editable_upload
+                    or convention_type_stationnement_service.editable_after_upload
                 ),
                 "convention_form_step": self.convention_form_step,
             },
@@ -600,8 +600,8 @@ class ConventionTypeStationnementView(LoginRequiredMixin, View):
                 "formset": convention_type_stationnement_service.formset,
                 "upform": convention_type_stationnement_service.upform,
                 "import_warnings": convention_type_stationnement_service.import_warnings,
-                "editable_upload": utils.editable_convention(request, convention)
-                or convention_type_stationnement_service.editable_upload,
+                "editable_after_upload": utils.editable_convention(request, convention)
+                or convention_type_stationnement_service.editable_after_upload,
                 "convention_form_step": self.convention_form_step,
             },
         )

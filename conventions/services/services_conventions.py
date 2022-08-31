@@ -66,14 +66,14 @@ def convention_financement(request, convention_uuid):
         uuid=convention_uuid
     )
     import_warnings = None
-    editable_upload = request.POST.get("editable_upload", False)
+    editable_after_upload = request.POST.get("editable_after_upload", False)
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
             form = ConventionFinancementForm(request.POST)
-            formset, upform, import_warnings, editable_upload = _upload_prets(
-                request, convention, import_warnings, editable_upload
+            formset, upform, import_warnings, editable_after_upload = _upload_prets(
+                request, convention, import_warnings, editable_after_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
         else:
@@ -84,8 +84,8 @@ def convention_financement(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": utils.editable_convention(request, convention)
-                or editable_upload,
+                "editable_after_upload": utils.editable_convention(request, convention)
+                or editable_after_upload,
             }
     # When display the file for the first time
     else:
@@ -121,12 +121,12 @@ def convention_financement(request, convention_uuid):
         "form": form,
         "formset": formset,
         "upform": upform,
-        "editable_upload": utils.editable_convention(request, convention)
-        or editable_upload,
+        "editable_after_upload": utils.editable_convention(request, convention)
+        or editable_after_upload,
     }
 
 
-def _upload_prets(request, convention, import_warnings, editable_upload):
+def _upload_prets(request, convention, import_warnings, editable_after_upload):
     formset = PretFormSet(request.POST)
     upform = UploadForm(request.POST, request.FILES)
     if upform.is_valid():
@@ -145,8 +145,8 @@ def _upload_prets(request, convention, import_warnings, editable_upload):
 
             formset = PretFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
-            editable_upload = True
-    return formset, upform, import_warnings, editable_upload
+            editable_after_upload = True
+    return formset, upform, import_warnings, editable_after_upload
 
 
 def _convention_financement_atomic_update(request, convention):

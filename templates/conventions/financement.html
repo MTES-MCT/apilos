@@ -73,22 +73,22 @@
                                                         id="{{form_pret.uuid.id_for_label}}"
                                                         name="{{form_pret.uuid.html_name}}"
                                                         value="{{ form_pret.uuid.value|default_if_none:'' }}">
-                                                    {% include "common/form/input_text.html" with form_input=form_pret.numero parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_text.html" with form_input=form_pret.numero parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_date.html" with form_input=form_pret.date_octroi parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_date.html" with form_input=form_pret.date_octroi parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_number.html" with form_input=form_pret.duree parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_number.html" with form_input=form_pret.duree parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_number.html" with form_input=form_pret.montant step="0.01" parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_number.html" with form_input=form_pret.montant step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_select.html" with form_input=form_pret.preteur parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_select.html" with form_input=form_pret.preteur parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                                 <td>
-                                                    {% include "common/form/input_text.html" with form_input=form_pret.autre parent_object_field=main_object_field editable=editable_upload %}
+                                                    {% include "common/form/input_text.html" with form_input=form_pret.autre parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                             </tr>
                                         {% endwith %}
