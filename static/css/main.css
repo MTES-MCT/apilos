@@ -3,7 +3,7 @@
 }
 
 .apilos-subtitle {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-style: italic;
 }
 
@@ -211,6 +211,22 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .fileinput--hidden {
   display: none;
 }
+.apilos-block-faqlink {
+  background-color: var(--blue-france-925-125);
+  width: max-content;
+  border-radius: 0.25rem;
+  color: #000091;
+}
+.apilos-block-faqlink .fr-p-2w {
+  margin: auto;
+}
+.apilos-block-faqlink .fr-icon-question-mark {
+  color: white;
+  background-color: #000091;
+  padding: 0.5rem;
+  border-radius: 2rem;
+}
+
 
 /* Stat score card */
 .statcard {
