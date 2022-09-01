@@ -33,6 +33,7 @@ def is_instructeur(request: HttpRequest) -> bool:
         GroupProfile.STAFF,
         GroupProfile.INSTRUCTEUR,
         GroupProfile.SIAP_SER_GEST,
+        GroupProfile.SIAP_ADM_CENTRALE,
     ]
 
 

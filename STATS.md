@@ -34,3 +34,22 @@ select AVG(delay) from tmp_conv;
 
 # nb logements sociaux
 
+# temps moyen des conventions en corrections requises
+
+with tmp_conv AS (
+    select
+        c.uuid,
+        NOW() - MAX(ch_corr.mis_a_jour_le) AS delay,
+        c.statut,
+        p.code_postal
+    from conventions_convention as c
+    join conventions_conventionhistory as ch_corr on ch_corr.convention_id = c.id and ch_corr.statut_convention = '3. Corrections requises'
+    join programmes_programme as p on c.programme_id = p.id
+    where c.statut = '3. Corrections requises' group by c.uuid, c.statut, p.code_postal
+)
+select AVG(delay) from tmp_conv;
+
+# BAILLEURS qui ne se sont jamais loggué
+
+select u.username, u.first_name, u.last_name, u.email from users_user as u join users_role as r on r.user_id = u.id where r.typologie = 'BAILLEUR' and u.last_login IS NULL;
+

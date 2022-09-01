@@ -53,19 +53,19 @@ class AdministrationsModelsTest(TestCase):
                 pass
 
     def test_permissions(self):
-        user_instructeur = User.objects.get(username="sabine")
+        user_instructeur_paris = User.objects.get(username="fix")
         user_instructeur_metropole = User.objects.get(username="roger")
-        self.assertTrue(user_instructeur.has_perm("logement.change_logement"))
-        self.assertTrue(user_instructeur.has_perm("logement.delete_logement"))
-        self.assertFalse(user_instructeur.has_perm("bailleur.delete_bailleur"))
+        self.assertTrue(user_instructeur_paris.has_perm("logement.change_logement"))
+        self.assertTrue(user_instructeur_paris.has_perm("logement.delete_logement"))
+        self.assertFalse(user_instructeur_paris.has_perm("bailleur.delete_bailleur"))
 
         convention = Convention.objects.get(numero="0001")
         convention.statut = ConventionStatut.PROJET
         self.assertTrue(
-            user_instructeur.has_perm("convention.change_convention", convention)
+            user_instructeur_paris.has_perm("convention.change_convention", convention)
         )
         self.assertTrue(
-            user_instructeur.has_perm("convention.change_convention", convention)
+            user_instructeur_paris.has_perm("convention.change_convention", convention)
         )
         self.assertFalse(
             user_instructeur_metropole.has_perm(
@@ -73,11 +73,11 @@ class AdministrationsModelsTest(TestCase):
             )
         )
         self.assertTrue(
-            user_instructeur.has_perm("convention.view_convention", convention)
+            user_instructeur_paris.has_perm("convention.view_convention", convention)
         )
-        self.assertTrue(user_instructeur.has_perm("convention.add_convention"))
+        self.assertTrue(user_instructeur_paris.has_perm("convention.add_convention"))
         self.assertTrue(
-            user_instructeur.has_perm("convention.add_convention", convention.lot)
+            user_instructeur_paris.has_perm("convention.add_convention", convention.lot)
         )
         self.assertFalse(
             user_instructeur_metropole.has_perm(
@@ -95,7 +95,9 @@ class AdministrationsModelsTest(TestCase):
         for statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
             convention.statut = statut
             self.assertTrue(
-                user_instructeur.has_perm("convention.change_convention", convention)
+                user_instructeur_paris.has_perm(
+                    "convention.change_convention", convention
+                )
             )
             self.assertFalse(
                 user_instructeur_metropole.has_perm(
@@ -103,7 +105,9 @@ class AdministrationsModelsTest(TestCase):
                 )
             )
             self.assertTrue(
-                user_instructeur.has_perm("convention.view_convention", convention)
+                user_instructeur_paris.has_perm(
+                    "convention.view_convention", convention
+                )
             )
             self.assertFalse(
                 user_instructeur_metropole.has_perm(

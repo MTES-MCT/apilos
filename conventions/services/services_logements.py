@@ -1,3 +1,6 @@
+from typing import List
+from django.http import HttpRequest
+
 from programmes.models import (
     Logement,
     Annexe,
@@ -19,7 +22,7 @@ from . import upload_objects
 
 
 def logements_update(request, convention_uuid):
-    editable_upload = request.POST.get("editable_upload", False)
+    editable_after_upload = request.POST.get("editable_after_upload", False)
     convention = (
         Convention.objects.prefetch_related("lot")
         .prefetch_related("lot__logements")
@@ -30,8 +33,8 @@ def logements_update(request, convention_uuid):
         request.user.check_perm("convention.change_convention", convention)
         form = LotLgtsOptionForm(request.POST)
         if request.POST.get("Upload", False):
-            formset, upform, import_warnings, editable_upload = _upload_logements(
-                request, convention, import_warnings, editable_upload
+            formset, upform, import_warnings, editable_after_upload = _upload_logements(
+                request, convention, import_warnings, editable_after_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
         else:
@@ -42,8 +45,8 @@ def logements_update(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": utils.editable_convention(request, convention)
-                or editable_upload,
+                "editable_after_upload": utils.editable_convention(request, convention)
+                or editable_after_upload,
             }
     # When display the file for the first time
     else:
@@ -82,12 +85,12 @@ def logements_update(request, convention_uuid):
         "form": form,
         "upform": upform,
         "import_warnings": import_warnings,
-        "editable_upload": utils.editable_convention(request, convention)
-        or editable_upload,
+        "editable_after_upload": utils.editable_convention(request, convention)
+        or editable_after_upload,
     }
 
 
-def _upload_logements(request, convention, import_warnings, editable_upload):
+def _upload_logements(request, convention, import_warnings, editable_after_upload):
     import_warnings = None
     formset = LogementFormSet(request.POST)
     upform = UploadForm(request.POST, request.FILES)
@@ -108,8 +111,8 @@ def _upload_logements(request, convention, import_warnings, editable_upload):
                     obj["uuid"] = lgts_by_designation[obj["designation"]]
             formset = LogementFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
-            editable_upload = True
-    return formset, upform, import_warnings, editable_upload
+            editable_after_upload = True
+    return formset, upform, import_warnings, editable_after_upload
 
 
 def _logements_atomic_update(request, convention):
@@ -268,14 +271,14 @@ def annexes_update(request, convention_uuid):
         .get(uuid=convention_uuid)
     )
     import_warnings = None
-    editable_upload = request.POST.get("editable_upload", False)
+    editable_after_upload = request.POST.get("editable_after_upload", False)
     if request.method == "POST":
         request.user.check_perm("convention.change_convention", convention)
         # When the user cliked on "Téléverser" button
         if request.POST.get("Upload", False):
             form = LotAnnexeForm(request.POST)
-            formset, upform, import_warnings, editable_upload = _upload_annexes(
-                request, convention, import_warnings, editable_upload
+            formset, upform, import_warnings, editable_after_upload = _upload_annexes(
+                request, convention, import_warnings, editable_after_upload
             )
         # When the user cliked on "Enregistrer et Suivant"
         else:
@@ -286,8 +289,8 @@ def annexes_update(request, convention_uuid):
                 result["redirect"] = "recapitulatif"
             return {
                 **result,
-                "editable_upload": utils.editable_convention(request, convention)
-                or editable_upload,
+                "editable_after_upload": utils.editable_convention(request, convention)
+                or editable_after_upload,
             }
 
     # When display the file for the first time
@@ -331,12 +334,12 @@ def annexes_update(request, convention_uuid):
         "formset": formset,
         "upform": upform,
         "import_warnings": import_warnings,
-        "editable_upload": utils.editable_convention(request, convention)
-        or editable_upload,
+        "editable_after_upload": utils.editable_convention(request, convention)
+        or editable_after_upload,
     }
 
 
-def _upload_annexes(request, convention, import_warnings, editable_upload):
+def _upload_annexes(request, convention, import_warnings, editable_after_upload):
     formset = AnnexeFormSet(request.POST)
     upform = UploadForm(request.POST, request.FILES)
     if upform.is_valid():
@@ -366,8 +369,8 @@ def _upload_annexes(request, convention, import_warnings, editable_upload):
 
             formset = AnnexeFormSet(initial=result["objects"])
             import_warnings = result["import_warnings"]
-            editable_upload = True
-    return formset, upform, import_warnings, editable_upload
+            editable_after_upload = True
+    return formset, upform, import_warnings, editable_after_upload
 
 
 def _save_lot_annexes(form, lot):
@@ -520,38 +523,31 @@ def _save_annexes(formset, convention):
         annexe.save()
 
 
-def stationnements_update(request, convention_uuid):
-    convention = (
-        Convention.objects.prefetch_related("lot")
-        .prefetch_related("lot__type_stationnements")
-        .get(uuid=convention_uuid)
-    )
-    import_warnings = None
-    editable_upload = request.POST.get("editable_upload", False)
-    if request.method == "POST":
-        request.user.check_perm("convention.change_convention", convention)
-        # When the user cliked on "Téléverser" button
-        if request.POST.get("Upload", False):
-            formset, upform, import_warnings, editable_upload = _upload_stationnements(
-                request, convention, import_warnings, editable_upload
-            )
-        # When the user cliked on "Enregistrer et Suivant"
-        else:
-            result = _stationnements_atomic_update(request, convention)
-            if result["success"] == utils.ReturnStatus.SUCCESS and request.POST.get(
-                "redirect_to_recap", False
-            ):
-                result["redirect"] = "recapitulatif"
-            return {
-                **result,
-                "editable_upload": utils.editable_convention(request, convention)
-                or editable_upload,
-            }
-    # When display the file for the first time
-    else:
-        request.user.check_perm("convention.view_convention", convention)
+class ConventionTypeStationnementService:
+    # pylint: disable=R0902
+    convention: Convention
+    request: HttpRequest
+    formset: TypeStationnementFormSet
+    upform: UploadForm = UploadForm()
+    editable_after_upload: bool
+    redirect_recap: bool = False
+    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
+    import_warnings: None | List = None
+
+    def __init__(
+        self,
+        convention: Convention,
+        request: HttpRequest,
+    ):
+        self.convention = convention
+        self.request = request
+
+    def get(self):
+        self.editable_after_upload = bool(
+            self.request.POST.get("editable_after_upload", False)
+        )
         initial = []
-        stationnements = convention.lot.type_stationnements.all()
+        stationnements = self.convention.lot.type_stationnements.all()
         for stationnement in stationnements:
             initial.append(
                 {
@@ -561,126 +557,128 @@ def stationnements_update(request, convention_uuid):
                     "loyer": stationnement.loyer,
                 }
             )
-        upform = UploadForm()
-        formset = TypeStationnementFormSet(initial=initial)
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "formset": formset,
-        "upform": upform,
-        "import_warnings": import_warnings,
-        "editable_upload": utils.editable_convention(request, convention)
-        or editable_upload,
-    }
+        # upform = UploadForm()
+        self.formset = TypeStationnementFormSet(initial=initial)
 
-
-def _upload_stationnements(request, convention, import_warnings, editable_upload):
-    formset = TypeStationnementFormSet(request.POST)
-    upform = UploadForm(request.POST, request.FILES)
-    if upform.is_valid():
-
-        result = upload_objects.handle_uploaded_xlsx(
-            upform,
-            request.FILES["file"],
-            TypeStationnement,
-            convention,
-            "stationnements.xlsx",
+    def save(self):
+        self.editable_after_upload = self.request.POST.get(
+            "editable_after_upload", False
         )
-        if result["success"] != utils.ReturnStatus.ERROR:
-            stationnement_by_designation = {}
-            for stationnement in TypeStationnement.objects.filter(
-                lot_id=convention.lot_id
-            ):
-                stationnement_by_designation[
-                    f"{stationnement.nb_stationnements}_{stationnement.typologie}"
-                ] = stationnement.uuid
+        # When the user cliked on "Téléverser" button
+        if self.request.POST.get("Upload", False):
+            self._upload_stationnements()
+        # When the user cliked on "Enregistrer et Suivant"
+        else:
+            self.redirect_recap = bool(
+                self.request.POST.get("redirect_to_recap", False)
+            )
+            self._stationnements_atomic_update()
 
-            for obj in result["objects"]:
-                if (
-                    "nb_stationnements" in obj
-                    and "typologie" in obj
-                    and f"{obj['nb_stationnements']}_{obj['typologie']}"
-                    in stationnement_by_designation
+    def _upload_stationnements(self):
+        self.formset = TypeStationnementFormSet(self.request.POST)
+        self.upform = UploadForm(self.request.POST, self.request.FILES)
+        if self.upform.is_valid():
+
+            result = upload_objects.handle_uploaded_xlsx(
+                self.upform,
+                self.request.FILES["file"],
+                TypeStationnement,
+                self.convention,
+                "stationnements.xlsx",
+            )
+            if result["success"] != utils.ReturnStatus.ERROR:
+                stationnement_by_designation = {}
+                for stationnement in TypeStationnement.objects.filter(
+                    lot_id=self.convention.lot_id
                 ):
-                    obj["uuid"] = stationnement_by_designation[
-                        f"{obj['nb_stationnements']}_{obj['typologie']}"
-                    ]
+                    stationnement_by_designation[
+                        f"{stationnement.nb_stationnements}_{stationnement.typologie}"
+                    ] = stationnement.uuid
 
-            formset = TypeStationnementFormSet(initial=result["objects"])
-            import_warnings = result["import_warnings"]
-            editable_upload = True
-    return formset, upform, import_warnings, editable_upload
+                for obj in result["objects"]:
+                    if (
+                        "nb_stationnements" in obj
+                        and "typologie" in obj
+                        and f"{obj['nb_stationnements']}_{obj['typologie']}"
+                        in stationnement_by_designation
+                    ):
+                        obj["uuid"] = stationnement_by_designation[
+                            f"{obj['nb_stationnements']}_{obj['typologie']}"
+                        ]
 
+                self.formset = TypeStationnementFormSet(initial=result["objects"])
+                self.import_warnings = result["import_warnings"]
+                self.editable_after_upload = True
 
-def _stationnements_atomic_update(request, convention):
-    formset = TypeStationnementFormSet(request.POST)
-    initformset = {
-        "form-TOTAL_FORMS": request.POST.get("form-TOTAL_FORMS", len(formset)),
-        "form-INITIAL_FORMS": request.POST.get("form-INITIAL_FORMS", len(formset)),
-    }
-    for idx, form_stationnement in enumerate(formset):
-        if form_stationnement["uuid"].value():
-            stationnement = TypeStationnement.objects.get(
-                uuid=form_stationnement["uuid"].value()
-            )
-            initformset = {
-                **initformset,
-                f"form-{idx}-uuid": stationnement.uuid,
-                f"form-{idx}-typologie": utils.get_form_value(
-                    form_stationnement, stationnement, "typologie"
-                ),
-                f"form-{idx}-nb_stationnements": utils.get_form_value(
-                    form_stationnement, stationnement, "nb_stationnements"
-                ),
-                f"form-{idx}-loyer": utils.get_form_value(
-                    form_stationnement, stationnement, "loyer"
-                ),
-            }
-        else:
-            initformset = {
-                **initformset,
-                f"form-{idx}-typologie": form_stationnement["typologie"].value(),
-                f"form-{idx}-nb_stationnements": form_stationnement[
-                    "nb_stationnements"
-                ].value(),
-                f"form-{idx}-loyer": form_stationnement["loyer"].value(),
-            }
-
-    formset = TypeStationnementFormSet(initformset)
-    if formset.is_valid():
-        _save_stationnements(formset, convention)
-        return {
-            "success": utils.ReturnStatus.SUCCESS,
-            "convention": convention,
+    def _stationnements_atomic_update(self):
+        self.formset = TypeStationnementFormSet(self.request.POST)
+        initformset = {
+            "form-TOTAL_FORMS": self.request.POST.get(
+                "form-TOTAL_FORMS", len(self.formset)
+            ),
+            "form-INITIAL_FORMS": self.request.POST.get(
+                "form-INITIAL_FORMS", len(self.formset)
+            ),
         }
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "formset": formset,
-        "upform": UploadForm(),
-    }
+        for idx, form_stationnement in enumerate(self.formset):
+            if form_stationnement["uuid"].value():
+                stationnement = TypeStationnement.objects.get(
+                    uuid=form_stationnement["uuid"].value()
+                )
+                initformset = {
+                    **initformset,
+                    f"form-{idx}-uuid": stationnement.uuid,
+                    f"form-{idx}-typologie": utils.get_form_value(
+                        form_stationnement, stationnement, "typologie"
+                    ),
+                    f"form-{idx}-nb_stationnements": utils.get_form_value(
+                        form_stationnement, stationnement, "nb_stationnements"
+                    ),
+                    f"form-{idx}-loyer": utils.get_form_value(
+                        form_stationnement, stationnement, "loyer"
+                    ),
+                }
+            else:
+                initformset = {
+                    **initformset,
+                    f"form-{idx}-typologie": form_stationnement["typologie"].value(),
+                    f"form-{idx}-nb_stationnements": form_stationnement[
+                        "nb_stationnements"
+                    ].value(),
+                    f"form-{idx}-loyer": form_stationnement["loyer"].value(),
+                }
 
-
-def _save_stationnements(formset, convention):
-    obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], formset))
-    obj_uuids = list(filter(None, obj_uuids1))
-    TypeStationnement.objects.filter(lot_id=convention.lot.id).exclude(
-        uuid__in=obj_uuids
-    ).delete()
-    for form_stationnement in formset:
-        if form_stationnement.cleaned_data["uuid"]:
-            stationnement = TypeStationnement.objects.get(
-                uuid=form_stationnement.cleaned_data["uuid"]
-            )
-            stationnement.typologie = form_stationnement.cleaned_data["typologie"]
-            stationnement.nb_stationnements = form_stationnement.cleaned_data[
-                "nb_stationnements"
-            ]
-            stationnement.loyer = form_stationnement.cleaned_data["loyer"]
+        self.formset = TypeStationnementFormSet(initformset)
+        if self.formset.is_valid():
+            self._save_stationnements()
+            self.return_status = utils.ReturnStatus.SUCCESS
         else:
-            stationnement = TypeStationnement.objects.create(
-                lot=convention.lot,
-                bailleur=convention.bailleur,
-                typologie=form_stationnement.cleaned_data["typologie"],
-                nb_stationnements=form_stationnement.cleaned_data["nb_stationnements"],
-                loyer=form_stationnement.cleaned_data["loyer"],
-            )
-        stationnement.save()
+            self.return_status = utils.ReturnStatus.ERROR
+
+    def _save_stationnements(self):
+        obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
+        obj_uuids = list(filter(None, obj_uuids1))
+        TypeStationnement.objects.filter(lot_id=self.convention.lot.id).exclude(
+            uuid__in=obj_uuids
+        ).delete()
+        for form_stationnement in self.formset:
+            if form_stationnement.cleaned_data["uuid"]:
+                stationnement = TypeStationnement.objects.get(
+                    uuid=form_stationnement.cleaned_data["uuid"]
+                )
+                stationnement.typologie = form_stationnement.cleaned_data["typologie"]
+                stationnement.nb_stationnements = form_stationnement.cleaned_data[
+                    "nb_stationnements"
+                ]
+                stationnement.loyer = form_stationnement.cleaned_data["loyer"]
+            else:
+                stationnement = TypeStationnement.objects.create(
+                    lot=self.convention.lot,
+                    bailleur=self.convention.bailleur,
+                    typologie=form_stationnement.cleaned_data["typologie"],
+                    nb_stationnements=form_stationnement.cleaned_data[
+                        "nb_stationnements"
+                    ],
+                    loyer=form_stationnement.cleaned_data["loyer"],
+                )
+            stationnement.save()

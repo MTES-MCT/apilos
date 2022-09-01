@@ -60,22 +60,22 @@
                                         id="{{form_annexe.uuid.id_for_label}}"
                                         name="{{form_annexe.uuid.html_name}}"
                                         value="{{ form_annexe.uuid.value|default_if_none:'' }}">
-                                    {% include "common/form/input_select.html" with form_input=form_annexe.typologie parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_select.html" with form_input=form_annexe.typologie parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td>
-                                    {% include "common/form/input_text.html" with form_input=form_annexe.logement_designation parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_text.html" with form_input=form_annexe.logement_designation parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td>
-                                    {% include "common/form/input_select.html" with form_input=form_annexe.logement_typologie parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_select.html" with form_input=form_annexe.logement_typologie parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td>
-                                    {% include "common/form/input_number.html" with form_input=form_annexe.surface_hors_surface_retenue step="0.01" parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_number.html" with form_input=form_annexe.surface_hors_surface_retenue step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td>
-                                    {% include "common/form/input_number.html" with form_input=form_annexe.loyer_par_metre_carre step="0.01" parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_number.html" with form_input=form_annexe.loyer_par_metre_carre step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td>
-                                    {% include "common/form/input_number.html" with form_input=form_annexe.loyer step="0.01" parent_object_field=main_object_field editable=editable_upload %}
+                                    {% include "common/form/input_number.html" with form_input=form_annexe.loyer step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                             </tr>
                         {% endwith %}
