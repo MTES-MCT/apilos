@@ -8,7 +8,7 @@
                             {{ label }}
                             {% include "common/form/required_field.html" with form_input=form_input %}
                         </label>
-                        <span class="fr-link fr-link--sm fr-fi-information-line content__helpicon"></span>
+                        <span class="fr-link fr-link--sm fr-icon-information-line content__helpicon"></span>
                     </summary>
                     {% include "common/help_field.html" with form_input=form_input %}
                 </detailS>
@@ -19,7 +19,7 @@
                     {% include "common/help_field.html" with form_input=form_input %}
                 </label>
             {% endif %}
-            {% else %}
+        {% else %}
             <label class="fr-label fr-mb-1w" for="{{form_input.id_for_label}}">
                 {{ form_input.label }}
                 {% include "common/form/required_field.html" with form_input=form_input %}
@@ -34,7 +34,7 @@
                             {{ form_input.label }}
                             {% include "common/form/required_field.html" with form_input=form_input %}
                         </label>
-                        <span class="fr-link fr-link--sm fr-fi-information-line content__helpicon"></span>
+                        <span class="fr-link fr-link--sm fr-icon-information-line content__helpicon"></span>
                     </summary>
                     {% include "common/help_field.html" with form_input=form_input %}
                 </detailS>
