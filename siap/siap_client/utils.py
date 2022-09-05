@@ -118,6 +118,11 @@ def get_or_create_programme(
 def get_or_create_lots_and_conventions(operation: dict, programme: Programme):
     lots = []
     conventions = []
+<<<<<<< HEAD
+=======
+    print(operation["detailsOperation"])
+    print(programme.type_operation)
+>>>>>>> 934e24f (s538 : Manage the operation SANS TRAVAUX from SIAP)
     if (
         operation["detailsOperation"] is None
         and programme.type_operation == TypeOperation.SANSTRAVAUX
