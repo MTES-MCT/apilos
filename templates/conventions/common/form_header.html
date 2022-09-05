@@ -57,20 +57,16 @@
     <div class='background-contrast-grey950'>
         <div class="fr-container">
             <div class="fr-col-12 fr-pb-3w">
-                {% if request|is_instructeur %}
-                    <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
-                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
-                            Entreprise bailleur : {{ convention.bailleur }}
-                        </div>
+                <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
+                        Entreprise bailleur : {{ convention.bailleur }}
                     </div>
-                {% endif %}
-                {% if request|display_administration  %}
-                    <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
-                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
-                            Service instructeur : {{ convention.programme.administration }}
-                        </div>
+                </div>
+                <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
+                        Service instructeur : {{ convention.programme.administration }}
                     </div>
-                {% endif %}
+                </div>
                 <div class="fr-grid-row fr-grid-row--gutters  fr-pl-9w">
                     <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
                         Financement : {{ convention.lot.financement|default_if_none:'-' }}
@@ -86,6 +82,15 @@
                     </div>
                     <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-text--bold">
                         Ville : {{ convention.programme.ville|default_if_none:'-' }}
+                    </div>
+                </div>
+                <div class="fr-grid-row fr-grid-row--gutters  fr-pl-9w">
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
+                        <a href="/" title="Accueil - APiLos">
+                            <button class="fr-btn fr-my-1w">
+                                Retour à la liste des conventions
+                            </button>
+                        </a>
                     </div>
                 </div>
             </div>

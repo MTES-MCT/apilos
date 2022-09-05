@@ -35,15 +35,12 @@
                 <div class="fr-header__tools">
                     <div class="fr-header__tools-links">
                         {% if user.is_authenticated %}
-                            <ul class="fr-links-group">
+                            <ul class="fr-links-group fr-mb-1w">
                                 <li class="fr-mx-2w apilos-flex-wrap">
-                                    <div class="width-100 apilos-d-block">
+                                    <div class="width-100 apilos-d-block fr-m-auto">
                                         Bonjour&nbsp;
                                         <strong>{{ request.user }}</strong>
                                     </div>
-                                    <a class="fr-mt-1w width-100" href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noopener">
-                                        <span class="fr-fi-question-line fr-mr-1w" aria-hidden="true"></span>Aide en ligne
-                                    </a>
                                 </li>
                                 <li class="apilos-navbar">
                                     <div class="btn-group">
@@ -61,6 +58,17 @@
                                     </div>
                                 </li>
                             </ul>
+                            <div class="fr-p-1w fr-grid-row apilos-block-faqlink">
+                                <div class="fr-p-2w"><span class="fr-icon-question-mark" aria-hidden="true"></span></div>
+                                <div class="fr-p-1w">
+                                    <div><strong>Vous avez besoin d'aide ?</strong></div>
+                                    <div class="fr-text--light">Retrouvez notre
+                                        <a href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noopener">
+                                            FAQ
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
 
                         {% else %}
                             <ul class="fr-links-group">

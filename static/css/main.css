@@ -214,8 +214,9 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .apilos-block-faqlink {
   background-color: var(--blue-france-925-125);
   width: max-content;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
   color: #000091;
+  text-align: left;
 }
 .apilos-block-faqlink .fr-p-2w {
   margin: auto;
