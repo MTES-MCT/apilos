@@ -143,6 +143,7 @@
                                 };
                                 document.getElementById('{{upform.file.id_for_label}}').onchange = function() {
                                     var input = document.createElement('input');
+                                    input.setAttribute('type', 'hidden');//hidden input
                                     input.setAttribute('name', 'Upload');//set the param name
                                     input.setAttribute('value', 'True');//set the value
                                     this.form.appendChild(input)

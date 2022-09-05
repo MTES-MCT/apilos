@@ -8,7 +8,7 @@
                 </p>
             </div>
             <a class="fr-link fr-mb-1w" href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' id="refresh_opened_comments">
-                <span class="fr-fi-refresh-line" aria-hidden="true">Rafraichir</span>
+                <span class="fr-icon-refresh-line" aria-hidden="true">Rafraichir</span>
             </a>
         </div>
 
@@ -43,6 +43,6 @@
     </div>
 {% else %}
     <a class="fr-link fr-mb-1w" href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' id="refresh_opened_comments" hidden>
-        <span class="fr-fi-refresh-line" aria-hidden="true">Rafraichir</span>
+        <span class="fr-icon-refresh-line" aria-hidden="true">Rafraichir</span>
     </a>
 {% endif %}

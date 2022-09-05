@@ -2,12 +2,12 @@
 <input type="hidden" name="editable_after_upload" value="{{ editable_after_upload }}">
 <div>
     <div id="save_after_comments" hidden>
-        <button class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right">
+        <button class="fr-btn fr-icon-arrow-right-s-line fr-btn--icon-right">
             Enregistrer et retour au Récapitulatif
         </button>
     </div>
     <div id="back_to_recap" hidden>
-        <a class="fr-btn fr-fi-arrow-right-s-line fr-btn--icon-right"
+        <a class="fr-btn fr-icon-arrow-right-s-line fr-btn--icon-right"
             href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
             Retour au Récapitulatif
         </a>
