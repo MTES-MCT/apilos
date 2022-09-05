@@ -78,6 +78,18 @@ def get_or_create_administration(administration_from_siap: dict):
 def get_or_create_programme(
     programme_from_siap: dict, bailleur: Bailleur, administration: Administration
 ) -> Programme:
+
+    if programme_from_siap["donneesOperation"]["sansTravaux"]:
+        type_operation = TypeOperation.SANSTRAVAUX
+        nature_logement = NatureLogement.LOGEMENTSORDINAIRES
+    else:
+        type_operation = _type_operation(
+            programme_from_siap["donneesOperation"]["sousNatureOperation"]
+        )
+        nature_logement = _nature_logement(
+            programme_from_siap["donneesOperation"]["natureLogement"]
+        )
+
     (programme, _) = Programme.objects.get_or_create(
         numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"],
         bailleur=bailleur,
@@ -96,12 +108,8 @@ def get_or_create_programme(
             ],
             "zone_abc": programme_from_siap["donneesLocalisation"]["zonage123"],
             "zone_123": programme_from_siap["donneesLocalisation"]["zonageABC"],
-            "type_operation": _type_operation(
-                programme_from_siap["donneesOperation"]["sousNatureOperation"]
-            ),
-            "nature_logement": _nature_logement(
-                programme_from_siap["donneesOperation"]["natureLogement"]
-            ),
+            "type_operation": type_operation,
+            "nature_logement": nature_logement,
         },
     )
     return programme
@@ -110,14 +118,19 @@ def get_or_create_programme(
 def get_or_create_lots_and_conventions(operation: dict, programme: Programme):
     lots = []
     conventions = []
-    for aide in operation["detailsOperation"]:
+    print(operation["detailsOperation"])
+    print(programme.type_operation)
+    if (
+        operation["detailsOperation"] is None
+        and programme.type_operation == TypeOperation.SANSTRAVAUX
+    ):
         (lot, _) = Lot.objects.get_or_create(
             programme=programme,
             bailleur=programme.bailleur,
-            financement=_financement(aide["aide"]["code"]),
+            financement=Financement.SANS_FINANCEMENT,
             defaults={
-                "type_habitat": _type_habitat(aide),
-                "nb_logements": _nb_logements(aide),
+                "type_habitat": TypeHabitat.MIXTE,
+                "nb_logements": 0,
             },
         )
         lots.append(lot)
@@ -125,9 +138,28 @@ def get_or_create_lots_and_conventions(operation: dict, programme: Programme):
             programme=programme,
             bailleur=programme.bailleur,
             lot=lot,
-            financement=_financement(aide["aide"]["code"]),
+            financement=Financement.SANS_FINANCEMENT,
         )
         conventions.append(convention)
+    else:
+        for aide in operation["detailsOperation"]:
+            (lot, _) = Lot.objects.get_or_create(
+                programme=programme,
+                bailleur=programme.bailleur,
+                financement=_financement(aide["aide"]["code"]),
+                defaults={
+                    "type_habitat": _type_habitat(aide),
+                    "nb_logements": _nb_logements(aide),
+                },
+            )
+            lots.append(lot)
+            (convention, _) = Convention.objects.get_or_create(
+                programme=programme,
+                bailleur=programme.bailleur,
+                lot=lot,
+                financement=_financement(aide["aide"]["code"]),
+            )
+            conventions.append(convention)
 
     return (lots, conventions)
 
