@@ -103,8 +103,7 @@ def _find_or_create_entity(request: HttpRequest, from_habilitation: dict):
         (perimetre_departement, perimetre_region) = _get_perimetre_geographique(
             from_habilitation
         )
-        Role.objects.filter(user=request.user).delete()
-        role = Role.objects.create(
+        (role, _) = Role.objects.get_or_create(
             typologie=TypeRole.ADMINISTRATEUR,
             user=request.user,
             group=Group.objects.get(name="administrateur"),
@@ -131,8 +130,7 @@ def _find_or_create_entity(request: HttpRequest, from_habilitation: dict):
         (perimetre_departement, perimetre_region) = _get_perimetre_geographique(
             from_habilitation
         )
-        Role.objects.filter(user=request.user).delete()
-        role = Role.objects.create(
+        (role, _) = Role.objects.get_or_create(
             typologie=TypeRole.BAILLEUR,
             bailleur=bailleur,
             user=request.user,
@@ -157,8 +155,7 @@ def _find_or_create_entity(request: HttpRequest, from_habilitation: dict):
         (perimetre_departement, perimetre_region) = _get_perimetre_geographique(
             from_habilitation
         )
-        Role.objects.filter(user=request.user).delete()
-        role = Role.objects.create(
+        (role, _) = Role.objects.get_or_create(
             typologie=TypeRole.INSTRUCTEUR,
             administration=administration,
             user=request.user,
