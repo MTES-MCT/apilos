@@ -118,8 +118,6 @@ def get_or_create_programme(
 def get_or_create_lots_and_conventions(operation: dict, programme: Programme):
     lots = []
     conventions = []
-    print(operation["detailsOperation"])
-    print(programme.type_operation)
     if (
         operation["detailsOperation"] is None
         and programme.type_operation == TypeOperation.SANSTRAVAUX
