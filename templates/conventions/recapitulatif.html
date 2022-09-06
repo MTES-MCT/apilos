@@ -467,6 +467,16 @@
                 {% include "conventions/recapitulatif/comments.html" %}
 
                 <turbo-frame id="convention_actions" data-turbo="true">
+
+                    {% if request|is_bailleur and convention.is_project %}
+                        <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
+                            {% include "conventions/actions/submit_convention.html" %}
+                            {% include "conventions/actions/delete.html"%}
+
+                        </div>
+                    {% endif %}
+
+
                     {% include "conventions/type1and2_options.html" %}
 
                     <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
@@ -477,12 +487,6 @@
                             {% include "conventions/actions/back_to_instruction.html" %}
                         {% endif %}
                     </div>
-                    {% if request|is_bailleur and convention.is_project %}
-                        <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
-                            {% include "conventions/actions/delete.html"%}
-                            {% include "conventions/actions/submit_convention.html" %}
-                        </div>
-                    {% endif %}
 
                     {% include "conventions/actions/bailleur_notification.html" %}
 
