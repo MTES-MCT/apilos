@@ -14,12 +14,15 @@ from pathlib import Path
 from datetime import timedelta
 import os
 import sys
+import logging
 
 import decouple
 import dj_database_url
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+
+logger = logging.Logger(__name__)
 
 
 def get_env_variable(name, cast=str, default=""):
@@ -437,5 +440,9 @@ DRAMATIQ_BROKER = {
 # from https://django-sql-explorer.readthedocs.io/en/latest/install.html
 if decouple.config("DB_READONLY", default=False):
     DATABASES["readonly"] = dj_database_url.parse(decouple.config("DB_READONLY"))
-    EXPLORER_CONNECTIONS = {"Default": "readonly"}
-    EXPLORER_DEFAULT_CONNECTION = "readonly"
+else:
+    logger.warning("DB_READONLY")
+    DATABASES["readonly"] = DATABASES["default"]
+
+EXPLORER_CONNECTIONS = {"Default": "readonly"}
+EXPLORER_DEFAULT_CONNECTION = "readonly"
