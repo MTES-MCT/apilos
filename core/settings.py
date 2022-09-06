@@ -52,20 +52,40 @@ DEBUG = get_env_variable("DEBUG", cast=bool)
 ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
 TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 
+LOGLEVEL = get_env_variable("LOGLEVEL", default="info").upper()
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
         "console": {
-            "level": "DEBUG",
             "class": "logging.StreamHandler",
+            "formatter": "default",
         }
     },
     "loggers": {
         "django.db.backends": {
-            "level": "INFO",
+            "level": LOGLEVEL,
             "handlers": ["console"],
-        }
+        },
+        "django": {
+            "handlers": ["console"],
+            "level": LOGLEVEL,
+        },
+        "": {
+            "handlers": ["console"],
+            "level": LOGLEVEL,
+        },
+        "django.server": {
+            "handlers": ["console"],
+            "level": LOGLEVEL,
+        },
+    },
+    "formatters": {
+        "default": {
+            # exact format is not important, this is the minimum information
+            "format": "[%(asctime)s] %(name)-12s] %(levelname)-8s : %(message)s",
+        },
     },
 }
 

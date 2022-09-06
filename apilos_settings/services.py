@@ -280,7 +280,7 @@ def edit_user(request, username):
             form_add_bailleur = AddBailleurForm()
             form_add_administration = AddAdministrationForm()
             bailleur_uuid = request.POST.get("bailleur")
-            Role.objects.filter(
+            Role.objects.get(
                 typologie=TypeRole.BAILLEUR,
                 bailleur=request.user.bailleurs().get(uuid=bailleur_uuid),
                 user=user,
@@ -303,7 +303,7 @@ def edit_user(request, username):
             form_add_bailleur = AddBailleurForm()
             form_add_administration = AddAdministrationForm()
             administration_uuid = request.POST.get("administration")
-            Role.objects.filter(
+            Role.objects.get(
                 typologie=TypeRole.INSTRUCTEUR,
                 administration=request.user.administrations().get(
                     uuid=administration_uuid

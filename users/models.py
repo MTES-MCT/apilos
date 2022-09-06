@@ -1,15 +1,19 @@
+import logging
+
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models.functions import Substr
+from django.forms.models import model_to_dict
 
 from apilos_settings.models import Departement
 from bailleurs.models import Bailleur
 from conventions.models import Convention
 from instructeurs.models import Administration
 from programmes.models import Lot, Programme
-
 from users.type_models import TypeRole, EmailPreferences
+
+logger = logging.getLogger(__name__)
 
 
 class GroupProfile(models.TextChoices):
@@ -360,6 +364,22 @@ class Role(models.Model):
     )
     user = models.ForeignKey("users.User", on_delete=models.CASCADE, null=False)
     group = models.ForeignKey("auth.Group", on_delete=models.CASCADE, null=False)
+
+    def save(self, *args, **kwargs):
+        logger.info(
+            "created Role %s for user %s ",
+            model_to_dict(self),
+            model_to_dict(self.user),
+        )
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        logger.info(
+            "removed Role %s for user %s ",
+            model_to_dict(self),
+            model_to_dict(self.user),
+        )
+        return super().delete(*args, **kwargs)
 
     def __str__(self):
         entity = ""
