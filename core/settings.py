@@ -111,6 +111,7 @@ CONVERTAPI_SECRET = get_env_variable("CONVERTAPI_SECRET")
 
 ALLOWED_HOSTS = ["localhost"] + env_allowed_hosts
 
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -136,7 +137,6 @@ INSTALLED_APPS = [
     "django_filters",
     "django_cas_ng",
     "django.contrib.admindocs",
-    "explorer",
 ]
 
 MIDDLEWARE = [
@@ -201,8 +201,6 @@ DATABASES = {
     "default": default_settings,
 }
 
-if decouple.config("DB_READONLY", default=False):
-    DATABASES["readonly"] = dj_database_url.parse(decouple.config("DB_READONLY"))
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -436,5 +434,8 @@ DRAMATIQ_BROKER = {
 
 # EXPORER settings
 # from https://django-sql-explorer.readthedocs.io/en/latest/install.html
-EXPLORER_CONNECTIONS = {"Default": "readonly"}
-EXPLORER_DEFAULT_CONNECTION = "readonly"
+if decouple.config("DB_READONLY", default=False):
+    DATABASES["readonly"] = dj_database_url.parse(decouple.config("DB_READONLY"))
+    INSTALLED_APPS = INSTALLED_APPS + ["explorer"]
+    EXPLORER_CONNECTIONS = {"Default": "readonly"}
+    EXPLORER_DEFAULT_CONNECTION = "readonly"
