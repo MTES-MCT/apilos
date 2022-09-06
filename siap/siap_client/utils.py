@@ -1,3 +1,6 @@
+import re
+from typing import Tuple
+
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
 from programmes.models import (
@@ -75,10 +78,21 @@ def get_or_create_administration(administration_from_siap: dict):
     return administration
 
 
+def _address_interpretation(one_liner_adresse: str) -> Tuple[str]:
+    adresse = one_liner_adresse
+    code_postal = ville = ""
+    five_digits = re.findall(r"\d{5}", one_liner_adresse)
+    if five_digits:
+        code_postal = five_digits[-1]
+        (adresse, ville) = one_liner_adresse.split(five_digits[-1])
+        ville = ville.strip(";, ") if ville is not None else ""
+        adresse = adresse.strip(";, ") if adresse is not None else ""
+    return (adresse, code_postal, ville)
+
+
 def get_or_create_programme(
     programme_from_siap: dict, bailleur: Bailleur, administration: Administration
 ) -> Programme:
-
     if programme_from_siap["donneesOperation"]["sansTravaux"]:
         type_operation = TypeOperation.SANSTRAVAUX
         nature_logement = NatureLogement.LOGEMENTSORDINAIRES
@@ -89,14 +103,18 @@ def get_or_create_programme(
         nature_logement = _nature_logement(
             programme_from_siap["donneesOperation"]["natureLogement"]
         )
-
+    (adresse, code_postal, ville) = _address_interpretation(
+        programme_from_siap["donneesLocalisation"]["adresse"]
+    )
     (programme, _) = Programme.objects.get_or_create(
         numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"],
         bailleur=bailleur,
         administration=administration,
         defaults={
             "nom": programme_from_siap["donneesOperation"]["nomOperation"],
-            "adresse": programme_from_siap["donneesLocalisation"]["adresse"],
+            "adresse": adresse,
+            "code_postal": code_postal,
+            "ville": ville,
             "code_insee_commune": programme_from_siap["donneesLocalisation"]["commune"][
                 "codeInsee"
             ],
@@ -118,11 +136,6 @@ def get_or_create_programme(
 def get_or_create_lots_and_conventions(operation: dict, programme: Programme):
     lots = []
     conventions = []
-<<<<<<< HEAD
-=======
-    print(operation["detailsOperation"])
-    print(programme.type_operation)
->>>>>>> 934e24f (s538 : Manage the operation SANS TRAVAUX from SIAP)
     if (
         operation["detailsOperation"] is None
         and programme.type_operation == TypeOperation.SANSTRAVAUX
