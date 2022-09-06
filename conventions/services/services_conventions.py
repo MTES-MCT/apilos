@@ -11,14 +11,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.db.models.functions import Substr
 from django.conf import settings
-from comments.models import Comment, CommentStatut
-from core.services import EmailService
 
-from programmes.models import (
-    Annexe,
-    Financement,
-)
-from conventions.models import Convention, ConventionHistory, ConventionStatut, Pret
+from comments.models import Comment, CommentStatut
 from conventions.forms import (
     ConventionCommentForm,
     ConventionFinancementForm,
@@ -30,7 +24,14 @@ from conventions.forms import (
     ConventionResiliationForm,
     NewAvenantForm,
 )
+from conventions.models import Convention, ConventionHistory, ConventionStatut, Pret
 from conventions.tasks import generate_and_send
+from core.services import EmailService
+from programmes.models import (
+    Annexe,
+    Financement,
+)
+from siap.siap_client.client import SIAPClient
 from upload.services import UploadService
 
 from . import utils
@@ -426,11 +427,28 @@ def convention_submit(request, convention_uuid):
         convention.soumis_le = timezone.now()
         convention.statut = ConventionStatut.INSTRUCTION
         convention.save()
+
+        instructeur_emails = []
+        if request.user.is_cerbere_user():
+            client = SIAPClient.get_instance()
+            operation = client.get_operation(
+                user_login=request.user.cerbere_login,
+                habilitation_id=request.session["habilitation_id"],
+                operation_identifier=convention.programme.numero_galion,
+            )
+            for utilisateur in operation["gestionnaire"]["utilisateurs"]:
+                instructeur_emails.append(utilisateur["email"])
+        else:
+            instructeur_emails = convention.get_email_instructeur_users(
+                include_partial=True
+            )
+
         send_email_instruction(
             request.build_absolute_uri(
                 reverse("conventions:recapitulatif", args=[convention.uuid])
             ),
             convention,
+            instructeur_emails,
         )
         submitted = utils.ReturnStatus.SUCCESS
     return {
@@ -446,7 +464,7 @@ def convention_delete(request, convention_uuid):
     convention.delete()
 
 
-def send_email_instruction(convention_url, convention):
+def send_email_instruction(convention_url, convention, instructeur_emails):
     """
     Send email "convention à instruire" when bailleur submit the convention
     Send an email to the bailleur who click and bailleur TOUS
@@ -507,7 +525,7 @@ def send_email_instruction(convention_url, convention):
 
     email_service = EmailService(
         subject=f"Convention à instruire ({convention})",
-        to_emails=convention.get_email_instructeur_users(include_partial=True),
+        to_emails=instructeur_emails,
         text_content=text_content,
         html_content=html_content,
     )

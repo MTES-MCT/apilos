@@ -173,7 +173,7 @@ class ServicesConventionsTests(TestCase):
     def test_send_email_instruction(self):
         convention = Convention.objects.get(numero="0001")
         email_sent = services_conventions.send_email_instruction(
-            "https://apilos.beta.gouv.fr/my_convention", convention
+            "https://apilos.beta.gouv.fr/my_convention", convention, ["fix@apilos.com"]
         )
         self.assertEqual(email_sent[0].to, ["raph@apilos.com"])
         self.assertEqual(email_sent[0].from_email, "contact@apilos.beta.gouv.fr")
@@ -195,7 +195,7 @@ class ServicesConventionsTests(TestCase):
             preferences_email=EmailPreferences.AUCUN
         )
         email_sent = services_conventions.send_email_instruction(
-            "https://apilos.beta.gouv.fr/my_convention", convention
+            "https://apilos.beta.gouv.fr/my_convention", convention, []
         )
         self.assertEqual(email_sent[0].to, ["contact@apilos.beta.gouv.fr"])
         self.assertEqual(email_sent[0].from_email, "contact@apilos.beta.gouv.fr")
