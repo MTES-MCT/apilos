@@ -52,7 +52,7 @@ DEBUG = get_env_variable("DEBUG", cast=bool)
 ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
 TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 
-LOGLEVEL = get_env_variable("LOGLEVEL", default="info").upper()
+LOGLEVEL = get_env_variable("LOGLEVEL", default="error").upper()
 
 LOGGING = {
     "version": 1,
@@ -199,8 +199,10 @@ except decouple.UndefinedValueError:
 
 DATABASES = {
     "default": default_settings,
-    "readonly": dj_database_url.parse(decouple.config("DB_READONLY")),
 }
+
+if decouple.config("DB_READONLY", default=False):
+    DATABASES["readonly"] = dj_database_url.parse(decouple.config("DB_READONLY"))
 
 AUTH_PASSWORD_VALIDATORS = [
     {
