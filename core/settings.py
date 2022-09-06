@@ -137,6 +137,7 @@ INSTALLED_APPS = [
     "django_filters",
     "django_cas_ng",
     "django.contrib.admindocs",
+    "explorer",
 ]
 
 MIDDLEWARE = [
@@ -436,6 +437,5 @@ DRAMATIQ_BROKER = {
 # from https://django-sql-explorer.readthedocs.io/en/latest/install.html
 if decouple.config("DB_READONLY", default=False):
     DATABASES["readonly"] = dj_database_url.parse(decouple.config("DB_READONLY"))
-    INSTALLED_APPS = INSTALLED_APPS + ["explorer"]
     EXPLORER_CONNECTIONS = {"Default": "readonly"}
     EXPLORER_DEFAULT_CONNECTION = "readonly"
