@@ -1,16 +1,15 @@
-<div class="fr-col-12 fr-col-lg-6">
-    <div role="alert" class="fr-alert fr-alert--warning">
+<div class="fr-col-12 block--row-strech apilos-line-top">
+    <div class="block--row-strech-1">
         <p class="fr-alert__title">
-            Suppression du projet {% if convention.is_avenant %}d'avenant{% else %}de convention{% endif %}
+            Supprimer ce projet {% if convention.is_avenant %}d'avenant{% else %}de convention{% endif %}
         </p>
         <p>
-            Vous vous êtes trompé lors de la création ? Ce n'est pas la bonne opération ?
-            Vous pouvez supprimer le projet {% if convention.is_avenant %}d'avenant{% else %}de convention{% endif %}, cela ne supprimera pas l'opération et vous pourrez la refaire plus tard.
+            Vous vous êtes trompé lors de la création ?
         </p>
-        <button type="button" class="fr-btn apilos-btn--red fr-btn--icon-left fr-fi-delete-line  fr-my-1w" data-fr-opened="false" aria-controls="fr-modal-{{convention.uuid}}">
-            Supprimer {% if convention.is_avenant %}cet avenant{% else %}cette convention{% endif %}
-        </button>
     </div>
+    <button type="button" class="fr-btn apilos-btn--secondary--red fr-btn--icon-left fr-fi-delete-line  fr-my-1w" data-fr-opened="false" aria-controls="fr-modal-{{convention.uuid}}">
+        Supprimer {% if convention.is_avenant %}cet avenant{% else %}cette convention{% endif %}
+    </button>
 </div>
 <dialog aria-labelledby="fr-modal-{{convention.uuid}}-title" id="fr-modal-{{convention.uuid}}" class="fr-modal" role="dialog" >
     <div class="fr-container fr-container--fluid fr-container-md">

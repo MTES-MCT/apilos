@@ -19,6 +19,9 @@
   display: block;
 }
 
+.apilos-line-top {
+  border-top: solid 1px #ccc;
+}
 .fr-fi--xxl {
   --icon-size: 4rem;
 }
@@ -603,6 +606,12 @@ table.fullwidth {
 
 .apilos-btn--red {
   background-color: #dc3545;
+}
+.apilos-btn--secondary--red,
+button:not(:disabled).apilos-btn--secondary--red:hover {
+  color: #dc3545;
+  border: solid 1px #dc3545;
+  background-color: transparent;
 }
 
 /*

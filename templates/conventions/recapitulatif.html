@@ -471,8 +471,6 @@
                     {% if request|is_bailleur and convention.is_project %}
                         <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
                             {% include "conventions/actions/submit_convention.html" %}
-                            {% include "conventions/actions/delete.html"%}
-
                         </div>
                     {% endif %}
 
@@ -486,6 +484,9 @@
                         {% if request|is_instructeur and convention.display_options.display_back_to_instruction %}
                             {% include "conventions/actions/back_to_instruction.html" %}
                         {% endif %}
+                    </div>
+                    <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
+                        {% include "conventions/actions/delete.html"%}
                     </div>
 
                     {% include "conventions/actions/bailleur_notification.html" %}
