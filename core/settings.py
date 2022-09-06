@@ -136,6 +136,7 @@ INSTALLED_APPS = [
     "django_filters",
     "django_cas_ng",
     "django.contrib.admindocs",
+    "explorer",
 ]
 
 MIDDLEWARE = [
@@ -180,7 +181,7 @@ try:
     # dj_database_url is used in scalingo environment to interpret the
     # connection configuration to the DB from a single URL with all path
     # and credentials
-    database_url = decouple.config("DATABASE_URL")
+    decouple.config("DATABASE_URL")
     default_settings = dj_database_url.config()
 except decouple.UndefinedValueError:
     default_settings = {
@@ -196,7 +197,10 @@ except decouple.UndefinedValueError:
         "ATOMIC_REQUESTS": True,
     }
 
-DATABASES = {"default": default_settings}
+DATABASES = {
+    "default": default_settings,
+    "readonly": dj_database_url.parse(decouple.config("DB_READONLY")),
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -427,3 +431,8 @@ DRAMATIQ_BROKER = {
         "django_dramatiq.middleware.AdminMiddleware",
     ],
 }
+
+# EXPORER settings
+# from https://django-sql-explorer.readthedocs.io/en/latest/install.html
+EXPLORER_CONNECTIONS = {"Default": "readonly"}
+EXPLORER_DEFAULT_CONNECTION = "readonly"

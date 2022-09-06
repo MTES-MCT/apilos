@@ -80,6 +80,7 @@ django==3.2.14 \
     #   django-dramatiq
     #   django-filter
     #   django-mailjet
+    #   django-sql-explorer
     #   django-storages
     #   djangorestframework
     #   djangorestframework-simplejwt
@@ -103,6 +104,10 @@ django-filter==22.1 \
     # via -r requirements.in
 django-mailjet==0.3.1 \
     --hash=sha256:c5974447b2fe4aeb298a4774887b6850374b3291fe941e7d23ff09c2edee8ef5
+    # via -r requirements.in
+django-sql-explorer[xls]==2.4.2 \
+    --hash=sha256:7e224a382a86229f323ce8373afe06b4f3ebc948b9a805e72b7d55d53c4479bb \
+    --hash=sha256:e98363d7f3402d553ba436708cad2db0dcc3f96b001cbf7ccd440c929a8e62e9
     # via -r requirements.in
 django-storages==1.13.1 \
     --hash=sha256:3540b45618b04be2c867c0982e8d2bd8e34f84dae922267fcebe4691fb93daf0 \
@@ -686,7 +691,9 @@ six==1.16.0 \
 sqlparse==0.4.2 \
     --hash=sha256:0c00730c74263a94e5a9919ade150dfc3b19c574389985446148402998287dae \
     --hash=sha256:48719e356bb8b42991bdbb1e8b83223757b93789c00910a616a071910ca4a64d
-    # via django
+    # via
+    #   django
+    #   django-sql-explorer
 static3==0.7.0 \
     --hash=sha256:674641c64bc75507af2eb20bef7e7e3593dca993dec6674be108fa15b42f47c8
     # via dj-static
@@ -821,6 +828,10 @@ wrapt==1.14.1 \
     # via
     #   astroid
     #   deprecated
+xlsxwriter==3.0.3 \
+    --hash=sha256:df0aefe5137478d206847eccf9f114715e42aaea077e6a48d0e8a2152e983010 \
+    --hash=sha256:e89f4a1d2fa2c9ea15cde77de95cd3fd8b0345d0efb3964623f395c8c4988b7f
+    # via django-sql-explorer
 zope-event==4.5.0 \
     --hash=sha256:2666401939cdaa5f4e0c08cf7f20c9b21423b95e88f4675b1443973bdb080c42 \
     --hash=sha256:5e76517f5b9b119acf37ca8819781db6c16ea433f7e2062c4afc2b6fbedb1330
