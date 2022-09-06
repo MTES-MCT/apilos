@@ -55,13 +55,24 @@ class User(AbstractUser):
 
     def has_object_permission(self, obj):
         if isinstance(obj, (Convention, Lot)):
-            # is administrateur of the convention
             if (
-                "currently" in self.siap_habilitation
-                and self.siap_habilitation["currently"]
-                == GroupProfile.SIAP_ADM_CENTRALE
+                "role" in self.siap_habilitation
+                and self.siap_habilitation["role"]["typologie"]
+                == TypeRole.ADMINISTRATEUR
             ):
+
+                if self.siap_habilitation["role"]["perimetre_departement"]:
+                    return (
+                        obj.programme.code_insee_departement
+                        == self.siap_habilitation["role"]["perimetre_departement"]
+                    )
+                if self.siap_habilitation["role"]["perimetre_region"]:
+                    return (
+                        obj.programme.code_insee_region
+                        == self.siap_habilitation["role"]["perimetre_region"]
+                    )
                 return True
+
             # is bailleur of the convention or is instructeur of the convention
             return self.role_set.filter(
                 bailleur_id=obj.bailleur_id
@@ -236,6 +247,22 @@ class User(AbstractUser):
     def bailleurs(self, order_by="nom"):
         return Bailleur.objects.filter(**self.bailleur_filter()).order_by(order_by)
 
+    def _apply_geo_filters(self, conventions):
+        if self.is_cerbere_user() and "role" in self.siap_habilitation:
+            if self.siap_habilitation["role"]["perimetre_departement"]:
+                return conventions.filter(
+                    programme__code_insee_departement=self.siap_habilitation["role"][
+                        "perimetre_departement"
+                    ]
+                )
+            if self.siap_habilitation["role"]["perimetre_region"]:
+                return conventions.filter(
+                    programme__code_insee_region=self.siap_habilitation["role"][
+                        "perimetre_region"
+                    ]
+                )
+        return conventions
+
     def conventions(self):
         """
         Return the conventions the user has right to view.
@@ -246,24 +273,24 @@ class User(AbstractUser):
         convs = Convention.objects.filter(parent_id__isnull=True)
         if self.is_superuser:
             return convs.all()
-
-        # to do : manage programme related to geo for instructeur
         if (
             self.is_cerbere_user()
-            and self.siap_habilitation["currently"] == GroupProfile.SIAP_ADM_CENTRALE
+            and "role" in self.siap_habilitation
+            and self.siap_habilitation["role"]["typologie"] == TypeRole.ADMINISTRATEUR
         ):
-            return convs
+            return self._apply_geo_filters(convs)
 
-        # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
+            convs = self._apply_geo_filters(convs)
             return convs.filter(
-                programme__administration_id__in=self.administration_ids()
+                programme__administration_id__in=self.administration_ids(),
             )
 
         if self.is_bailleur():
-            conventions_result = convs.filter(bailleur_id__in=self._bailleur_ids())
+            convs = self._apply_geo_filters(convs)
+            convs = convs.filter(bailleur_id__in=self._bailleur_ids())
             if self.id and self.filtre_departements.exists():
-                conventions_result = conventions_result.annotate(
+                convs = convs.annotate(
                     departement=Substr("programme__code_postal", 1, 2)
                 ).filter(
                     departement__in=list(
@@ -272,7 +299,7 @@ class User(AbstractUser):
                         )
                     )
                 )
-            return conventions_result
+            return convs
 
         raise PermissionDenied(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les bailleurs"
@@ -360,6 +387,8 @@ class Role(models.Model):
     )
     user = models.ForeignKey("users.User", on_delete=models.CASCADE, null=False)
     group = models.ForeignKey("auth.Group", on_delete=models.CASCADE, null=False)
+    perimetre_region = models.CharField(max_length=10, null=True)
+    perimetre_departement = models.CharField(max_length=10, null=True)
 
     def __str__(self):
         entity = ""
