@@ -13,7 +13,7 @@
         {% else %}
             <p>
                 Attention, {% if convention.is_avenant %}l'avenant à la convention{% else %}la convention{% endif %} n’est pas encore validé{% if not convention.is_avenant %}e{% endif %}, ce document est fourni à titre indicatif.
-                <a class="fr-link" href="https://docs.apilos.beta.gouv.fr/utiliser-la-plateforme/comment-signer-une-convention#generer-la-convention-au-format-word-ou-openoffice" target="_blank">En savoir plus</a>
+                <a class="fr-link" href="https://docs.apilos.beta.gouv.fr/bailleurs-guide/comment-remplir-les-champs/recapitulatif" target="_blank" rel="noopener">En savoir plus</a>
             </p>
             </div>
             <form method="post" action="{% url 'conventions:generate' convention_uuid=convention.uuid %}" data-turbo="false">
