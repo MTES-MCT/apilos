@@ -19,7 +19,7 @@
                             </li>
                             <a class="fr-btn fr-fi-close-circle-line" href="{% url 'logout' %}"></a>
                         {% else %}
-                            <a class="fr-btn fr-fi-edit-line" href="{% url 'login' %}"></a>
+                            <a class="fr-btn fr-icon-edit-line" href="{% url 'login' %}"></a>
                         {% endif %}
                     </div>
                 </div>
@@ -63,12 +63,12 @@
                         {% else %}
                             <ul class="fr-links-group">
                                 <li class="fr-mx-3w">
-                                    <a class="fr-btn fr-btn--icon-left fr-fi-account-line" href="{% url 'login' %}">
+                                    <a class="fr-btn fr-btn--icon-left fr-icon-account-line" href="{% url 'login' %}">
                                     </span>Espace bailleur
                                 </a>
                             </li>
                             <li>
-                                <a class="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-account-line" href="{% url 'login' %}?instructeur=1">
+                                <a class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-account-line" href="{% url 'login' %}?instructeur=1">
                                     <span class=" fr-mr-1w" aria-hidden="true">
                                     </span>Espace instructeur
                                 </a>

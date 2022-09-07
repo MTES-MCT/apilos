@@ -4,6 +4,8 @@ from django.db import models
 from django.db.models import Q
 from django.forms import model_to_dict
 from django.utils import timezone
+
+from core import model_utils
 from programmes.models import (
     Annexe,
     Financement,
@@ -12,7 +14,6 @@ from programmes.models import (
     Programme,
     TypeStationnement,
 )
-from core import model_utils
 from users.type_models import TypeRole, EmailPreferences
 
 
@@ -267,11 +268,6 @@ class Convention(models.Model):
         else partial should include only the instucteur which interact with the convention
         using convention statut
         """
-        if not self.programme.administration:
-            # the programme is not associated to an administration
-            # this can occure when the convention is done from scratch
-            # should be solved with the association of the commune to DAP (délégataire)
-            return []
         if include_partial:
             # All instructeurs of the administration will be notified except one
             # who choose no email (EmailPreferences.AUCUN)

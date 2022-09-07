@@ -28,7 +28,7 @@
 
             <div class="form-button-footer fr-col-md-12  fr-py-5w">
                 {% include "common/button/return_convention_index.html" %}
-                <a class="fr-btn fr-btn--icon-left fr-fi-arrow-left-s-line" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
+                <a class="fr-btn fr-btn--icon-left fr-icon-arrow-left-s-line" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
                     {% if convention.is_avenant %}
                         Retour à l'avenant de la convention
                     {% else %}

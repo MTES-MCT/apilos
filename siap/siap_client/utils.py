@@ -1,3 +1,6 @@
+import re
+from typing import Tuple
+
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
 from programmes.models import (
@@ -75,16 +78,43 @@ def get_or_create_administration(administration_from_siap: dict):
     return administration
 
 
+def _address_interpretation(one_liner_adresse: str) -> Tuple[str]:
+    adresse = one_liner_adresse
+    code_postal = ville = ""
+    five_digits = re.findall(r"\d{5}", one_liner_adresse)
+    if five_digits:
+        code_postal = five_digits[-1]
+        (adresse, ville) = one_liner_adresse.split(five_digits[-1])
+        ville = ville.strip(";, ") if ville is not None else ""
+        adresse = adresse.strip(";, ") if adresse is not None else ""
+    return (adresse, code_postal, ville)
+
+
 def get_or_create_programme(
     programme_from_siap: dict, bailleur: Bailleur, administration: Administration
 ) -> Programme:
+    if programme_from_siap["donneesOperation"]["sansTravaux"]:
+        type_operation = TypeOperation.SANSTRAVAUX
+        nature_logement = NatureLogement.LOGEMENTSORDINAIRES
+    else:
+        type_operation = _type_operation(
+            programme_from_siap["donneesOperation"]["sousNatureOperation"]
+        )
+        nature_logement = _nature_logement(
+            programme_from_siap["donneesOperation"]["natureLogement"]
+        )
+    (adresse, code_postal, ville) = _address_interpretation(
+        programme_from_siap["donneesLocalisation"]["adresse"]
+    )
     (programme, _) = Programme.objects.get_or_create(
         numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"],
         bailleur=bailleur,
         administration=administration,
         defaults={
             "nom": programme_from_siap["donneesOperation"]["nomOperation"],
-            "adresse": programme_from_siap["donneesLocalisation"]["adresse"],
+            "adresse": adresse,
+            "code_postal": code_postal,
+            "ville": ville,
             "code_insee_commune": programme_from_siap["donneesLocalisation"]["commune"][
                 "codeInsee"
             ],
@@ -96,12 +126,8 @@ def get_or_create_programme(
             ],
             "zone_abc": programme_from_siap["donneesLocalisation"]["zonage123"],
             "zone_123": programme_from_siap["donneesLocalisation"]["zonageABC"],
-            "type_operation": _type_operation(
-                programme_from_siap["donneesOperation"]["sousNatureOperation"]
-            ),
-            "nature_logement": _nature_logement(
-                programme_from_siap["donneesOperation"]["natureLogement"]
-            ),
+            "type_operation": type_operation,
+            "nature_logement": nature_logement,
         },
     )
     return programme
@@ -110,14 +136,17 @@ def get_or_create_programme(
 def get_or_create_lots_and_conventions(operation: dict, programme: Programme):
     lots = []
     conventions = []
-    for aide in operation["detailsOperation"]:
+    if (
+        operation["detailsOperation"] is None
+        and programme.type_operation == TypeOperation.SANSTRAVAUX
+    ):
         (lot, _) = Lot.objects.get_or_create(
             programme=programme,
             bailleur=programme.bailleur,
-            financement=_financement(aide["aide"]["code"]),
+            financement=Financement.SANS_FINANCEMENT,
             defaults={
-                "type_habitat": _type_habitat(aide),
-                "nb_logements": _nb_logements(aide),
+                "type_habitat": TypeHabitat.MIXTE,
+                "nb_logements": 0,
             },
         )
         lots.append(lot)
@@ -125,9 +154,28 @@ def get_or_create_lots_and_conventions(operation: dict, programme: Programme):
             programme=programme,
             bailleur=programme.bailleur,
             lot=lot,
-            financement=_financement(aide["aide"]["code"]),
+            financement=Financement.SANS_FINANCEMENT,
         )
         conventions.append(convention)
+    else:
+        for aide in operation["detailsOperation"]:
+            (lot, _) = Lot.objects.get_or_create(
+                programme=programme,
+                bailleur=programme.bailleur,
+                financement=_financement(aide["aide"]["code"]),
+                defaults={
+                    "type_habitat": _type_habitat(aide),
+                    "nb_logements": _nb_logements(aide),
+                },
+            )
+            lots.append(lot)
+            (convention, _) = Convention.objects.get_or_create(
+                programme=programme,
+                bailleur=programme.bailleur,
+                lot=lot,
+                financement=_financement(aide["aide"]["code"]),
+            )
+            conventions.append(convention)
 
     return (lots, conventions)
 
