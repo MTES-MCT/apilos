@@ -469,7 +469,7 @@
                 <turbo-frame id="convention_actions" data-turbo="true">
 
                     {% if request|is_bailleur and convention.is_project %}
-                        <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
+                        <div class="fr-col-12 fr-my-5w">
                             {% include "conventions/actions/submit_convention.html" %}
                         </div>
                     {% endif %}
@@ -480,7 +480,7 @@
 
                     {% include "conventions/type1and2_options.html" %}
 
-                    <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
+                    <div class="fr-col-12 fr-my-5w">
                         {% if convention.display_options.display_progress_bar_1 %}
                             {% include "conventions/actions/generate_convention.html" %}
                         {% endif %}
@@ -489,7 +489,7 @@
                         {% endif %}
                     </div>
                     {% if request|is_bailleur and convention.is_project %}
-                        <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
+                        <div class="fr-col-12 fr-my-5w">
                             {% include "conventions/actions/delete.html"%}
                         </div>
                     {% endif %}
@@ -510,8 +510,8 @@
                 </turbo-frame>
 
 
-                <div class="fr-grid-row fr-grid-row--gutters apilos-line-top">
-                    <div class="fr-col-12">
+                <div class="fr-col-12">
+                    <div class="apilos-line-top">
 
                         <div class="fr-col-md-12 fr-py-5w">
                             {% if request|is_bailleur %}
