@@ -273,6 +273,7 @@ class ConventionNumberForm(forms.Form):
     convention = None
     convention_numero = forms.CharField(
         max_length=250,
+        label="Numéro de convention",
         error_messages={
             "max_length": (
                 "La longueur totale du numéro de convention ne peut pas excéder"
