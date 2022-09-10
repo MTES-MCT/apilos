@@ -152,7 +152,9 @@ class Programme(IngestableModel):
     nom = models.CharField(max_length=255)
     numero_galion = models.CharField(max_length=255, null=True)
     bailleur = models.ForeignKey(
-        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
+        "bailleurs.Bailleur",
+        on_delete=models.CASCADE,
+        null=False,
     )
     administration = models.ForeignKey(
         "instructeurs.Administration", on_delete=models.SET_NULL, null=True
