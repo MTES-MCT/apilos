@@ -232,58 +232,70 @@ class Programme(IngestableModel):
         )
 
     def vendeur_text(self):
-        return model_utils.get_field_key(self, "vendeur", "text")
+        return model_utils.get_key_from_json_field(self.vendeur, "text")
 
     def vendeur_files(self):
-        return model_utils.get_field_key(self, "vendeur", "files", default={})
+        return model_utils.get_key_from_json_field(self.vendeur, "files", default={})
 
     def acquereur_text(self):
-        return model_utils.get_field_key(self, "acquereur", "text")
+        return model_utils.get_key_from_json_field(self.acquereur, "text")
 
     def acquereur_files(self):
-        return model_utils.get_field_key(self, "acquereur", "files", default={})
+        return model_utils.get_key_from_json_field(self.acquereur, "files", default={})
 
     def reference_notaire_text(self):
-        return model_utils.get_field_key(self, "reference_notaire", "text")
+        return model_utils.get_key_from_json_field(self.reference_notaire, "text")
 
     def reference_notaire_files(self):
-        return model_utils.get_field_key(self, "reference_notaire", "files", default={})
+        return model_utils.get_key_from_json_field(
+            self.reference_notaire, "files", default={}
+        )
 
     def reference_publication_acte_text(self):
-        return model_utils.get_field_key(self, "reference_publication_acte", "text")
+        return model_utils.get_key_from_json_field(
+            self.reference_publication_acte, "text"
+        )
 
     def reference_publication_acte_files(self):
-        return model_utils.get_field_key(
-            self, "reference_publication_acte", "files", default={}
+        return model_utils.get_key_from_json_field(
+            self.reference_publication_acte, "files", default={}
         )
 
     def acte_de_propriete_files(self):
-        return model_utils.get_field_key(self, "acte_de_propriete", "files", default={})
+        return model_utils.get_key_from_json_field(
+            self.acte_de_propriete, "files", default={}
+        )
 
     def certificat_adressage_files(self):
-        return model_utils.get_field_key(
-            self, "certificat_adressage", "files", default={}
+        return model_utils.get_key_from_json_field(
+            self.certificat_adressage, "files", default={}
         )
 
     def effet_relatif_files(self):
-        return model_utils.get_field_key(self, "effet_relatif", "files", default={})
+        return model_utils.get_key_from_json_field(
+            self.effet_relatif, "files", default={}
+        )
 
     def reference_cadastrale_files(self):
-        return model_utils.get_field_key(
-            self, "reference_cadastrale", "files", default={}
+        return model_utils.get_key_from_json_field(
+            self.reference_cadastrale, "files", default={}
         )
 
     def edd_volumetrique_text(self):
-        return model_utils.get_field_key(self, "edd_volumetrique", "text")
+        return model_utils.get_key_from_json_field(self.edd_volumetrique, "text")
 
     def edd_volumetrique_files(self):
-        return model_utils.get_field_key(self, "edd_volumetrique", "files", default={})
+        return model_utils.get_key_from_json_field(
+            self.edd_volumetrique, "files", default={}
+        )
 
     def edd_classique_text(self):
-        return model_utils.get_field_key(self, "edd_classique", "text")
+        return model_utils.get_key_from_json_field(self.edd_classique, "text")
 
     def edd_classique_files(self):
-        return model_utils.get_field_key(self, "edd_classique", "files", default={})
+        return model_utils.get_key_from_json_field(
+            self.edd_classique, "files", default={}
+        )
 
 
 # pylint: disable=W0613
@@ -406,16 +418,20 @@ class Lot(IngestableModel):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     def edd_volumetrique_text(self):
-        return model_utils.get_field_key(self, "edd_volumetrique", "text")
+        return model_utils.get_key_from_json_field(self.edd_volumetrique, "text")
 
     def edd_volumetrique_files(self):
-        return model_utils.get_field_key(self, "edd_volumetrique", "files", default={})
+        return model_utils.get_key_from_json_field(
+            self.edd_volumetrique, "files", default={}
+        )
 
     def edd_classique_text(self):
-        return model_utils.get_field_key(self, "edd_classique", "text")
+        return model_utils.get_key_from_json_field(self.edd_classique, "text")
 
     def edd_classique_files(self):
-        return model_utils.get_field_key(self, "edd_classique", "files", default={})
+        return model_utils.get_key_from_json_field(
+            self.edd_classique, "files", default={}
+        )
 
     def get_type_habitat_advanced_display(self, nb_logements=0):
         return (
