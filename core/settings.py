@@ -14,15 +14,12 @@ from pathlib import Path
 from datetime import timedelta
 import os
 import sys
-import logging
 
 import decouple
 import dj_database_url
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
-
-logger = logging.Logger(__name__)
 
 
 def get_env_variable(name, cast=str, default=""):
@@ -201,9 +198,18 @@ except decouple.UndefinedValueError:
         "ATOMIC_REQUESTS": True,
     }
 
-DATABASES = {
-    "default": default_settings,
-}
+# EXPORER settings
+# from https://django-sql-explorer.readthedocs.io/en/latest/install.html
+# The readonly access is configured with fake access when DB_READONLY env
+# variable is not set.
+DB_READONLY = decouple.config(
+    "DB_READONLY", default="postgres://fakeusername:fakepassword@postgres:5432/database"
+)
+readonly_settings = dj_database_url.parse(DB_READONLY)
+
+DATABASES = {"default": default_settings, "readonly": readonly_settings}
+EXPLORER_CONNECTIONS = {"Default": "readonly"}
+EXPLORER_DEFAULT_CONNECTION = "readonly"
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -435,14 +441,3 @@ DRAMATIQ_BROKER = {
         "django_dramatiq.middleware.AdminMiddleware",
     ],
 }
-
-# EXPORER settings
-# from https://django-sql-explorer.readthedocs.io/en/latest/install.html
-if decouple.config("DB_READONLY", default=False):
-    DATABASES["readonly"] = dj_database_url.parse(decouple.config("DB_READONLY"))
-else:
-    logger.warning("DB_READONLY")
-    DATABASES["readonly"] = DATABASES["default"]
-
-EXPLORER_CONNECTIONS = {"Default": "readonly"}
-EXPLORER_DEFAULT_CONNECTION = "readonly"
