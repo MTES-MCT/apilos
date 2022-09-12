@@ -52,7 +52,7 @@ DEBUG = get_env_variable("DEBUG", cast=bool)
 ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
 TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 
-LOGLEVEL = get_env_variable("LOGLEVEL", default="info").upper()
+LOGLEVEL = get_env_variable("LOGLEVEL", default="error").upper()
 
 LOGGING = {
     "version": 1,
@@ -111,6 +111,7 @@ CONVERTAPI_SECRET = get_env_variable("CONVERTAPI_SECRET")
 
 ALLOWED_HOSTS = ["localhost"] + env_allowed_hosts
 
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -136,6 +137,7 @@ INSTALLED_APPS = [
     "django_filters",
     "django_cas_ng",
     "django.contrib.admindocs",
+    "explorer",
 ]
 
 MIDDLEWARE = [
@@ -180,7 +182,7 @@ try:
     # dj_database_url is used in scalingo environment to interpret the
     # connection configuration to the DB from a single URL with all path
     # and credentials
-    database_url = decouple.config("DATABASE_URL")
+    decouple.config("DATABASE_URL")
     default_settings = dj_database_url.config()
 except decouple.UndefinedValueError:
     default_settings = {
@@ -196,7 +198,19 @@ except decouple.UndefinedValueError:
         "ATOMIC_REQUESTS": True,
     }
 
-DATABASES = {"default": default_settings}
+# EXPORER settings
+# from https://django-sql-explorer.readthedocs.io/en/latest/install.html
+# The readonly access is configured with fake access when DB_READONLY env
+# variable is not set.
+DB_READONLY = decouple.config(
+    "DB_READONLY", default="postgres://fakeusername:fakepassword@postgres:5432/database"
+)
+readonly_settings = dj_database_url.parse(DB_READONLY)
+
+DATABASES = {"default": default_settings, "readonly": readonly_settings}
+EXPLORER_CONNECTIONS = {"Default": "readonly"}
+EXPLORER_DEFAULT_CONNECTION = "readonly"
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
