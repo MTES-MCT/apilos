@@ -156,7 +156,11 @@ class SIAPClientRemote(SIAPClientInterface):
             habilitation_id=habilitation_id,
         )
         if response.status_code >= 200 and response.status_code < 300:
-            return response.json()
+            try:
+                return response.json()
+            except requests.exceptions.JSONDecodeError:
+                if habilitation_id:
+                    return self.get_habilitations(user_login, 0)
         raise Exception(
             f"user doesn't have SIAP habilitation, SIAP error returned {response.content}"
         )
