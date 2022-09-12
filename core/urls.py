@@ -65,6 +65,7 @@ urlpatterns = [
     path(
         "api-siap/v0/", include(("api.siap.v0.urls", "api-siap"), namespace="api-siap")
     ),
+    path("explorer/", include("explorer.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.CERBERE_AUTH:

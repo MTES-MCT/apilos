@@ -38,8 +38,11 @@
                             <ul class="fr-links-group fr-mb-1w">
                                 <li class="fr-mx-2w apilos-flex-wrap">
                                     <div class="width-100 apilos-d-block fr-m-auto">
-                                        Bonjour&nbsp;
-                                        <strong>{{ request.user }}</strong>
+                                        <div class="fr-mb-1w">
+                                            Bonjour&nbsp;
+                                            <strong>{{ request.user }}</strong>
+                                        </div>
+                                        {% include "common/FAQ_link.html"%}
                                     </div>
                                 </li>
                                 <li class="apilos-navbar">
@@ -58,7 +61,6 @@
                                     </div>
                                 </li>
                             </ul>
-                            {% include "common/FAQ_link.html"%}
 
                         {% else %}
                             <ul class="fr-links-group">

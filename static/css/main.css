@@ -214,7 +214,8 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .fileinput--hidden {
   display: none;
 }
-.apilos-block-faqlink {
+.apilos-block-faqlink,
+a[href].apilos-block-faqlink:hover {
   background-color: var(--blue-france-925-125);
   width: max-content;
   border-radius: 0.5rem;
