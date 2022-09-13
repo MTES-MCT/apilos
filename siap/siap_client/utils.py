@@ -136,6 +136,13 @@ def get_or_create_programme(
             "nature_logement": nature_logement,
         },
     )
+    # force type opération = sans travaux
+    if (
+        type_operation == TypeOperation.SANSTRAVAUX
+        and programme.type_operation != TypeOperation.SANSTRAVAUX
+    ):
+        programme.type_operation = TypeOperation.SANSTRAVAUX
+        programme.save()
     return programme
 
 
