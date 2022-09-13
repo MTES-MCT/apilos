@@ -11,10 +11,11 @@ from programmes.models import (
     TypeOperation,
     NatureLogement,
 )
+from users.models import User
 from conventions.models import Convention
 
 
-def get_or_create_conventions(operation: dict):
+def get_or_create_conventions(operation: dict, user: User):
     try:
         bailleur = get_or_create_bailleur(operation["donneesMo"])
     except KeyError as ke:
@@ -30,7 +31,9 @@ def get_or_create_conventions(operation: dict):
             "Operation not well formatted, missing programme's informations"
         ) from ke
     try:
-        (lots, conventions) = get_or_create_lots_and_conventions(operation, programme)
+        (lots, conventions) = get_or_create_lots_and_conventions(
+            operation, programme, user
+        )
     except KeyError as ke:
         raise KeyError(
             "Operation not well formatted, missing lot and convention informations"
@@ -133,7 +136,9 @@ def get_or_create_programme(
     return programme
 
 
-def get_or_create_lots_and_conventions(operation: dict, programme: Programme):
+def get_or_create_lots_and_conventions(
+    operation: dict, programme: Programme, user: User
+):
     lots = []
     conventions = []
     if (
@@ -155,6 +160,7 @@ def get_or_create_lots_and_conventions(operation: dict, programme: Programme):
             bailleur=programme.bailleur,
             lot=lot,
             financement=Financement.SANS_FINANCEMENT,
+            cree_par=user,
         )
         conventions.append(convention)
     else:
@@ -174,6 +180,7 @@ def get_or_create_lots_and_conventions(operation: dict, programme: Programme):
                 bailleur=programme.bailleur,
                 lot=lot,
                 financement=_financement(aide["aide"]["code"]),
+                cree_par=user,
             )
             conventions.append(convention)
 

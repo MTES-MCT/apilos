@@ -17,7 +17,7 @@ def operation_conventions(request, numero_operation):
         habilitation_id=request.session["habilitation_id"],
         operation_identifier=numero_operation,
     )
-    (programme, lots, conventions) = get_or_create_conventions(operation)
+    (programme, lots, conventions) = get_or_create_conventions(operation, request.user)
 
     return render(
         request,

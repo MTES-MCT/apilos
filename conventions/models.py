@@ -129,6 +129,12 @@ class Convention(models.Model):
     soumis_le = models.DateTimeField(null=True, blank=True)
     premiere_soumission_le = models.DateTimeField(null=True, blank=True)
     valide_le = models.DateTimeField(null=True, blank=True)
+    cree_par = models.ForeignKey(
+        "users.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
     type1and2 = models.CharField(
