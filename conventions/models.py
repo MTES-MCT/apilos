@@ -452,7 +452,7 @@ class Convention(models.Model):
             return "Convention en cours d'instruction"
         return ""
 
-    def clone(self):
+    def clone(self, user):
         # pylint: disable=R0914
         programme_fields = model_to_dict(self.programme)
         programme_fields.update(
@@ -476,18 +476,33 @@ class Convention(models.Model):
         cloned_lot = Lot(**lot_fields)
         cloned_lot.save()
 
-        convention_fields = model_to_dict(self)
+        convention_fields = model_to_dict(
+            self,
+            fields=(
+                "date_fin_conventionnement",
+                "financement",
+                "fond_propre",
+                "type1and2",
+                "type2_lgts_concernes_option1",
+                "type2_lgts_concernes_option2",
+                "type2_lgts_concernes_option3",
+                "type2_lgts_concernes_option4",
+                "type2_lgts_concernes_option5",
+                "type2_lgts_concernes_option6",
+                "type2_lgts_concernes_option7",
+                "type2_lgts_concernes_option8",
+            ),
+        )
         convention_fields.update(
             {
                 "bailleur": self.bailleur,
                 "programme": cloned_programme,
                 "lot": cloned_lot,
-                "parent_id": convention_fields.pop("id"),
+                "parent_id": self.id,
                 "statut": ConventionStatut.PROJET,
+                "cree_par": user,
             }
         )
-        convention_fields.pop("comments")
-        convention_fields.pop("numero")
         cloned_convention = Convention(**convention_fields)
         cloned_convention.save()
 

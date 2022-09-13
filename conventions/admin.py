@@ -27,6 +27,7 @@ class ConventionAdmin(admin.ModelAdmin):
         "bailleur",
         "programme",
         "lot",
+        "parent",
         "numero",
         "date_fin_conventionnement",
         "financement",
@@ -54,6 +55,7 @@ class ConventionAdmin(admin.ModelAdmin):
         "programme",
         "lot",
         "administration",
+        "parent",
         "cree_par",
         "cree_le",
     )

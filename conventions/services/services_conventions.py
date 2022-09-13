@@ -864,7 +864,7 @@ def create_avenant(request, convention_uuid):
     if request.method == "POST":
         new_avenant_form = NewAvenantForm(request.POST)
         if new_avenant_form.is_valid():
-            avenant = parent_convention.clone()
+            avenant = parent_convention.clone(request.user)
             avenant.avenant_type = new_avenant_form.cleaned_data["avenant_type"]
             avenant.save()
             return {
