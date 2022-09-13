@@ -1,6 +1,5 @@
 import re
 from typing import Tuple
-import logging
 
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
@@ -14,8 +13,6 @@ from programmes.models import (
 )
 from users.models import User
 from conventions.models import Convention
-
-logger = logging.getLogger(__name__)
 
 
 def get_or_create_conventions(operation: dict, user: User):
@@ -149,10 +146,6 @@ def get_or_create_programme(
 def get_or_create_lots_and_conventions(
     operation: dict, programme: Programme, user: User
 ):
-    logger.warning("====================")
-    logger.warning("detailOperation : %s", operation["detailsOperation"])
-    logger.warning("type_operation : %s", programme.type_operation)
-    logger.warning("====================")
     lots = []
     conventions = []
     if (
