@@ -2,6 +2,7 @@ from django.http.request import HttpRequest
 from django.conf import settings
 from django.template.defaultfilters import date as _date
 from django.template.defaulttags import register
+from core import model_utils
 from siap.siap_client.client import SIAPClient
 from conventions.models import ConventionStatut
 from users.models import GroupProfile
@@ -185,3 +186,14 @@ def to_fr_short_date(date):
     if date is None:
         return ""
     return _date(date, "d/m/Y")
+
+
+@register.filter
+def get_text_from_textfiles(field):
+    return model_utils.get_key_from_json_field(field, "text")
+
+
+@register.filter
+def get_files_from_textfiles(field):
+    files = model_utils.get_key_from_json_field(field, "files")
+    return files.values if files else None

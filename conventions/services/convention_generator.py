@@ -271,7 +271,7 @@ def _build_files_for_docx(doc, convention_uuid, file_list):
     local_pathes = []
     docx_images = []
     files = UploadedFile.objects.filter(uuid__in=file_list)
-    for object_file in files:  # convention.programme.vendeur_files().values():
+    for object_file in files:
         if "image" in object_file.content_type:
             file = UploadService().get_file(object_file.filepath(convention_uuid))
             local_path = (

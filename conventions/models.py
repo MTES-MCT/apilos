@@ -5,7 +5,6 @@ from django.db.models import Q
 from django.forms import model_to_dict
 from django.utils import timezone
 
-from core import model_utils
 from programmes.models import (
     Annexe,
     Financement,
@@ -99,9 +98,10 @@ class Convention(models.Model):
         "self",
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
         related_name="avenants",
     )
-    numero = models.CharField(max_length=255, null=True)
+    numero = models.CharField(max_length=255, null=True, blank=True)
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
@@ -112,27 +112,27 @@ class Convention(models.Model):
         null=False,
     )
     lot = models.ForeignKey("programmes.Lot", on_delete=models.CASCADE, null=False)
-    date_fin_conventionnement = models.DateField(null=True)
+    date_fin_conventionnement = models.DateField(null=True, blank=True)
     financement = models.CharField(
         max_length=25,
         choices=Financement.choices,
         default=Financement.PLUS,
     )
     # fix me: weird to keep fond_propre here
-    fond_propre = models.FloatField(null=True)
-    comments = models.TextField(null=True)
+    fond_propre = models.FloatField(null=True, blank=True)
+    comments = models.TextField(null=True, blank=True)
     statut = models.CharField(
         max_length=25,
         choices=ConventionStatut.choices,
         default=ConventionStatut.PROJET,
     )
-    soumis_le = models.DateTimeField(null=True)
-    premiere_soumission_le = models.DateTimeField(null=True)
-    valide_le = models.DateTimeField(null=True)
+    soumis_le = models.DateTimeField(null=True, blank=True)
+    premiere_soumission_le = models.DateTimeField(null=True, blank=True)
+    valide_le = models.DateTimeField(null=True, blank=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
     type1and2 = models.CharField(
-        max_length=25, choices=ConventionType1and2.choices, null=True
+        max_length=25, choices=ConventionType1and2.choices, null=True, blank=True
     )
     type2_lgts_concernes_option1 = models.BooleanField(default=True)
     type2_lgts_concernes_option2 = models.BooleanField(default=True)
@@ -147,6 +147,7 @@ class Convention(models.Model):
         choices=AvenantType.choices,
         default=AvenantType.PROGRAMME,
         null=True,
+        blank=True,
     )
     # Missing option for :
 
@@ -158,10 +159,10 @@ class Convention(models.Model):
     # montant du loyer entre en vigueur à compter de la date d'achèvement des travaux concernant
     # la tranche dans laquelle est compris le logement concerné. (7)
 
-    donnees_validees = models.TextField(null=True)
-    nom_fichier_signe = models.CharField(max_length=255, null=True)
-    televersement_convention_signee_le = models.DateTimeField(null=True)
-    date_resiliation = models.DateField(null=True)
+    donnees_validees = models.TextField(null=True, blank=True)
+    nom_fichier_signe = models.CharField(max_length=255, null=True, blank=True)
+    televersement_convention_signee_le = models.DateTimeField(null=True, blank=True)
+    date_resiliation = models.DateField(null=True, blank=True)
 
     def __str__(self):
         programme = self.programme
@@ -176,12 +177,6 @@ class Convention(models.Model):
             ConventionStatut.PROJET,
             ConventionStatut.CORRECTION,
         )
-
-    def comments_text(self):
-        return model_utils.get_field_key(self, "comments", "text")
-
-    def comments_files(self):
-        return model_utils.get_field_key(self, "comments", "files")
 
     def get_comments_dict(self):
         result = {}
@@ -527,6 +522,9 @@ class Convention(models.Model):
 
         return cloned_convention
 
+    def administration(self):
+        return self.programme.administration
+
 
 class ConventionHistory(models.Model):
     id = models.AutoField(primary_key=True)
@@ -545,9 +543,13 @@ class ConventionHistory(models.Model):
         choices=ConventionStatut.choices,
         default=ConventionStatut.PROJET,
     )
-    commentaire = models.TextField(null=True)
+    commentaire = models.TextField(null=True, blank=True)
     user = models.ForeignKey(
-        "users.User", related_name="valide_par", on_delete=models.SET_NULL, null=True
+        "users.User",
+        related_name="valide_par",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
@@ -565,10 +567,10 @@ class Pret(models.Model):
         choices=Preteur.choices,
         default=Preteur.AUTRE,
     )
-    autre = models.CharField(null=True, max_length=255)
-    date_octroi = models.DateField(null=True)
-    numero = models.CharField(null=True, max_length=255)
-    duree = models.IntegerField(null=True)
+    autre = models.CharField(null=True, blank=True, max_length=255)
+    date_octroi = models.DateField(null=True, blank=True)
+    numero = models.CharField(null=True, blank=True, max_length=255)
+    duree = models.IntegerField(null=True, blank=True)
     montant = models.DecimalField(max_digits=12, decimal_places=2)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
