@@ -65,7 +65,7 @@ et pour populer ces données :
 
 Cette commande est excutée lors du déploiement de l'application juste après la migration
 
-### Envoie de mails
+### Envoi de mails
 
 Nous utilisons mailjet. Si les variables d'environnements MAILJET_API_KEY et MAILJET_API_SECRET sont configurées, le backend email Mailjet est utilisé. Sinon, le backend email console est utilisé et les mail sont imprimé dans a console (dans les logs)
 
