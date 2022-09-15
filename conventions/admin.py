@@ -27,12 +27,15 @@ class ConventionAdmin(admin.ModelAdmin):
         "bailleur",
         "programme",
         "lot",
+        "parent",
         "numero",
         "date_fin_conventionnement",
         "financement",
         "fond_propre",
         "comments",
         "statut",
+        "cree_par",
+        "cree_le",
         "soumis_le",
         "premiere_soumission_le",
         "valide_le",
@@ -47,7 +50,15 @@ class ConventionAdmin(admin.ModelAdmin):
         "lot",
         "bailleur",
     )
-    readonly_fields = ("bailleur", "programme", "lot", "administration")
+    readonly_fields = (
+        "bailleur",
+        "programme",
+        "lot",
+        "administration",
+        "parent",
+        "cree_par",
+        "cree_le",
+    )
 
 
 admin.site.register(Convention, ConventionAdmin)

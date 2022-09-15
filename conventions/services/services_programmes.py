@@ -67,6 +67,7 @@ def select_programme_create(request):
                 programme_id=lot.programme_id,
                 bailleur_id=lot.bailleur_id,
                 financement=lot.financement,
+                cree_par=request.user,
             )
             if existing_programme != "selection":
                 _send_email_staff(request, convention)

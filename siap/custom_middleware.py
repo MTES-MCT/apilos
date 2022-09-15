@@ -92,6 +92,23 @@ def _get_perimetre_geographique(from_habilitation: dict) -> Tuple[None, str]:
     return (perimetre_departement, perimetre_region)
 
 
+def _manage_role(from_habilitation, **kwargs):
+    (perimetre_departement, perimetre_region) = _get_perimetre_geographique(
+        from_habilitation
+    )
+    Role.objects.filter(
+        **kwargs,
+        perimetre_region=perimetre_region,
+        perimetre_departement=perimetre_departement,
+    ).delete()
+    (role, _) = Role.objects.get_or_create(
+        **kwargs,
+        perimetre_region=perimetre_region,
+        perimetre_departement=perimetre_departement,
+    )
+    return model_to_dict(role)
+
+
 def _find_or_create_entity(request: HttpRequest, from_habilitation: dict):
     request.session["currently"] = from_habilitation["groupe"]["profil"]["code"]
     if from_habilitation["groupe"]["profil"]["code"] in [
@@ -99,19 +116,12 @@ def _find_or_create_entity(request: HttpRequest, from_habilitation: dict):
         GroupProfile.SIAP_SER_DEP,
         GroupProfile.SIAP_DIR_REG,
     ]:
-        # Manage Role following the habilitation["groupe"]["codeRole"]
-        (perimetre_departement, perimetre_region) = _get_perimetre_geographique(
-            from_habilitation
-        )
-        (role, _) = Role.objects.get_or_create(
+        request.session["role"] = _manage_role(
+            from_habilitation,
             typologie=TypeRole.ADMINISTRATEUR,
             user=request.user,
             group=Group.objects.get(name="administrateur"),
-            perimetre_region=perimetre_region,
-            perimetre_departement=perimetre_departement,
         )
-        request.session["role"] = model_to_dict(role)
-
     if (
         from_habilitation["groupe"]["profil"]["code"]
         == GroupProfile.SIAP_MO_PERS_MORALE
@@ -127,18 +137,13 @@ def _find_or_create_entity(request: HttpRequest, from_habilitation: dict):
             ],
         )
         # Manage Role following the habilitation["groupe"]["codeRole"]
-        (perimetre_departement, perimetre_region) = _get_perimetre_geographique(
-            from_habilitation
-        )
-        (role, _) = Role.objects.get_or_create(
+        request.session["role"] = _manage_role(
+            from_habilitation,
             typologie=TypeRole.BAILLEUR,
             bailleur=bailleur,
             user=request.user,
             group=Group.objects.get(name="bailleur"),
-            perimetre_region=perimetre_region,
-            perimetre_departement=perimetre_departement,
         )
-        request.session["role"] = model_to_dict(role)
 
     if from_habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_SER_GEST:
         # create if not exists gestionnaire
@@ -152,15 +157,10 @@ def _find_or_create_entity(request: HttpRequest, from_habilitation: dict):
                 "nom",
             ],
         )
-        (perimetre_departement, perimetre_region) = _get_perimetre_geographique(
-            from_habilitation
-        )
-        (role, _) = Role.objects.get_or_create(
+        request.session["role"] = _manage_role(
+            from_habilitation,
             typologie=TypeRole.INSTRUCTEUR,
             administration=administration,
             user=request.user,
             group=Group.objects.get(name="instructeur"),
-            perimetre_region=perimetre_region,
-            perimetre_departement=perimetre_departement,
         )
-        request.session["role"] = model_to_dict(role)
