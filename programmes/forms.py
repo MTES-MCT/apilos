@@ -141,7 +141,7 @@ class ProgrammeForm(forms.Form):
         },
     )
     adresse = forms.CharField(
-        label="Adresse(s)",
+        label="Adresses du ou des bâtiments concernés par le programme (PLUS, PLS et PLAI)",
         help_text=(
             "Si le programme comporte plusieurs adresses (exemple : plusieurs bâtiments),"
             + " renseignez chaque adresse en allant à la ligne entre chaque nouvelle adresse"
@@ -210,8 +210,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     date_acte_notarie = forms.DateField(
         required=False,
-        label="Date de l'acte notarié",
-        help_text="Champ à remplir si différent de la date d’achat",
+        label="Date de l'acte notarié (si différent de la date d’achat)",
     )
     date_achevement_previsible = forms.DateField(
         required=False,
@@ -395,7 +394,7 @@ class LotLgtsOptionForm(forms.Form):
         required=False,
         label="Loyer dérogatoire",
         help_text="""
-            Montant de loyer d'une opération d'acquisition ou n'est pas liée à la réalisation de travaux mais
+            Montant de loyer d'une opération d'acquisition qui n'est pas liée à la réalisation de travaux mais
             fait suite à une nouvelle acquisition pour un locataire ou un occupant de bonne foi dont les
             ressources excèdent les plafonds de ressources par dérogation et à titre transitoire
         """,

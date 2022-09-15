@@ -36,19 +36,48 @@
                         {% include "common/form/input_text.html" with form_input=form.permis_construire object_field="programme__permis_construire__"|add:form.uuid.value %}
 
                         <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_date.html" with form_input=form.date_acte_notarie object_field="programme__date_acte_notarie__"|add:form.uuid.value %}
-                            </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
                                 {% include "common/form/input_date.html" with form_input=form.date_achat object_field="programme__date_achat__"|add:form.uuid.value %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_date.html" with form_input=form.date_acte_notarie object_field="programme__date_acte_notarie__"|add:form.uuid.value %}
                             </div>
                         </div>
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                <div class="fr-mb-3w fr-form-group">
+                                    <fieldset class="fr-fieldset">
+                                        <div class="fr-fieldset__content">
+                                            <div class="fr-radio-group">
+                                                <input type="radio" value= "achevement" id="achevement" name="achevement" class="achevement_choice_button">
+                                                <label for="achevement">Mon batiment est achevé</label>
+                                            </div>
+                                            <div class="fr-radio-group">
+                                                <input type="radio" value= "achevement_previsible" id="achevement_previsible" name="achevement"class="achevement_choice_button">
+                                                <label for="achevement_previsible">Mon batiment est en construction</label>
+                                            </div>
+                                        </div>
+                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                document.querySelectorAll(".achevement_choice_button").forEach(buttonChoice => {
+                                                    buttonChoice.addEventListener("click", () => {
+                                                        document.querySelectorAll(".div_date_choice").forEach(div => {
+                                                            div.setAttribute("hidden", "")
+                                                        })
+                                                        var valueChoice = buttonChoice.value;
+                                                        document.getElementById(valueChoice+"_date").removeAttribute("hidden");
+                                                    })
+                                                })
+                                            });
+                                        </script>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w div_date_choice" id="achevement_previsible_date" hidden>
                                 {% include "common/form/input_date.html" with form_input=form.date_achevement_previsible object_field="programme__date_achevement_previsible__"|add:form.uuid.value %}
                             </div>
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w div_date_choice" id="achevement_date" hidden>
                                 {% include "common/form/input_date.html" with form_input=form.date_achevement object_field="programme__date_achevement__"|add:form.uuid.value %}
                             </div>
                         </div>
