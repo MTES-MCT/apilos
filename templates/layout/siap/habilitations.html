@@ -27,12 +27,10 @@
                 </li>
             {% endif %}
         {% endfor %}
-        <li class="navy-background fr-px-2w fr-py-3v fr-text--md">
-            <a href="{{ request|get_manage_habilitation_url }}">
-                <span aria-hidden="true">Gérer mes habilitations </span>
-            </a>
-        </li>
     </ul>
+    <a href="{{ request|get_manage_habilitation_url }}" class="navy-background fr-px-2w fr-py-3v fr-text--md fr-grid-row--left">
+        <span aria-hidden="true">Gérer mes habilitations </span>
+    </a>
 </div>
 
 

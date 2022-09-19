@@ -30,13 +30,18 @@
 }
 
 .navy-background,
-.navy-background a:hover {
+a.navy-background:hover {
   background-color: var(--background-action-high-blue-france);
-  color: #fff
+  color: #fff;
+  text-align: left;
+  display: block;
 }
-.navy-background:hover {
+a.navy-background:hover {
   background-image: radial-gradient(circle, rgba(17, 17, 255, 0.3), rgba(17, 17, 255, 0.3) 3%);
+  text-decoration: none;
+  text-decoration-style: none;
 }
+
 .habilitation-bloc {
   position: absolute;
   background: #FFFFFF;
@@ -48,6 +53,8 @@
   padding-right: 0 !important;
   margin-right: 0;
   box-shadow: 0 16px 16px -16px #00000052,0 8px 16px #0000001a;
+  /* overflow-y: auto;
+  max-height: 400px; */
 }
 .habilitation-bloc .fr-menu__list {
   padding: 0;
