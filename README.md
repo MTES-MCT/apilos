@@ -8,7 +8,7 @@ Lorsqu'un bailleur construit un logement social en france, avant la mise en loca
 
 APiLos offre une solution numérique pour la gestion de ces conventions entre bailleurs et instructeur de l'état (appartenant généralement au territoire) et plus tard d'autres acteurs tel que les préfectures ou la CAF.
 
-APiLos a aussi pour vocation de centraliser et fiabiliter les statistiques des logemente sociaux sur le territoire français pour un pilotage éclairé de la construction du parc social en France.
+APiLos a aussi pour vocation de centraliser et fiabiliser les statistiques des logemente sociaux sur le territoire français pour un pilotage éclairé de la construction du parc social en France.
 
 APiLos est un produit du SIAP (Système d'information des aides à la pierre)
 
@@ -65,7 +65,7 @@ et pour populer ces données :
 
 Cette commande est excutée lors du déploiement de l'application juste après la migration
 
-### Envoie de mails
+### Envoi de mails
 
 Nous utilisons mailjet. Si les variables d'environnements MAILJET_API_KEY et MAILJET_API_SECRET sont configurées, le backend email Mailjet est utilisé. Sinon, le backend email console est utilisé et les mail sont imprimé dans a console (dans les logs)
 
