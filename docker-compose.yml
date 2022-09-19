@@ -8,7 +8,8 @@ services:
       - POSTGRES_MULTIPLE_DATABASES=apilos-test
     volumes:
       - ./pg-init-scripts:/docker-entrypoint-initdb.d
-      - ./pgdata:/var/lib/postgresql/data
+      # Use :delegated to get better performances on docker write workloads where the sync with the host is not mandatory
+      - ./pgdata:/var/lib/postgresql/data:delegated
     ports:
       - 5433:5432
   redis:
@@ -18,13 +19,13 @@ services:
       - 6379
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
-      - ./redis-data:/data
+      - ./redis-data:/data:delegated
       - ./redis.conf:/usr/local/etc/redis/redis.conf
   apilos: &apilos
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      # Use :cached to get better performances on read-heavy workloads, typically here the mounted code will be edited on the host
+      - .:/code:cached
     ports:
       - "8001:8000"
     depends_on:
