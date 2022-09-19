@@ -24,32 +24,30 @@
             </div>
             {% if not without_action_button %}
                 <div class="fr-header__tools flex_unset">
-                    <div class="fr-header__tools-links">
-                        {% if user.is_authenticated %}
-                            <div class="fr-mb-2w">
-                                <span class="fr-text--sm fr-px-1w">{{ request.user }}</span>
-                                <a class="fr-mt-1w width-100" href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noopener">
-                                    <span class="fr-fi-question-line fr-mr-1w" aria-hidden="true"></span>
+                    {% if user.is_authenticated %}
+                        <div class="fr-mb-2w">
+                            <span class="fr-text--sm fr-px-1w">{{ request.user }}</span>
+                            <a class="fr-mt-1w width-100" href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noopener">
+                                <span class="fr-fi-question-line fr-mr-1w" aria-hidden="true"></span>
+                            </a>
+                            <a href="{% url 'settings:profile' %}">
+                                <span class="fr-icon-settings-5-line fr-mr-1w" aria-hidden="true"></span>
+                            </a>
+                            <a href="{% url 'cas_ng_logout' %}?next=/">
+                                <span class="fr-fi-logout-box-r-line fr-mr-1w" aria-hidden="true">
+                                </span>
+                            </a>
+                        </div>
+                        {% include "layout/siap/habilitations.html" %}
+                    {% else %}
+                        <ul class="fr-links-group">
+                            <li>
+                                <a class="fr-link fr-text--lg" href="//docs.apilos.beta.gouv.fr" alt="Aide en ligne" title="Aide en ligne" target="_blank" rel="noopener">
+                                    <span class="fr-fi-question-line" aria-hidden="true"></span>
                                 </a>
-                                <a href="{% url 'settings:profile' %}">
-                                    <span class="fr-icon-settings-5-line fr-mr-1w" aria-hidden="true"></span>
-                                </a>
-                                <a href="{% url 'cas_ng_logout' %}?next=/">
-                                    <span class="fr-fi-logout-box-r-line fr-mr-1w" aria-hidden="true">
-                                    </span>
-                                </a>
-                            </div>
-                            {% include "layout/siap/habilitations.html" %}
-                        {% else %}
-                            <ul class="fr-links-group">
-                                <li>
-                                    <a class="fr-link fr-text--lg" href="//docs.apilos.beta.gouv.fr" alt="Aide en ligne" title="Aide en ligne" target="_blank" rel="noopener">
-                                        <span class="fr-fi-question-line" aria-hidden="true"></span>
-                                    </a>
-                                </li>
-                            </ul>
-                        {% endif %}
-                    </div>
+                            </li>
+                        </ul>
+                    {% endif %}
                 </div>
             {% endif %}
         </div>
