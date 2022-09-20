@@ -8,7 +8,7 @@ services:
       - POSTGRES_MULTIPLE_DATABASES=apilos-test
     volumes:
       - ./pg-init-scripts:/docker-entrypoint-initdb.d
-      # Use :delegated to get better performances on docker write workloads where the sync with the host is not mandatory
+      # Use: delegated to get better performances on docker write workloads where the sync with the host is not mandatory
       - ./pgdata:/var/lib/postgresql/data:delegated
     ports:
       - 5433:5432
@@ -24,7 +24,7 @@ services:
   apilos: &apilos
     build: .
     volumes:
-      # Use :cached to get better performances on read-heavy workloads, typically here the mounted code will be edited on the host
+      # Use: cached to get better performances on read-heavy workloads, typically here the mounted code will be edited on the host
       - .:/code:cached
     ports:
       - "8001:8000"
