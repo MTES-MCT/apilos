@@ -1,10 +1,10 @@
 {% load static %}
 {% if convention.bailleur.is_type1and2 %}
     {% with type1and2editable=convention.display_options.display_type1and2_editable %}
-        <div class="fr-grid-row fr-grid-row--gutters apilos-line-top">
+        <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-12">
-                <div class="fr-my-2w">
-                    <div class="block--row-strech" id="{{object_field}}_div">
+                <div class="apilos-line-top">
+                    <div class="block--row-strech fr-my-2w" id="{{object_field}}_div">
                         <div class="block--row-strech-1">
                             <p class="fr-alert__title">
                                 Convention de type I & II
