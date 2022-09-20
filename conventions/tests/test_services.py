@@ -449,7 +449,7 @@ class ServicesUtilsTests(TestCase):
         convention = Convention.objects.get(numero="0001")
         convention.statut = ConventionStatut.PROJET
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
-        self.assertFalse(utils.editable_convention(self.request, convention))
+        self.assertTrue(utils.editable_convention(self.request, convention))
         self.request.session["currently"] = GroupProfile.BAILLEUR
         self.assertTrue(utils.editable_convention(self.request, convention))
         self.request.session["currently"] = GroupProfile.STAFF
