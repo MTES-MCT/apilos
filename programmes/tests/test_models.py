@@ -22,6 +22,9 @@ from programmes.models import (
 
 
 def params_logement(index):
+    # pylint: disable=R0911
+    if index <= 7:
+        return TypologieLogement.T1, 0.9, 30, 0, 0, 30
     if index <= 10:
         return TypologieLogement.T1, 0.9, 30, 0, 0, 30
     if index <= 20:
@@ -30,7 +33,9 @@ def params_logement(index):
         return TypologieLogement.T3, 1.1, 55, 10, 5, 60
     if index <= 40:
         return TypologieLogement.T4, 1.1, 80, 20, 10, 90
-    return TypologieLogement.T5, 0.9, 110, 28, 12, 122
+    if index <= 45:
+        return TypologieLogement.T5, 0.9, 100, 28, 12, 122
+    return TypologieLogement.T6, 0.9, 110, 28, 12, 122
 
 
 class ProgrammeModelsTest(TestCase):
