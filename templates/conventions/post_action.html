@@ -7,7 +7,7 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html"%}
-        <div class="fr-container fr-pb-5w">
+        <div class="fr-container fr-py-5w">
             <div class="fr-col-md-12 fr-mt-2w fr-mb-4w">
                 <div role="alert" class="fr-alert fr-alert--success">
                     {% if convention.televersement_convention_signee_le %}
@@ -37,12 +37,12 @@
                 </div>
             {% endif %}
             <div class="fr-col-12">
-                <div class="fr-mb-2w block--row-strech apilos-line-top">
+                <div class="fr-mb-2w fr-pt-2w block--row-strech apilos-line-top">
                     <div class="block--row-strech-1 fr-my-2w">
                         <p class="fr-alert__title">
                             Générer la fiche CAF
                         </p>
-                        <p>
+                        <p class="fr-mb-0">
                             La fiche CAF sera générée en format docx et téléchargée automatiquement.
                         </p>
                     </div>
@@ -55,7 +55,7 @@
                 </div>
             </div>
             <div class="fr-col-12">
-                <div class="fr-mb-2w block--row-strech apilos-line-top">
+                <div class="fr-mb-2w fr-pt-2w block--row-strech apilos-line-top">
                     <div class="block--row-strech-1 fr-my-2w">
                         <p class="fr-alert__title">
                             Voir la conventions signée (en PDF)
@@ -69,9 +69,16 @@
                     </button>
                 </div>
             </div>
+            {% if request|is_instructeur and convention.display_options.display_back_to_instruction %}
+                <div class="fr-col-12">
+                    <div class="fr-mb-2w fr-pt-2w block--row-strech apilos-line-top">
+                        {% include "conventions/actions/back_to_instruction.html" %}
+                    </div>
+                </div>
+            {% endif %}
             <div class="fr-col-12">
                 {% if request|is_instructeur %}
-                    <div class="fr-mb-3w apilos-line-top">
+                    <div class="fr-mb-5w fr-pt-2w apilos-line-top">
                         <div class="fr-my-2w">
                             <p class="fr-alert__title">
                                 Résiliation/dénonciation de la convention
@@ -132,7 +139,7 @@
                     </div>
                 {% endif %}
             </div>
-            <div class="apilos-line-top"></div>
+            <div class="fr-mb-2w fr-pt-2w apilos-line-top"></div>
             {% include "conventions/avenant_list.html" with conventions=avenants %}
 
             {% if request|is_instructeur %}

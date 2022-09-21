@@ -15,14 +15,6 @@
                         <li class="{% if convention_form_step > 9  %}active{% endif %} {% if convention_form_step == 9  %}current_step{% endif %} {% if convention_form_step == 8 %}after_step{% endif %}" role="comments"><div>Commentaires</div></li>
                         <li class="{% if convention_form_step > 10 %}active{% endif %} {% if convention_form_step == 10 %}current_step{% endif %} {% if convention_form_step == 9 %}after_step{% endif %}" role="recapitulatif"><div>Récapitulatif</div></li>
                     {% elif convention.display_options.display_progress_bar_2 %}
-                        <li class="{% if convention_form_step > 10 %}active{% endif %} {% if convention_form_step == 10 %}current_step{% endif %} {% if convention_form_step == 9 %}after_step{% endif %}" role="recapitulatif"><div>Récapitulatif</div></li>
-                        <li class="{% if convention_form_step > 11 %}active{% endif %} {% if convention_form_step == 11 %}current_step{% endif %} {% if convention_form_step == 10 %}after_step{% endif %}" role="preview"><div>Prévisualisation</div></li>
-                        <li class="{% if convention_form_step > 12 %}active{% endif %} {% if convention_form_step == 12 %}current_step{% endif %} {% if convention_form_step == 11 %}after_step{% endif %}" role="sent"><div>Téléversement</div></li>
-                    {% elif convention.display_options.display_progress_bar_3 %}
-                        <li class="{% if convention_form_step > 10 %}active{% endif %} {% if convention_form_step == 10 %}current_step{% endif %} {% if convention_form_step == 9 %}after_step{% endif %}" role="recapitulatif"><div>Récapitulatif</div></li>
-                        <li class="{% if convention_form_step > 11 %}active{% endif %} {% if convention_form_step == 11 %}current_step{% endif %} {% if convention_form_step == 10 %}after_step{% endif %}" role="preview"><div>Prévisualisation</div></li>
-                        <li class="{% if convention_form_step > 12 %}active{% endif %} {% if convention_form_step == 12 %}current_step{% endif %} {% if convention_form_step == 11 %}after_step{% endif %}" role="post_action"><div>Actions</div></li>
-                    {% elif convention.display_options.display_progress_bar_4 %}
                         <li class="{% if convention_form_step > 60 %}active{% endif %} {% if convention_form_step == 60 %}current_step{% endif %}" role="avenant_logements"><div>Logements</div></li>
                         <li class="{% if convention_form_step > 70 %}active{% endif %} {% if convention_form_step == 70 %}current_step{% endif %} {% if convention_form_step == 60 %}after_step{% endif %}" role="avenant_annexes"><div>Annexes</div></li>
                         <li class="{% if convention_form_step > 90 %}active{% endif %} {% if convention_form_step == 90 %}current_step{% endif %} {% if convention_form_step == 70 %}after_step{% endif %}" role="avenant_comments"><div>Commentaires</div></li>

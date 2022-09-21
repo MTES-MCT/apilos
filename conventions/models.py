@@ -387,17 +387,7 @@ class Convention(models.Model):
                 ConventionStatut.CORRECTION,
             ]
             and not self.is_avenant(),
-            "display_progress_bar_2": self.statut
-            in [
-                ConventionStatut.A_SIGNER,
-            ]
-            and not self.is_avenant(),
-            "display_progress_bar_3": self.statut
-            in [
-                ConventionStatut.SIGNEE,
-            ]
-            and not self.is_avenant(),
-            "display_progress_bar_4": self.avenant_type
+            "display_progress_bar_2": self.avenant_type
             in [
                 AvenantType.PROGRAMME,
             ],

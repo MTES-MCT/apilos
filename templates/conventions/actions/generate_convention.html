@@ -1,18 +1,18 @@
-<div class="fr-col-12 block--row-strech apilos-line-top">
-    <div class="block--row-strech-1 fr-my-2w">
+<div class="fr-col-12 block--row-strech apilos-line-top fr-pt-5w">
+    <div class="block--row-strech-1 fr-mr-6w">
         <p class="fr-alert__title">
             Télécharger le projet de {% if convention.is_avenant %}l'avenant à {% endif %}la convention (en docx)
         </p>
         {% if not convention.type1and2_configuration_not_needed %}
-            <p>
+            <p class="fr-mb-0">
                 Avant de pouvoir générer un document {% if convention.is_avenant %}d'avenant à la convention{% else %}de convention{% endif %}, il vous faut préciser le type de convention I ou II et les options associées dans la section <strong>Convention de type I & II ci-dessus.</strong>
             </p>
+            </div>
             <button class="fr-btn fr-btn--secondary fr-my-1w fr-icon-download-line fr-btn--icon-left" disabled>
                 Télécharger
             </button>
-            </div>
         {% else %}
-            <p>
+            <p class="fr-mb-0">
                 Attention, {% if convention.is_avenant %}l'avenant à la convention{% else %}la convention{% endif %} n’est pas encore validé{% if not convention.is_avenant %}e{% endif %}, ce document est fourni à titre indicatif.
                 <a class="fr-link" href="https://docs.apilos.beta.gouv.fr/bailleurs-guide/comment-remplir-les-champs/recapitulatif" target="_blank" rel="noopener">En savoir plus</a>
             </p>
