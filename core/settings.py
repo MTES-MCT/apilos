@@ -138,6 +138,7 @@ INSTALLED_APPS = [
     "django_cas_ng",
     "django.contrib.admindocs",
     "explorer",
+    "ecoloweb",
 ]
 
 MIDDLEWARE = [
@@ -198,7 +199,7 @@ except decouple.UndefinedValueError:
         "ATOMIC_REQUESTS": True,
     }
 
-# EXPORER settings
+# EXPLORER settings
 # from https://django-sql-explorer.readthedocs.io/en/latest/install.html
 # The readonly access is configured with fake access when DB_READONLY env
 # variable is not set.
@@ -207,7 +208,14 @@ DB_READONLY = decouple.config(
 )
 readonly_settings = dj_database_url.parse(DB_READONLY)
 
-DATABASES = {"default": default_settings, "readonly": readonly_settings}
+DATABASES = {
+    "default": default_settings,
+    "readonly": readonly_settings
+}
+
+if get_env_variable('ECOLO_DATABASE_URL') != "":
+    DATABASES["ecoloweb"] = dj_database_url.parse(get_env_variable('ECOLO_DATABASE_URL'))
+
 EXPLORER_CONNECTIONS = {"Default": "readonly"}
 EXPLORER_DEFAULT_CONNECTION = "readonly"
 
