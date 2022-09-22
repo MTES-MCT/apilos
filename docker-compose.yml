@@ -36,7 +36,13 @@ services:
     <<: *apilos
     command: python manage.py rundramatiq
     ports: []
-
+  mailcatcher:
+    image: sj26/mailcatcher
+    restart: always
+    ports:
+      - "1080:1080"
+    expose:
+      - 1025
 
 volumes:
   cache:

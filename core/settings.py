@@ -98,6 +98,13 @@ if mailjet_api_key != "":
     EMAIL_BACKEND = "django_mailjet.backends.MailjetBackend"
     MAILJET_API_KEY = mailjet_api_key
     MAILJET_API_SECRET = mailjet_api_secret
+elif get_env_variable("EMAIL_HOST") != '':
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = get_env_variable("EMAIL_HOST")
+    EMAIL_HOST_USER = get_env_variable("EMAIL_USER")
+    EMAIL_HOST_PASSWORD = get_env_variable("EMAIL_PASSWORD")
+    EMAIL_PORT = get_env_variable("EMAIL_PORT", cast=int, default=1025)
+    EMAIL_USE_TLS = get_env_variable("EMAIL_USE_TLS", cast=bool, default=False)
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
