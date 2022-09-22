@@ -80,9 +80,16 @@ workflows:
           filters:
             branches:
               only: develop
-      - deploy_prod:
+      - validate_deployment:
+          type: approval
           requires:
             - build
+          filters:
+            branches:
+              only: master
+      - deploy_prod:
+          requires:
+            - validate_deployment
           filters:
             branches:
               only: master
