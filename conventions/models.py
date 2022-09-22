@@ -390,7 +390,8 @@ class Convention(models.Model):
             "display_progress_bar_2": self.avenant_type
             in [
                 AvenantType.PROGRAMME,
-            ],
+            ]
+            and self.is_avenant,
             "display_type1and2_editable": self.statut
             in [
                 ConventionStatut.PROJET,
