@@ -47,16 +47,15 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
         nom = bailleur_from_siap["nom"]
     elif "raisonSociale" in bailleur_from_siap:
         nom = bailleur_from_siap["raisonSociale"]
+
+    adresse = code_postal = ville = ""
     # Adresse
-    if "adresseLigne4" in bailleur_from_siap:
-        adresse = bailleur_from_siap["adresseLigne4"]
-    elif "adresseL4Siege" in bailleur_from_siap:
-        adresse = bailleur_from_siap["adresseL4Siege"]
-    # code postal et ville
-    if "adresseLigne6" in bailleur_from_siap:
-        adresse = bailleur_from_siap["adresseLigne6"]
-    elif "adresseL6Siege" in bailleur_from_siap:
-        adresse = bailleur_from_siap["adresseL6Siege"]
+    if "codePostal" in bailleur_from_siap:
+        code_postal = bailleur_from_siap["codePostal"]
+    if "ville" in bailleur_from_siap:
+        ville = bailleur_from_siap["ville"]
+    if "adresseLigne" in bailleur_from_siap:
+        adresse = bailleur_from_siap["adresseLigne"]
 
     (bailleur, _) = Bailleur.objects.get_or_create(
         siren=bailleur_from_siap["siren"],
@@ -64,8 +63,8 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
             "siret": bailleur_from_siap["siren"],
             "nom": nom,
             "adresse": adresse,
-            "code_postal": adresse[:5],
-            "ville": adresse[6:],
+            "code_postal": code_postal,
+            "ville": ville,
         },
     )
     return bailleur
@@ -172,10 +171,13 @@ def get_or_create_lots_and_conventions(
         conventions.append(convention)
     else:
         for aide in operation["detailsOperation"]:
+            financement = _financement(aide["aide"]["code"])
+            if financement == financement.PLAI_ADP:
+                continue
             (lot, _) = Lot.objects.get_or_create(
                 programme=programme,
                 bailleur=programme.bailleur,
-                financement=_financement(aide["aide"]["code"]),
+                financement=financement,
                 defaults={
                     "type_habitat": _type_habitat(aide),
                     "nb_logements": _nb_logements(aide),
@@ -186,7 +188,7 @@ def get_or_create_lots_and_conventions(
                 programme=programme,
                 bailleur=programme.bailleur,
                 lot=lot,
-                financement=_financement(aide["aide"]["code"]),
+                financement=financement,
                 cree_par=user,
             )
             conventions.append(convention)
