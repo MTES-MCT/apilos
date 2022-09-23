@@ -333,6 +333,7 @@ CSP_MANIFEST_SRC = "'self'"
 CSP_INCLUDE_NONCE_IN = [
     "script-src",
 ]
+CSP_EXCLUDE_URL_PREFIXES = ("/explorer",)
 
 # Disable whitenoise for test
 STATICFILES_STORAGE = (
