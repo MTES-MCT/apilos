@@ -80,16 +80,29 @@ workflows:
           filters:
             branches:
               only: develop
-      - validate_deployment:
+      - validate_deployment_in_staging:
           type: approval
           requires:
             - build
           filters:
             branches:
-              only: master
-      - deploy_prod:
+              only: S585_continuous_deployment
+      - deploy_staging:
           requires:
-            - validate_deployment
+            - validate_deployment_in_staging
           filters:
             branches:
-              only: master
+              only: S585_continuous_deployment
+      - validate_deployment_in_prod:
+          type: approval
+          requires:
+            - build
+          filters:
+            branches:
+              only: S585_continuous_deployment
+      - deploy_prod:
+          requires:
+            - validate_deployment_in_prod
+          filters:
+            branches:
+              only: S585_continuous_deployment
