@@ -11,7 +11,7 @@
                         {% endif %}
                     </li>
                     <li class="fr-nav__item">
-                        <a class="fr-nav__link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" target="_self" {% if convention_form_step == 10  %}aria-current="page"{% endif %}>Récapitulatif</a>
+                        <a class="fr-nav__link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" target="_self" {% if convention_form_step == 10  %}aria-current="page"{% endif %}>Informations détaillées</a>
                     </li>
                 </ul>
             </nav>

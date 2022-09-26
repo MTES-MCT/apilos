@@ -523,19 +523,6 @@
                             {% endif %}
                         {% endif %}
                     </div>
-                    <div class="fr-col-md-6">
-                        <div class="form-button-footer fr-col-md-12">
-                            {% if convention.display_options.display_redirect_post_action %}
-                                <a class="fr-btn fr-btn--secondary fr-icon-arrow-right-s-line fr-btn--icon-right" href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}">
-                                    Retour
-                                </a>
-                            {% else %}
-                                <a class="fr-btn fr-btn--secondary fr-icon-arrow-right-s-line fr-btn--icon-right" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}">
-                                    Retour
-                                </a>
-                            {% endif %}
-                        </div>
-                    </div>
                 </div>
             </div>
 
