@@ -7,14 +7,28 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html"%}
-        {% include "common/step_progressbar.html"%}
-        <div class="fr-container fr-mb-2w">
+        {% include "common/nav_bar.html"%}
+        <div class="fr-container fr-mb-2w fr-pt-5w">
             <h2>Visualiser votre convention</h2>
             <div class="fr-col-md-12 fr-py-5w h-80vh">
 
                 <iframe src="{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'conventions:display_pdf' convention_uuid=convention.uuid %}" width="100%" height="1000px" nonce="{{request.csp_nonce}}"></iframe>
             </div>
 
+        </div>
+        <div class="fr-container fr-mb-2w">
+            <div class="form-button-footer fr-col-md-12  fr-py-5w">
+                {% if convention.display_options.display_redirect_post_action %}
+                    <a class="fr-btn fr-btn--secondary fr-icon-arrow-right-s-line fr-btn--icon-right" href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}">
+                        Retour
+                    </a>
+                {% else %}
+                    <a class="fr-btn fr-btn--secondary fr-icon-arrow-right-s-line fr-btn--icon-right" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}">
+                        Retour
+                    </a>
+                {% endif %}
+
+            </div>
         </div>
 
     </div>
