@@ -19,6 +19,9 @@
   display: block;
 }
 
+.apilos-line-top {
+  border-top: solid 1px #d3d3d3;
+}
 .fr-fi--xxl {
   --icon-size: 4rem;
 }
@@ -34,7 +37,9 @@
 .fr-link--sm {
   padding: 0.25rem 0.5rem;
 }
-
+#recap_navigation {
+  border-bottom: solid 1px var(--border-default-grey);
+}
 .notes {
   color: #6A6A6A;
 }
@@ -609,6 +614,12 @@ table.fullwidth {
 .apilos-btn--red {
   background-color: #dc3545;
 }
+.apilos-btn--secondary--red,
+button:not(:disabled).apilos-btn--secondary--red:hover {
+  color: #dc3545;
+  border: solid 1px #dc3545;
+  background-color: transparent;
+}
 
 /*
  * Display convention status
@@ -686,7 +697,7 @@ table.fullwidth {
   position: -webkit-sticky; /* Safari */
   position: sticky;
   top: 0;
-  z-index: 998;
+  z-index: 10000;
 }
 
 /*

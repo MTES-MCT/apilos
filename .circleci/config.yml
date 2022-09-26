@@ -55,6 +55,18 @@ jobs:
           name: Deploy Staging APiLos on Scalingo
           command: |
             git push -f git@ssh.osc-fr1.scalingo.com:apilos-staging.git $CIRCLE_SHA1:master
+  deploy_prod:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Add Scalingo to known_hosts
+          command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy master branch of APiLos on Scalingo
+          command: |
+            git push -f git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git $CIRCLE_SHA1:master
 
 
 workflows:
@@ -68,3 +80,29 @@ workflows:
           filters:
             branches:
               only: develop
+      - validate_deployment_in_staging:
+          type: approval
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy_staging:
+          requires:
+            - validate_deployment_in_staging
+          filters:
+            branches:
+              only: master
+      - validate_deployment_in_prod:
+          type: approval
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy_prod:
+          requires:
+            - validate_deployment_in_prod
+          filters:
+            branches:
+              only: master

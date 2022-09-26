@@ -1,5 +1,5 @@
-<div class="fr-col-12 fr-col-lg-6">
-    <div role="alert" class="fr-alert fr-alert--info">
+<div class="fr-col-12">
+    <div role="alert" class="fr-alert fr-alert--info fr-icon-arrow-right-s-line-double">
         <p class="fr-alert__title">
             Soumettre au service instructeur
         </p>
@@ -11,12 +11,13 @@
         </p>
         <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
             {% csrf_token %}
-            <button class="fr-btn fr-btn--secondary fr-my-1w">
-                Enregistrer le projet de convention
-            </button>
             <button name="SubmitConvention" value=True class="fr-btn fr-my-1w">
                 Soumettre au service instructeur
             </button>
+            <button class="fr-my-1w fr-ml-2w fr-link">
+                <u>Enregistrer comme brouillon</u>
+            </button>
+
         </form>
     </div>
 </div>

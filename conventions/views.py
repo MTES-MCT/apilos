@@ -318,7 +318,7 @@ def validate_convention(request, convention_uuid):
     result = services.convention_validate(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            reverse("conventions:sent", args=[result["convention"].uuid])
         )
     return render(
         request,
@@ -535,6 +535,7 @@ def new_avenant(request, convention_uuid):
 
 
 class ConventionTypeStationnementView(LoginRequiredMixin, View):
+    # pylint: disable=R0201
 
     target_template: str = "conventions/stationnements.html"
     next_path_redirect: str = "conventions:comments"

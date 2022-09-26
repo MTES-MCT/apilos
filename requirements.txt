@@ -40,9 +40,9 @@ charset-normalizer==2.0.12 \
     --hash=sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597 \
     --hash=sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df
     # via requests
-convertapi==1.4.0 \
-    --hash=sha256:0c7098a0aa9bed84cad76836d96bccf4e70ac1d2f68262d1cfdf087cbf4f8631 \
-    --hash=sha256:ac7061b6cb863070238402cd48f6049681015d1d9b11ae765f0310cf82415593
+convertapi==1.5.0 \
+    --hash=sha256:da4bf41a2f08c7e7935b98fd6f20178710dc692ebbf6d204f6d6884bdaab31f8 \
+    --hash=sha256:edf2916d196fd8c04f193b375d366c9834fde432af6be63132e719ece0f890f2
     # via -r requirements.in
 coreapi==2.3.3 \
     --hash=sha256:46145fcc1f7017c076a2ef684969b641d18a2991051fddec9458ad3f78ffc1cb \
@@ -138,9 +138,9 @@ dramatiq[redis,watch]==1.13.0 \
     # via
     #   -r requirements.in
     #   django-dramatiq
-drf-spectacular==0.23.1 \
-    --hash=sha256:2e42ae16717a5c3b2ae8632ac2b92f7eeb7b4fb9a941bc7879a92343e50ddeb6 \
-    --hash=sha256:d1724da1fd4ae99d66333b1c8530f3c51788d87b380f5951830bf8405f234120
+drf-spectacular==0.24.0 \
+    --hash=sha256:a59e33cfc87555dde027bc1bd0e379fbfd558e55a3abd9ebf975dee8c9e5052e \
+    --hash=sha256:bf22390e8d0aa53d81c5abf718ad4989c4e2eab133decc411a15c7e4ae3f6baf
     # via -r requirements.in
 drf-yasg==1.21.3 \
     --hash=sha256:85899b8b173cac7d39af3fea205bdc1a599aed8de3389a3bcccc29b37b9b983e \
@@ -522,9 +522,9 @@ psycopg2-binary==2.9.3 \
     --hash=sha256:e847774f8ffd5b398a75bc1c18fbb56564cda3d629fe68fd81971fece2d3c67e \
     --hash=sha256:ffb7a888a047696e7f8240d649b43fb3644f14f0ee229077e7f6b9f9081635bd
     # via -r requirements.in
-pyjwt==2.4.0 \
-    --hash=sha256:72d1d253f32dbd4f5c88eaf1fdc62f3a19f676ccbadb9dbc5d07e951b2b26daf \
-    --hash=sha256:d42908208c699b3b973cbeb01a969ba6a96c821eefb1c5bfe4c390c01d67abba
+pyjwt==2.5.0 \
+    --hash=sha256:8d82e7087868e94dd8d7d418e5088ce64f7daab4b36db654cbaedb46f9d1ca80 \
+    --hash=sha256:e77ab89480905d86998442ac5788f35333fa85f65047a534adc38edf3c88fc3b
     # via
     #   -r requirements.in
     #   djangorestframework-simplejwt

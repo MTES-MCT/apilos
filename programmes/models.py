@@ -44,25 +44,28 @@ class FinancementEDD(models.TextChoices):
 
 class TypologieLogement(models.TextChoices):
     T1 = "T1", "T1"
+    T1BIS = "T1bis", "T1bis"
     T2 = "T2", "T2"
     T3 = "T3", "T3"
     T4 = "T4", "T4"
-    T5 = "T5", "T5 et plus"
+    T5 = "T5", "T5"
+    T6 = "T6", "T6 et plus"
 
     @classmethod
     def map_string(cls, value):
         mapping = {
             "1": "T1",
+            "1bis": "T1bis",
             "2": "T2",
             "3": "T3",
             "4": "T4",
-            "5": "T5 et plus",
-            "5 et plus": "T5 et plus",
-            "6": "T5 et plus",
-            "7": "T5 et plus",
-            "8": "T5 et plus",
-            "9": "T5 et plus",
-            "10": "T5 et plus",
+            "5": "T5",
+            "6": "T6 et plus",
+            "6 et plus": "T6 et plus",
+            "7": "T6 et plus",
+            "8": "T6 et plus",
+            "9": "T6 et plus",
+            "10": "T6 et plus",
         }
         value = str(value)
         if value in mapping:
