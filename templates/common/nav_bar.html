@@ -13,6 +13,9 @@
                     <li class="fr-nav__item">
                         <a class="fr-nav__link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" target="_self" {% if convention_form_step == 10  %}aria-current="page"{% endif %}>Informations détaillées</a>
                     </li>
+                    <li class="fr-nav__item">
+                        <a class="fr-nav__link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}" target="_self" {% if convention_form_step == 11  %}aria-current="page"{% endif %}>Visualiser votre document</a>
+                    </li>
                 </ul>
             </nav>
         </div>
