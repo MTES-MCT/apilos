@@ -70,6 +70,10 @@ details > summary::-webkit-details-marker {
   justify-content: space-between;
 }
 
+.container__feedback_btn {
+  z-index: 1;
+}
+
 .apilos-fi-btn {
   width: 16px;
   filter: invert(100%) sepia(0%) saturate(7490%) hue-rotate(274deg) brightness(108%) contrast(103%);

@@ -47,7 +47,11 @@ habilitations_mock = {
             "porteeTerritComp": {
                 "id": 8,
                 "codePortee": "REG",
-                "regComp": {"id": 15, "libelle": "Provence-Alpes-Côte d'Azur"},
+                "regComp": {
+                    "id": 15,
+                    "libelle": "Provence-Alpes-Côte d'Azur",
+                    "code": 93,
+                },
                 "depComp": None,
                 "epciComp": None,
                 "comComp": None,
@@ -140,8 +144,12 @@ habilitations_mock = {
             "porteeTerritComp": {
                 "id": 26,
                 "codePortee": "EPCI",
-                "regComp": {"id": 15, "libelle": "Provence-Alpes-Côte d'Azur"},
-                "depComp": {"id": 13, "libelle": "Bouches du Rhône"},
+                "regComp": {
+                    "id": 15,
+                    "libelle": "Provence-Alpes-Côte d'Azur",
+                    "code": 93,
+                },
+                "depComp": {"id": 13, "libelle": "Bouches du Rhône", "code": 13},
                 "epciComp": {
                     "id": 276,
                     "libelle": "Métropole d'Aix-Marseille-Provence",
@@ -188,7 +196,11 @@ habilitations_mock = {
             "porteeTerritComp": {
                 "id": 96,
                 "codePortee": "REG",
-                "regComp": {"id": 15, "libelle": "Provence-Alpes-Côte d'Azur"},
+                "regComp": {
+                    "id": 15,
+                    "libelle": "Provence-Alpes-Côte d'Azur",
+                    "code": 93,
+                },
                 "depComp": None,
                 "epciComp": None,
                 "comComp": None,
