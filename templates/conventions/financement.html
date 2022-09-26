@@ -108,6 +108,15 @@
                                         <label class="fr-label fr-mb-1w" for="{{form.annee_fin_conventionnement.id_for_label}}">
                                             {{ form.annee_fin_conventionnement.label }}
                                             {% include "common/form/required_field.html" with form_input=form.annee_fin_conventionnement %}
+                                            <details>
+                                                <summary class="text-title-blue-france fr-text--xs">
+                                                    <u>Comment déterminer ma date de fin de convention ?</u>
+                                                </summary>
+                                                <div class="fr-text--xs">
+                                                    <div>Année de signature de la convention + au moins la durée du prêt le plus long. <br/>Elle ne peut être inférieure à 9 ans. Spécificités pour le PLS comprise entre 15 et 40 ans, pour les opérations sans financement, supérieur à 9 ans. <br/>Si la convention est signée après le 30 juin, la durée de la convention à prendre en compte débute à l'année N+1.</div>
+                                                    <div><a href="https://docs.apilos.beta.gouv.fr/bailleurs-guide/comment-remplir-les-champs/financement" target="_blank" rel="noopener" class="fr-link fr-text--xs">Plus d’informations sur la date de fin de convention.</a></div>
+                                                </div>
+                                            </details>
                                             {% include "common/help_field.html" with form_input=form.annee_fin_conventionnement helptext_visible=True %}
                                         </label>
                                         <div class="block--row-strech fr-mt-1w">
