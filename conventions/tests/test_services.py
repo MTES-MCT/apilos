@@ -1,5 +1,7 @@
 import json
 
+import mock
+
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import HttpRequest
 from django.test import RequestFactory, TestCase
@@ -362,8 +364,9 @@ class ServicesUtilsTests(TestCase):
 
     # set session in request object
     def setUp(self):
+        get_response = mock.MagicMock()
         self.request = RequestFactory().get("/conventions")
-        middleware = SessionMiddleware(None)
+        middleware = SessionMiddleware(get_response)
         middleware.process_request(self.request)
         self.request.session.save()
 

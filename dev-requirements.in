@@ -1,4 +1,7 @@
+--constraint=requirements.txt
+
 coverage==6.4.4
+djhtml>=1.5.0
+mock
 pre-commit>=2.13.0
 pylint>=2.9.5
-djhtml>=1.5.0
