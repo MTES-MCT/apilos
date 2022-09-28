@@ -142,9 +142,9 @@ drf-spectacular==0.24.2 \
     --hash=sha256:b276e6f7bda6dfb911e742dab87c6e97bc67da2dafe82d6fd8df7cec6c8b03ec \
     --hash=sha256:be32417594080a52f996afd83fd47ea9c2b83cbf13f6d3fbf3de809a0dfa7ead
     # via -r requirements.in
-drf-yasg==1.21.3 \
-    --hash=sha256:85899b8b173cac7d39af3fea205bdc1a599aed8de3389a3bcccc29b37b9b983e \
-    --hash=sha256:b2eebb438fa641503a08dac791be24183ea26dbcfe371a9824ea91f6e3a988aa
+drf-yasg==1.21.4 \
+    --hash=sha256:4a156d195fdccc51b40a227955588d982ca43c2e327927c7713bf967f5589913 \
+    --hash=sha256:887c9f79e64f46aa48974234e61029b1bea6b12ea628a8fc8a3697589add1d3e
     # via -r requirements.in
 et-xmlfile==1.1.0 \
     --hash=sha256:8eb9e2bc2f8c97e37a2dc85a09ecdcdec9d8a396530a6d5a33b30b9a92da0c5c \
