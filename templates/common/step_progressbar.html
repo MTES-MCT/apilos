@@ -24,6 +24,7 @@
             </div>
         </div>
     </div>
+    {% if convention.uuid is not None %}
     <script type="text/javascript" nonce="{{request.csp_nonce}}">
         document.addEventListener('DOMContentLoaded', function () {
             var lis = document.getElementById('step_progressbar').children
@@ -35,4 +36,5 @@
             }
         });
     </script>
+    {% endif %}
 {% endif %}
