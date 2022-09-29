@@ -629,34 +629,35 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
  */
 
  .apilos-colored_status {
-  border-radius: 0.25rem;
+  border-radius: 5px;
+  border: 1px solid rgba(70, 75, 99, 0.2);
 }
 
 .apilos-colored_status span{
-    color: white;
+    color: #464B63;
 }
 
 .apilos-colored_status--Projet {
-  background-color: #FF6F4C;
+  background-color: #D4E7F4;
 }
 
 .apilos-colored_status--Instruction_requise {
-  background-color: #6a6af4; /* blue-france-main-525 */
+  background-color: #FDCCCC;
 }
 
 .apilos-colored_status--Corrections_requises {
-  background-color: #000091; /* blue-france-sun-113 */
+  background-color: #FEDCD1;
 }
 
 .apilos-colored_status--A_signer {
-  background-color: #18753c;  /* success-425 */
+  background-color: #FEEDD1;
 }
 
 .apilos-colored_status--Signee {
-  background-color: #666666; /* grey-425 */
+  background-color: #D4F4E1;
 }
 .apilos-colored_status--Resiliee {
-  background-color: #bebebe; /* grey-425 */
+  background-color: #E2E2E2;
 }
 
 /*
