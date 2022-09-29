@@ -59,6 +59,13 @@
                     </div>
                 {% endif %}
             </form>
+            <details>
+                <summary>Trier par</summary>
+                <div>
+                    <div>{% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' label_order='Date de réalisation' %}</div>
+                    <div>{% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__nom' url_target='conventions:index' label_order='Nom du programme' %}</div>
+                </div>
+            </details>
         </div>
     </div>
 </div>
@@ -74,9 +81,15 @@
                             {% endif %}
                             <thead>
                                 <tr class="th_inline">
-                                    <th title="Statut de la convention" scope="col">
+                                    <th title="Statut de la convention" scope="col" class="apilos-status-col">
                                         Statut
                                     </th>
+                                    {% if request|is_instructeur %}
+                                        <th scope="col" class="th_inline">Bailleur</th>
+                                    {% endif %}
+                                    {% if request|display_administration %}
+                                        <th scope="col" class="th_inline">Instructeur</th>
+                                    {% endif %}
                                     <th title="Opération" scope="col">
                                         Opération
                                     </th>
@@ -120,6 +133,12 @@
                                                 });
                                             </script>
                                         </td>
+                                        {% if request|is_instructeur %}
+                                            <td>{{convention.bailleur}}</td>
+                                        {% endif %}
+                                        {% if request|display_administration %}
+                                            <td>{{convention.programme.administration}}</td>
+                                        {% endif %}
                                         <td>
                                             <strong>{{convention.programme.nom}}</strong><br/>
                                             <em>{{convention.programme.numero_galion}}</em>

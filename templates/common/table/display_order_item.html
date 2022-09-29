@@ -1,0 +1,16 @@
+<a class="" id='{{order_by_column}}' href='#'>
+    {{label_order}}
+</a>
+
+<script type="text/javascript" nonce="{{request.csp_nonce}}">
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('{{ order_by_column }}')
+            .addEventListener('click', function(){
+            if (document.getElementById('page') !== null) {
+                document.getElementById('page').value = "1"
+            }
+            document.getElementById('order_by').value = "{% if order_by == order_by_column %}-{% endif %}{{ order_by_column }}"
+            document.getElementById('search_table').submit()
+        });
+    });
+</script>

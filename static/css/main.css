@@ -499,7 +499,9 @@ a[href].apilos-block-faqlink:hover {
 /* .background-contrast-grey950:hover {
   background-color: #DDDDDD;
 } */
-
+.apilos-status-col {
+  min-width: 230px;
+}
 table.fullwidth {
   width: 100%;
 }
