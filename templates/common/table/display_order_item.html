@@ -18,12 +18,12 @@
         let order_value = params.order_by;
         if (order_value) {
             if (order_value.startsWith("-")) {
-                document.querySelector('.apilos_order_name').textContent = document.getElementById(order_value.substring(1)).textContent;
-                document.querySelector('.apilos_order_name').classList.add("fr-icon-arrow-down-fill");
+                document.querySelector('.apilos-order-name').textContent = document.getElementById(order_value.substring(1)).textContent;
+                document.querySelector('.apilos-order-name').classList.add("fr-icon-arrow-down-line");
             }
             else {
-                document.querySelector('.apilos_order_name').textContent = document.getElementById(order_value).textContent;
-                document.querySelector('.apilos_order_name').classList.add("fr-icon-arrow-up-fill");
+                document.querySelector('.apilos-order-name').textContent = document.getElementById(order_value).textContent;
+                document.querySelector('.apilos-order-name').classList.add("fr-icon-arrow-up-line");
             }
         }
     });

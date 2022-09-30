@@ -59,20 +59,48 @@
                     </div>
                 {% endif %}
             </form>
-            <details>
-                <summary>Trier par <span class="apilos_order_name"></span><span class="fr-icon-arrow-down-s-fill"></span></summary>
-                <div>
-                    <div>{% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' label_order='Date de réalisation' %}</div>
-                    <div>{% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__nom' url_target='conventions:index' label_order='Nom du programme' %}</div>
-                </div>
-            </details>
         </div>
     </div>
 </div>
 <div class="fr-container-fluid ds_banner">
     <div class="fr-container fr-py-3w">
         <div class="fr-grid-row fr-grid-row--gutters fr-card fr-card--no-border">
-            <div class="fr-col-md-12 ">
+            <div class="fr-col-md-12">
+                <details class="fr-py-2w apilos-order-menu">
+                    <summary class="fr-grid-row fr-grid-row--right">Trier par  <span class="apilos-order-name fr-link"></span><span class="fr-icon-arrow-down-s-line"></span></summary>
+                    <div class="fr-grid-row fr-grid-row--right">
+                        <div class="apilos-order-menu--open fr-p-2w">
+                            {% if request|is_instructeur %}
+                                <div  class="fr-py-1w">
+                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='bailleur__nom' url_target='conventions:index' label_order='Bailleur' %}
+                                </div>
+                            {% endif %}
+                            {% if request|display_administration %}
+                                <div  class="fr-py-1w">
+                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__administration__nom' url_target='conventions:index' label_order='Instructeur' %}
+                                </div>
+                            {% endif %}
+                            <div  class="fr-py-1w">
+                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__nom' url_target='conventions:index' label_order='Nom du programme' %}
+                            </div>
+                            <div class="fr-py-1w">
+                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='lot__financement' url_target='conventions:index' label_order='Financement'%}
+                            </div>
+                            <div class="fr-py-1w">
+                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__ville' url_target='conventions:index' label_order='Ville' %}
+                            </div>
+                            <div class="fr-py-1w">
+                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__code_postal' url_target='conventions:index' label_order='Code postal' %}
+                            </div>
+                            <div class="fr-py-1w">
+                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='lot__nb_logements' url_target='conventions:index' label_order='Nombre de logements' %}
+                            </div>
+                            <div class="fr-py-1w">
+                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' label_order='Date de réalisation' %}
+                            </div>
+                        </div>
+                    </div>
+                </details>
                 {% if conventions.paginated_conventions %}
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table>
