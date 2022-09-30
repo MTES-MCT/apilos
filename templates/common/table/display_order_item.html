@@ -12,5 +12,19 @@
             document.getElementById('order_by').value = "{% if order_by == order_by_column %}-{% endif %}{{ order_by_column }}"
             document.getElementById('search_table').submit()
         });
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+            get: (searchParams, prop) => searchParams.get(prop),
+        });
+        let order_value = params.order_by;
+        if (order_value) {
+            if (order_value.startsWith("-")) {
+                document.querySelector('.apilos_order_name').textContent = document.getElementById(order_value.substring(1)).textContent;
+                document.querySelector('.apilos_order_name').classList.add("fr-icon-arrow-down-fill");
+            }
+            else {
+                document.querySelector('.apilos_order_name').textContent = document.getElementById(order_value).textContent;
+                document.querySelector('.apilos_order_name').classList.add("fr-icon-arrow-up-fill");
+            }
+        }
     });
 </script>

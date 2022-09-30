@@ -60,7 +60,7 @@
                 {% endif %}
             </form>
             <details>
-                <summary>Trier par</summary>
+                <summary>Trier par <span class="apilos_order_name"></span><span class="fr-icon-arrow-down-s-fill"></span></summary>
                 <div>
                     <div>{% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' label_order='Date de réalisation' %}</div>
                     <div>{% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__nom' url_target='conventions:index' label_order='Nom du programme' %}</div>
