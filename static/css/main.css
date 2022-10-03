@@ -517,9 +517,6 @@ a[href].apilos-block-faqlink:hover {
 .apilos-order-menu .apilos-order-menu--open a {
   background-image: none;
 }
-.apilos-status-col {
-  min-width: 230px;
-}
 table.fullwidth {
   width: 100%;
 }
