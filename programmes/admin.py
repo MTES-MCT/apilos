@@ -14,22 +14,20 @@ from .models import (
 
 
 class ProgrammeAdmin(admin.ModelAdmin):
-    exclude = (
+    list_display = ("nom", "uuid")
+    fields = (
+        "uuid",
+        "nom",
+        "numero_galion",
+        "administration",
+        "bailleur",
         "zone_123",
         "zone_abc",
-        "vendeur",
-        "acquereur",
-        "date_acte_notarie",
-        "reference_notaire",
-        "reference_publication_acte",
-        "acte_de_propriete",
-        "certificat_adressage",
-        "effet_relatif",
-        "reference_cadastrale",
-        "edd_volumetrique",
-        "mention_publication_edd_volumetrique",
-        "edd_classique",
-        "mention_publication_edd_classique",
+    )
+    readonly_fields = (
+        "uuid",
+        "administration",
+        "bailleur",
     )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):

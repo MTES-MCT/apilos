@@ -23,6 +23,7 @@ class ConventionAdmin(admin.ModelAdmin):
         "programme__administration__nom",
     ]
     fields = (
+        "uuid",
         "administration",
         "bailleur",
         "programme",
@@ -51,6 +52,7 @@ class ConventionAdmin(admin.ModelAdmin):
         "bailleur",
     )
     readonly_fields = (
+        "uuid",
         "bailleur",
         "programme",
         "lot",
