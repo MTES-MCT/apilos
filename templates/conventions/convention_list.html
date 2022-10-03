@@ -8,7 +8,7 @@
                 <input type="hidden" id="order_by" name="order_by" value="{{conventions.order_by}}">
                 <input type="hidden" id="page" name="page" value="{{conventions.page}}">
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-5 fr-mb-2w">
                         <input class="fr-input" placeholder="par nom, code d’opération ou ville" type="search" id="search_input" name="search_input" value="{{conventions.search_input}}">
                     </div>
                     <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
@@ -38,13 +38,13 @@
                             </select>
                         </div>
                     </div>
-                    <div class="fr-col-1">
+                    <div class="fr-col-1 fr-grid-row fr-grid-row--right">
                         <button class="fr-btn fr-fi-search-line" title="Rechercher" id="search_btn">
                         </button>
                     </div>
                 </div>
                 {% if request.user.is_staff %}
-                    <div class="apilos-bordered fr-my-3w fr-col-12 fr-col-md-12 fr-col-lg-10">
+                    <div class="apilos-bordered fr-my-3w fr-col-12 fr-col-md-12 fr-col-lg-11">
                         <p class="notes">
                             <em>Les paramètres de recherche dans cet encadré sont disponibles uniquement pour les utilisateurs avancés.</em>
                         </p>
@@ -109,28 +109,28 @@
                             {% endif %}
                             <thead>
                                 <tr class="th_inline">
-                                    <th title="Statut de la convention" scope="col" class="apilos-status-col">
+                                    <th title="Statut de la convention" scope="col" class="col-3">
                                         Statut
                                     </th>
                                     {% if request|is_instructeur %}
-                                        <th scope="col" class="th_inline">Bailleur</th>
+                                        <th scope="col" class="col-1">Bailleur</th>
                                     {% endif %}
                                     {% if request|display_administration %}
-                                        <th scope="col" class="th_inline">Instructeur</th>
+                                        <th scope="col" class="col-1">Instructeur</th>
                                     {% endif %}
-                                    <th title="Opération" scope="col">
+                                    <th title="Opération" class="col-2" scope="col">
                                         Opération
                                     </th>
-                                    <th title="Financement" scope="col">
+                                    <th title="Financement" class="col-1" scope="col">
                                         Financement
                                     </th>
-                                    <th title="Ville" scope="col">
+                                    <th title="Ville" class="col-2" scope="col">
                                         Ville
                                     </th>
-                                    <th title="Nombre de logements à conventionner" scope="col">
+                                    <th title="Nombre de logements à conventionner" class="col-1" scope="col">
                                         Logements
                                     </th>
-                                    <th title="Date de livraison et mise en service" scope="col">
+                                    <th title="Date de livraison et mise en service" class="col-2" scope="col">
                                         Livraison
                                     </th>
                                 </tr>
