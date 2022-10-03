@@ -78,6 +78,9 @@
                         {% endif %}
                         <thead>
                             <tr class="th_inline">
+                                <th title="Statut de la convention" scope="col">
+                                    Statut
+                                </th>
                                 {% if request|is_instructeur %}
                                     <th scope="col" class="th_inline">
                                         Bailleur
@@ -118,34 +121,16 @@
                                     Nb Lgts
                                     {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='lot__nb_logements' url_target='conventions:index' %}
                                 </th>
-                                <th title="Statut de la convention" scope="col">
-                                    Statut
-                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='statut' url_target='conventions:index' %}
-                                </th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for convention in conventions.paginated_conventions %}
 
                                 <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention.display_options.display_redirect_sent %}sent{% elif convention.display_options.display_redirect_post_action %}signed{% endif %}">
-
-                                    {% if request|is_instructeur %}
-                                        <td>{{convention.bailleur}}</td>
-                                    {% endif %}
-                                    {% if request|display_administration %}
-                                        <td>{{convention.programme.administration}}</td>
-                                    {% endif %}
-                                    <td>{{convention.programme.numero_galion}}</td>
-                                    <td>{{convention.programme.date_achevement_compile|date:"d/m/Y"|default_if_none:'-' }}</td>
-                                    <td>{{convention.programme.nom}}</td>
-                                    <td>{{convention.financement}}</td>
-                                    <td>{{convention.programme.code_postal}}</td>
-                                    <td>{{convention.programme.ville}}</td>
-                                    <td>{{convention.lot.nb_logements}}</td>
                                     <td title="{{convention.statut_for_template.statut_display}}">
                                         <div class="fr-p-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
                                             <span><strong>
-                                                {{convention.statut_for_template.short_statut}}
+                                                {{convention.short_statut_for_template}}
                                             </strong></span>
                                         </div>
                                         <script type="text/javascript" nonce="{{request.csp_nonce}}">
@@ -164,6 +149,20 @@
                                             });
                                         </script>
                                     </td>
+
+                                    {% if request|is_instructeur %}
+                                        <td>{{convention.bailleur}}</td>
+                                    {% endif %}
+                                    {% if request|display_administration %}
+                                        <td>{{convention.programme.administration}}</td>
+                                    {% endif %}
+                                    <td>{{convention.programme.numero_galion}}</td>
+                                    <td>{{convention.programme.date_achevement_compile|date:"d/m/Y"|default_if_none:'-' }}</td>
+                                    <td>{{convention.programme.nom}}</td>
+                                    <td>{{convention.financement}}</td>
+                                    <td>{{convention.programme.code_postal}}</td>
+                                    <td>{{convention.programme.ville}}</td>
+                                    <td>{{convention.lot.nb_logements}}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

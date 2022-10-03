@@ -409,13 +409,19 @@ class Convention(models.Model):
         return {
             "statut": self.statut,
             "statut_display": self.get_statut_display(),
-            "short_statut": (
-                "Projet (Brouillon)"
-                if self.statut == ConventionStatut.PROJET
-                else self.statut[3:]
-            ),
             "key_statut": self.statut[3:].replace(" ", "_").replace("é", "e"),
         }
+
+    def short_statut_for_template(self):
+        short_status = {
+            ConventionStatut.PROJET: "Projet",
+            ConventionStatut.INSTRUCTION: "A instruire",
+            ConventionStatut.CORRECTION: "En attente de corrections",
+            ConventionStatut.A_SIGNER: "En attente de signature",
+            ConventionStatut.SIGNEE: "Finalisée",
+            ConventionStatut.RESILIEE: "Résiliée",
+        }
+        return f"{short_status.get(self.statut)}"
 
     def mixity_option(self):
         """

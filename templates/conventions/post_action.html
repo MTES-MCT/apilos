@@ -55,21 +55,6 @@
                     </form>
                 </div>
             </div>
-            <div class="fr-col-12">
-                <div class="fr-mb-2w fr-pt-2w block--row-strech apilos-line-top">
-                    <div class="block--row-strech-1 fr-my-2w">
-                        <p class="fr-alert__title">
-                            Voir la conventions signée (en PDF)
-                        </p>
-                        <p>
-                            Vous pouvez la prévisualiser et la télécharger.
-                        </p>
-                    </div>
-                    <button class="fr-btn fr-btn--secondary fr-my-1w fr-icon-eye-line fr-btn--icon-left">
-                        <a href="{% url 'conventions:preview' convention_uuid=convention.uuid %}">Consulter</a>
-                    </button>
-                </div>
-            </div>
             {% if request|is_instructeur and convention.display_options.display_back_to_instruction %}
                 <div class="fr-col-12">
                     <div class="fr-mb-2w fr-pt-2w block--row-strech apilos-line-top">

@@ -189,9 +189,6 @@ class ConventionModelsTest(TestCase):
             convention.statut_for_template()["statut_display"],
             "Création d'un projet de convention",
         )
-        self.assertEqual(
-            convention.statut_for_template()["short_statut"], "Projet (Brouillon)"
-        )
         self.assertEqual(convention.statut_for_template()["key_statut"], "Projet")
         convention.statut = ConventionStatut.INSTRUCTION
         self.assertEqual(
@@ -200,9 +197,6 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(
             convention.statut_for_template()["statut_display"],
             "Projet de convention soumis à l'instruction",
-        )
-        self.assertEqual(
-            convention.statut_for_template()["short_statut"], "Instruction requise"
         )
         self.assertEqual(
             convention.statut_for_template()["key_statut"], "Instruction_requise"
@@ -216,9 +210,6 @@ class ConventionModelsTest(TestCase):
             "Projet de convention à modifier par le bailleur",
         )
         self.assertEqual(
-            convention.statut_for_template()["short_statut"], "Corrections requises"
-        )
-        self.assertEqual(
             convention.statut_for_template()["key_statut"], "Corrections_requises"
         )
         convention.statut = ConventionStatut.A_SIGNER
@@ -226,15 +217,32 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(
             convention.statut_for_template()["statut_display"], "Convention à signer"
         )
-        self.assertEqual(convention.statut_for_template()["short_statut"], "A signer")
         self.assertEqual(convention.statut_for_template()["key_statut"], "A_signer")
         convention.statut = ConventionStatut.SIGNEE
         self.assertEqual(convention.statut_for_template()["statut"], "5. Signée")
         self.assertEqual(
             convention.statut_for_template()["statut_display"], "Convention signée"
         )
-        self.assertEqual(convention.statut_for_template()["short_statut"], "Signée")
         self.assertEqual(convention.statut_for_template()["key_statut"], "Signee")
+
+    def test_short_statut_for_template(self):
+        convention = Convention.objects.order_by("uuid").first()
+        convention.statut = ConventionStatut.PROJET
+        self.assertEqual(convention.short_statut_for_template(), "Projet")
+        convention.statut = ConventionStatut.INSTRUCTION
+        self.assertEqual(convention.short_statut_for_template(), "A instruire")
+        convention.statut = ConventionStatut.CORRECTION
+        self.assertEqual(
+            convention.short_statut_for_template(), "En attente de corrections"
+        )
+        convention.statut = ConventionStatut.A_SIGNER
+        self.assertEqual(
+            convention.short_statut_for_template(), "En attente de signature"
+        )
+        convention.statut = ConventionStatut.SIGNEE
+        self.assertEqual(convention.short_statut_for_template(), "Finalisée")
+        convention.statut = ConventionStatut.RESILIEE
+        self.assertEqual(convention.short_statut_for_template(), "Résiliée")
 
     def test_mixity_option(self):
         convention = Convention.objects.order_by("uuid").first()
