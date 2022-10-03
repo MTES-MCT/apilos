@@ -84,3 +84,5 @@ Quelques informations complémentaires:
 * La base de données APiLos est configurée dans l'administration de Metabase et a un accès en Lecture seule
 * Les données stockées par Metabase sont cryptées grâce à la variable d'environnement MB_ENCRYPTION_SECRET_KEY
 * les données SMTP sont celles du compte email de nicolas.oudard@beta.gouv.fr
+
+Metabase est ccessible à l'adresse [https://apilos-metabase-prod.osc-fr1.scalingo.io/]()
