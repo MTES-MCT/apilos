@@ -39,7 +39,7 @@ def handle_uploaded_xlsx(upform, my_file, myClass, convention, file_name):
     min_row = 3
     if "Data" in my_wb:
         if my_wb["Data"]["E2"].value:
-            min_row = my_wb["Data"]["E2"].value
+            min_row = int(my_wb["Data"]["E2"].value)
 
     save_uploaded_file(my_file, convention, file_name)
 
