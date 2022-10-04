@@ -408,6 +408,8 @@ def add_user(request):
             }
         )
         if form.is_valid():
+            # Forbid non super users to grant super user role to new users
+            is_superuser = form.cleaned_data["is_superuser"] if request.user.is_superuser else False
             user = User.objects.create(
                 email=form.cleaned_data["email"],
                 username=form.cleaned_data["username"],
@@ -415,10 +417,8 @@ def add_user(request):
                 last_name=form.cleaned_data["last_name"],
                 telephone=form.cleaned_data["telephone"],
                 administrateur_de_compte=form.cleaned_data["administrateur_de_compte"],
-                is_superuser=form.cleaned_data["is_superuser"],
+                is_superuser=is_superuser,
                 creator=request.user
-                if request.user.is_superuser
-                else False,
             )
             if form.cleaned_data["preferences_email"] is not None:
                 user.preferences_email = form.cleaned_data["preferences_email"]
