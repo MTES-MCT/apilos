@@ -18,15 +18,17 @@ from conventions.models import Convention
 def get_or_create_conventions(operation: dict, user: User):
     try:
         bailleur = get_or_create_bailleur(operation["donneesMo"])
-    except KeyError as ke:
-        raise KeyError("Operation not well formatted, missing `donneesMo`") from ke
+    except (KeyError, TypeError) as ke:
+        raise KeyError("Operation not well formatted, related to `donneesMo`") from ke
     try:
         administration = get_or_create_administration(operation["gestionnaire"])
-    except KeyError as ke:
-        raise KeyError("Operation not well formatted, missing `gestionnaire`") from ke
+    except (KeyError, TypeError) as ke:
+        raise KeyError(
+            "Operation not well formatted, related to `gestionnaire`"
+        ) from ke
     try:
         programme = get_or_create_programme(operation, bailleur, administration)
-    except KeyError as ke:
+    except (KeyError, TypeError) as ke:
         raise KeyError(
             "Operation not well formatted, missing programme's informations"
         ) from ke
