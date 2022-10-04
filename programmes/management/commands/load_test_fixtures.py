@@ -103,7 +103,7 @@ class Command(BaseCommand):
         elif inp.lower() in ["n", "no", "non"]:
             truncate_programme = False
         else:
-            print("Using default option: Operation won't be truncate")
+            print("Using default option: Operation won't be truncated")
         if truncate_programme:
             Programme.objects.all().delete()
             Convention.objects.all().delete()
@@ -116,7 +116,7 @@ class Command(BaseCommand):
         elif inp.lower() in ["n", "no", "non"]:
             truncate_users = False
         else:
-            print("Using default option: Users won't be truncate")
+            print("Using default option: Users won't be truncated")
         if truncate_users:
             User.objects.exclude(email__contains="beta.gouv.fr").delete()
 
