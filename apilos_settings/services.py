@@ -415,7 +415,8 @@ def add_user(request):
                 last_name=form.cleaned_data["last_name"],
                 telephone=form.cleaned_data["telephone"],
                 administrateur_de_compte=form.cleaned_data["administrateur_de_compte"],
-                is_superuser=form.cleaned_data["is_superuser"]
+                is_superuser=form.cleaned_data["is_superuser"],
+                creator=request.user
                 if request.user.is_superuser
                 else False,
             )
