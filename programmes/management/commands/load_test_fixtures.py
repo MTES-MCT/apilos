@@ -92,31 +92,33 @@ class Command(BaseCommand):
             siret=bailleur["siret"], defaults=bailleur
         )
 
-        if settings.ENVIRONMENT != "production":
-            # Remove conventions and operation and lot
-            truncate_programme = False
-            inp = input("Do you want to truncate Conventions/Operations/Lots (N/y) ?")
-            if inp.lower() in ["y", "yes", "oui"]:
-                truncate_programme = True
-            elif inp.lower() in ["n", "no", "non"]:
-                truncate_programme = False
-            else:
-                print("Using default option: Operation won't be truncate")
-            if truncate_programme:
-                Programme.objects.all().delete()
-                Convention.objects.all().delete()
+        if settings.ENVIRONMENT == "production":
+            raise Exception("il est interdit d'executer cette command en production")
 
-            # Remove user
+            # Remove conventions and operation and lot
+        truncate_programme = False
+        inp = input("Do you want to truncate Conventions/Operations/Lots (N/y) ?")
+        if inp.lower() in ["y", "yes", "oui"]:
+            truncate_programme = True
+        elif inp.lower() in ["n", "no", "non"]:
+            truncate_programme = False
+        else:
+            print("Using default option: Operation won't be truncated")
+        if truncate_programme:
+            Programme.objects.all().delete()
+            Convention.objects.all().delete()
+
+        # Remove user
+        truncate_users = False
+        inp = input("Do you want to truncate Users (N/y) ?")
+        if inp.lower() in ["y", "yes", "oui"]:
+            truncate_users = True
+        elif inp.lower() in ["n", "no", "non"]:
             truncate_users = False
-            inp = input("Do you want to truncate Users (N/y) ?")
-            if inp.lower() in ["y", "yes", "oui"]:
-                truncate_users = True
-            elif inp.lower() in ["n", "no", "non"]:
-                truncate_users = False
-            else:
-                print("Using default option: Users won't be truncate")
-            if truncate_users:
-                User.objects.exclude(email__contains="beta.gouv.fr").delete()
+        else:
+            print("Using default option: Users won't be truncated")
+        if truncate_users:
+            User.objects.exclude(email__contains="beta.gouv.fr").delete()
 
         if not User.objects.filter(username="demo.bailleur").exists():
             user_bailleur = User.objects.create_user(
