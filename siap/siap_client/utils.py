@@ -36,7 +36,7 @@ def get_or_create_conventions(operation: dict, user: User):
         (lots, conventions) = get_or_create_lots_and_conventions(
             operation, programme, user
         )
-    except KeyError as ke:
+    except (KeyError, TypeError) as ke:
         raise KeyError(
             "Operation not well formatted, missing lot and convention informations"
         ) from ke
