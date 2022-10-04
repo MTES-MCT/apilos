@@ -470,6 +470,7 @@ def post_action(request, convention_uuid):
 def display_pdf(request, convention_uuid):
     # récupérer le doc PDF
     convention = Convention.objects.get(uuid=convention_uuid)
+    filename = None
     if convention.nom_fichier_signe:
         filename = convention.nom_fichier_signe
     elif default_storage.exists(
