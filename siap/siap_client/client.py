@@ -17,6 +17,8 @@ from siap.siap_client.mock_data import (
 # The SIAP configuration will be refresh every REFRESH_SIAP_CONFIG minutes
 REFRESH_SIAP_CONFIG = 60
 
+logger = logging.getLogger(__name__)
+
 
 def build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
     dt_iat = datetime.now()
@@ -56,7 +58,10 @@ def _call_siap_api(
         timeout=5,
     )
     if response.status_code >= 400:
-        logging.warning("error from SIAP API: %s", response.content)
+        logger.error("ERROR from SIAP API: %s", response.content)
+    logger.debug(
+        "[Status code: %s] SIAP API : %s", response.status_code, response.content
+    )
     return response
 
 
