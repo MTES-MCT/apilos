@@ -56,6 +56,7 @@ class User(AbstractUser):
         ),
         blank=True,
     )
+    creator = models.ForeignKey('users.User', on_delete=models.SET_NULL, blank=True, null=True)
 
     def has_object_permission(self, obj):
         if isinstance(obj, (Convention, Lot)):
