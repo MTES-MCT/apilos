@@ -4,7 +4,10 @@
 
 La solution souveraine PaaS de [Scalingo](https://dashboard.scalingo.com/apps/osc-fr1/fabnum-apilos) est utilisée avec les composants suivants :
 * webapp : Application Django incluant interface et APIs, la webapp est déployé un système Ubunti 20.x
+* worker : worker Dramatiq pour déléguer des tâches longues qui s'executeront de manière asynchrone
 * Une base de données postgres en version 12.7.0
+
+Les applications lancées sont configurées dans le fichier [Procfile](Procfile)
 
 La base de données est backupée toute les nuits et Scalingo propose une solution PITR (Point-in-time recovery) pour sa restauration
 
@@ -19,7 +22,7 @@ La config est ici : [.circleci/config.yaml](.circleci/config.yaml)
 
 ### CI
 
-A chaque push sur github, le projet est buildé et les tests sont passés
+A chaque push sur [Github](https://github.com/MTES-MCT/apilos), le projet est buildé et les tests sont passés
 
 ### CD
 
@@ -35,19 +38,21 @@ Lors du déploiement, les étapes définient dans le script [bin/post_deploy](bi
 
 ### Déploiement en staging
 
-Pour déployer en staging, il suffit de pousser le code sur le repository git de scalingo dans le projet de staging
+Le code est déployé en staging automatiquement via [CircleCI](https://app.circleci.com/pipelines/github/MTES-MCT/apilos) quand il est poussé sur la branch `develop` du repository [Github](https://github.com/MTES-MCT/apilos)
 
-```git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master```
+Pour forcer le déploiement en staging, il est aussi possible de pousser la branche develop sur le repo git du projet sur Scalingo
+
+```git push git@ssh.osc-fr1.scalingo.com:apilos-staging.git develop:master```
 
 ### Déploiement en production
 
-A faire : intégrer le process de mise en prod dans circle ci
-
 Pour pousser en production, la version à pousser en production doit être préparée sur la branche `master` soit en mergeant les développements de la branche `develop`, soit à l'aide de la commande `cherry-pick`
 
-La branche `master` doit-être pousser sur le repo origin pour que les tests soient executés avant que la branche soit déployée
+Le code est déployé en production automatiquement via [CircleCI](https://app.circleci.com/pipelines/github/MTES-MCT/apilos) quand il est poussé sur la branch `master` du repository [Github](https://github.com/MTES-MCT/apilos). Cependant, il est nécessaire d'approuver le déploiement sur l'environnement de [CircleCI](https://app.circleci.com/pipelines/github/MTES-MCT/apilos)
 
-Puis la la branche `master` peut-être déployée sur l'environnement de `production` sur scalingo avec la commande :
+![CircleCI integration](static/img/circleci.png)
+
+Pour forcer la mise en production il est aussi possible de pousser la branche master sur le repo git du projet sur Scalingo
 
 ```git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master```
 
@@ -65,6 +70,75 @@ Puis la la branche `master` peut-être déployée sur l'environnement de `produc
 Pour le SIAP,
 
 9. Créer un utilisateur siap et transmettre son id au équipe du SIAP
+
+## Executer une commande python sur un Scalingo
+
+Il suffit d'ajouter avant `python manage.py` le début de commande :
+
+```
+$> scalingo --app <app_name> run ...
+```
+
+## Modification de l'appartenance d'un programme à un bailleur ou une administration
+
+### Modification de l'administration
+
+Récupérer au préalable les informations suivantes:
+* UUID du programme
+* Code de l'administration (cf. admin django)
+
+```
+$> python manage.py programme_update_administration
+Quel est l'identifiant UUID du programme à modifier ? 4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194
+le programme `4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194` : `Opération L9TQKLS6EC` va être modifié
+Quel est le code de l'administration à laquelle le programme doit être rattacher ? 13055
+le programme `Opération L9TQKLS6EC` va être attribué à l'administration `Métropole d'Aix-Marseille-Provence` de code `13055`
+Modifier l'administration du programme (Non/oui)?oui
+l'administration du programme `Opération L9TQKLS6EC` a été mise à jour avec l'administration de code `13055`
+le programme `Opération L9TQKLS6EC` va être attribué à l'administration `Métropole d'Aix-Marseille-Provence` de code `13055`
+```
+
+### Modification du bailleur
+
+Récupérer au préalable les informations suivantes:
+* UUID du programme
+* Numero siret du bailleur (cf. admin django)
+
+```
+$> python manage.py programme_update_bailleur
+Quel est l'identifiant UUID du programme à modifier ? 4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194
+le programme `4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194` : `Opération L9TQKLS6EC` va être modifié
+Quel est le siret du bailleur auquel le programme doit etre rattacher ? 48496369900026
+le programme `Opération L9TQKLS6EC` va être attribué au bailleur `6ème Sens Immobilier Investissement` de siret `48496369900026`
+Modifier le bailleur du programme (Non/oui)?oui
+le bailleur du programme `Opération L9TQKLS6EC` a été mise à jour avec le bailleur de siret `48496369900026`
+```
+
+## Remise à zéro des éléments métiers de la base de données d'un environnement
+
+```
+$> python manage.py clear_all_data
+```
+
+Les bailleurs, administrations et tous les objets leur appartenant seront supprimé (programmes, lots, conventions, logements, annexes, type_stationnements... etc)
+ainsi que les utilisateurs qui sont ni `superuser` ni `staff`
+
+⚠️ Cette commande n'est pas executable en production pour des raisons évidentes
+
+## Rechargement des fixtures de tests en staging
+
+Il est possible de déployer un jeu de donnée de tests en itulisant la command `load_test_fixtures`
+
+```
+$> python manage.py load_test_fixtures
+Do you want to truncate Conventions/Operations/Lots (N/y) ?
+Using default option: Operation won't be truncated
+Do you want to truncate Users (N/y) ?
+Using default option: Users won't be truncated
+```
+
+⚠️ Cette commande n'est pas executable en production car il n'est pas souhaitable de mélanger données de test et production
+
 
 # Déploiement de Metabase
 
@@ -85,39 +159,5 @@ Quelques informations complémentaires:
 * Les données stockées par Metabase sont cryptées grâce à la variable d'environnement MB_ENCRYPTION_SECRET_KEY
 * les données SMTP sont celles du compte email de nicolas.oudard@beta.gouv.fr
 
-Metabase est ccessible à l'adresse [https://apilos-metabase-prod.osc-fr1.scalingo.io/]()
+Metabase est accessible à l'adresse [https://apilos-metabase-prod.osc-fr1.scalingo.io/](https://apilos-metabase-prod.osc-fr1.scalingo.io/)
 
-# Modificatiuon de l'appatenance d'un programme à un bailleur ou une administration
-
-## Modification de l'administration
-
-Récupérer au préalable les informations suivantes:
-* UUID du programme
-* Code de l'administration (cf. admin django)
-
-```
-$> python manage.py programme_update_administration
-Quel est l'identifiant UUID du programme à modifier ? 4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194
-le programme `4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194` : `Opération L9TQKLS6EC` va être modifié
-Quel est le code de l'administration à laquelle le programme doit être rattacher ? 13055
-le programme `Opération L9TQKLS6EC` va être attribué à l'administration `Métropole d'Aix-Marseille-Provence` de code `13055`
-Modifier l'administration du programme (Non/oui)?oui
-l'administration du programme `Opération L9TQKLS6EC` a été mise à jour avec l'administration de code `13055`
-le programme `Opération L9TQKLS6EC` va être attribué à l'administration `Métropole d'Aix-Marseille-Provence` de code `13055`
-```
-
-## Modification du bailleur
-
-Récupérer au préalable les informations suivantes:
-* UUID du programme
-* Numero siret du bailleur (cf. admin django)
-
-```
-$> docker-compose exec apilos  python manage.py programme_update_bailleur
-Quel est l'identifiant UUID du programme à modifier ? 4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194
-le programme `4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194` : `Opération L9TQKLS6EC` va être modifié
-Quel est le siret du bailleur auquel le programme doit etre rattacher ? 48496369900026
-le programme `Opération L9TQKLS6EC` va être attribué au bailleur `6ème Sens Immobilier Investissement` de siret `48496369900026`
-Modifier le bailleur du programme (Non/oui)?oui
-le bailleur du programme `Opération L9TQKLS6EC` a été mise à jour avec le bailleur de siret `48496369900026`
-```
