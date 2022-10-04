@@ -107,7 +107,7 @@ def create_administrations():
             code="12345",
         ),
         Administration.objects.create(
-            nom="Métroploe de Marseille",
+            nom="Métropole de Marseille",
             code="67890",
         ),
         Administration.objects.create(
@@ -357,8 +357,8 @@ def create_all():
         administration_paris,
     ) = create_administrations()
     (bailleur, bailleur_hlm, bailleur_sem) = create_bailleurs()
-    group_instructeur = create_group("Instructeur", rwd=["logement", "convention"])
-    group_bailleur = create_group("Bailleur", rw=["logement", "convention"])
+    group_instructeur = create_group("instructeur", rwd=["logement", "convention"])
+    group_bailleur = create_group("bailleur", rw=["logement", "convention"])
 
     Role.objects.create(
         typologie=TypeRole.BAILLEUR,
