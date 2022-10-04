@@ -116,7 +116,6 @@ class ApilosSettingsViewTests(TestCase):
             'bailleur': bailleur.uuid
         })
 
-        print(response.content)
         self.assertRedirects(response, reverse("settings:users"))
         new_user = User.objects.get(username='bailleur.test')
 
