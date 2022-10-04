@@ -86,3 +86,38 @@ Quelques informations complémentaires:
 * les données SMTP sont celles du compte email de nicolas.oudard@beta.gouv.fr
 
 Metabase est ccessible à l'adresse [https://apilos-metabase-prod.osc-fr1.scalingo.io/]()
+
+# Modificatiuon de l'appatenance d'un programme à un bailleur ou une administration
+
+## Modification de l'administration
+
+Récupérer au préalable les informations suivantes:
+* UUID du programme
+* Code de l'administration (cf. admin django)
+
+```
+$> python manage.py programme_update_administration
+Quel est l'identifiant UUID du programme à modifier ? 4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194
+le programme `4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194` : `Opération L9TQKLS6EC` va être modifié
+Quel est le code de l'administration à laquelle le programme doit être rattacher ? 13055
+le programme `Opération L9TQKLS6EC` va être attribué à l'administration `Métropole d'Aix-Marseille-Provence` de code `13055`
+Modifier l'administration du programme (Non/oui)?oui
+l'administration du programme `Opération L9TQKLS6EC` a été mise à jour avec l'administration de code `13055`
+le programme `Opération L9TQKLS6EC` va être attribué à l'administration `Métropole d'Aix-Marseille-Provence` de code `13055`
+```
+
+## Modification du bailleur
+
+Récupérer au préalable les informations suivantes:
+* UUID du programme
+* Numero siret du bailleur (cf. admin django)
+
+```
+$> docker-compose exec apilos  python manage.py programme_update_bailleur
+Quel est l'identifiant UUID du programme à modifier ? 4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194
+le programme `4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194` : `Opération L9TQKLS6EC` va être modifié
+Quel est le siret du bailleur auquel le programme doit etre rattacher ? 48496369900026
+le programme `Opération L9TQKLS6EC` va être attribué au bailleur `6ème Sens Immobilier Investissement` de siret `48496369900026`
+Modifier le bailleur du programme (Non/oui)?oui
+le bailleur du programme `Opération L9TQKLS6EC` a été mise à jour avec le bailleur de siret `48496369900026`
+```
