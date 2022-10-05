@@ -747,3 +747,6 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   margin-right: 0;
   margin-bottom: 0;
 }
+#cgu .fr-table {
+  background-color: #fff;
+}
