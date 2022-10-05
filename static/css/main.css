@@ -499,7 +499,24 @@ a[href].apilos-block-faqlink:hover {
 /* .background-contrast-grey950:hover {
   background-color: #DDDDDD;
 } */
+.apilos-order-menu {
+  position: relative;
+}
+.apilos-order-menu .apilos-order-name {
+  margin-left: 5px;
+}
 
+.apilos-order-menu .apilos-order-menu--open {
+  position: absolute;
+  right: 0;
+  z-index: 1;
+  background-color: #fff;
+  border: 1px solid var(--border-default-grey);
+  border-radius: .25rem;
+}
+.apilos-order-menu .apilos-order-menu--open a {
+  background-image: none;
+}
 table.fullwidth {
   width: 100%;
 }
