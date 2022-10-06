@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+
 from conventions.models import Convention
 from core.tests import utils_fixtures
 
@@ -19,7 +20,7 @@ class AvenantCommentsViewTests(TestCase):
         )
         self.target_template = "conventions/avenant_comments.html"
         self.error_payload = {"comments": "O" * 5001}
-        self.sucess_payload = {"comments": "This is a comment"}
+        self.success_payload = {"comments": "This is a comment"}
         self.msg_prefix = "[AvenantCommentsViewTests] "
 
     def _test_data_integrity(self):
@@ -50,7 +51,7 @@ class AvenantCommentsViewTests(TestCase):
 
         response = self.client.post(
             self.target_path,
-            self.sucess_payload,
+            self.success_payload,
         )
         self.assertEqual(response.status_code, 302, msg=f"{self.msg_prefix}")
         self.assertRedirects(
@@ -76,7 +77,7 @@ class AvenantCommentsViewTests(TestCase):
         response = self.client.get(self.target_path)
         self.assertEqual(response.status_code, 200, msg=f"{self.msg_prefix}")
 
-        response = self.client.post(self.target_path)
+        response = self.client.post(self.target_path, self.success_payload)
         self.assertEqual(response.status_code, 302, msg=f"{self.msg_prefix}")
         self.assertRedirects(
             response, self.next_target_path, msg_prefix=self.msg_prefix
@@ -102,7 +103,7 @@ class AvenantCommentsViewTests(TestCase):
         response = self.client.get(self.target_path)
         self.assertEqual(response.status_code, 200, msg=f"{self.msg_prefix}")
 
-        response = self.client.post(self.target_path)
+        response = self.client.post(self.target_path, self.success_payload)
         self.assertEqual(response.status_code, 302, msg=f"{self.msg_prefix}")
         self.assertRedirects(
             response, self.next_target_path, msg_prefix=self.msg_prefix
@@ -136,7 +137,7 @@ class ConventionCommentsViewTests(AvenantCommentsViewTests):
         )
         self.target_template = "conventions/comments.html"
         self.error_payload = {"comments": "O" * 5001}
-        self.sucess_payload = {"comments": "This is a comment"}
+        self.success_payload = {"comments": "This is a comment"}
         self.msg_prefix = "[ConventionCommentsViewTests] "
 
 
@@ -166,7 +167,7 @@ class ConventionTypeStationnementViewTests(AvenantCommentsViewTests):
             "form-1-nb_stationnements": "",
             "form-1-loyer": 100.00,
         }
-        self.sucess_payload = {
+        self.success_payload = {
             "form-TOTAL_FORMS": 2,
             "form-INITIAL_FORMS": 2,
             "form-0-uuid": "",
@@ -182,3 +183,38 @@ class ConventionTypeStationnementViewTests(AvenantCommentsViewTests):
 
     def _test_data_integrity(self):
         pass
+
+
+class ConventionBailleurViewTests(AvenantCommentsViewTests):
+    @classmethod
+    def setUpTestData(cls):
+        utils_fixtures.create_all()
+
+    def setUp(self):
+        self.convention_75 = Convention.objects.filter(numero="0001").first()
+        self.target_path = reverse(
+            "conventions:bailleur", args=[self.convention_75.uuid]
+        )
+        self.next_target_path = reverse(
+            "conventions:programme", args=[self.convention_75.uuid]
+        )
+        self.target_template = "conventions/bailleur.html"
+        self.error_payload = {
+            "nom": "",
+            "adresse": "fake adresse",
+            "code_postal": "00000",
+        }
+        self.success_payload = {
+            "nom": "fake nom",
+            "adresse": "fake adresse",
+            "code_postal": "00000",
+        }
+        self.msg_prefix = "[ConventionBailleurViewTests] "
+
+    def _test_data_integrity(self):
+        self.convention_75.refresh_from_db()
+        self.assertEqual(
+            self.convention_75.bailleur.adresse,
+            "fake adresse",
+            msg=f"{self.msg_prefix}",
+        )

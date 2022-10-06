@@ -1,28 +1,21 @@
+from django.http import HttpRequest
+
 from bailleurs.forms import BailleurForm
 from conventions.models import Convention
-from . import utils
+from conventions.services import utils
+from conventions.services.services_logements import ConventionService
 
 
-def bailleur_update(request, convention_uuid):
-    convention = Convention.objects.prefetch_related("bailleur").get(
-        uuid=convention_uuid
-    )
-    bailleur = convention.bailleur
-    if request.method == "POST":
-        request.user.check_perm("convention.change_convention", convention)
-        if request.POST.get("redirect_to_recap", False):
-            return _bailleur_atomic_update(request, convention, bailleur)
-        form = BailleurForm({**request.POST.dict(), "uuid": bailleur.uuid})
-        if form.is_valid():
-            _save_bailleur(bailleur, form)
-            # All is OK -> Next:
-            return {
-                "success": utils.ReturnStatus.SUCCESS,
-                "convention": convention,
-            }
-    else:  # GET
-        request.user.check_perm("convention.view_convention", convention)
-        form = BailleurForm(
+class ConventionBailleurService(ConventionService):
+    convention: Convention
+    request: HttpRequest
+    form: BailleurForm
+    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
+    redirect_recap: bool = False
+
+    def get(self):
+        bailleur = self.convention.bailleur
+        self.form = BailleurForm(
             initial={
                 "uuid": bailleur.uuid,
                 "nom": bailleur.nom,
@@ -31,61 +24,66 @@ def bailleur_update(request, convention_uuid):
                 "adresse": bailleur.adresse,
                 "code_postal": bailleur.code_postal,
                 "ville": bailleur.ville,
-                "signataire_nom": bailleur.signataire_nom,
-                "signataire_fonction": bailleur.signataire_fonction,
+                "signataire_nom": self.convention.signataire_nom
+                or bailleur.signataire_nom,
+                "signataire_fonction": self.convention.signataire_fonction
+                or bailleur.signataire_fonction,
                 "signataire_date_deliberation": utils.format_date_for_form(
-                    bailleur.signataire_date_deliberation
+                    self.convention.signataire_date_deliberation
+                    or bailleur.signataire_date_deliberation
                 ),
             }
         )
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "form": form,
-    }
+
+    def save(self):
+        self.redirect_recap = bool(self.request.POST.get("redirect_to_recap", False))
+        self._bailleur_atomic_update(
+            self.request, self.convention, self.convention.bailleur
+        )
+
+    def _bailleur_atomic_update(self, request, convention, bailleur):
+        self.form = BailleurForm(
+            {
+                "uuid": bailleur.uuid,
+                "nom": request.POST.get("nom", bailleur.nom),
+                "siret": request.POST.get("siret", bailleur.siret),
+                "capital_social": request.POST.get(
+                    "capital_social", bailleur.capital_social
+                ),
+                "adresse": request.POST.get("adresse", bailleur.adresse),
+                "code_postal": request.POST.get("code_postal", bailleur.code_postal),
+                "ville": request.POST.get("ville", bailleur.ville),
+                "signataire_nom": request.POST.get(
+                    "signataire_nom",
+                    self.convention.signataire_nom or bailleur.signataire_nom,
+                ),
+                "signataire_fonction": request.POST.get(
+                    "signataire_fonction",
+                    convention.signataire_fonction or bailleur.signataire_fonction,
+                ),
+                "signataire_date_deliberation": request.POST.get(
+                    "signataire_date_deliberation",
+                    convention.signataire_date_deliberation
+                    or bailleur.signataire_date_deliberation,
+                ),
+            }
+        )
+        if self.form.is_valid():
+            _save_bailleur(convention, bailleur, self.form)
+            self.return_status = utils.ReturnStatus.SUCCESS
 
 
-def _bailleur_atomic_update(request, convention, bailleur):
-    form = BailleurForm(
-        {
-            "uuid": bailleur.uuid,
-            "nom": request.POST.get("nom", bailleur.nom),
-            "siret": request.POST.get("siret", bailleur.siret),
-            "capital_social": request.POST.get(
-                "capital_social", bailleur.capital_social
-            ),
-            "adresse": request.POST.get("adresse", bailleur.adresse),
-            "code_postal": request.POST.get("code_postal", bailleur.code_postal),
-            "ville": request.POST.get("ville", bailleur.ville),
-            "signataire_nom": request.POST.get(
-                "signataire_nom", bailleur.signataire_nom
-            ),
-            "signataire_fonction": request.POST.get(
-                "signataire_fonction", bailleur.signataire_fonction
-            ),
-            "signataire_date_deliberation": request.POST.get(
-                "signataire_date_deliberation", bailleur.signataire_date_deliberation
-            ),
-        }
-    )
-    if form.is_valid():
-        _save_bailleur(bailleur, form)
-        return utils.base_response_redirect_recap_success(convention)
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "form": form,
-    }
-
-
-def _save_bailleur(bailleur, form):
+def _save_bailleur(convention, bailleur, form):
     bailleur.nom = form.cleaned_data["nom"]
     bailleur.siret = form.cleaned_data["siret"]
     bailleur.capital_social = form.cleaned_data["capital_social"]
     bailleur.adresse = form.cleaned_data["adresse"]
     bailleur.code_postal = form.cleaned_data["code_postal"]
     bailleur.ville = form.cleaned_data["ville"]
-    bailleur.signataire_nom = form.cleaned_data["signataire_nom"]
-    bailleur.signataire_fonction = form.cleaned_data["signataire_fonction"]
-    bailleur.signataire_date_deliberation = form.cleaned_data[
+    bailleur.save()
+    convention.signataire_nom = form.cleaned_data["signataire_nom"]
+    convention.signataire_fonction = form.cleaned_data["signataire_fonction"]
+    convention.signataire_date_deliberation = form.cleaned_data[
         "signataire_date_deliberation"
     ]
-    bailleur.save()
+    convention.save()

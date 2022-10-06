@@ -1,24 +1,20 @@
 from typing import List
+
+from django.forms import Form
 from django.http import HttpRequest
 
-from programmes.models import (
-    Logement,
-    Annexe,
-    TypeStationnement,
-)
+from conventions.forms import UploadForm
+from conventions.models import Convention
 from programmes.forms import (
+    AnnexeFormSet,
     LogementFormSet,
+    LotAnnexeForm,
     LotLgtsOptionForm,
     TypeStationnementFormSet,
-    AnnexeFormSet,
-    LotAnnexeForm,
 )
-from conventions.models import Convention
-from conventions.forms import (
-    UploadForm,
-)
-from . import utils
-from . import upload_objects
+from programmes.models import Annexe, Logement, TypeStationnement
+
+from . import upload_objects, utils
 
 
 def logements_update(request, convention_uuid):
@@ -523,16 +519,16 @@ def _save_annexes(formset, convention):
         annexe.save()
 
 
-class ConventionTypeStationnementService:
-    # pylint: disable=R0902
+class ConventionService:
     convention: Convention
     request: HttpRequest
-    formset: TypeStationnementFormSet
-    upform: UploadForm = UploadForm()
-    editable_after_upload: bool
-    redirect_recap: bool = False
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
     import_warnings: None | List = None
+    redirect_recap: bool = False
+    editable_after_upload: bool = False
+    form: Form = None
+    formset = None
+    upform = None
 
     def __init__(
         self,
@@ -541,6 +537,23 @@ class ConventionTypeStationnementService:
     ):
         self.convention = convention
         self.request = request
+
+    def get(self):
+        pass
+
+    def save(self):
+        pass
+
+
+class ConventionTypeStationnementService(ConventionService):
+    convention: Convention
+    request: HttpRequest
+    formset: TypeStationnementFormSet
+    upform: UploadForm = UploadForm()
+    editable_after_upload: bool
+    redirect_recap: bool = False
+    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
+    import_warnings: None | List = None
 
     def get(self):
         self.editable_after_upload = bool(

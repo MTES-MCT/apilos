@@ -5,25 +5,24 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
-from django.http import (
-    FileResponse,
-    Http404,
-    HttpResponseRedirect,
-    HttpResponse,
-)
+from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods
+from programmes.models import FinancementEDD
+from upload.services import UploadService
 
 from conventions.models import Convention
 from conventions.permissions import has_campaign_permission
-from conventions.services import services, convention_generator, utils
+from conventions.services import convention_generator, services, utils
+from conventions.services.services_bailleurs import ConventionBailleurService
 from conventions.services.services_conventions import ConventionCommentsService
-from conventions.services.services_logements import ConventionTypeStationnementService
+from conventions.services.services_logements import (
+    ConventionService,
+    ConventionTypeStationnementService,
+)
 from conventions.services.utils import ReturnStatus
-from programmes.models import FinancementEDD
-from upload.services import UploadService
 
 
 @login_required
@@ -56,26 +55,80 @@ def select_programme_create(request):
     )
 
 
-@login_required
-def bailleur(request, convention_uuid):
-    # STEP 2
-    result = services.bailleur_update(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        if result.get("redirect", False) == "recapitulatif":
-            return HttpResponseRedirect(
-                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
-            )
-        return HttpResponseRedirect(
-            reverse("conventions:programme", args=[result["convention"].uuid])
+class ConventionView(LoginRequiredMixin, View):
+
+    target_template: str
+    next_path_redirect: str
+    convention_form_step: int
+    service_class: ConventionService
+
+    def _get_convention(self, convention_uuid):
+        return Convention.objects.get(uuid=convention_uuid)
+
+    @has_campaign_permission("convention.view_convention")
+    def get(self, request, convention_uuid):
+        convention = self._get_convention(convention_uuid)
+        service = self.service_class(convention=convention, request=request)
+        service.get()
+        return render(
+            request,
+            self.target_template,
+            {
+                **utils.base_convention_response_error(request, service.convention),
+                **({"form": service.form} if service.form else {}),
+                **({"upform": service.upform} if service.upform else {}),
+                **({"formset": service.formset} if service.formset else {}),
+                "editable_after_upload": (
+                    utils.editable_convention(request, convention)
+                    or service.editable_after_upload
+                ),
+                "convention_form_step": self.convention_form_step,
+            },
         )
-    return render(
-        request,
-        "conventions/bailleur.html",
-        {
-            **result,
-            "convention_form_step": 1,
-        },
-    )
+
+    @has_campaign_permission("convention.change_convention")
+    def post(self, request, convention_uuid):
+        convention = self._get_convention(convention_uuid)
+        service = self.service_class(convention=convention, request=request)
+        service.save()
+        if service.return_status == utils.ReturnStatus.SUCCESS:
+
+            if service.redirect_recap:
+                return HttpResponseRedirect(
+                    reverse("conventions:recapitulatif", args=[convention.uuid])
+                )
+            return HttpResponseRedirect(
+                reverse(self.next_path_redirect, args=[convention.uuid])
+            )
+        return render(
+            request,
+            self.target_template,
+            {
+                **utils.base_convention_response_error(request, service.convention),
+                **({"form": service.form} if service.form else {}),
+                **({"formset": service.formset} if service.formset else {}),
+                **({"upform": service.upform} if service.upform else {}),
+                **(
+                    {"import_warnings": service.import_warnings}
+                    if service.import_warnings
+                    else {}
+                ),
+                "editable_after_upload": utils.editable_convention(request, convention)
+                or service.editable_after_upload,
+                "convention_form_step": self.convention_form_step,
+            },
+        )
+
+
+class ConventionBailleurView(ConventionView):
+
+    target_template: str = "conventions/bailleur.html"
+    next_path_redirect: str = "conventions:programme"
+    convention_form_step: int = 1
+    service_class = ConventionBailleurService
+
+    def _get_convention(self, convention_uuid):
+        return Convention.objects.prefetch_related("bailleur").get(uuid=convention_uuid)
 
 
 @login_required
@@ -535,126 +588,18 @@ def new_avenant(request, convention_uuid):
     )
 
 
-class ConventionTypeStationnementView(LoginRequiredMixin, View):
-    # pylint: disable=R0201
-
+class ConventionTypeStationnementView(ConventionView):
     target_template: str = "conventions/stationnements.html"
-    next_path_redirect: str = "conventions:comments"
     convention_form_step: int = 8
-
-    def _get_convention(self, convention_uuid):
-        return (
-            Convention.objects.prefetch_related("lot")
-            .prefetch_related("lot__type_stationnements")
-            .get(uuid=convention_uuid)
-        )
-
-    @has_campaign_permission("convention.view_convention")
-    def get(self, request, convention_uuid):
-        convention = self._get_convention(convention_uuid)
-        convention_type_stationnement_service = ConventionTypeStationnementService(
-            convention=convention, request=request
-        )
-        convention_type_stationnement_service.get()
-        return render(
-            request,
-            self.target_template,
-            {
-                **utils.base_convention_response_error(
-                    request, convention_type_stationnement_service.convention
-                ),
-                "formset": convention_type_stationnement_service.formset,
-                "upform": convention_type_stationnement_service.upform,
-                "editable_after_upload": (
-                    utils.editable_convention(request, convention)
-                    or convention_type_stationnement_service.editable_after_upload
-                ),
-                "convention_form_step": self.convention_form_step,
-            },
-        )
-
-    @has_campaign_permission("convention.change_convention")
-    def post(self, request, convention_uuid):
-        convention = self._get_convention(convention_uuid)
-        convention_type_stationnement_service = ConventionTypeStationnementService(
-            convention=convention, request=request
-        )
-        convention_type_stationnement_service.save()
-        if (
-            convention_type_stationnement_service.return_status
-            == utils.ReturnStatus.SUCCESS
-        ):
-
-            if convention_type_stationnement_service.redirect_recap:
-                return HttpResponseRedirect(
-                    reverse("conventions:recapitulatif", args=[convention.uuid])
-                )
-            return HttpResponseRedirect(
-                reverse(self.next_path_redirect, args=[convention.uuid])
-            )
-        return render(
-            request,
-            self.target_template,
-            {
-                **utils.base_convention_response_error(
-                    request, convention_type_stationnement_service.convention
-                ),
-                "formset": convention_type_stationnement_service.formset,
-                "upform": convention_type_stationnement_service.upform,
-                "import_warnings": convention_type_stationnement_service.import_warnings,
-                "editable_after_upload": utils.editable_convention(request, convention)
-                or convention_type_stationnement_service.editable_after_upload,
-                "convention_form_step": self.convention_form_step,
-            },
-        )
+    next_path_redirect: str = "conventions:comments"
+    service_class: ConventionService = ConventionTypeStationnementService
 
 
-class ConventionCommentsView(LoginRequiredMixin, View):
-
+class ConventionCommentsView(ConventionView):
     target_template: str = "conventions/comments.html"
     convention_form_step: int = 9
-
-    @has_campaign_permission("convention.view_convention")
-    def get(self, request, convention_uuid):
-        convention = Convention.objects.get(uuid=convention_uuid)
-        convention_comment_service = ConventionCommentsService(
-            convention=convention, request=request
-        )
-        convention_comment_service.get_comments()
-        return render(
-            request,
-            self.target_template,
-            {
-                **utils.base_convention_response_error(
-                    request, convention_comment_service.convention
-                ),
-                "form": convention_comment_service.form,
-                "convention_form_step": self.convention_form_step,
-            },
-        )
-
-    @has_campaign_permission("convention.change_convention")
-    def post(self, request, convention_uuid):
-        convention = Convention.objects.get(uuid=convention_uuid)
-        convention_comment_service = ConventionCommentsService(
-            convention=convention, request=request
-        )
-        convention_comment_service.save_comments()
-        if convention_comment_service.return_status == utils.ReturnStatus.SUCCESS:
-            return HttpResponseRedirect(
-                reverse("conventions:recapitulatif", args=[convention_uuid])
-            )
-        return render(
-            request,
-            self.target_template,
-            {
-                **utils.base_convention_response_error(
-                    request, convention_comment_service.convention
-                ),
-                "form": convention_comment_service.form,
-                "convention_form_step": self.convention_form_step,
-            },
-        )
+    next_path_redirect: str = "conventions:recapitulatif"
+    service_class: ConventionService = ConventionCommentsService
 
 
 class AvenantCommentsView(ConventionCommentsView):

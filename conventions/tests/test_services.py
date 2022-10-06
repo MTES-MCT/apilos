@@ -1,3 +1,4 @@
+import datetime
 import json
 
 import mock
@@ -6,15 +7,88 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import HttpRequest
 from django.test import RequestFactory, TestCase
 
+from bailleurs.forms import BailleurForm
 from conventions.forms import ConventionCommentForm
 from conventions.models import Convention, ConventionStatut
-from conventions.services import services_conventions, services_logements, utils
+from conventions.services import (
+    services_bailleurs,
+    services_conventions,
+    services_logements,
+    utils,
+)
 from core.services import EmailService
 from core.tests import utils_fixtures
 from programmes.forms import TypeStationnementFormSet
 from programmes.models import TypeStationnement
 from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
+
+
+class ConventionBailleurServiceTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        utils_fixtures.create_all()
+
+    def setUp(self):
+        request = HttpRequest()
+        convention = Convention.objects.get(numero="0001")
+        request.user = User.objects.get(username="fix")
+        self.service = services_bailleurs.ConventionBailleurService(
+            convention=convention, request=request
+        )
+
+    def test_get(self):
+        self.service.get()
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertIsInstance(self.service.form, BailleurForm)
+        bailleur = self.service.convention.bailleur
+        self.assertEqual(
+            self.service.form.initial["uuid"],
+            bailleur.uuid,
+        )
+        self.assertEqual(self.service.form.initial["nom"], bailleur.nom)
+
+    def test_save(self):
+
+        bailleur = self.service.convention.bailleur
+        bailleur_signataire_nom = bailleur.signataire_nom
+        bailleur_signataire_fonction = bailleur.signataire_fonction
+        bailleur_signataire_date_deliberation = bailleur.signataire_date_deliberation
+
+        self.service.request.POST = {
+            "nom": "",
+            "adresse": "fake_address",
+            "code_postal": "00000",
+        }
+        self.service.save()
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertTrue(self.service.form.has_error("nom"))
+
+        self.service.request.POST = {
+            "nom": "nom bailleur",
+            "adresse": "fake_address",
+            "code_postal": "00000",
+            "signataire_nom": "Johnny",
+            "signataire_fonction": "Dirlo",
+            "signataire_date_deliberation": "2022-02-01",
+        }
+
+        self.service.save()
+        bailleur.refresh_from_db()
+        self.service.convention.refresh_from_db()
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
+        self.assertEqual(bailleur.nom, "nom bailleur")
+        self.assertEqual(bailleur.signataire_nom, bailleur_signataire_nom)
+        self.assertEqual(bailleur.signataire_fonction, bailleur_signataire_fonction)
+        self.assertEqual(
+            bailleur.signataire_date_deliberation, bailleur_signataire_date_deliberation
+        )
+        self.assertEqual(self.service.convention.signataire_nom, "Johnny")
+        self.assertEqual(self.service.convention.signataire_fonction, "Dirlo")
+        self.assertEqual(
+            self.service.convention.signataire_date_deliberation,
+            datetime.date(2022, 2, 1),
+        )
 
 
 class ConventionTypeStationnementServiceTests(TestCase):
@@ -97,8 +171,8 @@ class ConventionCommentsServiceTests(TestCase):
             )
         )
 
-    def test_get_comments(self):
-        self.convention_comments_service.get_comments()
+    def test_get(self):
+        self.convention_comments_service.get()
         self.assertEqual(
             self.convention_comments_service.return_status, utils.ReturnStatus.ERROR
         )
@@ -120,9 +194,9 @@ class ConventionCommentsServiceTests(TestCase):
             files,
         )
 
-    def test_save_comments(self):
+    def test_save(self):
         self.convention_comments_service.request.POST["comments"] = ("E" * 5001,)
-        self.convention_comments_service.save_comments()
+        self.convention_comments_service.save()
         self.assertEqual(
             self.convention_comments_service.return_status, utils.ReturnStatus.ERROR
         )
@@ -141,7 +215,7 @@ class ConventionCommentsServiceTests(TestCase):
             ),
         }
 
-        self.convention_comments_service.save_comments()
+        self.convention_comments_service.save()
         self.convention_comments_service.convention.refresh_from_db()
         comments = json.loads(self.convention_comments_service.convention.comments)
         self.assertEqual(
