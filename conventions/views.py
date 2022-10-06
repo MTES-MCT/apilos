@@ -17,11 +17,11 @@ from conventions.models import Convention
 from conventions.permissions import has_campaign_permission
 from conventions.services import convention_generator, services, utils
 from conventions.services.services_bailleurs import ConventionBailleurService
-from conventions.services.services_conventions import ConventionCommentsService
-from conventions.services.services_logements import (
+from conventions.services.services_conventions import (
+    ConventionCommentsService,
     ConventionService,
-    ConventionTypeStationnementService,
 )
+from conventions.services.services_logements import ConventionTypeStationnementService
 from conventions.services.utils import ReturnStatus
 
 

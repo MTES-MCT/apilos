@@ -1,5 +1,7 @@
 import datetime
-from typing import Any
+from typing import Any, List
+
+from django.forms import Form
 
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
@@ -25,12 +27,37 @@ from conventions.forms import (
 )
 from conventions.models import Convention, ConventionHistory, ConventionStatut, Pret
 from conventions.services import convention_generator, upload_objects, utils
-from conventions.services.services_logements import ConventionService
 from conventions.tasks import generate_and_send
 from core.services import EmailService
 from programmes.models import Annexe, Financement
 from siap.siap_client.client import SIAPClient
 from upload.services import UploadService
+
+
+class ConventionService:
+    convention: Convention
+    request: HttpRequest
+    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
+    import_warnings: None | List = None
+    redirect_recap: bool = False
+    editable_after_upload: bool = False
+    form: Form = None
+    formset = None
+    upform = None
+
+    def __init__(
+        self,
+        convention: Convention,
+        request: HttpRequest,
+    ):
+        self.convention = convention
+        self.request = request
+
+    def get(self):
+        pass
+
+    def save(self):
+        pass
 
 
 @require_GET

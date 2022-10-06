@@ -1,10 +1,10 @@
 from typing import List
 
-from django.forms import Form
 from django.http import HttpRequest
 
 from conventions.forms import UploadForm
 from conventions.models import Convention
+from conventions.services.services_conventions import ConventionService
 from programmes.forms import (
     AnnexeFormSet,
     LogementFormSet,
@@ -517,32 +517,6 @@ def _save_annexes(formset, convention):
                 loyer=form_annexe.cleaned_data["loyer"],
             )
         annexe.save()
-
-
-class ConventionService:
-    convention: Convention
-    request: HttpRequest
-    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
-    import_warnings: None | List = None
-    redirect_recap: bool = False
-    editable_after_upload: bool = False
-    form: Form = None
-    formset = None
-    upform = None
-
-    def __init__(
-        self,
-        convention: Convention,
-        request: HttpRequest,
-    ):
-        self.convention = convention
-        self.request = request
-
-    def get(self):
-        pass
-
-    def save(self):
-        pass
 
 
 class ConventionTypeStationnementService(ConventionService):
