@@ -82,13 +82,22 @@ def get_or_create_administration(administration_from_siap: dict):
     return administration
 
 
-def _address_interpretation(one_liner_adresse: str) -> Tuple[str]:
-    adresse = one_liner_adresse
+def _get_address_from_locdata(loc_data: dict) -> Tuple[str]:
+    if "adresseComplete" in loc_data:
+        try:
+            return (
+                loc_data["adresseComplete"]["adresse"],
+                loc_data["adresseComplete"]["codePostal"],
+                loc_data["adresseComplete"]["commune"],
+            )
+        except KeyError:
+            pass
+    adresse = loc_data["adresse"]
     code_postal = ville = ""
-    five_digits = re.findall(r"\d{5}", one_liner_adresse)
+    five_digits = re.findall(r"\d{5}", loc_data["adresse"])
     if five_digits:
         code_postal = five_digits[-1]
-        (adresse, ville) = one_liner_adresse.split(five_digits[-1])
+        (adresse, ville) = loc_data["adresse"].split(five_digits[-1])
         ville = ville.strip(";, ") if ville is not None else ""
         adresse = adresse.strip(";, ") if adresse is not None else ""
     return (adresse, code_postal, ville)
@@ -107,8 +116,8 @@ def get_or_create_programme(
         nature_logement = _nature_logement(
             programme_from_siap["donneesOperation"]["natureLogement"]
         )
-    (adresse, code_postal, ville) = _address_interpretation(
-        programme_from_siap["donneesLocalisation"]["adresse"]
+    (adresse, code_postal, ville) = _get_address_from_locdata(
+        programme_from_siap["donneesLocalisation"]
     )
     (programme, _) = Programme.objects.get_or_create(
         numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"],
