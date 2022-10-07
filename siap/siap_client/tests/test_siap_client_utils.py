@@ -1,12 +1,11 @@
-import unittest
-
+from django.test import TestCase
 from siap.siap_client import utils
 from bailleurs.models import Bailleur
 from core.tests import utils_fixtures
 from instructeurs.models import Administration
 
 
-class GetAddressFromLocdataTest(unittest.TestCase):
+class GetAddressFromLocdataTest(TestCase):
     # pylint: disable=W0212
 
     def test__get_address_from_locdata_empty(self):
@@ -65,7 +64,7 @@ class GetAddressFromLocdataTest(unittest.TestCase):
         self.assertEqual(ville, "MarSeille CEDEX 15")
 
 
-class GetOrCreateProgrammeTest(unittest.TestCase):
+class GetOrCreateProgrammeTest(TestCase):
     def setUp(self):
         utils_fixtures.create_administrations()
         utils_fixtures.create_bailleurs()
@@ -73,15 +72,6 @@ class GetOrCreateProgrammeTest(unittest.TestCase):
     # Test model User
     def test_get_or_create(self):
         data_from_siap = {
-            "donneesMo": {
-                "nom": "13 HABITAT",
-                "siren": "782855696",
-                "commune": None,
-                "adresseLigne3": "",
-                "adresseLigne4": "80 rue d'Albe BP 31",
-                "adresseLigne6": "13234 Marseille - 4e arrondissement",
-                "codeFamilleMO": "HLM",
-            },
             "donneesLocalisation": {
                 "region": {"codeInsee": "93", "libelle": None},
                 "departement": {"codeInsee": "13", "libelle": None},
@@ -105,25 +95,8 @@ class GetOrCreateProgrammeTest(unittest.TestCase):
                 "natureLogement": None,
                 "sansTravaux": True,
             },
-            "detailsOperation": None,
-            "planFinancement": None,
-            "gestionnaire": {
-                "id": 185,
-                "code": "DDI013",
-                "libelle": "DDI013 - DDI Bouches du Rh\xc3\xb4ne",
-                "typeDelegation": None,
-                "typeDelegataire": "3",
-                "typeLocalisation": None,
-                "adresse": None,
-                "commune": None,
-                "email": None,
-                "utilisateurs": [],
-            },
         }
-        bailleur = Bailleur.objects.first()
         programme = utils.get_or_create_programme(
-            data_from_siap,
-            bailleur,
-            Administration.objects.first(),
+            data_from_siap, Bailleur.objects.first(), Administration.objects.first()
         )
         self.assertTrue(programme.uuid)
