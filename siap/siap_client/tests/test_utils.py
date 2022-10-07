@@ -8,7 +8,7 @@ from instructeurs.models import Administration
 
 class GetAddressFromLocdataTest(unittest.TestCase):
     # pylint: disable=W0212
-    # Test model User
+
     def test__get_address_from_locdata_empty(self):
         self.assertRaises(KeyError, utils._get_address_from_locdata, {})
         self.assertRaises(
@@ -66,8 +66,7 @@ class GetAddressFromLocdataTest(unittest.TestCase):
 
 
 class GetOrCreateProgrammeTest(unittest.TestCase):
-    @classmethod
-    def setUpTestData(cls):
+    def setUp(self):
         utils_fixtures.create_administrations()
         utils_fixtures.create_bailleurs()
 
@@ -121,10 +120,10 @@ class GetOrCreateProgrammeTest(unittest.TestCase):
                 "utilisateurs": [],
             },
         }
-
+        bailleur = Bailleur.objects.first()
         programme = utils.get_or_create_programme(
             data_from_siap,
-            Bailleur.objects.first(),
+            bailleur,
             Administration.objects.first(),
         )
         self.assertTrue(programme.uuid)
