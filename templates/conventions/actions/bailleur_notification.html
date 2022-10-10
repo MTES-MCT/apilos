@@ -3,8 +3,8 @@
     <div class="fr-col-md-12  fr-py-5w">
         <div role="alert" class="fr-alert fr-alert--info">
             <h4>Vous avez créé cette convention en lieu et place du bailleur et vous souhaitez sa relecture<h4>
-                <p>Faites en part au bailleur, cette convention passera en <b>Corrections requises</b> et
-                    le bailleur pourra vous l'a renvoyer avec le statut <b>Instruction requise</b></p>
+                <p>Faites en part au bailleur, cette convention passera «Corrections requises» et
+                    le bailleur pourra vous l'a renvoyer avec le statut «Instruction requise»</p>
                 <div>
                     <form method="post" action="{% url 'conventions:feedback' convention_uuid=convention.uuid %}" data-turbo="false">
                         {% csrf_token %}
