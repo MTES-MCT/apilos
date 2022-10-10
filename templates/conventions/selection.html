@@ -82,13 +82,17 @@
                                             });
                                         </script>
                                         <div id='programme_creation' {% if form.existing_programme.value != 'creation' %}hidden{% endif %}>
-                                            {% if bailleurs.length == 1 %}
+                                            {% if bailleurs.count == 1 %}
                                                 {% include "common/form/input_select.html" with form_input=form.bailleur enum=bailleurs without_empty_option=True mandatory_input=True %}
                                             {% else %}
                                                 {% include "common/form/input_select.html" with form_input=form.bailleur enum=bailleurs without_empty_option=False mandatory_input=True %}
                                             {% endif %}
 
-                                            {% include "common/form/input_select.html" with form_input=form.administration enum=administrations without_empty_option=False mandatory_input=True %}
+                                            {% if administrations.count == 1 %}
+                                                {% include "common/form/input_select.html" with form_input=form.administration enum=administrations without_empty_option=True mandatory_input=True %}
+                                            {% else %}
+                                                {% include "common/form/input_select.html" with form_input=form.administration enum=administrations without_empty_option=False mandatory_input=True %}
+                                            {% endif %}
 
                                             {% include "common/form/input_text.html" with form_input=form.nom  mandatory_input=True %}
 

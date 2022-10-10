@@ -1,5 +1,5 @@
 {% load custom_filters %}
-{% if request|is_instructeur and convention.display_options.display_validation %}
+{% if request|is_instructeur and convention.display_options.display_validation or request|is_instructeur and convention.is_project and convention.cree_par.is_instructeur %}
     <div class="fr-col-md-12 fr-py-5w apilos-line-top">
         <p class="fr-alert__title">Valider {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}</p>
         <div role="alert">

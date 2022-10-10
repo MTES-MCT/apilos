@@ -51,7 +51,7 @@ def select_programme_create(request):
         "conventions/selection.html",
         {
             **result,
-            # Force Financment to EDD Financement because PLUS-PLAI doesn't exist
+            # Force Financement to EDD Financement because PLUS-PLAI doesn't exist
             "financements": FinancementEDD,
         },
     )
