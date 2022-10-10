@@ -19,18 +19,20 @@ def get_or_create_conventions(operation: dict, user: User):
     try:
         bailleur = get_or_create_bailleur(operation["donneesMo"])
     except (KeyError, TypeError) as ke:
-        raise KeyError("Operation not well formatted, related to `donneesMo`") from ke
+        raise KeyError(
+            f"Operation not well formatted, related to `donneesMo` : {operation}"
+        ) from ke
     try:
         administration = get_or_create_administration(operation["gestionnaire"])
     except (KeyError, TypeError) as ke:
         raise KeyError(
-            "Operation not well formatted, related to `gestionnaire`"
+            f"Operation not well formatted, related to `gestionnaire` : {operation}"
         ) from ke
     try:
         programme = get_or_create_programme(operation, bailleur, administration)
     except (KeyError, TypeError) as ke:
         raise KeyError(
-            "Operation not well formatted, missing programme's informations"
+            f"Operation not well formatted, missing programme's informations : {operation}"
         ) from ke
     try:
         (lots, conventions) = get_or_create_lots_and_conventions(
@@ -38,7 +40,7 @@ def get_or_create_conventions(operation: dict, user: User):
         )
     except (KeyError, TypeError) as ke:
         raise KeyError(
-            "Operation not well formatted, missing lot and convention informations"
+            f"Operation not well formatted, missing lot and convention informations : {operation}"
         ) from ke
     return (programme, lots, conventions)
 
