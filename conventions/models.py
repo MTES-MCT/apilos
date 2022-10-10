@@ -4,7 +4,6 @@ from django.db import models
 from django.db.models import Q
 from django.forms import model_to_dict
 from django.utils import timezone
-
 from programmes.models import (
     Annexe,
     Financement,
@@ -13,7 +12,7 @@ from programmes.models import (
     Programme,
     TypeStationnement,
 )
-from users.type_models import TypeRole, EmailPreferences
+from users.type_models import EmailPreferences, TypeRole
 
 
 class Preteur(models.TextChoices):
@@ -155,6 +154,9 @@ class Convention(models.Model):
         null=True,
         blank=True,
     )
+    signataire_nom = models.CharField(max_length=255, null=True)
+    signataire_fonction = models.CharField(max_length=255, null=True)
+    signataire_date_deliberation = models.DateField(null=True)
     # Missing option for :
 
     # La présente convention ne prévoyant pas de travaux, le bail entre en vigueur à la date de

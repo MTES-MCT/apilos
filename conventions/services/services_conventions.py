@@ -1,42 +1,64 @@
 import datetime
+from typing import Any, List
+from abc import ABC
 
-from typing import Any
+from django.forms import Form
 
+from django.conf import settings
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import Q
+from django.db.models.functions import Substr
+from django.http.request import HttpRequest
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
-from django.http.request import HttpRequest
 from django.views.decorators.http import require_GET, require_POST
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Q
-from django.db.models.functions import Substr
-from django.conf import settings
 
 from comments.models import Comment, CommentStatut
 from conventions.forms import (
     ConventionCommentForm,
     ConventionFinancementForm,
     ConventionNumberForm,
+    ConventionResiliationForm,
+    ConventionType1and2Form,
+    NewAvenantForm,
     NotificationForm,
     PretFormSet,
     UploadForm,
-    ConventionType1and2Form,
-    ConventionResiliationForm,
-    NewAvenantForm,
 )
 from conventions.models import Convention, ConventionHistory, ConventionStatut, Pret
+from conventions.services import convention_generator, upload_objects, utils
 from conventions.tasks import generate_and_send
 from core.services import EmailService
-from programmes.models import (
-    Annexe,
-    Financement,
-)
+from programmes.models import Annexe, Financement
 from siap.siap_client.client import SIAPClient
 from upload.services import UploadService
 
-from . import utils
-from . import upload_objects
-from . import convention_generator
+
+class ConventionService(ABC):
+    convention: Convention
+    request: HttpRequest
+    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
+    import_warnings: None | List = None
+    redirect_recap: bool = False
+    editable_after_upload: bool = False
+    form: Form = None
+    formset = None
+    upform = None
+
+    def __init__(
+        self,
+        convention: Convention,
+        request: HttpRequest,
+    ):
+        self.convention = convention
+        self.request = request
+
+    def get(self):
+        pass
+
+    def save(self):
+        pass
 
 
 @require_GET
@@ -884,21 +906,13 @@ def create_avenant(request, convention_uuid):
     }
 
 
-class ConventionCommentsService:
+class ConventionCommentsService(ConventionService):
     convention: Convention
     request: HttpRequest
     form: ConventionCommentForm
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
 
-    def __init__(
-        self,
-        convention: Convention,
-        request: HttpRequest,
-    ):
-        self.convention = convention
-        self.request = request
-
-    def get_comments(self):
+    def get(self):
         self.form = ConventionCommentForm(
             initial={
                 "uuid": self.convention.uuid,
@@ -909,7 +923,7 @@ class ConventionCommentsService:
             }
         )
 
-    def save_comments(self):
+    def save(self):
         self.request.user.check_perm("convention.change_convention", self.convention)
         self.form = ConventionCommentForm(self.request.POST)
         if self.form.is_valid():

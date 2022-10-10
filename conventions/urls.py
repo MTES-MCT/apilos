@@ -1,10 +1,16 @@
 from django.urls import path
+
 from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
     path("selection", views.select_programme_create, name="selection"),
-    path("bailleur/<convention_uuid>", views.bailleur, name="bailleur"),
+    #    path("bailleur/<convention_uuid>", views.bailleur, name="bailleur"),
+    path(
+        "bailleur/<convention_uuid>",
+        views.ConventionBailleurView.as_view(),
+        name="bailleur",
+    ),
     path("programme/<convention_uuid>", views.programme, name="programme"),
     path("cadastre/<convention_uuid>", views.cadastre, name="cadastre"),
     path("edd/<convention_uuid>", views.edd, name="edd"),
