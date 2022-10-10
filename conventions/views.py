@@ -1,3 +1,5 @@
+from abc import ABC
+
 from zipfile import ZipFile
 
 from django.conf import settings
@@ -10,9 +12,9 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods
+
 from programmes.models import FinancementEDD
 from upload.services import UploadService
-
 from conventions.models import Convention
 from conventions.permissions import has_campaign_permission
 from conventions.services import convention_generator, services, utils
@@ -53,82 +55,6 @@ def select_programme_create(request):
             "financements": FinancementEDD,
         },
     )
-
-
-class ConventionView(LoginRequiredMixin, View):
-
-    target_template: str
-    next_path_redirect: str
-    convention_form_step: int
-    service_class: ConventionService
-
-    def _get_convention(self, convention_uuid):
-        return Convention.objects.get(uuid=convention_uuid)
-
-    @has_campaign_permission("convention.view_convention")
-    def get(self, request, convention_uuid):
-        convention = self._get_convention(convention_uuid)
-        service = self.service_class(convention=convention, request=request)
-        service.get()
-        return render(
-            request,
-            self.target_template,
-            {
-                **utils.base_convention_response_error(request, service.convention),
-                **({"form": service.form} if service.form else {}),
-                **({"upform": service.upform} if service.upform else {}),
-                **({"formset": service.formset} if service.formset else {}),
-                "editable_after_upload": (
-                    utils.editable_convention(request, convention)
-                    or service.editable_after_upload
-                ),
-                "convention_form_step": self.convention_form_step,
-            },
-        )
-
-    @has_campaign_permission("convention.change_convention")
-    def post(self, request, convention_uuid):
-        convention = self._get_convention(convention_uuid)
-        service = self.service_class(convention=convention, request=request)
-        service.save()
-        if service.return_status == utils.ReturnStatus.SUCCESS:
-
-            if service.redirect_recap:
-                return HttpResponseRedirect(
-                    reverse("conventions:recapitulatif", args=[convention.uuid])
-                )
-            return HttpResponseRedirect(
-                reverse(self.next_path_redirect, args=[convention.uuid])
-            )
-        return render(
-            request,
-            self.target_template,
-            {
-                **utils.base_convention_response_error(request, service.convention),
-                **({"form": service.form} if service.form else {}),
-                **({"formset": service.formset} if service.formset else {}),
-                **({"upform": service.upform} if service.upform else {}),
-                **(
-                    {"import_warnings": service.import_warnings}
-                    if service.import_warnings
-                    else {}
-                ),
-                "editable_after_upload": utils.editable_convention(request, convention)
-                or service.editable_after_upload,
-                "convention_form_step": self.convention_form_step,
-            },
-        )
-
-
-class ConventionBailleurView(ConventionView):
-
-    target_template: str = "conventions/bailleur.html"
-    next_path_redirect: str = "conventions:programme"
-    convention_form_step: int = 1
-    service_class = ConventionBailleurService
-
-    def _get_convention(self, convention_uuid):
-        return Convention.objects.prefetch_related("bailleur").get(uuid=convention_uuid)
 
 
 @login_required
@@ -586,6 +512,82 @@ def new_avenant(request, convention_uuid):
             **result,
         },
     )
+
+
+class ConventionView(ABC, LoginRequiredMixin, View):
+
+    target_template: str
+    next_path_redirect: str
+    convention_form_step: int
+    service_class: ConventionService
+
+    def _get_convention(self, convention_uuid):
+        return Convention.objects.get(uuid=convention_uuid)
+
+    @has_campaign_permission("convention.view_convention")
+    def get(self, request, convention_uuid):
+        convention = self._get_convention(convention_uuid)
+        service = self.service_class(convention=convention, request=request)
+        service.get()
+        return render(
+            request,
+            self.target_template,
+            {
+                **utils.base_convention_response_error(request, service.convention),
+                **({"form": service.form} if service.form else {}),
+                **({"upform": service.upform} if service.upform else {}),
+                **({"formset": service.formset} if service.formset else {}),
+                "editable_after_upload": (
+                    utils.editable_convention(request, convention)
+                    or service.editable_after_upload
+                ),
+                "convention_form_step": self.convention_form_step,
+            },
+        )
+
+    @has_campaign_permission("convention.change_convention")
+    def post(self, request, convention_uuid):
+        convention = self._get_convention(convention_uuid)
+        service = self.service_class(convention=convention, request=request)
+        service.save()
+        if service.return_status == utils.ReturnStatus.SUCCESS:
+
+            if service.redirect_recap:
+                return HttpResponseRedirect(
+                    reverse("conventions:recapitulatif", args=[convention.uuid])
+                )
+            return HttpResponseRedirect(
+                reverse(self.next_path_redirect, args=[convention.uuid])
+            )
+        return render(
+            request,
+            self.target_template,
+            {
+                **utils.base_convention_response_error(request, service.convention),
+                **({"form": service.form} if service.form else {}),
+                **({"formset": service.formset} if service.formset else {}),
+                **({"upform": service.upform} if service.upform else {}),
+                **(
+                    {"import_warnings": service.import_warnings}
+                    if service.import_warnings
+                    else {}
+                ),
+                "editable_after_upload": utils.editable_convention(request, convention)
+                or service.editable_after_upload,
+                "convention_form_step": self.convention_form_step,
+            },
+        )
+
+
+class ConventionBailleurView(ConventionView):
+
+    target_template: str = "conventions/bailleur.html"
+    next_path_redirect: str = "conventions:programme"
+    convention_form_step: int = 1
+    service_class = ConventionBailleurService
+
+    def _get_convention(self, convention_uuid):
+        return Convention.objects.prefetch_related("bailleur").get(uuid=convention_uuid)
 
 
 class ConventionTypeStationnementView(ConventionView):

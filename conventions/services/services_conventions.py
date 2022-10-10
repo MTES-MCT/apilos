@@ -1,5 +1,6 @@
 import datetime
 from typing import Any, List
+from abc import ABC
 
 from django.forms import Form
 
@@ -34,7 +35,7 @@ from siap.siap_client.client import SIAPClient
 from upload.services import UploadService
 
 
-class ConventionService:
+class ConventionService(ABC):
     convention: Convention
     request: HttpRequest
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
