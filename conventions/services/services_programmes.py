@@ -3,9 +3,13 @@ from django.views.decorators.http import require_GET
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.conf import settings
+
+from conventions.templatetags.custom_filters import is_instructeur
+from conventions.models import Convention
+from conventions.forms import UploadForm
 from core.services import EmailService
 from instructeurs.models import Administration
-
+from bailleurs.models import Bailleur
 from programmes.models import (
     Financement,
     Programme,
@@ -21,10 +25,6 @@ from programmes.forms import (
     ProgrammeEDDForm,
     LogementEDDFormSet,
     ReferenceCadastraleFormSet,
-)
-from conventions.models import Convention
-from conventions.forms import (
-    UploadForm,
 )
 from . import utils
 from . import upload_objects
@@ -88,13 +88,20 @@ def select_programme_create(request):
         )
 
     programmes = _conventions_selection(request)
+    if is_instructeur(request):
+        administrations = request.user.administrations()
+        bailleurs = Bailleur.objects.all().order_by("nom")
+    else:
+        administrations = Administration.objects.all().order_by("nom")
+        bailleurs = request.user.bailleurs()
+
     return {
         "success": utils.ReturnStatus.ERROR,
         "programmes": programmes,
         "form": form,
         "editable": request.user.has_perm("convention.add_convention"),
-        "bailleurs": request.user.bailleurs(),
-        "administrations": Administration.objects.all().order_by("nom"),
+        "bailleurs": bailleurs,
+        "administrations": administrations,
     }
 
 

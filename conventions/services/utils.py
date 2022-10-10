@@ -119,7 +119,7 @@ def base_response_redirect_recap_success(convention):
 
 
 def editable_convention(request: HttpRequest, convention: Convention):
-    if is_bailleur(request) and is_instructeur(request):
+    if is_instructeur(request):
         return convention.statut in [
             ConventionStatut.PROJET,
             ConventionStatut.INSTRUCTION,
@@ -127,9 +127,4 @@ def editable_convention(request: HttpRequest, convention: Convention):
         ]
     if is_bailleur(request):
         return convention.statut == ConventionStatut.PROJET
-    if is_instructeur(request):
-        return convention.statut in [
-            ConventionStatut.INSTRUCTION,
-            ConventionStatut.CORRECTION,
-        ]
     return False

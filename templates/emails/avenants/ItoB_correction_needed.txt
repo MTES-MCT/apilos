@@ -1,7 +1,7 @@
 Bonjour
 
 L'avenant à la convention {{convention}} ({{convention_url}}) a été instruit.
-Vous avez des modifications à réaliser.
+Vous avez des vérifications ou des modifications à réaliser.
 
 {% if commentaire %}L'instructeur vous a laissé le message suivant :
 

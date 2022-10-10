@@ -13,8 +13,8 @@ from programmes.models import (
     TypologieLogement,
     TypologieAnnexe,
     TypologieStationnement,
+    FinancementEDD,
 )
-from conventions.models import Financement
 
 
 class ProgrammeSelectionForm(forms.Form):
@@ -71,7 +71,7 @@ class ProgrammeSelectionForm(forms.Form):
     financement = forms.TypedChoiceField(
         required=False,
         label="Financement",
-        choices=Financement.choices,
+        choices=FinancementEDD.choices,
         error_messages={
             "required": "Le financement est obligatoire",
         },
@@ -855,7 +855,7 @@ class LogementEDDForm(forms.Form):
     financement = forms.TypedChoiceField(
         required=True,
         label="",
-        choices=Financement.choices,
+        choices=FinancementEDD.choices,
         error_messages={
             "required": "Le financement est obligatoire",
         },
