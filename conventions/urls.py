@@ -11,7 +11,11 @@ urlpatterns = [
         views.ConventionBailleurView.as_view(),
         name="bailleur",
     ),
-    path("programme/<convention_uuid>", views.programme, name="programme"),
+    path(
+        "programme/<convention_uuid>",
+        views.ConventionProgrammeView.as_view(),
+        name="programme",
+    ),
     path("cadastre/<convention_uuid>", views.cadastre, name="cadastre"),
     path("edd/<convention_uuid>", views.edd, name="edd"),
     path("financement/<convention_uuid>", views.financement, name="financement"),

@@ -3,6 +3,7 @@ from django.conf import settings
 from django.template.defaultfilters import date as _date
 from django.template.defaulttags import register
 from core import model_utils
+from programmes.models import Financement
 from siap.siap_client.client import SIAPClient
 from conventions.models import ConventionStatut
 from users.models import GroupProfile
@@ -197,3 +198,8 @@ def get_text_from_textfiles(field):
 def get_files_from_textfiles(field):
     files = model_utils.get_key_from_json_field(field, "files")
     return files.values if files else None
+
+
+@register.filter
+def with_financement(convention):
+    return convention.lot.financement != Financement.SANS_FINANCEMENT

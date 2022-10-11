@@ -39,7 +39,7 @@
                 <turbo-frame id="convention_actions" data-turbo="true">
 
                     <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
-                        {% if convention.display_options.display_progress_bar_1 or convention.display_options.display_progress_bar_4 %}
+                        {% if convention.display_options.display_progress_bar_1 %}
                             {% include "conventions/actions/generate_convention.html" %}
                         {% endif %}
                         {% if request|is_instructeur and convention.display_options.display_back_to_instruction %}

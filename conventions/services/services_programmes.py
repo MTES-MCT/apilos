@@ -1,9 +1,11 @@
 from django.core.exceptions import PermissionDenied
+from django.http import HttpRequest
 from django.views.decorators.http import require_GET
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.conf import settings
 
+from conventions.services.services_conventions import ConventionService
 from conventions.templatetags.custom_filters import is_instructeur
 from conventions.models import Convention
 from conventions.forms import UploadForm
@@ -138,26 +140,17 @@ def _send_email_staff(request, convention):
     ).send_to_devs()
 
 
-def programme_update(request, convention_uuid):
-    convention = (
-        Convention.objects.prefetch_related("programme")
-        .prefetch_related("lot")
-        .get(uuid=convention_uuid)
-    )
-    programme = convention.programme
-    lot = convention.lot
-    if request.method == "POST":
-        request.user.check_perm("convention.change_convention", convention)
-        if request.POST.get("redirect_to_recap", False):
-            return _programme_atomic_update(request, convention, programme, lot)
-        form = ProgrammeForm(request.POST)
-        if form.is_valid():
-            _save_programme_and_lot(programme, lot, form)
-            return utils.base_response_success(convention)
-    # If this is a GET (or any other method) create the default form.
-    else:
-        request.user.check_perm("convention.view_convention", convention)
-        form = ProgrammeForm(
+class ConventionProgrammeService(ConventionService):
+    convention: Convention
+    request: HttpRequest
+    form: ProgrammeForm
+    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
+    redirect_recap: bool = False
+
+    def get(self):
+        programme = self.convention.programme
+        lot = self.convention.lot
+        self.form = ProgrammeForm(
             initial={
                 "uuid": programme.uuid,
                 "nom": programme.nom,
@@ -173,43 +166,43 @@ def programme_update(request, convention_uuid):
                 "nb_bureaux": programme.nb_bureaux,
             }
         )
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "form": form,
-        "avecfinancement": convention.lot.financement != Financement.SANS_FINANCEMENT,
-    }
 
+    def save(self):
+        self.redirect_recap = bool(self.request.POST.get("redirect_to_recap", False))
+        self._programme_atomic_update()
 
-def _programme_atomic_update(request, convention, programme, lot):
-    form = ProgrammeForm(
-        {
-            "uuid": programme.uuid,
-            "nb_logements": request.POST.get("nb_logements", lot.nb_logements),
-            "type_habitat": request.POST.get("type_habitat", lot.type_habitat),
-            **utils.build_partial_form(
-                request,
-                programme,
-                [
-                    "nom",
-                    "adresse",
-                    "code_postal",
-                    "ville",
-                    "type_operation",
-                    "anru",
-                    "autres_locaux_hors_convention",
-                    "nb_locaux_commerciaux",
-                    "nb_bureaux",
-                ],
-            ),
-        }
-    )
-    if form.is_valid():
-        _save_programme_and_lot(programme, lot, form)
-        return utils.base_response_redirect_recap_success(convention)
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "form": form,
-    }
+    def _programme_atomic_update(self):
+        self.form = ProgrammeForm(
+            {
+                "uuid": self.convention.programme.uuid,
+                "nb_logements": self.request.POST.get(
+                    "nb_logements", self.convention.lot.nb_logements
+                ),
+                "type_habitat": self.request.POST.get(
+                    "type_habitat", self.convention.lot.type_habitat
+                ),
+                **utils.build_partial_form(
+                    self.request,
+                    self.convention.programme,
+                    [
+                        "nom",
+                        "adresse",
+                        "code_postal",
+                        "ville",
+                        "type_operation",
+                        "anru",
+                        "autres_locaux_hors_convention",
+                        "nb_locaux_commerciaux",
+                        "nb_bureaux",
+                    ],
+                ),
+            }
+        )
+        if self.form.is_valid():
+            _save_programme_and_lot(
+                self.convention.programme, self.convention.lot, self.form
+            )
+            self.return_status = utils.ReturnStatus.SUCCESS
 
 
 def _save_programme_and_lot(programme, lot, form):
