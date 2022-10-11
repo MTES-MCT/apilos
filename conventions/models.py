@@ -235,12 +235,25 @@ class Convention(models.Model):
         except ConventionHistory.DoesNotExist:
             return None
 
-    def get_email_bailleur_users(self):
+    def get_email_bailleur_users(self, all_bailleur_users=False):
         """
         return the email of the bailleurs to send them an email following their email preferences
         partial should include only the bailleur which interact with the convention
         using convention statut
         """
+        if all_bailleur_users:
+            return list(
+                set(
+                    map(
+                        lambda x: x.email,
+                        [
+                            r.user
+                            for r in self.bailleur.role_set.all()
+                            if r.user.preferences_email != EmailPreferences.AUCUN
+                        ],
+                    )
+                )
+            )
         users_partial = list(
             set(
                 map(
