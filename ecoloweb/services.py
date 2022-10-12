@@ -10,7 +10,7 @@ from django.template import Template, Context
 
 from bailleurs.models import Bailleur
 from ecoloweb.models import EcoloReference
-from programmes.models import Programme, Lot
+from programmes.models import Programme, Lot, Logement
 
 
 class ModelImportHandler(ABC):
@@ -85,7 +85,6 @@ class ProgrammeImportHandler(ModelImportHandler):
     def _process_row(self, data: dict) -> bool:
         # TODO: attach a real bailleur instead of a randomly picked one
         data['bailleur'] = Bailleur.objects.order_by('?').first()
-        # TODO: save the ecoloweb_id somewhere to prevent duplicate imports
         ecolo_id = data.pop('id')
 
         if ref := self._find_ecolo_reference(Programme, ecolo_id) is None:
@@ -116,7 +115,7 @@ class ProgrammeLotImportHandler(ModelImportHandler):
 
             # TODO: attach a real bailleur instead of a randomly picked one
             data['bailleur'] = Bailleur.objects.order_by('?').first()
-            data['programme'] = self._resolve_reference(Programme, data.pop('programme'))
+            data['programme'] = self._resolve_reference(Programme, data.pop('programme_id'))
 
             lot = Lot.objects.create(**data)
             created = True
@@ -132,6 +131,33 @@ class ProgrammeLotImportHandler(ModelImportHandler):
         print(f"Migrated {self.count} lot(s)")
 
 
+class ProgrammeLogementImportHandler(ModelImportHandler):
+
+    def _get_sql_query(self) -> str:
+        return self._get_sql_from_template('resources/sql/programme_logements.sql', {'max_row': 10})
+
+    def _process_row(self, data: dict) -> bool:
+        ecolo_id = data.pop('id')
+        if ref := self._find_ecolo_reference(Logement, ecolo_id) is None:
+
+            # TODO: attach a real bailleur instead of a randomly picked one
+            data['bailleur'] = Bailleur.objects.order_by('?').first()
+            data['lot'] = self._resolve_reference(Lot, data.pop('lot_id'))
+
+            logement = Logement.objects.create(**data)
+            created = True
+
+            self._register_ecolo_reference(logement, ecolo_id)
+        else:
+            print(f"Skipping logement with ecolo id #{ecolo_id}, already imported ({ref.apilos_model} #{ref.apilos_id})")
+            created = False
+
+        return created
+
+    def on_complete(self):
+        print(f"Migrated {self.count} logement(s)")
+
+
 class EcolowebImportService:
     """
     Service en charge de transférer les données depuis la base Ecoloweb vers la base APiLos
@@ -144,7 +170,8 @@ class EcolowebImportService:
         self.handlers = [
             # TODO manager dependencies between handlers (ex: ProgrammeLotImportHandler requires ProgrammeImportHandler)
             ProgrammeImportHandler(self.connection),
-            ProgrammeLotImportHandler(self.connection)
+            ProgrammeLotImportHandler(self.connection),
+            ProgrammeLogementImportHandler(self.connection)
         ]
 
     def process(self):

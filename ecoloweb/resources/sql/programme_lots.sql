@@ -1,6 +1,6 @@
 -- Requête pour alimenter la table programmes_lot
 
--- Champs restants à mapper
+-- Champs restants à mapper:
 -- annexe_ateliers boolean not null
 -- annexe_balcons boolean not null
 -- annexe_celliers              boolean                  not null,
