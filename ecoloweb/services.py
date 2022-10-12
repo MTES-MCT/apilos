@@ -1,8 +1,11 @@
+import os
+
 from abc import ABC, abstractmethod
 from typing import List
 
 from django.db import connections
 from django.db.backends.utils import CursorWrapper
+from django.template import Template, Context
 
 
 class ModelImportHandler(ABC):
@@ -15,6 +18,15 @@ class ModelImportHandler(ABC):
     @abstractmethod
     def _get_sql_query(self) -> str:
         pass
+
+    def _get_file_content(self, path):
+        return ''.join(open(os.path.join(os.path.dirname(__file__), path), 'r').readlines())
+
+    def _get_sql_from_template(self, path: str, context: dict):
+        return Template(self._get_file_content(path)).render(Context(context))
+
+    def _get_sql_from_file(self, path: str) -> str:
+        return self._get_file_content(path)
 
     @abstractmethod
     def _process_row(self, data: dict) -> bool:
