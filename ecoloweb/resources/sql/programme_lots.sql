@@ -26,6 +26,7 @@
 
 select
     pl.id,
+    cdg as programme_id,
     logementsnombretotal as nb_logements,
     case
         when coalesce(pl.logementsnombreindtotal, 0) > 0 and coalesce(pl.logementsnombrecoltotal, 0) > 0 then 'MIXTE'
