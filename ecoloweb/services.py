@@ -14,6 +14,8 @@ from conventions.models import Convention
 from ecoloweb.models import EcoloReference
 from programmes.models import Programme, Lot, Logement
 
+from instructeurs.models import Administration
+
 
 class ModelImportHandler(ABC):
     connection: CursorWrapper
@@ -186,6 +188,22 @@ class ConventionImportHandler(ModelImportHandler):
 
     def on_complete(self):
         print(f"Migrated {self.count} convention(s)")
+
+
+class AdministrationImportHandler(ModelImportHandler):
+
+    def _get_sql_query(self) -> str:
+        return self._get_sql_from_file('resources/sql/administrations.sql')
+
+    def _process_row(self, data: dict) -> bool:
+        data['ecoloweb_id'] = data.pop('id')
+
+        administration, created = Administration.objects.get_or_create(code=data['code'], defaults=data)
+
+        return created
+
+    def on_complete(self):
+        print(f"Migrated {self.count} administration(s)")
 
 
 class EcolowebImportService:
