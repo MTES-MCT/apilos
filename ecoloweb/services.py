@@ -7,6 +7,9 @@ from django.db import connections
 from django.db.backends.utils import CursorWrapper
 from django.template import Template, Context
 
+from bailleurs.models import Bailleur
+from programmes.models import Programme
+
 
 class ModelImportHandler(ABC):
     connection: CursorWrapper
@@ -49,6 +52,38 @@ class ModelImportHandler(ABC):
 
     def on_complete(self):
         pass
+
+
+class ProgrammeImportHandler(ModelImportHandler):
+    """
+    Mapping des données entre APiLos et Ecolo:
+    * programme = ecolo_programmelogement
+    * lot =
+    * logement = ecolo_programmeadresse
+    Par contre:
+    * sur ecolo le type d'opération (NEUF, REHAB, etc...) est par programme, sur ecolo il est par lot. Par chance sur le
+    dump que l'on a c'est toujours le même type d'opération même pour les programmes multi lots
+    """
+
+    def _get_sql_query(self) -> str:
+        return self._get_sql_from_template('resources/sql/programmes.sql', {'max_row': 10})
+
+    def _process_row(self, data: dict) -> bool:
+        # TODO: attach a real bailleur instead of a randomly picked one
+        data['bailleur'] = Bailleur.objects.order_by('?').first()
+        # TODO: save the ecoloweb_id somewhere to prevent duplicate imports
+        ecoloweb_id = data.pop('id')
+
+        if data['numero_galion'] is not None:
+            _, created = Programme.objects.get_or_create(numero_galion=data['numero_galion'], defaults=data)
+        else:
+            _ = Programme.objects.create(**data)
+            created = True
+
+        return created
+
+    def on_complete(self):
+        print(f"Migrated {self.count} programme(s)")
 
 
 class EcolowebImportService:
