@@ -1,4 +1,45 @@
-                 -- Requête pour alimenter la table programmes_programme
+-- Requête pour alimenter la table programmes_programme
+
+-- Champs restants à mapper:
+-- code_postal                          varchar(10),
+-- ville                                varchar(255),
+-- adresse                              text,
+-- anru                                 boolean                  not null,
+-- nb_locaux_commerciaux                integer,
+-- nb_bureaux                           integer,
+-- vendeur                              text,
+-- acquereur                            text,
+-- date_acte_notarie                    date,
+-- cree_le                              timestamp with time zone not null,
+-- mis_a_jour_le                        timestamp with time zone not null,
+-- bailleur_id                          integer                  not null
+-- date_achat                           date,
+-- date_achevement                      date,
+-- date_achevement_previsible           date,
+-- permis_construire                    varchar(255),
+-- reference_notaire                    text,
+-- reference_publication_acte           text,
+-- annee_gestion_programmation          integer,
+-- surface_utile_totale                 numeric(8, 2),
+-- administration_id                    integer
+-- autres_locaux_hors_convention        text,
+-- acte_de_propriete                    text,
+-- edd_volumetrique                     text,
+-- certificat_adressage                 text,
+-- edd_classique                        text,
+-- mention_publication_edd_classique    text,
+-- mention_publication_edd_volumetrique text,
+-- reference_cadastrale                 text,
+-- zone_123                             varchar(25),
+-- zone_abc                             varchar(25),
+-- date_achevement_compile              date,
+-- effet_relatif                        text,
+-- code_insee_commune                   varchar(10),
+-- code_insee_departement               varchar(10),
+-- code_insee_region                    varchar(10),
+-- nature_logement                      varchar(25)              not null,
+-- parent_id                            integer
+
 select
     cdg.id,
     c.libelle as nom,
