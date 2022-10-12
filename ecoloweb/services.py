@@ -1,13 +1,16 @@
 import os
 
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
 from django.db import connections
 from django.db.backends.utils import CursorWrapper
+from django.db.models import Model
+from django.apps import apps
 from django.template import Template, Context
 
 from bailleurs.models import Bailleur
+from ecoloweb.models import EcoloReference
 from programmes.models import Programme, Lot
 
 
@@ -25,11 +28,32 @@ class ModelImportHandler(ABC):
     def _get_file_content(self, path):
         return ''.join(open(os.path.join(os.path.dirname(__file__), path), 'r').readlines())
 
-    def _get_sql_from_template(self, path: str, context: dict):
+    def _get_sql_from_template(self, path: str, context: dict = {}):
         return Template(self._get_file_content(path)).render(Context(context))
 
     def _get_sql_from_file(self, path: str) -> str:
         return self._get_file_content(path)
+
+    def _find_ecolo_reference(self, clazz, ecolo_id: int)-> Optional[EcoloReference]:
+        return EcoloReference.objects.filter(
+            apilos_model=EcoloReference.get_class_model_name(clazz),
+            ecolo_id=ecolo_id
+        ).first()
+
+    def _resolve_reference(self, clazz, ecolo_id: int)-> Optional[Model]:
+        if ref := self._find_ecolo_reference(clazz, ecolo_id) is None:
+            return None
+
+        return ref.resolve()
+
+    def _register_ecolo_reference(self, instance: Model, ecolo_id: int, id: Optional[int] = None):
+        apilos_id = id if id is not None else instance.id
+
+        EcoloReference.objects.create(
+            apilos_model=EcoloReference.get_instance_model_name(instance),
+            ecolo_id=ecolo_id,
+            apilos_id=apilos_id
+        )
 
     @abstractmethod
     def _process_row(self, data: dict) -> bool:
@@ -57,19 +81,24 @@ class ModelImportHandler(ABC):
 class ProgrammeImportHandler(ModelImportHandler):
 
     def _get_sql_query(self) -> str:
-        return self._get_sql_from_template('resources/sql/programmes.sql', {'max_row': 10})
+        return self._get_sql_from_template('resources/sql/programmes.sql')
 
     def _process_row(self, data: dict) -> bool:
         # TODO: attach a real bailleur instead of a randomly picked one
         data['bailleur'] = Bailleur.objects.order_by('?').first()
         # TODO: save the ecoloweb_id somewhere to prevent duplicate imports
-        ecoloweb_id = data.pop('id')
+        ecolo_id = data.pop('id')
 
-        if data['numero_galion'] is not None:
-            _, created = Programme.objects.get_or_create(numero_galion=data['numero_galion'], defaults=data)
+        if ref := self._find_ecolo_reference(Programme, ecolo_id) is None:
+            if data['numero_galion'] is not None:
+                programme, created = Programme.objects.get_or_create(numero_galion=data['numero_galion'], defaults=data)
+            else:
+                programme = Programme.objects.create(**data)
+                created = True
+            self._register_ecolo_reference(programme, ecolo_id)
         else:
-            _ = Programme.objects.create(**data)
-            created = True
+            print(f"Skipping Programme with ecolo id #{ecolo_id}, already imported ({ref.apilos_model} #{ref.apilos_id})")
+            created = False
 
         return created
 
@@ -83,16 +112,22 @@ class ProgrammeLotImportHandler(ModelImportHandler):
         return self._get_sql_from_template('resources/sql/programme_lots.sql', {'max_row': 10})
 
     def _process_row(self, data: dict) -> bool:
-        # TODO: attach a real bailleur instead of a randomly picked one
-        data['bailleur'] = Bailleur.objects.order_by('?').first()
-        # TODO: attach a real programme instead of a randomly picked one
-        data['programme'] = Programme.objects.order_by('?').first()
-        # TODO: save the ecoloweb_id somewhere to prevent duplicate imports
-        ecoloweb_id = data.pop('id')
+        ecolo_id = data.pop('id')
+        if ref := self._find_ecolo_reference(Programme, ecolo_id) is None:
 
-        lot = Lot.objects.create(**data)
+            # TODO: attach a real bailleur instead of a randomly picked one
+            data['bailleur'] = Bailleur.objects.order_by('?').first()
+            data['programme'] = self._resolve_reference(Programme, data.pop('programme'))
 
-        return True
+            lot = Lot.objects.create(**data)
+            created = True
+
+            self._register_ecolo_reference(lot, ecolo_id)
+        else:
+            print(f"Skipping lot with ecolo id #{ecolo_id}, already imported ({ref.apilos_model} #{ref.apilos_id})")
+            created = False
+
+        return created
 
     def on_complete(self):
         print(f"Migrated {self.count} lot(s)")
@@ -109,12 +144,10 @@ class EcolowebImportService:
         self.connection: CursorWrapper = connections[connection].cursor()
         self.handlers = [
             # TODO manager dependencies between handlers (ex: ProgrammeLotImportHandler requires ProgrammeImportHandler)
-            #ProgrammeImportHandler(self.connection)
+            ProgrammeImportHandler(self.connection),
             ProgrammeLotImportHandler(self.connection)
         ]
 
     def process(self):
         for handler in self.handlers:
             handler.handle()
-
-
