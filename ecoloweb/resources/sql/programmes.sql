@@ -1,7 +1,7 @@
                  -- Requête pour alimenter la table programmes_programme
 select
     cdg.id,
-    c.libelle,
+    c.libelle as nom,
     coalesce(p.type_operation, 'SANSOBJET') as type_operation,
     p.numero_galion
 from ecolo.ecolo_conventiondonneesgenerales cdg
