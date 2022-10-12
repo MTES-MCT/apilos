@@ -6,7 +6,6 @@ from typing import List, Optional
 from django.db import connections
 from django.db.backends.utils import CursorWrapper
 from django.db.models import Model
-from django.apps import apps
 from django.template import Template, Context
 
 from bailleurs.models import Bailleur
