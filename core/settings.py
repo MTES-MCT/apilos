@@ -64,19 +64,7 @@ LOGGING = {
         }
     },
     "loggers": {
-        "django.db.backends": {
-            "level": LOGLEVEL,
-            "handlers": ["console"],
-        },
         "django": {
-            "handlers": ["console"],
-            "level": LOGLEVEL,
-        },
-        "": {
-            "handlers": ["console"],
-            "level": LOGLEVEL,
-        },
-        "django.server": {
             "handlers": ["console"],
             "level": LOGLEVEL,
         },
