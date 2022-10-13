@@ -403,9 +403,9 @@ class ConventionType1and2Form(forms.Form):
 
 
 class NewAvenantForm(forms.Form):
-    avenant_type = forms.TypedChoiceField(
+    avenant_type = forms.ModelMultipleChoiceField(
         label="Type d'avenant",
-        choices=AvenantType.choices,
+        queryset=AvenantType.objects.all(),
         error_messages={
             "required": "Le type d'avenant est obligatoire",
         },

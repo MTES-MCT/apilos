@@ -71,18 +71,13 @@ class ConventionStatut(models.TextChoices):
     RESILIEE = "6. Résiliée", "Convention résiliée"
 
 
-class AvenantType(models.TextChoices):
+class AvenantType(models.Model):
+    id = models.AutoField(primary_key=True)
+    nom = models.CharField(max_length=255, unique=True)
+    desc = models.TextField(null=True, blank=True)
 
-    PROGRAMME = "Logements", "Modification des logements"
-    """TRAVAUX = "Travaux", "Travaux, réhabilitation totale"
-    PROROGATION = (
-        "Prorogation",
-        "Prorogation de la durée de la convention suite à travaux financés",
-    )
-    MUTATION = "Mutation", "Vente ou changement de dénomination du propriétaire"
-    GESTIONNAIRE = "Gestionnaire", "Changement de gestionnaire (pour les foyers)"
-    LOYER_MAX = "Loyer Maximum", "Modification du loyer maximum"
-    DENONCITAION = "Dénonciation", "Dénonciation partielle" """
+    def __str__(self):
+        return f"{self.nom}"
 
 
 class ConventionType1and2(models.TextChoices):
@@ -147,12 +142,12 @@ class Convention(models.Model):
     type2_lgts_concernes_option6 = models.BooleanField(default=True)
     type2_lgts_concernes_option7 = models.BooleanField(default=True)
     type2_lgts_concernes_option8 = models.BooleanField(default=True)
-    avenant_type = models.CharField(
-        max_length=25,
-        choices=AvenantType.choices,
-        default=AvenantType.PROGRAMME,
-        null=True,
+    avenant_type = models.ManyToManyField(
+        AvenantType,
         blank=True,
+        max_length=50,
+        related_name="avenant_type",
+        verbose_name="Type d'avenant",
     )
     signataire_nom = models.CharField(max_length=255, null=True)
     signataire_fonction = models.CharField(max_length=255, null=True)
@@ -330,7 +325,7 @@ class Convention(models.Model):
         return self.parent_id is not None
 
     def type_avenant(self):
-        return {"programme": self.avenant_type == AvenantType.PROGRAMME}
+        return {"programme": self.avenant_type == "logements"}
 
     def display_options(self):
         return {
@@ -389,10 +384,7 @@ class Convention(models.Model):
                 ConventionStatut.CORRECTION,
             ]
             and not self.is_avenant(),
-            "display_progress_bar_2": self.avenant_type
-            in [
-                AvenantType.PROGRAMME,
-            ]
+            "display_progress_bar_2": self.avenant_type == "logements"
             and self.is_avenant,
             "display_type1and2_editable": self.statut
             in [

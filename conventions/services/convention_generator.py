@@ -19,7 +19,7 @@ from programmes.models import (
 from upload.models import UploadedFile
 from upload.services import UploadService
 
-from conventions.models import AvenantType, ConventionType1and2
+from conventions.models import ConventionType1and2
 from conventions.templatetags.custom_filters import (
     inline_text_multiline,
     to_fr_date,
@@ -44,7 +44,7 @@ def generate_convention_doc(convention, save_data=False):
     )
     # It is an avenant
     if convention.is_avenant():
-        if convention.avenant_type == AvenantType.PROGRAMME:
+        if convention.avenant_type == "logements":
             filepath = f"{settings.BASE_DIR}/documents/Avenant-Logements-template.docx"
         else:
             raise NotHandleConventionType(

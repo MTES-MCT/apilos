@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Convention, Pret
+from .models import Convention, Pret, AvenantType
 
 
 @admin.display(description="Programme")
@@ -65,3 +65,4 @@ class ConventionAdmin(admin.ModelAdmin):
 
 admin.site.register(Convention, ConventionAdmin)
 admin.site.register(Pret)
+admin.site.register(AvenantType)

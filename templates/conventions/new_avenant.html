@@ -4,9 +4,8 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% include "conventions/common/form_header.html" with convention=parent_convention %}
-        <div class="fr-container  fr-mt-5w fr-pb-5w">
-            <h4 class="fr-mb-2w">Créer un nouvel avenant</h4>
+        {% include "conventions/common/avenant_form_header.html" with convention=parent_convention %}
+        <div class="fr-container fr-mt-5w fr-pb-5w">
             <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
                 {% csrf_token %}
                 <div class="fr-mt-1w block--row-strech" >
