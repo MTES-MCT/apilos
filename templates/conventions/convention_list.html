@@ -105,7 +105,7 @@
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table>
                             {% if conventions.paginated_conventions.paginator.count != conventions.total_conventions %}
-                                <caption><em>{{ conventions.paginated_conventions.paginator.count }} convention{{ conventions.paginated_conventions.paginator.count|pluralize }} correspondent à votre recherche</em></caption>
+                                <caption><em>{{ conventions.paginated_conventions.paginator.count }} convention{{ conventions.paginated_conventions.paginator.count|pluralize }} correspond{{ conventions.paginated_conventions.paginator.count|pluralize:'ent' }} à votre recherche</em></caption>
                             {% endif %}
                             <thead>
                                 <tr class="th_inline">
