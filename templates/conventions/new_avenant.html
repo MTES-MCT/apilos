@@ -5,11 +5,13 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/avenant_form_header.html" with convention=parent_convention %}
-        <div class="fr-container fr-pb-5w">
-            <!-- <div class="fr-col-12 block--row-strech">
-                <div class="block--row-strech-1 fr-mr-6w">
-                    <h2 class="fr-text--lg">Mettre à jour les informations du bailleur</h2>
-                    <p>Suite à une vente, un changement de gestionnaire, ou un changement de dénomination du propriétaire</p>
+        <div class="fr-container fr-mt-5w fr-pb-5w">
+            <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
+                {% csrf_token %}
+                <div class="fr-mt-1w block--row-strech" >
+                    <div class="fr-col-12 fr-mb-2w">
+                        {% include "common/form/input_select.html" with form_input=form.avenant_type %}
+                    </div>
                 </div>
                 <form method="post">
                     {% csrf_token %}

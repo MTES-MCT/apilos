@@ -409,5 +409,7 @@ class NewAvenantForm(forms.Form):
     avenant_type = forms.ModelMultipleChoiceField(
         label="Type d'avenant",
         queryset=AvenantType.objects.all(),
-        required=False,
+        error_messages={
+            "required": "Le type d'avenant est obligatoire",
+        },
     )
