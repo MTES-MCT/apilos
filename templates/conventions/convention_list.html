@@ -138,7 +138,7 @@
                             <tbody>
                                 {% for convention in conventions.paginated_conventions %}
 
-                                    <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention.display_options.display_redirect_sent %}sent{% elif convention.display_options.display_redirect_post_action %}signed{% endif %}">
+                                    <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action %}signed{% endif %}">
                                         <td title="{{convention.statut_for_template.statut_display}}">
                                             <span class="fr-p-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
                                                 <strong>

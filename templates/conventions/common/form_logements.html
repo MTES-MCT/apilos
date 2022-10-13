@@ -1,3 +1,4 @@
+{% load custom_filters %}
 
 <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-md-12">
@@ -25,7 +26,7 @@
             <table id="lgts_table">
                 <thead>
                     <tr>
-                        {% if convention.display_options.display_comments %}
+                        {% if convention|display_comments %}
                             {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' %}
                         {% endif %}
                         <th scope="col" class="col__width--200">
@@ -76,7 +77,7 @@
                     {% for form in formset %}
                         {% with main_object_field="logement__uuid__"|add:form.uuid.value %}
                             <tr id="{{form.uuid.id_for_label}}_group">
-                                {% if convention.display_options.display_comments %}
+                                {% if convention|display_comments %}
                                     <td id="{{form.uuid.id_for_label}}_div">
                                         {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form.uuid %}
                                     </td>
@@ -114,7 +115,7 @@
                         {% endwith %}
                     {% endfor %}
                     <tr>
-                        <td colspan="{% if convention.display_options.display_comments %}3{% else %}2{% endif %}"
+                        <td colspan="{% if convention|display_comments %}3{% else %}2{% endif %}"
                             class="fr-text--lg">
                             Total
                         </td>

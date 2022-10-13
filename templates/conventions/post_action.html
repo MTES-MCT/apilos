@@ -55,7 +55,7 @@
                     </form>
                 </div>
             </div>
-            {% if request|is_instructeur and convention.display_options.display_back_to_instruction %}
+            {% if convention|display_back_to_instruction:request %}
                 <div class="fr-col-12">
                     <div class="fr-mb-2w fr-pt-2w block--row-strech apilos-line-top">
                         {% include "conventions/actions/back_to_instruction.html" %}

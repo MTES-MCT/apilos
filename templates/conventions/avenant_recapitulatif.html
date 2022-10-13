@@ -25,7 +25,7 @@
             <div class="fr-container">
                 {% csrf_token %}
                 {% include "conventions/recapitulatif/alert_convention.html" %}
-                {% if convention.display_options.display_comments %}
+                {% if convention|display_comments %}
                     <turbo-frame id="opened_comments_block" data-turbo="true">
                         {% include "comments/opened_comments.html" %}
                     </turbo-frame>
@@ -39,10 +39,10 @@
                 <turbo-frame id="convention_actions" data-turbo="true">
 
                     <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
-                        {% if convention.display_options.display_progress_bar_1 %}
+                        {% if convention|display_convention_form_progressbar %}
                             {% include "conventions/actions/generate_convention.html" %}
                         {% endif %}
-                        {% if request|is_instructeur and convention.display_options.display_back_to_instruction %}
+                        {% if convention|display_back_to_instruction:request %}
                             {% include "conventions/actions/back_to_instruction.html" %}
                         {% endif %}
                     </div>
@@ -59,7 +59,7 @@
 
                     {% include "conventions/actions/instructeur_validation.html" %}
 
-                    {% if convention.display_options.display_is_resiliated %}
+                    {% if convention|display_is_resiliated %}
 
                         <div class="fr-col-md-12 fr-py-5w">
                             <div role="alert" class="fr-alert fr-alert--warning">
