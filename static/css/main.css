@@ -652,6 +652,7 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
  .apilos-colored_status {
   border-radius: 5px;
   border: 1px solid rgba(70, 75, 99, 0.2);
+  white-space: nowrap;
 }
 
 .apilos-colored_status span{
@@ -722,7 +723,7 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   position: -webkit-sticky; /* Safari */
   position: sticky;
   top: 0;
-  z-index: 10000;
+  z-index: 100;
 }
 
 /*
