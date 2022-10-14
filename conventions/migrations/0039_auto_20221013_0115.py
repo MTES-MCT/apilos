@@ -7,10 +7,11 @@ def update_convention_avenanttype(apps, schema_editor):
     Convention = apps.get_model("conventions", "Convention")
     AvenantType = apps.get_model("conventions", "AvenantType")
     logements = AvenantType.objects.get(nom="logements")
-    print("tables", logements)
     for conventionObj in Convention.objects.all():
         if conventionObj.parent_id:
             conventionObj.avenant_type.add(logements)
+        else:
+            conventionObj.avenant_type.clear()
 
 
 class Migration(migrations.Migration):
