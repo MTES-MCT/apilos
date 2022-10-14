@@ -7,8 +7,14 @@ from bailleurs.models import Bailleur, TypeBailleur
 
 
 class BailleurForm(forms.Form):
+    def __init__(self, bailleur_choices, *args, **kwargs):
+        self.base_fields["bailleur"].choices = bailleur_choices
+        super().__init__(*args, **kwargs)
 
     uuid = forms.UUIDField(required=False)
+    bailleur = forms.ChoiceField(
+        required=False, label="Bailleur", choices=[(1, "test")]
+    )
     nom = forms.CharField(
         required=True,
         label="Nom du bailleur",

@@ -14,6 +14,40 @@
         {% include "conventions/common/form_header.html"%}
         {% include "common/step_progressbar.html"%}
         <div class="fr-container">
+
+            <button class="fr-btn"  data-fr-opened="false" aria-controls="fr-modal-1">
+                Changement de bailleur
+            </button>
+
+
+            <dialog aria-labelledby="fr-modal-title-modal-1" role="dialog" id="fr-modal-1" class="fr-modal">
+                <div class="fr-container fr-container--fluid fr-container-md">
+                    <div class="fr-grid-row fr-grid-row--center">
+                        <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                            <div class="fr-modal__body">
+                                <div class="fr-modal__header">
+                                    <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="fr-modal-1">Fermer</button>
+                                </div>
+                                <div class="fr-modal__content">
+                                    <h1 id="fr-modal-title-modal-1" class="fr-modal__title"><span class="fr-fi-arrow-right-line fr-fi--lg"></span>Titre de la modale</h1>
+                                    <form method="post" action="{% url 'conventions:change_bailleur' convention_uuid=convention.uuid %}">
+
+                                        {% csrf_token %}
+                                        {% include "common/form/input_select.html" with form_input=form.bailleur mandatory_input=True %}
+
+                                        <button class="fr-btn">
+                                            Go
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </dialog>
+
+
+
             <form method="post" action="">
                 {% csrf_token %}
 
@@ -22,6 +56,7 @@
 
                         <h4>Entreprise bailleur</h4>
                         {% include "common/editable_fields_info.html" %}
+
 
                         {% include "common/form/input_text.html" with form_input=form.nom object_field="bailleur__nom__"|add:form.uuid.value %}
 

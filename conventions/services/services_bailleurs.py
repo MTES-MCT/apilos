@@ -14,10 +14,13 @@ class ConventionBailleurService(ConventionService):
     redirect_recap: bool = False
 
     def get(self):
+        bailleurs = [(b.uuid, b.nom) for b in self.request.user.bailleurs()]
         bailleur = self.convention.bailleur
         self.form = BailleurForm(
+            bailleurs,
             initial={
                 "uuid": bailleur.uuid,
+                "bailleur": bailleur.uuid,
                 "nom": bailleur.nom,
                 "siret": bailleur.siret,
                 "capital_social": bailleur.capital_social,
@@ -32,7 +35,7 @@ class ConventionBailleurService(ConventionService):
                     self.convention.signataire_date_deliberation
                     or bailleur.signataire_date_deliberation
                 ),
-            }
+            },
         )
 
     def save(self):
@@ -43,6 +46,7 @@ class ConventionBailleurService(ConventionService):
 
     def _bailleur_atomic_update(self, request, convention, bailleur):
         self.form = BailleurForm(
+            [],
             {
                 "uuid": bailleur.uuid,
                 "nom": request.POST.get("nom", bailleur.nom),
@@ -66,7 +70,7 @@ class ConventionBailleurService(ConventionService):
                     convention.signataire_date_deliberation
                     or bailleur.signataire_date_deliberation,
                 ),
-            }
+            },
         )
         if self.form.is_valid():
             _save_bailleur(convention, bailleur, self.form)
