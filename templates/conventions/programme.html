@@ -56,7 +56,7 @@
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                                 {% include "common/form/input_select.html" with form_input=form.type_operation object_field="programme__type_operation__"|add:form.uuid.value editable=convention|with_financement %}
                                 {% if not convention|with_financement %}
-                                    <em>le type d'opération n'est pas éditable pour les convnetions sans financement</em>
+                                    <em>le type d'opération n'est pas éditable pour les conventions sans financement</em>
                                 {% endif %}
                             </div>
                         </div>

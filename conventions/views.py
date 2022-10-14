@@ -75,7 +75,6 @@ def cadastre(request, convention_uuid):
         "conventions/cadastre.html",
         {
             **result,
-            "convention_form_step": 3,
             "form_step": {
                 "number": 3,
                 "total": 10,
@@ -104,7 +103,6 @@ def edd(request, convention_uuid):
         "conventions/edd.html",
         {
             **result,
-            "convention_form_step": 4,
             "form_step": {
                 "number": 4,
                 "total": 10,
@@ -132,7 +130,6 @@ def financement(request, convention_uuid):
         "conventions/financement.html",
         {
             **result,
-            "convention_form_step": 5,
             "years": range(2021, 2121),
             "form_step": {
                 "number": 5,
@@ -161,7 +158,6 @@ def logements(request, convention_uuid):
         "conventions/logements.html",
         {
             **result,
-            "convention_form_step": 6,
             "form_step": {
                 "number": 6,
                 "total": 10,
@@ -192,7 +188,6 @@ def avenant_logements(request, convention_uuid):
         "conventions/avenant_logements.html",
         {
             **result,
-            "convention_form_step": 60,
             "form_step": {
                 "number": 1,
                 "total": 4,
@@ -220,7 +215,6 @@ def annexes(request, convention_uuid):
         "conventions/annexes.html",
         {
             **result,
-            "convention_form_step": 7,
             "form_step": {
                 "number": 7,
                 "total": 10,
@@ -251,7 +245,6 @@ def avenant_annexes(request, convention_uuid):
         "conventions/avenant_annexes.html",
         {
             **result,
-            "convention_form_step": 70,
             "form_step": {
                 "number": 2,
                 "total": 4,
@@ -273,7 +266,6 @@ def recapitulatif(request, convention_uuid):
             "conventions/avenant_recapitulatif.html",
             {
                 **result,
-                "convention_form_step": 100,
                 "form_step": {
                     "number": 4,
                     "total": 4,
@@ -286,7 +278,6 @@ def recapitulatif(request, convention_uuid):
         "conventions/recapitulatif.html",
         {
             **result,
-            "convention_form_step": 10,
             **(
                 {
                     "form_step": {
@@ -296,7 +287,11 @@ def recapitulatif(request, convention_uuid):
                     }
                 }
                 if result["convention"].statut
-                not in [ConventionStatut.SIGNEE, ConventionStatut.RESILIEE]
+                not in [
+                    ConventionStatut.A_SIGNER,
+                    ConventionStatut.SIGNEE,
+                    ConventionStatut.RESILIEE,
+                ]
                 else {}
             ),
         },
@@ -349,7 +344,6 @@ def validate_convention(request, convention_uuid):
         "conventions/recapitulatif.html",
         {
             **result,
-            "convention_form_step": 10,
         },
     )
 
@@ -449,7 +443,6 @@ def preview(request, convention_uuid):
         {
             **result,
             "filepath": filepath,
-            "convention_form_step": 11,
         },
     )
 
@@ -467,7 +460,6 @@ def sent(request, convention_uuid):
         "conventions/sent.html",
         {
             **result,
-            "convention_form_step": 12,
         },
     )
 
@@ -485,7 +477,6 @@ def post_action(request, convention_uuid):
         "conventions/post_action.html",
         {
             **result,
-            "convention_form_step": 12,
         },
     )
 
@@ -563,7 +554,6 @@ class ConventionView(ABC, LoginRequiredMixin, View):
 
     target_template: str
     next_path_redirect: str
-    convention_form_step: int
     service_class: ConventionService
     form_step: None | dict
 
@@ -588,7 +578,6 @@ class ConventionView(ABC, LoginRequiredMixin, View):
                     utils.editable_convention(request, convention)
                     or service.editable_after_upload
                 ),
-                "convention_form_step": self.convention_form_step,
             },
         )
 
@@ -621,7 +610,6 @@ class ConventionView(ABC, LoginRequiredMixin, View):
                 ),
                 "editable_after_upload": utils.editable_convention(request, convention)
                 or service.editable_after_upload,
-                "convention_form_step": self.convention_form_step,
             },
         )
 
@@ -629,7 +617,6 @@ class ConventionView(ABC, LoginRequiredMixin, View):
 class ConventionBailleurView(ConventionView):
     target_template: str = "conventions/bailleur.html"
     next_path_redirect: str = "conventions:programme"
-    convention_form_step: int = 1
     service_class = ConventionBailleurService
     form_step: dict = {
         "number": 1,
@@ -646,10 +633,9 @@ class ConventionBailleurView(ConventionView):
 class ConventionProgrammeView(ConventionView):
     target_template: str = "conventions/programme.html"
     next_path_redirect: str = "conventions:cadastre"
-    convention_form_step: int = 2
     service_class = ConventionProgrammeService
     form_step: dict = {
-        "number": convention_form_step,
+        "number": 2,
         "total": 10,
         "title": "Opération",
         "next": "Cadastre",
@@ -666,7 +652,6 @@ class ConventionProgrammeView(ConventionView):
 
 class ConventionTypeStationnementView(ConventionView):
     target_template: str = "conventions/stationnements.html"
-    convention_form_step: int = 8
     next_path_redirect: str = "conventions:comments"
     service_class: ConventionService = ConventionTypeStationnementService
     form_step: dict = {
@@ -680,7 +665,6 @@ class ConventionTypeStationnementView(ConventionView):
 
 class ConventionCommentsView(ConventionView):
     target_template: str = "conventions/comments.html"
-    convention_form_step: int = 9
     next_path_redirect: str = "conventions:recapitulatif"
     service_class: ConventionService = ConventionCommentsService
     form_step: dict = {
@@ -695,7 +679,6 @@ class ConventionCommentsView(ConventionView):
 class AvenantCommentsView(ConventionCommentsView):
 
     target_template: str = "conventions/avenant_comments.html"
-    convention_form_step: int = 90
     next_path_redirect: str = "conventions:recapitulatif"
     form_step: dict = {
         "number": 3,

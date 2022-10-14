@@ -1,4 +1,6 @@
-{% if form_step %}
+{% load custom_filters %}
+
+{% if form_step and convention|display_convention_form_progressbar %}
     <div class="fr-container">
         <div class="fr-stepper">
             <h2 class="fr-stepper__title">

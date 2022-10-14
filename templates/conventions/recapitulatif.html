@@ -22,7 +22,7 @@
         <div class="fr-container-fluid ds_banner">
             {% include "conventions/common/form_header.html"%}
             {% include "common/step_progressbar.html"%}
-            {% include "common/nav_bar.html"%}
+            {% include "common/nav_bar.html"  with nav_bar_step="recapitulatif" %}
             {% if convention|display_is_validated %}
                 <div class="fr-container fr-mt-5w">
             {% else %}
