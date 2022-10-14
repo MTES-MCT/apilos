@@ -1,13 +1,13 @@
 {% load custom_filters %}
 
-{% if request|is_bailleur and convention.display_options.display_notification %}
+{% if convention|display_notification_bailleur_to_instructeur:request %}
     <div class="fr-col-md-12  fr-py-5w">
         <div role="alert" class="fr-alert fr-alert--info">
             <!-- <p class="fr-alert__title">Convention à valider</p> -->
             {% if convention.get_last_bailleur_notification %}
                 <p>Denière notification de l'instructeur : {{ convention.get_last_bailleur_notification.cree_le }}</p>
             {% endif %}
-            {% if convention.display_options.display_demande_instruction %}
+            {% if convention|display_demande_instruction %}
                 <h4>Vous avez modifié {% if convention.is_avenant %}l'avenant de {% endif %}la convention<br>
                     Renvoyez {% if convention.is_avenant %}l'avenant de {% endif %}la convention à l'instruction</h4>
             {% else %}
@@ -31,7 +31,7 @@
                         </label>
                     </div>
                     {% include "common/form/input_textarea.html" with form_input=notificationForm.comment label="Ajouter un commentaire à l'attention de l'instructeur (optionnel)" editable=True %}
-                    {% if convention.display_options.display_demande_instruction %}
+                    {% if convention|display_demande_instruction %}
                         <button class="fr-btn">
                             Renvoyer {% if convention.is_avenant %}l'avenant de {% endif %}la convention à l'instruction
                         </button>

@@ -1,12 +1,19 @@
 /*!
- * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.7.2 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
+@media (min-width: 36em) {
+  /*! media sm */
+}
+@media (min-width: 48em) {
+  /*! media md */
+}
+@media (min-width: 62em) {
+  /*! media lg */
+}
+@media (min-width: 78em) {
+  /*! media xl */
+}
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-  .fr-card {
-    content: '';
-    background-color: #fff;
-  }
-
   .fr-card::before {
     background-color: transparent;
     background-size: 100%;
@@ -26,6 +33,11 @@
     flex: 1 0 auto;
   }
 
+  .fr-card__title [target=_blank]::after {
+    width: 2rem;
+    height: 2rem;
+  }
+
   .fr-card__detail::before {
     width: 1rem;
     height: 1rem;
@@ -39,8 +51,12 @@
     flex-shrink: 0;
   }
 
+  .fr-card {
+    background-color: #fff;
+  }
+
   .fr-card:not(.fr-card--no-border):not(.fr-card--shadow) {
-    box-shadow: 0 0 0 1px #e5e5e5;
+    box-shadow: 0 0 0 1px #ddd;
   }
 
   .fr-card--grey {
@@ -48,7 +64,12 @@
   }
 
   .fr-card--shadow {
+    z-index: 500;
     background-color: #fff;
+  }
+
+  .fr-card--shadow.fr-card--grey {
+    background-color: #eee;
   }
 
   .fr-card--no-background {

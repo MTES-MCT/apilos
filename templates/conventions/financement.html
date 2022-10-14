@@ -2,6 +2,8 @@
 
 {% load static %}
 
+{% load custom_filters %}
+
 {% block page_title %}Financements - APiLos{% endblock%}
 
 {% block javascript_extras %}
@@ -47,7 +49,7 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        {% if convention.display_options.display_comments %}
+                                        {% if convention|display_comments %}
                                             {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et financements' %}
                                         {% endif %}
                                         <th scope="col">Numéro</th>
@@ -62,7 +64,7 @@
                                     {% for form_pret in formset %}
                                         {% with main_object_field="pret__uuid__"|add:form_pret.uuid.value %}
                                             <tr id="{{form_pret.uuid.id_for_label}}_group">
-                                                {% if convention.display_options.display_comments %}
+                                                {% if convention|display_comments %}
                                                     <td id="{{form_pret.uuid.id_for_label}}_div">
                                                         {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_pret.uuid %}
                                                     </td>

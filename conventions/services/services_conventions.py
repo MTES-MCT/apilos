@@ -73,6 +73,7 @@ def conventions_index(request):
         departement_input=request.GET.get("departement_input", ""),
         my_convention_list=request.user.conventions()
         .prefetch_related("programme")
+        .prefetch_related("programme__administration")
         .prefetch_related("lot"),
     )
     convention_list_service.paginate()

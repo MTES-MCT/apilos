@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-col-lg-12">
         <div class="fr-card fr-card--no-arrow">
@@ -8,7 +10,7 @@
                             Logements
                         </h4>
                     </div>
-                    {% if convention.display_options.display_progress_bar_1 %}
+                    {% if convention|display_convention_form_progressbar %}
                         <a class="fr-link fr-mb-1w" href="{% url 'conventions:logements' convention_uuid=convention.uuid %}" >
                             <span class="fr-icon-edit-line" aria-hidden="true">Aller à cette étape</span>
                         </a>
@@ -21,7 +23,7 @@
                     <table>
                         <thead>
                             <tr>
-                                {% if convention.display_options.display_comments %}
+                                {% if convention|display_comments %}
                                     {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' callback_click="refresh_opened_comments" %}
                                 {% endif %}
                                 <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
@@ -40,7 +42,7 @@
                                 {% with logement_uuid=logement.uuid|slugify %}
                                     {% with main_object_field="logement__uuid__"|add:logement_uuid %}
                                         <tr id="{{main_object_field}}_group">
-                                            {% if convention.display_options.display_comments %}
+                                            {% if convention|display_comments %}
                                                 <td id="{{main_object_field}}_div">
                                                     {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement" callback_click="refresh_opened_comments" %}
                                                 </td>
@@ -77,7 +79,7 @@
                                 {% endwith %}
                             {% endfor %}
                             <tr>
-                                <td colspan=" {% if convention.display_options.display_comments %}3{% else %}2{% endif %}" class="fr-text--lg">
+                                <td colspan=" {% if convention|display_comments %}3{% else %}2{% endif %}" class="fr-text--lg">
                                     Total
                                 </td>
                                 <td id="total_sh" class="fr-text--lg">

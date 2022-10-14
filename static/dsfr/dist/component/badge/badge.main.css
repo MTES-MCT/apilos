@@ -1,5 +1,5 @@
 /*!
- * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.7.2 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
 /* ------------------------------------ *\
   Badge
@@ -7,18 +7,19 @@
 .fr-badge {
   --text-spacing: 0;
   --title-spacing: 0;
-  display: inline-flex;
-  align-items: center;
   z-index: 1;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  width: -moz-fit-content;
+  width: fit-content;
 
   --underline-img: none;
-  --link-blank-content: none;
   --hover-tint: var(--hover);
   font-size: 0.875rem;
   line-height: 1.5rem;
   min-height: 1.5rem;
   padding: 0 0.5rem;
-  flex-direction: row;
   overflow: initial;
   max-height: none;
   font-weight: 700;
@@ -28,27 +29,39 @@
   color: var(--text-default-grey);
   background-color: var(--background-contrast-grey);
 
+  --idle: transparent;
   --hover: var(--background-contrast-grey-hover);
   --active: var(--background-contrast-grey-active);
 }
 
-.fr-badge--icon-left[class^="fr-icon-"],
+.fr-badge::before,
+.fr-badge::after {
+  display: block;
+}
+
+.fr-badge--icon-left[class^=fr-icon-],
 .fr-badge--icon-left[class*=" fr-icon-"],
-.fr-badge--icon-left[class^="fr-fi-"],
+.fr-badge--icon-left[class^=fr-fi-],
 .fr-badge--icon-left[class*=" fr-fi-"] {
-  flex-direction: row;
   overflow: initial;
   max-width: 100%;
   max-height: none;
 }
 
-.fr-badge--icon-left[class^="fr-icon-"]::before,
+.fr-badge--icon-left[class^=fr-icon-]::before,
 .fr-badge--icon-left[class*=" fr-icon-"]::before,
-.fr-badge--icon-left[class^="fr-fi-"]::before,
+.fr-badge--icon-left[class^=fr-fi-]::before,
 .fr-badge--icon-left[class*=" fr-fi-"]::before {
   --icon-size: 1rem;
-  margin-left: -0.16667rem;
+  margin-left: -0.125rem;
   margin-right: 0.25rem;
+}
+
+.fr-badge[class^=fr-icon-]:not([class*=fr-badge--icon-])::before,
+.fr-badge[class*=" fr-icon-"]:not([class*=fr-badge--icon-])::before,
+.fr-badge[class^=fr-fi-]:not([class*=fr-badge--icon-])::before,
+.fr-badge[class*=" fr-fi-"]:not([class*=fr-badge--icon-])::before {
+  content: none;
 }
 
 .fr-badge--sm {
@@ -56,38 +69,43 @@
   line-height: 1.25rem;
   min-height: 1.125rem;
   padding: 0 0.375rem;
-  flex-direction: row;
   overflow: initial;
   max-width: 100%;
   max-height: none;
 }
 
-.fr-badge--sm.fr-badge--icon-left[class^="fr-icon-"],
+.fr-badge--sm.fr-badge--icon-left[class^=fr-icon-],
 .fr-badge--sm.fr-badge--icon-left[class*=" fr-icon-"],
-.fr-badge--sm.fr-badge--icon-left[class^="fr-fi-"],
+.fr-badge--sm.fr-badge--icon-left[class^=fr-fi-],
 .fr-badge--sm.fr-badge--icon-left[class*=" fr-fi-"] {
-  flex-direction: row;
   overflow: initial;
   max-width: 100%;
   max-height: none;
 }
 
-.fr-badge--sm.fr-badge--icon-left[class^="fr-icon-"]::before,
+.fr-badge--sm.fr-badge--icon-left[class^=fr-icon-]::before,
 .fr-badge--sm.fr-badge--icon-left[class*=" fr-icon-"]::before,
-.fr-badge--sm.fr-badge--icon-left[class^="fr-fi-"]::before,
+.fr-badge--sm.fr-badge--icon-left[class^=fr-fi-]::before,
 .fr-badge--sm.fr-badge--icon-left[class*=" fr-fi-"]::before {
   --icon-size: 0.75rem;
-  margin-left: -0.125rem;
+  margin-left: -0.09375rem;
   margin-right: 0.25rem;
+}
+
+.fr-badge--sm[class^=fr-icon-]:not([class*=fr-badge--icon-])::before,
+.fr-badge--sm[class*=" fr-icon-"]:not([class*=fr-badge--icon-])::before,
+.fr-badge--sm[class^=fr-fi-]:not([class*=fr-badge--icon-])::before,
+.fr-badge--sm[class*=" fr-fi-"]:not([class*=fr-badge--icon-])::before {
+  content: none;
 }
 
 .fr-badge::before {
   --icon-size: 1rem;
-  margin-left: -0.16667rem;
+  margin-left: -0.125rem;
   margin-right: 0.25rem;
   flex: 0 0 auto;
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: calc((0.75em - var(--icon-size)) * 0.5);
   background-color: currentColor;
   width: var(--icon-size);
   height: var(--icon-size);
@@ -97,43 +115,51 @@
 
 .fr-badge--sm::before {
   --icon-size: 0.75rem;
-  margin-left: -0.125rem;
+  margin-left: -0.09375rem;
   margin-right: 0.25rem;
 }
 
 .fr-badge.fr-badge--info::before,
 .fr-badge--sm.fr-badge--info::before {
-  content: "";
   -webkit-mask-image: url("../../icons/system/fr--info-fill.svg");
   mask-image: url("../../icons/system/fr--info-fill.svg");
 }
 
 .fr-badge.fr-badge--success::before,
 .fr-badge--sm.fr-badge--success::before {
-  content: "";
   -webkit-mask-image: url("../../icons/system/fr--success-fill.svg");
   mask-image: url("../../icons/system/fr--success-fill.svg");
 }
 
 .fr-badge.fr-badge--error::before,
 .fr-badge--sm.fr-badge--error::before {
-  content: "";
   -webkit-mask-image: url("../../icons/system/fr--error-fill.svg");
   mask-image: url("../../icons/system/fr--error-fill.svg");
 }
 
 .fr-badge.fr-badge--warning::before,
 .fr-badge--sm.fr-badge--warning::before {
-  content: "";
   -webkit-mask-image: url("../../icons/system/fr--warning-fill.svg");
   mask-image: url("../../icons/system/fr--warning-fill.svg");
 }
 
 .fr-badge.fr-badge--new::before,
 .fr-badge--sm.fr-badge--new::before {
-  content: "";
   -webkit-mask-image: url("../../icons/weather/flashlight-fill.svg");
   mask-image: url("../../icons/weather/flashlight-fill.svg");
+}
+
+.fr-badge--info::before,
+.fr-badge--success::before,
+.fr-badge--error::before,
+.fr-badge--warning::before,
+.fr-badge--new::before,
+.fr-badge--sm--info::before,
+.fr-badge--sm--success::before,
+.fr-badge--sm--error::before,
+.fr-badge--sm--warning::before,
+.fr-badge--sm--new::before {
+  content: "";
 }
 
 .fr-badge.fr-badge--no-icon::before,
@@ -151,6 +177,8 @@
   --ol-content: none;
   display: flex;
   flex-wrap: wrap;
+  margin-left: -0.25rem;
+  margin-right: -0.25rem;
   margin-bottom: 0;
 }
 
@@ -160,8 +188,7 @@
 }
 
 .fr-badges-group .fr-badge {
-  margin-right: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin: 0 0.25rem 0.5rem 0.25rem;
 }
 
 .fr-badges-group--sm .fr-badge {
@@ -171,14 +198,16 @@
   padding: 0 0.375rem;
 }
 
-.fr-badges-group--sm .fr-badge::before {
-  content: none;
+.fr-badges-group--sm .fr-badge::before,
+.fr-badges-group--sm .fr-badge::after {
+  --icon-size: 0.75rem;
 }
 
 .fr-badge--info {
   color: var(--text-default-info);
   background-color: var(--background-contrast-info);
 
+  --idle: transparent;
   --hover: var(--background-contrast-info-hover);
   --active: var(--background-contrast-info-active);
 }
@@ -187,6 +216,7 @@
   color: var(--text-default-error);
   background-color: var(--background-contrast-error);
 
+  --idle: transparent;
   --hover: var(--background-contrast-error-hover);
   --active: var(--background-contrast-error-active);
 }
@@ -195,6 +225,7 @@
   color: var(--text-default-success);
   background-color: var(--background-contrast-success);
 
+  --idle: transparent;
   --hover: var(--background-contrast-success-hover);
   --active: var(--background-contrast-success-active);
 }
@@ -203,6 +234,7 @@
   color: var(--text-default-warning);
   background-color: var(--background-contrast-warning);
 
+  --idle: transparent;
   --hover: var(--background-contrast-warning-hover);
   --active: var(--background-contrast-warning-active);
 }
@@ -211,6 +243,7 @@
   color: var(--text-action-high-yellow-moutarde);
   background-color: var(--background-contrast-yellow-moutarde);
 
+  --idle: transparent;
   --hover: var(--background-contrast-yellow-moutarde-hover);
   --active: var(--background-contrast-yellow-moutarde-active);
 }
@@ -219,6 +252,7 @@
   color: var(--text-label-green-tilleul-verveine);
   background-color: var(--background-contrast-green-tilleul-verveine);
 
+  --idle: transparent;
   --hover: var(--background-contrast-green-tilleul-verveine-hover);
   --active: var(--background-contrast-green-tilleul-verveine-active);
 }
@@ -227,6 +261,7 @@
   color: var(--text-label-green-bourgeon);
   background-color: var(--background-contrast-green-bourgeon);
 
+  --idle: transparent;
   --hover: var(--background-contrast-green-bourgeon-hover);
   --active: var(--background-contrast-green-bourgeon-active);
 }
@@ -235,6 +270,7 @@
   color: var(--text-label-green-emeraude);
   background-color: var(--background-contrast-green-emeraude);
 
+  --idle: transparent;
   --hover: var(--background-contrast-green-emeraude-hover);
   --active: var(--background-contrast-green-emeraude-active);
 }
@@ -243,6 +279,7 @@
   color: var(--text-label-green-menthe);
   background-color: var(--background-contrast-green-menthe);
 
+  --idle: transparent;
   --hover: var(--background-contrast-green-menthe-hover);
   --active: var(--background-contrast-green-menthe-active);
 }
@@ -251,6 +288,7 @@
   color: var(--text-label-green-archipel);
   background-color: var(--background-contrast-green-archipel);
 
+  --idle: transparent;
   --hover: var(--background-contrast-green-archipel-hover);
   --active: var(--background-contrast-green-archipel-active);
 }
@@ -259,6 +297,7 @@
   color: var(--text-label-blue-ecume);
   background-color: var(--background-contrast-blue-ecume);
 
+  --idle: transparent;
   --hover: var(--background-contrast-blue-ecume-hover);
   --active: var(--background-contrast-blue-ecume-active);
 }
@@ -267,6 +306,7 @@
   color: var(--text-label-blue-cumulus);
   background-color: var(--background-contrast-blue-cumulus);
 
+  --idle: transparent;
   --hover: var(--background-contrast-blue-cumulus-hover);
   --active: var(--background-contrast-blue-cumulus-active);
 }
@@ -275,6 +315,7 @@
   color: var(--text-label-purple-glycine);
   background-color: var(--background-contrast-purple-glycine);
 
+  --idle: transparent;
   --hover: var(--background-contrast-purple-glycine-hover);
   --active: var(--background-contrast-purple-glycine-active);
 }
@@ -283,6 +324,7 @@
   color: var(--text-label-pink-macaron);
   background-color: var(--background-contrast-pink-macaron);
 
+  --idle: transparent;
   --hover: var(--background-contrast-pink-macaron-hover);
   --active: var(--background-contrast-pink-macaron-active);
 }
@@ -291,6 +333,7 @@
   color: var(--text-label-pink-tuile);
   background-color: var(--background-contrast-pink-tuile);
 
+  --idle: transparent;
   --hover: var(--background-contrast-pink-tuile-hover);
   --active: var(--background-contrast-pink-tuile-active);
 }
@@ -299,6 +342,7 @@
   color: var(--text-label-yellow-tournesol);
   background-color: var(--background-contrast-yellow-tournesol);
 
+  --idle: transparent;
   --hover: var(--background-contrast-yellow-tournesol-hover);
   --active: var(--background-contrast-yellow-tournesol-active);
 }
@@ -307,6 +351,7 @@
   color: var(--text-label-yellow-moutarde);
   background-color: var(--background-contrast-yellow-moutarde);
 
+  --idle: transparent;
   --hover: var(--background-contrast-yellow-moutarde-hover);
   --active: var(--background-contrast-yellow-moutarde-active);
 }
@@ -315,6 +360,7 @@
   color: var(--text-label-orange-terre-battue);
   background-color: var(--background-contrast-orange-terre-battue);
 
+  --idle: transparent;
   --hover: var(--background-contrast-orange-terre-battue-hover);
   --active: var(--background-contrast-orange-terre-battue-active);
 }
@@ -323,6 +369,7 @@
   color: var(--text-label-brown-cafe-creme);
   background-color: var(--background-contrast-brown-cafe-creme);
 
+  --idle: transparent;
   --hover: var(--background-contrast-brown-cafe-creme-hover);
   --active: var(--background-contrast-brown-cafe-creme-active);
 }
@@ -331,6 +378,7 @@
   color: var(--text-label-brown-caramel);
   background-color: var(--background-contrast-brown-caramel);
 
+  --idle: transparent;
   --hover: var(--background-contrast-brown-caramel-hover);
   --active: var(--background-contrast-brown-caramel-active);
 }
@@ -339,6 +387,7 @@
   color: var(--text-label-brown-opera);
   background-color: var(--background-contrast-brown-opera);
 
+  --idle: transparent;
   --hover: var(--background-contrast-brown-opera-hover);
   --active: var(--background-contrast-brown-opera-active);
 }
@@ -347,6 +396,7 @@
   color: var(--text-label-beige-gris-galet);
   background-color: var(--background-contrast-beige-gris-galet);
 
+  --idle: transparent;
   --hover: var(--background-contrast-beige-gris-galet-hover);
   --active: var(--background-contrast-beige-gris-galet-active);
 }
@@ -372,4 +422,16 @@
 .fr-badge-group .fr-badge {
   margin-right: 0.5rem;
   margin-bottom: 0.5rem;
+}
+@media (min-width: 36em) {
+  /*! media sm */
+}
+@media (min-width: 48em) {
+  /*! media md */
+}
+@media (min-width: 62em) {
+  /*! media lg */
+}
+@media (min-width: 78em) {
+  /*! media xl */
 }

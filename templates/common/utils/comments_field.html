@@ -1,6 +1,8 @@
 {% load static %}
 
-{% if object_field and convention.display_options.display_comments %}
+{% load custom_filters %}
+
+{% if object_field and convention|display_comments %}
     <div id="{{object_field}}_comment_factory"></div>
     <script type="text/javascript" nonce="{{request.csp_nonce}}">
         var [object_name, object_field, object_uuid] = '{{object_field}}'.split('__');

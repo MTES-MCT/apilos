@@ -19,6 +19,5 @@ from .services_programmes import (
     display_operation,
     programme_cadastral_update,
     programme_edd_update,
-    programme_update,
     select_programme_create,
 )

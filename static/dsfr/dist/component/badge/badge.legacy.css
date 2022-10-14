@@ -1,8 +1,21 @@
 /*!
- * DSFR v1.5.1 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
+ * DSFR v1.7.2 | SPDX-License-Identifier: MIT | License-Filename: LICENSE.md | restricted use (see terms and conditions)
  */
+@media (min-width: 36em) {
+  /*! media sm */
+}
+@media (min-width: 48em) {
+  /*! media md */
+}
+@media (min-width: 62em) {
+  /*! media lg */
+}
+@media (min-width: 78em) {
+  /*! media xl */
+}
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-  .fr-badge::before {
+  .fr-badge::before,
+  .fr-badge::after {
     background-color: transparent;
     background-size: 100%;
     background-repeat: no-repeat;
@@ -16,27 +29,37 @@
   }
 
   .fr-badge.fr-badge--info::before,
-  .fr-badge--sm.fr-badge--info::before {
+  .fr-badge.fr-badge--info::after,
+  .fr-badge--sm.fr-badge--info::before,
+  .fr-badge--sm.fr-badge--info::after {
     background-image: url("../../icons/system/fr--info-fill.svg");
   }
 
   .fr-badge.fr-badge--success::before,
-  .fr-badge--sm.fr-badge--success::before {
+  .fr-badge.fr-badge--success::after,
+  .fr-badge--sm.fr-badge--success::before,
+  .fr-badge--sm.fr-badge--success::after {
     background-image: url("../../icons/system/fr--success-fill.svg");
   }
 
   .fr-badge.fr-badge--error::before,
-  .fr-badge--sm.fr-badge--error::before {
+  .fr-badge.fr-badge--error::after,
+  .fr-badge--sm.fr-badge--error::before,
+  .fr-badge--sm.fr-badge--error::after {
     background-image: url("../../icons/system/fr--error-fill.svg");
   }
 
   .fr-badge.fr-badge--warning::before,
-  .fr-badge--sm.fr-badge--warning::before {
+  .fr-badge.fr-badge--warning::after,
+  .fr-badge--sm.fr-badge--warning::before,
+  .fr-badge--sm.fr-badge--warning::after {
     background-image: url("../../icons/system/fr--warning-fill.svg");
   }
 
   .fr-badge.fr-badge--new::before,
-  .fr-badge--sm.fr-badge--new::before {
+  .fr-badge.fr-badge--new::after,
+  .fr-badge--sm.fr-badge--new::before,
+  .fr-badge--sm.fr-badge--new::after {
     background-image: url("../../icons/weather/flashlight-fill.svg");
   }
 

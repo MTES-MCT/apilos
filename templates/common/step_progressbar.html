@@ -1,38 +1,23 @@
-{% if convention.display_options.display_progress_bar_1 or convention.display_options.display_progress_bar_2 or convention.display_options.display_progress_bar_3 or convention.display_options.display_progress_bar_4 %}
+{% load custom_filters %}
+
+{% if form_step and convention|display_convention_form_progressbar %}
     <div class="fr-container">
-        <div class="fr-grid-row fr-grid-row--center">
-            <div class="container-progressbar fr-col-12 fr-my-5w">
-                <ul id="step_progressbar" class="progressbar" width="100%">
-                    {% if convention.display_options.display_progress_bar_1 %}
-                        <li class="{% if convention_form_step > 1  %}active{% endif %} {% if convention_form_step == 1  %}current_step{% endif %}" role="bailleur"><div>Bailleur</div></li>
-                        <li class="{% if convention_form_step > 2  %}active{% endif %} {% if convention_form_step == 2  %}current_step{% endif %} {% if convention_form_step == 1 %}after_step{% endif %}" role="programme"><div>Opération</div></li>
-                        <li class="{% if convention_form_step > 3  %}active{% endif %} {% if convention_form_step == 3  %}current_step{% endif %} {% if convention_form_step == 2 %}after_step{% endif %}" role="cadastre"><div>Cadastre</div></li>
-                        <li class="{% if convention_form_step > 4  %}active{% endif %} {% if convention_form_step == 4  %}current_step{% endif %} {% if convention_form_step == 3 %}after_step{% endif %}" role="edd"><div>EDD</div></li>
-                        <li class="{% if convention_form_step > 5  %}active{% endif %} {% if convention_form_step == 5  %}current_step{% endif %} {% if convention_form_step == 4 %}after_step{% endif %}" role="financement"><div>Financement</div></li>
-                        <li class="{% if convention_form_step > 6  %}active{% endif %} {% if convention_form_step == 6  %}current_step{% endif %} {% if convention_form_step == 5 %}after_step{% endif %}" role="logements"><div>Logements</div></li>
-                        <li class="{% if convention_form_step > 7  %}active{% endif %} {% if convention_form_step == 7  %}current_step{% endif %} {% if convention_form_step == 6 %}after_step{% endif %}" role="annexes"><div>Annexes</div></li>
-                        <li class="{% if convention_form_step > 8  %}active{% endif %} {% if convention_form_step == 8  %}current_step{% endif %} {% if convention_form_step == 7 %}after_step{% endif %}" role="stationnements"><div>Stationnements</div></li>
-                        <li class="{% if convention_form_step > 9  %}active{% endif %} {% if convention_form_step == 9  %}current_step{% endif %} {% if convention_form_step == 8 %}after_step{% endif %}" role="comments"><div>Commentaires</div></li>
-                        <li class="{% if convention_form_step > 10 %}active{% endif %} {% if convention_form_step == 10 %}current_step{% endif %} {% if convention_form_step == 9 %}after_step{% endif %}" role="recapitulatif"><div>Récapitulatif</div></li>
-                    {% elif convention.display_options.display_progress_bar_2 %}
-                        <li class="{% if convention_form_step > 60 %}active{% endif %} {% if convention_form_step == 60 %}current_step{% endif %}" role="avenant_logements"><div>Logements</div></li>
-                        <li class="{% if convention_form_step > 70 %}active{% endif %} {% if convention_form_step == 70 %}current_step{% endif %} {% if convention_form_step == 60 %}after_step{% endif %}" role="avenant_annexes"><div>Annexes</div></li>
-                        <li class="{% if convention_form_step > 90 %}active{% endif %} {% if convention_form_step == 90 %}current_step{% endif %} {% if convention_form_step == 70 %}after_step{% endif %}" role="avenant_comments"><div>Commentaires</div></li>
-                        <li class="{% if convention_form_step > 100 %}active{% endif %} {% if convention_form_step == 100 %}current_step{% endif %} {% if convention_form_step == 90 %}after_step{% endif %}" role="recapitulatif"><div>Récapitulatif</div></li>
+        <div class="fr-stepper">
+            <h2 class="fr-stepper__title">
+                <span class="fr-stepper__state">Étape {{form_step.number}} sur {{form_step.total}}</span>
+                {{form_step.title}}
+            </h2>
+            <div class="fr-stepper__steps" data-fr-current-step="{{form_step.number}}" data-fr-steps="{{form_step.total}}"></div>
+            {% if form_step.next %}
+                <p class="fr-stepper__details">
+                    <span class="fr-text--bold">Étape suivante : </span>
+                    {% if form_step.next_target %}
+                        <a href="{% url form_step.next_target convention_uuid=convention.uuid %}">{{form_step.next}}</a>
+                    {% else %}
+                        {{form_step.next}}
                     {% endif %}
-                </ul>
-            </div>
+                </p>
+            {% endif %}
         </div>
     </div>
-    <script type="text/javascript" nonce="{{request.csp_nonce}}">
-        document.addEventListener('DOMContentLoaded', function () {
-            var lis = document.getElementById('step_progressbar').children
-            for (var i=0; i < lis.length; i++) {
-                lis[i].addEventListener('click', function(){
-                    location.href='/conventions/' + this.getAttribute('role') + '/{{convention.uuid}}'
-                });
-                lis[i].classList.add('clickable_step')
-            }
-        });
-    </script>
 {% endif %}

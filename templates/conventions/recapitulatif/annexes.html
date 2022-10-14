@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-col-lg-12">
         <div class="fr-card fr-card--no-arrow">
@@ -16,7 +18,7 @@
                     <table>
                         <thead>
                             <tr>
-                                {% if convention.display_options.display_comments %}
+                                {% if convention|display_comments %}
                                     {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" callback_click="refresh_opened_comments" %}
                                 {% endif %}
                                 <th scope="col" class="col__width--150">Type d'annexe {% include "common/form/required_field_star.html" %}</th>
@@ -32,7 +34,7 @@
                                 {% with annexe_uuid=annexe.uuid|slugify %}
                                     {% with main_object_field="annexe__uuid__"|add:annexe_uuid %}
                                         <tr id="{{main_object_field}}_group">
-                                            {% if convention.display_options.display_comments %}
+                                            {% if convention|display_comments %}
                                                 <td id="{{main_object_field}}_div">
                                                     {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Annexe" callback_click="refresh_opened_comments" %}
                                                 </td>
