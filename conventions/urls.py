@@ -77,11 +77,11 @@ urlpatterns = [
         views.load_xlsx_model,
         name="load_xlsx_model",
     ),
-    path(
-        "operation/<programme_uuid>/<programme_financement>",
-        views.display_operation,
-        name="display_operation",
-    ),
+    # path(
+    #     "operation/<programme_uuid>/<programme_financement>",
+    #     views.display_operation,
+    #     name="display_operation",
+    # ),
     path(
         "preview/<convention_uuid>",
         views.preview,
