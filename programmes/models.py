@@ -457,14 +457,7 @@ class Lot(IngestableModel):
         return self.financement == Financement.PLUS
 
     def __str__(self):
-        return " - ".join(
-            [
-                self.programme.ville,
-                self.programme.nom,
-                str(self.nb_logements),
-                self.financement,
-            ]
-        )
+        return f"{self.programme.nom} - {self.financement}"
 
 
 class Logement(models.Model):
