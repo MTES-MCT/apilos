@@ -35,7 +35,6 @@ class Command(BaseCommand):
             self.importer.process()
         except DatabaseError as e:
             transaction.rollback()
-            transaction.rollback()
             raise e
         finally:
             if dry_run:
