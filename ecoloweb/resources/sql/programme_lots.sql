@@ -35,7 +35,7 @@ select
         when pl.estderogationloyer and coalesce(pl.logementsnombrecoltotal, 0) > 0 then pl.montantplafondloyercolinitial
     end as loyer_derogatoire
 from ecolo.ecolo_programmelogement pl
-    inner join ecolo.ecolo_conventiondonneesgenerales cdg on pl.conventiondonneesgenerales_id = cdg.id
+    inner join ecolo.ecolo_conventiondonneesgenerales cdg on pl.conventiondonneesgenerales_id = cdg.id and cdg.avenant_id is null
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
     -- Financement
     inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
@@ -48,8 +48,7 @@ from ecolo.ecolo_programmelogement pl
     left join ecolo.ecolo_annexe a3 on a3.programmelogement_id = pl.id
     left join ecolo.ecolo_valeurparamstatic ap3 on a3.typeannexe_id = ap3.id and ap3.subtype = 'TAN' and ap3.code = 8 -- Box
 where
-    cdg.avenant_id is null
-    and pl.logementsnombretotal > 0
+    pl.logementsnombretotal > 0
 {% if max_row %}
 order by random()
 limit {{ max_row }}
