@@ -43,6 +43,7 @@ class Comment(models.Model):
             "type_stationnement": "Tableaux des types de stationnement",
         }
         mapping_champ_objet = {
+            "bailleur__uuid": "Choix du bailleur",
             "bailleur__nom": "Nom du bailleur",
             "bailleur__adresse": "Adresse du bailleur",
             "bailleur__code_postal": "Code postal du bailleur",

@@ -12,11 +12,6 @@ urlpatterns = [
         name="bailleur",
     ),
     path(
-        "change_bailleur/<convention_uuid>",
-        views.change_bailleur,
-        name="change_bailleur",
-    ),
-    path(
         "programme/<convention_uuid>",
         views.ConventionProgrammeView.as_view(),
         name="programme",

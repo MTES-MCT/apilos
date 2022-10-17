@@ -12,10 +12,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods
-from bailleurs.models import Bailleur
 
 from programmes.models import FinancementEDD
-from programmes.services import programme_change_bailleur
 from upload.services import UploadService
 from conventions.models import Convention
 from conventions.permissions import has_campaign_permission
@@ -38,16 +36,6 @@ def index(request):
         "conventions/index.html",
         {**result},
     )
-
-
-def change_bailleur(request, convention_uuid):
-    convention = Convention.objects.prefetch_related("programme").get(
-        uuid=convention_uuid
-    )
-    bailleur = Bailleur.objects.get(uuid=request.POST["bailleur"])
-    programme_change_bailleur(convention.programme, bailleur)
-
-    return HttpResponseRedirect(reverse("conventions:bailleur", args=[convention_uuid]))
 
 
 @login_required
@@ -549,6 +537,7 @@ def new_avenant(request, convention_uuid):
 class ConventionView(ABC, LoginRequiredMixin, View):
 
     target_template: str
+    current_path_redirect: None | str = None
     next_path_redirect: str
     service_class: ConventionService
     form_step: None | dict
@@ -590,6 +579,10 @@ class ConventionView(ABC, LoginRequiredMixin, View):
             return HttpResponseRedirect(
                 reverse(self.next_path_redirect, args=[convention.uuid])
             )
+        if service.return_status == utils.ReturnStatus.REFRESH:
+            return HttpResponseRedirect(
+                reverse(self.current_path_redirect, args=[convention.uuid])
+            )
         return render(
             request,
             self.target_template,
@@ -613,6 +606,7 @@ class ConventionView(ABC, LoginRequiredMixin, View):
 class ConventionBailleurView(ConventionView):
     target_template: str = "conventions/bailleur.html"
     next_path_redirect: str = "conventions:programme"
+    current_path_redirect: str = "conventions:bailleur"
     service_class = ConventionBailleurService
     form_step: dict = {
         "number": 1,

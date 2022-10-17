@@ -16,6 +16,7 @@ class ReturnStatus(Enum):
     SUCCESS = "SUCCESS"
     ERROR = "ERROR"
     WARNING = "WARNING"
+    REFRESH = "REFRESH"
 
 
 def set_files_and_text_field(files_field, text_field=""):

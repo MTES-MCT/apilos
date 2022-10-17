@@ -191,7 +191,6 @@ def edit_bailleur(request, bailleur_uuid):
     success = False
     if request.method == "POST":
         form = BailleurForm(
-            [],
             {
                 **request.POST.dict(),
                 "uuid": bailleur_uuid,
@@ -219,7 +218,6 @@ def edit_bailleur(request, bailleur_uuid):
             success = True
     else:
         form = BailleurForm(
-            [],
             initial={
                 **model_to_dict(
                     bailleur,
