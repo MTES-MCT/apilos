@@ -9,14 +9,25 @@
             </h2>
             <div class="fr-stepper__steps" data-fr-current-step="{{form_step.number}}" data-fr-steps="{{form_step.total}}"></div>
             {% if form_step.next %}
-                <p class="fr-stepper__details">
-                    <span class="fr-text--bold">Étape suivante : </span>
-                    {% if form_step.next_target %}
-                        <a href="{% url form_step.next_target convention_uuid=convention.uuid %}">{{form_step.next}}</a>
-                    {% else %}
-                        {{form_step.next}}
+                <div class="fr-grid-row">
+                    <div class="fr-col-6">
+                        <p class="fr-stepper__details">
+                            <span class="fr-text--bold">Passer à l'étape suivante (sans enregistrer) : </span>
+                            {% if form_step.next_target %}
+                                <a href="{% url form_step.next_target convention_uuid=convention.uuid %}">{{form_step.next}}</a>
+                            {% else %}
+                                {{form_step.next}}
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% if form_step.total != form_step.number %}
+                        <div class="fr-col-6 apilos-stepper-align-right">
+                            <p class="fr-stepper__details">
+                                <a href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">Récapitulatif</a>
+                            </p>
+                        </div>
                     {% endif %}
-                </p>
+                </div>
             {% endif %}
         </div>
     </div>
