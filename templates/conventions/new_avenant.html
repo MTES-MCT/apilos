@@ -5,21 +5,42 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/avenant_form_header.html" with convention=parent_convention %}
-        <div class="fr-container fr-mt-5w fr-pb-5w">
-            <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
-                {% csrf_token %}
-                <div class="fr-mt-1w block--row-strech" >
-                    <div class="fr-col-12 fr-mb-2w">
-                        {% include "common/form/input_select.html" with form_input=form.avenant_type %}
-                    </div>
+        <div class="fr-container fr-pb-5w">
+            <div class="fr-col-12 block--row-strech">
+                <div class="block--row-strech-1 fr-mr-6w">
+                    <h2 class="fr-text--lg">Mettre à jour les informations du bailleur</h2>
+                    <p>Suite à une vente, un changement de gestionnaire, ou un changement de dénomination du propriétaire</p>
                 </div>
-                <div class="form-button-footer fr-col-md-12 fr-py-5w">
-                    {% include "common/button/next_and_save.html" with suivant='conventions:selection' %}
-                    <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
-                        Revenir à la liste des conventions
-                    </a>
+                <!-- <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
+                    {% csrf_token %}
+                    <input value="{{avenant_types.bailleur}}" name="avenant_type" hidden> -->
+                <button class="fr-btn fr-btn--secondary fr-icon-eye-line fr-btn--icon-left"><span class=""></span>Mettre à jour</button>
+                <!-- </form> -->
+            </div>
+            <hr>
+            <div class="fr-col-12 block--row-strech">
+                <div class="block--row-strech-1 fr-mr-6w">
+                    <h2 class="fr-text--lg">Mettre à jour les logements</h2>
+                    <p>En cas de modification du programme, de travaux, de réhabilitation totale, ou d’une évolution des loyers.</p>
                 </div>
-            </form>
+                <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
+                    {% csrf_token %}
+                    <input value="{{avenant_types.logements}}" name="avenant_type" hidden>
+                    <button class="fr-btn fr-btn--secondary fr-icon-eye-line fr-btn--icon-left"><span class=""></span>Mettre à jour</button>
+                </form>
+            </div>
+            <hr>
+            <div class="fr-col-12 block--row-strech">
+                <div class="block--row-strech-1 fr-mr-6w">
+                    <h2 class="fr-text--lg">Mettre à jour la durée de la convention</h2>
+                    <p>En cas de nouveaux travaux financés</p>
+                </div>
+                <!-- <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
+                    {% csrf_token %}
+                    <input value="{{avenant_types.duree}}" name="avenant_type" hidden> -->
+                <button class="fr-btn fr-btn--secondary fr-icon-eye-line fr-btn--icon-left"><span class=""></span>Mettre à jour</button>
+                <!-- </form> -->
+            </div>
         </div>
     </div>
 {% endblock %}
