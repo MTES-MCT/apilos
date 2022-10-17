@@ -776,3 +776,6 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
 .fr-stepper__steps[data-fr-current-step="11"] {
   --current-step: 11;
 }
+.apilos-stepper-align-right {
+  text-align:right;
+}

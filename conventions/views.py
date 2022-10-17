@@ -15,7 +15,7 @@ from django.views.decorators.http import require_GET, require_http_methods
 
 from programmes.models import FinancementEDD
 from upload.services import UploadService
-from conventions.models import Convention, ConventionStatut
+from conventions.models import Convention
 from conventions.permissions import has_campaign_permission
 from conventions.services import convention_generator, services, utils
 from conventions.services.services_programmes import ConventionProgrammeService
@@ -77,7 +77,7 @@ def cadastre(request, convention_uuid):
             **result,
             "form_step": {
                 "number": 3,
-                "total": 10,
+                "total": 9,
                 "title": "Cadastre",
                 "next": "EDD",
                 "next_target": "conventions:edd",
@@ -105,7 +105,7 @@ def edd(request, convention_uuid):
             **result,
             "form_step": {
                 "number": 4,
-                "total": 10,
+                "total": 9,
                 "title": "EDD",
                 "next": "Financement",
                 "next_target": "conventions:financement",
@@ -133,7 +133,7 @@ def financement(request, convention_uuid):
             "years": range(2021, 2121),
             "form_step": {
                 "number": 5,
-                "total": 10,
+                "total": 9,
                 "title": "Financement",
                 "next": "Logements",
                 "next_target": "conventions:logements",
@@ -160,7 +160,7 @@ def logements(request, convention_uuid):
             **result,
             "form_step": {
                 "number": 6,
-                "total": 10,
+                "total": 9,
                 "title": "Logements",
                 "next": "Annexes",
                 "next_target": "conventions:annexes",
@@ -217,7 +217,7 @@ def annexes(request, convention_uuid):
             **result,
             "form_step": {
                 "number": 7,
-                "total": 10,
+                "total": 9,
                 "title": "Annexes",
                 "next": "Stationnements",
                 "next_target": "conventions:stationnements",
@@ -278,22 +278,6 @@ def recapitulatif(request, convention_uuid):
         "conventions/recapitulatif.html",
         {
             **result,
-            **(
-                {
-                    "form_step": {
-                        "number": 10,
-                        "total": 10,
-                        "title": "Récapitulatif",
-                    }
-                }
-                if result["convention"].statut
-                not in [
-                    ConventionStatut.A_SIGNER,
-                    ConventionStatut.SIGNEE,
-                    ConventionStatut.RESILIEE,
-                ]
-                else {}
-            ),
         },
     )
 
@@ -620,7 +604,7 @@ class ConventionBailleurView(ConventionView):
     service_class = ConventionBailleurService
     form_step: dict = {
         "number": 1,
-        "total": 10,
+        "total": 9,
         "title": "Bailleur",
         "next": "Opération",
         "next_target": next_path_redirect,
@@ -636,7 +620,7 @@ class ConventionProgrammeView(ConventionView):
     service_class = ConventionProgrammeService
     form_step: dict = {
         "number": 2,
-        "total": 10,
+        "total": 9,
         "title": "Opération",
         "next": "Cadastre",
         "next_target": next_path_redirect,
@@ -656,7 +640,7 @@ class ConventionTypeStationnementView(ConventionView):
     service_class: ConventionService = ConventionTypeStationnementService
     form_step: dict = {
         "number": 8,
-        "total": 10,
+        "total": 9,
         "title": "Stationnements",
         "next": "Commentaires",
         "next_target": next_path_redirect,
@@ -669,7 +653,7 @@ class ConventionCommentsView(ConventionView):
     service_class: ConventionService = ConventionCommentsService
     form_step: dict = {
         "number": 9,
-        "total": 10,
+        "total": 9,
         "title": "Commentaires",
         "next": "Récapitulatif",
         "next_target": next_path_redirect,
