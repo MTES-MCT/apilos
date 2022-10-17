@@ -17,4 +17,7 @@ select
     l.datecreation as mis_a_jour_le,
     l.programmelogement_id as lot_id
 from ecolo.ecolo_logement l
+    inner join ecolo.ecolo_programmelogement pl on l.programmelogement_id = pl.id
+    inner join ecolo.ecolo_conventiondonneesgenerales cdg on pl.conventiondonneesgenerales_id = cdg.id and cdg.avenant_id is null
+    inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
     inner join ecolo.ecolo_valeurparamstatic ptl on l.typelogement_id = ptl.id
