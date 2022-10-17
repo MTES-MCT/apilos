@@ -16,7 +16,7 @@ from .services_conventions import (
 )
 from .services_logements import annexes_update, logements_update
 from .services_programmes import (
-    display_operation,
+    #    display_operation,
     programme_cadastral_update,
     programme_edd_update,
     select_programme_create,

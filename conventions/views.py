@@ -396,24 +396,24 @@ def load_xlsx_model(request, file_type):
     return response
 
 
-@login_required
-def display_operation(request, programme_uuid, programme_financement):
-    result = services.display_operation(request, programme_uuid, programme_financement)
-    if result["success"] == ReturnStatus.SUCCESS and result["convention"]:
-        return HttpResponseRedirect(
-            reverse("conventions:recapitulatif", args=[result["convention"].uuid])
-        )
-    if result["success"] == ReturnStatus.WARNING:
-        return render(
-            request,
-            "conventions/selection.html",
-            {
-                **result,
-                "financements": FinancementEDD,
-                "redirect_action": "/conventions/selection",
-            },
-        )
-    return PermissionDenied
+# @login_required
+# def display_operation(request, programme_uuid, programme_financement):
+#     result = services.display_operation(request, programme_uuid, programme_financement)
+#     if result["success"] == ReturnStatus.SUCCESS and result["convention"]:
+#         return HttpResponseRedirect(
+#             reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+#         )
+#     if result["success"] == ReturnStatus.WARNING:
+#         return render(
+#             request,
+#             "conventions/selection.html",
+#             {
+#                 **result,
+#                 "financements": FinancementEDD,
+#                 "redirect_action": "/conventions/selection",
+#             },
+#         )
+#     return PermissionDenied
 
 
 @login_required

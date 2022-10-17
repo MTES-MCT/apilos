@@ -18,8 +18,17 @@ from programmes.models import (
 
 
 class ProgrammeSelectionForm(forms.Form):
-    lot_uuid = forms.CharField(
+    def __init__(
+        self, *args, lots=None, bailleurs=None, administrations=None, **kwargs
+    ) -> None:
+        self.declared_fields["lot"].choices = lots
+        self.declared_fields["bailleur"].choices = bailleurs
+        self.declared_fields["administration"].choices = administrations
+        super().__init__(*args, **kwargs)
+
+    lot = forms.CharField(
         required=False,
+        label="Lot à conventionner",
         error_messages={
             "required": "La selection du programme et de son financement est obligatoire"
         },
@@ -27,16 +36,18 @@ class ProgrammeSelectionForm(forms.Form):
     existing_programme = forms.ChoiceField(
         choices=[("selection", "selection"), ("creation", "creation")]
     )
-    bailleur = forms.IntegerField(
+    bailleur = forms.ChoiceField(
         required=False,
         label="Bailleur",
+        choices=[],
         error_messages={
             "required": "Le bailleur est obligatoire",
         },
     )
-    administration = forms.IntegerField(
+    administration = forms.ChoiceField(
         required=False,
         label="Administration",
+        choices=[],
         help_text="Délégataire des aides à la pierre du territoire de l'opération",
         error_messages={
             "required": "L'administration est obligatoire",
