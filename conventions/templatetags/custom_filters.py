@@ -3,6 +3,7 @@ from django.conf import settings
 from django.template.defaultfilters import date as _date
 from django.template.defaulttags import register
 from core import model_utils
+from programmes.models import Financement
 from siap.siap_client.client import SIAPClient
 from conventions.models import ConventionStatut
 from users.models import GroupProfile
@@ -19,16 +20,6 @@ def is_bailleur(request: HttpRequest) -> bool:
 
 
 @register.filter
-def display_administration(request: HttpRequest) -> bool:
-    if (
-        "multi_administration" in request.session
-        and request.session["multi_administration"]
-    ):
-        return True
-    return is_bailleur(request)
-
-
-@register.filter
 def is_instructeur(request: HttpRequest) -> bool:
     return "currently" in request.session and request.session["currently"] in [
         GroupProfile.STAFF,
@@ -36,6 +27,16 @@ def is_instructeur(request: HttpRequest) -> bool:
         GroupProfile.SIAP_SER_GEST,
         GroupProfile.SIAP_ADM_CENTRALE,
     ]
+
+
+@register.filter
+def display_administration(request: HttpRequest) -> bool:
+    if (
+        "multi_administration" in request.session
+        and request.session["multi_administration"]
+    ):
+        return True
+    return is_bailleur(request)
 
 
 @register.filter
@@ -197,3 +198,131 @@ def get_text_from_textfiles(field):
 def get_files_from_textfiles(field):
     files = model_utils.get_key_from_json_field(field, "files")
     return files.values if files else None
+
+
+@register.filter
+def with_financement(convention):
+    return convention.lot.financement != Financement.SANS_FINANCEMENT
+
+
+@register.filter
+def display_comments(convention):
+    return convention.statut in [
+        ConventionStatut.INSTRUCTION,
+        ConventionStatut.CORRECTION,
+        ConventionStatut.A_SIGNER,
+        ConventionStatut.SIGNEE,
+    ]
+
+
+@register.filter
+def display_comments_summary(convention):
+    return convention.statut in [
+        ConventionStatut.INSTRUCTION,
+        ConventionStatut.CORRECTION,
+    ]
+
+
+@register.filter
+def display_validation(convention, request):
+    if not is_instructeur(request):
+        return False
+    if convention.statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
+        return True
+    return (
+        convention.is_project
+        and convention.cree_par is not None
+        and convention.cree_par.is_instructeur()
+    )
+
+
+@register.filter
+def display_is_validated(convention):
+    return convention.statut in [
+        ConventionStatut.A_SIGNER,
+        ConventionStatut.SIGNEE,
+        ConventionStatut.RESILIEE,
+    ]
+
+
+@register.filter
+def display_is_resiliated(convention):
+    return convention.statut in [
+        ConventionStatut.RESILIEE,
+    ]
+
+
+@register.filter
+def display_notification_instructeur_to_bailleur(convention, request):
+    return convention.statut in [
+        ConventionStatut.INSTRUCTION,
+        ConventionStatut.CORRECTION,
+    ] and is_instructeur(request)
+
+
+@register.filter
+def display_notification_bailleur_to_instructeur(convention, request):
+    return convention.statut in [
+        ConventionStatut.INSTRUCTION,
+        ConventionStatut.CORRECTION,
+    ] and is_bailleur(request)
+
+
+@register.filter
+def display_notification_new_convention_instructeur_to_bailleur(convention, request):
+    return (
+        convention.statut == ConventionStatut.PROJET
+        and is_instructeur(request)
+        and convention.cree_par is not None
+        and convention.cree_par.is_instructeur
+    )
+
+
+@register.filter
+def display_demande_correction(convention):
+    return convention.statut == ConventionStatut.INSTRUCTION
+
+
+@register.filter
+def display_demande_instruction(convention):
+    return convention.statut == ConventionStatut.CORRECTION
+
+
+@register.filter
+def display_redirect_sent(convention):
+    return convention.statut == ConventionStatut.A_SIGNER
+
+
+@register.filter
+def display_redirect_post_action(convention):
+    return convention.statut == ConventionStatut.SIGNEE
+
+
+@register.filter
+def display_convention_form_progressbar(convention):
+    return (
+        convention.statut
+        in [
+            ConventionStatut.PROJET,
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+        ]
+        and not convention.is_avenant()
+    )
+
+
+@register.filter
+def display_type1and2_editable(convention):
+    return convention.statut in [
+        ConventionStatut.PROJET,
+        ConventionStatut.INSTRUCTION,
+        ConventionStatut.CORRECTION,
+    ]
+
+
+@register.filter
+def display_back_to_instruction(convention, request):
+    return convention.statut in [
+        ConventionStatut.A_SIGNER,
+        ConventionStatut.SIGNEE,
+    ] and is_instructeur(request)

@@ -7,7 +7,7 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html"%}
-        {% include "common/nav_bar.html"%}
+        {% include "common/nav_bar.html" with nav_bar_step="action" %}
         <div class="fr-container fr-py-5w">
             <div class="fr-col-md-12 fr-mt-2w fr-mb-4w">
                 <div role="alert" class="fr-alert fr-alert--success">
@@ -53,7 +53,7 @@
                     </form>
                 </div>
             </div>
-            {% if request|is_instructeur and convention.display_options.display_back_to_instruction %}
+            {% if convention|display_back_to_instruction:request %}
                 <div class="fr-col-12">
                     <div class="fr-mb-2w fr-pt-2w block--row-strech apilos-line-top">
                         {% include "conventions/actions/back_to_instruction.html" %}

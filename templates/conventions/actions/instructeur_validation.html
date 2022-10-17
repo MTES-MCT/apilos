@@ -1,5 +1,6 @@
 {% load custom_filters %}
-{% if request|is_instructeur and convention.display_options.display_validation or request|is_instructeur and convention.is_project and convention.cree_par.is_instructeur %}
+
+{% if convention|display_validation:request %}
     <div class="fr-col-md-12 fr-py-5w apilos-line-top">
         <p class="fr-alert__title">Valider {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}</p>
         <div role="alert">
@@ -35,7 +36,7 @@
     </div>
 {% endif %}
 
-{% if convention.display_options.display_is_validated %}
+{% if convention|display_is_validated %}
     <div class="fr-col-md-12  fr-py-5w">
         <div role="alert" class="fr-alert fr-alert--success">
             <p class="fr-alert__title">{% if convention.is_avenant %}L'avenant a été validé{% else %}La convention a été validée{% endif %} le {{ convention.valide_le|date:"j F Y" }}</p>

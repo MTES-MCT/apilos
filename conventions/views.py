@@ -18,6 +18,7 @@ from upload.services import UploadService
 from conventions.models import Convention
 from conventions.permissions import has_campaign_permission
 from conventions.services import convention_generator, services, utils
+from conventions.services.services_programmes import ConventionProgrammeService
 from conventions.services.services_bailleurs import ConventionBailleurService
 from conventions.services.services_conventions import (
     ConventionCommentsService,
@@ -58,28 +59,6 @@ def select_programme_create(request):
 
 
 @login_required
-def programme(request, convention_uuid):
-    # STEP 3
-    result = services.programme_update(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        if result.get("redirect", False) == "recapitulatif":
-            return HttpResponseRedirect(
-                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
-            )
-        return HttpResponseRedirect(
-            reverse("conventions:cadastre", args=[result["convention"].uuid])
-        )
-    return render(
-        request,
-        "conventions/programme.html",
-        {
-            **result,
-            "convention_form_step": 2,
-        },
-    )
-
-
-@login_required
 def cadastre(request, convention_uuid):
     # STEP 4
     result = services.programme_cadastral_update(request, convention_uuid)
@@ -96,7 +75,13 @@ def cadastre(request, convention_uuid):
         "conventions/cadastre.html",
         {
             **result,
-            "convention_form_step": 3,
+            "form_step": {
+                "number": 3,
+                "total": 9,
+                "title": "Cadastre",
+                "next": "EDD",
+                "next_target": "conventions:edd",
+            },
         },
     )
 
@@ -118,7 +103,13 @@ def edd(request, convention_uuid):
         "conventions/edd.html",
         {
             **result,
-            "convention_form_step": 4,
+            "form_step": {
+                "number": 4,
+                "total": 9,
+                "title": "EDD",
+                "next": "Financement",
+                "next_target": "conventions:financement",
+            },
         },
     )
 
@@ -139,8 +130,14 @@ def financement(request, convention_uuid):
         "conventions/financement.html",
         {
             **result,
-            "convention_form_step": 5,
             "years": range(2021, 2121),
+            "form_step": {
+                "number": 5,
+                "total": 9,
+                "title": "Financement",
+                "next": "Logements",
+                "next_target": "conventions:logements",
+            },
         },
     )
 
@@ -161,7 +158,13 @@ def logements(request, convention_uuid):
         "conventions/logements.html",
         {
             **result,
-            "convention_form_step": 6,
+            "form_step": {
+                "number": 6,
+                "total": 9,
+                "title": "Logements",
+                "next": "Annexes",
+                "next_target": "conventions:annexes",
+            },
         },
     )
 
@@ -185,7 +188,13 @@ def avenant_logements(request, convention_uuid):
         "conventions/avenant_logements.html",
         {
             **result,
-            "convention_form_step": 60,
+            "form_step": {
+                "number": 1,
+                "total": 4,
+                "title": "Logements",
+                "next": "Annexes",
+                "next_target": "conventions:avenant_annexes",
+            },
         },
     )
 
@@ -206,7 +215,13 @@ def annexes(request, convention_uuid):
         "conventions/annexes.html",
         {
             **result,
-            "convention_form_step": 7,
+            "form_step": {
+                "number": 7,
+                "total": 9,
+                "title": "Annexes",
+                "next": "Stationnements",
+                "next_target": "conventions:stationnements",
+            },
         },
     )
 
@@ -230,7 +245,13 @@ def avenant_annexes(request, convention_uuid):
         "conventions/avenant_annexes.html",
         {
             **result,
-            "convention_form_step": 70,
+            "form_step": {
+                "number": 2,
+                "total": 4,
+                "title": "Annexes",
+                "next": "Commentaires",
+                "next_target": "conventions:avenant_comments",
+            },
         },
     )
 
@@ -245,7 +266,11 @@ def recapitulatif(request, convention_uuid):
             "conventions/avenant_recapitulatif.html",
             {
                 **result,
-                "convention_form_step": 100,
+                "form_step": {
+                    "number": 4,
+                    "total": 4,
+                    "title": "Récapitulatif",
+                },
             },
         )
     return render(
@@ -253,7 +278,6 @@ def recapitulatif(request, convention_uuid):
         "conventions/recapitulatif.html",
         {
             **result,
-            "convention_form_step": 10,
         },
     )
 
@@ -304,7 +328,6 @@ def validate_convention(request, convention_uuid):
         "conventions/recapitulatif.html",
         {
             **result,
-            "convention_form_step": 10,
         },
     )
 
@@ -373,24 +396,24 @@ def load_xlsx_model(request, file_type):
     return response
 
 
-@login_required
-def display_operation(request, programme_uuid, programme_financement):
-    result = services.display_operation(request, programme_uuid, programme_financement)
-    if result["success"] == ReturnStatus.SUCCESS and result["convention"]:
-        return HttpResponseRedirect(
-            reverse("conventions:recapitulatif", args=[result["convention"].uuid])
-        )
-    if result["success"] == ReturnStatus.WARNING:
-        return render(
-            request,
-            "conventions/selection.html",
-            {
-                **result,
-                "financements": FinancementEDD,
-                "redirect_action": "/conventions/selection",
-            },
-        )
-    return PermissionDenied
+# @login_required
+# def display_operation(request, programme_uuid, programme_financement):
+#     result = services.display_operation(request, programme_uuid, programme_financement)
+#     if result["success"] == ReturnStatus.SUCCESS and result["convention"]:
+#         return HttpResponseRedirect(
+#             reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+#         )
+#     if result["success"] == ReturnStatus.WARNING:
+#         return render(
+#             request,
+#             "conventions/selection.html",
+#             {
+#                 **result,
+#                 "financements": FinancementEDD,
+#                 "redirect_action": "/conventions/selection",
+#             },
+#         )
+#     return PermissionDenied
 
 
 @login_required
@@ -404,7 +427,6 @@ def preview(request, convention_uuid):
         {
             **result,
             "filepath": filepath,
-            "convention_form_step": 11,
         },
     )
 
@@ -422,7 +444,6 @@ def sent(request, convention_uuid):
         "conventions/sent.html",
         {
             **result,
-            "convention_form_step": 12,
         },
     )
 
@@ -440,7 +461,6 @@ def post_action(request, convention_uuid):
         "conventions/post_action.html",
         {
             **result,
-            "convention_form_step": 12,
         },
     )
 
@@ -518,8 +538,8 @@ class ConventionView(ABC, LoginRequiredMixin, View):
 
     target_template: str
     next_path_redirect: str
-    convention_form_step: int
     service_class: ConventionService
+    form_step: None | dict
 
     def _get_convention(self, convention_uuid):
         return Convention.objects.get(uuid=convention_uuid)
@@ -537,11 +557,11 @@ class ConventionView(ABC, LoginRequiredMixin, View):
                 **({"form": service.form} if service.form else {}),
                 **({"upform": service.upform} if service.upform else {}),
                 **({"formset": service.formset} if service.formset else {}),
+                **({"form_step": self.form_step} if self.form_step else {}),
                 "editable_after_upload": (
                     utils.editable_convention(request, convention)
                     or service.editable_after_upload
                 ),
-                "convention_form_step": self.convention_form_step,
             },
         )
 
@@ -551,7 +571,6 @@ class ConventionView(ABC, LoginRequiredMixin, View):
         service = self.service_class(convention=convention, request=request)
         service.save()
         if service.return_status == utils.ReturnStatus.SUCCESS:
-
             if service.redirect_recap:
                 return HttpResponseRedirect(
                     reverse("conventions:recapitulatif", args=[convention.uuid])
@@ -565,8 +584,9 @@ class ConventionView(ABC, LoginRequiredMixin, View):
             {
                 **utils.base_convention_response_error(request, service.convention),
                 **({"form": service.form} if service.form else {}),
-                **({"formset": service.formset} if service.formset else {}),
                 **({"upform": service.upform} if service.upform else {}),
+                **({"formset": service.formset} if service.formset else {}),
+                **({"form_step": self.form_step} if self.form_step else {}),
                 **(
                     {"import_warnings": service.import_warnings}
                     if service.import_warnings
@@ -574,37 +594,80 @@ class ConventionView(ABC, LoginRequiredMixin, View):
                 ),
                 "editable_after_upload": utils.editable_convention(request, convention)
                 or service.editable_after_upload,
-                "convention_form_step": self.convention_form_step,
             },
         )
 
 
 class ConventionBailleurView(ConventionView):
-
     target_template: str = "conventions/bailleur.html"
     next_path_redirect: str = "conventions:programme"
-    convention_form_step: int = 1
     service_class = ConventionBailleurService
+    form_step: dict = {
+        "number": 1,
+        "total": 9,
+        "title": "Bailleur",
+        "next": "Opération",
+        "next_target": next_path_redirect,
+    }
 
     def _get_convention(self, convention_uuid):
         return Convention.objects.prefetch_related("bailleur").get(uuid=convention_uuid)
 
 
+class ConventionProgrammeView(ConventionView):
+    target_template: str = "conventions/programme.html"
+    next_path_redirect: str = "conventions:cadastre"
+    service_class = ConventionProgrammeService
+    form_step: dict = {
+        "number": 2,
+        "total": 9,
+        "title": "Opération",
+        "next": "Cadastre",
+        "next_target": next_path_redirect,
+    }
+
+    def _get_convention(self, convention_uuid):
+        return (
+            Convention.objects.prefetch_related("programme")
+            .prefetch_related("lot")
+            .get(uuid=convention_uuid)
+        )
+
+
 class ConventionTypeStationnementView(ConventionView):
     target_template: str = "conventions/stationnements.html"
-    convention_form_step: int = 8
     next_path_redirect: str = "conventions:comments"
     service_class: ConventionService = ConventionTypeStationnementService
+    form_step: dict = {
+        "number": 8,
+        "total": 9,
+        "title": "Stationnements",
+        "next": "Commentaires",
+        "next_target": next_path_redirect,
+    }
 
 
 class ConventionCommentsView(ConventionView):
     target_template: str = "conventions/comments.html"
-    convention_form_step: int = 9
     next_path_redirect: str = "conventions:recapitulatif"
     service_class: ConventionService = ConventionCommentsService
+    form_step: dict = {
+        "number": 9,
+        "total": 9,
+        "title": "Commentaires",
+        "next": "Récapitulatif",
+        "next_target": next_path_redirect,
+    }
 
 
 class AvenantCommentsView(ConventionCommentsView):
 
     target_template: str = "conventions/avenant_comments.html"
-    convention_form_step: int = 90
+    next_path_redirect: str = "conventions:recapitulatif"
+    form_step: dict = {
+        "number": 3,
+        "total": 4,
+        "title": "Commentaires",
+        "next": "Récapitulatif",
+        "next_target": next_path_redirect,
+    }

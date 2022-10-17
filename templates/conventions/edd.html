@@ -4,6 +4,8 @@
 
 {% load static %}
 
+{% load custom_filters %}
+
 {% block javascript_extras %}
     <script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
@@ -121,7 +123,7 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        {% if convention.display_options.display_comments %}
+                                        {% if convention|display_comments %}
                                             {% include 'common/utils/comments_header.html' with object_name='logement_edd' label="Logements de l'EDD" %}
                                         {% endif %}
                                         <th scope="col">Financement {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -133,7 +135,7 @@
                                     {% for form_edd in formset %}
                                         {% with input_id="logement_edd_"|add:form_edd.uuid.value main_object_field="logement_edd__uuid__"|add:form_edd.uuid.value %}
                                             <tr id="{{form_edd.uuid.id_for_label}}_group">
-                                                {% if convention.display_options.display_comments %}
+                                                {% if convention|display_comments %}
                                                     <td id="{{form_edd.uuid.id_for_label}}_div">
                                                         {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_edd.uuid %}
                                                     </td>

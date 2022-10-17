@@ -1,9 +1,9 @@
-from django.core.exceptions import PermissionDenied
-from django.views.decorators.http import require_GET
+from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.conf import settings
 
+from conventions.services.services_conventions import ConventionService
 from conventions.templatetags.custom_filters import is_instructeur
 from conventions.models import Convention
 from conventions.forms import UploadForm
@@ -30,22 +30,53 @@ from . import utils
 from . import upload_objects
 
 
+def _get_choices_from_object(object_list):
+    return [(instance.uuid, str(instance)) for instance in object_list]
+
+
 def select_programme_create(request):
+
+    lots = (
+        request.user.lots()
+        .prefetch_related("programme")
+        .prefetch_related("convention_set")
+        .order_by("programme__ville", "programme__nom", "nb_logements", "financement")
+    )
+    bailleurs = (
+        Bailleur.objects.all().order_by("nom")
+        if is_instructeur(request)
+        else request.user.bailleurs()
+    )
+    administrations = (
+        request.user.administrations()
+        if is_instructeur(request)
+        else Administration.objects.all().order_by("nom")
+    )
+
     if request.method == "POST":
-        form = ProgrammeSelectionForm(request.POST)
+        form = ProgrammeSelectionForm(
+            request.POST,
+            lots=_get_choices_from_object(lots),
+            bailleurs=_get_choices_from_object(bailleurs),
+            administrations=_get_choices_from_object(administrations),
+        )
         if form.is_valid():
             existing_programme = form.cleaned_data["existing_programme"]
             if existing_programme == "selection":
-                lot = Lot.objects.get(uuid=form.cleaned_data["lot_uuid"])
+                lot = Lot.objects.get(uuid=form.cleaned_data["lot"])
                 request.user.check_perm("convention.add_convention", lot)
             else:
                 request.user.check_perm("convention.add_convention")
+                bailleur = Bailleur.objects.get(uuid=form.cleaned_data["bailleur"])
+                administration = Administration.objects.get(
+                    uuid=form.cleaned_data["administration"]
+                )
                 programme = Programme.objects.create(
                     nom=form.cleaned_data["nom"],
                     code_postal=form.cleaned_data["code_postal"],
                     ville=form.cleaned_data["ville"],
-                    bailleur_id=form.cleaned_data["bailleur"],
-                    administration_id=form.cleaned_data["administration"],
+                    bailleur=bailleur,
+                    administration=administration,
                     type_operation=(
                         TypeOperation.SANSTRAVAUX
                         if form.cleaned_data["financement"]
@@ -59,7 +90,7 @@ def select_programme_create(request):
                     financement=form.cleaned_data["financement"],
                     type_habitat=form.cleaned_data["type_habitat"],
                     programme=programme,
-                    bailleur_id=form.cleaned_data["bailleur"],
+                    bailleur=bailleur,
                 )
                 lot.save()
             convention = Convention.objects.create(
@@ -82,26 +113,19 @@ def select_programme_create(request):
     # If this is a GET (or any other method) create the default form.
     else:
         form = ProgrammeSelectionForm(
+            lots=_get_choices_from_object(lots),
+            bailleurs=_get_choices_from_object(bailleurs),
+            administrations=_get_choices_from_object(administrations),
             initial={
                 "existing_programme": "selection",
-            }
+            },
         )
-
-    programmes = _conventions_selection(request)
-    if is_instructeur(request):
-        administrations = request.user.administrations()
-        bailleurs = Bailleur.objects.all().order_by("nom")
-    else:
-        administrations = Administration.objects.all().order_by("nom")
-        bailleurs = request.user.bailleurs()
 
     return {
         "success": utils.ReturnStatus.ERROR,
-        "programmes": programmes,
         "form": form,
+        "lots": lots,
         "editable": request.user.has_perm("convention.add_convention"),
-        "bailleurs": bailleurs,
-        "administrations": administrations,
     }
 
 
@@ -138,26 +162,17 @@ def _send_email_staff(request, convention):
     ).send_to_devs()
 
 
-def programme_update(request, convention_uuid):
-    convention = (
-        Convention.objects.prefetch_related("programme")
-        .prefetch_related("lot")
-        .get(uuid=convention_uuid)
-    )
-    programme = convention.programme
-    lot = convention.lot
-    if request.method == "POST":
-        request.user.check_perm("convention.change_convention", convention)
-        if request.POST.get("redirect_to_recap", False):
-            return _programme_atomic_update(request, convention, programme, lot)
-        form = ProgrammeForm(request.POST)
-        if form.is_valid():
-            _save_programme_and_lot(programme, lot, form)
-            return utils.base_response_success(convention)
-    # If this is a GET (or any other method) create the default form.
-    else:
-        request.user.check_perm("convention.view_convention", convention)
-        form = ProgrammeForm(
+class ConventionProgrammeService(ConventionService):
+    convention: Convention
+    request: HttpRequest
+    form: ProgrammeForm
+    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
+    redirect_recap: bool = False
+
+    def get(self):
+        programme = self.convention.programme
+        lot = self.convention.lot
+        self.form = ProgrammeForm(
             initial={
                 "uuid": programme.uuid,
                 "nom": programme.nom,
@@ -173,43 +188,43 @@ def programme_update(request, convention_uuid):
                 "nb_bureaux": programme.nb_bureaux,
             }
         )
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "form": form,
-        "avecfinancement": convention.lot.financement != Financement.SANS_FINANCEMENT,
-    }
 
+    def save(self):
+        self.redirect_recap = bool(self.request.POST.get("redirect_to_recap", False))
+        self._programme_atomic_update()
 
-def _programme_atomic_update(request, convention, programme, lot):
-    form = ProgrammeForm(
-        {
-            "uuid": programme.uuid,
-            "nb_logements": request.POST.get("nb_logements", lot.nb_logements),
-            "type_habitat": request.POST.get("type_habitat", lot.type_habitat),
-            **utils.build_partial_form(
-                request,
-                programme,
-                [
-                    "nom",
-                    "adresse",
-                    "code_postal",
-                    "ville",
-                    "type_operation",
-                    "anru",
-                    "autres_locaux_hors_convention",
-                    "nb_locaux_commerciaux",
-                    "nb_bureaux",
-                ],
-            ),
-        }
-    )
-    if form.is_valid():
-        _save_programme_and_lot(programme, lot, form)
-        return utils.base_response_redirect_recap_success(convention)
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "form": form,
-    }
+    def _programme_atomic_update(self):
+        self.form = ProgrammeForm(
+            {
+                "uuid": self.convention.programme.uuid,
+                "nb_logements": self.request.POST.get(
+                    "nb_logements", self.convention.lot.nb_logements
+                ),
+                "type_habitat": self.request.POST.get(
+                    "type_habitat", self.convention.lot.type_habitat
+                ),
+                **utils.build_partial_form(
+                    self.request,
+                    self.convention.programme,
+                    [
+                        "nom",
+                        "adresse",
+                        "code_postal",
+                        "ville",
+                        "type_operation",
+                        "anru",
+                        "autres_locaux_hors_convention",
+                        "nb_locaux_commerciaux",
+                        "nb_bureaux",
+                    ],
+                ),
+            }
+        )
+        if self.form.is_valid():
+            _save_programme_and_lot(
+                self.convention.programme, self.convention.lot, self.form
+            )
+            self.return_status = utils.ReturnStatus.SUCCESS
 
 
 def _save_programme_and_lot(programme, lot, form):
@@ -736,44 +751,43 @@ def _save_programme_logement_edd(formset, convention, programme):
         logementedd.save()
 
 
-def _conventions_selection(request):
-    return (
-        request.user.lots()
-        .prefetch_related("programme")
-        .prefetch_related("convention_set")
-        .order_by("programme__ville", "programme__nom", "nb_logements", "financement")
-    )
+# @require_GET
+# def display_operation(request, programme_uuid, financement):
+#     # CONVENTION
+#     try:
+#         programme = request.user.programmes().get(uuid=programme_uuid)
+#     except Programme.DoesNotExist as does_not_exist:
+#         raise PermissionDenied from does_not_exist
 
+#     try:
+#         convention = request.user.conventions().get(
+#             programme=programme,
+#             financement=financement,
+#         )
+#         return {"success": utils.ReturnStatus.SUCCESS, "convention": convention}
+#     except Convention.DoesNotExist:
+#         # LOT case
+#         lot = Lot.objects.get(
+#             programme=programme,
+#             financement=financement,
+#         )
+#         lots = (
+#             request.user.lots()
+#             .prefetch_related("programme")
+#             .prefetch_related("convention_set")
+#             .order_by(
+#                 "programme__ville", "programme__nom", "nb_logements", "financement"
+#             )
+#         )
+#         form = ProgrammeSelectionForm(
+#             lots=lots,
+#             bailleurs=request.user.bailleurs()
+#             initial={"existing_programme": "selection", "lot": f"{lot.uuid}"}
+#         )
 
-@require_GET
-def display_operation(request, programme_uuid, financement):
-    # CONVENTION
-    try:
-        programme = request.user.programmes().get(uuid=programme_uuid)
-    except Programme.DoesNotExist as does_not_exist:
-        raise PermissionDenied from does_not_exist
-
-    try:
-        convention = request.user.conventions().get(
-            programme=programme,
-            financement=financement,
-        )
-        return {"success": utils.ReturnStatus.SUCCESS, "convention": convention}
-    except Convention.DoesNotExist:
-        # LOT case
-        lot = Lot.objects.get(
-            programme=programme,
-            financement=financement,
-        )
-        form = ProgrammeSelectionForm(
-            initial={"existing_programme": "selection", "lot_uuid": f"{lot.uuid}"}
-        )
-
-        programmes = _conventions_selection(request)
-        return {
-            "success": utils.ReturnStatus.WARNING,
-            "programmes": programmes,
-            "form": form,
-            "editable": request.user.has_perm("convention.add_convention"),
-            "bailleurs": request.user.bailleurs(),
-        }
+#         return {
+#             "success": utils.ReturnStatus.WARNING,
+#             "form": form,
+#             "editable": request.user.has_perm("convention.add_convention"),
+#             "bailleurs": request.user.bailleurs(),
+#         }

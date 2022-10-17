@@ -11,7 +11,11 @@ urlpatterns = [
         views.ConventionBailleurView.as_view(),
         name="bailleur",
     ),
-    path("programme/<convention_uuid>", views.programme, name="programme"),
+    path(
+        "programme/<convention_uuid>",
+        views.ConventionProgrammeView.as_view(),
+        name="programme",
+    ),
     path("cadastre/<convention_uuid>", views.cadastre, name="cadastre"),
     path("edd/<convention_uuid>", views.edd, name="edd"),
     path("financement/<convention_uuid>", views.financement, name="financement"),
@@ -73,11 +77,11 @@ urlpatterns = [
         views.load_xlsx_model,
         name="load_xlsx_model",
     ),
-    path(
-        "operation/<programme_uuid>/<programme_financement>",
-        views.display_operation,
-        name="display_operation",
-    ),
+    # path(
+    #     "operation/<programme_uuid>/<programme_financement>",
+    #     views.display_operation,
+    #     name="display_operation",
+    # ),
     path(
         "preview/<convention_uuid>",
         views.preview,
