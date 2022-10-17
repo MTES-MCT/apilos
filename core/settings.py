@@ -15,14 +15,11 @@ from datetime import timedelta
 import os
 import sys
 
+import decouple
 import dj_database_url
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
-from decouple import Config, RepositoryEnv, UndefinedValueError
-
-DOTENV_FILE = ".env"
-env_config = Config(RepositoryEnv(DOTENV_FILE))
 
 
 def get_env_variable(name, cast=str, default=""):
@@ -42,7 +39,7 @@ def get_env_variable(name, cast=str, default=""):
         return cast(os.environ[name])
     # pylint: disable=W0702, bare-except
     except:
-        return env_config(name, cast=cast, default=default)
+        return decouple.config(name, cast=cast, default=default)
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -173,9 +170,9 @@ try:
     # dj_database_url is used in scalingo environment to interpret the
     # connection configuration to the DB from a single URL with all path
     # and credentials
-    env_config("DATABASE_URL")
+    decouple.config("DATABASE_URL")
     default_settings = dj_database_url.config()
-except UndefinedValueError:
+except decouple.UndefinedValueError:
     default_settings = {
         "ENGINE": "django.db.backends.postgresql",
         "USER": get_env_variable("DB_USER"),
@@ -193,7 +190,7 @@ except UndefinedValueError:
 # from https://django-sql-explorer.readthedocs.io/en/latest/install.html
 # The readonly access is configured with fake access when DB_READONLY env
 # variable is not set.
-DB_READONLY = env_config(
+DB_READONLY = decouple.config(
     "DB_READONLY", default="postgres://fakeusername:fakepassword@postgres:5432/database"
 )
 readonly_settings = dj_database_url.parse(DB_READONLY)
@@ -427,7 +424,7 @@ if SENTRY_URL:
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
     "OPTIONS": {
-        "url": env_config("REDIS_URL", default="redis://redis:6379"),
+        "url": decouple.config("REDIS_URL", default="redis://redis:6379"),
     },
     "MIDDLEWARE": [
         "django_dramatiq.middleware.AdminMiddleware",
