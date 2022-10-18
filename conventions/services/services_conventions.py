@@ -896,11 +896,9 @@ def create_avenant(request, convention_uuid):
         .prefetch_related("lot")
         .get(uuid=convention_uuid)
     )
+    avenant_types = {avenant.nom: avenant.id for avenant in AvenantType.objects.all()}
     if request.method == "POST":
         new_avenant_form = NewAvenantForm(request.POST)
-        avenant_types = {
-            avenant.nom: avenant.id for avenant in AvenantType.objects.all()
-        }
         if new_avenant_form.is_valid():
             avenant = parent_convention.clone(request.user)
             avenant.avenant_type.add(
