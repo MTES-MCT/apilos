@@ -146,7 +146,7 @@ class Convention(models.Model):
         AvenantType,
         blank=True,
         max_length=50,
-        related_name="avenant_type",
+        related_name="avenant_types",
         verbose_name="Type d'avenant",
     )
     signataire_nom = models.CharField(max_length=255, null=True)
@@ -336,9 +336,6 @@ class Convention(models.Model):
 
     def is_avenant(self):
         return self.parent_id is not None
-
-    def type_avenant(self):
-        return {"programme": self.avenant_type == "logements"}
 
     def statut_for_template(self):
         return {
