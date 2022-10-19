@@ -15,19 +15,15 @@
                         <caption><em>{{ conventions.paginated_conventions.paginator.count }} avenant{{ conventions.paginated_conventions.paginator.count|pluralize }} à cette convention</em></caption>
                         <thead>
                             <tr class="th_inline">
-                                <th title="Nombre de logements à conventionner" scope="col">
+                                <th title="Numéro de l'avenant" scope="col">
                                     Numéro
                                     {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='numero' url_target='conventions:post_action' %}
                                 </th>
-                                <th title="Nombre de logements à conventionner" scope="col">
-                                    Type d'avenant
-                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='type_avenant' url_target='conventions:post_action' %}
-                                </th>
-                                <th title="Nombre de logements à conventionner" scope="col">
+                                <th title="Date de création" scope="col">
                                     Créé le
                                     {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='cree_le' url_target='conventions:post_action' %}
                                 </th>
-                                <th title="Nombre de logements à conventionner" scope="col">
+                                <th title="Nombre de logements" scope="col">
                                     Nb Lgts
                                     {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='lot__nb_logements' url_target='conventions:post_action' %}
                                 </th>
@@ -42,7 +38,6 @@
 
                                 <tr id="convention_redirect_{{convention.uuid}}" class="clickable">
                                     <td>{{convention.numero}}</td>
-                                    <td>{{convention.avenant_type}}</td>
                                     <td>{{convention.cree_le|date:"d/m/Y"|default_if_none:'-' }}</td>
                                     <td>{{convention.lot.nb_logements}}</td>
                                     <td title="{{convention.statut_for_template.statut_display}}">

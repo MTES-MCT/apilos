@@ -88,6 +88,10 @@ details > summary::-webkit-details-marker {
   border: solid 1px #ccc;
   padding: 15px;
 }
+.apilos-h2-thin {
+  font-size: 2rem ;
+line-height: 2.5rem;
+}
 
 .dz {
   border: dashed !important;
@@ -230,6 +234,10 @@ a[href].apilos-block-faqlink:hover {
   border-radius: 0.5rem;
   color: #000091;
   text-align: left;
+  line-height: 24px;
+}
+a[href].apilos-block-faqlink:after {
+  content: none;
 }
 .apilos-block-faqlink .fr-p-2w {
   margin: auto;

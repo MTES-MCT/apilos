@@ -26,7 +26,13 @@ from conventions.forms import (
     PretFormSet,
     UploadForm,
 )
-from conventions.models import Convention, ConventionHistory, ConventionStatut, Pret
+from conventions.models import (
+    AvenantType,
+    Convention,
+    ConventionHistory,
+    ConventionStatut,
+    Pret,
+)
 from conventions.services import convention_generator, upload_objects, utils
 from conventions.tasks import generate_and_send
 from core.services import EmailService
@@ -890,11 +896,14 @@ def create_avenant(request, convention_uuid):
         .prefetch_related("lot")
         .get(uuid=convention_uuid)
     )
+    avenant_types = {avenant.nom: avenant.id for avenant in AvenantType.objects.all()}
     if request.method == "POST":
         new_avenant_form = NewAvenantForm(request.POST)
         if new_avenant_form.is_valid():
             avenant = parent_convention.clone(request.user)
-            avenant.avenant_type = new_avenant_form.cleaned_data["avenant_type"]
+            avenant.avenant_type.add(
+                new_avenant_form.cleaned_data["avenant_type"].first()
+            )
             avenant.save()
             return {
                 "success": utils.ReturnStatus.SUCCESS,
@@ -905,6 +914,7 @@ def create_avenant(request, convention_uuid):
         new_avenant_form = NewAvenantForm()
 
     return {
+        "avenant_types": avenant_types,
         "success": utils.ReturnStatus.ERROR,
         "editable": request.user.has_perm("convention.add_convention"),
         "bailleurs": request.user.bailleurs(),
