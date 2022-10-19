@@ -3,16 +3,17 @@ from .handlers import ModelImportHandler
 from bailleurs.models import Bailleur
 
 from programmes.models import Programme, Lot, Logement
+from .handlers_bailleurs import BailleurImportHandler
 
 
 class ProgrammeImportHandler(ModelImportHandler):
 
-    def _get_sql_query(self) -> str:
+    def _get_sql_query(self, criteria: dict) -> str:
         return self._get_sql_from_template('resources/sql/programmes.sql', {'max_row': 10})
 
-    def _process_row(self, data: dict) -> bool:
+    def _process_data(self, importer: 'EcolowebImportService', data: dict) -> bool:
         # TODO: attach a real bailleur instead of a randomly picked one
-        data['bailleur'] = Bailleur.objects.order_by('?').first()
+        data['bailleur'] = BailleurImportHandler().import_one(data.pop('bailleur_id'), importer)
         ecolo_id = data.pop('id')
 
         if ref := self._find_ecolo_reference(Programme, ecolo_id) is None:
@@ -34,10 +35,10 @@ class ProgrammeImportHandler(ModelImportHandler):
 
 class ProgrammeLotImportHandler(ModelImportHandler):
 
-    def _get_sql_query(self) -> str:
+    def _get_sql_query(self, criteria: dict) -> str:
         return self._get_sql_from_template('resources/sql/programme_lots.sql', {'max_row': 10})
 
-    def _process_row(self, data: dict) -> bool:
+    def _process_data(self, importer: 'EcolowebImportService', data: dict) -> bool:
         ecolo_id = data.pop('id')
         if ref := self._find_ecolo_reference(Programme, ecolo_id) is None:
 
@@ -61,10 +62,10 @@ class ProgrammeLotImportHandler(ModelImportHandler):
 
 class ProgrammeLogementImportHandler(ModelImportHandler):
 
-    def _get_sql_query(self) -> str:
+    def _get_sql_query(self, criteria: dict) -> str:
         return self._get_sql_from_template('resources/sql/programme_logements.sql', {'max_row': 10})
 
-    def _process_row(self, data: dict) -> bool:
+    def _process_data(self, importer: 'EcolowebImportService', data: dict) -> bool:
         ecolo_id = data.pop('id')
         if ref := self._find_ecolo_reference(Logement, ecolo_id) is None:
 

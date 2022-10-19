@@ -1,22 +1,26 @@
 from .handlers import ModelImportHandler
 
-from bailleurs.models import Bailleur
 from conventions.models import Convention
 
 from programmes.models import Programme, Lot
+from .handlers_bailleurs import BailleurImportHandler
 
 
 class ConventionImportHandler(ModelImportHandler):
 
-    def _get_sql_query(self) -> str:
-        return self._get_sql_from_template('resources/sql/conventions.sql', {'max_row': 10})
+    def _get_sql_query(self, criteria: dict) -> str:
+        return self._get_sql_from_template('resources/sql/conventions.sql', criteria)
 
-    def _process_row(self, data: dict) -> bool:
+    def _process_data(self, importer: 'EcolowebImportService', data: dict) -> bool:
         ecolo_id = data.pop('id')
+
         if ref := self._find_ecolo_reference(Convention, ecolo_id) is None:
-            data['bailleur'] = Bailleur.objects.order_by('?').first()
+
+            data['bailleur'] = BailleurImportHandler().import_one(data.pop('bailleur_id'), importer)
             data['lot'] = Lot.objects.order_by('?').first()
             data['programme'] = Programme.objects.order_by('?').first()
+
+            print(data['bailleur'])
 
             convention = Convention.objects.create(**data)
             created = True
