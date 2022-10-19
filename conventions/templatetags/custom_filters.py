@@ -279,12 +279,12 @@ def display_notification_new_convention_instructeur_to_bailleur(convention, requ
 
 
 @register.filter
-def display_demande_correction(convention):
+def display_demande_instruction(convention):
     return convention.statut == ConventionStatut.INSTRUCTION
 
 
 @register.filter
-def display_demande_instruction(convention):
+def display_demande_correction(convention):
     return convention.statut == ConventionStatut.CORRECTION
 
 
