@@ -718,12 +718,16 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
 .apilos-form-label--strike {
   text-decoration: line-through;
 }
-
-.apilos-sticky-top {
+.apilos-sticky {
   position: -webkit-sticky; /* Safari */
   position: sticky;
-  top: 0;
   z-index: 100;
+}
+.apilos-sticky-top {
+  top: 0;
+}
+.apilos-sticky-2 {
+  top: 104px;
 }
 
 /*

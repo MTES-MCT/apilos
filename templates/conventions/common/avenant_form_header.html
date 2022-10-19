@@ -17,9 +17,9 @@
                                     </a>
                                 {% else %}
                                     {% if convention.is_avenant %}
-                                        <a class='fr-link apilos-link' href="{% url 'conventions:recapitulatif' convention_uuid=convention.parent.uuid %}">Consulter la convention originale</a>
+                                        <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Consulter la convention originale</a>
                                     {% else %}
-                                        <a class='fr-link apilos-link' href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">Consulter la convention originale</a>
+                                        <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}">Consulter la convention originale</a>
                                     {% endif %}
                                 {% endif %}
                             </div>
@@ -27,6 +27,20 @@
                     </div>
                 </div>
                 <hr>
+                {% if convention.is_avenant %}
+                    <div class="fr-col-12 fr-mb-4w">
+                        <div role="alert" class="fr-alert fr-alert--info  fr-icon-arrow-right-s-line-double">
+                            <p class="fr-alert__title">
+                                votre avenant est
+                                <span class="fr-px-1w fr-h3">
+                                    {{convention.short_statut_for_template}}
+                                </span>
+                            </p>
+                            <p>Complétez ses informations, puis soumettez-le à votre service d’instruction</p>
+                        </div>
+                    </div>
+
+                {% endif %}
             </div>
         </div>
     </div>
