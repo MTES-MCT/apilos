@@ -15,9 +15,9 @@
 -- parent_id   FK(programmes_lot) dans le cas d'un avenant seulement ?
 
 select
-    pl.id,
+    md5(cdg.id||'-'||ff.code) as id, -- Les lots d'un programme sont tous les logements partageant le même financement
     cdg as programme_id,
-    123456789 as bailleur_id, -- TODO link with actual data
+    pl.bailleurproprietaire_id as bailleur_id,
     coalesce(pl.financementdate, now()) as cree_le,
     coalesce(pl.financementdate, now()) as mis_a_jour_le,
     ff.code as financement,
@@ -42,14 +42,15 @@ from ecolo.ecolo_programmelogement pl
     inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
     -- Annexes
     left join ecolo.ecolo_annexe a1 on a1.programmelogement_id = pl.id
-    left join ecolo.ecolo_valeurparamstatic ap1 on a1.typeannexe_id = ap1.id and ap1.subtype = 'TAN' and ap1.code = 7 -- Cave
+    left join ecolo.ecolo_valeurparamstatic ap1 on a1.typeannexe_id = ap1.id and ap1.subtype = 'TAN' and ap1.code = '7' -- Cave
     left join ecolo.ecolo_annexe a2 on a2.programmelogement_id = pl.id
-    left join ecolo.ecolo_valeurparamstatic ap2 on a2.typeannexe_id = ap2.id and ap2.subtype = 'TAN' and ap2.code = 5 -- Terrasse
+    left join ecolo.ecolo_valeurparamstatic ap2 on a2.typeannexe_id = ap2.id and ap2.subtype = 'TAN' and ap2.code = '5' -- Terrasse
     left join ecolo.ecolo_annexe a3 on a3.programmelogement_id = pl.id
-    left join ecolo.ecolo_valeurparamstatic ap3 on a3.typeannexe_id = ap3.id and ap3.subtype = 'TAN' and ap3.code = 8 -- Box
+    left join ecolo.ecolo_valeurparamstatic ap3 on a3.typeannexe_id = ap3.id and ap3.subtype = 'TAN' and ap3.code = '8' -- Box
 where
     pl.logementsnombretotal > 0
+order by cdg.id, ff.code
 {% if max_row %}
-order by random()
+, random()
 limit {{ max_row }}
 {% endif %}
