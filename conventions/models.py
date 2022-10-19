@@ -55,6 +55,18 @@ class ConventionStatut(models.TextChoices):
     D/ SIGNEE : Signée - Convention signée
         La convention signée est mise à disposition via la plateforme APiLos.
         Anciennement CLOS
+
+    E/ RESILIEE: Résilié - Convention résiliée
+
+    F/ DENONCEE: Dénoncée - Convention dénoncée
+        Le bailleur décide, une fois la période de couverture de la convention achevée, de
+        dénoncer la convention et rendre ainsi caduques toutes les clauses d'encadrement qui
+        y étaient définies. Il est seul décideur, cependant depuis peu une commune considérée
+        comme en "carence" de logement social peut s'opposer à cette dénonciation.
+
+    G/ ANNULEE: Annulée en suivi - Convention annulée
+        Les 2 parties s'entendent pour annuler la convention
+
     """
 
     PROJET = "1. Projet", "Création d'un projet de convention"
@@ -69,6 +81,8 @@ class ConventionStatut(models.TextChoices):
     A_SIGNER = "4. A signer", "Convention à signer"
     SIGNEE = "5. Signée", "Convention signée"
     RESILIEE = "6. Résiliée", "Convention résiliée"
+    DENONCEE = "7. Dénoncée", "Convention dénoncée"
+    ANNULEE = "8. Annulée en suivi", "Convention annulée en suivi"
 
 
 class AvenantType(models.Model):
