@@ -8,7 +8,7 @@ class AdministrationImportHandler(ModelImportHandler):
     def _get_sql_query(self) -> str:
         return self._get_sql_from_file('resources/sql/administrations.sql')
 
-    def _process_row(self, data: dict) -> bool:
+    def _process_data(self, data: dict) -> bool:
         ecolo_id = data.pop('id')
 
         if ref := self._find_ecolo_reference(Administration, ecolo_id) is None:

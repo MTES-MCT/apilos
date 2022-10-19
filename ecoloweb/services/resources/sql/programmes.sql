@@ -12,7 +12,6 @@
 -- date_acte_notarie                    date,
 -- cree_le                              timestamp with time zone not null,
 -- mis_a_jour_le                        timestamp with time zone not null,
--- bailleur_id                          integer                  not null
 -- date_achat                           date,
 -- date_achevement                      date,
 -- date_achevement_previsible           date,
@@ -42,11 +41,23 @@
 
 select
     cdg.id,
+    pb.bailleur_id,
     c.libelle as nom,
     coalesce(p.type_operation, 'SANSOBJET') as type_operation,
     p.numero_galion
 from ecolo.ecolo_conventiondonneesgenerales cdg
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
+    inner join (
+        -- Sur Ecolo il peut y avoir un bailleur gestionnaire *par logement*, aussi on attribue à la convention le
+        -- bailleur majoritaire
+        select
+            pl.conventiondonneesgenerales_id,
+            pl.bailleurgestionnaire_id as bailleur_id
+        from ecolo.ecolo_programmelogement pl
+            inner join ecolo.ecolo_bailleur b on pl.bailleurgestionnaire_id = b.id
+        group by pl.conventiondonneesgenerales_id, pl.bailleurgestionnaire_id
+        order by count(distinct(b.id)) desc
+    ) pb on pb.conventiondonneesgenerales_id = cdg.id
     inner join (
         select
             distinct on (pl.conventiondonneesgenerales_id)
@@ -66,7 +77,9 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
             left join ecolo.ecolo_valeurparamstatic nop on pl.natureoperation_id = nop.id
         order by pl.conventiondonneesgenerales_id, pl.ordre
     ) p on p.conventiondonneesgenerales_id = cdg.id
-where cdg.avenant_id is null
+where
+    cdg.avenant_id is null
+    and pb.bailleur_id is not null
 {% if max_row %}
 order by random()
 limit {{ max_row }}
