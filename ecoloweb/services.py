@@ -83,7 +83,7 @@ class ModelImportHandler(ABC):
 class ProgrammeImportHandler(ModelImportHandler):
 
     def _get_sql_query(self) -> str:
-        return self._get_sql_from_template('resources/sql/programmes.sql')
+        return self._get_sql_from_template('resources/sql/programmes.sql', {'max_row': 10})
 
     def _process_row(self, data: dict) -> bool:
         # TODO: attach a real bailleur instead of a randomly picked one
@@ -199,10 +199,10 @@ class EcolowebImportService:
         self.connection: CursorWrapper = connections[connection].cursor()
         self.handlers = [
             # TODO manager dependencies between handlers (ex: ProgrammeLotImportHandler requires ProgrammeImportHandler)
-            #ProgrammeImportHandler(self.connection),
+            ProgrammeImportHandler(self.connection),
             #ProgrammeLotImportHandler(self.connection),
             #ProgrammeLogementImportHandler(self.connection)
-            ConventionImportHandler(self.connection)
+            #ConventionImportHandler(self.connection)
         ]
 
     def process(self):

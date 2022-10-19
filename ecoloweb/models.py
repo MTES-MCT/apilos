@@ -31,7 +31,7 @@ class EcoloReference(models.Model):
     id = models.AutoField(primary_key=True)
     apilos_model = models.CharField(max_length=64, null=False)
     ecolo_id = models.IntegerField(null=False)
-    apilos_id = models.IntegerField(null=False)
+    apilos_id = models.TextField(null=False, max_length=32)
 
     def resolve(self) -> Optional[Model]:
         return apps.get_model(self.apilos_model.split('.')[0], self.apilos_model.split('.')[1]).objects.get(pk=self.apilos_id)
