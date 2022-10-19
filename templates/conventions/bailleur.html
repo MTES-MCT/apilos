@@ -18,37 +18,60 @@
                 {% csrf_token %}
 
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-12 fr-col-md-12">
+                    <div class="fr-col-12">
 
                         <h4>Entreprise bailleur</h4>
-                        {% include "common/editable_fields_info.html" %}
 
-                        {% include "common/form/input_text.html" with form_input=form.nom object_field="bailleur__nom__"|add:form.uuid.value %}
+                        <div class="apilos-bordered fr-mb-3w">
 
-                        <div class="fr-mb-2w">
-                            <div class="fr-grid-row fr-grid-row--gutters">
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_text.html" with form_input=form.siret object_field="bailleur__siret__"|add:form.uuid.value %}
+                            <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
+                                <p>Les infomations dans ce cadre sont attachées à l'entreprise bailleur,
+                                    les modifications seront donc reportées sur toutes les conventions en
+                                    projet ou en cours d'instruction appartement à ce bailleur.</p>
+                                {% if upform.bailleur.field.choices|length > 1 %}
+                                    <details>
+                                        <summary>
+                                            <span class="fr-link">Vous pouvez aussi demander une modification du bailleur de l'opération de la convention en cliquant sur ce lien</span>
+                                        </summary>
+                                        <div>
+                                            {% csrf_token %}
+                                            {% with convention_uuid_str=convention.uuid|stringformat:"s" %}
+                                                {% include "common/form/input_select.html" with form_input=upform.bailleur mandatory_input=True object_field="bailleur__uuid__"|add:convention_uuid_str %}
+                                            {% endwith %}
+                                            <button class="fr-btn" name="update_bailleur" value="True">
+                                                Changer le bailleur de la convention et de son opération
+                                            </button>
+                                        </div>
+                                    </details>
+                                {% endif %}
+                            </div>
+
+                            {% include "common/form/input_text.html" with form_input=form.nom object_field="bailleur__nom__"|add:form.uuid.value %}
+
+                            <div class="fr-mb-2w">
+                                <div class="fr-grid-row fr-grid-row--gutters">
+                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                        {% include "common/form/input_text.html" with form_input=form.siret object_field="bailleur__siret__"|add:form.uuid.value %}
+                                    </div>
+                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                                        {% include "common/form/input_number.html" with step="0.01" form_input=form.capital_social object_field="bailleur__capital_social__"|add:form.uuid.value %}
+                                    </div>
                                 </div>
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                    {% include "common/form/input_number.html" with step="0.01" form_input=form.capital_social object_field="bailleur__capital_social__"|add:form.uuid.value %}
+                            </div>
+
+                            {% include "common/form/input_text.html" with form_input=form.adresse object_field="bailleur__adresse__"|add:form.uuid.value %}
+
+                            <div class="fr-mb-2w">
+                                <div class="fr-grid-row fr-grid-row--gutters">
+                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                        {% include "common/form/input_text.html" with form_input=form.code_postal object_field="bailleur__code_postal__"|add:form.uuid.value %}
+                                    </div>
+                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                                        {% include "common/form/input_text.html" with form_input=form.ville object_field="bailleur__ville__"|add:form.uuid.value %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        {% include "common/form/input_text.html" with form_input=form.adresse object_field="bailleur__adresse__"|add:form.uuid.value %}
-
-                        <div class="fr-mb-2w">
-                            <div class="fr-grid-row fr-grid-row--gutters">
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_text.html" with form_input=form.code_postal object_field="bailleur__code_postal__"|add:form.uuid.value %}
-                                </div>
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                    {% include "common/form/input_text.html" with form_input=form.ville object_field="bailleur__ville__"|add:form.uuid.value %}
-                                </div>
-                            </div>
-                        </div>
-
                         <h4>Signataire de la convention</h4>
 
                         {% include "common/form/input_text.html" with form_input=form.signataire_nom object_field="bailleur__signataire_nom__"|add:form.uuid.value %}

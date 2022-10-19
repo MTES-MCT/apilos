@@ -6,8 +6,21 @@ from core import forms_utils
 from bailleurs.models import Bailleur, TypeBailleur
 
 
-class BailleurForm(forms.Form):
+class UpdateBailleurForm(forms.Form):
+    def __init__(self, *args, bailleurs=None, **kwargs) -> None:
+        self.declared_fields["bailleur"].choices = bailleurs
+        super().__init__(*args, **kwargs)
 
+    bailleur = forms.ChoiceField(
+        label="Bailleur",
+        choices=[],
+        error_messages={
+            "required": "Vous devez choisir un bailleur",
+        },
+    )
+
+
+class BailleurForm(forms.Form):
     uuid = forms.UUIDField(required=False)
     nom = forms.CharField(
         required=True,
@@ -44,7 +57,7 @@ class BailleurForm(forms.Form):
         required=False,
         label="Capital social",
     )
-    adresse, code_postal, ville = forms_utils.address_form_fields()
+    (adresse, code_postal, ville) = forms_utils.address_form_fields()
     signataire_nom = forms.CharField(
         label="Nom du signataire de la convention",
         max_length=255,

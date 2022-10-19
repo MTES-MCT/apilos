@@ -537,6 +537,7 @@ def new_avenant(request, convention_uuid):
 class ConventionView(ABC, LoginRequiredMixin, View):
 
     target_template: str
+    current_path_redirect: None | str = None
     next_path_redirect: str
     service_class: ConventionService
     form_step: None | dict
@@ -578,6 +579,10 @@ class ConventionView(ABC, LoginRequiredMixin, View):
             return HttpResponseRedirect(
                 reverse(self.next_path_redirect, args=[convention.uuid])
             )
+        if service.return_status == utils.ReturnStatus.REFRESH:
+            return HttpResponseRedirect(
+                reverse(self.current_path_redirect, args=[convention.uuid])
+            )
         return render(
             request,
             self.target_template,
@@ -601,6 +606,7 @@ class ConventionView(ABC, LoginRequiredMixin, View):
 class ConventionBailleurView(ConventionView):
     target_template: str = "conventions/bailleur.html"
     next_path_redirect: str = "conventions:programme"
+    current_path_redirect: str = "conventions:bailleur"
     service_class = ConventionBailleurService
     form_step: dict = {
         "number": 1,

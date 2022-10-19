@@ -199,7 +199,7 @@ def edit_bailleur(request, bailleur_uuid):
                     if request.user.is_superuser
                     else bailleur.type_bailleur
                 ),
-            }
+            },
         )
         if form.is_valid():
             bailleur.type_bailleur = form.cleaned_data["type_bailleur"]
@@ -237,7 +237,7 @@ def edit_bailleur(request, bailleur_uuid):
                 "signataire_date_deliberation": utils.format_date_for_form(
                     bailleur.signataire_date_deliberation
                 ),
-            }
+            },
         )
     user_list_service = UserListService(
         search_input=request.GET.get("search_input", ""),
@@ -409,7 +409,11 @@ def add_user(request):
         )
         if form.is_valid():
             # Forbid non super users to grant super user role to new users
-            is_superuser = form.cleaned_data["is_superuser"] if request.user.is_superuser else False
+            is_superuser = (
+                form.cleaned_data["is_superuser"]
+                if request.user.is_superuser
+                else False
+            )
             user = User.objects.create(
                 email=form.cleaned_data["email"],
                 username=form.cleaned_data["username"],
@@ -418,7 +422,7 @@ def add_user(request):
                 telephone=form.cleaned_data["telephone"],
                 administrateur_de_compte=form.cleaned_data["administrateur_de_compte"],
                 is_superuser=is_superuser,
-                creator=request.user
+                creator=request.user,
             )
             if form.cleaned_data["preferences_email"] is not None:
                 user.preferences_email = form.cleaned_data["preferences_email"]
