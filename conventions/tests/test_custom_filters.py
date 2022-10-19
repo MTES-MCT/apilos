@@ -104,10 +104,10 @@ class CustomFiltersTest(TestCase):
         self.assertFalse(custom_filters.display_demande_correction(self.convention))
 
         self.convention.statut = ConventionStatut.INSTRUCTION
-        self.assertFalse(custom_filters.display_demande_correction(self.convention))
+        self.assertTrue(custom_filters.display_demande_correction(self.convention))
 
         self.convention.statut = ConventionStatut.CORRECTION
-        self.assertTrue(custom_filters.display_demande_correction(self.convention))
+        self.assertFalse(custom_filters.display_demande_correction(self.convention))
 
         self.convention.statut = ConventionStatut.A_SIGNER
         self.assertFalse(custom_filters.display_demande_correction(self.convention))
@@ -123,10 +123,10 @@ class CustomFiltersTest(TestCase):
         self.assertFalse(custom_filters.display_demande_instruction(self.convention))
 
         self.convention.statut = ConventionStatut.INSTRUCTION
-        self.assertTrue(custom_filters.display_demande_instruction(self.convention))
+        self.assertFalse(custom_filters.display_demande_instruction(self.convention))
 
         self.convention.statut = ConventionStatut.CORRECTION
-        self.assertFalse(custom_filters.display_demande_instruction(self.convention))
+        self.assertTrue(custom_filters.display_demande_instruction(self.convention))
 
         self.convention.statut = ConventionStatut.A_SIGNER
         self.assertFalse(custom_filters.display_demande_instruction(self.convention))
