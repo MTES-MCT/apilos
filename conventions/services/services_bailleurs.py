@@ -19,8 +19,23 @@ class ConventionBailleurService(ConventionService):
 
     def get(self):
         bailleur = self.convention.bailleur
+        # Check if programme has validated convention
+        convention_validee = [
+            programme_convention
+            for programme_convention in self.convention.programme.conventions.all()
+            if programme_convention.statut
+            in [
+                ConventionStatut.A_SIGNER,
+                ConventionStatut.SIGNEE,
+            ]
+        ]
+        bailleurs = (
+            []
+            if convention_validee
+            else [(b.uuid, b.nom) for b in self.request.user.bailleurs(full_scope=True)]
+        )
         self.upform = UpdateBailleurForm(
-            bailleurs=[(b.uuid, b.nom) for b in self.request.user.bailleurs()],
+            bailleurs=bailleurs,
             initial={"bailleur": bailleur.uuid},
         )
         self.form = BailleurForm(
@@ -48,7 +63,9 @@ class ConventionBailleurService(ConventionService):
 
         self.upform = UpdateBailleurForm(
             self.request.POST,
-            bailleurs=[(b.uuid, b.nom) for b in self.request.user.bailleurs()],
+            bailleurs=[
+                (b.uuid, b.nom) for b in self.request.user.bailleurs(full_scope=True)
+            ],
         )
         update_bailleur = bool(self.request.POST.get("update_bailleur", False))
         if update_bailleur:

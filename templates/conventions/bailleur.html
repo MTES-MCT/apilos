@@ -28,10 +28,10 @@
                                 <p>Les infomations dans ce cadre sont attachées à l'entreprise bailleur,
                                     les modifications seront donc reportées sur toutes les conventions en
                                     projet ou en cours d'instruction appartement à ce bailleur.</p>
-                                {% if not form.bailleur.field.choices|length_is:1 %}
+                                {% if upform.bailleur.field.choices|length > 1 %}
                                     <details>
                                         <summary>
-                                            <span class="fr-link">Vous pouvez aussi demander une modification du bailleur de l'opération de la convention</span>
+                                            <span class="fr-link">Vous pouvez aussi demander une modification du bailleur de l'opération de la convention en cliquant sur ce lien</span>
                                         </summary>
                                         <div>
                                             {% csrf_token %}
@@ -39,7 +39,7 @@
                                                 {% include "common/form/input_select.html" with form_input=upform.bailleur mandatory_input=True object_field="bailleur__uuid__"|add:convention_uuid_str %}
                                             {% endwith %}
                                             <button class="fr-btn" name="update_bailleur" value="True">
-                                                Appliquer
+                                                Changer le bailleur de la convention et de son opération
                                             </button>
                                         </div>
                                     </details>

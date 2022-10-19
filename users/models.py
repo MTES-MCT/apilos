@@ -56,7 +56,9 @@ class User(AbstractUser):
         ),
         blank=True,
     )
-    creator = models.ForeignKey('users.User', on_delete=models.SET_NULL, blank=True, null=True)
+    creator = models.ForeignKey(
+        "users.User", on_delete=models.SET_NULL, blank=True, null=True
+    )
 
     def has_object_permission(self, obj):
         if isinstance(obj, (Convention, Lot)):
@@ -183,7 +185,7 @@ class User(AbstractUser):
     # bailleur = ???, filtre = {}
     # else raise
     #
-    def administration_filter(self):
+    def administration_filter(self, full_scope=False):
         if self.is_superuser:
             return {}
 
@@ -193,6 +195,8 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for bailleur
         if self.is_bailleur():
+            if full_scope:
+                return {}
             return {"id__in": []}
 
         raise Exception(
@@ -211,10 +215,10 @@ class User(AbstractUser):
             )
         )
 
-    def administrations(self, order_by="nom"):
-        return Administration.objects.filter(**self.administration_filter()).order_by(
-            order_by
-        )
+    def administrations(self, order_by="nom", full_scope=False):
+        return Administration.objects.filter(
+            **self.administration_filter(full_scope=full_scope)
+        ).order_by(order_by)
 
     #
     # list of bailleurs following role
@@ -223,12 +227,14 @@ class User(AbstractUser):
     # bailleur = bailleurs which belongs to the user as a bailleur, filtre = {id__in: [x,y,z]}
     # else raise
     #
-    def bailleur_filter(self):
+    def bailleur_filter(self, full_scope=False):
         if self.is_superuser:
             return {}
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
+            if full_scope:
+                return {}
             return {"id__in": []}
 
         if self.is_bailleur():
@@ -249,8 +255,10 @@ class User(AbstractUser):
             )
         )
 
-    def bailleurs(self, order_by="nom"):
-        return Bailleur.objects.filter(**self.bailleur_filter()).order_by(order_by)
+    def bailleurs(self, order_by="nom", full_scope=False):
+        return Bailleur.objects.filter(
+            **self.bailleur_filter(full_scope=full_scope)
+        ).order_by(order_by)
 
     def _apply_geo_filters(self, conventions):
         if self.is_cerbere_user() and "role" in self.siap_habilitation:
