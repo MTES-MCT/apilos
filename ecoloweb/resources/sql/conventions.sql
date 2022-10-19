@@ -6,7 +6,6 @@
 -- programme_id FK(programme) not null
 -- comments                           text
 -- fond_propre                        double precision
--- statut                             varchar(25)
 -- type1and2                          varchar(25)
 -- type2_lgts_concernes_option1       boolean                  not null
 -- type2_lgts_concernes_option2       boolean                  not null
@@ -27,6 +26,14 @@
 select
     c.id,
     c.noreglementaire as numero,
+    case
+        when pec.code = 'INS' then '2. Instruction requise'
+        when pec.code = 'ANI' then '3. Corrections requises' -- Abandonnée en instruction
+        when pec.code = 'OPP' then '5. Signée'
+        when pec.code = 'RES' then '6. Résiliée'
+        when pec.code = 'DEN' then '7. Dénoncée'
+        when pec.code = 'ANS' then '8. Annulée en suivi'
+    end as statut,
     cdg.datehistoriquefin as date_fin_conventionnement,
     -- Financement
     c.datedepot::timestamp at time zone '{{ timezone }}' as soumis_le,
@@ -37,6 +44,7 @@ select
     er.date_resiliation as date_resiliation
 from ecolo.ecolo_conventionapl c
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.id = cdg.conventionapl_id
+    inner join ecolo.ecolo_valeurparamstatic pec on cdg.etatconvention_id = pec.id and pec.subtype = 'ECO' -- Etat de la convention
     left join (
         select
             distinct on (e.conventionapl_id)
