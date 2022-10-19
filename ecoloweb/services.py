@@ -196,9 +196,12 @@ class AdministrationImportHandler(ModelImportHandler):
         return self._get_sql_from_file('resources/sql/administrations.sql')
 
     def _process_row(self, data: dict) -> bool:
-        data['ecoloweb_id'] = data.pop('id')
+        ecolo_id = data.pop('id')
 
-        administration, created = Administration.objects.get_or_create(code=data['code'], defaults=data)
+        if ref := self._find_ecolo_reference(Administration, ecolo_id) is None:
+            administration, created = Administration.objects.get_or_create(code=data['code'], defaults=data)
+        else:
+            created = False
 
         return created
 
@@ -217,10 +220,11 @@ class EcolowebImportService:
         self.connection: CursorWrapper = connections[connection].cursor()
         self.handlers = [
             # TODO manager dependencies between handlers (ex: ProgrammeLotImportHandler requires ProgrammeImportHandler)
-            ProgrammeImportHandler(self.connection),
+            #ProgrammeImportHandler(self.connection),
             #ProgrammeLotImportHandler(self.connection),
             #ProgrammeLogementImportHandler(self.connection)
             #ConventionImportHandler(self.connection)
+            AdministrationImportHandler(self.connection),
         ]
 
     def process(self):
