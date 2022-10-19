@@ -16,6 +16,7 @@ class ReturnStatus(Enum):
     SUCCESS = "SUCCESS"
     ERROR = "ERROR"
     WARNING = "WARNING"
+    # used to manage success without redirect on next step on step form
     REFRESH = "REFRESH"
 
 
