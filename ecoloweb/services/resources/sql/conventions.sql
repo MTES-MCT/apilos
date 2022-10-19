@@ -1,7 +1,6 @@
 -- Requête pour alimenter la table conventions_convention
 
 -- financement                        varchar(25)              not null,
--- bailleur_id FK(bailleur) not null
 -- lot_id FK(programme_lot) not null
 -- programme_id FK(programme) not null
 -- comments                           text
@@ -25,6 +24,8 @@
 -- signataire_nom                     varchar(255)
 select
     c.id,
+    pb.bailleur_id,
+    cdg.id as programme_id,
     c.noreglementaire as numero,
     case
         when pec.code = 'INS' then '2. Instruction requise'
@@ -44,6 +45,17 @@ select
     er.date_resiliation as date_resiliation
 from ecolo.ecolo_conventionapl c
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.id = cdg.conventionapl_id
+    inner join (
+        -- Sur Ecolo il peut y avoir un bailleur gestionnaire *par logement*, aussi on attribue à la convention le
+        -- bailleur majoritaire
+        select
+            pl.conventiondonneesgenerales_id,
+            pl.bailleurgestionnaire_id as bailleur_id
+        from ecolo.ecolo_programmelogement pl
+            inner join ecolo.ecolo_bailleur b on pl.bailleurgestionnaire_id = b.id
+        group by pl.conventiondonneesgenerales_id, pl.bailleurgestionnaire_id
+        order by count(distinct(b.id)) desc
+    ) pb on pb.conventiondonneesgenerales_id = cdg.id
     inner join ecolo.ecolo_valeurparamstatic pec on cdg.etatconvention_id = pec.id and pec.subtype = 'ECO' -- Etat de la convention
     left join (
         select
@@ -74,7 +86,4 @@ from ecolo.ecolo_conventionapl c
     ) ev on ev.convention_id = c.id -- Évènement de résiliation
 where
     cdg.avenant_id is null -- exclude avenant related conventions
-{% if max_row %}
 order by random()
-limit {{ max_row }}
-{% endif %}
