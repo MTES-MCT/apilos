@@ -7,6 +7,7 @@ from django.db import connections
 from django.db.backends.utils import CursorWrapper
 from django.db.models import Model
 from django.template import Template, Context
+from django.utils import timezone
 
 from bailleurs.models import Bailleur
 from conventions.models import Convention
@@ -29,7 +30,8 @@ class ModelImportHandler(ABC):
         return ''.join(open(os.path.join(os.path.dirname(__file__), path), 'r').readlines())
 
     def _get_sql_from_template(self, path: str, context: dict = {}):
-        return Template(self._get_file_content(path)).render(Context(context))
+        return Template(self._get_file_content(path))\
+            .render(Context(context | {'timezone': timezone.get_current_timezone()}))
 
     def _get_sql_from_file(self, path: str) -> str:
         return self._get_file_content(path)

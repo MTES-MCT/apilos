@@ -27,12 +27,13 @@
 select
     c.id,
     c.noreglementaire as numero,
-    c.datedepot as soumis_le,
-    ev.date_validation as valide_le,
     cdg.datehistoriquefin as date_fin_conventionnement,
-    c.datesaisie as cree_le,
-    c.datemodification as mis_a_jour_le,
-    eps.date_premiere_soumission as premiere_soumission_le,
+    -- Financement
+    c.datedepot::timestamp at time zone '{{ timezone }}' as soumis_le,
+    ev.date_validation::timestamp at time zone '{{ timezone }}' as valide_le,
+    c.datesaisie::timestamp at time zone '{{ timezone }}' as cree_le,
+    c.datemodification::timestamp at time zone '{{ timezone }}' as mis_a_jour_le,
+    eps.date_premiere_soumission::timestamp at time zone '{{ timezone }}' as premiere_soumission_le,
     er.date_resiliation as date_resiliation
 from ecolo.ecolo_conventionapl c
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.id = cdg.conventionapl_id
