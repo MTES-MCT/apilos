@@ -1,8 +1,10 @@
 import os
 
 from typing import Optional, List, Dict
-
 from abc import ABC, abstractmethod
+
+from django.db import connections
+from django.db.backends.utils import CursorWrapper
 from django.db.models import Model
 from django.template import Template, Context
 from django.utils import timezone
@@ -11,7 +13,10 @@ from ecoloweb.models import EcoloReference
 
 
 class ModelImportHandler(ABC):
-    count: int = 0
+
+    def __init__(self):
+        self._count: int = 0
+        self._connection: CursorWrapper = connections['ecoloweb'].cursor()
 
     @abstractmethod
     def _get_sql_query(self, criteria: dict) -> str:
@@ -49,40 +54,37 @@ class ModelImportHandler(ABC):
         )
 
     @abstractmethod
-    def _process_data(self, data: dict, importer: 'EcolowebImportService') -> Optional[Model]:
+    def _process_data(self, data: dict) -> Optional[Model]:
         pass
 
-    def import_one(self, pk: int, importer: 'EcolowebImportService') -> Optional[Model]:
+    def import_one(self, pk: int) -> Optional[Model]:
         return None
 
-    def import_all(self, importer: 'EcolowebImportService', criteria: dict = None):
+    def import_all(self, criteria: dict = None):
         if criteria is None:
             criteria = {}
         count: int = 0
 
         # Run query
-        for data in self.query_multiple_rows(self._get_sql_query(criteria), importer):
-            self.count += 1 if self._process_data(importer, data) else 0
+        for data in self.query_multiple_rows(self._get_sql_query(criteria)):
+            self._count += 1 if self._process_data(data) else 0
 
         self.on_complete()
 
     def on_complete(self):
         pass
 
-    @staticmethod
-    def query_single_row(query: str, importer: 'EcolowebImportService') -> Optional[Dict]:
-        importer.connection.execute(query)
+    def query_single_row(self, query: str) -> Optional[Dict]:
+        self._connection.execute(query)
 
-        columns = [col[0] for col in importer.connection.description]
-        row = importer.connection.fetchone()
-        print(row)
+        columns = [col[0] for col in self._connection.description]
+        row = self._connection.fetchone()
 
         return dict(zip(columns, row)) if row else None
 
-    @staticmethod
-    def query_multiple_rows(query: str, importer) -> List[Dict]:
-        importer.connection.execute(query)
+    def query_multiple_rows(self, query: str) -> List[Dict]:
+        self._connection.execute(query)
 
-        columns = [col[0] for col in importer.connection.description]
+        columns = [col[0] for col in self._connection.description]
 
-        return list(map(lambda row: dict(zip(columns, row)), importer.connection.fetchall()))
+        return list(map(lambda row: dict(zip(columns, row)), self._connection.fetchall()))
