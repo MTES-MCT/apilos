@@ -32,7 +32,7 @@ class Command(BaseCommand):
 
         try:
             # Actual processing
-            self.importer.process()
+            ConventionImportHandler().import_all()
         except DatabaseError as e:
             transaction.rollback()
             raise e

@@ -5,7 +5,7 @@ from instructeurs.models import Administration
 
 class AdministrationImportHandler(ModelImportHandler):
 
-    def _get_sql_query(self) -> str:
+    def _get_sql_query(self, criteria: dict) -> str:
         return self._get_sql_from_file('resources/sql/administrations.sql')
 
     def _process_data(self, data: dict) -> bool:
@@ -21,4 +21,4 @@ class AdministrationImportHandler(ModelImportHandler):
         return created
 
     def on_complete(self):
-        print(f"Migrated {self.count} administration(s)")
+        print(f"Migrated {self._count} administration(s)")

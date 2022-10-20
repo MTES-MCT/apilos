@@ -11,9 +11,9 @@ class ProgrammeImportHandler(ModelImportHandler):
     def _get_sql_query(self, criteria: dict) -> str:
         return self._get_sql_from_template('resources/sql/programmes.sql', {'max_row': 10})
 
-    def _process_data(self, importer: 'EcolowebImportService', data: dict) -> bool:
+    def _process_data(self, data: dict) -> bool:
         # TODO: attach a real bailleur instead of a randomly picked one
-        data['bailleur'] = BailleurImportHandler().import_one(data.pop('bailleur_id'), importer)
+        data['bailleur'] = BailleurImportHandler().import_one(data.pop('bailleur_id'))
         ecolo_id = data.pop('id')
 
         if ref := self._find_ecolo_reference(Programme, ecolo_id) is None:
@@ -30,7 +30,7 @@ class ProgrammeImportHandler(ModelImportHandler):
         return created
 
     def on_complete(self):
-        print(f"Migrated {self.count} programme(s)")
+        print(f"Migrated {self._count} programme(s)")
 
 
 class ProgrammeLotImportHandler(ModelImportHandler):
@@ -38,7 +38,7 @@ class ProgrammeLotImportHandler(ModelImportHandler):
     def _get_sql_query(self, criteria: dict) -> str:
         return self._get_sql_from_template('resources/sql/programme_lots.sql', {'max_row': 10})
 
-    def _process_data(self, importer: 'EcolowebImportService', data: dict) -> bool:
+    def _process_data(self, data: dict) -> bool:
         ecolo_id = data.pop('id')
         if ref := self._find_ecolo_reference(Programme, ecolo_id) is None:
 
@@ -57,7 +57,7 @@ class ProgrammeLotImportHandler(ModelImportHandler):
         return created
 
     def on_complete(self):
-        print(f"Migrated {self.count} lot(s)")
+        print(f"Migrated {self._count} lot(s)")
 
 
 class ProgrammeLogementImportHandler(ModelImportHandler):
@@ -65,7 +65,7 @@ class ProgrammeLogementImportHandler(ModelImportHandler):
     def _get_sql_query(self, criteria: dict) -> str:
         return self._get_sql_from_template('resources/sql/programme_logements.sql', {'max_row': 10})
 
-    def _process_data(self, importer: 'EcolowebImportService', data: dict) -> bool:
+    def _process_data(self, data: dict) -> bool:
         ecolo_id = data.pop('id')
         if ref := self._find_ecolo_reference(Logement, ecolo_id) is None:
 
@@ -84,4 +84,4 @@ class ProgrammeLogementImportHandler(ModelImportHandler):
         return created
 
     def on_complete(self):
-        print(f"Migrated {self.count} logement(s)")
+        print(f"Migrated {self._count} logement(s)")
