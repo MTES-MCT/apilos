@@ -9,15 +9,24 @@
         {% include "conventions/common/form_header.html"%}
         {% include "common/nav_bar.html" with nav_bar_step="action" %}
         <div class="fr-container fr-py-5w">
-            <div class="fr-col-md-12 fr-mt-2w fr-mb-4w">
-                <div role="alert" class="fr-alert fr-alert--success">
-                    {% if convention.televersement_convention_signee_le %}
-                        <p class="">Votre convention signée a été validée le <strong>{{convention.televersement_convention_signee_le}}</strong> <em>(Avec le numéro {{convention.numero}})</em>
-                        </p>
-                    {% else %}
-                        <p class="fr-alert__title">Votre convention signée a déjà été téléversée</p>
-                    {% endif %}
+            <div class="fr-col-12 fr-mt-2w fr-mb-4w">
+                <p class="fr-alert__title">
+                    Générer la fiche CAF
+                </p>
+                <div class="fr-grid-row">
+                    <div class="apilos-step-post-action fr-mr-2w">
+                        <div class="apilos-step-post-action--bubble fr-mr-2w"></div>
+                        <div class="apilos-step-post-action--line"></div>
+                    </div>
+                    <div class="fr-col-11">
+                        {% if convention.televersement_convention_signee_le %}
+                            <p>Convention signée le <strong>{{convention.televersement_convention_signee_le}}</strong></p>
+                        {% else %}
+                            <p>Votre convention signée a déjà été téléversée</p>
+                        {% endif %}
+                    </div>
                 </div>
+                {% include "conventions/avenant_list.html" with conventions=avenants %}
             </div>
             <div class="fr-col-12 fr-mb-4w">
                 <div role="alert" class="fr-alert fr-alert--info  fr-icon-arrow-right-s-line-double">
@@ -123,9 +132,6 @@
                     </div>
                 {% endif %}
             </div>
-            <div class="fr-mb-2w fr-pt-2w apilos-line-top"></div>
-            {% include "conventions/avenant_list.html" with conventions=avenants %}
-
             {% if request|is_instructeur %}
                 <div class="fr-accordion fr-mt-5w">
                     <div class="fr-accordion__title">

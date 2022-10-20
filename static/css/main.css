@@ -645,6 +645,22 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   background-color: transparent;
 }
 
+.apilos-step-post-action {
+  width: 40px;
+}
+.apilos-step-post-action--bubble {
+  height: 24px;
+  width: 24px;
+  border-radius: 12px;
+  border: solid 2px  var(--background-action-high-blue-france);
+}
+.apilos-step-post-action--line {
+  height: calc(100% - 24px);
+  width: 24px;
+  border-left: solid 2px var(--background-action-high-blue-france);
+  transform: translateX(11px);
+}
+
 /*
  * Display convention status
  */

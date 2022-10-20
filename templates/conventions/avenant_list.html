@@ -1,69 +1,39 @@
 {% load custom_filters %}
 
-<div class="fr-container">
-    <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-md-12 ">
-
-            <form class="fr-my-3w" method="get" action="" id="search_table">
-                <input type="hidden" id="order_by" name="order_by" value="{{conventions.order_by}}">
-                <input type="hidden" id="page" name="page" value="{{conventions.page}}">
-            </form>
-
-            {% if conventions.paginated_conventions %}
-                <div class="fr-table fr-table--bordered table--layout-fixed">
-                    <table>
-                        <caption><em>{{ conventions.paginated_conventions.paginator.count }} avenant{{ conventions.paginated_conventions.paginator.count|pluralize }} à cette convention</em></caption>
-                        <thead>
-                            <tr class="th_inline">
-                                <th title="Numéro de l'avenant" scope="col">
-                                    Numéro
-                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='numero' url_target='conventions:post_action' %}
-                                </th>
-                                <th title="Date de création" scope="col">
-                                    Créé le
-                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='cree_le' url_target='conventions:post_action' %}
-                                </th>
-                                <th title="Nombre de logements" scope="col">
-                                    Nb Lgts
-                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='lot__nb_logements' url_target='conventions:post_action' %}
-                                </th>
-                                <th title="Statut de la convention" scope="col">
-                                    Statut
-                                    {% include "common/table/display_order_icon.html" with order_by=conventions.order_by order_by_column='statut' url_target='conventions:post_action' %}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for convention in conventions.paginated_conventions %}
-
-                                <tr id="convention_redirect_{{convention.uuid}}" class="clickable">
-                                    <td>{{convention.numero}}</td>
-                                    <td>{{convention.cree_le|date:"d/m/Y"|default_if_none:'-' }}</td>
-                                    <td>{{convention.lot.nb_logements}}</td>
-                                    <td title="{{convention.statut_for_template.statut_display}}">
-                                        <div class="fr-p-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
-                                            <span><strong>
-                                                {{convention.short_statut_for_template}}
-                                            </strong></span>
-                                        </div>
-                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                            document.addEventListener('DOMContentLoaded', function () {
-                                                document.getElementById('convention_redirect_{{convention.uuid}}').addEventListener('click', function(){
-                                                    location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
-                                                });
-                                            });
-                                        </script>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+{% if conventions.paginated_conventions %}
+    {% for convention in conventions.paginated_conventions %}
+        <div class="fr-grid-row">
+            <div class="apilos-step-post-action fr-mr-2w">
+                <div class="apilos-step-post-action--bubble fr-mr-2w"></div>
+                <div class="apilos-step-post-action--line"></div>
+            </div>
+            {% if convention|display_is_validated %}
+                <div class="fr-col-11">
+                    <div class="fr-grid-row">
+                        Avenant du <span class="fr-ml-1v"><strong> {{convention.cree_le|date:"d/m/Y"|default_if_none:'-' }} </strong></span>
+                    </div>
+                    <div class="fr-mb-3w">
+                        <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}"> Voir le document</a>
+                    </div>
                 </div>
-                {% include 'common/table/pagination.html' with paginate_list=conventions.paginated_conventions %}
-
             {% else %}
-                <p>Aucun avenant à cette convention...</p>
+                <div class="fr-col-11">
+                    <div class="fr-grid-row">
+                        Avenant du <span class="fr-ml-1v"><strong> {{convention.cree_le|date:"d/m/Y"|default_if_none:'-' }} </strong></span>
+                        <div class="fr-py-1v fr-px-1w fr-mb-0 fr-ml-2w fr-mt-n1v fr-text--sm apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
+                            <span><strong>
+                                {{convention.short_statut_for_template}}
+                            </strong></span>
+                        </div>
+                    </div>
+                    <div class="fr-mb-3w fr-mt-n1v">
+                        <a class="fr-link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" >Voir l'avenant</a>
+                    </div>
+                </div>
             {% endif %}
         </div>
-    </div>
-</div>
+    {% endfor %}
+{% else %}
+    <p>Aucun avenant à cette convention...</p>
+{% endif %}
+
