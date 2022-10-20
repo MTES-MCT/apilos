@@ -1,16 +1,17 @@
 {% load custom_filters %}
-
 {% if conventions.paginated_conventions %}
     {% for convention in conventions.paginated_conventions %}
         <div class="fr-grid-row">
             <div class="apilos-step-post-action fr-mr-2w">
                 <div class="apilos-step-post-action--bubble fr-mr-2w"></div>
-                <div class="apilos-step-post-action--line"></div>
+                {% if not forloop.last %}
+                    <div class="apilos-step-post-action--line"></div>
+                {% endif %}
             </div>
             {% if convention|display_is_validated %}
                 <div class="fr-col-11">
                     <div class="fr-grid-row">
-                        Avenant du <span class="fr-ml-1v"><strong> {{convention.cree_le|date:"d/m/Y"|default_if_none:'-' }} </strong></span>
+                        Avenant du <span class="fr-ml-1v"><strong> {{convention.cree_le|date:"d F Y"|default_if_none:'-' }} </strong></span>
                     </div>
                     <div class="fr-mb-3w">
                         <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}"> Voir le document</a>
@@ -19,7 +20,7 @@
             {% else %}
                 <div class="fr-col-11">
                     <div class="fr-grid-row">
-                        Avenant du <span class="fr-ml-1v"><strong> {{convention.cree_le|date:"d/m/Y"|default_if_none:'-' }} </strong></span>
+                        Avenant du <span class="fr-ml-1v"><strong> {{convention.cree_le|date:"d F Y"|default_if_none:'-' }} </strong></span>
                         <div class="fr-py-1v fr-px-1w fr-mb-0 fr-ml-2w fr-mt-n1v fr-text--sm apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
                             <span><strong>
                                 {{convention.short_statut_for_template}}
@@ -33,7 +34,5 @@
             {% endif %}
         </div>
     {% endfor %}
-{% else %}
-    <p>Aucun avenant à cette convention...</p>
 {% endif %}
 

@@ -689,6 +689,7 @@ def convention_post_action(request, convention_uuid):
         .prefetch_related("programme")
         .prefetch_related("lot"),
     )
+    total_avenants = convention.avenants.all().count()
     avenant_list_service.paginate()
 
     return {
@@ -696,6 +697,7 @@ def convention_post_action(request, convention_uuid):
         "upform": upform,
         "convention": convention,
         "avenants": avenant_list_service,
+        "total_avenants": total_avenants,
         "resiliation_form": resiliation_form,
     }
 
