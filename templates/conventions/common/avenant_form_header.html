@@ -61,8 +61,12 @@
                                         en attente d'une signature
                                     </span>
                                 </p>
-                                {% if convention.administration.adresse and convention.administration.code_postal and convention.administration.ville %}
-                                    <p>Imprimez-le, signez-le et envoyez le à l’adresse suivante : {{ convention.administration.adresse }} - {{ convention.administration.code_postal }} {{ convention.administration.ville }}</p>
+                                {% if request|is_instructeur %}
+                                    Vous pouvez <a class="fr-link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>téléverser l'avenant signé</a>
+                                {% else %}
+                                    {% if convention.administration.adresse and convention.administration.code_postal and convention.administration.ville %}
+                                        <p>Imprimez-le, signez-le et envoyez le à l'adresse suivante : {{ convention.administration.adresse }} - {{ convention.administration.code_postal }} {{ convention.administration.ville }}</p>
+                                    {% endif %}
                                 {% endif %}
                             {% elif convention|display_redirect_post_action %}
                                 <p class="fr-text--lg">
