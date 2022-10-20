@@ -45,6 +45,9 @@ select
     er.date_resiliation as date_resiliation
 from ecolo.ecolo_conventionapl c
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.id = cdg.conventionapl_id
+    inner join ecolo.ecolo_entitegest eg on c.entitecreatrice_id = eg.id
+    inner join ecolo.ecolo_entitegestadresse aa on eg.adresse_id = aa.id
+    inner join ecolo.ecolo_departement ed on starts_with(aa.codepostal, ed.codeinsee)
     inner join (
         -- Sur Ecolo il peut y avoir un bailleur gestionnaire *par logement*, aussi on attribue à la convention le
         -- bailleur majoritaire
@@ -86,4 +89,7 @@ from ecolo.ecolo_conventionapl c
     ) ev on ev.convention_id = c.id -- Évènement de résiliation
 where
     cdg.avenant_id is null -- exclude avenant related conventions
+    {% if departements %}
+    and ed.codeinsee in ({{ departements|safeseq|join:',' }})
+    {% endif %}
 order by random()
