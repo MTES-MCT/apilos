@@ -723,6 +723,7 @@ def create_avenant(request, convention_uuid):
                 "success": utils.ReturnStatus.SUCCESS,
                 "convention": avenant,
                 "parent_convention": parent_convention,
+                "avenant_type": new_avenant_form.cleaned_data["avenant_type"].first(),
             }
     else:
         new_avenant_form = NewAvenantForm()

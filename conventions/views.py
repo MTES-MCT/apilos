@@ -163,7 +163,7 @@ def avenant_logements(request, convention_uuid):
             **result,
             "form_step": {
                 "number": 1,
-                "total": 4,
+                "total": 3,
                 "title": "Logements",
                 "next": "Annexes",
                 "next_target": "conventions:avenant_annexes",
@@ -220,7 +220,7 @@ def avenant_annexes(request, convention_uuid):
             **result,
             "form_step": {
                 "number": 2,
-                "total": 4,
+                "total": 3,
                 "title": "Annexes",
                 "next": "Commentaires",
                 "next_target": "conventions:avenant_comments",
@@ -494,10 +494,12 @@ def fiche_caf(request, convention_uuid):
 @permission_required("convention.add_convention")
 def new_avenant(request, convention_uuid):
     result = services.create_avenant(request, convention_uuid)
+    print(result["avenant_type"])
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:avenant_logements", args=[result["convention"].uuid])
         )
+
     return render(
         request,
         "conventions/new_avenant.html",
@@ -508,6 +510,7 @@ def new_avenant(request, convention_uuid):
 
 
 class ConventionView(ABC, LoginRequiredMixin, View):
+    # pylint: disable=R0201
 
     target_template: str
     current_path_redirect: None | str = None
@@ -593,6 +596,19 @@ class ConventionBailleurView(ConventionView):
         return Convention.objects.prefetch_related("bailleur").get(uuid=convention_uuid)
 
 
+class AvenantBailleurView(ConventionBailleurView):
+
+    target_template: str = "conventions/avenant_bailleur.html"
+    next_path_redirect: str = "conventions:avenant_comments"
+    form_step: dict = {
+        "number": 1,
+        "total": 2,
+        "title": "Bailleur",
+        "next": "Commentaires",
+        "next_target": next_path_redirect,
+    }
+
+
 class ConventionProgrammeView(ConventionView):
     target_template: str = "conventions/programme.html"
     next_path_redirect: str = "conventions:cadastre"
@@ -661,7 +677,7 @@ class AvenantCommentsView(ConventionCommentsView):
     next_path_redirect: str = "conventions:recapitulatif"
     form_step: dict = {
         "number": 3,
-        "total": 4,
+        "total": 3,
         "title": "Commentaires",
         "next": "Récapitulatif",
         "next_target": next_path_redirect,

@@ -12,6 +12,11 @@ urlpatterns = [
         name="bailleur",
     ),
     path(
+        "avenant_bailleur/<convention_uuid>",
+        views.AvenantBailleurView.as_view(),
+        name="avenant_bailleur",
+    ),
+    path(
         "programme/<convention_uuid>",
         views.ConventionProgrammeView.as_view(),
         name="programme",
