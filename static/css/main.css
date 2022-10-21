@@ -652,12 +652,12 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   height: 24px;
   width: 24px;
   border-radius: 12px;
-  border: solid 2px  var(--background-action-high-blue-france);
+  border: solid 3px  var(--background-action-high-blue-france);
 }
 .apilos-step-post-action--line {
   height: calc(100% - 24px);
   width: 24px;
-  border-left: solid 2px var(--background-action-high-blue-france);
+  border-left: solid 3px var(--background-action-high-blue-france);
   transform: translateX(11px);
 }
 

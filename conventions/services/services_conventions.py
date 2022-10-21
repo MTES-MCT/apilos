@@ -216,6 +216,7 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
                 "type2_lgts_concernes_option8": convention.type2_lgts_concernes_option8,
             }
         )
+    avenant_list = [avenant.nom for avenant in convention.avenant_type.all()]
     return {
         **utils.base_convention_response_error(request, convention),
         "opened_comments": opened_comments,
@@ -230,6 +231,7 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
         "notificationForm": NotificationForm(),
         "conventionNumberForm": convention_number_form,
         "ConventionType1and2Form": convention_type1_and_2_form,
+        "avenant_list": avenant_list,
     }
 
 

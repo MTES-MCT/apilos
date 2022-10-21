@@ -24,18 +24,22 @@
             {% include "common/step_progressbar.html"%}
             <div class="fr-container">
                 {% csrf_token %}
-                {% include "conventions/recapitulatif/alert_convention.html" %}
                 {% if convention|display_comments %}
                     <turbo-frame id="opened_comments_block" data-turbo="true">
                         {% include "comments/opened_comments.html" %}
                     </turbo-frame>
                 {% endif %}
-
-                {% include "conventions/recapitulatif/logements.html" %}
-                {% include "conventions/recapitulatif/annexes.html" %}
-                {% include "conventions/recapitulatif/comments.html" %}
-
-
+                {% if 'bailleur' in avenant_list %}
+                    {% include "conventions/recapitulatif/bailleur.html" %}
+                {% endif %}
+                {% if 'logements' in avenant_list %}
+                    {% include "conventions/recapitulatif/logements.html" %}
+                    {% include "conventions/recapitulatif/annexes.html" %}
+                    {% include "conventions/recapitulatif/comments.html" %}
+                {% endif %}
+                {% if 'duree' in avenant_list %}
+                    {% include "conventions/recapitulatif/financements.html" %}
+                {% endif %}
                 <turbo-frame id="convention_actions" data-turbo="true">
 
                     <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
@@ -58,6 +62,16 @@
                     {% include "conventions/actions/instructeur_notification.html" %}
 
                     {% include "conventions/actions/instructeur_validation.html" %}
+
+                    {% if 'logements' not in avenant_list %}
+                        pas de logements,
+                    {% endif %}
+                    {% if 'bailleur' not in avenant_list %}
+                        pas de bailleur,
+                    {% endif %}
+                    {% if 'duree' not in avenant_list %}
+                        pas de durée
+                    {% endif %}
 
                     {% if convention|display_is_resiliated %}
 
