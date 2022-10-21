@@ -104,11 +104,11 @@
                         <h4>Préciser aussi</h4>
 
                         <div class="fr-mb-2w">
-                            <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                                     <div class="fr-input-group {% if form.annee_fin_conventionnement.errors %}fr-select-group--error{% endif %}">
                                         <label class="fr-label fr-mb-1w" for="{{form.annee_fin_conventionnement.id_for_label}}">
-                                            {{ form.annee_fin_conventionnement.label }}
+                                            Date de fin de la convention
                                             {% include "common/form/required_field.html" with form_input=form.annee_fin_conventionnement %}
                                             <details>
                                                 <summary class="text-title-blue-france fr-text--xs">
@@ -121,36 +121,14 @@
                                             </details>
                                             {% include "common/help_field.html" with form_input=form.annee_fin_conventionnement helptext_visible=True %}
                                         </label>
-                                        <div class="block--row-strech fr-mt-1w">
-                                            <div class="day-and-month">
+                                        <div class="block--row-strech">
+                                            <div class="fr-mt-1w fr-mr-1w">
                                                 <span>30&nbsp;/&nbsp;06&nbsp;/&nbsp;</span>
                                             </div>
-                                            <div class="year" id="{{form.annee_fin_conventionnement.id_for_label}}_group">
-                                                <div class="block--row-strech" id="{{form.annee_fin_conventionnement.id_for_label}}_div">
-                                                    <select
-                                                        class="fr-select {% if form.annee_fin_conventionnement.errors %}fr-select--error{% endif %}"
-                                                        id="{{form.annee_fin_conventionnement.id_for_label}}"
-                                                        name="{{form.annee_fin_conventionnement.html_name}}"
-                                                        {% include "common/form/disable_form_input.html" with object_field="convention__annee_fin_conventionnement__"|add:form.uuid.value %}>
-                                                        <option value="" {% if not form.annee_fin_conventionnement.value %}selected{% endif %} disabled hidden>Année</option>
-                                                        {% for year in years %}
-                                                            <option value="{{year}}"
-                                                                {% if year|slugify == form.annee_fin_conventionnement.value|slugify %}selected{% endif %}>
-                                                                {{year}}
-                                                            </option>
-                                                        {% endfor %}
-                                                    </select>
-
-                                                    {% include "common/utils/comments_field.html" with form_input=form.annee_fin_conventionnement object_field="convention__annee_fin_conventionnement__"|add:form.uuid.value %}
-
-                                                </div>
+                                            <div class="block--row-strech-1">
+                                                {% include "common/form/input_select.html" with form_input=form.annee_fin_conventionnement object_field="convention__annee_fin_conventionnement__"|add:form.uuid.value %}
                                             </div>
                                         </div>
-                                        {% for error in form.annee_fin_conventionnement.errors %}
-                                            <p id="select-error-desc-error" class="fr-error-text">
-                                                {{ error }}
-                                            </p>
-                                        {% endfor %}
                                     </div>
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">

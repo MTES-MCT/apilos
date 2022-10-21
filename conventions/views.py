@@ -22,6 +22,7 @@ from conventions.services.services_programmes import ConventionProgrammeService
 from conventions.services.services_bailleurs import ConventionBailleurService
 from conventions.services.services_conventions import (
     ConventionCommentsService,
+    ConventionFinancementService,
     ConventionService,
 )
 from conventions.services.services_logements import ConventionTypeStationnementService
@@ -109,34 +110,6 @@ def edd(request, convention_uuid):
                 "title": "EDD",
                 "next": "Financement",
                 "next_target": "conventions:financement",
-            },
-        },
-    )
-
-
-@login_required
-def financement(request, convention_uuid):
-    result = services.convention_financement(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        if result.get("redirect", False) == "recapitulatif":
-            return HttpResponseRedirect(
-                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
-            )
-        return HttpResponseRedirect(
-            reverse("conventions:logements", args=[result["convention"].uuid])
-        )
-    return render(
-        request,
-        "conventions/financement.html",
-        {
-            **result,
-            "years": range(2021, 2121),
-            "form_step": {
-                "number": 5,
-                "total": 9,
-                "title": "Financement",
-                "next": "Logements",
-                "next_target": "conventions:logements",
             },
         },
     )
@@ -638,6 +611,22 @@ class ConventionProgrammeView(ConventionView):
             .prefetch_related("lot")
             .get(uuid=convention_uuid)
         )
+
+
+class ConventionFinancementView(ConventionView):
+    target_template: str = "conventions/financement.html"
+    next_path_redirect: str = "conventions:logements"
+    service_class: ConventionService = ConventionFinancementService
+    form_step: dict = {
+        "number": 5,
+        "total": 9,
+        "title": "Financement",
+        "next": "Logements",
+        "next_target": next_path_redirect,
+    }
+
+    def _get_convention(self, convention_uuid):
+        return Convention.objects.prefetch_related("pret_set").get(uuid=convention_uuid)
 
 
 class ConventionTypeStationnementView(ConventionView):

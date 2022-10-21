@@ -216,10 +216,6 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   flex:1
 }
 
-.day-and-month {
-  width: 85px;
-}
-
 .year {
   width: 100%;
 }

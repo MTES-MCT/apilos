@@ -79,6 +79,14 @@ def get_form_value(form_instance, object_instance, field_name):
     return getattr(object_instance, field_name)
 
 
+def get_form_date_value(form_instance, object_instance, field_name):
+    if form_instance[field_name].value() is not None:
+        return form_instance[field_name].value()
+    return format_date_for_form(
+        getattr(object_instance, field_name)
+    )  # format_date_for_form(
+
+
 def build_partial_form(request, convention_object, field_list):
     fields_dict = {}
     for field in field_list:
