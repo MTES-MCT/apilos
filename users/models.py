@@ -44,7 +44,7 @@ class User(AbstractUser):
     preferences_email = models.CharField(
         max_length=25,
         choices=EmailPreferences.choices,
-        default=EmailPreferences.TOUS,
+        default=EmailPreferences.PARTIEL,
     )
     filtre_departements = models.ManyToManyField(
         Departement,

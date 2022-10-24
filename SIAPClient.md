@@ -124,6 +124,7 @@ Puis test de quelques appels:
 {
   "iat": 2655458148,
   "exp": 2655458448,
+  "token_type": "access",
   "jti": "9f192912-426b-41c2-a8a5-ab51077a27fd",
   "user-login": "nicolas.oudard@beta.gouv.fr",
   "habilitation-id": 339

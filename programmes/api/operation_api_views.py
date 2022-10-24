@@ -10,6 +10,7 @@ from drf_spectacular.utils import (
 )
 
 from siap.siap_authentication import SIAPJWTAuthentication
+from programmes.services import get_or_create_conventions_from_operation_number
 from programmes.models import Programme
 from programmes.api.operation_serializers import OperationSerializer as MySerializer
 
@@ -43,7 +44,14 @@ class OperationDetails(generics.GenericAPIView):
         },
         description="Return Operations and all its conventions",
     )
-    def get(self, request, numero_galion):  # , format=None):
+    def get(self, request, numero_galion):
         programme = self.get_object(numero_galion)
+        serializer = MySerializer(programme)
+        return Response(serializer.data)
+
+    def post(self, request, numero_galion):
+        (programme, _, _) = get_or_create_conventions_from_operation_number(
+            request, numero_galion
+        )
         serializer = MySerializer(programme)
         return Response(serializer.data)
