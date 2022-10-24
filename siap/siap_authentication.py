@@ -84,7 +84,6 @@ class SIAPJWTAuthentication(JWTAuthentication):
                     ],
                 )
         except (KeyError, IndexError) as e:
-            logger.warning(e)
             raise AuthenticationFailed(
                 "User or Habilitation not found", code="user_not_found"
             ) from e

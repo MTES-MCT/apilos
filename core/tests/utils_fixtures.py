@@ -18,7 +18,7 @@ from programmes.models import (
 from bailleurs.models import Bailleur
 from upload.models import UploadedFile
 from users.models import User, Role
-from users.type_models import TypeRole
+from users.type_models import EmailPreferences, TypeRole
 from instructeurs.models import Administration
 
 FILES = [
@@ -64,14 +64,17 @@ def create_users_instructeur():
     user1 = User.objects.create_user("sabine", "sabine@apilos.com", "12345")
     user1.first_name = "Sabine"
     user1.last_name = "Marini"
+    user1.preferences_email = EmailPreferences.TOUS
     user1.save()
     user2 = User.objects.create_user("roger", "roger@apilos.com", "567890")
     user2.first_name = "Roger"
     user2.last_name = "Dupont"
+    user2.preferences_email = EmailPreferences.TOUS
     user2.save()
     user3 = User.objects.create_user("fix", "fix@apilos.com", "654321")
     user3.first_name = "François"
     user3.last_name = "Xavier"
+    user3.preferences_email = EmailPreferences.TOUS
     user3.save()
     return (
         user1,
@@ -84,14 +87,17 @@ def create_users_bailleur():
     user1 = User.objects.create_user("raph", "raph@apilos.com", "12345")
     user1.first_name = "Raphaëlle"
     user1.last_name = "Neyton"
+    user1.preferences_email = EmailPreferences.TOUS
     user1.save()
     user2 = User.objects.create_user("sophie", "sophie@apilos.com", "567890")
     user2.first_name = "Sophie"
     user2.last_name = "Eaubonne"
+    user2.preferences_email = EmailPreferences.TOUS
     user2.save()
     user3 = User.objects.create_user("sylvie", "sylvie@apilos.com", "01234")
     user3.first_name = "Sylvie"
     user3.last_name = "Vartan"
+    user3.preferences_email = EmailPreferences.TOUS
     user3.save()
     return (
         user1,
