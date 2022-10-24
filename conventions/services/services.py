@@ -3,7 +3,6 @@
 from .services_conventions import (
     convention_delete,
     convention_feedback,
-    convention_financement,
     convention_post_action,
     convention_preview,
     convention_sent,

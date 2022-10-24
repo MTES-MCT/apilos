@@ -43,9 +43,11 @@ class ConventionFinancementForm(forms.Form):
         required=False,
         label="Prêts et financements",
     )
-    annee_fin_conventionnement = forms.IntegerField(
+    annee_fin_conventionnement = forms.TypedChoiceField(
         required=True,
-        label="Date de fin de la convention",
+        label="",
+        coerce=int,
+        choices=[(str(year), str(year)) for year in range(2021, 2121)],
         error_messages={
             "required": "La date de fin de conventionnement est obligatoire",
         },
