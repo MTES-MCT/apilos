@@ -1,4 +1,3 @@
-import datetime
 import json
 
 import mock
@@ -7,7 +6,6 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import HttpRequest
 from django.test import RequestFactory, TestCase
 
-from bailleurs.forms import BailleurForm
 from conventions.forms import (
     ConventionCommentForm,
     ConventionFinancementForm,
@@ -16,217 +14,14 @@ from conventions.forms import (
 )
 from conventions.models import Convention, ConventionStatut, Pret, Preteur
 from conventions.services import (
-    services_bailleurs,
     services_conventions,
-    services_logements,
-    services_programmes,
     utils,
 )
 from core.services import EmailService
 from core.tests import utils_fixtures
-from programmes.forms import ProgrammeForm, TypeStationnementFormSet
-from programmes.models import TypeOperation, TypeStationnement
+from programmes.models import TypeOperation
 from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
-
-
-class ConventionBailleurServiceTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
-
-    def setUp(self):
-        request = HttpRequest()
-        convention = Convention.objects.get(numero="0001")
-        request.user = User.objects.get(username="fix")
-        self.service = services_bailleurs.ConventionBailleurService(
-            convention=convention, request=request
-        )
-
-    def test_get(self):
-        self.service.get()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertIsInstance(self.service.form, BailleurForm)
-        bailleur = self.service.convention.bailleur
-        self.assertEqual(
-            self.service.form.initial["uuid"],
-            bailleur.uuid,
-        )
-        self.assertEqual(self.service.form.initial["nom"], bailleur.nom)
-
-    def test_save(self):
-
-        bailleur = self.service.convention.bailleur
-        bailleur_signataire_nom = bailleur.signataire_nom
-        bailleur_signataire_fonction = bailleur.signataire_fonction
-        bailleur_signataire_date_deliberation = bailleur.signataire_date_deliberation
-
-        self.service.request.POST = {
-            "nom": "",
-            "adresse": "fake_address",
-            "code_postal": "00000",
-        }
-        self.service.save()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertTrue(self.service.form.has_error("nom"))
-
-        self.service.request.POST = {
-            "nom": "nom bailleur",
-            "adresse": "fake_address",
-            "code_postal": "00000",
-            "signataire_nom": "Johnny",
-            "signataire_fonction": "Dirlo",
-            "signataire_date_deliberation": "2022-02-01",
-        }
-
-        self.service.save()
-        bailleur.refresh_from_db()
-        self.service.convention.refresh_from_db()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
-        self.assertEqual(bailleur.nom, "nom bailleur")
-        self.assertEqual(bailleur.signataire_nom, bailleur_signataire_nom)
-        self.assertEqual(bailleur.signataire_fonction, bailleur_signataire_fonction)
-        self.assertEqual(
-            bailleur.signataire_date_deliberation, bailleur_signataire_date_deliberation
-        )
-        self.assertEqual(self.service.convention.signataire_nom, "Johnny")
-        self.assertEqual(self.service.convention.signataire_fonction, "Dirlo")
-        self.assertEqual(
-            self.service.convention.signataire_date_deliberation,
-            datetime.date(2022, 2, 1),
-        )
-
-
-class ConventionProgrammeServiceTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
-
-    def setUp(self):
-        request = HttpRequest()
-        convention = Convention.objects.get(numero="0001")
-        request.user = User.objects.get(username="fix")
-        self.service = services_programmes.ConventionProgrammeService(
-            convention=convention, request=request
-        )
-
-    def test_get(self):
-        self.service.get()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertIsInstance(self.service.form, ProgrammeForm)
-        programme = self.service.convention.programme
-        self.assertEqual(
-            self.service.form.initial["uuid"],
-            programme.uuid,
-        )
-        self.assertEqual(self.service.form.initial["nom"], programme.nom)
-
-    def test_save(self):
-
-        programme = self.service.convention.programme
-
-        self.service.request.POST = {
-            "nom": "Fake Opération",
-            "adresse": "",
-            "code_postal": "00000",
-            "ville": "Fake ville",
-            "nb_logements": "28",
-            "anru": "FALSE",
-            "type_habitat": "INDIVIDUEL",
-            "type_operation": "NEUF",
-            "nb_locaux_commerciaux": "",
-            "nb_bureaux": "",
-            "autres_locaux_hors_convention": "",
-        }
-        self.service.save()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertTrue(self.service.form.has_error("adresse"))
-
-        self.service.request.POST = {
-            "nom": "Fake Opération",
-            "adresse": "123 rue du fake",
-            "code_postal": "00000",
-            "ville": "Fake ville",
-            "nb_logements": "28",
-            "anru": "FALSE",
-            "type_habitat": "INDIVIDUEL",
-            "type_operation": "NEUF",
-            "nb_locaux_commerciaux": "",
-            "nb_bureaux": "",
-            "autres_locaux_hors_convention": "",
-        }
-
-        self.service.save()
-        programme.refresh_from_db()
-        self.service.convention.refresh_from_db()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
-        self.assertEqual(programme.nom, "Fake Opération")
-        self.assertEqual(programme.adresse, "123 rue du fake")
-
-
-class ConventionTypeStationnementServiceTests(TestCase):
-    service_class = services_logements.ConventionTypeStationnementService
-
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
-
-    def setUp(self):
-        request = HttpRequest()
-        convention = Convention.objects.get(numero="0001")
-        request.user = User.objects.get(username="fix")
-        self.service = self.service_class(convention=convention, request=request)
-
-    def test_get(self):
-        self.service.get()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertIsInstance(self.service.formset, TypeStationnementFormSet)
-
-    def test_save(self):
-        self.service.request.POST = {
-            "form-TOTAL_FORMS": 2,
-            "form-INITIAL_FORMS": 2,
-            "form-0-uuid": "",
-            "form-0-typologie": "GARAGE_AERIEN",
-            "form-0-nb_stationnements": 30,
-            "form-0-loyer": "",
-            "form-1-uuid": "",
-            "form-1-typologie": "GARAGE_ENTERRE",
-            "form-1-nb_stationnements": "",
-            "form-1-loyer": 100.00,
-        }
-        self.service.save()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        for form in self.service.formset.forms:
-            self.assertTrue(
-                form.has_error("loyer") or form.has_error("nb_stationnements")
-            )
-
-        self.service.request.POST = {
-            "form-TOTAL_FORMS": 2,
-            "form-INITIAL_FORMS": 2,
-            "form-0-uuid": "",
-            "form-0-typologie": "GARAGE_AERIEN",
-            "form-0-nb_stationnements": 30,
-            "form-0-loyer": 12,
-            "form-1-uuid": "",
-            "form-1-typologie": "GARAGE_ENTERRE",
-            "form-1-nb_stationnements": 5,
-            "form-1-loyer": 10.00,
-        }
-
-        self.service.save()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
-        garage_aerien = TypeStationnement.objects.get(
-            lot=self.service.convention.lot, typologie="GARAGE_AERIEN"
-        )
-        self.assertEqual(garage_aerien.nb_stationnements, 30)
-        self.assertEqual(garage_aerien.loyer, 12)
-        garage_enterre = TypeStationnement.objects.get(
-            lot=self.service.convention.lot, typologie="GARAGE_ENTERRE"
-        )
-        self.assertEqual(garage_enterre.nb_stationnements, 5)
-        self.assertEqual(garage_enterre.loyer, 10)
 
 
 class ConventionFinancementServiceTests(TestCase):

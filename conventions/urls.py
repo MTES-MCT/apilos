@@ -28,16 +28,24 @@ urlpatterns = [
         views.ConventionFinancementView.as_view(),
         name="financement",
     ),
-    path("logements/<convention_uuid>", views.logements, name="logements"),
+    path(
+        "logements/<convention_uuid>",
+        views.ConventionLogementsView.as_view(),
+        name="logements",
+    ),
     path(
         "avenant_logements/<convention_uuid>",
-        views.avenant_logements,
+        views.AvenantLogementsView.as_view(),
         name="avenant_logements",
     ),
-    path("annexes/<convention_uuid>", views.annexes, name="annexes"),
+    path(
+        "annexes/<convention_uuid>",
+        views.ConventionAnnexesView.as_view(),
+        name="annexes",
+    ),
     path(
         "avenant_annexes/<convention_uuid>",
-        views.avenant_annexes,
+        views.AvenantAnnexesView.as_view(),
         name="avenant_annexes",
     ),
     path(
@@ -86,11 +94,6 @@ urlpatterns = [
         views.load_xlsx_model,
         name="load_xlsx_model",
     ),
-    # path(
-    #     "operation/<programme_uuid>/<programme_financement>",
-    #     views.display_operation,
-    #     name="display_operation",
-    # ),
     path(
         "preview/<convention_uuid>",
         views.preview,

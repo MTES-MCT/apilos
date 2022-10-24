@@ -142,7 +142,7 @@ class Convention(models.Model):
     type2_lgts_concernes_option6 = models.BooleanField(default=True)
     type2_lgts_concernes_option7 = models.BooleanField(default=True)
     type2_lgts_concernes_option8 = models.BooleanField(default=True)
-    avenant_type = models.ManyToManyField(
+    avenant_types = models.ManyToManyField(
         AvenantType,
         blank=True,
         max_length=50,
@@ -336,81 +336,6 @@ class Convention(models.Model):
 
     def is_avenant(self):
         return self.parent_id is not None
-
-    def type_avenant(self):
-        return {"programme": self.avenant_type == "logements"}
-
-    def display_options(self):
-        return {
-            "display_comments": self.statut
-            in [
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-                ConventionStatut.A_SIGNER,
-                ConventionStatut.SIGNEE,
-            ],
-            "display_comments_summary": self.statut
-            in [
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ],
-            "display_validation": self.statut
-            in [
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ],
-            "display_is_validated": self.statut
-            in [
-                ConventionStatut.A_SIGNER,
-                ConventionStatut.SIGNEE,
-                ConventionStatut.RESILIEE,
-            ],
-            "display_is_resiliated": self.statut
-            in [
-                ConventionStatut.RESILIEE,
-            ],
-            "display_notification": self.statut
-            in [
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ],
-            "display_demande_correction": self.statut
-            in [
-                ConventionStatut.INSTRUCTION,
-            ],
-            "display_demande_instruction": self.statut
-            in [
-                ConventionStatut.CORRECTION,
-            ],
-            "display_redirect_sent": self.statut
-            in [
-                ConventionStatut.A_SIGNER,
-            ],
-            "display_redirect_post_action": self.statut
-            in [
-                ConventionStatut.SIGNEE,
-            ],
-            "display_progress_bar_1": self.statut
-            in [
-                ConventionStatut.PROJET,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ]
-            and not self.is_avenant(),
-            "display_progress_bar_2": self.avenant_type == "logements"
-            and self.is_avenant,
-            "display_type1and2_editable": self.statut
-            in [
-                ConventionStatut.PROJET,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ],
-            "display_back_to_instruction": self.statut
-            in [
-                ConventionStatut.A_SIGNER,
-                ConventionStatut.SIGNEE,
-            ],
-        }
 
     def statut_for_template(self):
         return {

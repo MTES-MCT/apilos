@@ -216,7 +216,8 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
                 "type2_lgts_concernes_option8": convention.type2_lgts_concernes_option8,
             }
         )
-    avenant_list = [avenant.nom for avenant in convention.avenant_type.all()]
+    # fixme do't need it if avenant !!!
+    avenant_list = [avenant.nom for avenant in convention.avenant_types.all()]
     return {
         **utils.base_convention_response_error(request, convention),
         "opened_comments": opened_comments,
@@ -710,26 +711,27 @@ def create_avenant(request, convention_uuid):
         .prefetch_related("lot")
         .get(uuid=convention_uuid)
     )
-    avenant_types = {avenant.nom: avenant.id for avenant in AvenantType.objects.all()}
     if request.method == "POST":
+        # fixme check the convention haven't already got ongoing avenant
         new_avenant_form = NewAvenantForm(request.POST)
         if new_avenant_form.is_valid():
+            # fixme clone the last avenant
             avenant = parent_convention.clone(request.user)
-            avenant.avenant_type.add(
-                new_avenant_form.cleaned_data["avenant_type"].first()
+            avenant_type = AvenantType.objects.get(
+                nom=new_avenant_form.cleaned_data["avenant_type"]
             )
+            avenant.avenant_types.add(avenant_type)
             avenant.save()
             return {
                 "success": utils.ReturnStatus.SUCCESS,
                 "convention": avenant,
                 "parent_convention": parent_convention,
-                "avenant_type": new_avenant_form.cleaned_data["avenant_type"].first(),
+                "avenant_type": avenant_type,
             }
     else:
         new_avenant_form = NewAvenantForm()
 
     return {
-        "avenant_types": avenant_types,
         "success": utils.ReturnStatus.ERROR,
         "editable": request.user.has_perm("convention.add_convention"),
         "bailleurs": request.user.bailleurs(),

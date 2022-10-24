@@ -405,9 +405,16 @@ class ConventionType1and2Form(forms.Form):
     )
 
 
+def get_avenant_types():
+    return [
+        (avenant_type.nom, avenant_type.nom)
+        for avenant_type in AvenantType.objects.all()
+    ]
+
+
 class NewAvenantForm(forms.Form):
-    avenant_type = forms.ModelMultipleChoiceField(
+    avenant_type = forms.ChoiceField(
         label="Type d'avenant",
-        queryset=AvenantType.objects.all(),
-        required=False,
+        choices=get_avenant_types,
+        required=True,
     )
