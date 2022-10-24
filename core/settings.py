@@ -120,7 +120,6 @@ INSTALLED_APPS = [
     "upload.apps.UploadConfig",
     "comments.apps.CommentsConfig",
     "rest_framework",
-    "drf_yasg",
     "drf_spectacular",
     "django_filters",
     "django_cas_ng",
