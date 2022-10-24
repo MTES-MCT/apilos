@@ -1,4 +1,3 @@
-# pylint: disable=E0401
 import mock
 
 from django.contrib.sessions.middleware import SessionMiddleware

@@ -494,7 +494,6 @@ def fiche_caf(request, convention_uuid):
 @permission_required("convention.add_convention")
 def new_avenant(request, convention_uuid):
     result = services.create_avenant(request, convention_uuid)
-    print(result["avenant_type"])
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:avenant_logements", args=[result["convention"].uuid])
@@ -510,8 +509,6 @@ def new_avenant(request, convention_uuid):
 
 
 class ConventionView(ABC, LoginRequiredMixin, View):
-    # pylint: disable=R0201
-
     target_template: str
     current_path_redirect: None | str = None
     next_path_redirect: str
