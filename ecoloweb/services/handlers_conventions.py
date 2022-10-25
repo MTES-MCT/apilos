@@ -2,6 +2,7 @@ from conventions.models import Convention
 from .handlers import ModelImporter
 from .handlers_bailleurs import BailleurImporter
 from .handlers_programmes import ProgrammeImporter, ProgrammeLotImporter
+from .query_iterator import QueryResultIterator
 
 
 class ConventionImporter(ModelImporter):
@@ -15,12 +16,5 @@ class ConventionImporter(ModelImporter):
             'bailleur': BailleurImporter(),
         }
 
-    def import_all(self, criteria: dict = None):
-        if criteria is None:
-            criteria = {}
-
-        # Run query
-        for data in self.query_multiple_rows(self._get_sql_query(criteria)):
-            self._nb_imported_models += 1 if self._process_result(data) else 0
-
-        print(f"Migrated {self._nb_imported_models} convention(s)")
+    def get_all_results(self, criteria: dict = None) -> QueryResultIterator:
+        return QueryResultIterator(self._db_connection, self._get_sql_query(criteria))
