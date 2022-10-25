@@ -40,8 +40,10 @@ class Command(BaseCommand):
         try:
             # Actual processing
             ConventionImportHandler().import_all(criteria)
-        except DatabaseError as e:
+        except Exception as e:
             transaction.rollback()
+
+            print("Rollabcking all changes due to runtime error")
             raise e
         finally:
             if dry_run:

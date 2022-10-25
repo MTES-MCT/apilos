@@ -26,6 +26,7 @@ select
     c.id,
     pb.bailleur_id,
     cdg.id as programme_id,
+    md5(cdg.id||'-'||ff.code) as lot_id, -- Les lots d'un programme sont tous les logements partageant le même financement
     c.noreglementaire as numero,
     case
         when pec.code = 'INS' then '2. Instruction requise'
@@ -45,6 +46,9 @@ select
     er.date_resiliation as date_resiliation
 from ecolo.ecolo_conventionapl c
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.id = cdg.conventionapl_id
+    inner join ecolo.ecolo_programmelogement pl on pl.conventiondonneesgenerales_id = cdg.id
+    inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
+    inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
     inner join ecolo.ecolo_entitegest eg on c.entitecreatrice_id = eg.id
     inner join ecolo.ecolo_entitegestadresse aa on eg.adresse_id = aa.id
     inner join ecolo.ecolo_departement ed on starts_with(aa.codepostal, ed.codeinsee)
@@ -92,4 +96,3 @@ where
     {% if departements %}
     and ed.codeinsee in ({{ departements|safeseq|join:',' }})
     {% endif %}
-order by random()

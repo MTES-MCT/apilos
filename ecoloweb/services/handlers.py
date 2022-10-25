@@ -13,14 +13,23 @@ from ecoloweb.models import EcoloReference
 
 
 class ModelImportHandler(ABC):
+    ecolo_id_field = 'id'
 
     def __init__(self):
         self._count: int = 0
         self._connection: CursorWrapper = connections['ecoloweb'].cursor()
 
+    @property
     @abstractmethod
+    def model(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def sql_template(self):
+        raise NotImplementedError
+
     def _get_sql_query(self, criteria: dict) -> str:
-        pass
+        return self._get_sql_from_template(self.sql_template, criteria)
 
     def _get_file_content(self, path):
         return ''.join(open(os.path.join(os.path.dirname(__file__), path), 'r').readlines())
@@ -49,27 +58,67 @@ class ModelImportHandler(ABC):
 
         EcoloReference.objects.create(
             apilos_model=EcoloReference.get_instance_model_name(instance),
-            ecolo_id=ecolo_id,
+            ecolo_id=str(ecolo_id),
             apilos_id=apilos_id
         )
 
-    @abstractmethod
-    def _process_data(self, data: dict) -> Optional[Model]:
-        pass
+    def _get_identity_keys(self) -> List[str]:
+        """
+        Return the list of fields to match an existing instance on DB, using get_or_create
+        """
+        return []
 
-    def import_one(self, pk: int) -> Optional[Model]:
+    def _get_dependencies(self):
+        """
+        Return a dict of key -> ModelImportHandler
+
+        This will replace fields with key `key` by their related model via the call of the related
+        ModelImportHandler.import_one()
+        """
+        return {}
+
+    def _process_result(self, data: dict) -> Optional[Model]:
+        # Enrich data by replacing dependencies references with imported instance
+        for key, handler in self._get_dependencies().items():
+            if f'{key}_id' in data:
+                data[key] = handler.import_one(data.pop(f'{key}_id'))
+            elif key in data:
+                data[key] = handler.import_one(data.pop(key))
+
+        instance = self._find_existing_model(data)
+        if instance is None:
+            ecolo_id = data.pop(self.ecolo_id_field)
+
+            if len(self._get_identity_keys()) > 0:
+                filters = {key: data[key] for key in self._get_identity_keys()}
+                instance, created = self.model.objects.get_or_create(**filters, defaults=data)
+
+                self._register_ecolo_reference(instance, ecolo_id)
+                if created:
+                    self._count += 1
+            else:
+                instance = self.model.objects.create(**data)
+                self._register_ecolo_reference(instance, ecolo_id)
+                self._count += 1
+
+        return instance
+
+    def _find_existing_model(self, data: dict) -> Optional[Model]:
+        if self.ecolo_id_field in data:
+            ref = self._find_ecolo_reference(self.model, data[self.ecolo_id_field])
+            if ref is not None:
+                res = ref.resolve()
+
+                return res
+
         return None
 
-    def import_all(self, criteria: dict = None):
-        if criteria is None:
-            criteria = {}
-        count: int = 0
-
-        # Run query
-        for data in self.query_multiple_rows(self._get_sql_query(criteria)):
-            self._count += 1 if self._process_data(data) else 0
-
-        self.on_complete()
+    def import_one(self, pk: int) -> Optional[Model]:
+        return self._process_result(
+            self.query_single_row(
+                self._get_sql_query({'pk': pk})
+            )
+        )
 
     def on_complete(self):
         pass

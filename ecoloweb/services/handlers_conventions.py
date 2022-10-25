@@ -1,37 +1,26 @@
-from .handlers import ModelImportHandler
-
 from conventions.models import Convention
-
-from programmes.models import Programme, Lot
+from .handlers import ModelImportHandler
 from .handlers_bailleurs import BailleurImportHandler
+from .handlers_programmes import ProgrammeImportHandler, ProgrammeLotImportHandler
 
 
 class ConventionImportHandler(ModelImportHandler):
+    model = Convention
+    sql_template = 'resources/sql/conventions.sql'
 
-    def _get_sql_query(self, criteria: dict) -> str:
-        return self._get_sql_from_template('resources/sql/conventions.sql', criteria)
+    def _get_dependencies(self):
+        return {
+            'programme': ProgrammeImportHandler(),
+            'lot': ProgrammeLotImportHandler(),
+            'bailleur': BailleurImportHandler(),
+        }
 
-    def _process_data(self, data: dict) -> bool:
-        ecolo_id = data.pop('id')
+    def import_all(self, criteria: dict = None):
+        if criteria is None:
+            criteria = {}
 
-        if ref := self._find_ecolo_reference(Convention, ecolo_id) is None:
+        # Run query
+        for data in self.query_multiple_rows(self._get_sql_query(criteria)):
+            self._count += 1 if self._process_result(data) else 0
 
-            data['bailleur'] = BailleurImportHandler().import_one(data.pop('bailleur_id'))
-            data['lot'] = Lot.objects.order_by('?').first()
-            data['programme'] = Programme.objects.order_by('?').first()
-
-            print(data['bailleur'])
-
-            convention = Convention.objects.create(**data)
-            created = True
-
-            self._register_ecolo_reference(convention, ecolo_id)
-        else:
-            print(
-                f"Skipping convention with ecolo id #{ecolo_id}, already imported ({ref.apilos_model} #{ref.apilos_id})")
-            created = False
-
-        return created
-
-    def on_complete(self):
         print(f"Migrated {self._count} convention(s)")

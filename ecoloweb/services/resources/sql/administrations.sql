@@ -9,4 +9,8 @@ select
     ega.ville as ville
 from ecolo.ecolo_entitegest eg
     left join ecolo.ecolo_entitegestadresse ega on eg.adresse_id = ega.id
+{% if pk %}
+where
+    eg.id = {{ pk }}
+{% endif %}
 order by eg.code, eg.version desc
