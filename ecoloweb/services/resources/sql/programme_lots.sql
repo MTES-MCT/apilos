@@ -16,12 +16,12 @@
 
 select
     md5(cdg.id||'-'||ff.code) as id, -- Les lots d'un programme sont tous les logements partageant le même financement
-    cdg as programme_id,
+    cdg.id as programme_id,
     pl.bailleurproprietaire_id as bailleur_id,
     coalesce(pl.financementdate, now()) as cree_le,
     coalesce(pl.financementdate, now()) as mis_a_jour_le,
     ff.code as financement,
-    logementsnombretotal as nb_logements,
+    pl.logementsnombretotal as nb_logements,
     case
         when coalesce(pl.logementsnombreindtotal, 0) > 0 and coalesce(pl.logementsnombrecoltotal, 0) > 0 then 'MIXTE'
         when coalesce(pl.logementsnombreindtotal, 0) > 0 then 'INDIVIDUEL'
@@ -47,10 +47,8 @@ from ecolo.ecolo_programmelogement pl
     left join ecolo.ecolo_valeurparamstatic ap2 on a2.typeannexe_id = ap2.id and ap2.subtype = 'TAN' and ap2.code = '5' -- Terrasse
     left join ecolo.ecolo_annexe a3 on a3.programmelogement_id = pl.id
     left join ecolo.ecolo_valeurparamstatic ap3 on a3.typeannexe_id = ap3.id and ap3.subtype = 'TAN' and ap3.code = '8' -- Box
+    {% if pk %}
 where
-    pl.logementsnombretotal > 0
+    md5(cdg.id||'-'||ff.code) = '{{ pk }}'
+    {% endif %}
 order by cdg.id, ff.code
-{% if max_row %}
-, random()
-limit {{ max_row }}
-{% endif %}

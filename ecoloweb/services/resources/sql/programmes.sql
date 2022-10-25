@@ -80,7 +80,6 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
 where
     cdg.avenant_id is null
     and pb.bailleur_id is not null
-{% if max_row %}
-order by random()
-limit {{ max_row }}
-{% endif %}
+    {% if pk %}
+    and cdg.id = {{ pk }}
+    {% endif %}
