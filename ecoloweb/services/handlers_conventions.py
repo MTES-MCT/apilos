@@ -1,18 +1,18 @@
 from conventions.models import Convention
-from .handlers import ModelImportHandler
-from .handlers_bailleurs import BailleurImportHandler
-from .handlers_programmes import ProgrammeImportHandler, ProgrammeLotImportHandler
+from .handlers import ModelImporter
+from .handlers_bailleurs import BailleurImporter
+from .handlers_programmes import ProgrammeImporter, ProgrammeLotImporter
 
 
-class ConventionImportHandler(ModelImportHandler):
+class ConventionImporter(ModelImporter):
     model = Convention
     sql_template = 'resources/sql/conventions.sql'
 
     def _get_dependencies(self):
         return {
-            'programme': ProgrammeImportHandler(),
-            'lot': ProgrammeLotImportHandler(),
-            'bailleur': BailleurImportHandler(),
+            'programme': ProgrammeImporter(),
+            'lot': ProgrammeLotImporter(),
+            'bailleur': BailleurImporter(),
         }
 
     def import_all(self, criteria: dict = None):
@@ -21,6 +21,6 @@ class ConventionImportHandler(ModelImportHandler):
 
         # Run query
         for data in self.query_multiple_rows(self._get_sql_query(criteria)):
-            self._count += 1 if self._process_result(data) else 0
+            self._nb_imported_models += 1 if self._process_result(data) else 0
 
-        print(f"Migrated {self._count} convention(s)")
+        print(f"Migrated {self._nb_imported_models} convention(s)")
