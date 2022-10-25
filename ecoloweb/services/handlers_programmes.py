@@ -2,11 +2,11 @@ from typing import List
 
 from programmes.models import Programme, Lot, Logement
 
-from .handlers import ModelImportHandler
-from .handlers_bailleurs import BailleurImportHandler
+from .handlers import ModelImporter
+from .handlers_bailleurs import BailleurImporter
 
 
-class ProgrammeImportHandler(ModelImportHandler):
+class ProgrammeImporter(ModelImporter):
     model = Programme
     sql_template = 'resources/sql/programmes.sql'
 
@@ -15,27 +15,27 @@ class ProgrammeImportHandler(ModelImportHandler):
 
     def _get_dependencies(self):
         return {
-            'bailleur': BailleurImportHandler()
+            'bailleur': BailleurImporter()
         }
 
 
-class ProgrammeLotImportHandler(ModelImportHandler):
+class ProgrammeLotImporter(ModelImporter):
     model = Lot
     sql_template = 'resources/sql/programme_lots.sql'
 
     def _get_dependencies(self):
         return {
-            'programme': ProgrammeImportHandler(),
-            'bailleur': BailleurImportHandler(),
+            'programme': ProgrammeImporter(),
+            'bailleur': BailleurImporter(),
         }
 
 
-class ProgrammeLogementImportHandler(ModelImportHandler):
+class ProgrammeLogementImporter(ModelImporter):
     model = Logement
     sql_template = 'resources/sql/programme_logements.sql'
 
     def _get_dependencies(self):
         return {
-            'lot': ProgrammeLotImportHandler(),
-            'bailleur': BailleurImportHandler(),
+            'lot': ProgrammeLotImporter(),
+            'bailleur': BailleurImporter(),
         }

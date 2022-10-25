@@ -1,3 +1,3 @@
-from .handlers import ModelImportHandler
-from .handlers_conventions import ConventionImportHandler
+from .handlers import ModelImporter
+from .handlers_conventions import ConventionImporter
 

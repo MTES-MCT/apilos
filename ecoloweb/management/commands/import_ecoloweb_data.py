@@ -1,9 +1,11 @@
 import sys
 from django.core.management import BaseCommand
-from django.db import connections, DatabaseError
+from django.db import connections
 from django.db import transaction
 
-from ecoloweb.services import ConventionImportHandler
+from tqdm import tqdm
+
+from ecoloweb.services import ConventionImporter
 
 
 class Command(BaseCommand):
@@ -39,7 +41,7 @@ class Command(BaseCommand):
 
         try:
             # Actual processing
-            ConventionImportHandler().import_all(criteria)
+            ConventionImporter().import_all(criteria)
         except Exception as e:
             transaction.rollback()
 
