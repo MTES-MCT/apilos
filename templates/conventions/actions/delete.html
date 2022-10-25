@@ -1,7 +1,7 @@
 {% load custom_filters %}
 
 {% if convention|display_delete_convention:request %}
-    <div class="fr-col-12 block--row-strech apilos-line-top fr-pt-5w fr-my-5w">
+    <div class="fr-col-12 block--row-strech fr-my-5w">
         <div class="block--row-strech-1 fr-mt-2w">
             <p class="fr-alert__title">
                 Supprimer ce projet {% if convention.is_avenant %}d'avenant{% else %}de convention{% endif %}
@@ -14,6 +14,7 @@
             Supprimer {% if convention.is_avenant %}cet avenant{% else %}cette convention{% endif %}
         </button>
     </div>
+    <hr>
     <dialog aria-labelledby="fr-modal-{{convention.uuid}}-title" id="fr-modal-{{convention.uuid}}" class="fr-modal" role="dialog" >
         <div class="fr-container fr-container--fluid fr-container-md">
             <div class="fr-grid-row fr-grid-row--center">

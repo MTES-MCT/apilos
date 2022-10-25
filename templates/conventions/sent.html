@@ -83,8 +83,9 @@
                 </div>
             {% endif %}
             {% if not convention.is_avenant and convention|display_back_to_instruction:request %}
+                <hr>
                 <div class="fr-col-12">
-                    <div class="fr-mb-2w block--row-strech apilos-line-top">
+                    <div class="fr-mb-2w block--row-strech">
                         {% include "conventions/actions/back_to_instruction.html" %}
                     </div>
                 </div>

@@ -78,18 +78,8 @@
                     {% include "conventions/actions/display_resiliation_info.html" %}
                 </turbo-frame>
 
-                <div class="fr-col-12">
-                    <div class="apilos-line-top fr-grid-row fr-py-5w">
-                        <div class="fr-col-md-6">
-                            {% if request|is_bailleur %}
-                                {% if convention.is_bailleur_editable %}
-                                    {% include "common/button/previous.html" with precedent='conventions:comments' convention_uuid=convention.uuid %}
-                                {% else %}
-                                    {% include "common/button/return_convention_index.html" %}
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                    </div>
+                <div class="fr-col-12 fr-py-5w">
+                    {% include "common/button/return_convention_index.html" %}
                 </div>
 
             </div>

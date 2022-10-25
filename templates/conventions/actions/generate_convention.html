@@ -1,7 +1,7 @@
 {% load custom_filters %}
 
 {% if convention|display_convention_form_progressbar %}
-    <div class="fr-col-12 block--row-strech apilos-line-top fr-pt-5w fr-my-5w">
+    <div class="fr-col-12 block--row-strech fr-my-5w">
         <div class="block--row-strech-1 fr-mr-6w">
             <p class="fr-alert__title">
                 Télécharger le projet de {% if convention.is_avenant %}l'avenant à {% endif %}la convention (en docx)
@@ -27,4 +27,5 @@
             {% endif %}
         </div>
     </div>
+    <hr>
 {% endif %}
