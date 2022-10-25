@@ -3,6 +3,33 @@ from django.urls import reverse
 
 from conventions.tests.views.abstract import AbstractViewTestCase
 
+post_fixture = {
+    "form-TOTAL_FORMS": "2",
+    "form-INITIAL_FORMS": "2",
+    "form-0-uuid": "",
+    "form-0-designation": "B1",
+    "form-0-typologie": "T1",
+    "form-0-surface_habitable": "12.12",
+    "form-0-surface_annexes": "45.57",
+    "form-0-surface_annexes_retenue": "0.00",
+    "form-0-surface_utile": "30.00",
+    "form-0-loyer_par_metre_carre": "4.5",
+    "form-0-coeficient": "1.0000",
+    "form-0-loyer": "135.00",
+    "form-1-uuid": "",
+    "form-1-designation": "B2",
+    "form-1-typologie": "T1",
+    "form-1-surface_habitable": "30.00",
+    "form-1-surface_annexes": "0.00",
+    "form-1-surface_annexes_retenue": "0.00",
+    "form-1-surface_utile": "30.00",
+    "form-1-loyer_par_metre_carre": "4.5",
+    "form-1-coeficient": "1.0000",
+    "form-1-loyer": "135.00",
+    "loyer_derogatoire": "10",
+    "lgts_mixite_sociale_negocies": "2",
+}
+
 
 class ConventionLogementsViewTests(AbstractViewTestCase, TestCase):
     def setUp(self):
@@ -16,59 +43,14 @@ class ConventionLogementsViewTests(AbstractViewTestCase, TestCase):
         self.target_template = "conventions/logements.html"
         self.error_payload = {
             "nb_logements": "2",
-            "form-TOTAL_FORMS": "2",
-            "form-INITIAL_FORMS": "2",
-            "form-0-uuid": "",
-            "form-0-designation": "B1",
-            "form-0-typologie": "T1",
-            "form-0-surface_habitable": "12.12",
-            "form-0-surface_annexes": "45.57",
-            "form-0-surface_annexes_retenue": "0.00",
-            "form-0-surface_utile": "30.00",
-            "form-0-loyer_par_metre_carre": "4.5",
-            "form-0-coeficient": "1.0000",
-            "form-0-loyer": "135.00",
-            "form-1-uuid": "",
-            "form-1-designation": "B2",
-            "form-1-typologie": "T1",
-            "form-1-surface_habitable": "30.00",
-            "form-1-surface_annexes": "0.00",
-            "form-1-surface_annexes_retenue": "0.00",
-            "form-1-surface_utile": "30.00",
-            "form-1-loyer_par_metre_carre": "4.5",
-            "form-1-coeficient": "1.0000",
-            "form-1-loyer": "750.00",
             "uuid": str(self.convention_75.lot.uuid),
-            "loyer_derogatoire": "10",
-            "lgts_mixite_sociale_negocies": "2",
+            **post_fixture,
+            "form-1-loyer": "750.00",
         }
         self.success_payload = {
             "nb_logements": "2",
-            "form-TOTAL_FORMS": "2",
-            "form-INITIAL_FORMS": "2",
-            "form-0-uuid": "",
-            "form-0-designation": "B1",
-            "form-0-typologie": "T1",
-            "form-0-surface_habitable": "12.12",
-            "form-0-surface_annexes": "45.57",
-            "form-0-surface_annexes_retenue": "0.00",
-            "form-0-surface_utile": "30.00",
-            "form-0-loyer_par_metre_carre": "4.5",
-            "form-0-coeficient": "1.0000",
-            "form-0-loyer": "135.00",
-            "form-1-uuid": "",
-            "form-1-designation": "B2",
-            "form-1-typologie": "T1",
-            "form-1-surface_habitable": "30.00",
-            "form-1-surface_annexes": "0.00",
-            "form-1-surface_annexes_retenue": "0.00",
-            "form-1-surface_utile": "30.00",
-            "form-1-loyer_par_metre_carre": "4.5",
-            "form-1-coeficient": "1.0000",
-            "form-1-loyer": "135.00",
             "uuid": str(self.convention_75.lot.uuid),
-            "loyer_derogatoire": "10",
-            "lgts_mixite_sociale_negocies": "2",
+            **post_fixture,
         }
         self.msg_prefix = "[ConventionLogementsViewTests] "
 
@@ -95,5 +77,5 @@ class AvenantLogementsViewTests(ConventionLogementsViewTests):
         self.next_target_path = reverse(
             "conventions:avenant_annexes", args=[self.convention_75.uuid]
         )
-        self.target_template = "conventions/avenant_logements.html"
+        self.target_template = "conventions/logements.html"
         self.msg_prefix = "[AvenantLogementsViewTests] "

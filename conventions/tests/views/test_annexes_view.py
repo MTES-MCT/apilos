@@ -120,5 +120,4 @@ class AvenantAnnexesViewTests(ConventionAnnexesViewTests):
         self.next_target_path = reverse(
             "conventions:recapitulatif", args=[self.convention_75.uuid]
         )
-        self.target_template = "conventions/avenant_annexes.html"
         self.msg_prefix = "[AvenantAnnexesViewTests] "

@@ -18,7 +18,7 @@
 
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
-                        {% include "common/button/next_and_save.html" with suivant='conventions:stationnements' convention_uuid=convention.uuid %}
+                        {% include "common/button/next_and_save.html" %}
                         {% include "common/button/previous.html" with precedent='conventions:annexes' convention_uuid=convention.uuid %}
                     {% else %}
                         {% include "common/button/noteditable_button.html"%}

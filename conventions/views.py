@@ -479,8 +479,6 @@ class ConventionBailleurView(ConventionView):
 
 
 class AvenantBailleurView(ConventionBailleurView):
-
-    target_template: str = "conventions/avenant_bailleur.html"
     next_path_redirect: str = "conventions:recapitulatif"
     form_step = {}
 
@@ -549,7 +547,7 @@ class ConventionLogementsView(ConventionView):
 
 
 class AvenantLogementsView(ConventionLogementsView):
-    target_template: str = "conventions/avenant_logements.html"
+    target_template: str = "conventions/logements.html"
     next_path_redirect: str = "conventions:avenant_annexes"
     service_class: ConventionService = ConventionLogementsService
     form_step: dict = {
@@ -581,8 +579,7 @@ class ConventionAnnexesView(ConventionView):
         )
 
 
-class AvenantAnnexesView(ConventionView):
-    target_template: str = "conventions/avenant_annexes.html"
+class AvenantAnnexesView(ConventionAnnexesView):
     next_path_redirect: str = "conventions:recapitulatif"
     service_class: ConventionService = ConventionAnnexesService
     form_step: dict = {
@@ -621,6 +618,5 @@ class ConventionCommentsView(ConventionView):
 
 
 class AvenantCommentsView(ConventionCommentsView):
-
-    target_template: str = "conventions/avenant_comments.html"
     next_path_redirect: str = "conventions:recapitulatif"
+    form_step: dict = {}

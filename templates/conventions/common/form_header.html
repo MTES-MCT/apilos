@@ -2,100 +2,192 @@
 
 {% if convention %}
 
-    <div class='background-contrast-grey950 apilos-sticky apilos-sticky-top fr-pt-2w'>
-        <div class="fr-container">
-            <div class="fr-col-12 fr-pb-2w">
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-12 fr-col-lg-6">
-                        <div class="fr-highlight">
-                            {% if CERBERE_AUTH %}
-                                <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
-                                    <h1>Opération n°{{convention.programme.numero_galion}}{% if convention.is_avenant %} - Avenant{% endif %}</h1>
-                                    <h2>{{convention.programme.nom}}</h2>
-                                </a>
-                            {% else %}
-                                {% if convention.is_avenant %}
-                                    <h1>
-                                        Avenant de la convention <a class='fr-link apilos-link fr-h1' href="{% url 'conventions:recapitulatif' convention_uuid=convention.parent.uuid %}"">{{convention.parent.numero}}</a>
-                                    </h1>
-                                    <h2>
-                                        {{convention.programme.nom}}
-                                    </h2>
-                                {% else %}
-                                    <h1>
-                                        {{convention.programme.nom}}
-                                    </h1>
-                                {% endif %}
-                                </h1>
-                            {% endif %}
+    {% if convention.is_avenant %}
+        <div class='fr-pt-2w'>
+            <div class="fr-container">
+                <div class="fr-col-12">
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12">
+                            <div class="fr-py-3w">
+                                <h1 class="fr-h2 apilos-d-inline">{{convention.programme.nom}}</h1>
+                                <span class="apilos-h2-thin"> - Avenant</span>
+                                <div class="fr-py-3w">
+                                    {% if CERBERE_AUTH %}
+                                        <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
+                                            Consulter la convention originale
+                                        </a>
+                                    {% else %}
+                                        {% if convention.is_avenant %}
+                                            <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Consulter la convention originale</a>
+                                        {% else %}
+                                            <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}">Consulter la convention originale</a>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="fr-col-12 fr-col-lg-6 fr-grid-row fr-grid-row--right">
-                        <div>
-                            {% if CERBERE_AUTH %}
-                                <div class="fr-grid-row fr-grid-row--right fr-my-2w">
-                                    <a href="{{ request|get_siap_operation_url:convention.programme.numero_galion }}">
-                                        Financement
-                                        <span class="fr-icon-arrow-right-line" aria-hidden="true"></span>
+                    <hr>
+                    {% if convention.is_avenant %}
+                        <div class="fr-col-12 fr-mb-4w">
+                            <div role="alert" class="fr-alert fr-alert--{{convention.statut_for_template.key_statut}} {% if convention|display_status_projet %}fr-icon-pencil-line{% elif convention|display_demande_correction %}fr-icon-eye-line{% elif convention|display_demande_instruction %}fr-icon-question-answer-line{% elif convention|display_redirect_sent %}fr-icon-draft-line{% elif convention|display_redirect_post_action %}fr-icon-success-line{% endif %}">
+                                {% if convention|display_status_projet %}
+                                    <p class="fr-text--lg">
+                                        Votre avenant est
+                                        <span class="fr-alert__title">
+                                            en projet
+                                        </span>
+                                    </p>
+                                    <p>Complétez ses informations, puis soumettez-le à votre service d’instruction</p>
+                                {% elif convention|display_demande_correction %}
+                                    <p class="fr-text--lg">
+                                        Votre avenant est
+                                        <span class="fr-alert__title">
+                                            en cours d'instruction
+                                        </span>
+                                    </p>
+                                    <p>Il sera prochainement validé ou votre instructeur vous demandera des corrections</p>
+                                {% elif convention|display_demande_instruction %}
+                                    <p class="fr-text--lg">
+                                        Votre avenant est
+                                        <span class="fr-alert__title">
+                                            en attente de corrections
+                                        </span>
+                                    </p>
+                                    <p>Corrigez les demandes de votre instructeur puis soumettez-le à nouveau</p>
+                                {% elif convention|display_redirect_sent %}
+                                    <p class="fr-text--lg">
+                                        Votre avenant est
+                                        <span class="fr-alert__title">
+                                            en attente d'une signature
+                                        </span>
+                                    </p>
+                                    {% if request|is_instructeur %}
+                                        Vous pouvez <a class="fr-link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>téléverser l'avenant signé</a>
+                                    {% else %}
+                                        {% if convention.administration.adresse and convention.administration.code_postal and convention.administration.ville %}
+                                            <p>Imprimez-le, signez-le et envoyez le à l'adresse suivante : {{ convention.administration.adresse }} - {{ convention.administration.code_postal }} {{ convention.administration.ville }}</p>
+                                        {% endif %}
+                                    {% endif %}
+                                {% elif convention|display_redirect_post_action %}
+                                    <p class="fr-text--lg">
+                                        Votre avenant est
+                                        <span class="fr-alert__title">
+                                            finalisé !
+                                        </span>
+                                    </p>
+                                    <p>Vous devrez désormais créer un autre avenant si vous souhaitez mettre à jour une information</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class='background-contrast-grey950 apilos-sticky apilos-sticky-top fr-pt-2w'>
+            <div class="fr-container">
+                <div class="fr-col-12 fr-pb-2w">
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-lg-6">
+                            <div class="fr-highlight">
+                                {% if CERBERE_AUTH %}
+                                    <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
+                                        <h1>Opération n°{{convention.programme.numero_galion}}{% if convention.is_avenant %} - Avenant{% endif %}</h1>
+                                        <h2>{{convention.programme.nom}}</h2>
                                     </a>
+                                {% else %}
+                                    {% if convention.is_avenant %}
+                                        <h1>
+                                            Avenant de la convention <a class='fr-link apilos-link fr-h1' href="{% url 'conventions:recapitulatif' convention_uuid=convention.parent.uuid %}"">{{convention.parent.numero}}</a>
+                                        </h1>
+                                        <h2>
+                                            {{convention.programme.nom}}
+                                        </h2>
+                                    {% else %}
+                                        <h1>
+                                            {{convention.programme.nom}}
+                                        </h1>
+                                    {% endif %}
+                                    </h1>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="fr-col-12 fr-col-lg-6 fr-grid-row fr-grid-row--right">
+                            <div>
+                                {% if CERBERE_AUTH %}
+                                    <div class="fr-grid-row fr-grid-row--right fr-my-2w">
+                                        <a href="{{ request|get_siap_operation_url:convention.programme.numero_galion }}">
+                                            Financement
+                                            <span class="fr-icon-arrow-right-line" aria-hidden="true"></span>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                                <div class="fr-py-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
+                                    <span class="fr-px-1w fr-h3">
+                                        {{convention.short_statut_for_template}}
+                                    </span>
                                 </div>
-                            {% endif %}
-                            <div class="fr-py-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
-                                <span class="fr-px-1w fr-h3">
-                                    {{convention.short_statut_for_template}}
-                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class='background-contrast-grey950'>
-        <div class="fr-container">
-            <div class="fr-col-12 fr-pb-3w">
-                {% if request|is_instructeur %}
-                    <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
+        <div class='background-contrast-grey950'>
+            <div class="fr-container">
+                <div class="fr-col-12 fr-pb-3w">
+                    {% if request|is_instructeur %}
+                        <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
+                                Entreprise bailleur : {{ convention.bailleur }}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if request|display_administration  %}
+                        <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
+                                Service instructeur : {{ convention.programme.administration }}
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="fr-grid-row fr-grid-row--gutters  fr-pl-9w">
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
-                            Entreprise bailleur : {{ convention.bailleur }}
+                            Financement : {{ convention.lot.financement|default_if_none:'-' }}
+                        </div>
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-text--bold">
+                            Nombre de logements : {{ convention.lot.nb_logements|default_if_none:'-' }}
+                            {{ convention.lot.get_type_habitat_display }}{{ convention.lot.nb_logements|pluralize }}
                         </div>
                     </div>
-                {% endif %}
-                {% if request|display_administration  %}
-                    <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
+                    <div class="fr-grid-row fr-grid-row--gutters  fr-pl-9w">
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
-                            Service instructeur : {{ convention.programme.administration }}
+                            Code postal : {{ convention.programme.code_postal|default_if_none:'-' }}
+                        </div>
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-text--bold">
+                            Ville : {{ convention.programme.ville|default_if_none:'-' }}
                         </div>
                     </div>
-                {% endif %}
-                <div class="fr-grid-row fr-grid-row--gutters  fr-pl-9w">
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
-                        Financement : {{ convention.lot.financement|default_if_none:'-' }}
-                    </div>
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-text--bold">
-                        Nombre de logements : {{ convention.lot.nb_logements|default_if_none:'-' }}
-                        {{ convention.lot.get_type_habitat_display }}{{ convention.lot.nb_logements|pluralize }}
-                    </div>
-                </div>
-                <div class="fr-grid-row fr-grid-row--gutters  fr-pl-9w">
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
-                        Code postal : {{ convention.programme.code_postal|default_if_none:'-' }}
-                    </div>
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-text--bold">
-                        Ville : {{ convention.programme.ville|default_if_none:'-' }}
-                    </div>
-                </div>
-                <div class="fr-grid-row fr-grid-row--gutters  fr-pl-9w">
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
-                        <a href="/" title="Accueil - APiLos">
-                            <button class="fr-btn fr-my-1w">
-                                Retour à la liste des conventions
-                            </button>
-                        </a>
+                    <div class="fr-grid-row fr-grid-row--gutters  fr-pl-9w">
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
+                            <a href="/" title="Accueil - APiLos">
+                                <button class="fr-btn fr-my-1w">
+                                    Retour à la liste des conventions
+                                </button>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    {% endif %}
+
+
+
+
+
+
+
 
 {% endif %}

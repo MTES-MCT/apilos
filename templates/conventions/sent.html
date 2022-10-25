@@ -7,7 +7,7 @@
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% if convention.is_avenant %}
-            {% include "conventions/common/avenant_form_header.html"%}
+            {% include "conventions/common/form_header.html"%}
             <div class="fr-container">
                 {% if CERBERE_AUTH %}
                     <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
