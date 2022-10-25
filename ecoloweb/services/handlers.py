@@ -17,8 +17,10 @@ class ModelImporter(ABC):
     Base importer service class whose responsibility is to ensure imports of entities from Ecoloweb database of a single
     model.
 
-    It relies on a SQL query to fetch and hydrate new models, with some extra layers like Ecolo references of identity
-    fields to avoid duplicate imports. Thus, if one Ecolo entity has already been imported, changes that may have
+    It relies on a SQL query to fetch and hydrate new models, with some extra layers like Ecolo references or identity
+    fields to avoid duplicate imports.
+
+    Thus, if one Ecolo entity has already been imported, changes that may have
     occurred in the meantime in the Ecolo database won't be echoed to the APiLos database /!\
     """
     ecolo_id_field = 'id'
@@ -116,7 +118,7 @@ class ModelImporter(ABC):
         """
         return {}
 
-    def _process_result(self, data: dict) -> Optional[Model]:
+    def process_result(self, data: dict) -> Optional[Model]:
         """
         For each result row from the base SQL query, process it by following these steps:
         1. look for an already imported model and if found return it
@@ -146,8 +148,9 @@ class ModelImporter(ABC):
             # hash function like for programme lots)
             ecolo_id = data.pop(self.ecolo_id_field)
 
-            # If the importer has
+            # If identity fields are defined, look for any matching model in the APiLos database
             if len(self._get_identity_keys()) > 0:
+                # Extract dict values from declared identity keys as filters dict
                 filters = {key: data[key] for key in self._get_identity_keys()}
                 instance, created = self.model.objects.get_or_create(**filters, defaults=data)
 
@@ -155,7 +158,9 @@ class ModelImporter(ABC):
                 if created:
                     self._nb_imported_models += 1
             else:
+                # Create a new instance...
                 instance = self.model.objects.create(**data)
+                # ...and mark it as imported
                 self._register_ecolo_reference(instance, ecolo_id)
                 self._nb_imported_models += 1
 
@@ -165,7 +170,7 @@ class ModelImporter(ABC):
         """
         Public entry point method to fetch a model from the Ecoloweb database based on its primary key
         """
-        return self._process_result(
+        return self.process_result(
             self._query_single_row(
                 self._get_sql_query({'pk': pk})
             )
@@ -182,12 +187,3 @@ class ModelImporter(ABC):
 
         return dict(zip(columns, row)) if row else None
 
-    def query_multiple_rows(self, query: str) -> List[Dict]:
-        """
-        Execute a SQL query returning multiple results, as list of dicts
-        """
-        self._db_connection.execute(query)
-
-        columns = [col[0] for col in self._db_connection.description]
-
-        return list(map(lambda row: dict(zip(columns, row)), self._db_connection.fetchall()))

@@ -160,7 +160,7 @@ Plus de détails sur la doc dédiée [API.md](API.md)
 
 Ajouter les dépendances dans requirements.in ou dev-requirements.in
 
-Puis compiler :
+Puis compiler (recquiert l'installation de `pip-tools`):
 
 ```sh
 pip-compile requirements.in --generate-hashes

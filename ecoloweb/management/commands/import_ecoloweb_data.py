@@ -38,16 +38,26 @@ class Command(BaseCommand):
             print("Running in dry mode")
 
         transaction.set_autocommit(False)
+        progress = None
 
         try:
+            importer = ConventionImporter()
+            results = importer.get_all_results(criteria)
+            # Progress bar
+            progress = tqdm(total=results.lines_total)
             # Actual processing
-            ConventionImporter().import_all(criteria)
+            for result in results:
+                importer.process_result(result)
+                progress.update(1)
+
         except Exception as e:
             transaction.rollback()
 
             print("Rollabcking all changes due to runtime error")
             raise e
         finally:
+            if progress is not None:
+                progress.close()
             if dry_run:
                 transaction.rollback()
             else:
