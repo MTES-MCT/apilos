@@ -94,7 +94,7 @@ class ConventionLogementsServiceTests(TestCase):
         self.assertEqual(logement_B1.lot.loyer_derogatoire, 10.00)
         self.assertEqual(logement_B1.lot.lgts_mixite_sociale_negocies, 2)
 
-    def test_save_loyer_failed(self):
+    def test_save_fails_on_loyer(self):
         self.service.request.POST = {
             "nb_logements": "2",
             "uuid": str(self.service.convention.lot.uuid),
@@ -106,7 +106,7 @@ class ConventionLogementsServiceTests(TestCase):
         self.assertFalse(self.service.formset.forms[0].has_error("loyer"))
         self.assertTrue(self.service.formset.forms[1].has_error("loyer"))
 
-    def test_save_nb_logements_failed(self):
+    def test_save_fails_on_nb_logements(self):
         self.service.request.POST = {
             "nb_logements": "3",
             "uuid": str(self.service.convention.lot.uuid),
