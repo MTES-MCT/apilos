@@ -33,3 +33,16 @@ class ConventionBailleurViewTests(AbstractViewTestCase, TestCase):
             "fake adresse",
             msg=f"{self.msg_prefix}",
         )
+
+
+class AvenantBailleurViewTests(ConventionBailleurViewTests):
+    def setUp(self):
+        super().setUp()
+        self.target_path = reverse(
+            "conventions:avenant_bailleur", args=[self.convention_75.uuid]
+        )
+        self.next_target_path = reverse(
+            "conventions:recapitulatif", args=[self.convention_75.uuid]
+        )
+        self.target_template = "conventions/avenant_bailleur.html"
+        self.msg_prefix = "[AvenantBailleurViewTests] "

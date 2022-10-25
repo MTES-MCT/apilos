@@ -70,3 +70,14 @@ class ConventionFinancementViewTests(AbstractViewTestCase, TestCase):
             [Preteur.CDCF, Preteur.CDCL],
             msg=f"{self.msg_prefix} 2 prets CDC",
         )
+
+
+class AvenantFinancementViewTests(ConventionFinancementViewTests):
+    def setUp(self):
+        super().setUp()
+        self.target_path = reverse(
+            "conventions:avenant_financement", args=[self.convention_75.uuid]
+        )
+        self.next_target_path = reverse(
+            "conventions:recapitulatif", args=[self.convention_75.uuid]
+        )

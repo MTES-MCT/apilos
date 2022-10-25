@@ -171,7 +171,8 @@ class ConventionLogementsService(ConventionService):
         self.formset = LogementFormSet(initformset)
         self.formset.programme_id = self.convention.programme_id
         self.formset.lot_id = self.convention.lot_id
-        self.formset.nb_logements = self.request.POST.get("nb_logements", None)
+        nb_logements = self.request.POST.get("nb_logements", None)
+        self.formset.nb_logements = int(nb_logements) if nb_logements else None
         formset_is_valid = self.formset.is_valid()
 
         if form_is_valid and formset_is_valid:

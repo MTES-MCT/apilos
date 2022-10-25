@@ -481,7 +481,7 @@ class ConventionBailleurView(ConventionView):
 class AvenantBailleurView(ConventionBailleurView):
 
     target_template: str = "conventions/avenant_bailleur.html"
-    next_path_redirect: str = "conventions:avenant_comments"
+    next_path_redirect: str = "conventions:recapitulatif"
     form_step = {}
 
 
@@ -519,6 +519,13 @@ class ConventionFinancementView(ConventionView):
 
     def _get_convention(self, convention_uuid):
         return Convention.objects.prefetch_related("pret_set").get(uuid=convention_uuid)
+
+
+class AvenantFinancementView(ConventionFinancementView):
+    target_template: str = "conventions/financement.html"
+    next_path_redirect: str = "conventions:recapitulatif"
+    service_class: ConventionService = ConventionFinancementService
+    form_step = {}
 
 
 class ConventionLogementsView(ConventionView):
@@ -576,7 +583,7 @@ class ConventionAnnexesView(ConventionView):
 
 class AvenantAnnexesView(ConventionView):
     target_template: str = "conventions/avenant_annexes.html"
-    next_path_redirect: str = "conventions:recapitulatif_avenant"
+    next_path_redirect: str = "conventions:recapitulatif"
     service_class: ConventionService = ConventionAnnexesService
     form_step: dict = {
         "number": 2,

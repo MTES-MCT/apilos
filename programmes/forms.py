@@ -713,14 +713,15 @@ class BaseLogementFormSet(BaseFormSet):
                 return
             loyer_with_coef += coeficient * surface_utile * loyer_par_metre_carre
             loyer_without_coef += surface_utile * loyer_par_metre_carre
+        nb_logements = self.nb_logements if self.nb_logements else lot.nb_logements
         if (
             round_half_up(loyer_with_coef, 2)
-            > round_half_up(loyer_without_coef, 2) + lot.nb_logements
+            > round_half_up(loyer_without_coef, 2) + nb_logements
         ):
             error = ValidationError(
                 "La somme des loyers après application des coéficients ne peut excéder "
                 + "la somme des loyers sans application des coéficients, c'est à dire "
-                + f"{round_half_up(loyer_without_coef,2)} € (tolérance de {lot.nb_logements} €)"
+                + f"{round_half_up(loyer_without_coef,2)} € (tolérance de {nb_logements} €)"
             )
             self._non_form_errors.append(error)
 
@@ -779,6 +780,30 @@ class AnnexeForm(forms.Form):
             "max_digits": "La loyer doit-être inférieur à 10000 €",
         },
     )
+
+    def clean_loyer(self):
+        surface_hors_surface_retenue = self.cleaned_data.get(
+            "surface_hors_surface_retenue", 0
+        )
+        loyer_par_metre_carre = self.cleaned_data.get("loyer_par_metre_carre", 0)
+        loyer = self.cleaned_data.get("loyer", 0)
+
+        # check that lot_id exist in DB
+        if (
+            abs(
+                round_half_up(loyer, 2)
+                - round_half_up(surface_hors_surface_retenue * loyer_par_metre_carre, 2)
+            )
+            > 0.1
+        ):
+            raise ValidationError(
+                "Le loyer doit-être le produit de la surface de l'annexe"
+                + " et du loyer par mètre carré. valeur attendue :"
+                + f" {round_half_up(surface_hors_surface_retenue*loyer_par_metre_carre,2)} €"
+                + " (tolérance de 0,1 €)"
+            )
+
+        return loyer
 
 
 class BaseAnnexeFormSet(BaseFormSet):

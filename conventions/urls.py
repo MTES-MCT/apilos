@@ -29,6 +29,11 @@ urlpatterns = [
         name="financement",
     ),
     path(
+        "avenant_financement/<convention_uuid>",
+        views.AvenantFinancementView.as_view(),
+        name="avenant_financement",
+    ),
+    path(
         "logements/<convention_uuid>",
         views.ConventionLogementsView.as_view(),
         name="logements",
