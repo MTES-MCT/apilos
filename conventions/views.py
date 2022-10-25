@@ -122,23 +122,27 @@ def edd(request, convention_uuid):
 @login_required
 def recapitulatif(request, convention_uuid):
     # Step 11/11
-    result = services.convention_summary(request, convention_uuid)
-    if result["convention"].is_avenant():
-        return render(
-            request,
-            "conventions/avenant_recapitulatif.html",
-            {
-                **result,
-                "form_step": {
-                    "number": 4,
-                    "total": 4,
-                    "title": "Récapitulatif",
-                },
-            },
-        )
+    convention = (
+        Convention.objects.prefetch_related("bailleur")
+        .prefetch_related("programme")
+        .prefetch_related("programme__referencecadastrale_set")
+        .prefetch_related("programme__logementedd_set")
+        .prefetch_related("lot")
+        .prefetch_related("lot__type_stationnements")
+        .prefetch_related("lot__logements")
+        .prefetch_related("programme__administration")
+        .get(uuid=convention_uuid)
+    )
+    result = services.convention_summary(request, convention)
+    template_name = "conventions/recapitulatif.html"
+    if convention.is_avenant():
+        result["avenant_list"] = [
+            avenant_type.nom for avenant_type in convention.avenant_types.all()
+        ]
+
     return render(
         request,
-        "conventions/recapitulatif.html",
+        template_name,
         {
             **result,
         },

@@ -1,0 +1,11 @@
+<div class="fr-col-12 block--row-strech">
+    <div class="block--row-strech-1 fr-mr-6w">
+        <h2 class="fr-text--lg">Mettre à jour les logements</h2>
+        <p>En cas de modification du programme, de travaux, de réhabilitation totale, ou d’une évolution des loyers.</p>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" value="logements" name="avenant_type">
+        <button class="fr-btn fr-btn--secondary fr-icon-eye-line fr-btn--icon-left"><span class=""></span>Mettre à jour</button>
+    </form>
+</div>

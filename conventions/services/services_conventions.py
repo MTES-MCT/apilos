@@ -91,29 +91,60 @@ def conventions_index(request):
     }
 
 
-def convention_summary(request, convention_uuid, convention_number_form=None):
-    convention = (
-        Convention.objects.prefetch_related("bailleur")
-        .prefetch_related("programme")
-        .prefetch_related("programme__referencecadastrale_set")
-        .prefetch_related("programme__logementedd_set")
-        .prefetch_related("lot")
-        .prefetch_related("lot__type_stationnements")
-        .prefetch_related("lot__logements")
-        .prefetch_related("programme__administration")
-        .get(uuid=convention_uuid)
-    )
-    request.user.check_perm("convention.view_convention", convention)
-    if convention_number_form is None:
-        convention_number_form = ConventionNumberForm(
-            initial={
-                "convention_numero": convention.numero
-                if convention.numero
-                else convention.get_convention_prefix()
-                if convention.programme.administration
-                else ""
-            }
+def _save_convention_type(request, convention):
+    convention_type1_and_2_form = ConventionType1and2Form(request.POST)
+    if convention_type1_and_2_form.is_valid():
+        convention.type1and2 = (
+            convention_type1_and_2_form.cleaned_data["type1and2"]
+            if convention_type1_and_2_form.cleaned_data["type1and2"]
+            else None
         )
+        if "type2_lgts_concernes_option1" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option1 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option1"]
+            )
+        if "type2_lgts_concernes_option2" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option2 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option2"]
+            )
+        if "type2_lgts_concernes_option3" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option3 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option3"]
+            )
+        if "type2_lgts_concernes_option4" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option4 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option4"]
+            )
+        if "type2_lgts_concernes_option5" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option5 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option5"]
+            )
+        if "type2_lgts_concernes_option6" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option6 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option6"]
+            )
+        if "type2_lgts_concernes_option7" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option7 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option7"]
+            )
+        if "type2_lgts_concernes_option8" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option8 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option8"]
+            )
+        convention.save()
+
+
+def convention_summary(request, convention):
+    request.user.check_perm("convention.view_convention", convention)
+    convention_number_form = ConventionNumberForm(
+        initial={
+            "convention_numero": convention.numero
+            if convention.numero
+            else convention.get_convention_prefix()
+            if convention.programme.administration
+            else ""
+        }
+    )
 
     opened_comments = Comment.objects.filter(
         convention=convention,
@@ -121,86 +152,7 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
     )
     opened_comments = opened_comments.order_by("cree_le")
     if request.method == "POST":
-        convention_type1_and_2_form = ConventionType1and2Form(request.POST)
-        if convention_type1_and_2_form.is_valid():
-            convention.type1and2 = (
-                convention_type1_and_2_form.cleaned_data["type1and2"]
-                if convention_type1_and_2_form.cleaned_data["type1and2"]
-                else None
-            )
-            if (
-                "type2_lgts_concernes_option1"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option1 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option1"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option2"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option2 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option2"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option3"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option3 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option3"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option4"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option4 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option4"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option5"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option5 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option5"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option6"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option6 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option6"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option7"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option7 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option7"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option8"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option8 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option8"
-                    ]
-                )
-            convention.save()
+        _save_convention_type(request, convention)
     else:
         convention_type1_and_2_form = ConventionType1and2Form(
             initial={
@@ -216,8 +168,6 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
                 "type2_lgts_concernes_option8": convention.type2_lgts_concernes_option8,
             }
         )
-    # fixme do't need it if avenant !!!
-    avenant_list = [avenant.nom for avenant in convention.avenant_types.all()]
     return {
         **utils.base_convention_response_error(request, convention),
         "opened_comments": opened_comments,
@@ -232,7 +182,6 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
         "notificationForm": NotificationForm(),
         "conventionNumberForm": convention_number_form,
         "ConventionType1and2Form": convention_type1_and_2_form,
-        "avenant_list": avenant_list,
     }
 
 

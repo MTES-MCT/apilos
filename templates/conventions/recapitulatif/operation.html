@@ -1,0 +1,65 @@
+<div class="fr-grid-row fr-grid-row--gutters fr-mt-1w">
+    <div class="fr-col-12 fr-col-lg-6">
+        <div class="fr-card fr-card--no-arrow">
+            <div class="fr-card__body fr-my-2w">
+                <div class="block--row-strech" id="{{object_field}}_div">
+                    <div class="block--row-strech-1">
+                        <h4 class="fr-card__title">
+                            Opération
+                        </h4>
+                    </div>
+                    {% if convention|display_convention_form_progressbar %}
+                        <a class="fr-link fr-mb-1w" href="{% url 'conventions:programme' convention_uuid=convention.uuid %}" >
+                            <span class="fr-icon-edit-line" aria-hidden="true">Aller à cette étape</span>
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="table--limited-height">
+                    <strong>{% include "common/display_field_if_exists.html" with label="Numéro de décision" value=programme.numero_galion %}</strong>
+                    {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom object_field="programme__nom__"|add:programme_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse object_field="programme__adresse__"|add:programme_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Code postal" value=programme.code_postal object_field="programme__code_postal__"|add:programme_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville object_field="programme__ville__"|add:programme_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements object_field="programme__nb_logements__"|add:programme_uuid %}
+                    {% include "common/display_checkbox.html" with label="ANRU" value=programme.anru object_field="programme__anru__"|add:programme_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Type d'habitat" value=programme.get_type_habitat_display object_field="programme__type_habitat__"|add:programme_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Type d'opération" value=programme.get_type_operation_display object_field="programme__type_operation__"|add:programme_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Nombre de locaux commerciaux (non-conventionnés)" value=programme.nb_locaux_commerciaux object_field="programme__nb_locaux_commerciaux__"|add:programme_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Nombre de bureaux (non-conventionnés)" value=programme.nb_bureaux object_field="programme__nb_bureaux__"|add:programme_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Autres logements non-conventionnés" value=programme.autres_locaux_hors_convention object_field="programme__autres_locaux_hors_convention__"|add:programme_uuid %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fr-col-12 fr-col-lg-6">
+        <div class="fr-card fr-card--no-arrow">
+            <div class="fr-card__body fr-my-2w">
+                <div class="block--row-strech" id="{{object_field}}_div">
+                    <div class="block--row-strech-1">
+                        <h4 class="fr-card__title">
+                            Opération - informations cadastrales
+                        </h4>
+                    </div>
+                    {% if convention|display_convention_form_progressbar %}
+                        <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}" >
+                            <span class="fr-icon-edit-line" aria-hidden="true">Aller à cette étape</span>
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="table--limited-height">
+                    {% include "common/display_field_if_exists.html" with label="Numéro de permis construire" value=programme.permis_construire object_field="programme__permis_construire__"|add:programme_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Date de l'acte notarié" value=programme.date_acte_notarie object_field="programme__date_acte_notarie__"|add:programme_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Date d'achat" value=programme.date_achat object_field="programme__date_achat__"|add:programme_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Date d'achèvement previsible" value=programme.date_achevement_previsible object_field="programme__date_achevement_previsible__"|add:programme_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Date d'achèvement ou d'obtention de certificat de conformité" value=programme.date_achevement object_field="programme__date_achevement__"|add:programme_uuid %}
+                    {% include "common/display_text_and_files_if_exists.html" with label="Vendeur" text=programme.vendeur|get_text_from_textfiles file_list=programme.vendeur|get_files_from_textfiles object_field="programme__vendeur__"|add:programme_uuid %}
+                    {% include "common/display_text_and_files_if_exists.html" with label="Acquéreur" text=programme.acquereur|get_text_from_textfiles file_list=programme.acquereur|get_files_from_textfiles object_field="programme__acquereur__"|add:programme_uuid %}
+                    {% include "common/display_text_and_files_if_exists.html" with label="Référence du notaire" text=programme.reference_notaire|get_text_from_textfiles file_list=programme.reference_notaire|get_files_from_textfiles object_field="programme__reference_notaire__"|add:programme_uuid %}
+                    {% include "common/display_text_and_files_if_exists.html" with label="Référence de publication de l'acte" text=programme.reference_publication_acte|get_text_from_textfiles file_list=programme.reference_publication_acte|get_files_from_textfiles object_field="programme__reference_publication_acte__"|add:programme_uuid %}
+                    {% include "common/display_text_and_files_if_exists.html" with label="Acte de propriété / Acte notarial" text=programme.acte_de_propriete|get_text_from_textfiles file_list=programme.acte_de_propriete|get_files_from_textfiles object_field="programme__acte_de_propriete__"|add:programme_uuid %}
+                    {% include "common/display_text_and_files_if_exists.html" with label="Certificat d'adressage / Autres" file_list=programme.certificat_adressage|get_files_from_textfiles object_field="programme__certificat_adressage__"|add:programme_uuid %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
