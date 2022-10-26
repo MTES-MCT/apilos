@@ -118,6 +118,21 @@ class ModelImporter(ABC):
         """
         return {}
 
+    def _fetch_related_objects(self, data) -> dict:
+        """
+        Hydrate the `data` dict by replacing external references (i.e. foreign keys) with the target
+        object by using the _dependencies_ importers defined using `_get_dependencies`
+        """
+        for key, handler in self._get_dependencies().items():
+            # First, try to resolve key suffixed by `_id` ...
+            if f'{key}_id' in data:
+                data[key] = handler.import_one(data.pop(f'{key}_id'))
+            # ... else try to resolve key with its plain name
+            elif key in data:
+                data[key] = handler.import_one(data.pop(key))
+
+        return data
+
     def _prepare_data(self, data: dict) -> dict:
         """
         Prepare data dict before it's used to create a new instance. This is where you can add, remove or update an
@@ -129,23 +144,11 @@ class ModelImporter(ABC):
         """
         For each result row from the base SQL query, process it by following these steps:
         1. look for an already imported model and if found return it
-        2. if none found, hydrate the `data` dict by replacing external references (i.e. foreign keys) with the target
-        object by using the _dependencies_ importers defined using `_get_dependencies`
-        3. if some identity fields are declared in the `_get_identity_keys`, attempt to find a matching model from the
+        2. if some identity fields are declared in the `_get_identity_keys`, attempt to find a matching model from the
         APiLos database
-        4. if still no model can be found, let's create it
-        5. mark the newly created model as imported to avoid duplicate imports
+        3. if still no model can be found, let's create it
+        4. mark the newly created model as imported to avoid duplicate imports
         """
-
-        # Resolve foreign keys by their related objects using the dependency importer declared in _get_dependencies()
-        # and inject resolved object directly in the `data` dict to ensure model creation works as expected
-        for key, handler in self._get_dependencies().items():
-            # First, try to resolve key suffixed by `_id` ...
-            if f'{key}_id' in data:
-                data[key] = handler.import_one(data.pop(f'{key}_id'))
-            # ... else try to resolve key with its plain name
-            elif key in data:
-                data[key] = handler.import_one(data.pop(key))
 
         # Look for a potentially already imported model
         instance = self._find_existing_model(data)
@@ -154,6 +157,8 @@ class ModelImporter(ABC):
             # Extract from data the id of the associated object in the Ecoloweb DB (in string format as it can be a
             # hash function like for programme lots)
             ecolo_id = data.pop(self.ecolo_id_field)
+            # Compute data dictionary
+            data = self._fetch_related_objects(data)
             data = self._prepare_data(data)
 
             # If identity fields are defined, look for any matching model in the APiLos database
