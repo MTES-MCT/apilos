@@ -568,3 +568,100 @@ class CustomFiltersTest(TestCase):
                 self.request,
             )
         )
+
+    def test_display_submit_convention(self):
+        self.convention.statut = ConventionStatut.PROJET
+        self.request.session["currently"] = GroupProfile.INSTRUCTEUR
+        self.assertFalse(
+            custom_filters.display_submit_convention(self.convention, self.request)
+        )
+        self.request.session["currently"] = GroupProfile.BAILLEUR
+        self.assertTrue(
+            custom_filters.display_submit_convention(self.convention, self.request)
+        )
+
+        for convention_statut in [
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+            ConventionStatut.A_SIGNER,
+            ConventionStatut.RESILIEE,
+        ]:
+            self.convention.statut = convention_statut
+            for group_profile in [GroupProfile.INSTRUCTEUR, GroupProfile.BAILLEUR]:
+                self.request.session["currently"] = group_profile
+                self.assertFalse(
+                    custom_filters.display_submit_convention(
+                        self.convention, self.request
+                    )
+                )
+
+    def test_display_delete_convention(self):
+        self.convention.statut = ConventionStatut.PROJET
+        self.request.session["currently"] = GroupProfile.INSTRUCTEUR
+        self.assertFalse(
+            custom_filters.display_delete_convention(self.convention, self.request)
+        )
+        self.request.session["currently"] = GroupProfile.BAILLEUR
+        self.assertTrue(
+            custom_filters.display_delete_convention(self.convention, self.request)
+        )
+
+        for convention_statut in [
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+            ConventionStatut.A_SIGNER,
+            ConventionStatut.RESILIEE,
+        ]:
+            self.convention.statut = convention_statut
+            for group_profile in [GroupProfile.INSTRUCTEUR, GroupProfile.BAILLEUR]:
+                self.request.session["currently"] = group_profile
+                self.assertFalse(
+                    custom_filters.display_delete_convention(
+                        self.convention, self.request
+                    )
+                )
+
+    def test_display_create_avenant(self):
+        self.assertTrue(custom_filters.display_create_avenant(self.convention))
+        Convention.objects.create(
+            statut=ConventionStatut.A_SIGNER,
+            parent=self.convention,
+            bailleur=self.convention.bailleur,
+            lot=self.convention.lot,
+            programme=self.convention.programme,
+        ).save()
+        self.assertTrue(custom_filters.display_create_avenant(self.convention))
+        Convention.objects.create(
+            statut=ConventionStatut.SIGNEE,
+            parent=self.convention,
+            bailleur=self.convention.bailleur,
+            lot=self.convention.lot,
+            programme=self.convention.programme,
+        ).save()
+        self.assertTrue(custom_filters.display_create_avenant(self.convention))
+        Convention.objects.create(
+            statut=ConventionStatut.RESILIEE,
+            parent=self.convention,
+            bailleur=self.convention.bailleur,
+            lot=self.convention.lot,
+            programme=self.convention.programme,
+        ).save()
+        self.assertTrue(custom_filters.display_create_avenant(self.convention))
+        ongoing_avenant = Convention.objects.create(
+            statut=ConventionStatut.PROJET,
+            parent=self.convention,
+            bailleur=self.convention.bailleur,
+            lot=self.convention.lot,
+            programme=self.convention.programme,
+        )
+        ongoing_avenant.save()
+        self.assertFalse(custom_filters.display_create_avenant(self.convention))
+        ongoing_avenant.statut = ConventionStatut.INSTRUCTION
+        ongoing_avenant.save()
+        self.assertFalse(custom_filters.display_create_avenant(self.convention))
+        ongoing_avenant.statut = ConventionStatut.CORRECTION
+        ongoing_avenant.save()
+        self.assertFalse(custom_filters.display_create_avenant(self.convention))
+        ongoing_avenant.statut = ConventionStatut.A_SIGNER
+        ongoing_avenant.save()
+        self.assertTrue(custom_filters.display_create_avenant(self.convention))

@@ -16,7 +16,7 @@
                     {% include "common/display_field_if_exists.html" with label="Nombre de logements" value=lot.nb_logements object_field="lot__nb_logements__"|add:lot_uuid %}
                 </div>
                 <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                    <table>
+                    <table  aria-label="Logements">
                         <thead>
                             <tr>
                                 {% if convention|display_comments %}
