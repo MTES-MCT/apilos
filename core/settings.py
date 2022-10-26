@@ -97,7 +97,11 @@ try:
 except KeyError:
     pass
 
+# Convert API
 CONVERTAPI_SECRET = get_env_variable("CONVERTAPI_SECRET")
+# INSEE API
+INSEE_API_KEY = get_env_variable('INSEE_API_KEY')
+INSEE_API_SECRET = get_env_variable('INSEE_API_SECRET')
 
 ALLOWED_HOSTS = ["localhost"] + env_allowed_hosts
 
