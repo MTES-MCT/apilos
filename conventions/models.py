@@ -79,6 +79,12 @@ class AvenantType(models.Model):
     def __str__(self):
         return f"{self.nom}"
 
+    @classmethod
+    def get_as_choices(cls):
+        return [
+            (avenant_type.nom, avenant_type.nom) for avenant_type in cls.objects.all()
+        ]
+
 
 class ConventionType1and2(models.TextChoices):
     TYPE1 = "Type1", "Type I"
@@ -142,7 +148,7 @@ class Convention(models.Model):
     type2_lgts_concernes_option6 = models.BooleanField(default=True)
     type2_lgts_concernes_option7 = models.BooleanField(default=True)
     type2_lgts_concernes_option8 = models.BooleanField(default=True)
-    avenant_type = models.ManyToManyField(
+    avenant_types = models.ManyToManyField(
         AvenantType,
         blank=True,
         max_length=50,
@@ -381,25 +387,50 @@ class Convention(models.Model):
             return "Convention en cours d'instruction"
         return ""
 
-    def clone(self, user):
+    def clone(self, user, *, convention_origin):
         # pylint: disable=R0914
-        programme_fields = model_to_dict(self.programme)
+        programme_fields = model_to_dict(
+            self.programme,
+            exclude=[
+                "id",
+                "parent",
+                "parent_id",
+                "bailleur",
+                "bailleur_id",
+                "administration_id",
+                "cree_le",
+                "mis_a_jour_le",
+            ],
+        )
         programme_fields.update(
             {
                 "bailleur": self.bailleur,
                 "administration_id": programme_fields.pop("administration"),
-                "parent_id": programme_fields.pop("id"),
+                "parent_id": convention_origin.programme_id,
             }
         )
-        cloned_programme = Programme(**programme_fields)
+        cloned_programme = Programme.objects.create(**programme_fields)
         cloned_programme.save()
 
-        lot_fields = model_to_dict(self.lot)
+        lot_fields = model_to_dict(
+            self.lot,
+            exclude=[
+                "id",
+                "parent",
+                "parent_id",
+                "bailleur",
+                "bailleur_id",
+                "programme",
+                "programme_id",
+                "cree_le",
+                "mis_a_jour_le",
+            ],
+        )
         lot_fields.update(
             {
                 "bailleur": self.bailleur,
                 "programme": cloned_programme,
-                "parent_id": lot_fields.pop("id"),
+                "parent_id": convention_origin.lot_id,
             }
         )
         cloned_lot = Lot(**lot_fields)
@@ -407,27 +438,27 @@ class Convention(models.Model):
 
         convention_fields = model_to_dict(
             self,
-            fields=(
-                "date_fin_conventionnement",
-                "financement",
-                "fond_propre",
-                "type1and2",
-                "type2_lgts_concernes_option1",
-                "type2_lgts_concernes_option2",
-                "type2_lgts_concernes_option3",
-                "type2_lgts_concernes_option4",
-                "type2_lgts_concernes_option5",
-                "type2_lgts_concernes_option6",
-                "type2_lgts_concernes_option7",
-                "type2_lgts_concernes_option8",
-            ),
+            exclude=[
+                "id",
+                "parent",
+                "parent_id",
+                "bailleur",
+                "bailleur_id",
+                "programme",
+                "programme_id",
+                "lot",
+                "lot_id",
+                "cree_le",
+                "mis_a_jour_le",
+                "avenant_types",
+            ],
         )
         convention_fields.update(
             {
                 "bailleur": self.bailleur,
                 "programme": cloned_programme,
                 "lot": cloned_lot,
-                "parent_id": self.id,
+                "parent_id": convention_origin.id,
                 "statut": ConventionStatut.PROJET,
                 "cree_par": user,
             }
@@ -436,8 +467,16 @@ class Convention(models.Model):
         cloned_convention.save()
 
         for logement in self.lot.logements.all():
-            logement_fields = model_to_dict(logement)
-            logement_fields.pop("id")
+            logement_fields = model_to_dict(
+                logement,
+                exclude=[
+                    "id",
+                    "bailleur",
+                    "lot",
+                    "cree_le",
+                    "mis_a_jour_le",
+                ],
+            )
             logement_fields.update(
                 {
                     "bailleur": self.bailleur,
@@ -447,8 +486,16 @@ class Convention(models.Model):
             cloned_logement = Logement(**logement_fields)
             cloned_logement.save()
             for annexe in logement.annexes.all():
-                annexe_fields = model_to_dict(annexe)
-                annexe_fields.pop("id")
+                annexe_fields = model_to_dict(
+                    annexe,
+                    exclude=[
+                        "id",
+                        "bailleur",
+                        "logement",
+                        "cree_le",
+                        "mis_a_jour_le",
+                    ],
+                )
                 annexe_fields.update(
                     {
                         "bailleur": self.bailleur,
@@ -459,8 +506,16 @@ class Convention(models.Model):
                 cloned_annexe.save()
 
         for type_stationnement in self.lot.type_stationnements.all():
-            type_stationnement_fields = model_to_dict(type_stationnement)
-            type_stationnement_fields.pop("id")
+            type_stationnement_fields = model_to_dict(
+                type_stationnement,
+                exclude=[
+                    "id",
+                    "bailleur",
+                    "lot",
+                    "cree_le",
+                    "mis_a_jour_le",
+                ],
+            )
             type_stationnement_fields.update(
                 {
                     "bailleur": self.bailleur,
@@ -469,9 +524,9 @@ class Convention(models.Model):
             )
             cloned_type_stationnement = TypeStationnement(**type_stationnement_fields)
             cloned_type_stationnement.save()
-
         return cloned_convention
 
+    # Needed for admin
     def administration(self):
         return self.programme.administration
 

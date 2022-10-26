@@ -13,9 +13,7 @@ from .services_conventions import (
     create_avenant,
     generate_convention,
 )
-from .services_logements import annexes_update, logements_update
 from .services_programmes import (
-    #    display_operation,
     programme_cadastral_update,
     programme_edd_update,
     select_programme_create,

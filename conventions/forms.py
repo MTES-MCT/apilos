@@ -405,9 +405,13 @@ class ConventionType1and2Form(forms.Form):
     )
 
 
-class NewAvenantForm(forms.Form):
-    avenant_type = forms.ModelMultipleChoiceField(
-        label="Type d'avenant",
-        queryset=AvenantType.objects.all(),
+class AvenantForm(forms.Form):
+    uuid = forms.UUIDField(
         required=False,
+    )
+
+    avenant_type = forms.ChoiceField(
+        label="Type d'avenant",
+        choices=AvenantType.get_as_choices,
+        required=True,
     )

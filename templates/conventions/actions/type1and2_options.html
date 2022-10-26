@@ -1,0 +1,48 @@
+{% load static %}
+{% if convention.bailleur.is_type1and2 %}
+    {% with type1and2editable=convention|display_type1and2_editable %}
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-pt-2w">
+                <div class="block--row-strech fr-my-2w" id="{{object_field}}_div">
+                    <div class="block--row-strech-1">
+                        <p class="fr-alert__title">
+                            Convention de type I & II
+                        </p>
+                    </div>
+                </div>
+                <p>
+                    Les paramètres des conventions de type I et de Type II peuvent-être édités par la bailleur et par l'instructeur.<br>
+                    N'hésitez pas laisser des commentaires et à notifier votre vis-à-vis en cas d'incertitude.
+                </p>
+                <form method="post" action="" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-lg-6">
+                            {% include "common/form/input_select.html" with form_input=ConventionType1and2Form.type1and2 with_empty_option=True editable=type1and2editable %}
+                        </div>
+                        <div class="fr-col-12" id="type2_options" {% if ConventionType1and2Form.type1and2.value != 'Type2'%}hidden{% endif %}>
+                            <h4 class="fr-card__title">Options de la convention de type II</h4>
+
+                            <p><em>Décochez pour rayer les mentions inutiles</em></p>
+                            {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option1 strike_unchecked=True editable=type1and2editable %}
+                            {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option2 strike_unchecked=True editable=type1and2editable %}
+                            {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option3 strike_unchecked=True editable=type1and2editable %}
+                            {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option4 strike_unchecked=True editable=type1and2editable %}
+                            {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option5 strike_unchecked=True editable=type1and2editable %}
+                            {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option6 strike_unchecked=True editable=type1and2editable %}
+                            {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option7 strike_unchecked=True editable=type1and2editable %}
+                            {% include "common/form/input_checkbox.html" with form_input=ConventionType1and2Form.type2_lgts_concernes_option8 strike_unchecked=True editable=type1and2editable %}
+                        </div>
+                    </div>
+                    {% if type1and2editable %}
+                        <button class="fr-btn fr-btn--secondary fr-my-1w">
+                            Enregistrer
+                        </button>
+                    {% endif %}
+                </form>
+                <script type="text/javascript" nonce="{{request.csp_nonce}}">init_type_two_options()</script>
+            </div>
+        </div>
+        <hr>
+    {% endwith %}
+{% endif %}

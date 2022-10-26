@@ -21,7 +21,7 @@ from conventions.forms import (
     ConventionNumberForm,
     ConventionResiliationForm,
     ConventionType1and2Form,
-    NewAvenantForm,
+    AvenantForm,
     NotificationForm,
     PretFormSet,
     UploadForm,
@@ -91,29 +91,60 @@ def conventions_index(request):
     }
 
 
-def convention_summary(request, convention_uuid, convention_number_form=None):
-    convention = (
-        Convention.objects.prefetch_related("bailleur")
-        .prefetch_related("programme")
-        .prefetch_related("programme__referencecadastrale_set")
-        .prefetch_related("programme__logementedd_set")
-        .prefetch_related("lot")
-        .prefetch_related("lot__type_stationnements")
-        .prefetch_related("lot__logements")
-        .prefetch_related("programme__administration")
-        .get(uuid=convention_uuid)
-    )
-    request.user.check_perm("convention.view_convention", convention)
-    if convention_number_form is None:
-        convention_number_form = ConventionNumberForm(
-            initial={
-                "convention_numero": convention.numero
-                if convention.numero
-                else convention.get_convention_prefix()
-                if convention.programme.administration
-                else ""
-            }
+def _save_convention_type(request, convention):
+    convention_type1_and_2_form = ConventionType1and2Form(request.POST)
+    if convention_type1_and_2_form.is_valid():
+        convention.type1and2 = (
+            convention_type1_and_2_form.cleaned_data["type1and2"]
+            if convention_type1_and_2_form.cleaned_data["type1and2"]
+            else None
         )
+        if "type2_lgts_concernes_option1" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option1 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option1"]
+            )
+        if "type2_lgts_concernes_option2" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option2 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option2"]
+            )
+        if "type2_lgts_concernes_option3" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option3 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option3"]
+            )
+        if "type2_lgts_concernes_option4" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option4 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option4"]
+            )
+        if "type2_lgts_concernes_option5" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option5 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option5"]
+            )
+        if "type2_lgts_concernes_option6" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option6 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option6"]
+            )
+        if "type2_lgts_concernes_option7" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option7 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option7"]
+            )
+        if "type2_lgts_concernes_option8" in convention_type1_and_2_form.cleaned_data:
+            convention.type2_lgts_concernes_option8 = (
+                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option8"]
+            )
+        convention.save()
+
+
+def convention_summary(request, convention):
+    request.user.check_perm("convention.view_convention", convention)
+    convention_number_form = ConventionNumberForm(
+        initial={
+            "convention_numero": convention.numero
+            if convention.numero
+            else convention.get_convention_prefix()
+            if convention.programme.administration
+            else ""
+        }
+    )
 
     opened_comments = Comment.objects.filter(
         convention=convention,
@@ -121,86 +152,7 @@ def convention_summary(request, convention_uuid, convention_number_form=None):
     )
     opened_comments = opened_comments.order_by("cree_le")
     if request.method == "POST":
-        convention_type1_and_2_form = ConventionType1and2Form(request.POST)
-        if convention_type1_and_2_form.is_valid():
-            convention.type1and2 = (
-                convention_type1_and_2_form.cleaned_data["type1and2"]
-                if convention_type1_and_2_form.cleaned_data["type1and2"]
-                else None
-            )
-            if (
-                "type2_lgts_concernes_option1"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option1 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option1"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option2"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option2 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option2"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option3"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option3 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option3"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option4"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option4 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option4"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option5"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option5 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option5"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option6"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option6 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option6"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option7"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option7 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option7"
-                    ]
-                )
-            if (
-                "type2_lgts_concernes_option8"
-                in convention_type1_and_2_form.cleaned_data
-            ):
-                convention.type2_lgts_concernes_option8 = (
-                    convention_type1_and_2_form.cleaned_data[
-                        "type2_lgts_concernes_option8"
-                    ]
-                )
-            convention.save()
+        _save_convention_type(request, convention)
     else:
         convention_type1_and_2_form = ConventionType1and2Form(
             initial={
@@ -688,7 +640,9 @@ def convention_post_action(request, convention_uuid):
         my_convention_list=convention.avenants.all()
         .prefetch_related("programme")
         .prefetch_related("lot"),
+        order_by="cree_le",
     )
+    total_avenants = convention.avenants.all().count()
     avenant_list_service.paginate()
 
     return {
@@ -696,39 +650,59 @@ def convention_post_action(request, convention_uuid):
         "upform": upform,
         "convention": convention,
         "avenants": avenant_list_service,
+        "total_avenants": total_avenants,
         "resiliation_form": resiliation_form,
     }
+
+
+def _get_last_avenant(convention):
+    avenants_status = {avenant.statut for avenant in convention.avenants.all()}
+    if {
+        ConventionStatut.PROJET,
+        ConventionStatut.INSTRUCTION,
+        ConventionStatut.CORRECTION,
+    } & avenants_status:
+        raise Exception("Ongoing avenant already exists")
+    ordered_avenants = convention.avenants.order_by("-cree_le")
+    return ordered_avenants[0] if ordered_avenants else convention
 
 
 def create_avenant(request, convention_uuid):
     parent_convention = (
         Convention.objects.prefetch_related("programme")
         .prefetch_related("lot")
+        .prefetch_related("avenants")
         .get(uuid=convention_uuid)
     )
-    avenant_types = {avenant.nom: avenant.id for avenant in AvenantType.objects.all()}
     if request.method == "POST":
-        new_avenant_form = NewAvenantForm(request.POST)
-        if new_avenant_form.is_valid():
-            avenant = parent_convention.clone(request.user)
-            avenant.avenant_type.add(
-                new_avenant_form.cleaned_data["avenant_type"].first()
+        avenant_form = AvenantForm(request.POST)
+        if avenant_form.is_valid():
+            if avenant_form.cleaned_data["uuid"]:
+                avenant = Convention.objects.get(uuid=avenant_form.cleaned_data["uuid"])
+            else:
+                convention_to_clone = _get_last_avenant(parent_convention)
+                avenant = convention_to_clone.clone(
+                    request.user, convention_origin=parent_convention
+                )
+            avenant_type = AvenantType.objects.get(
+                nom=avenant_form.cleaned_data["avenant_type"]
             )
+            avenant.avenant_types.add(avenant_type)
             avenant.save()
             return {
                 "success": utils.ReturnStatus.SUCCESS,
                 "convention": avenant,
                 "parent_convention": parent_convention,
+                "avenant_type": avenant_type,
             }
     else:
-        new_avenant_form = NewAvenantForm()
+        avenant_form = AvenantForm()
 
     return {
-        "avenant_types": avenant_types,
         "success": utils.ReturnStatus.ERROR,
         "editable": request.user.has_perm("convention.add_convention"),
         "bailleurs": request.user.bailleurs(),
-        "form": new_avenant_form,
+        "form": avenant_form,
         "parent_convention": parent_convention,
     }
 

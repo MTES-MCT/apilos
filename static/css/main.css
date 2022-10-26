@@ -19,9 +19,6 @@
   display: block;
 }
 
-.apilos-line-top {
-  border-top: solid 1px #d3d3d3;
-}
 .fr-fi--xxl {
   --icon-size: 4rem;
 }
@@ -645,6 +642,22 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   background-color: transparent;
 }
 
+.apilos-step-post-action {
+  width: 40px;
+}
+.apilos-step-post-action--bubble {
+  height: 24px;
+  width: 24px;
+  border-radius: 12px;
+  border: solid 3px  var(--background-action-high-blue-france);
+}
+.apilos-step-post-action--line {
+  height: calc(100% - 24px);
+  width: 24px;
+  border-left: solid 3px var(--background-action-high-blue-france);
+  transform: translateX(11px);
+}
+
 /*
  * Display convention status
  */
@@ -681,6 +694,27 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
 .apilos-colored_status--Resiliee {
   background-color: #E2E2E2;
 }
+.fr-alert--Projet {
+  box-shadow: inset 0 0 0 1px var(--border-default-grey),inset 2.5rem 0 0 0 #4EBEE1;
+  background-color: #fff;
+}
+.fr-alert--Instruction_requise {
+  box-shadow: inset 0 0 0 1px var(--border-default-grey),inset 2.5rem 0 0 0 #F36B58;
+  background-color: #fff;
+}
+.fr-alert--Corrections_requises {
+  box-shadow: inset 0 0 0 1px var(--border-default-grey),inset 2.5rem 0 0 0 #F3A358;
+  background-color: #fff;
+}
+.fr-alert--A_signer {
+  box-shadow: inset 0 0 0 1px var(--border-default-grey),inset 2.5rem 0 0 0 #EECA4A;
+  background-color: #fff;
+}
+.fr-alert--Signee {
+  box-shadow: inset 0 0 0 1px var(--border-default-grey),inset 2.5rem 0 0 0 #74CA66;
+  background-color: #fff;
+}
+
 
 /*
  * End display convention status
@@ -718,12 +752,16 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
 .apilos-form-label--strike {
   text-decoration: line-through;
 }
-
-.apilos-sticky-top {
+.apilos-sticky {
   position: -webkit-sticky; /* Safari */
   position: sticky;
-  top: 0;
   z-index: 100;
+}
+.apilos-sticky-top {
+  top: 0;
+}
+.apilos-sticky-2 {
+  top: 104px;
 }
 
 /*

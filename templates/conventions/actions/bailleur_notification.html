@@ -1,7 +1,7 @@
 {% load custom_filters %}
 
 {% if convention|display_notification_new_convention_instructeur_to_bailleur:request %}
-    <div class="fr-col-md-12  fr-py-5w">
+    <div class="fr-col-12 fr-py-5w">
         <div role="alert" class="fr-alert fr-alert--info">
             <h4>Vous avez créé cette convention en lieu et place du bailleur et vous souhaitez sa relecture<h4>
                 <p>Faites en part au bailleur, cette convention passera en statut « En attente de corrections » et
@@ -36,10 +36,11 @@
                 </div>
             </div>
             </div>
+            <hr>
 {% endif %}
 
 {% if convention|display_notification_instructeur_to_bailleur:request %}
-    <div class="fr-col-md-12  fr-py-5w">
+    <div class="fr-col-12 fr-py-5w">
         <div role="alert" class="fr-alert fr-alert--info">
             {% if convention.get_last_instructeur_notification %}
                 <p>Denière notification du bailleur : {{ convention.get_last_instructeur_notification.cree_le }}</p>
@@ -82,4 +83,5 @@
             </div>
         </div>
     </div>
+    <hr>
 {% endif %}

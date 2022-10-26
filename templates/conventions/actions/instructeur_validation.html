@@ -1,7 +1,7 @@
 {% load custom_filters %}
 
 {% if convention|display_validation:request %}
-    <div class="fr-col-md-12 fr-py-5w apilos-line-top">
+    <div class="fr-col-md-12 fr-py-5w">
         <p class="fr-alert__title">Valider {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}</p>
         <div role="alert">
             {% with editable_validation=convention.type1and2_configuration_not_needed %}
@@ -34,6 +34,7 @@
             {% endwith %}
         </div>
     </div>
+    <hr>
 {% endif %}
 
 {% if convention|display_is_validated %}

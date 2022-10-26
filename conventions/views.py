@@ -25,7 +25,11 @@ from conventions.services.services_conventions import (
     ConventionFinancementService,
     ConventionService,
 )
-from conventions.services.services_logements import ConventionTypeStationnementService
+from conventions.services.services_logements import (
+    ConventionAnnexesService,
+    ConventionLogementsService,
+    ConventionTypeStationnementService,
+)
 from conventions.services.utils import ReturnStatus
 
 
@@ -116,136 +120,25 @@ def edd(request, convention_uuid):
 
 
 @login_required
-def logements(request, convention_uuid):
-    result = services.logements_update(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        if result.get("redirect", False) == "recapitulatif":
-            return HttpResponseRedirect(
-                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
-            )
-        return HttpResponseRedirect(
-            reverse("conventions:annexes", args=[result["convention"].uuid])
-        )
-    return render(
-        request,
-        "conventions/logements.html",
-        {
-            **result,
-            "form_step": {
-                "number": 6,
-                "total": 9,
-                "title": "Logements",
-                "next": "Annexes",
-                "next_target": "conventions:annexes",
-            },
-        },
-    )
-
-
-@login_required
-def avenant_logements(request, convention_uuid):
-    result = services.logements_update(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        if result.get("redirect", False) == "recapitulatif":
-            return HttpResponseRedirect(
-                reverse(
-                    "conventions:recapitulatif",
-                    args=[result["convention"].uuid],
-                )
-            )
-        return HttpResponseRedirect(
-            reverse("conventions:avenant_annexes", args=[result["convention"].uuid])
-        )
-    return render(
-        request,
-        "conventions/avenant_logements.html",
-        {
-            **result,
-            "form_step": {
-                "number": 1,
-                "total": 4,
-                "title": "Logements",
-                "next": "Annexes",
-                "next_target": "conventions:avenant_annexes",
-            },
-        },
-    )
-
-
-@login_required
-def annexes(request, convention_uuid):
-    result = services.annexes_update(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        if result.get("redirect", False) == "recapitulatif":
-            return HttpResponseRedirect(
-                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
-            )
-        return HttpResponseRedirect(
-            reverse("conventions:stationnements", args=[result["convention"].uuid])
-        )
-    return render(
-        request,
-        "conventions/annexes.html",
-        {
-            **result,
-            "form_step": {
-                "number": 7,
-                "total": 9,
-                "title": "Annexes",
-                "next": "Stationnements",
-                "next_target": "conventions:stationnements",
-            },
-        },
-    )
-
-
-@login_required
-def avenant_annexes(request, convention_uuid):
-    result = services.annexes_update(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        if result.get("redirect", False) == "recapitulatif":
-            return HttpResponseRedirect(
-                reverse(
-                    "conventions:recapitulatif",
-                    args=[result["convention"].uuid],
-                )
-            )
-        return HttpResponseRedirect(
-            reverse("conventions:avenant_comments", args=[result["convention"].uuid])
-        )
-    return render(
-        request,
-        "conventions/avenant_annexes.html",
-        {
-            **result,
-            "form_step": {
-                "number": 2,
-                "total": 4,
-                "title": "Annexes",
-                "next": "Commentaires",
-                "next_target": "conventions:avenant_comments",
-            },
-        },
-    )
-
-
-@login_required
 def recapitulatif(request, convention_uuid):
     # Step 11/11
-    result = services.convention_summary(request, convention_uuid)
-    if result["convention"].is_avenant():
-        return render(
-            request,
-            "conventions/avenant_recapitulatif.html",
-            {
-                **result,
-                "form_step": {
-                    "number": 4,
-                    "total": 4,
-                    "title": "Récapitulatif",
-                },
-            },
-        )
+    convention = (
+        Convention.objects.prefetch_related("bailleur")
+        .prefetch_related("programme")
+        .prefetch_related("programme__referencecadastrale_set")
+        .prefetch_related("programme__logementedd_set")
+        .prefetch_related("lot")
+        .prefetch_related("lot__type_stationnements")
+        .prefetch_related("lot__logements")
+        .prefetch_related("programme__administration")
+        .get(uuid=convention_uuid)
+    )
+    result = services.convention_summary(request, convention)
+    if convention.is_avenant():
+        result["avenant_list"] = [
+            avenant_type.nom for avenant_type in convention.avenant_types.all()
+        ]
+
     return render(
         request,
         "conventions/recapitulatif.html",
@@ -369,26 +262,6 @@ def load_xlsx_model(request, file_type):
     return response
 
 
-# @login_required
-# def display_operation(request, programme_uuid, programme_financement):
-#     result = services.display_operation(request, programme_uuid, programme_financement)
-#     if result["success"] == ReturnStatus.SUCCESS and result["convention"]:
-#         return HttpResponseRedirect(
-#             reverse("conventions:recapitulatif", args=[result["convention"].uuid])
-#         )
-#     if result["success"] == ReturnStatus.WARNING:
-#         return render(
-#             request,
-#             "conventions/selection.html",
-#             {
-#                 **result,
-#                 "financements": FinancementEDD,
-#                 "redirect_action": "/conventions/selection",
-#             },
-#         )
-#     return PermissionDenied
-
-
 @login_required
 def preview(request, convention_uuid):
     # Step 11/12
@@ -495,9 +368,25 @@ def fiche_caf(request, convention_uuid):
 def new_avenant(request, convention_uuid):
     result = services.create_avenant(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
-        return HttpResponseRedirect(
-            reverse("conventions:avenant_logements", args=[result["convention"].uuid])
-        )
+        if result["avenant_type"].nom == "logements":
+            return HttpResponseRedirect(
+                reverse(
+                    "conventions:avenant_logements", args=[result["convention"].uuid]
+                )
+            )
+        if result["avenant_type"].nom == "bailleur":
+            return HttpResponseRedirect(
+                reverse(
+                    "conventions:avenant_bailleur", args=[result["convention"].uuid]
+                )
+            )
+        if result["avenant_type"].nom == "duree":
+            return HttpResponseRedirect(
+                reverse(
+                    "conventions:avenant_financement", args=[result["convention"].uuid]
+                )
+            )
+
     return render(
         request,
         "conventions/new_avenant.html",
@@ -508,7 +397,6 @@ def new_avenant(request, convention_uuid):
 
 
 class ConventionView(ABC, LoginRequiredMixin, View):
-
     target_template: str
     current_path_redirect: None | str = None
     next_path_redirect: str
@@ -517,6 +405,13 @@ class ConventionView(ABC, LoginRequiredMixin, View):
 
     def _get_convention(self, convention_uuid):
         return Convention.objects.get(uuid=convention_uuid)
+
+    def _get_form_steps(self):
+        if self.form_step:
+            return {
+                "form_step": self.form_step | {"next_target": self.next_path_redirect}
+            }
+        return {}
 
     @has_campaign_permission("convention.view_convention")
     def get(self, request, convention_uuid):
@@ -531,7 +426,7 @@ class ConventionView(ABC, LoginRequiredMixin, View):
                 **({"form": service.form} if service.form else {}),
                 **({"upform": service.upform} if service.upform else {}),
                 **({"formset": service.formset} if service.formset else {}),
-                **({"form_step": self.form_step} if self.form_step else {}),
+                **self._get_form_steps(),
                 "editable_after_upload": (
                     utils.editable_convention(request, convention)
                     or service.editable_after_upload
@@ -586,11 +481,15 @@ class ConventionBailleurView(ConventionView):
         "total": 9,
         "title": "Bailleur",
         "next": "Opération",
-        "next_target": next_path_redirect,
     }
 
     def _get_convention(self, convention_uuid):
         return Convention.objects.prefetch_related("bailleur").get(uuid=convention_uuid)
+
+
+class AvenantBailleurView(ConventionBailleurView):
+    next_path_redirect: str = "conventions:recapitulatif"
+    form_step = {}
 
 
 class ConventionProgrammeView(ConventionView):
@@ -602,7 +501,6 @@ class ConventionProgrammeView(ConventionView):
         "total": 9,
         "title": "Opération",
         "next": "Cadastre",
-        "next_target": next_path_redirect,
     }
 
     def _get_convention(self, convention_uuid):
@@ -616,53 +514,110 @@ class ConventionProgrammeView(ConventionView):
 class ConventionFinancementView(ConventionView):
     target_template: str = "conventions/financement.html"
     next_path_redirect: str = "conventions:logements"
-    service_class: ConventionService = ConventionFinancementService
+    service_class = ConventionFinancementService
     form_step: dict = {
         "number": 5,
         "total": 9,
         "title": "Financement",
         "next": "Logements",
-        "next_target": next_path_redirect,
     }
 
     def _get_convention(self, convention_uuid):
         return Convention.objects.prefetch_related("pret_set").get(uuid=convention_uuid)
 
 
+class AvenantFinancementView(ConventionFinancementView):
+    target_template: str = "conventions/financement.html"
+    next_path_redirect: str = "conventions:recapitulatif"
+    service_class = ConventionFinancementService
+    form_step = {}
+
+
+class ConventionLogementsView(ConventionView):
+    target_template: str = "conventions/logements.html"
+    next_path_redirect: str = "conventions:annexes"
+    service_class = ConventionLogementsService
+    form_step: dict = {
+        "number": 6,
+        "total": 9,
+        "title": "Logements",
+        "next": "Annexes",
+    }
+
+    def _get_convention(self, convention_uuid):
+        return (
+            Convention.objects.prefetch_related("lot")
+            .prefetch_related("lot__logements")
+            .get(uuid=convention_uuid)
+        )
+
+
+class AvenantLogementsView(ConventionLogementsView):
+    target_template: str = "conventions/logements.html"
+    next_path_redirect: str = "conventions:avenant_annexes"
+    service_class = ConventionLogementsService
+    form_step: dict = {
+        "number": 1,
+        "total": 2,
+        "title": "Logements",
+        "next": "Annexes",
+    }
+
+
+class ConventionAnnexesView(ConventionView):
+    target_template: str = "conventions/annexes.html"
+    next_path_redirect: str = "conventions:stationnements"
+    service_class = ConventionAnnexesService
+    form_step: dict = {
+        "number": 7,
+        "total": 9,
+        "title": "Annexes",
+        "next": "Stationnements",
+    }
+
+    def _get_convention(self, convention_uuid):
+        return (
+            Convention.objects.prefetch_related("lot")
+            .prefetch_related("lot__logements__annexes")
+            .get(uuid=convention_uuid)
+        )
+
+
+class AvenantAnnexesView(ConventionAnnexesView):
+    next_path_redirect: str = "conventions:recapitulatif"
+    service_class = ConventionAnnexesService
+    form_step: dict = {
+        "number": 2,
+        "total": 2,
+        "title": "Annexes",
+        "next": "Recapitulatif",
+    }
+
+
 class ConventionTypeStationnementView(ConventionView):
     target_template: str = "conventions/stationnements.html"
     next_path_redirect: str = "conventions:comments"
-    service_class: ConventionService = ConventionTypeStationnementService
+    service_class = ConventionTypeStationnementService
     form_step: dict = {
         "number": 8,
         "total": 9,
         "title": "Stationnements",
         "next": "Commentaires",
-        "next_target": next_path_redirect,
     }
 
 
 class ConventionCommentsView(ConventionView):
     target_template: str = "conventions/comments.html"
     next_path_redirect: str = "conventions:recapitulatif"
-    service_class: ConventionService = ConventionCommentsService
+    service_class = ConventionCommentsService
     form_step: dict = {
         "number": 9,
         "total": 9,
         "title": "Commentaires",
         "next": "Récapitulatif",
-        "next_target": next_path_redirect,
     }
 
 
 class AvenantCommentsView(ConventionCommentsView):
-
-    target_template: str = "conventions/avenant_comments.html"
     next_path_redirect: str = "conventions:recapitulatif"
-    form_step: dict = {
-        "number": 3,
-        "total": 4,
-        "title": "Commentaires",
-        "next": "Récapitulatif",
-        "next_target": next_path_redirect,
-    }
+    form_step: dict = {}

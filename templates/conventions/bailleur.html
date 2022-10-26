@@ -27,7 +27,7 @@
                             <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
                                 <p>Les infomations dans ce cadre sont attachées à l'entreprise bailleur,
                                     les modifications seront donc reportées sur toutes les conventions en
-                                    projet ou en cours d'instruction appartement à ce bailleur.</p>
+                                    projet ou en cours d'instruction appartenant à ce bailleur.</p>
                                 {% if upform.bailleur.field.choices|length > 1 %}
                                     <details>
                                         <summary>
@@ -77,7 +77,7 @@
                         {% include "common/form/input_text.html" with form_input=form.signataire_nom object_field="bailleur__signataire_nom__"|add:form.uuid.value %}
 
                         <div class="fr-mb-2w">
-                            <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                                     {% include "common/form/input_text.html" with form_input=form.signataire_fonction object_field="bailleur__signataire_fonction__"|add:form.uuid.value %}
                                 </div>
@@ -93,7 +93,7 @@
                 <div class="form-button-footer fr-col-12 fr-col-md-12  fr-py-5w">
 
                     {% if editable %}
-                        {% include "common/button/next_and_save.html" with suivant='conventions:bailleur' convention_uuid=convention.uuid %}
+                        {% include "common/button/next_and_save.html" %}
                     {% else %}
                         {% include "common/button/noteditable_button.html"%}
                     {% endif %}

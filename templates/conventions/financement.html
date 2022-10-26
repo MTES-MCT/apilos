@@ -46,7 +46,7 @@
 
                         {{ formset.management_form }}
                         <div class="fr-table fr-table--bordered table--layout-fixed">
-                            <table>
+                            <table aria-label="Prêts">
                                 <thead>
                                     <tr>
                                         {% if convention|display_comments %}
@@ -142,8 +142,10 @@
                 {% include "common/required_fields_info.html" %}
                 <div class="form-button-footer fr-col-md-12  fr-py-5w">
                     {% if editable %}
-                        {% include "common/button/next_and_save.html" with suivant='conventions:financement' convention_uuid=convention.uuid %}
-                        {% include "common/button/previous.html" with precedent='conventions:edd' convention_uuid=convention.uuid %}
+                        {% include "common/button/next_and_save.html" %}
+                        {% if not convention.is_avenant %}
+                            {% include "common/button/previous.html" with precedent='conventions:edd' convention_uuid=convention.uuid %}
+                        {% endif %}
                     {% else %}
                         {% include "common/button/noteditable_button.html"%}
                     {% endif %}

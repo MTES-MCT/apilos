@@ -277,6 +277,11 @@ def display_notification_new_convention_instructeur_to_bailleur(convention, requ
 
 
 @register.filter
+def display_status_projet(convention):
+    return convention.statut == ConventionStatut.PROJET
+
+
+@register.filter
 def display_demande_correction(convention):
     return convention.statut == ConventionStatut.INSTRUCTION
 
@@ -298,15 +303,11 @@ def display_redirect_post_action(convention):
 
 @register.filter
 def display_convention_form_progressbar(convention):
-    return (
-        convention.statut
-        in [
-            ConventionStatut.PROJET,
-            ConventionStatut.INSTRUCTION,
-            ConventionStatut.CORRECTION,
-        ]
-        and not convention.is_avenant()
-    )
+    return convention.statut in [
+        ConventionStatut.PROJET,
+        ConventionStatut.INSTRUCTION,
+        ConventionStatut.CORRECTION,
+    ]
 
 
 @register.filter
@@ -324,3 +325,25 @@ def display_back_to_instruction(convention, request):
         ConventionStatut.A_SIGNER,
         ConventionStatut.SIGNEE,
     ] and is_instructeur(request)
+
+
+@register.filter
+def display_submit_convention(convention, request):
+    return convention.statut == ConventionStatut.PROJET and is_bailleur(request)
+
+
+@register.filter
+def display_delete_convention(convention, request):
+    return convention.statut == ConventionStatut.PROJET and is_bailleur(request)
+
+
+@register.filter
+def display_create_avenant(convention):
+    return not (
+        {
+            ConventionStatut.PROJET,
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+        }
+        & {avenant.statut for avenant in convention.avenants.all()}
+    )

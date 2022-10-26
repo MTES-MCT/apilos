@@ -1,22 +1,27 @@
-<div class="fr-col-12">
-    <div role="alert" class="fr-alert fr-alert--info fr-icon-arrow-right-s-line-double">
-        <p class="fr-alert__title">
-            Soumettre au service instructeur
-        </p>
-        <p>
-            Votre projet {% if convention.is_avenant %}d'avenant à la {% else %}de {% endif %}convention est terminé ? Soumettez-le à l'instruction. Le service instructeur en sera informé et vous tiendra au courant de l'évolution de l'instruction.
-        </p>
-        <p>
-            Si vous avez encore des modifications à apporter au projet {% if convention.is_avenant %}d'avenant{% else %}de convention{% endif %}, vous pouvez y revenir plus tard.
-        </p>
-        <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
-            {% csrf_token %}
-            <button name="SubmitConvention" value=True class="fr-btn fr-my-3w">
+{% load custom_filters %}
+
+{% if convention|display_submit_convention:request %}
+    <div class="fr-col-12 fr-py-5w">
+        <div role="alert" class="fr-alert fr-alert--info fr-icon-arrow-right-s-line-double">
+            <p class="fr-alert__title">
                 Soumettre au service instructeur
-            </button>
-        </form>
-        <p class="fr-text--xs notes">
-            <em>Votre projet de convention est enregistré.Si vous le souhaitez, vous pouvez quitter cette page et y revenir plus tard.</em>
-        </p>
+            </p>
+            <p>
+                Votre projet {% if convention.is_avenant %}d'avenant à la {% else %}de {% endif %}convention est terminé ? Soumettez-le à l'instruction. Le service instructeur en sera informé et vous tiendra au courant de l'évolution de l'instruction.
+            </p>
+            <p>
+                Si vous avez encore des modifications à apporter au projet {% if convention.is_avenant %}d'avenant{% else %}de convention{% endif %}, vous pouvez y revenir plus tard.
+            </p>
+            <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
+                {% csrf_token %}
+                <button name="SubmitConvention" value=True class="fr-btn fr-my-3w">
+                    Soumettre au service instructeur
+                </button>
+            </form>
+            <p class="fr-text--xs notes">
+                <em>Votre projet de convention est enregistré.Si vous le souhaitez, vous pouvez quitter cette page et y revenir plus tard.</em>
+            </p>
+        </div>
     </div>
-</div>
+    <hr>
+{% endif %}
