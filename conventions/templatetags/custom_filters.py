@@ -337,3 +337,16 @@ def display_submit_convention(convention, request):
 def display_delete_convention(convention, request):
     # fixme to be tested
     return convention.statut == ConventionStatut.PROJET and is_bailleur(request)
+
+
+@register.filter
+def display_create_avenant(convention):
+    # fixme to be tested
+    return not (
+        {
+            ConventionStatut.PROJET,
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+        }
+        & {avenant.statut for avenant in convention.avenants.all()}
+    )

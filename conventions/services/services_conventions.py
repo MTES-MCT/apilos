@@ -681,8 +681,8 @@ def create_avenant(request, convention_uuid):
             else:
                 convention_to_clone = _get_last_avenant(parent_convention)
                 avenant = convention_to_clone.clone(
-                    request.user
-                )  # , convention_origin=parent_convention)
+                    request.user, convention_origin=parent_convention
+                )
             avenant_type = AvenantType.objects.get(
                 nom=avenant_form.cleaned_data["avenant_type"]
             )
