@@ -514,7 +514,7 @@ class ConventionProgrammeView(ConventionView):
 class ConventionFinancementView(ConventionView):
     target_template: str = "conventions/financement.html"
     next_path_redirect: str = "conventions:logements"
-    service_class: ConventionService = ConventionFinancementService
+    service_class = ConventionFinancementService
     form_step: dict = {
         "number": 5,
         "total": 9,
@@ -529,14 +529,14 @@ class ConventionFinancementView(ConventionView):
 class AvenantFinancementView(ConventionFinancementView):
     target_template: str = "conventions/financement.html"
     next_path_redirect: str = "conventions:recapitulatif"
-    service_class: ConventionService = ConventionFinancementService
+    service_class = ConventionFinancementService
     form_step = {}
 
 
 class ConventionLogementsView(ConventionView):
     target_template: str = "conventions/logements.html"
     next_path_redirect: str = "conventions:annexes"
-    service_class: ConventionService = ConventionLogementsService
+    service_class = ConventionLogementsService
     form_step: dict = {
         "number": 6,
         "total": 9,
@@ -555,7 +555,7 @@ class ConventionLogementsView(ConventionView):
 class AvenantLogementsView(ConventionLogementsView):
     target_template: str = "conventions/logements.html"
     next_path_redirect: str = "conventions:avenant_annexes"
-    service_class: ConventionService = ConventionLogementsService
+    service_class = ConventionLogementsService
     form_step: dict = {
         "number": 1,
         "total": 2,
@@ -567,7 +567,7 @@ class AvenantLogementsView(ConventionLogementsView):
 class ConventionAnnexesView(ConventionView):
     target_template: str = "conventions/annexes.html"
     next_path_redirect: str = "conventions:stationnements"
-    service_class: ConventionService = ConventionAnnexesService
+    service_class = ConventionAnnexesService
     form_step: dict = {
         "number": 7,
         "total": 9,
@@ -585,7 +585,7 @@ class ConventionAnnexesView(ConventionView):
 
 class AvenantAnnexesView(ConventionAnnexesView):
     next_path_redirect: str = "conventions:recapitulatif"
-    service_class: ConventionService = ConventionAnnexesService
+    service_class = ConventionAnnexesService
     form_step: dict = {
         "number": 2,
         "total": 2,
@@ -597,7 +597,7 @@ class AvenantAnnexesView(ConventionAnnexesView):
 class ConventionTypeStationnementView(ConventionView):
     target_template: str = "conventions/stationnements.html"
     next_path_redirect: str = "conventions:comments"
-    service_class: ConventionService = ConventionTypeStationnementService
+    service_class = ConventionTypeStationnementService
     form_step: dict = {
         "number": 8,
         "total": 9,
@@ -609,7 +609,7 @@ class ConventionTypeStationnementView(ConventionView):
 class ConventionCommentsView(ConventionView):
     target_template: str = "conventions/comments.html"
     next_path_redirect: str = "conventions:recapitulatif"
-    service_class: ConventionService = ConventionCommentsService
+    service_class = ConventionCommentsService
     form_step: dict = {
         "number": 9,
         "total": 9,

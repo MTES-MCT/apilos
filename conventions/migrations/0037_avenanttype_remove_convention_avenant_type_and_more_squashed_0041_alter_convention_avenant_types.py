@@ -19,10 +19,10 @@ def load_fixture(apps, schema_editor):
 
 
 def update_convention_avenanttype(apps, schema_editor):
-    Convention = apps.get_model("conventions", "Convention")
-    AvenantType = apps.get_model("conventions", "AvenantType")
-    logements = AvenantType.objects.get(nom="logements")
-    for convention in Convention.objects.filter(parent_id__isnull=False):
+    convention_class = apps.get_model("conventions", "Convention")
+    avenant_type_class = apps.get_model("conventions", "AvenantType")
+    logements = avenant_type_class.objects.get(nom="logements")
+    for convention in convention_class.objects.filter(parent_id__isnull=False):
         convention.avenant_types.add(logements)
 
 
