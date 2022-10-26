@@ -1,6 +1,7 @@
 from datetime import date
 from typing import Optional
 from api_insee import ApiInsee
+from box.exceptions import BoxKeyError
 from django.conf import settings
 from box import Box
 
@@ -8,7 +9,6 @@ from box import Box
 class SiretResolver:
     """
     Link to INSEE API doc: https://api.insee.fr/catalogue/site/themes/wso2/subthemes/insee/pages/item-info.jag?name=Sirene&version=V3&provider=insee
-
     """
 
     def __init__(self):
@@ -24,8 +24,7 @@ class SiretResolver:
         # Process API JSON result with dot notation via Box
         self._box.incoming = data
 
-        nic = self._box['incoming.uniteLegale.periodesUniteLegale.[0].nicSiegeUniteLegale']
-        if nic:
-            return siren + nic
-
-        return None
+        try:
+            return self._box['incoming.uniteLegale.periodesUniteLegale.[0].nicSiegeUniteLegale']
+        except BoxKeyError:
+            return None
