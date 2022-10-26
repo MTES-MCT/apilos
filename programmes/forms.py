@@ -554,8 +554,8 @@ class LogementForm(forms.Form):
         max_digits=6,
         decimal_places=4,
         error_messages={
-            "required": "Le coéficient est obligatoire",
-            "max_digits": "La coéficient doit-être inférieur à 1000",
+            "required": "Le coefficient est obligatoire",
+            "max_digits": "La coefficient doit-être inférieur à 1000",
         },
     )
     loyer = forms.DecimalField(
@@ -584,7 +584,7 @@ class LogementForm(forms.Form):
         ):
             raise ValidationError(
                 "Le loyer doit-être le produit de la surface utile,"
-                + " du loyer par mètre carré et du coéficient. valeur attendue :"
+                + " du loyer par mètre carré et du coefficient. valeur attendue :"
                 + f" {round_half_up(surface_utile*loyer_par_metre_carre*coeficient,2)} €"
                 + " (tolérance de 1 €)"
             )
@@ -719,8 +719,8 @@ class BaseLogementFormSet(BaseFormSet):
             > round_half_up(loyer_without_coef, 2) + nb_logements
         ):
             error = ValidationError(
-                "La somme des loyers après application des coéficients ne peut excéder "
-                + "la somme des loyers sans application des coéficients, c'est à dire "
+                "La somme des loyers après application des coefficients ne peut excéder "
+                + "la somme des loyers sans application des coefficients, c'est à dire "
                 + f"{round_half_up(loyer_without_coef,2)} € (tolérance de {nb_logements} €)"
             )
             self._non_form_errors.append(error)

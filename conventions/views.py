@@ -134,7 +134,6 @@ def recapitulatif(request, convention_uuid):
         .get(uuid=convention_uuid)
     )
     result = services.convention_summary(request, convention)
-    template_name = "conventions/recapitulatif.html"
     if convention.is_avenant():
         result["avenant_list"] = [
             avenant_type.nom for avenant_type in convention.avenant_types.all()
@@ -142,7 +141,7 @@ def recapitulatif(request, convention_uuid):
 
     return render(
         request,
-        template_name,
+        "conventions/recapitulatif.html",
         {
             **result,
         },
@@ -407,6 +406,13 @@ class ConventionView(ABC, LoginRequiredMixin, View):
     def _get_convention(self, convention_uuid):
         return Convention.objects.get(uuid=convention_uuid)
 
+    def _get_form_steps(self):
+        if self.form_step:
+            return {
+                "form_step": self.form_step | {"next_target": self.next_path_redirect}
+            }
+        return {}
+
     @has_campaign_permission("convention.view_convention")
     def get(self, request, convention_uuid):
         convention = self._get_convention(convention_uuid)
@@ -420,7 +426,7 @@ class ConventionView(ABC, LoginRequiredMixin, View):
                 **({"form": service.form} if service.form else {}),
                 **({"upform": service.upform} if service.upform else {}),
                 **({"formset": service.formset} if service.formset else {}),
-                **({"form_step": self.form_step} if self.form_step else {}),
+                **self._get_form_steps(),
                 "editable_after_upload": (
                     utils.editable_convention(request, convention)
                     or service.editable_after_upload
@@ -475,7 +481,6 @@ class ConventionBailleurView(ConventionView):
         "total": 9,
         "title": "Bailleur",
         "next": "Opération",
-        "next_target": next_path_redirect,
     }
 
     def _get_convention(self, convention_uuid):
@@ -496,7 +501,6 @@ class ConventionProgrammeView(ConventionView):
         "total": 9,
         "title": "Opération",
         "next": "Cadastre",
-        "next_target": next_path_redirect,
     }
 
     def _get_convention(self, convention_uuid):
@@ -516,7 +520,6 @@ class ConventionFinancementView(ConventionView):
         "total": 9,
         "title": "Financement",
         "next": "Logements",
-        "next_target": next_path_redirect,
     }
 
     def _get_convention(self, convention_uuid):
@@ -539,7 +542,6 @@ class ConventionLogementsView(ConventionView):
         "total": 9,
         "title": "Logements",
         "next": "Annexes",
-        "next_target": next_path_redirect,
     }
 
     def _get_convention(self, convention_uuid):
@@ -559,7 +561,6 @@ class AvenantLogementsView(ConventionLogementsView):
         "total": 2,
         "title": "Logements",
         "next": "Annexes",
-        "next_target": next_path_redirect,
     }
 
 
@@ -572,7 +573,6 @@ class ConventionAnnexesView(ConventionView):
         "total": 9,
         "title": "Annexes",
         "next": "Stationnements",
-        "next_target": next_path_redirect,
     }
 
     def _get_convention(self, convention_uuid):
@@ -591,7 +591,6 @@ class AvenantAnnexesView(ConventionAnnexesView):
         "total": 2,
         "title": "Annexes",
         "next": "Recapitulatif",
-        "next_target": next_path_redirect,
     }
 
 
@@ -604,7 +603,6 @@ class ConventionTypeStationnementView(ConventionView):
         "total": 9,
         "title": "Stationnements",
         "next": "Commentaires",
-        "next_target": next_path_redirect,
     }
 
 
@@ -617,7 +615,6 @@ class ConventionCommentsView(ConventionView):
         "total": 9,
         "title": "Commentaires",
         "next": "Récapitulatif",
-        "next_target": next_path_redirect,
     }
 
 
