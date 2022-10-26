@@ -2,6 +2,8 @@ from datetime import date
 from typing import Optional
 from api_insee import ApiInsee
 from django.conf import settings
+from box import Box
+
 
 class SiretResolver:
     """
@@ -14,12 +16,16 @@ class SiretResolver:
             key=settings.INSEE_API_KEY,
             secret =settings.INSEE_API_SECRET
         )
+        self._box = Box(box_dots=True)
 
     def resolve(self, siren: str) -> Optional[str]:
         data = self._insee_api_client.siren(siren, date=date.today().isoformat(), masquerValeursNulles=True).get()
 
-        nic = data['uniteLegale']['periodesUniteLegale'][0]['nicSiegeUniteLegale']
+        # Process API JSON result with dot notation via Box
+        self._box.incoming = data
+
+        nic = self._box['incoming.uniteLegale.periodesUniteLegale.[0].nicSiegeUniteLegale']
         if nic:
             return siren + nic
 
-        return siren + 'XXXXX'
+        return None
