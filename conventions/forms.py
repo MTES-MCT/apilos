@@ -405,13 +405,6 @@ class ConventionType1and2Form(forms.Form):
     )
 
 
-def get_avenant_types():
-    return [
-        (avenant_type.nom, avenant_type.nom)
-        for avenant_type in AvenantType.objects.all()
-    ]
-
-
 class AvenantForm(forms.Form):
     uuid = forms.UUIDField(
         required=False,
@@ -419,6 +412,6 @@ class AvenantForm(forms.Form):
 
     avenant_type = forms.ChoiceField(
         label="Type d'avenant",
-        choices=get_avenant_types,
+        choices=AvenantType.get_as_choices,
         required=True,
     )

@@ -79,6 +79,12 @@ class AvenantType(models.Model):
     def __str__(self):
         return f"{self.nom}"
 
+    @classmethod
+    def get_as_choices(cls):
+        return [
+            (avenant_type.nom, avenant_type.nom) for avenant_type in cls.objects.all()
+        ]
+
 
 class ConventionType1and2(models.TextChoices):
     TYPE1 = "Type1", "Type I"

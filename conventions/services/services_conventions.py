@@ -640,6 +640,7 @@ def convention_post_action(request, convention_uuid):
         my_convention_list=convention.avenants.all()
         .prefetch_related("programme")
         .prefetch_related("lot"),
+        order_by="cree_le",
     )
     total_avenants = convention.avenants.all().count()
     avenant_list_service.paginate()
