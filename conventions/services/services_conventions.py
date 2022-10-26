@@ -21,7 +21,7 @@ from conventions.forms import (
     ConventionNumberForm,
     ConventionResiliationForm,
     ConventionType1and2Form,
-    NewAvenantForm,
+    AvenantForm,
     NotificationForm,
     PretFormSet,
     UploadForm,
@@ -654,20 +654,37 @@ def convention_post_action(request, convention_uuid):
     }
 
 
+def _get_last_avenant(convention):
+    avenants_status = {avenant.statut for avenant in convention.avenants.all()}
+    if {
+        ConventionStatut.PROJET,
+        ConventionStatut.INSTRUCTION,
+        ConventionStatut.CORRECTION,
+    } & avenants_status:
+        raise Exception("Ongoing avenant already exists")
+    ordered_avenants = convention.avenants.order_by("-cree_le")
+    return ordered_avenants[0] if ordered_avenants else convention
+
+
 def create_avenant(request, convention_uuid):
     parent_convention = (
         Convention.objects.prefetch_related("programme")
         .prefetch_related("lot")
+        .prefetch_related("avenants")
         .get(uuid=convention_uuid)
     )
     if request.method == "POST":
-        # fixme check the convention haven't already got ongoing avenant
-        new_avenant_form = NewAvenantForm(request.POST)
-        if new_avenant_form.is_valid():
-            # fixme clone the last avenant
-            avenant = parent_convention.clone(request.user)
+        avenant_form = AvenantForm(request.POST)
+        if avenant_form.is_valid():
+            if avenant_form.cleaned_data["uuid"]:
+                avenant = Convention.objects.get(uuid=avenant_form.cleaned_data["uuid"])
+            else:
+                convention_to_clone = _get_last_avenant(parent_convention)
+                avenant = convention_to_clone.clone(
+                    request.user
+                )  # , convention_origin=parent_convention)
             avenant_type = AvenantType.objects.get(
-                nom=new_avenant_form.cleaned_data["avenant_type"]
+                nom=avenant_form.cleaned_data["avenant_type"]
             )
             avenant.avenant_types.add(avenant_type)
             avenant.save()
@@ -678,13 +695,13 @@ def create_avenant(request, convention_uuid):
                 "avenant_type": avenant_type,
             }
     else:
-        new_avenant_form = NewAvenantForm()
+        avenant_form = AvenantForm()
 
     return {
         "success": utils.ReturnStatus.ERROR,
         "editable": request.user.has_perm("convention.add_convention"),
         "bailleurs": request.user.bailleurs(),
-        "form": new_avenant_form,
+        "form": avenant_form,
         "parent_convention": parent_convention,
     }
 

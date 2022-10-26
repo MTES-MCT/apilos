@@ -3,9 +3,12 @@
         <h2 class="fr-text--lg">Mettre à jour la durée de la convention</h2>
         <p>En cas de nouveaux travaux financés</p>
     </div>
-    <form method="post">
+    <form method="post" {% if avenant_uuid %}action="{% url 'conventions:new_avenant' convention_uuid=avenant_uuid %}"{% endif %}>
         {% csrf_token %}
+        {% if avenant_uuid %}
+            <input type="hidden" value="{{avenant_uuid}}" name="uuid">
+        {% endif %}
         <input type="hidden" value="duree" name="avenant_type">
-        <button class="fr-btn fr-btn--secondary fr-icon-eye-line fr-btn--icon-left"><span class=""></span>Mettre à jour</button>
+        <button class="fr-btn fr-btn--secondary fr-icon-eye-line fr-btn--icon-left">Mettre à jour</button>
     </form>
 </div>

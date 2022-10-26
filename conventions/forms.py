@@ -412,7 +412,11 @@ def get_avenant_types():
     ]
 
 
-class NewAvenantForm(forms.Form):
+class AvenantForm(forms.Form):
+    uuid = forms.UUIDField(
+        required=False,
+    )
+
     avenant_type = forms.ChoiceField(
         label="Type d'avenant",
         choices=get_avenant_types,

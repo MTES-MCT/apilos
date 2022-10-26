@@ -33,38 +33,37 @@
                 {% endif %}
                 {% if convention.is_avenant %}
                     {% if 'bailleur' in avenant_list %}
-                        {% include "conventions/recapitulatif/bailleur.html" %}
+                        {% include "conventions/recapitulatif/bailleur.html" with target_url='conventions:avenant_bailleur' %}
                         <hr class="fr-mt-3w">
                     {% else %}
-                        {% include "conventions/avenant/bailleur_update_start.html" %}
+                        {% include "conventions/avenant/bailleur_update_start.html" with avenant_uuid=convention.uuid %}
                         <hr>
                     {% endif %}
                     {% if 'logements' in avenant_list %}
-                        {% include "conventions/recapitulatif/logements.html" %}
-                        {% include "conventions/recapitulatif/annexes.html" %}
-                        {% include "conventions/recapitulatif/comments.html" %}
+                        {% include "conventions/recapitulatif/logements.html" with target_url='conventions:avenant_logements' %}
+                        {% include "conventions/recapitulatif/annexes.html" with target_url='conventions:avenant_annexes' %}
                         <hr class="fr-mt-3w">
                     {% else %}
-                        {% include "conventions/avenant/logements_update_start.html" %}
+                        {% include "conventions/avenant/logements_update_start.html" with avenant_uuid=convention.uuid %}
                         <hr>
                     {% endif %}
                     {% if 'duree' in avenant_list %}
-                        {% include "conventions/recapitulatif/financements.html" %}
+                        {% include "conventions/recapitulatif/financement.html" with target_url='conventions:avenant_financement' %}
                         <hr class="fr-mt-3w">
                     {% else %}
-                        {% include "conventions/avenant/financement_update_start.html" %}
+                        {% include "conventions/avenant/financement_update_start.html" with avenant_uuid=convention.uuid %}
                         <hr>
                     {% endif %}
                 {% else %}
-                    {% include "conventions/recapitulatif/bailleur.html" %}
-                    {% include "conventions/recapitulatif/operation.html" %}
-                    {% include "conventions/recapitulatif/references_cadastrales.html" %}
-                    {% include "conventions/recapitulatif/edd.html" %}
-                    {% include "conventions/recapitulatif/financements.html" %}
-                    {% include "conventions/recapitulatif/logements.html" %}
-                    {% include "conventions/recapitulatif/annexes.html" %}
-                    {% include "conventions/recapitulatif/stationnements.html" %}
-                    {% include "conventions/recapitulatif/comments.html" %}
+                    {% include "conventions/recapitulatif/bailleur.html"  with target_url='conventions:bailleur'%}
+                    {% include "conventions/recapitulatif/operation.html" with target_url='conventions:programme'%}
+                    {% include "conventions/recapitulatif/references_cadastrales.html"  with target_url='conventions:references_cadastrales'%}
+                    {% include "conventions/recapitulatif/edd.html"  with target_url='conventions:edd'%}
+                    {% include "conventions/recapitulatif/financement.html" with target_url='conventions:financement' %}
+                    {% include "conventions/recapitulatif/logements.html" with target_url='conventions:logements' %}
+                    {% include "conventions/recapitulatif/annexes.html" with target_url='conventions:annexes' %}
+                    {% include "conventions/recapitulatif/stationnements.html" with target_url='conventions:stationnements' %}
+                    {% include "conventions/recapitulatif/comments.html" with target_url='conventions:comments' %}
                 {% endif %}
 
                 <turbo-frame id="convention_actions" data-turbo="true">
