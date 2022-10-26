@@ -118,6 +118,13 @@ class ModelImporter(ABC):
         """
         return {}
 
+    def _prepare_data(self, data: dict) -> dict:
+        """
+        Prepare data dict before it's used to create a new instance. This is where you can add, remove or update an
+        attribute
+        """
+        return data
+
     def process_result(self, data: dict) -> Optional[Model]:
         """
         For each result row from the base SQL query, process it by following these steps:
@@ -147,6 +154,7 @@ class ModelImporter(ABC):
             # Extract from data the id of the associated object in the Ecoloweb DB (in string format as it can be a
             # hash function like for programme lots)
             ecolo_id = data.pop(self.ecolo_id_field)
+            data = self._prepare_data(data)
 
             # If identity fields are defined, look for any matching model in the APiLos database
             if len(self._get_identity_keys()) > 0:

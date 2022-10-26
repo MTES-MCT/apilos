@@ -10,12 +10,17 @@ select
     b.id,
     b.raisonsociale as nom,
     -- Certains bailleurs n'ont pas de code SIRET entier dans la base Ecolo
+    b.codesiret,
+    b.codesiren,
+    b.codepersonne,
+    /*
     case
         when b.codesiret is not null then b.codesiret
         when b.codesiren is not null then b.codesiren||'XXXXX'
         when b.codepersonne is not null then b.codepersonne
         else b.codedaei||'XXXXXXXXX'
     end as siret,
+    */
     b.datemodif as cree_le,
     b.datemodif as mis_a_jour_le,
     ab.ligne1||' '||ab.ligne2||' '||ab.ligne3||' '||ab.ligne4 as adresse,
