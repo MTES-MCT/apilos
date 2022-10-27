@@ -386,6 +386,12 @@ def new_avenant(request, convention_uuid):
                     "conventions:avenant_financement", args=[result["convention"].uuid]
                 )
             )
+        if result["avenant_type"].nom == "commentaires":
+            return HttpResponseRedirect(
+                reverse(
+                    "conventions:avenant_comments", args=[result["convention"].uuid]
+                )
+            )
 
     return render(
         request,

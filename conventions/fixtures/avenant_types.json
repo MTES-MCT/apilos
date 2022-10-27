@@ -1,26 +1,34 @@
 [
   {
-      "model": "conventions.avenanttype",
-      "pk": 1,
-      "fields": {
-          "nom": "bailleur",
-          "desc": "Suite à une vente, un changement de gestionnaire, ou un changement de dénomination du propriétaire"
-      }
+    "model": "conventions.avenanttype",
+    "pk": 1,
+    "fields": {
+      "nom": "bailleur",
+      "desc": "Suite à une vente, un changement de gestionnaire, ou un changement de dénomination du propriétaire"
+    }
   },
   {
-      "model": "conventions.avenanttype",
-      "pk": 2,
-      "fields": {
-        "nom": "logements",
-        "desc": "En cas de modification du programme, de travaux, de réhabilitation totale, ou d’une évolution des loyers"
-      }
+    "model": "conventions.avenanttype",
+    "pk": 2,
+    "fields": {
+      "nom": "logements",
+      "desc": "En cas de modification du programme, de travaux, de réhabilitation totale, ou d’une évolution des loyers"
+    }
   },
   {
-      "model": "conventions.avenanttype",
-      "pk": 3,
-      "fields": {
-        "nom": "duree",
-        "desc": "En cas de nouveaux travaux financés"
-      }
+    "model": "conventions.avenanttype",
+    "pk": 3,
+    "fields": {
+      "nom": "duree",
+      "desc": "En cas de nouveaux travaux financés"
+    }
+  },
+  {
+    "model": "conventions.avenanttype",
+    "pk": 4,
+    "fields": {
+      "nom": "commentaires",
+      "desc": "En cas de nouveaux travaux financés"
+    }
   }
 ]

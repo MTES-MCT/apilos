@@ -54,6 +54,13 @@
                         {% include "conventions/avenant/financement_update_start.html" with avenant_uuid=convention.uuid %}
                         <hr>
                     {% endif %}
+                    {% if 'commentaires' in avenant_list %}
+                        {% include "conventions/recapitulatif/comments.html" with target_url='conventions:avenant_comments' %}
+                        <hr class="fr-mt-3w">
+                    {% else %}
+                        {% include "conventions/avenant/comments_update_start.html" with avenant_uuid=convention.uuid %}
+                        <hr>
+                    {% endif %}
                 {% else %}
                     {% include "conventions/recapitulatif/bailleur.html"  with target_url='conventions:bailleur'%}
                     {% include "conventions/recapitulatif/operation.html" with target_url='conventions:programme'%}
