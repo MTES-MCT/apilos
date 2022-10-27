@@ -277,11 +277,6 @@ def display_notification_new_convention_instructeur_to_bailleur(convention, requ
 
 
 @register.filter
-def display_status_projet(convention):
-    return convention.statut == ConventionStatut.PROJET
-
-
-@register.filter
 def display_demande_correction(convention):
     return convention.statut == ConventionStatut.INSTRUCTION
 
