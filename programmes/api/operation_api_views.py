@@ -49,6 +49,18 @@ class OperationDetails(generics.GenericAPIView):
         serializer = MySerializer(programme)
         return Response(serializer.data)
 
+    @extend_schema(
+        tags=["operation"],
+        responses={
+            200: MySerializer,
+            400: OpenApiResponse(description="Bad request (something invalid)"),
+            401: OpenApiResponse(description="Unauthorized"),
+            403: OpenApiResponse(description="Forbidden"),
+            404: OpenApiResponse(description="Not Found"),
+        },
+        description="Create all convention objects linked to an operation and retour"
+        + " all those created element",
+    )
     def post(self, request, numero_galion):
         (programme, _, _) = get_or_create_conventions_from_operation_number(
             request, numero_galion
@@ -61,5 +73,37 @@ class OperationDetails(generics.GenericAPIView):
 # * OperationClosed.get -> get the status of the last version of the convention
 # * OperationClosed.post -> create avenant if needed after operation is closed
 class OperationClosed(OperationDetails):
+    @extend_schema(
+        tags=["operation"],
+        responses={
+            200: MySerializer,
+            400: OpenApiResponse(description="Bad request (something invalid)"),
+            401: OpenApiResponse(description="Unauthorized"),
+            403: OpenApiResponse(description="Forbidden"),
+            404: OpenApiResponse(description="Not Found"),
+        },
+        description=(
+            "Return Operation and all its conventions with a summary of"
+            + " last data validated by conventions and its avenant (to do)"
+        ),
+    )
+    def get(self, request, numero_galion):
+        programme = self.get_object(numero_galion)
+        serializer = MySerializer(programme)
+        return Response(serializer.data)
+
+    @extend_schema(
+        tags=["operation"],
+        responses={
+            200: MySerializer,
+            400: OpenApiResponse(description="Bad request (something invalid)"),
+            401: OpenApiResponse(description="Unauthorized"),
+            403: OpenApiResponse(description="Forbidden"),
+            404: OpenApiResponse(description="Not Found"),
+        },
+        description=(
+            "Get last data from Operations and create Avenants if it is needed (to do)"
+        ),
+    )
     def post(self, request, numero_galion):
         return self.get(request, numero_galion)

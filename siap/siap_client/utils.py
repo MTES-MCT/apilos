@@ -61,10 +61,16 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
     if "adresseLigne" in bailleur_from_siap:
         adresse = bailleur_from_siap["adresseLigne"]
 
+    siret = (
+        bailleur_from_siap["siret"]
+        if "siret" in bailleur_from_siap
+        else bailleur_from_siap["siren"]
+    )
+
     (bailleur, _) = Bailleur.objects.get_or_create(
         siren=bailleur_from_siap["siren"],
         defaults={
-            "siret": bailleur_from_siap["siren"],
+            "siret": siret,
             "nom": nom,
             "adresse": adresse,
             "code_postal": code_postal,
