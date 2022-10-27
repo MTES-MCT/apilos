@@ -429,3 +429,6 @@ DRAMATIQ_BROKER = {
         "django_dramatiq.middleware.AdminMiddleware",
     ],
 }
+
+# limit reach when an operation has 167 logements
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
