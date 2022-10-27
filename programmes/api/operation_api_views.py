@@ -55,3 +55,11 @@ class OperationDetails(generics.GenericAPIView):
         )
         serializer = MySerializer(programme)
         return Response(serializer.data)
+
+
+# empty class to prepare routes for SIAP:
+# * OperationClosed.get -> get the status of the last version of the convention
+# * OperationClosed.post -> create avenant if needed after operation is closed
+class OperationClosed(OperationDetails):
+    def post(self, request, numero_galion):
+        return self.get(request, numero_galion)

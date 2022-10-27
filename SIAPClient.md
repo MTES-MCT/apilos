@@ -110,7 +110,7 @@ Puis test de quelques appels:
 >>> from siap.siap_client.client import SIAPClient
 >>> SIAPClient.get_instance().get_habilitations(user_login='nicolas.oudard@beta.gouv.fr')
 >>> SIAPClient.get_instance().get_menu(user_login='nicolas.oudard@beta.gouv.fr', habilitation_id=5)
->>> SIAPClient.get_instance().get_operation(user_login='nicolas.oudard@beta.gouv.fr', habilitation_id=5, operation_identifier='20220600005')
+>>> SIAPClient.get_instance().get_operation(user_login='nicolas.oudard@beta.gouv.fr', habilitation_id=27, operation_identifier='20221000003')
 ```
 
 ## Questions ouvertes pour plus tard :

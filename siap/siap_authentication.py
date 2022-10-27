@@ -50,7 +50,7 @@ class SIAPJWTAuthentication(JWTAuthentication):
             )[0]
 
             user = User(cerbere_login=validated_token["user-login"])
-
+            request.session["habilitation_id"] = habilitation["id"]
             user.siap_habilitation["currently"] = habilitation["groupe"]["profil"][
                 "code"
             ]

@@ -325,7 +325,7 @@ def create_all_for_siap():
     create_group("Instructeur", rwd=["logement", "convention"])
     create_group("Bailleur", rw=["logement", "convention"])
     programme_75 = create_programme(
-        bailleur, administration, nom="Programe 1", numero_galion="20220600005"
+        bailleur, administration, nom="Programme 1", numero_galion="20220600005"
     )
     lot_plai = create_lot(
         programme_75, Financement.PLAI, type_habitat=TypeHabitat.MIXTE
@@ -416,7 +416,7 @@ def create_all():
         group=group_instructeur,
     )
 
-    programme_75 = create_programme(bailleur, administration_paris, nom="Programe 1")
+    programme_75 = create_programme(bailleur, administration_paris, nom="Programme 1")
     lot_plai = create_lot(programme_75, Financement.PLAI)
     lot_plus = create_lot(programme_75, Financement.PLUS)
     create_convention(lot_plus, numero="0001")
@@ -425,7 +425,7 @@ def create_all():
     programme_13 = create_programme(
         bailleur,
         administration_metropole,
-        nom="Programe 1",
+        nom="Programme 1",
         numero_galion="98765",
         code_postal="13001",
     )
