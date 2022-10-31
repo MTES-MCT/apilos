@@ -3,14 +3,12 @@
         <h2 class="fr-text--lg">Mettre à jour les informations du bailleur</h2>
         <p>Suite à une vente, un changement de gestionnaire, ou un changement de dénomination du propriétaire</p>
     </div>
-    {% if not convention or convention|display_convention_form_progressbar %}
-        <form method="post" {% if avenant_uuid %}action="{% url 'conventions:new_avenant' convention_uuid=avenant_uuid %}"{% endif %}>
-            {% csrf_token %}
-            {% if avenant_uuid %}
-                <input type="hidden" value="{{avenant_uuid}}" name="uuid">
-            {% endif %}
-            <input type="hidden" value="bailleur" name="avenant_type">
-            <button class="fr-btn fr-btn--secondary fr-icon-eye-line fr-btn--icon-left">Mettre à jour</button>
-        </form>
-    {% endif %}
+    <form method="post" {% if avenant_uuid %}action="{% url 'conventions:new_avenant' convention_uuid=avenant_uuid %}"{% endif %}>
+        {% csrf_token %}
+        {% if avenant_uuid %}
+            <input type="hidden" value="{{avenant_uuid}}" name="uuid">
+        {% endif %}
+        <input type="hidden" value="bailleur" name="avenant_type">
+        <button class="fr-btn fr-btn--secondary fr-icon-eye-line fr-btn--icon-left">Mettre à jour</button>
+    </form>
 </div>
