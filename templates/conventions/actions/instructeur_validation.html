@@ -14,7 +14,7 @@
                             name="{{conventionNumberForm.convention_numero.html_name}}"
                             value="{{conventionNumberForm.convention_numero.value}}">
                         <button class="fr-btn fr-btn--secondary">
-                            Valider {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}
+                            Valider l'avenant
                         </button>
 
                     </form>
@@ -37,7 +37,7 @@
                                 </div>
                                 <div class="fr-col-12 fr-col-md-6">
                                     <button class="fr-btn fr-btn--secondary" {% if not editable_validation %}disabled{% endif %}>
-                                        Valider {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}
+                                        Valider la convention
                                     </button>
                                 </div>
                             </div>

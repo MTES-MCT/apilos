@@ -59,7 +59,7 @@
                                             {{convention.short_statut_for_template}}
                                         </strong></span>
                                     </div>
-                                    {% if convention.is_project %}
+                                    {% if convention.statut == CONVENTION_STATUT.PROJET %}
                                         <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                             document.addEventListener('DOMContentLoaded', function () {
                                                 document.getElementById('convention_redirect_{{convention.uuid}}')

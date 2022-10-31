@@ -337,9 +337,6 @@ class Convention(models.Model):
             )
         return None
 
-    def is_project(self):
-        return self.statut == ConventionStatut.PROJET
-
     def is_avenant(self):
         return self.parent_id is not None
 

@@ -15,7 +15,7 @@
 
                     {% include "conventions/recapitulatif/alert_convention.html" %}
 
-                    {% if request|is_bailleur and convention.is_project %}
+                    {% if request|is_bailleur and convention.statut == CONVENTION_STATUT.PROJET %}
                         <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
                             {% include "conventions/actions/submit_convention.html" %}
                             {% include "conventions/actions/delete.html"%}

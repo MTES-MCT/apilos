@@ -228,7 +228,7 @@ def display_validation(convention, request):
     if convention.statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
         return True
     return (
-        convention.is_project
+        convention.statut == ConventionStatut.PROJET
         and convention.cree_par is not None
         and convention.cree_par.is_instructeur()
     )
