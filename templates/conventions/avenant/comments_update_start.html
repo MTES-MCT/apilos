@@ -3,12 +3,14 @@
         <h2 class="fr-text--lg">Ajouter des commentaires</h2>
         <p>En cas de modification du programme, de travaux, de réhabilitation totale, ou d’une évolution des loyers.</p>
     </div>
-    <form method="post" {% if avenant_uuid %}action="{% url 'conventions:new_avenant' convention_uuid=avenant_uuid %}"{% endif %}>
-        {% csrf_token %}
-        {% if avenant_uuid %}
-            <input type="hidden" value="{{avenant_uuid}}" name="uuid">
-        {% endif %}
-        <input type="hidden" value="commentaires" name="avenant_type">
-        <button class="fr-btn fr-btn--secondary fr-icon-eye-line fr-btn--icon-left">Ajouter des commentaires</button>
-    </form>
+    {% if convention|display_convention_form_progressbar %}
+        <form method="post" {% if avenant_uuid %}action="{% url 'conventions:new_avenant' convention_uuid=avenant_uuid %}"{% endif %}>
+            {% csrf_token %}
+            {% if avenant_uuid %}
+                <input type="hidden" value="{{avenant_uuid}}" name="uuid">
+            {% endif %}
+            <input type="hidden" value="commentaires" name="avenant_type">
+            <button class="fr-btn fr-btn--secondary fr-icon-eye-line fr-btn--icon-left">Ajouter des commentaires</button>
+        </form>
+    {% endif %}
 </div>

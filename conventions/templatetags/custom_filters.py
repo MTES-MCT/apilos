@@ -245,9 +245,13 @@ def display_is_validated(convention):
 
 @register.filter
 def display_is_resiliated(convention):
-    return convention.statut in [
-        ConventionStatut.RESILIEE,
-    ]
+    return (
+        convention.statut
+        in [
+            ConventionStatut.RESILIEE,
+        ]
+        and not convention.is_avenant()
+    )
 
 
 @register.filter

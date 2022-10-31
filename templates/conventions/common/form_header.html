@@ -1,85 +1,181 @@
 {% load custom_filters %}
 
 {% if convention %}
-
-    {% if convention.is_avenant %}
-        <div class="fr-container  fr-pt-2w">
+    <div class='apilos-sticky'>
+        <div class="fr-container fr-pt-2w">
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12 fr-py-3w">
                     <h1 class="fr-h2 apilos-d-inline">{{convention.programme.nom}}</h1>
-                    <span class="apilos-h2-thin"> - Avenant</span>
-                    <div class="fr-py-3w">
-                        <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Consulter la convention originale</a>
-                    </div>
+                    {% if convention.is_avenant %}
+                        <span class="apilos-h2-thin"> - Avenant</span>
+                        <div class="fr-py-3w">
+                            <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Consulter la convention originale</a>
+                        </div>
+                    {% else %}
+                        <div class="apilos-text--italic">
+                            {{ convention.programme.ville|default_if_none:'-' }}&nbsp;-&nbsp;
+                            {{ convention.lot.nb_logements|default_if_none:'-' }}&nbsp;lgts&nbsp;-&nbsp;
+                            {{ convention.lot.get_type_habitat_display }}{{ convention.lot.nb_logements|pluralize }}&nbsp;-&nbsp;
+                            {{ convention.lot.financement|default_if_none:'' }}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
+        </div>
+    </div>
+    <div>
+        <div class="fr-container fr-pt-2w">
             <hr>
             {% if convention.statut == CONVENTION_STATUT.PROJET %}
                 <div role="alert" class="fr-col-12 fr-mb-3w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} fr-icon-pencil-line">
-                    <p class="fr-text--lg">
-                        Votre avenant est
-                        <span class="fr-text--bold">
-                            en projet
-                        </span>
-                    </p>
-                    <p>Complétez ses informations, puis soumettez-le à votre service d’instruction</p>
+                    {% if convention.is_avenant %}
+                        <p class="fr-text--lg">
+                            Votre avenant est
+                            <span class="fr-text--bold">
+                                en projet
+                            </span>
+                        </p>
+                        <p>Complétez ses informations, puis soumettez-le à votre service d’instruction</p>
+                    {% else %}
+                        <p class="fr-text--lg">
+                            Votre convention est
+                            <span class="fr-text--bold">
+                                en projet
+                            </span>
+                        </p>
+                        <p>Complétez ses informations, puis soumettez-la à votre service d’instruction</p>
+                    {% endif %}
                 </div>
             {% endif %}
             {% if convention.statut == CONVENTION_STATUT.INSTRUCTION %}
                 <div role="alert" class="fr-col-12 fr-mb-3w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} fr-icon-eye-line">
-                    <p class="fr-text--lg">
-                        Votre avenant est
-                        <span class="fr-text--bold">
-                            en cours d'instruction
-                        </span>
-                    </p>
-                    <p>Il sera prochainement validé ou votre instructeur vous demandera des corrections</p>
+                    {% if convention.is_avenant %}
+                        <p class="fr-text--lg">
+                            Votre avenant est
+                            <span class="fr-text--bold">
+                                en cours d'instruction
+                            </span>
+                        </p>
+                        <p>Il sera prochainement validé ou votre instructeur vous demandera des corrections</p>
+                    {% else %}
+                        <p class="fr-text--lg">
+                            Votre convention est
+                            <span class="fr-text--bold">
+                                en cours d'instruction
+                            </span>
+                        </p>
+                        <p>Elle sera prochainement validée ou votre instructeur vous demandera des corrections</p>
+                    {% endif %}
                 </div>
             {% endif %}
             {% if convention.statut == CONVENTION_STATUT.CORRECTION %}
                 <div role="alert" class="fr-col-12 fr-mb-3w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} fr-icon-question-answer-line">
-                    <p class="fr-text--lg">
-                        Votre avenant est
-                        <span class="fr-text--bold">
-                            en attente de corrections
-                        </span>
-                    </p>
-                    <p>Corrigez les demandes de votre instructeur puis soumettez-le à nouveau</p>
+                    {% if convention.is_avenant %}
+                        <p class="fr-text--lg">
+                            Votre avenant est
+                            <span class="fr-text--bold">
+                                en attente de corrections
+                            </span>
+                        </p>
+                        <p>Corrigez les demandes de votre instructeur puis soumettez-le à nouveau</p>
+                    {% else %}
+                        <p class="fr-text--lg">
+                            Votre convention est
+                            <span class="fr-text--bold">
+                                en attente de corrections
+                            </span>
+                        </p>
+                        <p>Corrigez les demandes de votre instructeur puis soumettez-la à nouveau</p>
+                    {% endif %}
                 </div>
             {% endif %}
             {% if convention.statut == CONVENTION_STATUT.A_SIGNER %}
-                <div role="alert" class="fr-col-12 fr-mb-3w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} fr-icon-draft-line{">
-                    <p class="fr-text--lg">
-                        Votre avenant est
-                        <span class="fr-text--bold">
-                            en attente d'une signature
-                        </span>
-                    </p>
-                    {% if request|is_instructeur %}
-                        Vous pouvez <a class="fr-link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>téléverser l'avenant signé</a>
+                <div role="alert" class="fr-col-12 fr-mb-3w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} fr-icon-draft-line">
+                    {% if convention.is_avenant %}
+                        <p class="fr-text--lg">
+                            Votre avenant est
+                            <span class="fr-text--bold">
+                                en attente d'une signature
+                            </span>
+                        </p>
+                        {% if request|is_instructeur %}
+                            Vous pouvez <a class="fr-link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>téléverser l'avenant signé</a>
+                        {% else %}
+                            {% if convention.programme.administration.adresse and convention.programme.administration.code_postal and convention.programme.administration.ville %}
+                                <p>Imprimez-le, signez-le et envoyez le à l'adresse suivante : {{ convention.programme.administration.adresse }} - {{ convention.programme.administration.code_postal }} {{ convention.programme.administration.ville }}</p>
+                            {% endif %}
+                        {% endif %}
                     {% else %}
-                        {% if convention.programme.administration.adresse and convention.programme.administration.code_postal and convention.programme.administration.ville %}
-                            <p>Imprimez-le, signez-le et envoyez le à l'adresse suivante : {{ convention.programme.administration.adresse }} - {{ convention.programme.administration.code_postal }} {{ convention.programme.administration.ville }}</p>
+                        <p class="fr-text--lg">
+                            Votre convention est
+                            <span class="fr-text--bold">
+                                en attente d'une signature
+                            </span>
+                        </p>
+                        {% if request|is_instructeur %}
+                            Vous pouvez <a class="fr-link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>téléverser la convention signée</a>
+                        {% else %}
+                            {% if convention.programme.administration.adresse and convention.programme.administration.code_postal and convention.programme.administration.ville %}
+                                <p>Imprimez-la, signez-la et envoyez la à l'adresse suivante : {{ convention.programme.administration.adresse }} - {{ convention.programme.administration.code_postal }} {{ convention.programme.administration.ville }}</p>
+                            {% endif %}
                         {% endif %}
                     {% endif %}
                 </div>
             {% endif %}
             {% if convention.statut == CONVENTION_STATUT.SIGNEE %}
                 <div role="alert" class="fr-col-12 fr-mb-3w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} fr-icon-success-line">
-                    <p class="fr-text--lg">
-                        Votre avenant est
-                        <span class="fr-text--bold">
-                            finalisé !
-                        </span>
-                    </p>
-                    <p>Vous devrez désormais créer un autre avenant si vous souhaitez mettre à jour une information</p>
+                    {% if convention.is_avenant %}
+                        <p class="fr-text--lg">
+                            Votre avenant est
+                            <span class="fr-text--bold">
+                                finalisé !
+                            </span>
+                        </p>
+                        <p>Vous devrez désormais créer un autre avenant si vous souhaitez mettre à jour une information</p>
+                    {% else %}
+                        <p class="fr-text--lg">
+                            Votre convention est
+                            <span class="fr-text--bold">
+                                finalisée !
+                            </span>
+                        </p>
+                        <p>Vous devrez désormais créer un avenant si vous souhaitez mettre à jour une information</p>
+                    {% endif %}
                 </div>
             {% endif %}
             {% if convention.statut == CONVENTION_STATUT.RESILIEE %}
+                <div role="alert" class="fr-col-12 fr-mb-3w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} fr-icon-success-line">
+                    {% if convention.is_avenant %}
+                        <p class="fr-text--lg">
+                            Votre avenant est
+                            <span class="fr-text--bold">
+                                résilié !
+                            </span>
+                        </p>
+                        <p>Il n'est pas possible d'y apporter des modifications</p>
+                    {% else %}
+                        <p class="fr-text--lg">
+                            Votre convention est
+                            <span class="fr-text--bold">
+                                résiliée !
+                            </span>
+                        </p>
+                        <p>Il n'est pas possible d'y apporter des modifications</p>
+                    {% endif %}
+                </div>
             {% endif %}
         </div>
-    {% else %}
-        <div class='background-contrast-grey950 apilos-sticky apilos-sticky-top fr-pt-2w'>
+    </div>
+
+
+
+
+
+
+
+    {% if False %}
+
+        <div class='background-contrast-grey950 apilos-sticky fr-pt-2w'>
             <div class="fr-container">
                 <div class="fr-col-12 fr-pb-2w">
                     <div class="fr-grid-row fr-grid-row--gutters">
