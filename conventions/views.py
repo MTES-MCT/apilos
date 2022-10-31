@@ -495,6 +495,7 @@ class ConventionBailleurView(ConventionView):
 
 class AvenantBailleurView(ConventionBailleurView):
     next_path_redirect: str = "conventions:recapitulatif"
+    current_path_redirect: str = "conventions:avenant_bailleur"
     form_step = {}
 
 
