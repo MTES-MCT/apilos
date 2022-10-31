@@ -500,9 +500,9 @@ psycopg2-binary==2.9.4 \
     --hash=sha256:fb639a0e65dce4a9cccbcbdd8ddd0c8c6ab10bca317b827a5c52ac3c3a4ad60a \
     --hash=sha256:ffb2f288f577a748cc23c65a818290755a4c2da1f87a40d7055b61a096d31e20
     # via -r requirements.in
-pyjwt==2.5.0 \
-    --hash=sha256:8d82e7087868e94dd8d7d418e5088ce64f7daab4b36db654cbaedb46f9d1ca80 \
-    --hash=sha256:e77ab89480905d86998442ac5788f35333fa85f65047a534adc38edf3c88fc3b
+pyjwt==2.6.0 \
+    --hash=sha256:69285c7e31fc44f68a1feb309e948e0df53259d579295e6cfe2b1792329f05fd \
+    --hash=sha256:d83c3d892a77bbb74d3e1a2cfa90afaadb60945205d1095d9221f04466f64c14
     # via
     #   -r requirements.in
     #   djangorestframework-simplejwt
