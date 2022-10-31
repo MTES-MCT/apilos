@@ -26,7 +26,7 @@
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-{{convention.uuid}}-title" class="fr-modal__title">
                                 <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
-                                {{ convention }}{% if convention.is_avenant %} - Avenant{% endif %}
+                                {{ convention }}{% if convention.is_avenant %} - Avenant {% if convention.numero %} n°{{ convention.numero }}{% endif %}{% endif %}
                             </h1>
                             <p>Vous vous apprétez à supprimer {% if convention.is_avenant %}l'avenant à la convention{% else %}la convention{% endif %} "{{convention}}", êtes-vous sur de vouloir supprimer {% if convention.is_avenant %}cet avenant{% else %}cette convention{% endif %} ?</p>
                         </div>

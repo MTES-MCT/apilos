@@ -451,6 +451,7 @@ class Convention(models.Model):
                 "cree_le",
                 "mis_a_jour_le",
                 "avenant_types",
+                "numero",
             ],
         )
         convention_fields.update(

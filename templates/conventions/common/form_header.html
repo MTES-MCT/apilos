@@ -7,7 +7,7 @@
                 <div class="fr-col-12 fr-py-3w">
                     <h1 class="fr-h2 apilos-d-inline">{{convention.programme.nom}}</h1>
                     {% if convention.is_avenant %}
-                        <span class="apilos-h2-thin"> - Avenant</span>
+                        <span class="apilos-h2-thin"> - Avenant{% if convention.numero %} n°{{ convention.numero }}{% endif %}</span>
                         <div class="fr-py-3w">
                             <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Consulter la convention originale</a>
                         </div>
@@ -183,7 +183,7 @@
                             <div class="fr-highlight">
                                 {% if CERBERE_AUTH %}
                                     <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
-                                        <h1>Opération n°{{convention.programme.numero_galion}}{% if convention.is_avenant %} - Avenant{% endif %}</h1>
+                                        <h1>Opération n°{{convention.programme.numero_galion}}{% if convention.is_avenant %} - Avenant{% if convention.numero %} n°{{ convention.numero }}{% endif %}{% endif %}</h1>
                                         <h2>{{convention.programme.nom}}</h2>
                                     </a>
                                 {% else %}
