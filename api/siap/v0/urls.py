@@ -6,7 +6,7 @@ from drf_spectacular.views import (
 )
 from rest_framework_simplejwt import views as jwt_views
 from apilos_settings.api.api_views import ApilosConfiguration, ConventionKPI
-from programmes.api.operation_api_views import OperationDetails
+from programmes.api.operation_api_views import OperationDetails, OperationClosed
 
 
 urlpatterns = [
@@ -18,6 +18,8 @@ urlpatterns = [
     path("convention_kpi/", ConventionKPI.as_view()),
     # Operation details route
     path("operation/<str:numero_galion>/", OperationDetails.as_view()),
+    # Operation details route
+    path("close_operation/<str:numero_galion>/", OperationClosed.as_view()),
     # DRF spectacula
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path(

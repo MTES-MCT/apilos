@@ -61,10 +61,16 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
     if "adresseLigne" in bailleur_from_siap:
         adresse = bailleur_from_siap["adresseLigne"]
 
+    siret = (
+        bailleur_from_siap["siret"]
+        if "siret" in bailleur_from_siap
+        else bailleur_from_siap["siren"]
+    )
+
     (bailleur, _) = Bailleur.objects.get_or_create(
         siren=bailleur_from_siap["siren"],
         defaults={
-            "siret": bailleur_from_siap["siren"],
+            "siret": siret,
             "nom": nom,
             "adresse": adresse,
             "code_postal": code_postal,
@@ -179,8 +185,16 @@ def get_or_create_lots_and_conventions(
             bailleur=programme.bailleur,
             lot=lot,
             financement=Financement.SANS_FINANCEMENT,
-            cree_par=user,
+            # When comes from SIAP through API, the user doesn't exist in DB
+            defaults={
+                "cree_par": (user if user.id else None),
+            },
         )
+        # When convention was created by SIAP through API and the user doesn't exist
+        # the first user how access it will be the creator
+        if convention.cree_par is None and user.id is not None:
+            convention.user = user
+            convention.save()
         conventions.append(convention)
     else:
         for aide in operation["detailsOperation"]:
@@ -202,8 +216,17 @@ def get_or_create_lots_and_conventions(
                 bailleur=programme.bailleur,
                 lot=lot,
                 financement=financement,
-                cree_par=user,
+                # When comes from SIAP through API, the user doesn't exist in DB
+                defaults={
+                    "cree_par": (user if user.id else None),
+                },
             )
+            # When convention was created by SIAP through API and the user doesn't exist
+            # the forst user how access it will be the creator
+            if convention.cree_par is None and user.id is not None:
+                convention.cree_par = user
+                convention.save()
+
             conventions.append(convention)
 
     return (lots, conventions)

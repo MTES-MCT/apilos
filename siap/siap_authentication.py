@@ -1,9 +1,14 @@
+import logging
+
 from django.forms import model_to_dict
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import AuthenticationFailed
 
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.utils import get_or_create_bailleur, get_or_create_administration
 from users.models import GroupProfile, User
+
+logger = logging.getLogger(__name__)
 
 
 class SIAPSimpleJWTAuthentication(JWTAuthentication):
@@ -44,11 +49,8 @@ class SIAPJWTAuthentication(JWTAuthentication):
                 )
             )[0]
 
-            # try:
-            #     user = User.objects.get(cerbere_login=validated_token["user-login"])
-            # except:
             user = User(cerbere_login=validated_token["user-login"])
-
+            request.session["habilitation_id"] = habilitation["id"]
             user.siap_habilitation["currently"] = habilitation["groupe"]["profil"][
                 "code"
             ]
@@ -81,7 +83,9 @@ class SIAPJWTAuthentication(JWTAuthentication):
                         "nom",
                     ],
                 )
-        except KeyError:
-            return None
+        except (KeyError, IndexError) as e:
+            raise AuthenticationFailed(
+                "User or Habilitation not found", code="user_not_found"
+            ) from e
 
         return user, validated_token

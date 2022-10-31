@@ -273,41 +273,46 @@ menu_mock = {
 
 operation_mock = {
     "donneesMo": {
-        "raisonSociale": "13 HABITAT",
+        "nom": "3F",
         "siren": "782855696",
-        "adresseL3Siege": None,
-        "adresseL4Siege": "80 RUE ALBE",
-        "adresseL6Siege": "13004 MARSEILLE 4",
-        "codeFamilleMO": None,
+        "commune": None,
+        "adresseLigne3": "",
+        "adresseLigne4": "80 rue d'Albe BP 31",
+        "adresseLigne6": "13234 Marseille - 4e arrondissement",
+        "codeFamilleMO": "HLM",
     },
     "donneesLocalisation": {
         "region": {"codeInsee": "93", "libelle": None},
         "departement": {"codeInsee": "13", "libelle": None},
         "commune": {"codeInsee": "13210", "libelle": "Marseille - 10e arrondissement"},
-        "adresse": " Allée de l’Aubepine 13010 Marseille",
+        "adresse": "Rue Francois Mauriac 13010 Marseille",
+        "adresseComplete": {
+            "adresse": "Rue Francois Mauriac ",
+            "codePostal": "13010",
+            "commune": "Marseille",
+            "codePostalCommune": "13010 Marseille",
+        },
         "zonage123": "02",
-        "zonageABC": None,
+        "zonageABC": "A",
     },
     "donneesOperation": {
-        "nomOperation": "test",
-        "numeroOperation": "20220600005",
-        "aides": [
-            {"code": "PLUS", "libelle": "PLUS"},
-            {"code": "PLS", "libelle": "PLS"},
-        ],
+        "nomOperation": "Programme 2",
+        "numeroOperation": "20220600006",
+        "aides": [{"code": "PLUS", "libelle": "PLUS"}],
         "sousNatureOperation": "CNE",
-        "typeConstruction": "TC_I",
+        "typeConstruction": "TC_C",
         "natureLogement": "LOO",
+        "sansTravaux": False,
     },
     "detailsOperation": [
         {
             "aide": {"code": "PLUS", "libelle": "PLUS"},
-            "logement": {"nbLogementsIndividuels": 1, "nbLogementsCollectifs": None},
+            "logement": {"nbLogementsIndividuels": None, "nbLogementsCollectifs": 1},
             "detailsTypeLogement": [
                 {
                     "typeLogement": "T1",
-                    "nbLogements": 1,
-                    "surfaceHabitable": 10,
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
                     "surfaceAnnexe": None,
                 },
                 {
@@ -356,19 +361,19 @@ operation_mock = {
             "garages": [
                 {
                     "type": "Enterrés / Sous-sol",
-                    "nbGaragesIndividuels": 0,
-                    "nbGaragesCollectifs": None,
+                    "nbGaragesIndividuels": None,
+                    "nbGaragesCollectifs": 0,
                 },
                 {
                     "type": "Superstructure",
-                    "nbGaragesIndividuels": 0,
-                    "nbGaragesCollectifs": None,
+                    "nbGaragesIndividuels": None,
+                    "nbGaragesCollectifs": 0,
                 },
             ],
             "loyers": [
                 {
-                    "type": "Individuel",
-                    "loyerZone": 0.0,
+                    "type": "Collectif",
+                    "loyerZone": 5.78,
                     "loyerBase": 0.0,
                     "loyerReglementaire": 0.0,
                     "loyerPratique": 0,
@@ -378,94 +383,12 @@ operation_mock = {
                     ],
                 }
             ],
-        },
-        {
-            "aide": {"code": "PLS", "libelle": "PLS"},
-            "logement": {"nbLogementsIndividuels": 1, "nbLogementsCollectifs": None},
-            "detailsTypeLogement": [
-                {
-                    "typeLogement": "T1",
-                    "nbLogements": 1,
-                    "surfaceHabitable": 10,
-                    "surfaceAnnexe": None,
-                },
-                {
-                    "typeLogement": "T1BIS",
-                    "nbLogements": None,
-                    "surfaceHabitable": None,
-                    "surfaceAnnexe": None,
-                },
-                {
-                    "typeLogement": "T1P",
-                    "nbLogements": None,
-                    "surfaceHabitable": None,
-                    "surfaceAnnexe": None,
-                },
-                {
-                    "typeLogement": "T2",
-                    "nbLogements": None,
-                    "surfaceHabitable": None,
-                    "surfaceAnnexe": None,
-                },
-                {
-                    "typeLogement": "T3",
-                    "nbLogements": None,
-                    "surfaceHabitable": None,
-                    "surfaceAnnexe": None,
-                },
-                {
-                    "typeLogement": "T4",
-                    "nbLogements": None,
-                    "surfaceHabitable": None,
-                    "surfaceAnnexe": None,
-                },
-                {
-                    "typeLogement": "T5",
-                    "nbLogements": None,
-                    "surfaceHabitable": None,
-                    "surfaceAnnexe": None,
-                },
-                {
-                    "typeLogement": "T6",
-                    "nbLogements": None,
-                    "surfaceHabitable": None,
-                    "surfaceAnnexe": None,
-                },
-            ],
-            "garages": [
-                {
-                    "type": "Enterrés / Sous-sol",
-                    "nbGaragesIndividuels": 0,
-                    "nbGaragesCollectifs": None,
-                },
-                {
-                    "type": "Superstructure",
-                    "nbGaragesIndividuels": 0,
-                    "nbGaragesCollectifs": None,
-                },
-            ],
-            "loyers": [
-                {
-                    "type": "Individuel",
-                    "loyerZone": 0.0,
-                    "loyerBase": 0.0,
-                    "loyerReglementaire": 0.0,
-                    "loyerPratique": 0,
-                    "loyerGarages": [
-                        {"type": "Enterrés / Sous-sol", "loyer": 0},
-                        {"type": "Superstructure", "loyer": 0},
-                    ],
-                }
-            ],
-        },
+        }
     ],
     "planFinancement": {
-        "subventions": [
-            {"type": "Subvention ANRU", "montant": 108000},
-            {"type": "PLUS", "montant": 40000},
-        ],
-        "prets": [{"type": "Prêt CDC foncier", "montant": 67932.0}],
-        "fondsPropres": 4168,
+        "subventions": [{"type": "PLUS", "montant": None}],
+        "prets": [],
+        "fondsPropres": 0,
     },
     "gestionnaire": {
         "id": 9,
@@ -483,17 +406,6 @@ operation_mock = {
                 "email": "nicolas.oudard@beta.gouv.fr",
                 "groupes": [
                     {
-                        "id": 19,
-                        "profil": {
-                            "code": "SER_GEST",
-                            "libelle": "Service gestionnaire",
-                        },
-                        "codeRole": "SERV_INSTR_DELGEG3_ADMIN",
-                        "libelleRole": "Administrateur",
-                        "codePorteeTerrit": "LOC",
-                        "typeDelegation": "T3",
-                    },
-                    {
                         "id": 20,
                         "profil": {
                             "code": "SER_GEST",
@@ -503,18 +415,7 @@ operation_mock = {
                         "libelleRole": "Instructeur",
                         "codePorteeTerrit": "LOC",
                         "typeDelegation": "T3",
-                    },
-                    {
-                        "id": 22,
-                        "profil": {
-                            "code": "SER_GEST",
-                            "libelle": "Service gestionnaire",
-                        },
-                        "codeRole": "SERV_INSTR_DELGEG3_SIGNATAIRE",
-                        "libelleRole": "Signataire",
-                        "codePorteeTerrit": "LOC",
-                        "typeDelegation": "T3",
-                    },
+                    }
                 ],
             }
         ],
