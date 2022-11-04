@@ -84,11 +84,21 @@ def _get_perimetre_geographique(from_habilitation: dict) -> Tuple[None, str]:
         and "codePortee" in from_habilitation["porteeTerritComp"]
     ):
         if from_habilitation["porteeTerritComp"]["codePortee"] == "REG":
-            perimetre_region = from_habilitation["porteeTerritComp"]["regComp"]["code"]
+            if (
+                "regComp" in from_habilitation["porteeTerritComp"]
+                and "code" in from_habilitation["porteeTerritComp"]["regComp"]
+            ):
+                perimetre_region = from_habilitation["porteeTerritComp"]["regComp"][
+                    "code"
+                ]
         if from_habilitation["porteeTerritComp"]["codePortee"] == "DEP":
-            perimetre_departement = from_habilitation["porteeTerritComp"]["depComp"][
-                "code"
-            ]
+            if (
+                "depComp" in from_habilitation["porteeTerritComp"]
+                and "code" in from_habilitation["porteeTerritComp"]["depComp"]
+            ):
+                perimetre_departement = from_habilitation["porteeTerritComp"][
+                    "depComp"
+                ]["code"]
     return (perimetre_departement, perimetre_region)
 
 
