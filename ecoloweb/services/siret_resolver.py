@@ -18,13 +18,20 @@ class SiretResolver:
         )
         self._box = Box(box_dots=True)
 
-    def resolve(self, siren: str) -> Optional[str]:
-        data = self._insee_api_client.siren(siren, date=date.today().isoformat(), masquerValeursNulles=True).get()
+    def resolve(self, siren: str, date_creation: Optional[date] = None) -> Optional[str]:
+
+        if date_creation:
+            data = self._insee_api_client.siren(siren, date=date_creation.isoformat(), masquerValeursNulles=True).get()
+        else:
+            data = self._insee_api_client.siren(siren, masquerValeursNulles=True).get()
 
         # Process API JSON result with dot notation via Box
         self._box.incoming = data
 
         try:
-            return self._box['incoming.uniteLegale.periodesUniteLegale.[0].nicSiegeUniteLegale']
+            nic = self._box['incoming.uniteLegale.periodesUniteLegale.[0].nicSiegeUniteLegale']
+
+            return siren + nic
+
         except BoxKeyError:
             return None
