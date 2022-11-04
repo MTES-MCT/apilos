@@ -49,11 +49,11 @@ def generate_convention_doc(convention, save_data=False):
         for avenant_type in convention.avenant_types.all():
             avenant_data[f"avenant_type_{avenant_type}"] = True
     # It is a convention
-    elif convention.bailleur.is_hlm():
+    elif convention.programme.bailleur.is_hlm():
         filepath = f"{settings.BASE_DIR}/documents/HLM-template.docx"
-    elif convention.bailleur.is_sem():
+    elif convention.programme.bailleur.is_sem():
         filepath = f"{settings.BASE_DIR}/documents/SEM-template.docx"
-    elif convention.bailleur.is_type1and2():
+    elif convention.programme.bailleur.is_type1and2():
         if convention.type1and2 == ConventionType1and2.TYPE1:
             filepath = f"{settings.BASE_DIR}/documents/Type1-template.docx"
         elif convention.type1and2 == ConventionType1and2.TYPE2:
@@ -61,12 +61,12 @@ def generate_convention_doc(convention, save_data=False):
         else:
             raise ConventionTypeConfigurationError(
                 "Le type de convention I ou II doit-être configuré pour les bailleurs non SEM ou"
-                + f" HLM. Bailleur de type : {convention.bailleur.get_type_bailleur_display()}"
+                + f" HLM. Bailleur de type : {convention.programme.bailleur.get_type_bailleur_display()}"
             )
     else:
         raise NotHandleConventionType(
             "La génération de convention n'est pas disponible pour ce type de"
-            + f" bailleur : {convention.bailleur.get_type_bailleur_display()}"
+            + f" bailleur : {convention.programme.bailleur.get_type_bailleur_display()}"
         )
     doc = DocxTemplate(filepath)
 
@@ -96,7 +96,7 @@ def generate_convention_doc(convention, save_data=False):
     context = {
         **avenant_data,
         "convention": convention,
-        "bailleur": convention.bailleur,
+        "bailleur": convention.programme.bailleur,
         "programme": convention.programme,
         "lot": convention.lot,
         "administration": convention.programme.administration,
@@ -162,7 +162,7 @@ def _save_convention_donnees_validees(
 
     context_to_save = {
         "convention": model_to_dict(convention),
-        "bailleur": model_to_dict(convention.bailleur),
+        "bailleur": model_to_dict(convention.programme.bailleur),
         "programme": model_to_dict(convention.programme),
         "lot": model_to_dict(convention.lot),
         "administration": model_to_dict(convention.programme.administration),
@@ -449,7 +449,7 @@ def fiche_caf_doc(convention):
 
     context = {
         "convention": convention,
-        "bailleur": convention.bailleur,
+        "bailleur": convention.programme.bailleur,
         "programme": convention.programme,
         "lot": convention.lot,
         "administration": convention.programme.administration,

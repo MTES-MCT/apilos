@@ -620,7 +620,6 @@ class CustomFiltersTest(TestCase):
         Convention.objects.create(
             statut=ConventionStatut.A_SIGNER,
             parent=self.convention,
-            bailleur=self.convention.bailleur,
             lot=self.convention.lot,
             programme=self.convention.programme,
         ).save()
@@ -628,7 +627,6 @@ class CustomFiltersTest(TestCase):
         Convention.objects.create(
             statut=ConventionStatut.SIGNEE,
             parent=self.convention,
-            bailleur=self.convention.bailleur,
             lot=self.convention.lot,
             programme=self.convention.programme,
         ).save()
@@ -636,7 +634,6 @@ class CustomFiltersTest(TestCase):
         Convention.objects.create(
             statut=ConventionStatut.RESILIEE,
             parent=self.convention,
-            bailleur=self.convention.bailleur,
             lot=self.convention.lot,
             programme=self.convention.programme,
         ).save()
@@ -644,7 +641,6 @@ class CustomFiltersTest(TestCase):
         ongoing_avenant = Convention.objects.create(
             statut=ConventionStatut.PROJET,
             parent=self.convention,
-            bailleur=self.convention.bailleur,
             lot=self.convention.lot,
             programme=self.convention.programme,
         )

@@ -98,8 +98,7 @@ def cadastre(request, convention_uuid):
 def recapitulatif(request, convention_uuid):
     # Step 11/11
     convention = (
-        Convention.objects.prefetch_related("bailleur")
-        .prefetch_related("programme")
+        Convention.objects.prefetch_related("programme")
         .prefetch_related("programme__referencecadastrale_set")
         .prefetch_related("programme__logementedd_set")
         .prefetch_related("lot")
@@ -317,8 +316,7 @@ def display_pdf(request, convention_uuid):
 @require_GET
 def fiche_caf(request, convention_uuid):
     convention = (
-        Convention.objects.prefetch_related("bailleur")
-        .prefetch_related("lot")
+        Convention.objects.prefetch_related("lot")
         .prefetch_related("lot__logements")
         .prefetch_related("programme")
         .prefetch_related("programme__administration")
@@ -463,9 +461,6 @@ class ConventionBailleurView(ConventionView):
         "title": "Bailleur",
         "next": "Opération",
     }
-
-    def _get_convention(self, convention_uuid):
-        return Convention.objects.prefetch_related("bailleur").get(uuid=convention_uuid)
 
 
 class AvenantBailleurView(ConventionBailleurView):

@@ -1,5 +1,5 @@
 {% load static %}
-{% if convention.bailleur.is_type1and2 and not convention.is_avenant %}
+{% if convention.programme.bailleur.is_type1and2 and not convention.is_avenant %}
 
     {% with type1and2editable=convention|display_type1and2_editable %}
         <div class="fr-grid-row fr-grid-row--gutters">

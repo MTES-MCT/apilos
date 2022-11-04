@@ -30,7 +30,7 @@ class ConventionBailleurServiceTests(TestCase):
         self.service.get()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
         self.assertIsInstance(self.service.form, BailleurForm)
-        bailleur = self.service.convention.bailleur
+        bailleur = self.service.convention.programme.bailleur
         self.assertEqual(
             self.service.form.initial["uuid"],
             bailleur.uuid,
@@ -39,7 +39,7 @@ class ConventionBailleurServiceTests(TestCase):
 
     def test_save(self):
 
-        bailleur = self.service.convention.bailleur
+        bailleur = self.service.convention.programme.bailleur
         bailleur_signataire_nom = bailleur.signataire_nom
         bailleur_signataire_fonction = bailleur.signataire_fonction
         bailleur_signataire_date_deliberation = bailleur.signataire_date_deliberation

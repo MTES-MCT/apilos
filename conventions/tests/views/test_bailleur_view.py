@@ -29,7 +29,7 @@ class ConventionBailleurViewTests(AbstractViewTestCase, TestCase):
     def _test_data_integrity(self):
         self.convention_75.refresh_from_db()
         self.assertEqual(
-            self.convention_75.bailleur.adresse,
+            self.convention_75.programme.bailleur.adresse,
             "fake adresse",
             msg=f"{self.msg_prefix}",
         )

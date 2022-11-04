@@ -57,7 +57,7 @@ class ConventionModelsTest(TestCase):
         raph.save()
         self.assertEqual(convention.get_email_bailleur_users(), [])
         ConventionHistory.objects.create(
-            bailleur=convention.bailleur,
+            bailleur=convention.programme.bailleur,
             convention=convention,
             statut_convention=ConventionStatut.INSTRUCTION,
             statut_convention_precedent=ConventionStatut.PROJET,
@@ -79,7 +79,7 @@ class ConventionModelsTest(TestCase):
             convention.get_email_instructeur_users(include_partial=True), [fix.email]
         )
         ConventionHistory.objects.create(
-            bailleur=convention.bailleur,
+            bailleur=convention.programme.bailleur,
             convention=convention,
             statut_convention=ConventionStatut.INSTRUCTION,
             statut_convention_precedent=ConventionStatut.PROJET,
@@ -167,7 +167,7 @@ class ConventionModelsTest(TestCase):
             TypeBailleur.COOPERATIVE_HLM_SCIC,
             TypeBailleur.SEM_EPL,
         ]:
-            convention.bailleur.type_bailleur = type_bailleur
+            convention.programme.bailleur.type_bailleur = type_bailleur
             for type1andtype2 in [
                 ConventionType1and2.TYPE1,
                 ConventionType1and2.TYPE2,
@@ -182,7 +182,7 @@ class ConventionModelsTest(TestCase):
                 TypeBailleur.COOPERATIVE_HLM_SCIC,
                 TypeBailleur.SEM_EPL,
             ]:
-                convention.bailleur.type_bailleur = k
+                convention.programme.bailleur.type_bailleur = k
                 convention.type1and2 = None
                 self.assertFalse(convention.type1and2_configuration_not_needed())
                 for type1andtype2 in [
@@ -224,7 +224,7 @@ class PretModelsTest(TestCase):
         convention = Convention.objects.get(numero="0001")
         Pret.objects.create(
             convention=convention,
-            bailleur=convention.bailleur,
+            bailleur=convention.programme.bailleur,
             preteur=Preteur.CDCF,
             date_octroi=datetime.datetime.today(),
             autre="test autre",

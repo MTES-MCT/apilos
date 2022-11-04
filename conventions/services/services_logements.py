@@ -214,7 +214,7 @@ class ConventionLogementsService(ConventionService):
             else:
                 logement = Logement.objects.create(
                     lot=self.convention.lot,
-                    bailleur=self.convention.bailleur,
+                    bailleur=self.convention.programme.bailleur,
                     designation=form_logement.cleaned_data["designation"],
                     typologie=form_logement.cleaned_data["typologie"],
                     surface_habitable=form_logement.cleaned_data["surface_habitable"],
@@ -453,7 +453,7 @@ class ConventionAnnexesService(ConventionService):
                 )
                 annexe = Annexe.objects.create(
                     logement=logement,
-                    bailleur=self.convention.bailleur,
+                    bailleur=self.convention.programme.bailleur,
                     typologie=form_annexe.cleaned_data["typologie"],
                     surface_hors_surface_retenue=form_annexe.cleaned_data[
                         "surface_hors_surface_retenue"
@@ -607,7 +607,7 @@ class ConventionTypeStationnementService(ConventionService):
             else:
                 stationnement = TypeStationnement.objects.create(
                     lot=self.convention.lot,
-                    bailleur=self.convention.bailleur,
+                    bailleur=self.convention.programme.bailleur,
                     typologie=form_stationnement.cleaned_data["typologie"],
                     nb_stationnements=form_stationnement.cleaned_data[
                         "nb_stationnements"

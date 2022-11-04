@@ -18,7 +18,7 @@ class ConventionBailleurService(ConventionService):
     redirect_recap: bool = False
 
     def get(self):
-        bailleur = self.convention.bailleur
+        bailleur = self.convention.programme.bailleur
         # Check if programme has validated convention
         convention_validee = [
             programme_convention
@@ -113,7 +113,7 @@ class ConventionBailleurService(ConventionService):
             self.return_status = utils.ReturnStatus.REFRESH
 
     def _bailleur_atomic_update(self):
-        bailleur = self.convention.bailleur
+        bailleur = self.convention.programme.bailleur
         self.form = BailleurForm(
             {
                 "uuid": bailleur.uuid,
