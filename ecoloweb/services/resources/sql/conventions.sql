@@ -35,6 +35,7 @@ select
         when pec.code = 'RES' then '6. Résiliée'
         when pec.code = 'DEN' then '7. Dénoncée'
         when pec.code = 'ANS' then '8. Annulée en suivi'
+        else '5. Signée'
     end as statut,
     cdg.datehistoriquefin as date_fin_conventionnement,
     -- Financement
@@ -53,14 +54,13 @@ from ecolo.ecolo_conventionapl c
     inner join ecolo.ecolo_entitegestadresse aa on eg.adresse_id = aa.id
     inner join ecolo.ecolo_departement ed on starts_with(aa.codepostal, ed.codeinsee)
     inner join (
-        -- Sur Ecolo il peut y avoir un bailleur gestionnaire *par logement*, aussi on attribue à la convention le
-        -- bailleur majoritaire
+        -- Sur Ecolo il peut y avoir un bailleur *par logement*, aussi on attribue la convention au bailleur majoritaire
         select
             pl.conventiondonneesgenerales_id,
-            pl.bailleurgestionnaire_id as bailleur_id
+            pl.bailleurproprietaire_id as bailleur_id
         from ecolo.ecolo_programmelogement pl
-            inner join ecolo.ecolo_bailleur b on pl.bailleurgestionnaire_id = b.id
-        group by pl.conventiondonneesgenerales_id, pl.bailleurgestionnaire_id
+            inner join ecolo.ecolo_bailleur b on pl.bailleurproprietaire_id = b.id
+        group by pl.conventiondonneesgenerales_id, pl.bailleurproprietaire_id
         order by count(distinct(b.id)) desc
     ) pb on pb.conventiondonneesgenerales_id = cdg.id
     inner join ecolo.ecolo_valeurparamstatic pec on cdg.etatconvention_id = pec.id and pec.subtype = 'ECO' -- Etat de la convention
