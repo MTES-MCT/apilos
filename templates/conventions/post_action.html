@@ -147,12 +147,17 @@
                 {% endif %}
             </div>
             {% if request|is_instructeur %}
-                <div class="fr-accordion fr-mt-5w">
-                    <div class="fr-accordion__title">
-                        <div class="fr-accordion__btn clickable " aria-expanded="false" aria-controls="accordion-106"><em>Si nécessaire, vous pouvez téléverser une nouvelle version de la convention signée ici.</em></div>
-                    </div>
-                    <div class="fr-collapse" id="accordion-106">
-
+                <hr>
+                <div class="fr-col-12">
+                    <div class="fr-mb-2w fr-pt-2w block--row-strech">
+                        <div class="block--row-strech-1 fr-my-2w">
+                            <p class="fr-alert__title">
+                                Téléverser à nouveau la convention
+                            </p>
+                            <p class="fr-mb-0">
+                                Si nécessaire, vous pouvez téléverser une nouvelle version de la convention signée ici.
+                            </p>
+                        </div>
                         <form method="post" action="{% url 'conventions:sent' convention_uuid=convention.uuid %}" enctype="multipart/form-data" id="{{upform.file.id_for_label}}_form">
                             {% csrf_token %}
                             <input
