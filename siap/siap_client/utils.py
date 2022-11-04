@@ -114,7 +114,10 @@ def _get_address_from_locdata(loc_data: dict) -> Tuple[str]:
 def get_or_create_programme(
     programme_from_siap: dict, bailleur: Bailleur, administration: Administration
 ) -> Programme:
-    if programme_from_siap["donneesOperation"]["sansTravaux"]:
+    if (
+        "sansTravaux" in programme_from_siap["donneesOperation"]
+        and programme_from_siap["donneesOperation"]["sansTravaux"]
+    ):
         type_operation = TypeOperation.SANSTRAVAUX
         nature_logement = NatureLogement.LOGEMENTSORDINAIRES
     else:
