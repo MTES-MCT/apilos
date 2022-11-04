@@ -34,7 +34,8 @@ class EcoloReference(models.Model):
     apilos_id = models.IntegerField(null=False)
 
     def resolve(self) -> Optional[Model]:
-        return apps.get_model(self.apilos_model.split('.')[0], self.apilos_model.split('.')[1]).objects.get(pk=self.apilos_id)
+        model = apps.get_model(self.apilos_model.split('.')[0], self.apilos_model.split('.')[1])
+        return model.objects.filter(pk=self.apilos_id).first()
 
     @classmethod
     def get_instance_model_name(cls, instance: Model) -> str:

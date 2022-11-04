@@ -1,3 +1,5 @@
+from datetime import date
+
 from . import SiretResolver
 from .handlers import ModelImporter
 from bailleurs.models import Bailleur
@@ -15,12 +17,13 @@ class BailleurImporter(ModelImporter):
         codesiret = data.pop('codesiret')
         codesiren = data.pop('codesiren')
         codepersonne = data.pop('codepersonne')
+        date_creation = data['cree_le']
 
         #
         if codesiret is not None:
             data['siret'] = codesiret
 
-        elif (siret := self._siret_resolver.resolve(codesiren)) is not None:
+        elif (siret := self._siret_resolver.resolve(codesiren, date_creation)) is not None:
             data['siret'] = siret
 
         else:
