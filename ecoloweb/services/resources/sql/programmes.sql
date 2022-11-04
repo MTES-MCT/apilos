@@ -52,10 +52,10 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
         -- bailleur majoritaire
         select
             pl.conventiondonneesgenerales_id,
-            pl.bailleurgestionnaire_id as bailleur_id
+            pl.bailleurproprietaire_id as bailleur_id
         from ecolo.ecolo_programmelogement pl
-            inner join ecolo.ecolo_bailleur b on pl.bailleurgestionnaire_id = b.id
-        group by pl.conventiondonneesgenerales_id, pl.bailleurgestionnaire_id
+            inner join ecolo.ecolo_bailleur b on pl.bailleurproprietaire_id = b.id
+        group by pl.conventiondonneesgenerales_id, pl.bailleurproprietaire_id
         order by count(distinct(b.id)) desc
     ) pb on pb.conventiondonneesgenerales_id = cdg.id
     inner join (
