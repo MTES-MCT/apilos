@@ -255,7 +255,7 @@ class AdministrationsModelsTest(TestCase):
         user_bailleur = User.objects.get(username="raph")
         convention_id_list = list(
             Convention.objects.filter(
-                bailleur_id__in=[
+                programme__bailleur_id__in=[
                     user_bailleur.role_set.all()[0].bailleur_id,
                     user_bailleur.role_set.all()[1].bailleur_id,
                 ]
@@ -271,7 +271,7 @@ class AdministrationsModelsTest(TestCase):
                 departement=Substr("programme__code_postal", 1, 2)
             )
             .filter(
-                bailleur_id__in=[
+                programme__bailleur_id__in=[
                     user_bailleur.role_set.all()[0].bailleur_id,
                     user_bailleur.role_set.all()[1].bailleur_id,
                 ],

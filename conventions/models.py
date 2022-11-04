@@ -116,9 +116,6 @@ class Convention(models.Model):
         related_name="avenants",
     )
     numero = models.CharField(max_length=255, null=True, blank=True)
-    bailleur = models.ForeignKey(
-        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
-    )
     programme = models.ForeignKey(
         "programmes.Programme",
         related_name="conventions",
@@ -191,6 +188,10 @@ class Convention(models.Model):
     @property
     def administration(self):
         return self.programme.administration
+
+    @property
+    def bailleur(self):
+        return self.programme.bailleur
 
     def __str__(self):
         programme = self.programme
@@ -268,7 +269,7 @@ class Convention(models.Model):
                         lambda x: x.email,
                         [
                             r.user
-                            for r in self.bailleur.role_set.all()
+                            for r in self.programme.bailleur.role_set.all()
                             if r.user.preferences_email != EmailPreferences.AUCUN
                         ],
                     )
@@ -289,7 +290,7 @@ class Convention(models.Model):
             set(
                 map(
                     lambda x: x.user.email,
-                    self.bailleur.role_set.filter(
+                    self.programme.bailleur.role_set.filter(
                         user__preferences_email=EmailPreferences.TOUS
                     ),
                 )
@@ -387,7 +388,7 @@ class Convention(models.Model):
 
     def type1and2_configuration_not_needed(self):
         return self.is_avenant() or not (
-            self.bailleur.is_type1and2() and not self.type1and2
+            self.programme.bailleur.is_type1and2() and not self.type1and2
         )
 
     def display_not_validated_status(self):
@@ -411,7 +412,6 @@ class Convention(models.Model):
                 "id",
                 "parent",
                 "parent_id",
-                "bailleur",
                 "bailleur_id",
                 "administration_id",
                 "cree_le",
@@ -420,7 +420,7 @@ class Convention(models.Model):
         )
         programme_fields.update(
             {
-                "bailleur": self.bailleur,
+                "bailleur_id": programme_fields.pop("bailleur"),
                 "administration_id": programme_fields.pop("administration"),
                 "parent_id": convention_origin.programme_id,
             }
@@ -444,7 +444,7 @@ class Convention(models.Model):
         )
         lot_fields.update(
             {
-                "bailleur": self.bailleur,
+                "bailleur": self.programme.bailleur,
                 "programme": cloned_programme,
                 "parent_id": convention_origin.lot_id,
             }
@@ -473,7 +473,6 @@ class Convention(models.Model):
         )
         convention_fields.update(
             {
-                "bailleur": self.bailleur,
                 "programme": cloned_programme,
                 "lot": cloned_lot,
                 "parent_id": convention_origin.id,
@@ -497,7 +496,7 @@ class Convention(models.Model):
             )
             logement_fields.update(
                 {
-                    "bailleur": self.bailleur,
+                    "bailleur": self.programme.bailleur,
                     "lot": cloned_lot,
                 }
             )
@@ -516,7 +515,7 @@ class Convention(models.Model):
                 )
                 annexe_fields.update(
                     {
-                        "bailleur": self.bailleur,
+                        "bailleur": self.programme.bailleur,
                         "logement": cloned_logement,
                     }
                 )
@@ -536,7 +535,7 @@ class Convention(models.Model):
             )
             type_stationnement_fields.update(
                 {
-                    "bailleur": self.bailleur,
+                    "bailleur": self.programme.bailleur,
                     "lot": cloned_lot,
                 }
             )

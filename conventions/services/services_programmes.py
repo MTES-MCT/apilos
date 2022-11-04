@@ -97,7 +97,6 @@ def select_programme_create(request):
             convention = Convention.objects.create(
                 lot=lot,
                 programme_id=lot.programme_id,
-                bailleur_id=lot.bailleur_id,
                 financement=lot.financement,
                 cree_par=request.user,
             )
@@ -432,7 +431,7 @@ def _save_programme_reference_cadastrale(formset, convention, programme):
         else:
             reference_cadastrale = ReferenceCadastrale.objects.create(
                 programme=programme,
-                bailleur=convention.bailleur,
+                bailleur=convention.programme.bailleur,
                 section=form.cleaned_data["section"],
                 numero=form.cleaned_data["numero"],
                 lieudit=form.cleaned_data["lieudit"],
@@ -715,7 +714,7 @@ class ConventionEDDService(ConventionService):
             else:
                 logementedd = LogementEDD.objects.create(
                     programme=self.convention.programme,
-                    bailleur=self.convention.bailleur,
+                    bailleur=self.convention.programme.bailleur,
                     financement=form_logementedd.cleaned_data["financement"],
                     designation=form_logementedd.cleaned_data["designation"],
                     numero_lot=form_logementedd.cleaned_data["numero_lot"],

@@ -183,7 +183,7 @@ def get_null_fields():
     * autres_locaux_hors_convention
     """
     bailleurs = Bailleur.objects.filter(
-        Exists(Convention.objects.filter(bailleur_id=OuterRef("pk")))
+        Exists(Convention.objects.filter(programme__bailleur_id=OuterRef("pk")))
     ).aggregate(
         capital_social_count_null=Sum(
             Case(

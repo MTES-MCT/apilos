@@ -162,7 +162,7 @@
                                             </script>
                                         </td>
                                         {% if request|is_instructeur %}
-                                            <td>{{convention.bailleur}}</td>
+                                            <td>{{convention.programme.bailleur}}</td>
                                         {% endif %}
                                         {% if request|display_administration %}
                                             <td>{{convention.programme.administration}}</td>

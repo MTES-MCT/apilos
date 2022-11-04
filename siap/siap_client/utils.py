@@ -217,7 +217,6 @@ def get_or_create_lots_and_conventions(
             lots.append(lot)
             (convention, _) = Convention.objects.get_or_create(
                 programme=programme,
-                bailleur=programme.bailleur,
                 lot=lot,
                 financement=financement,
                 # When comes from SIAP through API, the user doesn't exist in DB

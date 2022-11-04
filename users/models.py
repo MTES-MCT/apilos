@@ -82,7 +82,7 @@ class User(AbstractUser):
 
             # is bailleur of the convention or is instructeur of the convention
             return self.role_set.filter(
-                bailleur_id=obj.bailleur_id
+                bailleur_id=obj.programme.bailleur_id
             ) or self.role_set.filter(administration_id=obj.programme.administration_id)
         raise Exception(
             "Les permissions ne sont pas correctement configurer, un "
@@ -315,7 +315,7 @@ class User(AbstractUser):
 
         if self.is_bailleur():
             convs = self._apply_geo_filters(convs)
-            convs = convs.filter(bailleur_id__in=self._bailleur_ids())
+            convs = convs.filter(programme__bailleur_id__in=self._bailleur_ids())
             if self.id and self.filtre_departements.exists():
                 convs = convs.annotate(
                     departement=Substr("programme__code_postal", 1, 2)

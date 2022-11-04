@@ -19,7 +19,7 @@ class ConventionAdmin(admin.ModelAdmin):
         "programme__nom",
         "financement",
         "uuid",
-        "bailleur__nom",
+        "programme__bailleur__nom",
         "programme__administration__nom",
     ]
     fields = (
@@ -49,11 +49,9 @@ class ConventionAdmin(admin.ModelAdmin):
     list_select_related = (
         "programme",
         "lot",
-        "bailleur",
     )
     readonly_fields = (
         "uuid",
-        "bailleur",
         "programme",
         "lot",
         "administration",
