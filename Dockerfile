@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM python:3.10.4
+FROM python:3.10
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /code
