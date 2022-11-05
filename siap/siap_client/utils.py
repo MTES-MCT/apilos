@@ -134,6 +134,7 @@ def get_or_create_programme(
         numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"],
         bailleur=bailleur,
         administration=administration,
+        parent=None,
         defaults={
             "nom": programme_from_siap["donneesOperation"]["nomOperation"],
             "adresse": adresse,
