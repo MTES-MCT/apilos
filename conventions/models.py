@@ -173,6 +173,11 @@ class Convention(models.Model):
     televersement_convention_signee_le = models.DateTimeField(null=True, blank=True)
     date_resiliation = models.DateField(null=True, blank=True)
 
+    # Needed for admin
+    @property
+    def administration(self):
+        return self.programme.administration
+
     def __str__(self):
         programme = self.programme
         lot = self.lot
@@ -524,10 +529,6 @@ class Convention(models.Model):
             cloned_type_stationnement = TypeStationnement(**type_stationnement_fields)
             cloned_type_stationnement.save()
         return cloned_convention
-
-    # Needed for admin
-    def administration(self):
-        return self.programme.administration
 
     def get_default_convention_number(self):
         if self.is_avenant():

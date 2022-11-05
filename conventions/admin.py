@@ -40,7 +40,7 @@ class ConventionAdmin(admin.ModelAdmin):
         "soumis_le",
         "premiere_soumission_le",
         "valide_le",
-        "avenant_type",
+        "avenant_types",
         "donnees_validees",
         "nom_fichier_signe",
         "televersement_convention_signee_le",
