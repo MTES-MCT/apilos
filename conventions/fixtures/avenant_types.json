@@ -28,7 +28,7 @@
     "pk": 4,
     "fields": {
       "nom": "commentaires",
-      "desc": "En cas de nouveaux travaux financés"
+      "desc": "Ajouter des commentaires à l'attention de l'instructeur"
     }
   }
 ]
