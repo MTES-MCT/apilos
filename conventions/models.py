@@ -529,6 +529,25 @@ class Convention(models.Model):
     def administration(self):
         return self.programme.administration
 
+    def get_default_convention_number(self):
+        if self.is_avenant():
+            parent = self.parent
+            nb_validated_avenants = parent.avenants.exclude(
+                statut__in=[
+                    ConventionStatut.PROJET,
+                    ConventionStatut.INSTRUCTION,
+                    ConventionStatut.CORRECTION,
+                ]
+            ).count()
+            return str(nb_validated_avenants + 1)
+        return (
+            self.numero
+            if self.numero
+            else self.get_convention_prefix()
+            if self.programme.administration
+            else ""
+        )
+
 
 class ConventionHistory(models.Model):
     id = models.AutoField(primary_key=True)

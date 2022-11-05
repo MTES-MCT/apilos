@@ -137,26 +137,8 @@ def _save_convention_type(request, convention):
 
 def convention_summary(request, convention):
     request.user.check_perm("convention.view_convention", convention)
-    if convention.is_avenant():
-        parent = convention.parent
-        nb_validated_avenants = parent.avenants.exclude(
-            statut__in=[
-                ConventionStatut.PROJET,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-            ]
-        ).count()
-        numero_convention = str(nb_validated_avenants + 1)
-    else:
-        numero_convention = (
-            convention.numero
-            if convention.numero
-            else convention.get_convention_prefix()
-            if convention.programme.administration
-            else ""
-        )
     convention_number_form = ConventionNumberForm(
-        initial={"convention_numero": numero_convention}
+        initial={"convention_numero": convention.get_default_convention_number()}
     )
 
     opened_comments = Comment.objects.filter(
