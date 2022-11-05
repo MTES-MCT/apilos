@@ -132,6 +132,7 @@ def _save_convention_type(request, convention):
                 convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option8"]
             )
         convention.save()
+    return convention_type1_and_2_form
 
 
 def convention_summary(request, convention):
@@ -164,7 +165,7 @@ def convention_summary(request, convention):
     )
     opened_comments = opened_comments.order_by("cree_le")
     if request.method == "POST":
-        _save_convention_type(request, convention)
+        convention_type1_and_2_form = _save_convention_type(request, convention)
     else:
         convention_type1_and_2_form = ConventionType1and2Form(
             initial={

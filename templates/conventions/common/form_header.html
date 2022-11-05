@@ -1,25 +1,28 @@
 {% load custom_filters %}
 
 {% if convention %}
-    <div class='apilos-sticky'>
-        <div class="fr-container fr-pt-2w">
-            <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12 fr-py-3w">
-                    <h1 class="fr-h2 apilos-d-inline">{{convention.programme.nom}}</h1>
-                    {% if convention.is_avenant %}
-                        <span class="apilos-h2-thin"> - Avenant{% if convention.numero %} n°{{ convention.numero }}{% endif %}</span>
-                        <div class="fr-py-3w">
-                            <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Consulter la convention originale</a>
-                        </div>
-                    {% else %}
-                        <div class="apilos-text--italic">
-                            {{ convention.programme.ville|default_if_none:'-' }}&nbsp;-&nbsp;
-                            {{ convention.lot.nb_logements|default_if_none:'-' }}&nbsp;lgts&nbsp;-&nbsp;
-                            {{ convention.lot.get_type_habitat_display }}{{ convention.lot.nb_logements|pluralize }}&nbsp;-&nbsp;
-                            {{ convention.lot.financement|default_if_none:'' }}
-                        </div>
-                    {% endif %}
-                </div>
+    <div class="apilos-sticky fr-container fr-pt-2w">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-py-3w">
+                <h1 class="fr-h2 apilos-d-inline">{{convention.programme.nom}}</h1>
+                {% if convention.is_avenant %}
+                    <span class="apilos-h2-thin"> - Avenant{% if convention.numero %} n°{{ convention.numero }}{% endif %}</span>
+                    <div class="fr-py-3w">
+                        <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Consulter la convention originale</a>
+                    </div>
+                {% else %}
+                    <div class="apilos-text--italic">
+                        {% if CERBERE_AUTH and convention.programme.numero_galion %}
+                            <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
+                                Opération n°{{convention.programme.numero_galion}}
+                            </a>&nbsp;-&nbsp;
+                        {% endif %}
+                        {{ convention.programme.ville|default_if_none:'-' }}&nbsp;-&nbsp;
+                        {{ convention.lot.nb_logements|default_if_none:'-' }}&nbsp;lgts&nbsp;-&nbsp;
+                        {{ convention.lot.get_type_habitat_display }}{{ convention.lot.nb_logements|pluralize }}&nbsp;-&nbsp;
+                        {{ convention.lot.financement|default_if_none:'' }}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

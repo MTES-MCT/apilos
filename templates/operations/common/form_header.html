@@ -1,58 +1,30 @@
 {% load custom_filters %}
-<div class='background-contrast-grey950 apilos-sticky fr-pt-2w'>
-    <div class="fr-container">
-        <div class="fr-col-12 fr-pb-2w">
-            <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12 fr-col-lg-6">
-                    <div class="fr-highlight">
-                        {% if CERBERE_AUTH %}
-                            <h1>Opération n°{{programme.numero_galion}}</h1>
-                            <h2>{{programme.nom}}</h2>
-                        {% else %}
-                            <h1>{{programme.nom}}</h1>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="fr-col-12 fr-col-lg-6 fr-grid-row fr-grid-row--right">
-                    <div>
-                        {% if CERBERE_AUTH and programme.numero_galion %}
-                            <div class="fr-grid-row fr-grid-row--right fr-my-2w">
-                                <a href="{{ request|get_siap_operation_url:programme.numero_galion }}">
-                                    Financement
-                                    <span class="fr-icon-arrow-right-line" aria-hidden="true"></span>
-                                </a>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
+<div class="apilos-sticky fr-container fr-pt-2w">
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-8 fr-py-3w">
+            <h1 class="fr-h2 apilos-d-inline">{{programme.nom}}</h1>
+            <div class="apilos-text--italic">
+                {% if programme.numero_galion %}
+                    Opération n°{{programme.numero_galion}}
+                {% endif %}
+                {% if request|is_instructeur %}
+                    (Entreprise bailleur : {{ programme.bailleur }})
+                {% endif %}
+                {% if request|is_bailleur %}
+                    (Service instructeur : {{ programme.administration }})
+                {% endif %}
             </div>
         </div>
-    </div>
-</div>
-<div class='background-contrast-grey950'>
-    <div class="fr-container">
-        <div class="fr-col-12 fr-pb-3w">
-            {% if request|is_instructeur %}
-                <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
-                        Entreprise bailleur : {{ programme.bailleur }}
+        <div class="fr-col-4 fr-grid-row fr-grid-row--right">
+            <div>
+                {% if CERBERE_AUTH and programme.numero_galion %}
+                    <div class="fr-grid-row fr-grid-row--right fr-my-2w">
+                        <a href="{{ request|get_siap_operation_url:programme.numero_galion }}">
+                            Financement
+                            <span class="fr-icon-arrow-right-line" aria-hidden="true"></span>
+                        </a>
                     </div>
-                </div>
-            {% endif %}
-            {% if request|is_bailleur %}
-                <div class="fr-grid-row fr-grid-row--gutters fr-pl-9w">
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
-                        Service instructeur : {{ programme.administration }}
-                    </div>
-                </div>
-            {% endif %}
-            <div class="fr-grid-row fr-grid-row--gutters  fr-pl-9w">
-                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-text--bold">
-                    Code postal : {{ programme.code_postal|default_if_none:'-' }}
-                </div>
-                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-text--bold">
-                    Ville : {{ programme.ville|default_if_none:'-' }}
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>
