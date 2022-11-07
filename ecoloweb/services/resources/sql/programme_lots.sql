@@ -15,8 +15,8 @@
 -- parent_id   FK(programmes_lot) dans le cas d'un avenant seulement ?
 
 select
-    md5(cdg.id||'-'||ff.code) as id, -- Les lots d'un programme sont tous les logements partageant le même financement
-    cdg.id as programme_id,
+    md5(pl.conventiondonneesgenerales_id||'-'||ff.code) as id, -- Les lots d'un programme sont tous les logements partageant le même financement
+    pl.conventiondonneesgenerales_id as programme_id,
     pl.bailleurproprietaire_id as bailleur_id,
     coalesce(pl.financementdate, now()) as cree_le,
     coalesce(pl.financementdate, now()) as mis_a_jour_le,
@@ -35,8 +35,6 @@ select
         when pl.estderogationloyer and coalesce(pl.logementsnombrecoltotal, 0) > 0 then pl.montantplafondloyercolinitial
     end as loyer_derogatoire
 from ecolo.ecolo_programmelogement pl
-    inner join ecolo.ecolo_conventiondonneesgenerales cdg on pl.conventiondonneesgenerales_id = cdg.id and cdg.avenant_id is null
-    inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
     -- Financement
     inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
     inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
@@ -49,6 +47,5 @@ from ecolo.ecolo_programmelogement pl
     left join ecolo.ecolo_valeurparamstatic ap3 on a3.typeannexe_id = ap3.id and ap3.subtype = 'TAN' and ap3.code = '8' -- Box
     {% if pk %}
 where
-    md5(cdg.id||'-'||ff.code) = '{{ pk }}'
+    md5(pl.conventiondonneesgenerales_id||'-'||ff.code) = '{{ pk }}'
     {% endif %}
-order by cdg.id, ff.code

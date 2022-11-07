@@ -1,4 +1,4 @@
-from datetime import date
+from typing import List
 
 from . import SiretResolver
 from .handlers import ModelImporter
@@ -12,6 +12,9 @@ class BailleurImporter(ModelImporter):
     def __init__(self):
         super().__init__()
         self._siret_resolver = SiretResolver()
+
+    def _get_identity_keys(self) -> List[str]:
+        return ['siret']
 
     def _prepare_data(self, data: dict) -> dict:
         codesiret = data.pop('codesiret')
