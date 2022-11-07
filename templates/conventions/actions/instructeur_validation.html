@@ -6,7 +6,7 @@
         <div role="alert">
             {% if convention.is_avenant %}
                 <div>
-                    <p class="fr-mb-3w">L'avenant aura le numero {{conventionNumberForm.convention_numero.value}}.</p>
+                    <p class="fr-mb-3w">L'avenant aura le numéro{{conventionNumberForm.convention_numero.value}}.</p>
                     <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
                         {% csrf_token %}
                         <input type="hidden"
