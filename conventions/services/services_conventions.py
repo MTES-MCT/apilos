@@ -707,7 +707,7 @@ class ConventionFinancementService(ConventionService):
     request: HttpRequest
     form: ConventionFinancementForm
     formset = None
-    upform = None
+    upform: UploadForm = UploadForm()
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
     redirect_recap: bool = False
     editable_after_upload: bool = False
@@ -727,7 +727,6 @@ class ConventionFinancementService(ConventionService):
                     "autre": pret.autre,
                 }
             )
-        self.upform = UploadForm()
         self.formset = PretFormSet(initial=initial)
         self.form = ConventionFinancementForm(
             initial={
@@ -845,7 +844,6 @@ class ConventionFinancementService(ConventionService):
                 self._save_convention_financement_prets()
                 self.return_status = utils.ReturnStatus.SUCCESS
                 self.redirect_recap = self.request.POST.get("redirect_to_recap", False)
-        self.upform = UploadForm()
 
     def _save_convention_financement(self):
         self.convention.date_fin_conventionnement = datetime.date(
