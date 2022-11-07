@@ -386,6 +386,12 @@ def new_avenant(request, convention_uuid):
                     "conventions:avenant_financement", args=[result["convention"].uuid]
                 )
             )
+        if result["avenant_type"].nom == "commentaires":
+            return HttpResponseRedirect(
+                reverse(
+                    "conventions:avenant_comments", args=[result["convention"].uuid]
+                )
+            )
 
     return render(
         request,
@@ -489,6 +495,7 @@ class ConventionBailleurView(ConventionView):
 
 class AvenantBailleurView(ConventionBailleurView):
     next_path_redirect: str = "conventions:recapitulatif"
+    current_path_redirect: str = "conventions:avenant_bailleur"
     form_step = {}
 
 

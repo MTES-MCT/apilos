@@ -13,9 +13,6 @@
 
     <div class="fr-container">
         <div class="fr-grid-row fr-grid-row--gutters">
-
-
-
             <div class="fr-my-5w fr-table fr-table--bordered table--layout-fixed">
                 <table>
                     <caption><em>{{ conventions|length }} convention{{ conventions|length|pluralize }} associée{{ conventions|length|pluralize }}</em></caption>
@@ -59,7 +56,7 @@
                                             {{convention.short_statut_for_template}}
                                         </strong></span>
                                     </div>
-                                    {% if convention.is_project %}
+                                    {% if convention.statut == CONVENTION_STATUT.PROJET %}
                                         <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                             document.addEventListener('DOMContentLoaded', function () {
                                                 document.getElementById('convention_redirect_{{convention.uuid}}')

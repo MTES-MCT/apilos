@@ -15,7 +15,7 @@
 
                     {% include "conventions/recapitulatif/alert_convention.html" %}
 
-                    {% if request|is_bailleur and convention.is_project %}
+                    {% if request|is_bailleur and convention.statut == CONVENTION_STATUT.PROJET %}
                         <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
                             {% include "conventions/actions/submit_convention.html" %}
                             {% include "conventions/actions/delete.html"%}
@@ -28,7 +28,7 @@
                 {% include "common/button/return_convention_index.html" %}
                 <a class="fr-btn fr-btn--icon-left fr-icon-arrow-left-s-line" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
                     {% if convention.is_avenant %}
-                        Retour à l'avenant de la convention
+                        Retour à l'avenant
                     {% else %}
                         Retour à la convention
                     {% endif %}

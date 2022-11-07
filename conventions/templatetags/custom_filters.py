@@ -228,7 +228,7 @@ def display_validation(convention, request):
     if convention.statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
         return True
     return (
-        convention.is_project
+        convention.statut == ConventionStatut.PROJET
         and convention.cree_par is not None
         and convention.cree_par.is_instructeur()
     )
@@ -245,9 +245,13 @@ def display_is_validated(convention):
 
 @register.filter
 def display_is_resiliated(convention):
-    return convention.statut in [
-        ConventionStatut.RESILIEE,
-    ]
+    return (
+        convention.statut
+        in [
+            ConventionStatut.RESILIEE,
+        ]
+        and not convention.is_avenant()
+    )
 
 
 @register.filter
@@ -274,11 +278,6 @@ def display_notification_new_convention_instructeur_to_bailleur(convention, requ
         and convention.cree_par is not None
         and convention.cree_par.is_instructeur
     )
-
-
-@register.filter
-def display_status_projet(convention):
-    return convention.statut == ConventionStatut.PROJET
 
 
 @register.filter

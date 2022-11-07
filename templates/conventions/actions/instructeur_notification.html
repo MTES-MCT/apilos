@@ -8,10 +8,10 @@
                 <p>Denière notification de l'instructeur : {{ convention.get_last_bailleur_notification.cree_le }}</p>
             {% endif %}
             {% if convention|display_demande_instruction %}
-                <h4>Vous avez modifié {% if convention.is_avenant %}l'avenant de {% endif %}la convention<br>
-                    Renvoyez {% if convention.is_avenant %}l'avenant de {% endif %}la convention à l'instruction</h4>
+                <h4>Vous avez modifié {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}<br>
+                    Renvoyez {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %} à l'instruction</h4>
             {% else %}
-                <h4>Vous avez modifié {% if convention.is_avenant %}l'avenant de {% endif %}la convention<br>
+                <h4>Vous avez modifié {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}<br>
                     Faites part de vos commentaires à l'instructeur </h4>
             {% endif %}
             <div>
@@ -33,7 +33,7 @@
                     {% include "common/form/input_textarea.html" with form_input=notificationForm.comment label="Ajouter un commentaire à l'attention de l'instructeur (optionnel)" editable=True %}
                     {% if convention|display_demande_instruction %}
                         <button class="fr-btn">
-                            Renvoyer {% if convention.is_avenant %}l'avenant de {% endif %}la convention à l'instruction
+                            Renvoyer {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %} à l'instruction
                         </button>
                     {% else %}
                         <button class="fr-btn">

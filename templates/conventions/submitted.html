@@ -30,7 +30,7 @@
                 {% include "common/button/return_convention_index.html" %}
                 <a class="fr-btn fr-btn--icon-left fr-icon-arrow-left-s-line" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
                     {% if convention.is_avenant %}
-                        Retour à l'avenant de la convention
+                        Retour à l'avenant
                     {% else %}
                         Retour à la convention
                     {% endif %}
