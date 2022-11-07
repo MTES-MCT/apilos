@@ -109,6 +109,12 @@ class ModelImporter(ABC):
         """
         return []
 
+    def _get_matching_fields(self, data: dict) -> dict:
+        if len(self._get_identity_keys()) > 0:
+            return {key: data[key] for key in self._get_identity_keys() if data[key] is not None and data[key] != ''}
+
+        return {}
+
     def _get_dependencies(self):
         """
         Return a dict of key -> ModelImportHandler
@@ -161,15 +167,15 @@ class ModelImporter(ABC):
             data = self._fetch_related_objects(data)
             data = self._prepare_data(data)
 
-            # If identity fields are defined, look for any matching model in the APiLos database
-            if len(self._get_identity_keys()) > 0:
-                # Extract dict values from declared identity keys as filters dict
-                filters = {key: data[key] for key in self._get_identity_keys()}
+            # Extract dict values from declared identity keys as filters dict
+            filters = self._get_matching_fields(data)
+            if len(filters) > 0:
                 instance, created = self.model.objects.get_or_create(**filters, defaults=data)
 
                 self._register_ecolo_reference(instance, ecolo_id)
                 if created:
                     self._nb_imported_models += 1
+
             else:
                 # Create a new instance...
                 instance = self.model.objects.create(**data)
