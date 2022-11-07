@@ -43,14 +43,11 @@ def generate_convention_doc(convention, save_data=False):
         .all()
     )
     # It is an avenant
+    avenant_data = {}
     if convention.is_avenant():
-        if convention.avenant_type == "logements":
-            filepath = f"{settings.BASE_DIR}/documents/Avenant-Logements-template.docx"
-        else:
-            raise NotHandleConventionType(
-                "La génération de convention n'est pas disponible pour ce type de"
-                + f" bailleur : {convention.bailleur.get_type_bailleur_display()}"
-            )
+        filepath = f"{settings.BASE_DIR}/documents/Avenant-template.docx"
+        for avenant_type in convention.avenant_types.all():
+            avenant_data[f"avenant_type_{avenant_type}"] = True
     # It is a convention
     elif convention.bailleur.is_hlm():
         filepath = f"{settings.BASE_DIR}/documents/HLM-template.docx"
@@ -97,6 +94,7 @@ def generate_convention_doc(convention, save_data=False):
     object_images, local_pathes = _get_object_images(doc, convention)
 
     context = {
+        **avenant_data,
         "convention": convention,
         "bailleur": convention.bailleur,
         "programme": convention.programme,

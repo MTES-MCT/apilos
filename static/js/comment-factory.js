@@ -571,7 +571,7 @@ class CommentFactory {
 
         const owner_span = document.createElement('span');
         owner_span.classList.add('block--row-strech-1')
-        owner_span.classList.add('text-bold')
+        owner_span.classList.add('apilos-text--bold')
         var inner_text = username
         if (is_owner && is_owner != 'False') {
             inner_text = inner_text + " (vous)"
@@ -582,7 +582,7 @@ class CommentFactory {
 
         const status_span = document.createElement('span');
         status_span.setAttribute('id','comment_status_' + this.comment_icon_id + '_' + uuid)
-        status_span.classList.add('text-bold')
+        status_span.classList.add('apilos-text--bold')
         if (status == 'OUVERT') {
             status_span.classList.add('status_ouvert')
             status_span.innerText = 'Ouvert'
@@ -599,12 +599,12 @@ class CommentFactory {
         return owner_div
     }
 
-    //<div class="fr-text-sm text-italic"><i>le 3 novembre 2021 12:06</i></div>
+    //<div class="fr-text-sm apilos-text--italic"><i>le 3 novembre 2021 12:06</i></div>
     create_comment_date(uuid, date) {
         const date_div = document.createElement('div');
         date_div.setAttribute('id','comment_date_' + this.comment_icon_id + '_' + uuid)
         date_div.classList.add('fr-text-sm')
-        date_div.classList.add('text-italic')
+        date_div.classList.add('apilos-text--italic')
         date_div.innerText = "le " + this.format_french_date(date)
         return date_div
     }

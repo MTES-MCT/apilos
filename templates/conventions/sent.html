@@ -6,21 +6,8 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% if convention.is_avenant %}
-            {% include "conventions/common/form_header.html"%}
-            <div class="fr-container">
-                {% if CERBERE_AUTH %}
-                    <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
-                        Retour à la convention
-                    </a>
-                {% else %}
-                    <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Retour à la convention</a>
-                {% endif %}
-            </div>
-        {% else %}
-            {% include "conventions/common/form_header.html"%}
-            {% include "common/nav_bar.html" with nav_bar_step="sent" %}
-        {% endif %}
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/nav_bar.html" with nav_bar_step="sent" %}
         <div class="fr-container fr-py-5w">
             {% if request|is_instructeur %}
                 <div role="alert" class="fr-alert fr-alert--info fr-icon-arrow-right-s-line-double">
@@ -75,8 +62,13 @@
                 </div>
             {% else %}
                 <div role="alert" class="fr-alert fr-alert--success">
-                    <p class="">Ici, la convention pourra être téléversée par l'administration en charge dès qu'elle sera signée.
-                    </p>
+                    {% if convention.is_avenant %}
+                        <p >Ici, l'avenant pourra être téléversé par l'administration en charge dès qu'il sera signé.
+                        </p>
+                    {% else %}
+                        <p >Ici, la convention pourra être téléversée par l'administration en charge dès qu'elle sera signée.
+                        </p>
+                    {% endif %}
                     <a class="fr-my-1w fr-link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
                         Consulter le récapitulatif
                     </a>

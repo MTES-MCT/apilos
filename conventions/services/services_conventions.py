@@ -132,18 +132,13 @@ def _save_convention_type(request, convention):
                 convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option8"]
             )
         convention.save()
+    return convention_type1_and_2_form
 
 
 def convention_summary(request, convention):
     request.user.check_perm("convention.view_convention", convention)
     convention_number_form = ConventionNumberForm(
-        initial={
-            "convention_numero": convention.numero
-            if convention.numero
-            else convention.get_convention_prefix()
-            if convention.programme.administration
-            else ""
-        }
+        initial={"convention_numero": convention.get_default_convention_number()}
     )
 
     opened_comments = Comment.objects.filter(
@@ -152,7 +147,7 @@ def convention_summary(request, convention):
     )
     opened_comments = opened_comments.order_by("cree_le")
     if request.method == "POST":
-        _save_convention_type(request, convention)
+        convention_type1_and_2_form = _save_convention_type(request, convention)
     else:
         convention_type1_and_2_form = ConventionType1and2Form(
             initial={

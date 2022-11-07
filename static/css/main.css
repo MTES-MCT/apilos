@@ -1,5 +1,5 @@
 .ds_banner {
-  background-color: #F9F8F6;
+  background-color: var(--background-default-grey);
 }
 
 .apilos-subtitle {
@@ -438,11 +438,11 @@ a[href].apilos-block-faqlink:after {
   display: none !important;
 }
 
-.text-bold {
+.apilos-text--bold {
   font-weight: bold;
 }
 
-.text-italic {
+.apilos-text--italic {
   font-style: italic;
 }
 
@@ -756,12 +756,11 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   position: -webkit-sticky; /* Safari */
   position: sticky;
   z-index: 100;
-}
-.apilos-sticky-top {
+  background-color: var(--background-default-grey);
   top: 0;
 }
 .apilos-sticky-2 {
-  top: 104px;
+  top: 90px;
 }
 
 /*

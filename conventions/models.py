@@ -173,6 +173,11 @@ class Convention(models.Model):
     televersement_convention_signee_le = models.DateTimeField(null=True, blank=True)
     date_resiliation = models.DateField(null=True, blank=True)
 
+    # Needed for admin
+    @property
+    def administration(self):
+        return self.programme.administration
+
     def __str__(self):
         programme = self.programme
         lot = self.lot
@@ -337,9 +342,6 @@ class Convention(models.Model):
             )
         return None
 
-    def is_project(self):
-        return self.statut == ConventionStatut.PROJET
-
     def is_avenant(self):
         return self.parent_id is not None
 
@@ -451,6 +453,8 @@ class Convention(models.Model):
                 "cree_le",
                 "mis_a_jour_le",
                 "avenant_types",
+                "numero",
+                "comments",
             ],
         )
         convention_fields.update(
@@ -526,9 +530,24 @@ class Convention(models.Model):
             cloned_type_stationnement.save()
         return cloned_convention
 
-    # Needed for admin
-    def administration(self):
-        return self.programme.administration
+    def get_default_convention_number(self):
+        if self.is_avenant():
+            parent = self.parent
+            nb_validated_avenants = parent.avenants.exclude(
+                statut__in=[
+                    ConventionStatut.PROJET,
+                    ConventionStatut.INSTRUCTION,
+                    ConventionStatut.CORRECTION,
+                ]
+            ).count()
+            return str(nb_validated_avenants + 1)
+        return (
+            self.numero
+            if self.numero
+            else self.get_convention_prefix()
+            if self.programme.administration
+            else ""
+        )
 
 
 class ConventionHistory(models.Model):

@@ -6,23 +6,10 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% if convention.is_avenant %}
-            {% include "conventions/common/form_header.html"%}
-            <div class="fr-container">
-                {% if CERBERE_AUTH %}
-                    <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
-                        Retour à la convention
-                    </a>
-                {% else %}
-                    <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Retour à la convention</a>
-                {% endif %}
-            </div>
-        {% else %}
-            {% include "conventions/common/form_header.html"%}
-            {% include "common/nav_bar.html" with nav_bar_step="preview" %}
-        {% endif %}
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/nav_bar.html" with nav_bar_step="preview" %}
         <div class="fr-container fr-mb-2w fr-pt-5w">
-            <h2>Visualiser votre convention</h2>
+            <h2>Visualiser votre {% if convention.is_avenant %}avenant{% else %}convention{% endif %}</h2>
             <div class="fr-col-md-12 fr-py-5w h-80vh">
 
                 <iframe src="{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'conventions:display_pdf' convention_uuid=convention.uuid %}" width="100%" height="1000px" nonce="{{request.csp_nonce}}"></iframe>
