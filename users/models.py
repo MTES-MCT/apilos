@@ -88,7 +88,6 @@ class User(AbstractUser):
             if bailleur.parent:
                 bailleur_ids.append(bailleur.parent.id)
             # is bailleur of the convention or is instructeur of the convention
-            print(bailleur_ids)
             return self.role_set.filter(
                 bailleur_id__in=bailleur_ids
             ) or self.role_set.filter(administration_id=obj.programme.administration_id)

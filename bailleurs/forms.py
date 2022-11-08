@@ -22,7 +22,8 @@ class UpdateBailleurForm(forms.Form):
 
 class BailleurForm(forms.Form):
     def __init__(self, *args, bailleurs=None, **kwargs) -> None:
-        self.declared_fields["bailleur"].choices = bailleurs
+        if bailleurs:
+            self.declared_fields["bailleur"].choices = bailleurs
         super().__init__(*args, **kwargs)
 
     uuid = forms.UUIDField(required=False)
