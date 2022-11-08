@@ -297,9 +297,6 @@ class LogementEDD(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     designation = models.CharField(max_length=255)
-    bailleur = models.ForeignKey(
-        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
-    )
     programme = models.ForeignKey("Programme", on_delete=models.CASCADE, null=False)
     financement = models.CharField(
         max_length=25,
@@ -318,6 +315,11 @@ class LogementEDD(models.Model):
     }
     sheet_name = "EDD Simplifié"
 
+    # Needed for admin
+    @property
+    def bailleur(self):
+        return self.programme.bailleur
+
     def __str__(self):
         return self.designation
 
@@ -325,9 +327,6 @@ class LogementEDD(models.Model):
 class ReferenceCadastrale(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    bailleur = models.ForeignKey(
-        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
-    )
     programme = models.ForeignKey("Programme", on_delete=models.CASCADE, null=False)
     section = models.CharField(max_length=255, null=True)
     numero = models.IntegerField(null=True)
@@ -343,6 +342,11 @@ class ReferenceCadastrale(models.Model):
         "Surface": surface,
     }
     sheet_name = "Références Cadastrales"
+
+    # Needed for admin
+    @property
+    def bailleur(self):
+        return self.programme.bailleur
 
     def __str__(self):
         return f"{self.section} - {self.numero} - {self.lieudit}"
@@ -366,9 +370,6 @@ class Lot(IngestableModel):
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nb_logements = models.IntegerField(null=True)
-    bailleur = models.ForeignKey(
-        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
-    )
     programme = models.ForeignKey("Programme", on_delete=models.CASCADE, null=False)
     financement = models.CharField(
         max_length=25,
@@ -403,6 +404,11 @@ class Lot(IngestableModel):
 
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+    # Needed for admin
+    @property
+    def bailleur(self):
+        return self.programme.bailleur
 
     def edd_volumetrique_text(self):
         return get_key_from_json_field(self.edd_volumetrique, "text")
@@ -446,9 +452,6 @@ class Logement(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     designation = models.CharField(
         max_length=255, verbose_name="Désignation des logements"
-    )
-    bailleur = models.ForeignKey(
-        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
     )
     lot = models.ForeignKey(
         "Lot",
@@ -509,6 +512,11 @@ class Logement(models.Model):
         coeficient,
     ]
 
+    # Needed for admin
+    @property
+    def bailleur(self):
+        return self.lot.bailleur
+
     def __str__(self):
         return self.designation
 
@@ -562,9 +570,6 @@ class Annexe(models.Model):
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    bailleur = models.ForeignKey(
-        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
-    )
     logement = models.ForeignKey(
         "Logement",
         on_delete=models.CASCADE,
@@ -591,6 +596,11 @@ class Annexe(models.Model):
         "Loyer maximum en €": loyer,
     }
     sheet_name = "Annexes"
+
+    # Needed for admin
+    @property
+    def bailleur(self):
+        return self.logement.bailleur
 
     def __str__(self):
         return f"{self.typologie} - {self.logement}"
@@ -633,9 +643,6 @@ class TypeStationnement(IngestableModel):
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    bailleur = models.ForeignKey(
-        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
-    )
     lot = models.ForeignKey(
         "Lot",
         related_name="type_stationnements",
@@ -658,6 +665,11 @@ class TypeStationnement(IngestableModel):
         "Loyer maximum en €": loyer,
     }
     sheet_name = "Stationnements"
+
+    # Needed for admin
+    @property
+    def bailleur(self):
+        return self.lot.bailleur
 
     def __str__(self):
         return f"{self.typologie} - {self.lot}"

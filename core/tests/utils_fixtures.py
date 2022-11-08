@@ -254,7 +254,6 @@ def create_programme(
 def create_lot(programme: Programme, financement: Financement, type_habitat=None):
     return Lot.objects.create(
         programme=programme,
-        bailleur=programme.bailleur,
         financement=financement,
         type_habitat=type_habitat
         if type_habitat
@@ -277,7 +276,6 @@ def create_lot(programme: Programme, financement: Financement, type_habitat=None
 def create_logement(lot: Lot, designation: str, typologie: TypologieLogement):
     return Logement.objects.create(
         lot=lot,
-        bailleur=lot.bailleur,
         designation=designation,
         typologie=typologie,
         surface_habitable=50,
@@ -293,7 +291,6 @@ def create_logement(lot: Lot, designation: str, typologie: TypologieLogement):
 def create_annexe(logement: Logement, typologie: TypologieAnnexe):
     return Annexe.objects.create(
         logement=logement,
-        bailleur=logement.bailleur,
         typologie=typologie,
         surface_hors_surface_retenue=5,
         loyer_par_metre_carre=0.1,

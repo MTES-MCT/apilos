@@ -35,17 +35,6 @@ class Command(BaseCommand):
             with transaction.atomic():
                 programme.bailleur = bailleur
                 programme.save()
-                programme.lot_set.all().update(bailleur=bailleur)
-                programme.logementedd_set.all().update(bailleur=bailleur)
-                programme.referencecadastrale_set.all().update(bailleur=bailleur)
-                programme.conventions.all().update(bailleur=bailleur)
-                for convention in programme.conventions.all():
-                    convention.pret_set.all().update(bailleur=bailleur)
-                for lot in programme.lot_set.all():
-                    lot.type_stationnements.all().update(bailleur=bailleur)
-                    lot.logements.all().update(bailleur=bailleur)
-                    for logement in lot.logements.all():
-                        logement.annexes.all().update(bailleur=bailleur)
             print(
                 f"le bailleur du programme `{programme}` a été mise à jour "
                 + f"avec le bailleur de siret `{bailleur_siret}`"

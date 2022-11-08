@@ -161,5 +161,5 @@ class Command(BaseCommand):
             )
             for lot in lots:
                 Lot.objects.get_or_create(
-                    **lot, programme=programme_test, bailleur=bailleur_test
+                    **lot, programme=programme_test
                 )

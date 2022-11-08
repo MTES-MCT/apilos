@@ -176,7 +176,6 @@ def get_or_create_lots_and_conventions(
     ):
         (lot, _) = Lot.objects.get_or_create(
             programme=programme,
-            bailleur=programme.bailleur,
             financement=Financement.SANS_FINANCEMENT,
             defaults={
                 "type_habitat": TypeHabitat.MIXTE,
@@ -186,7 +185,6 @@ def get_or_create_lots_and_conventions(
         lots.append(lot)
         (convention, _) = Convention.objects.get_or_create(
             programme=programme,
-            bailleur=programme.bailleur,
             lot=lot,
             financement=Financement.SANS_FINANCEMENT,
             # When comes from SIAP through API, the user doesn't exist in DB
@@ -207,7 +205,6 @@ def get_or_create_lots_and_conventions(
                 continue
             (lot, _) = Lot.objects.get_or_create(
                 programme=programme,
-                bailleur=programme.bailleur,
                 financement=financement,
                 defaults={
                     "type_habitat": _type_habitat(aide),

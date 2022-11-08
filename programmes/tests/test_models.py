@@ -47,7 +47,6 @@ class ProgrammeModelsTest(TestCase):
 
         for financement in [Financement.PLAI, Financement.PLUS]:
             lot = Lot.objects.create(
-                bailleur=bailleur,
                 programme=programme,
                 financement=financement,
                 nb_logements=50,
@@ -57,14 +56,12 @@ class ProgrammeModelsTest(TestCase):
                 LogementEDD.objects.create(
                     designation=("A" if financement == Financement.PLAI else "B")
                     + str(index),
-                    bailleur=bailleur,
                     programme=programme,
                     financement=financement,
                 )
                 logement = Logement.objects.create(
                     designation=("A" if financement == Financement.PLAI else "B")
                     + str(index),
-                    bailleur=bailleur,
                     lot=lot,
                     typologie=typologie,
                     surface_habitable=sh,
@@ -78,7 +75,6 @@ class ProgrammeModelsTest(TestCase):
                 if sa > 0:
                     shsr = sar - sa
                     Annexe.objects.create(
-                        bailleur=bailleur,
                         logement=logement,
                         typologie=TypologieAnnexe.TERRASSE,
                         surface_hors_surface_retenue=shsr,
@@ -86,14 +82,12 @@ class ProgrammeModelsTest(TestCase):
                         loyer=shsr * 0.5,
                     )
             TypeStationnement.objects.create(
-                bailleur=bailleur,
                 lot=lot,
                 typologie=TypologieStationnement.PLACE_STATIONNEMENT,
                 nb_stationnements=random.randint(1, 10),
                 loyer=random.randint(40, 75),
             )
             TypeStationnement.objects.create(
-                bailleur=bailleur,
                 lot=lot,
                 typologie=TypologieStationnement.GARAGE_AERIEN,
                 nb_stationnements=random.randint(1, 10),

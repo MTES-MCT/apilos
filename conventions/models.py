@@ -412,8 +412,6 @@ class Convention(models.Model):
                 "id",
                 "parent",
                 "parent_id",
-                "bailleur_id",
-                "administration_id",
                 "cree_le",
                 "mis_a_jour_le",
             ],
@@ -434,8 +432,6 @@ class Convention(models.Model):
                 "id",
                 "parent",
                 "parent_id",
-                "bailleur",
-                "bailleur_id",
                 "programme",
                 "programme_id",
                 "cree_le",
@@ -444,7 +440,6 @@ class Convention(models.Model):
         )
         lot_fields.update(
             {
-                "bailleur": self.programme.bailleur,
                 "programme": cloned_programme,
                 "parent_id": convention_origin.lot_id,
             }
@@ -458,8 +453,6 @@ class Convention(models.Model):
                 "id",
                 "parent",
                 "parent_id",
-                "bailleur",
-                "bailleur_id",
                 "programme",
                 "programme_id",
                 "lot",
@@ -488,7 +481,6 @@ class Convention(models.Model):
                 logement,
                 exclude=[
                     "id",
-                    "bailleur",
                     "lot",
                     "cree_le",
                     "mis_a_jour_le",
@@ -496,7 +488,6 @@ class Convention(models.Model):
             )
             logement_fields.update(
                 {
-                    "bailleur": self.programme.bailleur,
                     "lot": cloned_lot,
                 }
             )
@@ -507,7 +498,6 @@ class Convention(models.Model):
                     annexe,
                     exclude=[
                         "id",
-                        "bailleur",
                         "logement",
                         "cree_le",
                         "mis_a_jour_le",
@@ -515,7 +505,6 @@ class Convention(models.Model):
                 )
                 annexe_fields.update(
                     {
-                        "bailleur": self.programme.bailleur,
                         "logement": cloned_logement,
                     }
                 )
@@ -527,7 +516,6 @@ class Convention(models.Model):
                 type_stationnement,
                 exclude=[
                     "id",
-                    "bailleur",
                     "lot",
                     "cree_le",
                     "mis_a_jour_le",
@@ -535,7 +523,6 @@ class Convention(models.Model):
             )
             type_stationnement_fields.update(
                 {
-                    "bailleur": self.programme.bailleur,
                     "lot": cloned_lot,
                 }
             )
@@ -566,9 +553,6 @@ class Convention(models.Model):
 class ConventionHistory(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    bailleur = models.ForeignKey(
-        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
-    )
     convention = models.ForeignKey("Convention", on_delete=models.CASCADE, null=False)
     statut_convention = models.CharField(
         max_length=25,
@@ -591,13 +575,15 @@ class ConventionHistory(models.Model):
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
+    # Needed for admin
+    @property
+    def bailleur(self):
+        return self.convention.bailleur
+
 
 class Pret(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    bailleur = models.ForeignKey(
-        "bailleurs.Bailleur", on_delete=models.CASCADE, null=False
-    )
     convention = models.ForeignKey("Convention", on_delete=models.CASCADE, null=False)
     preteur = models.CharField(
         max_length=25,
@@ -622,6 +608,11 @@ class Pret(models.Model):
         "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": autre,
     }
     sheet_name = "Financements"
+
+    # Needed for admin
+    @property
+    def bailleur(self):
+        return self.convention.bailleur
 
     def _get_preteur(self):
         return self.get_preteur_display()

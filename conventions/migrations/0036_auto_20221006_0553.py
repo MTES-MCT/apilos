@@ -7,11 +7,11 @@ def assign_signataire(apps, schema_editor):
 
     Convention = apps.get_model("conventions", "Convention")
 
-    for convention in Convention.objects.prefetch_related("programme__bailleur").all():
-        convention.signataire_nom = convention.programme.bailleur.signataire_nom
-        convention.signataire_fonction = convention.programme.bailleur.signataire_fonction
+    for convention in Convention.objects.prefetch_related("bailleur").all():
+        convention.signataire_nom = convention.bailleur.signataire_nom
+        convention.signataire_fonction = convention.bailleur.signataire_fonction
         convention.signataire_date_deliberation = (
-            convention.programme.bailleur.signataire_date_deliberation
+            convention.bailleur.signataire_date_deliberation
         )
         convention.save()
 

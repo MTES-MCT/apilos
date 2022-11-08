@@ -188,7 +188,6 @@ def convention_submit(request, convention_uuid):
     # Set back the onvention to the instruction
     if request.POST.get("BackToInstruction", False):
         ConventionHistory.objects.create(
-            bailleur=convention.programme.bailleur,
             convention=convention,
             statut_convention=ConventionStatut.INSTRUCTION,
             statut_convention_precedent=convention.statut,
@@ -201,7 +200,6 @@ def convention_submit(request, convention_uuid):
     if request.POST.get("SubmitConvention", False):
 
         ConventionHistory.objects.create(
-            bailleur=convention.programme.bailleur,
             convention=convention,
             statut_convention=ConventionStatut.INSTRUCTION,
             statut_convention_precedent=convention.statut,
@@ -341,7 +339,6 @@ def convention_feedback(request, convention_uuid):
         if notification_form.cleaned_data["from_instructeur"]:
             target_status = ConventionStatut.CORRECTION
         ConventionHistory.objects.create(
-            bailleur=convention.programme.bailleur,
             convention=convention,
             statut_convention=target_status,
             statut_convention_precedent=convention.statut,
@@ -439,7 +436,6 @@ def convention_validate(request, convention_uuid):
         convention.statut = ConventionStatut.A_SIGNER
 
         ConventionHistory.objects.create(
-            bailleur=convention.programme.bailleur,
             convention=convention,
             statut_convention=ConventionStatut.A_SIGNER,
             statut_convention_precedent=previous_status,
@@ -870,7 +866,6 @@ class ConventionFinancementService(ConventionService):
             else:
                 pret = Pret.objects.create(
                     convention=self.convention,
-                    bailleur=self.convention.programme.bailleur,
                     numero=form_pret.cleaned_data["numero"],
                     date_octroi=form_pret.cleaned_data["date_octroi"],
                     duree=form_pret.cleaned_data["duree"],

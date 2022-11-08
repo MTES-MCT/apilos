@@ -57,7 +57,6 @@ class ConventionModelsTest(TestCase):
         raph.save()
         self.assertEqual(convention.get_email_bailleur_users(), [])
         ConventionHistory.objects.create(
-            bailleur=convention.programme.bailleur,
             convention=convention,
             statut_convention=ConventionStatut.INSTRUCTION,
             statut_convention_precedent=ConventionStatut.PROJET,
@@ -79,7 +78,6 @@ class ConventionModelsTest(TestCase):
             convention.get_email_instructeur_users(include_partial=True), [fix.email]
         )
         ConventionHistory.objects.create(
-            bailleur=convention.programme.bailleur,
             convention=convention,
             statut_convention=ConventionStatut.INSTRUCTION,
             statut_convention_precedent=ConventionStatut.PROJET,
@@ -224,7 +222,6 @@ class PretModelsTest(TestCase):
         convention = Convention.objects.get(numero="0001")
         Pret.objects.create(
             convention=convention,
-            bailleur=convention.programme.bailleur,
             preteur=Preteur.CDCF,
             date_octroi=datetime.datetime.today(),
             autre="test autre",
