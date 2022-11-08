@@ -1,13 +1,19 @@
 {% load custom_filters %}
 
-{% if convention|display_delete_convention:request %}
-    <div class="fr-col-12 block--row-strech fr-mb-5w fr-mt-3w">
+{% if convention|display_delete_convention %}
+    <div class="fr-col-12 block--row-strech fr-my-5w">
         <div class="block--row-strech-1 fr-mt-2w">
             <p class="fr-alert__title">
                 Supprimer ce projet {% if convention.is_avenant %}d'avenant{% else %}de convention{% endif %}
             </p>
             <p class="fr-mb-0">
-                Vous vous êtes trompé lors de la création ?
+                {% if convention.is_avenant %}
+                    Cet avenant n'est pas encore validé, si c'est un erreur ou un doublon, il vous est possible de le supprimer.
+                    Vous perdrez alors tous les informations liées à cet avenant.
+                {% else %}
+                    Cette convention n'est pas encore validée, si c'est un erreur ou un doublon, il vous est possible de la supprimer.
+                    Vous perdrez alors tous les informations liées à cette convention.
+                {% endif %}
             </p>
         </div>
         <button type="button" class="fr-btn apilos-btn--secondary--red fr-btn--icon-left fr-fi-delete-line fr-my-1w" data-fr-opened="false" aria-controls="fr-modal-{{convention.uuid}}">

@@ -334,8 +334,12 @@ def display_submit_convention(convention, request):
 
 
 @register.filter
-def display_delete_convention(convention, request):
-    return convention.statut == ConventionStatut.PROJET and is_bailleur(request)
+def display_delete_convention(convention):
+    return convention.statut in [
+        ConventionStatut.PROJET,
+        ConventionStatut.INSTRUCTION,
+        ConventionStatut.CORRECTION,
+    ]
 
 
 @register.filter
