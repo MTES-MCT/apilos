@@ -2,13 +2,19 @@ from typing import List
 
 from programmes.models import Programme, Lot, Logement
 
-from .handlers import ModelImporter
-from .handlers_bailleurs import BailleurImporter
+from .importers import ModelImporter
+from .importers_bailleurs import BailleurImporter
 
 
 class ProgrammeImporter(ModelImporter):
     model = Programme
-    sql_template = 'resources/sql/programmes.sql'
+
+    def __init__(self):
+        super().__init__()
+        self._query = self._get_file_content('resources/sql/programmes.sql')
+
+    def _get_sql_query(self) -> str:
+        return self._query
 
     def _get_identity_keys(self) -> List[str]:
         return ['numero_galion']
@@ -21,7 +27,13 @@ class ProgrammeImporter(ModelImporter):
 
 class ProgrammeLotImporter(ModelImporter):
     model = Lot
-    sql_template = 'resources/sql/programme_lots.sql'
+
+    def __init__(self):
+        super().__init__()
+        self._query = self._get_file_content('resources/sql/programme_lots.sql')
+
+    def _get_sql_query(self) -> str:
+        return self._query
 
     def _get_dependencies(self):
         return {
@@ -32,7 +44,13 @@ class ProgrammeLotImporter(ModelImporter):
 
 class ProgrammeLogementImporter(ModelImporter):
     model = Logement
-    sql_template = 'resources/sql/programme_logements.sql'
+
+    def __init__(self):
+        super().__init__()
+        self._query = self._get_file_content('resources/sql/programme_logements.sql')
+
+    def _get_sql_query(self) -> str:
+        return self._query
 
     def _get_dependencies(self):
         return {

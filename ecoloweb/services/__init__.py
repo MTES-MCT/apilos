@@ -1,4 +1,4 @@
-from .handlers import ModelImporter
+from .importers import ModelImporter
 from .siret_resolver import SiretResolver
-from .handlers_conventions import ConventionImporter
+from .importers_conventions import ConventionImporter
 

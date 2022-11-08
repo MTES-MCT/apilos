@@ -19,7 +19,7 @@ class SiretResolver:
         self._box = Box(box_dots=True)
 
     def resolve(self, siren: str, date_creation: Optional[date] = None) -> Optional[str]:
-        if len(siren) != 9 or not siren.isdigit():
+        if not siren or len(siren) != 9 or not siren.isdigit():
             return None
 
         if date_creation:
