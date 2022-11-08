@@ -1,7 +1,7 @@
 <div class="fr-col-12 block--row-strech">
     <div class="block--row-strech-1 fr-mr-6w">
         <h2 class="fr-text--lg">Ajouter des commentaires</h2>
-        <p>En cas de modification du programme, de travaux, de réhabilitation totale, ou d’une évolution des loyers.</p>
+        <p>Ces informations sont complémentaires et servent à l’instruction. Elles ne figureront pas dans le document final d'avenant.</p>
     </div>
     <form method="post" {% if avenant_uuid %}action="{% url 'conventions:new_avenant' convention_uuid=avenant_uuid %}"{% endif %}>
         {% csrf_token %}
