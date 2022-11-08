@@ -11,7 +11,6 @@ class ConventionAnnexesViewTests(AbstractViewTestCase, TestCase):
         for designation in ["B1", "B2"]:
             Logement.objects.create(
                 designation=designation,
-                bailleur=self.convention_75.programme.bailleur,
                 lot=self.convention_75.lot,
                 typologie=TypologieLogement.T1,
                 surface_habitable=10.00,

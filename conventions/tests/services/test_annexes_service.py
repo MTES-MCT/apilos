@@ -60,7 +60,6 @@ class ConventionAnnexesServiceTests(TestCase):
         for designation in ["B1", "B2"]:
             Logement.objects.create(
                 designation=designation,
-                bailleur=convention.programme.bailleur,
                 lot=convention.lot,
                 typologie=TypologieLogement.T1,
                 surface_habitable=10.00,

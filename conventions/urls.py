@@ -5,7 +5,6 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("selection", views.select_programme_create, name="selection"),
-    #    path("bailleur/<convention_uuid>", views.bailleur, name="bailleur"),
     path(
         "bailleur/<convention_uuid>",
         views.ConventionBailleurView.as_view(),

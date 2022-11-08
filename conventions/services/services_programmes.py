@@ -91,7 +91,6 @@ def select_programme_create(request):
                     financement=form.cleaned_data["financement"],
                     type_habitat=form.cleaned_data["type_habitat"],
                     programme=programme,
-                    bailleur=bailleur,
                 )
                 lot.save()
             convention = Convention.objects.create(
@@ -415,7 +414,7 @@ def _save_programme_cadastrale(form, programme):
     programme.save()
 
 
-def _save_programme_reference_cadastrale(formset, convention, programme):
+def _save_programme_reference_cadastrale(formset, programme):
     obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], formset))
     obj_uuids = list(filter(None, obj_uuids1))
     programme.referencecadastrale_set.exclude(uuid__in=obj_uuids).delete()
@@ -431,7 +430,6 @@ def _save_programme_reference_cadastrale(formset, convention, programme):
         else:
             reference_cadastrale = ReferenceCadastrale.objects.create(
                 programme=programme,
-                bailleur=convention.programme.bailleur,
                 section=form.cleaned_data["section"],
                 numero=form.cleaned_data["numero"],
                 lieudit=form.cleaned_data["lieudit"],
@@ -512,7 +510,7 @@ def _programme_cadastrale_atomic_update(request, convention, programme):
 
     if form_is_valid and formset_is_valid:
         _save_programme_cadastrale(form, programme)
-        _save_programme_reference_cadastrale(formset, convention, programme)
+        _save_programme_reference_cadastrale(formset, programme)
         return {
             "success": utils.ReturnStatus.SUCCESS,
             "convention": convention,
@@ -635,6 +633,7 @@ class ConventionEDDService(ConventionService):
         )
         form_is_valid = self.form.is_valid()
 
+<<<<<<< HEAD
         self.formset = LogementEDDFormSet(self.request.POST)
         initformset = {
             "form-TOTAL_FORMS": self.request.POST.get(
@@ -643,6 +642,14 @@ class ConventionEDDService(ConventionService):
             "form-INITIAL_FORMS": self.request.POST.get(
                 "form-INITIAL_FORMS", len(self.formset)
             ),
+=======
+    if form_is_valid and formset_is_valid:
+        _save_programme_edd(form, programme, convention.lot)
+        _save_programme_logement_edd(formset, programme)
+        return {
+            "success": utils.ReturnStatus.SUCCESS,
+            "convention": convention,
+>>>>>>> d0a5e0ea (Remove all bailleur refs (except Programme & User))
         }
         for idx, form_logementedd in enumerate(self.formset):
             if form_logementedd["uuid"].value():
@@ -714,7 +721,6 @@ class ConventionEDDService(ConventionService):
             else:
                 logementedd = LogementEDD.objects.create(
                     programme=self.convention.programme,
-                    bailleur=self.convention.programme.bailleur,
                     financement=form_logementedd.cleaned_data["financement"],
                     designation=form_logementedd.cleaned_data["designation"],
                     numero_lot=form_logementedd.cleaned_data["numero_lot"],

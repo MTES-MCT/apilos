@@ -99,17 +99,7 @@ class ConventionBailleurService(ConventionService):
             with transaction.atomic():
                 programme.bailleur = bailleur
                 programme.save()
-                programme.lot_set.all().update(bailleur=bailleur)
-                programme.logementedd_set.all().update(bailleur=bailleur)
-                programme.referencecadastrale_set.all().update(bailleur=bailleur)
-                programme.conventions.all().update(bailleur=bailleur)
-                for convention in programme.conventions.all():
-                    convention.pret_set.all().update(bailleur=bailleur)
-                for lot in programme.lot_set.all():
-                    lot.type_stationnements.all().update(bailleur=bailleur)
-                    lot.logements.all().update(bailleur=bailleur)
-                    for logement in lot.logements.all():
-                        logement.annexes.all().update(bailleur=bailleur)
+
             self.return_status = utils.ReturnStatus.REFRESH
 
     def _bailleur_atomic_update(self):
