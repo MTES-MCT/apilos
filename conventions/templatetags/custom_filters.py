@@ -276,7 +276,7 @@ def display_notification_new_convention_instructeur_to_bailleur(convention, requ
         convention.statut == ConventionStatut.PROJET
         and is_instructeur(request)
         and convention.cree_par is not None
-        and convention.cree_par.is_instructeur
+        and convention.cree_par.is_instructeur()
     )
 
 
