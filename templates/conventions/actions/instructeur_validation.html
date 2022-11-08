@@ -1,12 +1,14 @@
 {% load custom_filters %}
 
 {% if convention|display_validation:request %}
-    <div class="fr-col-md-12 fr-py-5w">
-        <p class="fr-alert__title">Valider {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}</p>
+    <div class="fr-col-md-12 fr-mb-5w fr-mt-3w">
         <div role="alert">
             {% if convention.is_avenant %}
-                <div>
-                    <p class="fr-mb-3w">L'avenant aura le numéro{{conventionNumberForm.convention_numero.value}}.</p>
+                <div class="fr-col-md-12 block--row-strech">
+                    <div class="block--row-strech-1 fr-mr-6w">
+                        <p class="fr-alert__title">Valider l'avenant</p>
+                        <p class="fr-mb-0">L'avenant aura le numéro {{conventionNumberForm.convention_numero.value}}.</p>
+                    </div>
                     <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
                         {% csrf_token %}
                         <input type="hidden"
@@ -16,11 +18,10 @@
                         <button class="fr-btn fr-btn--secondary">
                             Valider l'avenant
                         </button>
-
                     </form>
                 </div>
-
             {% else %}
+                <p class="fr-alert__title">Valider la convention</p>
                 {% with editable_validation=convention.type1and2_configuration_not_needed %}
                     {% if editable_validation %}
                         <p class="fr-mb-3w">Vous pouvez associer un numéro de convention et valider celle-ci. Elle sera automatiquement transmise au bailleur par email pour signature.</p>

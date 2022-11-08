@@ -1,7 +1,7 @@
 {% load custom_filters %}
 
 {% if convention|display_notification_bailleur_to_instructeur:request %}
-    <div class="fr-col-md-12 fr-py-5w">
+    <div class="fr-col-md-12 fr-mb-5w fr-mt-3w">
         <div role="alert" class="fr-alert fr-alert--info">
             <!-- <p class="fr-alert__title">Convention à valider</p> -->
             {% if convention.get_last_bailleur_notification %}
@@ -17,6 +17,7 @@
             <div>
                 <form method="post" action="{% url 'conventions:feedback' convention_uuid=convention.uuid %}" data-turbo="false">
                     {% csrf_token %}
+                    {% include "common/form/input_textarea.html" with form_input=notificationForm.comment label="Ajouter un commentaire à l'attention de l'instructeur (optionnel)" editable=True %}
                     <div class="fr-checkbox-group">
                         <input
                             type="hidden"
@@ -30,7 +31,6 @@
                         <label class="fr-label" for="{{notificationForm.send_copy.id_for_label}}">Envoyez-moi une copie du message envoyé
                         </label>
                     </div>
-                    {% include "common/form/input_textarea.html" with form_input=notificationForm.comment label="Ajouter un commentaire à l'attention de l'instructeur (optionnel)" editable=True %}
                     {% if convention|display_demande_instruction %}
                         <button class="fr-btn">
                             Renvoyer {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %} à l'instruction

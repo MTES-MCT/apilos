@@ -1,7 +1,7 @@
 {% load custom_filters %}
 
 {% if convention %}
-    <div class="apilos-sticky fr-container fr-pt-2w">
+    <div class="apilos-sticky fr-container fr-pt-2w {% if convention|display_convention_form_progressbar %}no_navbar{% endif %}">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-py-3w">
                 <h1 class="fr-h2 apilos-d-inline">{{convention.programme.nom}}</h1>
@@ -28,7 +28,6 @@
     </div>
     <div>
         <div class="fr-container fr-pt-2w">
-            <hr>
             {% if convention.statut == CONVENTION_STATUT.PROJET %}
                 <div role="alert" class="fr-col-12 fr-mb-3w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} fr-icon-pencil-line">
                     {% if convention.is_avenant %}

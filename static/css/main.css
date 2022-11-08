@@ -34,7 +34,11 @@
 .fr-link--sm {
   padding: 0.25rem 0.5rem;
 }
-#recap_navigation {
+.fr-alert__title {
+  margin-bottom: 0.5rem;
+}
+#recap_navigation,
+.apilos-sticky.no_navbar {
   border-bottom: solid 1px var(--border-default-grey);
 }
 .notes {
