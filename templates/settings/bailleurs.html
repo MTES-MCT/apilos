@@ -29,50 +29,7 @@
                             </div>
                         {% endif %}
                     </form>
-
-                    <div class="fr-table fr-table--bordered table--layout-fixed">
-                        <table>
-                            <caption>{{paginated_items.paginator.count}}{% if paginated_items.paginator.count != total_items %} / {{total_items}}{% endif %} bailleur{{ paginated_items.paginator.count|pluralize }}</caption>
-
-                            <thead>
-                                <tr>
-                                    <th scope="col">
-                                        Nom
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='nom' url_target='settings:bailleur' %}
-                                    </th>
-                                    <th scope="col">
-                                        Type
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='type_bailleur' url_target='settings:bailleur' %}
-                                    </th>
-                                    <th scope="col">
-                                        Siret
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='siret' url_target='settings:bailleur' %}
-                                    </th>
-                                    <th scope="col">
-                                        Ville
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='ville' url_target='settings:bailleur' %}
-                                    </th>
-                                    <th scope="col"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for bailleur in paginated_items %}
-                                    <tr>
-                                        <td>{{ bailleur.nom }}</td>
-                                        <td>{{ bailleur.get_type_bailleur_display }}</td>
-                                        <td>{{ bailleur.siret }}</td>
-                                        <td>{{ bailleur.ville }}</td>
-                                        <td>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'settings:edit_bailleur' bailleur_uuid=bailleur.uuid %}" >
-                                                <span class="fr-icon-edit-line" aria-hidden="true"></span>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
+                    {% include 'settings/bailleur_list_table.html' with count=paginated_items.paginator.count total_items=total_items items=paginated_items%}
                     {% include 'common/table/pagination.html' with paginate_list=paginated_items %}
 
                 </div>

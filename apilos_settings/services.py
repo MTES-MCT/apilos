@@ -239,7 +239,8 @@ def edit_bailleur(request, bailleur_uuid):
     user_list_service.paginate()
 
     return {
-        **user_list_service.as_dict(),
+        "user_list": user_list_service,
+        "bailleur": bailleur,
         "form": form,
         "editable": True,
         "success": success,

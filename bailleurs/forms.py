@@ -29,6 +29,7 @@ class BailleurForm(forms.Form):
     bailleur = forms.ChoiceField(
         required=False,
         label="Bailleur parent",
+        help_text="Les utilisateurs du bailleur parent à les mêmes droits sur ce bailleur",
         initial=None,
         choices=[],
     )
