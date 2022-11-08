@@ -25,6 +25,14 @@
 
                                 {% include "common/form/input_text.html" with form_input=form.nom object_field="bailleur__nom__"|add:form.uuid.value %}
 
+                                {% if request.user.is_superuser or request.user.administrateur_de_compte %}
+                                    {% if form.bailleur.field.choices|length > 0 %}
+                                        {% include "common/form/input_select.html" with form_input=form.bailleur with_empty_option=True %}
+                                    {% endif %}
+                                {% else %}
+                                    {% include "common/form/input_select.html" with form_input=form.bailleur editable=False %}
+                                {% endif %}
+
                                 {% include "common/form/input_select.html" with form_input=form.type_bailleur editable=request.user.is_superuser %}
 
                                 <div class="fr-mb-2w">

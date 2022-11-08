@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block page_title %}Bailleur{{ bailleurs.paginator.count|pluralize }}  - APiLos{% endblock%}
+{% block page_title %}Bailleur{{ paginated_items.paginator.count|pluralize }}  - APiLos{% endblock%}
 
 {% block content %}
     <div class="fr-container-fluid">
@@ -17,7 +17,7 @@
                         <input type="hidden" id="page" name="page" value="{{bailleurs.number}}">
                         <input type="hidden" id="order_by" name="order_by" value="{{order_by}}">
 
-                        {% if total_bailleur > 3 %}
+                        {% if total_items > 3 %}
                             <div class="fr-search-bar" id="header-search" role="search">
                                 <label class="fr-label" for="search_input">
                                     Recherche
@@ -32,7 +32,7 @@
 
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table>
-                            <caption>{{bailleurs.paginator.count}}{% if bailleurs.paginator.count != total_bailleur %} / {{total_bailleur}}{% endif %} bailleur{{ bailleurs.paginator.count|pluralize }}</caption>
+                            <caption>{{paginated_items.paginator.count}}{% if paginated_items.paginator.count != total_items %} / {{total_items}}{% endif %} bailleur{{ paginated_items.paginator.count|pluralize }}</caption>
 
                             <thead>
                                 <tr>
@@ -56,7 +56,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for bailleur in bailleurs %}
+                                {% for bailleur in paginated_items %}
                                     <tr>
                                         <td>{{ bailleur.nom }}</td>
                                         <td>{{ bailleur.get_type_bailleur_display }}</td>
@@ -73,7 +73,7 @@
                         </table>
                     </div>
 
-                    {% include 'common/table/pagination.html' with paginate_list=bailleurs %}
+                    {% include 'common/table/pagination.html' with paginate_list=paginated_items %}
 
                 </div>
             </div>

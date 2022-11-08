@@ -44,6 +44,13 @@ class Bailleur(IngestableModel):
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="bailleurs",
+    )
     nom = models.CharField(max_length=255)
     siret = models.CharField(max_length=14, unique=True)
     siren = models.CharField(max_length=9, null=True)
