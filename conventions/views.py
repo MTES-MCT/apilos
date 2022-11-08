@@ -465,7 +465,7 @@ class ConventionView(ABC, LoginRequiredMixin, View):
                 **({"form": service.form} if service.form else {}),
                 **({"upform": service.upform} if service.upform else {}),
                 **({"formset": service.formset} if service.formset else {}),
-                **({"form_step": self.form_step} if self.form_step else {}),
+                **self._get_form_steps(),
                 **(
                     {"import_warnings": service.import_warnings}
                     if service.import_warnings

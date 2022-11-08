@@ -7,7 +7,7 @@
                 <div class="fr-col-md-12 block--row-strech">
                     <div class="block--row-strech-1 fr-mr-6w">
                         <p class="fr-alert__title">Valider l'avenant</p>
-                        <p class="fr-mb-0">L'avenant aura le numero {{conventionNumberForm.convention_numero.value}}.</p>
+                        <p class="fr-mb-0">L'avenant aura le numéro {{conventionNumberForm.convention_numero.value}}.</p>
                     </div>
                     <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
                         {% csrf_token %}

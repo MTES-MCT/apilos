@@ -4,7 +4,18 @@
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% include "conventions/common/form_header.html" with convention=parent_convention %}
+        <div class="apilos-sticky fr-container fr-pt-2w">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-py-3w">
+                    <h1 class="fr-h2 apilos-d-inline">{{parent_convention.programme.nom}}</h1>
+                    <span class="apilos-h2-thin"> - Nouvel avenant</span>
+                    <div class="fr-py-3w">
+                        <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=parent_convention.uuid %}">Consulter la convention originale</a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+        </div>
         <div class="fr-container fr-pb-5w">
             {% include "conventions/avenant/bailleur_update_start.html" %}
             <hr>

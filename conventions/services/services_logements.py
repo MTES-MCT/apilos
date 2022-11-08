@@ -20,7 +20,7 @@ from . import upload_objects, utils
 class ConventionLogementsService(ConventionService):
     form: LotLgtsOptionForm
     formset: LogementFormSet
-    upform: UploadForm
+    upform: UploadForm = UploadForm()
 
     def get(self):
         initial = []
@@ -40,7 +40,6 @@ class ConventionLogementsService(ConventionService):
                     "loyer": logement.loyer,
                 }
             )
-        self.upform = UploadForm()
         self.formset = LogementFormSet(initial=initial)
         self.form = LotLgtsOptionForm(
             initial={
@@ -236,7 +235,7 @@ class ConventionLogementsService(ConventionService):
 class ConventionAnnexesService(ConventionService):
     form: LotAnnexeForm
     formset: AnnexeFormSet
-    upform: UploadForm
+    upform: UploadForm = UploadForm()
 
     def get(self):
         initial = []
@@ -253,7 +252,6 @@ class ConventionAnnexesService(ConventionService):
                     "loyer": annexe.loyer,
                 }
             )
-        self.upform = UploadForm()
         self.formset = AnnexeFormSet(initial=initial)
         lot = self.convention.lot
         self.form = LotAnnexeForm(
@@ -493,7 +491,6 @@ class ConventionTypeStationnementService(ConventionService):
                     "loyer": stationnement.loyer,
                 }
             )
-        # upform = UploadForm()
         self.formset = TypeStationnementFormSet(initial=initial)
 
     def save(self):
