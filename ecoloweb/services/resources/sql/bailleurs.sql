@@ -32,7 +32,5 @@ from ecolo.ecolo_bailleur b
     left join ecolo.ecolo_departement ed on b.departement_id = ed.id
 -- TODO se connecter à l'API d'Annuaire Entreprise pour résoudre les SIRET par leur SIREN
 -- 🔗 https://annuaire-entreprises.data.gouv.fr/entreprise/343586541?redirected=1
- {% if pk %}
 where
-    b.id = {{ pk }}
-{% endif %}
+    b.id = %s

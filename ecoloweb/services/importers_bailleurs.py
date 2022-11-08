@@ -1,17 +1,20 @@
 from typing import List
 
 from . import SiretResolver
-from .handlers import ModelImporter
+from .importers import ModelImporter
 from bailleurs.models import Bailleur
 
 
 class BailleurImporter(ModelImporter):
     model = Bailleur
-    sql_template = 'resources/sql/bailleurs.sql'
 
     def __init__(self):
         super().__init__()
         self._siret_resolver = SiretResolver()
+        self._query = self._get_file_content('resources/sql/bailleurs.sql')
+
+    def _get_sql_query(self) -> str:
+        return self._query
 
     def _get_identity_keys(self) -> List[str]:
         return ['siret']

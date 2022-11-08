@@ -79,7 +79,4 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
     ) p on p.conventiondonneesgenerales_id = cdg.id
 where
     cdg.avenant_id is null
-    and pb.bailleur_id is not null
-    {% if pk %}
-    and cdg.id = {{ pk }}
-    {% endif %}
+    and cdg.id = %s

@@ -45,7 +45,5 @@ from ecolo.ecolo_programmelogement pl
     left join ecolo.ecolo_valeurparamstatic ap2 on a2.typeannexe_id = ap2.id and ap2.subtype = 'TAN' and ap2.code = '5' -- Terrasse
     left join ecolo.ecolo_annexe a3 on a3.programmelogement_id = pl.id
     left join ecolo.ecolo_valeurparamstatic ap3 on a3.typeannexe_id = ap3.id and ap3.subtype = 'TAN' and ap3.code = '8' -- Box
-    {% if pk %}
 where
-    md5(pl.conventiondonneesgenerales_id||'-'||ff.code) = '{{ pk }}'
-    {% endif %}
+    md5(pl.conventiondonneesgenerales_id||'-'||ff.code) = %s

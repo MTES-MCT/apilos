@@ -40,21 +40,11 @@ class ModelImporter(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def sql_template(self) -> str:
-        """
-        The path to the SQL file template (ideally located in the local `resources` folder).
-
-        Abstract property that must be overriden in children classes.
-        """
-        raise NotImplementedError
-
-    def _get_sql_query(self, criteria: dict) -> str:
+    def _get_sql_query(self) -> str:
         """
         Base method to retrieve SQL query to be executed based on specified criteria, if any.
-
-        By default, it relies on the `sql_template` attribute to generate it dynamically, but can be overriden.
         """
-        return self._get_sql_from_template(self.sql_template, criteria)
+        pass
 
     def _get_file_content(self, path):
         """
@@ -129,13 +119,13 @@ class ModelImporter(ABC):
         Hydrate the `data` dict by replacing external references (i.e. foreign keys) with the target
         object by using the _dependencies_ importers defined using `_get_dependencies`
         """
-        for key, handler in self._get_dependencies().items():
+        for key, importer in self._get_dependencies().items():
             # First, try to resolve key suffixed by `_id` ...
             if f'{key}_id' in data:
-                data[key] = handler.import_one(data.pop(f'{key}_id'))
+                data[key] = importer.import_one(data.pop(f'{key}_id'))
             # ... else try to resolve key with its plain name
             elif key in data:
-                data[key] = handler.import_one(data.pop(key))
+                data[key] = importer.import_one(data.pop(key))
 
         return data
 
@@ -190,16 +180,14 @@ class ModelImporter(ABC):
         Public entry point method to fetch a model from the Ecoloweb database based on its primary key
         """
         return self.process_result(
-            self._query_single_row(
-                self._get_sql_query({'pk': pk})
-            )
+            self._query_single_row([pk])
         )
 
-    def _query_single_row(self, query: str) -> Optional[Dict]:
+    def _query_single_row(self, parameters: List) -> Optional[Dict]:
         """
         Execute a SQL query returning a single result, as dict
         """
-        self._db_connection.execute(query)
+        self._db_connection.execute(self._get_sql_query(), parameters)
 
         columns = [col[0] for col in self._db_connection.description]
         row = self._db_connection.fetchone()
