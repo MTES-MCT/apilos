@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('apilos_id', models.IntegerField()),
             ],
             options={
-                'unique_together': {('apilos_model', 'ecolo_id', 'apilos_id'), ('apilos_model', 'ecolo_id')},
+                'unique_together': {('apilos_model', 'ecolo_id')},
             },
         ),
     ]
