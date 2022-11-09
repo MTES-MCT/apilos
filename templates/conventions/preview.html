@@ -11,7 +11,6 @@
         <div class="fr-container fr-mb-2w fr-pt-5w">
             <h2>Visualiser votre {% if convention.is_avenant %}avenant{% else %}convention{% endif %}</h2>
             <div class="fr-col-md-12 fr-py-5w h-80vh">
-
                 <iframe src="{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'conventions:display_pdf' convention_uuid=convention.uuid %}" width="100%" height="1000px" nonce="{{request.csp_nonce}}"></iframe>
             </div>
         </div>

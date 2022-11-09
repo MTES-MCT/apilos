@@ -224,7 +224,9 @@ def load_xlsx_model(request, file_type):
         raise PermissionDenied
 
     if file_type == "all":
-        filepath = f"{settings.BASE_DIR}/static/files/tous_les_templates_xlsx.zip"
+        filepath = (
+            settings.BASE_DIR / "static" / "files" / "tous_les_templates_xlsx.zip"
+        )
         with ZipFile(filepath, "w") as zipObj:
             # Add multiple files to the zip
             for each_file in [
@@ -249,7 +251,7 @@ def load_xlsx_model(request, file_type):
         ] = 'attachment; filename="tous_les_templates_xlsx.zip"'
         return response
 
-    filepath = f"{settings.BASE_DIR}/static/files/{file_type}.xlsx"
+    filepath = settings.BASE_DIR / "static" / "files" / f"{file_type}.xlsx"
 
     with open(filepath, "rb") as excel:
         data = excel.read()
@@ -264,16 +266,11 @@ def load_xlsx_model(request, file_type):
 
 @login_required
 def preview(request, convention_uuid):
-    # Step 11/12
     result = services.convention_preview(convention_uuid)
-    filepath = f"{settings.BASE_DIR}"
     return render(
         request,
         "conventions/preview.html",
-        {
-            **result,
-            "filepath": filepath,
-        },
+        result,
     )
 
 
