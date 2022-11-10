@@ -195,7 +195,9 @@ def get_text_from_textfiles(field):
 @register.filter
 def get_files_from_textfiles(field):
     files = model_utils.get_key_from_json_field(field, "files")
-    return files.values if files else None
+    if isinstance(files, dict):
+        return [f for f in files.values() if "uuid" in f]
+    return None
 
 
 @register.filter
