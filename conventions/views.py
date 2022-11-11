@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
-from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect
+from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
@@ -332,7 +332,10 @@ def display_pdf(request, convention_uuid):
             filename=filename,
         )
 
-    raise Http404
+    return render(
+        request,
+        "conventions/no_convention_document.html",
+    )
 
 
 @login_required
