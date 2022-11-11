@@ -41,7 +41,10 @@
 
 select
     cdg.id,
-    pb.bailleur_id,
+    p.bailleur_id,
+    p.code_postal,
+    p.ville,
+    p.adresse,
     c.libelle as nom,
     coalesce(p.type_operation, 'SANSOBJET') as type_operation,
     p.numero_galion
@@ -51,19 +54,13 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
         -- Sur Ecolo il peut y avoir un bailleur gestionnaire *par logement*, aussi on attribue à la convention le
         -- bailleur majoritaire
         select
-            pl.conventiondonneesgenerales_id,
-            pl.bailleurproprietaire_id as bailleur_id
-        from ecolo.ecolo_programmelogement pl
-            inner join ecolo.ecolo_bailleur b on pl.bailleurproprietaire_id = b.id
-        group by pl.conventiondonneesgenerales_id, pl.bailleurproprietaire_id
-        order by count(distinct(b.id)) desc
-    ) pb on pb.conventiondonneesgenerales_id = cdg.id
-    inner join (
-        select
             distinct on (pl.conventiondonneesgenerales_id)
+            pl.id,
             pl.conventiondonneesgenerales_id,
-            -- All rows from ecolo_programmelogement tied to the same conventiondonneesgenerales_id
-            -- always have the same ecolo_valeurparamstatic attached
+            pl.bailleurproprietaire_id as bailleur_id,
+            pa.codepostal as code_postal,
+            pa.ville,
+            pa.ligne1||' '||pa.ligne2||' '||pa.ligne3||' '||pa.ligne4 as adresse,
             case
                 when nop.libelle = 'Acquisition seule' then 'ACQUIS'
                 when nop.libelle = 'Neuf ou construction' then 'NEUF'
@@ -74,9 +71,8 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
             end as type_operation,
             pl.financementreferencedossier as numero_galion
         from ecolo.ecolo_programmelogement pl
+            left join ecolo.ecolo_programmeadresse pa on pl.id = pa.programmelogement_id
             left join ecolo.ecolo_valeurparamstatic nop on pl.natureoperation_id = nop.id
-        order by pl.conventiondonneesgenerales_id, pl.ordre
     ) p on p.conventiondonneesgenerales_id = cdg.id
 where
-    cdg.avenant_id is null
-    and cdg.id = %s
+    cdg.id = %s
