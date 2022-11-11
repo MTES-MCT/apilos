@@ -1,3 +1,6 @@
+import uuid
+import json
+
 from typing import SupportsRound, Any
 
 
@@ -10,3 +13,21 @@ def round_half_up(number: SupportsRound[Any], ndigits: int = 0):
     if ndigits == 0:
         return round(float(number) + 1e-15)
     return round(float(number) + 1e-15, ndigits)
+
+
+def is_valid_uuid(val):
+    try:
+        uuid.UUID(str(val))
+        return True
+    except ValueError:
+        return False
+
+
+def get_key_from_json_field(json_field, key, default=""):
+    try:
+        field = json.loads(json_field)
+        return field[key] if key in field else ""
+    except json.decoder.JSONDecodeError:
+        return default
+    except TypeError:
+        return default

@@ -2,7 +2,7 @@ from django.http.request import HttpRequest
 from django.conf import settings
 from django.template.defaultfilters import date as _date
 from django.template.defaulttags import register
-from core import model_utils
+from core.utils import is_valid_uuid, get_key_from_json_field
 from programmes.models import Financement
 from siap.siap_client.client import SIAPClient
 from conventions.models import ConventionStatut
@@ -189,14 +189,14 @@ def to_fr_short_date(date):
 
 @register.filter
 def get_text_from_textfiles(field):
-    return model_utils.get_key_from_json_field(field, "text")
+    return get_key_from_json_field(field, "text")
 
 
 @register.filter
 def get_files_from_textfiles(field):
-    files = model_utils.get_key_from_json_field(field, "files")
+    files = get_key_from_json_field(field, "files")
     if isinstance(files, dict):
-        return [f for f in files.values() if "uuid" in f]
+        return [f for f in files.values() if "uuid" in f and is_valid_uuid(f["uuid"])]
     return None
 
 
