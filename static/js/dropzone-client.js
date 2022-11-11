@@ -26,6 +26,12 @@ function init_dropzone_from_file(form_id, accepted_files) {
         maxFilesize: 100, // 100 Mo
         acceptedFiles: accepted_files,
         addRemoveLinks: true,
+        accept:function(file, done) {
+            if (file.name.includes('"')) {
+                done("Erreur! le fichier ne doit ps comprendre de double quote");
+            }
+            else { done(); }
+        },
         init: function () {
             this.on("removedfile", function (file) {
                 let files = {};
@@ -48,7 +54,8 @@ function init_dropzone_from_file(form_id, accepted_files) {
                     file.thumbnail = document.querySelector('img[alt="'+filename+'"]').src;
                 }
                 for (var i = 0; i < response.uploaded_file.length; i++) {
-                    if (response.uploaded_file[i].filename == filename) {
+                    uploaded_filename = encodeURI(response.uploaded_file[i].filename)
+                    if ( uploaded_filename == filename) {
                         file.uuid = response.uploaded_file[i].uuid
                     }
                 }
