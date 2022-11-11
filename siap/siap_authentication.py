@@ -1,12 +1,13 @@
 import logging
 
-from django.forms import model_to_dict
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 
-from siap.siap_client.client import SIAPClient
-from siap.siap_client.utils import get_or_create_bailleur, get_or_create_administration
-from users.models import GroupProfile, User
+from siap.custom_middleware import (
+    set_habilitation_in_session,
+    copy_session_habilitation_to_user,
+)
+from users.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -30,62 +31,30 @@ class SIAPJWTAuthentication(JWTAuthentication):
         header = self.get_header(request)
         if header is None:
             return None
-
         raw_token = self.get_raw_token(header)
         if raw_token is None:
             return None
 
         validated_token = self.get_validated_token(raw_token)
-        client = SIAPClient.get_instance()
         try:
-            habilitations = client.get_habilitations(
-                user_login=validated_token["user-login"],
-                habilitation_id=validated_token["habilitation-id"],
-            )
-            habilitation = list(
-                filter(
-                    lambda x: x.get("id") == validated_token["habilitation-id"],
-                    habilitations["habilitations"],
-                )
-            )[0]
 
+            # Create user
             user = User(cerbere_login=validated_token["user-login"])
-            request.session["habilitation_id"] = habilitation["id"]
-            user.siap_habilitation["currently"] = habilitation["groupe"]["profil"][
-                "code"
-            ]
-            if (
-                habilitation["groupe"]["profil"]["code"]
-                == GroupProfile.SIAP_MO_PERS_MORALE
-            ):
-                bailleur = get_or_create_bailleur(habilitation["entiteMorale"])
-                user.siap_habilitation["bailleur"] = model_to_dict(
-                    bailleur,
-                    fields=[
-                        "id",
-                        "uuid",
-                        "siren",
-                        "nom",
-                    ],
-                )
+            request.user = user
 
-            if habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_SER_GEST:
-                # create if not exists gestionnaire
-                administration = get_or_create_administration(
-                    habilitation["gestionnaire"]
-                )
-                user.siap_habilitation["administration"] = model_to_dict(
-                    administration,
-                    fields=[
-                        "id",
-                        "uuid",
-                        "code",
-                        "nom",
-                    ],
-                )
+            # Manage SIAP habilitation in session
+            habilitation_id = validated_token["habilitation-id"]
+            cerbere_login = validated_token["user-login"]
+
+            # Set habilitation in session
+            set_habilitation_in_session(
+                request, cerbere_login, habilitation_id, session_only=True
+            )
+
+            copy_session_habilitation_to_user(request)
+
         except (KeyError, IndexError) as e:
             raise AuthenticationFailed(
                 "User or Habilitation not found", code="user_not_found"
             ) from e
-
         return user, validated_token
