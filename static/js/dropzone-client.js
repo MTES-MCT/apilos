@@ -56,7 +56,7 @@ function init_dropzone_from_file(form_id, accepted_files) {
                 let files = {};
                 if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
                 if (files.constructor !== Object) files = {}
-                if (files[file.uuid] === undefined && file.uuid !== undefined) files[file.uuid] = {
+                if (files[file.uuid] === undefined) files[file.uuid] = {
                     'uuid':file.uuid,
                     'thumbnail' : file.thumbnail,
                     'size': file.size,
