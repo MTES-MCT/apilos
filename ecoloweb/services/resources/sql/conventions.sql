@@ -47,21 +47,18 @@ select
     er.date_resiliation as date_resiliation
 from ecolo.ecolo_conventionapl c
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.id = cdg.conventionapl_id
+    inner join ecolo_naturelogement nl on cdg.naturelogement_id = nl.id and nl.code = '1' -- Seulement les "Logements ordinaires"
     inner join ecolo.ecolo_programmelogement pl on pl.conventiondonneesgenerales_id = cdg.id
     inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
     inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
     inner join ecolo.ecolo_entitegest eg on c.entitecreatrice_id = eg.id
     inner join ecolo.ecolo_entitegestadresse aa on eg.adresse_id = aa.id
-    inner join ecolo.ecolo_departement ed on starts_with(aa.codepostal, ed.codeinsee)
     inner join (
-        -- Sur Ecolo il peut y avoir un bailleur *par logement*, aussi on attribue la convention au bailleur majoritaire
         select
+            distinct on (pl.conventiondonneesgenerales_id)
             pl.conventiondonneesgenerales_id,
             pl.bailleurproprietaire_id as bailleur_id
         from ecolo.ecolo_programmelogement pl
-            inner join ecolo.ecolo_bailleur b on pl.bailleurproprietaire_id = b.id
-        group by pl.conventiondonneesgenerales_id, pl.bailleurproprietaire_id
-        order by count(distinct(b.id)) desc
     ) pb on pb.conventiondonneesgenerales_id = cdg.id
     inner join ecolo.ecolo_valeurparamstatic pec on cdg.etatconvention_id = pec.id and pec.subtype = 'ECO' -- Etat de la convention
     left join (
@@ -94,5 +91,5 @@ from ecolo.ecolo_conventionapl c
 where
     cdg.avenant_id is null -- exclude avenant related conventions
     {% if departements %}
-    and ed.codeinsee in ({{ departements|safeseq|join:',' }})
+    and substr(aa.codepostal, 1, 2) in ({{ departements|safeseq|join:',' }})
     {% endif %}
