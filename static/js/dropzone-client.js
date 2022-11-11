@@ -49,13 +49,12 @@ function init_dropzone_from_file(form_id, accepted_files) {
                 console.log('all_files_uploaded');
             });
             this.on("success", function (file, response) {
-                filename = encodeURI(file.name)
+                let filename = encodeURI(file.name)
                 if (document.querySelector('img[alt="'+filename+'"]') != null) {
                     file.thumbnail = document.querySelector('img[alt="'+filename+'"]').src;
                 }
                 for (var i = 0; i < response.uploaded_file.length; i++) {
-                    uploaded_filename = encodeURI(response.uploaded_file[i].filename)
-                    if ( uploaded_filename == filename) {
+                    if (filename == encodeURI(response.uploaded_file[i].filename)) {
                         file.uuid = response.uploaded_file[i].uuid
                     }
                 }
