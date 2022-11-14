@@ -18,7 +18,10 @@ from upload.services import UploadService
 from conventions.models import Convention
 from conventions.permissions import has_campaign_permission
 from conventions.services import convention_generator, services, utils
-from conventions.services.services_programmes import ConventionProgrammeService
+from conventions.services.services_programmes import (
+    ConventionProgrammeService,
+    ConventionEDDService,
+)
 from conventions.services.services_bailleurs import ConventionBailleurService
 from conventions.services.services_conventions import (
     ConventionCommentsService,
@@ -86,34 +89,6 @@ def cadastre(request, convention_uuid):
                 "title": "Cadastre",
                 "next": "EDD",
                 "next_target": "conventions:edd",
-            },
-        },
-    )
-
-
-@login_required
-def edd(request, convention_uuid):
-    # STEP 5
-    result = services.programme_edd_update(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        if result.get("redirect", False) == "recapitulatif":
-            return HttpResponseRedirect(
-                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
-            )
-        return HttpResponseRedirect(
-            reverse("conventions:financement", args=[result["convention"].uuid])
-        )
-    return render(
-        request,
-        "conventions/edd.html",
-        {
-            **result,
-            "form_step": {
-                "number": 4,
-                "total": 9,
-                "title": "EDD",
-                "next": "Financement",
-                "next_target": "conventions:financement",
             },
         },
     )
@@ -511,6 +486,26 @@ class ConventionProgrammeView(ConventionView):
         return (
             Convention.objects.prefetch_related("programme")
             .prefetch_related("lot")
+            .get(uuid=convention_uuid)
+        )
+
+
+class ConventionEDDView(ConventionView):
+    target_template: str = "conventions/edd.html"
+    next_path_redirect: str = "conventions:financement"
+    service_class = ConventionEDDService
+    form_step: dict = {
+        "number": 4,
+        "total": 9,
+        "title": "EDD",
+        "next": "Financement",
+    }
+
+    def _get_convention(self, convention_uuid):
+        return (
+            Convention.objects.prefetch_related("programme")
+            .prefetch_related("lot")
+            .prefetch_related("programme__logementedd_set")
             .get(uuid=convention_uuid)
         )
 

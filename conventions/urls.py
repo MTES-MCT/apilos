@@ -22,7 +22,7 @@ urlpatterns = [
         name="programme",
     ),
     path("cadastre/<convention_uuid>", views.cadastre, name="cadastre"),
-    path("edd/<convention_uuid>", views.edd, name="edd"),
+    path("edd/<convention_uuid>", views.ConventionEDDView.as_view(), name="edd"),
     path(
         "financement/<convention_uuid>",
         views.ConventionFinancementView.as_view(),
