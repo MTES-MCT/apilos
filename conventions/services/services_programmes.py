@@ -41,6 +41,7 @@ def select_programme_create(request):
         .prefetch_related("programme")
         .prefetch_related("convention_set")
         .order_by("programme__ville", "programme__nom", "nb_logements", "financement")
+        .filter(programme__parent_id__isnull=True)
     )
     bailleurs = (
         Bailleur.objects.all().order_by("nom")
