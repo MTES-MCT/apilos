@@ -15,3 +15,10 @@ lint = [
     "pylint",
 ]
 log_level = "INFO"
+
+[tool.coverage.run]
+omit = [
+    "*/__init__.py",
+    "*/tests/*",
+    "*/migrations/*",
+]

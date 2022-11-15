@@ -286,7 +286,7 @@ AWS_DEFAULT_ACL = get_env_variable("AWS_DEFAULT_ACL")
 AWS_S3_REGION_NAME = get_env_variable("AWS_S3_REGION_NAME")
 AWS_S3_ENDPOINT_URL = get_env_variable("AWS_S3_ENDPOINT_URL")
 
-if AWS_ACCESS_KEY_ID:
+if AWS_ACCESS_KEY_ID:  # pragma: no cover
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 else:
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
@@ -429,7 +429,7 @@ if CERBERE_AUTH:
 
 SENTRY_URL = get_env_variable("SENTRY_URL")
 
-if SENTRY_URL:
+if SENTRY_URL:  # pragma: no cover
     # opened issue on Sentry package : https://github.com/getsentry/sentry-python/issues/1081
     # it should be solved in a further release
     # pylint: disable=E0110
