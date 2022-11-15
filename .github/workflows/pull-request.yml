@@ -46,8 +46,14 @@ jobs:
       - name: Create coverage report
         run:
           coverage xml coverage.xml
+      - name: Display coverage
+        run:
+          cat coverage.xml
       - name: Post coverage to PR
         uses: orgoro/coverage@v3
         with:
           coverageFile: .coverage
           token: ${{ secrets.GITHUB_TOKEN }}
+          thresholdAll: 0.5
+          thresholdNew: 0.5
+          thresholdModified: 0.5
