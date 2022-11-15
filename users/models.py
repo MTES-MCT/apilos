@@ -126,7 +126,12 @@ class User(AbstractUser):
         if self.is_cerbere_user():
             return "currently" in self.siap_habilitation and self.siap_habilitation[
                 "currently"
-            ] in [GroupProfile.SIAP_SER_GEST, GroupProfile.SIAP_ADM_CENTRALE]
+            ] in [
+                GroupProfile.SIAP_SER_GEST,
+                GroupProfile.SIAP_DIR_REG,
+                GroupProfile.SIAP_SER_DEP,
+                GroupProfile.SIAP_ADM_CENTRALE,
+            ]
         return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
 
     def _is_role(self, role):
@@ -206,7 +211,9 @@ class User(AbstractUser):
 
     def administration_ids(self):
         if self.is_cerbere_user():
-            return [self.siap_habilitation["administration"]["id"]]
+            if "administration" in self.siap_habilitation:
+                return [self.siap_habilitation["administration"]["id"]]
+            return None
 
         return list(
             map(
@@ -276,6 +283,14 @@ class User(AbstractUser):
                 )
         return conventions
 
+    def _apply_administration_ids_filters(self, convs):
+        administrations_ids = self.administration_ids()
+        if administrations_ids:
+            convs = convs.filter(
+                programme__administration_id__in=self.administration_ids(),
+            )
+        return convs
+
     def conventions(self):
         """
         Return the conventions the user has right to view.
@@ -295,9 +310,8 @@ class User(AbstractUser):
 
         if self.is_instructeur():
             convs = self._apply_geo_filters(convs)
-            return convs.filter(
-                programme__administration_id__in=self.administration_ids(),
-            )
+            convs = self._apply_administration_ids_filters(convs)
+            return convs
 
         if self.is_bailleur():
             convs = self._apply_geo_filters(convs)
