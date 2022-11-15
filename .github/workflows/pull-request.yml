@@ -5,8 +5,29 @@ on:
 jobs:
   coverage:
     name: Test & Coverage
+
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER: appel
+          POSTGRES_NAME: appel
+          POSTGRES_HOST: postgres 
+          POSTGRES_PASSWORD: appel
+          POSTGRES_PORT: 5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     runs-on: ubuntu-latest
-    steps:
+      steps:
       - name: Checkout repository
         uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -18,6 +39,12 @@ jobs:
       - name: Execute test with coverage
         run:
           coverage run --source='.' manage.py test
+        env:
+          DB_USER: appel
+          DB_NAME: appel
+          DB_HOST: postgres 
+          DB_PASSWORD: appel
+          DB_PORT: 5432
       - name: Create coverage report
         run:
           coverage xml coverage.xml
