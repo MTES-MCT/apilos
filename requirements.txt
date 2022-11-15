@@ -83,9 +83,9 @@ django-csp==3.7 \
     --hash=sha256:01443a07723f9a479d498bd7bb63571aaa771e690f64bde515db6cdb76e8041a \
     --hash=sha256:01eda02ad3f10261c74131cdc0b5a6a62b7c7ad4fd017fbefb7a14776e0a9727
     # via -r requirements.in
-django-dramatiq==0.11.0 \
-    --hash=sha256:21814303bc536e804cff2eef54f34429638586a9a612dd382c030ed4ab0dfbfa \
-    --hash=sha256:21b51b70cbf18d38a74fe829f4cd42c27e4d31b681317b0ecf2cd5b068fbe3d0
+django-dramatiq==0.11.1 \
+    --hash=sha256:24ddfc7681b1107b8677ab516da7271b122da501e498abdcb48ad08bbd69bbbe \
+    --hash=sha256:91db6787bab521b59ccf564c3100d7a6606644c7ca1decb1fb08833f88c292b2
     # via -r requirements.in
 django-filter==22.1 \
     --hash=sha256:ed429e34760127e3520a67f415bec4c905d4649fbe45d0d6da37e6ff5e0287eb \
@@ -649,10 +649,6 @@ sqlparse==0.4.2 \
 static3==0.7.0 \
     --hash=sha256:674641c64bc75507af2eb20bef7e7e3593dca993dec6674be108fa15b42f47c8
     # via dj-static
-tomli==2.0.1 \
-    --hash=sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc \
-    --hash=sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f
-    # via pylint
 tomlkit==0.11.0 \
     --hash=sha256:0f4050db66fd445b885778900ce4dd9aea8c90c4721141fde0d6ade893820ef1 \
     --hash=sha256:71ceb10c0eefd8b8f11fe34e8a51ad07812cb1dc3de23247425fbc9ddc47b9dd
