@@ -4,7 +4,7 @@ from django.urls import reverse
 from conventions.tests.views.abstract import AbstractViewTestCase
 
 
-class ConventionFinancementViewTests(AbstractViewTestCase, TestCase):
+class ConventionEDDViewTests(AbstractViewTestCase, TestCase):
     def setUp(self):
         super().setUp()
         self.target_path = reverse("conventions:edd", args=[self.convention_75.uuid])

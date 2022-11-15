@@ -15,7 +15,7 @@ from programmes.models import Financement
 from users.models import User
 
 
-class ConventionFinancementServiceTests(TestCase):
+class ConventionEDDServiceTests(TestCase):
     service_class = services_programmes.ConventionEDDService
 
     @classmethod
