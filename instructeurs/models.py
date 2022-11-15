@@ -5,6 +5,11 @@ from core.models import IngestableModel
 
 
 class Administration(IngestableModel):
+    def natural_key(self):
+        return (self.code,)
+
+    def get_by_natural_key(self, code):
+        return self.get(code=code)
 
     pivot = "code"
     mapping = {
