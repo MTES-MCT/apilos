@@ -6,8 +6,19 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     steps:
-      - name: Get Cover
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run:
+          pip install -r requirements.txt -r dev-requirements.txt
+      - name: Execute test with coverage
+        run:
+          coverage run --source='.' manage.py test
+      - name: Create coverage report
+        run:
+          coverage xml coverage.xml
+      - name: Post coverage to PR
         uses: orgoro/coverage@v3
         with:
-            coverageFile: coverage.xml
-            token: ${{ secrets.GITHUB_TOKEN }}
+          coverageFile: .coverage
+          token: ${{ secrets.GITHUB_TOKEN }}
