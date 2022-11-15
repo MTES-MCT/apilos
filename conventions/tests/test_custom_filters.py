@@ -596,30 +596,24 @@ class CustomFiltersTest(TestCase):
                 )
 
     def test_display_delete_convention(self):
-        self.convention.statut = ConventionStatut.PROJET
-        self.request.session["currently"] = GroupProfile.INSTRUCTEUR
-        self.assertFalse(
-            custom_filters.display_delete_convention(self.convention, self.request)
-        )
-        self.request.session["currently"] = GroupProfile.BAILLEUR
-        self.assertTrue(
-            custom_filters.display_delete_convention(self.convention, self.request)
-        )
 
-        for convention_statut in [
-            ConventionStatut.INSTRUCTION,
-            ConventionStatut.CORRECTION,
-            ConventionStatut.A_SIGNER,
-            ConventionStatut.RESILIEE,
-        ]:
-            self.convention.statut = convention_statut
-            for group_profile in [GroupProfile.INSTRUCTEUR, GroupProfile.BAILLEUR]:
-                self.request.session["currently"] = group_profile
-                self.assertFalse(
-                    custom_filters.display_delete_convention(
-                        self.convention, self.request
-                    )
-                )
+        self.convention.statut = ConventionStatut.PROJET
+        self.assertTrue(custom_filters.display_delete_convention(self.convention))
+
+        self.convention.statut = ConventionStatut.INSTRUCTION
+        self.assertTrue(custom_filters.display_delete_convention(self.convention))
+
+        self.convention.statut = ConventionStatut.CORRECTION
+        self.assertTrue(custom_filters.display_delete_convention(self.convention))
+
+        self.convention.statut = ConventionStatut.A_SIGNER
+        self.assertFalse(custom_filters.display_delete_convention(self.convention))
+
+        self.convention.statut = ConventionStatut.SIGNEE
+        self.assertFalse(custom_filters.display_delete_convention(self.convention))
+
+        self.convention.statut = ConventionStatut.RESILIEE
+        self.assertFalse(custom_filters.display_delete_convention(self.convention))
 
     def test_display_create_avenant(self):
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
