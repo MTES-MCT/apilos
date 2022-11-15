@@ -42,12 +42,6 @@ jobs:
       - name: Execute test with coverage
         run:
           coverage run --source='.' manage.py test
-        env:
-          DB_USER: appel
-          DB_NAME: appel
-          DB_HOST: postgres 
-          DB_PASSWORD: appel
-          DB_PORT: 5432
       - name: Create coverage report
         run:
           coverage xml coverage.xml
