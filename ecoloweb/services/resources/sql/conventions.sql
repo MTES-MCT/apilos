@@ -24,7 +24,7 @@
 -- signataire_nom                     varchar(255)
 select
     c.id,
-    pb.bailleur_id,
+    pl.bailleur_id,
     cdg.id as programme_id,
     md5(cdg.id||'-'||ff.code) as lot_id, -- Les lots d'un programme sont tous les logements partageant le même financement
     c.noreglementaire as numero,
@@ -40,56 +40,44 @@ select
     cdg.datehistoriquefin as date_fin_conventionnement,
     -- Financement
     c.datedepot::timestamp at time zone '{{ timezone }}' as soumis_le,
-    ev.date_validation::timestamp at time zone '{{ timezone }}' as valide_le,
+    cdg.datesignatureentitegest::timestamp at time zone '{{ timezone }}' as valide_le,
     c.datesaisie::timestamp at time zone '{{ timezone }}' as cree_le,
     c.datemodification::timestamp at time zone '{{ timezone }}' as mis_a_jour_le,
-    eps.date_premiere_soumission::timestamp at time zone '{{ timezone }}' as premiere_soumission_le,
-    er.date_resiliation as date_resiliation
+    cdg.datesignatureentitegest::timestamp at time zone '{{ timezone }}' as premiere_soumission_le,
+    cdg.dateresiliationprefet as date_resiliation
 from ecolo.ecolo_conventionapl c
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.id = cdg.conventionapl_id
-    inner join ecolo_naturelogement nl on cdg.naturelogement_id = nl.id and nl.code = '1' -- Seulement les "Logements ordinaires"
-    inner join ecolo.ecolo_programmelogement pl on pl.conventiondonneesgenerales_id = cdg.id
-    inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
-    inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
+    inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id
     inner join ecolo.ecolo_entitegest eg on c.entitecreatrice_id = eg.id
     inner join ecolo.ecolo_entitegestadresse aa on eg.adresse_id = aa.id
     inner join (
         select
-            distinct on (pl.conventiondonneesgenerales_id)
+            distinct on (pl.conventiondonneesgenerales_id, pl.typefinancement_id)
             pl.conventiondonneesgenerales_id,
+            pl.typefinancement_id,
             pl.bailleurproprietaire_id as bailleur_id
         from ecolo.ecolo_programmelogement pl
-    ) pb on pb.conventiondonneesgenerales_id = cdg.id
+        order by pl.conventiondonneesgenerales_id, pl.typefinancement_id, pl.ordre
+    ) pl on pl.conventiondonneesgenerales_id = cdg.id
+    inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
+    inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
     inner join ecolo.ecolo_valeurparamstatic pec on cdg.etatconvention_id = pec.id and pec.subtype = 'ECO' -- Etat de la convention
-    left join (
-        select
-            distinct on (e.conventionapl_id)
-            e.conventionapl_id as convention_id,
-            e.date as date_premiere_soumission
-        from ecolo.ecolo_evenement e
-            inner join ecolo.ecolo_valeurparamstatic ev on e.typeevenement_id = ev.id and ev.code = '1'
-        order by e.conventionapl_id, e.date
-    ) eps on eps.convention_id = c.id -- Évènement de résiliation
-    left join (
-        select
-            distinct on (e.conventionapl_id)
-            e.conventionapl_id as convention_id,
-            e.date as date_resiliation
-        from ecolo.ecolo_evenement e
-            inner join ecolo.ecolo_valeurparamstatic ev on e.typeevenement_id = ev.id and ev.code = '22'
-        order by e.conventionapl_id, e.date
-    ) er on er.convention_id = c.id -- Évènement de résiliation
-    left join (
-        select
-            distinct on (e.conventionapl_id)
-            e.conventionapl_id as convention_id,
-            e.date as date_validation
-        from ecolo.ecolo_evenement e
-            inner join ecolo.ecolo_valeurparamstatic ev on e.typeevenement_id = ev.id and ev.code = '13'
-        order by e.conventionapl_id, e.date
-    ) ev on ev.convention_id = c.id -- Évènement de résiliation
 where
-    cdg.avenant_id is null -- exclude avenant related conventions
+    cdg.avenant_id is null
+    and nl.code = '1' -- Seulement les "Logements ordinaires"
+    -- On exclue les conventions ayant (au moins) un lot associé à plus d'un bailleur ou d'une commune
+    -- TODO voir si possible de déléguer à une materialzed view (pour la perf)
+    and not exists (
+        select
+            pl2.conventiondonneesgenerales_id
+        from ecolo.ecolo_programmelogement pl2
+            inner join ecolo.ecolo_conventiondonneesgenerales cdg2 on cdg2.id = pl2.conventiondonneesgenerales_id and cdg2.avenant_id is null
+            inner join ecolo.ecolo_typefinancement tf2 on pl2.typefinancement_id = tf2.id
+            inner join ecolo.ecolo_famillefinancement ff2 on tf2.famillefinancement_id = ff2.id
+        where cdg2.id = cdg.id
+        group by pl2.conventiondonneesgenerales_id, ff2.libelle
+        having count(distinct(pl2.commune_id)) > 1 or count(distinct(pl2.bailleurproprietaire_id)) > 1
+    )
     {% if departements %}
     and substr(aa.codepostal, 1, 2) in ({{ departements|safeseq|join:',' }})
     {% endif %}

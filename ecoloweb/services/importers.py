@@ -1,4 +1,5 @@
 import os
+import time
 
 from typing import Optional, List, Dict
 from abc import ABC, abstractmethod
@@ -25,9 +26,10 @@ class ModelImporter(ABC):
     """
     ecolo_id_field = 'id'
 
-    def __init__(self):
+    def __init__(self, debug=False):
         self._nb_imported_models: int = 0
         self._db_connection: CursorWrapper = connections['ecoloweb'].cursor()
+        self.debug = debug
 
     @property
     @abstractmethod
@@ -45,6 +47,10 @@ class ModelImporter(ABC):
         Base method to retrieve SQL query to be executed based on specified criteria, if any.
         """
         pass
+
+    def _debug(self, message: str):
+        if self.debug:
+            print(message)
 
     def _get_file_content(self, path):
         """
@@ -145,6 +151,7 @@ class ModelImporter(ABC):
         3. if still no model can be found, let's create it
         4. mark the newly created model as imported to avoid duplicate imports
         """
+        self._debug(f'Prcessing result {data} for handler {self.__class__.__name__}')
 
         # Look for a potentially already imported model
         instance = self._find_existing_model(data)
@@ -187,7 +194,11 @@ class ModelImporter(ABC):
         """
         Execute a SQL query returning a single result, as dict
         """
+        start = time.time()
+        self._debug(f'Start query for handler {self.__class__.__name__}')
         self._db_connection.execute(self._get_sql_query(), parameters)
+        stop = time.time()
+        self._debug(f'End query for handler {self.__class__.__name__} ({stop - start})')
 
         columns = [col[0] for col in self._db_connection.description]
         row = self._db_connection.fetchone()
