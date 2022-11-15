@@ -3,6 +3,7 @@ import json
 from enum import Enum
 from django.http import HttpRequest
 
+from core.utils import is_valid_uuid
 from upload.models import UploadedFile
 from conventions.models import Convention, ConventionStatut
 from conventions.templatetags.custom_filters import is_bailleur, is_instructeur
@@ -40,7 +41,7 @@ def get_text_and_files_from_field(name, field):
                 "files": {},
                 "text": field if isinstance(field, str) else "",
             }
-        files = object_field["files"]
+        files = {k: v for k, v in object_field["files"].items() if is_valid_uuid(k)}
     returned_files = {}
     for file in UploadedFile.objects.filter(uuid__in=files):
         returned_files[str(file.uuid)] = {
