@@ -4,7 +4,12 @@ on:
 
 jobs:
   coverage:
+    name: Test & Coverage
     runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: ["3.10"]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
