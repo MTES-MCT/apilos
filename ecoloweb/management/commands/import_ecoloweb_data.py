@@ -23,6 +23,11 @@ class Command(BaseCommand):
             default=[],
             help="Départements on which restrict import of conventions"
         )
+        parser.add_argument(
+            '--debug',
+            action='store_true',
+            help='Print debug statement'
+        )
 
     def handle(self, *args, **options):
         if 'ecoloweb' not in connections:
@@ -30,6 +35,7 @@ class Command(BaseCommand):
             sys.exit(1)
 
         dry_run = options["dry_run"]
+        debug = options["debug"]
         criteria = {}
         if len(options["departements"]) > 0:
             criteria['departements'] = [f"'{d}'" for d in options["departements"]]
@@ -41,7 +47,7 @@ class Command(BaseCommand):
         progress = None
 
         try:
-            importer = ConventionImporter()
+            importer = ConventionImporter(debug)
             results = importer.get_all_results(criteria)
             # Progress bar
             progress = tqdm(total=results.lines_total)
