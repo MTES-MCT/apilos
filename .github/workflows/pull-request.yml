@@ -10,16 +10,15 @@ jobs:
     services:
       # Label used to access the service container
       postgres:
-        # Docker Hub image
         image: postgres
-        # Provide the password for postgres
+        ports:
+          - 5432:5432
         env:
           POSTGRES_USER: appel
           POSTGRES_NAME: appel
           POSTGRES_HOST: postgres 
           POSTGRES_PASSWORD: appel
           POSTGRES_PORT: 5432
-        # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -42,6 +41,8 @@ jobs:
       - name: Execute test with coverage
         run:
           coverage run --source='.' manage.py test
+        env:
+          DB_HOST: localhost
       - name: Create coverage report
         run:
           coverage xml coverage.xml
