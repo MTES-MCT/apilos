@@ -45,10 +45,7 @@ jobs:
           DB_HOST: localhost
       - name: Create coverage report
         run:
-          coverage xml coverage.xml
-      - name: Display coverage
-        run:
-          cat coverage.xml
+          coverage xml -o coverage.xml
       - name: Post coverage to PR
         uses: orgoro/coverage@v3
         with:
