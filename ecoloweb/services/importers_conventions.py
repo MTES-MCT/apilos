@@ -8,15 +8,15 @@ from .query_iterator import QueryResultIterator
 class ConventionImporter(ModelImporter):
     model = Convention
 
-    def _get_sql_query(self) -> str:
+    def _get_sql_one_query(self) -> str:
         # No base query as conventions are never requested individually
         return ''
 
-    def _get_dependencies(self):
+    def _get_o2o_dependencies(self):
         return {
-            'programme': ProgrammeImporter(),
-            'lot': ProgrammeLotImporter(),
-            'bailleur': BailleurImporter(),
+            'programme': ProgrammeImporter(self.debug),
+            'lot': ProgrammeLotImporter(self.debug),
+            'bailleur': BailleurImporter(self.debug),
         }
 
     def get_all_results(self, criteria: dict = None) -> QueryResultIterator:

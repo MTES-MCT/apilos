@@ -11,6 +11,7 @@ from django.template import Template, Context
 from django.utils import timezone
 
 from ecoloweb.models import EcoloReference
+from ecoloweb.services.query_iterator import QueryResultIterator
 
 
 class ModelImporter(ABC):
@@ -42,11 +43,17 @@ class ModelImporter(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _get_sql_query(self) -> str:
+    def _get_sql_one_query(self) -> str:
         """
-        Base method to retrieve SQL query to be executed based on specified criteria, if any.
+        Base method to declare SQL query for single model.
         """
         pass
+
+    def _get_sql_many_query(self) -> Optional[str]:
+        """
+        Method to declare SQL query for many to one models.
+        """
+        return None
 
     def _debug(self, message: str):
         if self.debug:
@@ -111,7 +118,7 @@ class ModelImporter(ABC):
 
         return {}
 
-    def _get_dependencies(self):
+    def _get_o2o_dependencies(self):
         """
         Return a dict of key -> ModelImportHandler
 
@@ -120,12 +127,12 @@ class ModelImporter(ABC):
         """
         return {}
 
-    def _fetch_related_objects(self, data) -> dict:
+    def _fetch_related_o2o_objects(self, data) -> dict:
         """
         Hydrate the `data` dict by replacing external references (i.e. foreign keys) with the target
         object by using the _dependencies_ importers defined using `_get_dependencies`
         """
-        for key, importer in self._get_dependencies().items():
+        for key, importer in self._get_o2o_dependencies().items():
             # First, try to resolve key suffixed by `_id` ...
             if f'{key}_id' in data:
                 data[key] = importer.import_one(data.pop(f'{key}_id'))
@@ -134,6 +141,23 @@ class ModelImporter(ABC):
                 data[key] = importer.import_one(data.pop(key))
 
         return data
+
+    def _get_o2m_dependencies(self):
+        """
+        Return a dict of key -> ModelImportHandler
+
+        This will replace fields with key `key` by their related model via the call of the related
+        ModelImportHandler.import_one()
+        """
+        return {}
+
+    def _fetch_related_o2m_objects(self, pk):
+        """
+
+        """
+        for key, importer in self._get_o2m_dependencies().items():
+            self._debug(f'Fetching o2m objects {importer.__class__.__name__} from {self.__class__.__name__} with FK {pk}')
+            importer.import_many(pk)
 
     def _prepare_data(self, data: dict) -> dict:
         """
@@ -155,13 +179,14 @@ class ModelImporter(ABC):
 
         # Look for a potentially already imported model
         instance = self._find_existing_model(data)
+        created = False
         # If model wasn't imported yet, import it now
         if instance is None:
             # Extract from data the id of the associated object in the Ecoloweb DB (in string format as it can be a
             # hash function like for programme lots)
             ecolo_id = data.pop(self.ecolo_id_field)
             # Compute data dictionary
-            data = self._fetch_related_objects(data)
+            data = self._fetch_related_o2o_objects(data)
             data = self._prepare_data(data)
 
             # Extract dict values from declared identity keys as filters dict
@@ -176,9 +201,14 @@ class ModelImporter(ABC):
             else:
                 # Create a new instance...
                 instance = self.model.objects.create(**data)
+                created = True
                 # ...and mark it as imported
                 self._register_ecolo_reference(instance, ecolo_id)
                 self._nb_imported_models += 1
+
+            if created:
+                # Import one to many models
+                self._fetch_related_o2m_objects(ecolo_id)
 
         return instance
 
@@ -196,7 +226,7 @@ class ModelImporter(ABC):
         """
         start = time.time()
         self._debug(f'Start query for handler {self.__class__.__name__}')
-        self._db_connection.execute(self._get_sql_query(), parameters)
+        self._db_connection.execute(self._get_sql_one_query(), parameters)
         stop = time.time()
         self._debug(f'End query for handler {self.__class__.__name__} ({stop - start})')
 
@@ -205,3 +235,16 @@ class ModelImporter(ABC):
 
         return dict(zip(columns, row)) if row else None
 
+    def import_many(self, fk):
+        """
+        Public entry point method to fetch a list of models from the Ecoloweb database based on its foreign key
+        """
+        if self._get_sql_many_query() is not None:
+            iterator = QueryResultIterator(
+                self._db_connection,
+                self._get_sql_many_query(),
+                [fk]
+            )
+
+            for result in iterator:
+                self.process_result(result)

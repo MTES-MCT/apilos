@@ -8,12 +8,12 @@ from bailleurs.models import Bailleur
 class BailleurImporter(ModelImporter):
     model = Bailleur
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, debug=False):
+        super().__init__(debug)
         self._siret_resolver = SiretResolver()
         self._query = self._get_file_content('resources/sql/bailleurs.sql')
 
-    def _get_sql_query(self) -> str:
+    def _get_sql_one_query(self) -> str:
         return self._query
 
     def _get_identity_keys(self) -> List[str]:
@@ -32,8 +32,10 @@ class BailleurImporter(ModelImporter):
         elif (siret := self._siret_resolver.resolve(codesiren, date_creation)) is not None:
             data['siret'] = siret
 
+        elif codesiren is not None:
+            data['siret'] = codesiren
+
         else:
-            # TODO we'd rather create a new attribute on Bailleur model for this
             data['siret'] = codepersonne
 
         return data

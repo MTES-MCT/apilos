@@ -10,5 +10,5 @@ class AdministrationImporter(ModelImporter):
         super().__init__()
         self._query = self._get_file_content('resources/sql/administrations.sql')
 
-    def _get_sql_query(self) -> str:
+    def _get_sql_one_query(self) -> str:
         return self._query
