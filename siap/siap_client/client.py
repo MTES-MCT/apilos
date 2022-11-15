@@ -6,6 +6,7 @@ import requests
 import jwt
 
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 
 from siap.siap_client.mock_data import (
     config_mock,
@@ -166,7 +167,7 @@ class SIAPClientRemote(SIAPClientInterface):
             except requests.exceptions.JSONDecodeError:
                 if habilitation_id:
                     return self.get_habilitations(user_login, 0)
-        raise Exception(
+        raise PermissionDenied(
             f"user doesn't have SIAP habilitation, SIAP error returned {response.content}"
         )
 
