@@ -52,7 +52,7 @@ jobs:
       - name: Post coverage to PR
         uses: orgoro/coverage@v3
         with:
-          coverageFile: .coverage
+          coverageFile: coverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           thresholdAll: 0.5
           thresholdNew: 0.5
