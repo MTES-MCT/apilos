@@ -23,4 +23,4 @@ from ecolo.ecolo_logement l
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
     inner join ecolo.ecolo_valeurparamstatic ptl on l.typelogement_id = ptl.id
 where
-    l.id = %s
+    pl.id = %s

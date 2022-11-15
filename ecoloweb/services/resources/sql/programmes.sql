@@ -41,20 +41,18 @@
 
 select
     cdg.id,
-    p.bailleur_id,
-    p.code_postal,
-    p.ville,
-    p.adresse,
+    pl.bailleur_id,
+    pl.code_postal,
+    pl.ville,
+    pl.adresse,
     c.libelle as nom,
-    coalesce(p.type_operation, 'SANSOBJET') as type_operation,
-    p.numero_galion
+    coalesce(pl.type_operation, 'SANSOBJET') as type_operation,
+    pl.numero_galion
 from ecolo.ecolo_conventiondonneesgenerales cdg
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
     inner join (
-        -- Sur Ecolo il peut y avoir un bailleur gestionnaire *par logement*, aussi on attribue à la convention le
-        -- bailleur majoritaire
         select
-            distinct on (pl.conventiondonneesgenerales_id)
+            distinct on (pl.conventiondonneesgenerales_id, pl.typefinancement_id)
             pl.id,
             pl.conventiondonneesgenerales_id,
             pl.bailleurproprietaire_id as bailleur_id,
@@ -73,6 +71,8 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
         from ecolo.ecolo_programmelogement pl
             left join ecolo.ecolo_programmeadresse pa on pl.id = pa.programmelogement_id
             left join ecolo.ecolo_valeurparamstatic nop on pl.natureoperation_id = nop.id
-    ) p on p.conventiondonneesgenerales_id = cdg.id
+        order by pl.conventiondonneesgenerales_id, pl.typefinancement_id, pl.ordre
+    ) pl on pl.conventiondonneesgenerales_id = cdg.id
 where
-    cdg.id = %s
+    cdg.avenant_id is null
+    and cdg.id = %s
