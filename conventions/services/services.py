@@ -15,6 +15,5 @@ from .services_conventions import (
 )
 from .services_programmes import (
     programme_cadastral_update,
-    programme_edd_update,
     select_programme_create,
 )
