@@ -81,6 +81,9 @@ class ReferenceCadastraleImporter(ModelImporter):
         self._query = self._get_file_content('resources/sql/programme_reference_cadastrale.sql')
 
     def _prepare_data(self, data: dict) -> dict:
+        # Cast numero to int here
+        data['numero'] = int(data.pop('raw_numero'))
+
         superficie = data.pop('superficie', 0)
         if superficie is not None:
             # Compute surface (in hectares / ares / centiares)
