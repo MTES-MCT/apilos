@@ -80,9 +80,15 @@ class ApilosConfiguration(APIView):
                 description="Example of returned configuration when /config url is called",
                 value={
                     "racine_url_acces_web": "https://apilos.beta.gouv.fr",
+                    "url_acces_api_cloture_operation": (
+                        "/api-siap/v0/close_operation/{NUMERO_OPERATION_SIAP}"
+                    ),
+                    "url_acces_api_conventions_operation": (
+                        "/api-siap/v0/operation/{NUMERO_OPERATION_SIAP}"
+                    ),
+                    "url_acces_api_kpi": "/api-siap/v0/convention_kpi/",
                     "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}/",
                     "url_acces_web_recherche": "/conventions/",
-                    "url_acces_api_kpi": "/api-siap/v0/convention_kpi/",
                     "version": "0.1",
                 },
                 request_only=False,  # signal that example only applies to requests
@@ -102,9 +108,15 @@ class ApilosConfiguration(APIView):
         return Response(
             {
                 "racine_url_acces_web": protocol + request.get_host(),
+                "url_acces_api_cloture_operation": (
+                    "/api-siap/v0/close_operation/{NUMERO_OPERATION_SIAP}"
+                ),
+                "url_acces_api_conventions_operation": (
+                    "/api-siap/v0/operation/{NUMERO_OPERATION_SIAP}"
+                ),
+                "url_acces_api_kpi": "/api-siap/v0/convention_kpi/",
                 "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}",
                 "url_acces_web_recherche": "/conventions",
-                "url_acces_api_kpi": "/api-siap/v0/convention_kpi/",
                 "version": version,
             }
         )

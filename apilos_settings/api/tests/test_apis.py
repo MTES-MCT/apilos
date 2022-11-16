@@ -33,6 +33,12 @@ class ConfigurationAPITest(APITestCase):
             "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}",
             "url_acces_web_recherche": "/conventions",
             "url_acces_api_kpi": "/api-siap/v0/convention_kpi/",
+            "url_acces_api_cloture_operation": (
+                "/api-siap/v0/close_operation/{NUMERO_OPERATION_SIAP}"
+            ),
+            "url_acces_api_conventions_operation": (
+                "/api-siap/v0/operation/{NUMERO_OPERATION_SIAP}"
+            ),
             "version": "0.0",
         }
         self.assertEqual(response.data, expected)
