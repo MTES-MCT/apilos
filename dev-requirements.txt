@@ -41,7 +41,7 @@ click==8.1.3 \
     --hash=sha256:7682dc8afb30297001674575ea00d1814d808d6a36af415a82bd481d37ba7b8e \
     --hash=sha256:bb4d8133cb15a609f44e8213d9b391b0809795062913b383c62be0ee95b1db48
     # via black
-coverage==6.5.0 \
+coverage[toml]==6.5.0 \
     --hash=sha256:027018943386e7b942fa832372ebc120155fd970837489896099f5cfa2890f79 \
     --hash=sha256:11b990d520ea75e7ee8dcab5bc908072aaada194a794db9f6d7d5cfd19661e5a \
     --hash=sha256:12adf310e4aafddc58afdb04d686795f33f4d7a6fa67a7a9d4ce7d6ae24d949f \
@@ -237,6 +237,7 @@ tomli==2.0.1 \
     # via
     #   -c requirements.txt
     #   black
+    #   coverage
     #   pylint
 tomlkit==0.11.6 \
     --hash=sha256:07de26b0d8cfc18f871aec595fda24d95b08fef89d147caa861939f37230bf4b \
