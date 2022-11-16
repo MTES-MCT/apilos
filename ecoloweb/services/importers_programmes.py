@@ -24,10 +24,10 @@ class ProgrammeImporter(ModelImporter):
             'bailleur': BailleurImporter()
         }
 
-    def _get_o2m_dependencies(self):
-        return {
-            'cadastre': ReferenceCadastraleImporter(self.debug)
-        }
+    #def _get_o2m_dependencies(self):
+    #    return {
+    #        'cadastre': ReferenceCadastraleImporter(self.debug)
+    #    }
 
 
 class ProgrammeLotImporter(ModelImporter):
@@ -101,3 +101,9 @@ class ReferenceCadastraleImporter(ModelImporter):
     def _get_sql_many_query(self) -> Optional[str]:
         # No single query defined for Lots, as it's only used to fetch one to many
         return self._query
+
+    def _get_o2o_dependencies(self):
+        return {
+            'programme': ProgrammeImporter(),
+            'bailleur': BailleurImporter(),
+        }

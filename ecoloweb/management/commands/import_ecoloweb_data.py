@@ -28,6 +28,11 @@ class Command(BaseCommand):
             action='store_true',
             help='Print debug statement'
         )
+        parser.add_argument(
+            '--no-progress',
+            action='store_true',
+            help='Disable progress bar, only print info into newlines'
+        )
 
     def handle(self, *args, **options):
         if 'ecoloweb' not in connections:
@@ -36,6 +41,8 @@ class Command(BaseCommand):
 
         dry_run = options["dry_run"]
         debug = options["debug"]
+        no_progress = options["no_progress"]
+
         criteria = {}
         if len(options["departements"]) > 0:
             criteria['departements'] = [f"'{d}'" for d in options["departements"]]
@@ -50,11 +57,15 @@ class Command(BaseCommand):
             importer = ConventionImporter(debug)
             results = importer.get_all_results(criteria)
             # Progress bar
-            progress = tqdm(total=results.lines_total)
+            if not no_progress:
+                progress = tqdm(total=results.lines_total)
             # Actual processing
             for result in results:
                 importer.process_result(result)
-                progress.update(1)
+                if progress is not None:
+                    progress.update(1)
+                else:
+                    print(f'Processed convention #{results.lines_fetched} (out of {results.lines_total} total)')
 
         except Exception as e:
             transaction.rollback()
