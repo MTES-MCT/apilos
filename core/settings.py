@@ -21,6 +21,8 @@ import dj_database_url
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
+from django.core.exceptions import PermissionDenied
+
 
 def get_env_variable(name, cast=str, default=""):
     try:
@@ -418,6 +420,7 @@ if SENTRY_URL:
         # If you wish to associate users to errors (assuming you are using
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
+        ignore_errors=[PermissionDenied],
     )
 
 DRAMATIQ_BROKER = {
