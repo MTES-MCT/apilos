@@ -212,6 +212,9 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
   height: 100px;
   border-radius: 50px;
 }
+.apilos-verbatim-text {
+  font-size: 0.9rem;
+}
 .dropdown-menu.apilos-dropdown-menu {
   z-index: 100000;
 }
