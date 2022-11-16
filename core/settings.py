@@ -100,8 +100,8 @@ except KeyError:
 # Convert API
 CONVERTAPI_SECRET = get_env_variable("CONVERTAPI_SECRET")
 # INSEE API
-INSEE_API_KEY = get_env_variable('INSEE_API_KEY')
-INSEE_API_SECRET = get_env_variable('INSEE_API_SECRET')
+INSEE_API_KEY = get_env_variable("INSEE_API_KEY")
+INSEE_API_SECRET = get_env_variable("INSEE_API_SECRET")
 
 ALLOWED_HOSTS = ["localhost"] + env_allowed_hosts
 
@@ -201,13 +201,12 @@ DB_READONLY = decouple.config(
 )
 readonly_settings = dj_database_url.parse(DB_READONLY)
 
-DATABASES = {
-    "default": default_settings,
-    "readonly": readonly_settings
-}
+DATABASES = {"default": default_settings, "readonly": readonly_settings}
 
-if get_env_variable('ECOLO_DATABASE_URL') != "":
-    DATABASES["ecoloweb"] = dj_database_url.parse(get_env_variable('ECOLO_DATABASE_URL'))
+if get_env_variable("ECOLO_DATABASE_URL") != "":
+    DATABASES["ecoloweb"] = dj_database_url.parse(
+        get_env_variable("ECOLO_DATABASE_URL")
+    )
 
 EXPLORER_CONNECTIONS = {"Default": "readonly"}
 EXPLORER_DEFAULT_CONNECTION = "readonly"
@@ -321,7 +320,11 @@ CSP_IMG_SRC = (
 CSP_OBJECT_SRC = "'none'"
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
-CSP_FRAME_SRC = "'self'"
+CSP_FRAME_SRC = (
+    "'self'",
+    "https://www.dailymotion.com/embed/video/x8f7lru",
+    "https://www.youtube.com/embed/L_rFsfZ3hF8",
+)
 CSP_FONT_SRC = "'self'", "data:"
 CSP_CONNECT_SRC = ("'self'", "https://stats.data.gouv.fr/piwik.php")
 CSP_STYLE_SRC = (
