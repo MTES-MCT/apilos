@@ -82,12 +82,21 @@ LOGGING = {
 mailjet_api_key = get_env_variable("MAILJET_API_KEY")
 mailjet_api_secret = get_env_variable("MAILJET_API_SECRET")
 
+sendinblue_api_key = get_env_variable("SENDINBLUE_API_KEY")
+
+
 DEFAULT_FROM_EMAIL = "contact@apilos.beta.gouv.fr"
 
 if mailjet_api_key != "":
     EMAIL_BACKEND = "django_mailjet.backends.MailjetBackend"
     MAILJET_API_KEY = mailjet_api_key
     MAILJET_API_SECRET = mailjet_api_secret
+elif sendinblue_api_key:
+    ANYMAIL = {
+        "SENDINBLUE_API_KEY": sendinblue_api_key,
+    }
+    EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
+
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
@@ -100,8 +109,8 @@ except KeyError:
 # Convert API
 CONVERTAPI_SECRET = get_env_variable("CONVERTAPI_SECRET")
 # INSEE API
-INSEE_API_KEY = get_env_variable('INSEE_API_KEY')
-INSEE_API_SECRET = get_env_variable('INSEE_API_SECRET')
+INSEE_API_KEY = get_env_variable("INSEE_API_KEY")
+INSEE_API_SECRET = get_env_variable("INSEE_API_SECRET")
 
 ALLOWED_HOSTS = ["localhost"] + env_allowed_hosts
 
@@ -132,6 +141,7 @@ INSTALLED_APPS = [
     "django.contrib.admindocs",
     "explorer",
     "ecoloweb",
+    "anymail",
 ]
 
 MIDDLEWARE = [
@@ -201,13 +211,12 @@ DB_READONLY = decouple.config(
 )
 readonly_settings = dj_database_url.parse(DB_READONLY)
 
-DATABASES = {
-    "default": default_settings,
-    "readonly": readonly_settings
-}
+DATABASES = {"default": default_settings, "readonly": readonly_settings}
 
-if get_env_variable('ECOLO_DATABASE_URL') != "":
-    DATABASES["ecoloweb"] = dj_database_url.parse(get_env_variable('ECOLO_DATABASE_URL'))
+if get_env_variable("ECOLO_DATABASE_URL") != "":
+    DATABASES["ecoloweb"] = dj_database_url.parse(
+        get_env_variable("ECOLO_DATABASE_URL")
+    )
 
 EXPLORER_CONNECTIONS = {"Default": "readonly"}
 EXPLORER_DEFAULT_CONNECTION = "readonly"
