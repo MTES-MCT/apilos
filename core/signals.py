@@ -47,11 +47,14 @@ def user_logged_in_callback(sender, request, user, **kwargs):
 
 @receiver(user_logged_out)
 def user_logged_out_callback(sender, request, user, **kwargs):
-    logger.info(
-        f"User logs out via Django authentication: user={user},"
-        + f" email={user.email},"
-        + f" username={user.username}"
-    )
+    if user:
+        logger.info(
+            f"User logs out via Django authentication: user={user},"
+            + f" email={user.email},"
+            + f" username={user.username}"
+        )
+    else:
+        logger.warning("Unlogged user tries to log out via Django authentication")
 
 
 @receiver(user_login_failed)
