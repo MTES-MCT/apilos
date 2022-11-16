@@ -155,7 +155,7 @@ class ModelImporter(ABC):
         """
 
         """
-        for key, importer in self._get_o2m_dependencies().items():
+        for _, importer in self._get_o2m_dependencies().items():
             self._debug(f'Fetching o2m objects {importer.__class__.__name__} from {self.__class__.__name__} with FK {pk}')
             importer.import_many(pk)
 
