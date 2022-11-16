@@ -6,6 +6,11 @@
   font-size: 1.3rem;
   font-style: italic;
 }
+.apilos-mobile-header {
+  height: 50px;
+  width: 50px;
+  position: relative;
+}
 
 .apilos-flex-wrap {
   flex-wrap: wrap;
