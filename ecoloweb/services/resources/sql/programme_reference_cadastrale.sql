@@ -1,4 +1,4 @@
--- Requête pour alimenter la table programmes_lot
+-- Requête pour alimenter la table programmes_reference_cadastrale
 
 -- Champs restants à mapper:
 -- cree_le       timestamp with time zone not null,
