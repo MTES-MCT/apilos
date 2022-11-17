@@ -67,14 +67,14 @@ class EmailService:
         message.template_id = 84  # use this Sendinblue template
         message.from_email = None  # to use the template's default sender
         message.merge_global_data = {
-            "email": "toto@oudard.org",
+            "email": "toto@email.org",
             "username": "toto",
             "password": "Toto@Password",
             "firstname": "Toto",
             "lastname": "Oudard",
             "login_url": "https://apilos.beta.gouv.fr/login",
         }
-        filename = "conventions/7e2babf5-6dff-4d29-ad31-166cf441bc00/convention_docs/7e2babf5-6dff-4d29-ad31-166cf441bc00.docx"
+        filename = "paht/to/convention.docx"
         f = default_storage.open(filename, "rb")
         message.attach(
             "convention.docx",
