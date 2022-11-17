@@ -633,7 +633,6 @@ class ConventionEDDService(ConventionService):
         )
         form_is_valid = self.form.is_valid()
 
-<<<<<<< HEAD
         self.formset = LogementEDDFormSet(self.request.POST)
         initformset = {
             "form-TOTAL_FORMS": self.request.POST.get(
@@ -642,14 +641,6 @@ class ConventionEDDService(ConventionService):
             "form-INITIAL_FORMS": self.request.POST.get(
                 "form-INITIAL_FORMS", len(self.formset)
             ),
-=======
-    if form_is_valid and formset_is_valid:
-        _save_programme_edd(form, programme, convention.lot)
-        _save_programme_logement_edd(formset, programme)
-        return {
-            "success": utils.ReturnStatus.SUCCESS,
-            "convention": convention,
->>>>>>> d0a5e0ea (Remove all bailleur refs (except Programme & User))
         }
         for idx, form_logementedd in enumerate(self.formset):
             if form_logementedd["uuid"].value():

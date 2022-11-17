@@ -357,7 +357,6 @@ class Lot(IngestableModel):
     mapping = {
         "financement": "Produit",
         "programme": "Nom Opération",
-        "bailleur": "MOA (code SIRET)",
         "nb_logements": "Nb logts",
         "type_habitat": "Type d'habitat",
     }
@@ -515,7 +514,7 @@ class Logement(models.Model):
     # Needed for admin
     @property
     def bailleur(self):
-        return self.lot.bailleur
+        return self.lot.programme.bailleur
 
     def __str__(self):
         return self.designation
@@ -600,7 +599,7 @@ class Annexe(models.Model):
     # Needed for admin
     @property
     def bailleur(self):
-        return self.logement.bailleur
+        return self.logement.lot.programme.bailleur
 
     def __str__(self):
         return f"{self.typologie} - {self.logement}"
@@ -638,7 +637,6 @@ class TypeStationnement(IngestableModel):
         "nb_stationnements": "Nb Stationnement",
         "loyer": "Loyer",
         "lot": "Produit",
-        "bailleur": "MOA (code SIRET)",
     }
 
     id = models.AutoField(primary_key=True)
@@ -669,7 +667,7 @@ class TypeStationnement(IngestableModel):
     # Needed for admin
     @property
     def bailleur(self):
-        return self.lot.bailleur
+        return self.lot.programme.bailleur
 
     def __str__(self):
         return f"{self.typologie} - {self.lot}"
