@@ -578,7 +578,7 @@ class ConventionHistory(models.Model):
     # Needed for admin
     @property
     def bailleur(self):
-        return self.convention.bailleur
+        return self.convention.programme.bailleur
 
 
 class Pret(models.Model):
@@ -612,7 +612,7 @@ class Pret(models.Model):
     # Needed for admin
     @property
     def bailleur(self):
-        return self.convention.bailleur
+        return self.convention.programme.bailleur
 
     def _get_preteur(self):
         return self.get_preteur_display()
