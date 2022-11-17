@@ -5,6 +5,8 @@ from conventions.models import Convention
 
 from upload.services import UploadService
 
+from django.core.files.storage import default_storage
+
 
 class EmailService:
     subject: str
@@ -55,23 +57,52 @@ class EmailService:
         self.msg.send()
 
     def send_welcome_email(self, user, password, login_url) -> None:
-        # envoi au bailleur
-        if not user.is_bailleur():
-            login_url = login_url + "?instructeur=1"
 
-        # All bailleur users from convention
-        self.to_emails = [user.email]
-        self.text_content = render_to_string(
-            "emails/welcome_user.txt",
-            {"password": password, "user": user, "login_url": login_url},
+        message = EmailMultiAlternatives(
+            to=["nicolas@oudard.org"],  # single recipient...
+            cc=["nicolas.oudard@beta.gouv.fr"]
+            # ...multiple to emails would all get the same message
+            # (and would all see each other's emails in the "to" header)
         )
-        self.html_content = render_to_string(
-            "emails/welcome_user.html",
-            {"password": password, "user": user, "login_url": login_url},
+        message.template_id = 84  # use this Sendinblue template
+        message.from_email = None  # to use the template's default sender
+        message.merge_global_data = {
+            "email": "toto@oudard.org",
+            "username": "toto",
+            "password": "Toto@Password",
+            "firstname": "Toto",
+            "lastname": "Oudard",
+            "login_url": "https://apilos.beta.gouv.fr/login",
+        }
+        filename = "conventions/7e2babf5-6dff-4d29-ad31-166cf441bc00/convention_docs/7e2babf5-6dff-4d29-ad31-166cf441bc00.docx"
+        f = default_storage.open(filename, "rb")
+        message.attach(
+            "convention.docx",
+            f.read(),
+            "application/vnd.openxmlformats-officedocument.wordprocessingm",
         )
-        self.subject = "Bienvenue sur la plateforme APiLos"
-        self.build_msg()
-        self.msg.send()
+        f.close()
+        message.send()
+
+        # TODO use template as describe here :
+        # https://anymail.dev/en/stable/esps/sendinblue/
+        # envoi au bailleur
+        # if not user.is_bailleur():
+        #     login_url = login_url + "?instructeur=1"
+
+        # # All bailleur users from convention
+        # self.to_emails = [user.email]
+        # self.text_content = render_to_string(
+        #     "emails/welcome_user.txt",
+        #     {"password": password, "user": user, "login_url": login_url},
+        # )
+        # self.html_content = render_to_string(
+        #     "emails/welcome_user.html",
+        #     {"password": password, "user": user, "login_url": login_url},
+        # )
+        # self.subject = "Bienvenue sur la plateforme APiLos"
+        # self.build_msg()
+        # self.msg.send()
 
     def send_email_valide(
         self,
