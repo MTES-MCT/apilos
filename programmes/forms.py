@@ -793,7 +793,7 @@ class AnnexeForm(forms.Form):
             round_half_up(surface_hors_surface_retenue * loyer_par_metre_carre, 2) + 0.1
         ):
             raise ValidationError(
-                "Le loyer ne peut être suppérieur au le produit de la surface"
+                "Le loyer ne peut être supérieur au produit de la surface"
                 + " de l'annexe et du loyer par mètre carré. valeur attendue :"
                 + f" {round_half_up(surface_hors_surface_retenue*loyer_par_metre_carre,2)} €"
                 + " (tolérance de 0,1 €)"
