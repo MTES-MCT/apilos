@@ -127,7 +127,7 @@ ainsi que les utilisateurs qui sont ni `superuser` ni `staff`
 
 ## Rechargement des fixtures de tests en staging
 
-Il est possible de déployer un jeu de donnée de tests en itulisant la command `load_test_fixtures`
+Il est possible de déployer un jeu de donnée de tests en utilisant la commande `load_test_fixtures`
 
 ```
 $> python manage.py load_test_fixtures
@@ -138,6 +138,10 @@ Using default option: Users won't be truncated
 ```
 
 ⚠️ Cette commande n'est pas executable en production car il n'est pas souhaitable de mélanger données de test et production
+
+## Chargement d'un jeu de test
+Un jeu de données minimales est disponible dans le fichier dataset_staging.json. Il se déploie en utilisant la commande `loaddata dataset_staging.json`
+⚠️ Cette commande ne doit pas être exécutée en production car il n'est pas souhaitable de mélanger données de test et production
 
 
 # Déploiement de Metabase
