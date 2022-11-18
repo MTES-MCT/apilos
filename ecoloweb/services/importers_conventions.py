@@ -1,6 +1,5 @@
 from conventions.models import Convention
 from .importers import ModelImporter
-from .importers_bailleurs import BailleurImporter
 from .importers_programmes import ProgrammeImporter, ProgrammeLotImporter
 from .query_iterator import QueryResultIterator
 
@@ -16,7 +15,6 @@ class ConventionImporter(ModelImporter):
         return {
             'programme': ProgrammeImporter(self.debug),
             'lot': ProgrammeLotImporter(self.debug),
-            'bailleur': BailleurImporter(self.debug),
         }
 
     def get_all_results(self, criteria: dict = None) -> QueryResultIterator:

@@ -17,7 +17,6 @@
 select
     md5(pl.conventiondonneesgenerales_id||'-'||ff.code) as id, -- Les lots d'un programme sont tous les logements partageant le même financement
     pl.conventiondonneesgenerales_id as programme_id,
-    pl.bailleurproprietaire_id as bailleur_id,
     coalesce(pl.financementdate, now()) as cree_le,
     coalesce(pl.financementdate, now()) as mis_a_jour_le,
     ff.code as financement,

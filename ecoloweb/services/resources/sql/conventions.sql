@@ -24,7 +24,6 @@
 -- signataire_nom                     varchar(255)
 select
     c.id,
-    pl.bailleur_id,
     cdg.id as programme_id,
     md5(cdg.id||'-'||ff.code) as lot_id, -- Les lots d'un programme sont tous les logements partageant le même financement
     c.noreglementaire as numero,

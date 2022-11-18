@@ -6,7 +6,6 @@
 select
     l.id,
     md5(pl.conventiondonneesgenerales_id||'-'||ff.code) as lot_id,
-    pl.bailleurproprietaire_id as bailleur_id,
     coalesce(l.numerobatiment||' '||l.noescalier||' '||l.etage||' '||l.numerologement, '') as designation,
     ptl.code as typologie,
     l.surfacehabitable::float as surface_habitable,
