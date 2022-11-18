@@ -1,0 +1,109 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}Importer un listing bailleur - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters fr-py-5w fr-mb-1w">
+                <div class='fr-col-12 fr-col-md-4 fr-col-lg-3'>
+                    {% include 'settings/common/side_menu.html' with active_menu='bailleurs' %}
+                </div>
+                <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
+
+                    <h4>Importer un listing bailleur</h4>
+
+                    <form method="post" action="" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div id='download_upload_block'>
+                            <fieldset>
+                                <input type="hidden" name="upload" value="true" />
+                                <input
+                                    class="fileinput--hidden"
+                                    type="file"
+                                    id="file-upload-input"
+                                    name="file"
+                                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+
+                                <button class="fr-btn fr-icon-upload-line fr-btn--icon-left auto-upload-btn" type="button" data-target="file-upload-input">
+                                    Téléverser le fichier de listing bailleur
+                                </button>
+                            </fieldset>
+
+
+                            <hr class="fr-col-12 fr-my-3w">
+
+                            <div class="fr-table fr-table--bordered table--layout-fixed">
+                                <table aria-label="Prêts">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Nom</th>
+                                            <th scope="col">Prénom</th>
+                                            <th scope="col">Bailleur</th>
+                                            <th scope="col">Adresse e-mail</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                {% include "common/form/input_text.html" %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_text.html" %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_select.html" %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_text.html" %}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+
+                        <button class="fr-btn fr-icon-save-line fr-btn--icon-right">
+                            Enregistrer
+                        </button>
+
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block js %}
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+        document.addEventListener('DOMContentLoaded', function () {
+            // Handler auto upload buttons
+            for (let button of document.getElementsByClassName('auto-upload-btn')) {
+                console.log(button);
+                const target = document.getElementById(button.getAttribute('data-target'));
+                console.log(target);
+
+                if (target) {
+                    button.onclick = function () {
+                        // Enable surrounding fieldset
+                        button.closest('fieldset').removeAttribute('disabled');
+                        // Trigger file selection popup
+                        target.click();
+                    }
+
+                    target.onchange = function () {
+                        this.form.submit();
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

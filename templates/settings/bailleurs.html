@@ -13,6 +13,13 @@
                 </div>
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
 
+                    <div class="fr-grid-row fr-grid-row--right">
+                        <a class="fr-btn" href="{% url 'settings:create_bulk_bailleur' %}">
+                            <span class="fr-icon-upload-line fr-mr-1w" aria-hidden="true"></span>Importer un listing bailleur
+                        </a>
+                    </div>
+
+
                     <form class="fr-my-3w" method="get" action="" id="search_table">
                         <input type="hidden" id="page" name="page" value="{{bailleurs.number}}">
                         <input type="hidden" id="order_by" name="order_by" value="{{order_by}}">

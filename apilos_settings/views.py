@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
 from django.views.decorators.http import require_POST
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 
 from apilos_settings import services
@@ -68,6 +70,19 @@ def edit_bailleur(request, bailleur_uuid):
         "settings/edit_bailleur.html",
         {**result},
     )
+
+
+class CreateBulkBailleurView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        return render(
+            request,
+            "settings/create_bulk_bailleur.html",
+        )
+
+    def post(self, request):
+        return JsonResponse(request.POST.items(), safe=False)
+
 
 
 @login_required

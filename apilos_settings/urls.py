@@ -23,6 +23,11 @@ urlpatterns = [
         name="bailleurs",
     ),
     path(
+        "bailleurs/import",
+        views.CreateBulkBailleurView.as_view(),
+        name="create_bulk_bailleur",
+    ),
+    path(
         "bailleurs/<bailleur_uuid>",
         views.edit_bailleur,
         name="edit_bailleur",
