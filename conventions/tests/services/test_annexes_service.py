@@ -142,11 +142,32 @@ class ConventionAnnexesServiceTests(TestCase):
         for annexe in ["annexe_resserres", "annexe_combles"]:
             self.assertTrue(getattr(self.service.convention.lot, annexe))
 
+    def test_save_ok_on_loyer(self):
+        self.service.request.POST = {
+            "uuid": str(self.service.convention.lot.uuid),
+            **post_fixture,
+            "form-1-loyer": "0.01",
+        }
+        self.service.save()
+        self.assertEqual(
+            self.service.return_status, utils.ReturnStatus.SUCCESS, "Ok if it is lowers"
+        )
+
+        self.service.request.POST = {
+            "uuid": str(self.service.convention.lot.uuid),
+            **post_fixture,
+            "form-1-loyer": "1.1",
+        }
+        self.service.save()
+        self.assertEqual(
+            self.service.return_status, utils.ReturnStatus.SUCCESS, "Ok with tolerance"
+        )
+
     def test_save_fails_on_loyer(self):
         self.service.request.POST = {
             "uuid": str(self.service.convention.lot.uuid),
             **post_fixture,
-            "form-1-loyer": "750.00",
+            "form-1-loyer": "1.11",
         }
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)

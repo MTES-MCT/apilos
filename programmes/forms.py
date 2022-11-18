@@ -789,16 +789,12 @@ class AnnexeForm(forms.Form):
         loyer = self.cleaned_data.get("loyer", 0)
 
         # check that lot_id exist in DB
-        if (
-            abs(
-                round_half_up(loyer, 2)
-                - round_half_up(surface_hors_surface_retenue * loyer_par_metre_carre, 2)
-            )
-            > 0.1
+        if round_half_up(loyer, 2) > (
+            round_half_up(surface_hors_surface_retenue * loyer_par_metre_carre, 2) + 0.1
         ):
             raise ValidationError(
-                "Le loyer doit-être le produit de la surface de l'annexe"
-                + " et du loyer par mètre carré. valeur attendue :"
+                "Le loyer ne peut être supérieur au produit de la surface"
+                + " de l'annexe et du loyer par mètre carré. valeur attendue :"
                 + f" {round_half_up(surface_hors_surface_retenue*loyer_par_metre_carre,2)} €"
                 + " (tolérance de 0,1 €)"
             )
