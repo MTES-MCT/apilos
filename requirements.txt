@@ -68,6 +68,7 @@ django==4.1.3 \
     # via
     #   -r requirements.in
     #   dj-database-url
+    #   django-anymail
     #   django-cas-ng
     #   django-csp
     #   django-dramatiq
@@ -78,6 +79,10 @@ django==4.1.3 \
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
+django-anymail[sendinblue]==8.6 \
+    --hash=sha256:49d83d7c16316ca86a624097496881d59b7d71b16bf1c5211cffa5b19ef98d0c \
+    --hash=sha256:783342d49dd07d68778b81dd12a94c86e1d217463a68a85450a0513fabe31345
+    # via -r requirements.in
 django-cas-ng==4.3.0 \
     --hash=sha256:6fcc9f52b9fb8765369e1a78e6abc1e7d4ed71fe01e604a304a3d1376a9dea19 \
     --hash=sha256:d15a3a7934732fd8f602a449fc0e59631972d74d9bd8b98710d165e1cea1f5fc
@@ -641,6 +646,7 @@ requests==2.27.1 \
     --hash=sha256:f22fa1e554c9ddfd16e6e41ac79759e17be9e492b3587efa038054674760e72d
     # via
     #   convertapi
+    #   django-anymail
     #   mailjet-rest
     #   python-cas
 s3transfer==0.6.0 \

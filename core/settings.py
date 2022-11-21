@@ -82,12 +82,21 @@ LOGGING = {
 mailjet_api_key = get_env_variable("MAILJET_API_KEY")
 mailjet_api_secret = get_env_variable("MAILJET_API_SECRET")
 
+sendinblue_api_key = get_env_variable("SENDINBLUE_API_KEY")
+
+
 DEFAULT_FROM_EMAIL = "contact@apilos.beta.gouv.fr"
 
 if mailjet_api_key != "":
     EMAIL_BACKEND = "django_mailjet.backends.MailjetBackend"
     MAILJET_API_KEY = mailjet_api_key
     MAILJET_API_SECRET = mailjet_api_secret
+elif sendinblue_api_key:
+    ANYMAIL = {
+        "SENDINBLUE_API_KEY": sendinblue_api_key,
+    }
+    EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
+
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
@@ -132,6 +141,7 @@ INSTALLED_APPS = [
     "django.contrib.admindocs",
     "explorer",
     "ecoloweb",
+    "anymail",
 ]
 
 MIDDLEWARE = [
