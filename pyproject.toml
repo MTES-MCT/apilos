@@ -21,4 +21,6 @@ omit = [
     "*/__init__.py",
     "*/tests/*",
     "*/migrations/*",
+    "ecoloweb/*",
+    "programmes/management/commands/import_galion.py",
 ]
