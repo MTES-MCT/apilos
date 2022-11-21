@@ -251,3 +251,8 @@ class LotModelsTest(TestCase):
                 lot.financement = k
                 self.assertFalse(lot.mixity_option())
                 self.assertEqual(0, lot.lgts_mixite_sociale_negocies_display())
+
+    def test_lot_bailleur(self):
+        lot = Lot.objects.order_by("uuid").first()
+        self.assertEqual(lot.bailleur, lot.programme.bailleur)
+        self.assertEqual(lot.bailleur_id, lot.programme.bailleur_id)

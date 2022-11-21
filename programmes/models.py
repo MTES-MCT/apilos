@@ -409,6 +409,10 @@ class Lot(IngestableModel):
     def bailleur(self):
         return self.programme.bailleur
 
+    @property
+    def bailleur_id(self):
+        return self.programme.bailleur_id
+
     def edd_volumetrique_text(self):
         return get_key_from_json_field(self.edd_volumetrique, "text")
 

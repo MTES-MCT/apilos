@@ -201,7 +201,7 @@ def get_or_create_lots_and_conventions(
     else:
         for aide in operation["detailsOperation"]:
             financement = _financement(aide["aide"]["code"])
-            if financement == financement.PLAI_ADP:
+            if financement == Financement.PLAI_ADP:
                 continue
             (lot, _) = Lot.objects.get_or_create(
                 programme=programme,
