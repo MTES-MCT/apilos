@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 
 from instructeurs.models import Administration
-from bailleurs.models import Bailleur, SousNatureBailleur
+from bailleurs.models import Bailleur, TypeBailleur
 from conventions.models import Convention
 from programmes.models import (
     Programme,
@@ -23,7 +23,7 @@ from users.type_models import TypeRole
 bailleur = {
     "nom": "Bailleur HLM de test",
     "siret": "12345678900000",
-    "sous_nature_bailleur": SousNatureBailleur.OFFICE_PUBLIC_HLM,
+    "type_bailleur": TypeBailleur.OFFICE_PUBLIC_HLM,
     "capital_social": 10000.01,
     "adresse": "1 place de la république",
     "code_postal": "00100",
@@ -160,4 +160,6 @@ class Command(BaseCommand):
                 **programme, administration=administration_test, bailleur=bailleur_test
             )
             for lot in lots:
-                Lot.objects.get_or_create(**lot, programme=programme_test)
+                Lot.objects.get_or_create(
+                    **lot, programme=programme_test
+                )

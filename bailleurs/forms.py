@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 
 from core import forms_utils
 
-from bailleurs.models import Bailleur, SousNatureBailleur
+from bailleurs.models import Bailleur, TypeBailleur
 
 
 class UpdateBailleurForm(forms.Form):
@@ -99,8 +99,8 @@ class BailleurForm(forms.Form):
         ),
     )
 
-    sous_nature_bailleur = forms.TypedChoiceField(
-        required=False, label="Type de bailleur", choices=SousNatureBailleur.choices
+    type_bailleur = forms.TypedChoiceField(
+        required=False, label="Type de bailleur", choices=TypeBailleur.choices
     )
 
     def clean_nom(self):

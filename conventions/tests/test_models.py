@@ -1,7 +1,7 @@
 import datetime
 
 from django.test import TestCase
-from bailleurs.models import SousNatureBailleur
+from bailleurs.models import TypeBailleur
 from core.tests import utils_assertions, utils_fixtures
 from conventions.models import (
     Convention,
@@ -159,13 +159,13 @@ class ConventionModelsTest(TestCase):
 
     def test_type1and2_configuration_not_needed(self):
         convention = Convention.objects.order_by("uuid").first()
-        for sous_nature_bailleur in [
-            SousNatureBailleur.OFFICE_PUBLIC_HLM,
-            SousNatureBailleur.SA_HLM_ESH,
-            SousNatureBailleur.COOPERATIVE_HLM_SCIC,
-            SousNatureBailleur.SEM_EPL,
+        for type_bailleur in [
+            TypeBailleur.OFFICE_PUBLIC_HLM,
+            TypeBailleur.SA_HLM_ESH,
+            TypeBailleur.COOPERATIVE_HLM_SCIC,
+            TypeBailleur.SEM_EPL,
         ]:
-            convention.programme.bailleur.sous_nature_bailleur = sous_nature_bailleur
+            convention.programme.bailleur.type_bailleur = type_bailleur
             for type1andtype2 in [
                 ConventionType1and2.TYPE1,
                 ConventionType1and2.TYPE2,
@@ -173,14 +173,14 @@ class ConventionModelsTest(TestCase):
             ]:
                 convention.type1and2 = type1andtype2
                 self.assertTrue(convention.type1and2_configuration_not_needed())
-        for k, _ in SousNatureBailleur.choices:
+        for k, _ in TypeBailleur.choices:
             if k not in [
-                SousNatureBailleur.OFFICE_PUBLIC_HLM,
-                SousNatureBailleur.SA_HLM_ESH,
-                SousNatureBailleur.COOPERATIVE_HLM_SCIC,
-                SousNatureBailleur.SEM_EPL,
+                TypeBailleur.OFFICE_PUBLIC_HLM,
+                TypeBailleur.SA_HLM_ESH,
+                TypeBailleur.COOPERATIVE_HLM_SCIC,
+                TypeBailleur.SEM_EPL,
             ]:
-                convention.programme.bailleur.sous_nature_bailleur = k
+                convention.programme.bailleur.type_bailleur = k
                 convention.type1and2 = None
                 self.assertFalse(convention.type1and2_configuration_not_needed())
                 for type1andtype2 in [

@@ -17,7 +17,7 @@ class BailleurSerializer(serializers.HyperlinkedModelSerializer):
             "code_postal",
             "ville",
             "capital_social",
-            "sous_nature_bailleur",
+            "type_bailleur",
         )
         ref_name = "Bailleur"
 

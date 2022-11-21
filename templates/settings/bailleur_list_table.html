@@ -10,7 +10,7 @@
                 </th>
                 <th scope="col">
                     Type
-                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='sous_nature_bailleur' url_target='settings:bailleur' %}
+                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='type_bailleur' url_target='settings:bailleur' %}
                 </th>
                 <th scope="col">
                     Siret
@@ -27,7 +27,7 @@
             {% for bailleur in items %}
                 <tr>
                     <td>{{ bailleur.nom }}</td>
-                    <td>{{ bailleur.get_sous_nature_bailleur_display }}</td>
+                    <td>{{ bailleur.get_type_bailleur_display }}</td>
                     <td>{{ bailleur.siret }}</td>
                     <td>{{ bailleur.ville }}</td>
                     <td>

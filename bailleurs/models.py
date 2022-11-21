@@ -5,7 +5,7 @@ from django.db import models
 from core.models import IngestableModel
 
 
-class SousNatureBailleur(models.TextChoices):
+class TypeBailleur(models.TextChoices):
     ASSOCIATIONS = "ASSOCIATIONS", "Associations"
     COMMERCIALES = "COMMERCIALES", "entreprises commerciales"
     COMMUNE = "COMMUNE", "Commune"
@@ -39,7 +39,7 @@ class Bailleur(IngestableModel):
         "adresse": "MOA Adresse 1",
         "code_postal": "MOA Code postal",
         "ville": "MOA Ville",
-        # "sous_nature_bailleur": "Famille MOA", -> doesn't exists in the last version of file
+        # "type_bailleur": "Famille MOA", -> doesn't exists in the last version of file
     }
 
     id = models.AutoField(primary_key=True)
@@ -62,10 +62,10 @@ class Bailleur(IngestableModel):
     signataire_fonction = models.CharField(max_length=255, null=True)
     signataire_date_deliberation = models.DateField(null=True)
     operation_exceptionnelle = models.TextField(null=True)
-    sous_nature_bailleur = models.CharField(
+    type_bailleur = models.CharField(
         max_length=25,
-        choices=SousNatureBailleur.choices,
-        default=SousNatureBailleur.NONRENSEIGNE,
+        choices=TypeBailleur.choices,
+        default=TypeBailleur.NONRENSEIGNE,
     )
 
     cree_le = models.DateTimeField(auto_now_add=True)
@@ -85,14 +85,14 @@ class Bailleur(IngestableModel):
     label = property(_get_nom)
 
     def is_hlm(self):
-        return self.sous_nature_bailleur in [
-            SousNatureBailleur.OFFICE_PUBLIC_HLM,
-            SousNatureBailleur.SA_HLM_ESH,
-            SousNatureBailleur.COOPERATIVE_HLM_SCIC,
+        return self.type_bailleur in [
+            TypeBailleur.OFFICE_PUBLIC_HLM,
+            TypeBailleur.SA_HLM_ESH,
+            TypeBailleur.COOPERATIVE_HLM_SCIC,
         ]
 
     def is_sem(self):
-        return self.sous_nature_bailleur in [SousNatureBailleur.SEM_EPL]
+        return self.type_bailleur in [TypeBailleur.SEM_EPL]
 
     def is_type1and2(self):
         return not self.is_hlm() and not self.is_sem()
