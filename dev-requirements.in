@@ -1,6 +1,6 @@
 --constraint=requirements.txt
 
-coverage
+coverage[toml]
 black
 djhtml
 mock
