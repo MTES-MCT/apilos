@@ -47,6 +47,12 @@ administration = {
 def generate_programmes(num):
     fake = Faker("fr_FR")
     programmes = []
+    random_title = [
+        "Résidence ",
+        "Les jardins de ",
+        "Les terrasses de ",
+        "Le clos ",
+    ]
     random_name = [
         fake.name(),
         fake.color_name(),
@@ -64,14 +70,7 @@ def generate_programmes(num):
             lots.append({"nb_logements": random.randint(1, 30), "financement": fin2})
         programmes.append(
             {
-                "nom": random.choice(
-                    [
-                        "Résidence ",
-                        "Les jardins de ",
-                        "Les terrasses de ",
-                        "Le clos ",
-                    ]
-                )
+                "nom": random.choice(random_title)
                 + f"{''.join(random.choice(random_name))}",
                 "code_postal": f"001{random.randint(0,9)}{random.randint(0,9)}",
                 "ville": f"Ma Ville {random.choice(string.ascii_uppercase)}",
