@@ -19,7 +19,7 @@ operation_response = {
         "code_postal": "",
         "ville": "",
         "capital_social": None,
-        "type_bailleur": "NONRENSEIGNE",
+        "sous_nature_bailleur": "NONRENSEIGNE",
     },
     "administration": {
         "nom": "13055 - Métropole d'Aix-Marseille-Provence",
