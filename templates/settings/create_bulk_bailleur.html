@@ -18,53 +18,54 @@
                     <form method="post" action="" enctype="multipart/form-data">
                         {% csrf_token %}
 
-                        <div id='download_upload_block'>
-                            <fieldset>
-                                <input type="hidden" name="upload" value="true" />
-                                <input
-                                    class="fileinput--hidden"
-                                    type="file"
-                                    id="file-upload-input"
-                                    name="file"
-                                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+                        <div>
+                            <input id="file-upload-lock" type="hidden" name="Upload" value="true" disabled="disabled" />
+                            <input
+                                class="fileinput--hidden"
+                                type="file"
+                                id="file-upload-input"
+                                name="file"
+                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
 
-                                <button class="fr-btn fr-icon-upload-line fr-btn--icon-left auto-upload-btn" type="button" data-target="file-upload-input">
-                                    Téléverser le fichier de listing bailleur
-                                </button>
-                            </fieldset>
+                            <button
+                                class="fr-btn fr-icon-upload-line fr-btn--icon-left auto-upload-btn"
+                                type="button"
+                                data-input="file-upload-input"
+                                data-lock="file-upload-lock"
+                            >
+                                Téléverser le fichier de listing bailleur
+                            </button>
+                        </div>
 
+                        <hr class="fr-col-12 fr-my-3w">
 
-                            <hr class="fr-col-12 fr-my-3w">
-
-                            <div class="fr-table fr-table--bordered table--layout-fixed">
-                                <table aria-label="Prêts">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Nom</th>
-                                            <th scope="col">Prénom</th>
-                                            <th scope="col">Bailleur</th>
-                                            <th scope="col">Adresse e-mail</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                {% include "common/form/input_text.html" %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/input_text.html" %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/input_select.html" %}
-                                            </td>
-                                            <td>
-                                                {% include "common/form/input_text.html" %}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
+                        <div class="fr-table fr-table--bordered table--layout-fixed">
+                            <table aria-label="Prêts">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Nom</th>
+                                        <th scope="col">Prénom</th>
+                                        <th scope="col">Bailleur</th>
+                                        <th scope="col">Adresse e-mail</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            {% include "common/form/input_text.html" %}
+                                        </td>
+                                        <td>
+                                            {% include "common/form/input_text.html" %}
+                                        </td>
+                                        <td>
+                                            {% include "common/form/input_select.html" %}
+                                        </td>
+                                        <td>
+                                            {% include "common/form/input_text.html" %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
 
 
@@ -87,19 +88,21 @@
         document.addEventListener('DOMContentLoaded', function () {
             // Handler auto upload buttons
             for (let button of document.getElementsByClassName('auto-upload-btn')) {
-                console.log(button);
-                const target = document.getElementById(button.getAttribute('data-target'));
-                console.log(target);
 
-                if (target) {
+                const input = document.getElementById(button.getAttribute('data-input'));
+                const lock = document.getElementById(button.getAttribute('data-lock'));
+
+                if (input) {
                     button.onclick = function () {
-                        // Enable surrounding fieldset
-                        button.closest('fieldset').removeAttribute('disabled');
+                        // Enable related hidden input as lock
+                        if (lock) {
+                            lock.removeAttribute('disabled');
+                        }
                         // Trigger file selection popup
-                        target.click();
+                        input.click();
                     }
 
-                    target.onchange = function () {
+                    input.onchange = function () {
                         this.form.submit();
                     }
                 }

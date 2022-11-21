@@ -3,11 +3,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.views.decorators.http import require_POST
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from apilos_settings import services
 from apilos_settings.models import Departement
+from conventions.forms import UploadForm
+from conventions.services.upload_objects import BailleurListingProcessor
 
 
 @login_required
@@ -74,14 +76,38 @@ def edit_bailleur(request, bailleur_uuid):
 
 class CreateBulkBailleurView(LoginRequiredMixin, View):
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._upform = UploadForm()
+
     def get(self, request):
         return render(
             request,
             "settings/create_bulk_bailleur.html",
+            {
+                'upform': self._upform
+            }
         )
 
     def post(self, request):
-        return JsonResponse(request.POST.items(), safe=False)
+        context = {
+            'upform': self._upform
+        }
+        if self.request.POST.get("Upload", False):
+            self._upform = UploadForm(self.request.POST, self.request.FILES)
+            if self._upform.is_valid():
+                processor = BailleurListingProcessor(self.request.FILES["file"])
+                processor.process()
+
+        else:
+            # TODO process formset
+            pass
+
+        return render(
+            request,
+            "settings/create_bulk_bailleur.html",
+            {**context}
+        )
 
 
 

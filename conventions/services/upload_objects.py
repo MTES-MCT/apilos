@@ -1,11 +1,19 @@
 from io import BytesIO
+from typing import List
 from zipfile import BadZipFile
 import datetime
 from decimal import Decimal
-from openpyxl import load_workbook
 
+from django.contrib.auth.models import Group
+from django.forms import model_to_dict
+from openpyxl import load_workbook, Workbook
+from openpyxl.worksheet.worksheet import Worksheet
+
+from bailleurs.models import Bailleur
 from core.storage import client
 from programmes.models import TypologieLogement
+from users.models import User, Role
+from users.type_models import TypeRole
 from . import utils
 
 
@@ -283,3 +291,48 @@ def all_words_in_key_of_dict(value, dict_keys):
         if all(word in value for word in words):
             return key
     return None
+
+
+class BailleurListingProcessor:
+    columns = {
+        'first_name': ['prénom', 'prenom'],
+        'last_name': ['nom'],
+        'email': ['email', 'e-mail', 'adresse email', 'adresse e-mail', 'courriel', 'mail', 'adresse mail'],
+        'bailleur': ['nom bailleur', 'nom du bailleur', 'bailleur']
+    }
+
+    def __init__(self, filename):
+        workbook: Workbook = load_workbook(filename=filename, data_only=True)
+        self._worksheet: Worksheet = workbook[workbook.sheetnames[0]]
+
+    def process(self) -> List[dict]:
+        results = []
+        # Create mapping:
+        mapping = {}
+
+        for column in self._worksheet.iter_cols(min_col=1, max_col=self._worksheet.max_column, min_row=1, max_row=1):
+            cell = column[0]
+            if cell.value is None:
+                continue
+            for (key, labels) in self.columns.items():
+                if cell.value.strip().lower() in labels:
+                    mapping[key] = cell.column
+                    break
+            if len(mapping) == len(self.columns):
+                break
+
+        if len(mapping) < len(self.columns):
+            raise Exception(f"Lecture du fichier impossible: les colonnes {', '.join(list(self.columns.keys() - mapping.keys()))} sont manquantes")
+
+        print(mapping)
+
+        for row in self._worksheet.iter_rows(min_col=1, max_col=self._worksheet.max_column, min_row=2, max_row=self._worksheet.max_row, values_only=True):
+            data = {key: row[index - 1] for (key, index) in mapping.items()}
+
+            # We stop at first row not returning any valid data
+            if all(v is None for v in data.values()):
+                break
+            data['bailleur'] = Bailleur.objects.filter(nom=data.pop('bailleur')).first()
+            results.append(data)
+
+        return results
