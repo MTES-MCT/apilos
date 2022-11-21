@@ -1,10 +1,19 @@
 # syntax=docker/dockerfile:1
 FROM python:3.10
 ENV PYTHONUNBUFFERED=1
+ARG IPYTHON_AUTORELOAD
 
 WORKDIR /code
 COPY requirements.txt .
 COPY dev-requirements.txt .
+
+# Install ipython & setup autoreload, if required
+RUN echo "${IPYTHON_AUTORELOAD}"
+RUN if [ -n "${IPYTHON_AUTORELOAD}" ]; then pip install ipython; fi
+RUN if [ -n "${IPYTHON_AUTORELOAD}" ]; then ipython profile create; fi
+RUN if [ -n "${IPYTHON_AUTORELOAD}" ]; then echo "c.InteractiveShellApp.exec_lines = []" > ~/.ipython/profile_default/ipython_config.py; fi
+RUN if [ -n "${IPYTHON_AUTORELOAD}" ]; then echo "c.InteractiveShellApp.exec_lines.append('%load_ext autoreload')" >> ~/.ipython/profile_default/ipython_config.py; fi
+RUN if [ -n "${IPYTHON_AUTORELOAD}" ]; then echo "c.InteractiveShellApp.exec_lines.append('%autoreload 2')" >> ~/.ipython/profile_default/ipython_config.py; fi
 
 SHELL ["/bin/bash", "-c"]
 

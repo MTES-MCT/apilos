@@ -22,7 +22,10 @@ services:
       - ./redis-data:/data:delegated
       - ./redis.conf:/usr/local/etc/redis/redis.conf
   apilos: &apilos
-    build: .
+    build:
+      context: .
+      args:
+        - IPYTHON_AUTORELOAD=${IPYTHON_AUTORELOAD:-}
     volumes:
       # Use: cached to get better performances on read-heavy workloads, typically here the mounted code will be edited on the host
       - .:/code:cached
