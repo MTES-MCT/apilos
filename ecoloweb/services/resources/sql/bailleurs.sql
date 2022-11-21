@@ -5,7 +5,7 @@
 -- signataire_date_deliberation date,
 -- operation_exceptionnelle     text,
 -- capital_social               double precision,
--- type_bailleur                varchar(25)              not null,
+-- sous_nature_bailleur         varchar(25)              not null,
 select
     b.id,
     b.raisonsociale as nom,

@@ -1,11 +1,20 @@
 import uuid
 
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 from core.models import IngestableModel
 
 
-class TypeBailleur(models.TextChoices):
+class NatureBailleur(models.TextChoices):
+    AUTRES = "Autres bailleurs sociaux non HLM", "Autres bailleurs sociaux non HLM"
+    PRIVES = "Bailleurs privés", "Bailleurs privés"
+    HLM = "HLM", "HLM"
+    SEM = "SEM", "SEM"
+
+
+class SousNatureBailleur(models.TextChoices):
     ASSOCIATIONS = "ASSOCIATIONS", "Associations"
     COMMERCIALES = "COMMERCIALES", "entreprises commerciales"
     COMMUNE = "COMMUNE", "Commune"
@@ -31,6 +40,32 @@ class TypeBailleur(models.TextChoices):
     UES = "UES", "UES"
 
 
+NATURE_RELATIONSHIP = {
+    SousNatureBailleur.ASSOCIATIONS: NatureBailleur.AUTRES,
+    SousNatureBailleur.COMMERCIALES: NatureBailleur.AUTRES,
+    SousNatureBailleur.COMMUNE: NatureBailleur.AUTRES,
+    SousNatureBailleur.COOPERATIVE_HLM_SCIC: NatureBailleur.HLM,
+    SousNatureBailleur.CROUS: NatureBailleur.AUTRES,
+    SousNatureBailleur.DEPARTEMENT: NatureBailleur.AUTRES,
+    SousNatureBailleur.DRE_DDE_CETE_AC_PREF: NatureBailleur.AUTRES,
+    SousNatureBailleur.EPCI: NatureBailleur.AUTRES,
+    SousNatureBailleur.ETC_PUBLIQUE_LOCAL: NatureBailleur.AUTRES,
+    SousNatureBailleur.ETS_HOSTIPATIERS_PRIVES: NatureBailleur.AUTRES,
+    SousNatureBailleur.FONDATION: NatureBailleur.AUTRES,
+    SousNatureBailleur.FONDATION_HLM: NatureBailleur.AUTRES,
+    SousNatureBailleur.FRONCIERE_LOGEMENT: NatureBailleur.AUTRES,
+    SousNatureBailleur.GIP: NatureBailleur.AUTRES,
+    SousNatureBailleur.MUTUELLE: NatureBailleur.AUTRES,
+    SousNatureBailleur.OFFICE_PUBLIC_HLM: NatureBailleur.HLM,
+    SousNatureBailleur.PACT_ARIM: NatureBailleur.AUTRES,
+    SousNatureBailleur.PARTICULIERS: NatureBailleur.PRIVES,
+    SousNatureBailleur.SA_HLM_ESH: NatureBailleur.HLM,
+    SousNatureBailleur.SACI_CAP: NatureBailleur.AUTRES,
+    SousNatureBailleur.SEM_EPL: NatureBailleur.SEM,
+    SousNatureBailleur.UES: NatureBailleur.AUTRES,
+}
+
+
 class Bailleur(IngestableModel):
     pivot = "siret"
     mapping = {
@@ -39,7 +74,7 @@ class Bailleur(IngestableModel):
         "adresse": "MOA Adresse 1",
         "code_postal": "MOA Code postal",
         "ville": "MOA Ville",
-        # "type_bailleur": "Famille MOA", -> doesn't exists in the last version of file
+        # "sous_nature_bailleur": "Famille MOA", -> doesn't exists in the last version of file
     }
 
     id = models.AutoField(primary_key=True)
@@ -62,10 +97,15 @@ class Bailleur(IngestableModel):
     signataire_fonction = models.CharField(max_length=255, null=True)
     signataire_date_deliberation = models.DateField(null=True)
     operation_exceptionnelle = models.TextField(null=True)
-    type_bailleur = models.CharField(
+    nature_bailleur = models.CharField(
+        max_length=255,
+        choices=NatureBailleur.choices,
+        default=NatureBailleur.AUTRES,
+    )
+    sous_nature_bailleur = models.CharField(
         max_length=25,
-        choices=TypeBailleur.choices,
-        default=TypeBailleur.NONRENSEIGNE,
+        choices=SousNatureBailleur.choices,
+        default=SousNatureBailleur.NONRENSEIGNE,
     )
 
     cree_le = models.DateTimeField(auto_now_add=True)
@@ -85,14 +125,21 @@ class Bailleur(IngestableModel):
     label = property(_get_nom)
 
     def is_hlm(self):
-        return self.type_bailleur in [
-            TypeBailleur.OFFICE_PUBLIC_HLM,
-            TypeBailleur.SA_HLM_ESH,
-            TypeBailleur.COOPERATIVE_HLM_SCIC,
+        return self.sous_nature_bailleur in [
+            SousNatureBailleur.OFFICE_PUBLIC_HLM,
+            SousNatureBailleur.SA_HLM_ESH,
+            SousNatureBailleur.COOPERATIVE_HLM_SCIC,
         ]
 
     def is_sem(self):
-        return self.type_bailleur in [TypeBailleur.SEM_EPL]
+        return self.sous_nature_bailleur in [SousNatureBailleur.SEM_EPL]
 
     def is_type1and2(self):
         return not self.is_hlm() and not self.is_sem()
+
+
+# pylint: disable=W0613
+@receiver(pre_save, sender=Bailleur)
+def set_bailleur_nature(sender, instance, *args, **kwargs):
+    if instance.sous_nature_bailleur in NATURE_RELATIONSHIP:
+        instance.nature_bailleur = NATURE_RELATIONSHIP[instance.sous_nature_bailleur]

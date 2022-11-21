@@ -6,7 +6,7 @@ bailleur = {
     "code_postal": None,
     "ville": "Marseille",
     "capital_social": 123000.5,
-    "type_bailleur": "NONRENSEIGNE",
+    "sous_nature_bailleur": "NONRENSEIGNE",
 }
 administration = {
     "nom": "CA d'Arles-Crau-Camargue-Montagnette",

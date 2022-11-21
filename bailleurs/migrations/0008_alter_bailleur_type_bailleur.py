@@ -7,7 +7,7 @@ from django.conf import settings
 
 from openpyxl import load_workbook
 
-from bailleurs.models import TypeBailleur
+from bailleurs.models import SousNatureBailleur
 
 
 def update_type_bailleur(apps, schema_editor):
