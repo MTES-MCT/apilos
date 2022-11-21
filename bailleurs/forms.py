@@ -21,7 +21,19 @@ class UpdateBailleurForm(forms.Form):
 
 
 class BailleurForm(forms.Form):
+    def __init__(self, *args, bailleurs=None, **kwargs) -> None:
+        if bailleurs:
+            self.declared_fields["bailleur"].choices = bailleurs
+        super().__init__(*args, **kwargs)
+
     uuid = forms.UUIDField(required=False)
+    bailleur = forms.ChoiceField(
+        required=False,
+        label="Bailleur parent",
+        help_text="Les utilisateurs du bailleur parent à les mêmes droits sur ce bailleur",
+        initial=None,
+        choices=[],
+    )
     nom = forms.CharField(
         required=True,
         label="Nom du bailleur",

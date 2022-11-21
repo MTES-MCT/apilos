@@ -211,6 +211,11 @@ class ConventionModelsTest(TestCase):
         convention.statut = ConventionStatut.SIGNEE
         self.assertEqual(convention.display_not_validated_status(), "")
 
+    def test_convention_bailleur(self):
+        convention = Convention.objects.order_by("uuid").first()
+        self.assertEqual(convention.bailleur, convention.programme.bailleur)
+        self.assertEqual(convention.bailleur_id, convention.programme.bailleur_id)
+
     def test_xlsx(self):
         utils_assertions.assert_xlsx(self, Pret, "financement")
 
