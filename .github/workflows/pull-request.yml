@@ -53,4 +53,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           thresholdAll: 0.6
           thresholdNew: 0.5
-          thresholdModified: 0.5
+          thresholdModified: 0.4
