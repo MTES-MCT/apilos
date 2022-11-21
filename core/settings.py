@@ -82,21 +82,12 @@ LOGGING = {
 mailjet_api_key = get_env_variable("MAILJET_API_KEY")
 mailjet_api_secret = get_env_variable("MAILJET_API_SECRET")
 
-sendinblue_api_key = get_env_variable("SENDINBLUE_API_KEY")
-
-
 DEFAULT_FROM_EMAIL = "contact@apilos.beta.gouv.fr"
 
 if mailjet_api_key != "":
     EMAIL_BACKEND = "django_mailjet.backends.MailjetBackend"
     MAILJET_API_KEY = mailjet_api_key
     MAILJET_API_SECRET = mailjet_api_secret
-elif sendinblue_api_key:
-    ANYMAIL = {
-        "SENDINBLUE_API_KEY": sendinblue_api_key,
-    }
-    EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
-
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
@@ -141,7 +132,6 @@ INSTALLED_APPS = [
     "django.contrib.admindocs",
     "explorer",
     "ecoloweb",
-    "anymail",
 ]
 
 MIDDLEWARE = [
@@ -286,7 +276,7 @@ AWS_DEFAULT_ACL = get_env_variable("AWS_DEFAULT_ACL")
 AWS_S3_REGION_NAME = get_env_variable("AWS_S3_REGION_NAME")
 AWS_S3_ENDPOINT_URL = get_env_variable("AWS_S3_ENDPOINT_URL")
 
-if AWS_ACCESS_KEY_ID:  # pragma: no cover
+if AWS_ACCESS_KEY_ID:
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 else:
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
@@ -429,7 +419,7 @@ if CERBERE_AUTH:
 
 SENTRY_URL = get_env_variable("SENTRY_URL")
 
-if SENTRY_URL:  # pragma: no cover
+if SENTRY_URL:
     # opened issue on Sentry package : https://github.com/getsentry/sentry-python/issues/1081
     # it should be solved in a further release
     # pylint: disable=E0110

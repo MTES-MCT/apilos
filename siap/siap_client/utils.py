@@ -1,7 +1,7 @@
 import re
 from typing import Tuple
 
-from bailleurs.models import Bailleur, NatureBailleur
+from bailleurs.models import Bailleur
 from instructeurs.models import Administration
 from programmes.models import (
     Financement,
@@ -75,7 +75,6 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
             "adresse": adresse,
             "code_postal": code_postal,
             "ville": ville,
-            "nature_bailleur": _get_nature_bailleur(bailleur_from_siap),
         },
     )
     return bailleur
@@ -202,7 +201,7 @@ def get_or_create_lots_and_conventions(
     else:
         for aide in operation["detailsOperation"]:
             financement = _financement(aide["aide"]["code"])
-            if financement == Financement.PLAI_ADP:
+            if financement == financement.PLAI_ADP:
                 continue
             (lot, _) = Lot.objects.get_or_create(
                 programme=programme,
@@ -274,20 +273,6 @@ def _financement(code):
     if code in ["PLAI_ADP", Financement.PLAI_ADP]:
         return Financement.PLAI_ADP
     return code
-
-
-def _get_nature_bailleur(bailleur_from_siap):
-    if "codeFamilleMO" in bailleur_from_siap:
-        if bailleur_from_siap["codeFamilleMO"] in ["HLM", NatureBailleur.HLM]:
-            return NatureBailleur.HLM
-        if bailleur_from_siap["codeFamilleMO"] in ["SEM", NatureBailleur.SEM]:
-            return NatureBailleur.SEM
-        if bailleur_from_siap["codeFamilleMO"] in [
-            "Bailleurs privés",
-            NatureBailleur.PRIVES,
-        ]:
-            return NatureBailleur.PRIVES
-    return NatureBailleur.AUTRES
 
 
 def _type_habitat(aide: dict) -> TypeHabitat:

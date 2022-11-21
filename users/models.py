@@ -80,16 +80,9 @@ class User(AbstractUser):
                     )
                 return True
 
-            # Get bailleur and its parent to know if the user has rights on one of those
-            bailleur = Bailleur.objects.prefetch_related("parent").get(
-                id=obj.bailleur_id
-            )
-            bailleur_ids = [obj.bailleur_id]
-            if bailleur.parent:
-                bailleur_ids.append(bailleur.parent.id)
             # is bailleur of the convention or is instructeur of the convention
             return self.role_set.filter(
-                bailleur_id__in=bailleur_ids
+                bailleur_id=obj.programme.bailleur_id
             ) or self.role_set.filter(administration_id=obj.programme.administration_id)
         raise Exception(
             "Les permissions ne sont pas correctement configurer, un "
@@ -262,20 +255,12 @@ class User(AbstractUser):
         if self.is_cerbere_user():
             return [self.siap_habilitation["bailleur"]["id"]]
 
-        bailleur_ids = list(
+        return list(
             map(
                 lambda role: role.bailleur_id,
                 self.role_set.filter(typologie=TypeRole.BAILLEUR),
             )
         )
-        bailleur_ids.extend(
-            [
-                bailleur.id
-                for bailleur in Bailleur.objects.filter(parent_id__in=bailleur_ids)
-            ]
-        )
-
-        return bailleur_ids
 
     def bailleurs(self, order_by="nom", full_scope=False):
         return Bailleur.objects.filter(

@@ -155,6 +155,37 @@ def edit_administration(request, administration_uuid):
     }
 
 
+@require_GET
+def bailleur_list(request):
+    search_input = request.GET.get("search_input", "")
+    order_by = request.GET.get("order_by", "nom")
+    page = request.GET.get("page", 1)
+
+    my_bailleur_list = request.user.bailleurs().order_by(order_by)
+    total_bailleur = my_bailleur_list.count()
+    if search_input:
+        my_bailleur_list = my_bailleur_list.filter(
+            Q(nom__icontains=search_input)
+            | Q(siret__icontains=search_input)
+            | Q(ville__icontains=search_input)
+        )
+
+    paginator = Paginator(my_bailleur_list, settings.APILOS_PAGINATION_PER_PAGE)
+    try:
+        bailleurs = paginator.page(page)
+    except PageNotAnInteger:
+        bailleurs = paginator.page(1)
+    except EmptyPage:
+        bailleurs = paginator.page(paginator.num_pages)
+
+    return {
+        "bailleurs": bailleurs,
+        "total_bailleur": total_bailleur,
+        "order_by": order_by,
+        "search_input": search_input,
+    }
+
+
 def edit_bailleur(request, bailleur_uuid):
     bailleur = Bailleur.objects.get(uuid=bailleur_uuid)
     success = False
@@ -163,31 +194,16 @@ def edit_bailleur(request, bailleur_uuid):
             {
                 **request.POST.dict(),
                 "uuid": bailleur_uuid,
-                "sous_nature_bailleur": (
-                    request.POST.get("sous_nature_bailleur", False)
+                "type_bailleur": (
+                    request.POST.get("type_bailleur", False)
                     if request.user.is_superuser
-                    else bailleur.sous_nature_bailleur
+                    else bailleur.type_bailleur
                 ),
             },
-            bailleurs=[
-                (b.uuid, b.nom)
-                for b in request.user.bailleurs(full_scope=True)
-                .exclude(id=bailleur.id)
-                .filter(parent_id__isnull=True)
-            ],
         )
         if form.is_valid():
-            if request.user.is_superuser or request.user.administrateur_de_compte:
-                parent = (
-                    Bailleur.objects.get(uuid=form.cleaned_data["bailleur"])
-                    if form.cleaned_data["bailleur"]
-                    else None
-                )
-            else:
-                parent = bailleur.parent
-            bailleur.sous_nature_bailleur = form.cleaned_data["sous_nature_bailleur"]
+            bailleur.type_bailleur = form.cleaned_data["type_bailleur"]
             bailleur.nom = form.cleaned_data["nom"]
-            bailleur.parent = parent
             bailleur.siret = form.cleaned_data["siret"]
             bailleur.capital_social = form.cleaned_data["capital_social"]
             bailleur.adresse = form.cleaned_data["adresse"]
@@ -207,7 +223,7 @@ def edit_bailleur(request, bailleur_uuid):
                     bailleur,
                     fields=[
                         "uuid",
-                        "sous_nature_bailleur",
+                        "type_bailleur",
                         "nom",
                         "siret",
                         "capital_social",
@@ -218,17 +234,10 @@ def edit_bailleur(request, bailleur_uuid):
                         "signataire_fonction",
                     ],
                 ),
-                "bailleur": bailleur.parent.uuid if bailleur.parent else None,
                 "signataire_date_deliberation": utils.format_date_for_form(
                     bailleur.signataire_date_deliberation
                 ),
             },
-            bailleurs=[
-                (b.uuid, b.nom)
-                for b in request.user.bailleurs(full_scope=True)
-                .exclude(id=bailleur.id)
-                .filter(parent_id__isnull=True)
-            ],
         )
     user_list_service = UserListService(
         search_input=request.GET.get("search_input", ""),
@@ -239,8 +248,7 @@ def edit_bailleur(request, bailleur_uuid):
     user_list_service.paginate()
 
     return {
-        "user_list": user_list_service,
-        "bailleur": bailleur,
+        **user_list_service.as_dict(),
         "form": form,
         "editable": True,
         "success": success,
@@ -512,64 +520,3 @@ class UserListService:
             "paginated_users": self.paginated_users,
             "total_users": self.total_users,
         }
-
-
-class ListService:
-    search_input: str
-    order_by: str
-    page: str
-    item_list: Any
-    paginated_items: Any
-    total_items: int
-
-    def __init__(
-        self,
-        search_input: str,
-        order_by: str,
-        page: str,
-        item_list: Any,
-    ):
-        self.search_input = search_input
-        self.order_by = order_by
-        self.page = page
-        self.item_list = item_list
-
-    def _get_filter(self):
-        pass
-
-    def paginate(self) -> None:
-        total_items = self.item_list.count()
-        if self.search_input:
-            self.item_list = self.item_list.filter(self._get_filter())
-        if self.order_by:
-            self.item_list = self.item_list.order_by(self.order_by)
-
-        paginator = Paginator(self.item_list, settings.APILOS_PAGINATION_PER_PAGE)
-        try:
-            items = paginator.page(self.page)
-        except PageNotAnInteger:
-            items = paginator.page(1)
-        except EmptyPage:
-            items = paginator.page(paginator.num_pages)
-
-        self.paginated_items = items
-        self.total_items = total_items
-
-    def as_dict(self):
-        return {
-            "search_input": self.search_input,
-            "order_by": self.order_by,
-            "page": self.page,
-            "item_list": self.item_list,
-            "paginated_items": self.paginated_items,
-            "total_items": self.total_items,
-        }
-
-
-class BailleurListService(ListService):
-    def _get_filter(self):
-        return (
-            Q(nom__icontains=self.search_input)
-            | Q(siret__icontains=self.search_input)
-            | Q(ville__icontains=self.search_input)
-        )

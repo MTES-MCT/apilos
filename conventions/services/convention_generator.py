@@ -60,14 +60,13 @@ def generate_convention_doc(convention, save_data=False):
             filepath = f"{settings.BASE_DIR}/documents/Type2-template.docx"
         else:
             raise ConventionTypeConfigurationError(
-                "Le type de convention I ou II doit-être configuré pour les bailleurs"
-                + " non SEM ou HLM. Bailleur de type : "
-                + convention.programme.bailleur.get_sous_nature_bailleur_display()
+                "Le type de convention I ou II doit-être configuré pour les bailleurs non SEM ou"
+                + f" HLM. Bailleur de type : {convention.programme.bailleur.get_type_bailleur_display()}"
             )
     else:
         raise NotHandleConventionType(
             "La génération de convention n'est pas disponible pour ce type de"
-            + f" bailleur : {convention.programme.bailleur.get_sous_nature_bailleur_display()}"
+            + f" bailleur : {convention.programme.bailleur.get_type_bailleur_display()}"
         )
     doc = DocxTemplate(filepath)
 

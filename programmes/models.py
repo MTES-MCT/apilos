@@ -37,6 +37,7 @@ class Financement(models.TextChoices):
 class FinancementEDD(models.TextChoices):
     PLUS = "PLUS", "PLUS"
     PLAI = "PLAI", "PLAI"
+    PLAI_ADP = "PLAI_ADP", "PLAI_ADP"
     PLS = "PLS", "PLS"
     SANS_FINANCEMENT = "SANS_FINANCEMENT", "Sans Financement"
 
@@ -407,10 +408,6 @@ class Lot(IngestableModel):
     @property
     def bailleur(self):
         return self.programme.bailleur
-
-    @property
-    def bailleur_id(self):
-        return self.programme.bailleur_id
 
     def edd_volumetrique_text(self):
         return get_key_from_json_field(self.edd_volumetrique, "text")

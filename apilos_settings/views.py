@@ -43,18 +43,11 @@ def edit_administration(request, administration_uuid):
 
 @login_required
 def bailleurs(request):
-    bailleur_list_service = services.BailleurListService(
-        search_input=request.GET.get("search_input", ""),
-        order_by=request.GET.get("order_by", "nom"),
-        page=request.GET.get("page", 1),
-        item_list=request.user.bailleurs(),
-    )
-    bailleur_list_service.paginate()
-
+    result = services.bailleur_list(request)
     return render(
         request,
         "settings/bailleurs.html",
-        bailleur_list_service.as_dict(),
+        {**result},
     )
 
 
