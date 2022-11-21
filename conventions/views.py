@@ -21,6 +21,7 @@ from conventions.services import convention_generator, services, utils
 from conventions.services.services_programmes import (
     ConventionProgrammeService,
     ConventionEDDService,
+    ConventionCadastreService,
 )
 from conventions.services.services_bailleurs import ConventionBailleurService
 from conventions.services.services_conventions import (
@@ -62,34 +63,6 @@ def select_programme_create(request):
             **result,
             # Force Financement to EDD Financement because PLUS-PLAI doesn't exist
             "financements": FinancementEDD,
-        },
-    )
-
-
-@login_required
-def cadastre(request, convention_uuid):
-    # STEP 4
-    result = services.programme_cadastral_update(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        if result.get("redirect", False) == "recapitulatif":
-            return HttpResponseRedirect(
-                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
-            )
-        return HttpResponseRedirect(
-            reverse("conventions:edd", args=[result["convention"].uuid])
-        )
-    return render(
-        request,
-        "conventions/cadastre.html",
-        {
-            **result,
-            "form_step": {
-                "number": 3,
-                "total": 9,
-                "title": "Cadastre",
-                "next": "EDD",
-                "next_target": "conventions:edd",
-            },
         },
     )
 
@@ -484,6 +457,25 @@ class ConventionProgrammeView(ConventionView):
         return (
             Convention.objects.prefetch_related("programme")
             .prefetch_related("lot")
+            .get(uuid=convention_uuid)
+        )
+
+
+class ConventionCadastreView(ConventionView):
+    target_template: str = "conventions/cadastre.html"
+    next_path_redirect: str = "conventions:edd"
+    service_class = ConventionCadastreService
+    form_step: dict = {
+        "number": 3,
+        "total": 9,
+        "title": "Cadastre",
+        "next": "EDD",
+    }
+
+    def _get_convention(self, convention_uuid):
+        return (
+            Convention.objects.prefetch_related("programme")
+            .prefetch_related("programme__referencecadastrale_set")
             .get(uuid=convention_uuid)
         )
 
