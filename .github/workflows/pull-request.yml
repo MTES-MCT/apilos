@@ -1,0 +1,56 @@
+name: 'coverage'
+on:
+  - pull_request
+
+jobs:
+  coverage:
+    name: Test & Coverage
+
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: appel
+          POSTGRES_NAME: appel
+          POSTGRES_HOST: postgres 
+          POSTGRES_PASSWORD: appel
+          POSTGRES_PORT: 5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+      - name: Install dependencies
+        run:
+          pip install -r requirements.txt -r dev-requirements.txt
+      - name: Copy env variable
+        run:
+          mv .env.template .env
+      - name: Execute test with coverage
+        run:
+          coverage run --source='.' manage.py test
+        env:
+          DB_HOST: localhost
+      - name: Create coverage report
+        run:
+          coverage xml -o coverage.xml
+      - name: Post coverage to PR
+        uses: orgoro/coverage@v3
+        with:
+          coverageFile: coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          thresholdAll: 0.6
+          thresholdNew: 0.5
+          thresholdModified: 0.4

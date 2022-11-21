@@ -875,10 +875,6 @@ zope-interface==5.5.1 \
     --hash=sha256:e6a923d2dec50f2b4d41ce198af3516517f2e458220942cf393839d2f9e22000 \
     --hash=sha256:e8c8764226daad39004b7873c3880eb4860c594ff549ea47c045cdf313e1bad5
     # via gevent
-    # via openpyxl
-faker==15.3.2 \
-    --hash=sha256:0094fe3340ad73c490d3ffccc59cc171b161acfccccd52925c70970ba23e6d6b \
-    --hash=sha256:43da04aae745018e8bded768e74c84423d9dc38e4c498a53439e749d90e20bc0
 
 # WARNING: The following packages were not pinned, but pip requires them to be
 # pinned when the requirements file includes hashes. Consider using the --allow-unsafe flag.

@@ -30,4 +30,3 @@ whitenoise>=5.3.0
 tqdm>=4.0
 typing-extensions>=3.10
 django-sql-explorer[xls]
-Faker>=15.3

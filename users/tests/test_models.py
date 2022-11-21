@@ -242,45 +242,46 @@ class AdministrationsModelsTest(TestCase):
     def test_conventions(self):
         user_instructeur = User.objects.get(username="sabine")
         self.assertEqual(
-            list(user_instructeur.conventions().values_list("uuid", flat=True)),
-            list(
-                Convention.objects.filter(
+            {convention.uuid for convention in user_instructeur.conventions()},
+            {
+                convention.uuid
+                for convention in Convention.objects.filter(
                     programme__administration_id__in=[
                         user_instructeur.role_set.all()[0].administration_id,
                         user_instructeur.role_set.all()[1].administration_id,
                     ]
-                ).values_list("uuid", flat=True)
-            ),
+                )
+            },
         )
         user_bailleur = User.objects.get(username="raph")
-        convention_id_list = list(
-            Convention.objects.filter(
+        convention_id_list = {
+            convention.uuid
+            for convention in Convention.objects.filter(
                 programme__bailleur_id__in=[
                     user_bailleur.role_set.all()[0].bailleur_id,
                     user_bailleur.role_set.all()[1].bailleur_id,
                 ]
-            ).values_list("uuid", flat=True)
-        )
+            )
+        }
         self.assertEqual(
-            list(user_bailleur.conventions().values_list("uuid", flat=True)),
+            {convention.uuid for convention in user_bailleur.conventions()},
             convention_id_list,
         )
         user_bailleur.filtre_departements.add(Departement.objects.get(code_insee="13"))
-        convention_id_list_with_filters = list(
-            Convention.objects.annotate(
+        convention_id_list_with_filters = {
+            convention.uuid
+            for convention in Convention.objects.annotate(
                 departement=Substr("programme__code_postal", 1, 2)
-            )
-            .filter(
+            ).filter(
                 programme__bailleur_id__in=[
                     user_bailleur.role_set.all()[0].bailleur_id,
                     user_bailleur.role_set.all()[1].bailleur_id,
                 ],
                 departement="13",
             )
-            .values_list("uuid", flat=True)
-        )
+        }
         self.assertEqual(
-            list(user_bailleur.conventions().values_list("uuid", flat=True)),
+            {convention.uuid for convention in user_bailleur.conventions()},
             convention_id_list_with_filters,
         )
         self.assertNotEqual(

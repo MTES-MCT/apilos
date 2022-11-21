@@ -156,7 +156,7 @@ pre-commit install
 
 Plus de détails sur la doc dédiée [API.md](API.md)
 
-## Ajouter des dépendance avec pip-tools
+## Ajouter des dépendances avec pip-tools
 
 Ajouter les dépendances dans requirements.in ou dev-requirements.in
 

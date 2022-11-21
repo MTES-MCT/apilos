@@ -193,6 +193,10 @@ class Convention(models.Model):
     def bailleur(self):
         return self.programme.bailleur
 
+    @property
+    def bailleur_id(self):
+        return self.programme.bailleur_id
+
     def __str__(self):
         programme = self.programme
         lot = self.lot
