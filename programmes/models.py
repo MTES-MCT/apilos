@@ -37,7 +37,6 @@ class Financement(models.TextChoices):
 class FinancementEDD(models.TextChoices):
     PLUS = "PLUS", "PLUS"
     PLAI = "PLAI", "PLAI"
-    PLAI_ADP = "PLAI_ADP", "PLAI_ADP"
     PLS = "PLS", "PLS"
     SANS_FINANCEMENT = "SANS_FINANCEMENT", "Sans Financement"
 
