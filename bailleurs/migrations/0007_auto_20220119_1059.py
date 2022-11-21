@@ -2,7 +2,7 @@
 
 from django.db import migrations
 
-from bailleurs.models import TypeBailleur
+from bailleurs.models import SousNatureBailleur
 
 
 def normalize_enum_data(apps, schema_editor):
@@ -13,10 +13,10 @@ def normalize_enum_data(apps, schema_editor):
 
     for bailleur in Bailleur.objects.all():
 
-        for value, label in TypeBailleur.choices:
+        for value, label in SousNatureBailleur.choices:
             if bailleur.type_bailleur == label:
                 bailleur.type_bailleur = value
-        if bailleur.type_bailleur not in TypeBailleur.values:
+        if bailleur.type_bailleur not in SousNatureBailleur.values:
             bailleur.type_bailleur = Bailleur.type_bailleur.field.default
 
         bailleur.save()
