@@ -299,7 +299,9 @@ class LogementEDD(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     designation = models.CharField(max_length=255)
-    programme = models.ForeignKey("Programme", on_delete=models.CASCADE, null=False)
+    programme = models.ForeignKey(
+        "Programme", on_delete=models.CASCADE, null=False, related_name="logementedds"
+    )
     financement = models.CharField(
         max_length=25,
         choices=FinancementEDD.choices,
@@ -329,7 +331,12 @@ class LogementEDD(models.Model):
 class ReferenceCadastrale(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    programme = models.ForeignKey("Programme", on_delete=models.CASCADE, null=False)
+    programme = models.ForeignKey(
+        "Programme",
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="referencecadastrales",
+    )
     section = models.CharField(max_length=255, null=True)
     numero = models.IntegerField(null=True)
     lieudit = models.CharField(max_length=255, null=True)
@@ -371,7 +378,9 @@ class Lot(IngestableModel):
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nb_logements = models.IntegerField(null=True)
-    programme = models.ForeignKey("Programme", on_delete=models.CASCADE, null=False)
+    programme = models.ForeignKey(
+        "Programme", on_delete=models.CASCADE, null=False, related_name="lots"
+    )
     financement = models.CharField(
         max_length=25,
         choices=Financement.choices,

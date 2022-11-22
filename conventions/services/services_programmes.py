@@ -39,7 +39,7 @@ def select_programme_create(request):
     lots = (
         request.user.lots()
         .prefetch_related("programme")
-        .prefetch_related("convention_set")
+        .prefetch_related("conventions")
         .order_by("programme__ville", "programme__nom", "nb_logements", "financement")
         .filter(programme__parent_id__isnull=True)
     )
@@ -258,7 +258,7 @@ class ConventionCadastreService(ConventionService):
     def get(self):
         initial = []
         referencecadastrales = (
-            self.convention.programme.referencecadastrale_set.all().order_by("section")
+            self.convention.programme.referencecadastrales.all().order_by("section")
         )
         for referencecadastrale in referencecadastrales:
             initial.append(
@@ -491,7 +491,7 @@ class ConventionCadastreService(ConventionService):
     def _save_programme_reference_cadastrale(self):
         obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         obj_uuids = list(filter(None, obj_uuids1))
-        self.convention.programme.referencecadastrale_set.exclude(
+        self.convention.programme.referencecadastrales.exclude(
             uuid__in=obj_uuids
         ).delete()
         for form in self.formset:
@@ -526,7 +526,7 @@ class ConventionEDDService(ConventionService):
 
     def get(self):
         initial = []
-        for logementedd in self.convention.programme.logementedd_set.all():
+        for logementedd in self.convention.programme.logementedds.all():
             initial.append(
                 {
                     "uuid": logementedd.uuid,
@@ -689,7 +689,7 @@ class ConventionEDDService(ConventionService):
     def _save_programme_logement_edd(self):
         lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         lgt_uuids = list(filter(None, lgt_uuids1))
-        self.convention.programme.logementedd_set.exclude(uuid__in=lgt_uuids).delete()
+        self.convention.programme.logementedds.exclude(uuid__in=lgt_uuids).delete()
         for form_logementedd in self.formset:
             if form_logementedd.cleaned_data["uuid"]:
                 logementedd = LogementEDD.objects.get(

@@ -88,9 +88,9 @@ class User(AbstractUser):
             if bailleur.parent:
                 bailleur_ids.append(bailleur.parent.id)
             # is bailleur of the convention or is instructeur of the convention
-            return self.role_set.filter(
-                bailleur_id__in=bailleur_ids
-            ) or self.role_set.filter(administration_id=obj.programme.administration_id)
+            return self.roles.filter(bailleur_id__in=bailleur_ids) or self.roles.filter(
+                administration_id=obj.programme.administration_id
+            )
         raise Exception(
             "Les permissions ne sont pas correctement configurer, un "
             + "objet de type Convention doit être asocié à la "
@@ -105,7 +105,7 @@ class User(AbstractUser):
             return False
         # check permission itself
         permissions = []
-        for role in self.role_set.all():
+        for role in self.roles.all():
             permissions += map(
                 lambda permission: permission.content_type.name
                 + "."
@@ -142,7 +142,7 @@ class User(AbstractUser):
         return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
 
     def _is_role(self, role):
-        return role in map(lambda r: r.typologie, self.role_set.all())
+        return role in map(lambda r: r.typologie, self.roles.all())
 
     def programmes(self) -> list:
         """
@@ -225,7 +225,7 @@ class User(AbstractUser):
         return list(
             map(
                 lambda role: role.administration_id,
-                self.role_set.filter(typologie=TypeRole.INSTRUCTEUR),
+                self.roles.filter(typologie=TypeRole.INSTRUCTEUR),
             )
         )
 
@@ -265,7 +265,7 @@ class User(AbstractUser):
         bailleur_ids = list(
             map(
                 lambda role: role.bailleur_id,
-                self.role_set.filter(typologie=TypeRole.BAILLEUR),
+                self.roles.filter(typologie=TypeRole.BAILLEUR),
             )
         )
         bailleur_ids.extend(
@@ -353,14 +353,14 @@ class User(AbstractUser):
         if self.is_bailleur():
             return (
                 User.objects.all()
-                .filter(role__bailleur_id__in=self._bailleur_ids())
+                .filter(roles__bailleur_id__in=self._bailleur_ids())
                 .order_by(order_by)
                 .distinct()
             )
         if self.is_instructeur():
             return (
                 User.objects.all()
-                .filter(role__administration_id__in=self.administration_ids())
+                .filter(roles__administration_id__in=self.administration_ids())
                 .order_by(order_by)
                 .distinct()
             )
@@ -422,13 +422,31 @@ class Role(models.Model):
         default=TypeRole.BAILLEUR,
     )
     bailleur = models.ForeignKey(
-        "bailleurs.Bailleur", on_delete=models.CASCADE, blank=True, null=True
+        "bailleurs.Bailleur",
+        blank=True,
+        related_name="roles",
+        null=True,
+        on_delete=models.CASCADE,
     )
     administration = models.ForeignKey(
-        "instructeurs.Administration", on_delete=models.CASCADE, blank=True, null=True
+        "instructeurs.Administration",
+        blank=True,
+        related_name="roles",
+        null=True,
+        on_delete=models.CASCADE,
     )
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE, null=False)
-    group = models.ForeignKey("auth.Group", on_delete=models.CASCADE, null=False)
+    user = models.ForeignKey(
+        "users.User",
+        related_name="roles",
+        null=False,
+        on_delete=models.CASCADE,
+    )
+    group = models.ForeignKey(
+        "auth.Group",
+        related_name="roles",
+        null=False,
+        on_delete=models.CASCADE,
+    )
     perimetre_region = models.CharField(max_length=10, null=True)
     perimetre_departement = models.CharField(max_length=10, null=True)
 

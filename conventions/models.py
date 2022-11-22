@@ -122,7 +122,12 @@ class Convention(models.Model):
         on_delete=models.CASCADE,
         null=False,
     )
-    lot = models.ForeignKey("programmes.Lot", on_delete=models.CASCADE, null=False)
+    lot = models.ForeignKey(
+        "programmes.Lot",
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="conventions",
+    )
     date_fin_conventionnement = models.DateField(null=True, blank=True)
     financement = models.CharField(
         max_length=25,
@@ -229,14 +234,14 @@ class Convention(models.Model):
     def get_last_notification_by_role(self, role: TypeRole):
         try:
             return (
-                self.conventionhistory_set.prefetch_related("user")
-                .prefetch_related("user__role_set")
+                self.conventionhistories.prefetch_related("user")
+                .prefetch_related("user__roles")
                 .filter(
                     statut_convention__in=[
                         ConventionStatut.INSTRUCTION,
                         ConventionStatut.CORRECTION,
                     ],
-                    user__role__typologie=role,
+                    user__roles__typologie=role,
                 )
                 .latest("cree_le")
             )
@@ -251,7 +256,7 @@ class Convention(models.Model):
 
     def get_last_submission(self):
         try:
-            return self.conventionhistory_set.filter(
+            return self.conventionhistories.filter(
                 statut_convention__in=[
                     ConventionStatut.INSTRUCTION,
                     ConventionStatut.CORRECTION,
@@ -273,7 +278,7 @@ class Convention(models.Model):
                         lambda x: x.email,
                         [
                             r.user
-                            for r in self.programme.bailleur.role_set.all()
+                            for r in self.programme.bailleur.roles.all()
                             if r.user.preferences_email != EmailPreferences.AUCUN
                         ],
                     )
@@ -283,9 +288,9 @@ class Convention(models.Model):
             set(
                 map(
                     lambda x: x.user.email,
-                    self.conventionhistory_set.filter(
+                    self.conventionhistories.filter(
                         user__preferences_email=EmailPreferences.PARTIEL,
-                        user__role__typologie=TypeRole.BAILLEUR,
+                        user__roles__typologie=TypeRole.BAILLEUR,
                     ),
                 )
             )
@@ -294,7 +299,7 @@ class Convention(models.Model):
             set(
                 map(
                     lambda x: x.user.email,
-                    self.programme.bailleur.role_set.filter(
+                    self.programme.bailleur.roles.filter(
                         user__preferences_email=EmailPreferences.TOUS
                     ),
                 )
@@ -316,7 +321,7 @@ class Convention(models.Model):
                 set(
                     map(
                         lambda x: x.user.email,
-                        self.programme.administration.role_set.filter(
+                        self.programme.administration.roles.filter(
                             Q(user__preferences_email=EmailPreferences.PARTIEL)
                             | Q(user__preferences_email=EmailPreferences.TOUS)
                         ),
@@ -327,9 +332,9 @@ class Convention(models.Model):
             set(
                 map(
                     lambda x: x.user.email,
-                    self.conventionhistory_set.filter(
+                    self.conventionhistories.filter(
                         user__preferences_email=EmailPreferences.PARTIEL,
-                        user__role__typologie=TypeRole.INSTRUCTEUR,
+                        user__roles__typologie=TypeRole.INSTRUCTEUR,
                     ),
                 )
             )
@@ -338,7 +343,7 @@ class Convention(models.Model):
             set(
                 map(
                     lambda x: x.user.email,
-                    self.programme.administration.role_set.filter(
+                    self.programme.administration.roles.filter(
                         user__preferences_email=EmailPreferences.TOUS
                     ),
                 )
@@ -557,7 +562,12 @@ class Convention(models.Model):
 class ConventionHistory(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    convention = models.ForeignKey("Convention", on_delete=models.CASCADE, null=False)
+    convention = models.ForeignKey(
+        "Convention",
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="conventionhistories",
+    )
     statut_convention = models.CharField(
         max_length=25,
         choices=ConventionStatut.choices,
@@ -588,7 +598,9 @@ class ConventionHistory(models.Model):
 class Pret(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    convention = models.ForeignKey("Convention", on_delete=models.CASCADE, null=False)
+    convention = models.ForeignKey(
+        "Convention", on_delete=models.CASCADE, null=False, related_name="prets"
+    )
     preteur = models.CharField(
         max_length=25,
         choices=Preteur.choices,

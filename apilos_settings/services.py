@@ -143,7 +143,7 @@ def edit_administration(request, administration_uuid):
         search_input=request.GET.get("search_input", ""),
         order_by=request.GET.get("order_by", "username"),
         page=request.GET.get("page", 1),
-        my_user_list=User.objects.filter(role__in=administration.role_set.all()),
+        my_user_list=User.objects.filter(roles__in=administration.roles.all()),
     )
     user_list_service.paginate()
 
@@ -234,7 +234,7 @@ def edit_bailleur(request, bailleur_uuid):
         search_input=request.GET.get("search_input", ""),
         order_by=request.GET.get("order_by", "username"),
         page=request.GET.get("page", 1),
-        my_user_list=User.objects.filter(role__in=bailleur.role_set.all()),
+        my_user_list=User.objects.filter(roles__in=bailleur.roles.all()),
     )
     user_list_service.paginate()
 

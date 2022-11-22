@@ -105,9 +105,9 @@ def generate_convention_doc(convention, save_data=False):
         "logements": convention.lot.logements.all(),
         "annexes": annexes,
         "stationnements": convention.lot.type_stationnements.all(),
-        "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF", "CDCL"]),
-        "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF", "CDCL"]),
-        "references_cadastrales": convention.programme.referencecadastrale_set.all(),
+        "prets_cdc": convention.prets.filter(preteur__in=["CDCF", "CDCL"]),
+        "autres_prets": convention.prets.exclude(preteur__in=["CDCF", "CDCL"]),
+        "references_cadastrales": convention.programme.referencecadastrales.all(),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),
@@ -172,13 +172,13 @@ def _save_convention_donnees_validees(
         "annexes": _list_to_dict(annexes),
         "stationnements": _list_to_dict(convention.lot.type_stationnements.all()),
         "prets_cdc": _list_to_dict(
-            convention.pret_set.filter(preteur__in=["CDCF", "CDCL"])
+            convention.prets.filter(preteur__in=["CDCF", "CDCL"])
         ),
         "autres_prets": _list_to_dict(
-            convention.pret_set.exclude(preteur__in=["CDCF", "CDCL"])
+            convention.prets.exclude(preteur__in=["CDCF", "CDCL"])
         ),
         "references_cadastrales": _list_to_dict(
-            convention.programme.referencecadastrale_set.all()
+            convention.programme.referencecadastrales.all()
         ),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
@@ -402,7 +402,7 @@ def _compute_mixte(convention):
 
 
 def _prepare_logement_edds(convention):
-    logement_edds = convention.programme.logementedd_set.order_by(
+    logement_edds = convention.programme.logementedds.order_by(
         "financement", "designation"
     ).all()
     count = 0

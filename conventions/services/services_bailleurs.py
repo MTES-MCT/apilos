@@ -80,11 +80,11 @@ class ConventionBailleurService(ConventionService):
         if self.upform.is_valid():
             bailleur = Bailleur.objects.get(uuid=self.request.POST["bailleur"])
             programme = (
-                Programme.objects.prefetch_related("lot_set__logements__annexes")
-                .prefetch_related("lot_set__type_stationnements")
-                .prefetch_related("logementedd_set")
-                .prefetch_related("conventions__pret_set")
-                .prefetch_related("referencecadastrale_set")
+                Programme.objects.prefetch_related("lots__logements__annexes")
+                .prefetch_related("lots__type_stationnements")
+                .prefetch_related("logementedds")
+                .prefetch_related("conventions__prets")
+                .prefetch_related("referencecadastrales")
             ).get(id=self.convention.programme_id)
             for convention in programme.conventions.all():
                 if convention.statut in [
