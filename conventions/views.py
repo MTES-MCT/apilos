@@ -380,7 +380,7 @@ class ConventionView(ABC, LoginRequiredMixin, View):
                 **base_convention_response_error(request, service.convention),
                 **({"form": service.form} if service.form else {}),
                 **({"upform": service.upform} if service.upform else {}),
-                **({"formset": service.formset} if service.formset else {}),
+                **({"formset": service._formset} if service._formset else {}),
                 **self._get_form_steps(),
                 "editable_after_upload": (
                     editable_convention(request, convention)
@@ -413,7 +413,7 @@ class ConventionView(ABC, LoginRequiredMixin, View):
                 **base_convention_response_error(request, service.convention),
                 **({"form": service.form} if service.form else {}),
                 **({"upform": service.upform} if service.upform else {}),
-                **({"formset": service.formset} if service.formset else {}),
+                **({"formset": service._formset} if service._formset else {}),
                 **self._get_form_steps(),
                 **(
                     {"import_warnings": service.import_warnings}

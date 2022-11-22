@@ -1,3 +1,5 @@
+from io import BytesIO
+
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
@@ -8,8 +10,10 @@ from django.urls import reverse
 
 from apilos_settings import services
 from apilos_settings.models import Departement
+from bailleurs.models import Bailleur
 from conventions.forms import UploadForm
 from conventions.services.upload_objects import BailleurListingProcessor
+from users.forms import UserBailleurFormSet
 
 
 @login_required
@@ -79,29 +83,41 @@ class CreateBulkBailleurView(LoginRequiredMixin, View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._upform = UploadForm()
+        self._formset = UserBailleurFormSet()
 
     def get(self, request):
         return render(
             request,
             "settings/create_bulk_bailleur.html",
             {
-                'upform': self._upform
+                'upform': self._upform,
+                'formset': self._formset,
             }
         )
 
     def post(self, request):
         context = {
-            'upform': self._upform
+            'upform': self._upform,
+            'formset': self._formset,
         }
         if self.request.POST.get("Upload", False):
-            self._upform = UploadForm(self.request.POST, self.request.FILES)
+            self._upform = UploadForm(request.POST, request.FILES)
             if self._upform.is_valid():
-                processor = BailleurListingProcessor(self.request.FILES["file"])
-                processor.process()
-
+                processor = BailleurListingProcessor(filename=BytesIO(request.FILES['file'].read()))
+                users = processor.process()
+                data = {
+                    'form-TOTAL_FORMS': len(users),
+                    'form-INITIAL_FORMS': len(users),
+                }
+                print(users)
+                for index, user in enumerate(users):
+                    for key, value in user.items():
+                        data[f'form-{index}-{key}'] = value
+                self._formset = UserBailleurFormSet(data)
+                context['formset'] = self._formset
         else:
-            # TODO process formset
-            pass
+            self._formset = UserBailleurFormSet(request.POST)
+            context['formset'] = self._formset
 
         return render(
             request,

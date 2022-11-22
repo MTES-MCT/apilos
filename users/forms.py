@@ -1,7 +1,10 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.forms import formset_factory, BaseFormSet
+
 from apilos_settings.models import Departement
+from bailleurs.models import Bailleur
 
 from users.models import User
 from users.type_models import TypeRole, EmailPreferences
@@ -145,6 +148,57 @@ class AddUserForm(UserForm):
 
         user_type = cleaned_data.get("user_type")
 
+
+class UserBailleurForm(forms.Form):
+    first_name = forms.CharField(
+        required=True,
+        label="Prénom",
+        max_length=150,
+        error_messages={
+            "max_length": "Le prénom de l'utilisateur ne doit pas excéder 150 caractères",
+        },
+    )
+
+    last_name = forms.CharField(
+        required=True,
+        label="Nom",
+        max_length=150,
+        error_messages={
+            "max_length": "Le nom de l'utilisateur ne doit pas excéder 150 caractères",
+        },
+    )
+
+    email = forms.EmailField(
+        required=True,
+        label="Email",
+        error_messages={
+            "required": "L'email de l'utilisateur est obligatoire",
+        },
+    )
+
+    bailleur = forms.ModelChoiceField(
+        required=True,
+        queryset=Bailleur.objects.all(),
+        label="Entreprise bailleur",
+    )
+
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        same_users = User.objects.filter(email=email)
+        if "username" in self.cleaned_data:
+            same_users = same_users.exclude(username=self.cleaned_data["username"])
+
+        if same_users.exists():
+            raise ValidationError(
+                "Le email de l'utilisateur existe déjà, il doit-être unique"
+            )
+        return email
+
+
+class BaseUserBailleurFormSet(BaseFormSet):
+    pass
+
+UserBailleurFormSet = formset_factory(UserBailleurForm, formset=BaseUserBailleurFormSet, extra=0)
 
 class AddBailleurForm(forms.Form):
 

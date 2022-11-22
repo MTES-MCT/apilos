@@ -39,6 +39,7 @@
 
                         <hr class="fr-col-12 fr-my-3w">
 
+                        {{ formset.management_form }}
                         <div class="fr-table fr-table--bordered table--layout-fixed">
                             <table aria-label="Prêts">
                                 <thead>
@@ -50,20 +51,22 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for form_user_bailleur in formset %}
                                     <tr>
                                         <td>
-                                            {% include "common/form/input_text.html" %}
+                                            {% include "common/form/input_text.html" with form_input=form_user_bailleur.first_name editable=True %}
                                         </td>
                                         <td>
-                                            {% include "common/form/input_text.html" %}
+                                            {% include "common/form/input_text.html" with form_input=form_user_bailleur.last_name editable=True %}
                                         </td>
                                         <td>
-                                            {% include "common/form/input_select.html" %}
+                                            {% include "common/form/input_select.html" with form_input=form_user_bailleur.bailleur editable=True %}
                                         </td>
                                         <td>
-                                            {% include "common/form/input_text.html" %}
+                                            {% include "common/form/input_text.html" with form_input=form_user_bailleur.email editable=True %}
                                         </td>
                                     </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
