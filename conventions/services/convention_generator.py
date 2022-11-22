@@ -123,7 +123,7 @@ def generate_convention_doc(convention, save_data=False):
     jinja_env.filters["d"] = to_fr_date
     jinja_env.filters["sd"] = to_fr_short_date
     jinja_env.filters["f"] = _to_fr_float
-    jinja_env.filters["pl"] = _pluralize
+    jinja_env.filters["pl"] = pluralize
     jinja_env.filters["len"] = len
     jinja_env.filters["inline_text_multiline"] = inline_text_multiline
 
@@ -259,7 +259,7 @@ def _to_fr_float(value, d=2):
     return format(value, f",.{d}f").replace(",", " ").replace(".", ",")
 
 
-def _pluralize(value):
+def pluralize(value):
     if value > 1:
         return "s"
     return ""
@@ -465,7 +465,7 @@ def fiche_caf_doc(convention):
     jinja_env.filters["d"] = to_fr_date
     jinja_env.filters["sd"] = to_fr_short_date
     jinja_env.filters["f"] = _to_fr_float
-    jinja_env.filters["pl"] = _pluralize
+    jinja_env.filters["pl"] = pluralize
     jinja_env.filters["len"] = len
     jinja_env.filters["inline_text_multiline"] = inline_text_multiline
 
