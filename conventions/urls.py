@@ -6,6 +6,16 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("selection", views.select_programme_create, name="selection"),
     path(
+        "selection_from_db",
+        views.ConventionSelectionFromDBView.as_view(),
+        name="selection",
+    ),
+    path(
+        "selection_from_zero",
+        views.ConventionSelectionFromZeroView.as_view(),
+        name="selection",
+    ),
+    path(
         "bailleur/<convention_uuid>",
         views.ConventionBailleurView.as_view(),
         name="bailleur",
