@@ -1,0 +1,133 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}Selection - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        {% include "conventions/common/form_header.html"%}
+        <div class="fr-container">
+            <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
+                {% csrf_token %}
+                <div class="fr-grid-row fr-grid-row--gutters fr-pt-5w">
+                    <div class="fr-col-md-12">
+                        <div class="fr-mb-3w fr-form-group">
+                            <fieldset class="fr-fieldset">
+                                <div class="fr-fieldset__content">
+                                    <div class="fr-radio-group">
+                                        <input
+                                            type="radio"
+                                            id="selection"
+                                            value="selection"
+                                            name="{{form.existing_programme.html_name}}"
+                                            {% if form.existing_programme.value == 'selection' %}checked{% endif %}/>
+                                        <label class="fr-label" for="selection">
+                                            Sélectionnez votre programme et son financement {% include "common/form/required_field.html" with form_input=form.lot_uuid %}
+                                        </label>
+                                    </div>
+                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                            document.getElementById('selection')
+                                                .addEventListener('click', function(){ convention_mode(true) });
+                                        });
+                                    </script>
+                                    <div id='programme_selection' class="fr-ml-4w fr-select-group {% if form.lot_uuid.errors %}fr-select-group--error{% endif %}"  {% if form.existing_programme.value != 'selection' %}hidden{% endif %}>
+                                        <details>
+                                            <summary class="text-title-blue-france fr-text--xs"><u>Comment afficher uniquement les programmes de mes départements ?</u></summary>
+                                            <div class="fr-text--xs">
+                                                <div>Vous pouvez choisir vos zones et départements d’intervention dans votre <a class="fr-link fr-text--xs" href="{% url 'settings:profile' %}">espace personnel.</a></div>
+                                                <div><a href="https://docs.apilos.beta.gouv.fr/apres-la-validation-de-la-convention/bailleurs-parametres/comment-afficher-mes-programmes-par-departement" target="_blank" rel="noopener" class="fr-link fr-text--xs">Plus d’informations sur les paramètres de votre compte</a></div>
+                                            </div>
+                                        </details>
+
+
+                                        <div class="fr-mt-1w block--row-strech" id="{{form.lot.id_for_label}}_div">
+                                            <select
+                                                class="fr-select {% if form.lot.errors %}fr-select--error{% endif %}"
+                                                id="{{form.lot.id_for_label}}"
+                                                name="{{form.lot.html_name}}"
+                                                {% if convention %}disabled{% endif %} >
+                                                <option value="" selected disabled hidden>Selectionnez une option</option>
+                                                {% for lot in lots %}
+                                                    <option
+                                                        value="{{lot.uuid}}"
+                                                        {% if lot.uuid|stringformat:"s"  == form.lot.value %}selected{% endif %}
+                                                        {% if lot.convention_set.all and lot.uuid|stringformat:"s"  != form.lot.value %}disabled="disabled"{% endif %}>
+                                                        {{ lot.programme.ville}} - {{ lot.programme.nom }} - {{lot.nb_logements}} lgts - {{ lot.get_type_habitat_display }} - {{ lot.financement }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        {% for error in form.lot.errors %}
+                                            <p id="select-error-desc-error" class="fr-error-text">
+                                                {{ error }}
+                                            </p>
+                                        {% endfor %}
+                                    </div>
+
+                                    {% if not convention.uuid %}
+                                        <div class="fr-radio-group">
+                                            <input
+                                                type="radio"
+                                                id="creation"
+                                                value="creation"
+                                                name="{{form.existing_programme.html_name}}"
+                                                {% if form.existing_programme.value == 'creation' %}checked{% endif %}/>
+                                            <label class="fr-label" for="creation">Convention sans agrément : créez votre convention à partir de zéro
+                                            </label>
+                                        </div>
+                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                document.getElementById('creation')
+                                                    .addEventListener('click', function(){ convention_mode(false) });
+                                            });
+                                        </script>
+                                        <div id='programme_creation' {% if form.existing_programme.value != 'creation' %}hidden{% endif %}>
+                                            {% include "common/form/input_select.html" with form_input=form.bailleur without_empty_option=form.bailleur.field.choices|length_is:1 mandatory_input=True %}
+
+                                            {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 mandatory_input=True %}
+
+                                            {% include "common/form/input_text.html" with form_input=form.nom  mandatory_input=True %}
+
+                                            <div class="fr-grid-row fr-grid-row--gutters">
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                                                    {% include "common/form/input_number.html" with form_input=form.nb_logements mandatory_input=True %}
+                                                </div>
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                                                    {% include "common/form/input_select.html" with form_input=form.type_habitat mandatory_input=True %}
+                                                </div>
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                                                    {% include "common/form/input_select.html" with form_input=form.financement mandatory_input=True %}
+                                                </div>
+                                            </div>
+
+                                            <div class="fr-grid-row fr-grid-row--gutters">
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                    {% include "common/form/input_text.html" with form_input=form.code_postal mandatory_input=True %}
+                                                </div>
+                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                                    {% include "common/form/input_text.html" with form_input=form.ville mandatory_input=True %}
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-button-footer fr-col-md-12 fr-py-5w">
+                    {% include "common/button/next_and_save.html" %}
+                    <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
+                        Revenir à la liste des conventions
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

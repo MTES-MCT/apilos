@@ -61,7 +61,7 @@ def select_programme_create(request):
         "conventions/selection.html",
         {
             **result,
-            # Force Financement to EDD Financement because PLUS-PLAI doesn't exist
+            # Shortlist of financement
             "financements": FinancementEDD,
         },
     )
@@ -421,6 +421,47 @@ class ConventionView(ABC, LoginRequiredMixin, View):
                 or service.editable_after_upload,
             },
         )
+
+
+class ConventionSelectionFromDBView(LoginRequiredMixin, View):
+
+    # @permission_required("convention.add_convention")
+    def get(self, request):
+
+        result = services.select_programme_create(request)
+
+        return render(
+            request,
+            "conventions/selection_from_db.html",
+            {
+                **result,
+                "financements": FinancementEDD,
+            },
+        )
+
+    # @permission_required("convention.add_convention")
+    def post(self, request):
+        pass
+
+
+class ConventionSelectionFromZeroView(LoginRequiredMixin, View):
+    @permission_required("convention.add_convention")
+    def get(self, request):
+
+        result = services.select_programme_create(request)
+
+        return render(
+            request,
+            "conventions/selection_from_zero.html",
+            {
+                **result,
+                "financements": FinancementEDD,
+            },
+        )
+
+    @permission_required("convention.add_convention")
+    def post(self, request):
+        pass
 
 
 class ConventionBailleurView(ConventionView):
