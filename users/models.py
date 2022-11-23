@@ -126,7 +126,7 @@ class User(AbstractUser):
                 == GroupProfile.SIAP_MO_PERS_MORALE
             )
         if bailleur_id is not None:
-            return self.roles.filter(bailleur_id=bailleur_id)
+            return self.role_set.filter(bailleur_id=bailleur_id)
         return self._is_role(TypeRole.BAILLEUR) or self.is_superuser
 
     def is_instructeur(self):
