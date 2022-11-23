@@ -72,7 +72,7 @@
                         <div class="apilos-order-menu--open fr-p-2w">
                             {% if request|is_instructeur %}
                                 <div  class="fr-py-1w">
-                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='bailleur__nom' url_target='conventions:index' label_order='Bailleur' %}
+                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__bailleur__nom' url_target='conventions:index' label_order='Bailleur' %}
                                 </div>
                             {% endif %}
                             {% if request|display_administration %}
