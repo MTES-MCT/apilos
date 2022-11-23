@@ -66,7 +66,17 @@ NATURE_RELATIONSHIP = {
 }
 
 
+class BailleurManager(models.Manager):
+    def get_by_natural_key(self, field, value):
+        if field == 'siret':
+            return self.get(siret=value)
+
+        return self.get(pk=value)
+
+
 class Bailleur(IngestableModel):
+    objects = BailleurManager()
+
     pivot = "siret"
     mapping = {
         "nom": "MOA (nom officiel)",
@@ -136,6 +146,9 @@ class Bailleur(IngestableModel):
 
     def is_type1and2(self):
         return not self.is_hlm() and not self.is_sem()
+
+    def natural_key(self) -> tuple:
+        return tuple(self.siret)
 
 
 # pylint: disable=W0613

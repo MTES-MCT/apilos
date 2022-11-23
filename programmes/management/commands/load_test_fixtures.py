@@ -24,7 +24,6 @@ from users.type_models import TypeRole
 
 bailleur = {
     "nom": "Bailleur HLM de test",
-    "pk": 1,
     "siret": "12345678900000",
     "sous_nature_bailleur": SousNatureBailleur.OFFICE_PUBLIC_HLM,
     "capital_social": 10000.01,
@@ -38,7 +37,6 @@ bailleur = {
 
 administration = {
     "nom": "Administration DAP Test",
-    "pk": 1,
     "code": "00000",
     "ville_signature": "Ma ville sur Fleuve",
 }
@@ -102,11 +100,11 @@ class Command(BaseCommand):
     # pylint: disable=R0912,R0914,R0915
     def handle(self, *args, **options):
 
-        administration_test, _ = Administration.objects.get_or_create(
+        administration_test, _ = Administration.objects.update_or_create(
             code=administration["code"], defaults=administration
         )
 
-        bailleur_test, _ = Bailleur.objects.get_or_create(
+        bailleur_test, _ = Bailleur.objects.update_or_create(
             siret=bailleur["siret"], defaults=bailleur
         )
 
@@ -178,4 +176,4 @@ class Command(BaseCommand):
                 **programme, administration=administration_test, bailleur=bailleur_test
             )
             for lot in lots:
-                Lot.objects.get_or_create(**lot, programme=programme_test)
+                lot, _ = Lot.objects.get_or_create(**lot, programme=programme_test)
