@@ -124,8 +124,6 @@ class ImportBailleurUsersView(LoginRequiredMixin, View):
                     UserService.create_user_bailleur(
                         form_user_bailleur.cleaned_data['first_name'],
                         form_user_bailleur.cleaned_data['last_name'],
-                        # TODO generate username instead
-                        f"{form_user_bailleur.cleaned_data['first_name']}.{form_user_bailleur.cleaned_data['last_name']}",
                         form_user_bailleur.cleaned_data['email'],
                         form_user_bailleur.cleaned_data['bailleur']
                     )

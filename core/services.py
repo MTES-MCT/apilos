@@ -1,6 +1,9 @@
+import re
 from typing import List
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+import unidecode
+
 from conventions.models import Convention
 
 from upload.services import UploadService
@@ -126,3 +129,10 @@ class EmailService:
             self.msg.content_subtype = "html"
 
         self.msg.send()
+
+
+class Slugifier:
+    @classmethod
+    def slugify(cls, label: str, replacer: str = '-') -> str:
+        text = unidecode.unidecode(label).lower()
+        return re.sub(r'[\W_]+', replacer, text)
