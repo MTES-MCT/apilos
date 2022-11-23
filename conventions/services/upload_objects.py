@@ -324,8 +324,6 @@ class BailleurListingProcessor:
         if len(mapping) < len(self.columns):
             raise Exception(f"Lecture du fichier impossible: les colonnes {', '.join(list(self.columns.keys() - mapping.keys()))} sont manquantes")
 
-        print(mapping)
-
         for row in self._worksheet.iter_rows(min_col=1, max_col=self._worksheet.max_column, min_row=2, max_row=self._worksheet.max_row, values_only=True):
             data = {key: row[index - 1] for (key, index) in mapping.items()}
 

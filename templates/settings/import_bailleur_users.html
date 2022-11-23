@@ -13,7 +13,7 @@
                 </div>
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
 
-                    <h4>Importer un listing bailleur</h4>
+                    <h4>Importer un listing utilisateur bailleur</h4>
 
                     <form method="post" action="" enctype="multipart/form-data">
                         {% csrf_token %}
@@ -60,7 +60,7 @@
                                             {% include "common/form/input_text.html" with form_input=form_user_bailleur.last_name editable=True %}
                                         </td>
                                         <td>
-                                            {% include "common/form/input_select.html" with form_input=form_user_bailleur.bailleur editable=True %}
+                                            {% include "common/form/input_select.html" with form_input=form_user_bailleur.bailleur enum=bailleurs editable=True %}
                                         </td>
                                         <td>
                                             {% include "common/form/input_text.html" with form_input=form_user_bailleur.email editable=True %}

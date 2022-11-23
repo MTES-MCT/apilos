@@ -23,11 +23,6 @@ urlpatterns = [
         name="bailleurs",
     ),
     path(
-        "bailleurs/import",
-        views.CreateBulkBailleurView.as_view(),
-        name="create_bulk_bailleur",
-    ),
-    path(
         "bailleurs/<bailleur_uuid>",
         views.edit_bailleur,
         name="edit_bailleur",
@@ -52,6 +47,12 @@ urlpatterns = [
         views.add_user,
         name="add_user",
     ),
+    path(
+        "users/bailleur/import",
+        views.ImportBailleurUsersView.as_view(),
+        name="import_bailleur_users",
+    ),
+
     path(
         "users/delete/<username>",
         views.delete_user,

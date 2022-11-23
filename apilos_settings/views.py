@@ -1,5 +1,6 @@
 from io import BytesIO
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
@@ -14,6 +15,7 @@ from bailleurs.models import Bailleur
 from conventions.forms import UploadForm
 from conventions.services.upload_objects import BailleurListingProcessor
 from users.forms import UserBailleurFormSet
+from users.services import UserService
 
 
 @login_required
@@ -78,7 +80,7 @@ def edit_bailleur(request, bailleur_uuid):
     )
 
 
-class CreateBulkBailleurView(LoginRequiredMixin, View):
+class ImportBailleurUsersView(LoginRequiredMixin, View):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -88,7 +90,7 @@ class CreateBulkBailleurView(LoginRequiredMixin, View):
     def get(self, request):
         return render(
             request,
-            "settings/create_bulk_bailleur.html",
+            "settings/import_bailleur_users.html",
             {
                 'upform': self._upform,
                 'formset': self._formset,
@@ -99,6 +101,7 @@ class CreateBulkBailleurView(LoginRequiredMixin, View):
         context = {
             'upform': self._upform,
             'formset': self._formset,
+            "bailleurs": Bailleur.objects.all(),
         }
         if self.request.POST.get("Upload", False):
             self._upform = UploadForm(request.POST, request.FILES)
@@ -109,7 +112,6 @@ class CreateBulkBailleurView(LoginRequiredMixin, View):
                     'form-TOTAL_FORMS': len(users),
                     'form-INITIAL_FORMS': len(users),
                 }
-                print(users)
                 for index, user in enumerate(users):
                     for key, value in user.items():
                         data[f'form-{index}-{key}'] = value
@@ -117,11 +119,29 @@ class CreateBulkBailleurView(LoginRequiredMixin, View):
                 context['formset'] = self._formset
         else:
             self._formset = UserBailleurFormSet(request.POST)
-            context['formset'] = self._formset
+            if self._formset.is_valid():
+                for form_user_bailleur in self._formset:
+                    UserService.create_user_bailleur(
+                        form_user_bailleur.cleaned_data['first_name'],
+                        form_user_bailleur.cleaned_data['last_name'],
+                        # TODO generate username instead
+                        f"{form_user_bailleur.cleaned_data['first_name']}.{form_user_bailleur.cleaned_data['last_name']}",
+                        form_user_bailleur.cleaned_data['email'],
+                        form_user_bailleur.cleaned_data['bailleur']
+                    )
+                # TODO plan a welcome email
+                messages.success(
+                    request,
+                    f"{len(self._formset)} utilisateurs bailleurs ont été correctement créés à partir du listing",
+                    extra_tags="Listing importé"
+                )
+                return HttpResponseRedirect(reverse("settings:users"))
+            else:
+                context['formset'] = self._formset
 
         return render(
             request,
-            "settings/create_bulk_bailleur.html",
+            "settings/import_bailleur_users.html",
             {**context}
         )
 
