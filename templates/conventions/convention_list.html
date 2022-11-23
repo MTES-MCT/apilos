@@ -169,9 +169,9 @@
                                         {% endif %}
                                         <td>
                                             <strong>{{convention.programme.nom}}</strong><br/>
-                                            <em>{{convention.programme.numero_galion}}</em>
+                                            <em data-test-role="programme-galion-cell">{{convention.programme.numero_galion}}</em>
                                         </td>
-                                        <td>{{convention.financement}}</td>
+                                        <td data-test-role="programme-financement-cell">{{convention.financement}}</td>
                                         <td>
                                             <strong>{{convention.programme.ville}}</strong><br/>
                                             <em>{{convention.programme.code_postal}}</em>
