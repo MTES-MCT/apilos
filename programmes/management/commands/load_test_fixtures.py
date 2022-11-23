@@ -1,9 +1,11 @@
-import string
 import random
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.contrib.auth.models import Group
+
+
+from faker import Faker
 
 from instructeurs.models import Administration
 from bailleurs.models import Bailleur, SousNatureBailleur
@@ -22,6 +24,7 @@ from users.type_models import TypeRole
 
 bailleur = {
     "nom": "Bailleur HLM de test",
+    "pk": 1,
     "siret": "12345678900000",
     "sous_nature_bailleur": SousNatureBailleur.OFFICE_PUBLIC_HLM,
     "capital_social": 10000.01,
@@ -35,13 +38,28 @@ bailleur = {
 
 administration = {
     "nom": "Administration DAP Test",
+    "pk": 1,
     "code": "00000",
     "ville_signature": "Ma ville sur Fleuve",
 }
 
 
 def generate_programmes(num):
+    fake = Faker("fr_FR")
     programmes = []
+    random_title = [
+        "Résidence ",
+        "Les jardins de ",
+        "Les terrasses de ",
+        "Le clos ",
+    ]
+    random_name = [
+        fake.name(),
+        fake.color_name(),
+        fake.region(),
+        fake.department_name(),
+        fake.first_name(),
+    ]
     for _ in range(num):
         fin = random.choice([Financement.PLAI, Financement.PLS, Financement.PLUS]).value
         lots = [{"nb_logements": random.randint(1, 30), "financement": fin}]
@@ -52,10 +70,10 @@ def generate_programmes(num):
             lots.append({"nb_logements": random.randint(1, 30), "financement": fin2})
         programmes.append(
             {
-                "nom": "Opération "
-                + f"{''.join(random.choices(string.ascii_uppercase + string.digits, k=10))}",
+                "nom": random.choice(random_title)
+                + f"{''.join(random.choice(random_name))}",
                 "code_postal": f"001{random.randint(0,9)}{random.randint(0,9)}",
-                "ville": f"Ma Ville {random.choice(string.ascii_uppercase)}",
+                "ville": fake.city(),
                 "adresse": None,
                 "numero_galion": f"{random.randint(0,9)}{random.randint(0,9)}"
                 + f"{random.randint(0,9)}{random.randint(0,9)}00000"

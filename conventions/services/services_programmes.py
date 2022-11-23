@@ -245,42 +245,20 @@ def _save_programme_and_lot(programme, lot, form):
     lot.save()
 
 
-def programme_cadastral_update(request, convention_uuid):
-    # pylint: disable=R0915
-    convention = (
-        Convention.objects.prefetch_related("programme")
-        .prefetch_related("programme__referencecadastrale_set")
-        .get(uuid=convention_uuid)
-    )
-    programme = convention.programme
-    import_warnings = None
-    editable_after_upload = request.POST.get("editable_after_upload", False)
-    if request.method == "POST":
-        request.user.check_perm("convention.change_convention", convention)
-        # When the user cliked on "Téléverser" button
-        if request.POST.get("Upload", False):
-            form = ProgrammeCadastralForm(request.POST)
-            formset, upform, import_warnings, editable_after_upload = _upload_cadastre(
-                request, convention, import_warnings, editable_after_upload
-            )
-        # When the user cliked on "Enregistrer et Suivant"
-        else:
-            result = _programme_cadastrale_atomic_update(request, convention, programme)
-            if result["success"] == utils.ReturnStatus.SUCCESS and request.POST.get(
-                "redirect_to_recap", False
-            ):
-                result["redirect"] = "recapitulatif"
-            return {
-                **result,
-                "editable_after_upload": utils.editable_convention(request, convention)
-                or editable_after_upload,
-            }
-    # When display the file for the first time
-    else:
-        request.user.check_perm("convention.view_convention", convention)
+class ConventionCadastreService(ConventionService):
+    convention: Convention
+    request: HttpRequest
+    form: ProgrammeCadastralForm
+    formset: ReferenceCadastraleFormSet
+    upform: UploadForm = UploadForm()
+    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
+    redirect_recap: bool = False
+    editable_after_upload: bool = False
+
+    def get(self):
         initial = []
-        referencecadastrales = programme.referencecadastrale_set.all().order_by(
-            "section"
+        referencecadastrales = (
+            self.convention.programme.referencecadastrale_set.all().order_by("section")
         )
         for referencecadastrale in referencecadastrales:
             initial.append(
@@ -292,236 +270,248 @@ def programme_cadastral_update(request, convention_uuid):
                     "surface": referencecadastrale.surface,
                 }
             )
-        formset = ReferenceCadastraleFormSet(initial=initial)
-        upform = UploadForm()
-        form = ProgrammeCadastralForm(
+        self.formset = ReferenceCadastraleFormSet(initial=initial)
+        self.form = ProgrammeCadastralForm(
             initial={
-                "uuid": programme.uuid,
-                "permis_construire": programme.permis_construire,
+                "uuid": self.convention.programme.uuid,
+                "permis_construire": self.convention.programme.permis_construire,
                 "date_acte_notarie": utils.format_date_for_form(
-                    programme.date_acte_notarie
+                    self.convention.programme.date_acte_notarie
                 ),
                 "date_achevement_previsible": utils.format_date_for_form(
-                    programme.date_achevement_previsible
+                    self.convention.programme.date_achevement_previsible
                 ),
-                "date_achat": utils.format_date_for_form(programme.date_achat),
+                "date_achat": utils.format_date_for_form(
+                    self.convention.programme.date_achat
+                ),
                 "date_achevement": utils.format_date_for_form(
-                    programme.date_achevement
-                ),
-                **utils.get_text_and_files_from_field("vendeur", programme.vendeur),
-                **utils.get_text_and_files_from_field("acquereur", programme.acquereur),
-                **utils.get_text_and_files_from_field(
-                    "reference_notaire", programme.reference_notaire
+                    self.convention.programme.date_achevement
                 ),
                 **utils.get_text_and_files_from_field(
-                    "reference_publication_acte", programme.reference_publication_acte
+                    "vendeur", self.convention.programme.vendeur
                 ),
                 **utils.get_text_and_files_from_field(
-                    "effet_relatif", programme.effet_relatif
+                    "acquereur", self.convention.programme.acquereur
                 ),
                 **utils.get_text_and_files_from_field(
-                    "acte_de_propriete", programme.acte_de_propriete
+                    "reference_notaire", self.convention.programme.reference_notaire
                 ),
                 **utils.get_text_and_files_from_field(
-                    "certificat_adressage", programme.certificat_adressage
-                ),
-                **utils.get_text_and_files_from_field(
-                    "reference_cadastrale", programme.reference_cadastrale
-                ),
-            }
-        )
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "form": form,
-        "formset": formset,
-        "upform": upform,
-        "import_warnings": import_warnings,
-        "editable_after_upload": utils.editable_convention(request, convention)
-        or editable_after_upload,
-    }
-
-
-def _upload_cadastre(request, convention, import_warnings, editable_after_upload):
-    formset = ReferenceCadastraleFormSet(request.POST)
-    upform = UploadForm(request.POST, request.FILES)
-    if upform.is_valid():
-        result = upload_objects.handle_uploaded_xlsx(
-            upform,
-            request.FILES["file"],
-            ReferenceCadastrale,
-            convention,
-            "cadastre.xlsx",
-        )
-        if result["success"] != utils.ReturnStatus.ERROR:
-            refcads_by_section = {}
-            for refcad in ReferenceCadastrale.objects.filter(
-                programme_id=convention.programme_id
-            ):
-                refcads_by_section[f"{refcad.section}__{refcad.numero}"] = refcad.uuid
-
-            for obj in result["objects"]:
-                if (
-                    "section" in obj
-                    and "numero" in obj
-                    and f"{obj['section']}__{obj['numero']}" in refcads_by_section
-                ):
-                    obj["uuid"] = refcads_by_section[
-                        f"{obj['section']}__{obj['numero']}"
-                    ]
-
-            formset = ReferenceCadastraleFormSet(initial=result["objects"])
-            import_warnings = result["import_warnings"]
-            editable_after_upload = True
-    return formset, upform, import_warnings, editable_after_upload
-
-
-def _save_programme_cadastrale(form, programme):
-    programme.permis_construire = form.cleaned_data["permis_construire"]
-    programme.date_acte_notarie = form.cleaned_data["date_acte_notarie"]
-    programme.date_achevement_previsible = form.cleaned_data[
-        "date_achevement_previsible"
-    ]
-    programme.date_achat = form.cleaned_data["date_achat"]
-    programme.date_achevement = form.cleaned_data["date_achevement"]
-    programme.vendeur = utils.set_files_and_text_field(
-        form.cleaned_data["vendeur_files"],
-        form.cleaned_data["vendeur"],
-    )
-    programme.acquereur = utils.set_files_and_text_field(
-        form.cleaned_data["acquereur_files"],
-        form.cleaned_data["acquereur"],
-    )
-    programme.reference_notaire = utils.set_files_and_text_field(
-        form.cleaned_data["reference_notaire_files"],
-        form.cleaned_data["reference_notaire"],
-    )
-    programme.reference_publication_acte = utils.set_files_and_text_field(
-        form.cleaned_data["reference_publication_acte_files"],
-        form.cleaned_data["reference_publication_acte"],
-    )
-    programme.effet_relatif = utils.set_files_and_text_field(
-        form.cleaned_data["effet_relatif_files"],
-    )
-    programme.acte_de_propriete = utils.set_files_and_text_field(
-        form.cleaned_data["acte_de_propriete_files"],
-    )
-    programme.certificat_adressage = utils.set_files_and_text_field(
-        form.cleaned_data["certificat_adressage_files"],
-    )
-    programme.reference_cadastrale = utils.set_files_and_text_field(
-        form.cleaned_data["reference_cadastrale_files"],
-    )
-    programme.save()
-
-
-def _save_programme_reference_cadastrale(formset, programme):
-    obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], formset))
-    obj_uuids = list(filter(None, obj_uuids1))
-    programme.referencecadastrale_set.exclude(uuid__in=obj_uuids).delete()
-    for form in formset:
-        if form.cleaned_data["uuid"]:
-            reference_cadastrale = ReferenceCadastrale.objects.get(
-                uuid=form.cleaned_data["uuid"]
-            )
-            reference_cadastrale.section = form.cleaned_data["section"]
-            reference_cadastrale.numero = form.cleaned_data["numero"]
-            reference_cadastrale.lieudit = form.cleaned_data["lieudit"]
-            reference_cadastrale.surface = form.cleaned_data["surface"]
-        else:
-            reference_cadastrale = ReferenceCadastrale.objects.create(
-                programme=programme,
-                section=form.cleaned_data["section"],
-                numero=form.cleaned_data["numero"],
-                lieudit=form.cleaned_data["lieudit"],
-                surface=form.cleaned_data["surface"],
-            )
-        reference_cadastrale.save()
-
-
-def _programme_cadastrale_atomic_update(request, convention, programme):
-    form = ProgrammeCadastralForm(
-        {
-            "uuid": programme.uuid,
-            **utils.build_partial_form(
-                request,
-                programme,
-                [
-                    "permis_construire",
-                    "date_acte_notarie",
-                    "date_achevement_previsible",
-                    "date_achat",
-                    "date_achevement",
-                ],
-            ),
-            **utils.build_partial_text_and_files_form(
-                request,
-                programme,
-                [
-                    "vendeur",
-                    "acquereur",
-                    "reference_notaire",
                     "reference_publication_acte",
-                    "acte_de_propriete",
-                    "effet_relatif",
+                    self.convention.programme.reference_publication_acte,
+                ),
+                **utils.get_text_and_files_from_field(
+                    "effet_relatif", self.convention.programme.effet_relatif
+                ),
+                **utils.get_text_and_files_from_field(
+                    "acte_de_propriete", self.convention.programme.acte_de_propriete
+                ),
+                **utils.get_text_and_files_from_field(
                     "certificat_adressage",
+                    self.convention.programme.certificat_adressage,
+                ),
+                **utils.get_text_and_files_from_field(
                     "reference_cadastrale",
-                ],
+                    self.convention.programme.reference_cadastrale,
+                ),
+            }
+        )
+
+    def save(self):
+        self.editable_after_upload = self.request.POST.get(
+            "editable_after_upload", False
+        )
+        # When the user cliked on "Téléverser" button
+        if self.request.POST.get("Upload", False):
+            self.form = ProgrammeCadastralForm(self.request.POST)
+            self._upload_cadastre()
+        # When the user cliked on "Enregistrer et Suivant"
+        else:
+            self._programme_cadastrale_atomic_update()
+
+    def _upload_cadastre(self):
+        self.formset = ReferenceCadastraleFormSet(self.request.POST)
+        self.upform = UploadForm(self.request.POST, self.request.FILES)
+        if self.upform.is_valid():
+            result = upload_objects.handle_uploaded_xlsx(
+                self.upform,
+                self.request.FILES["file"],
+                ReferenceCadastrale,
+                self.convention,
+                "cadastre.xlsx",
+            )
+            if result["success"] != utils.ReturnStatus.ERROR:
+                refcads_by_section = {}
+                for refcad in ReferenceCadastrale.objects.filter(
+                    programme_id=self.convention.programme_id
+                ):
+                    refcads_by_section[
+                        f"{refcad.section}__{refcad.numero}"
+                    ] = refcad.uuid
+
+                for obj in result["objects"]:
+                    if (
+                        "section" in obj
+                        and "numero" in obj
+                        and f"{obj['section']}__{obj['numero']}" in refcads_by_section
+                    ):
+                        obj["uuid"] = refcads_by_section[
+                            f"{obj['section']}__{obj['numero']}"
+                        ]
+
+                self.formset = ReferenceCadastraleFormSet(initial=result["objects"])
+                self.import_warnings = result["import_warnings"]
+                self.editable_after_upload = True
+
+    def _programme_cadastrale_atomic_update(self):
+        self.form = ProgrammeCadastralForm(
+            {
+                "uuid": self.convention.programme.uuid,
+                **utils.build_partial_form(
+                    self.request,
+                    self.convention.programme,
+                    [
+                        "permis_construire",
+                        "date_acte_notarie",
+                        "date_achevement_previsible",
+                        "date_achat",
+                        "date_achevement",
+                    ],
+                ),
+                **utils.build_partial_text_and_files_form(
+                    self.request,
+                    self.convention.programme,
+                    [
+                        "vendeur",
+                        "acquereur",
+                        "reference_notaire",
+                        "reference_publication_acte",
+                        "acte_de_propriete",
+                        "effet_relatif",
+                        "certificat_adressage",
+                        "reference_cadastrale",
+                    ],
+                ),
+            }
+        )
+        form_is_valid = self.form.is_valid()
+
+        self.formset = ReferenceCadastraleFormSet(self.request.POST)
+        initformset = {
+            "form-TOTAL_FORMS": self.request.POST.get(
+                "form-TOTAL_FORMS", len(self.formset)
+            ),
+            "form-INITIAL_FORMS": self.request.POST.get(
+                "form-INITIAL_FORMS", len(self.formset)
             ),
         }
-    )
-    form_is_valid = form.is_valid()
+        for idx, form_reference_cadastrale in enumerate(self.formset):
+            if form_reference_cadastrale["uuid"].value():
+                reference_cadastrale = ReferenceCadastrale.objects.get(
+                    uuid=form_reference_cadastrale["uuid"].value()
+                )
+                initformset = {
+                    **initformset,
+                    f"form-{idx}-uuid": reference_cadastrale.uuid,
+                    f"form-{idx}-section": utils.get_form_value(
+                        form_reference_cadastrale, reference_cadastrale, "section"
+                    ),
+                    f"form-{idx}-numero": utils.get_form_value(
+                        form_reference_cadastrale, reference_cadastrale, "numero"
+                    ),
+                    f"form-{idx}-lieudit": utils.get_form_value(
+                        form_reference_cadastrale, reference_cadastrale, "lieudit"
+                    ),
+                    f"form-{idx}-surface": utils.get_form_value(
+                        form_reference_cadastrale, reference_cadastrale, "surface"
+                    ),
+                }
+            else:
+                initformset = {
+                    **initformset,
+                    f"form-{idx}-section": form_reference_cadastrale["section"].value(),
+                    f"form-{idx}-numero": form_reference_cadastrale["numero"].value(),
+                    f"form-{idx}-lieudit": form_reference_cadastrale["lieudit"].value(),
+                    f"form-{idx}-surface": form_reference_cadastrale["surface"].value(),
+                }
+        self.formset = ReferenceCadastraleFormSet(initformset)
+        formset_is_valid = self.formset.is_valid()
 
-    formset = ReferenceCadastraleFormSet(request.POST)
-    initformset = {
-        "form-TOTAL_FORMS": request.POST.get("form-TOTAL_FORMS", len(formset)),
-        "form-INITIAL_FORMS": request.POST.get("form-INITIAL_FORMS", len(formset)),
-    }
-    for idx, form_reference_cadastrale in enumerate(formset):
-        if form_reference_cadastrale["uuid"].value():
-            reference_cadastrale = ReferenceCadastrale.objects.get(
-                uuid=form_reference_cadastrale["uuid"].value()
+        if form_is_valid and formset_is_valid:
+            self._save_programme_cadastrale()
+            self._save_programme_reference_cadastrale()
+            self.return_status = utils.ReturnStatus.SUCCESS
+
+    def _save_programme_cadastrale(self):
+        self.convention.programme.permis_construire = self.form.cleaned_data[
+            "permis_construire"
+        ]
+        self.convention.programme.date_acte_notarie = self.form.cleaned_data[
+            "date_acte_notarie"
+        ]
+        self.convention.programme.date_achevement_previsible = self.form.cleaned_data[
+            "date_achevement_previsible"
+        ]
+        self.convention.programme.date_achat = self.form.cleaned_data["date_achat"]
+        self.convention.programme.date_achevement = self.form.cleaned_data[
+            "date_achevement"
+        ]
+        self.convention.programme.vendeur = utils.set_files_and_text_field(
+            self.form.cleaned_data["vendeur_files"],
+            self.form.cleaned_data["vendeur"],
+        )
+        self.convention.programme.acquereur = utils.set_files_and_text_field(
+            self.form.cleaned_data["acquereur_files"],
+            self.form.cleaned_data["acquereur"],
+        )
+        self.convention.programme.reference_notaire = utils.set_files_and_text_field(
+            self.form.cleaned_data["reference_notaire_files"],
+            self.form.cleaned_data["reference_notaire"],
+        )
+        self.convention.programme.reference_publication_acte = (
+            utils.set_files_and_text_field(
+                self.form.cleaned_data["reference_publication_acte_files"],
+                self.form.cleaned_data["reference_publication_acte"],
             )
-            initformset = {
-                **initformset,
-                f"form-{idx}-uuid": reference_cadastrale.uuid,
-                f"form-{idx}-section": utils.get_form_value(
-                    form_reference_cadastrale, reference_cadastrale, "section"
-                ),
-                f"form-{idx}-numero": utils.get_form_value(
-                    form_reference_cadastrale, reference_cadastrale, "numero"
-                ),
-                f"form-{idx}-lieudit": utils.get_form_value(
-                    form_reference_cadastrale, reference_cadastrale, "lieudit"
-                ),
-                f"form-{idx}-surface": utils.get_form_value(
-                    form_reference_cadastrale, reference_cadastrale, "surface"
-                ),
-            }
-        else:
-            initformset = {
-                **initformset,
-                f"form-{idx}-section": form_reference_cadastrale["section"].value(),
-                f"form-{idx}-numero": form_reference_cadastrale["numero"].value(),
-                f"form-{idx}-lieudit": form_reference_cadastrale["lieudit"].value(),
-                f"form-{idx}-surface": form_reference_cadastrale["surface"].value(),
-            }
-    formset = ReferenceCadastraleFormSet(initformset)
-    formset_is_valid = formset.is_valid()
+        )
+        self.convention.programme.effet_relatif = utils.set_files_and_text_field(
+            self.form.cleaned_data["effet_relatif_files"],
+        )
+        self.convention.programme.acte_de_propriete = utils.set_files_and_text_field(
+            self.form.cleaned_data["acte_de_propriete_files"],
+        )
+        self.convention.programme.certificat_adressage = utils.set_files_and_text_field(
+            self.form.cleaned_data["certificat_adressage_files"],
+        )
+        self.convention.programme.reference_cadastrale = utils.set_files_and_text_field(
+            self.form.cleaned_data["reference_cadastrale_files"],
+        )
+        self.convention.programme.save()
 
-    if form_is_valid and formset_is_valid:
-        _save_programme_cadastrale(form, programme)
-        _save_programme_reference_cadastrale(formset, programme)
-        return {
-            "success": utils.ReturnStatus.SUCCESS,
-            "convention": convention,
-        }
-    upform = UploadForm()
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "form": form,
-        "formset": formset,
-        "upform": upform,
-    }
+    def _save_programme_reference_cadastrale(self):
+        obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
+        obj_uuids = list(filter(None, obj_uuids1))
+        self.convention.programme.referencecadastrale_set.exclude(
+            uuid__in=obj_uuids
+        ).delete()
+        for form in self.formset:
+            if form.cleaned_data["uuid"]:
+                reference_cadastrale = ReferenceCadastrale.objects.get(
+                    uuid=form.cleaned_data["uuid"]
+                )
+                reference_cadastrale.section = form.cleaned_data["section"]
+                reference_cadastrale.numero = form.cleaned_data["numero"]
+                reference_cadastrale.lieudit = form.cleaned_data["lieudit"]
+                reference_cadastrale.surface = form.cleaned_data["surface"]
+            else:
+                reference_cadastrale = ReferenceCadastrale.objects.create(
+                    programme=self.convention.programme,
+                    section=form.cleaned_data["section"],
+                    numero=form.cleaned_data["numero"],
+                    lieudit=form.cleaned_data["lieudit"],
+                    surface=form.cleaned_data["surface"],
+                )
+            reference_cadastrale.save()
 
 
 class ConventionEDDService(ConventionService):
@@ -546,7 +536,6 @@ class ConventionEDDService(ConventionService):
                 }
             )
         self.formset = LogementEDDFormSet(initial=initial)
-        self.upform = UploadForm()
         self.form = ProgrammeEDDForm(
             initial={
                 "uuid": self.convention.programme.uuid,

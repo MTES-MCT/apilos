@@ -14,6 +14,5 @@ from .services_conventions import (
     generate_convention,
 )
 from .services_programmes import (
-    programme_cadastral_update,
     select_programme_create,
 )
