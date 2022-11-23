@@ -1,6 +1,3 @@
-from io import BytesIO
-
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
@@ -11,11 +8,9 @@ from django.urls import reverse
 
 from apilos_settings import services
 from apilos_settings.models import Departement
+from apilos_settings.services.services_users import ImportBailleurUsersService
 from bailleurs.models import Bailleur
-from conventions.forms import UploadForm
-from conventions.services.upload_objects import BailleurListingProcessor
-from users.forms import UserBailleurFormSet
-from users.services import UserService
+from conventions.services.utils import ReturnStatus
 
 
 @login_required
@@ -82,67 +77,34 @@ def edit_bailleur(request, bailleur_uuid):
 
 class ImportBailleurUsersView(LoginRequiredMixin, View):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._upform = UploadForm()
-        self._formset = UserBailleurFormSet()
-
     def get(self, request):
+        service = ImportBailleurUsersService(request)
+        service.get()
         return render(
             request,
             "settings/import_bailleur_users.html",
             {
-                'upform': self._upform,
-                'formset': self._formset,
+                'upform': service.upload_form,
+                'formset': service.formset,
             }
         )
 
     def post(self, request):
-        context = {
-            'upform': self._upform,
-            'formset': self._formset,
-            "bailleurs": Bailleur.objects.all(),
-        }
-        if self.request.POST.get("Upload", False):
-            self._upform = UploadForm(request.POST, request.FILES)
-            if self._upform.is_valid():
-                processor = BailleurListingProcessor(filename=BytesIO(request.FILES['file'].read()))
-                users = processor.process()
-                data = {
-                    'form-TOTAL_FORMS': len(users),
-                    'form-INITIAL_FORMS': len(users),
-                }
-                for index, user in enumerate(users):
-                    for key, value in user.items():
-                        data[f'form-{index}-{key}'] = value
-                self._formset = UserBailleurFormSet(data)
-                context['formset'] = self._formset
-        else:
-            self._formset = UserBailleurFormSet(request.POST)
-            if self._formset.is_valid():
-                for form_user_bailleur in self._formset:
-                    UserService.create_user_bailleur(
-                        form_user_bailleur.cleaned_data['first_name'],
-                        form_user_bailleur.cleaned_data['last_name'],
-                        form_user_bailleur.cleaned_data['email'],
-                        form_user_bailleur.cleaned_data['bailleur']
-                    )
-                # TODO plan a welcome email
-                messages.success(
-                    request,
-                    f"{len(self._formset)} utilisateurs bailleurs ont été correctement créés à partir du listing",
-                    extra_tags="Listing importé"
-                )
-                return HttpResponseRedirect(reverse("settings:users"))
-            else:
-                context['formset'] = self._formset
+        service = ImportBailleurUsersService(request)
+        status = service.save()
+
+        if status == ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(reverse("settings:users"))
 
         return render(
             request,
             "settings/import_bailleur_users.html",
-            {**context}
+            {
+                'upform': service.upload_form,
+                'formset': service.formset,
+                "bailleurs": Bailleur.objects.all(),
+            }
         )
-
 
 
 @login_required
