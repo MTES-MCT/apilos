@@ -8,7 +8,7 @@ from django.urls import reverse
 
 from apilos_settings import services
 from apilos_settings.models import Departement
-from apilos_settings.services.services_users import ImportBailleurUsersService
+from apilos_settings.services import ImportBailleurUsersService
 from bailleurs.models import Bailleur
 from conventions.services.utils import ReturnStatus
 
@@ -93,7 +93,7 @@ class ImportBailleurUsersView(LoginRequiredMixin, View):
         service = ImportBailleurUsersService(request)
         status = service.save()
 
-        if status == ReturnStatus.SUCCESS:
+        if not service.is_upload and status == ReturnStatus.SUCCESS:
             return HttpResponseRedirect(reverse("settings:users"))
 
         return render(
