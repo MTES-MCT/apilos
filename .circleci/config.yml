@@ -67,6 +67,42 @@ jobs:
           name: Deploy master branch of APiLos on Scalingo
           command: |
             git push -f git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git $CIRCLE_SHA1:master
+  deploy_siap_integration:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Add Scalingo to known_hosts
+          command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy Staging APiLos on Scalingo
+          command: |
+            git push -f git@ssh.osc-fr1.scalingo.com:apilos-siap-integration.git $CIRCLE_SHA1:master
+  deploy_siap_recette:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Add Scalingo to known_hosts
+          command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy Staging APiLos on Scalingo
+          command: |
+            git push -f git@ssh.osc-fr1.scalingo.com:apilos-siap-recette.git $CIRCLE_SHA1:master
+  deploy_siap_ecole:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Add Scalingo to known_hosts
+          command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy Staging APiLos on Scalingo
+          command: |
+            git push -f git@ssh.osc-fr1.scalingo.com:apilos-siap-ecole.git $CIRCLE_SHA1:master
 
 
 workflows:
@@ -103,6 +139,45 @@ workflows:
       - deploy_prod:
           requires:
             - validate_deployment_in_prod
+          filters:
+            branches:
+              only: master
+      - validate_deployment_in_siap_integration:
+          type: approval
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy_siap_integration:
+          requires:
+            - validate_deployment_in_siap_integration
+          filters:
+            branches:
+              only: master
+      - validate_deployment_in_siap_recette:
+          type: approval
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy_siap_recette:
+          requires:
+            - validate_deployment_in_siap_recette
+          filters:
+            branches:
+              only: master
+      - validate_deployment_in_siap_ecole:
+          type: approval
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy_siap_ecole:
+          requires:
+            - validate_deployment_in_siap_ecole
           filters:
             branches:
               only: master
