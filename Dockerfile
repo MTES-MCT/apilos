@@ -7,6 +7,10 @@ WORKDIR /code
 COPY requirements.txt .
 COPY dev-requirements.txt .
 
+# pip ugrade & pip tools install
+RUN pip install --upgrade pip # Pip upgrade
+RUN pip install pip-tools
+
 # Install ipython & setup autoreload, if required
 RUN echo "${IPYTHON_AUTORELOAD}"
 RUN if [ -n "${IPYTHON_AUTORELOAD}" ]; then pip install ipython; fi
