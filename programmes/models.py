@@ -55,6 +55,8 @@ class TypologieLogement(models.TextChoices):
         mapping = {
             "1": "T1",
             "1bis": "T1bis",
+            "T1 bis": "T1bis",
+            "1 bis": "T1bis",
             "2": "T2",
             "3": "T3",
             "4": "T4",
