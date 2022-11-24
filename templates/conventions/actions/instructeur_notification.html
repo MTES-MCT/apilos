@@ -1,7 +1,7 @@
 {% load custom_filters %}
 
 {% if convention|display_notification_bailleur_to_instructeur:request %}
-    <div class="fr-col-md-12 fr-mb-5w fr-mt-3w">
+    <div class="fr-col-12 fr-mb-5w fr-mt-3w">
         <div role="alert" class="fr-alert fr-alert--info">
             <!-- <p class="fr-alert__title">Convention à valider</p> -->
             {% if convention.get_last_bailleur_notification %}
