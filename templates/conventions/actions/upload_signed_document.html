@@ -1,0 +1,65 @@
+{% if request|is_instructeur %}
+    <div role="alert" class="fr-alert fr-alert--info fr-icon-arrow-right-s-line-double">
+        <p class="fr-alert__title">
+            Téléverser {% if convention.is_avenant %}l'avenant signé{% else %}la convention signée{% endif %}
+        </p>
+        <p class="fr-mb-2w">
+            Ici, vous pouvez téléverser votre {% if convention.is_avenant %}avenant signé afin qu'il puisse être transmis.{% else %}convention signée afin qu'elle puisse être transmise.{% endif %}
+        </p>
+        <div class="block--row-strech">
+
+            <form method="post" action="" enctype="multipart/form-data" id="{{upform.file.id_for_label}}_form">
+                {% csrf_token %}
+                <input
+                    class="fileinput--hidden"
+                    type="file"
+                    id="{{upform.file.id_for_label}}"
+                    name="{{upform.file.html_name}}"
+                    accept="application/pdf">
+                <div class="block--row-strech">
+                    <div>
+                        <button id="{{upform.file.id_for_label}}_upload_button" class="fr-btn fr-icon-upload-line fr-btn--icon-left" type="button">
+                            Téléverser {% if convention.is_avenant %}l'avenant signé{% else %}la convention signée{% endif %}
+                        </button>
+                        {% for error in upform.file.errors %}
+                            <p id="text-input-error-desc-error" class="fr-error-text">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                    document.getElementById('{{upform.file.id_for_label}}_upload_button').onclick = function() {
+                        document.getElementById('{{upform.file.id_for_label}}').click();
+                    };
+                    document.getElementById('{{upform.file.id_for_label}}').onchange = function() {
+                        var input = document.createElement('input');
+                        input.setAttribute('type', 'hidden');//hidden input
+                        input.setAttribute('name', 'Upload');//set the param name
+                        input.setAttribute('value', 'True');//set the value
+                        this.form.appendChild(input)
+                        document.getElementById("{{upform.file.id_for_label}}_form").submit();
+                    }
+                </script>
+            </form>
+            <a class="fr-my-1w fr-link fr-ml-2w" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
+                Consulter le récapitulatif
+            </a>
+        </div>
+    </div>
+{% else %}
+    <div role="alert" class="fr-alert fr-alert--success">
+        {% if convention.is_avenant %}
+            <p >Ici, l'avenant pourra être téléversé par l'administration en charge dès qu'il sera signé.
+            </p>
+        {% else %}
+            <p >Ici, la convention pourra être téléversée par l'administration en charge dès qu'elle sera signée.
+            </p>
+        {% endif %}
+        <a class="fr-my-1w fr-link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
+            Consulter le récapitulatif
+        </a>
+    </div>
+{% endif %}
+<hr>
