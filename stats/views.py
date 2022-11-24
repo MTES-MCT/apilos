@@ -40,9 +40,9 @@ def index(request):
 
     comment_fields, comment_data = _nb_comment_by_field()
 
-    users = User.objects.prefetch_related("role_set").all()
-    bailleurs = users.filter(role__typologie="BAILLEUR").distinct()
-    instructeurs = users.filter(role__typologie="INSTRUCTEUR").distinct()
+    users = User.objects.prefetch_related("roles").all()
+    bailleurs = users.filter(roles__typologie="BAILLEUR").distinct()
+    instructeurs = users.filter(roles__typologie="INSTRUCTEUR").distinct()
 
     null_fields = get_null_fields()
 
@@ -197,8 +197,8 @@ def get_null_fields():
     programmes_qs = Programme.objects.filter(
         Exists(Convention.objects.filter(programme_id=OuterRef("pk")))
     ).annotate(
-        count_referencecadastrale=Count("referencecadastrale"),
-        count_logementedd=Count("logementedd"),
+        count_referencecadastrale=Count("referencecadastrales"),
+        count_logementedd=Count("logementedds"),
     )
     programmes = programmes_qs.aggregate(
         #

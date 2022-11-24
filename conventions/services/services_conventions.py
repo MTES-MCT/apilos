@@ -169,10 +169,10 @@ def convention_summary(request, convention):
         "bailleur": convention.programme.bailleur,
         "lot": convention.lot,
         "programme": convention.programme,
-        "logement_edds": convention.programme.logementedd_set.all(),
+        "logement_edds": convention.programme.logementedds.all(),
         "logements": convention.lot.logements.all(),
         "stationnements": convention.lot.type_stationnements.all(),
-        "reference_cadastrales": convention.programme.referencecadastrale_set.all(),
+        "reference_cadastrales": convention.programme.referencecadastrales.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
         "conventionNumberForm": convention_number_form,
@@ -461,10 +461,9 @@ def convention_validate(request, convention_uuid):
         }
 
     convention = (
-        Convention.objects
-        .prefetch_related("programme__bailleur")
-        .prefetch_related("programme__referencecadastrale_set")
-        .prefetch_related("programme__logementedd_set")
+        Convention.objects.prefetch_related("programme__bailleur")
+        .prefetch_related("programme__referencecadastrales")
+        .prefetch_related("programme__logementedds")
         .prefetch_related("lot")
         .prefetch_related("lot__type_stationnements")
         .prefetch_related("lot__logements")
@@ -475,10 +474,10 @@ def convention_validate(request, convention_uuid):
         "bailleur": convention.programme.bailleur,
         "lot": convention.lot,
         "programme": convention.programme,
-        "logement_edds": convention.programme.logementedd_set.all(),
+        "logement_edds": convention.programme.logementedds.all(),
         "logements": convention.lot.logements.all(),
         "stationnements": convention.lot.type_stationnements.all(),
-        "reference_cadastrales": convention.programme.referencecadastrale_set.all(),
+        "reference_cadastrales": convention.programme.referencecadastrales.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
         "conventionNumberForm": convention_number_form,
@@ -488,16 +487,15 @@ def convention_validate(request, convention_uuid):
 @require_POST
 def generate_convention(request, convention_uuid):
     convention = (
-        Convention.objects
-        .prefetch_related("programme__bailleur")
+        Convention.objects.prefetch_related("programme__bailleur")
         .prefetch_related("lot")
         .prefetch_related("lot__type_stationnements")
         .prefetch_related("lot__logements")
-        .prefetch_related("pret_set")
+        .prefetch_related("prets")
         .prefetch_related("programme")
         .prefetch_related("programme__administration")
-        .prefetch_related("programme__logementedd_set")
-        .prefetch_related("programme__referencecadastrale_set")
+        .prefetch_related("programme__logementedds")
+        .prefetch_related("programme__referencecadastrales")
         .get(uuid=convention_uuid)
     )
     file_stream = convention_generator.generate_convention_doc(convention)
@@ -711,7 +709,7 @@ class ConventionFinancementService(ConventionService):
 
     def get(self):
         initial = []
-        prets = self.convention.pret_set.all()
+        prets = self.convention.prets.all()
         for pret in prets:
             initial.append(
                 {
@@ -764,7 +762,7 @@ class ConventionFinancementService(ConventionService):
             if result["success"] != utils.ReturnStatus.ERROR:
 
                 prets_by_numero = {}
-                for pret in self.convention.pret_set.all():
+                for pret in self.convention.prets.all():
                     prets_by_numero[pret.numero] = pret.uuid
                 for obj in result["objects"]:
                     if "numero" in obj and obj["numero"] in prets_by_numero:
@@ -852,7 +850,7 @@ class ConventionFinancementService(ConventionService):
     def _save_convention_financement_prets(self):
         obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         obj_uuids = list(filter(None, obj_uuids1))
-        self.convention.pret_set.exclude(uuid__in=obj_uuids).delete()
+        self.convention.prets.exclude(uuid__in=obj_uuids).delete()
         for form_pret in self.formset:
             if form_pret.cleaned_data["uuid"]:
                 pret = Pret.objects.get(uuid=form_pret.cleaned_data["uuid"])

@@ -105,9 +105,9 @@ def generate_convention_doc(convention, save_data=False):
         "logements": convention.lot.logements.all(),
         "annexes": annexes,
         "stationnements": convention.lot.type_stationnements.all(),
-        "prets_cdc": convention.pret_set.filter(preteur__in=["CDCF", "CDCL"]),
-        "autres_prets": convention.pret_set.exclude(preteur__in=["CDCF", "CDCL"]),
-        "references_cadastrales": convention.programme.referencecadastrale_set.all(),
+        "prets_cdc": convention.prets.filter(preteur__in=["CDCF", "CDCL"]),
+        "autres_prets": convention.prets.exclude(preteur__in=["CDCF", "CDCL"]),
+        "references_cadastrales": convention.programme.referencecadastrales.all(),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),
@@ -123,7 +123,7 @@ def generate_convention_doc(convention, save_data=False):
     jinja_env.filters["d"] = to_fr_date
     jinja_env.filters["sd"] = to_fr_short_date
     jinja_env.filters["f"] = _to_fr_float
-    jinja_env.filters["pl"] = _pluralize
+    jinja_env.filters["pl"] = pluralize
     jinja_env.filters["len"] = len
     jinja_env.filters["inline_text_multiline"] = inline_text_multiline
 
@@ -172,13 +172,13 @@ def _save_convention_donnees_validees(
         "annexes": _list_to_dict(annexes),
         "stationnements": _list_to_dict(convention.lot.type_stationnements.all()),
         "prets_cdc": _list_to_dict(
-            convention.pret_set.filter(preteur__in=["CDCF", "CDCL"])
+            convention.prets.filter(preteur__in=["CDCF", "CDCL"])
         ),
         "autres_prets": _list_to_dict(
-            convention.pret_set.exclude(preteur__in=["CDCF", "CDCL"])
+            convention.prets.exclude(preteur__in=["CDCF", "CDCL"])
         ),
         "references_cadastrales": _list_to_dict(
-            convention.programme.referencecadastrale_set.all()
+            convention.programme.referencecadastrales.all()
         ),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
@@ -259,7 +259,7 @@ def _to_fr_float(value, d=2):
     return format(value, f",.{d}f").replace(",", " ").replace(".", ",")
 
 
-def _pluralize(value):
+def pluralize(value):
     if value > 1:
         return "s"
     return ""
@@ -402,7 +402,7 @@ def _compute_mixte(convention):
 
 
 def _prepare_logement_edds(convention):
-    logement_edds = convention.programme.logementedd_set.order_by(
+    logement_edds = convention.programme.logementedds.order_by(
         "financement", "designation"
     ).all()
     count = 0
@@ -465,7 +465,7 @@ def fiche_caf_doc(convention):
     jinja_env.filters["d"] = to_fr_date
     jinja_env.filters["sd"] = to_fr_short_date
     jinja_env.filters["f"] = _to_fr_float
-    jinja_env.filters["pl"] = _pluralize
+    jinja_env.filters["pl"] = pluralize
     jinja_env.filters["len"] = len
     jinja_env.filters["inline_text_multiline"] = inline_text_multiline
 

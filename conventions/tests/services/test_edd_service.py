@@ -75,12 +75,12 @@ class ConventionEDDServiceTests(TestCase):
 
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
-        edd_plai = self.service.convention.programme.logementedd_set.filter(
+        edd_plai = self.service.convention.programme.logementedds.filter(
             financement=Financement.PLAI
         )
         self.assertEqual(len(edd_plai), 1)
         self.assertEqual(edd_plai.first().designation, "B")
-        edd_plus = self.service.convention.programme.logementedd_set.filter(
+        edd_plus = self.service.convention.programme.logementedds.filter(
             financement=Financement.PLUS
         )
         self.assertEqual(len(edd_plus), 1)
@@ -119,11 +119,11 @@ class ConventionEDDServiceTests(TestCase):
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
-        edd_plai = self.service.convention.programme.logementedd_set.filter(
+        edd_plai = self.service.convention.programme.logementedds.filter(
             financement=Financement.PLAI
         )
         self.assertEqual(len(edd_plai), 0)
-        edd_plus = self.service.convention.programme.logementedd_set.filter(
+        edd_plus = self.service.convention.programme.logementedds.filter(
             financement=Financement.PLUS
         )
         self.assertEqual(len(edd_plus), 2)

@@ -29,7 +29,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for pret in convention.pret_set.all %}
+                            {% for pret in convention.prets.all %}
                                 {% with pret_uuid=pret.uuid|slugify %}
                                     {% with main_object_field="pret__uuid__"|add:pret_uuid %}
                                         <tr id="{{main_object_field}}_group">

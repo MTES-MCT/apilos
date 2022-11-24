@@ -167,8 +167,8 @@ class AdministrationsModelsTest(TestCase):
             list(
                 Programme.objects.filter(
                     administration_id__in=[
-                        user_instructeur.role_set.all()[0].administration_id,
-                        user_instructeur.role_set.all()[1].administration_id,
+                        user_instructeur.roles.all()[0].administration_id,
+                        user_instructeur.roles.all()[1].administration_id,
                     ]
                 ).values_list("uuid", flat=True)
             ),
@@ -177,8 +177,8 @@ class AdministrationsModelsTest(TestCase):
         programme_id_list = list(
             Programme.objects.filter(
                 bailleur_id__in=[
-                    user_bailleur.role_set.all()[0].bailleur_id,
-                    user_bailleur.role_set.all()[1].bailleur_id,
+                    user_bailleur.roles.all()[0].bailleur_id,
+                    user_bailleur.roles.all()[1].bailleur_id,
                 ]
             ).values_list("uuid", flat=True)
         )
@@ -191,8 +191,8 @@ class AdministrationsModelsTest(TestCase):
             Programme.objects.annotate(departement=Substr("code_postal", 1, 2))
             .filter(
                 bailleur_id__in=[
-                    user_bailleur.role_set.all()[0].bailleur_id,
-                    user_bailleur.role_set.all()[1].bailleur_id,
+                    user_bailleur.roles.all()[0].bailleur_id,
+                    user_bailleur.roles.all()[1].bailleur_id,
                 ],
                 departement="13",
             )
@@ -215,8 +215,8 @@ class AdministrationsModelsTest(TestCase):
             user_instructeur.administration_filter(),
             {
                 "id__in": [
-                    user_instructeur.role_set.all()[0].administration_id,
-                    user_instructeur.role_set.all()[1].administration_id,
+                    user_instructeur.roles.all()[0].administration_id,
+                    user_instructeur.roles.all()[1].administration_id,
                 ]
             },
         )
@@ -233,8 +233,8 @@ class AdministrationsModelsTest(TestCase):
             user_bailleur.bailleur_filter(),
             {
                 "id__in": [
-                    user_bailleur.role_set.all()[0].bailleur_id,
-                    user_bailleur.role_set.all()[1].bailleur_id,
+                    user_bailleur.roles.all()[0].bailleur_id,
+                    user_bailleur.roles.all()[1].bailleur_id,
                 ]
             },
         )
@@ -247,8 +247,8 @@ class AdministrationsModelsTest(TestCase):
                 convention.uuid
                 for convention in Convention.objects.filter(
                     programme__administration_id__in=[
-                        user_instructeur.role_set.all()[0].administration_id,
-                        user_instructeur.role_set.all()[1].administration_id,
+                        user_instructeur.roles.all()[0].administration_id,
+                        user_instructeur.roles.all()[1].administration_id,
                     ]
                 )
             },
@@ -258,8 +258,8 @@ class AdministrationsModelsTest(TestCase):
             convention.uuid
             for convention in Convention.objects.filter(
                 programme__bailleur_id__in=[
-                    user_bailleur.role_set.all()[0].bailleur_id,
-                    user_bailleur.role_set.all()[1].bailleur_id,
+                    user_bailleur.roles.all()[0].bailleur_id,
+                    user_bailleur.roles.all()[1].bailleur_id,
                 ]
             )
         }
@@ -274,8 +274,8 @@ class AdministrationsModelsTest(TestCase):
                 departement=Substr("programme__code_postal", 1, 2)
             ).filter(
                 programme__bailleur_id__in=[
-                    user_bailleur.role_set.all()[0].bailleur_id,
-                    user_bailleur.role_set.all()[1].bailleur_id,
+                    user_bailleur.roles.all()[0].bailleur_id,
+                    user_bailleur.roles.all()[1].bailleur_id,
                 ],
                 departement="13",
             )
@@ -467,6 +467,6 @@ class AdministrationsModelsTest(TestCase):
 
     # Test model Role
     def test_object_role_str(self):
-        role = User.objects.get(username="sabine").role_set.all()[0]
+        role = User.objects.get(username="sabine").roles.all()[0]
         expected_object_name = f"{role.user} - {role.typologie} - {role.administration}"
         self.assertEqual(str(role), expected_object_name)

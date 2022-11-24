@@ -83,9 +83,7 @@ class ConventionCadastreServiceTests(TestCase):
             self.service.convention.programme.permis_construire, "123456789 AB"
         )
 
-        ref_cadastrales = (
-            self.service.convention.programme.referencecadastrale_set.all()
-        )
+        ref_cadastrales = self.service.convention.programme.referencecadastrales.all()
 
         self.assertEqual(
             {ref_cadastrale.lieudit for ref_cadastrale in ref_cadastrales},
