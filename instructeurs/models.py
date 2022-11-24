@@ -4,7 +4,16 @@ from django.db import models
 from core.models import IngestableModel
 
 
+class AdministrateurManager(models.Manager):
+    def get_by_natural_key(self, field, value):
+        if field == 'code':
+            return self.get(code=value)
+
+        return self.get(pk=value)
+
+
 class Administration(IngestableModel):
+    objects = AdministrateurManager()
 
     pivot = "code"
     mapping = {
@@ -36,6 +45,9 @@ class Administration(IngestableModel):
             if self.ville_signature
             else "                              "
         )
+
+    def natural_key(self) -> tuple:
+        return tuple(self.code)
 
     def _get_id(self):
         return self.id
