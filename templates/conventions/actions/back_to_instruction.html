@@ -1,27 +1,31 @@
 {% load custom_filters %}
 
-<div class="fr-col-12">
-    <div class="block--row-strech fr-my-2w">
-        <div class="block--row-strech-1 fr-my-2w fr-mr-6w">
-            <p class="fr-alert__title">
-                Repasser {% if convention.is_avenant %}cet avenant{% else %}cette convention{% endif %} au statut "A instruire"
-            </p>
-            <p>
-                {% if convention.is_avenant %}Cet avenant{% else %}Cette convention{% endif %} est {% if convention|display_redirect_sent %}en attente de signature{% else %}déjà {% if convention.is_avenant %}signé{% else %}signée{% endif %}{% endif %}. Cependant,
-                s'il reste des modifications à apporter, vous avez la possibilité de la repasser en statut "A instruire".
-                en cliquant sur le bouton ci-dessous
-            </p>
-            <p>
-                <span class="fr-icon-warning-line" aria-hidden="true"></span>
-                Une fois {% if convention.is_avenant %}l‘avenant{% else %}la convention{% endif %} en statut "A instruire", c'est l'instructeur qui aura la main sur la convention (c'est à dire vous-même).
-                Si l'intervention du bailleur est nécessaire, vous devrez alors lui renvoyer en cliquant sur le bouton "Demander des corrections au bailleur"
-            </p>
+{% if convention|display_back_to_instruction:request %}
+
+    <div class="fr-col-12 fr-my-2w">
+        <div class="block--row-strech">
+            <div class="block--row-strech-1 fr-mr-6w">
+                <p class="fr-alert__title">
+                    Repasser {% if convention.is_avenant %}cet avenant{% else %}cette convention{% endif %} au statut "A instruire"
+                </p>
+                <p>
+                    {% if convention.is_avenant %}Cet avenant{% else %}Cette convention{% endif %} est {% if convention|display_redirect_sent %}en attente de signature{% else %}déjà {% if convention.is_avenant %}signé{% else %}signée{% endif %}{% endif %}. Cependant,
+                    s'il reste des modifications à apporter, vous avez la possibilité de la repasser en statut "A instruire".
+                    en cliquant sur le bouton ci-dessous
+                </p>
+                <p>
+                    <span class="fr-icon-warning-line" aria-hidden="true"></span>
+                    Une fois {% if convention.is_avenant %}l‘avenant{% else %}la convention{% endif %} en statut "A instruire", c'est l'instructeur qui aura la main sur la convention (c'est à dire vous-même).
+                    Si l'intervention du bailleur est nécessaire, vous devrez alors lui renvoyer en cliquant sur le bouton "Demander des corrections au bailleur"
+                </p>
+            </div>
+            <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
+                {% csrf_token %}
+                <button name="BackToInstruction" value=True class="fr-btn  apilos-btn--secondary--red fr-my-1w">
+                    Retour à l'instruction
+                </button>
+            </form>
         </div>
-        <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
-            {% csrf_token %}
-            <button name="BackToInstruction" value=True class="fr-btn  apilos-btn--secondary--red fr-my-1w">
-                Retour à l'instruction
-            </button>
-        </form>
     </div>
-</div>
+    <hr>
+{% endif %}
