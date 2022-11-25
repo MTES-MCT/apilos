@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group
 
 from faker import Faker
 
+from ecoloweb.models import EcoloReference
 from instructeurs.models import Administration
 from bailleurs.models import Bailleur, SousNatureBailleur
 from conventions.models import Convention
@@ -123,6 +124,8 @@ class Command(BaseCommand):
         if truncate_programme:
             Programme.objects.all().delete()
             Convention.objects.all().delete()
+            # If we truncate programmes & conventions, we must also purge Ecolo References
+            EcoloReference.objects.all().delete()
 
         # Remove user
         truncate_users = False

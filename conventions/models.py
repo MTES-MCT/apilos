@@ -1,9 +1,12 @@
 import uuid
+from typing import Optional
 
 from django.db import models
 from django.db.models import Q
 from django.forms import model_to_dict
 from django.utils import timezone
+
+from ecoloweb.models import EcoloReference
 from programmes.models import (
     Annexe,
     Financement,
@@ -197,6 +200,16 @@ class Convention(models.Model):
     @property
     def bailleur(self):
         return self.programme.bailleur
+
+    @property
+    def ecolo_reference(self) -> Optional[EcoloReference]:
+        if self.id is not None:
+            return EcoloReference.objects.filter(
+                apilos_model='conventions.Convention',
+                apilos_id=self.id
+            ).first()
+
+        return None
 
     @property
     def bailleur_id(self):
@@ -412,6 +425,17 @@ class Convention(models.Model):
         ]:
             return "Convention en cours d'instruction"
         return ""
+
+    def delete(self, using=None, keep_parents=False):
+        # When deleting a convention, also clear its related ecolo reference, so it can be imported again later
+        ref = self.ecolo_reference
+        if ref is not None:
+            print(f"Delete ecolo reference {ref.id}")
+            ref.delete()
+
+        super(Convention, self).delete(using, keep_parents)
+
+
 
     def clone(self, user, *, convention_origin):
         # pylint: disable=R0914

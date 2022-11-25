@@ -28,6 +28,14 @@
     </div>
     <div>
         <div class="fr-container fr-pt-2w">
+            {% if convention.ecolo_reference %}
+                <div class="fr-alert fr-alert--info">
+                    <h3 class="fr-alert__title">Issue d'Ecoloweb</h3>
+                    <p>Les données de cette convention ont été importées depuis la plateforme Ecoloweb</p>
+                </div>
+            {% endif %}
+
+
             {% if convention.statut == CONVENTION_STATUT.PROJET %}
                 <div role="alert" class="fr-col-12 fr-mb-3w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} fr-icon-pencil-line">
                     {% if convention.is_avenant %}
