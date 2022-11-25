@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from programmes.models import Programme, Lot, Logement, ReferenceCadastrale
+from programmes.models import Programme, Lot, Logement, ReferenceCadastrale, TypeStationnement
 
 from .importers import ModelImporter
 from .importers_administrations import AdministrationImporter
@@ -26,10 +26,10 @@ class ProgrammeImporter(ModelImporter):
             'administration': AdministrationImporter(self.debug),
         }
 
-    #def _get_o2m_dependencies(self):
-    #    return {
-    #        'cadastre': ReferenceCadastraleImporter(self.debug)
-    #    }
+    def _get_o2m_dependencies(self):
+       return {
+           'cadastre': ReferenceCadastraleImporter(self.debug)
+       }
 
 
 class ProgrammeLotImporter(ModelImporter):
@@ -50,6 +50,7 @@ class ProgrammeLotImporter(ModelImporter):
     def _get_o2m_dependencies(self):
         return {
             'logement': ProgrammeLogementImporter(self.debug),
+            'type_stationnement': TypeStationnementImporter(self.debug),
         }
 
 
@@ -69,7 +70,7 @@ class ProgrammeLogementImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {
-            'lot': ProgrammeLotImporter(),
+            'lot': ProgrammeLotImporter(self.debug),
         }
 
 
@@ -98,14 +99,33 @@ class ReferenceCadastraleImporter(ModelImporter):
         return data
 
     def _get_sql_one_query(self) -> str:
+        # No single query defined here, as it's only used to fetch one to many
         return ''
 
     def _get_sql_many_query(self) -> Optional[str]:
-        # No single query defined for Lots, as it's only used to fetch one to many
         return self._query
 
     def _get_o2o_dependencies(self):
         return {
-            'programme': ProgrammeImporter(),
-            'bailleur': BailleurImporter(),
+            'programme': ProgrammeImporter(self.debug),
+        }
+
+
+class TypeStationnementImporter(ModelImporter):
+    model = TypeStationnement
+
+    def __init__(self, debug=False):
+        super().__init__(debug)
+        self._query = self._get_file_content('resources/sql/programme_type_stationnement.sql')
+
+    def _get_sql_one_query(self) -> str:
+        # No single query defined here, as it's only used to fetch one to many
+        return ''
+
+    def _get_sql_many_query(self) -> Optional[str]:
+        return self._query
+
+    def _get_o2o_dependencies(self):
+        return {
+            'lot': ProgrammeLotImporter(self.debug),
         }

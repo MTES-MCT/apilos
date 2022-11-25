@@ -1,3 +1,5 @@
+from typing import List
+
 from .importers import ModelImporter
 
 from instructeurs.models import Administration
@@ -12,3 +14,6 @@ class AdministrationImporter(ModelImporter):
 
     def _get_sql_one_query(self) -> str:
         return self._query
+
+    def _get_identity_keys(self) -> List[str]:
+        return ['code']

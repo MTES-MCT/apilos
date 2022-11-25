@@ -50,7 +50,7 @@ class Command(BaseCommand):
         if dry_run:
             print("Running in dry mode")
 
-        transaction.set_autocommit(False)
+        transaction.set_autocommit(not dry_run and debug)
         progress = None
 
         try:
@@ -68,14 +68,15 @@ class Command(BaseCommand):
                     print(f'Processed convention #{results.lines_fetched} (out of {results.lines_total} total)')
 
         except Exception as e:
-            transaction.rollback()
+            if dry_run or not debug:
+                transaction.rollback()
 
-            print("Rollabcking all changes due to runtime error")
+                print("Rollabcking all changes due to runtime error")
             raise e
         finally:
             if progress is not None:
                 progress.close()
             if dry_run:
-                transaction.rollback()
-            else:
-                transaction.commit()
+                 transaction.rollback()
+            elif not debug:
+                 transaction.commit()
