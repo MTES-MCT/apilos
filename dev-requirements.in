@@ -6,3 +6,4 @@ djhtml
 mock
 pre-commit
 pylint
+beautifulsoup4
