@@ -28,12 +28,11 @@ select
     md5(cdg.id||'-'||ff.code) as lot_id, -- Les lots d'un programme sont tous les logements partageant le même financement
     c.noreglementaire as numero,
     case
-        when pec.code = 'INS' then '2. Instruction requise'
-        when pec.code = 'ANI' then '3. Corrections requises' -- Abandonnée en instruction
-        when pec.code = 'OPP' then '5. Signée'
-        when pec.code = 'RES' then '6. Résiliée'
-        when pec.code = 'DEN' then '7. Dénoncée'
-        when pec.code = 'ANS' then '8. Annulée en suivi'
+        when cdg.dateannulation is not null then '8. Annulée en suivi'
+        when cdg.datedemandedenonciation is not null then '7. Dénoncée'
+        when cdg.dateresiliationprefet is not null then '6. Résiliée'
+        when pec.code = 'INS' and c.noreglementaire is null then '2. Instruction requise'
+        -- Manquent les états 9. Renouvelée, 10. Expirée
         else '5. Signée'
     end as statut,
     cdg.datehistoriquefin as date_fin_conventionnement,
