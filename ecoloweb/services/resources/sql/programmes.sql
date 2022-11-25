@@ -42,6 +42,7 @@
 select
     cdg.id,
     pl.bailleur_id,
+    c.entitecreatrice_id as administration_id,
     pl.code_postal,
     pl.ville,
     pl.adresse,

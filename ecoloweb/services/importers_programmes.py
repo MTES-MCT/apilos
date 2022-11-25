@@ -3,6 +3,7 @@ from typing import List, Optional
 from programmes.models import Programme, Lot, Logement, ReferenceCadastrale
 
 from .importers import ModelImporter
+from .importers_administrations import AdministrationImporter
 from .importers_bailleurs import BailleurImporter
 
 
@@ -21,7 +22,8 @@ class ProgrammeImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {
-            'bailleur': BailleurImporter()
+            'bailleur': BailleurImporter(self.debug),
+            'administration': AdministrationImporter(self.debug),
         }
 
     #def _get_o2m_dependencies(self):
@@ -42,7 +44,7 @@ class ProgrammeLotImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {
-            'programme': ProgrammeImporter(),
+            'programme': ProgrammeImporter(self.debug),
         }
 
     def _get_o2m_dependencies(self):
