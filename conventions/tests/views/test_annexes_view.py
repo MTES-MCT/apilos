@@ -1,11 +1,11 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from conventions.tests.views.abstract import AbstractViewTestCase
+from conventions.tests.views.abstract import AbstractEditViewTestCase
 from programmes.models import Annexe, Logement, TypologieLogement
 
 
-class ConventionAnnexesViewTests(AbstractViewTestCase, TestCase):
+class ConventionAnnexesViewTests(AbstractEditViewTestCase, TestCase):
     def setUp(self):
         super().setUp()
         for designation in ["B1", "B2"]:

@@ -13,57 +13,52 @@ from django.urls import reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods
 
-from programmes.models import FinancementEDD
 from upload.services import UploadService
 from conventions.models import Convention, ConventionStatut
 from conventions.permissions import has_campaign_permission
-from conventions.services import convention_generator, services, utils
-from conventions.services.services_programmes import (
-    ConventionProgrammeService,
-    ConventionEDDService,
-    ConventionCadastreService,
-)
+from conventions.services.convention_generator import fiche_caf_doc
 from conventions.services.services_bailleurs import ConventionBailleurService
 from conventions.services.services_conventions import (
     ConventionCommentsService,
     ConventionFinancementService,
     ConventionService,
+    convention_delete,
+    convention_feedback,
+    convention_post_action,
+    convention_preview,
+    convention_sent,
+    convention_submit,
+    convention_summary,
+    convention_validate,
+    conventions_index,
+    create_avenant,
+    generate_convention_service,
 )
 from conventions.services.services_logements import (
     ConventionAnnexesService,
     ConventionLogementsService,
     ConventionTypeStationnementService,
 )
-from conventions.services.utils import ReturnStatus
+from conventions.services.services_programmes import (
+    ConventionProgrammeService,
+    ConventionEDDService,
+    ConventionCadastreService,
+    ConventionSeletionService,
+)
+from conventions.services.utils import (
+    base_convention_response_error,
+    editable_convention,
+    ReturnStatus,
+)
 
 
 @login_required
 def index(request):
-    result = services.conventions_index(request)
+    result = conventions_index(request)
     return render(
         request,
         "conventions/index.html",
         {**result},
-    )
-
-
-@login_required
-@permission_required("convention.add_convention")
-def select_programme_create(request):
-    # STEP 1
-    result = services.select_programme_create(request)
-    if result["success"] == ReturnStatus.SUCCESS:
-        return HttpResponseRedirect(
-            reverse("conventions:bailleur", args=[result["convention"].uuid])
-        )
-    return render(
-        request,
-        "conventions/selection.html",
-        {
-            **result,
-            # Shortlist of financement
-            "financements": FinancementEDD,
-        },
     )
 
 
@@ -80,7 +75,7 @@ def recapitulatif(request, convention_uuid):
         .prefetch_related("programme__administration")
         .get(uuid=convention_uuid)
     )
-    result = services.convention_summary(request, convention)
+    result = convention_summary(request, convention)
     if convention.is_avenant():
         result["avenant_list"] = [
             avenant_type.nom for avenant_type in convention.avenant_types.all()
@@ -97,7 +92,7 @@ def recapitulatif(request, convention_uuid):
 
 @login_required
 def save_convention(request, convention_uuid):
-    result = services.convention_submit(request, convention_uuid)
+    result = convention_submit(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return render(
             request,
@@ -117,13 +112,13 @@ def save_convention(request, convention_uuid):
 
 @login_required
 def delete_convention(request, convention_uuid):
-    services.convention_delete(request, convention_uuid)
+    convention_delete(request, convention_uuid)
     return HttpResponseRedirect(reverse("conventions:index"))
 
 
 @login_required
 def feedback_convention(request, convention_uuid):
-    result = services.convention_feedback(request, convention_uuid)
+    result = convention_feedback(request, convention_uuid)
     return HttpResponseRedirect(
         reverse("conventions:recapitulatif", args=[result["convention"].uuid])
     )
@@ -131,7 +126,7 @@ def feedback_convention(request, convention_uuid):
 
 @login_required
 def validate_convention(request, convention_uuid):
-    result = services.convention_validate(request, convention_uuid)
+    result = convention_validate(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:sent", args=[result["convention"].uuid])
@@ -147,7 +142,7 @@ def validate_convention(request, convention_uuid):
 
 @login_required
 def generate_convention(request, convention_uuid):
-    data, file_name = services.generate_convention(request, convention_uuid)
+    data, file_name = generate_convention_service(request, convention_uuid)
 
     response = HttpResponse(
         data,
@@ -213,7 +208,7 @@ def load_xlsx_model(request, file_type):
 
 @login_required
 def preview(request, convention_uuid):
-    result = services.convention_preview(convention_uuid)
+    result = convention_preview(convention_uuid)
     return render(
         request,
         "conventions/preview.html",
@@ -224,7 +219,7 @@ def preview(request, convention_uuid):
 @login_required
 def sent(request, convention_uuid):
     # Step 12/12
-    result = services.convention_sent(request, convention_uuid)
+    result = convention_sent(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:preview", args=[convention_uuid])
@@ -241,7 +236,7 @@ def sent(request, convention_uuid):
 @require_http_methods(["GET", "POST"])
 def post_action(request, convention_uuid):
     # Step 12/12
-    result = services.convention_post_action(request, convention_uuid)
+    result = convention_post_action(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:recapitulatif", args=[convention_uuid])
@@ -305,11 +300,7 @@ def fiche_caf(request, convention_uuid):
         .prefetch_related("programme__administration")
         .get(uuid=convention_uuid)
     )
-    file_stream = convention_generator.fiche_caf_doc(convention)
-
-    #    return file_stream, f"{convention}"
-
-    #   data, file_name = services.fiche_caf(request, convention_uuid)
+    file_stream = fiche_caf_doc(convention)
 
     response = HttpResponse(
         file_stream,
@@ -322,7 +313,7 @@ def fiche_caf(request, convention_uuid):
 @login_required
 @permission_required("convention.add_convention")
 def new_avenant(request, convention_uuid):
-    result = services.create_avenant(request, convention_uuid)
+    result = create_avenant(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         if result["avenant_type"].nom == "logements":
             return HttpResponseRedirect(
@@ -384,13 +375,13 @@ class ConventionView(ABC, LoginRequiredMixin, View):
             request,
             self.target_template,
             {
-                **utils.base_convention_response_error(request, service.convention),
+                **base_convention_response_error(request, service.convention),
                 **({"form": service.form} if service.form else {}),
                 **({"upform": service.upform} if service.upform else {}),
                 **({"formset": service.formset} if service.formset else {}),
                 **self._get_form_steps(),
                 "editable_after_upload": (
-                    utils.editable_convention(request, convention)
+                    editable_convention(request, convention)
                     or service.editable_after_upload
                 ),
             },
@@ -401,7 +392,7 @@ class ConventionView(ABC, LoginRequiredMixin, View):
         convention = self._get_convention(convention_uuid)
         service = self.service_class(convention=convention, request=request)
         service.save()
-        if service.return_status == utils.ReturnStatus.SUCCESS:
+        if service.return_status == ReturnStatus.SUCCESS:
             if service.redirect_recap:
                 return HttpResponseRedirect(
                     reverse("conventions:recapitulatif", args=[convention.uuid])
@@ -409,7 +400,7 @@ class ConventionView(ABC, LoginRequiredMixin, View):
             return HttpResponseRedirect(
                 reverse(self.next_path_redirect, args=[convention.uuid])
             )
-        if service.return_status == utils.ReturnStatus.REFRESH:
+        if service.return_status == ReturnStatus.REFRESH:
             return HttpResponseRedirect(
                 reverse(self.current_path_redirect, args=[convention.uuid])
             )
@@ -417,7 +408,7 @@ class ConventionView(ABC, LoginRequiredMixin, View):
             request,
             self.target_template,
             {
-                **utils.base_convention_response_error(request, service.convention),
+                **base_convention_response_error(request, service.convention),
                 **({"form": service.form} if service.form else {}),
                 **({"upform": service.upform} if service.upform else {}),
                 **({"formset": service.formset} if service.formset else {}),
@@ -427,7 +418,7 @@ class ConventionView(ABC, LoginRequiredMixin, View):
                     if service.import_warnings
                     else {}
                 ),
-                "editable_after_upload": utils.editable_convention(request, convention)
+                "editable_after_upload": editable_convention(request, convention)
                 or service.editable_after_upload,
             },
         )
@@ -438,40 +429,72 @@ class ConventionSelectionFromDBView(LoginRequiredMixin, View):
     # @permission_required("convention.add_convention")
     def get(self, request):
 
-        result = services.select_programme_create(request)
+        service = ConventionSeletionService(request)
+        service.get_from_db()
 
         return render(
             request,
             "conventions/selection_from_db.html",
             {
-                **result,
-                "financements": FinancementEDD,
+                "form": service.form,
+                "lots": service.lots,
+                "editable": True,
             },
         )
 
     # @permission_required("convention.add_convention")
     def post(self, request):
-        pass
+        service = ConventionSeletionService(request)
+        service.post_from_db()
+
+        if service.return_status == ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(
+                reverse("conventions:bailleur", args=[service.convention.uuid])
+            )
+        return render(
+            request,
+            "conventions/selection_from_db.html",
+            {
+                "form": service.form,
+                "lots": service.lots,
+                "editable": True,
+            },
+        )
 
 
 class ConventionSelectionFromZeroView(LoginRequiredMixin, View):
-    @permission_required("convention.add_convention")
-    def get(self, request):
 
-        result = services.select_programme_create(request)
+    # @permission_required("convention.add_convention")
+    def get(self, request):
+        service = ConventionSeletionService(request)
+        service.get_from_zero()
 
         return render(
             request,
             "conventions/selection_from_zero.html",
             {
-                **result,
-                "financements": FinancementEDD,
+                "form": service.form,
+                "editable": True,
             },
         )
 
-    @permission_required("convention.add_convention")
+    # @permission_required("convention.add_convention")
     def post(self, request):
-        pass
+        service = ConventionSeletionService(request)
+        service.post_from_zero()
+
+        if service.return_status == ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(
+                reverse("conventions:bailleur", args=[service.convention.uuid])
+            )
+        return render(
+            request,
+            "conventions/selection_from_zero.html",
+            {
+                "form": service.form,
+                "editable": True,
+            },
+        )
 
 
 class ConventionBailleurView(ConventionView):

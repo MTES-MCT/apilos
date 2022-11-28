@@ -1,19 +1,22 @@
 from django.urls import path
-
+from django.contrib.auth.decorators import permission_required
 from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("selection", views.select_programme_create, name="selection"),
     path(
-        "selection_from_db",
-        views.ConventionSelectionFromDBView.as_view(),
+        "selection",
+        permission_required("convention.add_convention")(
+            views.ConventionSelectionFromDBView.as_view()
+        ),
         name="selection",
     ),
     path(
         "selection_from_zero",
-        views.ConventionSelectionFromZeroView.as_view(),
-        name="selection",
+        permission_required("convention.add_convention")(
+            views.ConventionSelectionFromZeroView.as_view()
+        ),
+        name="selection_from_zero",
     ),
     path(
         "bailleur/<convention_uuid>",

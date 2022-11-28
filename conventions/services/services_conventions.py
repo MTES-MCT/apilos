@@ -485,7 +485,7 @@ def convention_validate(request, convention_uuid):
 
 
 @require_POST
-def generate_convention(request, convention_uuid):
+def generate_convention_service(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme__bailleur")
         .prefetch_related("lot")
