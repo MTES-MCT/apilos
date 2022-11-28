@@ -13,10 +13,10 @@
                     <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
                         <p class="fr-alert__title">Vous n'avez pas trouvé votre programme dans la liste déroulante des programmes et financements connus de l'administration</p>
                         <p>Vous avez la possibilité de créer une convention en saisissant les données du programme et du financement dans le formulaire ci-dessous.</p>
-                        <p><i>
+                        <p><em>
                             Il est toute fois conseillé de créer votre convention à partir des programmes et financements connus de l'administration, cela évite la double saisies.
                             Vous pouvez vérifier et accéder à la liste en cliquant sur le bouton ci-dessous :
-                        </i></p>
+                        </em></p>
                         <a class="fr-btn fr-btn--secondary" href="{% url 'conventions:selection' %}">
                             Retour à la sélection d'une convention
                         </a>
@@ -64,111 +64,3 @@
         </div>
     </div>
 {% endblock %}
-
-
-
-
-
-{% comment %}
-
-<div class="fr-container-fluid ds_banner">
-        {% include "conventions/common/form_header.html"%}
-        <div class="fr-container">
-            <form method="post" action="{% if redirect_action %}{{ redirect_action }}{% endif %}">
-                {% csrf_token %}
-                <div class="fr-grid-row fr-grid-row--gutters fr-pt-5w">
-                    <div class="fr-col-md-12">
-                        <div class="fr-mb-3w fr-form-group">
-                            <fieldset class="fr-fieldset">
-                                <div class="fr-fieldset__content">
-                                    <div class="fr-radio-group">
-                                        <input
-                                            type="radio"
-                                            id="selection"
-                                            value="selection"
-                                            name="{{form.existing_programme.html_name}}"
-                                            {% if form.existing_programme.value == 'selection' %}checked{% endif %}/>
-                                        <label class="fr-label" for="selection">
-                                            Sélectionnez votre programme et son financement {% include "common/form/required_field.html" with form_input=form.lot_uuid %}
-                                        </label>
-                                    </div>
-                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                        document.addEventListener('DOMContentLoaded', function () {
-                                            document.getElementById('selection')
-                                                .addEventListener('click', function(){ convention_mode(true) });
-                                        });
-                                    </script>
-                                    <div id='programme_selection' class="fr-ml-4w fr-select-group {% if form.lot_uuid.errors %}fr-select-group--error{% endif %}"  {% if form.existing_programme.value != 'selection' %}hidden{% endif %}>
-                                        <details>
-                                            <summary class="text-title-blue-france fr-text--xs"><u>Comment afficher uniquement les programmes de mes départements ?</u></summary>
-                                            <div class="fr-text--xs">
-                                                <div>Vous pouvez choisir vos zones et départements d’intervention dans votre <a class="fr-link fr-text--xs" href="{% url 'settings:profile' %}">espace personnel.</a></div>
-                                                <div><a href="https://docs.apilos.beta.gouv.fr/apres-la-validation-de-la-convention/bailleurs-parametres/comment-afficher-mes-programmes-par-departement" target="_blank" rel="noopener" class="fr-link fr-text--xs">Plus d’informations sur les paramètres de votre compte</a></div>
-                                            </div>
-                                        </details>
-
-
-                                        <div class="fr-mt-1w block--row-strech" id="{{form.lot.id_for_label}}_div">
-                                            <select
-                                                class="fr-select {% if form.lot.errors %}fr-select--error{% endif %}"
-                                                id="{{form.lot.id_for_label}}"
-                                                name="{{form.lot.html_name}}"
-                                                {% if convention %}disabled{% endif %} >
-                                                <option value="" selected disabled hidden>Selectionnez une option</option>
-                                                {% for lot in lots %}
-                                                    <option
-                                                        value="{{lot.uuid}}"
-                                                        {% if lot.uuid|stringformat:"s"  == form.lot.value %}selected{% endif %}
-                                                        {% if lot.convention_set.all and lot.uuid|stringformat:"s"  != form.lot.value %}disabled="disabled"{% endif %}>
-                                                        {{ lot.programme.ville}} - {{ lot.programme.nom }} - {{lot.nb_logements}} lgts - {{ lot.get_type_habitat_display }} - {{ lot.financement }}
-                                                    </option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                        {% for error in form.lot.errors %}
-                                            <p id="select-error-desc-error" class="fr-error-text">
-                                                {{ error }}
-                                            </p>
-                                        {% endfor %}
-                                    </div>
-
-                                    {% if not convention.uuid %}
-                                        <div class="fr-radio-group">
-                                            <input
-                                                type="radio"
-                                                id="creation"
-                                                value="creation"
-                                                name="{{form.existing_programme.html_name}}"
-                                                {% if form.existing_programme.value == 'creation' %}checked{% endif %}/>
-                                            <label class="fr-label" for="creation">Convention sans agrément : créez votre convention à partir de zéro
-                                            </label>
-                                        </div>
-                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                            document.addEventListener('DOMContentLoaded', function () {
-                                                document.getElementById('creation')
-                                                    .addEventListener('click', function(){ convention_mode(false) });
-                                            });
-                                        </script>
-                                        <div id='programme_creation' {% if form.existing_programme.value != 'creation' %}hidden{% endif %}>
-
-
-                                        </div>
-
-                                    {% endif %}
-
-                                </div>
-                            </fieldset>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-button-footer fr-col-md-12 fr-py-5w">
-                    {% include "common/button/next_and_save.html" %}
-                    <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
-                        Revenir à la liste des conventions
-                    </a>
-                </div>
-            </form>
-        </div>
-    </div>
-{% endblock %} {% endcomment %}
