@@ -78,7 +78,6 @@ class TypologieLogement(models.TextChoices):
 
 
 class NatureLogement(models.TextChoices):
-    SANSOBJET = "SANSOBJET", "Sans Objet"
     LOGEMENTSORDINAIRES = "LOGEMENTSORDINAIRES", "Logements ordinaires"
     AUTRE = "AUTRE", "Autres logements foyers"
     HEBERGEMENT = "HEBERGEMENT", "Hébergement"
@@ -287,6 +286,19 @@ class Programme(IngestableModel):
 
     def edd_classique_files(self):
         return get_key_from_json_field(self.edd_classique, "files", default={})
+
+    def is_foyer(self):
+        return self.nature_logement in [NatureLogement.AUTRE]
+
+    def is_residence(self):
+        return self.nature_logement in [
+            NatureLogement.HEBERGEMENT,
+            NatureLogement.RESISDENCESOCIALE,
+            NatureLogement.PENSIONSDEFAMILLE,
+            NatureLogement.RESIDENCEDACCUEIL,
+            NatureLogement.RESIDENCEUNIVERSITAIRE,
+            NatureLogement.RHVS,
+        ]
 
 
 # pylint: disable=W0613

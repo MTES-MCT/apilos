@@ -35,6 +35,29 @@ class ConventionTypeConfigurationError(Exception):
     pass
 
 
+def get_convention_template_path(convention):
+    if convention.is_avenant():
+        return f"{settings.BASE_DIR}/documents/Avenant-template.docx"
+    elif convention.programme.is_foyer():
+        return f"{settings.BASE_DIR}/documents/Foyer-template.docx"
+    elif convention.programme.is_residence():
+        return f"{settings.BASE_DIR}/documents/Residence-template.docx"
+    elif convention.programme.bailleur.is_hlm():
+        return f"{settings.BASE_DIR}/documents/HLM-template.docx"
+    elif convention.programme.bailleur.is_sem():
+        return f"{settings.BASE_DIR}/documents/SEM-template.docx"
+    elif convention.programme.bailleur.is_type1and2():
+        if convention.type1and2 == ConventionType1and2.TYPE1:
+            return f"{settings.BASE_DIR}/documents/Type1-template.docx"
+        elif convention.type1and2 == ConventionType1and2.TYPE2:
+            return f"{settings.BASE_DIR}/documents/Type2-template.docx"
+    raise ConventionTypeConfigurationError(
+        "Le type de convention I ou II doit-être configuré pour les bailleurs"
+        + " non SEM ou HLM. Bailleur de type : "
+        + convention.programme.bailleur.get_sous_nature_bailleur_display()
+    )
+
+
 def generate_convention_doc(convention, save_data=False):
     # pylint: disable=R0912,R0914,R0915
     annexes = (
@@ -42,33 +65,14 @@ def generate_convention_doc(convention, save_data=False):
         .filter(logement__lot_id=convention.lot.id)
         .all()
     )
+
     # It is an avenant
     avenant_data = {}
     if convention.is_avenant():
-        filepath = f"{settings.BASE_DIR}/documents/Avenant-template.docx"
         for avenant_type in convention.avenant_types.all():
             avenant_data[f"avenant_type_{avenant_type}"] = True
-    # It is a convention
-    elif convention.programme.bailleur.is_hlm():
-        filepath = f"{settings.BASE_DIR}/documents/HLM-template.docx"
-    elif convention.programme.bailleur.is_sem():
-        filepath = f"{settings.BASE_DIR}/documents/SEM-template.docx"
-    elif convention.programme.bailleur.is_type1and2():
-        if convention.type1and2 == ConventionType1and2.TYPE1:
-            filepath = f"{settings.BASE_DIR}/documents/Type1-template.docx"
-        elif convention.type1and2 == ConventionType1and2.TYPE2:
-            filepath = f"{settings.BASE_DIR}/documents/Type2-template.docx"
-        else:
-            raise ConventionTypeConfigurationError(
-                "Le type de convention I ou II doit-être configuré pour les bailleurs"
-                + " non SEM ou HLM. Bailleur de type : "
-                + convention.programme.bailleur.get_sous_nature_bailleur_display()
-            )
-    else:
-        raise NotHandleConventionType(
-            "La génération de convention n'est pas disponible pour ce type de"
-            + f" bailleur : {convention.programme.bailleur.get_sous_nature_bailleur_display()}"
-        )
+
+    filepath = get_convention_template_path(convention)
     doc = DocxTemplate(filepath)
 
     logements_totale = {

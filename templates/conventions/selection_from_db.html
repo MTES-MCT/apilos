@@ -15,22 +15,20 @@
                         <div class="fr-col-12">
                             <p>Vous trouverez dans la liste ci-dessous tous les programmes et leurs financements connus par l'administration.</p>
 
-                            <div class="fr-mt-1w block--row-strech" id="{{form.lot.id_for_label}}_div">
-                                <select
-                                    class="fr-select {% if form.lot.errors %}fr-select--error{% endif %}"
-                                    id="{{form.lot.id_for_label}}"
-                                    name="{{form.lot.html_name}}">
-                                    <option value="" selected disabled hidden>Selectionnez une option</option>
-                                    {% for lot in lots %}
-                                        <option
-                                            value="{{lot.uuid}}"
-                                            {% if lot.uuid|stringformat:"s"  == form.lot.value %}selected{% endif %}
-                                            {% if lot.conventions.all and lot.uuid|stringformat:"s"  != form.lot.value %}disabled="disabled"{% endif %}>
-                                            {{ lot.programme.ville}} - {{ lot.programme.nom }} - {{lot.nb_logements}} lgts - {{ lot.get_type_habitat_display }} - {{ lot.financement }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                            <select
+                                class="fr-select {% if form.lot.errors %}fr-select--error{% endif %}"
+                                id="{{form.lot.id_for_label}}"
+                                name="{{form.lot.html_name}}">
+                                <option value="" selected disabled hidden>Selectionnez une option</option>
+                                {% for lot in lots %}
+                                    <option
+                                        value="{{lot.uuid}}"
+                                        {% if lot.uuid|stringformat:"s"  == form.lot.value %}selected{% endif %}
+                                        {% if lot.conventions.all and lot.uuid|stringformat:"s"  != form.lot.value %}disabled="disabled"{% endif %}>
+                                        {{ lot.programme.ville}} - {{ lot.programme.nom }} - {{lot.nb_logements}} lgts - {{ lot.get_type_habitat_display }} - {{ lot.financement }}
+                                    </option>
+                                {% endfor %}
+                            </select>
                             {% for error in form.lot.errors %}
                                 <p id="select-error-desc-error" class="fr-error-text">
                                     {{ error }}
@@ -44,6 +42,10 @@
                                 <div><a href="https://docs.apilos.beta.gouv.fr/apres-la-validation-de-la-convention/bailleurs-parametres/comment-afficher-mes-programmes-par-departement" target="_blank" rel="noopener" class="fr-link">Plus d’informations sur les paramètres de votre compte</a></div>
                             </div>
                         </details>
+
+                        <div class="fr-col-12  fr-mt-3w">
+                            {% include "common/form/input_select.html" with form_input=form.nature_logement mandatory_input=True %}
+                        </div>
 
                         <div class="form-button-footer fr-col-md-12 fr-py-5w">
                             {% include "common/button/next_and_save.html" %}

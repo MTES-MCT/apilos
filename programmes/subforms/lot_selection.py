@@ -1,6 +1,6 @@
 from django import forms
 
-from programmes.models import FinancementEDD, TypeHabitat
+from programmes.models import FinancementEDD, NatureLogement, TypeHabitat
 
 
 class ProgrammeSelectionFromDBForm(forms.Form):
@@ -13,6 +13,15 @@ class ProgrammeSelectionFromDBForm(forms.Form):
         choices=[],
         error_messages={
             "required": "La selection du programme et de son financement est obligatoire"
+        },
+    )
+
+    nature_logement = forms.ChoiceField(
+        label="Nature des logements",
+        help_text="Si la convention ne porte pas sur une résidence ou un foyer, vous devez selectionner «Logements ordinaires»",
+        choices=NatureLogement.choices,
+        error_messages={
+            "required": "La selection de la nature des logements est obligatoire"
         },
     )
 
@@ -48,6 +57,14 @@ class ProgrammeSelectionFromZeroForm(forms.Form):
             "max_length": "Le nom du programme ne doit pas excéder 255 caractères",
         },
     )
+    numero_galion = forms.CharField(
+        label="N° Opération",
+        required=False,
+        max_length=255,
+        error_messages={
+            "max_length": "Le Numéro d'opération ne doit pas excéder 255 caractères",
+        },
+    )
     nb_logements = forms.IntegerField(
         label="Nb logements à conventionner",
         error_messages={
@@ -66,6 +83,14 @@ class ProgrammeSelectionFromZeroForm(forms.Form):
         choices=FinancementEDD.choices,
         error_messages={
             "required": "Le financement est obligatoire",
+        },
+    )
+    nature_logement = forms.ChoiceField(
+        label="Nature des logements",
+        help_text="Si la convention ne porte pas sur une résidence ou un foyer, vous devez selectionner «Logements ordinaires»",
+        choices=NatureLogement.choices,
+        error_messages={
+            "required": "La selection de la nature des logements est obligatoire"
         },
     )
     code_postal = forms.CharField(
