@@ -19,13 +19,15 @@ from programmes.models import (
     ReferenceCadastrale,
     TypeOperation,
 )
+from programmes.subforms.lot_selection import (
+    ProgrammeSelectionFromDBForm,
+    ProgrammeSelectionFromZeroForm,
+)
 from programmes.forms import (
     ProgrammeForm,
     ProgrammeCadastralForm,
     ProgrammeEDDForm,
     LogementEDDFormSet,
-    ProgrammeSelectionFromDBForm,
-    ProgrammeSelectionFromZeroForm,
     ReferenceCadastraleFormSet,
 )
 from . import utils

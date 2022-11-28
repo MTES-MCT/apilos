@@ -4,17 +4,18 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 
 from bailleurs.models import Bailleur
+from conventions.models import Convention
 from conventions.services import (
     services_programmes,
     utils,
 )
 from core.tests import utils_fixtures
 from instructeurs.models import Administration
-from programmes.forms import (
+from programmes.subforms.lot_selection import (
     ProgrammeSelectionFromDBForm,
     ProgrammeSelectionFromZeroForm,
 )
-from programmes.models import Lot
+from programmes.models import Financement, Lot, TypeHabitat
 from users.models import GroupProfile, User
 
 
@@ -52,8 +53,41 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
             [(lot.uuid, str(lot)) for lot in lots],
         )
 
-    def test_post_from_db(self):
-        pass
+    def test_post_from_db_failed_form(self):
+        self.service.request.POST = {"lot": ""}
+        self.service.post_from_db()
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertTrue(self.service.form.has_error("lot"))
+
+    def test_post_from_db_failed_scope(self):
+        bailleur = Bailleur.objects.get(siret="987654321")
+        administration = Administration.objects.get(code="12345")
+        programme = utils_fixtures.create_programme(
+            bailleur, administration, nom="Programme failed"
+        )
+        utils_fixtures.create_lot(programme, Financement.PLAI)
+        lot_plus = utils_fixtures.create_lot(programme, Financement.PLUS)
+        self.service.request.POST = {"lot": str(lot_plus.uuid)}
+        self.service.post_from_db()
+
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertTrue(self.service.form.has_error("lot"))
+
+    def test_post_from_db_success(self):
+        bailleur = Bailleur.objects.get(siret="987654321")
+        administration = Administration.objects.get(code="75000")
+        programme_2 = utils_fixtures.create_programme(
+            bailleur, administration, nom="Programme 2"
+        )
+        utils_fixtures.create_lot(programme_2, Financement.PLAI)
+        lot_plus_2 = utils_fixtures.create_lot(programme_2, Financement.PLUS)
+
+        self.service.request.POST = {"lot": str(lot_plus_2.uuid)}
+        self.service.post_from_db()
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
+        self.assertEqual(
+            self.service.convention, Convention.objects.get(lot=lot_plus_2)
+        )
 
     def test_get_from_zero(self):
         administration = Administration.objects.get(code="75000")
@@ -70,8 +104,63 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
             [(bailleur.uuid, str(bailleur)) for bailleur in bailleurs],
         )
 
-    def test_post_from_zero(self):
-        pass
+    def test_post_from_zero_failed_form(self):
+        bailleur = Bailleur.objects.get(siret="987654321")
+        administration = Administration.objects.get(code="75000")
+        self.service.request.POST = {
+            "bailleur": str(bailleur.uuid),
+            "administration": str(administration.uuid),
+            "nom": "Programme de test",
+            "nb_logements": "10",
+            "type_habitat": TypeHabitat.MIXTE,
+            "financement": Financement.PLUS,
+            "code_postal": "20000",
+            "ville": "",
+        }
+        self.service.post_from_zero()
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertTrue(self.service.form.has_error("ville"))
+
+    def test_post_from_zero_failed_scope(self):
+        bailleur = Bailleur.objects.get(siret="987654321")
+        administration = Administration.objects.get(code="12345")
+        self.service.request.POST = {
+            "bailleur": str(bailleur.uuid),
+            "administration": str(administration.uuid),
+            "nom": "Programme de test",
+            "nb_logements": "10",
+            "type_habitat": TypeHabitat.MIXTE,
+            "financement": Financement.PLUS,
+            "code_postal": "20000",
+            "ville": "Bisouville",
+        }
+        self.service.post_from_zero()
+
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertTrue(self.service.form.has_error("administration"))
+
+    def test_post_from_zero_success(self):
+        bailleur = Bailleur.objects.get(siret="987654321")
+        administration = Administration.objects.get(code="75000")
+        self.service.request.POST = {
+            "bailleur": str(bailleur.uuid),
+            "administration": str(administration.uuid),
+            "nom": "Programme de test",
+            "nb_logements": "10",
+            "type_habitat": TypeHabitat.MIXTE,
+            "financement": Financement.PLUS,
+            "code_postal": "20000",
+            "ville": "Bisouville",
+        }
+        self.service.post_from_zero()
+
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
+        self.assertEqual(
+            self.service.convention,
+            Convention.objects.get(
+                programme__nom="Programme de test", financement=Financement.PLUS
+            ),
+        )
 
 
 class ConventionSelectionServiceForBailleurTests(TestCase):
@@ -100,7 +189,6 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             )
             .filter(programme__parent_id__isnull=True)
         )
-        print(lots)
         self.service.get_from_db()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
         self.assertIsInstance(self.service.form, ProgrammeSelectionFromDBForm)
@@ -109,8 +197,41 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             [(lot.uuid, str(lot)) for lot in lots],
         )
 
-    def test_post_from_db(self):
-        pass
+    def test_post_from_db_failed(self):
+        self.service.request.POST = {"lot": ""}
+        self.service.post_from_db()
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertTrue(self.service.form.has_error("lot"))
+
+        bailleur = Bailleur.objects.get(siret="2345678901")
+        administration = Administration.objects.get(code="12345")
+        programme = utils_fixtures.create_programme(
+            bailleur, administration, nom="Programme failed"
+        )
+        utils_fixtures.create_lot(programme, Financement.PLAI)
+        lot_plus = utils_fixtures.create_lot(programme, Financement.PLUS)
+        self.service.request.POST = {"lot": str(lot_plus.uuid)}
+        self.service.post_from_db()
+
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertTrue(self.service.form.has_error("lot"))
+
+    def test_post_from_db_success(self):
+
+        bailleur = Bailleur.objects.get(siret="987654321")
+        administration = Administration.objects.get(code="75000")
+        programme_2 = utils_fixtures.create_programme(
+            bailleur, administration, nom="Programme 2"
+        )
+        utils_fixtures.create_lot(programme_2, Financement.PLAI)
+        lot_plus_2 = utils_fixtures.create_lot(programme_2, Financement.PLUS)
+
+        self.service.request.POST = {"lot": str(lot_plus_2.uuid)}
+        self.service.post_from_db()
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
+        self.assertEqual(
+            self.service.convention, Convention.objects.get(lot=lot_plus_2)
+        )
 
     def test_get_from_zero(self):
         administrations = Administration.objects.all().order_by("nom")
@@ -132,5 +253,60 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             [(bailleur.uuid, str(bailleur)) for bailleur in bailleurs],
         )
 
-    def test_post_from_zero(self):
-        pass
+    def test_post_from_zero_failed_form(self):
+        bailleur = Bailleur.objects.get(siret="987654321")
+        administration = Administration.objects.get(code="75000")
+        self.service.request.POST = {
+            "bailleur": str(bailleur.uuid),
+            "administration": str(administration.uuid),
+            "nom": "Programme de test",
+            "nb_logements": "10",
+            "type_habitat": TypeHabitat.MIXTE,
+            "financement": Financement.PLUS,
+            "code_postal": "20000",
+            "ville": "",
+        }
+        self.service.post_from_zero()
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertTrue(self.service.form.has_error("ville"))
+
+    def test_post_from_zero_failed_scope(self):
+        bailleur = Bailleur.objects.get(siret="2345678901")
+        administration = Administration.objects.get(code="75000")
+        self.service.request.POST = {
+            "bailleur": str(bailleur.uuid),
+            "administration": str(administration.uuid),
+            "nom": "Programme de test",
+            "nb_logements": "10",
+            "type_habitat": TypeHabitat.MIXTE,
+            "financement": Financement.PLUS,
+            "code_postal": "20000",
+            "ville": "Bisouville",
+        }
+        self.service.post_from_zero()
+
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertTrue(self.service.form.has_error("bailleur"))
+
+    def test_post_from_zero_success(self):
+        bailleur = Bailleur.objects.get(siret="987654321")
+        administration = Administration.objects.get(code="75000")
+        self.service.request.POST = {
+            "bailleur": str(bailleur.uuid),
+            "administration": str(administration.uuid),
+            "nom": "Programme de test",
+            "nb_logements": "10",
+            "type_habitat": TypeHabitat.MIXTE,
+            "financement": Financement.PLUS,
+            "code_postal": "20000",
+            "ville": "Bisouville",
+        }
+        self.service.post_from_zero()
+
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
+        self.assertEqual(
+            self.service.convention,
+            Convention.objects.get(
+                programme__nom="Programme de test", financement=Financement.PLUS
+            ),
+        )

@@ -14,7 +14,7 @@ class ConventionSelectionFromDBViewTests(AbstractCreateViewTestCase, TestCase):
         super().setUp()
 
         bailleur = Bailleur.objects.get(siret="987654321")
-        administration = Administration.objects.get(code="12345")
+        administration = Administration.objects.get(code="75000")
         programme_2 = utils_fixtures.create_programme(
             bailleur, administration, nom="Programme 2"
         )
