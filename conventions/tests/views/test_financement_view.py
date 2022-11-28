@@ -2,10 +2,10 @@ from django.test import TestCase
 from django.urls import reverse
 
 from conventions.models import Preteur
-from conventions.tests.views.abstract import AbstractViewTestCase
+from conventions.tests.views.abstract import AbstractEditViewTestCase
 
 
-class ConventionFinancementViewTests(AbstractViewTestCase, TestCase):
+class ConventionFinancementViewTests(AbstractEditViewTestCase, TestCase):
     def setUp(self):
         super().setUp()
         self.target_path = reverse(

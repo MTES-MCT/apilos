@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from conventions.tests.views.abstract import AbstractViewTestCase
+from conventions.tests.views.abstract import AbstractEditViewTestCase
 
 post_fixture = {
     "form-TOTAL_FORMS": "2",
@@ -31,7 +31,7 @@ post_fixture = {
 }
 
 
-class ConventionLogementsViewTests(AbstractViewTestCase, TestCase):
+class ConventionLogementsViewTests(AbstractEditViewTestCase, TestCase):
     def setUp(self):
         super().setUp()
         self.target_path = reverse(
