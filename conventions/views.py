@@ -15,7 +15,7 @@ from django.views.decorators.http import require_GET, require_http_methods
 
 from programmes.models import FinancementEDD
 from upload.services import UploadService
-from conventions.models import Convention
+from conventions.models import Convention, ConventionStatut
 from conventions.permissions import has_campaign_permission
 from conventions.services import convention_generator, services, utils
 from conventions.services.services_programmes import (
@@ -260,7 +260,17 @@ def display_pdf(request, convention_uuid):
     # récupérer le doc PDF
     convention = Convention.objects.get(uuid=convention_uuid)
     filename = None
-    if convention.nom_fichier_signe:
+    if (
+        convention.statut
+        in [
+            ConventionStatut.SIGNEE,
+            ConventionStatut.RESILIEE,
+            ConventionStatut.DENONCEE,
+            ConventionStatut.ANNULEE,
+        ]
+        and convention.nom_fichier_signe
+        and default_storage.exists(convention.nom_fichier_signe)
+    ):
         filename = convention.nom_fichier_signe
     elif default_storage.exists(
         f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.pdf"
