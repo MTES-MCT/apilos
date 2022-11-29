@@ -2,6 +2,7 @@ from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.conf import settings
+from django.db.models.query import QuerySet
 
 from conventions.services.services_conventions import ConventionService
 from conventions.templatetags.custom_filters import is_instructeur
@@ -18,8 +19,11 @@ from programmes.models import (
     ReferenceCadastrale,
     TypeOperation,
 )
+from programmes.subforms.lot_selection import (
+    ProgrammeSelectionFromDBForm,
+    ProgrammeSelectionFromZeroForm,
+)
 from programmes.forms import (
-    ProgrammeSelectionForm,
     ProgrammeForm,
     ProgrammeCadastralForm,
     ProgrammeEDDForm,
@@ -34,98 +38,116 @@ def _get_choices_from_object(object_list):
     return [(instance.uuid, str(instance)) for instance in object_list]
 
 
-def select_programme_create(request):
+class ConventionSelectionService:
+    request: HttpRequest
+    convention: Convention
+    form: ProgrammeSelectionFromDBForm | ProgrammeSelectionFromZeroForm
+    lots: QuerySet[Lot] | None = None
+    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
 
-    lots = (
-        request.user.lots()
-        .prefetch_related("programme")
-        .prefetch_related("conventions")
-        .order_by("programme__ville", "programme__nom", "nb_logements", "financement")
-        .filter(programme__parent_id__isnull=True)
-    )
-    bailleurs = (
-        Bailleur.objects.all().order_by("nom")
-        if is_instructeur(request)
-        else request.user.bailleurs()
-    )
-    administrations = (
-        request.user.administrations()
-        if is_instructeur(request)
-        else Administration.objects.all().order_by("nom")
-    )
+    def __init__(self, request: HttpRequest) -> None:
+        self.request = request
 
-    if request.method == "POST":
-        form = ProgrammeSelectionForm(
-            request.POST,
-            lots=_get_choices_from_object(lots),
-            bailleurs=_get_choices_from_object(bailleurs),
-            administrations=_get_choices_from_object(administrations),
+    def _get_bailleur_choices(self):
+        return _get_choices_from_object(
+            Bailleur.objects.all().order_by("nom")
+            if is_instructeur(self.request)
+            else self.request.user.bailleurs()
         )
-        if form.is_valid():
-            existing_programme = form.cleaned_data["existing_programme"]
-            if existing_programme == "selection":
-                lot = Lot.objects.get(uuid=form.cleaned_data["lot"])
-                request.user.check_perm("convention.add_convention", lot)
-            else:
-                request.user.check_perm("convention.add_convention")
-                bailleur = Bailleur.objects.get(uuid=form.cleaned_data["bailleur"])
-                administration = Administration.objects.get(
-                    uuid=form.cleaned_data["administration"]
-                )
-                programme = Programme.objects.create(
-                    nom=form.cleaned_data["nom"],
-                    code_postal=form.cleaned_data["code_postal"],
-                    ville=form.cleaned_data["ville"],
-                    bailleur=bailleur,
-                    administration=administration,
-                    type_operation=(
-                        TypeOperation.SANSTRAVAUX
-                        if form.cleaned_data["financement"]
-                        == Financement.SANS_FINANCEMENT
-                        else TypeOperation.NEUF
-                    ),
-                )
-                programme.save()
-                lot = Lot.objects.create(
-                    nb_logements=form.cleaned_data["nb_logements"],
-                    financement=form.cleaned_data["financement"],
-                    type_habitat=form.cleaned_data["type_habitat"],
-                    programme=programme,
-                )
-                lot.save()
-            convention = Convention.objects.create(
+
+    def _get_administration_choices(self):
+        return _get_choices_from_object(
+            self.request.user.administrations()
+            if is_instructeur(self.request)
+            else Administration.objects.all().order_by("nom")
+        )
+
+    def get_from_zero(self):
+        self.form = ProgrammeSelectionFromZeroForm(
+            bailleurs=self._get_bailleur_choices(),
+            administrations=self._get_administration_choices(),
+        )
+
+    def post_from_zero(self):
+        self.form = ProgrammeSelectionFromZeroForm(
+            self.request.POST,
+            bailleurs=self._get_bailleur_choices(),
+            administrations=self._get_administration_choices(),
+        )
+        if self.form.is_valid():
+            bailleur = Bailleur.objects.get(uuid=self.form.cleaned_data["bailleur"])
+            administration = Administration.objects.get(
+                uuid=self.form.cleaned_data["administration"]
+            )
+            programme = Programme.objects.create(
+                nom=self.form.cleaned_data["nom"],
+                code_postal=self.form.cleaned_data["code_postal"],
+                ville=self.form.cleaned_data["ville"],
+                bailleur=bailleur,
+                administration=administration,
+                type_operation=(
+                    TypeOperation.SANSTRAVAUX
+                    if self.form.cleaned_data["financement"]
+                    == Financement.SANS_FINANCEMENT
+                    else TypeOperation.NEUF
+                ),
+            )
+            programme.save()
+            lot = Lot.objects.create(
+                nb_logements=self.form.cleaned_data["nb_logements"],
+                financement=self.form.cleaned_data["financement"],
+                type_habitat=self.form.cleaned_data["type_habitat"],
+                programme=programme,
+            )
+            lot.save()
+            self.convention = Convention.objects.create(
                 lot=lot,
                 programme_id=lot.programme_id,
                 financement=lot.financement,
-                cree_par=request.user,
+                cree_par=self.request.user,
             )
-            if existing_programme != "selection":
-                _send_email_staff(request, convention)
+            _send_email_staff(self.request, self.convention)
+            self.convention.save()
+            self.return_status = utils.ReturnStatus.SUCCESS
 
-            convention.save()
-            # All is OK -> Next:
-            return {
-                "success": utils.ReturnStatus.SUCCESS,
-                "convention": convention,
-            }
-
-    # If this is a GET (or any other method) create the default form.
-    else:
-        form = ProgrammeSelectionForm(
-            lots=_get_choices_from_object(lots),
-            bailleurs=_get_choices_from_object(bailleurs),
-            administrations=_get_choices_from_object(administrations),
-            initial={
-                "existing_programme": "selection",
-            },
+    def get_from_db(self):
+        self.lots = (
+            self.request.user.lots()
+            .prefetch_related("programme")
+            .prefetch_related("conventions")
+            .order_by(
+                "programme__ville", "programme__nom", "nb_logements", "financement"
+            )
+            .filter(programme__parent_id__isnull=True)
+        )
+        self.form = ProgrammeSelectionFromDBForm(
+            lots=_get_choices_from_object(self.lots),
         )
 
-    return {
-        "success": utils.ReturnStatus.ERROR,
-        "form": form,
-        "lots": lots,
-        "editable": request.user.has_perm("convention.add_convention"),
-    }
+    def post_from_db(self):
+        self.lots = (
+            self.request.user.lots()
+            .prefetch_related("programme")
+            .prefetch_related("conventions")
+            .order_by(
+                "programme__ville", "programme__nom", "nb_logements", "financement"
+            )
+            .filter(programme__parent_id__isnull=True)
+        )
+        self.form = ProgrammeSelectionFromDBForm(
+            self.request.POST,
+            lots=_get_choices_from_object(self.lots),
+        )
+        if self.form.is_valid():
+            lot = Lot.objects.get(uuid=self.form.cleaned_data["lot"])
+            self.convention = Convention.objects.create(
+                lot=lot,
+                programme_id=lot.programme_id,
+                financement=lot.financement,
+                cree_par=self.request.user,
+            )
+            self.convention.save()
+            self.return_status = utils.ReturnStatus.SUCCESS
 
 
 def _send_email_staff(request, convention):

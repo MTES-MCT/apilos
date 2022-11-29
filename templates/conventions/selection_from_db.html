@@ -1,0 +1,70 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}Selection - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-my-5w">
+                    <h1 class="fr-h2">Sélectionnez votre programme et son financement</h1>
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="fr-col-12">
+                            <p>Vous trouverez dans la liste ci-dessous tous les programmes et leurs financements connus par l'administration.</p>
+
+                            <div class="fr-mt-1w block--row-strech" id="{{form.lot.id_for_label}}_div">
+                                <select
+                                    class="fr-select {% if form.lot.errors %}fr-select--error{% endif %}"
+                                    id="{{form.lot.id_for_label}}"
+                                    name="{{form.lot.html_name}}">
+                                    <option value="" selected disabled hidden>Selectionnez une option</option>
+                                    {% for lot in lots %}
+                                        <option
+                                            value="{{lot.uuid}}"
+                                            {% if lot.uuid|stringformat:"s"  == form.lot.value %}selected{% endif %}
+                                            {% if lot.conventions.all and lot.uuid|stringformat:"s"  != form.lot.value %}disabled="disabled"{% endif %}>
+                                            {{ lot.programme.ville}} - {{ lot.programme.nom }} - {{lot.nb_logements}} lgts - {{ lot.get_type_habitat_display }} - {{ lot.financement }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% for error in form.lot.errors %}
+                                <p id="select-error-desc-error" class="fr-error-text">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                        <details class='fr-mt-3w'>
+                            <summary class="fr-mb-1w text-title-blue-france fr-text--s"><u>Comment afficher uniquement les programmes de mes départements ?</u></summary>
+                            <div class="fr-text--s">
+                                <div>Vous pouvez choisir vos zones et départements d’intervention dans votre <a class="fr-link fr-text--s" href="{% url 'settings:profile' %}">espace personnel.</a></div>
+                                <div><a href="https://docs.apilos.beta.gouv.fr/apres-la-validation-de-la-convention/bailleurs-parametres/comment-afficher-mes-programmes-par-departement" target="_blank" rel="noopener" class="fr-link">Plus d’informations sur les paramètres de votre compte</a></div>
+                            </div>
+                        </details>
+
+                        <div class="form-button-footer fr-col-md-12 fr-py-5w">
+                            {% include "common/button/next_and_save.html" %}
+                            <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
+                                Revenir à la liste des conventions
+                            </a>
+                        </div>
+
+                        <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
+                            <p class="fr-alert__title">Vous ne trouvez pas votre programme et son financement ?</p>
+                            <p><em>
+                                Vous avez la possibilité de <a class="fr-link" href="{% url 'conventions:selection_from_zero' %}">
+                                    créer une convention à partir de zéro
+                                </a> en re-saisissant vous même les informations liées au programme.
+                            </em></p>
+
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,10 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from conventions.tests.views.abstract import AbstractViewTestCase
+from conventions.tests.views.abstract import AbstractEditViewTestCase
 
 
-class ConventionTypeStationnementViewTests(AbstractViewTestCase, TestCase):
+class ConventionTypeStationnementViewTests(AbstractEditViewTestCase, TestCase):
     def setUp(self):
         super().setUp()
         self.target_path = reverse(

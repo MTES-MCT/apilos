@@ -47,7 +47,8 @@ select
     pl.adresse,
     c.libelle as nom,
     coalesce(pl.type_operation, 'SANSOBJET') as type_operation,
-    pl.numero_galion
+    pl.numero_galion,
+    cdg.datehistoriquedebut as date_achevement
 from ecolo.ecolo_conventiondonneesgenerales cdg
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
     inner join (
