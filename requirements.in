@@ -6,6 +6,7 @@ dj-static>=0.0.6
 django_dramatiq>=0.11.0
 django-anymail[sendinblue]
 django-cas-ng>=4.3.0
+django-composite-foreignkey-2>=3.9
 django-csp>=3.7
 django-filter>=21.1
 django-mailjet>=0.3.1

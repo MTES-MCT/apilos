@@ -26,7 +26,7 @@ class EcoloReference(models.Model):
     """
 
     class Meta:
-        unique_together = ('apilos_model', 'ecolo_id')
+        unique_together = (('apilos_model', 'ecolo_id'),('apilos_model', 'apilos_id'))
 
     id = models.AutoField(primary_key=True)
     apilos_model = models.CharField(max_length=64, null=False)

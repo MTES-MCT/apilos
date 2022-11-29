@@ -1,6 +1,6 @@
 import uuid
-from typing import Optional
 
+from compositefk.fields import RawFieldValue, CompositeOneToOneField
 from django.db import models
 from django.db.models import Q
 from django.forms import model_to_dict
@@ -191,6 +191,16 @@ class Convention(models.Model):
     nom_fichier_signe = models.CharField(max_length=255, null=True, blank=True)
     televersement_convention_signee_le = models.DateTimeField(null=True, blank=True)
     date_resiliation = models.DateField(null=True, blank=True)
+    ecolo_reference = CompositeOneToOneField('ecoloweb.EcoloReference',
+        on_delete=models.DO_NOTHING,
+        to_fields={
+            'apilos_id': 'id',
+            "apilos_model": RawFieldValue('conventions.Convention')
+        },
+        default=None,
+                                          #null_if_equal=True,
+        null=True
+    )
 
     # Needed for admin
     @property
@@ -200,16 +210,6 @@ class Convention(models.Model):
     @property
     def bailleur(self):
         return self.programme.bailleur
-
-    @property
-    def ecolo_reference(self) -> Optional[EcoloReference]:
-        if self.id is not None:
-            return EcoloReference.objects.filter(
-                apilos_model='conventions.Convention',
-                apilos_id=self.id
-            ).first()
-
-        return None
 
     @property
     def bailleur_id(self):
