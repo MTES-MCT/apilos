@@ -1,0 +1,13 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %}Nouvel avenant - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        <div class="fr-mr-3w">
+            <a class="fr-btn" href="{% url 'conventions:search_for_avenant' %}">
+                <span class="fr-fi-add-circle-line fr-mr-1w" aria-hidden="true"></span>Commencer
+            </a>
+        </div>
+    </div>
+{% endblock %}

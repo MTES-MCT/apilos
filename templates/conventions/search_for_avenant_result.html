@@ -1,0 +1,22 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %} Résultat de recherch - APiLos{% endblock%}
+
+{% load static %}
+
+{% block content %}
+    <!-- <div>
+        Les résultats sont : <br>
+        Département : {{ departement_input }}<br>
+        Année : {{ year }}<br>
+        4 derniers numéros : {{ num }}
+    </div> -->
+
+    {% for convention in conventions %}
+        <strong>{{convention.programme.nom}}</strong><br/>
+        <em data-test-role="programme-galion-cell">{{convention.programme.numero_galion}}</em>
+        <strong>{{convention.programme.ville}}</strong><br/>
+        <em>{{convention.programme.code_postal}}</em>
+    {% endfor %}
+
+{% endblock %}

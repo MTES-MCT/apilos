@@ -1,0 +1,14 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %} Recherche de convention - APiLos {% endblock%}
+
+{% load static %}
+
+{% block content %}
+    on recherche ici
+    <div class="fr-mr-3w">
+        <a class="fr-btn" href="{% url 'conventions:search_for_avenant_result' year=2022 dpt=44 num=0213 %}">
+            <span class="fr-fi-add-circle-line fr-mr-1w" aria-hidden="true"></span>Commencer
+        </a>
+    </div>
+{% endblock %}

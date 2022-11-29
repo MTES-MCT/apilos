@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic import TemplateView
 
 from . import views
 
@@ -128,4 +129,21 @@ urlpatterns = [
         name="fiche_caf",
     ),
     path("new_avenant/<convention_uuid>", views.new_avenant, name="new_avenant"),
+    path(
+        "new_avenant_start",
+        TemplateView.as_view(template_name="conventions/new_avenant_start.html"),
+        name="new_avenant_start",
+    ),
+    path(
+        "search_for_avenant",
+        TemplateView.as_view(template_name="conventions/search_for_avenant.html"),
+        name="search_for_avenant",
+    ),
+    path(
+        "search_for_avenant_result/?dpt=<dpt>&year=<year>&num=<num>",
+        TemplateView.as_view(
+            template_name="conventions/search_for_avenant_result.html"
+        ),
+        name="search_for_avenant_result",
+    ),
 ]
