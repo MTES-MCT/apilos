@@ -22,6 +22,15 @@ La génération de document .docx est prise en charge par la librairie [python-d
 
 Le package openpyxl est utilisé pour l'interprétation des fichier xlsx
 
+La plateforme est déployée 2 fois par environnement:
+- 1 fois avec une authentification CERBERE (SSO du MTE), les conventions sont alors très fortement liées à la plateforme SIAP
+plus d'information sur les interactions entre les 2 plateformes sont disponibles sur le document [SIAPClient.md](./SIAPClient.md)
+- 1 fois indépendante du SIAP
+
+Cependant, certaines briques logicielles sont partagées (voir l'illustration ci-dessous)
+
+![Architecture APilos](static/img/ArchitectureAPilos.jpg)
+
 ### Qualité de code
 
 Plusieurs outils sont utilisés pour gérer la qualité de code:
