@@ -5,6 +5,7 @@ import random
 from django.contrib.auth.models import Group, Permission
 
 from conventions.models import Convention
+from ecoloweb.models import EcoloReference
 from programmes.models import (
     Annexe,
     Financement,
@@ -415,7 +416,12 @@ def create_all():
     programme_75 = create_programme(bailleur, administration_paris, nom="Programme 1")
     lot_plai = create_lot(programme_75, Financement.PLAI)
     lot_plus = create_lot(programme_75, Financement.PLUS)
-    create_convention(lot_plus, numero="0001")
+    c1 = create_convention(lot_plus, numero="0001")
+    EcoloReference.objects.create(
+        apilos_model='conventions.Conventions',
+        ecolo_id=1234,
+        apilos_id=c1.id
+    )
     create_convention(lot_plai, numero="0002")
 
     programme_13 = create_programme(

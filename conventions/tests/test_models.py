@@ -11,6 +11,7 @@ from conventions.models import (
     Pret,
     Preteur,
 )
+from ecoloweb.models import EcoloReference
 from programmes.models import Financement
 from users.models import User
 from users.type_models import EmailPreferences
@@ -219,6 +220,14 @@ class ConventionModelsTest(TestCase):
     def test_xlsx(self):
         utils_assertions.assert_xlsx(self, Pret, "financement")
 
+    def test_convention_has_ecolo_reference(self):
+        convention = Convention.objects.get(numero="0001")
+        self.assertIsInstance(convention.ecolo_reference, EcoloReference)
+        self.assertEqual(1234, convention.ecolo_reference.ecolo_id)
+
+        convention = Convention.objects.get(numero="0002")
+        with self.assertRaises(expected_exception=EcoloReference.DoesNotExist):
+            self.assertEqual(1234, convention.ecolo_reference.ecolo_id)
 
 class PretModelsTest(TestCase):
     @classmethod

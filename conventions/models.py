@@ -6,7 +6,6 @@ from django.db.models import Q
 from django.forms import model_to_dict
 from django.utils import timezone
 
-from ecoloweb.models import EcoloReference
 from programmes.models import (
     Annexe,
     Financement,
@@ -198,7 +197,6 @@ class Convention(models.Model):
             "apilos_model": RawFieldValue('conventions.Convention')
         },
         default=None,
-                                          #null_if_equal=True,
         null=True
     )
 
