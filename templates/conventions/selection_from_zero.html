@@ -1,0 +1,60 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}Selection - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-my-5w">
+                    <h1 class="fr-h2">Convention sans agrément : créez votre convention à partir de zéro</h1>
+                    <p>Vous êtes sur le point de créer une convention en re-saisissant les données du programme et du financement.
+                        Il est toutefois préférable de créer votre convention à partir des
+                        <a class="fr-link" href="{% url 'conventions:selection' %}">
+                            programmes et financements connus de l'administration
+                        </a>.</p>
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="fr-col-12">
+                            {% include "common/form/input_select.html" with form_input=form.bailleur without_empty_option=form.bailleur.field.choices|length_is:1 mandatory_input=True %}
+
+                            {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 mandatory_input=True %}
+
+                            {% include "common/form/input_text.html" with form_input=form.nom  mandatory_input=True %}
+
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                                    {% include "common/form/input_number.html" with form_input=form.nb_logements mandatory_input=True %}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                                    {% include "common/form/input_select.html" with form_input=form.type_habitat mandatory_input=True %}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                                    {% include "common/form/input_select.html" with form_input=form.financement mandatory_input=True %}
+                                </div>
+                            </div>
+
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_text.html" with form_input=form.code_postal mandatory_input=True %}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_text.html" with form_input=form.ville mandatory_input=True %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-button-footer fr-col-md-12 fr-py-5w">
+                            {% include "common/button/next_and_save.html" %}
+                            <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
+                                Revenir à la liste des conventions
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
