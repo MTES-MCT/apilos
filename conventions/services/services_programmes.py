@@ -38,7 +38,7 @@ def _get_choices_from_object(object_list):
     return [(instance.uuid, str(instance)) for instance in object_list]
 
 
-class ConventionSelectionService:
+class ConventionSeletionService:
     request: HttpRequest
     convention: Convention
     form: ProgrammeSelectionFromDBForm | ProgrammeSelectionFromZeroForm
@@ -85,6 +85,7 @@ class ConventionSelectionService:
                 ville=self.form.cleaned_data["ville"],
                 bailleur=bailleur,
                 administration=administration,
+                nature_logement=self.form.cleaned_data["nature_logement"],
                 type_operation=(
                     TypeOperation.SANSTRAVAUX
                     if self.form.cleaned_data["financement"]
@@ -140,6 +141,8 @@ class ConventionSelectionService:
         )
         if self.form.is_valid():
             lot = Lot.objects.get(uuid=self.form.cleaned_data["lot"])
+            lot.programme.nature_logement = self.form.cleaned_data["nature_logement"]
+            lot.programme.save()
             self.convention = Convention.objects.create(
                 lot=lot,
                 programme_id=lot.programme_id,

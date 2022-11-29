@@ -15,7 +15,7 @@ from programmes.subforms.lot_selection import (
     ProgrammeSelectionFromDBForm,
     ProgrammeSelectionFromZeroForm,
 )
-from programmes.models import Financement, Lot, TypeHabitat
+from programmes.models import Financement, Lot, NatureLogement, TypeHabitat
 from users.models import GroupProfile, User
 
 
@@ -32,7 +32,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
         middleware.process_request(self.request)
         self.request.session.save()
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
-        self.service = services_programmes.ConventionSelectionService(
+        self.service = services_programmes.ConventionSeletionService(
             request=self.request
         )
 
@@ -54,10 +54,11 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
         )
 
     def test_post_from_db_failed_form(self):
-        self.service.request.POST = {"lot": ""}
+        self.service.request.POST = {"lot": "", "nature_logement": ""}
         self.service.post_from_db()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
         self.assertTrue(self.service.form.has_error("lot"))
+        self.assertTrue(self.service.form.has_error("nature_logement"))
 
     def test_post_from_db_failed_scope(self):
         bailleur = Bailleur.objects.get(siret="987654321")
@@ -82,7 +83,10 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
         utils_fixtures.create_lot(programme_2, Financement.PLAI)
         lot_plus_2 = utils_fixtures.create_lot(programme_2, Financement.PLUS)
 
-        self.service.request.POST = {"lot": str(lot_plus_2.uuid)}
+        self.service.request.POST = {
+            "lot": str(lot_plus_2.uuid),
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
+        }
         self.service.post_from_db()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
         self.assertEqual(
@@ -112,6 +116,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
             "administration": str(administration.uuid),
             "nom": "Programme de test",
             "nb_logements": "10",
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "type_habitat": TypeHabitat.MIXTE,
             "financement": Financement.PLUS,
             "code_postal": "20000",
@@ -129,6 +134,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
             "administration": str(administration.uuid),
             "nom": "Programme de test",
             "nb_logements": "10",
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "type_habitat": TypeHabitat.MIXTE,
             "financement": Financement.PLUS,
             "code_postal": "20000",
@@ -147,6 +153,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
             "administration": str(administration.uuid),
             "nom": "Programme de test",
             "nb_logements": "10",
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "type_habitat": TypeHabitat.MIXTE,
             "financement": Financement.PLUS,
             "code_postal": "20000",
@@ -176,7 +183,7 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
         middleware.process_request(self.request)
         self.request.session.save()
         self.request.session["currently"] = GroupProfile.BAILLEUR
-        self.service = services_programmes.ConventionSelectionService(
+        self.service = services_programmes.ConventionSeletionService(
             request=self.request
         )
 
@@ -198,10 +205,11 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
         )
 
     def test_post_from_db_failed(self):
-        self.service.request.POST = {"lot": ""}
+        self.service.request.POST = {"lot": "", "nature_logement": ""}
         self.service.post_from_db()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
         self.assertTrue(self.service.form.has_error("lot"))
+        self.assertTrue(self.service.form.has_error("nature_logement"))
 
         bailleur = Bailleur.objects.get(siret="2345678901")
         administration = Administration.objects.get(code="12345")
@@ -226,11 +234,18 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
         utils_fixtures.create_lot(programme_2, Financement.PLAI)
         lot_plus_2 = utils_fixtures.create_lot(programme_2, Financement.PLUS)
 
-        self.service.request.POST = {"lot": str(lot_plus_2.uuid)}
+        self.service.request.POST = {
+            "lot": str(lot_plus_2.uuid),
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
+        }
         self.service.post_from_db()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
         self.assertEqual(
             self.service.convention, Convention.objects.get(lot=lot_plus_2)
+        )
+        self.assertEqual(
+            self.service.convention.programme.nature_logement,
+            NatureLogement.LOGEMENTSORDINAIRES,
         )
 
     def test_get_from_zero(self):
@@ -261,6 +276,7 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             "administration": str(administration.uuid),
             "nom": "Programme de test",
             "nb_logements": "10",
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "type_habitat": TypeHabitat.MIXTE,
             "financement": Financement.PLUS,
             "code_postal": "20000",
@@ -278,6 +294,7 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             "administration": str(administration.uuid),
             "nom": "Programme de test",
             "nb_logements": "10",
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "type_habitat": TypeHabitat.MIXTE,
             "financement": Financement.PLUS,
             "code_postal": "20000",
@@ -296,6 +313,7 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             "administration": str(administration.uuid),
             "nom": "Programme de test",
             "nb_logements": "10",
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "type_habitat": TypeHabitat.MIXTE,
             "financement": Financement.PLUS,
             "code_postal": "20000",
@@ -309,4 +327,8 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             Convention.objects.get(
                 programme__nom="Programme de test", financement=Financement.PLUS
             ),
+        )
+        self.assertEqual(
+            self.service.convention.programme.nature_logement,
+            NatureLogement.LOGEMENTSORDINAIRES,
         )
