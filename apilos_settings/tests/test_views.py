@@ -167,14 +167,17 @@ class ApilosSettingsViewTests(TestCase):
                 "form-INITIAL_FORMS": 1,
                 "form-0-first_name": "Jean",
                 "form-0-last_name": "Bailleur",
+                "form-0-username": "jean.bailleur2",
                 "form-0-bailleur": bailleur.id,
                 "form-0-email": "jean.bailleur2@apilos.com",
                 "form-1-first_name": "Jeanne",
                 "form-1-last_name": "Bailleur",
+                "form-1-username": "jeanne.bailleur2",
                 "form-1-bailleur": bailleur.id,
                 "form-1-email": "jeanne.bailleur2@apilos.com",
                 "form-2-first_name": "Chantal",
                 "form-2-last_name": "Bailleur",
+                "form-2-username": "chantal.bailleur",
                 "form-2-bailleur": bailleur.id,
                 "form-2-email": "chantal.bailleur2@apilos.com"
 
@@ -203,6 +206,7 @@ class ApilosSettingsViewTests(TestCase):
                 "form-INITIAL_FORMS": 1,
                 "form-0-first_name": "Sabine",
                 "form-0-last_name": "L'autre",
+                "form-0-username": "sabine",
                 "form-0-bailleur": bailleur.id,
                 "form-0-email": "sabine@apilos.com"
             }

@@ -129,10 +129,3 @@ class EmailService:
             self.msg.content_subtype = "html"
 
         self.msg.send()
-
-
-class Slugifier:
-    @classmethod
-    def slugify(cls, label: str, replacer: str = '-') -> str:
-        text = unidecode.unidecode(label).lower()
-        return re.sub(r'[\W_]+', replacer, text)

@@ -31,18 +31,21 @@ class BailleurListingProcessorTest(TestCase):
                     'last_name': "Bailleur",
                     'bailleur': bailleur,
                     'email': "jean.bailleur2@apilos.com",
+                    'username': "jean.bailleur2",
                 },
                 {
                     'first_name': "Jeanne",
                     'last_name': "Bailleur",
                     'bailleur': bailleur,
                     'email': "jeanne.bailleur@apilos.com",
+                    'username': "jeanne.bailleur",
                 },
                 {
                     'first_name': "Chantal",
                     'last_name': "Bailleur",
                     'bailleur': bailleur,
                     'email': "chantal.bailleur@apilos.com",
+                    'username': "chantal.bailleur",
                 }
             ])
 
@@ -115,14 +118,17 @@ class ImportBailleurUsersServiceTest(TestCase):
                     "form-INITIAL_FORMS": 3,
                     "form-0-first_name": "Jean",
                     "form-0-last_name": "Bailleur",
+                    "form-0-username": "jean.bailleur2",
                     "form-0-bailleur": bailleur.id,
                     "form-0-email": "jean.bailleur2@apilos.com",
                     "form-1-first_name": "Jeanne",
                     "form-1-last_name": "Bailleur",
+                    "form-1-username": "jeanne.bailleur",
                     "form-1-bailleur": bailleur.id,
                     "form-1-email": "jeanne.bailleur@apilos.com",
                     "form-2-first_name": "Chantal",
                     "form-2-last_name": "Bailleur",
+                    "form-2-username": "chantal.bailleur",
                     "form-2-bailleur": bailleur.id,
                     "form-2-email": "chantal.bailleur@apilos.com"
                 }
@@ -154,7 +160,7 @@ class ImportBailleurUsersServiceTest(TestCase):
         self.assertEqual(user.first_name, "Chantal")
         self.assertEqual(user.last_name, "Bailleur")
         self.assertTrue(user.is_bailleur(bailleur_id=bailleur.id))
-        self.assertEqual(user.username, 'chantal.bailleur3')
+        self.assertEqual(user.username, 'chantal.bailleur')
 
     def test_submit_ko(self):
         users_count = User.objects.count()

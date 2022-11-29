@@ -168,6 +168,18 @@ class UserBailleurForm(forms.Form):
         },
     )
 
+    username = forms.CharField(
+        required=True,
+        label="Nom d'utilisateur",
+        max_length=150,
+        min_length=1,
+        error_messages={
+            "required": "Le nom d'utilisateur est obligatoire",
+            "min_length": "Le nom d'utilisateur est obligatoire",
+            "max_length": "Le nom du programme ne doit pas excéder 150 caractères",
+        },
+    )
+
     email = forms.EmailField(
         required=True,
         label="Email",
@@ -178,21 +190,27 @@ class UserBailleurForm(forms.Form):
 
     bailleur = forms.ModelChoiceField(
         required=True,
-        queryset=Bailleur.objects.all(),
+        queryset=Bailleur.objects.all().order_by('nom'),
         label="Entreprise bailleur",
     )
 
     def clean_email(self):
         email = self.cleaned_data["email"]
-        same_users = User.objects.filter(email=email)
-        if "username" in self.cleaned_data:
-            same_users = same_users.exclude(username=self.cleaned_data["username"])
 
-        if same_users.exists():
+        if User.objects.filter(email=email).exists():
             raise ValidationError(
-                "Le email de l'utilisateur existe déjà, il doit-être unique"
+                "L'adresse email de cet utilisateur existe déjà, elle doit-être unique"
             )
         return email
+
+    def clean_username(self):
+        username = self.cleaned_data["username"]
+
+        if User.objects.filter(username=username).exists():
+            raise ValidationError(
+                "L'identifiant de cet utilisateur existe déjà, il doit-être unique"
+            )
+        return username
 
 
 class BaseUserBailleurFormSet(BaseFormSet):

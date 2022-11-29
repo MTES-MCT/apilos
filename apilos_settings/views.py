@@ -9,7 +9,6 @@ from django.urls import reverse
 from apilos_settings import services
 from apilos_settings.models import Departement
 from apilos_settings.services import ImportBailleurUsersService
-from bailleurs.models import Bailleur
 from conventions.services.utils import ReturnStatus
 
 
@@ -102,7 +101,6 @@ class ImportBailleurUsersView(LoginRequiredMixin, View):
             {
                 'upform': service.upload_form,
                 'formset': service.formset,
-                "bailleurs": Bailleur.objects.all(),
             }
         )
 

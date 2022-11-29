@@ -9,7 +9,7 @@
         <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters fr-py-5w fr-mb-1w">
                 <div class='fr-col-12 fr-col-md-4 fr-col-lg-3'>
-                    {% include 'settings/common/side_menu.html' with active_menu='bailleurs' %}
+                    {% include 'settings/common/side_menu.html' with active_menu='users' %}
                 </div>
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
 
@@ -46,6 +46,7 @@
                                     <tr>
                                         <th scope="col">Nom</th>
                                         <th scope="col">Prénom</th>
+                                        <th scope="col">Identifiant</th>
                                         <th scope="col">Bailleur</th>
                                         <th scope="col">Adresse e-mail</th>
                                     </tr>
@@ -60,7 +61,10 @@
                                             {% include "common/form/input_text.html" with form_input=form_user_bailleur.last_name editable=True %}
                                         </td>
                                         <td>
-                                            {% include "common/form/input_select.html" with form_input=form_user_bailleur.bailleur enum=bailleurs editable=True %}
+                                            {% include "common/form/input_text.html" with form_input=form_user_bailleur.username editable=True %}
+                                        </td>
+                                        <td>
+                                            {% include "common/form/input_select.html" with form_input=form_user_bailleur.bailleur enum=form_user_bailleur.fields.bailleur.queryset editable=True %}
                                         </td>
                                         <td>
                                             {% include "common/form/input_text.html" with form_input=form_user_bailleur.email editable=True %}

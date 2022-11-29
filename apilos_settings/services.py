@@ -623,33 +623,21 @@ class BailleurListingProcessor:
             # We stop at first row not returning any valid data
             if all(v is None for v in data.values()):
                 break
-            data['bailleur'] = Bailleur.objects.filter(nom=data.pop('bailleur')).first()
+            data['bailleur'] = Bailleur.objects.filter(nom__iexact=data.pop('bailleur')).first()
+            data['username'] = UserService.extract_username_from_email(data.get('email', ''))
             results.append(data)
 
         return results
 
 
-class BaseService(ABC):
+class ImportBailleurUsersService:
+    request: HttpRequest
+    upload_form = UploadForm()
+    formset = UserBailleurFormSet()
+    is_upload: bool = False
 
     def __init__(self, request: HttpRequest):
-        self.request: HttpRequest = request
-
-    @abstractmethod
-    def get(self) -> ReturnStatus:
-        pass
-
-    @abstractmethod
-    def save(self) -> ReturnStatus:
-        pass
-
-
-class ImportBailleurUsersService(BaseService):
-    def __init__(self, request: HttpRequest):
-        super().__init__(request)
-
-        self.upload_form = UploadForm()
-        self.formset = UserBailleurFormSet()
-        self.is_upload = False
+        self.request = request
 
     def get(self) -> ReturnStatus:
         return ReturnStatus.SUCCESS
@@ -679,7 +667,8 @@ class ImportBailleurUsersService(BaseService):
                     form_user_bailleur.cleaned_data['first_name'],
                     form_user_bailleur.cleaned_data['last_name'],
                     form_user_bailleur.cleaned_data['email'],
-                    form_user_bailleur.cleaned_data['bailleur']
+                    form_user_bailleur.cleaned_data['bailleur'],
+                    form_user_bailleur.cleaned_data['username']
                 )
             # TODO plan a welcome email
             messages.success(
