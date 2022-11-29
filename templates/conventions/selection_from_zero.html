@@ -10,17 +10,11 @@
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12 fr-my-5w">
                     <h1 class="fr-h2">Convention sans agrément : créez votre convention à partir de zéro</h1>
-                    <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
-                        <p class="fr-alert__title">Vous n'avez pas trouvé votre programme dans la liste déroulante des programmes et financements connus de l'administration</p>
-                        <p>Vous avez la possibilité de créer une convention en saisissant les données du programme et du financement dans le formulaire ci-dessous.</p>
-                        <p><em>
-                            Il est toute fois conseillé de créer votre convention à partir des programmes et financements connus de l'administration, cela évite la double saisies.
-                            Vous pouvez vérifier et accéder à la liste en cliquant sur le bouton ci-dessous :
-                        </em></p>
-                        <a class="fr-btn fr-btn--secondary" href="{% url 'conventions:selection' %}">
-                            Retour à la sélection d'une convention
-                        </a>
-                    </div>
+                    <p>Vous êtes sur le point de créer une convention en ressaisissant les données du programme et du financement.
+                        Il est toutefois préférable de créer votre convention à partir des
+                        <a class="fr-link" href="{% url 'conventions:selection' %}">
+                            programmes et financements connus de l'administration
+                        </a>.</p>
                     <form method="post" action="">
                         {% csrf_token %}
                         <div class="fr-col-12">
