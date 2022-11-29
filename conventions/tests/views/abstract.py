@@ -8,12 +8,12 @@ class AbstractCreateViewTestCase:
     # pylint: disable=E1101
     # Should be used with TestCase class as a Mixin class
     convention_75: Convention
-    target_path: str
+    target_path: str = ""
     next_target_starts_with: str | None = None
-    target_template: str
-    error_payload: dict
-    success_payload: dict
-    msg_prefix: str
+    target_template: str = ""
+    error_payload: dict = {}
+    success_payload: dict = {}
+    msg_prefix: str = "[ViewTests] "
 
     @classmethod
     def setUpTestData(cls):
@@ -21,12 +21,6 @@ class AbstractCreateViewTestCase:
 
     def setUp(self):
         self.convention_75 = Convention.objects.filter(numero="0001").first()
-        self.target_path = ""
-        self.next_target_path = ""
-        self.target_template = ""
-        self.error_payload = {}
-        self.success_payload = {}
-        self.msg_prefix = "[ViewTests] "
 
     def _test_data_integrity(self):
         pass
@@ -99,11 +93,7 @@ class AbstractCreateViewTestCase:
 class AbstractEditViewTestCase(AbstractCreateViewTestCase):
     # pylint: disable=E1101
     # Should be used with TestCase class as a Mixin class
-    next_target_path: str
-
-    def setUp(self):
-        super().setUp()
-        self.next_target_path = ""
+    next_target_path: str = ""
 
     def _test_redirect(self, response):
         self.assertRedirects(
