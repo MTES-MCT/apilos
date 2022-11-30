@@ -8,6 +8,8 @@ from django.db import transaction
 
 from tqdm import tqdm
 
+from conventions.models import Convention
+from ecoloweb.models import EcoloReference
 from ecoloweb.services import ConventionImporter
 
 
@@ -17,7 +19,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             'departements',
-            nargs='?',
+            nargs='+',
             default=[],
             help="Départements on which purge import data"
         )
@@ -33,6 +35,17 @@ class Command(BaseCommand):
             sys.exit(1)
 
         departements: List[str] = options['departements']
+
         purge_models = options["purge_models"]
 
-        # TODO implement action
+        if purge_models:
+            convention_ids = EcoloReference.objects.values_list('apilos_id', flat=True).filter(
+                departement__in=departements,
+                apilos_model=EcoloReference.get_class_model_name(Convention)
+            )
+
+            Convention.objects.filter(id__in=convention_ids).delete()
+            print(f'Purged {len(convention_ids)} convention(s)')
+
+        EcoloReference.objects.filter(departement__in=departements).delete()
+        print(f"Ecolo references linked to import on departement(s) {', '.join(departements)} deleted")
