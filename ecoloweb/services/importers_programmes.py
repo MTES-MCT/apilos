@@ -91,15 +91,8 @@ class ReferenceCadastraleImporter(ModelImporter):
 
     def _prepare_data(self, data: dict) -> dict:
         superficie = data.pop('superficie', 0)
-        if superficie is not None:
-            # Compute surface (in hectares / ares / centiares)
-            superficie = int(superficie)
 
-            nb_ca = superficie % 100
-            nb_a = superficie % 10000 // 100
-            nb_ha = superficie // 10000
-
-            data['surface'] = f'{nb_ha} ha {nb_a} a {nb_ca} ca'
+        data['surface'] = ReferenceCadastrale.compute_surface(superficie)
 
         return data
 
