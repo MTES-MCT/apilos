@@ -28,6 +28,7 @@ class ProgrammeImporter(ModelImporter):
 
     def _get_o2m_dependencies(self):
        return {
+           'lot': ProgrammeLotImporter(self.debug),
            'cadastre': ReferenceCadastraleImporter(self.debug)
        }
 
@@ -37,15 +38,22 @@ class ProgrammeLotImporter(ModelImporter):
 
     def __init__(self, debug=False):
         super().__init__(debug)
-        self._query = self._get_file_content('resources/sql/programme_lots.sql')
+        self._query_one = self._get_file_content('resources/sql/programme_lots.sql')
+        self._query_many = self._get_file_content('resources/sql/programme_lots_many.sql')
 
     def _get_sql_one_query(self) -> str:
-        return self._query
+        return self._query_one
+
+    def _get_sql_many_query(self) -> Optional[str]:
+        return self._query_many
 
     def _get_o2o_dependencies(self):
         return {
             'programme': ProgrammeImporter(self.debug),
         }
+
+    def _fetch_related_o2m_objects(self, pk):
+        super()._fetch_related_o2m_objects(pk)
 
     def _get_o2m_dependencies(self):
         return {
