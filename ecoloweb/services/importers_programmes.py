@@ -52,9 +52,6 @@ class ProgrammeLotImporter(ModelImporter):
             'programme': ProgrammeImporter(self.debug),
         }
 
-    def _fetch_related_o2m_objects(self, pk):
-        super()._fetch_related_o2m_objects(pk)
-
     def _get_o2m_dependencies(self):
         return {
             'logement': ProgrammeLogementImporter(self.debug),

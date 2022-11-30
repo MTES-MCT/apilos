@@ -1,4 +1,6 @@
 import sys
+import datetime
+
 from django.core.management import BaseCommand
 from django.db import connections
 from django.db import transaction
@@ -39,7 +41,8 @@ class Command(BaseCommand):
             print("No 'ecoloweb' connection defined, migration aborted!")
             sys.exit(1)
 
-        departement:str = options['departement'][0]
+        departement: str = options['departement'][0]
+        import_date: datetime = datetime.datetime.today()
         no_transaction = options["no_transaction"]
 
         debug = options["debug"]
@@ -56,7 +59,7 @@ class Command(BaseCommand):
                 progress = tqdm(total=results.lines_total)
             # Actual processing
             for result in results:
-                importer.process_result(result)
+                importer.process_result(result, departement, import_date)
                 if progress is not None:
                     progress.update(1)
                 else:

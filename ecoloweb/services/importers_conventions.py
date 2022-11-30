@@ -2,6 +2,7 @@ from conventions.models import Convention
 from .importers import ModelImporter
 from .importers_programmes import ProgrammeImporter, ProgrammeLotImporter
 from .query_iterator import QueryResultIterator
+from datetime import datetime
 
 
 class ConventionImporter(ModelImporter):
