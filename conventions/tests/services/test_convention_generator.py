@@ -1,11 +1,98 @@
 import random
 import unittest
-from conventions.services.convention_generator import pluralize
+
+from django.test import TestCase
+from django.conf import settings
+from bailleurs.models import SousNatureBailleur
+from conventions.models import Convention, ConventionType1and2
+from conventions.services.convention_generator import (
+    ConventionTypeConfigurationError,
+    get_convention_template_path,
+    pluralize,
+)
+from core.tests import utils_fixtures
+from programmes.models import NatureLogement
+from users.models import User
 
 
-class ConventionGeneratorTest(unittest.TestCase):
+class ConventionUtilGeneratorTest(unittest.TestCase):
     def test_pluralize(self):
         self.assertEqual(pluralize(0), "")
         self.assertEqual(pluralize(1), "")
         self.assertEqual(pluralize(2), "s")
         self.assertEqual(pluralize(random.randint(3, 999)), "s")
+
+
+class ConventionServiceGeneratorTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        utils_fixtures.create_all()
+
+    def setUp(self):
+        pass
+
+    def test_get_convention_template_path(self):
+        user = User.objects.get(username="fix")
+        convention = Convention.objects.get(numero="0001")
+        avenant = convention.clone(user, convention_origin=convention)
+        self.assertEqual(
+            get_convention_template_path(avenant),
+            f"{settings.BASE_DIR}/documents/Avenant-template.docx",
+        )
+        convention.programme.nature_logement = NatureLogement.AUTRE
+        self.assertEqual(
+            get_convention_template_path(convention),
+            f"{settings.BASE_DIR}/documents/Foyer-template.docx",
+        )
+        for nature_logement in [
+            NatureLogement.HEBERGEMENT,
+            NatureLogement.RESISDENCESOCIALE,
+            NatureLogement.PENSIONSDEFAMILLE,
+            NatureLogement.RESIDENCEDACCUEIL,
+            NatureLogement.RESIDENCEUNIVERSITAIRE,
+            NatureLogement.RHVS,
+        ]:
+            convention.programme.nature_logement = nature_logement
+            self.assertEqual(
+                get_convention_template_path(convention),
+                f"{settings.BASE_DIR}/documents/Residence-template.docx",
+            )
+
+        convention.programme.nature_logement = NatureLogement.LOGEMENTSORDINAIRES
+        convention.programme.bailleur.sous_nature_bailleur = SousNatureBailleur.SEM_EPL
+        self.assertEqual(
+            get_convention_template_path(convention),
+            f"{settings.BASE_DIR}/documents/SEM-template.docx",
+        )
+
+        for sous_nature in [
+            SousNatureBailleur.OFFICE_PUBLIC_HLM,
+            SousNatureBailleur.SA_HLM_ESH,
+            SousNatureBailleur.COOPERATIVE_HLM_SCIC,
+        ]:
+            convention.programme.bailleur.sous_nature_bailleur = sous_nature
+            self.assertEqual(
+                get_convention_template_path(convention),
+                f"{settings.BASE_DIR}/documents/HLM-template.docx",
+            )
+
+        for sous_nature in [
+            SousNatureBailleur.ASSOCIATIONS,
+        ]:
+            convention.programme.bailleur.sous_nature_bailleur = sous_nature
+            convention.type1and2 = ConventionType1and2.TYPE1
+            self.assertEqual(
+                get_convention_template_path(convention),
+                f"{settings.BASE_DIR}/documents/Type1-template.docx",
+            )
+            convention.type1and2 = ConventionType1and2.TYPE2
+            self.assertEqual(
+                get_convention_template_path(convention),
+                f"{settings.BASE_DIR}/documents/Type2-template.docx",
+            )
+            convention.type1and2 = None
+            self.assertRaises(
+                ConventionTypeConfigurationError,
+                get_convention_template_path,
+                convention,
+            )
