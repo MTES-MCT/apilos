@@ -1,8 +1,6 @@
-import re
 from typing import List
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-import unidecode
 
 from conventions.models import Convention
 

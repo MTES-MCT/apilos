@@ -77,6 +77,9 @@ def edit_bailleur(request, bailleur_uuid):
 class ImportBailleurUsersView(LoginRequiredMixin, View):
 
     def get(self, request):
+        if not request.user.is_staff:
+            return HttpResponseRedirect(reverse("settings:users"))
+
         service = ImportBailleurUsersService(request)
         service.get()
         return render(
@@ -89,6 +92,9 @@ class ImportBailleurUsersView(LoginRequiredMixin, View):
         )
 
     def post(self, request):
+        if not request.user.is_staff:
+            return HttpResponseRedirect(reverse("settings:users"))
+
         service = ImportBailleurUsersService(request)
         status = service.save()
 
