@@ -16,7 +16,7 @@ from ecolo.ecolo_programmelogement pl
     inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
     inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
     inner join ecolo.ecolo_annexe ea on pl.id = ea.programmelogement_id
-    inner join ecolo_valeurparamstatic ev on ea.typeannexe_id = ev.id and ev.subtype = 'TAN' and ev.code in ('10', '20', '80')
+    inner join ecolo.ecolo_valeurparamstatic ev on ea.typeannexe_id = ev.id and ev.subtype = 'TAN' and ev.code in ('10', '20', '80')
 where
     md5(pl.conventiondonneesgenerales_id||'-'||ff.code) = %s
 group by md5(pl.conventiondonneesgenerales_id||'-'||ff.code)
