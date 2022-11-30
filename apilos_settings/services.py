@@ -663,14 +663,15 @@ class ImportBailleurUsersService:
         self.formset = UserBailleurFormSet(self.request.POST)
         if self.formset.is_valid():
             for form_user_bailleur in self.formset:
-                UserService.create_user_bailleur(
+                user = UserService.create_user_bailleur(
                     form_user_bailleur.cleaned_data['first_name'],
                     form_user_bailleur.cleaned_data['last_name'],
                     form_user_bailleur.cleaned_data['email'],
                     form_user_bailleur.cleaned_data['bailleur'],
-                    form_user_bailleur.cleaned_data['username']
+                    form_user_bailleur.cleaned_data['username'],
+                    self.request.build_absolute_uri("/accounts/login/")
                 )
-            # TODO plan a welcome email
+
             messages.success(
                 self.request,
                 f"{len(self.formset)} utilisateurs bailleurs ont été correctement créés à partir du listing",
