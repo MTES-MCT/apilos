@@ -264,7 +264,9 @@ def display_pdf(request, convention_uuid):
             ConventionStatut.ANNULEE,
         ]
         and convention.nom_fichier_signe
-        and default_storage.exists(convention.nom_fichier_signe)
+        and default_storage.exists(
+            f"conventions/{convention.uuid}/convention_docs/{convention.nom_fichier_signe}"
+        )
     ):
         filename = convention.nom_fichier_signe
     elif default_storage.exists(
