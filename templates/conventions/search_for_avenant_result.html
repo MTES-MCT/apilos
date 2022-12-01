@@ -7,16 +7,17 @@
 {% block content %}
     <!-- <div>
         Les résultats sont : <br>
-        Département : {{ departement_input }}<br>
+        Département : {{ dpt }}<br>
         Année : {{ year }}<br>
         4 derniers numéros : {{ num }}
     </div> -->
-
-    {% for convention in conventions %}
-        <strong>{{convention.programme.nom}}</strong><br/>
-        <em data-test-role="programme-galion-cell">{{convention.programme.numero_galion}}</em>
-        <strong>{{convention.programme.ville}}</strong><br/>
-        <em>{{convention.programme.code_postal}}</em>
-    {% endfor %}
-
+    {% if conventions %}
+        {% for convention in conventions %}
+            <strong>{{convention.programme.nom}}</strong><br/>
+            <strong>{{convention.programme.ville}}</strong>
+            <em>{{convention.programme.code_postal}}</em>
+        {% endfor %}
+    {% else %}
+        Pas de résultats
+    {% endif %}
 {% endblock %}

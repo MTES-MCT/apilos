@@ -91,6 +91,19 @@ def conventions_index(request):
     }
 
 
+# .
+def search_result(request):
+    departement = request.GET["departement"]
+    annee = request.GET["annee"]
+    num = request.GET["num"]
+    conventions = request.user.conventions().filter(
+        programme__code_postal__startswith=departement,
+        valide_le__year=annee,
+        numero__endswith=num,
+    )
+    return {"conventions": conventions}
+
+
 def _save_convention_type(request, convention):
     convention_type1_and_2_form = ConventionType1and2Form(request.POST)
     if convention_type1_and_2_form.is_valid():

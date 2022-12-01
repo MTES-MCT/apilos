@@ -31,6 +31,7 @@ from conventions.services.services_conventions import (
     convention_summary,
     convention_validate,
     conventions_index,
+    search_result,
     create_avenant,
     generate_convention_service,
 )
@@ -58,6 +59,16 @@ def index(request):
     return render(
         request,
         "conventions/index.html",
+        {**result},
+    )
+
+
+@login_required
+def search_for_avenant_result(request):
+    result = search_result(request)
+    return render(
+        request,
+        "conventions/search_for_avenant_result.html",
         {**result},
     )
 
@@ -357,6 +368,7 @@ class ConventionView(ABC, LoginRequiredMixin, View):
     form_step: None | dict
 
     def _get_convention(self, convention_uuid):
+        # pylint: disable=R0201
         return Convention.objects.get(uuid=convention_uuid)
 
     def _get_form_steps(self):

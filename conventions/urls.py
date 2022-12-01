@@ -154,10 +154,8 @@ urlpatterns = [
         name="search_for_avenant",
     ),
     path(
-        "search_for_avenant_result/?dpt=<dpt>&year=<year>&num=<num>",
-        TemplateView.as_view(
-            template_name="conventions/search_for_avenant_result.html"
-        ),
+        "search_for_avenant_result",
+        views.search_for_avenant_result,
         name="search_for_avenant_result",
     ),
 ]
