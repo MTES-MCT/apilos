@@ -732,6 +732,23 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   background-color: #fff;
 }
 
+.apilos-alert {
+  display: flex;
+  flex-direction: column;
+  justify-content:space-around;
+  position: relative;
+  --title-spacing: 0 0 0.25rem;
+  --text-spacing: 0 0 0.25rem;
+  border: solid 1px var(--border-default-grey);
+  padding: 20px 5px 20px 100px;
+  background-position: 16px center;
+  background-repeat: no-repeat;
+  background-size: 64px 64px;
+}
+
+.apilos-alert-ecoloweb {
+  background-image: url('/static/img/ecoloweb.svg');
+}
 
 /*
  * End display convention status
