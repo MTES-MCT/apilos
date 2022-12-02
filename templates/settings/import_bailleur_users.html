@@ -18,7 +18,7 @@
                     <form method="post" action="" enctype="multipart/form-data">
                         {% csrf_token %}
 
-                        <div>
+                        <div class="fr-grid-row fr-grid-row--right fr-grid-row--middle">
                             <input id="file-upload-lock" type="hidden" name="Upload" value="true" disabled="disabled" />
                             <input
                                 class="fileinput--hidden"
@@ -36,10 +36,25 @@
                                 Téléverser le fichier de listing bailleur
                             </button>
 
-                            <a href="{% static '/files/listing_bailleur.xlsx' %}" download="listing_bailleur">Télécharger un exemple</a>
+                            <p class="mx-4 my-0"> ou </p>
+                            <a class="fr-btn fr-btn--md fr-btn--secondary fr-icon-download-line fr-btn--icon-left auto-upload-btn" href="{% static '/files/listing_bailleur.xlsx' %}" download="listing_bailleur">
+                                Télécharger un fichier d'exemple
+                            </a>
                         </div>
 
                         <hr class="fr-col-12 fr-my-3w">
+
+                        {% if upform.errors %}
+                            <div class="fr-col-12">
+                                {% for field in upform %}
+                                    {% for error in field.errors %}
+                                        <p id="select-error-desc-error" class="fr-error-text">
+                                            {{ error|escape }}
+                                        </p>
+                                   {% endfor %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
 
                         {{ formset.management_form }}
                         <div class="fr-table fr-table--bordered table--layout-fixed">

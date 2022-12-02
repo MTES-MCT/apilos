@@ -97,7 +97,7 @@ class ApilosSettingsViewTests(TestCase):
 
     def test_create_bailleur(self):
         """
-        Superuser will login & create a new bailleur
+        Superuser will log in & create a new bailleur
         """
 
         # login as superuser
@@ -129,7 +129,7 @@ class ApilosSettingsViewTests(TestCase):
 
     def test_import_bailleur_users_upload_ok(self):
         """
-        Superuser will login & upload a xlsx listing file
+        Superuser will log in & upload a xlsx listing file
         """
         # login as superuser
         self.client.post(
@@ -145,10 +145,29 @@ class ApilosSettingsViewTests(TestCase):
                 }
             )
             self.assertEqual(response.status_code, status.HTTP_200_OK)
+            
+    def test_import_bailleur_users_upload_ko(self):
+        """
+        Superuser will log in & upload an invalid xlsx listing file
+        """
+        # login as superuser
+        self.client.post(
+            reverse("login"), {"username": "nicolas", "password": "12345"}
+        )
+
+        with open(os.path.join(os.path.dirname(__file__), './resources/listing_bailleur_missing_nom_bailleur.xlsx'), 'rb') as listing_file:
+            response = self.client.post(
+                reverse("settings:import_bailleur_users"),
+                {
+                    'file': listing_file,
+                    'Upload': True,
+                }
+            )
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_import_bailleur_users_submit_ok(self):
         """
-        Superuser will login & submit a list of bailleurs users to create
+        Superuser will log in & submit a list of bailleurs users to create
         """
         # login as superuser
         self.client.post(
@@ -187,7 +206,7 @@ class ApilosSettingsViewTests(TestCase):
 
     def test_import_bailleur_users_submit_nok(self):
         """
-        Superuser will login & submit a list of bailleurs users to create
+        Superuser will log in & submit a list of bailleurs users to create
         """
         # login as superuser
         self.client.post(

@@ -6,9 +6,9 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from apilos_settings import services
+from apilos_settings.services import services_view as services
 from apilos_settings.models import Departement
-from apilos_settings.services import ImportBailleurUsersService
+from apilos_settings.services import services_view
 from conventions.services.utils import ReturnStatus
 
 
@@ -25,7 +25,7 @@ def index(request):
 
 @login_required
 def administrations(request):
-    result = services.administration_list(request)
+    result = services_view.administration_list(request)
     return render(
         request,
         "settings/administrations.html",
@@ -35,7 +35,7 @@ def administrations(request):
 
 @login_required
 def edit_administration(request, administration_uuid):
-    result = services.edit_administration(request, administration_uuid)
+    result = services_view.edit_administration(request, administration_uuid)
     if result["success"]:
         return HttpResponseRedirect(reverse("settings:administrations"))
     return render(
@@ -47,7 +47,7 @@ def edit_administration(request, administration_uuid):
 
 @login_required
 def bailleurs(request):
-    bailleur_list_service = services.BailleurListService(
+    bailleur_list_service = services_view.BailleurListService(
         search_input=request.GET.get("search_input", ""),
         order_by=request.GET.get("order_by", "nom"),
         page=request.GET.get("page", 1),
@@ -80,7 +80,7 @@ class ImportBailleurUsersView(LoginRequiredMixin, View):
         if not request.user.is_staff:
             return HttpResponseRedirect(reverse("settings:users"))
 
-        service = ImportBailleurUsersService(request)
+        service = services.ImportBailleurUsersService(request)
         service.get()
         return render(
             request,
@@ -95,7 +95,7 @@ class ImportBailleurUsersView(LoginRequiredMixin, View):
         if not request.user.is_staff:
             return HttpResponseRedirect(reverse("settings:users"))
 
-        service = ImportBailleurUsersService(request)
+        service = services.ImportBailleurUsersService(request)
         status = service.save()
 
         if not service.is_upload and status == ReturnStatus.SUCCESS:

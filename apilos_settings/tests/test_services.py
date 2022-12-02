@@ -6,7 +6,8 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from django.urls import reverse
 
-from apilos_settings.services import BailleurListingProcessor, ImportBailleurUsersService
+from apilos_settings.services.services_file import BailleurListingProcessor
+from apilos_settings.services.services_view import ImportBailleurUsersService
 from bailleurs.models import Bailleur
 from conventions.services.utils import ReturnStatus
 from core.tests import utils_fixtures
@@ -88,23 +89,50 @@ class ImportBailleurUsersServiceTest(TestCase):
         # No user should have been created
         self.assertEqual(User.objects.count(), users_count)
 
-    def test_upload(self):
+    def _process_file(self, file: str) -> ImportBailleurUsersService:
+        listing_file = open(os.path.join(os.path.dirname(__file__), file), 'rb')
+
+        return ImportBailleurUsersService(
+            self._post(
+                self._path,
+                {
+                    'file': listing_file,
+                    'Upload': True,
+                }
+            )
+        )
+
+    def test_upload_ok(self):
         users_count = User.objects.count()
 
-        with open(os.path.join(os.path.dirname(__file__), './resources/listing_bailleur_ok.xlsx'), 'rb') as listing_file:
-            service = ImportBailleurUsersService(
-                self._post(
-                    self._path,
-                    {
-                        'file': listing_file,
-                        'Upload': True,
-                    }
-                )
-            )
-            status = service.save()
-            self.assertEqual(status, ReturnStatus.SUCCESS)
-            # No user should have been created
-            self.assertEqual(User.objects.count(), users_count)
+        service = self._process_file('./resources/listing_bailleur_ok.xlsx')
+        status = service.save()
+
+        self.assertEqual(status, ReturnStatus.SUCCESS)
+        # No user should have been created
+        self.assertEqual(User.objects.count(), users_count)
+
+    def test_upload_ko_missing_column(self):
+        users_count = User.objects.count()
+
+        service = self._process_file('./resources/listing_bailleur_missing_nom_bailleur.xlsx')
+        status = service.save()
+
+        self.assertEqual(status, ReturnStatus.ERROR)
+        self.assertTrue(service.upload_form.errors.get('file')[0].startswith('Lecture du fichier impossible: la colonne'))
+        # No user should have been created
+        self.assertEqual(User.objects.count(), users_count)
+
+    def test_upload_ko_missing_columns(self):
+        users_count = User.objects.count()
+
+        service = self._process_file('./resources/listing_bailleur_missing_nom_bailleur_et_prenom.xlsx')
+        status = service.save()
+        
+        self.assertEqual(status, ReturnStatus.ERROR)
+        self.assertTrue(service.upload_form.errors.get('file')[0].startswith('Lecture du fichier impossible: les colonnes'))
+        # No user should have been created
+        self.assertEqual(User.objects.count(), users_count)
 
     def test_submit_ok(self):
         users_count = User.objects.count()
