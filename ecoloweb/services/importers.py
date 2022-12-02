@@ -1,5 +1,6 @@
 import os
 import time
+from datetime import datetime
 
 from typing import Optional, List, Dict
 from abc import ABC, abstractmethod
@@ -27,10 +28,12 @@ class ModelImporter(ABC):
     """
     ecolo_id_field = 'id'
 
-    def __init__(self, debug=False):
+    def __init__(self, departement: str, import_date: datetime, debug=False):
         self._nb_imported_models: int = 0
         self._db_connection: CursorWrapper = connections['ecoloweb'].cursor()
         self.debug = debug
+        self.departement = departement
+        self.import_date = import_date
 
     @property
     @abstractmethod
@@ -90,7 +93,12 @@ class ModelImporter(ABC):
 
         return None
 
-    def _register_ecolo_reference(self, instance: Model, ecolo_id: int, id: Optional[int] = None):
+    def _register_ecolo_reference(
+            self,
+            instance: Model,
+            ecolo_id: int,
+            id: Optional[int] = None
+    ):
         """
         Create and save an EcoloReference model to mark an entity from the Ecoloweb database as imported
         """
@@ -99,7 +107,9 @@ class ModelImporter(ABC):
         EcoloReference.objects.create(
             apilos_model=EcoloReference.get_instance_model_name(instance),
             ecolo_id=str(ecolo_id),
-            apilos_id=apilos_id
+            apilos_id=apilos_id,
+            departement=self.departement,
+            importe_le=self.import_date
         )
 
     def _get_identity_keys(self) -> List[str]:
@@ -216,9 +226,7 @@ class ModelImporter(ABC):
         """
         Public entry point method to fetch a model from the Ecoloweb database based on its primary key
         """
-        return self.process_result(
-            self._query_single_row([pk])
-        )
+        return self.process_result(self._query_single_row([pk]))
 
     def _query_single_row(self, parameters: List) -> Optional[Dict]:
         """

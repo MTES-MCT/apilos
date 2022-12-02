@@ -1,26 +1,16 @@
 -- Requête pour alimenter la table programmes_programme
 
 -- Champs restants à mapper:
--- code_postal                          varchar(10),
--- ville                                varchar(255),
--- adresse                              text,
--- anru                                 boolean                  not null,
 -- nb_locaux_commerciaux                integer,
 -- nb_bureaux                           integer,
 -- vendeur                              text,
 -- acquereur                            text,
 -- date_acte_notarie                    date,
--- cree_le                              timestamp with time zone not null,
--- mis_a_jour_le                        timestamp with time zone not null,
--- date_achat                           date,
--- date_achevement                      date,
--- date_achevement_previsible           date,
 -- permis_construire                    varchar(255),
 -- reference_notaire                    text,
 -- reference_publication_acte           text,
 -- annee_gestion_programmation          integer,
 -- surface_utile_totale                 numeric(8, 2),
--- administration_id                    integer
 -- autres_locaux_hors_convention        text,
 -- acte_de_propriete                    text,
 -- edd_volumetrique                     text,
@@ -32,25 +22,34 @@
 -- zone_123                             varchar(25),
 -- zone_abc                             varchar(25),
 -- date_achevement_compile              date,
--- effet_relatif                        text,
--- code_insee_commune                   varchar(10),
--- code_insee_departement               varchar(10),
--- code_insee_region                    varchar(10),
--- nature_logement                      varchar(25)              not null,
--- parent_id                            integer
+-- effet_relatif                        text
 
 select
     cdg.id,
     pl.bailleur_id,
+    c.entitecreatrice_id as administration_id,
     pl.code_postal,
     pl.ville,
     pl.adresse,
     c.libelle as nom,
     coalesce(pl.type_operation, 'SANSOBJET') as type_operation,
     pl.numero_galion,
-    cdg.datehistoriquedebut as date_achevement
+    pl.date_achat,
+    pl.date_achevement,
+    pl.date_achevement_previsible,
+    pl.surface_utile_totale,
+    pl.code_insee_commune,
+    pl.code_insee_departement,
+    pl.code_insee_region,
+    case
+        when nl.code = '1' then 'LOGEMENTSORDINAIRES'
+    end as nature_logement,
+    cdg.datehistoriquedebut as date_achevement,
+    coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as cree_le,
+    coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as mis_a_jour_le
 from ecolo.ecolo_conventiondonneesgenerales cdg
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
+    inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id and nl.code in ('1')
     inner join (
         select
             distinct on (pl.conventiondonneesgenerales_id, pl.typefinancement_id)
@@ -58,6 +57,11 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
             pl.conventiondonneesgenerales_id,
             pl.bailleurproprietaire_id as bailleur_id,
             pa.codepostal as code_postal,
+            pl.datemisechantier,
+            pl.surfaceutile as surface_utile_totale,
+            pl.financementdate as date_achat,
+            pl.datemiseservice as date_achevement,
+            pl.datemiseservice as date_achevement_previsible,
             pa.ville,
             pa.ligne1||' '||pa.ligne2||' '||pa.ligne3||' '||pa.ligne4 as adresse,
             case
@@ -68,10 +72,16 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
                 when nop.libelle = 'Parc existant' then 'USUFRUIT'
                 else 'SANSOBJET'
             end as type_operation,
+            ec.code as code_insee_commune,
+            ed.codeinsee as code_insee_departement,
+            er.codeinsee as code_insee_region,
             pl.financementreferencedossier as numero_galion
         from ecolo.ecolo_programmelogement pl
             left join ecolo.ecolo_programmeadresse pa on pl.id = pa.programmelogement_id
             left join ecolo.ecolo_valeurparamstatic nop on pl.natureoperation_id = nop.id
+            inner join ecolo.ecolo_commune ec on pl.commune_id = ec.id
+            inner join ecolo.ecolo_departement ed on ec.departement_id = ed.id
+            inner join ecolo.ecolo_region er on ed.region_id = er.id
         order by pl.conventiondonneesgenerales_id, pl.typefinancement_id, pl.ordre
     ) pl on pl.conventiondonneesgenerales_id = cdg.id
 where

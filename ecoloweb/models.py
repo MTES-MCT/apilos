@@ -32,6 +32,8 @@ class EcoloReference(models.Model):
     apilos_model = models.CharField(max_length=64, null=False)
     ecolo_id = models.TextField(null=False, max_length=32)
     apilos_id = models.IntegerField(null=False)
+    departement = models.CharField(max_length=3, null=False, default=None)
+    importe_le = models.DateField(null=True)
 
     def resolve(self) -> Optional[Model]:
         model = apps.get_model(self.apilos_model.split('.')[0], self.apilos_model.split('.')[1])
