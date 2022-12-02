@@ -1,9 +1,5 @@
 -- Requête pour alimenter la table programmes_reference_cadastrale
 
--- Champs restants à mapper:
--- cree_le       timestamp with time zone not null,
--- mis_a_jour_le timestamp with time zone not null
-
 select ic.id,
     pl.conventiondonneesgenerales_id as programme_id,
     ic.id,
@@ -11,8 +7,11 @@ select ic.id,
     -- le champs Parcelle d'Ecolo est "splitté" en autant de lignes qu'il y a de valeurs séparées par un caractère non alphanumérique
     ic.numero::int,
     pl.description as lieudit,
-    ic.superficie
+    ic.superficie,
+    coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as cree_le,
+    coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as mis_a_jour_le
 from ecolo.ecolo_programmelogement pl
+    inner join ecolo.ecolo_conventiondonneesgenerales cdg on pl.conventiondonneesgenerales_id = cdg.id
     inner join (
         select
             ic.id,

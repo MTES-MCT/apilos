@@ -1,9 +1,6 @@
 --typologie         varchar(35)              not null
 --nb_stationnements integer                  not null
 --loyer             numeric(6, 2)            not null
---cree_le           timestamp with time zone not null
---mis_a_jour_le     timestamp with time zone not null
---lot_id            FK(lot)                  not null
 
 select
     'GARAGE_AERIEN' as typologie,
