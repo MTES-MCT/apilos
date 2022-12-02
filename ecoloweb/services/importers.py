@@ -28,10 +28,12 @@ class ModelImporter(ABC):
     """
     ecolo_id_field = 'id'
 
-    def __init__(self, debug=False):
+    def __init__(self, departement: str, import_date: datetime, debug=False):
         self._nb_imported_models: int = 0
         self._db_connection: CursorWrapper = connections['ecoloweb'].cursor()
         self.debug = debug
+        self.departement = departement
+        self.import_date = import_date
 
     @property
     @abstractmethod
@@ -95,8 +97,6 @@ class ModelImporter(ABC):
             self,
             instance: Model,
             ecolo_id: int,
-            departement: str,
-            import_date: datetime,
             id: Optional[int] = None
     ):
         """
@@ -108,8 +108,8 @@ class ModelImporter(ABC):
             apilos_model=EcoloReference.get_instance_model_name(instance),
             ecolo_id=str(ecolo_id),
             apilos_id=apilos_id,
-            departement=departement,
-            importe_le=import_date
+            departement=self.departement,
+            importe_le=self.import_date
         )
 
     def _get_identity_keys(self) -> List[str]:
@@ -137,7 +137,7 @@ class ModelImporter(ABC):
         """
         return {}
 
-    def _fetch_related_o2o_objects(self, data, departement: str, import_date: datetime) -> dict:
+    def _fetch_related_o2o_objects(self, data) -> dict:
         """
         Hydrate the `data` dict by replacing external references (i.e. foreign keys) with the target
         object by using the _dependencies_ importers defined using `_get_dependencies`
@@ -145,10 +145,10 @@ class ModelImporter(ABC):
         for key, importer in self._get_o2o_dependencies().items():
             # First, try to resolve key suffixed by `_id` ...
             if f'{key}_id' in data:
-                data[key] = importer.import_one(data.pop(f'{key}_id'), departement, import_date)
+                data[key] = importer.import_one(data.pop(f'{key}_id'))
             # ... else try to resolve key with its plain name
             elif key in data:
-                data[key] = importer.import_one(data.pop(key), departement, import_date)
+                data[key] = importer.import_one(data.pop(key))
 
         return data
 
@@ -161,13 +161,13 @@ class ModelImporter(ABC):
         """
         return {}
 
-    def _fetch_related_o2m_objects(self, pk, departement: str, import_date: datetime):
+    def _fetch_related_o2m_objects(self, pk):
         """
 
         """
         for _, importer in self._get_o2m_dependencies().items():
             self._debug(f'Fetching o2m objects {importer.__class__.__name__} from {self.__class__.__name__} with FK {pk}')
-            importer.import_many(pk, departement, import_date)
+            importer.import_many(pk)
 
     def _prepare_data(self, data: dict) -> dict:
         """
@@ -176,7 +176,7 @@ class ModelImporter(ABC):
         """
         return data
 
-    def process_result(self, data: dict, departement: str, import_date: datetime) -> Optional[Model]:
+    def process_result(self, data: dict) -> Optional[Model]:
         """
         For each result row from the base SQL query, process it by following these steps:
         1. look for an already imported model and if found return it
@@ -196,7 +196,7 @@ class ModelImporter(ABC):
             # hash function like for programme lots)
             ecolo_id = data.pop(self.ecolo_id_field)
             # Compute data dictionary
-            data = self._fetch_related_o2o_objects(data, departement, import_date)
+            data = self._fetch_related_o2o_objects(data)
             data = self._prepare_data(data)
 
             # Extract dict values from declared identity keys as filters dict
@@ -204,7 +204,7 @@ class ModelImporter(ABC):
             if len(filters) > 0:
                 instance, created = self.model.objects.get_or_create(**filters, defaults=data)
 
-                self._register_ecolo_reference(instance, ecolo_id, departement, import_date)
+                self._register_ecolo_reference(instance, ecolo_id)
                 if created:
                     self._nb_imported_models += 1
 
@@ -213,24 +213,20 @@ class ModelImporter(ABC):
                 instance = self.model.objects.create(**data)
                 created = True
                 # ...and mark it as imported
-                self._register_ecolo_reference(instance, ecolo_id, departement, import_date)
+                self._register_ecolo_reference(instance, ecolo_id)
                 self._nb_imported_models += 1
 
             if created:
                 # Import one to many models
-                self._fetch_related_o2m_objects(ecolo_id, departement, import_date)
+                self._fetch_related_o2m_objects(ecolo_id)
 
         return instance
 
-    def import_one(self, pk, departement: str, import_date: datetime) -> Optional[Model]:
+    def import_one(self, pk) -> Optional[Model]:
         """
         Public entry point method to fetch a model from the Ecoloweb database based on its primary key
         """
-        return self.process_result(
-            self._query_single_row([pk]),
-            departement,
-            import_date
-        )
+        return self.process_result(self._query_single_row([pk]))
 
     def _query_single_row(self, parameters: List) -> Optional[Dict]:
         """
@@ -247,7 +243,7 @@ class ModelImporter(ABC):
 
         return dict(zip(columns, row)) if row else None
 
-    def import_many(self, fk, departement: str, import_date: datetime):
+    def import_many(self, fk):
         """
         Public entry point method to fetch a list of models from the Ecoloweb database based on its foreign key
         """
@@ -259,4 +255,4 @@ class ModelImporter(ABC):
             )
 
             for result in iterator:
-                self.process_result(result, departement, import_date)
+                self.process_result(result)

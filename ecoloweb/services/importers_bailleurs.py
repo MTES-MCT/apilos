@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from . import SiretResolver
@@ -8,8 +9,8 @@ from bailleurs.models import Bailleur
 class BailleurImporter(ModelImporter):
     model = Bailleur
 
-    def __init__(self, debug=False):
-        super().__init__(debug)
+    def __init__(self, departement: str, import_date: datetime, debug=False):
+        super().__init__(departement, import_date, debug)
         self._siret_resolver = SiretResolver()
         self._query = self._get_file_content('resources/sql/bailleurs.sql')
 

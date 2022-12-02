@@ -52,14 +52,14 @@ class Command(BaseCommand):
         progress = None
 
         try:
-            importer = ConventionImporter(debug)
-            results = importer.get_all_by_departement(departement)
+            importer = ConventionImporter(departement, import_date, debug)
+            results = importer.get_all_by_departement()
             # Progress bar
             if not no_progress:
                 progress = tqdm(total=results.lines_total)
             # Actual processing
             for result in results:
-                importer.process_result(result, departement, import_date)
+                importer.process_result(result)
                 if progress is not None:
                     progress.update(1)
                 else:
