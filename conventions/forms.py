@@ -242,7 +242,7 @@ class UploadForm(forms.Form):
     file = FileField(
         error_messages={
             "required": (
-                "Vous devez séléctionner un fichier avant "
+                "Vous devez sélectionner un fichier avant "
                 + "de cliquer sur le bouton 'Téléverser'"
             ),
         }

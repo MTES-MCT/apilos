@@ -1,6 +1,7 @@
 from typing import List
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+
 from conventions.models import Convention
 
 from upload.services import UploadService
