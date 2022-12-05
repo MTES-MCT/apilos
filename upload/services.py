@@ -1,4 +1,3 @@
-import os
 import errno
 
 from django.conf import settings
@@ -23,9 +22,10 @@ class UploadService:
             settings.DEFAULT_FILE_STORAGE
             == "django.core.files.storage.FileSystemStorage"
         ):
-            if not os.path.exists(f"{settings.MEDIA_ROOT}/{self.convention_dirpath}"):
+            convention_dir = settings.MEDIA_ROOT / self.convention_dirpath
+            if not convention_dir.exists():
                 try:
-                    os.makedirs(f"{settings.MEDIA_ROOT}/{self.convention_dirpath}")
+                    convention_dir.mkdir(parents=True)
                 except OSError as exc:  # Guard against race condition
                     if exc.errno != errno.EEXIST:
                         raise
@@ -43,9 +43,10 @@ class UploadService:
             settings.DEFAULT_FILE_STORAGE
             == "django.core.files.storage.FileSystemStorage"
         ):
-            if not os.path.exists(f"{settings.MEDIA_ROOT}/{self.convention_dirpath}"):
+            convention_dir = settings.MEDIA_ROOT / self.convention_dirpath
+            if not convention_dir.exists():
                 try:
-                    os.makedirs(f"{settings.MEDIA_ROOT}/{self.convention_dirpath}")
+                    convention_dir.mkdir(parents=True)
                 except OSError as exc:  # Guard against race condition
                     if exc.errno != errno.EEXIST:
                         raise
