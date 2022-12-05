@@ -359,6 +359,12 @@ class ReferenceCadastrale(models.Model):
     def bailleur(self):
         return self.programme.bailleur
 
+    @staticmethod
+    def compute_surface(superficie: int | None = None):
+        s = superficie if superficie is not None else 0
+
+        return f'{s % 100} ha {s % 10000 // 100} a {s // 10000} ca'
+
     def __str__(self):
         return f"{self.section} - {self.numero} - {self.lieudit}"
 

@@ -1,9 +1,12 @@
 import uuid
+from typing import Optional
 
 from django.db import models
 from django.db.models import Q
 from django.forms import model_to_dict
 from django.utils import timezone
+
+from ecoloweb.models import EcoloReference
 from programmes.models import (
     Annexe,
     Financement,
@@ -197,6 +200,16 @@ class Convention(models.Model):
     @property
     def bailleur(self):
         return self.programme.bailleur
+
+    @property
+    def ecolo_reference(self) -> Optional[EcoloReference]:
+        if self.id is not None:
+            return EcoloReference.objects.filter(
+                apilos_model='conventions.Convention',
+                apilos_id=self.id
+            ).first()
+
+        return None
 
     @property
     def bailleur_id(self):

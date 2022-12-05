@@ -1,3 +1,4 @@
+{% load static %}
 {% load custom_filters %}
 
 {% if convention %}
@@ -28,6 +29,17 @@
     </div>
     <div>
         <div class="fr-container fr-pt-2w">
+            {% if convention.ecolo_reference %}
+
+                <div role="alert" class="fr-col-12 fr-mb-3w apilos-alert apilos-alert-ecoloweb">
+                    <p class="fr-text--lg">Cette convention a été récupérée automatiquement depuis <span class="fr-text--bold">Ecoloweb</span></p>
+                    <p>Vous pouvez compléter les informations incomplètes</p>
+                </div>
+
+                <hr class="fr-col-12 fr-my-3w">
+            {% endif %}
+
+
             {% if convention.statut == CONVENTION_STATUT.PROJET %}
                 <div role="alert" class="fr-col-12 fr-mb-3w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} fr-icon-pencil-line">
                     {% if convention.is_avenant %}

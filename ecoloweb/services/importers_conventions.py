@@ -13,12 +13,13 @@ class ConventionImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {
-            'programme': ProgrammeImporter(self.debug),
-            'lot': ProgrammeLotImporter(self.debug),
+            'programme': ProgrammeImporter(self.departement, self.import_date, self.debug),
+            'lot': ProgrammeLotImporter(self.departement, self.import_date, self.debug),
         }
 
-    def get_all_results(self, criteria: dict = None) -> QueryResultIterator:
+    def get_all_by_departement(self) -> QueryResultIterator:
         return QueryResultIterator(
             self._db_connection,
-            self._get_sql_from_template('resources/sql/conventions.sql', criteria)
+            self._get_file_content('resources/sql/conventions.sql'),
+            [self.departement]
         )

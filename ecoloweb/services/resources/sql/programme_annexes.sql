@@ -19,4 +19,4 @@ select
     upper(ev.libelle) as typologie,
     montantloyerinitial as loyer
 from ecolo.ecolo_annexe ea
-    inner join ecolo_valeurparamstatic ev on ev.id = ea.typeannexe_id;
+    inner join ecolo.ecolo_valeurparamstatic ev on ev.id = ea.typeannexe_id;

@@ -1,4 +1,6 @@
 import sys
+import datetime
+
 from django.core.management import BaseCommand
 from django.db import connections
 from django.db import transaction
@@ -13,15 +15,15 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--dry-run',
-            action='store_true',
-            help='Do not persist downloaded data'
-        )
-        parser.add_argument(
-            '--departements',
-            nargs='*',
+            'departement',
+            nargs=1,
             default=[],
             help="Départements on which restrict import of conventions"
+        )
+        parser.add_argument(
+            '--no-transaction',
+            action='store_true',
+            help='Perform queries under transaction'
         )
         parser.add_argument(
             '--debug',
@@ -39,23 +41,19 @@ class Command(BaseCommand):
             print("No 'ecoloweb' connection defined, migration aborted!")
             sys.exit(1)
 
-        dry_run = options["dry_run"]
+        departement: str = options['departement'][0]
+        import_date: datetime = datetime.datetime.today()
+        no_transaction = options["no_transaction"]
+
         debug = options["debug"]
         no_progress = options["no_progress"]
 
-        criteria = {}
-        if len(options["departements"]) > 0:
-            criteria['departements'] = [f"'{d}'" for d in options["departements"]]
-
-        if dry_run:
-            print("Running in dry mode")
-
-        transaction.set_autocommit(False)
+        transaction.set_autocommit(no_transaction)
         progress = None
 
         try:
-            importer = ConventionImporter(debug)
-            results = importer.get_all_results(criteria)
+            importer = ConventionImporter(departement, import_date, debug)
+            results = importer.get_all_by_departement()
             # Progress bar
             if not no_progress:
                 progress = tqdm(total=results.lines_total)
@@ -68,14 +66,13 @@ class Command(BaseCommand):
                     print(f'Processed convention #{results.lines_fetched} (out of {results.lines_total} total)')
 
         except Exception as e:
-            transaction.rollback()
+            if not no_transaction:
+                print("Rollabcking all changes due to runtime error")
+                transaction.rollback()
 
-            print("Rollabcking all changes due to runtime error")
             raise e
-        finally:
+        else:
             if progress is not None:
                 progress.close()
-            if dry_run:
-                transaction.rollback()
-            else:
-                transaction.commit()
+            if not no_transaction:
+                 transaction.commit()

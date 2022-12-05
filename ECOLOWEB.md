@@ -4,28 +4,26 @@ La migration des données depuis Ecoloweb se fait via une commande CLI (_command
 
 ## Fonctionnement de la commande
 
-La commande se nomme `import_ecoloweb_data` est lancée via Django (i.e. `manage.py`). 
-
-/!\ **ATTENTION:** si la commande est lancée sans arguments ensuite, elle aura pour mission d'importer **tout**
-l'historique, ce qui représente un volume de données très important.
+La commande se nomme `import_ecoloweb_data` est lancée via Django (i.e. `manage.py`).  
 
 Un accès en lecture seule à une base de données est nécessaire via la variable d'environnement `ECOLO_DATABASE_URL` qui
-reste optionnelle sur le reste du projet. L'ensemble des données importées au cours d'un lancement sont enregistrés au
-sein d'une transaction SQL; soit tout est importé, soit rien. En outre, un système de _références_ est mis en place pour
-éviter d'importer 2 fois une donnée vers la base APiLos.
+reste optionnelle sur le reste du projet.
 
-Pour lancer l'import des conventions d'un département, il faut ajouter l'option `--departement` (qui accepte d'ailleurs
-une ou plusieurs valeurs):
+L'ensemble des données importées au cours d'un lancement sont enregistrés au
+sein d'une transaction SQL; soit tout est importé, soit rien. Il est cependant possible de ne pas utiliser de
+transaction via l'option `--no-transaction`. En outre, un système de _références_ est mis en place pour éviter
+d'importer 2 fois une donnée vers la base APiLos.
+
+Pour lancer l'import des conventions sur un département, il faut ajouter le code INSEE de celui-ci en argument:
 
 ```bash
 # Importer les données des Bouches du Rhône:
-./manage.py import_ecoloweb_data --departement 13
-# Importer les données de toute la Bretagne
-./manage.py import_ecoloweb_data --departement 22 29 35 56
+./manage.py import_ecoloweb_data 13
+# Importer les données de la Haute Corse
+./manage.py import_ecoloweb_data 2B
 ```
 
 D'autres options, _réellement optionnelles_ celles-ci, sont disponibles:
-* `--dry_run`: importer les données sans les sauvegarder, uniquement pour vérifier qu'il n'y pas d'erreur de traitement
 * `--no-progress`: ne pas afficher la barre de progression dynamique (utile pour analyser les logs depuis Scalingo)
 * `--debug`: affiche des informations supplémentaires au développeur (à conjuguer avec l'option `--no-progress`)
 
@@ -37,13 +35,13 @@ va nous falloir suivre [la (très bonne) documentation concernant les "detached 
 Ex: pour lancer l'import des Bouches du Rhône :
 
 ```
-scalingo --app <app> run --detached 'python ./manage.py import_ecoloweb_data --departement 13'
+scalingo --app <app> run --detached 'python ./manage.py import_ecoloweb_data 13 --no-progress'
 ```
 
 Scaling va alors répondre avec un message comme suit :
 
 ```txt
-Starting one-off 'python ./manage.py import_ecoloweb_data --departement 13' for app '<app>'.
+Starting one-off 'python ./manage.py import_ecoloweb_data 13 --no-progress' for app '<app>'.
 Run `scalingo --region <region> --app <app> logs --filter one-off-<number>` to get the output
 ```
 
