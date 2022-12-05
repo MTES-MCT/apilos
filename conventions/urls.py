@@ -145,17 +145,23 @@ urlpatterns = [
     path("new_avenant/<convention_uuid>", views.new_avenant, name="new_avenant"),
     path(
         "new_avenant_start",
-        TemplateView.as_view(template_name="conventions/new_avenant_start.html"),
+        TemplateView.as_view(
+            template_name="conventions/avenant/new_avenant_start.html"
+        ),
         name="new_avenant_start",
     ),
     path(
         "search_for_avenant",
-        TemplateView.as_view(template_name="conventions/search_for_avenant.html"),
+        TemplateView.as_view(
+            template_name="conventions/avenant/search_for_avenant.html"
+        ),
         name="search_for_avenant",
     ),
     path(
         "search_for_avenant_result",
-        views.search_for_avenant_result,
+        permission_required("convention.add_convention")(
+            views.SearchForAvenantResultView.as_view()
+        ),
         name="search_for_avenant_result",
     ),
 ]

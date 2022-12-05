@@ -64,16 +64,6 @@ def index(request):
 
 
 @login_required
-def search_for_avenant_result(request):
-    result = search_result(request)
-    return render(
-        request,
-        "conventions/search_for_avenant_result.html",
-        {**result},
-    )
-
-
-@login_required
 def recapitulatif(request, convention_uuid):
     # Step 11/11
     convention = (
@@ -504,6 +494,39 @@ class ConventionSelectionFromZeroView(LoginRequiredMixin, View):
         return render(
             request,
             "conventions/selection_from_zero.html",
+            {
+                "form": service.form,
+                "editable": True,
+            },
+        )
+
+
+class SearchForAvenantResultView(LoginRequiredMixin, View):
+    def get(self, request):
+        result = search_result(request)
+        service = ConventionSelectionService(request)
+        service.get_from_zero()
+        return render(
+            request,
+            "conventions/avenant/search_for_avenant_result.html",
+            {
+                **result,
+                "form": service.form,
+                "editable": True,
+            },
+        )
+
+    def post(self, request):
+        service = ConventionSelectionService(request)
+        service.post_from_zero()
+
+        if service.return_status == ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(
+                reverse("conventions:new_avenant", args=[service.convention.uuid])
+            )
+        return render(
+            request,
+            "conventions/avenant/search_for_avenant_result.htm",
             {
                 "form": service.form,
                 "editable": True,
