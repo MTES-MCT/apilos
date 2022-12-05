@@ -5,17 +5,11 @@
 {% load static %}
 
 {% block content %}
-    <!-- <div>
-        Les résultats sont : <br>
-        Département : {{ dpt }}<br>
-        Année : {{ year }}<br>
-        4 derniers numéros : {{ num }}
-    </div> -->
     {% if conventions %}
         {% for convention in conventions %}
             <strong>{{convention.programme.nom}}</strong><br/>
             <strong>{{convention.programme.ville}}</strong>
-            <em>{{convention.programme.code_postal}}</em>
+            <em>{{convention.programme.code_postal}}</em><br/><br/>
         {% endfor %}
     {% else %}
         Pas de résultats
