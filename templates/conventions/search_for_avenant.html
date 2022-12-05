@@ -7,8 +7,31 @@
 {% block content %}
     on recherche ici
     <div class="fr-mr-3w">
-        <a class="fr-btn" href="{% url 'conventions:search_for_avenant_result' %}?departement=29&annee=2022&num=22">
-            <span class="fr-fi-add-circle-line fr-mr-1w" aria-hidden="true"></span>Commencer
-        </a>
+        <form class="fr-my-3w" method="get" action="{% url 'conventions:search_for_avenant_result' %}" id="search_for_avenant">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                    <label class="fr-label" for="search_input">
+                        Préciser un département
+                    </label>
+                    <input class="fr-input" placeholder="Ex : 13" type="recherche" name="departement">
+                </div>
+                <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                    <label class="fr-label" for="search_input">
+                        Préciser une annee
+                    </label>
+                    <input class="fr-input" placeholder="Ex : 2022" type="recherche" name="annee">
+                </div>
+                <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                    <label class="fr-label" for="search_input">
+                        Préciser un numéro
+                    </label>
+                    <input class="fr-input" placeholder="Ex : 1234" type="recherche" name="num">
+                </div>
+            </div>
+            <div class="fr-col-1 fr-grid-row fr-grid-row--right">
+                <button class="" title="Rechercher" id="search_btn">Rechercher
+                </button>
+            </div>
+        </form>
     </div>
 {% endblock %}
