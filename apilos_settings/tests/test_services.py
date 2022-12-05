@@ -20,35 +20,75 @@ class BailleurListingProcessorTest(TestCase):
     def setUpTestData(cls):
         utils_fixtures.create_all()
 
-    def test_process_listing(self):
+    def _process_file(self, file: str):
+        listing_file = open(os.path.join(os.path.dirname(__file__), file), 'rb')
+        processor = BailleurListingProcessor(filename=listing_file)
+        return processor.process()
+
+    def test_process_listing_ok(self):
         bailleur = Bailleur.objects.get(nom='HLM')
 
-        with open(os.path.join(os.path.dirname(__file__), './resources/listing_bailleur_ok.xlsx'), 'rb') as listing_file:
-            processor = BailleurListingProcessor(filename=listing_file)
-            users = processor.process()
-            self.assertListEqual(users, [
-                {
-                    'first_name': "Jean",
-                    'last_name': "Bailleur",
-                    'bailleur': bailleur,
-                    'email': "jean.bailleur2@apilos.com",
-                    'username': "jean.bailleur2",
-                },
-                {
-                    'first_name': "Jeanne",
-                    'last_name': "Bailleur",
-                    'bailleur': bailleur,
-                    'email': "jeanne.bailleur@apilos.com",
-                    'username': "jeanne.bailleur",
-                },
-                {
-                    'first_name': "Chantal",
-                    'last_name': "Bailleur",
-                    'bailleur': bailleur,
-                    'email': "chantal.bailleur@apilos.com",
-                    'username': "chantal.bailleur",
-                }
-            ])
+        users = self._process_file('./resources/listing_bailleur_ok.xlsx')
+
+        self.assertListEqual(users, [
+            {
+                'first_name': "Jean",
+                'last_name': "Bailleur",
+                'bailleur': bailleur,
+                'email': "jean.bailleur2@apilos.com",
+                'username': "jean.bailleur2",
+            },
+            {
+                'first_name': "Jeanne",
+                'last_name': "Bailleur",
+                'bailleur': bailleur,
+                'email': "jeanne.bailleur@apilos.com",
+                'username': "jeanne.bailleur",
+            },
+            {
+                'first_name': "Chantal",
+                'last_name': "Bailleur",
+                'bailleur': bailleur,
+                'email': "chantal.bailleur@apilos.com",
+                'username': "chantal.bailleur",
+            }
+        ])
+
+    def test_process_listing_ko_unfilled_columns(self):
+        bailleur = Bailleur.objects.get(nom='HLM')
+
+        users = self._process_file('./resources/listing_bailleur_unfilled_columns.xlsx')
+
+        self.assertListEqual(users, [
+            {
+                'first_name': None,
+                'last_name': "Bailleur",
+                'bailleur': bailleur,
+                'email': "inconnu@baille.ur",
+                'username': "inconnu",
+            },
+            {
+                'first_name': "Bernadette",
+                'last_name': None,
+                'bailleur': bailleur,
+                'email': "bernadette@baille.ur",
+                'username': "bernadette",
+            },
+            {
+                'first_name': "Josiane",
+                'last_name': "Bailleur",
+                'bailleur': None,
+                'email': "josiane@baille.ur",
+                'username': "josiane",
+            },
+            {
+                'first_name': "Philippe",
+                'last_name': "Bailleur",
+                'bailleur': bailleur,
+                'email': None,
+                'username': "",
+            }
+        ])
 
 
 class ImportBailleurUsersServiceTest(TestCase):
