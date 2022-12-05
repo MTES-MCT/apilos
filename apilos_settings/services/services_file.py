@@ -1,5 +1,7 @@
 from typing import List
 
+from django.db.models import Q
+
 from openpyxl import Workbook, load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
@@ -56,7 +58,9 @@ class BailleurListingProcessor:
                 if nb_empty_lines == self.empty_lines_allowed:
                     break
             else:
-                data['bailleur'] = Bailleur.objects.filter(nom__iexact=data.pop('bailleur')).first()
+                bailleur = data.pop('bailleur')
+                bailleur = str(bailleur).strip() if bailleur is not None else None
+                data['bailleur'] = Bailleur.objects.filter(Q(nom__iexact=bailleur) | Q(siret=bailleur)).first()
                 data['username'] = UserService.extract_username_from_email(data.get('email', ''))
                 results.append(data)
 
