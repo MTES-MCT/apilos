@@ -67,8 +67,9 @@ NATURE_RELATIONSHIP = {
 
 
 class BailleurManager(models.Manager):
+    # pylint: disable=R0903
     def get_by_natural_key(self, field, value):
-        if field == 'siret':
+        if field == "siret":
             return self.get(siret=value)
 
         return self.get(pk=value)
@@ -99,14 +100,14 @@ class Bailleur(IngestableModel):
     nom = models.CharField(max_length=255)
     siret = models.CharField(max_length=14, unique=True)
     siren = models.CharField(max_length=9, null=True)
-    capital_social = models.FloatField(null=True)
+    capital_social = models.FloatField(null=True, blank=True)
     adresse = models.CharField(max_length=255, null=True)
     code_postal = models.CharField(max_length=255, null=True)
     ville = models.CharField(max_length=255, null=True)
-    signataire_nom = models.CharField(max_length=255, null=True)
-    signataire_fonction = models.CharField(max_length=255, null=True)
-    signataire_date_deliberation = models.DateField(null=True)
-    operation_exceptionnelle = models.TextField(null=True)
+    signataire_nom = models.CharField(max_length=255, null=True, blank=True)
+    signataire_fonction = models.CharField(max_length=255, null=True, blank=True)
+    signataire_date_deliberation = models.DateField(null=True, blank=True)
+    operation_exceptionnelle = models.TextField(null=True, blank=True)
     nature_bailleur = models.CharField(
         max_length=255,
         choices=NatureBailleur.choices,
