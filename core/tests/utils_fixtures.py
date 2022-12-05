@@ -99,6 +99,17 @@ def create_users_bailleur():
     user3.last_name = "Vartan"
     user3.preferences_email = EmailPreferences.TOUS
     user3.save()
+    # Users not returned as write-only
+    user4 = User.objects.create_user("jean.bailleur", "jean.bailleur@apilos.com", "01234")
+    user4.first_name = "Jean"
+    user4.last_name = "Bailleur"
+    user4.preferences_email = EmailPreferences.AUCUN
+    user4.save()
+    user5 = User.objects.create_user("chantal.bailleur2", "chantal@apilos.com", "01234")
+    user5.first_name = "Chantal"
+    user5.last_name = "Bailleur"
+    user5.preferences_email = EmailPreferences.PARTIEL
+    user5.save()
     return (
         user1,
         user2,

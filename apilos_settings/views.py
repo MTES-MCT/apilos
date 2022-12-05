@@ -1,11 +1,15 @@
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
 from django.views.decorators.http import require_POST
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from apilos_settings import services
+from apilos_settings.services import services_view as services
 from apilos_settings.models import Departement
+from apilos_settings.services import services_view
+from conventions.services.utils import ReturnStatus
 
 
 @login_required
@@ -21,7 +25,7 @@ def index(request):
 
 @login_required
 def administrations(request):
-    result = services.administration_list(request)
+    result = services_view.administration_list(request)
     return render(
         request,
         "settings/administrations.html",
@@ -31,7 +35,7 @@ def administrations(request):
 
 @login_required
 def edit_administration(request, administration_uuid):
-    result = services.edit_administration(request, administration_uuid)
+    result = services_view.edit_administration(request, administration_uuid)
     if result["success"]:
         return HttpResponseRedirect(reverse("settings:administrations"))
     return render(
@@ -43,7 +47,7 @@ def edit_administration(request, administration_uuid):
 
 @login_required
 def bailleurs(request):
-    bailleur_list_service = services.BailleurListService(
+    bailleur_list_service = services_view.BailleurListService(
         search_input=request.GET.get("search_input", ""),
         order_by=request.GET.get("order_by", "nom"),
         page=request.GET.get("page", 1),
@@ -68,6 +72,43 @@ def edit_bailleur(request, bailleur_uuid):
         "settings/edit_bailleur.html",
         {**result},
     )
+
+
+class ImportBailleurUsersView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        if not request.user.is_staff:
+            return HttpResponseRedirect(reverse("settings:users"))
+
+        service = services.ImportBailleurUsersService(request)
+        service.get()
+        return render(
+            request,
+            "settings/import_bailleur_users.html",
+            {
+                'upform': service.upload_form,
+                'formset': service.formset,
+            }
+        )
+
+    def post(self, request):
+        if not request.user.is_staff:
+            return HttpResponseRedirect(reverse("settings:users"))
+
+        service = services.ImportBailleurUsersService(request)
+        status = service.save()
+
+        if not service.is_upload and status == ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(reverse("settings:users"))
+
+        return render(
+            request,
+            "settings/import_bailleur_users.html",
+            {
+                'upform': service.upload_form,
+                'formset': service.formset,
+            }
+        )
 
 
 @login_required
