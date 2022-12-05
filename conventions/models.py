@@ -413,11 +413,6 @@ class Convention(models.Model):
         """
         return self.financement == Financement.PLUS
 
-    def type1and2_configuration_not_needed(self):
-        return self.is_avenant() or not (
-            self.programme.bailleur.is_type1and2() and not self.type1and2
-        )
-
     def display_not_validated_status(self):
         """
         Text display as Watermark when the convention is in project or instruction status

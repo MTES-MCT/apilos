@@ -317,6 +317,21 @@ def display_convention_form_progressbar(convention):
 
 
 @register.filter
+def display_type1and2(convention):
+    return (
+        convention.programme.bailleur.is_type1and2()
+        and not convention.is_avenant()
+        and not convention.programme.is_foyer()
+        and not convention.programme.is_residence()
+    )
+
+
+@register.filter
+def display_deactivated_because_type1and2_config_is_needed(convention):
+    return display_type1and2(convention) and not convention.type1and2
+
+
+@register.filter
 def display_type1and2_editable(convention):
     return convention.statut in [
         ConventionStatut.PROJET,

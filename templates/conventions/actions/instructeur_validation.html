@@ -22,7 +22,7 @@
                 </div>
             {% else %}
                 <p class="fr-alert__title">Valider la convention</p>
-                {% with editable_validation=convention.type1and2_configuration_not_needed %}
+                {% with editable_validation=convention|display_deactivated_because_type1and2_config_is_needed %}
                     {% if editable_validation %}
                         <p class="fr-mb-3w">Vous pouvez associer un numéro de convention et valider celle-ci. Elle sera automatiquement transmise au bailleur par email pour signature.</p>
                     {% else %}

@@ -1,13 +1,11 @@
 import datetime
 
 from django.test import TestCase
-from bailleurs.models import SousNatureBailleur
 from core.tests import utils_assertions, utils_fixtures
 from conventions.models import (
     Convention,
     ConventionHistory,
     ConventionStatut,
-    ConventionType1and2,
     Pret,
     Preteur,
 )
@@ -156,39 +154,6 @@ class ConventionModelsTest(TestCase):
             if k != Financement.PLUS:
                 convention.financement = k
                 self.assertFalse(convention.mixity_option())
-
-    def test_type1and2_configuration_not_needed(self):
-        convention = Convention.objects.order_by("uuid").first()
-        for sous_nature_bailleur in [
-            SousNatureBailleur.OFFICE_PUBLIC_HLM,
-            SousNatureBailleur.SA_HLM_ESH,
-            SousNatureBailleur.COOPERATIVE_HLM_SCIC,
-            SousNatureBailleur.SEM_EPL,
-        ]:
-            convention.programme.bailleur.sous_nature_bailleur = sous_nature_bailleur
-            for type1andtype2 in [
-                ConventionType1and2.TYPE1,
-                ConventionType1and2.TYPE2,
-                None,
-            ]:
-                convention.type1and2 = type1andtype2
-                self.assertTrue(convention.type1and2_configuration_not_needed())
-        for k, _ in SousNatureBailleur.choices:
-            if k not in [
-                SousNatureBailleur.OFFICE_PUBLIC_HLM,
-                SousNatureBailleur.SA_HLM_ESH,
-                SousNatureBailleur.COOPERATIVE_HLM_SCIC,
-                SousNatureBailleur.SEM_EPL,
-            ]:
-                convention.programme.bailleur.sous_nature_bailleur = k
-                convention.type1and2 = None
-                self.assertFalse(convention.type1and2_configuration_not_needed())
-                for type1andtype2 in [
-                    ConventionType1and2.TYPE1,
-                    ConventionType1and2.TYPE2,
-                ]:
-                    convention.type1and2 = type1andtype2
-                    self.assertTrue(convention.type1and2_configuration_not_needed())
 
     def test_display_not_validated_status(self):
         convention = Convention.objects.order_by("uuid").first()
