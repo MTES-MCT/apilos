@@ -66,6 +66,9 @@ class ConventionFinancementForm(forms.Form):
             and self.convention is not None
             and annee_fin_conventionnement is not None
         ):
+            # FIXME : [FOYER] règle différente :
+            # (identique convention - 31 décembre ici pas 30 juin)
+            # date de la fin de la convention
             if self.convention.financement == Financement.PLS:
                 self._pls_end_date_validation(annee_fin_conventionnement)
             elif self.convention.programme.type_operation == TypeOperation.SANSTRAVAUX:

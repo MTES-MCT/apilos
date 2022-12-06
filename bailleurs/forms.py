@@ -103,6 +103,46 @@ class BailleurForm(forms.Form):
         required=False, label="Type de bailleur", choices=SousNatureBailleur.choices
     )
 
+    gestionnaire = forms.CharField(
+        label="Entreprise gestionnaire",
+        required=False,
+        max_length=255,
+        error_messages={
+            "max_length": "L'entreprise gestionnaire de la convention "
+            + "ne doit pas excéder 255 caractères",
+        },
+    )
+
+    gestionnaire_signataire_nom = forms.CharField(
+        label="Nom du signataire du gestionnaire de la convention",
+        required=False,
+        max_length=255,
+        error_messages={
+            "max_length": "Le nom du signataire du gestionnaire de la convention "
+            + "ne doit pas excéder 255 caractères",
+        },
+    )
+    gestionnaire_signataire_fonction = forms.CharField(
+        label="Fonction du signataire du gestionnaire de la convention",
+        required=False,
+        max_length=255,
+        error_messages={
+            "max_length": "La fonction du signataire du gestionnaire de la convention "
+            + "ne doit pas excéder 255 caractères",
+        },
+    )
+    gestionnaire_signataire_date_deliberation = forms.DateField(
+        label="Date de délibération",
+        required=False,
+        error_messages={
+            "required": "La date de délibération est obligatoire",
+        },
+        help_text=(
+            "Date à laquelle le signataire du gestionnaire a reçu le mandat lui "
+            + "permettant de signer la convention"
+        ),
+    )
+
     def clean_nom(self):
         nom = self.cleaned_data["nom"]
         return nom

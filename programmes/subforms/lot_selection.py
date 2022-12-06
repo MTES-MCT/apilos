@@ -61,7 +61,7 @@ class ProgrammeSelectionFromZeroForm(forms.Form):
         },
     )
     numero_galion = forms.CharField(
-        label="N° Opération",
+        label="N° de décision de financement",
         required=False,
         max_length=255,
         error_messages={

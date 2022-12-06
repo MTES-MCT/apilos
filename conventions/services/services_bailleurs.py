@@ -39,6 +39,7 @@ class ConventionBailleurService(ConventionService):
             initial={"bailleur": bailleur.uuid},
         )
         self.form = BailleurForm(
+            bailleurs=bailleurs,
             initial={
                 "uuid": bailleur.uuid,
                 "nom": bailleur.nom,

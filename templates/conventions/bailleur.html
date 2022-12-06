@@ -72,7 +72,8 @@
                                 </div>
                             </div>
                         </div>
-                        <h4>Signataire de la convention</h4>
+
+                        <h4>Signataire de la convention (Propriétaire)</h4>
 
                         {% include "common/form/input_text.html" with form_input=form.signataire_nom object_field="bailleur__signataire_nom__"|add:form.uuid.value %}
 
@@ -86,6 +87,28 @@
                                 </div>
                             </div>
                         </div>
+
+                        {% if convention.programme.is_foyer %}
+                            <h4>Gestionnaire des logments conventionnés</h4>
+
+                            {% include "common/form/input_text.html" with form_input=form.gestionnaire object_field="gestionnaire__uuid__"|add:form.uuid.value %}
+
+                            {% include "common/form/input_text.html" with form_input=form.gestionnaire_signataire_nom object_field="gestionnaire__signataire_nom__"|add:form.uuid.value %}
+
+                            <div class="fr-mb-2w">
+                                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                        {% include "common/form/input_text.html" with form_input=form.gestionnaire_signataire_fonction object_field="gestionnaire__signataire_fonction__"|add:form.uuid.value %}
+                                    </div>
+                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                                        {% include "common/form/input_date.html" with form_input=form.gestionnaire_signataire_date_deliberation object_field="gestionnaire__signataire_date_deliberation__"|add:form.uuid.value %}
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% endif %}
+
+
                     </div>
                 </div>
                 {% include "common/required_fields_info.html" %}
