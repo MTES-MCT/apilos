@@ -4,6 +4,10 @@ from django.urls import reverse
 from django.conf import settings
 from django.db.models.query import QuerySet
 
+from conventions.models import (
+    ConventionStatut,
+)
+
 from conventions.services.services_conventions import ConventionService
 from conventions.templatetags.custom_filters import is_instructeur
 from conventions.models import Convention
@@ -105,6 +109,11 @@ class ConventionSelectionService:
                 programme_id=lot.programme_id,
                 financement=lot.financement,
                 cree_par=self.request.user,
+                statut=(
+                    ConventionStatut.SIGNEE
+                    if self.form.cleaned_data["statut"]
+                    else ConventionStatut.PROJET
+                ),
             )
             _send_email_staff(self.request, self.convention)
             self.convention.save()

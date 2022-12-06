@@ -527,7 +527,7 @@ class SearchForAvenantResultView(LoginRequiredMixin, View):
             )
         return render(
             request,
-            "conventions/avenant/search_for_avenant_result.htm",
+            "conventions/avenant/search_for_avenant_result.html",
             {
                 "form": service.form,
                 "editable": True,
