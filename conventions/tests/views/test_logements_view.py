@@ -1,7 +1,9 @@
 from django.test import TestCase
 from django.urls import reverse
+from conventions.models import Convention
 
 from conventions.tests.views.abstract import AbstractEditViewTestCase
+from users.models import User
 
 post_fixture = {
     "form-TOTAL_FORMS": "2",
@@ -71,6 +73,10 @@ class ConventionLogementsViewTests(AbstractEditViewTestCase, TestCase):
 class AvenantLogementsViewTests(ConventionLogementsViewTests):
     def setUp(self):
         super().setUp()
+        # force convention_75 to be an avenant
+        user = User.objects.get(username="fix")
+        convention = Convention.objects.get(numero="0001")
+        self.convention_75 = convention.clone(user, convention_origin=convention)
         self.target_path = reverse(
             "conventions:avenant_logements", args=[self.convention_75.uuid]
         )

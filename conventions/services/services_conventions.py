@@ -741,7 +741,7 @@ class ConventionFinancementService(ConventionService):
         )
         # When the user cliked on "Téléverser" button
         if self.request.POST.get("Upload", False):
-            self.form = ConventionFinancementForm(self.request.POST)
+            self.form = ConventionFinancementForm(initial=self.request.POST)
             self._upload_prets()
         # When the user cliked on "Enregistrer et Suivant"
         else:
@@ -841,9 +841,14 @@ class ConventionFinancementService(ConventionService):
                 self.redirect_recap = self.request.POST.get("redirect_to_recap", False)
 
     def _save_convention_financement(self):
-        self.convention.date_fin_conventionnement = datetime.date(
-            self.form.cleaned_data["annee_fin_conventionnement"], 6, 30
-        )
+        if self.convention.programme.is_foyer():
+            self.convention.date_fin_conventionnement = datetime.date(
+                self.form.cleaned_data["annee_fin_conventionnement"], 12, 31
+            )
+        else:
+            self.convention.date_fin_conventionnement = datetime.date(
+                self.form.cleaned_data["annee_fin_conventionnement"], 6, 30
+            )
         self.convention.fond_propre = self.form.cleaned_data["fond_propre"]
         self.convention.save()
 

@@ -66,9 +66,6 @@ class ConventionFinancementForm(forms.Form):
             and self.convention is not None
             and annee_fin_conventionnement is not None
         ):
-            # FIXME : [FOYER] règle différente :
-            # (identique convention - 31 décembre ici pas 30 juin)
-            # date de la fin de la convention
             if self.convention.financement == Financement.PLS:
                 self._pls_end_date_validation(annee_fin_conventionnement)
             elif self.convention.programme.type_operation == TypeOperation.SANSTRAVAUX:
@@ -132,7 +129,12 @@ class ConventionFinancementForm(forms.Form):
             cdc_end_year = end_conv.year
             if end_conv.year - cdc_pret.cleaned_data["date_octroi"].year < 9:
                 cdc_end_year = cdc_pret.cleaned_data["date_octroi"].year + 9
-            if end_conv and end_conv.month > 6:
+            # don't add a year for FOYER because end of convention is the 31/12
+            if (
+                not self.convention.programme.is_foyer()
+                and end_conv
+                and end_conv.month > 6
+            ):
                 cdc_end_year = cdc_end_year + 1
             if annee_fin_conventionnement < cdc_end_year:
                 self.add_error(

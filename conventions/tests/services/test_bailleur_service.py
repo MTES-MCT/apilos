@@ -3,7 +3,7 @@ import datetime
 from django.http import HttpRequest
 from django.test import TestCase
 
-from bailleurs.forms import BailleurForm
+from bailleurs.forms import ConventionBailleurForm
 from conventions.models import Convention
 from conventions.services import (
     services_bailleurs,
@@ -29,7 +29,7 @@ class ConventionBailleurServiceTests(TestCase):
     def test_get(self):
         self.service.get()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertIsInstance(self.service.form, BailleurForm)
+        self.assertIsInstance(self.service.form, ConventionBailleurForm)
         bailleur = self.service.convention.programme.bailleur
         self.assertEqual(
             self.service.form.initial["uuid"],

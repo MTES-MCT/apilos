@@ -1,14 +1,22 @@
 from abc import ABC
 from datetime import datetime
+from typing import List
 
 from zipfile import ZipFile
+from dataclasses import dataclass
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
-from django.http import FileResponse, HttpResponse, HttpResponseRedirect, HttpResponseNotFound, HttpResponseForbidden
+from django.http import (
+    FileResponse,
+    HttpResponse,
+    HttpResponseRedirect,
+    HttpResponseNotFound,
+    HttpResponseForbidden,
+)
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
@@ -354,6 +362,7 @@ def new_avenant(request, convention_uuid):
         },
     )
 
+
 @login_required
 @permission_required("convention.add_convention")
 def piece_jointe(request, piece_jointe_uuid):
@@ -361,15 +370,18 @@ def piece_jointe(request, piece_jointe_uuid):
     Display the raw file associated to the pièce jointe
     """
     piece_jointe = PieceJointe.objects.get(uuid=piece_jointe_uuid)
-    object = client.get_object(settings.AWS_ECOLOWEB_BUCKET_NAME, f'piecesJointes/{piece_jointe.fichier}')
+    object = client.get_object(
+        settings.AWS_ECOLOWEB_BUCKET_NAME, f"piecesJointes/{piece_jointe.fichier}"
+    )
 
     if object is None:
         return HttpResponseNotFound()
     return FileResponse(
-        object['Body'],
+        object["Body"],
         filename=piece_jointe.nom_reel,
-        content_type=object['ContentType']
+        content_type=object["ContentType"],
     )
+
 
 @login_required
 @permission_required("convention.add_convention")
@@ -388,7 +400,9 @@ def piece_jointe_promote(request, piece_jointe_uuid):
     if not piece_jointe.is_convention():
         return HttpResponseForbidden()
 
-    o = client.get_object(settings.AWS_ECOLOWEB_BUCKET_NAME, f'piecesJointes/{piece_jointe.fichier}')
+    o = client.get_object(
+        settings.AWS_ECOLOWEB_BUCKET_NAME, f"piecesJointes/{piece_jointe.fichier}"
+    )
 
     if o is None:
         return HttpResponseNotFound
@@ -399,7 +413,7 @@ def piece_jointe_promote(request, piece_jointe_uuid):
         convention_dirpath=f"conventions/{piece_jointe.convention.uuid}/convention_docs",
         filename=filename,
     )
-    upload_service.upload_file(o['Body'])
+    upload_service.upload_file(o["Body"])
 
     piece_jointe.convention.statut = ConventionStatut.SIGNEE
     piece_jointe.convention.nom_fichier_signe = filename
@@ -407,33 +421,213 @@ def piece_jointe_promote(request, piece_jointe_uuid):
     piece_jointe.convention.save()
 
     return HttpResponseRedirect(
-        reverse(
-            "conventions:preview", args=[piece_jointe.convention.uuid]
-        )
+        reverse("conventions:preview", args=[piece_jointe.convention.uuid])
     )
 
 
+@dataclass
+class ConventionFormStep:
+    pathname: str  # "convention:programme"
+    label: str
+    classname: str | None
+
+
+bailleur_step = ConventionFormStep(
+    pathname="conventions:bailleur",
+    label="Bailleur",
+    classname="ConventionBailleurView",
+)
+
+programme_step = ConventionFormStep(
+    pathname="conventions:programme",
+    label="Operation",
+    classname="ConventionProgrammeView",
+)
+
+cadastre_step = ConventionFormStep(
+    pathname="conventions:cadastre",
+    label="Cadastre",
+    classname="ConventionCadastreView",
+)
+
+edd_step = ConventionFormStep(
+    pathname="conventions:edd",
+    label="EDD",
+    classname="ConventionEDDView",
+)
+
+financement_step = ConventionFormStep(
+    pathname="conventions:financement",
+    label="Financement",
+    classname="ConventionFinancementView",
+)
+
+logements_step = ConventionFormStep(
+    pathname="conventions:logements",
+    label="Logements",
+    classname="ConventionLogementsView",
+)
+
+annexes_step = ConventionFormStep(
+    pathname="conventions:annexes",
+    label="Annexes",
+    classname="ConventionAnnexesView",
+)
+
+stationnements_step = ConventionFormStep(
+    pathname="conventions:stationnements",
+    label="Stationnements",
+    classname="ConventionTypeStationnementView",
+)
+
+comments_step = ConventionFormStep(
+    pathname="conventions:comments",
+    label="Commentaires",
+    classname="ConventionCommentsView",
+)
+
+avenant_bailleur_step = ConventionFormStep(
+    pathname="conventions:avenant_bailleur",
+    label="Bailleur",
+    classname="AvenantBailleurView",
+)
+
+avenant_logements_step = ConventionFormStep(
+    pathname="conventions:avenant_logements",
+    label="Logements",
+    classname="AvenantLogementsView",
+)
+
+avenant_annexes_step = ConventionFormStep(
+    pathname="conventions:avenant_annexes",
+    label="Annexes",
+    classname="AvenantAnnexesView",
+)
+
+avenant_financement_step = ConventionFormStep(
+    pathname="conventions:avenant_financement",
+    label="Financement",
+    classname="AvenantFinancementView",
+)
+
+avenant_comments_step = ConventionFormStep(
+    pathname="conventions:avenant_comments",
+    label="Commentaires",
+    classname="AvenantCommentsView",
+)
+
+
+hlm_sem_type_steps = [
+    bailleur_step,
+    programme_step,
+    cadastre_step,
+    edd_step,
+    financement_step,
+    logements_step,
+    annexes_step,
+    stationnements_step,
+    comments_step,
+]
+
+foyer_steps = [
+    bailleur_step,
+    programme_step,
+    cadastre_step,
+    edd_step,
+    financement_step,
+    logements_step,
+    annexes_step,
+    comments_step,
+]
+
+
+class ConventionFormSteps:
+    steps: List[ConventionFormStep]
+    active_classname: str
+    convention: Convention
+    total_step_number: int
+    current_step_number: int
+    current_step: ConventionFormStep
+    next_step: ConventionFormStep
+
+    last_step_path: ConventionFormStep = ConventionFormStep(
+        pathname="conventions:recapitulatif", label="Récapitulatif", classname=None
+    )
+
+    def __init__(self, *, convention, active_classname) -> None:
+        self.convention = convention
+        self.active_classname = active_classname
+        if convention.is_avenant():
+            if self.active_classname == "AvenantBailleurView":
+                self.steps = [avenant_bailleur_step]
+            if self.active_classname in ["AvenantLogementsView", "AvenantAnnexesView"]:
+                self.steps = [avenant_logements_step, avenant_annexes_step]
+            if self.active_classname == "AvenantFinancementView":
+                self.steps = [avenant_financement_step]
+            if self.active_classname == "AvenantCommentsView":
+                self.steps = [avenant_comments_step]
+        elif convention.programme.is_foyer():
+            self.steps = foyer_steps
+        else:
+            self.steps = hlm_sem_type_steps
+        step_index = [
+            i
+            for i, elem in enumerate(self.steps)
+            if elem.classname == self.active_classname
+        ][0]
+        self.total_step_number = len(self.steps)
+        self.current_step_number = step_index + 1
+        self.current_step = self.steps[step_index]
+        self.next_step = (
+            self.steps[step_index + 1]
+            if self.current_step_number < self.total_step_number
+            else self.last_step_path
+        )
+
+    def get_form_step(self):
+        return {
+            "number": self.current_step_number,
+            "total": self.total_step_number,
+            "title": self.current_step.label,
+            "next": self.next_step.label,
+            "next_target": self.next_step.pathname,
+        }
+
+    def next_path_redirect(self):
+        return self.next_step.pathname
+
+    def current_step_path(self):
+        return self.current_step.pathname
+
+
 class ConventionView(ABC, LoginRequiredMixin, View):
+    convention: Convention
+    steps: ConventionFormSteps
     target_template: str
-    current_path_redirect: None | str = None
-    next_path_redirect: str
     service_class: ConventionService
-    form_step: None | dict
 
     def _get_convention(self, convention_uuid):
         return Convention.objects.get(uuid=convention_uuid)
 
-    def _get_form_steps(self):
-        if self.form_step:
-            return {
-                "form_step": self.form_step | {"next_target": self.next_path_redirect}
-            }
-        return {}
+    @property
+    def next_path_redirect(self):
+        return self.steps.next_path_redirect()
 
+    def current_path_redirect(self):
+        return self.steps.current_step_path()
+
+    # pylint: disable=W0221
+    def setup(self, request, convention_uuid, *args, **kwargs):
+        self.convention = self._get_convention(convention_uuid)
+        self.steps = ConventionFormSteps(
+            convention=self.convention, active_classname=self.__class__.__name__
+        )
+        return super().setup(request, convention_uuid, *args, **kwargs)
+
+    # pylint: disable=W0613
     @has_campaign_permission("convention.view_convention")
     def get(self, request, convention_uuid):
-        convention = self._get_convention(convention_uuid)
-        service = self.service_class(convention=convention, request=request)
+        service = self.service_class(convention=self.convention, request=request)
         service.get()
         return render(
             request,
@@ -443,30 +637,30 @@ class ConventionView(ABC, LoginRequiredMixin, View):
                 **({"form": service.form} if service.form else {}),
                 **({"upform": service.upform} if service.upform else {}),
                 **({"formset": service.formset} if service.formset else {}),
-                **self._get_form_steps(),
+                "form_step": self.steps.get_form_step(),
                 "editable_after_upload": (
-                    editable_convention(request, convention)
+                    editable_convention(request, self.convention)
                     or service.editable_after_upload
                 ),
             },
         )
 
+    # pylint: disable=W0613
     @has_campaign_permission("convention.change_convention")
     def post(self, request, convention_uuid):
-        convention = self._get_convention(convention_uuid)
-        service = self.service_class(convention=convention, request=request)
+        service = self.service_class(convention=self.convention, request=request)
         service.save()
         if service.return_status == ReturnStatus.SUCCESS:
             if service.redirect_recap:
                 return HttpResponseRedirect(
-                    reverse("conventions:recapitulatif", args=[convention.uuid])
+                    reverse("conventions:recapitulatif", args=[self.convention.uuid])
                 )
             return HttpResponseRedirect(
-                reverse(self.next_path_redirect, args=[convention.uuid])
+                reverse(self.next_path_redirect, args=[self.convention.uuid])
             )
         if service.return_status == ReturnStatus.REFRESH:
             return HttpResponseRedirect(
-                reverse(self.current_path_redirect, args=[convention.uuid])
+                reverse(self.current_path_redirect, args=[self.convention.uuid])
             )
         return render(
             request,
@@ -476,13 +670,13 @@ class ConventionView(ABC, LoginRequiredMixin, View):
                 **({"form": service.form} if service.form else {}),
                 **({"upform": service.upform} if service.upform else {}),
                 **({"formset": service.formset} if service.formset else {}),
-                **self._get_form_steps(),
+                "form_step": self.steps.get_form_step(),
                 **(
                     {"import_warnings": service.import_warnings}
                     if service.import_warnings
                     else {}
                 ),
-                "editable_after_upload": editable_convention(request, convention)
+                "editable_after_upload": editable_convention(request, self.convention)
                 or service.editable_after_upload,
             },
         )
@@ -563,33 +757,17 @@ class ConventionSelectionFromZeroView(LoginRequiredMixin, View):
 
 class ConventionBailleurView(ConventionView):
     target_template: str = "conventions/bailleur.html"
-    next_path_redirect: str = "conventions:programme"
     current_path_redirect: str = "conventions:bailleur"
     service_class = ConventionBailleurService
-    form_step: dict = {
-        "number": 1,
-        "total": 9,
-        "title": "Bailleur",
-        "next": "Opération",
-    }
 
 
 class AvenantBailleurView(ConventionBailleurView):
-    next_path_redirect: str = "conventions:recapitulatif"
     current_path_redirect: str = "conventions:avenant_bailleur"
-    form_step = {}
 
 
 class ConventionProgrammeView(ConventionView):
     target_template: str = "conventions/programme.html"
-    next_path_redirect: str = "conventions:cadastre"
     service_class = ConventionProgrammeService
-    form_step: dict = {
-        "number": 2,
-        "total": 9,
-        "title": "Opération",
-        "next": "Cadastre",
-    }
 
     def _get_convention(self, convention_uuid):
         return (
@@ -601,14 +779,7 @@ class ConventionProgrammeView(ConventionView):
 
 class ConventionCadastreView(ConventionView):
     target_template: str = "conventions/cadastre.html"
-    next_path_redirect: str = "conventions:edd"
     service_class = ConventionCadastreService
-    form_step: dict = {
-        "number": 3,
-        "total": 9,
-        "title": "Cadastre",
-        "next": "EDD",
-    }
 
     def _get_convention(self, convention_uuid):
         return (
@@ -620,14 +791,7 @@ class ConventionCadastreView(ConventionView):
 
 class ConventionEDDView(ConventionView):
     target_template: str = "conventions/edd.html"
-    next_path_redirect: str = "conventions:financement"
     service_class = ConventionEDDService
-    form_step: dict = {
-        "number": 4,
-        "total": 9,
-        "title": "EDD",
-        "next": "Financement",
-    }
 
     def _get_convention(self, convention_uuid):
         return (
@@ -640,14 +804,7 @@ class ConventionEDDView(ConventionView):
 
 class ConventionFinancementView(ConventionView):
     target_template: str = "conventions/financement.html"
-    next_path_redirect: str = "conventions:logements"
     service_class = ConventionFinancementService
-    form_step: dict = {
-        "number": 5,
-        "total": 9,
-        "title": "Financement",
-        "next": "Logements",
-    }
 
     def _get_convention(self, convention_uuid):
         return Convention.objects.prefetch_related("prets").get(uuid=convention_uuid)
@@ -655,21 +812,12 @@ class ConventionFinancementView(ConventionView):
 
 class AvenantFinancementView(ConventionFinancementView):
     target_template: str = "conventions/financement.html"
-    next_path_redirect: str = "conventions:recapitulatif"
     service_class = ConventionFinancementService
-    form_step = {}
 
 
 class ConventionLogementsView(ConventionView):
     target_template: str = "conventions/logements.html"
-    next_path_redirect: str = "conventions:annexes"
     service_class = ConventionLogementsService
-    form_step: dict = {
-        "number": 6,
-        "total": 9,
-        "title": "Logements",
-        "next": "Annexes",
-    }
 
     def _get_convention(self, convention_uuid):
         return (
@@ -681,26 +829,12 @@ class ConventionLogementsView(ConventionView):
 
 class AvenantLogementsView(ConventionLogementsView):
     target_template: str = "conventions/logements.html"
-    next_path_redirect: str = "conventions:avenant_annexes"
     service_class = ConventionLogementsService
-    form_step: dict = {
-        "number": 1,
-        "total": 2,
-        "title": "Logements",
-        "next": "Annexes",
-    }
 
 
 class ConventionAnnexesView(ConventionView):
     target_template: str = "conventions/annexes.html"
-    next_path_redirect: str = "conventions:stationnements"
     service_class = ConventionAnnexesService
-    form_step: dict = {
-        "number": 7,
-        "total": 9,
-        "title": "Annexes",
-        "next": "Stationnements",
-    }
 
     def _get_convention(self, convention_uuid):
         return (
@@ -711,40 +845,18 @@ class ConventionAnnexesView(ConventionView):
 
 
 class AvenantAnnexesView(ConventionAnnexesView):
-    next_path_redirect: str = "conventions:recapitulatif"
     service_class = ConventionAnnexesService
-    form_step: dict = {
-        "number": 2,
-        "total": 2,
-        "title": "Annexes",
-        "next": "Recapitulatif",
-    }
 
 
 class ConventionTypeStationnementView(ConventionView):
     target_template: str = "conventions/stationnements.html"
-    next_path_redirect: str = "conventions:comments"
     service_class = ConventionTypeStationnementService
-    form_step: dict = {
-        "number": 8,
-        "total": 9,
-        "title": "Stationnements",
-        "next": "Commentaires",
-    }
 
 
 class ConventionCommentsView(ConventionView):
     target_template: str = "conventions/comments.html"
-    next_path_redirect: str = "conventions:recapitulatif"
     service_class = ConventionCommentsService
-    form_step: dict = {
-        "number": 9,
-        "total": 9,
-        "title": "Commentaires",
-        "next": "Récapitulatif",
-    }
 
 
 class AvenantCommentsView(ConventionCommentsView):
-    next_path_redirect: str = "conventions:recapitulatif"
-    form_step: dict = {}
+    pass
