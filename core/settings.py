@@ -333,6 +333,7 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 CSP_FRAME_SRC = (
     "'self'",
     "https://www.dailymotion.com/embed/video/x8fkp4y",
+    "https://www.dailymotion.com/embed/video/x8frr91",
 )
 CSP_FONT_SRC = "'self'", "data:"
 CSP_CONNECT_SRC = ("'self'", "https://stats.data.gouv.fr/piwik.php")

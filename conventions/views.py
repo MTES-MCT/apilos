@@ -161,6 +161,7 @@ def load_xlsx_model(request, file_type):
         "financement",
         "logements_edd",
         "logements",
+        "listing_bailleur",
         "stationnements",
         "all",
     ]:
