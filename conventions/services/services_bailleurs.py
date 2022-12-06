@@ -1,7 +1,7 @@
 from django.db import transaction
 from django.http import HttpRequest
 
-from bailleurs.forms import BailleurForm, UpdateBailleurForm
+from bailleurs.forms import ConventionBailleurForm, UpdateBailleurForm
 from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
@@ -12,7 +12,7 @@ from programmes.models import Programme
 class ConventionBailleurService(ConventionService):
     convention: Convention
     request: HttpRequest
-    form: BailleurForm
+    form: ConventionBailleurForm
     upform: UpdateBailleurForm
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
     redirect_recap: bool = False
@@ -38,8 +38,7 @@ class ConventionBailleurService(ConventionService):
             bailleurs=bailleurs,
             initial={"bailleur": bailleur.uuid},
         )
-        self.form = BailleurForm(
-            bailleurs=bailleurs,
+        self.form = ConventionBailleurForm(
             initial={
                 "uuid": bailleur.uuid,
                 "nom": bailleur.nom,
@@ -56,11 +55,21 @@ class ConventionBailleurService(ConventionService):
                     self.convention.signataire_date_deliberation
                     or bailleur.signataire_date_deliberation
                 ),
+                "gestionnaire": self.convention.gestionnaire,
+                "gestionnaire_signataire_nom": (
+                    self.convention.gestionnaire_signataire_nom
+                ),
+                "gestionnaire_signataire_fonction": (
+                    self.convention.gestionnaire_signataire_fonction
+                ),
+                "gestionnaire_signataire_date_deliberation": utils.format_date_for_form(
+                    self.convention.gestionnaire_signataire_date_deliberation
+                ),
             },
         )
 
     def save(self):
-        self.form = BailleurForm(self.request.POST)
+        self.form = ConventionBailleurForm(self.request.POST)
 
         self.upform = UpdateBailleurForm(
             self.request.POST,
@@ -105,7 +114,7 @@ class ConventionBailleurService(ConventionService):
 
     def _bailleur_atomic_update(self):
         bailleur = self.convention.programme.bailleur
-        self.form = BailleurForm(
+        self.form = ConventionBailleurForm(
             {
                 "uuid": bailleur.uuid,
                 "nom": self.request.POST.get("nom", bailleur.nom),
@@ -131,6 +140,21 @@ class ConventionBailleurService(ConventionService):
                     self.convention.signataire_date_deliberation
                     or bailleur.signataire_date_deliberation,
                 ),
+                "gestionnaire": self.request.POST.get(
+                    "gestionnaire", self.convention.gestionnaire
+                ),
+                "gestionnaire_signataire_nom": self.request.POST.get(
+                    "gestionnaire_signataire_nom",
+                    self.convention.gestionnaire_signataire_nom,
+                ),
+                "gestionnaire_signataire_fonction": self.request.POST.get(
+                    "gestionnaire_signataire_fonction",
+                    self.convention.gestionnaire_signataire_fonction,
+                ),
+                "gestionnaire_signataire_date_deliberation": self.request.POST.get(
+                    "gestionnaire_signataire_date_deliberation",
+                    self.convention.gestionnaire_signataire_date_deliberation,
+                ),
             },
         )
 
@@ -151,5 +175,15 @@ def _save_bailleur(convention, bailleur, form):
     convention.signataire_fonction = form.cleaned_data["signataire_fonction"]
     convention.signataire_date_deliberation = form.cleaned_data[
         "signataire_date_deliberation"
+    ]
+    convention.gestionnaire = form.cleaned_data["gestionnaire"]
+    convention.gestionnaire_signataire_nom = form.cleaned_data[
+        "gestionnaire_signataire_nom"
+    ]
+    convention.gestionnaire_signataire_fonction = form.cleaned_data[
+        "gestionnaire_signataire_fonction"
+    ]
+    convention.gestionnaire_signataire_date_deliberation = form.cleaned_data[
+        "gestionnaire_signataire_date_deliberation"
     ]
     convention.save()

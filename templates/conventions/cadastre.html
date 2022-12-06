@@ -39,12 +39,10 @@
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                Date d'autorisation hors habitat inclusif [FOYER]
-                                {% include "common/form/input_date.html" with form_input=form.date_hors_habitat_inclusif object_field="programme__date_hors_habitat_inclusif__"|add:form.uuid.value %}
+                                {% include "common/form/input_date.html" with form_input=form.date_autorisation_hors_habitat_inclusif object_field="programme__date_autorisation_hors_habitat_inclusif__"|add:form.uuid.value %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                Date de la convention de location [FOYER]
-                                {% include "common/form/input_date.html" with form_input=form.date_cas_echeant object_field="programme__date_cas_echeant__"|add:form.uuid.value %}
+                                {% include "common/form/input_date.html" with form_input=form.date_convention_location object_field="programme__date_convention_location__"|add:form.uuid.value %}
                             </div>
                         </div>
                         <div class="fr-grid-row fr-grid-row--gutters">

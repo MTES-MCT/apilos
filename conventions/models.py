@@ -184,13 +184,15 @@ class Convention(models.Model):
     motif_refus_spf = models.CharField(max_length=1000, null=True)
     # Missing option for :
 
-    # La présente convention ne prévoyant pas de travaux, le bail entre en vigueur à la date de
-    # son acceptation par l'occupant de bonne foi après publication de la convention au fichier
-    # immobilier ou son inscription au livre foncier. (7)
-    #   OR
-    # La présente convention prévoyant des travaux, le bail et, notamment, la clause relative au
-    # montant du loyer entre en vigueur à compter de la date d'achèvement des travaux concernant
-    # la tranche dans laquelle est compris le logement concerné. (7)
+    # Gestionnaire data are needed for FOYER (AND RESIDENCE)
+    gestionnaire = models.CharField(max_length=255, null=True, blank=True)
+    gestionnaire_signataire_nom = models.CharField(
+        max_length=255, null=True, blank=True
+    )
+    gestionnaire_signataire_fonction = models.CharField(
+        max_length=255, null=True, blank=True
+    )
+    gestionnaire_signataire_date_deliberation = models.DateField(null=True, blank=True)
 
     donnees_validees = models.TextField(null=True, blank=True)
     nom_fichier_signe = models.CharField(max_length=255, null=True, blank=True)
@@ -207,11 +209,10 @@ class Convention(models.Model):
         return self.programme.bailleur
 
     @property
-    def ecolo_reference(self) -> EcoloReference | None  :
+    def ecolo_reference(self) -> EcoloReference | None:
         if self.id is not None:
             return EcoloReference.objects.filter(
-                apilos_model='conventions.Convention',
-                apilos_id=self.id
+                apilos_model="conventions.Convention", apilos_id=self.id
             ).first()
 
         return None
@@ -693,7 +694,10 @@ class Pret(models.Model):
 
 class PieceJointeType(models.TextChoices):
     CONVENTION = "CONVENTION", "Convention APL"
-    RECTIFICATION = "RECTIFICATION", "Demande de rectification(s) du bureau des hypothèques"
+    RECTIFICATION = (
+        "RECTIFICATION",
+        "Demande de rectification(s) du bureau des hypothèques",
+    )
     ATTESTATION_PREFECTORALE = "ATTESTATION_PREFECTORALE", "Attestations préfectorales"
     AVENANT = "AVENANT", "Avenant"
     PHOTO = "PHOTO", "Photographie du bâti ou des logements"
@@ -704,9 +708,17 @@ class PieceJointe(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     convention = models.ForeignKey(
-        "Convention", on_delete=models.CASCADE, null=False, related_name="pieces_jointes"
+        "Convention",
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="pieces_jointes",
     )
-    type = models.CharField(null=True, max_length=24, choices=PieceJointeType.choices, default=PieceJointeType.AUTRE)
+    type = models.CharField(
+        null=True,
+        max_length=24,
+        choices=PieceJointeType.choices,
+        default=PieceJointeType.AUTRE,
+    )
     fichier = models.CharField(null=True, blank=True, max_length=255)
     nom_reel = models.CharField(null=True, blank=True, max_length=255)
     description = models.CharField(null=True, blank=True, max_length=255)

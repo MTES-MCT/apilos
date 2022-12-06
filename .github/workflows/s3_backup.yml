@@ -1,4 +1,3 @@
-#fixme : we will need to do it for production and siap-production
 name: Backup S3 Production Bucket
 
 on:

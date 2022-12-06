@@ -60,22 +60,22 @@
                                 {% endif %}
                             </div>
                         </div>
+                        {% if not convention.programme.is_foyer %}
+                            <h4 class="fr-mt-2w">
+                                Locaux auxquels ne s'applique pas la présente convention
+                            </h4>
 
-                        <h4 class="fr-mt-2w">
-                            Locaux auxquels ne s'applique pas la présente convention
-                        </h4>
-
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_number.html" with form_input=form.nb_locaux_commerciaux object_field="programme__nb_locaux_commerciaux__"|add:form.uuid.value %}
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_number.html" with form_input=form.nb_locaux_commerciaux object_field="programme__nb_locaux_commerciaux__"|add:form.uuid.value %}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_number.html" with form_input=form.nb_bureaux object_field="programme__nb_bureaux__"|add:form.uuid.value %}
+                                </div>
                             </div>
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_number.html" with form_input=form.nb_bureaux object_field="programme__nb_bureaux__"|add:form.uuid.value %}
-                            </div>
-                        </div>
 
-                        {% include "common/form/input_textarea.html" with form_input=form.autres_locaux_hors_convention object_field="programme__autres_locaux_hors_convention__"|add:form.uuid.value %}
-
+                            {% include "common/form/input_textarea.html" with form_input=form.autres_locaux_hors_convention object_field="programme__autres_locaux_hors_convention__"|add:form.uuid.value %}
+                        {% endif %}
                     </div>
                 </div>
                 {% include "common/required_fields_info.html" %}

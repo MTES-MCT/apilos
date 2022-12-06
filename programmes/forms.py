@@ -119,6 +119,14 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         label="Date d'achèvement ou d'obtention de certificat de conformité",
     )
+    date_autorisation_hors_habitat_inclusif = forms.DateField(
+        required=False,
+        label="Date d'autorisation hors habitat inclusif",
+    )
+    date_convention_location = forms.DateField(
+        required=False,
+        label="Date de la convention de location",
+    )
     vendeur = forms.CharField(
         required=False,
         label="Vendeur",

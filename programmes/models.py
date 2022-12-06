@@ -220,6 +220,8 @@ class Programme(IngestableModel):
     date_achevement_previsible = models.DateField(null=True)
     date_achat = models.DateField(null=True)
     date_achevement = models.DateField(null=True)
+    date_autorisation_hors_habitat_inclusif = models.DateField(null=True)  # FOYER
+    date_convention_location = models.DateField(null=True)  # FOYER
     date_achevement_compile = models.DateField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
@@ -375,7 +377,7 @@ class ReferenceCadastrale(models.Model):
     def compute_surface(superficie: int | None = None):
         s = superficie if superficie is not None else 0
 
-        return f'{s % 100} ha {s % 10000 // 100} a {s // 10000} ca'
+        return f"{s % 100} ha {s % 10000 // 100} a {s // 10000} ca"
 
     def __str__(self):
         return f"{self.section} - {self.numero} - {self.lieudit}"

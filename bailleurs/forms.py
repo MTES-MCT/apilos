@@ -20,20 +20,9 @@ class UpdateBailleurForm(forms.Form):
     )
 
 
-class BailleurForm(forms.Form):
-    def __init__(self, *args, bailleurs=None, **kwargs) -> None:
-        if bailleurs:
-            self.declared_fields["bailleur"].choices = bailleurs
-        super().__init__(*args, **kwargs)
-
+class ConventionBailleurForm(forms.Form):
     uuid = forms.UUIDField(required=False)
-    bailleur = forms.ChoiceField(
-        required=False,
-        label="Bailleur parent",
-        help_text="Les utilisateurs du bailleur parent à les mêmes droits sur ce bailleur",
-        initial=None,
-        choices=[],
-    )
+
     nom = forms.CharField(
         required=True,
         label="Nom du bailleur",
@@ -134,15 +123,57 @@ class BailleurForm(forms.Form):
     gestionnaire_signataire_date_deliberation = forms.DateField(
         label="Date de délibération",
         required=False,
-        error_messages={
-            "required": "La date de délibération est obligatoire",
-        },
         help_text=(
             "Date à laquelle le signataire du gestionnaire a reçu le mandat lui "
             + "permettant de signer la convention"
         ),
     )
 
-    def clean_nom(self):
-        nom = self.cleaned_data["nom"]
-        return nom
+    def clean(self):
+        gestionnaire = self.cleaned_data.get("gestionnaire", None)
+        gestionnaire_signataire_nom = self.cleaned_data.get(
+            "gestionnaire_signataire_nom", None
+        )
+        gestionnaire_signataire_fonction = self.cleaned_data.get(
+            "gestionnaire_signataire_fonction", None
+        )
+        gestionnaire_signataire_date_deliberation = self.cleaned_data.get(
+            "gestionnaire_signataire_date_deliberation", None
+        )
+        if gestionnaire:
+            if not gestionnaire_signataire_nom:
+                self.add_error(
+                    "gestionnaire_signataire_nom",
+                    "Lorsque l'entreprise gestionnaire est renseignée, Le nom du"
+                    + " signataire du gestionnaire de la convention doit être"
+                    + " renseigné",
+                )
+            if not gestionnaire_signataire_fonction:
+                self.add_error(
+                    "gestionnaire_signataire_fonction",
+                    "Lorsque l'entreprise gestionnaire est renseignée, La fonction du"
+                    + " signataire du gestionnaire de la convention doit être"
+                    + " renseignée",
+                )
+            if not gestionnaire_signataire_date_deliberation:
+                self.add_error(
+                    "gestionnaire_signataire_date_deliberation",
+                    "Lorsque l'entreprise gestionnaire est renseignée, La date de"
+                    + " délibération du signataire du gestionnaire de la convention"
+                    + " doit être renseignée",
+                )
+
+
+class BailleurForm(ConventionBailleurForm):
+    def __init__(self, *args, bailleurs=None, **kwargs) -> None:
+        if bailleurs:
+            self.declared_fields["bailleur"].choices = bailleurs
+        super().__init__(*args, **kwargs)
+
+    bailleur = forms.ChoiceField(
+        required=False,
+        label="Bailleur parent",
+        help_text="Les utilisateurs du bailleur parent à les mêmes droits sur ce bailleur",
+        initial=None,
+        choices=[],
+    )

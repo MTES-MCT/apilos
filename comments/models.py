@@ -61,24 +61,35 @@ class Comment(models.Model):
             "programme__ville": "Ville de l'opération",
             "programme__nb_logements": "Nombre de logements à conventionner",
             "programme__anru": "Option ANRU de l'opération",
-            "programme__nb_locaux_commerciaux": "Nombre de locaux commerciaux de l'opération",
+            "programme__nb_locaux_commerciaux": (
+                "Nombre de locaux commerciaux de l'opération"
+            ),
             "programme__nb_bureaux": "Nombre de bureaux de l'opération",
             "programme__autres_locaux_hors_convention": "Autre locaux de l'opération",
             "programme__type_operation": "Type d'opération",
             "programme__type_habitat": "Type d'habitat de l'opération",
             "programme__permis_construire": "Permis de construire de l'opération",
             "programme__date_acte_notarie": "Date de l'acte notarié de l'opération",
+            "programme__date_autorisation_hors_habitat_inclusif": (
+                "Date d'autorisation hors habitat inclusif"
+            ),
+            "programme__date_convention_location": "Date de la convention de location",
             "programme__date_achat": "Date d'achat telle qu'indiquée sur l'acte notarié",
-            "programme__date_achevement_previsible": "Date d'achèvement prévisible de l'opération",
+            "programme__date_achevement_previsible": (
+                "Date d'achèvement prévisible de l'opération"
+            ),
             "programme__date_achevement": (
-                "Date d'achèvement ou d'obtention de certificat de conformité de l'opération"
+                "Date d'achèvement ou d'obtention de certificat de conformité de"
+                + " l'opération"
             ),
             "programme__vendeur": "Vendeur tel qu'indiqué sur l'acte notarié",
             "programme__acquereur": "Acquéreur tel qu'indiqué sur l'acte notarié",
             "programme__reference_notaire": (
                 "Référence du notaire tel qu'indiqué sur l'acte notarié"
             ),
-            "programme__reference_publication_acte": "Référence de publication de l'acte notarié",
+            "programme__reference_publication_acte": (
+                "Référence de publication de l'acte notarié"
+            ),
             "programme__acte_de_propriete": "Acte de propriété ou acte notarial",
             "programme__certificat_adressage": "Certificat d'adressage ou autres",
             "programme__effet_relatif": "Effet relatif de l'opération",
@@ -110,14 +121,40 @@ class Comment(models.Model):
                 "Mention de publication de l'edd classique"
             ),
             "convention__type1and2": "Selection du type I ou II de la convention",
-            "convention__type2_lgts_concernes_option1": "Option 1 pour les convention de type II",
-            "convention__type2_lgts_concernes_option2": "Option 2 pour les convention de type II",
-            "convention__type2_lgts_concernes_option3": "Option 3 pour les convention de type II",
-            "convention__type2_lgts_concernes_option4": "Option 4 pour les convention de type II",
-            "convention__type2_lgts_concernes_option5": "Option 5 pour les convention de type II",
-            "convention__type2_lgts_concernes_option6": "Option 6 pour les convention de type II",
-            "convention__type2_lgts_concernes_option7": "Option 7 pour les convention de type II",
-            "convention__type2_lgts_concernes_option8": "Option 8 pour les convention de type II",
+            "convention__type2_lgts_concernes_option1": (
+                "Option 1 pour les convention de type II"
+            ),
+            "convention__type2_lgts_concernes_option2": (
+                "Option 2 pour les convention de type II"
+            ),
+            "convention__type2_lgts_concernes_option3": (
+                "Option 3 pour les convention de type II"
+            ),
+            "convention__type2_lgts_concernes_option4": (
+                "Option 4 pour les convention de type II"
+            ),
+            "convention__type2_lgts_concernes_option5": (
+                "Option 5 pour les convention de type II"
+            ),
+            "convention__type2_lgts_concernes_option6": (
+                "Option 6 pour les convention de type II"
+            ),
+            "convention__type2_lgts_concernes_option7": (
+                "Option 7 pour les convention de type II"
+            ),
+            "convention__type2_lgts_concernes_option8": (
+                "Option 8 pour les convention de type II"
+            ),
+            "convention__gestionnaire": "Entreprise gestionnaire",
+            "convention__gestionnaire_signataire_nom": (
+                "Nom du signataire du gestionnaire"
+            ),
+            "convention__gestionnaire_signataire_fonction": (
+                "Fonction du signataire du gestionnaire"
+            ),
+            "convention__gestionnaire_signataire_date_deliberation": (
+                "Date de délibération du signataire du gestionnaire"
+            ),
         }
         if f"{self.nom_objet}__{self.champ_objet}" in mapping_champ_objet:
             return mapping_champ_objet[f"{self.nom_objet}__{self.champ_objet}"]
