@@ -112,6 +112,7 @@
                                 en attente d'une signature
                             </span>
                         </p>
+                        <p>Il porte le numéro <strong>{{ convention.numero }}</strong></p>
                         {% if request|is_instructeur %}
                             Vous pouvez <a class="fr-link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>téléverser l'avenant signé</a>
                         {% else %}
@@ -126,6 +127,7 @@
                                 en attente d'une signature
                             </span>
                         </p>
+                        <p>Elle porte le numéro <strong>{{ convention.numero }}</strong></p>
                         {% if request|is_instructeur %}
                             Vous pouvez <a class="fr-link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>téléverser la convention signée</a>
                         {% else %}
@@ -145,6 +147,7 @@
                                 finalisé !
                             </span>
                         </p>
+                        <p>Il porte le numéro <strong>{{ convention.numero }}</strong></p>
                         <p>Vous devrez désormais créer un autre avenant si vous souhaitez mettre à jour une information</p>
                     {% else %}
                         <p class="fr-text--lg">
@@ -153,6 +156,7 @@
                                 finalisée !
                             </span>
                         </p>
+                        <p>Elle porte le numéro <strong>{{ convention.numero }}</strong></p>
                         <p>Vous devrez désormais créer un avenant si vous souhaitez mettre à jour une information</p>
                     {% endif %}
                 </div>
