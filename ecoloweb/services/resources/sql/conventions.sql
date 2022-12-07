@@ -36,7 +36,12 @@ select
     cdg.datehistoriquefin as date_fin_conventionnement,
     -- Financement
     c.datedepot::timestamp at time zone 'Europe/Paris' as soumis_le,
-    cdg.datesignatureentitegest::timestamp at time zone 'Europe/Paris' as valide_le,
+     -- The latest non null signature date is the one considered as accurate
+    greatest(
+        cdg.datesignatureentitegest::timestamp at time zone 'Europe/Paris',
+        cdg.datesignaturebailleur::timestamp at time zone 'Europe/Paris',
+        cdg.datesignatureprefet::timestamp at time zone 'Europe/Paris'
+    ) as valide_le,
     c.datesaisie::timestamp at time zone 'Europe/Paris' as cree_le,
     c.datemodification::timestamp at time zone 'Europe/Paris' as mis_a_jour_le,
     cdg.datesignatureentitegest::timestamp at time zone 'Europe/Paris' as premiere_soumission_le,
