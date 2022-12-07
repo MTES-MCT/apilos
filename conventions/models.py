@@ -711,3 +711,6 @@ class PieceJointe(models.Model):
     nom_reel = models.CharField(null=True, blank=True, max_length=255)
     description = models.CharField(null=True, blank=True, max_length=255)
     cree_le = models.DateTimeField(auto_now_add=False)
+
+    def is_convention(self) -> bool:
+        return self.type == PieceJointeType.CONVENTION
