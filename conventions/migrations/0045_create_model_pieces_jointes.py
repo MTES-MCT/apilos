@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                     "description",
                     models.CharField(blank=True, max_length=255, null=True),
                 ),
-                ("cree_le", models.DateTimeField(auto_now_add=True)),
+                ("cree_le", models.DateTimeField(auto_now_add=False)),
                 (
                     "convention",
                     models.ForeignKey(
