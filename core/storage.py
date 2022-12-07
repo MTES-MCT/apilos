@@ -1,3 +1,4 @@
+from botocore.exceptions import ClientError
 from django.conf import settings
 import boto3
 
@@ -27,6 +28,22 @@ class StorageClient:
                 ACL="private",
                 CacheControl="max-age=31556926",  # 1 year
             )
+
+    def get_object(self, bucket, file) -> dict | None:
+        if self.is_s3:
+            resource = boto3.resource(
+                "s3",
+                region_name=settings.AWS_S3_REGION_NAME,
+                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            )
+            try:
+                return resource.Object(bucket, file).get()
+            except ClientError as e:
+                return None
+
+        return None
 
 
 client = StorageClient()

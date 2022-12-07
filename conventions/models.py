@@ -202,7 +202,7 @@ class Convention(models.Model):
         return self.programme.bailleur
 
     @property
-    def ecolo_reference(self) -> Optional[EcoloReference]:
+    def ecolo_reference(self) -> EcoloReference | None  :
         if self.id is not None:
             return EcoloReference.objects.filter(
                 apilos_model='conventions.Convention',
@@ -710,4 +710,4 @@ class PieceJointe(models.Model):
     fichier = models.CharField(null=True, blank=True, max_length=255)
     nom_reel = models.CharField(null=True, blank=True, max_length=255)
     description = models.CharField(null=True, blank=True, max_length=255)
-    cree_le = models.DateTimeField(auto_now_add=True)
+    cree_le = models.DateTimeField(auto_now_add=False)

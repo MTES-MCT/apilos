@@ -7,14 +7,15 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
-from django.http import FileResponse, HttpResponse, HttpResponseRedirect
+from django.http import FileResponse, HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods
 
+from core.storage import client
 from upload.services import UploadService
-from conventions.models import Convention, ConventionStatut
+from conventions.models import Convention, ConventionStatut, PieceJointe
 from conventions.permissions import has_campaign_permission
 from conventions.services.convention_generator import fiche_caf_doc
 from conventions.services.services_bailleurs import ConventionBailleurService
@@ -349,6 +350,20 @@ def new_avenant(request, convention_uuid):
         {
             **result,
         },
+    )
+
+@login_required
+@permission_required("convention.add_convention")
+def piece_jointe(request, piece_jointe_uuid):
+    piece_jointe = PieceJointe.objects.get(uuid=piece_jointe_uuid)
+    object = client.get_object(settings.AWS_ECOLOWEB_BUCKET_NAME, f'piecesJointes/{piece_jointe.fichier}')
+
+    if object is None:
+        return HttpResponseNotFound()
+    return FileResponse(
+        object['Body'],
+        filename=piece_jointe.nom_reel,
+        content_type=object['ContentType']
     )
 
 
