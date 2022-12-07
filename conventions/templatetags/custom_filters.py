@@ -257,6 +257,11 @@ def display_is_resiliated(convention):
 
 
 @register.filter
+def display_spf_info(convention):
+    return convention.date_envoi_spf is not None or convention.date_envoi_spf is not None
+
+
+@register.filter
 def display_notification_instructeur_to_bailleur(convention, request):
     return convention.statut in [
         ConventionStatut.INSTRUCTION,

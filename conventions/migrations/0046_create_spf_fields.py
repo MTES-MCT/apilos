@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="convention",
-            name="motif_refux_spf",
+            name="motif_refus_spf",
             field=models.CharField(max_length=1000, null=True),
         ),
         migrations.AddField(
