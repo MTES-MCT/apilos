@@ -9,10 +9,10 @@ select
         when vps.code = '5' then 'PHOTO'
         else 'AUTRE'
     end as type,
-    '/piecesJointes/'||pj.entitegest_id||'/'||pj.conventionapl_id||'/'||pj.id||'.'||regexp_matches(pj.fichier,'\.(\w+)$') as fichier,
+    pj.entitegest_id||'/'||pj.conventionapl_id||'/'||pj.id||'.'||(regexp_matches(pj.fichier,'\.(\w+)$'))[1] as fichier,
     pj.fichier as nom_reel,
     pj.description,
-    pj.date as cree_le
+    pj.date::timestamp at time zone 'Europe/Paris' as cree_le
 from ecolo.ecolo_piecejointe pj
     inner join ecolo.ecolo_conventionapl c on pj.conventionapl_id = c.id
     inner join ecolo_valeurparamstatic vps on pj.typepiecejointe_id = vps.id and vps.subtype = 'TPJ'
