@@ -1,5 +1,7 @@
 from typing import List
 
+from django.db.models import Q
+
 from openpyxl import Workbook, load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
@@ -8,6 +10,7 @@ from users.services import UserService
 
 
 class BailleurListingProcessor:
+    empty_lines_allowed = 5
     columns = {
         'first_name': ['prénom', 'prenom'],
         'last_name': ['nom'],
@@ -43,15 +46,23 @@ class BailleurListingProcessor:
             else:
                 raise Exception(f"Lecture du fichier impossible: les colonnes {', '.join(keys)} sont manquantes")
 
+        nb_empty_lines = 0
+
         for row in self._worksheet.iter_rows(min_col=1, max_col=self._worksheet.max_column, min_row=2, max_row=self._worksheet.max_row, values_only=True):
             data = {key: row[index - 1] for (key, index) in mapping.items()}
 
-            # We stop at first row not returning any valid data
+            # Check if row produces only empty data
             if all(v is None for v in data.values()):
-                break
-            data['bailleur'] = Bailleur.objects.filter(nom__iexact=data.pop('bailleur')).first()
-            data['username'] = UserService.extract_username_from_email(data.get('email', ''))
-            results.append(data)
+                # If so check we haven't reached maximum number of allowed empty rows
+                nb_empty_lines += 1
+                if nb_empty_lines == self.empty_lines_allowed:
+                    break
+            else:
+                bailleur = data.pop('bailleur')
+                bailleur = str(bailleur).strip() if bailleur is not None else None
+                data['bailleur'] = Bailleur.objects.filter(Q(nom__iexact=bailleur) | Q(siret=bailleur)).first()
+                data['username'] = UserService.extract_username_from_email(data.get('email', ''))
+                results.append(data)
 
         return results
 
