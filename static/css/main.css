@@ -215,6 +215,9 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .apilos-verbatim-text {
   font-size: 0.9rem;
 }
+.apilos-icon-success {
+  color: var(--background-action-high-success);
+}
 .dropdown-menu.apilos-dropdown-menu {
   z-index: 100000;
 }
