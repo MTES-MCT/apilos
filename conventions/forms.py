@@ -68,7 +68,7 @@ class ConventionFinancementForm(forms.Form):
         ):
             if self.convention.lot.financement == Financement.PLS:
                 self._pls_end_date_validation(annee_fin_conventionnement)
-            elif self.convention.programme.type_operation == TypeOperation.SANSTRAVAUX:
+            elif self.convention.lot.programme.type_operation == TypeOperation.SANSTRAVAUX:
                 self._sans_travaux_end_date_validation(annee_fin_conventionnement)
             else:
                 self._other_end_date_validation(annee_fin_conventionnement)
@@ -222,7 +222,7 @@ class BasePretFormSet(BaseFormSet):
         if (
             self.convention is not None
             and self.convention.lot.financement != Financement.PLS
-            and self.convention.programme.type_operation != TypeOperation.SANSTRAVAUX
+            and self.convention.lot.programme.type_operation != TypeOperation.SANSTRAVAUX
         ):
             for form in self.forms:
                 if form.cleaned_data.get("preteur") in ["CDCF", "CDCL"]:

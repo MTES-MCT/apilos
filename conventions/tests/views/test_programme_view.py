@@ -45,7 +45,7 @@ class ConventionProgrammeViewTests(AbstractEditViewTestCase, TestCase):
     def _test_data_integrity(self):
         self.convention_75.refresh_from_db()
         self.assertEqual(
-            self.convention_75.programme.adresse,
+            self.convention_75.lot.programme.adresse,
             "123 rue du fake",
             msg=f"{self.msg_prefix}",
         )

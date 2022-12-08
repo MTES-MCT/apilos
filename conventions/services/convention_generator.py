@@ -49,11 +49,11 @@ def generate_convention_doc(convention, save_data=False):
         for avenant_type in convention.avenant_types.all():
             avenant_data[f"avenant_type_{avenant_type}"] = True
     # It is a convention
-    elif convention.programme.bailleur.is_hlm():
+    elif convention.lot.programme.bailleur.is_hlm():
         filepath = f"{settings.BASE_DIR}/documents/HLM-template.docx"
-    elif convention.programme.bailleur.is_sem():
+    elif convention.lot.programme.bailleur.is_sem():
         filepath = f"{settings.BASE_DIR}/documents/SEM-template.docx"
-    elif convention.programme.bailleur.is_type1and2():
+    elif convention.lot.programme.bailleur.is_type1and2():
         if convention.type1and2 == ConventionType1and2.TYPE1:
             filepath = f"{settings.BASE_DIR}/documents/Type1-template.docx"
         elif convention.type1and2 == ConventionType1and2.TYPE2:
@@ -62,12 +62,12 @@ def generate_convention_doc(convention, save_data=False):
             raise ConventionTypeConfigurationError(
                 "Le type de convention I ou II doit-être configuré pour les bailleurs"
                 + " non SEM ou HLM. Bailleur de type : "
-                + convention.programme.bailleur.get_sous_nature_bailleur_display()
+                + convention.lot.programme.bailleur.get_sous_nature_bailleur_display()
             )
     else:
         raise NotHandleConventionType(
             "La génération de convention n'est pas disponible pour ce type de"
-            + f" bailleur : {convention.programme.bailleur.get_sous_nature_bailleur_display()}"
+            + f" bailleur : {convention.lot.programme.bailleur.get_sous_nature_bailleur_display()}"
         )
     doc = DocxTemplate(filepath)
 
@@ -97,17 +97,17 @@ def generate_convention_doc(convention, save_data=False):
     context = {
         **avenant_data,
         "convention": convention,
-        "bailleur": convention.programme.bailleur,
-        "programme": convention.programme,
+        "bailleur": convention.lot.programme.bailleur,
+        "programme": convention.lot.programme,
         "lot": convention.lot,
-        "administration": convention.programme.administration,
+        "administration": convention.lot.programme.administration,
         "logement_edds": logement_edds,
         "logements": convention.lot.logements.all(),
         "annexes": annexes,
         "stationnements": convention.lot.type_stationnements.all(),
         "prets_cdc": convention.prets.filter(preteur__in=["CDCF", "CDCL"]),
         "autres_prets": convention.prets.exclude(preteur__in=["CDCF", "CDCL"]),
-        "references_cadastrales": convention.programme.referencecadastrales.all(),
+        "references_cadastrales": convention.lot.programme.referencecadastrales.all(),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),
@@ -163,10 +163,10 @@ def _save_convention_donnees_validees(
 
     context_to_save = {
         "convention": model_to_dict(convention),
-        "bailleur": model_to_dict(convention.programme.bailleur),
-        "programme": model_to_dict(convention.programme),
+        "bailleur": model_to_dict(convention.lot.programme.bailleur),
+        "programme": model_to_dict(convention.lot.programme),
         "lot": model_to_dict(convention.lot),
-        "administration": model_to_dict(convention.programme.administration),
+        "administration": model_to_dict(convention.lot.programme.administration),
         "logement_edds": _list_to_dict(logement_edds),
         "logements": _list_to_dict(convention.lot.logements.all()),
         "annexes": _list_to_dict(annexes),
@@ -178,7 +178,7 @@ def _save_convention_donnees_validees(
             convention.prets.exclude(preteur__in=["CDCF", "CDCL"])
         ),
         "references_cadastrales": _list_to_dict(
-            convention.programme.referencecadastrales.all()
+            convention.lot.programme.referencecadastrales.all()
         ),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
@@ -190,18 +190,18 @@ def _save_convention_donnees_validees(
     context_to_save.update(_compute_mixte(convention))
     context_to_save.update(logements_totale)
     object_files = {}
-    object_files["vendeur_files"] = convention.programme.vendeur_files()
-    object_files["acquereur_files"] = convention.programme.acquereur_files()
+    object_files["vendeur_files"] = convention.lot.programme.vendeur_files()
+    object_files["acquereur_files"] = convention.lot.programme.acquereur_files()
     object_files[
         "reference_notaire_files"
-    ] = convention.programme.reference_notaire_files()
+    ] = convention.lot.programme.reference_notaire_files()
     object_files[
         "reference_publication_acte_files"
-    ] = convention.programme.reference_publication_acte_files()
+    ] = convention.lot.programme.reference_publication_acte_files()
     object_files[
         "reference_cadastrale_files"
-    ] = convention.programme.reference_cadastrale_files()
-    object_files["effet_relatif_files"] = convention.programme.effet_relatif_files()
+    ] = convention.lot.programme.reference_cadastrale_files()
+    object_files["effet_relatif_files"] = convention.lot.programme.effet_relatif_files()
     object_files["edd_volumetrique_files"] = convention.lot.edd_volumetrique_files()
     object_files["edd_classique_files"] = convention.lot.edd_classique_files()
     convention.donnees_validees = json.dumps(
@@ -291,34 +291,34 @@ def _get_object_images(doc, convention):
     object_images = {}
     local_pathes = []
     vendeur_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.vendeur_files()
+        doc, convention.uuid, convention.lot.programme.vendeur_files()
     )
     object_images["vendeur_images"] = vendeur_images
     local_pathes += tmp_local_path
     acquereur_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.acquereur_files()
+        doc, convention.uuid, convention.lot.programme.acquereur_files()
     )
     object_images["acquereur_images"] = acquereur_images
     local_pathes += tmp_local_path
     reference_notaire_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.reference_notaire_files()
+        doc, convention.uuid, convention.lot.programme.reference_notaire_files()
     )
     object_images["reference_notaire_images"] = reference_notaire_images
     local_pathes += tmp_local_path
     reference_publication_acte_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.reference_publication_acte_files()
+        doc, convention.uuid, convention.lot.programme.reference_publication_acte_files()
     )
     object_images[
         "reference_publication_acte_images"
     ] = reference_publication_acte_images
     local_pathes += tmp_local_path
     reference_cadastrale_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.reference_cadastrale_files()
+        doc, convention.uuid, convention.lot.programme.reference_cadastrale_files()
     )
     object_images["reference_cadastrale_images"] = reference_cadastrale_images
     local_pathes += tmp_local_path
     effet_relatif_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.programme.effet_relatif_files()
+        doc, convention.uuid, convention.lot.programme.effet_relatif_files()
     )
     object_images["effet_relatif_images"] = effet_relatif_images
     local_pathes += tmp_local_path
@@ -402,7 +402,7 @@ def _compute_mixte(convention):
 
 
 def _prepare_logement_edds(convention):
-    logement_edds = convention.programme.logementedds.order_by(
+    logement_edds = convention.lot.programme.logementedds.order_by(
         "financement", "designation"
     ).all()
     count = 0
@@ -450,10 +450,10 @@ def fiche_caf_doc(convention):
 
     context = {
         "convention": convention,
-        "bailleur": convention.programme.bailleur,
-        "programme": convention.programme,
+        "bailleur": convention.lot.programme.bailleur,
+        "programme": convention.lot.programme,
         "lot": convention.lot,
-        "administration": convention.programme.administration,
+        "administration": convention.lot.programme.administration,
         "logements": convention.lot.logements.all(),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,

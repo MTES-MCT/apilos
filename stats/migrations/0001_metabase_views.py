@@ -17,7 +17,8 @@ select
     c.id,
     asd.id as departement_id
 from conventions_convention c
-    inner join programmes_programme pp on c.programme_id = pp.id
+    inner join programmes_lot pl on c.lot_id = pl.id
+    inner join programmes_programme pp on pl.programme_id = pp.id
     inner join apilos_settings_departement asd on substr(pp.code_postal, 1, 2) = asd.code_insee or substr(pp.code_postal, 1, 3) = asd.code_insee
     """,
             reverse_sql="""

@@ -185,7 +185,6 @@ def get_or_create_lots_and_conventions(
         )
         lots.append(lot)
         (convention, _) = Convention.objects.get_or_create(
-            programme=programme,
             lot=lot,
             # When comes from SIAP through API, the user doesn't exist in DB
             defaults={
@@ -213,7 +212,6 @@ def get_or_create_lots_and_conventions(
             )
             lots.append(lot)
             (convention, _) = Convention.objects.get_or_create(
-                programme=programme,
                 lot=lot,
                 # When comes from SIAP through API, the user doesn't exist in DB
                 defaults={

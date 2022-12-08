@@ -71,7 +71,7 @@ class ConventionSelectionFromZeroViewTests(AbstractCreateViewTestCase, TestCase)
     def _test_data_integrity(self):
         self.assertTrue(
             Convention.objects.get(
-                programme__nom="Programme de test", lot__financement=Financement.PLUS
+                lot__programme__nom="Programme de test", lot__financement=Financement.PLUS
             ),
             msg=f"{self.msg_prefix}",
         )

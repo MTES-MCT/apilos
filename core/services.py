@@ -97,7 +97,7 @@ class EmailService:
             {
                 "convention_url": convention_url,
                 "convention": convention,
-                "administration": convention.programme.administration,
+                "administration": convention.lot.programme.administration,
             },
         )
         self.html_content = render_to_string(
@@ -105,7 +105,7 @@ class EmailService:
             {
                 "convention_url": convention_url,
                 "convention": convention,
-                "administration": convention.programme.administration,
+                "administration": convention.lot.programme.administration,
             },
         )
 

@@ -97,7 +97,7 @@ class ConventionFinancementServiceTests(TestCase):
         self.assertEqual(pret_cdcl.duree, 20)
 
     def test_cdc_is_needed(self):
-        programme = self.service.convention.programme
+        programme = self.service.convention.lot.programme
         programme.type_operation = TypeOperation.NEUF
         programme.save()
 

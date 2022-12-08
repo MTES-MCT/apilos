@@ -66,13 +66,13 @@ def index(request):
 def recapitulatif(request, convention_uuid):
     # Step 11/11
     convention = (
-        Convention.objects.prefetch_related("programme")
-        .prefetch_related("programme__referencecadastrales")
-        .prefetch_related("programme__logementedds")
-        .prefetch_related("lot")
+        Convention.objects.prefetch_related("lot")
+        .prefetch_related("lot__programme")
+        .prefetch_related("lot__programme__referencecadastrales")
+        .prefetch_related("lot__programme__logementedds")
+        .prefetch_related("lot__programme__administration")
         .prefetch_related("lot__type_stationnements")
         .prefetch_related("lot__logements")
-        .prefetch_related("programme__administration")
         .get(uuid=convention_uuid)
     )
     result = convention_summary(request, convention)
@@ -299,8 +299,8 @@ def fiche_caf(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("lot")
         .prefetch_related("lot__logements")
-        .prefetch_related("programme")
-        .prefetch_related("programme__administration")
+        .prefetch_related("lot__programme")
+        .prefetch_related("lot__programme__administration")
         .get(uuid=convention_uuid)
     )
     file_stream = fiche_caf_doc(convention)
@@ -532,7 +532,7 @@ class ConventionProgrammeView(ConventionView):
 
     def _get_convention(self, convention_uuid):
         return (
-            Convention.objects.prefetch_related("programme")
+            Convention.objects.prefetch_related("lot__programme")
             .prefetch_related("lot")
             .get(uuid=convention_uuid)
         )
@@ -551,8 +551,8 @@ class ConventionCadastreView(ConventionView):
 
     def _get_convention(self, convention_uuid):
         return (
-            Convention.objects.prefetch_related("programme")
-            .prefetch_related("programme__referencecadastrales")
+            Convention.objects.prefetch_related("lot__programme")
+            .prefetch_related("lot__programme__referencecadastrales")
             .get(uuid=convention_uuid)
         )
 
@@ -570,9 +570,9 @@ class ConventionEDDView(ConventionView):
 
     def _get_convention(self, convention_uuid):
         return (
-            Convention.objects.prefetch_related("programme")
+            Convention.objects.prefetch_related("lot__programme")
             .prefetch_related("lot")
-            .prefetch_related("programme__logementedds")
+            .prefetch_related("lot__programme__logementedds")
             .get(uuid=convention_uuid)
         )
 

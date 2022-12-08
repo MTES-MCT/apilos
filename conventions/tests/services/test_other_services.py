@@ -85,7 +85,7 @@ class ServicesConventionsTests(TestCase):
         self.assertNotIn("13001", email_sent.body)
         self.assertNotIn("Marseille", email_sent.body)
 
-        administration = convention.programme.administration
+        administration = convention.lot.programme.administration
         administration.nb_convention_exemplaires = 1
         administration.adresse = "1 rue du bois"
         administration.code_postal = "13001"

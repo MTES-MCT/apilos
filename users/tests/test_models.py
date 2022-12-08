@@ -246,7 +246,7 @@ class AdministrationsModelsTest(TestCase):
             {
                 convention.uuid
                 for convention in Convention.objects.filter(
-                    programme__administration_id__in=[
+                    lot__programme__administration_id__in=[
                         user_instructeur.roles.all()[0].administration_id,
                         user_instructeur.roles.all()[1].administration_id,
                     ]
@@ -257,7 +257,7 @@ class AdministrationsModelsTest(TestCase):
         convention_id_list = {
             convention.uuid
             for convention in Convention.objects.filter(
-                programme__bailleur_id__in=[
+                lot__programme__bailleur_id__in=[
                     user_bailleur.roles.all()[0].bailleur_id,
                     user_bailleur.roles.all()[1].bailleur_id,
                 ]
@@ -271,9 +271,9 @@ class AdministrationsModelsTest(TestCase):
         convention_id_list_with_filters = {
             convention.uuid
             for convention in Convention.objects.annotate(
-                departement=Substr("programme__code_postal", 1, 2)
+                departement=Substr("lot__programme__code_postal", 1, 2)
             ).filter(
-                programme__bailleur_id__in=[
+                lot__programme__bailleur_id__in=[
                     user_bailleur.roles.all()[0].bailleur_id,
                     user_bailleur.roles.all()[1].bailleur_id,
                 ],

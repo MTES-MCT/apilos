@@ -72,15 +72,15 @@ def conventions_index(request):
 
     convention_list_service = ConventionListService(
         search_input=request.GET.get("search_input", ""),
-        order_by=request.GET.get("order_by", "programme__date_achevement_compile"),
+        order_by=request.GET.get("order_by", "lot__programme__date_achevement_compile"),
         page=request.GET.get("page", 1),
         statut_filter=request.GET.get("cstatut", ""),
         financement_filter=request.GET.get("financement", ""),
         departement_input=request.GET.get("departement_input", ""),
         my_convention_list=request.user.conventions()
-        .prefetch_related("programme")
-        .prefetch_related("programme__administration")
-        .prefetch_related("lot"),
+        .prefetch_related("lot")
+        .prefetch_related("lot__programme")
+        .prefetch_related("lot__programme__administration"),
     )
     convention_list_service.paginate()
 
@@ -166,13 +166,13 @@ def convention_summary(request, convention):
     return {
         **utils.base_convention_response_error(request, convention),
         "opened_comments": opened_comments,
-        "bailleur": convention.programme.bailleur,
+        "bailleur": convention.lot.programme.bailleur,
         "lot": convention.lot,
-        "programme": convention.programme,
-        "logement_edds": convention.programme.logementedds.all(),
+        "programme": convention.lot.programme,
+        "logement_edds": convention.lot.programme.logementedds.all(),
         "logements": convention.lot.logements.all(),
         "stationnements": convention.lot.type_stationnements.all(),
-        "reference_cadastrales": convention.programme.referencecadastrales.all(),
+        "reference_cadastrales": convention.lot.programme.referencecadastrales.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
         "conventionNumberForm": convention_number_form,
@@ -218,7 +218,7 @@ def convention_submit(request, convention_uuid):
             operation = client.get_operation(
                 user_login=request.user.cerbere_login,
                 habilitation_id=request.session["habilitation_id"],
-                operation_identifier=convention.programme.numero_galion,
+                operation_identifier=convention.lot.programme.numero_galion,
             )
             for utilisateur in operation["gestionnaire"]["utilisateurs"]:
                 instructeur_emails.append(utilisateur["email"])
@@ -461,23 +461,23 @@ def convention_validate(request, convention_uuid):
         }
 
     convention = (
-        Convention.objects.prefetch_related("programme__bailleur")
-        .prefetch_related("programme__referencecadastrales")
-        .prefetch_related("programme__logementedds")
-        .prefetch_related("lot")
+        Convention.objects.prefetch_related("lot")
+        .prefetch_related("lot__programme__bailleur")
+        .prefetch_related("lot__programme__referencecadastrales")
+        .prefetch_related("lot__programme__logementedds")
         .prefetch_related("lot__type_stationnements")
         .prefetch_related("lot__logements")
         .get(uuid=convention_uuid)
     )
     return {
         **utils.base_convention_response_error(request, convention),
-        "bailleur": convention.programme.bailleur,
+        "bailleur": convention.lot.programme.bailleur,
         "lot": convention.lot,
-        "programme": convention.programme,
-        "logement_edds": convention.programme.logementedds.all(),
+        "programme": convention.lot.programme,
+        "logement_edds": convention.lot.programme.logementedds.all(),
         "logements": convention.lot.logements.all(),
         "stationnements": convention.lot.type_stationnements.all(),
-        "reference_cadastrales": convention.programme.referencecadastrales.all(),
+        "reference_cadastrales": convention.lot.programme.referencecadastrales.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
         "conventionNumberForm": convention_number_form,
@@ -487,15 +487,15 @@ def convention_validate(request, convention_uuid):
 @require_POST
 def generate_convention_service(request, convention_uuid):
     convention = (
-        Convention.objects.prefetch_related("programme__bailleur")
-        .prefetch_related("lot")
+        Convention.objects.prefetch_related("lot")
         .prefetch_related("lot__type_stationnements")
         .prefetch_related("lot__logements")
         .prefetch_related("prets")
-        .prefetch_related("programme")
-        .prefetch_related("programme__administration")
-        .prefetch_related("programme__logementedds")
-        .prefetch_related("programme__referencecadastrales")
+        .prefetch_related("lot__programme")
+        .prefetch_related("lot__programme__bailleur")
+        .prefetch_related("lot__programme__administration")
+        .prefetch_related("lot__programme__logementedds")
+        .prefetch_related("lot__programme__referencecadastrales")
         .get(uuid=convention_uuid)
     )
     file_stream = convention_generator.generate_convention_doc(convention)
@@ -537,9 +537,9 @@ class ConventionListService:
         total_user = self.my_convention_list.count()
         if self.search_input:
             self.my_convention_list = self.my_convention_list.filter(
-                Q(programme__ville__icontains=self.search_input)
-                | Q(programme__nom__icontains=self.search_input)
-                | Q(programme__numero_galion__icontains=self.search_input)
+                Q(lot__programme__ville__icontains=self.search_input)
+                | Q(lot__programme__nom__icontains=self.search_input)
+                | Q(lot__programme__numero_galion__icontains=self.search_input)
             )
         if self.statut_filter:
             self.my_convention_list = self.my_convention_list.filter(
@@ -551,7 +551,7 @@ class ConventionListService:
             )
         if self.departement_input:
             self.my_convention_list = self.my_convention_list.annotate(
-                departement=Substr("programme__code_postal", 1, 2)
+                departement=Substr("lot__programme__code_postal", 1, 2)
             ).filter(departement=self.departement_input)
 
         if self.order_by:
@@ -628,7 +628,7 @@ def convention_post_action(request, convention_uuid):
     upform = UploadForm()
     avenant_list_service = ConventionListService(
         my_convention_list=convention.avenants.all()
-        .prefetch_related("programme")
+        .prefetch_related("lot__programme")
         .prefetch_related("lot"),
         order_by="cree_le",
     )
@@ -659,8 +659,8 @@ def _get_last_avenant(convention):
 
 def create_avenant(request, convention_uuid):
     parent_convention = (
-        Convention.objects.prefetch_related("programme")
-        .prefetch_related("lot")
+        Convention.objects.prefetch_related("lot")
+        .prefetch_related("lot__programme")
         .prefetch_related("avenants")
         .get(uuid=convention_uuid)
     )

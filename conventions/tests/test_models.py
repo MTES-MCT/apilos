@@ -25,7 +25,7 @@ class ConventionModelsTest(TestCase):
         convention = Convention.objects.get(numero="0001")
         lot = convention.lot
         type_habitat = lot.get_type_habitat_display()
-        programme = convention.programme
+        programme = convention.lot.programme
         expected_object_name = (
             f"{programme.ville} - {programme.nom} - "
             + f"{lot.nb_logements} lgts - {type_habitat} - {lot.financement}"
@@ -165,7 +165,7 @@ class ConventionModelsTest(TestCase):
             SousNatureBailleur.COOPERATIVE_HLM_SCIC,
             SousNatureBailleur.SEM_EPL,
         ]:
-            convention.programme.bailleur.sous_nature_bailleur = sous_nature_bailleur
+            convention.lot.programme.bailleur.sous_nature_bailleur = sous_nature_bailleur
             for type1andtype2 in [
                 ConventionType1and2.TYPE1,
                 ConventionType1and2.TYPE2,
@@ -180,7 +180,7 @@ class ConventionModelsTest(TestCase):
                 SousNatureBailleur.COOPERATIVE_HLM_SCIC,
                 SousNatureBailleur.SEM_EPL,
             ]:
-                convention.programme.bailleur.sous_nature_bailleur = k
+                convention.lot.programme.bailleur.sous_nature_bailleur = k
                 convention.type1and2 = None
                 self.assertFalse(convention.type1and2_configuration_not_needed())
                 for type1andtype2 in [
@@ -213,8 +213,8 @@ class ConventionModelsTest(TestCase):
 
     def test_convention_bailleur(self):
         convention = Convention.objects.order_by("uuid").first()
-        self.assertEqual(convention.bailleur, convention.programme.bailleur)
-        self.assertEqual(convention.bailleur_id, convention.programme.bailleur_id)
+        self.assertEqual(convention.bailleur, convention.lot.programme.bailleur)
+        self.assertEqual(convention.bailleur_id, convention.lot.programme.bailleur_id)
 
     def test_xlsx(self):
         utils_assertions.assert_xlsx(self, Pret, "financement")

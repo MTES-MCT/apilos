@@ -313,7 +313,6 @@ def create_convention(lot: Lot, numero: str = "0001"):
     return Convention.objects.create(
         numero=numero,
         lot=lot,
-        programme=lot.programme,
         comments=_create_upload_files(),
     )
 

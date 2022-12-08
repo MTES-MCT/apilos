@@ -1,5 +1,6 @@
 import uuid
 
+from django.apps import apps
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -224,6 +225,12 @@ class Programme(IngestableModel):
     date_achevement_compile = models.DateField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+    @property
+    def conventions(self):
+        # To avoid circular imports
+        convention = apps.get_model('conventions.Convention')
+        return convention.objects.filter(lot__programme_id=self.id).order_by("-lot__financement")
 
     def __str__(self):
         return self.nom

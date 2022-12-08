@@ -80,10 +80,10 @@ class ConventionCadastreServiceTests(TestCase):
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
         self.assertEqual(
-            self.service.convention.programme.permis_construire, "123456789 AB"
+            self.service.convention.lot.programme.permis_construire, "123456789 AB"
         )
 
-        ref_cadastrales = self.service.convention.programme.referencecadastrales.all()
+        ref_cadastrales = self.service.convention.lot.programme.referencecadastrales.all()
 
         self.assertEqual(
             {ref_cadastrale.lieudit for ref_cadastrale in ref_cadastrales},

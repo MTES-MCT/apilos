@@ -28,7 +28,7 @@ class ConventionProgrammeServiceTests(TestCase):
         self.service.get()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
         self.assertIsInstance(self.service.form, ProgrammeForm)
-        programme = self.service.convention.programme
+        programme = self.service.convention.lot.programme
         self.assertEqual(
             self.service.form.initial["uuid"],
             programme.uuid,
@@ -37,7 +37,7 @@ class ConventionProgrammeServiceTests(TestCase):
 
     def test_save(self):
 
-        programme = self.service.convention.programme
+        programme = self.service.convention.lot.programme
 
         self.service.request.POST = {
             "nom": "Fake Opération",

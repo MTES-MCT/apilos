@@ -168,7 +168,7 @@ class ConventionLogementsService(ConventionService):
                     f"form-{idx}-loyer": form_logement["loyer"].value(),
                 }
         self.formset = LogementFormSet(initformset)
-        self.formset.programme_id = self.convention.programme_id
+        self.formset.programme_id = self.convention.lot.programme_id
         self.formset.lot_id = self.convention.lot_id
         nb_logements = self.request.POST.get("nb_logements", None)
         self.formset.nb_logements = int(nb_logements) if nb_logements else None

@@ -621,28 +621,24 @@ class CustomFiltersTest(TestCase):
             statut=ConventionStatut.A_SIGNER,
             parent=self.convention,
             lot=self.convention.lot,
-            programme=self.convention.programme,
         ).save()
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
         Convention.objects.create(
             statut=ConventionStatut.SIGNEE,
             parent=self.convention,
             lot=self.convention.lot,
-            programme=self.convention.programme,
         ).save()
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
         Convention.objects.create(
             statut=ConventionStatut.RESILIEE,
             parent=self.convention,
             lot=self.convention.lot,
-            programme=self.convention.programme,
         ).save()
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
         ongoing_avenant = Convention.objects.create(
             statut=ConventionStatut.PROJET,
             parent=self.convention,
             lot=self.convention.lot,
-            programme=self.convention.programme,
         )
         ongoing_avenant.save()
         self.assertFalse(custom_filters.display_create_avenant(self.convention))

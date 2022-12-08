@@ -119,12 +119,6 @@ class Convention(models.Model):
         related_name="avenants",
     )
     numero = models.CharField(max_length=255, null=True, blank=True)
-    programme = models.ForeignKey(
-        "programmes.Programme",
-        related_name="conventions",
-        on_delete=models.CASCADE,
-        null=False,
-    )
     lot = models.ForeignKey(
         "programmes.Lot",
         on_delete=models.CASCADE,
@@ -190,11 +184,15 @@ class Convention(models.Model):
     # Needed for admin
     @property
     def administration(self):
-        return self.programme.administration
+        return self.lot.programme.administration
 
     @property
     def bailleur(self):
-        return self.programme.bailleur
+        return self.lot.programme.bailleur
+
+    @property
+    def programme(self):
+        return self.lot.programme
 
     @property
     def financement(self):
@@ -212,10 +210,10 @@ class Convention(models.Model):
 
     @property
     def bailleur_id(self):
-        return self.programme.bailleur_id
+        return self.lot.programme.bailleur_id
 
     def __str__(self):
-        programme = self.programme
+        programme = self.lot.programme
         lot = self.lot
         return (
             f"{programme.ville} - {programme.nom} - "
@@ -290,7 +288,7 @@ class Convention(models.Model):
                         lambda x: x.email,
                         [
                             r.user
-                            for r in self.programme.bailleur.roles.all()
+                            for r in self.lot.programme.bailleur.roles.all()
                             if r.user.preferences_email != EmailPreferences.AUCUN
                         ],
                     )
@@ -311,7 +309,7 @@ class Convention(models.Model):
             set(
                 map(
                     lambda x: x.user.email,
-                    self.programme.bailleur.roles.filter(
+                    self.lot.programme.bailleur.roles.filter(
                         user__preferences_email=EmailPreferences.TOUS
                     ),
                 )
@@ -333,7 +331,7 @@ class Convention(models.Model):
                 set(
                     map(
                         lambda x: x.user.email,
-                        self.programme.administration.roles.filter(
+                        self.lot.programme.administration.roles.filter(
                             Q(user__preferences_email=EmailPreferences.PARTIEL)
                             | Q(user__preferences_email=EmailPreferences.TOUS)
                         ),
@@ -355,7 +353,7 @@ class Convention(models.Model):
             set(
                 map(
                     lambda x: x.user.email,
-                    self.programme.administration.roles.filter(
+                    self.lot.programme.administration.roles.filter(
                         user__preferences_email=EmailPreferences.TOUS
                     ),
                 )
@@ -364,15 +362,15 @@ class Convention(models.Model):
         return users_partial + users_all_email
 
     def get_convention_prefix(self):
-        if self.programme.administration:
+        if self.lot.programme.administration:
             return (
-                self.programme.administration.prefix_convention.replace(
+                self.lot.programme.administration.prefix_convention.replace(
                     "{département}",
-                    self.programme.code_postal[:-3]
-                    if self.programme.code_postal
+                    self.lot.programme.code_postal[:-3]
+                    if self.lot.programme.code_postal
                     else "",
                 )
-                .replace("{zone}", str(self.programme.zone_123))
+                .replace("{zone}", str(self.lot.programme.zone_123))
                 .replace("{mois}", str(timezone.now().month))
                 .replace("{année}", str(timezone.now().year))
             )
@@ -441,7 +439,7 @@ class Convention(models.Model):
             {
                 "bailleur_id": programme_fields.pop("bailleur"),
                 "administration_id": programme_fields.pop("administration"),
-                "parent_id": convention_origin.programme_id,
+                "parent_id": convention_origin.lot.programme_id,
             }
         )
         cloned_programme = Programme.objects.create(**programme_fields)
@@ -494,7 +492,6 @@ class Convention(models.Model):
         )
         convention_fields.update(
             {
-                "programme": cloned_programme,
                 "lot": cloned_lot,
                 "parent_id": convention_origin.id,
                 "statut": ConventionStatut.PROJET,
@@ -573,7 +570,7 @@ class Convention(models.Model):
             self.numero
             if self.numero
             else self.get_convention_prefix()
-            if self.programme.administration
+            if self.lot.programme.administration
             else ""
         )
 
@@ -611,7 +608,7 @@ class ConventionHistory(models.Model):
     # Needed for admin
     @property
     def bailleur(self):
-        return self.convention.programme.bailleur
+        return self.convention.lot.programme.bailleur
 
 
 class Pret(models.Model):
@@ -647,7 +644,7 @@ class Pret(models.Model):
     # Needed for admin
     @property
     def bailleur(self):
-        return self.convention.programme.bailleur
+        return self.convention.lot.programme.bailleur
 
     def _get_preteur(self):
         return self.get_preteur_display()

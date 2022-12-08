@@ -126,7 +126,7 @@ def _get_conventions_by_dept():
     """
     queryset_bydept_bystatut = (
         Convention.objects.all()
-        .annotate(departement=Substr("programme__code_postal", 1, 2))
+        .annotate(departement=Substr("lot__programme__code_postal", 1, 2))
         .values("departement", "statut")
         .annotate(total=Count("statut"))
         .order_by("departement")
@@ -183,7 +183,7 @@ def get_null_fields():
     * autres_locaux_hors_convention
     """
     bailleurs = Bailleur.objects.filter(
-        Exists(Convention.objects.filter(programme__bailleur_id=OuterRef("pk")))
+        Exists(Convention.objects.filter(lot__programme__bailleur_id=OuterRef("pk")))
     ).aggregate(
         capital_social_count_null=Sum(
             Case(
@@ -195,7 +195,7 @@ def get_null_fields():
     )
 
     programmes_qs = Programme.objects.filter(
-        Exists(Convention.objects.filter(programme_id=OuterRef("pk")))
+        Exists(Convention.objects.filter(lot__programme_id=OuterRef("pk")))
     ).annotate(
         count_referencecadastrale=Count("referencecadastrales"),
         count_logementedd=Count("logementedds"),

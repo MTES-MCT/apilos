@@ -6,7 +6,7 @@ from .models import Convention, Pret, AvenantType
 @admin.display(description="Programme")
 def view_programme(convention):
     return (
-        f"{convention.programme.ville} -  {convention.lot} - "
+        f"{convention.lot.programme.ville} -  {convention.lot} - "
         + f"{convention.lot.nb_logements} lgts - "
         + f"{convention.lot.get_type_habitat_display()}"
     )
@@ -15,12 +15,12 @@ def view_programme(convention):
 class ConventionAdmin(admin.ModelAdmin):
     list_display = (view_programme, "administration", "bailleur", "financement", "uuid")
     search_fields = [
-        "programme__ville",
-        "programme__nom",
+        "lot__programme__ville",
+        "lot__programme__nom",
         "lot__financement",
         "uuid",
-        "programme__bailleur__nom",
-        "programme__administration__nom",
+        "lot__programme__bailleur__nom",
+        "lot__programme__administration__nom",
     ]
     fields = (
         "uuid",

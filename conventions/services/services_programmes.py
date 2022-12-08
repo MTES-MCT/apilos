@@ -102,7 +102,6 @@ class ConventionSelectionService:
             lot.save()
             self.convention = Convention.objects.create(
                 lot=lot,
-                programme_id=lot.programme_id,
                 cree_par=self.request.user,
             )
             _send_email_staff(self.request, self.convention)
@@ -141,7 +140,6 @@ class ConventionSelectionService:
             lot = Lot.objects.get(uuid=self.form.cleaned_data["lot"])
             self.convention = Convention.objects.create(
                 lot=lot,
-                programme_id=lot.programme_id,
                 cree_par=self.request.user,
             )
             self.convention.save()
@@ -158,7 +156,7 @@ def _send_email_staff(request, convention):
         {
             "convention_url": convention_url,
             "convention": convention,
-            "programme": convention.programme,
+            "programme": convention.lot.programme,
             "user": request.user,
         },
     )
@@ -167,7 +165,7 @@ def _send_email_staff(request, convention):
         {
             "convention_url": convention_url,
             "convention": convention,
-            "programme": convention.programme,
+            "programme": convention.lot.programme,
             "user": request.user,
         },
     )
@@ -189,7 +187,7 @@ class ConventionProgrammeService(ConventionService):
     redirect_recap: bool = False
 
     def get(self):
-        programme = self.convention.programme
+        programme = self.convention.lot.programme
         lot = self.convention.lot
         self.form = ProgrammeForm(
             initial={
@@ -215,7 +213,7 @@ class ConventionProgrammeService(ConventionService):
     def _programme_atomic_update(self):
         self.form = ProgrammeForm(
             {
-                "uuid": self.convention.programme.uuid,
+                "uuid": self.convention.lot.programme.uuid,
                 "nb_logements": self.request.POST.get(
                     "nb_logements", self.convention.lot.nb_logements
                 ),
@@ -224,7 +222,7 @@ class ConventionProgrammeService(ConventionService):
                 ),
                 **utils.build_partial_form(
                     self.request,
-                    self.convention.programme,
+                    self.convention.lot.programme,
                     [
                         "nom",
                         "adresse",
@@ -241,7 +239,7 @@ class ConventionProgrammeService(ConventionService):
         )
         if self.form.is_valid():
             _save_programme_and_lot(
-                self.convention.programme, self.convention.lot, self.form
+                self.convention.lot.programme, self.convention.lot, self.form
             )
             self.return_status = utils.ReturnStatus.SUCCESS
 
@@ -278,7 +276,7 @@ class ConventionCadastreService(ConventionService):
     def get(self):
         initial = []
         referencecadastrales = (
-            self.convention.programme.referencecadastrales.all().order_by("section")
+            self.convention.lot.programme.referencecadastrales.all().order_by("section")
         )
         for referencecadastrale in referencecadastrales:
             initial.append(
@@ -293,46 +291,46 @@ class ConventionCadastreService(ConventionService):
         self.formset = ReferenceCadastraleFormSet(initial=initial)
         self.form = ProgrammeCadastralForm(
             initial={
-                "uuid": self.convention.programme.uuid,
-                "permis_construire": self.convention.programme.permis_construire,
+                "uuid": self.convention.lot.programme.uuid,
+                "permis_construire": self.convention.lot.programme.permis_construire,
                 "date_acte_notarie": utils.format_date_for_form(
-                    self.convention.programme.date_acte_notarie
+                    self.convention.lot.programme.date_acte_notarie
                 ),
                 "date_achevement_previsible": utils.format_date_for_form(
-                    self.convention.programme.date_achevement_previsible
+                    self.convention.lot.programme.date_achevement_previsible
                 ),
                 "date_achat": utils.format_date_for_form(
-                    self.convention.programme.date_achat
+                    self.convention.lot.programme.date_achat
                 ),
                 "date_achevement": utils.format_date_for_form(
-                    self.convention.programme.date_achevement
+                    self.convention.lot.programme.date_achevement
                 ),
                 **utils.get_text_and_files_from_field(
-                    "vendeur", self.convention.programme.vendeur
+                    "vendeur", self.convention.lot.programme.vendeur
                 ),
                 **utils.get_text_and_files_from_field(
-                    "acquereur", self.convention.programme.acquereur
+                    "acquereur", self.convention.lot.programme.acquereur
                 ),
                 **utils.get_text_and_files_from_field(
-                    "reference_notaire", self.convention.programme.reference_notaire
+                    "reference_notaire", self.convention.lot.programme.reference_notaire
                 ),
                 **utils.get_text_and_files_from_field(
                     "reference_publication_acte",
-                    self.convention.programme.reference_publication_acte,
+                    self.convention.lot.programme.reference_publication_acte,
                 ),
                 **utils.get_text_and_files_from_field(
-                    "effet_relatif", self.convention.programme.effet_relatif
+                    "effet_relatif", self.convention.lot.programme.effet_relatif
                 ),
                 **utils.get_text_and_files_from_field(
-                    "acte_de_propriete", self.convention.programme.acte_de_propriete
+                    "acte_de_propriete", self.convention.lot.programme.acte_de_propriete
                 ),
                 **utils.get_text_and_files_from_field(
                     "certificat_adressage",
-                    self.convention.programme.certificat_adressage,
+                    self.convention.lot.programme.certificat_adressage,
                 ),
                 **utils.get_text_and_files_from_field(
                     "reference_cadastrale",
-                    self.convention.programme.reference_cadastrale,
+                    self.convention.lot.programme.reference_cadastrale,
                 ),
             }
         )
@@ -363,7 +361,7 @@ class ConventionCadastreService(ConventionService):
             if result["success"] != utils.ReturnStatus.ERROR:
                 refcads_by_section = {}
                 for refcad in ReferenceCadastrale.objects.filter(
-                    programme_id=self.convention.programme_id
+                    programme_id=self.convention.lot.programme_id
                 ):
                     refcads_by_section[
                         f"{refcad.section}__{refcad.numero}"
@@ -386,10 +384,10 @@ class ConventionCadastreService(ConventionService):
     def _programme_cadastrale_atomic_update(self):
         self.form = ProgrammeCadastralForm(
             {
-                "uuid": self.convention.programme.uuid,
+                "uuid": self.convention.lot.programme.uuid,
                 **utils.build_partial_form(
                     self.request,
-                    self.convention.programme,
+                    self.convention.lot.programme,
                     [
                         "permis_construire",
                         "date_acte_notarie",
@@ -400,7 +398,7 @@ class ConventionCadastreService(ConventionService):
                 ),
                 **utils.build_partial_text_and_files_form(
                     self.request,
-                    self.convention.programme,
+                    self.convention.lot.programme,
                     [
                         "vendeur",
                         "acquereur",
@@ -463,55 +461,55 @@ class ConventionCadastreService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_programme_cadastrale(self):
-        self.convention.programme.permis_construire = self.form.cleaned_data[
+        self.convention.lot.programme.permis_construire = self.form.cleaned_data[
             "permis_construire"
         ]
-        self.convention.programme.date_acte_notarie = self.form.cleaned_data[
+        self.convention.lot.programme.date_acte_notarie = self.form.cleaned_data[
             "date_acte_notarie"
         ]
-        self.convention.programme.date_achevement_previsible = self.form.cleaned_data[
+        self.convention.lot.programme.date_achevement_previsible = self.form.cleaned_data[
             "date_achevement_previsible"
         ]
-        self.convention.programme.date_achat = self.form.cleaned_data["date_achat"]
-        self.convention.programme.date_achevement = self.form.cleaned_data[
+        self.convention.lot.programme.date_achat = self.form.cleaned_data["date_achat"]
+        self.convention.lot.programme.date_achevement = self.form.cleaned_data[
             "date_achevement"
         ]
-        self.convention.programme.vendeur = utils.set_files_and_text_field(
+        self.convention.lot.programme.vendeur = utils.set_files_and_text_field(
             self.form.cleaned_data["vendeur_files"],
             self.form.cleaned_data["vendeur"],
         )
-        self.convention.programme.acquereur = utils.set_files_and_text_field(
+        self.convention.lot.programme.acquereur = utils.set_files_and_text_field(
             self.form.cleaned_data["acquereur_files"],
             self.form.cleaned_data["acquereur"],
         )
-        self.convention.programme.reference_notaire = utils.set_files_and_text_field(
+        self.convention.lot.programme.reference_notaire = utils.set_files_and_text_field(
             self.form.cleaned_data["reference_notaire_files"],
             self.form.cleaned_data["reference_notaire"],
         )
-        self.convention.programme.reference_publication_acte = (
+        self.convention.lot.programme.reference_publication_acte = (
             utils.set_files_and_text_field(
                 self.form.cleaned_data["reference_publication_acte_files"],
                 self.form.cleaned_data["reference_publication_acte"],
             )
         )
-        self.convention.programme.effet_relatif = utils.set_files_and_text_field(
+        self.convention.lot.programme.effet_relatif = utils.set_files_and_text_field(
             self.form.cleaned_data["effet_relatif_files"],
         )
-        self.convention.programme.acte_de_propriete = utils.set_files_and_text_field(
+        self.convention.lot.programme.acte_de_propriete = utils.set_files_and_text_field(
             self.form.cleaned_data["acte_de_propriete_files"],
         )
-        self.convention.programme.certificat_adressage = utils.set_files_and_text_field(
+        self.convention.lot.programme.certificat_adressage = utils.set_files_and_text_field(
             self.form.cleaned_data["certificat_adressage_files"],
         )
-        self.convention.programme.reference_cadastrale = utils.set_files_and_text_field(
+        self.convention.lot.programme.reference_cadastrale = utils.set_files_and_text_field(
             self.form.cleaned_data["reference_cadastrale_files"],
         )
-        self.convention.programme.save()
+        self.convention.lot.programme.save()
 
     def _save_programme_reference_cadastrale(self):
         obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         obj_uuids = list(filter(None, obj_uuids1))
-        self.convention.programme.referencecadastrales.exclude(
+        self.convention.lot.programme.referencecadastrales.exclude(
             uuid__in=obj_uuids
         ).delete()
         for form in self.formset:
@@ -525,7 +523,7 @@ class ConventionCadastreService(ConventionService):
                 reference_cadastrale.surface = form.cleaned_data["surface"]
             else:
                 reference_cadastrale = ReferenceCadastrale.objects.create(
-                    programme=self.convention.programme,
+                    programme=self.convention.lot.programme,
                     section=form.cleaned_data["section"],
                     numero=form.cleaned_data["numero"],
                     lieudit=form.cleaned_data["lieudit"],
@@ -546,7 +544,7 @@ class ConventionEDDService(ConventionService):
 
     def get(self):
         initial = []
-        for logementedd in self.convention.programme.logementedds.all():
+        for logementedd in self.convention.lot.programme.logementedds.all():
             initial.append(
                 {
                     "uuid": logementedd.uuid,
@@ -558,19 +556,19 @@ class ConventionEDDService(ConventionService):
         self.formset = LogementEDDFormSet(initial=initial)
         self.form = ProgrammeEDDForm(
             initial={
-                "uuid": self.convention.programme.uuid,
+                "uuid": self.convention.lot.programme.uuid,
                 "lot_uuid": self.convention.lot.uuid,
                 **utils.get_text_and_files_from_field(
                     "edd_volumetrique", self.convention.lot.edd_volumetrique
                 ),
                 "mention_publication_edd_volumetrique": (
-                    self.convention.programme.mention_publication_edd_volumetrique
+                    self.convention.lot.programme.mention_publication_edd_volumetrique
                 ),
                 **utils.get_text_and_files_from_field(
                     "edd_classique", self.convention.lot.edd_classique
                 ),
                 "mention_publication_edd_classique": (
-                    self.convention.programme.mention_publication_edd_classique
+                    self.convention.lot.programme.mention_publication_edd_classique
                 ),
             }
         )
@@ -601,7 +599,7 @@ class ConventionEDDService(ConventionService):
             if result["success"] != utils.ReturnStatus.ERROR:
                 edd_lgts_by_designation = {}
                 for edd_lgt in LogementEDD.objects.filter(
-                    programme_id=self.convention.programme_id
+                    programme_id=self.convention.lot.programme_id
                 ):
                     edd_lgts_by_designation[edd_lgt.designation] = edd_lgt.uuid
 
@@ -619,14 +617,14 @@ class ConventionEDDService(ConventionService):
     def _programme_edd_atomic_update(self):
         self.form = ProgrammeEDDForm(
             {
-                "uuid": self.convention.programme.uuid,
+                "uuid": self.convention.lot.programme.uuid,
                 **utils.init_text_and_files_from_field(
                     self.request, self.convention.lot, "edd_volumetrique"
                 ),
                 "mention_publication_edd_volumetrique": (
                     self.request.POST.get(
                         "mention_publication_edd_volumetrique",
-                        self.convention.programme.mention_publication_edd_volumetrique,
+                        self.convention.lot.programme.mention_publication_edd_volumetrique,
                     )
                 ),
                 **utils.init_text_and_files_from_field(
@@ -635,7 +633,7 @@ class ConventionEDDService(ConventionService):
                 "mention_publication_edd_classique": (
                     self.request.POST.get(
                         "mention_publication_edd_classique",
-                        self.convention.programme.mention_publication_edd_classique,
+                        self.convention.lot.programme.mention_publication_edd_classique,
                     )
                 ),
             }
@@ -677,7 +675,7 @@ class ConventionEDDService(ConventionService):
                     f"form-{idx}-numero_lot": form_logementedd["numero_lot"].value(),
                 }
         self.formset = LogementEDDFormSet(initformset)
-        self.formset.programme_id = self.convention.programme_id
+        self.formset.programme_id = self.convention.lot.programme_id
         self.formset.ignore_optional_errors = self.request.POST.get(
             "ignore_optional_errors", False
         )
@@ -693,23 +691,23 @@ class ConventionEDDService(ConventionService):
             self.form.cleaned_data["edd_volumetrique_files"],
             self.form.cleaned_data["edd_volumetrique"],
         )
-        self.convention.programme.mention_publication_edd_volumetrique = (
+        self.convention.lot.programme.mention_publication_edd_volumetrique = (
             self.form.cleaned_data["mention_publication_edd_volumetrique"]
         )
         self.convention.lot.edd_classique = utils.set_files_and_text_field(
             self.form.cleaned_data["edd_classique_files"],
             self.form.cleaned_data["edd_classique"],
         )
-        self.convention.programme.mention_publication_edd_classique = (
+        self.convention.lot.programme.mention_publication_edd_classique = (
             self.form.cleaned_data["mention_publication_edd_classique"]
         )
         self.convention.lot.save()
-        self.convention.programme.save()
+        self.convention.lot.programme.save()
 
     def _save_programme_logement_edd(self):
         lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         lgt_uuids = list(filter(None, lgt_uuids1))
-        self.convention.programme.logementedds.exclude(uuid__in=lgt_uuids).delete()
+        self.convention.lot.programme.logementedds.exclude(uuid__in=lgt_uuids).delete()
         for form_logementedd in self.formset:
             if form_logementedd.cleaned_data["uuid"]:
                 logementedd = LogementEDD.objects.get(
@@ -720,7 +718,7 @@ class ConventionEDDService(ConventionService):
                 logementedd.numero_lot = form_logementedd.cleaned_data["numero_lot"]
             else:
                 logementedd = LogementEDD.objects.create(
-                    programme=self.convention.programme,
+                    programme=self.convention.lot.programme,
                     financement=form_logementedd.cleaned_data["financement"],
                     designation=form_logementedd.cleaned_data["designation"],
                     numero_lot=form_logementedd.cleaned_data["numero_lot"],

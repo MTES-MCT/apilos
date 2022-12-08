@@ -18,11 +18,11 @@ class ConventionBailleurService(ConventionService):
     redirect_recap: bool = False
 
     def get(self):
-        bailleur = self.convention.programme.bailleur
+        bailleur = self.convention.lot.programme.bailleur
         # Check if programme has validated convention
         convention_validee = [
             programme_convention
-            for programme_convention in self.convention.programme.conventions.all()
+            for programme_convention in self.convention.lot.programme.conventions.all()
             if programme_convention.statut
             in [
                 ConventionStatut.A_SIGNER,
@@ -85,7 +85,7 @@ class ConventionBailleurService(ConventionService):
                 .prefetch_related("logementedds")
                 .prefetch_related("conventions__prets")
                 .prefetch_related("referencecadastrales")
-            ).get(id=self.convention.programme_id)
+            ).get(id=self.convention.lot.programme_id)
             for convention in programme.conventions.all():
                 if convention.statut in [
                     ConventionStatut.A_SIGNER,
@@ -103,7 +103,7 @@ class ConventionBailleurService(ConventionService):
             self.return_status = utils.ReturnStatus.REFRESH
 
     def _bailleur_atomic_update(self):
-        bailleur = self.convention.programme.bailleur
+        bailleur = self.convention.lot.programme.bailleur
         self.form = BailleurForm(
             {
                 "uuid": bailleur.uuid,

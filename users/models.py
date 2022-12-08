@@ -286,13 +286,13 @@ class User(AbstractUser):
         if self.is_cerbere_user() and "role" in self.siap_habilitation:
             if self.siap_habilitation["role"]["perimetre_departement"]:
                 return conventions.filter(
-                    programme__code_insee_departement=self.siap_habilitation["role"][
+                    lot__programme__code_insee_departement=self.siap_habilitation["role"][
                         "perimetre_departement"
                     ]
                 )
             if self.siap_habilitation["role"]["perimetre_region"]:
                 return conventions.filter(
-                    programme__code_insee_region=self.siap_habilitation["role"][
+                    lot__programme__code_insee_region=self.siap_habilitation["role"][
                         "perimetre_region"
                     ]
                 )
@@ -302,7 +302,7 @@ class User(AbstractUser):
         administrations_ids = self.administration_ids()
         if administrations_ids:
             convs = convs.filter(
-                programme__administration_id__in=self.administration_ids(),
+                lot__programme__administration_id__in=self.administration_ids(),
             )
         return convs
 
@@ -330,10 +330,10 @@ class User(AbstractUser):
 
         if self.is_bailleur():
             convs = self._apply_geo_filters(convs)
-            convs = convs.filter(programme__bailleur_id__in=self._bailleur_ids())
+            convs = convs.filter(lot__programme__bailleur_id__in=self._bailleur_ids())
             if self.id and self.filtre_departements.exists():
                 convs = convs.annotate(
-                    departement=Substr("programme__code_postal", 1, 2)
+                    departement=Substr("lot__programme__code_postal", 1, 2)
                 ).filter(
                     departement__in=list(
                         self.filtre_departements.all().values_list(
