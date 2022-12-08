@@ -31,7 +31,7 @@
                                 <option value="">Financement</option>
                                 {% for financement in financements %}
                                     <option value="{{financement.value}}"
-                                        {% if financement.value  == conventions.financement_filter %}selected{% endif %}>
+                                        {% if financement.value  == conventions.lot.financement_filter %}selected{% endif %}>
                                         {{financement.label}}
                                     </option>
                                 {% endfor %}
@@ -171,7 +171,7 @@
                                             <strong>{{convention.programme.nom}}</strong><br/>
                                             <em data-test-role="programme-galion-cell">{{convention.programme.numero_galion}}</em>
                                         </td>
-                                        <td data-test-role="programme-financement-cell">{{convention.financement}}</td>
+                                        <td data-test-role="programme-financement-cell">{{convention.lot.financement}}</td>
                                         <td>
                                             <strong>{{convention.programme.ville}}</strong><br/>
                                             <em>{{convention.programme.code_postal}}</em>

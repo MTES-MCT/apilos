@@ -150,11 +150,11 @@ class ConventionModelsTest(TestCase):
 
     def test_mixity_option(self):
         convention = Convention.objects.order_by("uuid").first()
-        convention.financement = Financement.PLUS
+        convention.lot.financement = Financement.PLUS
         self.assertTrue(convention.mixity_option())
         for k, _ in Financement.choices:
             if k != Financement.PLUS:
-                convention.financement = k
+                convention.lot.financement = k
                 self.assertFalse(convention.mixity_option())
 
     def test_type1and2_configuration_not_needed(self):

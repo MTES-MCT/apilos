@@ -158,7 +158,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
         self.assertEqual(
             self.service.convention,
             Convention.objects.get(
-                programme__nom="Programme de test", financement=Financement.PLUS
+                programme__nom="Programme de test", lot__financement=Financement.PLUS
             ),
         )
 
@@ -307,6 +307,6 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
         self.assertEqual(
             self.service.convention,
             Convention.objects.get(
-                programme__nom="Programme de test", financement=Financement.PLUS
+                programme__nom="Programme de test", lot__financement=Financement.PLUS
             ),
         )

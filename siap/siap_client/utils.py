@@ -187,7 +187,6 @@ def get_or_create_lots_and_conventions(
         (convention, _) = Convention.objects.get_or_create(
             programme=programme,
             lot=lot,
-            financement=Financement.SANS_FINANCEMENT,
             # When comes from SIAP through API, the user doesn't exist in DB
             defaults={
                 "cree_par": (user if user.id else None),
@@ -216,7 +215,6 @@ def get_or_create_lots_and_conventions(
             (convention, _) = Convention.objects.get_or_create(
                 programme=programme,
                 lot=lot,
-                financement=financement,
                 # When comes from SIAP through API, the user doesn't exist in DB
                 defaults={
                     "cree_par": (user if user.id else None),

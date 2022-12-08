@@ -132,11 +132,6 @@ class Convention(models.Model):
         related_name="conventions",
     )
     date_fin_conventionnement = models.DateField(null=True, blank=True)
-    financement = models.CharField(
-        max_length=25,
-        choices=Financement.choices,
-        default=Financement.PLUS,
-    )
     # fix me: weird to keep fond_propre here
     fond_propre = models.FloatField(null=True, blank=True)
     comments = models.TextField(null=True, blank=True)
@@ -200,6 +195,10 @@ class Convention(models.Model):
     @property
     def bailleur(self):
         return self.programme.bailleur
+
+    @property
+    def financement(self):
+        return self.lot.financement
 
     @property
     def ecolo_reference(self) -> Optional[EcoloReference]:
@@ -406,7 +405,7 @@ class Convention(models.Model):
         with low revenu should be displayed in the interface and fill in the convention document
         Should be editable when it is a PLUS convention
         """
-        return self.financement == Financement.PLUS
+        return self.lot.financement == Financement.PLUS
 
     def type1and2_configuration_not_needed(self):
         return self.is_avenant() or not (

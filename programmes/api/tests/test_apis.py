@@ -132,7 +132,7 @@ class OperationDetailsAPITest(APITestCase):
             Programme.objects.filter(numero_galion="20220600006").count(), 0
         )
 
-        response = client.post("/api-siap/v0/operation/20220600006/")
+        response = client.post("/api-siap/v0/operation/20220600006/", format='json')
 
         self.assertEqual(
             Programme.objects.filter(numero_galion="20220600006").count(), 1
@@ -141,7 +141,7 @@ class OperationDetailsAPITest(APITestCase):
         self.assertEqual(programme.nom, "Programme 2")
         self.assertEqual(programme.bailleur.siret, "782855696")
         self.assertEqual(programme.conventions.count(), 1)
-        self.assertEqual(response.data, operation_response)
+        self.assertDictEqual(response.json(), operation_response)
 
         response = client.post("/api-siap/v0/operation/20220600006/")
         self.assertEqual(
@@ -183,7 +183,7 @@ class OperationClosedAPITest(APITestCase):
             user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
         )
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
-        response = client.get("/api-siap/v0/close_operation/20220600005/")
+        response = client.get("/api-siap/v0/close_operation/20220600005/", format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         expected_data = {
@@ -201,9 +201,9 @@ class OperationClosedAPITest(APITestCase):
             "anru": False,
         }
         for key, value in expected_data.items():
-            self.assertEqual(response.data[key], value)
+            self.assertEqual(response.json()[key], value)
         for key in ["date_achevement_previsible", "date_achat", "date_achevement"]:
-            self.assertTrue(response.data[key])
+            self.assertTrue(response.json()[key])
 
     def test_post_operation_unauthorized(self):
         client = APIClient()

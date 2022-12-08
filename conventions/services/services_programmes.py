@@ -103,7 +103,6 @@ class ConventionSelectionService:
             self.convention = Convention.objects.create(
                 lot=lot,
                 programme_id=lot.programme_id,
-                financement=lot.financement,
                 cree_par=self.request.user,
             )
             _send_email_staff(self.request, self.convention)
@@ -143,7 +142,6 @@ class ConventionSelectionService:
             self.convention = Convention.objects.create(
                 lot=lot,
                 programme_id=lot.programme_id,
-                financement=lot.financement,
                 cree_par=self.request.user,
             )
             self.convention.save()

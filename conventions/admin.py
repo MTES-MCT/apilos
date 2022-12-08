@@ -17,7 +17,7 @@ class ConventionAdmin(admin.ModelAdmin):
     search_fields = [
         "programme__ville",
         "programme__nom",
-        "financement",
+        "lot__financement",
         "uuid",
         "programme__bailleur__nom",
         "programme__administration__nom",
@@ -31,7 +31,6 @@ class ConventionAdmin(admin.ModelAdmin):
         "parent",
         "numero",
         "date_fin_conventionnement",
-        "financement",
         "fond_propre",
         "comments",
         "statut",

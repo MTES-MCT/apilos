@@ -547,7 +547,7 @@ class ConventionListService:
             )
         if self.financement_filter:
             self.my_convention_list = self.my_convention_list.filter(
-                financement=self.financement_filter
+                lot__financement=self.financement_filter
             )
         if self.departement_input:
             self.my_convention_list = self.my_convention_list.annotate(

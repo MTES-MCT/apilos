@@ -66,7 +66,7 @@ class ConventionFinancementForm(forms.Form):
             and self.convention is not None
             and annee_fin_conventionnement is not None
         ):
-            if self.convention.financement == Financement.PLS:
+            if self.convention.lot.financement == Financement.PLS:
                 self._pls_end_date_validation(annee_fin_conventionnement)
             elif self.convention.programme.type_operation == TypeOperation.SANSTRAVAUX:
                 self._sans_travaux_end_date_validation(annee_fin_conventionnement)
@@ -221,7 +221,7 @@ class BasePretFormSet(BaseFormSet):
     def manage_cdc_validation(self):
         if (
             self.convention is not None
-            and self.convention.financement != Financement.PLS
+            and self.convention.lot.financement != Financement.PLS
             and self.convention.programme.type_operation != TypeOperation.SANSTRAVAUX
         ):
             for form in self.forms:
