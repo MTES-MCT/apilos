@@ -36,12 +36,15 @@ def get_text_and_files_from_field(name, field):
     if field:
         try:
             object_field = json.loads(field)
+            # Fix potentially malformed JSON
+            if type(object_field['files']) is not dict:
+                object_field['files'] = {}
         except json.decoder.JSONDecodeError:
             object_field = {
                 "files": {},
                 "text": field if isinstance(field, str) else "",
             }
-        files = {k: v for k, v in object_field["files"].items() if is_valid_uuid(k)}
+        files = {k: v for k, v in object_field.get("files", files).items() if is_valid_uuid(k)}
     returned_files = {}
     for file in UploadedFile.objects.filter(uuid__in=files):
         returned_files[str(file.uuid)] = {
