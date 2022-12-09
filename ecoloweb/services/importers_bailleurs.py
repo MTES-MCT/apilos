@@ -20,23 +20,23 @@ class BailleurImporter(ModelImporter):
     def _get_identity_keys(self) -> List[str]:
         return ['siret']
 
-    # def _prepare_data(self, data: dict) -> dict:
-    #     codesiret = data.pop('codesiret')
-    #     codesiren = data.pop('codesiren')
-    #     codepersonne = data.pop('codepersonne')
-    #     date_creation = data['cree_le']
-    #
-    #     #
-    #     if codesiret is not None:
-    #         data['siret'] = codesiret
-    #
-    #     elif (siret := self._siret_resolver.resolve(codesiren, date_creation)) is not None:
-    #         data['siret'] = siret
-    #
-    #     elif codesiren is not None:
-    #         data['siret'] = codesiren
-    #
-    #     else:
-    #         data['siret'] = codepersonne
-    #
-    #     return data
+    def _prepare_data(self, data: dict) -> dict:
+        codesiret = data.pop('codesiret')
+        codesiren = data.pop('codesiren')
+        codepersonne = data.pop('codepersonne')
+        date_creation = data['cree_le']
+
+        #
+        if codesiret is not None:
+            data['siret'] = codesiret
+
+        #elif (siret := self._siret_resolver.resolve(codesiren, date_creation)) is not None:
+        #    data['siret'] = siret
+
+        elif codesiren is not None:
+            data['siret'] = codesiren
+
+        else:
+            data['siret'] = codepersonne
+
+        return data

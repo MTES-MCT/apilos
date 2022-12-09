@@ -96,7 +96,7 @@ class ModelImporter(ABC):
         return Template(self._get_file_content(path)) \
             .render(Context(context | {'timezone': timezone.get_current_timezone()}))
 
-    def _find_existing_model(self, data: dict) -> Optional[Model]:
+    def _find_existing_model(self, id) -> Optional[Model]:
         """
         Based on input data, attempts to extract an existing EcoloReference, using the `ecolo_id_field` defined as
         attribute and, if found, resolve it. See EcoloReference class model definition to understand how it works.
@@ -104,31 +104,26 @@ class ModelImporter(ABC):
         The external reference in the Ecoloweb database is a string, as sometimes there is no other choice than to use a
         hashed value (like `md5` for Programe Lots for example).
         """
-        if self.ecolo_id_field in data:
-            ref = EcoloReference.objects.filter(
-                apilos_model=EcoloReference.get_class_model_name(self.model),
-                ecolo_id=data[self.ecolo_id_field]
-            ).first()
-            if ref is not None:
-                return ref.resolve()
+        ref = EcoloReference.objects.filter(
+            apilos_model=EcoloReference.get_class_model_name(self.model),
+            ecolo_id=id
+        ).first()
 
-        return None
+        return ref.resolve() if ref is not None else None
 
     def _register_ecolo_reference(
             self,
             instance: Model,
             ecolo_id: int,
-            id: Optional[int] = None
+            id: int | None = None
     ):
         """
         Create and save an EcoloReference model to mark an entity from the Ecoloweb database as imported
         """
-        apilos_id = id if id is not None else instance.id
-
         EcoloReference.objects.create(
             apilos_model=EcoloReference.get_instance_model_name(instance),
             ecolo_id=str(ecolo_id),
-            apilos_id=apilos_id,
+            apilos_id=id if id is not None else instance.id,
             departement=self.departement,
             importe_le=self.import_date
         )
@@ -165,12 +160,8 @@ class ModelImporter(ABC):
         """
         if self._o2o_importers is not None:
             for key, importer in self._o2o_importers.items():
-                # First, try to resolve key suffixed by `_id` ...
-                if f'{key}_id' in data:
-                    data[key] = importer.import_one(data.pop(f'{key}_id'))
-                # ... else try to resolve key with its plain name
-                elif key in data:
-                    data[key] = importer.import_one(data.pop(key))
+                # Try to resolve key suffixed by `_id` first, else try key as it is
+                data[key] = importer.import_one(data.pop(f'{key}_id' if f'{key}_id' in data else key))
 
         return data
 
@@ -211,7 +202,7 @@ class ModelImporter(ABC):
         self._debug(f'Prcessing result {data} for handler {self.__class__.__name__}')
 
         # Look for a potentially already imported model
-        instance = self._find_existing_model(data)
+        instance = self._find_existing_model(data[self.ecolo_id_field]) if self.ecolo_id_field in data else None
         created = False
         # If model wasn't imported yet, import it now
         if instance is None:
@@ -239,9 +230,9 @@ class ModelImporter(ABC):
                 self._register_ecolo_reference(instance, ecolo_id)
                 self._nb_imported_models += 1
 
-            if created:
-                # Import one-to-many models
-                self._fetch_related_o2m_objects(ecolo_id)
+
+        # Import one-to-many models
+        self._fetch_related_o2m_objects(ecolo_id)
 
         return instance
 
@@ -249,7 +240,12 @@ class ModelImporter(ABC):
         """
         Public entry point method to fetch a model from the Ecoloweb database based on its primary key
         """
-        return self.process_result(self._query_single_row(pk))
+        model = self._find_existing_model(pk)
+
+        if model is None:
+            model = self.process_result(self._query_single_row(pk))
+
+        return model
 
     def _query_single_row(self, pk) -> Optional[Dict]:
         """
