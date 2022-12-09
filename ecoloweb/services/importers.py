@@ -96,7 +96,7 @@ class ModelImporter(ABC):
         return Template(self._get_file_content(path)) \
             .render(Context(context | {'timezone': timezone.get_current_timezone()}))
 
-    def _find_existing_model(self, id) -> Optional[Model]:
+    def _find_ecolo_ref(self, id) -> EcoloReference | None:
         """
         Based on input data, attempts to extract an existing EcoloReference, using the `ecolo_id_field` defined as
         attribute and, if found, resolve it. See EcoloReference class model definition to understand how it works.
@@ -104,12 +104,10 @@ class ModelImporter(ABC):
         The external reference in the Ecoloweb database is a string, as sometimes there is no other choice than to use a
         hashed value (like `md5` for Programe Lots for example).
         """
-        ref = EcoloReference.objects.filter(
+        return EcoloReference.objects.filter(
             apilos_model=EcoloReference.get_class_model_name(self.model),
             ecolo_id=id
         ).first()
-
-        return ref.resolve() if ref is not None else None
 
     def _register_ecolo_reference(
             self,
@@ -202,10 +200,10 @@ class ModelImporter(ABC):
         self._debug(f'Prcessing result {data} for handler {self.__class__.__name__}')
 
         # Look for a potentially already imported model
-        instance = self._find_existing_model(data[self.ecolo_id_field]) if self.ecolo_id_field in data else None
+        ecolor_ref = self._find_ecolo_ref(data[self.ecolo_id_field]) if self.ecolo_id_field in data else None
         created = False
         # If model wasn't imported yet, import it now
-        if instance is None:
+        if ecolor_ref is None:
             # Extract from data the id of the associated object in the Ecoloweb DB (in string format as it can be a
             # hash function like for programme lots)
             ecolo_id = data.pop(self.ecolo_id_field)
@@ -229,7 +227,9 @@ class ModelImporter(ABC):
                 # ...and mark it as imported
                 self._register_ecolo_reference(instance, ecolo_id)
                 self._nb_imported_models += 1
-
+        else:
+            ecolo_id = ecolor_ref.ecolo_id
+            instance = ecolor_ref.resolve()
 
         # Import one-to-many models
         self._fetch_related_o2m_objects(ecolo_id)
@@ -240,12 +240,9 @@ class ModelImporter(ABC):
         """
         Public entry point method to fetch a model from the Ecoloweb database based on its primary key
         """
-        model = self._find_existing_model(pk)
+        ecolo_ref = self._find_ecolo_ref(pk)
 
-        if model is None:
-            model = self.process_result(self._query_single_row(pk))
-
-        return model
+        return self.process_result(self._query_single_row(pk)) if ecolo_ref is None else ecolo_ref.resolve()
 
     def _query_single_row(self, pk) -> Optional[Dict]:
         """
