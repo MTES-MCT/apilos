@@ -218,6 +218,9 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .apilos-icon-success {
   color: var(--background-action-high-success);
 }
+.apilos-overflow-hidden {
+  overflow: hidden;
+}
 .dropdown-menu.apilos-dropdown-menu {
   z-index: 100000;
 }

@@ -13,8 +13,8 @@
                         <div class="fr-card fr-card--no-arrow fr-p-4w fr-mb-3w">
                             <div class="fr-grid-row">
                                 <div class="fr-col-1 fr-my-auto"><span class="fr-icon-success-line apilos-icon-success fr-icon--lg" aria-hidden="true"></span></div>
-                                <div class="fr-col-7">
-                                    <div class="fr-mb-1w fr-text--bold">
+                                <div class="fr-col-7 fr-pr-1w">
+                                    <div class="fr-mb-1w fr-text--bold apilos-overflow-hidden">
                                         {{convention.programme.nom}}
                                     </div>
                                     {{convention.programme.ville}} - <strong>{{ convention.lot.financement|default_if_none:'' }}</strong>
@@ -25,7 +25,8 @@
                             </div>
                         </div>
                         {% if convention|display_create_avenant %}
-                            <a class='fr-btn fr-mr-3w fr-mb-5w' href="{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}">Créer un avenant</a>
+                            <a class='fr-btn fr-mr-3w fr-mb-5w' href="{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}">Créer un avenant
+                                <span class="fr-icon-arrow-right-s-line fr-ml-1w" aria-hidden="true"></span></a>
                         {% else %}
                             <p>Un avenant est déjà en cours.
                                 <a class="fr-link fr-mb-5w" href="{% url 'conventions:post_action' convention_uuid=convention.uuid  %}">Aller à la convention et ses avenants</a>

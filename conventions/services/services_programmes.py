@@ -1,6 +1,9 @@
+import datetime
+
 from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import timezone
 from django.conf import settings
 from django.db.models.query import QuerySet
 
@@ -34,6 +37,9 @@ from programmes.forms import (
     LogementEDDFormSet,
     ReferenceCadastraleFormSet,
 )
+
+from upload.services import UploadService
+
 from . import utils
 from . import upload_objects
 
@@ -75,6 +81,7 @@ class ConventionSelectionService:
     def post_from_zero(self):
         self.form = ProgrammeSelectionFromZeroForm(
             self.request.POST,
+            self.request.FILES,
             bailleurs=self._get_bailleur_choices(),
             administrations=self._get_administration_choices(),
         )
@@ -117,6 +124,19 @@ class ConventionSelectionService:
             )
             _send_email_staff(self.request, self.convention)
             self.convention.save()
+            file = self.request.FILES.get("nom_fichier_signe", False)
+            print(self.form.cleaned_data, self.request.FILES)
+            if file:
+                now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+                filename = f"{now}_convention_{self.convention.uuid}_signed.pdf"
+                upload_service = UploadService(
+                    convention_dirpath=f"conventions/{self.convention.uuid}/convention_docs",
+                    filename=filename,
+                )
+                upload_service.upload_file(file)
+                self.convention.nom_fichier_signe = filename
+                self.convention.televersement_convention_signee_le = timezone.now()
+                self.convention.save()
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def get_from_db(self):
