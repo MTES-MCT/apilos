@@ -35,6 +35,8 @@ class ModelImporter(ABC):
         self.debug = debug
         self.departement = departement
         self.import_date = import_date
+        self._query_one = self._get_query_one()
+        self._query_many = self._get_query_many()
         self._o2o_importers: Dict[ModelImporter] | None = None
         if len(self._get_o2o_dependencies()) > 0:
             self._o2o_importers = {}
@@ -65,14 +67,13 @@ class ModelImporter(ABC):
         """
         raise NotImplementedError
 
-    @abstractmethod
-    def _get_sql_one_query(self) -> str:
+    def _get_query_one(self) -> str | None:
         """
         Base method to declare SQL query for single model.
         """
-        pass
+        return None
 
-    def _get_sql_many_query(self) -> Optional[str]:
+    def _get_query_many(self) -> Optional[str]:
         """
         Method to declare SQL query for many to one models.
         """
@@ -239,7 +240,7 @@ class ModelImporter(ABC):
                 self._nb_imported_models += 1
 
             if created:
-                # Import one to many models
+                # Import one-to-many models
                 self._fetch_related_o2m_objects(ecolo_id)
 
         return instance
@@ -248,15 +249,18 @@ class ModelImporter(ABC):
         """
         Public entry point method to fetch a model from the Ecoloweb database based on its primary key
         """
-        return self.process_result(self._query_single_row([pk]))
+        return self.process_result(self._query_single_row(pk))
 
-    def _query_single_row(self, parameters: List) -> Optional[Dict]:
+    def _query_single_row(self, pk) -> Optional[Dict]:
         """
         Execute a SQL query returning a single result, as dict
         """
+        if self._query_one is None:
+            return None
+
         start = time.time()
         self._debug(f'Start query for handler {self.__class__.__name__}')
-        self._db_connection.execute(self._get_sql_one_query(), parameters)
+        self._db_connection.execute(self._query_one, [pk])
         stop = time.time()
         self._debug(f'End query for handler {self.__class__.__name__} ({stop - start})')
 
@@ -269,10 +273,10 @@ class ModelImporter(ABC):
         """
         Public entry point method to fetch a list of models from the Ecoloweb database based on its foreign key
         """
-        if self._get_sql_many_query() is not None:
+        if self._query_many is not None:
             iterator = QueryResultIterator(
                 self._db_connection,
-                self._get_sql_many_query(),
+                self._get_query_many(),
                 [fk]
             )
 

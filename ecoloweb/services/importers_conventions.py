@@ -7,7 +7,7 @@ from .query_iterator import QueryResultIterator
 class ConventionImporter(ModelImporter):
     model = Convention
 
-    def _get_sql_one_query(self) -> str:
+    def _get_query_one(self) -> str:
         # No base query as conventions are never requested individually
         return ''
 
