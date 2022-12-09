@@ -87,6 +87,10 @@ class ProgrammeSelectionFromZeroForm(forms.Form):
     statut = forms.CharField(
         required=False,
     )
+    numero = forms.CharField(
+        required=False,
+        label="Numéro de convention",
+    )
     nom_fichier_signe = forms.FileField(
         required=False,
     )

@@ -121,6 +121,11 @@ class ConventionSelectionService:
                     if self.form.cleaned_data["statut"]
                     else ConventionStatut.PROJET
                 ),
+                numero=(
+                    self.form.cleaned_data["numero"]
+                    if self.form.cleaned_data["numero"]
+                    else ""
+                ),
             )
             _send_email_staff(self.request, self.convention)
             self.convention.save()

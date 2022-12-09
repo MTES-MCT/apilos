@@ -26,6 +26,9 @@
             <div class="fr-col-12 fr-col-lg-6 fr-mb-2w">
                 {% include "common/form/input_select.html" with form_input=form.type_habitat mandatory_input=True %}
             </div>
+            <div class="fr-col-12 fr-mb-2w">
+                {% include "common/form/input_text.html" with form_input=form.numero mandatory_input=True %}
+            </div>
         </div>
         <input id="id_statut" name="statut" value="SIGNEE" hidden>
         <div class="fr-upload-group">
