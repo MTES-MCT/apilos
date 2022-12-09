@@ -130,7 +130,6 @@ class ConventionSelectionService:
             _send_email_staff(self.request, self.convention)
             self.convention.save()
             file = self.request.FILES.get("nom_fichier_signe", False)
-            print(self.form.cleaned_data, self.request.FILES)
             if file:
                 now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
                 filename = f"{now}_convention_{self.convention.uuid}_signed.pdf"
