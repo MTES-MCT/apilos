@@ -1,8 +1,9 @@
 import os
 import time
 from datetime import datetime
+from inspect import isclass
 
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Type
 from abc import ABC, abstractmethod
 
 from django.db import connections
@@ -26,7 +27,7 @@ class ModelImporter(ABC):
     Thus, if one Ecolo entity has already been imported, changes that may have
     occurred in the meantime in the Ecolo database won't be echoed to the APiLos database /!\
     """
-    ecolo_id_field = 'id'
+    ecolo_id_field: str = 'id'
 
     def __init__(self, departement: str, import_date: datetime, debug=False):
         self._nb_imported_models: int = 0
@@ -34,6 +35,25 @@ class ModelImporter(ABC):
         self.debug = debug
         self.departement = departement
         self.import_date = import_date
+        self._o2o_importers: Dict[ModelImporter] | None = None
+        if len(self._get_o2o_dependencies()) > 0:
+            self._o2o_importers = {}
+            for key, dependency in self._get_o2o_dependencies().items():
+                if not isclass(dependency):
+                    raise ValueError(f'{dependency} must be a subclass of ModelImporter')
+                if not issubclass(dependency, ModelImporter):
+                    raise ValueError(f'{dependency} must be a subclass of ModelImporter')
+                self._o2o_importers[key] = dependency(self.departement, self.import_date, self.debug)
+
+        self._o2m_importers: List[ModelImporter] | None = None
+        if len(self._get_o2m_dependencies()) > 0:
+            self._o2m_importers = []
+            for dependency in self._get_o2m_dependencies():
+                if not isclass(dependency):
+                    raise ValueError(f'{dependency} must be a subclass of ModelImporter')
+                if not issubclass(dependency, ModelImporter):
+                    raise ValueError(f'{dependency} must be a subclass of ModelImporter')
+                self._o2m_importers.append(dependency(self.departement, self.import_date, self.debug))
 
     @property
     @abstractmethod
@@ -128,7 +148,7 @@ class ModelImporter(ABC):
 
         return {}
 
-    def _get_o2o_dependencies(self):
+    def _get_o2o_dependencies(self) -> Dict:
         """
         Return a dict of key -> ModelImportHandler
 
@@ -142,32 +162,34 @@ class ModelImporter(ABC):
         Hydrate the `data` dict by replacing external references (i.e. foreign keys) with the target
         object by using the _dependencies_ importers defined using `_get_dependencies`
         """
-        for key, importer in self._get_o2o_dependencies().items():
-            # First, try to resolve key suffixed by `_id` ...
-            if f'{key}_id' in data:
-                data[key] = importer.import_one(data.pop(f'{key}_id'))
-            # ... else try to resolve key with its plain name
-            elif key in data:
-                data[key] = importer.import_one(data.pop(key))
+        if self._o2o_importers is not None:
+            for key, importer in self._o2o_importers.items():
+                # First, try to resolve key suffixed by `_id` ...
+                if f'{key}_id' in data:
+                    data[key] = importer.import_one(data.pop(f'{key}_id'))
+                # ... else try to resolve key with its plain name
+                elif key in data:
+                    data[key] = importer.import_one(data.pop(key))
 
         return data
 
-    def _get_o2m_dependencies(self):
+    def _get_o2m_dependencies(self) -> List:
         """
-        Return a dict of key -> ModelImportHandler
+        Return a list of ModelImporter subclasses
 
         This will replace fields with key `key` by their related model via the call of the related
-        ModelImportHandler.import_one()
+        ModelImporter.import_many(pk)
         """
-        return {}
+        return []
 
     def _fetch_related_o2m_objects(self, pk):
         """
 
         """
-        for _, importer in self._get_o2m_dependencies().items():
-            self._debug(f'Fetching o2m objects {importer.__class__.__name__} from {self.__class__.__name__} with FK {pk}')
-            importer.import_many(pk)
+        if self._o2m_importers is not None:
+            for importer in self._o2m_importers:
+                self._debug(f'Fetching o2m objects {importer.__class__.__name__} from {self.__class__.__name__} with FK {pk}')
+                importer.import_many(pk)
 
     def _prepare_data(self, data: dict) -> dict:
         """
