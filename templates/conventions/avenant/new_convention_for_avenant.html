@@ -1,7 +1,7 @@
 <div class="fr-col-12">
     <h2>Informations générales</h2>
     <p>Nous n'avons pas trouvé de convention correspondant à votre recherche.</p>
-    <p>Pour créer votre avenant, merci de compléter ces quelques informations sur la convention originale.</p>
+    <p>Pour créer votre avenant, merci de compléter ces quelques informations de la convention originale ou du dernier avenant.</p>
 </div>
 <form method="post" action="" enctype="multipart/form-data" >
     {% csrf_token %}
@@ -32,11 +32,11 @@
             </div>
         </div>
         <input id="id_statut" name="statut" value="SIGNEE" hidden>
-        <div class="fr-upload-group">
-            <label class="fr-label" for="file-upload">Ajouter des fichiers
+        <div class="fr-upload-group fr-mt-5w">
+            <label class="fr-label" for="file-upload">Téléverser la convention (en PDF) {% include "common/form/required_field_star.html" %}
                 <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
             </label>
-            <input class="fr-upload" type="file" id="file-upload" name="nom_fichier_signe" >
+            <input class="fr-upload" type="file" id="file-upload" name="nom_fichier_signe" required>
         </div>
     </div>
     <div class="form-button-footer fr-py-5w">

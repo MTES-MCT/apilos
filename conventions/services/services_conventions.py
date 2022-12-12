@@ -22,6 +22,7 @@ from conventions.forms import (
     ConventionResiliationForm,
     ConventionType1and2Form,
     AvenantForm,
+    AvenantsforavenantForm,
     NotificationForm,
     PretFormSet,
     UploadForm,
@@ -93,14 +94,16 @@ def conventions_index(request):
 
 # .
 def search_result(request):
-    departement = request.GET["departement"]
-    annee = request.GET["annee"]
-    num = request.GET["num"]
-    conventions = request.user.conventions().filter(
-        programme__code_postal__startswith=departement,
-        valide_le__year=annee,
-        numero__endswith=num,
-    )
+    departement = request.GET.get("departement", None)
+    annee = request.GET.get("annee", None)
+    num = request.GET.get("num", None)
+    conventions = []
+    if departement and annee and num:
+        conventions = request.user.conventions().filter(
+            programme__code_postal__startswith=departement,
+            valide_le__year=annee,
+            numero__endswith=num,
+        )
     return {"conventions": conventions}
 
 
@@ -700,6 +703,40 @@ def create_avenant(request, convention_uuid):
             }
     else:
         avenant_form = AvenantForm()
+
+    return {
+        "success": utils.ReturnStatus.ERROR,
+        "editable": request.user.has_perm("convention.add_convention"),
+        "bailleurs": request.user.bailleurs(),
+        "form": avenant_form,
+        "parent_convention": parent_convention,
+    }
+
+
+def create_avenants_for_avenant(request, convention_uuid):
+    parent_convention = (
+        Convention.objects.prefetch_related("programme")
+        .prefetch_related("lot")
+        .prefetch_related("avenants")
+        .get(uuid=convention_uuid)
+    )
+    if request.method == "POST":
+        avenant_form = AvenantsforavenantForm(request.POST)
+        if avenant_form.is_valid():
+            convention_to_clone = _get_last_avenant(parent_convention)
+            avenant = convention_to_clone.clone(
+                request.user, convention_origin=parent_convention
+            )
+            avenant_types = avenant_form.cleaned_data.get("avenant_types")
+            avenant.save()
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "convention": avenant,
+                "parent_convention": parent_convention,
+                "avenant_types": avenant_types,
+            }
+    else:
+        avenant_form = AvenantsforavenantForm()
 
     return {
         "success": utils.ReturnStatus.ERROR,

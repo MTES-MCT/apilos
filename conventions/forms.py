@@ -415,3 +415,13 @@ class AvenantForm(forms.Form):
         choices=AvenantType.get_as_choices,
         required=True,
     )
+
+
+class AvenantsforavenantForm(forms.Form):
+
+    avenant_types = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        label="Type d'avenant",
+        choices=AvenantType.get_as_choices,
+        required=True,
+    )

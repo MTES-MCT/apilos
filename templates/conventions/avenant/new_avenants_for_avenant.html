@@ -1,0 +1,24 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %} Téléverser les avenants{% endblock%}
+
+{% load static %}
+
+{% block content %}
+    <div class="fr-col-12">
+        <h2 class="fr-text--lg">Téleverser l'avenant</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <!-- <div class="fr-upload-group fr-mt-5w">
+                <label class="fr-label" for="file-upload">Téléverser la convention (en PDF) {% include "common/form/required_field_star.html" %}
+                    <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
+                </label>
+                <input class="fr-upload" type="file" id="file-upload" name="nom_fichier_signe" required>
+            </div>
+            <button class="fr-btn fr-btn--secondary fr-icon-eye-line fr-btn--icon-left">Créer l'avenant</button> -->
+            <input type='submit' value='submit'>
+        </form>
+    </div>
+{% endblock %}
+

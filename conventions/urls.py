@@ -164,4 +164,9 @@ urlpatterns = [
         ),
         name="search_for_avenant_result",
     ),
+    path(
+        "new_avenants_for_avenant/<convention_uuid>",
+        views.new_avenants_for_avenant,
+        name="new_avenants_for_avenant",
+    ),
 ]
