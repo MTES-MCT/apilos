@@ -18,6 +18,7 @@ from comments.models import Comment, CommentStatut
 from conventions.forms import (
     ConventionCommentForm,
     ConventionFinancementForm,
+    ConventionFoyerAttributionForm,
     ConventionNumberForm,
     ConventionResiliationForm,
     ConventionType1and2Form,
@@ -698,14 +699,8 @@ def create_avenant(request, convention_uuid):
 
 
 class ConventionFinancementService(ConventionService):
-    convention: Convention
-    request: HttpRequest
     form: ConventionFinancementForm
-    formset = None
     upform: UploadForm = UploadForm()
-    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
-    redirect_recap: bool = False
-    editable_after_upload: bool = False
 
     def get(self):
         initial = []
@@ -879,9 +874,22 @@ class ConventionFinancementService(ConventionService):
             pret.save()
 
 
+class ConventionFoyerAttributionService(ConventionService):
+    form: ConventionFoyerAttributionForm
+    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
+
+    def get(self):
+        self.form = ConventionFoyerAttributionForm(
+            initial={
+                "uuid": self.convention.uuid,
+                "attribution_foyer": True,
+                "attribution_type": "agees"
+                # "attribution_foyer": self.convention.attribution_foyer,
+            }
+        )
+
+
 class ConventionCommentsService(ConventionService):
-    convention: Convention
-    request: HttpRequest
     form: ConventionCommentForm
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
 

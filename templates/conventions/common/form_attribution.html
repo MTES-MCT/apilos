@@ -1,0 +1,156 @@
+{% load custom_filters %}
+
+{% csrf_token %}
+
+<input
+    type="hidden"
+    id="{{form.uuid.id_for_label}}"
+    name="{{form.uuid.html_name}}"
+    value="{{ form.uuid.value|default_if_none:'' }}">
+<div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-md-12">
+        <h3>Conditions d'attribution et d'occupation permanente du logement-foyer</h3>
+
+        {% comment %} <p>Le gestionnaire s'engage à réserver le logement-foyer :</p>
+            <h4>Soit aux personnes âgées seules ou en ménage dans l'établissement suivant :</h4>
+            <p>[cocher la case prévue selon le type d'établissement retenu] : à cocher</p>
+            {% include "common/form/input_checkbox.html" with form_input=form.attribution_agees_autonomie object_field="convention__attribution_agees_autonomie__"|add:form.uuid.value %}
+            {% include "common/form/input_checkbox.html" with form_input=form.attribution_agees_ephad object_field="convention__attribution_agees_ephad__"|add:form.uuid.value %}
+            {% include "common/form/input_checkbox.html" with form_input=form.attribution_agees_desorientees object_field="convention__attribution_agees_desorientees__"|add:form.uuid.value %}
+            {% include "common/form/input_checkbox.html" with form_input=form.attribution_agees_petite_unite object_field="convention__attribution_agees_petite_unite__"|add:form.uuid.value %}
+            {% include "common/form/input_checkbox.html" with form_input=form.attribution_agees_autre object_field="convention__attribution_agees_autre__"|add:form.uuid.value %}
+            {% include "common/form/input_text.html" with form_input=form.attribution_agees_autre_detail object_field="convention__attribution_agees_autre_detail__"|add:form.uuid.value %}
+            <h4>Soit aux personnes handicapées seules ou en ménage dans l'établissement suivant :</h4>
+            [cocher la case prévue selon le type d'établissement retenu] : à cocher<br>
+            {% include "common/form/input_checkbox.html" with form_input=form.attribution_handicapes_foyer object_field="convention__attribution_handicapes_foyer__"|add:form.uuid.value %}
+            {% include "common/form/input_checkbox.html" with form_input=form.attribution_handicapes_foyer_de_vie object_field="convention__attribution_handicapes_foyer_de_vie__"|add:form.uuid.value %}
+            {% include "common/form/input_checkbox.html" with form_input=form.attribution_handicapes_foyer_medicalise object_field="convention__attribution_handicapes_foyer_medicalise__"|add:form.uuid.value %}
+            {% include "common/form/input_checkbox.html" with form_input=form.attribution_handicapes_autre object_field="convention__attribution_handicapes_autre__"|add:form.uuid.value %}
+            {% include "common/form/input_text.html" with form_input=form.attribution_handicapes_autre_detail object_field="convention__attribution_handicapes_autre_detail__"|add:form.uuid.value %}
+            <h4>Soit aux personnes en situation de perte d’autonomie liée à l’âge ou au handicap seules ou en ménage :</h4>
+            □ Habitat inclusif.<br>
+
+            Si HABITAT INCLUSIF :<br>
+            Conditions spécifiques d'accueil : à remplir
+            Conditions d'admission dans l’habitat inclusif : à remplir
+            Modalités d'attribution : à remplir
+            Partenariats concourant à la mise en œuvre du projet de vie sociale et partagée mis en place : à remplir
+            Activités proposées à l’ensemble des résidents dans le cadre du projet de vie sociale et partagée : à remplir {% endcomment %}
+
+        <div class="fr-form-group">
+            <fieldset class="fr-fieldset">
+                <legend class="fr-fieldset__legend fr-text--regular" id='radio-hint-element-legend'>
+                    Le gestionnaire s'engage à réserver le logement-foyer :
+                </legend>
+                <div class="fr-fieldset__content">
+                    <div class="fr-radio-group">
+                        <input
+                            type="radio"
+                            id="{{form.attribution_type.html_name}}-agees"
+                            value="agees"
+                            name="{{form.attribution_type.html_name}}"
+                            {% if form.attribution_type.value == 'agees' %}checked{% endif %}>
+                        <label class="fr-label fr-h4" for="{{form.attribution_type.html_name}}-agees">Aux personnes âgées seules ou en ménage
+                            {% comment %} <span class="fr-hint-text">Texte de description additionnel</span> {% endcomment %}
+                        </label>
+                    </div>
+                    <div id="{{form.attribution_type.html_name}}-agees-details">
+                        <p>[cocher la case prévue selon le type d'établissement retenu] : à cocher</p>
+                        {% include "common/form/input_checkbox.html" with form_input=form.attribution_agees_autonomie object_field="convention__attribution_agees_autonomie__"|add:form.uuid.value %}
+                        {% include "common/form/input_checkbox.html" with form_input=form.attribution_agees_ephad object_field="convention__attribution_agees_ephad__"|add:form.uuid.value %}
+                        {% include "common/form/input_checkbox.html" with form_input=form.attribution_agees_desorientees object_field="convention__attribution_agees_desorientees__"|add:form.uuid.value %}
+                        {% include "common/form/input_checkbox.html" with form_input=form.attribution_agees_petite_unite object_field="convention__attribution_agees_petite_unite__"|add:form.uuid.value %}
+                        {% include "common/form/input_checkbox.html" with form_input=form.attribution_agees_autre object_field="convention__attribution_agees_autre__"|add:form.uuid.value %}
+                        {% include "common/form/input_text.html" with form_input=form.attribution_agees_autre_detail object_field="convention__attribution_agees_autre_detail__"|add:form.uuid.value %}
+                    </div>
+                    <div class="fr-radio-group">
+                        <input
+                            type="radio"
+                            id="{{form.attribution_type.html_name}}-handicapees"
+                            value="handicapees"
+                            name="{{form.attribution_type.html_name}}"
+                            {% if form.attribution_type.value == 'handicapees' %}checked{% endif %}>
+                        <label class="fr-label fr-h4" for="{{form.attribution_type.html_name}}-handicapees">Aux personnes handicapées seules ou en ménage
+                        </label>
+                    </div>
+                    <div id="{{form.attribution_type.html_name}}-handicapees-details">
+                        <p>[cocher la case prévue selon le type d'établissement retenu] : à cocher</p>
+                        {% include "common/form/input_checkbox.html" with form_input=form.attribution_handicapes_foyer object_field="convention__attribution_handicapes_foyer__"|add:form.uuid.value %}
+                        {% include "common/form/input_checkbox.html" with form_input=form.attribution_handicapes_foyer_de_vie object_field="convention__attribution_handicapes_foyer_de_vie__"|add:form.uuid.value %}
+                        {% include "common/form/input_checkbox.html" with form_input=form.attribution_handicapes_foyer_medicalise object_field="convention__attribution_handicapes_foyer_medicalise__"|add:form.uuid.value %}
+                        {% include "common/form/input_checkbox.html" with form_input=form.attribution_handicapes_autre object_field="convention__attribution_handicapes_autre__"|add:form.uuid.value %}
+                        {% include "common/form/input_text.html" with form_input=form.attribution_handicapes_autre_detail object_field="convention__attribution_handicapes_autre_detail__"|add:form.uuid.value %}
+                    </div>
+                    <div class="fr-radio-group">
+                        <input
+                            type="radio"
+                            id="{{form.attribution_type.html_name}}-inclusif"
+                            value="inclusif"
+                            name="{{form.attribution_type.html_name}}"
+                            {% if form.attribution_type.value == 'inclusif' %}checked{% endif %}>
+                        <label class="fr-label fr-h4" for="{{form.attribution_type.html_name}}-inclusif">Habitat inclusif
+                            <span class="fr-hint-text">Aux personnes en situation de perte d’autonomie liée à l’âge ou au handicap seules ou en ménage</span>
+                        </label>
+                    </div>
+                    <div id="{{form.attribution_type.html_name}}-inclusif-details">
+                        {% include "common/form/input_textarea.html" with form_input=form.attribution_inclusif_conditions_specifiques object_field="convention__attribution_inclusif_conditions_specifiques__"|add:form.uuid.value mandatory_input=True %}
+                        {% include "common/form/input_textarea.html" with form_input=form.attribution_inclusif_conditions_admission object_field="convention__attribution_inclusif_conditions_admission__"|add:form.uuid.value mandatory_input=True %}
+                        {% include "common/form/input_textarea.html" with form_input=form.attribution_inclusif_modalites_attribution object_field="convention__attribution_inclusif_modalites_attribution__"|add:form.uuid.value mandatory_input=True %}
+                        {% include "common/form/input_textarea.html" with form_input=form.attribution_inclusif_partenariats object_field="convention__attribution_inclusif_partenariats__"|add:form.uuid.value mandatory_input=True %}
+                        {% include "common/form/input_textarea.html" with form_input=form.attribution_inclusif_activites object_field="convention__attribution_inclusif_activites__"|add:form.uuid.value mandatory_input=True %}
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+            document.addEventListener('DOMContentLoaded', function () {
+                radio_options = document.getElementsByName('attribution_type')
+                for (var i = 0;i<radio_options.length;i++) {
+                    if (!(radio_options[i].checked)) {
+                        document.getElementById('attribution_type-' + radio_options[i].value + '-details').hidden = true
+                    }
+                    radio_options[i].addEventListener('change', function(event) {
+                        if (event.target.value == 'agees' && event.target.checked){
+                            document.getElementById('attribution_type-agees-details').hidden = false
+                            document.getElementById('attribution_type-handicapees-details').hidden = true
+                            document.getElementById('attribution_type-inclusif-details').hidden = true
+                        }
+                        if (event.target.value == 'handicapees' && event.target.checked){
+                            document.getElementById('attribution_type-agees-details').hidden = true
+                            document.getElementById('attribution_type-handicapees-details').hidden = false
+                            document.getElementById('attribution_type-inclusif-details').hidden = true
+                        }
+                        if (event.target.value == 'inclusif' && event.target.checked){
+                            document.getElementById('attribution_type-agees-details').hidden = true
+                            document.getElementById('attribution_type-handicapees-details').hidden = true
+                            document.getElementById('attribution_type-inclusif-details').hidden = false
+                        }
+                    })
+                }
+            });
+        </script>
+        <hr>
+        Part de réservations préfectorales<br>
+        ++ La part des locaux à usage privatif réservés par le préfet est fixée à ... pourcentage de réservation préfectorale définit dans chaque département et chaque programme %<br><br>
+        {% include "common/form/input_textarea.html" with form_input=form.attribution_inclusif_activites object_field="convention__attribution_inclusif_activites__"|add:form.uuid.value %}
+
+        Modalités de gestion des reservations<br>
+        ++ les modalités de gestion de des réservations<br>
+        {% include "common/form/input_textarea.html" with form_input=form.attribution_inclusif_activites object_field="convention__attribution_inclusif_activites__"|add:form.uuid.value %}
+
+        Modalités de choix des personnes accueillies<br>
+        ++ les modalités de choix des personnes accueillies<br>
+        {% include "common/form/input_textarea.html" with form_input=form.attribution_inclusif_activites object_field="convention__attribution_inclusif_activites__"|add:form.uuid.value %}
+
+        Prestation intégrées dans la redevance<br>
+        ++ Les prestations obligatoirement intégrées dans la redevance et non prises en compte pour le calcul de l'APL (non prises en compte au titre des charges récupérables):<br><em>Liste</em><br>
+        {% include "common/form/input_textarea.html" with form_input=form.attribution_inclusif_activites object_field="convention__attribution_inclusif_activites__"|add:form.uuid.value %}
+
+        Prestion facultatives
+        ++ Les prestations facultatives à la demande du résident facturées séparément :<br><em>Liste</em><br><br>
+        {% include "common/form/input_textarea.html" with form_input=form.attribution_inclusif_activites object_field="convention__attribution_inclusif_activites__"|add:form.uuid.value %}
+
+    </div>
+</div>
+
+{% include "common/required_fields_info.html" %}

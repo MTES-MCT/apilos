@@ -32,6 +32,7 @@ from conventions.services.services_bailleurs import ConventionBailleurService
 from conventions.services.services_conventions import (
     ConventionCommentsService,
     ConventionFinancementService,
+    ConventionFoyerAttributionService,
     ConventionService,
     convention_delete,
     convention_feedback,
@@ -480,6 +481,12 @@ stationnements_step = ConventionFormStep(
     classname="ConventionTypeStationnementView",
 )
 
+foyer_attribution_step = ConventionFormStep(
+    pathname="conventions:attribution",
+    label="Attribution",
+    classname="ConventionFoyerAttributionView",
+)
+
 comments_step = ConventionFormStep(
     pathname="conventions:comments",
     label="Commentaires",
@@ -537,6 +544,7 @@ foyer_steps = [
     financement_step,
     logements_step,
     annexes_step,
+    foyer_attribution_step,
     comments_step,
 ]
 
@@ -846,6 +854,11 @@ class ConventionAnnexesView(ConventionView):
 
 class AvenantAnnexesView(ConventionAnnexesView):
     service_class = ConventionAnnexesService
+
+
+class ConventionFoyerAttributionView(ConventionView):
+    target_template: str = "conventions/attribution.html"
+    service_class = ConventionFoyerAttributionService
 
 
 class ConventionTypeStationnementView(ConventionView):

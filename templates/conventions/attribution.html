@@ -2,7 +2,9 @@
 
 {% load static %}
 
-{% block page_title %}Type de stationnements - APiLos{% endblock%}
+{% load custom_filters %}
+
+{% block page_title %}Annexes - APiLos{% endblock%}
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
@@ -16,11 +18,11 @@
             <form method="post" action="" enctype="multipart/form-data">
 
 
-                {% include "conventions/common/form_stationnements.html"%}
-
+                {% include "conventions/common/form_attribution.html" %}
                 <div class="form-button-footer fr-col-md-12 fr-py-5w">
                     {% if editable %}
                         {% include "common/button/next_and_save.html" %}
+                        {% comment %} FIXME manage previous using steps {% endcomment %}
                         {% include "common/button/previous.html" with precedent='conventions:annexes' convention_uuid=convention.uuid %}
                     {% else %}
                         {% include "common/button/noteditable_button.html"%}

@@ -13,6 +13,83 @@ from programmes.models import (
 from conventions.models import ConventionType1and2, Preteur, AvenantType
 
 
+class ConventionFoyerAttributionForm(forms.Form):
+
+    uuid = forms.UUIDField(
+        required=False,
+    )
+    attribution_type = forms.ChoiceField(choices=[("handicapees", "agees", "inclusif")])
+    # Foyer pour personnes handicapées
+    attribution_agees_autonomie = forms.BooleanField(
+        required=False,
+        label="Résidence autonomie",
+    )
+    attribution_agees_ephad = forms.BooleanField(
+        required=False,
+        label="Établissement hébergeant des personnes âgées dépendantes (EHPAD)",
+    )
+    attribution_agees_desorientees = forms.BooleanField(
+        required=False,
+        label="Unité pour personnes désorientées (unités Alzheimer, ...)",
+    )
+    attribution_agees_petite_unite = forms.BooleanField(
+        required=False,
+        label="Petite unité de vie (établissement de moins de 25 places autorisées)",
+    )
+    attribution_agees_autre = forms.BooleanField(
+        required=False,
+        label="Autres [préciser]",
+    )
+    attribution_agees_autre_detail = forms.CharField(
+        required=False,
+        label="",
+    )
+
+    # Foyer pour personnes handicapées
+    attribution_handicapes_foyer = forms.BooleanField(
+        required=False,
+        label="Foyer",
+    )
+    attribution_handicapes_foyer_de_vie = forms.BooleanField(
+        required=False,
+        label="Foyer de vie ou occupationnel",
+    )
+    attribution_handicapes_foyer_medicalise = forms.BooleanField(
+        required=False,
+        label="Foyer d'accueil médicalisé",
+    )
+    attribution_handicapes_autre = forms.BooleanField(
+        required=False,
+        label="Autres [préciser]",
+    )
+    attribution_handicapes_autre_detail = forms.CharField(
+        required=False,
+        label="",
+    )
+    attribution_inclusif_conditions_specifiques = forms.CharField(
+        required=False,  # True if Inclusif
+        label="Conditions spécifiques d'accueil",
+    )
+    attribution_inclusif_conditions_admission = forms.CharField(
+        required=False,  # True if Inclusif
+        label="Conditions d'admission dans l’habitat inclusif",
+    )
+    attribution_inclusif_modalites_attribution = forms.CharField(
+        required=False,  # True if Inclusif
+        label="Modalités d'attribution",
+    )
+    attribution_inclusif_partenariats = forms.CharField(
+        required=False,  # True if Inclusif
+        label="Partenariats concourant à la mise en œuvre du projet de vie sociale"
+        + " et partagée mis en place",
+    )
+    attribution_inclusif_activites = forms.CharField(
+        required=False,  # True if Inclusif
+        label="Activités proposées à l’ensemble des résidents dans le cadre du projet"
+        + " de vie sociale et partagée",
+    )
+
+
 class ConventionCommentForm(forms.Form):
 
     uuid = forms.UUIDField(

@@ -80,6 +80,11 @@ urlpatterns = [
         name="comments",
     ),
     path(
+        "attribution/<convention_uuid>",
+        views.ConventionFoyerAttributionView.as_view(),
+        name="attribution",
+    ),
+    path(
         "avenant_comments/<convention_uuid>",
         views.AvenantCommentsView.as_view(),
         name="avenant_comments",
