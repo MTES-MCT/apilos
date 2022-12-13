@@ -258,7 +258,7 @@ def display_is_resiliated(convention):
 
 @register.filter
 def display_spf_info(convention):
-    return convention.date_envoi_spf is not None or convention.date_envoi_spf is not None
+    return convention.date_envoi_spf is not None or convention.date_publication_spf is not None
 
 
 @register.filter
