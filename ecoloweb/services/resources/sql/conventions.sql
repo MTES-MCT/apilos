@@ -73,4 +73,5 @@ where
         group by pl2.conventiondonneesgenerales_id, ff2.libelle
         having count(distinct(pl2.commune_id)) > 1 or count(distinct(pl2.bailleurproprietaire_id)) > 1
     )
+order by cdg.datehistoriquedebut desc, cdg.datesignatureentitegest desc nulls last
 

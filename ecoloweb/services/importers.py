@@ -242,7 +242,15 @@ class ModelImporter(ABC):
         """
         ecolo_ref = self._find_ecolo_ref(pk)
 
-        return self.process_result(self._query_single_row(pk)) if ecolo_ref is None else ecolo_ref.resolve()
+        # If an EcoloReference has been found
+        if ecolo_ref is not None:
+            # Fetch related one to many objects (in case previous import had crashed)
+            self._fetch_related_o2m_objects(ecolo_ref.ecolo_id)
+            # and return linked model
+            return ecolo_ref.resolve()
+
+        # Otherwise perform SQL query and process result
+        return self.process_result(self._query_single_row(pk))
 
     def _query_single_row(self, pk) -> Optional[Dict]:
         """
