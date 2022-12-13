@@ -1,5 +1,4 @@
 import uuid
-from typing import Optional
 
 from django.db import models
 from django.db.models import Q
@@ -177,6 +176,12 @@ class Convention(models.Model):
     signataire_nom = models.CharField(max_length=255, null=True)
     signataire_fonction = models.CharField(max_length=255, null=True)
     signataire_date_deliberation = models.DateField(null=True)
+    # Champs liés au SPF (Service de Publication Foncière))
+    date_publication_spf = models.DateField(null=True)
+    reference_spf = models.CharField(max_length=50, null=True)
+    date_envoi_spf = models.DateField(null=True)
+    date_refus_spf = models.DateField(null=True)
+    motif_refus_spf = models.CharField(max_length=1000, null=True)
     # Missing option for :
 
     # La présente convention ne prévoyant pas de travaux, le bail entre en vigueur à la date de

@@ -1,24 +1,9 @@
 -- Requête pour alimenter la table conventions_convention
 
--- comments                           text
 -- fond_propre                        double precision
 -- type1and2                          varchar(25)
--- type2_lgts_concernes_option1       boolean                  not null
--- type2_lgts_concernes_option2       boolean                  not null
--- type2_lgts_concernes_option3       boolean                  not null
--- type2_lgts_concernes_option4       boolean                  not null
--- type2_lgts_concernes_option5       boolean                  not null
--- type2_lgts_concernes_option6       boolean                  not null
--- type2_lgts_concernes_option7       boolean                  not null
--- type2_lgts_concernes_option8       boolean                  not null
--- donnees_validees                   text
--- nom_fichier_signe                  varchar(255)
--- televersement_convention_signee_le timestamp with time zone
 -- avenant_type                       varchar(25)
 -- parent_id                          FK(conventions) i.e. les avenants
--- cree_par_id                        bigint
--- signataire_fonction                varchar(255)
--- signataire_nom                     varchar(255)
 select
     md5(c.id||'-'||pl.financement) as id,
     cdg.id as programme_id,
@@ -36,11 +21,21 @@ select
     cdg.datehistoriquefin as date_fin_conventionnement,
     -- Financement
     c.datedepot::timestamp at time zone 'Europe/Paris' as soumis_le,
-    cdg.datesignatureentitegest::timestamp at time zone 'Europe/Paris' as valide_le,
+     -- The latest non null signature date is the one considered as accurate
+    greatest(
+        cdg.datesignatureentitegest::timestamp at time zone 'Europe/Paris',
+        cdg.datesignaturebailleur::timestamp at time zone 'Europe/Paris',
+        cdg.datesignatureprefet::timestamp at time zone 'Europe/Paris'
+    ) as valide_le,
     c.datesaisie::timestamp at time zone 'Europe/Paris' as cree_le,
     c.datemodification::timestamp at time zone 'Europe/Paris' as mis_a_jour_le,
     cdg.datesignatureentitegest::timestamp at time zone 'Europe/Paris' as premiere_soumission_le,
-    cdg.dateresiliationprefet as date_resiliation
+    cdg.dateresiliationprefet as date_resiliation,
+    cdg.datepublication as date_publication_spf,
+    cdg.referencepublication as reference_spf,
+    cdg.datepublication as date_envoi_spf,
+    cdg.daterefushypotheque as date_refus_spf,
+    cdg.motifrefushypotheque as motif_refus_spf
 from ecolo.ecolo_conventionapl c
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.id = cdg.conventionapl_id and cdg.avenant_id is null
     inner join ecolo.ecolo_valeurparamstatic pec on cdg.etatconvention_id = pec.id and pec.subtype = 'ECO' -- Etat de la convention
