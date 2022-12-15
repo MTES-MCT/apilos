@@ -27,12 +27,12 @@ from core.storage import client
 from upload.services import UploadService
 from conventions.models import Convention, ConventionStatut, PieceJointe
 from conventions.permissions import has_campaign_permission
+from conventions.services.attribution import ConventionFoyerAttributionService
 from conventions.services.convention_generator import fiche_caf_doc
 from conventions.services.services_bailleurs import ConventionBailleurService
 from conventions.services.services_conventions import (
     ConventionCommentsService,
     ConventionFinancementService,
-    ConventionFoyerAttributionService,
     ConventionService,
     convention_delete,
     convention_feedback,

@@ -68,4 +68,9 @@
             {{ error }}
         </p>
     {% endfor %}
+    {% if is_list %}
+        <p class="fr-mb-3w fr-text--xs notes">
+            Ce champ sera affiché comme une liste, chaque ligne sera un item de la liste.
+        </p>
+    {% endif %}
 </div>

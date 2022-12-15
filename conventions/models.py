@@ -199,6 +199,52 @@ class Convention(models.Model):
     televersement_convention_signee_le = models.DateTimeField(null=True, blank=True)
     date_resiliation = models.DateField(null=True, blank=True)
 
+    attribution_agees_autonomie = models.BooleanField(default=False)
+    attribution_agees_ephad = models.BooleanField(default=False)
+    attribution_agees_desorientees = models.BooleanField(default=False)
+    attribution_agees_petite_unite = models.BooleanField(default=False)
+    attribution_agees_autre = models.BooleanField(default=False)
+    attribution_agees_autre_detail = models.CharField(
+        max_length=255, null=True, blank=True
+    )
+    attribution_handicapes_foyer = models.BooleanField(default=False)
+    attribution_handicapes_foyer_de_vie = models.BooleanField(default=False)
+    attribution_handicapes_foyer_medicalise = models.BooleanField(default=False)
+    attribution_handicapes_autre = models.BooleanField(default=False)
+    attribution_handicapes_autre_detail = models.CharField(
+        max_length=255, null=True, blank=True
+    )
+    attribution_inclusif_conditions_specifiques = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_inclusif_conditions_admission = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_inclusif_modalites_attribution = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_inclusif_partenariats = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_inclusif_activites = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_reservation_prefectoral = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_modalites_reservations = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_modalites_choix_personnes = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_prestations_integrees = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_prestations_facultatives = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+
     # Needed for admin
     @property
     def administration(self):

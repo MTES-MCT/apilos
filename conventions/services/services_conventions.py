@@ -18,7 +18,6 @@ from comments.models import Comment, CommentStatut
 from conventions.forms import (
     ConventionCommentForm,
     ConventionFinancementForm,
-    ConventionFoyerAttributionForm,
     ConventionNumberForm,
     ConventionResiliationForm,
     ConventionType1and2Form,
@@ -872,21 +871,6 @@ class ConventionFinancementService(ConventionService):
                     autre=form_pret.cleaned_data["autre"],
                 )
             pret.save()
-
-
-class ConventionFoyerAttributionService(ConventionService):
-    form: ConventionFoyerAttributionForm
-    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
-
-    def get(self):
-        self.form = ConventionFoyerAttributionForm(
-            initial={
-                "uuid": self.convention.uuid,
-                "attribution_foyer": True,
-                "attribution_type": "agees"
-                # "attribution_foyer": self.convention.attribution_foyer,
-            }
-        )
 
 
 class ConventionCommentsService(ConventionService):
