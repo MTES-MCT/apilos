@@ -265,6 +265,16 @@ class Convention(models.Model):
     def bailleur_id(self):
         return self.programme.bailleur_id
 
+    @property
+    def attribution_inclusif(self):
+        return bool(
+            self.attribution_inclusif_conditions_specifiques
+            or self.attribution_inclusif_conditions_admission
+            or self.attribution_inclusif_modalites_attribution
+            or self.attribution_inclusif_partenariats
+            or self.attribution_inclusif_activites
+        )
+
     def __str__(self):
         programme = self.programme
         lot = self.lot
@@ -294,7 +304,7 @@ class Convention(models.Model):
             result[comment_name].append(comment)
         return result
 
-    def get_last_notification_by_role(self, role: TypeRole):
+    def _get_last_notification_by_role(self, role: TypeRole):
         try:
             return (
                 self.conventionhistories.prefetch_related("user")
@@ -312,10 +322,10 @@ class Convention(models.Model):
             return None
 
     def get_last_bailleur_notification(self):
-        return self.get_last_notification_by_role(TypeRole.BAILLEUR)
+        return self._get_last_notification_by_role(TypeRole.BAILLEUR)
 
     def get_last_instructeur_notification(self):
-        return self.get_last_notification_by_role(TypeRole.INSTRUCTEUR)
+        return self._get_last_notification_by_role(TypeRole.INSTRUCTEUR)
 
     def get_last_submission(self):
         try:
