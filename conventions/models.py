@@ -229,9 +229,7 @@ class Convention(models.Model):
     attribution_inclusif_activites = models.CharField(
         null=True, blank=True, max_length=5000
     )
-    attribution_reservation_prefectoral = models.CharField(
-        null=True, blank=True, max_length=5000
-    )
+    attribution_reservation_prefectoral = models.IntegerField(null=True, blank=True)
     attribution_modalites_reservations = models.CharField(
         null=True, blank=True, max_length=5000
     )

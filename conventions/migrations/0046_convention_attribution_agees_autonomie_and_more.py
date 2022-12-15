@@ -113,6 +113,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="convention",
             name="attribution_reservation_prefectoral",
-            field=models.CharField(blank=True, max_length=5000, null=True),
+            field=models.IntegerField(blank=True, null=True),
         ),
     ]
