@@ -1,5 +1,6 @@
 from django.http import HttpRequest
 from django.test import TestCase
+from django.core.exceptions import NON_FIELD_ERRORS
 
 from conventions.forms import ConventionFoyerVariantesForm
 from conventions.models import Convention
@@ -55,7 +56,7 @@ class ConventionFoyerVarianteServiceTests(TestCase):
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
 
         self.assertFalse(self.service.form.has_error("foyer_variante_2_travaux"))
-        self.assertTrue(self.service.form.has_error(None))
+        self.assertTrue(self.service.form.has_error(NON_FIELD_ERRORS))
 
     def test_save_failed_travaux_without_its_variante(self):
 
@@ -70,4 +71,4 @@ class ConventionFoyerVarianteServiceTests(TestCase):
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
 
         self.assertTrue(self.service.form.has_error("foyer_variante_2_travaux"))
-        self.assertFalse(self.service.form.has_error(None))
+        self.assertFalse(self.service.form.has_error(NON_FIELD_ERRORS))
