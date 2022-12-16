@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("conventions", "0044_alter_convention_lot_and_more"),
+        ("conventions", "0046_create_spf_fields"),
     ]
 
     operations = [
