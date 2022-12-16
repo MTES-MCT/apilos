@@ -39,14 +39,14 @@
                     </div>
                 </div>
                 <div class="fr-col-12 fr-grid-row fr-my-1w block--row-strech fr-grid-row--middle">
-                    <div class="px-2 text-title-{% if category == 'en-cours' %}-grey{% else %}blue-france{% endif %}">
+                    <div class="px-2 text-title-{% if category == 'en-cours' and nb_active_conventions > 0 %}-grey{% else %}blue-france{% endif %}">
                         {% if category == 'en-cours' %}<p class="m-0">{% else %}<a class="fr-link apilos-link" href="{% url 'conventions:search' category="en-cours" %}" title="Conventions en cours">{% endif %}
-                            <span class="fr-text--bold">58 conventions</span>&nbsp;en cours
+                            <span class="fr-text--bold">{{ nb_active_conventions }} convention{% if nb_active_conventions > 1 %}s{% endif %}</span>&nbsp;en cours
                         {% if category == 'en-cours' %}</p>{% else %}</a>{% endif %}
                     </div>
-                    <div class="px-2 text-title-{% if category == 'finalisees' %}-grey{% else %}blue-france{% endif %}">
+                    <div class="px-2 text-title-{% if category == 'finalisees' and nb_completed_conventions > 0 %}-grey{% else %}blue-france{% endif %}">
                         {% if category == 'finalisees' %}<p class="m-0">{% else %}<a class="fr-link apilos-link" href="{% url 'conventions:search' category="finalisees" %}" title="Conventions finalisées">{% endif %}
-                            <span class="fr-text--bold">256 conventions</span>&nbsp;finalisées
+                            <span class="fr-text--bold">{{ nb_completed_conventions }} convention{% if nb_completed_conventions > 1 %}s{% endif %}</span>&nbsp;finalisées
                         {% if category == 'finalisees' %}</p>{% else %}</a>{% endif %}
                     </div>
                 </div>
