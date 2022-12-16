@@ -75,14 +75,19 @@ urlpatterns = [
         name="stationnements",
     ),
     path(
-        "comments/<convention_uuid>",
-        views.ConventionCommentsView.as_view(),
-        name="comments",
-    ),
-    path(
         "attribution/<convention_uuid>",
         views.ConventionFoyerAttributionView.as_view(),
         name="attribution",
+    ),
+    path(
+        "variantes/<convention_uuid>",
+        views.ConventionFoyerVariantesView.as_view(),
+        name="variantes",
+    ),
+    path(
+        "comments/<convention_uuid>",
+        views.ConventionCommentsView.as_view(),
+        name="comments",
     ),
     path(
         "avenant_comments/<convention_uuid>",
@@ -147,5 +152,9 @@ urlpatterns = [
     ),
     path("new_avenant/<convention_uuid>", views.new_avenant, name="new_avenant"),
     path("piece_jointe/<piece_jointe_uuid>", views.piece_jointe, name="piece_jointe"),
-    path("piece_jointe/<piece_jointe_uuid>/promote", views.piece_jointe_promote, name="piece_jointe_promote"),
+    path(
+        "piece_jointe/<piece_jointe_uuid>/promote",
+        views.piece_jointe_promote,
+        name="piece_jointe_promote",
+    ),
 ]

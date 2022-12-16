@@ -243,6 +243,11 @@ class Convention(models.Model):
         null=True, blank=True, max_length=5000
     )
 
+    foyer_variante_1 = models.BooleanField(default=True)
+    foyer_variante_2 = models.BooleanField(default=True)
+    foyer_variante_2_travaux = models.CharField(null=True, blank=True, max_length=5000)
+    foyer_variante_3 = models.BooleanField(default=True)
+
     @property
     def attribution_type(self):
         if not self.programme.is_foyer():

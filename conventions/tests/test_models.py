@@ -179,35 +179,6 @@ class ConventionModelsTest(TestCase):
     def test_convention_bailleur(self):
         convention = Convention.objects.order_by("uuid").first()
         self.assertEqual(convention.bailleur, convention.programme.bailleur)
-        self.assertEqual(convention.bailleur_id, convention.programme.bailleur_id)
-
-    def test_attribution_inclusif(self):
-        convention = Convention.objects.order_by("uuid").first()
-        for field in [
-            "attribution_inclusif_conditions_specifiques",
-            "attribution_inclusif_conditions_admission",
-            "attribution_inclusif_modalites_attribution",
-            "attribution_inclusif_partenariats",
-            "attribution_inclusif_activites",
-        ]:
-            setattr(convention, field, "")
-        self.assertFalse(convention.attribution_inclusif)
-        convention.attribution_inclusif_conditions_specifiques = "something"
-        self.assertTrue(convention.attribution_inclusif)
-        convention.attribution_inclusif_conditions_specifiques = ""
-        convention.attribution_inclusif_conditions_admission = "something"
-        self.assertTrue(convention.attribution_inclusif)
-        convention.attribution_inclusif_conditions_admission = ""
-        convention.attribution_inclusif_modalites_attribution = "something"
-        self.assertTrue(convention.attribution_inclusif)
-        convention.attribution_inclusif_modalites_attribution = ""
-        convention.attribution_inclusif_partenariats = "something"
-        self.assertTrue(convention.attribution_inclusif)
-        convention.attribution_inclusif_partenariats = ""
-        convention.attribution_inclusif_activites = "something"
-        self.assertTrue(convention.attribution_inclusif)
-        convention.attribution_inclusif_activites = ""
-        self.assertFalse(convention.attribution_inclusif)
 
 
 class PretModelsTest(TestCase):

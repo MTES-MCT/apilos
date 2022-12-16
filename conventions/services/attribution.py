@@ -7,14 +7,11 @@ class ConventionFoyerAttributionService(ConventionService):
     form: ConventionFoyerAttributionForm
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
 
-    def _get_attribution_type(self):
-        return self.convention.attribution_type
-
     def get(self):
         self.form = ConventionFoyerAttributionForm(
             initial={
                 "uuid": self.convention.uuid,
-                "attribution_type": self._get_attribution_type(),
+                "attribution_type": self.convention.attribution_type,
                 "attribution_agees_autonomie": self.convention.attribution_agees_autonomie,
                 "attribution_agees_ephad": self.convention.attribution_agees_ephad,
                 "attribution_agees_desorientees": self.convention.attribution_agees_desorientees,
@@ -79,7 +76,7 @@ class ConventionFoyerAttributionService(ConventionService):
                 "attribution_agees_autre",
                 "attribution_agees_autre_detail",
             ]:
-                _set_from_form_or_object(field, self.form, self.convention)
+                utils.set_from_form_or_object(field, self.form, self.convention)
 
             self.convention.attribution_handicapes_foyer = False
             self.convention.attribution_handicapes_foyer_de_vie = False
@@ -108,7 +105,7 @@ class ConventionFoyerAttributionService(ConventionService):
                 "attribution_handicapes_autre",
                 "attribution_handicapes_autre_detail",
             ]:
-                _set_from_form_or_object(field, self.form, self.convention)
+                utils.set_from_form_or_object(field, self.form, self.convention)
 
             self.convention.attribution_inclusif_conditions_specifiques = ""
             self.convention.attribution_inclusif_conditions_admission = ""
@@ -137,7 +134,7 @@ class ConventionFoyerAttributionService(ConventionService):
                 "attribution_inclusif_partenariats",
                 "attribution_inclusif_activites",
             ]:
-                _set_from_form_or_object(field, self.form, self.convention)
+                utils.set_from_form_or_object(field, self.form, self.convention)
 
         for field in [
             "attribution_reservation_prefectoral",
@@ -146,16 +143,6 @@ class ConventionFoyerAttributionService(ConventionService):
             "attribution_prestations_integrees",
             "attribution_prestations_facultatives",
         ]:
-            _set_from_form_or_object(field, self.form, self.convention)
+            utils.set_from_form_or_object(field, self.form, self.convention)
 
         self.convention.save()
-
-
-def _set_from_form_or_object(field, form, obj):
-    setattr(
-        obj,
-        field,
-        form.cleaned_data[field]
-        if form.cleaned_data[field] is not None
-        else getattr(obj, field),
-    )

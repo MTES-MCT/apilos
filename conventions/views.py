@@ -27,6 +27,7 @@ from core.storage import client
 from upload.services import UploadService
 from conventions.models import Convention, ConventionStatut, PieceJointe
 from conventions.permissions import has_campaign_permission
+from conventions.services.variantes import ConventionFoyerVariantesService
 from conventions.services.attribution import ConventionFoyerAttributionService
 from conventions.services.convention_generator import fiche_caf_doc
 from conventions.services.services_bailleurs import ConventionBailleurService
@@ -487,6 +488,12 @@ foyer_attribution_step = ConventionFormStep(
     classname="ConventionFoyerAttributionView",
 )
 
+foyer_variante_step = ConventionFormStep(
+    pathname="conventions:variantes",
+    label="Variantes",
+    classname="ConventionFoyerVariantesView",
+)
+
 comments_step = ConventionFormStep(
     pathname="conventions:comments",
     label="Commentaires",
@@ -545,6 +552,7 @@ foyer_steps = [
     logements_step,
     annexes_step,
     foyer_attribution_step,
+    foyer_variante_step,
     comments_step,
 ]
 
@@ -874,6 +882,11 @@ class AvenantAnnexesView(ConventionAnnexesView):
 class ConventionFoyerAttributionView(ConventionView):
     target_template: str = "conventions/attribution.html"
     service_class = ConventionFoyerAttributionService
+
+
+class ConventionFoyerVariantesView(ConventionView):
+    target_template: str = "conventions/variantes.html"
+    service_class = ConventionFoyerVariantesService
 
 
 class ConventionTypeStationnementView(ConventionView):

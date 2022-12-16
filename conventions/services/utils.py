@@ -37,14 +37,18 @@ def get_text_and_files_from_field(name, field):
         try:
             object_field = json.loads(field)
             # Fix potentially malformed JSON
-            if type(object_field['files']) is not dict:
-                object_field['files'] = {}
+            if not isinstance(object_field["files"], dict):
+                object_field["files"] = {}
         except json.decoder.JSONDecodeError:
             object_field = {
                 "files": {},
                 "text": field if isinstance(field, str) else "",
             }
-        files = {k: v for k, v in object_field.get("files", files).items() if is_valid_uuid(k)}
+        files = {
+            k: v
+            for k, v in object_field.get("files", files).items()
+            if is_valid_uuid(k)
+        }
     returned_files = {}
     for file in UploadedFile.objects.filter(uuid__in=files):
         returned_files[str(file.uuid)] = {
@@ -142,3 +146,13 @@ def editable_convention(request: HttpRequest, convention: Convention):
     if is_bailleur(request):
         return convention.statut == ConventionStatut.PROJET
     return False
+
+
+def set_from_form_or_object(field, form, obj):
+    setattr(
+        obj,
+        field,
+        form.cleaned_data[field]
+        if form.cleaned_data[field] is not None
+        else getattr(obj, field),
+    )

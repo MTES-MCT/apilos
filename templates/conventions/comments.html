@@ -28,6 +28,7 @@
                     {% if editable %}
                         {% include "common/button/next_and_save.html" %}
                         {% if not convention.is_avenant %}
+                            {% comment %} FIXME manage previous using steps {% endcomment %}
                             {% include "common/button/previous.html" with precedent='conventions:stationnements' convention_uuid=convention.uuid %}
                         {% endif %}
                     {% else %}

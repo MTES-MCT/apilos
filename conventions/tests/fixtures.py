@@ -22,3 +22,10 @@ attribution_success_payload = {
     "attribution_prestations_integrees": "OKOK",
     "attribution_prestations_facultatives": "",
 }
+
+variantes_success_payload = {
+    "foyer_variante_1": "on",
+    "foyer_variante_2": "on",
+    "foyer_variante_2_travaux": "TRAVAUX",
+    "foyer_variante_3": "on",
+}

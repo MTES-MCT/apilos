@@ -16,7 +16,7 @@
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                [FOYER] adaptation des logements pour le cas des Foyers<br>
+                {% comment %} FIXME [FOYER] adaptation des logements pour le cas des Foyers<br> {% endcomment %}
 
                 {% if convention.is_avenant %}
                     <div class="fr-grid-row fr-grid-row--gutters">
