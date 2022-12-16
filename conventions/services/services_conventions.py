@@ -67,7 +67,6 @@ class ConventionService(ABC):
         pass
 
 
-@require_GET
 def conventions_index(request):
 
     convention_list_service = ConventionListService(

@@ -68,12 +68,16 @@ from conventions.services.utils import (
 
 
 @login_required
-def index(request):
+@require_GET
+def search(request, category: str):
     result = conventions_index(request)
     return render(
         request,
         "conventions/index.html",
-        {**result},
+        {
+            'category': category,
+            **result,
+        },
     )
 
 

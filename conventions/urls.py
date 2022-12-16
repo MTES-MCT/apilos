@@ -1,9 +1,12 @@
-from django.urls import path
+from django.urls import path, re_path
 from django.contrib.auth.decorators import permission_required
+from django.views.generic import RedirectView
+
 from . import views
 
 urlpatterns = [
-    path("", views.index, name="index"),
+    path("", RedirectView.as_view(url='/conventions/en-cours'), name="index"),
+    re_path("(?P<category>en-cours|finalisees)$", views.search, name="search"),
     path(
         "selection",
         permission_required("convention.add_convention")(

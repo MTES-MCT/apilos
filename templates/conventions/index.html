@@ -12,17 +12,19 @@
 
         <div class="fr-container-fluid ds_banner">
             <div class="fr-container">
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-12 fr-my-5w block--row-strech">
+                <div class="fr-grid-row fr-mt-2w fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-my-3w block--row-strech fr-grid-row--middle">
                         {% if request|is_bailleur %}
                             <div class="block--row-strech-1">
-                                <h1>Gérer mes conventions APL</h1>
-                                <p class="apilos-subtitle">{{conventions.total_conventions}} convention{{ conventions.total_conventions|pluralize }} liée{{ conventions.total_conventions|pluralize }} à votre bailleur trouvée{{ conventions.total_conventions|pluralize }} dans APiLos</p>
+                                <h1 class="m-0">Conventions et avenants</h1>
                             </div>
                             {% if not CERBERE_AUTH %}
                                 <div>
                                     <a class="fr-btn" href="{% url 'conventions:selection' %}">
-                                        <span class="fr-fi-add-circle-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
+                                        <span class="fr-fi-add-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
+                                    </a>
+                                    <a class="fr-btn fr-btn--secondary" href="{% url 'conventions:selection' %}">
+                                        <span class="fr-fi-add-line fr-mr-1w" aria-hidden="true"></span>Créer un avenant
                                     </a>
                                 </div>
                             {% endif %}
@@ -34,6 +36,18 @@
                         {% else %}
                             <p class="fr-mb-3w">Votre profil n'est pas bien configuré, merci de vous rapprocher de votre instructeur</p>
                         {% endif %}
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-grid-row fr-my-1w block--row-strech fr-grid-row--middle">
+                    <div class="px-2 text-title-{% if category == 'en-cours' %}-grey{% else %}blue-france{% endif %}">
+                        {% if category == 'en-cours' %}<p class="m-0">{% else %}<a class="fr-link apilos-link" href="{% url 'conventions:search' category="en-cours" %}" title="Conventions en cours">{% endif %}
+                            <span class="fr-text--bold">58 conventions</span>&nbsp;en cours
+                        {% if category == 'en-cours' %}</p>{% else %}</a>{% endif %}
+                    </div>
+                    <div class="px-2 text-title-{% if category == 'finalisees' %}-grey{% else %}blue-france{% endif %}">
+                        {% if category == 'finalisees' %}<p class="m-0">{% else %}<a class="fr-link apilos-link" href="{% url 'conventions:search' category="finalisees" %}" title="Conventions finalisées">{% endif %}
+                            <span class="fr-text--bold">256 conventions</span>&nbsp;finalisées
+                        {% if category == 'finalisees' %}</p>{% else %}</a>{% endif %}
                     </div>
                 </div>
             </div>
