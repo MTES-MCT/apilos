@@ -169,4 +169,9 @@ urlpatterns = [
         views.new_avenants_for_avenant,
         name="new_avenants_for_avenant",
     ),
+    path(
+        "form_avenants_for_avenant/<convention_uuid>",
+        views.form_avenants_for_avenant,
+        name="form_avenants_for_avenant",
+    ),
 ]

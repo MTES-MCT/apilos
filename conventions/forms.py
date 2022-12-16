@@ -417,6 +417,12 @@ class AvenantForm(forms.Form):
     )
 
 
+class InitavenantsforavenantForm(forms.Form):
+    uuid = forms.UUIDField(
+        required=False,
+    )
+
+
 class AvenantsforavenantForm(forms.Form):
 
     avenant_types = forms.MultipleChoiceField(
@@ -424,4 +430,9 @@ class AvenantsforavenantForm(forms.Form):
         label="Type d'avenant",
         choices=AvenantType.get_as_choices,
         required=True,
+    )
+    error_messages = (
+        {
+            "required": "Vous devez saisir un ou plusieurs types d'avenant",
+        },
     )

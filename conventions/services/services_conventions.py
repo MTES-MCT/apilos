@@ -22,6 +22,7 @@ from conventions.forms import (
     ConventionResiliationForm,
     ConventionType1and2Form,
     AvenantForm,
+    InitavenantsforavenantForm,
     AvenantsforavenantForm,
     NotificationForm,
     PretFormSet,
@@ -713,37 +714,83 @@ def create_avenant(request, convention_uuid):
     }
 
 
-def create_avenants_for_avenant(request, convention_uuid):
+def upload_avenants_for_avenant(request, convention_uuid):
     parent_convention = (
         Convention.objects.prefetch_related("programme")
         .prefetch_related("lot")
         .prefetch_related("avenants")
         .get(uuid=convention_uuid)
     )
+    avenant_list_service = ConventionListService(
+        my_convention_list=parent_convention.avenants.all()
+        .prefetch_related("programme")
+        .prefetch_related("lot"),
+        order_by="cree_le",
+    )
+    ongoing_avenant_list_service = parent_convention.avenants.all().filter(numero=None)
+    avenant_list_service.paginate()
     if request.method == "POST":
-        avenant_form = AvenantsforavenantForm(request.POST)
+        avenant_form = InitavenantsforavenantForm(request.POST)
         if avenant_form.is_valid():
             convention_to_clone = _get_last_avenant(parent_convention)
             avenant = convention_to_clone.clone(
                 request.user, convention_origin=parent_convention
             )
-            avenant_types = avenant_form.cleaned_data.get("avenant_types")
             avenant.save()
             return {
                 "success": utils.ReturnStatus.SUCCESS,
                 "convention": avenant,
                 "parent_convention": parent_convention,
-                "avenant_types": avenant_types,
+            }
+    else:
+        avenant_form = InitavenantsforavenantForm()
+    return {
+        "success": utils.ReturnStatus.ERROR,
+        "form": avenant_form,
+        "convention": parent_convention,
+        "avenants": avenant_list_service,
+        "ongoing_avenants": ongoing_avenant_list_service,
+    }
+
+
+def complete_avenants_for_avenant(request, convention_uuid):
+    avenant = Convention.objects.get(uuid=convention_uuid)
+    avenant_list_service = ConventionListService(
+        my_convention_list=avenant.parent.avenants.all()
+        .prefetch_related("programme")
+        .prefetch_related("lot"),
+        order_by="numero",
+    )
+    avenant_list_service.paginate()
+    avenant_numero = avenant.get_default_convention_number()
+    if request.method == "POST":
+        avenant_form = AvenantsforavenantForm(request.POST)
+        if avenant_form.is_valid():
+            file = request.FILES.get("nom_fichier_signe", False)
+            if file:
+                now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+                filename = f"{now}_convention_{avenant.uuid}_signed.pdf"
+                upload_service = UploadService(
+                    convention_dirpath=f"conventions/{avenant.uuid}/convention_docs",
+                    filename=filename,
+                )
+                upload_service.upload_file(file)
+                avenant.nom_fichier_signe = filename
+                avenant.televersement_convention_signee_le = timezone.now()
+                avenant.statut = ConventionStatut.SIGNEE
+                avenant.save()
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "avenant_form": avenant_form,
+                "avenant": avenant,
             }
     else:
         avenant_form = AvenantsforavenantForm()
-
     return {
         "success": utils.ReturnStatus.ERROR,
-        "editable": request.user.has_perm("convention.add_convention"),
-        "bailleurs": request.user.bailleurs(),
-        "form": avenant_form,
-        "parent_convention": parent_convention,
+        "avenant_numero": avenant_numero,
+        "parent_avenants": avenant_list_service,
+        "avenant_form": avenant_form,
     }
 
 

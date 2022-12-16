@@ -224,6 +224,9 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .dropdown-menu.apilos-dropdown-menu {
   z-index: 100000;
 }
+.apilos-avenant_type:not(:last-child):after {
+  content: ", ";
+}
 
 .block--row-strech {
   display: flex;

@@ -33,7 +33,8 @@ from conventions.services.services_conventions import (
     conventions_index,
     search_result,
     create_avenant,
-    create_avenants_for_avenant,
+    upload_avenants_for_avenant,
+    complete_avenants_for_avenant,
     generate_convention_service,
 )
 from conventions.services.services_logements import (
@@ -357,15 +358,35 @@ def new_avenant(request, convention_uuid):
 @login_required
 @permission_required("convention.add_convention")
 def new_avenants_for_avenant(request, convention_uuid):
-    result = create_avenants_for_avenant(request, convention_uuid)
+    result = upload_avenants_for_avenant(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:new_avenant", args=[result["convention"].uuid])
+            reverse(
+                "conventions:form_avenants_for_avenant",
+                args=[result["convention"].uuid],
+            )
         )
-
     return render(
         request,
         "conventions/avenant/new_avenants_for_avenant.html",
+        {
+            **result,
+        },
+    )
+
+
+@login_required
+def form_avenants_for_avenant(request, convention_uuid):
+    result = complete_avenants_for_avenant(request, convention_uuid)
+    if result["success"] == ReturnStatus.SUCCESS:
+        return HttpResponseRedirect(
+            reverse(
+                "conventions:new_avenants_for_avenant", args=[result["convention"].uuid]
+            )
+        )
+    return render(
+        request,
+        "conventions/avenant/form_avenants_for_avenant.html",
         {
             **result,
         },
