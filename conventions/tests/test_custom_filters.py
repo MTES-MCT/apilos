@@ -3,8 +3,8 @@ import mock
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 from bailleurs.models import SousNatureBailleur
-
 from core.tests import utils_fixtures
+from conventions.views import ConventionFormSteps
 from conventions.models import (
     Convention,
     ConventionStatut,
@@ -834,3 +834,32 @@ class CustomFiltersTest(TestCase):
                         avenant
                     )
                 )
+
+    def is_a_step(self):
+        self.convention.programme.nature_logement = NatureLogement.LOGEMENTSORDINAIRES
+        convention_form_steps = ConventionFormSteps(convention=self.convention)
+        self.assertTrue(custom_filters.is_a_step(convention_form_steps, "Bailleur"))
+        self.assertTrue(
+            custom_filters.is_a_step(convention_form_steps, "Stationnement")
+        )
+        self.assertFalse(custom_filters.is_a_step(convention_form_steps, "Attribution"))
+        self.convention.programme.nature_logement = NatureLogement.AUTRE
+        self.assertTrue(custom_filters.is_a_step(convention_form_steps, "Bailleur"))
+        self.assertFalse(
+            custom_filters.is_a_step(convention_form_steps, "Stationnement")
+        )
+        self.assertTrue(custom_filters.is_a_step(convention_form_steps, "Attribution"))
+
+    def test_get_text_as_list(self):
+        self.assertEqual(
+            custom_filters.get_text_as_list(
+                "First line\r\nSecond line\r\nThird line\r\n\r\n "
+            ),
+            ["First line", "Second line", "Third line"],
+        )
+        self.assertEqual(
+            custom_filters.get_text_as_list(
+                "* First line\r\n - Second line - \r\nThird line\r\n\r\n "
+            ),
+            ["First line", "Second line", "Third line"],
+        )

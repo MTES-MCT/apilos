@@ -377,7 +377,11 @@ def display_create_avenant(convention):
     )
 
 
-# FIXME : to be tested
 @register.filter
 def is_a_step(convention_form_step, label):
     return any(step for step in convention_form_step.steps if step.label == label)
+
+
+@register.filter
+def get_text_as_list(text_field):
+    return [line.strip(" -*") for line in text_field.splitlines() if line.strip(" -*")]

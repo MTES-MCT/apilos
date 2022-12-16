@@ -243,6 +243,27 @@ class Convention(models.Model):
         null=True, blank=True, max_length=5000
     )
 
+    @property
+    def attribution_type(self):
+        if not self.programme.is_foyer():
+            return None
+        if (
+            self.attribution_agees_autonomie
+            or self.attribution_agees_ephad
+            or self.attribution_agees_desorientees
+            or self.attribution_agees_petite_unite
+            or self.attribution_agees_autre
+        ):
+            return "agees"
+        if (
+            self.attribution_handicapes_foyer
+            or self.attribution_handicapes_foyer_de_vie
+            or self.attribution_handicapes_foyer_medicalise
+            or self.attribution_handicapes_autre
+        ):
+            return "handicapes"
+        return "inclusif"
+
     # Needed for admin
     @property
     def administration(self):
@@ -260,20 +281,6 @@ class Convention(models.Model):
             ).first()
 
         return None
-
-    @property
-    def bailleur_id(self):
-        return self.programme.bailleur_id
-
-    @property
-    def attribution_inclusif(self):
-        return bool(
-            self.attribution_inclusif_conditions_specifiques
-            or self.attribution_inclusif_conditions_admission
-            or self.attribution_inclusif_modalites_attribution
-            or self.attribution_inclusif_partenariats
-            or self.attribution_inclusif_activites
-        )
 
     def __str__(self):
         programme = self.programme

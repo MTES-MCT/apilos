@@ -21,6 +21,7 @@ from upload.services import UploadService
 
 from conventions.models import ConventionType1and2
 from conventions.templatetags.custom_filters import (
+    get_text_as_list,
     inline_text_multiline,
     to_fr_date,
     to_fr_short_date,
@@ -430,10 +431,6 @@ def _prepare_logement_edds(convention):
 
 def _list_to_dict(object_list):
     return list(map(model_to_dict, object_list))
-
-
-def get_text_as_list(text_field):
-    return [line.strip(" -*") for line in text_field.splitlines() if line.strip(" -*")]
 
 
 def fiche_caf_doc(convention):

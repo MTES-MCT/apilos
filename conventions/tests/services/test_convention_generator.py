@@ -8,7 +8,6 @@ from conventions.models import Convention, ConventionType1and2
 from conventions.services.convention_generator import (
     ConventionTypeConfigurationError,
     get_convention_template_path,
-    get_text_as_list,
     pluralize,
 )
 from core.tests import utils_fixtures
@@ -97,15 +96,3 @@ class ConventionServiceGeneratorTest(TestCase):
                 get_convention_template_path,
                 convention,
             )
-
-    def test_get_text_as_list(self):
-        self.assertEqual(
-            get_text_as_list("First line\r\nSecond line\r\nThird line\r\n\r\n "),
-            ["First line", "Second line", "Third line"],
-        )
-        self.assertEqual(
-            get_text_as_list(
-                "* First line\r\n - Second line - \r\nThird line\r\n\r\n "
-            ),
-            ["First line", "Second line", "Third line"],
-        )

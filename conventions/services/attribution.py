@@ -8,22 +8,7 @@ class ConventionFoyerAttributionService(ConventionService):
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
 
     def _get_attribution_type(self):
-        if (
-            self.convention.attribution_agees_autonomie
-            or self.convention.attribution_agees_ephad
-            or self.convention.attribution_agees_desorientees
-            or self.convention.attribution_agees_petite_unite
-            or self.convention.attribution_agees_autre
-        ):
-            return "agees"
-        if (
-            self.convention.attribution_handicapes_foyer
-            or self.convention.attribution_handicapes_foyer_de_vie
-            or self.convention.attribution_handicapes_foyer_medicalise
-            or self.convention.attribution_handicapes_autre
-        ):
-            return "handicapes"
-        return "inclusif"
+        return self.convention.attribution_type
 
     def get(self):
         self.form = ConventionFoyerAttributionForm(
