@@ -124,15 +124,7 @@ def generate_convention_doc(convention, save_data=False):
     context.update(logements_totale)
     context.update(object_images)
 
-    jinja_env = jinja2.Environment(autoescape=True)
-    jinja_env.filters["d"] = to_fr_date
-    jinja_env.filters["sd"] = to_fr_short_date
-    jinja_env.filters["f"] = _to_fr_float
-    jinja_env.filters["pl"] = pluralize
-    jinja_env.filters["len"] = len
-    jinja_env.filters["inline_text_multiline"] = inline_text_multiline
-
-    doc.render(context, jinja_env)
+    doc.render(context, _get_jinja_env())
     file_stream = io.BytesIO()
     doc.save(file_stream)
     file_stream.seek(0)
@@ -150,6 +142,18 @@ def generate_convention_doc(convention, save_data=False):
         )
 
     return file_stream
+
+
+def _get_jinja_env():
+    jinja_env = jinja2.Environment(autoescape=True)
+    jinja_env.filters["d"] = to_fr_date
+    jinja_env.filters["sd"] = to_fr_short_date
+    jinja_env.filters["f"] = _to_fr_float
+    jinja_env.filters["pl"] = pluralize
+    jinja_env.filters["len"] = len
+    jinja_env.filters["inline_text_multiline"] = inline_text_multiline
+    jinja_env.filters["get_text_as_list"] = get_text_as_list
+    return jinja_env
 
 
 def _save_convention_donnees_validees(
@@ -292,6 +296,7 @@ def _build_files_for_docx(doc, convention_uuid, file_list):
     return docx_images, local_pathes
 
 
+# FIXME : can be factorized
 def _get_object_images(doc, convention):
     object_images = {}
     local_pathes = []
@@ -427,6 +432,10 @@ def _list_to_dict(object_list):
     return list(map(model_to_dict, object_list))
 
 
+def get_text_as_list(text_field):
+    return [line.strip(" -*") for line in text_field.splitlines() if line.strip(" -*")]
+
+
 def fiche_caf_doc(convention):
     filepath = f"{settings.BASE_DIR}/documents/FicheCAF-template.docx"
 
@@ -466,15 +475,7 @@ def fiche_caf_doc(convention):
     }
     context.update(logements_totale)
 
-    jinja_env = jinja2.Environment(autoescape=True)
-    jinja_env.filters["d"] = to_fr_date
-    jinja_env.filters["sd"] = to_fr_short_date
-    jinja_env.filters["f"] = _to_fr_float
-    jinja_env.filters["pl"] = pluralize
-    jinja_env.filters["len"] = len
-    jinja_env.filters["inline_text_multiline"] = inline_text_multiline
-
-    doc.render(context, jinja_env)
+    doc.render(context, _get_jinja_env())
     file_stream = io.BytesIO()
     doc.save(file_stream)
     file_stream.seek(0)
