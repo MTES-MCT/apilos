@@ -370,17 +370,18 @@ def piece_jointe(request, piece_jointe_uuid):
     """
     Display the raw file associated to the pièce jointe
     """
-    piece_jointe = PieceJointe.objects.get(uuid=piece_jointe_uuid)
-    object = client.get_object(
-        settings.AWS_ECOLOWEB_BUCKET_NAME, f"piecesJointes/{piece_jointe.fichier}"
+    piece_jointe_from_db = PieceJointe.objects.get(uuid=piece_jointe_uuid)
+    s3_object = client.get_object(
+        settings.AWS_ECOLOWEB_BUCKET_NAME,
+        f"piecesJointes/{piece_jointe_from_db.fichier}",
     )
 
-    if object is None:
+    if s3_object is None:
         return HttpResponseNotFound()
     return FileResponse(
-        object["Body"],
-        filename=piece_jointe.nom_reel,
-        content_type=object["ContentType"],
+        s3_object["Body"],
+        filename=piece_jointe_from_db.nom_reel,
+        content_type=s3_object["ContentType"],
     )
 
 
@@ -390,39 +391,40 @@ def piece_jointe_promote(request, piece_jointe_uuid):
     """
     Promote a pièce jointe to the official PDF document of a convention
     """
-    piece_jointe = PieceJointe.objects.get(uuid=piece_jointe_uuid)
+    piece_jointe_from_db = PieceJointe.objects.get(uuid=piece_jointe_uuid)
 
-    if piece_jointe is None:
+    if piece_jointe_from_db is None:
         return HttpResponseNotFound
 
-    if piece_jointe.convention.ecolo_reference is None:
+    if piece_jointe_from_db.convention.ecolo_reference is None:
         return HttpResponseForbidden()
 
-    if not piece_jointe.is_convention():
+    if not piece_jointe_from_db.is_convention():
         return HttpResponseForbidden()
 
     o = client.get_object(
-        settings.AWS_ECOLOWEB_BUCKET_NAME, f"piecesJointes/{piece_jointe.fichier}"
+        settings.AWS_ECOLOWEB_BUCKET_NAME,
+        f"piecesJointes/{piece_jointe_from_db.fichier}",
     )
 
     if o is None:
         return HttpResponseNotFound
 
     now = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    filename = f"{now}_convention_{piece_jointe.convention.uuid}_signed.pdf"
+    filename = f"{now}_convention_{piece_jointe_from_db.convention.uuid}_signed.pdf"
     upload_service = UploadService(
-        convention_dirpath=f"conventions/{piece_jointe.convention.uuid}/convention_docs",
+        convention_dirpath=f"conventions/{piece_jointe_from_db.convention.uuid}/convention_docs",
         filename=filename,
     )
     upload_service.upload_file(o["Body"])
 
-    piece_jointe.convention.statut = ConventionStatut.SIGNEE
-    piece_jointe.convention.nom_fichier_signe = filename
-    piece_jointe.convention.televersement_convention_signee_le = timezone.now()
-    piece_jointe.convention.save()
+    piece_jointe_from_db.convention.statut = ConventionStatut.SIGNEE
+    piece_jointe_from_db.convention.nom_fichier_signe = filename
+    piece_jointe_from_db.convention.televersement_convention_signee_le = timezone.now()
+    piece_jointe_from_db.convention.save()
 
     return HttpResponseRedirect(
-        reverse("conventions:preview", args=[piece_jointe.convention.uuid])
+        reverse("conventions:preview", args=[piece_jointe_from_db.convention.uuid])
     )
 
 
