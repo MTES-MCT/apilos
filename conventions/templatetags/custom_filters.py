@@ -258,7 +258,10 @@ def display_is_resiliated(convention):
 
 @register.filter
 def display_spf_info(convention):
-    return convention.date_envoi_spf is not None or convention.date_publication_spf is not None
+    return (
+        convention.date_envoi_spf is not None
+        or convention.date_publication_spf is not None
+    )
 
 
 @register.filter
@@ -372,3 +375,9 @@ def display_create_avenant(convention):
         }
         & {avenant.statut for avenant in convention.avenants.all()}
     )
+
+
+# FIXME : to be tested
+@register.filter
+def is_a_step(convention_form_step, label):
+    return any(step for step in convention_form_step.steps if step.label == label)

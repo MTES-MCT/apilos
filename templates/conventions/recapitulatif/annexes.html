@@ -1,86 +1,89 @@
 {% load custom_filters %}
 
-<div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-12 fr-col-lg-12">
-        <div class="fr-card fr-card--no-arrow">
-            <div class="fr-card__body fr-my-2w">
-                <div class="block--row-strech" id="{{object_field}}_div">
-                    <div class="block--row-strech-1">
-                        <h4 class="fr-card__title">
-                            Annexes
-                        </h4>
-                    </div>
-                    {% include "conventions/actions/goto.html" %}
-                </div>
-                <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                    <table  aria-label="Annexes">
-                        <thead>
-                            <tr>
-                                {% if convention|display_comments %}
-                                    {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" callback_click="refresh_opened_comments" %}
-                                {% endif %}
-                                <th scope="col" class="col__width--150">Type d'annexe {% include "common/form/required_field_star.html" %}</th>
-                                <th scope="col" class="col__width--200">Désignation des logements {% include "common/form/required_field_star.html" %}</th>
-                                <th scope="col" class="col__width--150">Typologie des logements {% include "common/form/required_field_star.html" %}</th>
-                                <th scope="col" class="col__width--120">Surface de l'annexe {% include "common/form/required_field_star.html" %}</th>
-                                <th scope="col" class="col__width--120">Loyer unitaire en € {% include "common/form/required_field_star.html" %}</th>
-                                <th scope="col" class="col__width--120">Loyer maximum du logement en € {% include "common/form/required_field_star.html" %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for annexe in annexes %}
-                                {% with annexe_uuid=annexe.uuid|slugify %}
-                                    {% with main_object_field="annexe__uuid__"|add:annexe_uuid %}
-                                        <tr id="{{main_object_field}}_group">
-                                            {% if convention|display_comments %}
-                                                <td id="{{main_object_field}}_div">
-                                                    {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Annexe" callback_click="refresh_opened_comments" %}
-                                                </td>
-                                            {% endif %}
-                                            <td>
-                                                {{ annexe.get_typologie_display }}
-                                            </td>
-                                            <td>
-                                                {{ annexe.logement.designation }}
-                                            </td>
-                                            <td>
-                                                {{ annexe.logement.get_typologie_display }}
-                                            </td>
-                                            <td>
-                                                {{ annexe.surface_hors_surface_retenue|floatformat:2 }}
-                                            </td>
-                                            <td>
-                                                {{ annexe.loyer_par_metre_carre|floatformat:2 }}
-                                            </td>
-                                            <td>
-                                                {{ annexe.loyer|floatformat:2 }}
-                                            </td>
-                                        </tr>
-                                    {% endwith %}
-                                {% endwith %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+{% if convention_form_steps|is_a_step:'Annexes' %}
 
-                        {% include "common/display_checkbox.html" with value=lot.annexe_caves label="Caves" object_field="lot__annexe_caves__"|add:lot_uuid %}
-                        {% include "common/display_checkbox.html" with value=lot.annexe_soussols label="Sous-sols" object_field="lot__annexe_soussols__"|add:lot_uuid %}
-                        {% include "common/display_checkbox.html" with value=lot.annexe_remises label="Remises" object_field="lot__annexe_remises__"|add:lot_uuid %}
-                        {% include "common/display_checkbox.html" with value=lot.annexe_ateliers label="Ateliers" object_field="lot__annexe_ateliers__"|add:lot_uuid %}
-                        {% include "common/display_checkbox.html" with value=lot.annexe_sechoirs label="Séchoirs" object_field="lot__annexe_sechoirs__"|add:lot_uuid %}
-                        {% include "common/display_checkbox.html" with value=lot.annexe_celliers label="Celliers extérieurs au logement" object_field="lot__annexe_celliers__"|add:lot_uuid %}
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-lg-12">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body fr-my-2w">
+                    <div class="block--row-strech" id="{{object_field}}_div">
+                        <div class="block--row-strech-1">
+                            <h4 class="fr-card__title">
+                                Annexes
+                            </h4>
+                        </div>
+                        {% include "conventions/actions/goto.html" %}
                     </div>
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                        {% include "common/display_checkbox.html" with value=lot.annexe_resserres label="Resserres" object_field="lot__annexe_resserres__"|add:lot_uuid %}
-                        {% include "common/display_checkbox.html" with value=lot.annexe_combles label="Combles et greniers aménageables" object_field="lot__annexe_combles__"|add:lot_uuid %}
-                        {% include "common/display_checkbox.html" with value=lot.annexe_balcons label="Balcons" object_field="lot__annexe_balcons__"|add:lot_uuid %}
-                        {% include "common/display_checkbox.html" with value=lot.annexe_loggias label="Loggias et Vérandas" object_field="lot__annexe_loggias__"|add:lot_uuid %}
-                        {% include "common/display_checkbox.html" with value=lot.annexe_terrasses label="Terrasses" sublabel="Dans la limite de 9 m2, les parties de terrasses accessibles en étage ou aménagées sur ouvrage enterré ou à moitié enterré" object_field="lot__annexe_terrasses__"|add:lot_uuid %}
+                    <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
+                        <table  aria-label="Annexes">
+                            <thead>
+                                <tr>
+                                    {% if convention|display_comments %}
+                                        {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" callback_click="refresh_opened_comments" %}
+                                    {% endif %}
+                                    <th scope="col" class="col__width--150">Type d'annexe {% include "common/form/required_field_star.html" %}</th>
+                                    <th scope="col" class="col__width--200">Désignation des logements {% include "common/form/required_field_star.html" %}</th>
+                                    <th scope="col" class="col__width--150">Typologie des logements {% include "common/form/required_field_star.html" %}</th>
+                                    <th scope="col" class="col__width--120">Surface de l'annexe {% include "common/form/required_field_star.html" %}</th>
+                                    <th scope="col" class="col__width--120">Loyer unitaire en € {% include "common/form/required_field_star.html" %}</th>
+                                    <th scope="col" class="col__width--120">Loyer maximum du logement en € {% include "common/form/required_field_star.html" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for annexe in annexes %}
+                                    {% with annexe_uuid=annexe.uuid|slugify %}
+                                        {% with main_object_field="annexe__uuid__"|add:annexe_uuid %}
+                                            <tr id="{{main_object_field}}_group">
+                                                {% if convention|display_comments %}
+                                                    <td id="{{main_object_field}}_div">
+                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Annexe" callback_click="refresh_opened_comments" %}
+                                                    </td>
+                                                {% endif %}
+                                                <td>
+                                                    {{ annexe.get_typologie_display }}
+                                                </td>
+                                                <td>
+                                                    {{ annexe.logement.designation }}
+                                                </td>
+                                                <td>
+                                                    {{ annexe.logement.get_typologie_display }}
+                                                </td>
+                                                <td>
+                                                    {{ annexe.surface_hors_surface_retenue|floatformat:2 }}
+                                                </td>
+                                                <td>
+                                                    {{ annexe.loyer_par_metre_carre|floatformat:2 }}
+                                                </td>
+                                                <td>
+                                                    {{ annexe.loyer|floatformat:2 }}
+                                                </td>
+                                            </tr>
+                                        {% endwith %}
+                                    {% endwith %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+
+                            {% include "common/display_checkbox.html" with value=lot.annexe_caves label="Caves" object_field="lot__annexe_caves__"|add:lot_uuid %}
+                            {% include "common/display_checkbox.html" with value=lot.annexe_soussols label="Sous-sols" object_field="lot__annexe_soussols__"|add:lot_uuid %}
+                            {% include "common/display_checkbox.html" with value=lot.annexe_remises label="Remises" object_field="lot__annexe_remises__"|add:lot_uuid %}
+                            {% include "common/display_checkbox.html" with value=lot.annexe_ateliers label="Ateliers" object_field="lot__annexe_ateliers__"|add:lot_uuid %}
+                            {% include "common/display_checkbox.html" with value=lot.annexe_sechoirs label="Séchoirs" object_field="lot__annexe_sechoirs__"|add:lot_uuid %}
+                            {% include "common/display_checkbox.html" with value=lot.annexe_celliers label="Celliers extérieurs au logement" object_field="lot__annexe_celliers__"|add:lot_uuid %}
+                        </div>
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                            {% include "common/display_checkbox.html" with value=lot.annexe_resserres label="Resserres" object_field="lot__annexe_resserres__"|add:lot_uuid %}
+                            {% include "common/display_checkbox.html" with value=lot.annexe_combles label="Combles et greniers aménageables" object_field="lot__annexe_combles__"|add:lot_uuid %}
+                            {% include "common/display_checkbox.html" with value=lot.annexe_balcons label="Balcons" object_field="lot__annexe_balcons__"|add:lot_uuid %}
+                            {% include "common/display_checkbox.html" with value=lot.annexe_loggias label="Loggias et Vérandas" object_field="lot__annexe_loggias__"|add:lot_uuid %}
+                            {% include "common/display_checkbox.html" with value=lot.annexe_terrasses label="Terrasses" sublabel="Dans la limite de 9 m2, les parties de terrasses accessibles en étage ou aménagées sur ouvrage enterré ou à moitié enterré" object_field="lot__annexe_terrasses__"|add:lot_uuid %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+{% endif %}
