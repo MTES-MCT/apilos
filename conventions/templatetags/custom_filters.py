@@ -344,6 +344,11 @@ def display_type1and2_editable(convention):
 
 
 @register.filter
+def not_op(boolean_value):
+    return not boolean_value
+
+
+@register.filter
 def display_back_to_instruction(convention, request):
     return convention.statut in [
         ConventionStatut.A_SIGNER,
@@ -384,4 +389,6 @@ def is_a_step(convention_form_step, label):
 
 @register.filter
 def get_text_as_list(text_field):
+    if text_field is None:
+        return ""
     return [line.strip(" -*") for line in text_field.splitlines() if line.strip(" -*")]
