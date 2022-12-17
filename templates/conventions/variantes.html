@@ -16,8 +16,6 @@
         {% include "common/step_progressbar.html"%}
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
-
-
                 {% csrf_token %}
                 <input
                     type="hidden"
@@ -44,15 +42,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="form-button-footer fr-col-md-12 fr-py-5w">
-                    {% if editable %}
-                        {% include "common/button/next_and_save.html" %}
-                        {% include "common/button/previous.html" with precedent='conventions:attribution' convention_uuid=convention.uuid %}
-                    {% else %}
-                        {% include "common/button/noteditable_button.html"%}
-                    {% endif %}
-                </div>
+                {% include "conventions/common/form_footer_button.html" %}
             </form>
         </div>
     </div>

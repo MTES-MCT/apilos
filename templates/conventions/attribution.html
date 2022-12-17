@@ -133,15 +133,7 @@
                 </div>
 
                 {% include "common/required_fields_info.html" %}
-                <div class="form-button-footer fr-col-md-12 fr-py-5w">
-                    {% if editable %}
-                        {% include "common/button/next_and_save.html" %}
-                        {% comment %} FIXME manage previous using steps {% endcomment %}
-                        {% include "common/button/previous.html" with precedent='conventions:annexes' convention_uuid=convention.uuid %}
-                    {% else %}
-                        {% include "common/button/noteditable_button.html"%}
-                    {% endif %}
-                </div>
+                {% include "conventions/common/form_footer_button.html" %}
             </form>
         </div>
     </div>

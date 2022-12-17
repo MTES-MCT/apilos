@@ -1,0 +1,10 @@
+<div class="form-button-footer fr-col-md-12 fr-py-5w">
+    {% if editable %}
+        {% include "common/button/next_and_save.html" %}
+        {% if form_step.previous_target %}
+            {% include "common/button/previous.html" with precedent=form_step.previous_target convention_uuid=convention.uuid %}
+        {% endif %}
+    {% else %}
+        {% include "common/button/noteditable_button.html"%}
+    {% endif %}
+</div>

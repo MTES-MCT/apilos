@@ -233,7 +233,7 @@ def generate_pdf(file_stream, convention):
         convertapi.api_secret = settings.CONVERTAPI_SECRET
         result = convertapi.convert("pdf", {"File": local_docx_path})
 
-        convention_dirpath = f"conventions/{convention.uuid}/convention_docs/"
+        convention_dirpath = f"conventions/{convention.uuid}/convention_docs"
         convention_filename = f"{convention.uuid}.pdf"
         pdf_path = _save_io_as_file(
             result.file.io, convention_dirpath, convention_filename
@@ -242,7 +242,7 @@ def generate_pdf(file_stream, convention):
         # remove docx version
         os.remove(local_docx_path)
     else:
-        convention_dirpath = f"conventions/{convention.uuid}/convention_docs/"
+        convention_dirpath = f"conventions/{convention.uuid}/convention_docs"
         convention_filename = f"{convention.uuid}.docx"
         pdf_path = _save_io_as_file(
             file_stream, convention_dirpath, convention_filename

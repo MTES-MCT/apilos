@@ -123,6 +123,10 @@ class EmailService:
                     pdf_file_handler.read(),
                     "application/vnd.openxmlformats-officedocument.wordprocessingm",
                 )
+            if extention == "zip":
+                self.msg.attach(
+                    f"{convention}.zip", pdf_file_handler.read(), "application/zip"
+                )
             pdf_file_handler.close()
             self.msg.content_subtype = "html"
 

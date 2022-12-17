@@ -559,12 +559,12 @@ foyer_steps = [
 
 class ConventionFormSteps:
     steps: List[ConventionFormStep]
-    active_classname: str | None
     convention: Convention
     total_step_number: int
     current_step_number: int
     current_step: ConventionFormStep
     next_step: ConventionFormStep
+    previous_step: ConventionFormStep | None = None
 
     last_step_path: ConventionFormStep = ConventionFormStep(
         pathname="conventions:recapitulatif", label="Récapitulatif", classname=None
@@ -572,9 +572,8 @@ class ConventionFormSteps:
 
     def __init__(self, *, convention, active_classname=None) -> None:
         self.convention = convention
-        self.active_classname = active_classname
         if convention.is_avenant():
-            if self.active_classname is None:
+            if active_classname is None:
                 self.steps = [
                     avenant_bailleur_step,
                     avenant_financement_step,
@@ -583,16 +582,16 @@ class ConventionFormSteps:
                     avenant_comments_step,
                 ]
             else:
-                if self.active_classname == "AvenantBailleurView":
+                if active_classname == "AvenantBailleurView":
                     self.steps = [avenant_bailleur_step]
-                if self.active_classname in [
+                if active_classname in [
                     "AvenantLogementsView",
                     "AvenantAnnexesView",
                 ]:
                     self.steps = [avenant_logements_step, avenant_annexes_step]
-                if self.active_classname == "AvenantFinancementView":
+                if active_classname == "AvenantFinancementView":
                     self.steps = [avenant_financement_step]
-                if self.active_classname == "AvenantCommentsView":
+                if active_classname == "AvenantCommentsView":
                     self.steps = [avenant_comments_step]
         elif convention.programme.is_foyer():
             self.steps = foyer_steps
@@ -601,11 +600,11 @@ class ConventionFormSteps:
 
         self.total_step_number = len(self.steps)
 
-        if self.active_classname is not None:
+        if active_classname is not None:
             step_index = [
                 i
                 for i, elem in enumerate(self.steps)
-                if elem.classname == self.active_classname
+                if elem.classname == active_classname
             ][0]
             self.current_step_number = step_index + 1
             self.current_step = self.steps[step_index]
@@ -614,15 +613,25 @@ class ConventionFormSteps:
                 if self.current_step_number < self.total_step_number
                 else self.last_step_path
             )
+            if step_index > 0:
+                self.previous_step = self.steps[step_index - 1]
 
     def get_form_step(self):
-        return {
+        form_step = {
             "number": self.current_step_number,
             "total": self.total_step_number,
             "title": self.current_step.label,
             "next": self.next_step.label,
             "next_target": self.next_step.pathname,
         }
+        if self.previous_step is not None:
+            form_step.update(
+                {
+                    "previous": self.previous_step.label,
+                    "previous_target": self.previous_step.pathname,
+                }
+            )
+        return form_step
 
     def next_path_redirect(self):
         return self.next_step.pathname

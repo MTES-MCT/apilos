@@ -13,9 +13,8 @@
                         </div>
                         {% include "conventions/actions/goto.html" %}
                     </div>
-                    <div class="table--limited-height">
-                        {% include "common/display_text_and_files_if_exists.html" with text=convention.comments|get_text_from_textfiles file_list=convention.comments|get_files_from_textfiles %}
-                    </div>
+                    {% include "common/display_text_and_files_if_exists.html" with text=convention.comments|get_text_from_textfiles file_list=convention.comments|get_files_from_textfiles %}
+                    {% include "common/display_text_and_files_if_exists.html" with text=convention.attached|get_text_from_textfiles label="Fichiers à joindre à la convention" file_list=convention.attached|get_files_from_textfiles %}
                 </div>
             </div>
         </div>

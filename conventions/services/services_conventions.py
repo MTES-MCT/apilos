@@ -885,6 +885,9 @@ class ConventionCommentsService(ConventionService):
                 **utils.get_text_and_files_from_field(
                     "comments", self.convention.comments
                 ),
+                **utils.get_text_and_files_from_field(
+                    "attached", self.convention.attached
+                ),
             }
         )
 
@@ -892,6 +895,9 @@ class ConventionCommentsService(ConventionService):
         self.request.user.check_perm("convention.change_convention", self.convention)
         self.form = ConventionCommentForm(self.request.POST)
         if self.form.is_valid():
+            self.convention.attached = utils.set_files_and_text_field(
+                self.form.cleaned_data["attached_files"],
+            )
             self.convention.comments = utils.set_files_and_text_field(
                 self.form.cleaned_data["comments_files"],
                 self.form.cleaned_data["comments"],
