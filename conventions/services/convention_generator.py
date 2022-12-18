@@ -11,7 +11,7 @@ from docx.shared import Inches
 from django.conf import settings
 from django.forms.models import model_to_dict
 
-from core.utils import round_half_up
+from core.utils import get_key_from_json_field, round_half_up
 from programmes.models import (
     Financement,
     Annexe,
@@ -295,6 +295,28 @@ def _build_files_for_docx(doc, convention_uuid, file_list):
             )
             local_pathes.append(f"{local_path}")
     return docx_images, local_pathes
+
+
+def get_files_attached(convention):
+    local_pathes = []
+    attached_files = get_key_from_json_field(convention.attached, "files", default={})
+
+    files = UploadedFile.objects.filter(uuid__in=attached_files)
+    for object_file in files:
+        file = UploadService().get_file(object_file.filepath(convention.uuid))
+        local_path = (
+            settings.MEDIA_ROOT
+            / "conventions"
+            / str(convention.uuid)
+            / "attached_files"
+            / object_file.filename
+        )
+        local_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(local_path, "wb") as local_file:
+            local_file.write(file.read())
+            file.close()
+        local_pathes.append(local_path)
+    return local_pathes
 
 
 # FIXME : can be factorized
