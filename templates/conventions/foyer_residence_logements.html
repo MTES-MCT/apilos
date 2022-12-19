@@ -15,11 +15,9 @@
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
-                {% include "conventions/common/form_logements.html"%}
+                {% include "conventions/common/form_foyer_residence_logements.html"%}
                 {% include "conventions/common/form_footer_button.html" %}
             </form>
         </div>
     </div>
-    <script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{request.csp_nonce}}"></script>
-
 {% endblock %}

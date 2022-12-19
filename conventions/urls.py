@@ -60,6 +60,11 @@ urlpatterns = [
         name="avenant_logements",
     ),
     path(
+        "foyer_residence_logements/<convention_uuid>",
+        views.ConventionFoyerResidenceLogementsView.as_view(),
+        name="foyer_residence_logements",
+    ),
+    path(
         "annexes/<convention_uuid>",
         views.ConventionAnnexesView.as_view(),
         name="annexes",
@@ -68,6 +73,11 @@ urlpatterns = [
         "avenant_annexes/<convention_uuid>",
         views.AvenantAnnexesView.as_view(),
         name="avenant_annexes",
+    ),
+    path(
+        "foyer_residence_annexes/<convention_uuid>",
+        views.ConventionFoyerResidenceAnnexesView.as_view(),
+        name="foyer_residence_annexes",
     ),
     path(
         "stationnements/<convention_uuid>",

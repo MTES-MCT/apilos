@@ -11,6 +11,8 @@ from programmes.models import (
     TypeHabitat,
     TypeOperation,
     TypologieLogement,
+    TypologieLogementClassique,
+    TypologieLogementFoyerResidence,
     TypologieAnnexe,
     TypologieStationnement,
     FinancementEDD,
@@ -316,6 +318,24 @@ class LotLgtsOptionForm(forms.Form):
     )
 
 
+class LotFoyerResidenceLgtsDetailsForm(forms.Form):
+    uuid = forms.UUIDField(
+        required=False,
+        label="Logement du programme",
+    )
+    surface_habitable_totale = forms.DecimalField(
+        label="Surface habitable totale en m²",
+        help_text="concerne la surface habitable de tout le bâti, y compris les locaux"
+        + " auxquels ne s’applique pas la convention",
+        max_digits=7,
+        decimal_places=2,
+        error_messages={
+            "required": "La surface habitable totale est obligatoire",
+            "max_digits": "La surface habitable doit-être inférieur à 100000 m²",
+        },
+    )
+
+
 class ProgrammeEDDForm(forms.Form):
 
     uuid = forms.UUIDField(
@@ -394,7 +414,7 @@ class LogementForm(forms.Form):
     typologie = forms.TypedChoiceField(
         required=True,
         label="",
-        choices=TypologieLogement.choices,
+        choices=TypologieLogementClassique.choices,
         error_messages={
             "required": "Le type de logement est obligatoire",
         },
@@ -624,6 +644,65 @@ class BaseLogementFormSet(BaseFormSet):
 LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, extra=0)
 
 
+class FoyerResidenceLogementForm(forms.Form):
+
+    uuid = forms.UUIDField(
+        required=False,
+        label="Logement",
+    )
+    designation = forms.CharField(
+        label="",
+        max_length=255,
+        min_length=1,
+        error_messages={
+            "required": "Le numéro du logement du logement est obligatoire",
+            "min_length": "Le numéro du logement du logement est obligatoire",
+            "max_length": "Le numéro du logement du logement ne doit pas excéder 255 caractères",
+        },
+    )
+    typologie = forms.TypedChoiceField(
+        required=True,
+        label="",
+        choices=TypologieLogementFoyerResidence.choices,
+        error_messages={
+            "required": "Le type de logement est obligatoire",
+        },
+    )
+    surface_habitable = forms.DecimalField(
+        label="",
+        max_digits=6,
+        decimal_places=2,
+        error_messages={
+            "required": "La surface habitable est obligatoire",
+            "max_digits": "La surface habitable doit-être inférieur à 10000 m²",
+        },
+    )
+    loyer = forms.DecimalField(
+        label="",
+        max_digits=6,
+        decimal_places=2,
+        error_messages={
+            "required": "La redevance maximale est obligatoire",
+            "max_digits": "La redevance maximale inférieur à 10000 €",
+        },
+    )
+
+
+class BaseFoyerResidenceLogementLogementFormSet(BaseFormSet):
+    def clean(self):
+        # FIXME : ajout de validations:
+        # - Chaque type de logement doivent avoir le même loyer
+        # - la surface habitable totale doit-être suppérieur à la surface totale des logements
+        pass
+
+
+FoyerResidenceLogementFormSet = formset_factory(
+    FoyerResidenceLogementForm,
+    formset=BaseFoyerResidenceLogementLogementFormSet,
+    extra=0,
+)
+
+
 class AnnexeForm(forms.Form):
 
     uuid = forms.UUIDField(
@@ -646,7 +725,7 @@ class AnnexeForm(forms.Form):
         },
     )
     logement_typologie = forms.TypedChoiceField(
-        required=True, label="", choices=TypologieLogement.choices
+        required=True, label="", choices=TypologieLogementClassique.choices
     )
     surface_hors_surface_retenue = forms.DecimalField(
         label="",

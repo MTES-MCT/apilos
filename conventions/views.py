@@ -49,6 +49,8 @@ from conventions.services.services_conventions import (
 )
 from conventions.services.services_logements import (
     ConventionAnnexesService,
+    ConventionFoyerResidenceAnnexesService,
+    ConventionFoyerResidenceLogementsService,
     ConventionLogementsService,
     ConventionTypeStationnementService,
 )
@@ -166,14 +168,17 @@ def generate_convention(request, convention_uuid):
 @login_required
 def load_xlsx_model(request, file_type):
     if file_type not in [
+        "all",
         "annexes",
         "cadastre",
         "financement",
+        "foyer_residence_annexes",
+        # FIXME : à tester
+        "foyer_residence_logements",
+        "listing_bailleur",
         "logements_edd",
         "logements",
-        "listing_bailleur",
         "stationnements",
-        "all",
     ]:
         raise PermissionDenied
 
@@ -470,10 +475,22 @@ logements_step = ConventionFormStep(
     classname="ConventionLogementsView",
 )
 
+foyer_residence_logements_step = ConventionFormStep(
+    pathname="conventions:foyer_residence_logements",
+    label="Logements",
+    classname="ConventionFoyerResidenceLogementsView",
+)
+
 annexes_step = ConventionFormStep(
     pathname="conventions:annexes",
     label="Annexes",
     classname="ConventionAnnexesView",
+)
+
+foyer_residence_annexes_step = ConventionFormStep(
+    pathname="conventions:foyer_residence_annexes",
+    label="Annexes",
+    classname="ConventionFoyerResidenceAnnexesView",
 )
 
 stationnements_step = ConventionFormStep(
@@ -549,8 +566,9 @@ foyer_steps = [
     cadastre_step,
     edd_step,
     financement_step,
-    logements_step,
-    annexes_step,
+    # FIXME : à tester
+    foyer_residence_logements_step,
+    foyer_residence_annexes_step,
     foyer_attribution_step,
     foyer_variante_step,
     comments_step,
@@ -588,6 +606,7 @@ class ConventionFormSteps:
                     "AvenantLogementsView",
                     "AvenantAnnexesView",
                 ]:
+                    # FIXME : foyer residence doesn't have the same step here
                     self.steps = [avenant_logements_step, avenant_annexes_step]
                 if active_classname == "AvenantFinancementView":
                     self.steps = [avenant_financement_step]
@@ -872,6 +891,19 @@ class AvenantLogementsView(ConventionLogementsView):
     service_class = ConventionLogementsService
 
 
+class ConventionFoyerResidenceLogementsView(ConventionView):
+    # FIXME : à tester
+    target_template: str = "conventions/foyer_residence_logements.html"
+    service_class = ConventionFoyerResidenceLogementsService
+
+    def _get_convention(self, convention_uuid):
+        return (
+            Convention.objects.prefetch_related("lot")
+            .prefetch_related("lot__logements")
+            .get(uuid=convention_uuid)
+        )
+
+
 class ConventionAnnexesView(ConventionView):
     target_template: str = "conventions/annexes.html"
     service_class = ConventionAnnexesService
@@ -886,6 +918,19 @@ class ConventionAnnexesView(ConventionView):
 
 class AvenantAnnexesView(ConventionAnnexesView):
     service_class = ConventionAnnexesService
+
+
+class ConventionFoyerResidenceAnnexesView(ConventionView):
+    # FIXME : à tester
+    target_template: str = "conventions/annexes.html"
+    service_class = ConventionFoyerResidenceAnnexesService
+
+    def _get_convention(self, convention_uuid):
+        return (
+            Convention.objects.prefetch_related("lot")
+            .prefetch_related("lot__logements__annexes")
+            .get(uuid=convention_uuid)
+        )
 
 
 class ConventionFoyerAttributionView(ConventionView):

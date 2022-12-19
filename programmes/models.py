@@ -41,7 +41,7 @@ class FinancementEDD(models.TextChoices):
     SANS_FINANCEMENT = "SANS_FINANCEMENT", "Sans Financement"
 
 
-class TypologieLogement(models.TextChoices):
+class TypologieLogementClassique(models.TextChoices):
     T1 = "T1", "T1"
     T1BIS = "T1bis", "T1bis"
     T2 = "T2", "T2"
@@ -49,6 +49,29 @@ class TypologieLogement(models.TextChoices):
     T4 = "T4", "T4"
     T5 = "T5", "T5"
     T6 = "T6", "T6 et plus"
+
+
+class TypologieLogementFoyerResidence(models.TextChoices):
+    T1 = "T1", "T1"
+    T1prime = "T1prime", "T1'"
+    T2 = "T2", "T2"
+    T3 = "T3", "T3"
+    T4 = "T4", "T4"
+    T5 = "T5", "T5"
+    T6 = "T6", "T6"
+    T7 = "T7", "T7"
+
+
+class TypologieLogement(models.TextChoices):
+    T1 = "T1", "T1"
+    T1BIS = "T1bis", "T1bis"
+    T1prime = "T1prime", "T1'"
+    T2 = "T2", "T2"
+    T3 = "T3", "T3"
+    T4 = "T4", "T4"
+    T5 = "T5", "T5"
+    T6 = "T6", "T6"
+    T7 = "T7", "T7"
 
     @classmethod
     def map_string(cls, value):
@@ -63,13 +86,10 @@ class TypologieLogement(models.TextChoices):
             "5": "T5",
             "5 et plus": "T5",
             "T5 et plus": "T5",
-            "T6": "T6 et plus",
-            "6": "T6 et plus",
-            "6 et plus": "T6 et plus",
-            "7": "T6 et plus",
-            "8": "T6 et plus",
-            "9": "T6 et plus",
-            "10": "T6 et plus",
+            "T6": "T6",
+            "6": "T6",
+            "6 et plus": "T6",
+            "7": "T7",
         }
         value = str(value)
         if value in mapping:
@@ -433,6 +453,11 @@ class Lot(IngestableModel):
         null=True,
         verbose_name="Loyer dérogatoire",
     )
+    surface_habitable_totale = models.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        null=True,
+    )
 
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
@@ -535,6 +560,14 @@ class Logement(models.Model):
         "Coefficient propre au logement": coeficient,
         "Loyer maximum du logement en €\n(col 4 * col 5 * col 6)": loyer,
     }
+
+    foyer_residence_import_mapping = {
+        "Numéro du logement": designation,
+        "Type": typologie,
+        "Surface habitable": surface_habitable,
+        "Redevance maximale": loyer,
+    }
+
     sheet_name = "Logements"
     needed_in_mapping = [
         designation,
@@ -542,6 +575,12 @@ class Logement(models.Model):
         surface_utile,
         loyer_par_metre_carre,
         coeficient,
+    ]
+    foyer_residence_needed_in_mapping = [
+        designation,
+        typologie,
+        surface_habitable,
+        loyer,
     ]
 
     # Needed for admin
