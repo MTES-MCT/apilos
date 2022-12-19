@@ -173,7 +173,6 @@ def load_xlsx_model(request, file_type):
         "cadastre",
         "financement",
         "locaux_collectifs",
-        # FIXME : à tester
         "foyer_residence_logements",
         "listing_bailleur",
         "logements_edd",

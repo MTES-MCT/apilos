@@ -5,7 +5,7 @@ from openpyxl import load_workbook
 from django.conf import settings
 
 
-def assert_xlsx(self, my_class, file_name):
+def assert_xlsx(self, my_class, file_name, import_mapping="import_mapping"):
     filepath = f"{settings.BASE_DIR}/static/files/{file_name}.xlsx"
     with open(filepath, "rb") as excel:
         my_wb = load_workbook(filename=BytesIO(excel.read()), data_only=True)
@@ -19,7 +19,7 @@ def assert_xlsx(self, my_class, file_name):
             for cell in col:
                 column_values.append(cell.value)
 
-        for key in my_class.import_mapping:
+        for key in getattr(my_class, import_mapping):
             words = key.split()
             exists_in_list = False
             for value in column_values:

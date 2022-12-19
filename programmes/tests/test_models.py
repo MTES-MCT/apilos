@@ -5,6 +5,7 @@ from django.test import TestCase
 from core.tests import utils_assertions, utils_fixtures
 
 from programmes.models import (
+    LocauxCollectifs,
     Programme,
     Lot,
     LogementEDD,
@@ -194,6 +195,13 @@ class ProgrammeModelsTest(TestCase):
         utils_assertions.assert_xlsx(self, ReferenceCadastrale, "cadastre")
         utils_assertions.assert_xlsx(self, LogementEDD, "logements_edd")
         utils_assertions.assert_xlsx(self, Logement, "logements")
+        utils_assertions.assert_xlsx(self, LocauxCollectifs, "locaux_collectifs")
+        utils_assertions.assert_xlsx(
+            self,
+            Logement,
+            "foyer_residence_logements",
+            import_mapping="foyer_residence_import_mapping",
+        )
         utils_assertions.assert_xlsx(self, TypeStationnement, "stationnements")
 
     def test_get_text_and_files(self):
