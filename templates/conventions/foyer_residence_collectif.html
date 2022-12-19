@@ -1,0 +1,24 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% load custom_filters %}
+
+{% block page_title %}Annexes - APiLos{% endblock%}
+
+{% block javascript_extras %}
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner fr-pb-1w">
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/step_progressbar.html"%}
+        <div class="fr-container">
+            <form method="post" action="" enctype="multipart/form-data">
+                {% include "conventions/common/form_foyer_collectif.html" %}
+                {% include "conventions/common/form_footer_button.html" %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

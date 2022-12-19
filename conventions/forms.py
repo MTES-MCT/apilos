@@ -340,6 +340,7 @@ class ConventionFinancementForm(forms.Form):
             )
 
     def _other_end_date_validation(self, annee_fin_conventionnement):
+        print("OTHER")
         end_conv = None
         cdc_pret = None
         for pret in self.prets:

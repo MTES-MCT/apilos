@@ -60,6 +60,30 @@ def get_convention_template_path(convention):
     )
 
 
+def _compute_total_logement(convention):
+    logements_totale = {
+        "sh_totale": 0,
+        "sa_totale": 0,
+        "sar_totale": 0,
+        "su_totale": 0,
+        "loyer_total": 0,
+    }
+    nb_logements_par_type = {}
+    for logement in convention.lot.logements.order_by("typologie").all():
+        logements_totale["sh_totale"] += logement.surface_habitable
+        if logement.surface_annexes is not None:
+            logements_totale["sa_totale"] += logement.surface_annexes
+        if logement.surface_annexes_retenue is not None:
+            logements_totale["sar_totale"] += logement.surface_annexes_retenue
+        if logement.surface_utile is not None:
+            logements_totale["su_totale"] += logement.surface_utile
+        logements_totale["loyer_total"] += logement.loyer
+        if logement.get_typologie_display() not in nb_logements_par_type:
+            nb_logements_par_type[logement.get_typologie_display()] = 0
+        nb_logements_par_type[logement.get_typologie_display()] += 1
+    return (logements_totale, nb_logements_par_type)
+
+
 def generate_convention_doc(convention, save_data=False):
     # pylint: disable=R0912,R0914,R0915
     annexes = (
@@ -76,24 +100,27 @@ def generate_convention_doc(convention, save_data=False):
 
     filepath = get_convention_template_path(convention)
     doc = DocxTemplate(filepath)
-
-    logements_totale = {
-        "sh_totale": 0,
-        "sa_totale": 0,
-        "sar_totale": 0,
-        "su_totale": 0,
-        "loyer_total": 0,
-    }
-    nb_logements_par_type = {}
-    for logement in convention.lot.logements.order_by("typologie").all():
-        logements_totale["sh_totale"] += logement.surface_habitable
-        logements_totale["sa_totale"] += logement.surface_annexes
-        logements_totale["sar_totale"] += logement.surface_annexes_retenue
-        logements_totale["su_totale"] += logement.surface_utile
-        logements_totale["loyer_total"] += logement.loyer
-        if logement.get_typologie_display() not in nb_logements_par_type:
-            nb_logements_par_type[logement.get_typologie_display()] = 0
-        nb_logements_par_type[logement.get_typologie_display()] += 1
+    (logements_totale, nb_logements_par_type) = _compute_total_logement(convention)
+    # logements_totale = {
+    #     "sh_totale": 0,
+    #     "sa_totale": 0,
+    #     "sar_totale": 0,
+    #     "su_totale": 0,
+    #     "loyer_total": 0,
+    # }
+    # nb_logements_par_type = {}
+    # for logement in convention.lot.logements.order_by("typologie").all():
+    #     logements_totale["sh_totale"] += logement.surface_habitable
+    #     if logement.surface_annexes is not None:
+    #         logements_totale["sa_totale"] += logement.surface_annexes
+    #     if logement.surface_annexes_retenue is not None:
+    #         logements_totale["sar_totale"] += logement.surface_annexes_retenue
+    #     if logement.surface_utile is not None:
+    #         logements_totale["su_totale"] += logement.surface_utile
+    #     logements_totale["loyer_total"] += logement.loyer
+    #     if logement.get_typologie_display() not in nb_logements_par_type:
+    #         nb_logements_par_type[logement.get_typologie_display()] = 0
+    #     nb_logements_par_type[logement.get_typologie_display()] += 1
 
     logement_edds, lot_num = _prepare_logement_edds(convention)
     # tester si il logement exists avant de commencer

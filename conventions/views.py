@@ -49,7 +49,7 @@ from conventions.services.services_conventions import (
 )
 from conventions.services.services_logements import (
     ConventionAnnexesService,
-    ConventionFoyerResidenceAnnexesService,
+    ConventionFoyerResidenceCollectifService,
     ConventionFoyerResidenceLogementsService,
     ConventionLogementsService,
     ConventionTypeStationnementService,
@@ -172,7 +172,7 @@ def load_xlsx_model(request, file_type):
         "annexes",
         "cadastre",
         "financement",
-        "foyer_residence_annexes",
+        "locaux_collectifs",
         # FIXME : à tester
         "foyer_residence_logements",
         "listing_bailleur",
@@ -487,10 +487,10 @@ annexes_step = ConventionFormStep(
     classname="ConventionAnnexesView",
 )
 
-foyer_residence_annexes_step = ConventionFormStep(
-    pathname="conventions:foyer_residence_annexes",
-    label="Annexes",
-    classname="ConventionFoyerResidenceAnnexesView",
+foyer_residence_collectif_step = ConventionFormStep(
+    pathname="conventions:foyer_residence_collectif",
+    label="Collectif",
+    classname="ConventionFoyerResidenceCollectifView",
 )
 
 stationnements_step = ConventionFormStep(
@@ -568,7 +568,7 @@ foyer_steps = [
     financement_step,
     # FIXME : à tester
     foyer_residence_logements_step,
-    foyer_residence_annexes_step,
+    foyer_residence_collectif_step,
     foyer_attribution_step,
     foyer_variante_step,
     comments_step,
@@ -920,10 +920,10 @@ class AvenantAnnexesView(ConventionAnnexesView):
     service_class = ConventionAnnexesService
 
 
-class ConventionFoyerResidenceAnnexesView(ConventionView):
+class ConventionFoyerResidenceCollectifView(ConventionView):
     # FIXME : à tester
-    target_template: str = "conventions/annexes.html"
-    service_class = ConventionFoyerResidenceAnnexesService
+    target_template: str = "conventions/foyer_residence_collectif.html"
+    service_class = ConventionFoyerResidenceCollectifService
 
     def _get_convention(self, convention_uuid):
         return (

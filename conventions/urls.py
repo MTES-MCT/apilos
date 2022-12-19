@@ -75,9 +75,9 @@ urlpatterns = [
         name="avenant_annexes",
     ),
     path(
-        "foyer_residence_annexes/<convention_uuid>",
-        views.ConventionFoyerResidenceAnnexesView.as_view(),
-        name="foyer_residence_annexes",
+        "foyer_residence_collectif/<convention_uuid>",
+        views.ConventionFoyerResidenceCollectifView.as_view(),
+        name="foyer_residence_collectif",
     ),
     path(
         "stationnements/<convention_uuid>",

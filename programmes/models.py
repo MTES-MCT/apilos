@@ -458,6 +458,13 @@ class Lot(IngestableModel):
         decimal_places=2,
         null=True,
     )
+    foyer_residence_nb_garage_parking = models.IntegerField(blank=True, null=True)
+    foyer_residence_dependance = models.TextField(
+        max_length=5000, blank=True, null=True
+    )
+    foyer_residence_locaux_hors_convention = models.TextField(
+        max_length=5000, blank=True, null=True
+    )
 
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
@@ -700,6 +707,32 @@ class Annexe(models.Model):
         return self.loyer
 
     l = property(_get_loyer)
+
+
+class LocauxCollectifs(models.Model):
+
+    id = models.AutoField(primary_key=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    lot = models.ForeignKey(
+        "Lot",
+        on_delete=models.CASCADE,
+        related_name="locaux_collectifs",
+        null=False,
+    )
+
+    type_local = models.TextField()
+    surface_habitable = models.DecimalField(max_digits=6, decimal_places=2)
+    nombre = models.IntegerField()
+
+    cree_le = models.DateTimeField(auto_now_add=True)
+    mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+    import_mapping = {
+        "Type de local": type_local,
+        "Surface habitable": surface_habitable,
+        "Nombre": nombre,
+    }
+    sheet_name = "Locaux Collectifs"
 
 
 class TypeStationnement(IngestableModel):

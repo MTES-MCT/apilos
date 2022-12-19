@@ -8,13 +8,15 @@ from conventions.services.services_conventions import ConventionService
 from programmes.forms import (
     AnnexeFormSet,
     FoyerResidenceLogementFormSet,
+    LocauxCollectifsFormSet,
     LogementFormSet,
     LotAnnexeForm,
+    LotFoyerResidenceCollectifForm,
     LotFoyerResidenceLgtsDetailsForm,
     LotLgtsOptionForm,
     TypeStationnementFormSet,
 )
-from programmes.models import Annexe, Logement, TypeStationnement
+from programmes.models import Annexe, LocauxCollectifs, Logement, TypeStationnement
 
 from . import upload_objects, utils
 
@@ -620,42 +622,33 @@ class ConventionAnnexesService(ConventionService):
             annexe.save()
 
 
-class ConventionFoyerResidenceAnnexesService(ConventionService):
-    form: LotAnnexeForm
-    formset: AnnexeFormSet
+class ConventionFoyerResidenceCollectifService(ConventionService):
+    form: LotFoyerResidenceCollectifForm
+    formset: LocauxCollectifsFormSet
     upform: UploadForm = UploadForm()
 
     def get(self):
         initial = []
-        annexes = Annexe.objects.filter(logement__lot_id=self.convention.lot.id)
-        for annexe in annexes:
+        locaux_collectifs = LocauxCollectifs.objects.filter(
+            lot_id=self.convention.lot.id
+        )
+        for type_locaux_collectifs in locaux_collectifs:
             initial.append(
                 {
-                    "uuid": annexe.uuid,
-                    "typologie": annexe.typologie,
-                    "logement_designation": annexe.logement.designation,
-                    "logement_typologie": annexe.logement.typologie,
-                    "surface_hors_surface_retenue": annexe.surface_hors_surface_retenue,
-                    "loyer_par_metre_carre": annexe.loyer_par_metre_carre,
-                    "loyer": annexe.loyer,
+                    "uuid": type_locaux_collectifs.uuid,
+                    "type_local": type_locaux_collectifs.type_local,
+                    "surface_habitable": type_locaux_collectifs.surface_habitable,
+                    "nombre": type_locaux_collectifs.nombre,
                 }
             )
-        self.formset = AnnexeFormSet(initial=initial)
+        self.formset = LocauxCollectifsFormSet(initial=initial)
         lot = self.convention.lot
-        self.form = LotAnnexeForm(
+        self.form = LotFoyerResidenceCollectifForm(
             initial={
                 "uuid": lot.uuid,
-                "annexe_caves": lot.annexe_caves,
-                "annexe_soussols": lot.annexe_soussols,
-                "annexe_remises": lot.annexe_remises,
-                "annexe_ateliers": lot.annexe_ateliers,
-                "annexe_sechoirs": lot.annexe_sechoirs,
-                "annexe_celliers": lot.annexe_celliers,
-                "annexe_resserres": lot.annexe_resserres,
-                "annexe_combles": lot.annexe_combles,
-                "annexe_balcons": lot.annexe_balcons,
-                "annexe_loggias": lot.annexe_loggias,
-                "annexe_terrasses": lot.annexe_terrasses,
+                "foyer_residence_nb_garage_parking": lot.foyer_residence_nb_garage_parking,
+                "foyer_residence_dependance": lot.foyer_residence_dependance,
+                "foyer_residence_locaux_hors_convention": lot.foyer_residence_locaux_hors_convention,
             }
         )
 
@@ -665,45 +658,26 @@ class ConventionFoyerResidenceAnnexesService(ConventionService):
         )
         if self.request.POST.get("Upload", False):
 
-            self.form = LotAnnexeForm(self.request.POST)
-            self._upload_annexes()
+            self.form = LotFoyerResidenceCollectifForm(self.request.POST)
+            self._upload_locaux_collectifs()
         # When the user cliked on "Enregistrer et Suivant"
         else:
             self._annexes_atomic_update()
 
-    def _upload_annexes(self):
-        self.formset = AnnexeFormSet(self.request.POST)
+    def _upload_locaux_collectifs(self):
+        self.formset = LocauxCollectifsFormSet(self.request.POST)
         self.upform = UploadForm(self.request.POST, self.request.FILES)
         if self.upform.is_valid():
             result = upload_objects.handle_uploaded_xlsx(
                 self.upform,
                 self.request.FILES["file"],
-                Annexe,
+                LocauxCollectifs,
                 self.convention,
-                "annexes.xlsx",
+                "locaux_collectifs.xlsx",
             )
+            print(result["objects"])
             if result["success"] != utils.ReturnStatus.ERROR:
-
-                annexes_by_designation = {}
-                for annexe in Annexe.objects.prefetch_related("logement").filter(
-                    logement__lot_id=self.convention.lot.id
-                ):
-                    annexes_by_designation[
-                        f"{annexe.logement.designation}_{annexe.typologie}"
-                    ] = annexe.uuid
-
-                for obj in result["objects"]:
-                    if (
-                        "logement_designation" in obj
-                        and "typologie" in obj
-                        and f"{obj['logement_designation']}_{obj['typologie']}"
-                        in annexes_by_designation
-                    ):
-                        obj["uuid"] = annexes_by_designation[
-                            f"{obj['logement_designation']}_{obj['typologie']}"
-                        ]
-
-                self.formset = AnnexeFormSet(initial=result["objects"])
+                self.formset = LocauxCollectifsFormSet(initial=result["objects"])
                 self.import_warnings = result["import_warnings"]
                 self.editable_after_upload = True
 
@@ -723,7 +697,7 @@ class ConventionFoyerResidenceAnnexesService(ConventionService):
         lot.save()
 
     def _annexes_atomic_update(self):
-        self.form = LotAnnexeForm(
+        self.form = LotFoyerResidenceCollectifForm(
             {
                 "uuid": self.convention.lot.uuid,
                 **utils.build_partial_form(
