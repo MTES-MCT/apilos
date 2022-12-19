@@ -197,7 +197,6 @@ def to_fr_short_date_or_default(date):
 
 
 def _get_jinja_env():
-    # FIXME: get back here the function not use in templates
     jinja_env = jinja2.Environment(autoescape=True)
     jinja_env.filters["d"] = to_fr_date
     jinja_env.filters["dd"] = to_fr_date_or_default
@@ -375,7 +374,6 @@ def get_files_attached(convention):
     return local_pathes
 
 
-# FIXME : can be factorized
 def _get_object_images(doc, convention):
     object_images = {}
     local_pathes = []

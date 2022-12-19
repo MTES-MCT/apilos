@@ -316,6 +316,7 @@ class LotLgtsOptionForm(forms.Form):
 
 
 class LotFoyerResidenceLgtsDetailsForm(forms.Form):
+    floor_surface_habitable_totale: float
     uuid = forms.UUIDField(
         required=False,
         label="Logement du programme",
@@ -331,6 +332,16 @@ class LotFoyerResidenceLgtsDetailsForm(forms.Form):
             "max_digits": "La surface habitable doit-être inférieur à 100000 m²",
         },
     )
+
+    def clean_surface_habitable_totale(self):
+        surface_habitable_totale = self.cleaned_data.get("surface_habitable_totale", 0)
+        if surface_habitable_totale < self.floor_surface_habitable_totale:
+            raise ValidationError(
+                "La surface habitable ne peut-être inférieur à la somme des surfaces"
+                + f" habitables des logements ({self.floor_surface_habitable_totale} m²)"
+            )
+
+        return surface_habitable_totale
 
 
 class ProgrammeEDDForm(forms.Form):
@@ -685,17 +696,47 @@ class FoyerResidenceLogementForm(forms.Form):
     )
 
 
-class BaseFoyerResidenceLogementLogementFormSet(BaseFormSet):
+class BaseFoyerResidenceLogementFormSet(BaseFormSet):
+    nb_logements = None
+
     def clean(self):
-        # FIXME : ajout de validations:
-        # - Chaque type de logement doivent avoir le même loyer
-        # - la surface habitable totale doit-être suppérieur à la surface totale des logements
-        pass
+        self.loan_should_be_consistent()
+
+    #     self.manage_nb_logement_consistency()
+
+    # def manage_nb_logement_consistency(self):
+    #     if self.nb_logements is None:
+    #         lot = Lot.objects.get(id=self.lot_id)
+    #         nb_logements = lot.nb_logements
+    #     else:
+    #         nb_logements = int(self.nb_logements)
+    #     if nb_logements != self.total_form_count():
+    #         error = ValidationError(
+    #             f"Le nombre de logement a conventionner ({nb_logements}) "
+    #             + f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
+    #         )
+    #         self._non_form_errors.append(error)
+
+    def loan_should_be_consistent(self):
+        loan_by_type = {}
+        loan_errors = {}
+        for form in self.forms:
+            typologie = form.cleaned_data.get("typologie", "")
+            if typologie not in loan_by_type:
+                loan_by_type[typologie] = form.cleaned_data.get("loyer")
+            else:
+                if loan_by_type[typologie] != form.cleaned_data.get("loyer"):
+                    loan_errors[typologie] = ValidationError(
+                        "Les loyers doivent-être identiques pour les logements de"
+                        + f" typologie identique : {form.cleaned_data.get('typologie')} "
+                    )
+        for _, loan_error in loan_errors.items():
+            self._non_form_errors.append(loan_error)
 
 
 FoyerResidenceLogementFormSet = formset_factory(
     FoyerResidenceLogementForm,
-    formset=BaseFoyerResidenceLogementLogementFormSet,
+    formset=BaseFoyerResidenceLogementFormSet,
     extra=0,
 )
 

@@ -565,7 +565,6 @@ foyer_steps = [
     cadastre_step,
     edd_step,
     financement_step,
-    # FIXME : à tester
     foyer_residence_logements_step,
     foyer_residence_collectif_step,
     foyer_attribution_step,
@@ -605,8 +604,11 @@ class ConventionFormSteps:
                     "AvenantLogementsView",
                     "AvenantAnnexesView",
                 ]:
-                    # FIXME : foyer residence doesn't have the same step here
-                    self.steps = [avenant_logements_step, avenant_annexes_step]
+                    if convention.programme.is_foyer():
+                        # FIXME : foyer residence doesn't have the same step here
+                        pass
+                    else:
+                        self.steps = [avenant_logements_step, avenant_annexes_step]
                 if active_classname == "AvenantFinancementView":
                     self.steps = [avenant_financement_step]
                 if active_classname == "AvenantCommentsView":
@@ -886,8 +888,7 @@ class ConventionLogementsView(ConventionView):
 
 
 class AvenantLogementsView(ConventionLogementsView):
-    target_template: str = "conventions/logements.html"
-    service_class = ConventionLogementsService
+    pass
 
 
 class ConventionFoyerResidenceLogementsView(ConventionView):
@@ -903,6 +904,10 @@ class ConventionFoyerResidenceLogementsView(ConventionView):
         )
 
 
+class AvenantFoyerResidenceLogementsView(ConventionFoyerResidenceLogementsView):
+    pass
+
+
 class ConventionAnnexesView(ConventionView):
     target_template: str = "conventions/annexes.html"
     service_class = ConventionAnnexesService
@@ -916,7 +921,7 @@ class ConventionAnnexesView(ConventionView):
 
 
 class AvenantAnnexesView(ConventionAnnexesView):
-    service_class = ConventionAnnexesService
+    pass
 
 
 class ConventionFoyerResidenceCollectifView(ConventionView):
@@ -930,6 +935,10 @@ class ConventionFoyerResidenceCollectifView(ConventionView):
             .prefetch_related("lot__logements__annexes")
             .get(uuid=convention_uuid)
         )
+
+
+class AvenantFoyerResidenceCollectifView(ConventionFoyerResidenceCollectifView):
+    pass
 
 
 class ConventionFoyerAttributionView(ConventionView):

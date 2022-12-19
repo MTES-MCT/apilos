@@ -720,7 +720,7 @@ class LocauxCollectifs(models.Model):
         null=False,
     )
 
-    type_local = models.TextField()
+    type_local = models.CharField(max_length=255)
     surface_habitable = models.DecimalField(max_digits=6, decimal_places=2)
     nombre = models.IntegerField()
 

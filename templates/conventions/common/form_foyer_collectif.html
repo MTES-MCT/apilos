@@ -50,13 +50,13 @@
                                     </td>
                                 {% endif %}
                                 <td>
-                                    {% include "common/form/input_text.html" with form_input=form_locaux_collectifs.logement_designation parent_object_field=main_object_field editable=editable_after_upload %}
+                                    {% include "common/form/input_text.html" with form_input=form_locaux_collectifs.type_local parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td>
-                                    {% include "common/form/input_number.html" with form_input=form_locaux_collectifs.loyer_par_metre_carre step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
+                                    {% include "common/form/input_number.html" with form_input=form_locaux_collectifs.surface_habitable step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td>
-                                    {% include "common/form/input_number.html" with form_input=form_locaux_collectifs.loyer step="1" parent_object_field=main_object_field editable=editable_after_upload %}
+                                    {% include "common/form/input_number.html" with form_input=form_locaux_collectifs.nombre step="1" parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                             </tr>
                         {% endwith %}

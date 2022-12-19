@@ -236,7 +236,6 @@ class ConventionLogementsService(ConventionService):
 
 
 class ConventionFoyerResidenceLogementsService(ConventionService):
-    # FIXME : à tester
     form: LotFoyerResidenceLgtsDetailsForm
     formset: FoyerResidenceLogementFormSet
     upform: UploadForm = UploadForm()
@@ -259,7 +258,6 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
             initial={
                 "uuid": self.convention.lot.uuid,
                 "surface_habitable_totale": self.convention.lot.surface_habitable_totale,
-                # fixme surface totale
             }
         )
 
@@ -302,16 +300,6 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                 self.editable_after_upload = True
 
     def _foyer_residence_logements_atomic_update(self):
-        self.form = LotFoyerResidenceLgtsDetailsForm(
-            {
-                "uuid": self.convention.lot.uuid,
-                "surface_habitable_totale": self.request.POST.get(
-                    "surface_habitable_totale",
-                    getattr(self.convention.lot, "surface_habitable_totale"),
-                ),
-            }
-        )
-        form_is_valid = self.form.is_valid()
 
         self.formset = FoyerResidenceLogementFormSet(self.request.POST)
         initformset = {
@@ -322,7 +310,13 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                 "form-INITIAL_FORMS", len(self.formset)
             ),
         }
+        surface_habitable_totale = 0
         for idx, form_logement in enumerate(self.formset):
+            surface_habitable_totale += (
+                float(form_logement["surface_habitable"].value())
+                if form_logement["surface_habitable"].value()
+                else 0
+            )
             if form_logement["uuid"].value():
                 logement = Logement.objects.get(uuid=form_logement["uuid"].value())
                 initformset = {
@@ -353,6 +347,19 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                 }
         self.formset = FoyerResidenceLogementFormSet(initformset)
         formset_is_valid = self.formset.is_valid()
+
+        self.form = LotFoyerResidenceLgtsDetailsForm(
+            {
+                "uuid": self.convention.lot.uuid,
+                "surface_habitable_totale": self.request.POST.get(
+                    "surface_habitable_totale",
+                    getattr(self.convention.lot, "surface_habitable_totale"),
+                ),
+            }
+        )
+
+        self.form.floor_surface_habitable_totale = surface_habitable_totale
+        form_is_valid = self.form.is_valid()
 
         if form_is_valid and formset_is_valid:
             self._save_foyer_residence_logements()
@@ -648,7 +655,9 @@ class ConventionFoyerResidenceCollectifService(ConventionService):
                 "uuid": lot.uuid,
                 "foyer_residence_nb_garage_parking": lot.foyer_residence_nb_garage_parking,
                 "foyer_residence_dependance": lot.foyer_residence_dependance,
-                "foyer_residence_locaux_hors_convention": lot.foyer_residence_locaux_hors_convention,
+                "foyer_residence_locaux_hors_convention": (
+                    lot.foyer_residence_locaux_hors_convention
+                ),
             }
         )
 

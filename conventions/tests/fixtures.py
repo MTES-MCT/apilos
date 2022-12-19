@@ -29,3 +29,19 @@ variantes_success_payload = {
     "foyer_variante_2_travaux": "TRAVAUX",
     "foyer_variante_3": "on",
 }
+
+foyer_residence_logements_success_payload = {
+    "form-TOTAL_FORMS": "2",
+    "form-INITIAL_FORMS": "2",
+    "form-0-uuid": "",
+    "form-0-designation": "B1",
+    "form-0-typologie": "T1prime",
+    "form-0-surface_habitable": "12.12",
+    "form-0-loyer": "135.00",
+    "form-1-uuid": "",
+    "form-1-designation": "B2",
+    "form-1-typologie": "T1prime",
+    "form-1-surface_habitable": "30.00",
+    "form-1-loyer": "135.00",
+    "surface_habitable_totale": "50.55",
+}
