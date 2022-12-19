@@ -73,19 +73,7 @@
             </div>
         </div>
         {% include "common/form/input_textarea.html" with form_input=form.foyer_residence_dependance helptext_visible=True object_field="lot__foyer_residence_dependance__"|add:form.uuid.value %}
-        {% include "common/form/input_textarea.html" with form_input=form.foyer_residence_locaux_hors_convention helptext_visible=True object_field="lot__foyer_residence_locaux_hors_convention__"|add:form.uuid.value %}
-
-
-        {% comment %} Dépendances (nombre et surface) : nb et surface, champs libre<br>
-        Garages et/ ou parking (nombre) : nb (pas de tableau ici)<br>
-        B. Locaux auxquels ne s'appliquent pas la convention [Exemple : logement de fonction, logement d'accueil temporaire et espaces hors hébergement dédiés aux soins, à de la balnéothérapie ...] :<br>
-        - lister les locaux auxquels ne s’applique pas la convention<br>
-        -<br>
-        -<br> {% endcomment %}
-
+        {% include "common/form/input_textarea.html" with form_input=form.foyer_residence_locaux_hors_convention helptext_visible=True is_list=True object_field="lot__foyer_residence_locaux_hors_convention__"|add:form.uuid.value %}
     </div>
 </div>
-
-
-
 {% include "common/required_fields_info.html" %}

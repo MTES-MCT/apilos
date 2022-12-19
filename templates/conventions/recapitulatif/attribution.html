@@ -64,7 +64,6 @@
                                 {% include "common/display_field_if_exists.html" with label="" value=convention.attribution_handicapes_autre_detail object_field="convention__attribution_handicapes_autre_detail__"|add:convention_uuid %}
                             </div>
                         </div>
-
                     {% endif %}
                     {% if convention.attribution_type == 'inclusif' %}
                         {% include "common/display_textfield_if_exists.html" with label="Conditions spécifiques d'accueil" value=convention.attribution_inclusif_conditions_specifiques object_field="convention__attribution_inclusif_conditions_specifiques__"|add:convention_uuid %}
@@ -73,16 +72,11 @@
                         {% include "common/display_textfield_if_exists.html" with label="Partenariats concourant à la mise en œuvre du projet de vie sociale et partagée mis en place" value=convention.attribution_inclusif_partenariats object_field="convention__attribution_inclusif_partenariats__"|add:convention_uuid %}
                         {% include "common/display_textfield_if_exists.html" with label="Activités proposées à l’ensemble des résidents dans le cadre du projet de vie sociale et partagée" value=convention.attribution_inclusif_activites object_field="convention__attribution_inclusif_activites__"|add:convention_uuid %}
                     {% endif %}
-
                     <h4 class='fr-mt-3w'>Autres modalitées</h4>
                     {% include "common/display_textfield_if_exists.html" with label="Les modalités de gestion des reservations sont obligatoires" value=convention.attribution_modalites_reservations object_field="convention__attribution_modalites_reservations__"|add:convention_uuid %}
                     {% include "common/display_textfield_if_exists.html" with label="Modalités de choix des personnes accueillies" value=convention.attribution_modalites_choix_personnes object_field="convention__attribution_modalites_choix_personnes__"|add:convention_uuid %}
                     {% include "common/display_listfield_if_exists.html" with label="Prestation intégrées dans la redevance (Liste)" value=convention.attribution_prestations_integrees object_field="convention__attribution_prestations_integrees__"|add:convention_uuid %}
                     {% include "common/display_listfield_if_exists.html" with label="Prestations facultatives (Liste)" value=convention.attribution_prestations_facultatives object_field="convention__attribution_prestations_facultatives__"|add:convention_uuid %}
-
-
-
-
                 </div>
             </div>
         </div>

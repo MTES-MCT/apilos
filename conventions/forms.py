@@ -282,6 +282,14 @@ class ConventionFinancementForm(forms.Form):
         required=False,
         label="Fonds propres",
     )
+    historique_financement_public = forms.CharField(
+        required=False,
+        label="Historique de financement public",
+        max_length=5000,
+        error_messages={
+            "max_length": "L'historique de financement public ne doit pas excéder 5000 caractères",
+        },
+    )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -340,7 +348,6 @@ class ConventionFinancementForm(forms.Form):
             )
 
     def _other_end_date_validation(self, annee_fin_conventionnement):
-        print("OTHER")
         end_conv = None
         cdc_pret = None
         for pret in self.prets:

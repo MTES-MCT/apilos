@@ -200,6 +200,10 @@ class Convention(models.Model):
     televersement_convention_signee_le = models.DateTimeField(null=True, blank=True)
     date_resiliation = models.DateField(null=True, blank=True)
 
+    historique_financement_public = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+
     attribution_agees_autonomie = models.BooleanField(default=False)
     attribution_agees_ephad = models.BooleanField(default=False)
     attribution_agees_desorientees = models.BooleanField(default=False)

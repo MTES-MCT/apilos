@@ -147,7 +147,11 @@
                                         </div>
                                     </div>
                                     <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                        {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" object_field="convention__fond_propre__"|add:form.uuid.value %}
+                                        {% if convention.programme.is_foyer %}
+                                            {% include "common/form/input_textarea.html" with form_input=form.historique_financement_public helptext_visible=True object_field="convention__historique_financement_public__"|add:form.uuid.value %}
+                                        {% else %}
+                                            {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" object_field="convention__fond_propre__"|add:form.uuid.value %}
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>

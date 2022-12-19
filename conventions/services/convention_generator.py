@@ -10,6 +10,7 @@ from docx.shared import Inches
 
 from django.conf import settings
 from django.forms.models import model_to_dict
+from django.template.defaultfilters import date as template_date
 
 from core.utils import get_key_from_json_field, round_half_up
 from programmes.models import (
@@ -23,8 +24,6 @@ from conventions.models import ConventionType1and2
 from conventions.templatetags.custom_filters import (
     get_text_as_list,
     inline_text_multiline,
-    to_fr_date,
-    to_fr_short_date,
 )
 
 
@@ -172,15 +171,45 @@ def generate_convention_doc(convention, save_data=False):
     return file_stream
 
 
+def default_str_if_none(text_field):
+    return text_field if text_field else "---"
+
+
+def to_fr_date(date):
+    """
+    Display french date using the date function from django.template.defaultfilters
+    Write the date in number (ex : 05/01/2021). More about format syntax here :
+    https://docs.djangoproject.com/fr/4.0/ref/templates/builtins/#date
+    """
+    return template_date(date, "j F Y") if date else ""
+
+
+def to_fr_date_or_default(date):
+    return template_date(date, "j F Y") if date else "---"
+
+
+def to_fr_short_date(date):
+    return template_date(date, "d/m/Y") if date else ""
+
+
+def to_fr_short_date_or_default(date):
+    return template_date(date, "d/m/Y") if date else "---"
+
+
 def _get_jinja_env():
+    # FIXME: get back here the function not use in templates
     jinja_env = jinja2.Environment(autoescape=True)
     jinja_env.filters["d"] = to_fr_date
+    jinja_env.filters["dd"] = to_fr_date_or_default
     jinja_env.filters["sd"] = to_fr_short_date
+    jinja_env.filters["sdd"] = to_fr_short_date_or_default
     jinja_env.filters["f"] = _to_fr_float
     jinja_env.filters["pl"] = pluralize
     jinja_env.filters["len"] = len
     jinja_env.filters["inline_text_multiline"] = inline_text_multiline
     jinja_env.filters["get_text_as_list"] = get_text_as_list
+    jinja_env.filters["default_str_if_none"] = default_str_if_none
+
     return jinja_env
 
 

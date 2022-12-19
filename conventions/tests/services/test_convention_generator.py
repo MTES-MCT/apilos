@@ -1,3 +1,4 @@
+from datetime import date
 import random
 import unittest
 
@@ -7,8 +8,13 @@ from bailleurs.models import SousNatureBailleur
 from conventions.models import Convention, ConventionType1and2
 from conventions.services.convention_generator import (
     ConventionTypeConfigurationError,
+    default_str_if_none,
     get_convention_template_path,
     pluralize,
+    to_fr_date,
+    to_fr_date_or_default,
+    to_fr_short_date,
+    to_fr_short_date_or_default,
 )
 from core.tests import utils_fixtures
 from programmes.models import NatureLogement
@@ -96,3 +102,28 @@ class ConventionServiceGeneratorTest(TestCase):
                 get_convention_template_path,
                 convention,
             )
+
+    def test_default_str_if_none(self):
+        self.assertEqual(default_str_if_none(None), "---")
+        self.assertEqual(default_str_if_none(""), "---")
+        self.assertEqual(default_str_if_none("None"), "None")
+
+    def test_to_fr_date(self):
+        self.assertEqual(to_fr_date(None), "")
+        self.assertEqual(to_fr_date(""), "")
+        self.assertEqual(to_fr_date(date(2022, 12, 31)), "31 décembre 2022")
+
+    def test_to_fr_date_or_default(self):
+        self.assertEqual(to_fr_date_or_default(None), "---")
+        self.assertEqual(to_fr_date_or_default(""), "---")
+        self.assertEqual(to_fr_date_or_default(date(2022, 12, 31)), "31 décembre 2022")
+
+    def test_to_fr_short_date(self):
+        self.assertEqual(to_fr_short_date(None), "")
+        self.assertEqual(to_fr_short_date(""), "")
+        self.assertEqual(to_fr_short_date(date(2022, 12, 31)), "31/12/2022")
+
+    def test_to_fr_short_date_or_default(self):
+        self.assertEqual(to_fr_short_date_or_default(None), "---")
+        self.assertEqual(to_fr_short_date_or_default(""), "---")
+        self.assertEqual(to_fr_short_date_or_default(date(2022, 12, 31)), "31/12/2022")

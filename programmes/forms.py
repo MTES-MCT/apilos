@@ -135,7 +135,6 @@ class ProgrammeCadastralForm(forms.Form):
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
-        help_text="Identité du vendeur telle que mentionnée dans l'acte de propriété",
     )
     vendeur_files = forms.CharField(
         required=False,
@@ -148,7 +147,6 @@ class ProgrammeCadastralForm(forms.Form):
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
-        help_text="Identité de l'acquéreur telle que mentionnée dans l'acte de propriété",
     )
     acquereur_files = forms.CharField(
         required=False,
@@ -980,7 +978,8 @@ class LotFoyerResidenceCollectifForm(forms.Form):
     foyer_residence_locaux_hors_convention = forms.CharField(
         required=False,
         label="Locaux auxquels ne s'appliquent pas la convention (Liste)",
-        help_text="Exemple : logement de fonction, logement d'accueil temporaire et espaces hors hébergement dédiés aux soins, à de la balnéothérapie ...",
+        help_text="Exemple : logement de fonction, logement d'accueil temporaire et"
+        + " espaces hors hébergement dédiés aux soins, à de la balnéothérapie ...",
         max_length=5000,
         error_messages={
             "max_length": "la description des dépendances ne doit pas excéder 5000 caractères",

@@ -726,6 +726,7 @@ class ConventionFinancementService(ConventionService):
                 if self.convention.date_fin_conventionnement is not None
                 else None,
                 "fond_propre": self.convention.fond_propre,
+                "historique_financement_public": self.convention.historique_financement_public,
             }
         )
 
@@ -772,6 +773,10 @@ class ConventionFinancementService(ConventionService):
                 "uuid": self.convention.uuid,
                 "fond_propre": self.request.POST.get(
                     "fond_propre", self.convention.fond_propre
+                ),
+                "historique_financement_public": self.request.POST.get(
+                    "historique_financement_public",
+                    self.convention.historique_financement_public,
                 ),
                 "annee_fin_conventionnement": self.request.POST.get(
                     "annee_fin_conventionnement",
@@ -844,6 +849,9 @@ class ConventionFinancementService(ConventionService):
                 self.form.cleaned_data["annee_fin_conventionnement"], 6, 30
             )
         self.convention.fond_propre = self.form.cleaned_data["fond_propre"]
+        self.convention.historique_financement_public = self.form.cleaned_data[
+            "historique_financement_public"
+        ]
         self.convention.save()
 
     def _save_convention_financement_prets(self):
