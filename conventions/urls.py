@@ -60,6 +60,16 @@ urlpatterns = [
         name="avenant_logements",
     ),
     path(
+        "foyer_residence_logements/<convention_uuid>",
+        views.ConventionFoyerResidenceLogementsView.as_view(),
+        name="foyer_residence_logements",
+    ),
+    path(
+        "avenant_foyer_residence_logements/<convention_uuid>",
+        views.AvenantFoyerResidenceLogementsView.as_view(),
+        name="avenant_foyer_residence_logements",
+    ),
+    path(
         "annexes/<convention_uuid>",
         views.ConventionAnnexesView.as_view(),
         name="annexes",
@@ -70,9 +80,29 @@ urlpatterns = [
         name="avenant_annexes",
     ),
     path(
+        "collectif/<convention_uuid>",
+        views.ConventionCollectifView.as_view(),
+        name="collectif",
+    ),
+    path(
+        "avenant_collectif/<convention_uuid>",
+        views.AvenantCollectifView.as_view(),
+        name="avenant_collectif",
+    ),
+    path(
         "stationnements/<convention_uuid>",
         views.ConventionTypeStationnementView.as_view(),
         name="stationnements",
+    ),
+    path(
+        "attribution/<convention_uuid>",
+        views.ConventionFoyerAttributionView.as_view(),
+        name="attribution",
+    ),
+    path(
+        "variantes/<convention_uuid>",
+        views.ConventionFoyerVariantesView.as_view(),
+        name="variantes",
     ),
     path(
         "comments/<convention_uuid>",
@@ -142,5 +172,9 @@ urlpatterns = [
     ),
     path("new_avenant/<convention_uuid>", views.new_avenant, name="new_avenant"),
     path("piece_jointe/<piece_jointe_uuid>", views.piece_jointe, name="piece_jointe"),
-    path("piece_jointe/<piece_jointe_uuid>/promote", views.piece_jointe_promote, name="piece_jointe_promote"),
+    path(
+        "piece_jointe/<piece_jointe_uuid>/promote",
+        views.piece_jointe_promote,
+        name="piece_jointe_promote",
+    ),
 ]

@@ -118,7 +118,6 @@ class Bailleur(IngestableModel):
         choices=SousNatureBailleur.choices,
         default=SousNatureBailleur.NONRENSEIGNE,
     )
-
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 

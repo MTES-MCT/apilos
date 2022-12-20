@@ -36,6 +36,8 @@
                         {% include "conventions/recapitulatif/bailleur.html" with target_url='conventions:avenant_bailleur' %}
                     {% endif %}
                     {% if 'logements' in avenant_list %}
+                        {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:avenant_foyer_residence_logements' %}
+                        {% include "conventions/recapitulatif/collectif.html" with target_url='conventions:avenant_collectif' %}
                         {% include "conventions/recapitulatif/logements.html" with target_url='conventions:avenant_logements' %}
                         {% include "conventions/recapitulatif/annexes.html" with target_url='conventions:avenant_annexes' %}
                     {% endif %}
@@ -75,12 +77,16 @@
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:financement' %}
                     {% endif %}
                     {% include "conventions/recapitulatif/logements.html" with target_url='conventions:logements' %}
+                    {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:foyer_residence_logements' %}
+                    {% include "conventions/recapitulatif/collectif.html" with target_url='conventions:collectif' %}
                     {%  if not ecolo_ref %}
                         {% include "conventions/recapitulatif/annexes.html" with target_url='conventions:annexes' %}
                     {% else %}
                         {% include "conventions/recapitulatif/pieces_jointes.html" %}
                     {% endif %}
                     {% include "conventions/recapitulatif/stationnements.html" with target_url='conventions:stationnements' %}
+                    {% include "conventions/recapitulatif/attribution.html" with target_url='conventions:attribution' %}
+                    {% include "conventions/recapitulatif/variantes.html" with target_url='conventions:variantes' %}
                     {% include "conventions/recapitulatif/comments.html" with target_url='conventions:comments' %}
                 {% endif %}
 
@@ -103,7 +109,7 @@
             </div>
         </div>
 
-        <script type="text/javascript" src="{% static "js/recap-logements-table.js" %}" nonce="{{request.csp_nonce}}"></script>
+        <script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{request.csp_nonce}}"></script>
 
     {% endwith %}
 {% endblock %}

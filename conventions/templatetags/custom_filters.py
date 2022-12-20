@@ -1,6 +1,5 @@
 from django.http.request import HttpRequest
 from django.conf import settings
-from django.template.defaultfilters import date as _date
 from django.template.defaulttags import register
 from core.utils import is_valid_uuid, get_key_from_json_field
 from programmes.models import Financement
@@ -164,30 +163,6 @@ def is_bailleur_administrator(current_user, bailleur):
 
 
 @register.filter
-def to_fr_date(date):
-    """
-    Display french date using the date function from django.template.defaultfilters
-    Write the date in letter (ex : 5 janvier 2021). More about format syntax here :
-    https://docs.djangoproject.com/fr/4.0/ref/templates/builtins/#date
-    """
-    if date is None:
-        return ""
-    return _date(date, "j F Y")
-
-
-@register.filter
-def to_fr_short_date(date):
-    """
-    Display french date using the date function from django.template.defaultfilters
-    Write the date in number (ex : 05/01/2021). More about format syntax here :
-    https://docs.djangoproject.com/fr/4.0/ref/templates/builtins/#date
-    """
-    if date is None:
-        return ""
-    return _date(date, "d/m/Y")
-
-
-@register.filter
 def get_text_from_textfiles(field):
     return get_key_from_json_field(field, "text")
 
@@ -258,7 +233,10 @@ def display_is_resiliated(convention):
 
 @register.filter
 def display_spf_info(convention):
-    return convention.date_envoi_spf is not None or convention.date_publication_spf is not None
+    return (
+        convention.date_envoi_spf is not None
+        or convention.date_publication_spf is not None
+    )
 
 
 @register.filter
@@ -317,12 +295,32 @@ def display_convention_form_progressbar(convention):
 
 
 @register.filter
+def display_type1and2(convention):
+    return (
+        convention.programme.bailleur.is_type1and2()
+        and not convention.is_avenant()
+        and not convention.programme.is_foyer()
+        and not convention.programme.is_residence()
+    )
+
+
+@register.filter
+def display_deactivated_because_type1and2_config_is_needed(convention):
+    return display_type1and2(convention) and not convention.type1and2
+
+
+@register.filter
 def display_type1and2_editable(convention):
     return convention.statut in [
         ConventionStatut.PROJET,
         ConventionStatut.INSTRUCTION,
         ConventionStatut.CORRECTION,
     ]
+
+
+@register.filter
+def not_op(boolean_value):
+    return not boolean_value
 
 
 @register.filter
@@ -357,3 +355,17 @@ def display_create_avenant(convention):
         }
         & {avenant.statut for avenant in convention.avenants.all()}
     )
+
+
+@register.filter
+def is_a_step(convention_form_step, classname):
+    return any(
+        step for step in convention_form_step.steps if step.classname == classname
+    )
+
+
+@register.filter
+def get_text_as_list(text_field):
+    if text_field is None:
+        return ""
+    return [line.strip(" -*") for line in text_field.splitlines() if line.strip(" -*")]

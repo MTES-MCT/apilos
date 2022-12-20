@@ -1,0 +1,115 @@
+{% load static %}
+
+{% load custom_filters %}
+
+<div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-md-12">
+
+        <h4>Logements associés à la convention</h4>
+        <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
+            {% include "common/form/download_upload_form.html" with file_type='foyer_residence_logements' upform=upform what='logements'%}
+            <hr class="fr-col-12 fr-my-3w">
+        </div>
+
+        {% for error in import_warnings %}
+            <p id="text-input-error-desc-error" class="fr-error-text">
+                {{ error }}
+            </p>
+        {% endfor %}
+
+        {% for error in formset.non_form_errors %}
+            <p id="text-input-error-desc-error" class="fr-error-text">
+                {{ error }}
+            </p>
+        {% endfor %}
+
+        {{ formset.management_form }}
+        <div class="fr-table fr-table--bordered table--layout-fixed">
+            <table id="lgts_table"  aria-label="Logements">
+                <thead>
+                    <tr>
+                        {% if convention|display_comments %}
+                            {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' %}
+                        {% endif %}
+                        <th scope="col" class="col__width--200">
+                            Numéro du logement (désignation)
+                            {% if formset.total_form_count %}
+                                {% include "common/form/required_field_star.html" %}
+                            {% endif %}
+                        </th>
+                        <th scope="col" class="col__width--150">
+                            Type
+                            {% if formset.total_form_count %}
+                                {% include "common/form/required_field_star.html" %}
+                            {% endif %}
+                        </th>
+                        <th scope="col" class="col__width--120">
+                            Surface habitable par local {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                        <th scope="col" class="col__width--120">
+                            Redevance maximale en €
+                            {% if formset.total_form_count %}
+                                {% include "common/form/required_field_star.html" %}
+                            {% endif %}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in formset %}
+                        {% with main_object_field="logement__uuid__"|add:form.uuid.value %}
+                            <tr id="{{form.uuid.id_for_label}}_group">
+                                {% if convention|display_comments %}
+                                    <td id="{{form.uuid.id_for_label}}_div">
+                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form.uuid %}
+                                    </td>
+                                {% endif %}
+                                <td>
+                                    <input
+                                        type="hidden"
+                                        id="{{form.uuid.id_for_label}}"
+                                        name="{{form.uuid.html_name}}"
+                                        value="{{ form.uuid.value|default_if_none:'' }}">
+                                    {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field editable=editable_after_upload %}
+                                </td>
+                                <td>
+                                    {% include "common/form/input_select.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_after_upload %}
+                                </td>
+                                <td id="lgt_sh">
+                                    {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" onchange="compute_total_value('sh')" parent_object_field=main_object_field editable=editable_after_upload %}
+                                </td>
+                                <td id="lgt_loyer">
+                                    {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" onchange="compute_total_value('loyer')" parent_object_field=main_object_field editable=editable_after_upload %}
+                                </td>
+                            </tr>
+                        {% endwith %}
+                    {% endfor %}
+                    <tr>
+                        <td colspan="{% if convention|display_comments %}3{% else %}2{% endif %}"
+                            class="fr-text--lg">
+                            Total
+                        </td>
+                        <td id="total_sh" class="fr-text--lg text--center">
+                        </td>
+                        <td id="total_loyer" class="fr-text--lg text--center">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<input
+    type="hidden"
+    id="{{form.uuid.id_for_label}}"
+    name="{{form.uuid.html_name}}"
+    value="{{ form.uuid.value|default_if_none:'' }}">
+
+<div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-12 fr-mb-2w">
+        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.surface_habitable_totale object_field="lot__surface_habitable_totale__"|add:form.uuid.value %}
+    </div>
+</div>
+
+<script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{request.csp_nonce}}"></script>
+
+{% include "common/required_fields_info.html" %}

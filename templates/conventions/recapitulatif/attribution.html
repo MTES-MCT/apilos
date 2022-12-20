@@ -1,0 +1,84 @@
+{% load custom_filters %}
+
+{% if convention_form_steps|is_a_step:'ConventionFoyerAttributionView' %}
+
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-lg-12">
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body fr-my-2w">
+                    <div class="block--row-strech" id="{{object_field}}_div">
+                        <div class="block--row-strech-1">
+                            <h4 class="fr-card__title">
+                                Attribution
+                                {% if convention.attribution_type == 'agees' %}
+                                    <strong>aux personnes âgées seules ou en ménage</strong>
+                                {% elif convention.attribution_type == 'handicapes' %}
+                                    <strong>aux personnes handicapées seules ou en ménage</strong>
+                                {% else %}
+                                    <strong>aux personnes en situation de perte d’autonomie liée à l’âge ou au handicap seules ou en ménage</strong>
+                                {% endif %}
+
+                            </h4>
+                        </div>
+                        {% include "conventions/actions/goto.html" %}
+                    </div>
+                    {% if convention.attribution_type == 'agees' %}
+                        <div class="fr-grid-row fr-grid-row--gutters fr-pl-1w fr-py-1w">
+                            {% include "common/display_checkbox.html" with value=convention.attribution_agees_autonomie label="Résidence autonomie" object_field="convention__attribution_agees_autonomie__"|add:convention_uuid %}
+                        </div>
+                        <div class="fr-grid-row fr-grid-row--gutters fr-pl-1w fr-py-1w">
+                            {% include "common/display_checkbox.html" with value=convention.attribution_agees_ephad label="Établissement hébergeant des personnes âgées dépendantes (EHPAD)" object_field="convention__attribution_agees_ephad__"|add:convention_uuid %}
+                        </div>
+                        <div class="fr-grid-row fr-grid-row--gutters fr-pl-1w fr-py-1w">
+                            {% include "common/display_checkbox.html" with value=convention.attribution_agees_desorientees label="Unité pour personnes désorientées (unités Alzheimer, ...)" object_field="convention__attribution_agees_desorientees__"|add:convention_uuid %}
+                        </div>
+                        <div class="fr-grid-row fr-grid-row--gutters fr-pl-1w fr-py-1w">
+                            {% include "common/display_checkbox.html" with value=convention.attribution_agees_petite_unite label="Petite unité de vie (établissement de moins de 25 places autorisées)" object_field="convention__attribution_agees_petite_unite__"|add:convention_uuid %}
+                        </div>
+
+                        <div class="fr-grid-row fr-grid-row--gutters fr-pl-1w fr-py-1w">
+                            <div>
+                                {% include "common/display_checkbox.html" with value=convention.attribution_agees_autre label="Autres : " object_field="convention__attribution_agees_autre__"|add:convention_uuid %}
+                            </div>
+                            <div class="">
+                                {% include "common/display_field_if_exists.html" with label="" value=convention.attribution_agees_autre_detail object_field="convention__attribution_agees_autre_detail__"|add:convention_uuid %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if convention.attribution_type == 'handicapes' %}
+                        <div class="fr-grid-row fr-grid-row--gutters fr-pl-1w fr-py-1w">
+                            {% include "common/display_checkbox.html" with value=convention.attribution_handicapes_foyer label="Foyer" object_field="convention__attribution_handicapes_foyer__"|add:convention_uuid %}
+                        </div>
+                        <div class="fr-grid-row fr-grid-row--gutters fr-pl-1w fr-py-1w">
+                            {% include "common/display_checkbox.html" with value=convention.attribution_handicapes_foyer_de_vie label="Foyer de vie ou occupationnel" object_field="convention__attribution_handicapes_foyer_de_vie__"|add:convention_uuid %}
+                        </div>
+                        <div class="fr-grid-row fr-grid-row--gutters fr-pl-1w fr-py-1w">
+                            {% include "common/display_checkbox.html" with value=convention.attribution_handicapes_foyer_medicalise label="Foyer d'accueil médicalisé" object_field="convention__attribution_handicapes_foyer_medicalise__"|add:convention_uuid %}
+                        </div>
+
+                        <div class="fr-grid-row fr-grid-row--gutters fr-pl-1w fr-py-1w">
+                            <div>
+                                {% include "common/display_checkbox.html" with value=convention.attribution_handicapes_autre label="Autres : " object_field="convention__attribution_handicapes_autre__"|add:convention_uuid %}
+                            </div>
+                            <div class="">
+                                {% include "common/display_field_if_exists.html" with label="" value=convention.attribution_handicapes_autre_detail object_field="convention__attribution_handicapes_autre_detail__"|add:convention_uuid %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if convention.attribution_type == 'inclusif' %}
+                        {% include "common/display_textfield_if_exists.html" with label="Conditions spécifiques d'accueil" value=convention.attribution_inclusif_conditions_specifiques object_field="convention__attribution_inclusif_conditions_specifiques__"|add:convention_uuid %}
+                        {% include "common/display_textfield_if_exists.html" with label="Conditions d'admission dans l’habitat inclusif" value=convention.attribution_inclusif_conditions_admission object_field="convention__attribution_inclusif_conditions_admission__"|add:convention_uuid %}
+                        {% include "common/display_textfield_if_exists.html" with label="Modalités d'attribution" value=convention.attribution_inclusif_modalites_attribution object_field="convention__attribution_inclusif_modalites_attribution__"|add:convention_uuid %}
+                        {% include "common/display_textfield_if_exists.html" with label="Partenariats concourant à la mise en œuvre du projet de vie sociale et partagée mis en place" value=convention.attribution_inclusif_partenariats object_field="convention__attribution_inclusif_partenariats__"|add:convention_uuid %}
+                        {% include "common/display_textfield_if_exists.html" with label="Activités proposées à l’ensemble des résidents dans le cadre du projet de vie sociale et partagée" value=convention.attribution_inclusif_activites object_field="convention__attribution_inclusif_activites__"|add:convention_uuid %}
+                    {% endif %}
+                    <h4 class='fr-mt-3w'>Autres modalitées</h4>
+                    {% include "common/display_textfield_if_exists.html" with label="Les modalités de gestion des reservations sont obligatoires" value=convention.attribution_modalites_reservations object_field="convention__attribution_modalites_reservations__"|add:convention_uuid %}
+                    {% include "common/display_textfield_if_exists.html" with label="Modalités de choix des personnes accueillies" value=convention.attribution_modalites_choix_personnes object_field="convention__attribution_modalites_choix_personnes__"|add:convention_uuid %}
+                    {% include "common/display_listfield_if_exists.html" with label="Prestation intégrées dans la redevance (Liste)" value=convention.attribution_prestations_integrees object_field="convention__attribution_prestations_integrees__"|add:convention_uuid %}
+                    {% include "common/display_listfield_if_exists.html" with label="Prestations facultatives (Liste)" value=convention.attribution_prestations_facultatives object_field="convention__attribution_prestations_facultatives__"|add:convention_uuid %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

@@ -1,6 +1,6 @@
 {% load custom_filters %}
 
-{% if form_step %}
+{% if form_step and form_step.total > 1 %}
     <div class="fr-container">
         <div class="fr-stepper">
             <h2 class="fr-stepper__title">

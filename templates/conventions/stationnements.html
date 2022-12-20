@@ -15,15 +15,7 @@
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% include "conventions/common/form_stationnements.html"%}
-
-                <div class="form-button-footer fr-col-md-12 fr-py-5w">
-                    {% if editable %}
-                        {% include "common/button/next_and_save.html" %}
-                        {% include "common/button/previous.html" with precedent='conventions:annexes' convention_uuid=convention.uuid %}
-                    {% else %}
-                        {% include "common/button/noteditable_button.html"%}
-                    {% endif %}
-                </div>
+                {% include "conventions/common/form_footer_button.html" %}
             </form>
         </div>
     </div>

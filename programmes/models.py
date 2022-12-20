@@ -41,7 +41,7 @@ class FinancementEDD(models.TextChoices):
     SANS_FINANCEMENT = "SANS_FINANCEMENT", "Sans Financement"
 
 
-class TypologieLogement(models.TextChoices):
+class TypologieLogementClassique(models.TextChoices):
     T1 = "T1", "T1"
     T1BIS = "T1bis", "T1bis"
     T2 = "T2", "T2"
@@ -49,6 +49,29 @@ class TypologieLogement(models.TextChoices):
     T4 = "T4", "T4"
     T5 = "T5", "T5"
     T6 = "T6", "T6 et plus"
+
+
+class TypologieLogementFoyerResidence(models.TextChoices):
+    T1 = "T1", "T1"
+    T1prime = "T1prime", "T1'"
+    T2 = "T2", "T2"
+    T3 = "T3", "T3"
+    T4 = "T4", "T4"
+    T5 = "T5", "T5"
+    T6 = "T6", "T6"
+    T7 = "T7", "T7"
+
+
+class TypologieLogement(models.TextChoices):
+    T1 = "T1", "T1"
+    T1BIS = "T1bis", "T1bis"
+    T1prime = "T1prime", "T1'"
+    T2 = "T2", "T2"
+    T3 = "T3", "T3"
+    T4 = "T4", "T4"
+    T5 = "T5", "T5"
+    T6 = "T6", "T6"
+    T7 = "T7", "T7"
 
     @classmethod
     def map_string(cls, value):
@@ -63,13 +86,10 @@ class TypologieLogement(models.TextChoices):
             "5": "T5",
             "5 et plus": "T5",
             "T5 et plus": "T5",
-            "T6": "T6 et plus",
-            "6": "T6 et plus",
-            "6 et plus": "T6 et plus",
-            "7": "T6 et plus",
-            "8": "T6 et plus",
-            "9": "T6 et plus",
-            "10": "T6 et plus",
+            "T6": "T6",
+            "6": "T6",
+            "6 et plus": "T6",
+            "7": "T7",
         }
         value = str(value)
         if value in mapping:
@@ -77,8 +97,12 @@ class TypologieLogement(models.TextChoices):
         return value
 
 
+class OppenedNatureLogement(models.TextChoices):
+    LOGEMENTSORDINAIRES = "LOGEMENTSORDINAIRES", "Logements ordinaires"
+    AUTRE = "AUTRE", "Autres logements foyers"
+
+
 class NatureLogement(models.TextChoices):
-    SANSOBJET = "SANSOBJET", "Sans Objet"
     LOGEMENTSORDINAIRES = "LOGEMENTSORDINAIRES", "Logements ordinaires"
     AUTRE = "AUTRE", "Autres logements foyers"
     HEBERGEMENT = "HEBERGEMENT", "Hébergement"
@@ -221,6 +245,8 @@ class Programme(IngestableModel):
     date_achevement_previsible = models.DateField(null=True)
     date_achat = models.DateField(null=True)
     date_achevement = models.DateField(null=True)
+    date_autorisation_hors_habitat_inclusif = models.DateField(null=True)  # FOYER
+    date_convention_location = models.DateField(null=True)  # FOYER
     date_achevement_compile = models.DateField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
@@ -287,6 +313,19 @@ class Programme(IngestableModel):
 
     def edd_classique_files(self):
         return get_key_from_json_field(self.edd_classique, "files", default={})
+
+    def is_foyer(self):
+        return self.nature_logement in [NatureLogement.AUTRE]
+
+    def is_residence(self):
+        return self.nature_logement in [
+            NatureLogement.HEBERGEMENT,
+            NatureLogement.RESISDENCESOCIALE,
+            NatureLogement.PENSIONSDEFAMILLE,
+            NatureLogement.RESIDENCEDACCUEIL,
+            NatureLogement.RESIDENCEUNIVERSITAIRE,
+            NatureLogement.RHVS,
+        ]
 
 
 # pylint: disable=W0613
@@ -363,7 +402,7 @@ class ReferenceCadastrale(models.Model):
     def compute_surface(superficie: int | None = None):
         s = superficie if superficie is not None else 0
 
-        return f'{s % 100} ha {s % 10000 // 100} a {s // 10000} ca'
+        return f"{s % 100} ha {s % 10000 // 100} a {s // 10000} ca"
 
     def __str__(self):
         return f"{self.section} - {self.numero} - {self.lieudit}"
@@ -419,6 +458,18 @@ class Lot(IngestableModel):
         null=True,
         verbose_name="Loyer dérogatoire",
     )
+    surface_habitable_totale = models.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        null=True,
+    )
+    foyer_residence_nb_garage_parking = models.IntegerField(blank=True, null=True)
+    foyer_residence_dependance = models.TextField(
+        max_length=5000, blank=True, null=True
+    )
+    foyer_residence_locaux_hors_convention = models.TextField(
+        max_length=5000, blank=True, null=True
+    )
 
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
@@ -427,10 +478,6 @@ class Lot(IngestableModel):
     @property
     def bailleur(self):
         return self.programme.bailleur
-
-    @property
-    def bailleur_id(self):
-        return self.programme.bailleur_id
 
     def edd_volumetrique_text(self):
         return get_key_from_json_field(self.edd_volumetrique, "text")
@@ -525,6 +572,14 @@ class Logement(models.Model):
         "Coefficient propre au logement": coeficient,
         "Loyer maximum du logement en €\n(col 4 * col 5 * col 6)": loyer,
     }
+
+    foyer_residence_import_mapping = {
+        "Numéro du logement": designation,
+        "Type": typologie,
+        "Surface habitable": surface_habitable,
+        "Redevance maximale": loyer,
+    }
+
     sheet_name = "Logements"
     needed_in_mapping = [
         designation,
@@ -532,6 +587,12 @@ class Logement(models.Model):
         surface_utile,
         loyer_par_metre_carre,
         coeficient,
+    ]
+    foyer_residence_needed_in_mapping = [
+        designation,
+        typologie,
+        surface_habitable,
+        loyer,
     ]
 
     # Needed for admin
@@ -651,6 +712,32 @@ class Annexe(models.Model):
         return self.loyer
 
     l = property(_get_loyer)
+
+
+class LocauxCollectifs(models.Model):
+
+    id = models.AutoField(primary_key=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    lot = models.ForeignKey(
+        "Lot",
+        on_delete=models.CASCADE,
+        related_name="locaux_collectifs",
+        null=False,
+    )
+
+    type_local = models.CharField(max_length=255)
+    surface_habitable = models.DecimalField(max_digits=6, decimal_places=2)
+    nombre = models.IntegerField()
+
+    cree_le = models.DateTimeField(auto_now_add=True)
+    mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+    import_mapping = {
+        "Type de local": type_local,
+        "Surface habitable": surface_habitable,
+        "Nombre": nombre,
+    }
+    sheet_name = "Locaux Collectifs"
 
 
 class TypeStationnement(IngestableModel):

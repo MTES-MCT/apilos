@@ -40,7 +40,7 @@ class StorageClient:
             )
             try:
                 return resource.Object(bucket, file).get()
-            except ClientError as e:
+            except ClientError:
                 return None
 
         return None

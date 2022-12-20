@@ -168,6 +168,7 @@ def convention_summary(request, convention):
         "opened_comments": opened_comments,
         "bailleur": convention.programme.bailleur,
         "lot": convention.lot,
+        "locaux_collectifs": convention.lot.locaux_collectifs.all(),
         "programme": convention.programme,
         "logement_edds": convention.programme.logementedds.all(),
         "logements": convention.lot.logements.all(),
@@ -698,14 +699,8 @@ def create_avenant(request, convention_uuid):
 
 
 class ConventionFinancementService(ConventionService):
-    convention: Convention
-    request: HttpRequest
     form: ConventionFinancementForm
-    formset = None
     upform: UploadForm = UploadForm()
-    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
-    redirect_recap: bool = False
-    editable_after_upload: bool = False
 
     def get(self):
         initial = []
@@ -732,6 +727,7 @@ class ConventionFinancementService(ConventionService):
                 if self.convention.date_fin_conventionnement is not None
                 else None,
                 "fond_propre": self.convention.fond_propre,
+                "historique_financement_public": self.convention.historique_financement_public,
             }
         )
 
@@ -741,7 +737,7 @@ class ConventionFinancementService(ConventionService):
         )
         # When the user cliked on "Téléverser" button
         if self.request.POST.get("Upload", False):
-            self.form = ConventionFinancementForm(self.request.POST)
+            self.form = ConventionFinancementForm(initial=self.request.POST)
             self._upload_prets()
         # When the user cliked on "Enregistrer et Suivant"
         else:
@@ -778,6 +774,10 @@ class ConventionFinancementService(ConventionService):
                 "uuid": self.convention.uuid,
                 "fond_propre": self.request.POST.get(
                     "fond_propre", self.convention.fond_propre
+                ),
+                "historique_financement_public": self.request.POST.get(
+                    "historique_financement_public",
+                    self.convention.historique_financement_public,
                 ),
                 "annee_fin_conventionnement": self.request.POST.get(
                     "annee_fin_conventionnement",
@@ -841,10 +841,18 @@ class ConventionFinancementService(ConventionService):
                 self.redirect_recap = self.request.POST.get("redirect_to_recap", False)
 
     def _save_convention_financement(self):
-        self.convention.date_fin_conventionnement = datetime.date(
-            self.form.cleaned_data["annee_fin_conventionnement"], 6, 30
-        )
+        if self.convention.programme.is_foyer():
+            self.convention.date_fin_conventionnement = datetime.date(
+                self.form.cleaned_data["annee_fin_conventionnement"], 12, 31
+            )
+        else:
+            self.convention.date_fin_conventionnement = datetime.date(
+                self.form.cleaned_data["annee_fin_conventionnement"], 6, 30
+            )
         self.convention.fond_propre = self.form.cleaned_data["fond_propre"]
+        self.convention.historique_financement_public = self.form.cleaned_data[
+            "historique_financement_public"
+        ]
         self.convention.save()
 
     def _save_convention_financement_prets(self):
@@ -875,8 +883,6 @@ class ConventionFinancementService(ConventionService):
 
 
 class ConventionCommentsService(ConventionService):
-    convention: Convention
-    request: HttpRequest
     form: ConventionCommentForm
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
 
@@ -888,6 +894,9 @@ class ConventionCommentsService(ConventionService):
                 **utils.get_text_and_files_from_field(
                     "comments", self.convention.comments
                 ),
+                **utils.get_text_and_files_from_field(
+                    "attached", self.convention.attached
+                ),
             }
         )
 
@@ -895,6 +904,9 @@ class ConventionCommentsService(ConventionService):
         self.request.user.check_perm("convention.change_convention", self.convention)
         self.form = ConventionCommentForm(self.request.POST)
         if self.form.is_valid():
+            self.convention.attached = utils.set_files_and_text_field(
+                self.form.cleaned_data["attached_files"],
+            )
             self.convention.comments = utils.set_files_and_text_field(
                 self.form.cleaned_data["comments_files"],
                 self.form.cleaned_data["comments"],

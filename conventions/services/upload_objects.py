@@ -9,7 +9,7 @@ from programmes.models import TypologieLogement
 from . import utils
 
 
-def save_uploaded_file(my_file, convention, file_name):
+def _save_uploaded_file(my_file, convention, file_name):
     my_file.seek(0)
     client.put_object(
         my_file=my_file.read(),
@@ -17,7 +17,15 @@ def save_uploaded_file(my_file, convention, file_name):
     )
 
 
-def handle_uploaded_xlsx(upform, my_file, myClass, convention, file_name):
+def handle_uploaded_xlsx(
+    upform,
+    my_file,
+    myClass,
+    convention,
+    file_name,
+    class_field_mapping="import_mapping",
+    class_field_needed_mapping="needed_in_mapping",
+):
     # pylint: disable=R0912
     try:
         my_file.seek(0)
@@ -41,7 +49,7 @@ def handle_uploaded_xlsx(upform, my_file, myClass, convention, file_name):
         if my_wb["Data"]["E2"].value:
             min_row = int(my_wb["Data"]["E2"].value)
 
-    save_uploaded_file(my_file, convention, file_name)
+    _save_uploaded_file(my_file, convention, file_name)
 
     import_warnings = []
     column_from_index = {}
@@ -51,21 +59,23 @@ def handle_uploaded_xlsx(upform, my_file, myClass, convention, file_name):
         for cell in col:
             if cell.value is None:
                 continue
-            key = all_words_in_key_of_dict(cell.value, myClass.import_mapping)
+            key = all_words_in_key_of_dict(
+                cell.value, getattr(myClass, class_field_mapping)
+            )
             if key is None:
                 import_warnings.append(
                     Exception(
                         f"La colonne nommée '{cell.value}' est inconnue, "
                         + "elle sera ignorée. Le contenu des colonnes "
                         + "attendus est dans la liste : "
-                        + f"{', '.join(myClass.import_mapping.keys())}"
+                        + f"{', '.join(getattr(myClass, class_field_mapping).keys())}"
                     )
                 )
                 continue
             column_from_index[cell.column] = key
 
     error_column = False
-    for key in myClass.import_mapping:
+    for key in getattr(myClass, class_field_mapping):
         if not all_words_in_key_of_dict(key, list(column_from_index.values())):
             upform.add_error(
                 "file",
@@ -79,8 +89,14 @@ def handle_uploaded_xlsx(upform, my_file, myClass, convention, file_name):
         return {"success": utils.ReturnStatus.ERROR}
 
     # transform each line into object
-    my_objects, import_warnings = get_object_from_worksheet(
-        my_ws, column_from_index, myClass, import_warnings, min_row
+    my_objects, import_warnings = _get_object_from_worksheet(
+        my_ws,
+        column_from_index,
+        myClass,
+        import_warnings,
+        min_row,
+        class_field_mapping=class_field_mapping,
+        class_field_needed_mapping=class_field_needed_mapping,
     )
 
     return {
@@ -92,19 +108,28 @@ def handle_uploaded_xlsx(upform, my_file, myClass, convention, file_name):
     }
 
 
-def get_object_from_worksheet(
-    my_ws, column_from_index, myClass, import_warnings, min_row=3
+def _get_object_from_worksheet(
+    my_ws,
+    column_from_index,
+    myClass,
+    import_warnings,
+    min_row=3,
+    *,
+    class_field_mapping,
+    class_field_needed_mapping,
 ):
     my_objects = []
 
     for row in my_ws.iter_rows(
         min_row=min_row, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
     ):
-        my_row, empty_line, new_warnings = extract_row(row, column_from_index, myClass)
+        my_row, empty_line, new_warnings = _extract_row(
+            row, column_from_index, myClass, class_field_mapping=class_field_mapping
+        )
 
-        if hasattr(myClass, "needed_in_mapping"):
-            if not empty_line and myClass.needed_in_mapping:
-                for needed_field in myClass.needed_in_mapping:
+        if hasattr(myClass, class_field_needed_mapping):
+            if not empty_line and getattr(myClass, class_field_needed_mapping):
+                for needed_field in getattr(myClass, class_field_needed_mapping):
                     if needed_field.name not in my_row:
                         empty_line = True
                         new_warnings.append(
@@ -124,11 +149,12 @@ def get_object_from_worksheet(
     return my_objects, import_warnings
 
 
-def extract_row(row, column_from_index, cls):
+def _extract_row(row, column_from_index, cls, *, class_field_mapping):
     # pylint: disable=R0912
     new_warnings = []
     my_row = {}
     empty_line = True
+    import_mapping = getattr(cls, class_field_mapping)
     for cell in row:
         # Ignore unknown column
         if cell.column not in column_from_index or cell.value is None:
@@ -137,7 +163,7 @@ def extract_row(row, column_from_index, cls):
         # Check the empty lines to don't fill it
         empty_line = False
         value = None
-        model_field = cls.import_mapping[column_from_index[cell.column]]
+        model_field = import_mapping[column_from_index[cell.column]]
 
         if isinstance(model_field, str):
             key = model_field

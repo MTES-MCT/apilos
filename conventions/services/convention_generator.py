@@ -10,20 +10,21 @@ from docx.shared import Inches
 
 from django.conf import settings
 from django.forms.models import model_to_dict
+from django.template.defaultfilters import date as template_date
 
-from core.utils import round_half_up
+from core.utils import get_key_from_json_field, round_half_up
 from programmes.models import (
     Financement,
     Annexe,
+    TypologieLogement,
 )
 from upload.models import UploadedFile
 from upload.services import UploadService
 
 from conventions.models import ConventionType1and2
 from conventions.templatetags.custom_filters import (
+    get_text_as_list,
     inline_text_multiline,
-    to_fr_date,
-    to_fr_short_date,
 )
 
 
@@ -35,42 +36,31 @@ class ConventionTypeConfigurationError(Exception):
     pass
 
 
-def generate_convention_doc(convention, save_data=False):
-    # pylint: disable=R0912,R0914,R0915
-    annexes = (
-        Annexe.objects.prefetch_related("logement")
-        .filter(logement__lot_id=convention.lot.id)
-        .all()
-    )
-    # It is an avenant
-    avenant_data = {}
+def get_convention_template_path(convention):
+    # pylint: disable=R0911
     if convention.is_avenant():
-        filepath = f"{settings.BASE_DIR}/documents/Avenant-template.docx"
-        for avenant_type in convention.avenant_types.all():
-            avenant_data[f"avenant_type_{avenant_type}"] = True
-    # It is a convention
-    elif convention.programme.bailleur.is_hlm():
-        filepath = f"{settings.BASE_DIR}/documents/HLM-template.docx"
-    elif convention.programme.bailleur.is_sem():
-        filepath = f"{settings.BASE_DIR}/documents/SEM-template.docx"
-    elif convention.programme.bailleur.is_type1and2():
+        return f"{settings.BASE_DIR}/documents/Avenant-template.docx"
+    if convention.programme.is_foyer():
+        return f"{settings.BASE_DIR}/documents/Foyer-template.docx"
+    if convention.programme.is_residence():
+        return f"{settings.BASE_DIR}/documents/Residence-template.docx"
+    if convention.programme.bailleur.is_hlm():
+        return f"{settings.BASE_DIR}/documents/HLM-template.docx"
+    if convention.programme.bailleur.is_sem():
+        return f"{settings.BASE_DIR}/documents/SEM-template.docx"
+    if convention.programme.bailleur.is_type1and2():
         if convention.type1and2 == ConventionType1and2.TYPE1:
-            filepath = f"{settings.BASE_DIR}/documents/Type1-template.docx"
-        elif convention.type1and2 == ConventionType1and2.TYPE2:
-            filepath = f"{settings.BASE_DIR}/documents/Type2-template.docx"
-        else:
-            raise ConventionTypeConfigurationError(
-                "Le type de convention I ou II doit-être configuré pour les bailleurs"
-                + " non SEM ou HLM. Bailleur de type : "
-                + convention.programme.bailleur.get_sous_nature_bailleur_display()
-            )
-    else:
-        raise NotHandleConventionType(
-            "La génération de convention n'est pas disponible pour ce type de"
-            + f" bailleur : {convention.programme.bailleur.get_sous_nature_bailleur_display()}"
-        )
-    doc = DocxTemplate(filepath)
+            return f"{settings.BASE_DIR}/documents/Type1-template.docx"
+        if convention.type1and2 == ConventionType1and2.TYPE2:
+            return f"{settings.BASE_DIR}/documents/Type2-template.docx"
+    raise ConventionTypeConfigurationError(
+        "Le type de convention I ou II doit-être configuré pour les bailleurs"
+        + " non SEM ou HLM. Bailleur de type : "
+        + convention.programme.bailleur.get_sous_nature_bailleur_display()
+    )
 
+
+def _compute_total_logement(convention):
     logements_totale = {
         "sh_totale": 0,
         "sa_totale": 0,
@@ -81,13 +71,43 @@ def generate_convention_doc(convention, save_data=False):
     nb_logements_par_type = {}
     for logement in convention.lot.logements.order_by("typologie").all():
         logements_totale["sh_totale"] += logement.surface_habitable
-        logements_totale["sa_totale"] += logement.surface_annexes
-        logements_totale["sar_totale"] += logement.surface_annexes_retenue
-        logements_totale["su_totale"] += logement.surface_utile
+        if logement.surface_annexes is not None:
+            logements_totale["sa_totale"] += logement.surface_annexes
+        if logement.surface_annexes_retenue is not None:
+            logements_totale["sar_totale"] += logement.surface_annexes_retenue
+        if logement.surface_utile is not None:
+            logements_totale["su_totale"] += logement.surface_utile
         logements_totale["loyer_total"] += logement.loyer
         if logement.get_typologie_display() not in nb_logements_par_type:
             nb_logements_par_type[logement.get_typologie_display()] = 0
         nb_logements_par_type[logement.get_typologie_display()] += 1
+    return (logements_totale, nb_logements_par_type)
+
+
+def _compute_total_locaux_collectifs(convention):
+    return sum(
+        locaux_collectif.surface_habitable
+        for locaux_collectif in convention.lot.locaux_collectifs.all()
+    )
+
+
+def generate_convention_doc(convention, save_data=False):
+    # pylint: disable=R0912,R0914,R0915
+    annexes = (
+        Annexe.objects.prefetch_related("logement")
+        .filter(logement__lot_id=convention.lot.id)
+        .all()
+    )
+
+    # It is an avenant
+    avenant_data = {}
+    if convention.is_avenant():
+        for avenant_type in convention.avenant_types.all():
+            avenant_data[f"avenant_type_{avenant_type}"] = True
+
+    filepath = get_convention_template_path(convention)
+    doc = DocxTemplate(filepath)
+    (logements_totale, nb_logements_par_type) = _compute_total_logement(convention)
 
     logement_edds, lot_num = _prepare_logement_edds(convention)
     # tester si il logement exists avant de commencer
@@ -102,7 +122,8 @@ def generate_convention_doc(convention, save_data=False):
         "lot": convention.lot,
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
-        "logements": convention.lot.logements.all(),
+        "logements": convention.lot.logements.order_by("typologie").all(),
+        "locaux_collectifs": convention.lot.locaux_collectifs.all(),
         "annexes": annexes,
         "stationnements": convention.lot.type_stationnements.all(),
         "prets_cdc": convention.prets.filter(preteur__in=["CDCF", "CDCL"]),
@@ -114,20 +135,13 @@ def generate_convention_doc(convention, save_data=False):
         "liste_des_annexes": _compute_liste_des_annexes(
             convention.lot.type_stationnements.all(), annexes
         ),
+        "lc_sh_totale": _compute_total_locaux_collectifs(convention),
     }
     context.update(_compute_mixte(convention))
     context.update(logements_totale)
     context.update(object_images)
 
-    jinja_env = jinja2.Environment(autoescape=True)
-    jinja_env.filters["d"] = to_fr_date
-    jinja_env.filters["sd"] = to_fr_short_date
-    jinja_env.filters["f"] = _to_fr_float
-    jinja_env.filters["pl"] = pluralize
-    jinja_env.filters["len"] = len
-    jinja_env.filters["inline_text_multiline"] = inline_text_multiline
-
-    doc.render(context, jinja_env)
+    doc.render(context, _get_jinja_env())
     file_stream = io.BytesIO()
     doc.save(file_stream)
     file_stream.seek(0)
@@ -145,6 +159,56 @@ def generate_convention_doc(convention, save_data=False):
         )
 
     return file_stream
+
+
+def typologie_label(typologie: str):
+    return (
+        typologie.replace("T", "Logement T ")
+        if typologie in TypologieLogement.labels
+        else None
+    )
+
+
+def default_str_if_none(text_field):
+    return text_field if text_field else "---"
+
+
+def to_fr_date(date):
+    """
+    Display french date using the date function from django.template.defaultfilters
+    Write the date in number (ex : 05/01/2021). More about format syntax here :
+    https://docs.djangoproject.com/fr/4.0/ref/templates/builtins/#date
+    """
+    return template_date(date, "j F Y") if date else ""
+
+
+def to_fr_date_or_default(date):
+    return template_date(date, "j F Y") if date else "---"
+
+
+def to_fr_short_date(date):
+    return template_date(date, "d/m/Y") if date else ""
+
+
+def to_fr_short_date_or_default(date):
+    return template_date(date, "d/m/Y") if date else "---"
+
+
+def _get_jinja_env():
+    jinja_env = jinja2.Environment(autoescape=True)
+    jinja_env.filters["d"] = to_fr_date
+    jinja_env.filters["dd"] = to_fr_date_or_default
+    jinja_env.filters["sd"] = to_fr_short_date
+    jinja_env.filters["sdd"] = to_fr_short_date_or_default
+    jinja_env.filters["f"] = _to_fr_float
+    jinja_env.filters["pl"] = pluralize
+    jinja_env.filters["len"] = len
+    jinja_env.filters["inline_text_multiline"] = inline_text_multiline
+    jinja_env.filters["get_text_as_list"] = get_text_as_list
+    jinja_env.filters["default_str_if_none"] = default_str_if_none
+    jinja_env.filters["tl"] = typologie_label
+
+    return jinja_env
 
 
 def _save_convention_donnees_validees(
@@ -223,7 +287,7 @@ def generate_pdf(file_stream, convention):
         convertapi.api_secret = settings.CONVERTAPI_SECRET
         result = convertapi.convert("pdf", {"File": local_docx_path})
 
-        convention_dirpath = f"conventions/{convention.uuid}/convention_docs/"
+        convention_dirpath = f"conventions/{convention.uuid}/convention_docs"
         convention_filename = f"{convention.uuid}.pdf"
         pdf_path = _save_io_as_file(
             result.file.io, convention_dirpath, convention_filename
@@ -232,7 +296,7 @@ def generate_pdf(file_stream, convention):
         # remove docx version
         os.remove(local_docx_path)
     else:
-        convention_dirpath = f"conventions/{convention.uuid}/convention_docs/"
+        convention_dirpath = f"conventions/{convention.uuid}/convention_docs"
         convention_filename = f"{convention.uuid}.docx"
         pdf_path = _save_io_as_file(
             file_stream, convention_dirpath, convention_filename
@@ -285,6 +349,28 @@ def _build_files_for_docx(doc, convention_uuid, file_list):
             )
             local_pathes.append(f"{local_path}")
     return docx_images, local_pathes
+
+
+def get_files_attached(convention):
+    local_pathes = []
+    attached_files = get_key_from_json_field(convention.attached, "files", default={})
+
+    files = UploadedFile.objects.filter(uuid__in=attached_files)
+    for object_file in files:
+        file = UploadService().get_file(object_file.filepath(convention.uuid))
+        local_path = (
+            settings.MEDIA_ROOT
+            / "conventions"
+            / str(convention.uuid)
+            / "attached_files"
+            / object_file.filename
+        )
+        local_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(local_path, "wb") as local_file:
+            local_file.write(file.read())
+            file.close()
+        local_pathes.append(local_path)
+    return local_pathes
 
 
 def _get_object_images(doc, convention):
@@ -461,15 +547,7 @@ def fiche_caf_doc(convention):
     }
     context.update(logements_totale)
 
-    jinja_env = jinja2.Environment(autoescape=True)
-    jinja_env.filters["d"] = to_fr_date
-    jinja_env.filters["sd"] = to_fr_short_date
-    jinja_env.filters["f"] = _to_fr_float
-    jinja_env.filters["pl"] = pluralize
-    jinja_env.filters["len"] = len
-    jinja_env.filters["inline_text_multiline"] = inline_text_multiline
-
-    doc.render(context, jinja_env)
+    doc.render(context, _get_jinja_env())
     file_stream = io.BytesIO()
     doc.save(file_stream)
     file_stream.seek(0)

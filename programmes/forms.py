@@ -10,7 +10,8 @@ from programmes.models import (
     Lot,
     TypeHabitat,
     TypeOperation,
-    TypologieLogement,
+    TypologieLogementClassique,
+    TypologieLogementFoyerResidence,
     TypologieAnnexe,
     TypologieStationnement,
     FinancementEDD,
@@ -119,6 +120,14 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         label="Date d'achèvement ou d'obtention de certificat de conformité",
     )
+    date_autorisation_hors_habitat_inclusif = forms.DateField(
+        required=False,
+        label="Date d'autorisation hors habitat inclusif",
+    )
+    date_convention_location = forms.DateField(
+        required=False,
+        label="Date de la convention de location",
+    )
     vendeur = forms.CharField(
         required=False,
         label="Vendeur",
@@ -126,7 +135,6 @@ class ProgrammeCadastralForm(forms.Form):
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
-        help_text="Identité du vendeur telle que mentionnée dans l'acte de propriété",
     )
     vendeur_files = forms.CharField(
         required=False,
@@ -139,7 +147,6 @@ class ProgrammeCadastralForm(forms.Form):
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
-        help_text="Identité de l'acquéreur telle que mentionnée dans l'acte de propriété",
     )
     acquereur_files = forms.CharField(
         required=False,
@@ -299,13 +306,42 @@ class LotLgtsOptionForm(forms.Form):
         max_digits=6,
         decimal_places=2,
         error_messages={
-            "max_digits": "La loyer dérogatoire par m² doit-être inférieur à 10000 €",
+            "max_digits": "Le loyer dérogatoire par m² doit-être inférieur à 10000 €",
         },
     )
     nb_logements = forms.IntegerField(
         required=False,
         label="Nombre de logements",
     )
+
+
+class LotFoyerResidenceLgtsDetailsForm(forms.Form):
+    floor_surface_habitable_totale: float
+    uuid = forms.UUIDField(
+        required=False,
+        label="Logement du programme",
+    )
+    surface_habitable_totale = forms.DecimalField(
+        label="Surface habitable totale en m²",
+        help_text="concerne la surface habitable de tout le bâti, y compris les locaux"
+        + " auxquels ne s’applique pas la convention",
+        max_digits=7,
+        decimal_places=2,
+        error_messages={
+            "required": "La surface habitable totale est obligatoire",
+            "max_digits": "La surface habitable doit-être inférieur à 100000 m²",
+        },
+    )
+
+    def clean_surface_habitable_totale(self):
+        surface_habitable_totale = self.cleaned_data.get("surface_habitable_totale", 0)
+        if surface_habitable_totale < self.floor_surface_habitable_totale:
+            raise ValidationError(
+                "La surface habitable ne peut-être inférieur à la somme des surfaces"
+                + f" habitables des logements ({self.floor_surface_habitable_totale} m²)"
+            )
+
+        return surface_habitable_totale
 
 
 class ProgrammeEDDForm(forms.Form):
@@ -386,7 +422,7 @@ class LogementForm(forms.Form):
     typologie = forms.TypedChoiceField(
         required=True,
         label="",
-        choices=TypologieLogement.choices,
+        choices=TypologieLogementClassique.choices,
         error_messages={
             "required": "Le type de logement est obligatoire",
         },
@@ -616,6 +652,95 @@ class BaseLogementFormSet(BaseFormSet):
 LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, extra=0)
 
 
+class FoyerResidenceLogementForm(forms.Form):
+
+    uuid = forms.UUIDField(
+        required=False,
+        label="Logement",
+    )
+    designation = forms.CharField(
+        label="",
+        max_length=255,
+        min_length=1,
+        error_messages={
+            "required": "Le numéro du logement du logement est obligatoire",
+            "min_length": "Le numéro du logement du logement est obligatoire",
+            "max_length": "Le numéro du logement du logement ne doit pas excéder 255 caractères",
+        },
+    )
+    typologie = forms.TypedChoiceField(
+        required=True,
+        label="",
+        choices=TypologieLogementFoyerResidence.choices,
+        error_messages={
+            "required": "Le type de logement est obligatoire",
+        },
+    )
+    surface_habitable = forms.DecimalField(
+        label="",
+        max_digits=6,
+        decimal_places=2,
+        error_messages={
+            "required": "La surface habitable est obligatoire",
+            "max_digits": "La surface habitable doit-être inférieur à 10000 m²",
+        },
+    )
+    loyer = forms.DecimalField(
+        label="",
+        max_digits=6,
+        decimal_places=2,
+        error_messages={
+            "required": "La redevance maximale est obligatoire",
+            "max_digits": "La redevance maximale inférieur à 10000 €",
+        },
+    )
+
+
+class BaseFoyerResidenceLogementFormSet(BaseFormSet):
+    nb_logements = None
+    lot_id = None
+
+    def clean(self):
+        self.loan_should_be_consistent()
+        self.manage_nb_logement_consistency()
+
+    def manage_nb_logement_consistency(self):
+        if self.nb_logements is None:
+            lot = Lot.objects.get(id=self.lot_id)
+            nb_logements = lot.nb_logements
+        else:
+            nb_logements = int(self.nb_logements)
+        if nb_logements != self.total_form_count():
+            error = ValidationError(
+                f"Le nombre de logement a conventionner ({nb_logements}) "
+                + f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
+            )
+            self._non_form_errors.append(error)
+
+    def loan_should_be_consistent(self):
+        loan_by_type = {}
+        loan_errors = {}
+        for form in self.forms:
+            typologie = form.cleaned_data.get("typologie", "")
+            if typologie not in loan_by_type:
+                loan_by_type[typologie] = form.cleaned_data.get("loyer")
+            else:
+                if loan_by_type[typologie] != form.cleaned_data.get("loyer"):
+                    loan_errors[typologie] = ValidationError(
+                        "Les loyers doivent-être identiques pour les logements de"
+                        + f" typologie identique : {form.cleaned_data.get('typologie')}"
+                    )
+        for _, loan_error in loan_errors.items():
+            self._non_form_errors.append(loan_error)
+
+
+FoyerResidenceLogementFormSet = formset_factory(
+    FoyerResidenceLogementForm,
+    formset=BaseFoyerResidenceLogementFormSet,
+    extra=0,
+)
+
+
 class AnnexeForm(forms.Form):
 
     uuid = forms.UUIDField(
@@ -638,7 +763,7 @@ class AnnexeForm(forms.Form):
         },
     )
     logement_typologie = forms.TypedChoiceField(
-        required=True, label="", choices=TypologieLogement.choices
+        required=True, label="", choices=TypologieLogementClassique.choices
     )
     surface_hors_surface_retenue = forms.DecimalField(
         label="",

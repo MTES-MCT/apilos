@@ -9,6 +9,7 @@ from ecoloweb.models import EcoloReference
 from programmes.models import (
     Annexe,
     Financement,
+    LocauxCollectifs,
     Logement,
     Lot,
     Programme,
@@ -139,6 +140,7 @@ class Convention(models.Model):
     # fix me: weird to keep fond_propre here
     fond_propre = models.FloatField(null=True, blank=True)
     comments = models.TextField(null=True, blank=True)
+    attached = models.TextField(null=True, blank=True)
     statut = models.CharField(
         max_length=25,
         choices=ConventionStatut.choices,
@@ -184,18 +186,94 @@ class Convention(models.Model):
     motif_refus_spf = models.CharField(max_length=1000, null=True)
     # Missing option for :
 
-    # La présente convention ne prévoyant pas de travaux, le bail entre en vigueur à la date de
-    # son acceptation par l'occupant de bonne foi après publication de la convention au fichier
-    # immobilier ou son inscription au livre foncier. (7)
-    #   OR
-    # La présente convention prévoyant des travaux, le bail et, notamment, la clause relative au
-    # montant du loyer entre en vigueur à compter de la date d'achèvement des travaux concernant
-    # la tranche dans laquelle est compris le logement concerné. (7)
+    # Gestionnaire data are needed for FOYER (AND RESIDENCE)
+    gestionnaire = models.CharField(max_length=255, null=True, blank=True)
+    gestionnaire_signataire_nom = models.CharField(
+        max_length=255, null=True, blank=True
+    )
+    gestionnaire_signataire_fonction = models.CharField(
+        max_length=255, null=True, blank=True
+    )
+    gestionnaire_signataire_date_deliberation = models.DateField(null=True, blank=True)
 
     donnees_validees = models.TextField(null=True, blank=True)
     nom_fichier_signe = models.CharField(max_length=255, null=True, blank=True)
     televersement_convention_signee_le = models.DateTimeField(null=True, blank=True)
     date_resiliation = models.DateField(null=True, blank=True)
+
+    historique_financement_public = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+
+    attribution_agees_autonomie = models.BooleanField(default=False)
+    attribution_agees_ephad = models.BooleanField(default=False)
+    attribution_agees_desorientees = models.BooleanField(default=False)
+    attribution_agees_petite_unite = models.BooleanField(default=False)
+    attribution_agees_autre = models.BooleanField(default=False)
+    attribution_agees_autre_detail = models.CharField(
+        max_length=255, null=True, blank=True
+    )
+    attribution_handicapes_foyer = models.BooleanField(default=False)
+    attribution_handicapes_foyer_de_vie = models.BooleanField(default=False)
+    attribution_handicapes_foyer_medicalise = models.BooleanField(default=False)
+    attribution_handicapes_autre = models.BooleanField(default=False)
+    attribution_handicapes_autre_detail = models.CharField(
+        max_length=255, null=True, blank=True
+    )
+    attribution_inclusif_conditions_specifiques = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_inclusif_conditions_admission = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_inclusif_modalites_attribution = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_inclusif_partenariats = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_inclusif_activites = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_reservation_prefectoral = models.IntegerField(null=True, blank=True)
+    attribution_modalites_reservations = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_modalites_choix_personnes = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_prestations_integrees = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    attribution_prestations_facultatives = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+
+    foyer_variante_1 = models.BooleanField(default=True)
+    foyer_variante_2 = models.BooleanField(default=True)
+    foyer_variante_2_travaux = models.CharField(null=True, blank=True, max_length=5000)
+    foyer_variante_3 = models.BooleanField(default=True)
+
+    @property
+    def attribution_type(self):
+        if not self.programme.is_foyer():
+            return None
+        if (
+            self.attribution_agees_autonomie
+            or self.attribution_agees_ephad
+            or self.attribution_agees_desorientees
+            or self.attribution_agees_petite_unite
+            or self.attribution_agees_autre
+        ):
+            return "agees"
+        if (
+            self.attribution_handicapes_foyer
+            or self.attribution_handicapes_foyer_de_vie
+            or self.attribution_handicapes_foyer_medicalise
+            or self.attribution_handicapes_autre
+        ):
+            return "handicapes"
+        return "inclusif"
 
     # Needed for admin
     @property
@@ -207,18 +285,13 @@ class Convention(models.Model):
         return self.programme.bailleur
 
     @property
-    def ecolo_reference(self) -> EcoloReference | None  :
+    def ecolo_reference(self) -> EcoloReference | None:
         if self.id is not None:
             return EcoloReference.objects.filter(
-                apilos_model='conventions.Convention',
-                apilos_id=self.id
+                apilos_model="conventions.Convention", apilos_id=self.id
             ).first()
 
         return None
-
-    @property
-    def bailleur_id(self):
-        return self.programme.bailleur_id
 
     def __str__(self):
         programme = self.programme
@@ -249,7 +322,7 @@ class Convention(models.Model):
             result[comment_name].append(comment)
         return result
 
-    def get_last_notification_by_role(self, role: TypeRole):
+    def _get_last_notification_by_role(self, role: TypeRole):
         try:
             return (
                 self.conventionhistories.prefetch_related("user")
@@ -267,10 +340,10 @@ class Convention(models.Model):
             return None
 
     def get_last_bailleur_notification(self):
-        return self.get_last_notification_by_role(TypeRole.BAILLEUR)
+        return self._get_last_notification_by_role(TypeRole.BAILLEUR)
 
     def get_last_instructeur_notification(self):
-        return self.get_last_notification_by_role(TypeRole.INSTRUCTEUR)
+        return self._get_last_notification_by_role(TypeRole.INSTRUCTEUR)
 
     def get_last_submission(self):
         try:
@@ -412,11 +485,6 @@ class Convention(models.Model):
         Should be editable when it is a PLUS convention
         """
         return self.financement == Financement.PLUS
-
-    def type1and2_configuration_not_needed(self):
-        return self.is_avenant() or not (
-            self.programme.bailleur.is_type1and2() and not self.type1and2
-        )
 
     def display_not_validated_status(self):
         """
@@ -562,6 +630,23 @@ class Convention(models.Model):
             )
             cloned_type_stationnement = TypeStationnement(**type_stationnement_fields)
             cloned_type_stationnement.save()
+        for locaux_collectif in self.lot.locaux_collectifs.all():
+            locaux_collectif_fields = model_to_dict(
+                locaux_collectif,
+                exclude=[
+                    "id",
+                    "lot",
+                    "cree_le",
+                    "mis_a_jour_le",
+                ],
+            )
+            locaux_collectif_fields.update(
+                {
+                    "lot": cloned_lot,
+                }
+            )
+            cloned_locaux_collectif = LocauxCollectifs(**locaux_collectif_fields)
+            cloned_locaux_collectif.save()
         return cloned_convention
 
     def get_default_convention_number(self):
@@ -698,7 +783,10 @@ class Pret(models.Model):
 
 class PieceJointeType(models.TextChoices):
     CONVENTION = "CONVENTION", "Convention APL"
-    RECTIFICATION = "RECTIFICATION", "Demande de rectification(s) du bureau des hypothèques"
+    RECTIFICATION = (
+        "RECTIFICATION",
+        "Demande de rectification(s) du bureau des hypothèques",
+    )
     ATTESTATION_PREFECTORALE = "ATTESTATION_PREFECTORALE", "Attestations préfectorales"
     AVENANT = "AVENANT", "Avenant"
     PHOTO = "PHOTO", "Photographie du bâti ou des logements"
@@ -709,9 +797,17 @@ class PieceJointe(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     convention = models.ForeignKey(
-        "Convention", on_delete=models.CASCADE, null=False, related_name="pieces_jointes"
+        "Convention",
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="pieces_jointes",
     )
-    type = models.CharField(null=True, max_length=24, choices=PieceJointeType.choices, default=PieceJointeType.AUTRE)
+    type = models.CharField(
+        null=True,
+        max_length=24,
+        choices=PieceJointeType.choices,
+        default=PieceJointeType.AUTRE,
+    )
     fichier = models.CharField(null=True, blank=True, max_length=255)
     nom_reel = models.CharField(null=True, blank=True, max_length=255)
     description = models.CharField(null=True, blank=True, max_length=255)
