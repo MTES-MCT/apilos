@@ -698,24 +698,24 @@ class FoyerResidenceLogementForm(forms.Form):
 
 class BaseFoyerResidenceLogementFormSet(BaseFormSet):
     nb_logements = None
+    lot_id = None
 
     def clean(self):
         self.loan_should_be_consistent()
+        self.manage_nb_logement_consistency()
 
-    #     self.manage_nb_logement_consistency()
-
-    # def manage_nb_logement_consistency(self):
-    #     if self.nb_logements is None:
-    #         lot = Lot.objects.get(id=self.lot_id)
-    #         nb_logements = lot.nb_logements
-    #     else:
-    #         nb_logements = int(self.nb_logements)
-    #     if nb_logements != self.total_form_count():
-    #         error = ValidationError(
-    #             f"Le nombre de logement a conventionner ({nb_logements}) "
-    #             + f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
-    #         )
-    #         self._non_form_errors.append(error)
+    def manage_nb_logement_consistency(self):
+        if self.nb_logements is None:
+            lot = Lot.objects.get(id=self.lot_id)
+            nb_logements = lot.nb_logements
+        else:
+            nb_logements = int(self.nb_logements)
+        if nb_logements != self.total_form_count():
+            error = ValidationError(
+                f"Le nombre de logement a conventionner ({nb_logements}) "
+                + f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
+            )
+            self._non_form_errors.append(error)
 
     def loan_should_be_consistent(self):
         loan_by_type = {}

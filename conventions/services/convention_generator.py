@@ -16,6 +16,7 @@ from core.utils import get_key_from_json_field, round_half_up
 from programmes.models import (
     Financement,
     Annexe,
+    TypologieLogement,
 )
 from upload.models import UploadedFile
 from upload.services import UploadService
@@ -83,6 +84,13 @@ def _compute_total_logement(convention):
     return (logements_totale, nb_logements_par_type)
 
 
+def _compute_total_locaux_collectifs(convention):
+    return sum(
+        locaux_collectif.surface_habitable
+        for locaux_collectif in convention.lot.locaux_collectifs.all()
+    )
+
+
 def generate_convention_doc(convention, save_data=False):
     # pylint: disable=R0912,R0914,R0915
     annexes = (
@@ -100,26 +108,6 @@ def generate_convention_doc(convention, save_data=False):
     filepath = get_convention_template_path(convention)
     doc = DocxTemplate(filepath)
     (logements_totale, nb_logements_par_type) = _compute_total_logement(convention)
-    # logements_totale = {
-    #     "sh_totale": 0,
-    #     "sa_totale": 0,
-    #     "sar_totale": 0,
-    #     "su_totale": 0,
-    #     "loyer_total": 0,
-    # }
-    # nb_logements_par_type = {}
-    # for logement in convention.lot.logements.order_by("typologie").all():
-    #     logements_totale["sh_totale"] += logement.surface_habitable
-    #     if logement.surface_annexes is not None:
-    #         logements_totale["sa_totale"] += logement.surface_annexes
-    #     if logement.surface_annexes_retenue is not None:
-    #         logements_totale["sar_totale"] += logement.surface_annexes_retenue
-    #     if logement.surface_utile is not None:
-    #         logements_totale["su_totale"] += logement.surface_utile
-    #     logements_totale["loyer_total"] += logement.loyer
-    #     if logement.get_typologie_display() not in nb_logements_par_type:
-    #         nb_logements_par_type[logement.get_typologie_display()] = 0
-    #     nb_logements_par_type[logement.get_typologie_display()] += 1
 
     logement_edds, lot_num = _prepare_logement_edds(convention)
     # tester si il logement exists avant de commencer
@@ -134,7 +122,8 @@ def generate_convention_doc(convention, save_data=False):
         "lot": convention.lot,
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
-        "logements": convention.lot.logements.all(),
+        "logements": convention.lot.logements.order_by("typologie").all(),
+        "locaux_collectifs": convention.lot.locaux_collectifs.all(),
         "annexes": annexes,
         "stationnements": convention.lot.type_stationnements.all(),
         "prets_cdc": convention.prets.filter(preteur__in=["CDCF", "CDCL"]),
@@ -146,6 +135,7 @@ def generate_convention_doc(convention, save_data=False):
         "liste_des_annexes": _compute_liste_des_annexes(
             convention.lot.type_stationnements.all(), annexes
         ),
+        "lc_sh_totale": _compute_total_locaux_collectifs(convention),
     }
     context.update(_compute_mixte(convention))
     context.update(logements_totale)
@@ -169,6 +159,14 @@ def generate_convention_doc(convention, save_data=False):
         )
 
     return file_stream
+
+
+def typologie_label(typologie: str):
+    return (
+        typologie.replace("T", "Logement T ")
+        if typologie in TypologieLogement.labels
+        else None
+    )
 
 
 def default_str_if_none(text_field):
@@ -208,6 +206,7 @@ def _get_jinja_env():
     jinja_env.filters["inline_text_multiline"] = inline_text_multiline
     jinja_env.filters["get_text_as_list"] = get_text_as_list
     jinja_env.filters["default_str_if_none"] = default_str_if_none
+    jinja_env.filters["tl"] = typologie_label
 
     return jinja_env
 

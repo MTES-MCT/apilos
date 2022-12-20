@@ -15,9 +15,10 @@ from conventions.services.convention_generator import (
     to_fr_date_or_default,
     to_fr_short_date,
     to_fr_short_date_or_default,
+    typologie_label,
 )
 from core.tests import utils_fixtures
-from programmes.models import NatureLogement
+from programmes.models import NatureLogement, TypologieLogement
 from users.models import User
 
 
@@ -102,6 +103,14 @@ class ConventionServiceGeneratorTest(TestCase):
                 get_convention_template_path,
                 convention,
             )
+
+    def test_typologie_label(self):
+        self.assertEqual(typologie_label(TypologieLogement.T1.label), "Logement T 1")
+        self.assertEqual(
+            typologie_label(TypologieLogement.T1prime.label), "Logement T 1'"
+        )
+        self.assertEqual(typologie_label(TypologieLogement.T7.label), "Logement T 7")
+        self.assertEqual(typologie_label("Invalid value"), None)
 
     def test_default_str_if_none(self):
         self.assertEqual(default_str_if_none(None), "---")

@@ -9,6 +9,7 @@ from ecoloweb.models import EcoloReference
 from programmes.models import (
     Annexe,
     Financement,
+    LocauxCollectifs,
     Logement,
     Lot,
     Programme,
@@ -629,6 +630,23 @@ class Convention(models.Model):
             )
             cloned_type_stationnement = TypeStationnement(**type_stationnement_fields)
             cloned_type_stationnement.save()
+        for locaux_collectif in self.lot.locaux_collectifs.all():
+            locaux_collectif_fields = model_to_dict(
+                locaux_collectif,
+                exclude=[
+                    "id",
+                    "lot",
+                    "cree_le",
+                    "mis_a_jour_le",
+                ],
+            )
+            locaux_collectif_fields.update(
+                {
+                    "lot": cloned_lot,
+                }
+            )
+            cloned_locaux_collectif = LocauxCollectifs(**locaux_collectif_fields)
+            cloned_locaux_collectif.save()
         return cloned_convention
 
     def get_default_convention_number(self):

@@ -110,6 +110,28 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
             ],
         )
 
+    def test_save_fails_on_nb_logements(self):
+        self.service.request.POST = {
+            **foyer_residence_logement_success_payload,
+            "form-TOTAL_FORMS": "3",
+            "form-INITIAL_FORMS": "3",
+            "form-2-uuid": "",
+            "form-2-designation": "b2",
+            "form-2-typologie": "T2",
+            "form-2-surface_habitable": "16.00",
+            "form-2-loyer": "160.00",
+        }
+        self.service.save()
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertTrue(self.service.formset.non_form_errors())
+        self.assertEqual(
+            self.service.formset.non_form_errors(),
+            [
+                "Le nombre de logement a conventionner (2) "
+                + "ne correspond pas au nombre de logements déclaré (3)"
+            ],
+        )
+
     def test_save_fails_on_surface_habitable_totale(self):
         self.service.request.POST = {
             **foyer_residence_logement_success_payload,

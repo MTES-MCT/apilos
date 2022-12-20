@@ -36,6 +36,8 @@
                         {% include "conventions/recapitulatif/bailleur.html" with target_url='conventions:avenant_bailleur' %}
                     {% endif %}
                     {% if 'logements' in avenant_list %}
+                        {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:avenant_foyer_residence_logements' %}
+                        {% include "conventions/recapitulatif/collectif.html" with target_url='conventions:avenant_collectif' %}
                         {% include "conventions/recapitulatif/logements.html" with target_url='conventions:avenant_logements' %}
                         {% include "conventions/recapitulatif/annexes.html" with target_url='conventions:avenant_annexes' %}
                     {% endif %}
@@ -76,6 +78,7 @@
                     {% endif %}
                     {% include "conventions/recapitulatif/logements.html" with target_url='conventions:logements' %}
                     {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:foyer_residence_logements' %}
+                    {% include "conventions/recapitulatif/collectif.html" with target_url='conventions:collectif' %}
                     {%  if not ecolo_ref %}
                         {% include "conventions/recapitulatif/annexes.html" with target_url='conventions:annexes' %}
                     {% else %}

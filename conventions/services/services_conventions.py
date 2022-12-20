@@ -168,6 +168,7 @@ def convention_summary(request, convention):
         "opened_comments": opened_comments,
         "bailleur": convention.programme.bailleur,
         "lot": convention.lot,
+        "locaux_collectifs": convention.lot.locaux_collectifs.all(),
         "programme": convention.programme,
         "logement_edds": convention.programme.logementedds.all(),
         "logements": convention.lot.logements.all(),

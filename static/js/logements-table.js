@@ -2,7 +2,7 @@ function compute_total_value(what, is_form=true){
     elements = document.querySelectorAll('[id=lgt_' + what + ']');
     total_value = 0;
     for ( i =0, len = elements.length; i<len; i++) {
-        inner_input = elements[i].getElementsByTagName('input')
+        var inner_input = elements[i].getElementsByTagName('input')
         if (inner_input.length > 0) {
             total_value = total_value + parseFloat(inner_input[0].value);
         }
@@ -10,7 +10,7 @@ function compute_total_value(what, is_form=true){
             total_value = total_value + parseFloat(elements[i].innerHTML);
         }
     }
-    total = document.getElementById('total_' + what)
+    var total = document.getElementById('total_' + what)
     if (total !== null) {
         document.getElementById('total_' + what).innerHTML = "<span>" + total_value.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g, " ") + "</span>";
     }

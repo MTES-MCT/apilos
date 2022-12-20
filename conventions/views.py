@@ -333,29 +333,22 @@ def fiche_caf(request, convention_uuid):
 def new_avenant(request, convention_uuid):
     result = create_avenant(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
+        convention = result["convention"]
+        target_pathname = None
         if result["avenant_type"].nom == "logements":
-            return HttpResponseRedirect(
-                reverse(
-                    "conventions:avenant_logements", args=[result["convention"].uuid]
-                )
-            )
+            if convention.programme.is_foyer():
+                target_pathname = "conventions:avenant_foyer_residence_logements"
+            else:
+                target_pathname = "conventions:avenant_logements"
         if result["avenant_type"].nom == "bailleur":
-            return HttpResponseRedirect(
-                reverse(
-                    "conventions:avenant_bailleur", args=[result["convention"].uuid]
-                )
-            )
+            target_pathname = "conventions:avenant_bailleur"
         if result["avenant_type"].nom == "duree":
-            return HttpResponseRedirect(
-                reverse(
-                    "conventions:avenant_financement", args=[result["convention"].uuid]
-                )
-            )
+            target_pathname = "conventions:avenant_financement"
         if result["avenant_type"].nom == "commentaires":
+            target_pathname = "conventions:avenant_comments"
+        if target_pathname:
             return HttpResponseRedirect(
-                reverse(
-                    "conventions:avenant_comments", args=[result["convention"].uuid]
-                )
+                reverse(target_pathname, args=[result["convention"].uuid])
             )
 
     return render(
@@ -541,7 +534,7 @@ avenant_annexes_step = ConventionFormStep(
 )
 
 avenant_collectif_step = ConventionFormStep(
-    pathname="conventions:collectif",
+    pathname="conventions:avenant_collectif",
     label="Collectif",
     classname="AvenantCollectifView",
 )
@@ -602,13 +595,22 @@ class ConventionFormSteps:
         self.convention = convention
         if convention.is_avenant():
             if active_classname is None:
-                self.steps = [
-                    avenant_bailleur_step,
-                    avenant_financement_step,
-                    avenant_logements_step,
-                    avenant_annexes_step,
-                    avenant_comments_step,
-                ]
+                if convention.programme.is_foyer():
+                    self.steps = [
+                        avenant_bailleur_step,
+                        avenant_financement_step,
+                        avenant_foyer_residence_logements_step,
+                        avenant_collectif_step,
+                        avenant_comments_step,
+                    ]
+                else:
+                    self.steps = [
+                        avenant_bailleur_step,
+                        avenant_financement_step,
+                        avenant_logements_step,
+                        avenant_annexes_step,
+                        avenant_comments_step,
+                    ]
             else:
                 if active_classname == "AvenantBailleurView":
                     self.steps = [avenant_bailleur_step]
@@ -616,13 +618,15 @@ class ConventionFormSteps:
                     "AvenantLogementsView",
                     "AvenantAnnexesView",
                 ]:
-                    if convention.programme.is_foyer():
-                        self.steps = [
-                            avenant_foyer_residence_logements_step,
-                            avenant_collectif_step,
-                        ]
-                    else:
-                        self.steps = [avenant_logements_step, avenant_annexes_step]
+                    self.steps = [avenant_logements_step, avenant_annexes_step]
+                if active_classname in [
+                    "AvenantFoyerResidenceLogementsView",
+                    "AvenantCollectifView",
+                ]:
+                    self.steps = [
+                        avenant_foyer_residence_logements_step,
+                        avenant_collectif_step,
+                    ]
                 if active_classname == "AvenantFinancementView":
                     self.steps = [avenant_financement_step]
                 if active_classname == "AvenantCommentsView":

@@ -39,6 +39,7 @@ class Comment(models.Model):
             "reference_cadastrale": "Tableau des références cadastrales",
             "pret": "Tableau des prêts et financements",
             "logement": "Tableaux des logements",
+            "locaux_collectifs": "Tableaux des locaux collectifs",
             "annexe": "Tableaux des annexes",
             "type_stationnement": "Tableaux des types de stationnement",
         }
@@ -156,6 +157,55 @@ class Comment(models.Model):
             "convention__gestionnaire_signataire_date_deliberation": (
                 "Date de délibération du signataire du gestionnaire"
             ),
+            "lot__foyer_residence_nb_garage_parking": "Garages et/ ou parking (nombre)",
+            "lot__foyer_residence_dependance": "Dépendances (nombre et surface)",
+            "lot__foyer_residence_locaux_hors_convention": (
+                "Locaux auxquels ne s'appliquent pas la convention (Liste)"
+            ),
+            "convention__attribution_inclusif_conditions_specifiques": (
+                "Conditions spécifiques d'accueil"
+            ),
+            "convention__attribution_inclusif_conditions_admission": (
+                "Conditions d'admission dans l’habitat inclusif"
+            ),
+            "convention__attribution_inclusif_modalites_attribution": "Modalités d'attribution",
+            "convention__attribution_inclusif_partenariats": "Partenariats",
+            "convention__attribution_inclusif_activites": "Activités proposées",
+            "convention__attribution_modalites_reservations": (
+                "Modalités de gestion des reservations"
+            ),
+            "convention__attribution_modalites_choix_personnes": (
+                "Modalités de choix des personnes accueillies"
+            ),
+            "convention__attribution_prestations_integrees": (
+                "Prestation intégrées dans la redevance"
+            ),
+            "convention__attribution_prestations_facultatives": "Prestations facultatives",
+            "convention__attribution_reservation_prefectoral": (
+                "Part de réservations préfectorales"
+            ),
+            "convention__foyer_variante_1": "Variante 1",
+            "convention__foyer_variante_2": "Variante 2",
+            "convention__foyer_variante_2_travaux": "Variante 2 travaux",
+            "convention__foyer_variante_3": "Variante 3",
+            "convention__attached": "Fichiers à joindre à la convention",
+            "convention__attribution_agees_autonomie": "Résidence autonomie",
+            "convention__attribution_agees_ephad": (
+                "Établissement hébergeant des personnes âgées dépendantes (EHPAD)"
+            ),
+            "convention__attribution_agees_desorientees": (
+                "Unité pour personnes désorientées (unités Alzheimer, ...)"
+            ),
+            "convention__attribution_agees_petite_unite": (
+                "Petite unité de vie (établissement de moins de 25 places autorisées)"
+            ),
+            "convention__attribution_agees_autre": "Autres",
+            "convention__attribution_agees_autre_detail": "Autres",
+            "convention__attribution_handicapes_foyer": "Foyer",
+            "convention__attribution_handicapes_foyer_de_vie": "Foyer de vie ou occupationnel",
+            "convention__attribution_handicapes_foyer_medicalise": "Foyer d'accueil médicalisé",
+            "convention__attribution_handicapes_autre": "Autres",
+            "convention__attribution_handicapes_autre_detail": "Autres [préciser]",
         }
         if f"{self.nom_objet}__{self.champ_objet}" in mapping_champ_objet:
             return mapping_champ_objet[f"{self.nom_objet}__{self.champ_objet}"]

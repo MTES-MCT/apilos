@@ -33,7 +33,7 @@
                 <thead>
                     <tr>
                         {% if convention|display_comments %}
-                            {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" %}
+                            {% include 'common/utils/comments_header.html' with object_name='locaux_collectifs' label="Locaux Collectifs" %}
                         {% endif %}
                         <th scope="col" class="col__width--150">Type de local {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                         <th scope="col" class="col__width--120">Surface Habitable {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -42,7 +42,7 @@
                 </thead>
                 <tbody>
                     {% for form_locaux_collectifs in formset %}
-                        {% with main_object_field="annexe__uuid__"|add:form_locaux_collectifs.uuid.value %}
+                        {% with main_object_field="locaux_collectifs__uuid__"|add:form_locaux_collectifs.uuid.value %}
                             <tr id="{{form_locaux_collectifs.uuid.id_for_label}}_group">
                                 {% if convention|display_comments %}
                                     <td id="{{form_locaux_collectifs.uuid.id_for_label}}_div">
@@ -65,7 +65,7 @@
             </table>
         </div>
 
-        <h4 class="fr-mb-1w">Autres annexes et locaux auquels ne s'appliquent pas la convention</h4>
+        <h4 class="fr-mb-1w">Autres locaux auxquels ne s'appliquent pas la convention</h4>
 
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-mb-2w">

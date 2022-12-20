@@ -97,6 +97,11 @@ class TypologieLogement(models.TextChoices):
         return value
 
 
+class OppenedNatureLogement(models.TextChoices):
+    LOGEMENTSORDINAIRES = "LOGEMENTSORDINAIRES", "Logements ordinaires"
+    AUTRE = "AUTRE", "Autres logements foyers"
+
+
 class NatureLogement(models.TextChoices):
     LOGEMENTSORDINAIRES = "LOGEMENTSORDINAIRES", "Logements ordinaires"
     AUTRE = "AUTRE", "Autres logements foyers"

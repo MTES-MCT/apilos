@@ -264,9 +264,8 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
             "editable_after_upload", False
         )
         if self.request.POST.get("Upload", False):
-            self.form = LotFoyerResidenceLgtsDetailsForm(self.request.POST)
+            self.form = LotFoyerResidenceLgtsDetailsForm(initial=self.request.POST)
             self._upload_foyer_residence_logements()
-        # When the user cliked on "Enregistrer et Suivant"
         else:
             self._foyer_residence_logements_atomic_update()
 
@@ -344,6 +343,9 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                     f"form-{idx}-loyer": form_logement["loyer"].value(),
                 }
         self.formset = FoyerResidenceLogementFormSet(initformset)
+        self.formset.lot_id = self.convention.lot_id
+        # nb_logements = self.request.POST.get("nb_logements", None)
+        # self.formset.nb_logements = int(nb_logements) if nb_logements else None
         formset_is_valid = self.formset.is_valid()
 
         self.form = LotFoyerResidenceLgtsDetailsForm(
