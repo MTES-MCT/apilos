@@ -38,7 +38,7 @@ def _get_choices_from_object(object_list):
     return [(instance.uuid, str(instance)) for instance in object_list]
 
 
-class ConventionSeletionService:
+class ConventionSelectionService:
     request: HttpRequest
     convention: Convention
     form: ProgrammeSelectionFromDBForm | ProgrammeSelectionFromZeroForm

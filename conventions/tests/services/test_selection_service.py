@@ -32,7 +32,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
         middleware.process_request(self.request)
         self.request.session.save()
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
-        self.service = services_programmes.ConventionSeletionService(
+        self.service = services_programmes.ConventionSelectionService(
             request=self.request
         )
 
@@ -183,7 +183,7 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
         middleware.process_request(self.request)
         self.request.session.save()
         self.request.session["currently"] = GroupProfile.BAILLEUR
-        self.service = services_programmes.ConventionSeletionService(
+        self.service = services_programmes.ConventionSelectionService(
             request=self.request
         )
 

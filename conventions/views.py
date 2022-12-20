@@ -58,7 +58,7 @@ from conventions.services.services_programmes import (
     ConventionProgrammeService,
     ConventionEDDService,
     ConventionCadastreService,
-    ConventionSeletionService,
+    ConventionSelectionService,
 )
 from conventions.services.utils import (
     base_convention_response_error,
@@ -765,7 +765,7 @@ class ConventionSelectionFromDBView(LoginRequiredMixin, View):
     # @permission_required("convention.add_convention")
     def get(self, request):
 
-        service = ConventionSeletionService(request)
+        service = ConventionSelectionService(request)
         service.get_from_db()
 
         return render(
@@ -780,7 +780,7 @@ class ConventionSelectionFromDBView(LoginRequiredMixin, View):
 
     # @permission_required("convention.add_convention")
     def post(self, request):
-        service = ConventionSeletionService(request)
+        service = ConventionSelectionService(request)
         service.post_from_db()
 
         if service.return_status == ReturnStatus.SUCCESS:
@@ -802,7 +802,7 @@ class ConventionSelectionFromZeroView(LoginRequiredMixin, View):
 
     # @permission_required("convention.add_convention")
     def get(self, request):
-        service = ConventionSeletionService(request)
+        service = ConventionSelectionService(request)
         service.get_from_zero()
 
         return render(
@@ -816,7 +816,7 @@ class ConventionSelectionFromZeroView(LoginRequiredMixin, View):
 
     # @permission_required("convention.add_convention")
     def post(self, request):
-        service = ConventionSeletionService(request)
+        service = ConventionSelectionService(request)
         service.post_from_zero()
 
         if service.return_status == ReturnStatus.SUCCESS:
