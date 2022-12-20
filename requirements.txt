@@ -55,9 +55,9 @@ dill==0.3.6 \
     --hash=sha256:a07ffd2351b8c678dfc4a856a3005f8067aea51d6ba6c700796a4d9e280f39f0 \
     --hash=sha256:e5db55f3687856d8fbdab002ed78544e1c4559a130302693d839dfe8f93f2373
     # via pylint
-dj-database-url==1.0.0 \
-    --hash=sha256:ccf3e8718f75ddd147a1e212fca88eecdaa721759ee48e38b485481c77bca3dc \
-    --hash=sha256:cd354a3b7a9136d78d64c17b2aec369e2ae5616fbca6bfbe435ef15bb372ce39
+dj-database-url==1.2.0 \
+    --hash=sha256:5c2993b91801c0f78a8b19e642b497b90831124cbade0c265900d4c1037b4730 \
+    --hash=sha256:b23b15046cb38180e0c95207bcc90fe5e9dbde8eef16065907dd85cf4ca7036c
     # via -r requirements.in
 dj-static==0.0.6 \
     --hash=sha256:032ec1c532617922e6e3e956d504a6fb1acce4fc1c7c94612d0fda21828ce8ef
