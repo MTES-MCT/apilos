@@ -1,6 +1,6 @@
 {% load custom_filters %}
 
-{% if convention_form_steps|is_a_step:'Bailleur' %}
+{% if convention_form_steps|is_a_step:'ConventionBailleurView' or convention_form_steps|is_a_step:'AvenantBailleurView' %}
     <div class="fr-grid-row fr-grid-row--gutters fr-mt-1w">
         <div class="fr-col-12">
             <div class="fr-card fr-card--no-arrow">

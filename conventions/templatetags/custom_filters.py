@@ -358,8 +358,10 @@ def display_create_avenant(convention):
 
 
 @register.filter
-def is_a_step(convention_form_step, label):
-    return any(step for step in convention_form_step.steps if step.label == label)
+def is_a_step(convention_form_step, classname):
+    return any(
+        step for step in convention_form_step.steps if step.classname == classname
+    )
 
 
 @register.filter

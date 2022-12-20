@@ -1,6 +1,6 @@
 {% load custom_filters %}
 
-{% if convention_form_steps|is_a_step:'ConventionLogementsView' or convention_form_steps|is_a_step:'AvenantLogementsView' %}
+{% if convention_form_steps|is_a_step:'ConventionFoyerResidenceLogementsView' or convention_form_steps|is_a_step:'AvenantFoyerResidenceLogementsView' %}
 
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-lg-12">
@@ -24,15 +24,10 @@
                                     {% if convention|display_comments %}
                                         {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' callback_click="refresh_opened_comments" %}
                                     {% endif %}
-                                    <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
+                                    <th scope="col" class="col__width--150">Numéro du logement (désignation) {% include "common/form/required_field_star.html" %}</th>
                                     <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
-                                    <th scope="col" class="col__width--120">Surface habitable {% include "common/form/required_field_star.html" %}</th>
-                                    <th scope="col" class="col__width--120">Surface des annexes réelle {% include "common/form/required_field_star.html" %}</th>
-                                    <th scope="col" class="col__width--120">Surface des annexes retenue dans la SU {% include "common/form/required_field_star.html" %}</th>
-                                    <th scope="col" class="col__width--120">Surface Utile {% include "common/form/required_field_star.html" %}</th>
-                                    <th scope="col" class="col__width--120">Loyer maximum en € par m² de surface utile {% include "common/form/required_field_star.html" %}</th>
-                                    <th scope="col" class="col__width--120">Coefficient propre au logement {% include "common/form/required_field_star.html" %}</th>
-                                    <th scope="col" class="col__width--120">Loyer maximum du logement en € {% include "common/form/required_field_star.html" %}</th>
+                                    <th scope="col" class="col__width--120">Surface habitable par local {% include "common/form/required_field_star.html" %}</th>
+                                    <th scope="col" class="col__width--120">Redevance maximale en € {% include "common/form/required_field_star.html" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -54,21 +49,6 @@
                                                 <td id="lgt_sh">
                                                     {{ logement.surface_habitable|floatformat:2 }}
                                                 </td>
-                                                <td id="lgt_sa">
-                                                    {{ logement.surface_annexes|floatformat:2 }}
-                                                </td>
-                                                <td id="lgt_sar">
-                                                    {{ logement.surface_annexes_retenue|floatformat:2 }}
-                                                </td>
-                                                <td id="lgt_su">
-                                                    {{ logement.surface_utile|floatformat:2 }}
-                                                </td>
-                                                <td>
-                                                    {{ logement.loyer_par_metre_carre|floatformat:2 }}
-                                                </td>
-                                                <td>
-                                                    {{ logement.coeficient|floatformat:4 }}
-                                                </td>
                                                 <td id="lgt_loyer">
                                                     {{ logement.loyer|floatformat:2 }}
                                                 </td>
@@ -82,16 +62,6 @@
                                     </td>
                                     <td id="total_sh" class="fr-text--lg">
                                     </td>
-                                    <td id="total_sa" class="fr-text--lg">
-                                    </td>
-                                    <td id="total_sar" class="fr-text--lg">
-                                    </td>
-                                    <td id="total_su" class="fr-text--lg">
-                                    </td>
-                                    <td>
-                                    </td>
-                                    <td>
-                                    </td>
                                     <td id="total_loyer" class="fr-text--lg">
                                     </td>
                                 </tr>
@@ -99,8 +69,7 @@
                         </table>
                     </div>
 
-                    {% include "common/display_field_if_exists.html" with label="loyer dérogatoire" value=lot.loyer_derogatoire object_field="lot__loyer_derogatoire__"|add:lot_uuid %}
-                    {% include "common/display_field_if_exists.html" with label="Nombre de logements à louer en plus à des ménages dont les ressources n'excèdent pas le plafond" value=lot.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:lot_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Surface habitable totale en m²" value=lot.surface_habitable_totale object_field="lot__surface_habitable_totale__"|add:lot_uuid %}
 
                 </div>
             </div>

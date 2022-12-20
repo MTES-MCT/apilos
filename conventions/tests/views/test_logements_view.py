@@ -1,36 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
-from conventions.models import Convention
 
+from conventions.models import Convention
+from conventions.tests.fixtures import logement_success_payload
 from conventions.tests.views.abstract import AbstractEditViewTestCase
 from users.models import User
-
-post_fixture = {
-    "form-TOTAL_FORMS": "2",
-    "form-INITIAL_FORMS": "2",
-    "form-0-uuid": "",
-    "form-0-designation": "B1",
-    "form-0-typologie": "T1",
-    "form-0-surface_habitable": "12.12",
-    "form-0-surface_annexes": "45.57",
-    "form-0-surface_annexes_retenue": "0.00",
-    "form-0-surface_utile": "30.00",
-    "form-0-loyer_par_metre_carre": "4.5",
-    "form-0-coeficient": "1.0000",
-    "form-0-loyer": "135.00",
-    "form-1-uuid": "",
-    "form-1-designation": "B2",
-    "form-1-typologie": "T1",
-    "form-1-surface_habitable": "30.00",
-    "form-1-surface_annexes": "0.00",
-    "form-1-surface_annexes_retenue": "0.00",
-    "form-1-surface_utile": "30.00",
-    "form-1-loyer_par_metre_carre": "4.5",
-    "form-1-coeficient": "1.0000",
-    "form-1-loyer": "135.00",
-    "loyer_derogatoire": "10",
-    "lgts_mixite_sociale_negocies": "2",
-}
 
 
 class ConventionLogementsViewTests(AbstractEditViewTestCase, TestCase):
@@ -46,13 +20,13 @@ class ConventionLogementsViewTests(AbstractEditViewTestCase, TestCase):
         self.error_payload = {
             "nb_logements": "2",
             "uuid": str(self.convention_75.lot.uuid),
-            **post_fixture,
+            **logement_success_payload,
             "form-1-loyer": "750.00",
         }
         self.success_payload = {
             "nb_logements": "2",
             "uuid": str(self.convention_75.lot.uuid),
-            **post_fixture,
+            **logement_success_payload,
         }
         self.msg_prefix = "[ConventionLogementsViewTests] "
 

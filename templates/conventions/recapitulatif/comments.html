@@ -1,6 +1,6 @@
 {% load custom_filters %}
 
-{% if convention_form_steps|is_a_step:'Commentaires' %}
+{% if convention_form_steps|is_a_step:'ConventionCommentsView' or convention_form_steps|is_a_step:'AvenantCommentsView' %}
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-lg-12">
             <div class="fr-card fr-card--no-arrow">

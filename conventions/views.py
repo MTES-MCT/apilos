@@ -47,9 +47,9 @@ from conventions.services.services_conventions import (
     create_avenant,
     generate_convention_service,
 )
+from conventions.services.collectif import ConventionCollectifService
 from conventions.services.services_logements import (
     ConventionAnnexesService,
-    ConventionFoyerResidenceCollectifService,
     ConventionFoyerResidenceLogementsService,
     ConventionLogementsService,
     ConventionTypeStationnementService,
@@ -486,10 +486,10 @@ annexes_step = ConventionFormStep(
     classname="ConventionAnnexesView",
 )
 
-foyer_residence_collectif_step = ConventionFormStep(
-    pathname="conventions:foyer_residence_collectif",
+collectif_step = ConventionFormStep(
+    pathname="conventions:collectif",
     label="Collectif",
-    classname="ConventionFoyerResidenceCollectifView",
+    classname="ConventionCollectifView",
 )
 
 stationnements_step = ConventionFormStep(
@@ -528,10 +528,22 @@ avenant_logements_step = ConventionFormStep(
     classname="AvenantLogementsView",
 )
 
+avenant_foyer_residence_logements_step = ConventionFormStep(
+    pathname="conventions:avenant_foyer_residence_logements",
+    label="Logements",
+    classname="AvenantFoyerResidenceLogementsView",
+)
+
 avenant_annexes_step = ConventionFormStep(
     pathname="conventions:avenant_annexes",
     label="Annexes",
     classname="AvenantAnnexesView",
+)
+
+avenant_collectif_step = ConventionFormStep(
+    pathname="conventions:collectif",
+    label="Collectif",
+    classname="AvenantCollectifView",
 )
 
 avenant_financement_step = ConventionFormStep(
@@ -566,7 +578,7 @@ foyer_steps = [
     edd_step,
     financement_step,
     foyer_residence_logements_step,
-    foyer_residence_collectif_step,
+    collectif_step,
     foyer_attribution_step,
     foyer_variante_step,
     comments_step,
@@ -605,8 +617,10 @@ class ConventionFormSteps:
                     "AvenantAnnexesView",
                 ]:
                     if convention.programme.is_foyer():
-                        # FIXME : foyer residence doesn't have the same step here
-                        pass
+                        self.steps = [
+                            avenant_foyer_residence_logements_step,
+                            avenant_collectif_step,
+                        ]
                     else:
                         self.steps = [avenant_logements_step, avenant_annexes_step]
                 if active_classname == "AvenantFinancementView":
@@ -871,8 +885,7 @@ class ConventionFinancementView(ConventionView):
 
 
 class AvenantFinancementView(ConventionFinancementView):
-    target_template: str = "conventions/financement.html"
-    service_class = ConventionFinancementService
+    pass
 
 
 class ConventionLogementsView(ConventionView):
@@ -892,7 +905,6 @@ class AvenantLogementsView(ConventionLogementsView):
 
 
 class ConventionFoyerResidenceLogementsView(ConventionView):
-    # FIXME : à tester
     target_template: str = "conventions/foyer_residence_logements.html"
     service_class = ConventionFoyerResidenceLogementsService
 
@@ -924,10 +936,9 @@ class AvenantAnnexesView(ConventionAnnexesView):
     pass
 
 
-class ConventionFoyerResidenceCollectifView(ConventionView):
-    # FIXME : à tester
-    target_template: str = "conventions/foyer_residence_collectif.html"
-    service_class = ConventionFoyerResidenceCollectifService
+class ConventionCollectifView(ConventionView):
+    target_template: str = "conventions/collectif.html"
+    service_class = ConventionCollectifService
 
     def _get_convention(self, convention_uuid):
         return (
@@ -937,7 +948,7 @@ class ConventionFoyerResidenceCollectifView(ConventionView):
         )
 
 
-class AvenantFoyerResidenceCollectifView(ConventionFoyerResidenceCollectifView):
+class AvenantCollectifView(ConventionCollectifView):
     pass
 
 

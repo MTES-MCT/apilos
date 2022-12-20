@@ -59,7 +59,7 @@ class Comment(models.Model):
             "programme__adresse": "Adresse de l'opération",
             "programme__code_postal": "Code postal de l'opération",
             "programme__ville": "Ville de l'opération",
-            # fixme : should be lot__nb_logements
+            # FIXME : should be lot__nb_logements
             "programme__nb_logements": "Nombre de logements à conventionner",
             "programme__anru": "Option ANRU de l'opération",
             "programme__nb_locaux_commerciaux": (
