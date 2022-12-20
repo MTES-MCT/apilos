@@ -38,7 +38,7 @@ class ConventionImporter(ConventionImporterSimple):
 class PieceJointeImporter(ModelImporter):
     model = PieceJointe
 
-    def _get_sql_many_query(self) -> Optional[str]:
+    def _get_query_many(self) -> str | None:
         return self._get_file_content('resources/sql/convention_pieces_jointes.sql')
 
     def _get_o2o_dependencies(self):
