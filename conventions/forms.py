@@ -436,3 +436,8 @@ class AvenantsforavenantForm(forms.Form):
             "required": "Vous devez saisir un ou plusieurs types d'avenant",
         },
     )
+    desc_avenant = forms.CharField(
+        widget=forms.Textarea,
+        required=False,
+        label="Informations sur la nature de l'avenant.",
+    )

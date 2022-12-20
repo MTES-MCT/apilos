@@ -8,16 +8,13 @@
     <div class="fr-container fr-py-5w">
         <div class="fr-col-12 fr-mt-2w fr-mb-4w">
             <h2>{{parent}}</h2>
-            {% include "conventions/avenant/list_avenants_for_avenant.html" with conventions=parent_avenants %}
+            {% include "conventions/avenant/list_avenants_for_avenant.html" with conventions=avenants_parent %}
             <div class="fr-col-12">
                 <h2 class="fr-text--lg">Téléverser l'avenant {{avenant_numero}} </h2>
                 <form method="post">
                     {% csrf_token %}
-                    {{ avenant_form }}
-                    <input type="hidden"
-                        id="id_convention_numero"
-                        name="convention_numero"
-                        value="{{avenant_numero}}">
+                    {{avenant_form.avenant_types}}
+                    {{avenant_form.desc_avenant}}
                     <button class="fr-btn fr-btn--secondary fr-icon-eye-line fr-btn--icon-left">Créer l'avenant</button>
                 </form>
             </div>

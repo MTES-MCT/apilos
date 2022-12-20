@@ -31,11 +31,13 @@ from conventions.services.services_conventions import (
     convention_summary,
     convention_validate,
     conventions_index,
-    search_result,
     create_avenant,
+    generate_convention_service,
+)
+from conventions.services.avenants import (
+    search_result,
     upload_avenants_for_avenant,
     complete_avenants_for_avenant,
-    generate_convention_service,
 )
 from conventions.services.services_logements import (
     ConventionAnnexesService,
@@ -381,7 +383,8 @@ def form_avenants_for_avenant(request, convention_uuid):
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse(
-                "conventions:new_avenants_for_avenant", args=[result["convention"].uuid]
+                "conventions:new_avenants_for_avenant",
+                args=[result["convention_parent"].uuid],
             )
         )
     return render(
