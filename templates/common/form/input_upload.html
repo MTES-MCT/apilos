@@ -15,6 +15,8 @@
                     <br>
                     <div class="fr-hint-text">informations complémentaires à destination de l’instructeur</div>
                 {% endif %}
+                {% include "common/form/required_field.html" with form_input=form_input %}
+                {% include "common/help_field.html" with form_input=form_input %}
             </label>
             {% include "common/utils/comments_field.html" %}
         </div>

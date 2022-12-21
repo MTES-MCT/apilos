@@ -1,8 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from conventions.models import Preteur
+from conventions.models import Convention, Preteur
 from conventions.tests.views.abstract import AbstractEditViewTestCase
+from programmes.models import NatureLogement
+from users.models import User
 
 
 class ConventionFinancementViewTests(AbstractEditViewTestCase, TestCase):
@@ -71,13 +73,52 @@ class ConventionFinancementViewTests(AbstractEditViewTestCase, TestCase):
             msg=f"{self.msg_prefix} 2 prets CDC",
         )
 
+    def test_next_step_when_foyer(self):
+        self.convention_75.programme.nature_logement = NatureLogement.AUTRE
+        self.convention_75.programme.save()
+        foyer_next_target_path = reverse(
+            "conventions:foyer_residence_logements", args=[self.convention_75.uuid]
+        )
+
+        response = self.client.post(
+            reverse("login"), {"username": "raph", "password": "12345"}
+        )
+        response = self.client.get(self.target_path)
+        self.assertEqual(response.status_code, 200, msg=f"{self.msg_prefix}")
+
+        response = self.client.post(self.target_path, self.success_payload)
+        self.assertEqual(response.status_code, 302, msg=f"{self.msg_prefix}")
+        self.assertRedirects(
+            response, foyer_next_target_path, msg_prefix=self.msg_prefix
+        )
+
 
 class AvenantFinancementViewTests(ConventionFinancementViewTests):
     def setUp(self):
         super().setUp()
+        # force convention_75 to be an avenant
+        user = User.objects.get(username="fix")
+        convention = Convention.objects.get(numero="0001")
+        self.convention_75 = convention.clone(user, convention_origin=convention)
         self.target_path = reverse(
             "conventions:avenant_financement", args=[self.convention_75.uuid]
         )
         self.next_target_path = reverse(
             "conventions:recapitulatif", args=[self.convention_75.uuid]
+        )
+
+    def test_next_step_when_foyer(self):
+        self.convention_75.programme.nature_logement = NatureLogement.AUTRE
+        self.convention_75.programme.save()
+
+        response = self.client.post(
+            reverse("login"), {"username": "raph", "password": "12345"}
+        )
+        response = self.client.get(self.target_path)
+        self.assertEqual(response.status_code, 200, msg=f"{self.msg_prefix}")
+
+        response = self.client.post(self.target_path, self.success_payload)
+        self.assertEqual(response.status_code, 302, msg=f"{self.msg_prefix}")
+        self.assertRedirects(
+            response, self.next_target_path, msg_prefix=self.msg_prefix
         )

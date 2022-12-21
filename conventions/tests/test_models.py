@@ -1,13 +1,11 @@
 import datetime
 
 from django.test import TestCase
-from bailleurs.models import SousNatureBailleur
 from core.tests import utils_assertions, utils_fixtures
 from conventions.models import (
     Convention,
     ConventionHistory,
     ConventionStatut,
-    ConventionType1and2,
     Pret,
     Preteur,
 )
@@ -157,39 +155,6 @@ class ConventionModelsTest(TestCase):
                 convention.financement = k
                 self.assertFalse(convention.mixity_option())
 
-    def test_type1and2_configuration_not_needed(self):
-        convention = Convention.objects.order_by("uuid").first()
-        for sous_nature_bailleur in [
-            SousNatureBailleur.OFFICE_PUBLIC_HLM,
-            SousNatureBailleur.SA_HLM_ESH,
-            SousNatureBailleur.COOPERATIVE_HLM_SCIC,
-            SousNatureBailleur.SEM_EPL,
-        ]:
-            convention.programme.bailleur.sous_nature_bailleur = sous_nature_bailleur
-            for type1andtype2 in [
-                ConventionType1and2.TYPE1,
-                ConventionType1and2.TYPE2,
-                None,
-            ]:
-                convention.type1and2 = type1andtype2
-                self.assertTrue(convention.type1and2_configuration_not_needed())
-        for k, _ in SousNatureBailleur.choices:
-            if k not in [
-                SousNatureBailleur.OFFICE_PUBLIC_HLM,
-                SousNatureBailleur.SA_HLM_ESH,
-                SousNatureBailleur.COOPERATIVE_HLM_SCIC,
-                SousNatureBailleur.SEM_EPL,
-            ]:
-                convention.programme.bailleur.sous_nature_bailleur = k
-                convention.type1and2 = None
-                self.assertFalse(convention.type1and2_configuration_not_needed())
-                for type1andtype2 in [
-                    ConventionType1and2.TYPE1,
-                    ConventionType1and2.TYPE2,
-                ]:
-                    convention.type1and2 = type1andtype2
-                    self.assertTrue(convention.type1and2_configuration_not_needed())
-
     def test_display_not_validated_status(self):
         convention = Convention.objects.order_by("uuid").first()
         convention.statut = ConventionStatut.PROJET
@@ -214,10 +179,6 @@ class ConventionModelsTest(TestCase):
     def test_convention_bailleur(self):
         convention = Convention.objects.order_by("uuid").first()
         self.assertEqual(convention.bailleur, convention.programme.bailleur)
-        self.assertEqual(convention.bailleur_id, convention.programme.bailleur_id)
-
-    def test_xlsx(self):
-        utils_assertions.assert_xlsx(self, Pret, "financement")
 
 
 class PretModelsTest(TestCase):
@@ -271,3 +232,6 @@ class PretModelsTest(TestCase):
         pret.preteur = Preteur.AUTRE
         pret.autre = "n'importe quoi"
         self.assertEqual(pret.preteur_display(), "n'importe quoi")
+
+    def test_xlsx(self):
+        utils_assertions.assert_xlsx(self, Pret, "financement")

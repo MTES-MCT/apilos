@@ -1,8 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
+from conventions.models import Convention
 
 from conventions.tests.views.abstract import AbstractEditViewTestCase
 from programmes.models import Annexe, Logement, TypologieLogement
+from users.models import User
 
 
 class ConventionAnnexesViewTests(AbstractEditViewTestCase, TestCase):
@@ -113,6 +115,10 @@ class ConventionAnnexesViewTests(AbstractEditViewTestCase, TestCase):
 class AvenantAnnexesViewTests(ConventionAnnexesViewTests):
     def setUp(self):
         super().setUp()
+        # force convention_75 to be an avenant
+        user = User.objects.get(username="fix")
+        convention = Convention.objects.get(numero="0001")
+        self.convention_75 = convention.clone(user, convention_origin=convention)
         self.target_path = reverse(
             "conventions:avenant_annexes", args=[self.convention_75.uuid]
         )

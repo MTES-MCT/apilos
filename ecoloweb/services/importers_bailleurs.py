@@ -11,11 +11,11 @@ class BailleurImporter(ModelImporter):
 
     def __init__(self, departement: str, import_date: datetime, debug=False):
         super().__init__(departement, import_date, debug)
-        self._siret_resolver = SiretResolver()
-        self._query = self._get_file_content('resources/sql/bailleurs.sql')
 
-    def _get_sql_one_query(self) -> str:
-        return self._query
+        self._siret_resolver = SiretResolver()
+
+    def _get_query_one(self) -> str:
+        return self._get_file_content('resources/sql/bailleurs.sql')
 
     def _get_identity_keys(self) -> List[str]:
         return ['siret']
@@ -26,7 +26,7 @@ class BailleurImporter(ModelImporter):
         codepersonne = data.pop('codepersonne')
         date_creation = data['cree_le']
 
-        #
+        # Clean SIRET code
         if codesiret is not None:
             data['siret'] = codesiret
 

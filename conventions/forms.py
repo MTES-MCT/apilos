@@ -13,12 +13,238 @@ from programmes.models import (
 from conventions.models import ConventionType1and2, Preteur, AvenantType
 
 
+class ConventionFoyerVariantesForm(forms.Form):
+    uuid = forms.UUIDField(
+        required=False,
+    )
+    foyer_variante_1 = forms.BooleanField(
+        required=False,
+        label="Variante 1",
+        help_text="programme existant dont la construction a été financée dans les"
+        + " conditions du 1° de l'article R. 832-21 du code de la construction et de"
+        + " l'habitation",
+    )
+    foyer_variante_2 = forms.BooleanField(
+        required=False,
+        label="Variante 2",
+        help_text="programme existant dont l'amélioration ou l'acquisition suivie d'une"
+        + " amélioration est financée dans les conditions prévues au 2° de l'article"
+        + " R. 832-21 du code de la construction et de l'habitation",
+    )
+    foyer_variante_2_travaux = forms.CharField(
+        max_length=5000,
+        required=False,
+        label="Description du programme des travaux ",
+        help_text="A renseigner pour une Acquisition/Amélioration, conformément à"
+        + " l’article 14 de la convention",
+    )
+    foyer_variante_3 = forms.BooleanField(
+        required=False,
+        label="Variante 3",
+        help_text="programme neuf dont la construction est financée dans les conditions"
+        + " visées au 3° de l'article R. 832-21 du code de la construction et de"
+        + " l'habitation",
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if (
+            not cleaned_data.get("foyer_variante_1")
+            and not cleaned_data.get("foyer_variante_2")
+            and not cleaned_data.get("foyer_variante_3")
+        ):
+            self.add_error(None, "Au moins 1 variante doit-être sélectionnée")
+        if cleaned_data.get("foyer_variante_2") and not cleaned_data.get(
+            "foyer_variante_2_travaux"
+        ):
+            self.add_error(
+                "foyer_variante_2_travaux",
+                "Si la Variante 2 est sélectionnée, vous devez décrire le programme des"
+                + " travaux",
+            )
+
+
+class ConventionFoyerAttributionForm(forms.Form):
+
+    uuid = forms.UUIDField(
+        required=False,
+    )
+    attribution_type = forms.ChoiceField(
+        choices=[
+            ("handicapees", "handicapees"),
+            ("agees", "agees"),
+            ("inclusif", "inclusif"),
+        ]
+    )
+    # Foyer pour personnes handicapées
+    attribution_agees_autonomie = forms.BooleanField(
+        required=False,
+        label="Résidence autonomie",
+    )
+    attribution_agees_ephad = forms.BooleanField(
+        required=False,
+        label="Établissement hébergeant des personnes âgées dépendantes (EHPAD)",
+    )
+    attribution_agees_desorientees = forms.BooleanField(
+        required=False,
+        label="Unité pour personnes désorientées (unités Alzheimer, ...)",
+    )
+    attribution_agees_petite_unite = forms.BooleanField(
+        required=False,
+        label="Petite unité de vie (établissement de moins de 25 places autorisées)",
+    )
+    attribution_agees_autre = forms.BooleanField(
+        required=False,
+        label="Autres [préciser]",
+    )
+    attribution_agees_autre_detail = forms.CharField(
+        required=False,
+        label="",
+    )
+
+    # Foyer pour personnes handicapées
+    attribution_handicapes_foyer = forms.BooleanField(
+        required=False,
+        label="Foyer",
+    )
+    attribution_handicapes_foyer_de_vie = forms.BooleanField(
+        required=False,
+        label="Foyer de vie ou occupationnel",
+    )
+    attribution_handicapes_foyer_medicalise = forms.BooleanField(
+        required=False,
+        label="Foyer d'accueil médicalisé",
+    )
+    attribution_handicapes_autre = forms.BooleanField(
+        required=False,
+        label="Autres [préciser]",
+    )
+    attribution_handicapes_autre_detail = forms.CharField(
+        required=False,
+        label="",
+    )
+    attribution_inclusif_conditions_specifiques = forms.CharField(
+        required=False,
+        label="Conditions spécifiques d'accueil",
+    )
+    attribution_inclusif_conditions_admission = forms.CharField(
+        required=False,
+        label="Conditions d'admission dans l’habitat inclusif",
+    )
+    attribution_inclusif_modalites_attribution = forms.CharField(
+        required=False,
+        label="Modalités d'attribution",
+    )
+    attribution_inclusif_partenariats = forms.CharField(
+        required=False,
+        label="Partenariats concourant à la mise en œuvre du projet de vie sociale"
+        + " et partagée mis en place",
+    )
+    attribution_inclusif_activites = forms.CharField(
+        required=False,
+        label="Activités proposées à l’ensemble des résidents dans le cadre du projet"
+        + " de vie sociale et partagée",
+    )
+    attribution_reservation_prefectoral = forms.IntegerField(
+        label="Part de réservations préfectorales",
+        help_text="La part des locaux à usage privatif réservés par le préfet en pourcentage",
+        error_messages={
+            "required": "La part de réservations préfectoriales est obligatoire"
+        },
+    )
+
+    attribution_modalites_reservations = forms.CharField(
+        label="Modalités de gestion des reservations",
+        error_messages={
+            "required": "Les modalités de gestion des reservations sont obligatoires"
+        },
+    )
+
+    attribution_modalites_choix_personnes = forms.CharField(
+        label="Modalités de choix des personnes accueillies",
+        error_messages={
+            "required": "Les modalités de choix des personnes accueillies sont obligatoires"
+        },
+    )
+
+    attribution_prestations_integrees = forms.CharField(
+        required=False,
+        label="Prestation intégrées dans la redevance (Liste)",
+        help_text="Les prestations obligatoirement intégrées dans la redevance et non"
+        + " prises en compte pour le calcul de l'APL (non prises en compte au titre des"
+        + " charges récupérables)",
+    )
+
+    attribution_prestations_facultatives = forms.CharField(
+        required=False,
+        label="Prestations facultatives (Liste)",
+        help_text="Prestations facultatives à la demande du résident facturées séparément",
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        attribution_type = cleaned_data.get("attribution_type")
+
+        if attribution_type == "inclusif":
+            for inclusif_required_field in [
+                "attribution_inclusif_conditions_specifiques",
+                "attribution_inclusif_conditions_admission",
+                "attribution_inclusif_modalites_attribution",
+                "attribution_inclusif_partenariats",
+                "attribution_inclusif_activites",
+            ]:
+                clean_field = cleaned_data.get(inclusif_required_field)
+                if not clean_field:
+                    self.add_error(
+                        inclusif_required_field,
+                        "Ce champ est requis lors qu'il s'agit d'un habitat inclusif",
+                    )
+
+        if cleaned_data.get("attribution_agees_autre") and not cleaned_data.get(
+            "attribution_agees_autre_detail"
+        ):
+            self.add_error(
+                "attribution_agees_autre_detail",
+                "Merci de préciser le type d'établissement retenu",
+            )
+        if cleaned_data.get("attribution_handicapes_autre") and not cleaned_data.get(
+            "attribution_handicapes_autre_detail"
+        ):
+            self.add_error(
+                "attribution_handicapes_autre_detail",
+                "Merci de préciser le type d'établissement retenu",
+            )
+
+
 class ConventionCommentForm(forms.Form):
 
     uuid = forms.UUIDField(
         required=False,
         label="Commentaires",
     )
+
+    attached = forms.CharField(
+        required=False,
+        label="Fichiers à joindre à la convention",
+        help_text="Téléversez ici les fichiers à joindre à votre convention le cas"
+        + " echéant et si nécessaire, par exemple"
+        + " \r\n  • Autorisation délivrée au gestionnaire par le président du conseil"
+        + " départemental ou par l'autorité compétente de l'état dans le cadre d'un"
+        + " foyer hors habitat inclusif"
+        + " \r\n  • Convention de location"
+        + " \r\n  • Programme et des travaux"
+        + " \r\n  • Échéancier du programme des travaux"
+        + " \r\n  • …",
+        max_length=5000,
+        error_messages={
+            "max_length": "Le message ne doit pas excéder 5000 caractères",
+        },
+    )
+    attached_files = forms.CharField(
+        required=False,
+    )
+
     comments = forms.CharField(
         required=False,
         label="Ajoutez vos commentaires à l'attention de l'instructeur",
@@ -55,6 +281,14 @@ class ConventionFinancementForm(forms.Form):
     fond_propre = forms.FloatField(
         required=False,
         label="Fonds propres",
+    )
+    historique_financement_public = forms.CharField(
+        required=False,
+        label="Historique de financement public",
+        max_length=5000,
+        error_messages={
+            "max_length": "L'historique de financement public ne doit pas excéder 5000 caractères",
+        },
     )
 
     def clean(self):
@@ -129,7 +363,12 @@ class ConventionFinancementForm(forms.Form):
             cdc_end_year = end_conv.year
             if end_conv.year - cdc_pret.cleaned_data["date_octroi"].year < 9:
                 cdc_end_year = cdc_pret.cleaned_data["date_octroi"].year + 9
-            if end_conv and end_conv.month > 6:
+            # don't add a year for FOYER because end of convention is the 31/12
+            if (
+                not self.convention.programme.is_foyer()
+                and end_conv
+                and end_conv.month > 6
+            ):
                 cdc_end_year = cdc_end_year + 1
             if annee_fin_conventionnement < cdc_end_year:
                 self.add_error(

@@ -85,7 +85,9 @@ class ConventionSelectionService:
             bailleurs=self._get_bailleur_choices(),
             administrations=self._get_administration_choices(),
         )
+        print(self.form)
         if self.form.is_valid():
+            print("valid", self.form)
             bailleur = Bailleur.objects.get(uuid=self.form.cleaned_data["bailleur"])
             administration = Administration.objects.get(
                 uuid=self.form.cleaned_data["administration"]
@@ -96,6 +98,7 @@ class ConventionSelectionService:
                 ville=self.form.cleaned_data["ville"],
                 bailleur=bailleur,
                 administration=administration,
+                nature_logement=self.form.cleaned_data["nature_logement"],
                 type_operation=(
                     TypeOperation.SANSTRAVAUX
                     if self.form.cleaned_data["financement"]
@@ -103,6 +106,7 @@ class ConventionSelectionService:
                     else TypeOperation.NEUF
                 ),
             )
+            print(programme)
             programme.save()
             lot = Lot.objects.create(
                 nb_logements=self.form.cleaned_data["nb_logements"],
@@ -173,6 +177,8 @@ class ConventionSelectionService:
         )
         if self.form.is_valid():
             lot = Lot.objects.get(uuid=self.form.cleaned_data["lot"])
+            lot.programme.nature_logement = self.form.cleaned_data["nature_logement"]
+            lot.programme.save()
             self.convention = Convention.objects.create(
                 lot=lot,
                 programme_id=lot.programme_id,
@@ -339,6 +345,12 @@ class ConventionCadastreService(ConventionService):
                 "date_achat": utils.format_date_for_form(
                     self.convention.programme.date_achat
                 ),
+                "date_autorisation_hors_habitat_inclusif": utils.format_date_for_form(
+                    self.convention.programme.date_autorisation_hors_habitat_inclusif
+                ),
+                "date_convention_location": utils.format_date_for_form(
+                    self.convention.programme.date_convention_location
+                ),
                 "date_achevement": utils.format_date_for_form(
                     self.convention.programme.date_achevement
                 ),
@@ -429,6 +441,8 @@ class ConventionCadastreService(ConventionService):
                         "permis_construire",
                         "date_acte_notarie",
                         "date_achevement_previsible",
+                        "date_autorisation_hors_habitat_inclusif",
+                        "date_convention_location",
                         "date_achat",
                         "date_achevement",
                     ],
@@ -506,6 +520,12 @@ class ConventionCadastreService(ConventionService):
         ]
         self.convention.programme.date_achevement_previsible = self.form.cleaned_data[
             "date_achevement_previsible"
+        ]
+        self.convention.programme.date_autorisation_hors_habitat_inclusif = (
+            self.form.cleaned_data["date_autorisation_hors_habitat_inclusif"]
+        )
+        self.convention.programme.date_convention_location = self.form.cleaned_data[
+            "date_convention_location"
         ]
         self.convention.programme.date_achat = self.form.cleaned_data["date_achat"]
         self.convention.programme.date_achevement = self.form.cleaned_data[

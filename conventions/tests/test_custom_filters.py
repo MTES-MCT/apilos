@@ -2,13 +2,16 @@ import mock
 
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
-
+from bailleurs.models import SousNatureBailleur
 from core.tests import utils_fixtures
+from conventions.views import ConventionFormSteps
 from conventions.models import (
     Convention,
     ConventionStatut,
+    ConventionType1and2,
 )
 from conventions.templatetags import custom_filters
+from programmes.models import NatureLogement
 from users.models import GroupProfile, User
 
 
@@ -655,3 +658,208 @@ class CustomFiltersTest(TestCase):
         ongoing_avenant.statut = ConventionStatut.A_SIGNER
         ongoing_avenant.save()
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
+
+    def test_display_type1and2(self):
+        for sous_nature_bailleur in [
+            SousNatureBailleur.OFFICE_PUBLIC_HLM,
+            SousNatureBailleur.SA_HLM_ESH,
+            SousNatureBailleur.COOPERATIVE_HLM_SCIC,
+            SousNatureBailleur.SEM_EPL,
+        ]:
+            self.convention.programme.bailleur.sous_nature_bailleur = (
+                sous_nature_bailleur
+            )
+            for type1andtype2 in [
+                ConventionType1and2.TYPE1,
+                ConventionType1and2.TYPE2,
+                None,
+            ]:
+                self.convention.type1and2 = type1andtype2
+                self.assertFalse(custom_filters.display_type1and2(self.convention))
+
+        for sous_nature_bailleur in [
+            SousNatureBailleur.ASSOCIATIONS,
+            SousNatureBailleur.COMMERCIALES,
+            SousNatureBailleur.COMMUNE,
+            SousNatureBailleur.CROUS,
+            SousNatureBailleur.DEPARTEMENT,
+            SousNatureBailleur.DRE_DDE_CETE_AC_PREF,
+            SousNatureBailleur.EPCI,
+            SousNatureBailleur.ETC_PUBLIQUE_LOCAL,
+            SousNatureBailleur.ETS_HOSTIPATIERS_PRIVES,
+            SousNatureBailleur.FONDATION,
+            SousNatureBailleur.FONDATION_HLM,
+            SousNatureBailleur.FRONCIERE_LOGEMENT,
+            SousNatureBailleur.GIP,
+            SousNatureBailleur.MUTUELLE,
+            SousNatureBailleur.NONRENSEIGNE,
+            SousNatureBailleur.PACT_ARIM,
+            SousNatureBailleur.PARTICULIERS,
+            SousNatureBailleur.SACI_CAP,
+            SousNatureBailleur.UES,
+        ]:
+            self.convention.programme.bailleur.sous_nature_bailleur = (
+                sous_nature_bailleur
+            )
+
+            for nature_logement, _ in NatureLogement.choices:
+                self.convention.programme.nature_logement = nature_logement
+
+                for type1andtype2 in [
+                    ConventionType1and2.TYPE1,
+                    ConventionType1and2.TYPE2,
+                    None,
+                ]:
+                    if nature_logement == NatureLogement.LOGEMENTSORDINAIRES:
+                        self.assertTrue(
+                            custom_filters.display_type1and2(self.convention)
+                        )
+                    else:
+                        self.assertFalse(
+                            custom_filters.display_type1and2(self.convention)
+                        )
+
+        avenant = Convention.objects.create(
+            statut=ConventionStatut.SIGNEE,
+            parent=self.convention,
+            lot=self.convention.lot,
+            programme=self.convention.programme,
+        )
+        avenant.type1and2 = None
+        avenant.programme.bailleur.sous_nature_bailleur = (
+            SousNatureBailleur.ASSOCIATIONS
+        )
+        for sous_nature_bailleur, _ in SousNatureBailleur.choices:
+            avenant.programme.bailleur.sous_nature_bailleur = sous_nature_bailleur
+            for type1andtype2 in [
+                ConventionType1and2.TYPE1,
+                ConventionType1and2.TYPE2,
+                None,
+            ]:
+                self.assertFalse(custom_filters.display_type1and2(avenant))
+
+    def test_display_deactivated_because_type1and2_config_is_needed(self):
+        for sous_nature_bailleur in [
+            SousNatureBailleur.OFFICE_PUBLIC_HLM,
+            SousNatureBailleur.SA_HLM_ESH,
+            SousNatureBailleur.COOPERATIVE_HLM_SCIC,
+            SousNatureBailleur.SEM_EPL,
+        ]:
+            self.convention.programme.bailleur.sous_nature_bailleur = (
+                sous_nature_bailleur
+            )
+            for type1andtype2 in [
+                ConventionType1and2.TYPE1,
+                ConventionType1and2.TYPE2,
+                None,
+            ]:
+                self.convention.type1and2 = type1andtype2
+                self.assertFalse(
+                    custom_filters.display_deactivated_because_type1and2_config_is_needed(
+                        self.convention
+                    )
+                )
+
+        for sous_nature_bailleur in [
+            SousNatureBailleur.ASSOCIATIONS,
+            SousNatureBailleur.COMMERCIALES,
+            SousNatureBailleur.COMMUNE,
+            SousNatureBailleur.CROUS,
+            SousNatureBailleur.DEPARTEMENT,
+            SousNatureBailleur.DRE_DDE_CETE_AC_PREF,
+            SousNatureBailleur.EPCI,
+            SousNatureBailleur.ETC_PUBLIQUE_LOCAL,
+            SousNatureBailleur.ETS_HOSTIPATIERS_PRIVES,
+            SousNatureBailleur.FONDATION,
+            SousNatureBailleur.FONDATION_HLM,
+            SousNatureBailleur.FRONCIERE_LOGEMENT,
+            SousNatureBailleur.GIP,
+            SousNatureBailleur.MUTUELLE,
+            SousNatureBailleur.NONRENSEIGNE,
+            SousNatureBailleur.PACT_ARIM,
+            SousNatureBailleur.PARTICULIERS,
+            SousNatureBailleur.SACI_CAP,
+            SousNatureBailleur.UES,
+        ]:
+            self.convention.programme.bailleur.sous_nature_bailleur = (
+                sous_nature_bailleur
+            )
+
+            for nature_logement, _ in NatureLogement.choices:
+                self.convention.programme.nature_logement = nature_logement
+
+                for type1andtype2 in [
+                    ConventionType1and2.TYPE1,
+                    ConventionType1and2.TYPE2,
+                ]:
+                    self.convention.type1and2 = type1andtype2
+                    self.assertFalse(
+                        custom_filters.display_deactivated_because_type1and2_config_is_needed(
+                            self.convention
+                        )
+                    )
+                self.convention.type1and2 = None
+                if nature_logement == NatureLogement.LOGEMENTSORDINAIRES:
+                    self.assertTrue(
+                        custom_filters.display_deactivated_because_type1and2_config_is_needed(
+                            self.convention
+                        )
+                    )
+                else:
+                    self.assertFalse(
+                        custom_filters.display_deactivated_because_type1and2_config_is_needed(
+                            self.convention
+                        )
+                    )
+
+        avenant = Convention.objects.create(
+            statut=ConventionStatut.SIGNEE,
+            parent=self.convention,
+            lot=self.convention.lot,
+            programme=self.convention.programme,
+        )
+        avenant.type1and2 = None
+        avenant.programme.bailleur.sous_nature_bailleur = (
+            SousNatureBailleur.ASSOCIATIONS
+        )
+        for sous_nature_bailleur, _ in SousNatureBailleur.choices:
+            avenant.programme.bailleur.sous_nature_bailleur = sous_nature_bailleur
+            for type1andtype2 in [
+                ConventionType1and2.TYPE1,
+                ConventionType1and2.TYPE2,
+                None,
+            ]:
+                self.assertFalse(
+                    custom_filters.display_deactivated_because_type1and2_config_is_needed(
+                        avenant
+                    )
+                )
+
+    def is_a_step(self):
+        self.convention.programme.nature_logement = NatureLogement.LOGEMENTSORDINAIRES
+        convention_form_steps = ConventionFormSteps(convention=self.convention)
+        self.assertTrue(custom_filters.is_a_step(convention_form_steps, "Bailleur"))
+        self.assertTrue(
+            custom_filters.is_a_step(convention_form_steps, "Stationnement")
+        )
+        self.assertFalse(custom_filters.is_a_step(convention_form_steps, "Attribution"))
+        self.convention.programme.nature_logement = NatureLogement.AUTRE
+        self.assertTrue(custom_filters.is_a_step(convention_form_steps, "Bailleur"))
+        self.assertFalse(
+            custom_filters.is_a_step(convention_form_steps, "Stationnement")
+        )
+        self.assertTrue(custom_filters.is_a_step(convention_form_steps, "Attribution"))
+
+    def test_get_text_as_list(self):
+        self.assertEqual(
+            custom_filters.get_text_as_list(
+                "First line\r\nSecond line\r\nThird line\r\n\r\n "
+            ),
+            ["First line", "Second line", "Third line"],
+        )
+        self.assertEqual(
+            custom_filters.get_text_as_list(
+                "* First line\r\n - Second line - \r\nThird line\r\n\r\n "
+            ),
+            ["First line", "Second line", "Third line"],
+        )

@@ -82,9 +82,9 @@ class User(AbstractUser):
 
             # Get bailleur and its parent to know if the user has rights on one of those
             bailleur = Bailleur.objects.prefetch_related("parent").get(
-                id=obj.bailleur_id
+                id=obj.programme.bailleur_id
             )
-            bailleur_ids = [obj.bailleur_id]
+            bailleur_ids = [obj.programme.bailleur_id]
             if bailleur.parent:
                 bailleur_ids.append(bailleur.parent.id)
             # is bailleur of the convention or is instructeur of the convention

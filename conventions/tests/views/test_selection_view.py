@@ -5,7 +5,7 @@ from conventions.models import Convention
 from conventions.tests.views.abstract import AbstractCreateViewTestCase
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
-from programmes.models import Financement, TypeHabitat
+from programmes.models import Financement, NatureLogement, TypeHabitat
 from core.tests import utils_fixtures
 
 
@@ -27,7 +27,10 @@ class ConventionSelectionFromDBViewTests(AbstractCreateViewTestCase, TestCase):
         self.error_payload = {
             # "lot": str(self.convention.lot.uuid)
         }
-        self.success_payload = {"lot": str(self.lot_plus_2.uuid)}
+        self.success_payload = {
+            "lot": str(self.lot_plus_2.uuid),
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
+        }
         self.msg_prefix = "[ConventionSelectionFromDBViewTests] "
 
     def _test_data_integrity(self):
@@ -51,6 +54,7 @@ class ConventionSelectionFromZeroViewTests(AbstractCreateViewTestCase, TestCase)
             "administration": str(administration.uuid),
             "nom": "Programme de test",
             "nb_logements": "10",
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "type_habitat": TypeHabitat.MIXTE,
             "financement": Financement.PLUS,
             "code_postal": "20000",
@@ -61,6 +65,7 @@ class ConventionSelectionFromZeroViewTests(AbstractCreateViewTestCase, TestCase)
             "administration": str(administration.uuid),
             "nom": "Programme de test",
             "nb_logements": "10",
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "type_habitat": TypeHabitat.MIXTE,
             "financement": Financement.PLUS,
             "code_postal": "20000",

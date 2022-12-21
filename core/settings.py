@@ -285,6 +285,7 @@ AWS_STORAGE_BUCKET_NAME = get_env_variable("AWS_STORAGE_BUCKET_NAME")
 AWS_DEFAULT_ACL = get_env_variable("AWS_DEFAULT_ACL")
 AWS_S3_REGION_NAME = get_env_variable("AWS_S3_REGION_NAME")
 AWS_S3_ENDPOINT_URL = get_env_variable("AWS_S3_ENDPOINT_URL")
+AWS_ECOLOWEB_BUCKET_NAME = get_env_variable("AWS_ECOLOWEB_BUCKET_NAME")
 
 if AWS_ACCESS_KEY_ID:  # pragma: no cover
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"

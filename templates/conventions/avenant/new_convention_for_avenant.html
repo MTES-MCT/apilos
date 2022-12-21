@@ -32,6 +32,10 @@
             </div>
         </div>
         <input id="id_statut" name="statut" value="SIGNEE" hidden>
+        <select name="nature_logement" id="id_nature_logement" hidden>
+            <option value="LOGEMENTSORDINAIRES" selected>Logements ordinaires</option>
+            <option value="AUTRE">Autres logements foyers</option>
+        </select>
         <div class="fr-upload-group fr-mt-5w">
             <label class="fr-label" for="file-upload">Téléverser la convention (en PDF) {% include "common/form/required_field_star.html" %}
                 <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>

@@ -244,9 +244,7 @@ def _type_operation(type_operation_from_siap: str) -> TypeOperation:
 
 
 def _nature_logement(nature_logement_from_siap: str) -> TypeOperation:
-    nature_logement = NatureLogement.SANSOBJET
-    if nature_logement_from_siap in ["LOO", NatureLogement.LOGEMENTSORDINAIRES]:
-        nature_logement = NatureLogement.LOGEMENTSORDINAIRES
+    nature_logement = NatureLogement.LOGEMENTSORDINAIRES
     if nature_logement_from_siap in ["ALF", NatureLogement.AUTRE]:
         nature_logement = NatureLogement.AUTRE
     if nature_logement_from_siap in ["HEB", NatureLogement.HEBERGEMENT]:

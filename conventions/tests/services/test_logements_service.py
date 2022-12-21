@@ -11,7 +11,7 @@ from conventions.services.services_logements import ConventionLogementsService
 from conventions.services import (
     utils,
 )
-from conventions.tests.views.test_logements_view import post_fixture
+from conventions.tests.fixtures import logement_success_payload
 from core.tests import utils_fixtures
 from programmes.forms import LogementFormSet, LotLgtsOptionForm
 from programmes.models import Logement
@@ -54,7 +54,7 @@ class ConventionLogementsServiceTests(TestCase):
         self.service.request.POST = {
             "nb_logements": "2",
             "uuid": str(self.service.convention.lot.uuid),
-            **post_fixture,
+            **logement_success_payload,
         }
 
         self.service.save()
@@ -98,7 +98,7 @@ class ConventionLogementsServiceTests(TestCase):
         self.service.request.POST = {
             "nb_logements": "2",
             "uuid": str(self.service.convention.lot.uuid),
-            **post_fixture,
+            **logement_success_payload,
             "form-1-loyer": "750.00",
         }
         self.service.save()
@@ -110,7 +110,7 @@ class ConventionLogementsServiceTests(TestCase):
         self.service.request.POST = {
             "nb_logements": "3",
             "uuid": str(self.service.convention.lot.uuid),
-            **post_fixture,
+            **logement_success_payload,
         }
         self.service.save()
         self.assertEqual(
@@ -125,7 +125,7 @@ class ConventionLogementsServiceTests(TestCase):
         self.service.convention.lot.save()
         self.service.request.POST = {
             "uuid": str(self.service.convention.lot.uuid),
-            **post_fixture,
+            **logement_success_payload,
         }
         self.service.save()
         self.assertEqual(
