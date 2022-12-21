@@ -134,6 +134,9 @@ class Bailleur(IngestableModel):
 
     label = property(_get_nom)
 
+    def is_prives(self):
+        return self.nature_bailleur == NatureBailleur.PRIVES
+
     def is_hlm(self):
         return self.sous_nature_bailleur in [
             SousNatureBailleur.OFFICE_PUBLIC_HLM,
