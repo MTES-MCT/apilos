@@ -184,6 +184,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
             "financement": Financement.PLAI,
             "code_postal": "20000",
             "ville": "Bisouville",
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "statut": ConventionStatut.SIGNEE,
             "numero": "2022-75-Rivoli-02-213",
         }

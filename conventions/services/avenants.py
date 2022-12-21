@@ -87,9 +87,9 @@ def complete_avenants_for_avenant(request, convention_uuid):
     avenant_list_service.paginate()
     avenant_numero = avenant.get_default_convention_number()
     if request.method == "POST":
-        avenant_form = AvenantsforavenantForm(request.POST)
+        avenant_form = AvenantsforavenantForm(request.POST, request.FILES)
         if avenant_form.is_valid():
-            file = request.FILES.get("nom_fichier_signe", False)
+            file = request.FILES["nom_fichier_signe"]
             if file:
                 now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
                 filename = f"{now}_convention_{avenant.uuid}_signed.pdf"

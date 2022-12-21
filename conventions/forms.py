@@ -680,3 +680,6 @@ class AvenantsforavenantForm(forms.Form):
         required=False,
         label="Informations sur la nature de l'avenant.",
     )
+    nom_fichier_signe = forms.FileField(
+        required=False,
+    )
