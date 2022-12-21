@@ -329,6 +329,7 @@ def fiche_caf(request, convention_uuid):
 
 
 @login_required
+@require_GET
 @permission_required("convention.add_convention")
 def piece_jointe_access(request, piece_jointe_uuid):
     """
@@ -351,7 +352,7 @@ def piece_jointe_access(request, piece_jointe_uuid):
 
 @login_required
 @permission_required("convention.add_convention")
-def piece_jointe_promote(request, piece_jointe_uuid):
+def piece_jointe_promote(piece_jointe_uuid):
     """
     Promote a pièce jointe to the official PDF document of a convention
     """
