@@ -34,6 +34,7 @@ from conventions.models import (
     Pret,
 )
 from conventions.services import convention_generator, upload_objects, utils
+from conventions.services.file import ConventionFileService
 from conventions.tasks import generate_and_send
 from core.services import EmailService
 from programmes.models import Annexe, Financement
@@ -585,19 +586,7 @@ def convention_sent(request, convention_uuid):
     if request.method == "POST":
         upform = UploadForm(request.POST, request.FILES)
         if upform.is_valid():
-            file = request.FILES["file"]
-            now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-            filename = f"{now}_convention_{convention_uuid}_signed.pdf"
-            upload_service = UploadService(
-                convention_dirpath=f"conventions/{convention_uuid}/convention_docs",
-                filename=filename,
-            )
-            upload_service.upload_file(file)
-
-            convention.statut = ConventionStatut.SIGNEE
-            convention.nom_fichier_signe = filename
-            convention.televersement_convention_signee_le = timezone.now()
-            convention.save()
+            ConventionFileService.upload_convention_file(convention, request.FILES["file"])
             result_status = utils.ReturnStatus.SUCCESS
     else:
         upform = UploadForm()

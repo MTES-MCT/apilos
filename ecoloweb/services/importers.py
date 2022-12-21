@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 from inspect import isclass
 
-from typing import Optional, List, Dict, Type
+from typing import List, Dict
 from abc import ABC, abstractmethod
 
 from django.db import connections
@@ -73,7 +73,7 @@ class ModelImporter(ABC):
         """
         return None
 
-    def _get_query_many(self) -> Optional[str]:
+    def _get_query_many(self) -> str | None:
         """
         Method to declare SQL query for many to one models.
         """
@@ -188,7 +188,7 @@ class ModelImporter(ABC):
         """
         return data
 
-    def process_result(self, data: dict) -> Optional[Model]:
+    def process_result(self, data: dict) -> Model | None:
         """
         For each result row from the base SQL query, process it by following these steps:
         1. look for an already imported model and if found return it
@@ -201,7 +201,7 @@ class ModelImporter(ABC):
 
         # Look for a potentially already imported model
         ecolor_ref = self._find_ecolo_ref(data[self.ecolo_id_field]) if self.ecolo_id_field in data else None
-        created = False
+
         # If model wasn't imported yet, import it now
         if ecolor_ref is None:
             # Extract from data the id of the associated object in the Ecoloweb DB (in string format as it can be a
@@ -223,7 +223,7 @@ class ModelImporter(ABC):
             else:
                 # Create a new instance...
                 instance = self.model.objects.create(**data)
-                created = True
+
                 # ...and mark it as imported
                 self._register_ecolo_reference(instance, ecolo_id)
                 self._nb_imported_models += 1
@@ -234,9 +234,15 @@ class ModelImporter(ABC):
         # Import one-to-many models
         self._fetch_related_o2m_objects(ecolo_id)
 
+        # Perform post process operations
+        self._on_processed(instance)
+
         return instance
 
-    def import_one(self, pk) -> Optional[Model]:
+    def _on_processed(self, model: Model | None):
+        pass
+
+    def import_one(self, pk) -> Model | None:
         """
         Public entry point method to fetch a model from the Ecoloweb database based on its primary key
         """
@@ -252,7 +258,7 @@ class ModelImporter(ABC):
         # Otherwise perform SQL query and process result
         return self.process_result(self._query_single_row(pk))
 
-    def _query_single_row(self, pk) -> Optional[Dict]:
+    def _query_single_row(self, pk) -> Dict | None:
         """
         Execute a SQL query returning a single result, as dict
         """
@@ -260,7 +266,7 @@ class ModelImporter(ABC):
             return None
 
         start = time.time()
-        self._debug(f'Start query for handler {self.__class__.__name__}')
+        self._debug(f'Start query for handler {self.__class__.__name__} with pk {pk}')
         self._db_connection.execute(self._query_one, [pk])
         stop = time.time()
         self._debug(f'End query for handler {self.__class__.__name__} ({stop - start})')
