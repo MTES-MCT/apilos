@@ -6,7 +6,8 @@ from . import views
 
 urlpatterns = [
     path("", RedirectView.as_view(url='/conventions/en-cours'), name="index"),
-    re_path("(?P<category>en-cours|finalisees)$", views.search, name="search"),
+    path("en-cours", views.search, {'active': True}, name="search_active"),
+    path("finalisees", views.search, {'active': False}, name="search_completed"),
     path(
         "selection",
         permission_required("convention.add_convention")(

@@ -533,8 +533,7 @@ class ConventionListService:
         self.page = page
         self.my_convention_list = my_convention_list
 
-    def \
-            paginate(self) -> None:
+    def paginate(self) -> None:
         total_user = self.my_convention_list.count()
         if self.search_input:
             self.my_convention_list = self.my_convention_list.filter(

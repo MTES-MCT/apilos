@@ -1,0 +1,14 @@
+{% if tab_active and count > 0 %}
+{# If tab is currently open, no link needed #}
+<div class="px-2 text-title-}-grey">
+    <p class="m-0">
+        <span class="fr-text--bold">{{ count }} convention{% if count > 1 %}s{% endif %}</span>&nbsp;{{ label }}
+    </p>
+</div>
+{% else %}
+<div class="px-2 text-title-blue-france">
+    <a class="fr-link apilos-link" href="{% url route %}" title="{{ title }}">
+        <span class="fr-text--bold">{{ count }} convention{% if count > 1 %}s{% endif %}</span>&nbsp;{{ label }}
+    </a>
+</div>
+{% endif %}

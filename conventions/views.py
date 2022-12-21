@@ -70,9 +70,8 @@ from conventions.services.utils import (
 
 @login_required
 @require_GET
-def search(request, category: str):
-    only_active = category == 'en-cours'
-    query_set = request.user.conventions(only_active)
+def search(request, active: bool = True):
+    query_set = request.user.conventions(active=active)
 
     service = ConventionListService(
         search_input=request.GET.get("search_input", ""),
@@ -92,11 +91,11 @@ def search(request, category: str):
         request,
         "conventions/index.html",
         {
-            'category': category,
+            'active': active,
             "statuts": ConventionStatut,
             "financements": Financement,
-            "nb_active_conventions": request.user.conventions(True).count(),
-            "nb_completed_conventions": request.user.conventions(False).count(),
+            "nb_active_conventions": request.user.conventions(active=True).count(),
+            "nb_completed_conventions": request.user.conventions(active=False).count(),
             "conventions": service
         },
     )

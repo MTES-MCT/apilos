@@ -369,3 +369,7 @@ def get_text_as_list(text_field):
     if text_field is None:
         return ""
     return [line.strip(" -*") for line in text_field.splitlines() if line.strip(" -*")]
+
+@register.filter
+def negate(condition: bool):
+    return not condition

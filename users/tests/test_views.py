@@ -45,8 +45,8 @@ class UserViewTests(TestCase):
         response = self.client.get(reverse("users:home"))
         self.assertRedirects(response, reverse("conventions:index"), fetch_redirect_response=False)
         response = self.client.get(reverse("conventions:index"))
-        self.assertRedirects(response, reverse("conventions:search", args=['en-cours']), fetch_redirect_response=False)
-        response = self.client.get(reverse("conventions:search", args=['en-cours']))
+        self.assertRedirects(response, reverse("conventions:search_active"), fetch_redirect_response=False)
+        response = self.client.get(reverse("conventions:search_active"))
 
         self.assertContains(response, "Déconnexion")
         self.assertNotContains(response, "Espace instructeur")
