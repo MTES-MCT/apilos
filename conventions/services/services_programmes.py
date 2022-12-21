@@ -85,9 +85,7 @@ class ConventionSelectionService:
             bailleurs=self._get_bailleur_choices(),
             administrations=self._get_administration_choices(),
         )
-        print(self.form)
         if self.form.is_valid():
-            print("valid", self.form)
             bailleur = Bailleur.objects.get(uuid=self.form.cleaned_data["bailleur"])
             administration = Administration.objects.get(
                 uuid=self.form.cleaned_data["administration"]
@@ -106,7 +104,6 @@ class ConventionSelectionService:
                     else TypeOperation.NEUF
                 ),
             )
-            print(programme)
             programme.save()
             lot = Lot.objects.create(
                 nb_logements=self.form.cleaned_data["nb_logements"],
