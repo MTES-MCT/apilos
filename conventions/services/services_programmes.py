@@ -1,9 +1,6 @@
-import datetime
-
 from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils import timezone
 from django.conf import settings
 from django.db.models.query import QuerySet
 
@@ -38,10 +35,10 @@ from programmes.forms import (
     ReferenceCadastraleFormSet,
 )
 
-from upload.services import UploadService
 
 from . import utils
 from . import upload_objects
+from .file import ConventionFileService
 
 
 def _get_choices_from_object(object_list):
@@ -132,16 +129,7 @@ class ConventionSelectionService:
             self.convention.save()
             file = self.request.FILES.get("nom_fichier_signe", False)
             if file:
-                now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-                filename = f"{now}_convention_{self.convention.uuid}_signed.pdf"
-                upload_service = UploadService(
-                    convention_dirpath=f"conventions/{self.convention.uuid}/convention_docs",
-                    filename=filename,
-                )
-                upload_service.upload_file(file)
-                self.convention.nom_fichier_signe = filename
-                self.convention.televersement_convention_signee_le = timezone.now()
-                self.convention.save()
+                ConventionFileService.upload_convention_file(self.convention, file)
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def get_from_db(self):
