@@ -1,6 +1,6 @@
 select
     pj.id,
-    c.id||':'||ff.code as convention_id,
+    c.id||':'||ff.code||':'||cdg.datehistoriquedebut as convention_id,
     case
         when vps.code = '1' then 'CONVENTION'
         when vps.code = '2' then 'RECTIFICATION'
@@ -23,3 +23,4 @@ from ecolo.ecolo_piecejointe pj
 where
     c.id = %s
     and ff.code = %s
+    and cdg.datehistoriquedebut = %s

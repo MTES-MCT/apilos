@@ -49,7 +49,6 @@ def generate_and_send(args):
 
 @dramatiq.actor
 def promote_piece_jointe(pk: int):
-    print("Id is ", pk)
     piece_jointe = PieceJointe.objects.get(id=pk)
     if piece_jointe.convention.nom_fichier_signe is None:
         ConventionFileService.promote_piece_jointe(piece_jointe)

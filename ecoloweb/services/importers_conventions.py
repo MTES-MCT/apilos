@@ -16,21 +16,10 @@ class ConventionImporterSimple(ModelImporter):
     def _get_query_one(self) -> str | None:
         return self._get_file_content('resources/sql/conventions.sql')
 
-    def _query_single_row(self, pk) -> Dict | None:
-        """
-        Execute a SQL query returning a single result, as dict
-        """
+    def _build_query_parameters(self, pk) -> list:
         args = pk.split(':')
 
-        if self._query_one is None:
-            return None
-
-        self._db_connection.execute(self._query_one, [int(args[0]), args[1]])
-
-        columns = [col[0] for col in self._db_connection.description]
-        row = self._db_connection.fetchone()
-
-        return dict(zip(columns, row)) if row else None
+        return [int(args[0]), args[1], args[2]]
 
 
 class ConventionImporter(ConventionImporterSimple):
@@ -70,19 +59,3 @@ class PieceJointeImporter(ModelImporter):
         return {
             'convention': ConventionImporterSimple
         }
-
-    def import_many(self, fk):
-        """
-        Public entry point method to fetch a list of models from the Ecoloweb database based on its foreign key
-        """
-        args = fk.split(':')
-
-        if self._query_many is not None:
-            iterator = QueryResultIterator(
-                self._db_connection,
-                self._get_query_many(),
-                [int(args[0]), args[1]]
-            )
-
-            for result in iterator:
-                self.process_result(result)
