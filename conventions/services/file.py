@@ -1,6 +1,5 @@
 import datetime
 
-import dramatiq
 from django.conf import settings
 from django.core.files import File
 from django.utils import timezone
@@ -35,9 +34,3 @@ class ConventionFileService:
 
         cls.upload_convention_file(piece_jointe.convention, file)
         return True
-
-    @staticmethod
-    @dramatiq.actor
-    def promote_piece_jointe_async(pk: int):
-        piece_jointe = PieceJointe.objects.get(pk)
-        ConventionFileService.promote_piece_jointe(piece_jointe)

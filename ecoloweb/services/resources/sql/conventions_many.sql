@@ -20,7 +20,7 @@
 -- signataire_fonction                varchar(255)
 -- signataire_nom                     varchar(255)
 select
-    md5(c.id||'-'||pl.financement) as id,
+    c.id||':'||pl.financement as id,
     cdg.id as programme_id,
     md5(cdg.id||'-'||pl.financement) as lot_id, -- Les lots d'un programme sont tous les logements partageant le même financement
     pl.financement as financement,

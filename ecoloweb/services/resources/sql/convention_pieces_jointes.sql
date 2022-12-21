@@ -1,6 +1,6 @@
 select
     pj.id,
-    md5(c.id||'-'||ff.code) as convention_id,
+    c.id||':'||ff.code as convention_id,
     case
         when vps.code = '1' then 'CONVENTION'
         when vps.code = '2' then 'RECTIFICATION'
@@ -21,4 +21,5 @@ from ecolo.ecolo_piecejointe pj
     inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
     inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
 where
-    md5(c.id||'-'||ff.code) = %s
+    c.id = %s
+    and ff.code = %s

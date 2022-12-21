@@ -1,9 +1,7 @@
-from typing import List
-
-from django.db.models import Model
+from typing import List, Dict
 
 from conventions.models import Convention, PieceJointe, PieceJointeType
-from conventions.services.file import ConventionFileService
+from conventions.tasks import promote_piece_jointe
 from .importers import ModelImporter
 from .importers_programmes import ProgrammeImporter, ProgrammeLotImporter
 from .query_iterator import QueryResultIterator
@@ -17,6 +15,22 @@ class ConventionImporterSimple(ModelImporter):
 
     def _get_query_one(self) -> str | None:
         return self._get_file_content('resources/sql/conventions.sql')
+
+    def _query_single_row(self, pk) -> Dict | None:
+        """
+        Execute a SQL query returning a single result, as dict
+        """
+        args = pk.split(':')
+
+        if self._query_one is None:
+            return None
+
+        self._db_connection.execute(self._query_one, [int(args[0]), args[1]])
+
+        columns = [col[0] for col in self._db_connection.description]
+        row = self._db_connection.fetchone()
+
+        return dict(zip(columns, row)) if row else None
 
 
 class ConventionImporter(ConventionImporterSimple):
@@ -40,9 +54,10 @@ class ConventionImporter(ConventionImporterSimple):
     def _on_processed(self, model: Convention | None):
         if model is not None:
             piece_jointe = model.pieces_jointes.filter(type=PieceJointeType.CONVENTION).order_by('-cree_le').first()
+
             # Automatically promote the latest piece jointe with type CONVENTION as official convention document
             if piece_jointe is not None:
-                ConventionFileService.promote_piece_jointe_async(piece_jointe.id)
+                promote_piece_jointe.send(piece_jointe.id)
 
 
 class PieceJointeImporter(ModelImporter):
@@ -55,3 +70,19 @@ class PieceJointeImporter(ModelImporter):
         return {
             'convention': ConventionImporterSimple
         }
+
+    def import_many(self, fk):
+        """
+        Public entry point method to fetch a list of models from the Ecoloweb database based on its foreign key
+        """
+        args = fk.split(':')
+
+        if self._query_many is not None:
+            iterator = QueryResultIterator(
+                self._db_connection,
+                self._get_query_many(),
+                [int(args[0]), args[1]]
+            )
+
+            for result in iterator:
+                self.process_result(result)
