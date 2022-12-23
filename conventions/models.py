@@ -87,6 +87,14 @@ class ConventionStatut(models.TextChoices):
     DENONCEE = "7. Dénoncée", "Convention dénoncée"
     ANNULEE = "8. Annulée en suivi", "Convention annulée en suivi"
 
+    @classmethod
+    def active_statuts(cls):
+        return [cls.PROJET, cls.INSTRUCTION, cls.CORRECTION, cls.A_SIGNER]
+
+    @classmethod
+    def completed_statuts(cls):
+        return [cls.SIGNEE, cls.RESILIEE, cls.DENONCEE, cls.ANNULEE]
+
 
 class AvenantType(models.Model):
     id = models.AutoField(primary_key=True)

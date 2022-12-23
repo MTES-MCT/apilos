@@ -8,7 +8,7 @@ from django.forms.models import model_to_dict
 
 from apilos_settings.models import Departement
 from bailleurs.models import Bailleur
-from conventions.models import Convention
+from conventions.models import Convention, ConventionStatut
 from instructeurs.models import Administration
 from programmes.models import Lot, Programme
 from users.type_models import TypeRole, EmailPreferences
@@ -306,14 +306,22 @@ class User(AbstractUser):
             )
         return convs
 
-    def conventions(self):
+    def conventions(self, active: bool | None = None):
         """
         Return the conventions the user has right to view.
         For an `instructeur`, it returns the conventions of its administrations
         For a `bailleur`, it returns the conventions of its bailleur entities in the limit of its
-        geographic filter
+        geographic filter.
+
+        The active argument allows to filter this list based on the status of the convention, whether it's active
+        (A_SIGNER and below) or completed (SIGNEE and up). If omitted or None, no filter is applied
         """
         convs = Convention.objects.filter(parent_id__isnull=True)
+        if active is not None:
+            convs = convs.filter(
+                statut__in=ConventionStatut.active_statuts() if active else ConventionStatut.completed_statuts()
+            )
+
         if self.is_superuser:
             return convs.all()
         if (
