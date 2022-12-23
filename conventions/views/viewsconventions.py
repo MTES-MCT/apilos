@@ -1,5 +1,4 @@
 from abc import ABC
-from datetime import datetime
 from typing import List
 
 from zipfile import ZipFile
@@ -19,10 +18,10 @@ from django.http import (
 )
 from django.shortcuts import render
 from django.urls import reverse
-from django.utils import timezone
 from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods
 
+from conventions.services.file import ConventionFileService
 from core.storage import client
 from upload.services import UploadService
 from conventions.models import Convention, ConventionStatut, PieceJointe
@@ -330,8 +329,9 @@ def fiche_caf(request, convention_uuid):
 
 
 @login_required
+@require_GET
 @permission_required("convention.add_convention")
-def piece_jointe(request, piece_jointe_uuid):
+def piece_jointe_access(request, piece_jointe_uuid):
     """
     Display the raw file associated to the pièce jointe
     """
@@ -352,44 +352,26 @@ def piece_jointe(request, piece_jointe_uuid):
 
 @login_required
 @permission_required("convention.add_convention")
-def piece_jointe_promote(request, piece_jointe_uuid):
+def piece_jointe_promote(piece_jointe_uuid):
     """
     Promote a pièce jointe to the official PDF document of a convention
     """
-    piece_jointe_from_db = PieceJointe.objects.get(uuid=piece_jointe_uuid)
+    piece_jointe = PieceJointe.objects.get(uuid=piece_jointe_uuid)
 
-    if piece_jointe_from_db is None:
+    if piece_jointe is None:
         return HttpResponseNotFound
 
-    if piece_jointe_from_db.convention.ecolo_reference is None:
+    if piece_jointe.convention.ecolo_reference is None:
         return HttpResponseForbidden()
 
-    if not piece_jointe_from_db.is_convention():
+    if not piece_jointe.is_convention():
         return HttpResponseForbidden()
 
-    o = client.get_object(
-        settings.AWS_ECOLOWEB_BUCKET_NAME,
-        f"piecesJointes/{piece_jointe_from_db.fichier}",
-    )
-
-    if o is None:
+    if not ConventionFileService.promote_piece_jointe(piece_jointe):
         return HttpResponseNotFound
-
-    now = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    filename = f"{now}_convention_{piece_jointe_from_db.convention.uuid}_signed.pdf"
-    upload_service = UploadService(
-        convention_dirpath=f"conventions/{piece_jointe_from_db.convention.uuid}/convention_docs",
-        filename=filename,
-    )
-    upload_service.upload_file(o["Body"])
-
-    piece_jointe_from_db.convention.statut = ConventionStatut.SIGNEE
-    piece_jointe_from_db.convention.nom_fichier_signe = filename
-    piece_jointe_from_db.convention.televersement_convention_signee_le = timezone.now()
-    piece_jointe_from_db.convention.save()
 
     return HttpResponseRedirect(
-        reverse("conventions:preview", args=[piece_jointe_from_db.convention.uuid])
+        reverse("conventions:preview", args=[piece_jointe.convention.uuid])
     )
 
 

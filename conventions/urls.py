@@ -173,7 +173,7 @@ urlpatterns = [
         name="fiche_caf",
     ),
     path("new_avenant/<convention_uuid>", views.new_avenant, name="new_avenant"),
-    path("piece_jointe/<piece_jointe_uuid>", views.piece_jointe, name="piece_jointe"),
+    path("piece_jointe/<piece_jointe_uuid>", views.piece_jointe_access, name="piece_jointe"),
     path(
         "piece_jointe/<piece_jointe_uuid>/promote",
         views.piece_jointe_promote,
