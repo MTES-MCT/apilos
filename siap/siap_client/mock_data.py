@@ -421,3 +421,351 @@ operation_mock = {
         ],
     },
 }
+operation_mock2 = {
+    "donneesMo": {
+        "nom": "13 HABITAT",
+        "siren": "782855696",
+        "commune": None,
+        "adresseLigne3": "",
+        "adresseLigne4": "80 rue d'Albe BP 31",
+        "adresseLigne6": "13234 Marseille - 4e arrondissement",
+        "codeFamilleMO": "HLM",
+    },
+    "donneesLocalisation": {
+        "region": {"codeInsee": "93", "libelle": None},
+        "departement": {"codeInsee": "13", "libelle": None},
+        "commune": {"codeInsee": "13210", "libelle": "Marseille - 10e arrondissement"},
+        "adresse": "10 Rue de salon 13010 Marseille",
+        "adresseComplete": {
+            "adresse": "10 Rue de salon",
+            "codePostal": "13010",
+            "codeInseeCommune": None,
+            "commune": "Marseille",
+            "codePostalCommune": "13010 Marseille",
+        },
+        "zonage123": "02",
+        "zonageABC": "A",
+    },
+    "donneesOperation": {
+        "nomOperation": "APiLos",
+        "numeroOperation": "20221200002",
+        "aides": [
+            {"code": "PLUS", "libelle": "PLUS"},
+            {"code": "PLAI", "libelle": "PLAI"},
+        ],
+        "sousNatureOperation": "CNE",
+        "typeConstruction": "TC_I",
+        "natureLogement": "LOO",
+        "sansTravaux": False,
+    },
+    "detailsOperation": [
+        {
+            "aide": {"code": "PLUS", "libelle": "PLUS"},
+            "logement": {"nbLogementsIndividuels": 10, "nbLogementsCollectifs": None},
+            "detailsTypeLogement": [
+                {
+                    "typeLogement": "T1",
+                    "nbLogements": 10,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T1BIS",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T1P",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T2",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T3",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T4",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T5",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T6",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+            ],
+            "garages": [
+                {
+                    "type": "Enterrés / Sous-sol",
+                    "nbGaragesIndividuels": 0,
+                    "nbGaragesCollectifs": None,
+                },
+                {
+                    "type": "Superstructure",
+                    "nbGaragesIndividuels": 0,
+                    "nbGaragesCollectifs": None,
+                },
+            ],
+            "loyers": [
+                {
+                    "type": "Individuel",
+                    "loyerZone": 0.0,
+                    "loyerBase": 0.0,
+                    "loyerReglementaire": 0.0,
+                    "loyerPratique": 0,
+                    "loyerGarages": [
+                        {"type": "Enterrés / Sous-sol", "loyer": 0},
+                        {"type": "Superstructure", "loyer": 0},
+                    ],
+                }
+            ],
+        },
+        {
+            "aide": {"code": "PLAI", "libelle": "PLAI"},
+            "logement": {"nbLogementsIndividuels": 10, "nbLogementsCollectifs": None},
+            "detailsTypeLogement": [
+                {
+                    "typeLogement": "T1",
+                    "nbLogements": 10,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T1BIS",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T1P",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T2",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T3",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T4",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T5",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T6",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+            ],
+            "garages": [
+                {
+                    "type": "Enterrés / Sous-sol",
+                    "nbGaragesIndividuels": 0,
+                    "nbGaragesCollectifs": None,
+                },
+                {
+                    "type": "Superstructure",
+                    "nbGaragesIndividuels": 0,
+                    "nbGaragesCollectifs": None,
+                },
+            ],
+            "loyers": [
+                {
+                    "type": "Individuel",
+                    "loyerZone": 0.0,
+                    "loyerBase": 0.0,
+                    "loyerReglementaire": 0.0,
+                    "loyerPratique": 0,
+                    "loyerGarages": [
+                        {"type": "Enterrés / Sous-sol", "loyer": 0},
+                        {"type": "Superstructure", "loyer": 0},
+                    ],
+                }
+            ],
+        },
+    ],
+    "plansFinancement": [
+        {
+            "repartitionAideComp": None,
+            "subventions": [
+                {"type": "PLAI", "montant": 100},
+                {"type": "PLUS", "montant": 100},
+            ],
+            "prets": [],
+            "aidesFisclaes": None,
+            "fondsPropres": 0,
+            "codeAide": "PLUS",
+        },
+        {
+            "repartitionAideComp": None,
+            "subventions": [
+                {"type": "PLAI", "montant": 100},
+                {"type": "PLUS", "montant": 100},
+            ],
+            "prets": [],
+            "aidesFisclaes": None,
+            "fondsPropres": 3000,
+            "codeAide": "PLAI",
+        },
+    ],
+    "gestionnaire": {
+        "id": 9,
+        "code": "13055",
+        "libelle": "13055 - Métropole d'Aix-Marseille-Provence",
+        "typeDelegation": "3",
+        "typeDelegataire": "1",
+        "typeLocalisation": "EPCI3",
+        "adresse": None,
+        "commune": None,
+        "email": None,
+        "utilisateurs": [
+            {
+                "login": "nicolas.oudard@beta.gouv.fr",
+                "email": "nicolas.oudard@beta.gouv.fr",
+                "groupes": [
+                    {
+                        "id": 19,
+                        "profil": {
+                            "code": "SER_GEST",
+                            "libelle": "Service gestionnaire",
+                        },
+                        "codeRole": "SERV_INSTR_DELGEG3_ADMIN",
+                        "libelleRole": "Administrateur",
+                        "codePorteeTerrit": "LOC",
+                        "typeDelegation": "T3",
+                    },
+                    {
+                        "id": 20,
+                        "profil": {
+                            "code": "SER_GEST",
+                            "libelle": "Service gestionnaire",
+                        },
+                        "codeRole": "SERV_INSTR_DELGEG3_INSTRUCTEUR",
+                        "libelleRole": "Instructeur",
+                        "codePorteeTerrit": "LOC",
+                        "typeDelegation": "T3",
+                    },
+                    {
+                        "id": 22,
+                        "profil": {
+                            "code": "SER_GEST",
+                            "libelle": "Service gestionnaire",
+                        },
+                        "codeRole": "SERV_INSTR_DELGEG3_SIGNATAIRE",
+                        "libelleRole": "Signataire",
+                        "codePorteeTerrit": "LOC",
+                        "typeDelegation": "T3",
+                    },
+                    {
+                        "id": 21,
+                        "profil": {
+                            "code": "SER_GEST",
+                            "libelle": "Service gestionnaire",
+                        },
+                        "codeRole": "SERV_INSTR_DELGEG3_VALIDEUR",
+                        "libelleRole": "Valideur",
+                        "codePorteeTerrit": "LOC",
+                        "typeDelegation": "T3",
+                    },
+                ],
+            }
+        ],
+    },
+    "gestionnaireSecondaire": {
+        "id": 9,
+        "code": "13055",
+        "libelle": "13055 - Métropole d'Aix-Marseille-Provence",
+        "typeDelegation": "3",
+        "typeDelegataire": "1",
+        "typeLocalisation": "EPCI3",
+        "adresse": None,
+        "commune": None,
+        "email": None,
+        "utilisateurs": [
+            {
+                "login": "nicolas.oudard@beta.gouv.fr",
+                "email": "nicolas.oudard@beta.gouv.fr",
+                "groupes": [
+                    {
+                        "id": 19,
+                        "profil": {
+                            "code": "SER_GEST",
+                            "libelle": "Service gestionnaire",
+                        },
+                        "codeRole": "SERV_INSTR_DELGEG3_ADMIN",
+                        "libelleRole": "Administrateur",
+                        "codePorteeTerrit": "LOC",
+                        "typeDelegation": "T3",
+                    },
+                    {
+                        "id": 20,
+                        "profil": {
+                            "code": "SER_GEST",
+                            "libelle": "Service gestionnaire",
+                        },
+                        "codeRole": "SERV_INSTR_DELGEG3_INSTRUCTEUR",
+                        "libelleRole": "Instructeur",
+                        "codePorteeTerrit": "LOC",
+                        "typeDelegation": "T3",
+                    },
+                    {
+                        "id": 22,
+                        "profil": {
+                            "code": "SER_GEST",
+                            "libelle": "Service gestionnaire",
+                        },
+                        "codeRole": "SERV_INSTR_DELGEG3_SIGNATAIRE",
+                        "libelleRole": "Signataire",
+                        "codePorteeTerrit": "LOC",
+                        "typeDelegation": "T3",
+                    },
+                    {
+                        "id": 21,
+                        "profil": {
+                            "code": "SER_GEST",
+                            "libelle": "Service gestionnaire",
+                        },
+                        "codeRole": "SERV_INSTR_DELGEG3_VALIDEUR",
+                        "libelleRole": "Valideur",
+                        "codePorteeTerrit": "LOC",
+                        "typeDelegation": "T3",
+                    },
+                ],
+            }
+        ],
+    },
+}
