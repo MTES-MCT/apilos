@@ -1,0 +1,28 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %}Nouvel avenant - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-lg-6 fr-my-5w">
+                    <div class="fr-mb-4w">
+                        <h2>Création d’un nouvel avenant</h2>
+                        <p>Ce formulaire vous permet de mettre à jour des informations liées à une convention après sa signature. Il dure en moyenne <strong>5 minutes</strong></p>
+                    </div>
+                    <div class="fr-mb-4w">
+                        <div class="fr-h4 fr-mb-1w">Informations à préparer</div>
+                        <p class="fr-mb-0">Pour le compléter, vous aurez besoin :</p>
+                        <ul>
+                            <li>Du numéro de convention concernée</li>
+                            <li>De votre <strong>convention signée, avec ses avenants</strong> (en format PDF)</li>
+                        </ul>
+                    </div>
+                    <a class="fr-btn" href="{% url 'conventions:search_for_avenant' %}">Commencer
+                        <span class="fr-icon-arrow-right-s-line fr-ml-1w" aria-hidden="true"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+{% endblock %}

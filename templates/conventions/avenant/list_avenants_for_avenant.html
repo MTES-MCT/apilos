@@ -1,0 +1,23 @@
+{% load custom_filters %}
+{% if conventions.paginated_conventions %}
+    <section class="fr-accordion">
+        <h2 class="fr-accordion__title">
+            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-106">Avenants déjà téléversés</button>
+        </h2>
+        <div class="fr-collapse" id="accordion-106">
+            {% for convention in conventions.paginated_conventions %}
+                {% if convention.numero is not None %}
+                    <ul>
+                        <li>
+                            Avenant {{convention.numero}} : {% for avenant_type in convention.avenant_types.all %} <span class="apilos-avenant_type">{{avenant_type}}</span> {% endfor %}
+                        </li>
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+    <hr>
+{% endif %}
+
+
+

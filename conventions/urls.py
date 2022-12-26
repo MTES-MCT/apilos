@@ -1,13 +1,14 @@
-from django.urls import path, re_path
+from django.urls import path
+from django.views.generic import TemplateView
 from django.contrib.auth.decorators import permission_required
 from django.views.generic import RedirectView
 
 from . import views
 
 urlpatterns = [
-    path("", RedirectView.as_view(url='/conventions/en-cours'), name="index"),
-    path("en-cours", views.search, {'active': True}, name="search_active"),
-    path("finalisees", views.search, {'active': False}, name="search_completed"),
+    path("", RedirectView.as_view(url="/conventions/en-cours"), name="index"),
+    path("en-cours", views.search, {"active": True}, name="search_active"),
+    path("finalisees", views.search, {"active": False}, name="search_completed"),
     path(
         "selection",
         permission_required("convention.add_convention")(
@@ -175,10 +176,41 @@ urlpatterns = [
         name="fiche_caf",
     ),
     path("new_avenant/<convention_uuid>", views.new_avenant, name="new_avenant"),
-    path("piece_jointe/<piece_jointe_uuid>", views.piece_jointe, name="piece_jointe"),
+    path("piece_jointe/<piece_jointe_uuid>", views.piece_jointe_access, name="piece_jointe"),
     path(
         "piece_jointe/<piece_jointe_uuid>/promote",
         views.piece_jointe_promote,
         name="piece_jointe_promote",
+    ),
+    path(
+        "new_avenant_start",
+        TemplateView.as_view(
+            template_name="conventions/avenant/new_avenant_start.html"
+        ),
+        name="new_avenant_start",
+    ),
+    path(
+        "search_for_avenant",
+        TemplateView.as_view(
+            template_name="conventions/avenant/search_for_avenant.html"
+        ),
+        name="search_for_avenant",
+    ),
+    path(
+        "search_for_avenant_result",
+        permission_required("convention.add_convention")(
+            views.SearchForAvenantResultView.as_view()
+        ),
+        name="search_for_avenant_result",
+    ),
+    path(
+        "new_avenants_for_avenant/<convention_uuid>",
+        views.new_avenants_for_avenant,
+        name="new_avenants_for_avenant",
+    ),
+    path(
+        "form_avenants_for_avenant/<convention_uuid>",
+        views.form_avenants_for_avenant,
+        name="form_avenants_for_avenant",
     ),
 ]

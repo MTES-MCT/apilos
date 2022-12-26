@@ -117,6 +117,7 @@ class ConventionType1and2(models.TextChoices):
 
 
 class Convention(models.Model):
+    # pylint: disable=R0904
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     parent = models.ForeignKey(
@@ -208,6 +209,7 @@ class Convention(models.Model):
     nom_fichier_signe = models.CharField(max_length=255, null=True, blank=True)
     televersement_convention_signee_le = models.DateTimeField(null=True, blank=True)
     date_resiliation = models.DateField(null=True, blank=True)
+    desc_avenant = models.TextField(null=True, blank=True)
 
     historique_financement_public = models.CharField(
         null=True, blank=True, max_length=5000

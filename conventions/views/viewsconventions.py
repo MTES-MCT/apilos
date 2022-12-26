@@ -1,5 +1,4 @@
 from abc import ABC
-from datetime import datetime
 from typing import List
 
 from zipfile import ZipFile
@@ -19,10 +18,10 @@ from django.http import (
 )
 from django.shortcuts import render
 from django.urls import reverse
-from django.utils import timezone
 from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods
 
+from conventions.services.file import ConventionFileService
 from core.storage import client
 from programmes.models import Financement
 from upload.services import UploadService
@@ -44,11 +43,12 @@ from conventions.services.services_conventions import (
     convention_submit,
     convention_summary,
     convention_validate,
-    conventions_index,
-    create_avenant,
-    generate_convention_service, ConventionListService,
+    generate_convention_service,
+    ConventionListService,
 )
 from conventions.services.collectif import ConventionCollectifService
+
+
 from conventions.services.services_logements import (
     ConventionAnnexesService,
     ConventionFoyerResidenceLogementsService,
@@ -80,8 +80,7 @@ def search(request, active: bool = True):
         statut_filter=request.GET.get("cstatut", ""),
         financement_filter=request.GET.get("financement", ""),
         departement_input=request.GET.get("departement_input", ""),
-        my_convention_list=query_set
-        .prefetch_related("programme")
+        my_convention_list=query_set.prefetch_related("programme")
         .prefetch_related("programme__administration")
         .prefetch_related("lot"),
     )
@@ -91,12 +90,12 @@ def search(request, active: bool = True):
         request,
         "conventions/index.html",
         {
-            'active': active,
+            "active": active,
             "statuts": ConventionStatut,
             "financements": Financement,
             "nb_active_conventions": request.user.conventions(active=True).count(),
             "nb_completed_conventions": request.user.conventions(active=False).count(),
-            "conventions": service
+            "conventions": service,
         },
     )
 
@@ -353,40 +352,9 @@ def fiche_caf(request, convention_uuid):
 
 
 @login_required
+@require_GET
 @permission_required("convention.add_convention")
-def new_avenant(request, convention_uuid):
-    result = create_avenant(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        convention = result["convention"]
-        target_pathname = None
-        if result["avenant_type"].nom == "logements":
-            if convention.programme.is_foyer():
-                target_pathname = "conventions:avenant_foyer_residence_logements"
-            else:
-                target_pathname = "conventions:avenant_logements"
-        if result["avenant_type"].nom == "bailleur":
-            target_pathname = "conventions:avenant_bailleur"
-        if result["avenant_type"].nom == "duree":
-            target_pathname = "conventions:avenant_financement"
-        if result["avenant_type"].nom == "commentaires":
-            target_pathname = "conventions:avenant_comments"
-        if target_pathname:
-            return HttpResponseRedirect(
-                reverse(target_pathname, args=[result["convention"].uuid])
-            )
-
-    return render(
-        request,
-        "conventions/new_avenant.html",
-        {
-            **result,
-        },
-    )
-
-
-@login_required
-@permission_required("convention.add_convention")
-def piece_jointe(request, piece_jointe_uuid):
+def piece_jointe_access(request, piece_jointe_uuid):
     """
     Display the raw file associated to the pièce jointe
     """
@@ -407,44 +375,26 @@ def piece_jointe(request, piece_jointe_uuid):
 
 @login_required
 @permission_required("convention.add_convention")
-def piece_jointe_promote(request, piece_jointe_uuid):
+def piece_jointe_promote(piece_jointe_uuid):
     """
     Promote a pièce jointe to the official PDF document of a convention
     """
-    piece_jointe_from_db = PieceJointe.objects.get(uuid=piece_jointe_uuid)
+    piece_jointe = PieceJointe.objects.get(uuid=piece_jointe_uuid)
 
-    if piece_jointe_from_db is None:
+    if piece_jointe is None:
         return HttpResponseNotFound
 
-    if piece_jointe_from_db.convention.ecolo_reference is None:
+    if piece_jointe.convention.ecolo_reference is None:
         return HttpResponseForbidden()
 
-    if not piece_jointe_from_db.is_convention():
+    if not piece_jointe.is_convention():
         return HttpResponseForbidden()
 
-    o = client.get_object(
-        settings.AWS_ECOLOWEB_BUCKET_NAME,
-        f"piecesJointes/{piece_jointe_from_db.fichier}",
-    )
-
-    if o is None:
+    if not ConventionFileService.promote_piece_jointe(piece_jointe):
         return HttpResponseNotFound
-
-    now = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    filename = f"{now}_convention_{piece_jointe_from_db.convention.uuid}_signed.pdf"
-    upload_service = UploadService(
-        convention_dirpath=f"conventions/{piece_jointe_from_db.convention.uuid}/convention_docs",
-        filename=filename,
-    )
-    upload_service.upload_file(o["Body"])
-
-    piece_jointe_from_db.convention.statut = ConventionStatut.SIGNEE
-    piece_jointe_from_db.convention.nom_fichier_signe = filename
-    piece_jointe_from_db.convention.televersement_convention_signee_le = timezone.now()
-    piece_jointe_from_db.convention.save()
 
     return HttpResponseRedirect(
-        reverse("conventions:preview", args=[piece_jointe_from_db.convention.uuid])
+        reverse("conventions:preview", args=[piece_jointe.convention.uuid])
     )
 
 
@@ -616,6 +566,7 @@ class ConventionFormSteps:
     )
 
     def __init__(self, *, convention, active_classname=None) -> None:
+        # pylint: disable=R0912
         self.convention = convention
         if convention.is_avenant():
             if active_classname is None:
@@ -709,6 +660,7 @@ class ConventionView(ABC, LoginRequiredMixin, View):
     service_class: ConventionService
 
     def _get_convention(self, convention_uuid):
+        # pylint: disable=R0201
         return Convention.objects.get(uuid=convention_uuid)
 
     @property

@@ -115,3 +115,13 @@ class ProgrammeSelectionFromZeroForm(forms.Form):
             "max_length": "La ville ne doit pas excéder 255 caractères",
         },
     )
+    statut = forms.CharField(
+        required=False,
+    )
+    numero = forms.CharField(
+        required=False,
+        label="Numéro de convention",
+    )
+    nom_fichier_signe = forms.FileField(
+        required=False,
+    )

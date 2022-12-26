@@ -5,7 +5,7 @@
 -- avenant_type                       varchar(25)
 -- parent_id                          FK(conventions) i.e. les avenants
 select
-    md5(c.id||'-'||pl.financement) as id,
+    c.id||':'||pl.financement||':'||cdg.datehistoriquedebut as id,
     cdg.id as programme_id,
     md5(cdg.id||'-'||pl.financement) as lot_id, -- Les lots d'un programme sont tous les logements partageant le même financement
     pl.financement as financement,
@@ -53,5 +53,7 @@ from ecolo.ecolo_conventionapl c
             inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
     ) pl on pl.conventiondonneesgenerales_id = cdg.id
 where
-    md5(c.id||'-'||pl.financement) = %s
+    c.id = %s
+    and pl.financement = %s
+    and cdg.datehistoriquedebut = %s
 

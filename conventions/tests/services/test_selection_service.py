@@ -4,7 +4,10 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 
 from bailleurs.models import Bailleur
-from conventions.models import Convention
+from conventions.models import (
+    Convention,
+    ConventionStatut,
+)
 from conventions.services import (
     services_programmes,
     utils,
@@ -169,6 +172,32 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
             ),
         )
 
+    def test_post_from_zero_avenant_success(self):
+        bailleur = Bailleur.objects.get(siret="987654321")
+        administration = Administration.objects.get(code="75000")
+        self.service.request.POST = {
+            "bailleur": str(bailleur.uuid),
+            "administration": str(administration.uuid),
+            "nom": "Programme de test",
+            "nb_logements": "10",
+            "type_habitat": TypeHabitat.MIXTE,
+            "financement": Financement.PLAI,
+            "code_postal": "20000",
+            "ville": "Bisouville",
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
+            "statut": ConventionStatut.SIGNEE,
+            "numero": "2022-75-Rivoli-02-213",
+        }
+        self.service.post_from_zero()
+
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
+        self.assertEqual(
+            self.service.convention,
+            Convention.objects.get(
+                programme__nom="Programme de test", financement=Financement.PLAI
+            ),
+        )
+
 
 class ConventionSelectionServiceForBailleurTests(TestCase):
     @classmethod
@@ -318,6 +347,36 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             "financement": Financement.PLUS,
             "code_postal": "20000",
             "ville": "Bisouville",
+        }
+        self.service.post_from_zero()
+
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
+        self.assertEqual(
+            self.service.convention,
+            Convention.objects.get(
+                programme__nom="Programme de test", financement=Financement.PLUS
+            ),
+        )
+        self.assertEqual(
+            self.service.convention.programme.nature_logement,
+            NatureLogement.LOGEMENTSORDINAIRES,
+        )
+
+    def test_post_from_zero_avenant_success(self):
+        bailleur = Bailleur.objects.get(siret="987654321")
+        administration = Administration.objects.get(code="75000")
+        self.service.request.POST = {
+            "bailleur": str(bailleur.uuid),
+            "administration": str(administration.uuid),
+            "nom": "Programme de test",
+            "nb_logements": "10",
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
+            "type_habitat": TypeHabitat.MIXTE,
+            "financement": Financement.PLUS,
+            "code_postal": "20000",
+            "ville": "Bisouville",
+            "statut": ConventionStatut.SIGNEE,
+            "numero": "2022-75-Rivoli-02-213",
         }
         self.service.post_from_zero()
 

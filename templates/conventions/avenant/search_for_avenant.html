@@ -1,0 +1,47 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %} Recherche de convention - APiLos {% endblock%}
+
+{% load static %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-lg-6 fr-my-5w">
+                    <div class="fr-mb-4w">
+                        <h2>Convention originale</h2>
+                        <p>Pour quelle convention souhaitez-vous créer un avenant ?</p>
+                    </div>
+                    <form class="fr-my-3w" method="get" action="{% url 'conventions:search_for_avenant_result' %}" id="search_for_avenant">
+                        <div class="fr-mb-5w">
+                            <div class="fr-col-9 fr-mb-3w">
+                                <label class="fr-label" for="search_input">
+                                    Département<span class="fr-ml-1w warning-notification" title="(obligatoire)">*</span>
+                                </label>
+                                <input class="fr-input" placeholder="Ex : 13" type="recherche" name="departement" required>
+                            </div>
+                            <div class="fr-col-9 fr-mb-3w">
+                                <label class="fr-label" for="search_input">
+                                    Année de signature<span class="fr-ml-1w warning-notification" title="(obligatoire)">*</span>
+                                </label>
+                                <input class="fr-input" placeholder="Ex : 2022" type="recherche" name="annee" required>
+                            </div>
+                            <div class="fr-col-9 fr-mb-3w">
+                                <label class="fr-label" for="search_input">
+                                    4 derniers chiffres de votre numéro de convention<span class="fr-ml-1w warning-notification" title="(obligatoire)">*</span>
+                                </label>
+                                <input class="fr-input" placeholder="Ex : 1234" type="recherche" name="num" required>
+                            </div>
+                        </div>
+                        <div class="fr-grid-row">
+                            <button class="fr-btn" title="Rechercher" id="search_btn">Etape suivante
+                                <span class="fr-icon-arrow-right-s-line fr-ml-1w" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

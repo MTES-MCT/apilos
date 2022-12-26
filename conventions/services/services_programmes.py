@@ -4,6 +4,10 @@ from django.urls import reverse
 from django.conf import settings
 from django.db.models.query import QuerySet
 
+from conventions.models import (
+    ConventionStatut,
+)
+
 from conventions.services.services_conventions import ConventionService
 from conventions.templatetags.custom_filters import is_instructeur
 from conventions.models import Convention
@@ -30,8 +34,11 @@ from programmes.forms import (
     LogementEDDFormSet,
     ReferenceCadastraleFormSet,
 )
+
+
 from . import utils
 from . import upload_objects
+from .file import ConventionFileService
 
 
 def _get_choices_from_object(object_list):
@@ -71,6 +78,7 @@ class ConventionSelectionService:
     def post_from_zero(self):
         self.form = ProgrammeSelectionFromZeroForm(
             self.request.POST,
+            self.request.FILES,
             bailleurs=self._get_bailleur_choices(),
             administrations=self._get_administration_choices(),
         )
@@ -106,9 +114,22 @@ class ConventionSelectionService:
                 programme_id=lot.programme_id,
                 financement=lot.financement,
                 cree_par=self.request.user,
+                statut=(
+                    ConventionStatut.SIGNEE
+                    if self.form.cleaned_data["statut"]
+                    else ConventionStatut.PROJET
+                ),
+                numero=(
+                    self.form.cleaned_data["numero"]
+                    if self.form.cleaned_data["numero"]
+                    else ""
+                ),
             )
             _send_email_staff(self.request, self.convention)
             self.convention.save()
+            file = self.request.FILES.get("nom_fichier_signe", False)
+            if file:
+                ConventionFileService.upload_convention_file(self.convention, file)
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def get_from_db(self):

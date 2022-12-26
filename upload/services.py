@@ -1,6 +1,7 @@
 import errno
 
 from django.conf import settings
+from django.core.files import File
 from django.core.files.storage import default_storage
 
 
@@ -17,7 +18,7 @@ class UploadService:
         self.convention_dirpath = convention_dirpath
         self.filename = filename
 
-    def upload_file(self, file) -> None:
+    def upload_file(self, file: File) -> None:
         if (
             settings.DEFAULT_FILE_STORAGE
             == "django.core.files.storage.FileSystemStorage"
@@ -34,7 +35,8 @@ class UploadService:
             "bw",
         )
 
-        destination.write(file.read())
+        for chunk in file.chunks():
+            destination.write(chunk)
         destination.close()
 
     def upload_file_io(self, file_io) -> None:

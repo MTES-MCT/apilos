@@ -1,0 +1,22 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %} Téléverser les avenants{% endblock%}
+
+{% load static %}
+
+{% block content %}
+    <div class="fr-container fr-py-5w">
+        <div class="fr-col-12 fr-mt-2w fr-mb-4w">
+            <h2>{{convention}}</h2>
+            {% include "conventions/avenant/list_avenants_for_avenant.html" with conventions=avenants %}
+            {% include "conventions/avenant/televersement_avenants_for_avenant_start.html" with ongoing_avenants=ongoing_avenants %}
+            <hr>
+            <h2 class="fr-mt-4w fr-text--lg">Créer un nouvel avenant</h2>
+            <p>Après avoir téléversé l'ensemble des avenants existants, vous pouvez créer votre nouvel avenant.</p>
+            <a class="fr-btn" href="{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}">
+                Aller à la création du nouvel avenant
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
