@@ -1,6 +1,9 @@
 from django.test import TestCase
 from django.urls import reverse
-from conventions.models import Convention
+from conventions.models import (
+    Convention,
+    ConventionStatut,
+)
 
 from conventions.tests.views.abstract import AbstractCreateViewTestCase
 from bailleurs.models import Bailleur
@@ -72,6 +75,52 @@ class ConventionSelectionFromZeroViewTests(AbstractCreateViewTestCase, TestCase)
             "ville": "Bisouville",
         }
         self.msg_prefix = "[ConventionSelectionFromZeroViewTests] "
+
+    def _test_data_integrity(self):
+        self.assertTrue(
+            Convention.objects.get(
+                programme__nom="Programme de test", financement=Financement.PLUS
+            ),
+            msg=f"{self.msg_prefix}",
+        )
+
+
+class ConventionPostFromZeroAvenantViewTests(AbstractCreateViewTestCase, TestCase):
+    def setUp(self):
+        super().setUp()
+
+        bailleur = Bailleur.objects.get(siret="987654321")
+        administration = Administration.objects.get(code="75000")
+        self.target_path = reverse("conventions:selection_from_zero")
+        self.next_target_starts_with = "/conventions/bailleur"
+        self.target_template = "conventions/selection_from_zero.html"
+        self.error_payload = {
+            "bailleur": str(bailleur.uuid),
+            "administration": str(administration.uuid),
+            "nom": "Programme de test",
+            "nb_logements": "10",
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
+            "type_habitat": TypeHabitat.MIXTE,
+            "financement": Financement.PLUS,
+            "code_postal": "20000",
+            "ville": "",
+            "statut": ConventionStatut.SIGNEE,
+            "numero": "2022-75-Rivoli-02-213",
+        }
+        self.success_payload = {
+            "bailleur": str(bailleur.uuid),
+            "administration": str(administration.uuid),
+            "nom": "Programme de test",
+            "nb_logements": "10",
+            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
+            "type_habitat": TypeHabitat.MIXTE,
+            "financement": Financement.PLUS,
+            "code_postal": "20000",
+            "ville": "Bisouville",
+            "statut": ConventionStatut.SIGNEE,
+            "numero": "2022-75-Rivoli-02-213",
+        }
+        self.msg_prefix = "[ConventionPostFromZeroAvenantViewTests] "
 
     def _test_data_integrity(self):
         self.assertTrue(
