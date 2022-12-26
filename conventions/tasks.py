@@ -2,7 +2,8 @@ from zipfile import ZipFile
 from django.conf import settings
 import dramatiq
 from conventions.services import convention_generator
-from conventions.models import Convention
+from conventions.models import Convention, PieceJointe
+from conventions.services.file import ConventionFileService
 from core.services import EmailService
 
 
@@ -45,3 +46,9 @@ def generate_and_send(args):
         [convention_email_validator],
         str(local_zip_path) if local_zip_path is not None else str(local_pdf_path),
     )
+
+@dramatiq.actor
+def promote_piece_jointe(pk: int):
+    piece_jointe = PieceJointe.objects.get(id=pk)
+    if piece_jointe.convention.nom_fichier_signe is None:
+        ConventionFileService.promote_piece_jointe(piece_jointe)
