@@ -24,6 +24,7 @@ from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods
 
 from core.storage import client
+from programmes.models import Financement
 from upload.services import UploadService
 from conventions.models import Convention, ConventionStatut, PieceJointe
 from conventions.permissions import has_campaign_permission
@@ -43,8 +44,8 @@ from conventions.services.services_conventions import (
     convention_submit,
     convention_summary,
     convention_validate,
-    conventions_index,
     generate_convention_service,
+    ConventionListService,
 )
 from conventions.services.collectif import ConventionCollectifService
 
@@ -69,12 +70,34 @@ from conventions.services.utils import (
 
 
 @login_required
-def index(request):
-    result = conventions_index(request)
+@require_GET
+def search(request, active: bool = True):
+    query_set = request.user.conventions(active=active)
+
+    service = ConventionListService(
+        search_input=request.GET.get("search_input", ""),
+        order_by=request.GET.get("order_by", "programme__date_achevement_compile"),
+        page=request.GET.get("page", 1),
+        statut_filter=request.GET.get("cstatut", ""),
+        financement_filter=request.GET.get("financement", ""),
+        departement_input=request.GET.get("departement_input", ""),
+        my_convention_list=query_set.prefetch_related("programme")
+        .prefetch_related("programme__administration")
+        .prefetch_related("lot"),
+    )
+    service.paginate()
+
     return render(
         request,
         "conventions/index.html",
-        {**result},
+        {
+            "active": active,
+            "statuts": ConventionStatut,
+            "financements": Financement,
+            "nb_active_conventions": request.user.conventions(active=True).count(),
+            "nb_completed_conventions": request.user.conventions(active=False).count(),
+            "conventions": service,
+        },
     )
 
 
