@@ -23,6 +23,11 @@
 .apilos-d-block {
   display: block;
 }
+.apilos-tag-ok {
+  background-color: var(--background-action-low-blue-france);
+  color: var(--text-action-high-blue-france);
+}
+
 
 .fr-fi--xxl {
   --icon-size: 4rem;
