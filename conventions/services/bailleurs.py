@@ -5,7 +5,7 @@ from bailleurs.forms import ConventionBailleurForm, ChangeBailleurForm
 from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
-from conventions.services.services_conventions import ConventionService
+from conventions.services.conventions import ConventionService
 from programmes.models import Programme
 
 

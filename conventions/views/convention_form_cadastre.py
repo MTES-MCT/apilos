@@ -1,5 +1,5 @@
 from conventions.models import Convention
-from conventions.services.services_programmes import ConventionCadastreService
+from conventions.services.cadastre import ConventionCadastreService
 from conventions.views.convention_form import ConventionView
 
 

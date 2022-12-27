@@ -8,7 +8,7 @@ from conventions.forms import (
 )
 from conventions.models import Convention, Pret, Preteur
 from conventions.services import (
-    services_conventions,
+    financement as financement_service,
     utils,
 )
 from core.tests import utils_fixtures
@@ -17,7 +17,7 @@ from users.models import User
 
 
 class ConventionFinancementServiceTests(TestCase):
-    service_class = services_conventions.ConventionFinancementService
+    service_class = financement_service.ConventionFinancementService
 
     @classmethod
     def setUpTestData(cls):

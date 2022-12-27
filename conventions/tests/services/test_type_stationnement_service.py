@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from conventions.models import Convention
 from conventions.services import (
-    services_logements,
+    type_stationnement as service_type_stationnement,
     utils,
 )
 from core.tests import utils_fixtures
@@ -13,7 +13,7 @@ from users.models import User
 
 
 class ConventionTypeStationnementServiceTests(TestCase):
-    service_class = services_logements.ConventionTypeStationnementService
+    service_class = service_type_stationnement.ConventionTypeStationnementService
 
     @classmethod
     def setUpTestData(cls):

@@ -9,7 +9,7 @@ from conventions.models import (
     ConventionStatut,
 )
 from conventions.services import (
-    services_programmes,
+    selection,
     utils,
 )
 from core.tests import utils_fixtures
@@ -35,9 +35,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
         middleware.process_request(self.request)
         self.request.session.save()
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
-        self.service = services_programmes.ConventionSelectionService(
-            request=self.request
-        )
+        self.service = selection.ConventionSelectionService(request=self.request)
 
     def test_get_from_db(self):
         administration = Administration.objects.get(code="75000")
@@ -212,9 +210,7 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
         middleware.process_request(self.request)
         self.request.session.save()
         self.request.session["currently"] = GroupProfile.BAILLEUR
-        self.service = services_programmes.ConventionSelectionService(
-            request=self.request
-        )
+        self.service = selection.ConventionSelectionService(request=self.request)
 
     def test_get_from_db(self):
         bailleurs = Bailleur.objects.filter(siret__in=["987654321", "12345678901234"])

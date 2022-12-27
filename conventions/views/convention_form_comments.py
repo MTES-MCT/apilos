@@ -1,4 +1,4 @@
-from conventions.services.services_conventions import ConventionCommentsService
+from conventions.services.commentaires import ConventionCommentsService
 from conventions.views.convention_form import ConventionView
 
 

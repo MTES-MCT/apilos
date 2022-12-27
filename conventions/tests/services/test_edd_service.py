@@ -6,7 +6,7 @@ from conventions.forms import UploadForm
 
 from conventions.models import Convention
 from conventions.services import (
-    services_programmes,
+    edd as service_edd,
     utils,
 )
 from core.tests import utils_fixtures
@@ -16,7 +16,7 @@ from users.models import User
 
 
 class ConventionEDDServiceTests(TestCase):
-    service_class = services_programmes.ConventionEDDService
+    service_class = service_edd.ConventionEDDService
 
     @classmethod
     def setUpTestData(cls):

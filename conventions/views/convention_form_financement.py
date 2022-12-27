@@ -1,5 +1,5 @@
 from conventions.models import Convention
-from conventions.services.services_conventions import ConventionFinancementService
+from conventions.services.financement import ConventionFinancementService
 from conventions.views.convention_form import ConventionView
 
 

@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 
-from conventions.services.services_programmes import ConventionSelectionService
+from conventions.services.selection import ConventionSelectionService
 from conventions.services.utils import ReturnStatus
 
 

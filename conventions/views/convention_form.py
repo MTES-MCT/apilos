@@ -13,7 +13,7 @@ from django.views import View
 from conventions.models import Convention
 
 from conventions.permissions import has_campaign_permission
-from conventions.services.services_conventions import (
+from conventions.services.conventions import (
     ConventionService,
 )
 from conventions.services.utils import (

@@ -1,27 +1,63 @@
 import datetime
 
 from django.utils import timezone
-from django.views.decorators.http import require_GET
 
 
 from conventions.forms import (
     InitavenantsforavenantForm,
     AvenantsforavenantForm,
 )
+from conventions.forms.avenant import AvenantForm
 from conventions.models import (
     AvenantType,
     Convention,
     ConventionStatut,
 )
 from conventions.services import utils
-from conventions.services.services_conventions import (
-    ConventionListService,
-    _get_last_avenant,
-)
+from conventions.services.conventions import ConventionListService
 from upload.services import UploadService
 
 
-@require_GET
+def create_avenant(request, convention_uuid):
+    parent_convention = (
+        Convention.objects.prefetch_related("programme")
+        .prefetch_related("lot")
+        .prefetch_related("avenants")
+        .get(uuid=convention_uuid)
+    )
+    if request.method == "POST":
+        avenant_form = AvenantForm(request.POST)
+        if avenant_form.is_valid():
+            if avenant_form.cleaned_data["uuid"]:
+                avenant = Convention.objects.get(uuid=avenant_form.cleaned_data["uuid"])
+            else:
+                convention_to_clone = _get_last_avenant(parent_convention)
+                avenant = convention_to_clone.clone(
+                    request.user, convention_origin=parent_convention
+                )
+            avenant_type = AvenantType.objects.get(
+                nom=avenant_form.cleaned_data["avenant_type"]
+            )
+            avenant.avenant_types.add(avenant_type)
+            avenant.save()
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "convention": avenant,
+                "parent_convention": parent_convention,
+                "avenant_type": avenant_type,
+            }
+    else:
+        avenant_form = AvenantForm()
+
+    return {
+        "success": utils.ReturnStatus.ERROR,
+        "editable": request.user.has_perm("convention.add_convention"),
+        "bailleurs": request.user.bailleurs(),
+        "form": avenant_form,
+        "parent_convention": parent_convention,
+    }
+
+
 def search_result(request):
     departement = request.GET.get("departement", None)
     annee = request.GET.get("annee", None)
@@ -73,6 +109,18 @@ def upload_avenants_for_avenant(request, convention_uuid):
         "avenants": avenant_list_service,
         "ongoing_avenants": ongoing_avenant_list_service,
     }
+
+
+def _get_last_avenant(convention):
+    avenants_status = {avenant.statut for avenant in convention.avenants.all()}
+    if {
+        ConventionStatut.PROJET,
+        ConventionStatut.INSTRUCTION,
+        ConventionStatut.CORRECTION,
+    } & avenants_status:
+        raise Exception("Ongoing avenant already exists")
+    ordered_avenants = convention.avenants.order_by("-cree_le")
+    return ordered_avenants[0] if ordered_avenants else convention
 
 
 def complete_avenants_for_avenant(request, convention_uuid):

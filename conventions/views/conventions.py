@@ -13,32 +13,29 @@ from django.http import (
 )
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.decorators.http import require_GET, require_http_methods
+from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
 from core.storage import client
 from programmes.models import Financement
 from upload.services import UploadService
+from conventions.services import convention_generator
+from conventions.services.recapitulatif import (
+    convention_delete,
+    convention_feedback,
+    convention_submit,
+    convention_summary,
+    convention_validate,
+)
 from conventions.services.file import ConventionFileService
 from conventions.views.convention_form import ConventionFormSteps
 from conventions.models import Convention, ConventionStatut, PieceJointe
 from conventions.services.convention_generator import fiche_caf_doc
-from conventions.services.services_conventions import (
-    convention_delete,
-    convention_feedback,
+from conventions.services.conventions import (
     convention_post_action,
-    convention_preview,
     convention_sent,
-    convention_submit,
-    convention_summary,
-    convention_validate,
-    generate_convention_service,
     ConventionListService,
 )
-
-
-from conventions.services.utils import (
-    ReturnStatus,
-)
+from conventions.services.utils import ReturnStatus
 
 
 @login_required
@@ -101,7 +98,10 @@ def recapitulatif(request, convention_uuid):
 
 @login_required
 def save_convention(request, convention_uuid):
-    result = convention_submit(request, convention_uuid)
+    # could be in a summary service
+    convention = Convention.objects.get(uuid=convention_uuid)
+    request.user.check_perm("convention.change_convention", convention)
+    result = convention_submit(request, convention)
     if result["success"] == ReturnStatus.SUCCESS:
         return render(
             request,
@@ -121,21 +121,37 @@ def save_convention(request, convention_uuid):
 
 @login_required
 def delete_convention(request, convention_uuid):
-    convention_delete(request, convention_uuid)
+    convention = Convention.objects.get(uuid=convention_uuid)
+    request.user.check_perm("convention.change_convention", convention)
+    convention_delete(convention)
     return HttpResponseRedirect(reverse("conventions:index"))
 
 
+@require_POST
 @login_required
 def feedback_convention(request, convention_uuid):
-    result = convention_feedback(request, convention_uuid)
+    convention = Convention.objects.get(uuid=convention_uuid)
+    request.user.check_perm("convention.view_convention", convention)
+    result = convention_feedback(request, convention)
     return HttpResponseRedirect(
         reverse("conventions:recapitulatif", args=[result["convention"].uuid])
     )
 
 
+@require_POST
 @login_required
 def validate_convention(request, convention_uuid):
-    result = convention_validate(request, convention_uuid)
+    convention = (
+        Convention.objects.prefetch_related("programme__bailleur")
+        .prefetch_related("programme__referencecadastrales")
+        .prefetch_related("programme__logementedds")
+        .prefetch_related("lot")
+        .prefetch_related("lot__type_stationnements")
+        .prefetch_related("lot__logements")
+        .get(uuid=convention_uuid)
+    )
+    request.user.check_perm("convention.change_convention", convention)
+    result = convention_validate(request, convention)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:sent", args=[result["convention"].uuid])
@@ -150,14 +166,29 @@ def validate_convention(request, convention_uuid):
 
 
 @login_required
+@require_POST
 def generate_convention(request, convention_uuid):
-    data, file_name = generate_convention_service(request, convention_uuid)
+    convention = (
+        Convention.objects.prefetch_related("programme__bailleur")
+        .prefetch_related("lot")
+        .prefetch_related("lot__type_stationnements")
+        .prefetch_related("lot__logements")
+        .prefetch_related("prets")
+        .prefetch_related("programme")
+        .prefetch_related("programme__administration")
+        .prefetch_related("programme__logementedds")
+        .prefetch_related("programme__referencecadastrales")
+        .get(uuid=convention_uuid)
+    )
+    request.user.check_perm("convention.view_convention", convention)
+
+    data = convention_generator.generate_convention_doc(convention)
 
     response = HttpResponse(
         data,
         content_type="application/vnd.openxmlformats-officedocument.wordprocessingm",
     )
-    response["Content-Disposition"] = f"attachment; filename={file_name}.docx"
+    response["Content-Disposition"] = f"attachment; filename={convention}.docx"
     return response
 
 
@@ -218,19 +249,20 @@ def load_xlsx_model(request, file_type):
     return response
 
 
+@require_GET
 @login_required
 def preview(request, convention_uuid):
-    result = convention_preview(convention_uuid)
+    convention = Convention.objects.get(uuid=convention_uuid)
+    request.user.check_perm("convention.view_convention", convention)
     return render(
         request,
         "conventions/preview.html",
-        result,
+        {"convention": convention},
     )
 
 
 @login_required
 def sent(request, convention_uuid):
-    # Step 12/12
     result = convention_sent(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(

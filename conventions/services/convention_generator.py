@@ -12,6 +12,11 @@ from django.conf import settings
 from django.forms.models import model_to_dict
 from django.template.defaultfilters import date as template_date
 
+from conventions.models import Convention, ConventionType1and2
+from conventions.templatetags.custom_filters import (
+    get_text_as_list,
+    inline_text_multiline,
+)
 from core.utils import get_key_from_json_field, round_half_up
 from programmes.models import (
     Financement,
@@ -20,12 +25,6 @@ from programmes.models import (
 )
 from upload.models import UploadedFile
 from upload.services import UploadService
-
-from conventions.models import ConventionType1and2
-from conventions.templatetags.custom_filters import (
-    get_text_as_list,
-    inline_text_multiline,
-)
 
 
 class NotHandleConventionType(Exception):
@@ -91,7 +90,7 @@ def _compute_total_locaux_collectifs(convention):
     )
 
 
-def generate_convention_doc(convention, save_data=False):
+def generate_convention_doc(convention: Convention, save_data=False):
     # pylint: disable=R0912,R0914,R0915
     annexes = (
         Annexe.objects.prefetch_related("logement")

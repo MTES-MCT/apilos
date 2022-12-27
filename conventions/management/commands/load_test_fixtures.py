@@ -1,4 +1,4 @@
-import random
+import secrets
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -60,29 +60,34 @@ def generate_programmes(num):
         fake.first_name(),
     ]
     for _ in range(num):
-        fin = random.choice([Financement.PLAI, Financement.PLS, Financement.PLUS]).value
-        lots = [{"nb_logements": random.randint(1, 30), "financement": fin}]
-        fin2 = random.choice(
+        fin = secrets.choice(
             [Financement.PLAI, Financement.PLS, Financement.PLUS]
         ).value
+        lots = [{"nb_logements": secrets.randbelow(29) + 1, "financement": fin}]
+        fin2 = secrets.choice(
+            [Financement.PLAI, Financement.PLS, Financement.PLUS]
+        ).value
+
         if fin2 != fin:
-            lots.append({"nb_logements": random.randint(1, 30), "financement": fin2})
+            lots.append(
+                {"nb_logements": secrets.randbelow(29) + 1, "financement": fin2}
+            )
         programmes.append(
             {
-                "nom": random.choice(random_title)
-                + f"{''.join(random.choice(random_name))}",
-                "code_postal": f"001{random.randint(0,9)}{random.randint(0,9)}",
+                "nom": secrets.choice(random_title)
+                + f"{''.join(secrets.choice(random_name))}",
+                "code_postal": f"001{secrets.randbelow(9)}{secrets.randbelow(9)}",
                 "ville": fake.city(),
                 "adresse": None,
-                "numero_galion": f"{random.randint(0,9)}{random.randint(0,9)}"
-                + f"{random.randint(0,9)}{random.randint(0,9)}00000"
-                + f"{random.randint(0,9)}{random.randint(0,9)}"
-                + f"{random.randint(0,9)}{random.randint(0,9)}",
+                "numero_galion": f"{secrets.randbelow(9)}{secrets.randbelow(9)}"
+                + f"{secrets.randbelow(9)}{secrets.randbelow(9)}00000"
+                + f"{secrets.randbelow(9)}{secrets.randbelow(9)}"
+                + f"{secrets.randbelow(9)}{secrets.randbelow(9)}",
                 "annee_gestion_programmation": 2022,
-                "zone_123": random.choice(
+                "zone_123": secrets.choice(
                     [Zone123.Zone1, Zone123.Zone2, Zone123.Zone3]
                 ).value,
-                "zone_abc": random.choice(
+                "zone_abc": secrets.choice(
                     [
                         ZoneABC.ZoneA,
                         ZoneABC.ZoneB1,
@@ -90,7 +95,7 @@ def generate_programmes(num):
                         ZoneABC.ZoneC,
                     ]
                 ).value,
-                "type_operation": random.choice(TypeOperation.choices)[0],
+                "type_operation": secrets.choice(TypeOperation.choices)[0],
                 "lots": lots,
             }
         )
