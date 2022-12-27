@@ -1,7 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
-from core import forms_utils
 from core.utils import round_half_up
 
 from programmes.models import (
@@ -53,7 +52,22 @@ class ProgrammeForm(forms.Form):
             "max_length": "L'adresse ne doit pas excéder 5000 caractères",
         },
     )
-    code_postal, ville = forms_utils.ville_codepostal_form_fields()
+    code_postal = forms.CharField(
+        label="Code postal",
+        max_length=255,
+        error_messages={
+            "required": "Le code postal est obligatoire",
+            "max_length": "Le code postal ne doit pas excéder 255 caractères",
+        },
+    )
+    ville = forms.CharField(
+        label="Ville",
+        max_length=255,
+        error_messages={
+            "required": "La ville est obligatoire",
+            "max_length": "La ville ne doit pas excéder 255 caractères",
+        },
+    )
     nb_logements = forms.IntegerField(
         label="Nombre de logements à conventionner",
         error_messages={

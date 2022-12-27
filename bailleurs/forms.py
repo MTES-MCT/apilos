@@ -1,12 +1,10 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from core import forms_utils
-
 from bailleurs.models import Bailleur, SousNatureBailleur
 
 
-class UpdateBailleurForm(forms.Form):
+class ChangeBailleurForm(forms.Form):
     def __init__(self, *args, bailleurs=None, **kwargs) -> None:
         self.declared_fields["bailleur"].choices = bailleurs
         super().__init__(*args, **kwargs)
@@ -58,7 +56,35 @@ class ConventionBailleurForm(forms.Form):
         required=False,
         label="Capital social",
     )
-    (adresse, code_postal, ville) = forms_utils.address_form_fields()
+
+    adresse = forms.CharField(
+        label="Adresse",
+        max_length=255,
+        min_length=1,
+        error_messages={
+            "required": "L'adresse est obligatoire",
+            "min_length": "L'adresse est obligatoire",
+            "max_length": "L'adresse ne doit pas excéder 255 caractères",
+        },
+    )
+
+    code_postal = forms.CharField(
+        label="Code postal",
+        max_length=255,
+        error_messages={
+            "required": "Le code postal est obligatoire",
+            "max_length": "Le code postal ne doit pas excéder 255 caractères",
+        },
+    )
+    ville = forms.CharField(
+        label="Ville",
+        max_length=255,
+        error_messages={
+            "required": "La ville est obligatoire",
+            "max_length": "La ville ne doit pas excéder 255 caractères",
+        },
+    )
+
     signataire_nom = forms.CharField(
         label="Nom du signataire de la convention",
         max_length=255,

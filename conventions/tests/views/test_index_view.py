@@ -26,12 +26,18 @@ class ConventionIndexViewTests(TestCase):
         self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
         response = self.client.get(reverse("conventions:search_active"))
-        soup = BeautifulSoup(response.content, 'html.parser')
-        galion_refs = soup.find_all(attrs={'data-test-role': "programme-galion-cell"})
-        financements = soup.find_all(attrs={'data-test-role': "programme-financement-cell"})
+        soup = BeautifulSoup(response.content, "html.parser")
+        galion_refs = soup.find_all(attrs={"data-test-role": "programme-galion-cell"})
+        financements = soup.find_all(
+            attrs={"data-test-role": "programme-financement-cell"}
+        )
 
-        self.assertListEqual([r.text for r in galion_refs], ['12345', '12345', '98765', '98765'])
-        self.assertListEqual([f.text for f in financements], ['PLUS', 'PLAI', 'PLUS', 'PLAI'])
+        self.assertListEqual(
+            [r.text for r in galion_refs], ["12345", "12345", "98765", "98765"]
+        )
+        self.assertListEqual(
+            [f.text for f in financements], ["PLUS", "PLAI", "PLUS", "PLAI"]
+        )
 
     def test_get_list_active_ordered_by_bailleur(self):
         """
@@ -40,10 +46,15 @@ class ConventionIndexViewTests(TestCase):
         # login as superuser
         self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
-        response = self.client.get(reverse("conventions:search_active"), data={'order_by': "programme__bailleur__nom"})
-        soup = BeautifulSoup(response.content, 'html.parser')
-        galion_refs = soup.find_all(attrs={'data-test-role': "programme-galion-cell"})
-        financements = soup.find_all(attrs={'data-test-role': "programme-financement-cell"})
+        response = self.client.get(
+            reverse("conventions:search_active"),
+            data={"order_by": "programme__bailleur__nom"},
+        )
+        soup = BeautifulSoup(response.content, "html.parser")
+        galion_refs = soup.find_all(attrs={"data-test-role": "programme-galion-cell"})
+        financements = soup.find_all(
+            attrs={"data-test-role": "programme-financement-cell"}
+        )
 
-        self.assertListEqual([r.text for r in galion_refs], ['12345', '12345', '98765', '98765'])
-        self.assertListEqual([f.text for f in financements], ['PLUS', 'PLAI', 'PLUS', 'PLAI'])
+        self.assertEqual({r.text for r in galion_refs}, {"12345", "98765"})
+        self.assertEqual({f.text for f in financements}, {"PLUS", "PLAI"})

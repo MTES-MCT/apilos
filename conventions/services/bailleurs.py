@@ -1,7 +1,7 @@
 from django.db import transaction
 from django.http import HttpRequest
 
-from bailleurs.forms import ConventionBailleurForm, UpdateBailleurForm
+from bailleurs.forms import ConventionBailleurForm, ChangeBailleurForm
 from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
@@ -13,7 +13,7 @@ class ConventionBailleurService(ConventionService):
     convention: Convention
     request: HttpRequest
     form: ConventionBailleurForm
-    upform: UpdateBailleurForm
+    upform: ChangeBailleurForm
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
     redirect_recap: bool = False
 
@@ -34,7 +34,7 @@ class ConventionBailleurService(ConventionService):
             if convention_validee
             else [(b.uuid, b.nom) for b in self.request.user.bailleurs(full_scope=True)]
         )
-        self.upform = UpdateBailleurForm(
+        self.upform = ChangeBailleurForm(
             bailleurs=bailleurs,
             initial={"bailleur": bailleur.uuid},
         )
@@ -71,7 +71,7 @@ class ConventionBailleurService(ConventionService):
     def save(self):
         self.form = ConventionBailleurForm(self.request.POST)
 
-        self.upform = UpdateBailleurForm(
+        self.upform = ChangeBailleurForm(
             self.request.POST,
             bailleurs=[
                 (b.uuid, b.nom) for b in self.request.user.bailleurs(full_scope=True)
@@ -159,31 +159,33 @@ class ConventionBailleurService(ConventionService):
         )
 
         if self.form.is_valid():
-            _save_bailleur(self.convention, bailleur, self.form)
+            self._save_bailleur()
             self.return_status = utils.ReturnStatus.SUCCESS
 
-
-def _save_bailleur(convention, bailleur, form):
-    bailleur.nom = form.cleaned_data["nom"]
-    bailleur.siret = form.cleaned_data["siret"]
-    bailleur.capital_social = form.cleaned_data["capital_social"]
-    bailleur.adresse = form.cleaned_data["adresse"]
-    bailleur.code_postal = form.cleaned_data["code_postal"]
-    bailleur.ville = form.cleaned_data["ville"]
-    bailleur.save()
-    convention.signataire_nom = form.cleaned_data["signataire_nom"]
-    convention.signataire_fonction = form.cleaned_data["signataire_fonction"]
-    convention.signataire_date_deliberation = form.cleaned_data[
-        "signataire_date_deliberation"
-    ]
-    convention.gestionnaire = form.cleaned_data["gestionnaire"]
-    convention.gestionnaire_signataire_nom = form.cleaned_data[
-        "gestionnaire_signataire_nom"
-    ]
-    convention.gestionnaire_signataire_fonction = form.cleaned_data[
-        "gestionnaire_signataire_fonction"
-    ]
-    convention.gestionnaire_signataire_date_deliberation = form.cleaned_data[
-        "gestionnaire_signataire_date_deliberation"
-    ]
-    convention.save()
+    def _save_bailleur(self):
+        bailleur = self.convention.programme.bailleur
+        bailleur.nom = self.form.cleaned_data["nom"]
+        bailleur.siret = self.form.cleaned_data["siret"]
+        bailleur.capital_social = self.form.cleaned_data["capital_social"]
+        bailleur.adresse = self.form.cleaned_data["adresse"]
+        bailleur.code_postal = self.form.cleaned_data["code_postal"]
+        bailleur.ville = self.form.cleaned_data["ville"]
+        bailleur.save()
+        self.convention.signataire_nom = self.form.cleaned_data["signataire_nom"]
+        self.convention.signataire_fonction = self.form.cleaned_data[
+            "signataire_fonction"
+        ]
+        self.convention.signataire_date_deliberation = self.form.cleaned_data[
+            "signataire_date_deliberation"
+        ]
+        self.convention.gestionnaire = self.form.cleaned_data["gestionnaire"]
+        self.convention.gestionnaire_signataire_nom = self.form.cleaned_data[
+            "gestionnaire_signataire_nom"
+        ]
+        self.convention.gestionnaire_signataire_fonction = self.form.cleaned_data[
+            "gestionnaire_signataire_fonction"
+        ]
+        self.convention.gestionnaire_signataire_date_deliberation = (
+            self.form.cleaned_data["gestionnaire_signataire_date_deliberation"]
+        )
+        self.convention.save()

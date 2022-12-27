@@ -39,7 +39,6 @@ from conventions.tasks import generate_and_send
 from core.services import EmailService
 from programmes.models import Annexe, Financement
 from siap.siap_client.client import SIAPClient
-from upload.services import UploadService
 
 
 class ConventionService(ABC):
@@ -349,7 +348,11 @@ def convention_feedback(request, convention_uuid):
         convention.statut = target_status
         convention.save()
 
-        return utils.base_response_redirect_recap_success(convention)
+        return {
+            "success": utils.ReturnStatus.SUCCESS,
+            "convention": convention,
+            "redirect": "recapitulatif",
+        }
     return {
         **utils.base_convention_response_error(request, convention),
         "notificationForm": notification_form,
@@ -585,7 +588,9 @@ def convention_sent(request, convention_uuid):
     if request.method == "POST":
         upform = UploadForm(request.POST, request.FILES)
         if upform.is_valid():
-            ConventionFileService.upload_convention_file(convention, request.FILES["file"])
+            ConventionFileService.upload_convention_file(
+                convention, request.FILES["file"]
+            )
             result_status = utils.ReturnStatus.SUCCESS
     else:
         upform = UploadForm()
