@@ -24,44 +24,51 @@
                         {% include "common/display_field_if_exists.html" with label="Mention de publication de l'EDD classique" value=programme.mention_publication_edd_classique object_field="programme__mention_publication_edd_classique__"|add:programme_uuid %}
                     </div>
                     <p class="fr-my-1w">EDD Simplifé : </p>
-                    <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                        <table  aria-label="Logements de l'EDD">
-                            <thead>
-                                <tr>
-                                    {% if convention|display_comments %}
-                                        {% include 'common/utils/comments_header.html' with object_name='logement_edd' label="Logements de l'EDD" callback_click="refresh_opened_comments" %}
-                                    {% endif %}
-                                    <th scope="col">Financement {% include "common/form/required_field_star.html" %}</th>
-                                    <th scope="col">Désignation {% include "common/form/required_field_star.html" %}</th>
-                                    <th scope="col">Numéro de lot {% include "common/form/required_field_star.html" %}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for lgt in logement_edds %}
-                                    {% with lgt_uuid=lgt.uuid|slugify %}
-                                        {% with main_object_field="logement_edd__uuid__"|add:lgt_uuid %}
-                                            <tr id="{{main_object_field}}_group">
-                                                {% if convention|display_comments %}
-                                                    <td id="{{main_object_field}}_div">
-                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement de l'EDD" callback_click="refresh_opened_comments" %}
+                    {% if logement_edds %}
+                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
+                            <table  aria-label="Logements de l'EDD">
+                                <thead>
+                                    <tr>
+                                        {% if convention|display_comments %}
+                                            {% include 'common/utils/comments_header.html' with object_name='logement_edd' label="Logements de l'EDD" callback_click="refresh_opened_comments" %}
+                                        {% endif %}
+                                        <th scope="col">Financement {% include "common/form/required_field_star.html" %}</th>
+                                        <th scope="col">Désignation {% include "common/form/required_field_star.html" %}</th>
+                                        <th scope="col">Numéro de lot {% include "common/form/required_field_star.html" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for lgt in logement_edds %}
+                                        {% with lgt_uuid=lgt.uuid|slugify %}
+                                            {% with main_object_field="logement_edd__uuid__"|add:lgt_uuid %}
+                                                <tr id="{{main_object_field}}_group">
+                                                    {% if convention|display_comments %}
+                                                        <td id="{{main_object_field}}_div">
+                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement de l'EDD" callback_click="refresh_opened_comments" %}
+                                                        </td>
+                                                    {% endif %}
+                                                    <td>
+                                                        {{lgt.financement}}
                                                     </td>
-                                                {% endif %}
-                                                <td>
-                                                    {{lgt.financement}}
-                                                </td>
-                                                <td>
-                                                    {{lgt.designation}}
-                                                </td>
-                                                <td>
-                                                    {{lgt.numero_lot}}
-                                                </td>
-                                            </tr>
+                                                    <td>
+                                                        {{lgt.designation}}
+                                                    </td>
+                                                    <td>
+                                                        {{lgt.numero_lot}}
+                                                    </td>
+                                                </tr>
+                                            {% endwith %}
                                         {% endwith %}
-                                    {% endwith %}
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="fr-my-2w">
+                            <p class="fr-mb-0 notes"><em>Vous n'avez indiqué aucun EDD simplifié.</em></p>
+                            <a class="fr-mb-1w fr-link" href="{% url target_url convention_uuid=convention.uuid %}">Ajouter un EDD</a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
