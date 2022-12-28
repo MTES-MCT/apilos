@@ -68,7 +68,7 @@
                     {% else %}
                         <div class="fr-my-2w">
                             <p class="fr-mb-0 notes"><em>Vous n'avez indiqué aucune annexe.</em></p>
-                            <a class="fr-mb-1w fr-link" href="{% url 'conventions:annexes' convention_uuid=convention.uuid %}" >Ajouter une annexe</a>
+                            <a class="fr-mb-1w fr-link" href="{% url target_url convention_uuid=convention.uuid %}">Ajouter une annexe</a>
                         </div>
                     {% endif %}
                     <div class="fr-grid-row fr-grid-row--gutters">

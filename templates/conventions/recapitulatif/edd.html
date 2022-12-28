@@ -66,7 +66,7 @@
                     {% else %}
                         <div class="fr-my-2w">
                             <p class="fr-mb-0 notes"><em>Vous n'avez indiqué aucun EDD simplifié.</em></p>
-                            <a class="fr-mb-1w fr-link" href="{% url 'conventions:edd' convention_uuid=convention.uuid %}" >Ajouter un EDD</a>
+                            <a class="fr-mb-1w fr-link" href="{% url target_url convention_uuid=convention.uuid %}">Ajouter un EDD</a>
                         </div>
                     {% endif %}
                 </div>

@@ -102,7 +102,7 @@
                     {% else %}
                         <div class="fr-my-2w">
                             <p class="fr-mb-0 notes"><em>Vous n'avez indiqué aucune logement.</em></p>
-                            <a class="fr-mb-1w fr-link" href="{% url 'conventions:logements' convention_uuid=convention.uuid %}" >Ajouter un logement</a>
+                            <a class="fr-mb-1w fr-link" href="{% url target_url convention_uuid=convention.uuid %}">Ajouter un logement</a>
                         </div>
                     {% endif %}
                     {% include "common/display_field_if_exists.html" with label="loyer dérogatoire" value=lot.loyer_derogatoire object_field="lot__loyer_derogatoire__"|add:lot_uuid %}

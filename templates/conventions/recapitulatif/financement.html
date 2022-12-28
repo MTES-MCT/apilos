@@ -70,7 +70,7 @@
                     {% else %}
                         <div class="fr-my-2w">
                             <p class="fr-mb-0 notes"><em>Vous n'avez indiqué aucun financement.</em></p>
-                            <a class="fr-mb-1w fr-link" href="{% url 'conventions:financement' convention_uuid=convention.uuid %}" >Ajouter un prêt ou une subvention</a>
+                            <a class="fr-mb-1w fr-link"href="{% url target_url convention_uuid=convention.uuid %}">Ajouter un prêt ou une subvention</a>
                         </div>
                     {% endif %}
                     {% include "common/display_field_if_exists.html" with label="Date de fin de la convention" value=convention.date_fin_conventionnement object_field="convention__annee_fin_conventionnement__"|add:convention_uuid %}
