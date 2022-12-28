@@ -8,7 +8,7 @@ from conventions.forms import (
 )
 from conventions.models import Convention
 from conventions.services import (
-    services_conventions,
+    commentaires,
     utils,
 )
 from core.tests import utils_fixtures
@@ -24,10 +24,8 @@ class ConventionCommentsServiceTests(TestCase):
         request = HttpRequest()
         convention = Convention.objects.get(numero="0001")
         request.user = User.objects.get(username="fix")
-        self.convention_comments_service = (
-            services_conventions.ConventionCommentsService(
-                convention=convention, request=request
-            )
+        self.convention_comments_service = commentaires.ConventionCommentsService(
+            convention=convention, request=request
         )
 
     def test_get(self):

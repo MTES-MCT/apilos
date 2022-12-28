@@ -5,7 +5,7 @@ from conventions.forms import UploadForm
 
 from conventions.models import Convention
 from conventions.services import (
-    services_programmes,
+    cadastre as service_cadatsre,
     utils,
 )
 from core.tests import utils_fixtures
@@ -14,7 +14,7 @@ from users.models import User
 
 
 class ConventionCadastreServiceTests(TestCase):
-    service_class = services_programmes.ConventionCadastreService
+    service_class = service_cadatsre.ConventionCadastreService
 
     @classmethod
     def setUpTestData(cls):

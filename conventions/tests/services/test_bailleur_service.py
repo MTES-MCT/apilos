@@ -6,7 +6,7 @@ from django.test import TestCase
 from bailleurs.forms import ConventionBailleurForm
 from conventions.models import Convention
 from conventions.services import (
-    services_bailleurs,
+    bailleurs,
     utils,
 )
 from core.tests import utils_fixtures
@@ -22,7 +22,7 @@ class ConventionBailleurServiceTests(TestCase):
         request = HttpRequest()
         convention = Convention.objects.get(numero="0001")
         request.user = User.objects.get(username="fix")
-        self.service = services_bailleurs.ConventionBailleurService(
+        self.service = bailleurs.ConventionBailleurService(
             convention=convention, request=request
         )
 

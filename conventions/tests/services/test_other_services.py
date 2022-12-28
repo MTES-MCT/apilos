@@ -5,7 +5,7 @@ from django.test import RequestFactory, TestCase
 
 from conventions.models import Convention, ConventionStatut
 from conventions.services import (
-    services_conventions,
+    recapitulatif as service_recapitilatif,
     utils,
 )
 from core.services import EmailService
@@ -21,7 +21,7 @@ class ServicesConventionsTests(TestCase):
 
     def test_send_email_instruction(self):
         convention = Convention.objects.get(numero="0001")
-        email_sent = services_conventions.send_email_instruction(
+        email_sent = service_recapitilatif.send_email_instruction(
             "https://apilos.beta.gouv.fr/my_convention", convention, ["fix@apilos.com"]
         )
         self.assertEqual(email_sent[0].to, ["raph@apilos.com"])
@@ -43,7 +43,7 @@ class ServicesConventionsTests(TestCase):
         User.objects.filter(username="fix").update(
             preferences_email=EmailPreferences.AUCUN
         )
-        email_sent = services_conventions.send_email_instruction(
+        email_sent = service_recapitilatif.send_email_instruction(
             "https://apilos.beta.gouv.fr/my_convention", convention, []
         )
         self.assertEqual(email_sent[0].to, ["contact@apilos.beta.gouv.fr"])
@@ -135,7 +135,7 @@ class ServicesConventionsTests(TestCase):
     def test_send_email_correction(self):
         convention = Convention.objects.get(numero="0001")
 
-        email_sent = services_conventions.send_email_correction(
+        email_sent = service_recapitilatif.send_email_correction(
             "https://apilos.beta.gouv.fr/my_convention",
             convention,
             ["me@apilos.com"],
@@ -150,7 +150,7 @@ class ServicesConventionsTests(TestCase):
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
         self.assertIn("Toto à un vélo", email_sent.body)
 
-        email_sent = services_conventions.send_email_correction(
+        email_sent = service_recapitilatif.send_email_correction(
             "https://apilos.beta.gouv.fr/my_convention", convention, [], False
         )
 
@@ -168,7 +168,7 @@ class ServicesConventionsTests(TestCase):
             preferences_email=EmailPreferences.AUCUN
         )
 
-        email_sent = services_conventions.send_email_correction(
+        email_sent = service_recapitilatif.send_email_correction(
             "https://apilos.beta.gouv.fr/my_convention",
             convention,
             ["me@apilos.com"],
@@ -186,7 +186,7 @@ class ServicesConventionsTests(TestCase):
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
         self.assertIn("Toto à un vélo", email_sent.body)
 
-        email_sent = services_conventions.send_email_correction(
+        email_sent = service_recapitilatif.send_email_correction(
             "https://apilos.beta.gouv.fr/my_convention",
             convention,
             [],

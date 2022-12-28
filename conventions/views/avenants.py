@@ -1,27 +1,18 @@
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import (
-    HttpResponseRedirect,
-)
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 
-from conventions.services.services_conventions import (
-    create_avenant,
-)
-
 from conventions.services.avenants import (
+    create_avenant,
     search_result,
     upload_avenants_for_avenant,
     complete_avenants_for_avenant,
 )
-from conventions.services.services_programmes import (
-    ConventionSelectionService,
-)
-from conventions.services.utils import (
-    ReturnStatus,
-)
+from conventions.services.selection import ConventionSelectionService
+from conventions.services.utils import ReturnStatus
 
 
 @login_required
