@@ -10,7 +10,10 @@ from drf_spectacular.utils import (
 )
 
 from siap.siap_authentication import SIAPJWTAuthentication
-from programmes.services import get_or_create_conventions_from_operation_number
+from programmes.services import (
+    get_or_create_avenant_on_closed_operation,
+    get_or_create_conventions_from_operation_number,
+)
 from programmes.models import Programme
 from programmes.api.operation_serializers import (
     ClosingOperationSerializer,
@@ -113,4 +116,12 @@ class OperationClosed(OperationDetails):
         ),
     )
     def post(self, request, numero_galion):
+        # steps:
+        # 1. get operation from SIAP
+        # 2. collecte all reason to create an avenant
+        #   2.1. typologies / nombre des logements
+        #   2.2. ...
+        # 3. create avenant if needed (explain why in comments of the avenant)
+        # 4. return operations with its convention and avenants
+        get_or_create_avenant_on_closed_operation(request, numero_galion)
         return self.get(request, numero_galion)
