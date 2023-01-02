@@ -13,6 +13,35 @@ administration = {
     "code": "12345",
     "ville_signature": None,
 }
+programme1 = {
+    "nom": "Programme 1",
+    "code_postal": "75007",
+    "ville": "Paris",
+    "adresse": "22 rue segur",
+    "numero_galion": "20220600005",
+    "zone_123": "3",
+    "zone_abc": "B1",
+    "type_operation": "NEUF",
+    "anru": False,
+    "date_achevement_previsible": "2024-01-02",
+    "date_achat": "2022-01-02",
+    "date_achevement": "2024-04-11",
+}
+programme2 = {
+    "nom": "Programme 2",
+    "code_postal": "13010",
+    "ville": "Marseille",
+    "adresse": "Rue Francois Mauriac ",
+    "numero_galion": "20220600006",
+    "zone_123": "A",
+    "zone_abc": "02",
+    "type_operation": "NEUF",
+    "anru": False,
+    "date_achevement_previsible": None,
+    "date_achat": None,
+    "date_achevement": None,
+}
+
 logts1 = [
     {
         "designation": "PLUS 1",
@@ -41,6 +70,7 @@ convention1 = {
     "lot": lot1,
     "numero": "0001",
     "statut": "1. Projet",
+    "operation_version": programme1,
 }
 convention1signed = {
     "date_fin_conventionnement": None,
@@ -49,6 +79,7 @@ convention1signed = {
     "lot": lot1,
     "numero": "0001",
     "statut": "5. Signée",
+    "operation_version": programme1,
 }
 annexes = [
     {
@@ -116,6 +147,7 @@ convention2 = {
     "lot": lot2,
     "numero": "0002",
     "statut": "1. Projet",
+    "operation_version": programme1,
 }
 convention2signed = {
     "date_fin_conventionnement": None,
@@ -124,4 +156,5 @@ convention2signed = {
     "lot": lot2,
     "numero": "0002",
     "statut": "5. Signée",
+    "operation_version": programme1,
 }

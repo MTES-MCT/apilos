@@ -11,8 +11,9 @@ from core.tests import utils_fixtures
 from programmes.api.tests import fixtures
 from programmes.models import Programme
 
+
 operation_response = {
-    "nom": "Programme 2",
+    **fixtures.programme2,
     "bailleur": {
         "nom": "13 HABITAT",
         "siren": "782855696",
@@ -28,6 +29,23 @@ operation_response = {
         "code": "13055",
         "ville_signature": None,
     },
+    "conventions": [
+        {
+            "date_fin_conventionnement": None,
+            "financement": "PLUS",
+            "fond_propre": None,
+            "lot": {
+                "nb_logements": 1,
+                "financement": "PLUS",
+                "type_habitat": "COLLECTIF",
+                "logements": [],
+                "type_stationnements": [],
+            },
+            "numero": None,
+            "statut": "1. Projet",
+            "operation_version": fixtures.programme2,
+        }
+    ],
     "all_conventions": [
         {
             "date_fin_conventionnement": None,
@@ -42,20 +60,9 @@ operation_response = {
             },
             "numero": None,
             "statut": "1. Projet",
+            "operation_version": fixtures.programme2,
         }
     ],
-    "code_postal": "13010",
-    "ville": "Marseille",
-    "adresse": "Rue Francois Mauriac ",
-    "numero_galion": "20220600006",
-    "zone_123": "A",
-    "zone_abc": "02",
-    "type_operation": "NEUF",
-    "anru": False,
-    "date_achevement_previsible": None,
-    "date_achat": None,
-    "date_achevement": None,
-    #    "summary": "toto",
 }
 
 
