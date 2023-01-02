@@ -10,7 +10,6 @@ from upload.services import UploadService
 
 
 class ConventionFileService:
-
     @classmethod
     def upload_convention_file(cls, convention: Convention, file: File):
         now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
@@ -28,7 +27,9 @@ class ConventionFileService:
 
     @classmethod
     def promote_piece_jointe(cls, piece_jointe: PieceJointe) -> bool:
-        file = client.get_object(settings.AWS_ECOLOWEB_BUCKET_NAME, f'piecesJointes/{piece_jointe.fichier}')
+        file = client.get_object(
+            settings.AWS_ECOLOWEB_BUCKET_NAME, f"piecesJointes/{piece_jointe.fichier}"
+        )
         if file is None:
             return False
 
