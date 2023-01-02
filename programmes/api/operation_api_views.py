@@ -83,7 +83,7 @@ class OperationClosed(OperationDetails):
     @extend_schema(
         tags=["operation"],
         responses={
-            200: MySerializer,
+            200: ClosingOperationSerializer,
             400: OpenApiResponse(description="Bad request (something invalid)"),
             401: OpenApiResponse(description="Unauthorized"),
             403: OpenApiResponse(description="Forbidden"),
@@ -102,7 +102,7 @@ class OperationClosed(OperationDetails):
     @extend_schema(
         tags=["operation"],
         responses={
-            200: MySerializer,
+            200: ClosingOperationSerializer,
             400: OpenApiResponse(description="Bad request (something invalid)"),
             401: OpenApiResponse(description="Unauthorized"),
             403: OpenApiResponse(description="Forbidden"),

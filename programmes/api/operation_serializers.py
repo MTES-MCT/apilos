@@ -133,11 +133,10 @@ class ConventionSerializer(serializers.HyperlinkedModelSerializer):
 class OperationSerializer(serializers.HyperlinkedModelSerializer):
     bailleur = BailleurSerializer(read_only=True)
     administration = AdministrationSerializer(read_only=True)
-    all_conventions = ConventionSerializer(many=True)
-    conventions = ConventionSerializer(many=True)
+    conventions = ConventionSerializer(source="all_conventions", many=True)
 
     # Deprecated fields to check with SIAP Sully team:
-    #   conventions, nom, code_postal, ville, adresse, numero_galion, zone_123, zone_abc,
+    #   nom, code_postal, ville, adresse, zone_123, zone_abc,
     #   type_operation, anru, date_achevement_previsible, date_achat, date_achevement
 
     class Meta:
@@ -147,7 +146,6 @@ class OperationSerializer(serializers.HyperlinkedModelSerializer):
             "bailleur",
             "administration",
             "conventions",
-            "all_conventions",
             "code_postal",
             "ville",
             "adresse",

@@ -46,23 +46,6 @@ operation_response = {
             "operation_version": fixtures.programme2,
         }
     ],
-    "all_conventions": [
-        {
-            "date_fin_conventionnement": None,
-            "financement": "PLUS",
-            "fond_propre": None,
-            "lot": {
-                "nb_logements": 1,
-                "financement": "PLUS",
-                "type_habitat": "COLLECTIF",
-                "logements": [],
-                "type_stationnements": [],
-            },
-            "numero": None,
-            "statut": "1. Projet",
-            "operation_version": fixtures.programme2,
-        }
-    ],
 }
 
 
@@ -106,7 +89,7 @@ class OperationDetailsAPITest(APITestCase):
             "nom": "Programme 1",
             "bailleur": fixtures.bailleur,
             "administration": fixtures.administration,
-            "all_conventions": [fixtures.convention1, fixtures.convention2],
+            "conventions": [fixtures.convention1, fixtures.convention2],
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
@@ -200,7 +183,7 @@ class OperationClosedAPITest(APITestCase):
             "nom": "Programme 1",
             "bailleur": fixtures.bailleur,
             "administration": fixtures.administration,
-            "all_conventions": [fixtures.convention1, fixtures.convention2],
+            "conventions": [fixtures.convention1, fixtures.convention2],
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
@@ -233,7 +216,7 @@ class OperationClosedAPITest(APITestCase):
             "nom": "Programme 1",
             "bailleur": fixtures.bailleur,
             "administration": fixtures.administration,
-            "all_conventions": [
+            "conventions": [
                 fixtures.convention1signed,
                 fixtures.convention2signed,
             ],
@@ -272,7 +255,7 @@ class OperationClosedAPITest(APITestCase):
         response = client.get("/api-siap/v0/close_operation/20220600005/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(len(response.data["all_conventions"]), 3)
+        self.assertEqual(len(response.data["conventions"]), 3)
         self.assertFalse(response.data["all_conventions_are_signed"])
         self.assertEqual(
             response.data["last_conventions_state"],
@@ -290,7 +273,7 @@ class OperationClosedAPITest(APITestCase):
         response = client.get("/api-siap/v0/close_operation/20220600005/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(len(response.data["all_conventions"]), 3)
+        self.assertEqual(len(response.data["conventions"]), 3)
         self.assertTrue(response.data["all_conventions_are_signed"])
         self.assertEqual(len(response.data["last_conventions_state"]), 2)
         self.assertEqual(
@@ -321,7 +304,7 @@ class OperationClosedAPITest(APITestCase):
             "nom": "Programme 1",
             "bailleur": fixtures.bailleur,
             "administration": fixtures.administration,
-            "all_conventions": [fixtures.convention1, fixtures.convention2],
+            "conventions": [fixtures.convention1, fixtures.convention2],
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
