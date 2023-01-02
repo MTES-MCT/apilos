@@ -12,7 +12,10 @@ from drf_spectacular.utils import (
 from siap.siap_authentication import SIAPJWTAuthentication
 from programmes.services import get_or_create_conventions_from_operation_number
 from programmes.models import Programme
-from programmes.api.operation_serializers import OperationSerializer as MySerializer
+from programmes.api.operation_serializers import (
+    ClosingOperationSerializer,
+    OperationSerializer as MySerializer,
+)
 
 
 class OperationDetails(generics.GenericAPIView):
@@ -25,10 +28,14 @@ class OperationDetails(generics.GenericAPIView):
 
     serializer_class = MySerializer
 
-    # pylint: disable=W0221 arguments-differ
-    def get_object(self, numero_galion):
+    def get_last_relevant_programme(self, numero_galion):
         try:
-            programme = Programme.objects.get(numero_galion=numero_galion)
+            # dernière version
+            programme = (
+                Programme.objects.filter(numero_galion=numero_galion)
+                .order_by("-cree_le")
+                .first()
+            )
             return programme
         except Programme.DoesNotExist as does_not_exist:
             raise Http404 from does_not_exist
@@ -45,7 +52,7 @@ class OperationDetails(generics.GenericAPIView):
         description="Return Operations and all its conventions",
     )
     def get(self, request, numero_galion):
-        programme = self.get_object(numero_galion)
+        programme = self.get_last_relevant_programme(numero_galion)
         serializer = MySerializer(programme)
         return Response(serializer.data)
 
@@ -88,8 +95,8 @@ class OperationClosed(OperationDetails):
         ),
     )
     def get(self, request, numero_galion):
-        programme = self.get_object(numero_galion)
-        serializer = MySerializer(programme)
+        programme = self.get_last_relevant_programme(numero_galion)
+        serializer = ClosingOperationSerializer(programme)
         return Response(serializer.data)
 
     @extend_schema(

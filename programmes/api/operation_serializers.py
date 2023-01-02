@@ -111,7 +111,7 @@ class ConventionSerializer(serializers.HyperlinkedModelSerializer):
 class OperationSerializer(serializers.HyperlinkedModelSerializer):
     bailleur = BailleurSerializer(read_only=True)
     administration = AdministrationSerializer(read_only=True)
-    conventions = ConventionSerializer(many=True)
+    all_conventions = ConventionSerializer(many=True)
 
     class Meta:
         model = Programme
@@ -119,7 +119,7 @@ class OperationSerializer(serializers.HyperlinkedModelSerializer):
             "nom",
             "bailleur",
             "administration",
-            "conventions",
+            "all_conventions",
             "code_postal",
             "ville",
             "adresse",
@@ -133,3 +133,15 @@ class OperationSerializer(serializers.HyperlinkedModelSerializer):
             "date_achevement",
         )
         ref_name = "Operation"
+
+
+class ClosingOperationSerializer(OperationSerializer):
+    last_conventions_state = ConventionSerializer(many=True)
+
+    class Meta:
+        model = OperationSerializer.Meta.model
+        fields = OperationSerializer.Meta.fields + (
+            "all_conventions_are_signed",
+            "last_conventions_state",
+        )
+        ref_name = "ClosingOperation"

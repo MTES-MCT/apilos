@@ -42,6 +42,14 @@ convention1 = {
     "numero": "0001",
     "statut": "1. Projet",
 }
+convention1signed = {
+    "date_fin_conventionnement": None,
+    "financement": "PLUS",
+    "fond_propre": None,
+    "lot": lot1,
+    "numero": "0001",
+    "statut": "5. Signée",
+}
 annexes = [
     {
         "typologie": "CAVE",
@@ -108,4 +116,12 @@ convention2 = {
     "lot": lot2,
     "numero": "0002",
     "statut": "1. Projet",
+}
+convention2signed = {
+    "date_fin_conventionnement": None,
+    "financement": "PLAI",
+    "fond_propre": None,
+    "lot": lot2,
+    "numero": "0002",
+    "statut": "5. Signée",
 }
