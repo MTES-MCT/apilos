@@ -22,7 +22,7 @@ class Command(BaseCommand):
     # pylint: disable=R0912,R0914,R0915
     def handle(self, *args, **options):
         basedir = settings.BASE_DIR
-        file_path = os.path.join(basedir, "documents", "v5.xlsx")
+        file_path = os.path.join(basedir, "documents", "v6.xlsx")
 
         file_path_input = input("Enter your value (default: " + file_path + "): ")
         file_path = file_path_input or file_path
