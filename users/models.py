@@ -5,6 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models.functions import Substr
 from django.forms.models import model_to_dict
+from simple_history.models import HistoricalRecords
 
 from apilos_settings.models import Departement
 from bailleurs.models import Bailleur
@@ -59,6 +60,7 @@ class User(AbstractUser):
     creator = models.ForeignKey(
         "users.User", on_delete=models.SET_NULL, blank=True, null=True
     )
+    history = HistoricalRecords()
 
     def has_object_permission(self, obj):
         if isinstance(obj, (Convention, Lot)):
@@ -313,13 +315,16 @@ class User(AbstractUser):
         For a `bailleur`, it returns the conventions of its bailleur entities in the limit of its
         geographic filter.
 
-        The active argument allows to filter this list based on the status of the convention, whether it's active
-        (A_SIGNER and below) or completed (SIGNEE and up). If omitted or None, no filter is applied
+        The active argument allows to filter this list based on the status of the convention,
+        whether it's active (A_SIGNER and below) or completed (SIGNEE and up).
+        If omitted or None, no filter is applied
         """
         convs = Convention.objects.filter(parent_id__isnull=True)
         if active is not None:
             convs = convs.filter(
-                statut__in=ConventionStatut.active_statuts() if active else ConventionStatut.completed_statuts()
+                statut__in=ConventionStatut.active_statuts()
+                if active
+                else ConventionStatut.completed_statuts()
             )
 
         if self.is_superuser:
@@ -457,6 +462,7 @@ class Role(models.Model):
     )
     perimetre_region = models.CharField(max_length=10, null=True)
     perimetre_departement = models.CharField(max_length=10, null=True)
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         logger.info(

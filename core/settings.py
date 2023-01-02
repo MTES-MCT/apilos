@@ -142,6 +142,7 @@ INSTALLED_APPS = [
     "explorer",
     "ecoloweb",
     "anymail",
+    "simple_history",
 ]
 
 MIDDLEWARE = [
@@ -153,6 +154,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
 if not TESTING:
