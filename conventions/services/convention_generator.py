@@ -38,6 +38,8 @@ class ConventionTypeConfigurationError(Exception):
 def get_convention_template_path(convention):
     # pylint: disable=R0911
     if convention.is_avenant():
+        if convention.programme.is_foyer() or convention.programme.is_residence():
+            return f"{settings.BASE_DIR}/documents/FoyerResidence-Avenant-template.docx"
         return f"{settings.BASE_DIR}/documents/Avenant-template.docx"
     if convention.programme.is_foyer():
         return f"{settings.BASE_DIR}/documents/Foyer-template.docx"
@@ -161,10 +163,13 @@ def generate_convention_doc(convention: Convention, save_data=False):
 
 
 def typologie_label(typologie: str):
+    typo = (
+        TypologieLogement(typologie).label
+        if typologie in TypologieLogement
+        else typologie
+    )
     return (
-        typologie.replace("T", "Logement T ")
-        if typologie in TypologieLogement.labels
-        else None
+        typo.replace("T", "Logement T ") if typo in TypologieLogement.labels else None
     )
 
 

@@ -46,11 +46,18 @@ class ConventionServiceGeneratorTest(TestCase):
             get_convention_template_path(avenant),
             f"{settings.BASE_DIR}/documents/Avenant-template.docx",
         )
+        avenant.delete()
         convention.programme.nature_logement = NatureLogement.AUTRE
         self.assertEqual(
             get_convention_template_path(convention),
             f"{settings.BASE_DIR}/documents/Foyer-template.docx",
         )
+        foyer_avenant = convention.clone(user, convention_origin=convention)
+        self.assertEqual(
+            get_convention_template_path(foyer_avenant),
+            f"{settings.BASE_DIR}/documents/FoyerResidence-Avenant-template.docx",
+        )
+
         for nature_logement in [
             NatureLogement.HEBERGEMENT,
             NatureLogement.RESISDENCESOCIALE,
@@ -110,6 +117,11 @@ class ConventionServiceGeneratorTest(TestCase):
             typologie_label(TypologieLogement.T1prime.label), "Logement T 1'"
         )
         self.assertEqual(typologie_label(TypologieLogement.T7.label), "Logement T 7")
+        self.assertEqual(typologie_label(TypologieLogement.T1.value), "Logement T 1")
+        self.assertEqual(
+            typologie_label(TypologieLogement.T1prime.value), "Logement T 1'"
+        )
+        self.assertEqual(typologie_label(TypologieLogement.T7.value), "Logement T 7")
         self.assertEqual(typologie_label("Invalid value"), None)
 
     def test_default_str_if_none(self):
