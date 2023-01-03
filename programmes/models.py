@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from conventions.models.choices import ConventionStatut
 
 from core.models import IngestableModel
 from core.utils import get_key_from_json_field
@@ -158,6 +159,7 @@ class TypologieStationnement(models.TextChoices):
 
 
 class Programme(IngestableModel):
+    # pylint: disable=R0904
     pivot = ["bailleur", "nom", "ville"]
     mapping = {
         "nom": "Nom Opération",
@@ -250,6 +252,56 @@ class Programme(IngestableModel):
     date_achevement_compile = models.DateField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+    @property
+    def all_conventions_are_signed(self):
+        not_signed_conventions = [
+            convention
+            for convention in self.all_conventions
+            if convention.statut
+            in [
+                ConventionStatut.PROJET,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+                ConventionStatut.A_SIGNER,
+            ]
+        ]
+        return not not_signed_conventions
+
+    @property
+    def last_conventions_state(self):
+        conventions_by_financement = {}
+        conventions = [
+            convention
+            for convention in self.all_conventions
+            if convention.statut
+            not in [
+                ConventionStatut.PROJET,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+                ConventionStatut.A_SIGNER,
+            ]
+        ]
+        for convention in conventions:
+            if (
+                convention.financement not in conventions_by_financement
+                or conventions_by_financement[convention.financement].cree_le
+                < convention.cree_le
+            ):
+                conventions_by_financement[convention.financement] = convention
+
+        # filter last signed one by fianncement
+        return [convention for _, convention in conventions_by_financement.items()]
+
+    @property
+    def all_conventions(self):
+        return [
+            convention
+            for programme in Programme.objects.filter(
+                numero_galion=self.numero_galion
+            ).all()
+            for convention in programme.conventions.all()
+        ]
 
     def __str__(self):
         return self.nom

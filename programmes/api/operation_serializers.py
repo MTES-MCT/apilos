@@ -92,8 +92,29 @@ class LotSerializer(serializers.HyperlinkedModelSerializer):
         ref_name = "Lot"
 
 
+class OperationVersionSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Programme
+        fields = (
+            "nom",
+            "code_postal",
+            "ville",
+            "adresse",
+            "numero_galion",
+            "zone_123",
+            "zone_abc",
+            "type_operation",
+            "anru",
+            "date_achevement_previsible",
+            "date_achat",
+            "date_achevement",
+        )
+        ref_name = "Operation"
+
+
 class ConventionSerializer(serializers.HyperlinkedModelSerializer):
     lot = LotSerializer(read_only=True)
+    operation_version = OperationVersionSerializer(source="programme", read_only=True)
 
     class Meta:
         model = Convention
@@ -102,6 +123,7 @@ class ConventionSerializer(serializers.HyperlinkedModelSerializer):
             "financement",
             "fond_propre",
             "lot",
+            "operation_version",
             "numero",
             "statut",
         )
@@ -111,7 +133,11 @@ class ConventionSerializer(serializers.HyperlinkedModelSerializer):
 class OperationSerializer(serializers.HyperlinkedModelSerializer):
     bailleur = BailleurSerializer(read_only=True)
     administration = AdministrationSerializer(read_only=True)
-    conventions = ConventionSerializer(many=True)
+    conventions = ConventionSerializer(source="all_conventions", many=True)
+
+    # Deprecated fields to check with SIAP Sully team:
+    #   nom, code_postal, ville, adresse, zone_123, zone_abc,
+    #   type_operation, anru, date_achevement_previsible, date_achat, date_achevement
 
     class Meta:
         model = Programme
@@ -133,3 +159,15 @@ class OperationSerializer(serializers.HyperlinkedModelSerializer):
             "date_achevement",
         )
         ref_name = "Operation"
+
+
+class ClosingOperationSerializer(OperationSerializer):
+    last_conventions_state = ConventionSerializer(many=True)
+
+    class Meta:
+        model = OperationSerializer.Meta.model
+        fields = OperationSerializer.Meta.fields + (
+            "all_conventions_are_signed",
+            "last_conventions_state",
+        )
+        ref_name = "ClosingOperation"
