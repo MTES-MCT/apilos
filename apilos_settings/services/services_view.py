@@ -22,6 +22,7 @@ from users.models import User, Role, TypeRole
 from conventions.services.utils import ReturnStatus
 from users.forms import UserBailleurFormSet
 from users.services import UserService
+from core.services import EmailTemplateID
 
 
 def user_profile(request):
@@ -436,10 +437,21 @@ def add_user(request):
             if form.cleaned_data["filtre_departements"] is not None:
                 user.filtre_departements.clear()
                 user.filtre_departements.add(*form.cleaned_data["filtre_departements"])
-            EmailService().send_welcome_email(
-                user, password, request.build_absolute_uri("/accounts/login/")
-            )
+            if not settings.SENDINBLUE_API_KEY:
+                EmailService().send_welcome_email(
+                    user, password, request.build_absolute_uri("/accounts/login/")
+                )
             if form.cleaned_data["user_type"] == "BAILLEUR":
+                EmailService(
+                    to_emails=[user.email],
+                    email_template_id=EmailTemplateID.B_WELCOME,
+                ).send_transactional_email(
+                    email_data={
+                        "password": password,
+                        "user": user,
+                        "login_url": request.build_absolute_uri("/accounts/login/"),
+                    }
+                )
                 Role.objects.create(
                     typologie=TypeRole.BAILLEUR,
                     bailleur=request.user.bailleurs().get(
@@ -449,6 +461,17 @@ def add_user(request):
                     group=Group.objects.get(name="bailleur"),
                 )
             if form.cleaned_data["user_type"] == "INSTRUCTEUR":
+                EmailService(
+                    to_emails=[user.email],
+                    email_template_id=EmailTemplateID.I_WELCOME,
+                ).send_transactional_email(
+                    email_data={
+                        "password": password,
+                        "user": user,
+                        "login_url": request.build_absolute_uri("/accounts/login/")
+                        + "?instructeur=1",
+                    }
+                )
                 Role.objects.create(
                     typologie=TypeRole.INSTRUCTEUR,
                     administration=request.user.administrations().get(

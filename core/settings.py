@@ -88,7 +88,7 @@ LOGGING = {
 mailjet_api_key = get_env_variable("MAILJET_API_KEY")
 mailjet_api_secret = get_env_variable("MAILJET_API_SECRET")
 
-sendinblue_api_key = get_env_variable("SENDINBLUE_API_KEY")
+SENDINBLUE_API_KEY = get_env_variable("SENDINBLUE_API_KEY")
 
 
 DEFAULT_FROM_EMAIL = "ne-pas-repondre@apilos.beta.gouv.fr"
@@ -97,9 +97,9 @@ if mailjet_api_key != "":
     EMAIL_BACKEND = "django_mailjet.backends.MailjetBackend"
     MAILJET_API_KEY = mailjet_api_key
     MAILJET_API_SECRET = mailjet_api_secret
-elif sendinblue_api_key:
+elif SENDINBLUE_API_KEY:
     ANYMAIL = {
-        "SENDINBLUE_API_KEY": sendinblue_api_key,
+        "SENDINBLUE_API_KEY": SENDINBLUE_API_KEY,
     }
     EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
 
