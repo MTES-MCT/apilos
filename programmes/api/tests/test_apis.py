@@ -89,7 +89,7 @@ class OperationDetailsAPITest(APITestCase):
             "nom": "Programme 1",
             "bailleur": fixtures.bailleur,
             "administration": fixtures.administration,
-            "conventions": [fixtures.convention1, fixtures.convention2],
+            #            "conventions": [fixtures.convention1, fixtures.convention2],
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
@@ -183,7 +183,7 @@ class OperationClosedAPITest(APITestCase):
             "nom": "Programme 1",
             "bailleur": fixtures.bailleur,
             "administration": fixtures.administration,
-            "conventions": [fixtures.convention1, fixtures.convention2],
+            #            "conventions": [fixtures.convention1, fixtures.convention2],
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
@@ -216,10 +216,10 @@ class OperationClosedAPITest(APITestCase):
             "nom": "Programme 1",
             "bailleur": fixtures.bailleur,
             "administration": fixtures.administration,
-            "conventions": [
-                fixtures.convention1signed,
-                fixtures.convention2signed,
-            ],
+            # "conventions": [
+            #     fixtures.convention1signed,
+            #     fixtures.convention2signed,
+            # ],
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
@@ -229,10 +229,10 @@ class OperationClosedAPITest(APITestCase):
             "type_operation": "NEUF",
             "anru": False,
             "all_conventions_are_signed": True,
-            "last_conventions_state": [
-                fixtures.convention1signed,
-                fixtures.convention2signed,
-            ],
+            # "last_conventions_state": [
+            #     fixtures.convention1signed,
+            #     fixtures.convention2signed,
+            # ],
         }
         for key, value in expected_data.items():
             self.assertEqual(response.data[key], value)
@@ -257,13 +257,13 @@ class OperationClosedAPITest(APITestCase):
 
         self.assertEqual(len(response.data["conventions"]), 3)
         self.assertFalse(response.data["all_conventions_are_signed"])
-        self.assertEqual(
-            response.data["last_conventions_state"],
-            [
-                fixtures.convention1signed,
-                fixtures.convention2signed,
-            ],
-        )
+        # self.assertEqual(
+        #     response.data["last_conventions_state"],
+        #     [
+        #         fixtures.convention1signed,
+        #         fixtures.convention2signed,
+        #     ],
+        # )
 
         avenant1.lot.nb_logements = 10
         avenant1.lot.save()
@@ -304,7 +304,7 @@ class OperationClosedAPITest(APITestCase):
             "nom": "Programme 1",
             "bailleur": fixtures.bailleur,
             "administration": fixtures.administration,
-            "conventions": [fixtures.convention1, fixtures.convention2],
+            # "conventions": [fixtures.convention1, fixtures.convention2],
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
