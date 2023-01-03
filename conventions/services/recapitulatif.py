@@ -1,8 +1,8 @@
-from datetime import timezone
 from django.http import HttpRequest
 from django.views.decorators.http import require_GET, require_POST
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import timezone
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.convention_number import ConventionNumberForm

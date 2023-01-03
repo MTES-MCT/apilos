@@ -2,7 +2,6 @@ import datetime
 
 from django.utils import timezone
 
-
 from conventions.forms import (
     InitavenantsforavenantForm,
     AvenantsforavenantForm,
