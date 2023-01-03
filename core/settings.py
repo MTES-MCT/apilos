@@ -16,12 +16,21 @@ import os
 import sys
 
 import decouple
+from decouple import Config, RepositoryEnv
 import dj_database_url
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from django.core.exceptions import PermissionDenied
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
+if TESTING:
+    config = Config(RepositoryEnv(BASE_DIR / ".env.template"))
+else:
+    config = decouple.config
 
 
 def get_env_variable(name, cast=str, default=""):
@@ -41,10 +50,8 @@ def get_env_variable(name, cast=str, default=""):
         return cast(os.environ[name])
     # pylint: disable=W0702, bare-except
     except:
-        return decouple.config(name, cast=cast, default=default)
+        return config(name, cast=cast, default=default)
 
-
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -52,7 +59,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = get_env_variable("SECRET_KEY")
 DEBUG = get_env_variable("DEBUG", cast=bool)
 ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
-TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 
 LOGLEVEL = get_env_variable("LOGLEVEL", default="error").upper()
 
@@ -188,7 +194,7 @@ try:
     # dj_database_url is used in scalingo environment to interpret the
     # connection configuration to the DB from a single URL with all path
     # and credentials
-    decouple.config("DATABASE_URL")
+    config("DATABASE_URL")
     default_settings = dj_database_url.config()
 except decouple.UndefinedValueError:
     default_settings = {
@@ -208,7 +214,7 @@ except decouple.UndefinedValueError:
 # from https://django-sql-explorer.readthedocs.io/en/latest/install.html
 # The readonly access is configured with fake access when DB_READONLY env
 # variable is not set.
-DB_READONLY = decouple.config(
+DB_READONLY = config(
     "DB_READONLY", default="postgres://fakeusername:fakepassword@postgres:5432/database"
 )
 readonly_settings = dj_database_url.parse(DB_READONLY)
@@ -454,7 +460,7 @@ if SENTRY_URL:  # pragma: no cover
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
     "OPTIONS": {
-        "url": decouple.config("REDIS_URL", default="redis://redis:6379"),
+        "url": config("REDIS_URL", default="redis://redis:6379"),
     },
     "MIDDLEWARE": [
         "django_dramatiq.middleware.AdminMiddleware",
