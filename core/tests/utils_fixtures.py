@@ -100,7 +100,9 @@ def create_users_bailleur():
     user3.preferences_email = EmailPreferences.TOUS
     user3.save()
     # Users not returned as write-only
-    user4 = User.objects.create_user("jean.bailleur", "jean.bailleur@apilos.com", "01234")
+    user4 = User.objects.create_user(
+        "jean.bailleur", "jean.bailleur@apilos.com", "01234"
+    )
     user4.first_name = "Jean"
     user4.last_name = "Bailleur"
     user4.preferences_email = EmailPreferences.AUCUN
@@ -256,9 +258,9 @@ def create_programme(
             [_create_upload_files(), "", "n'importe quoi", None]
         ),
         permis_construire="123 456 789 ABC",
-        date_achevement_previsible=datetime.date.today() + datetime.timedelta(days=365),
-        date_achat=datetime.date.today() - datetime.timedelta(days=365),
-        date_achevement=datetime.date.today() + datetime.timedelta(days=465),
+        date_achevement_previsible=datetime.date(2024, 1, 2),
+        date_achat=datetime.date(2022, 1, 2),
+        date_achevement=datetime.date(2024, 4, 11),
     )
 
 
