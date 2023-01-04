@@ -278,7 +278,7 @@ def _save_convention_donnees_validees(
     convention.save()
 
 
-def generate_pdf(file_stream, convention):
+def generate_pdf(file_stream: io.BytesIO, convention: Convention):
     # save the convention docx locally
     local_docx_path = str(settings.MEDIA_ROOT) + f"/convention_{convention.uuid}.docx"
 
