@@ -1,5 +1,4 @@
 from django.http import HttpRequest
-from django.views.decorators.http import require_GET, require_POST
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -108,7 +107,6 @@ def _save_convention_type(request: HttpRequest, convention: Convention):
     return convention_type1_and_2_form
 
 
-@require_POST
 def convention_submit(request: HttpRequest, convention: Convention):
     submitted = utils.ReturnStatus.WARNING
     # Set back the onvention to the instruction
@@ -165,11 +163,6 @@ def convention_submit(request: HttpRequest, convention: Convention):
         "success": submitted,
         "convention": convention,
     }
-
-
-@require_GET
-def convention_delete(convention: Convention):
-    convention.delete()
 
 
 def send_email_instruction(convention_url, convention, instructeur_emails):

@@ -20,7 +20,6 @@ from programmes.models import Financement
 from upload.services import UploadService
 from conventions.services import convention_generator
 from conventions.services.recapitulatif import (
-    convention_delete,
     convention_feedback,
     convention_submit,
     convention_summary,
@@ -96,6 +95,7 @@ def recapitulatif(request, convention_uuid):
     )
 
 
+@require_POST
 @login_required
 def save_convention(request, convention_uuid):
     # could be in a summary service
@@ -123,7 +123,7 @@ def save_convention(request, convention_uuid):
 def delete_convention(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     request.user.check_perm("convention.change_convention", convention)
-    convention_delete(convention)
+    convention.delete()
     return HttpResponseRedirect(reverse("conventions:index"))
 
 
