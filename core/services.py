@@ -1,7 +1,7 @@
 from typing import List
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-
+from django.conf import settings
 from conventions.models import Convention
 
 from upload.services import UploadService
@@ -22,7 +22,7 @@ class EmailService:
         cc_emails: List[str] | None = None,
         text_content: str = "",
         html_content: str = "",
-        from_email: str = "contact@apilos.beta.gouv.fr",
+        from_email: str = settings.DEFAULT_FROM_EMAIL,
     ):
         self.subject = subject
         self.to_emails = to_emails
