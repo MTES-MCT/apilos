@@ -22,6 +22,7 @@ def generate_and_send(args):
     file_stream = convention_generator.generate_convention_doc(convention, True)
     pdf_path = convention_generator.generate_pdf(file_stream, convention)
 
+    zip_path = None
     if convention.programme.is_foyer():
         zip_path = (
             Path("conventions")
