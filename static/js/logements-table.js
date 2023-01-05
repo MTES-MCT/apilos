@@ -7,7 +7,7 @@ function compute_total_value(what, is_form=true){
             total_value = total_value + parseFloat(inner_input[0].value);
         }
         else {
-            float = parseFloat(elements[i].innerHTML.replace(/,/, '.'));
+            let float = parseFloat(elements[i].innerHTML.replace(/,/, '.'));
             total_value = total_value + float;
         }
     }
