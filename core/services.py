@@ -43,9 +43,9 @@ class EmailService:
     subject: str
     from_email: str
     to_emails: List[str] | None
+    cc_emails: List[str] | None
     text_content: str
     html_content: str
-    attachements: List
     email_template_id: EmailTemplateID
 
     def __init__(
@@ -68,7 +68,9 @@ class EmailService:
         self.from_email = from_email
         self.msg = None
 
-    def send_transactional_email(self, email_data={}, filepath: Path | None = None):
+    def send_transactional_email(
+        self, *, email_data: dict | None = None, filepath: Path | None = None
+    ):
         if not settings.SENDINBLUE_API_KEY or not self.email_template_id:
             return
 
@@ -76,17 +78,10 @@ class EmailService:
             to=self.to_emails,
             cc=self.cc_emails,
         )
-        message.template_id = self.email_template_id
+        message.template_id = self.email_template_id.value
         message.from_email = None  # to use the template's default sender
-        message.merge_global_data = email_data
-        # {
-        #     "email": "toto@email.org",
-        #     "username": "toto",
-        #     "password": "Toto@Password",
-        #     "firstname": "Toto",
-        #     "lastname": "Oudard",
-        #     "login_url": "https://apilos.beta.gouv.fr/login",
-        # }
+        if email_data:
+            message.merge_global_data = email_data
         if filepath:
             f = default_storage.open(filepath, "rb")
             message.attach(
