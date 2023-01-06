@@ -16,7 +16,7 @@ repos:
     hooks:
     -   id: pylint
         name: PyLint
-        entry: python -m pylint.__main__
+        entry: python -m pylint.__main__ --help-msg=django-not-configured
         language: system
         files: \.py$
 -   repo: https://github.com/rtts/djhtml
