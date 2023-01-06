@@ -31,6 +31,11 @@ jobs:
           name: Wait for Postgres server
           command: dockerize -wait tcp://localhost:5432 -timeout 10s
       - run:
+          command: |
+            sudo apt-get update && sudo apt-get install postgresql
+            PGPASSWORD=password psql -h localhost -U root -d apilos_test -c "create database ecolotest;"
+            PGPASSWORD=password psql -h localhost -U root -d ecolotest -c "create schema ecolo;"
+      - run:
           name: Running tests
           command: |
             . .venv/bin/activate
