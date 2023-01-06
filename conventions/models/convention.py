@@ -390,6 +390,8 @@ class Convention(models.Model):
             ConventionStatut.A_SIGNER: "En attente de signature",
             ConventionStatut.SIGNEE: "Finalisée",
             ConventionStatut.RESILIEE: "Résiliée",
+            ConventionStatut.DENONCEE: "Dénoncée",
+            ConventionStatut.ANNULEE: "Annulée",
         }
         return f"{short_status.get(self.statut)}"
 
