@@ -2,6 +2,7 @@ import mock
 
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
+from django.conf import settings
 
 from conventions.models import Convention, ConventionStatut
 from conventions.services import (
@@ -25,13 +26,13 @@ class ServicesConventionsTests(TestCase):
             "https://apilos.beta.gouv.fr/my_convention", convention, ["fix@apilos.com"]
         )
         self.assertEqual(email_sent[0].to, ["raph@apilos.com"])
-        self.assertEqual(email_sent[0].from_email, "contact@apilos.beta.gouv.fr")
+        self.assertEqual(email_sent[0].from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(
             email_sent[0].subject, f"Convention à instruire ({convention})"
         )
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent[0].body)
         self.assertEqual(email_sent[1].to, ["fix@apilos.com"])
-        self.assertEqual(email_sent[1].from_email, "contact@apilos.beta.gouv.fr")
+        self.assertEqual(email_sent[1].from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(
             email_sent[1].subject, f"Convention à instruire ({convention})"
         )
@@ -47,14 +48,14 @@ class ServicesConventionsTests(TestCase):
             "https://apilos.beta.gouv.fr/my_convention", convention, []
         )
         self.assertEqual(email_sent[0].to, ["contact@apilos.beta.gouv.fr"])
-        self.assertEqual(email_sent[0].from_email, "contact@apilos.beta.gouv.fr")
+        self.assertEqual(email_sent[0].from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(
             email_sent[0].subject,
             f"[ATTENTION pas de destinataire à cet email] Convention à instruire ({convention})",
         )
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent[0].body)
         self.assertEqual(email_sent[1].to, ["contact@apilos.beta.gouv.fr"])
-        self.assertEqual(email_sent[1].from_email, "contact@apilos.beta.gouv.fr")
+        self.assertEqual(email_sent[1].from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(
             email_sent[1].subject,
             f"[ATTENTION pas de destinataire à cet email] Convention à instruire ({convention})",
@@ -73,7 +74,7 @@ class ServicesConventionsTests(TestCase):
         email_sent = email_service.msg
         self.assertEqual(email_sent.to, ["raph@apilos.com"])
         self.assertEqual(email_sent.cc, ["me@apilos.com"])
-        self.assertEqual(email_sent.from_email, "contact@apilos.beta.gouv.fr")
+        self.assertEqual(email_sent.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(email_sent.subject, f"Convention validée ({convention})")
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
         self.assertIn(
@@ -125,7 +126,7 @@ class ServicesConventionsTests(TestCase):
         email_sent = email_service.msg
         self.assertEqual(email_sent.to, ["contact@apilos.beta.gouv.fr"])
         self.assertEqual(email_sent.cc, [])
-        self.assertEqual(email_sent.from_email, "contact@apilos.beta.gouv.fr")
+        self.assertEqual(email_sent.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(
             email_sent.subject,
             f"[ATTENTION pas de destinataire à cet email] Convention validée ({convention})",
@@ -145,7 +146,7 @@ class ServicesConventionsTests(TestCase):
 
         self.assertEqual(email_sent.to, ["raph@apilos.com"])
         self.assertEqual(email_sent.cc, ["me@apilos.com"])
-        self.assertEqual(email_sent.from_email, "contact@apilos.beta.gouv.fr")
+        self.assertEqual(email_sent.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(email_sent.subject, f"Convention à modifier ({convention})")
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
         self.assertIn("Toto à un vélo", email_sent.body)
@@ -156,7 +157,7 @@ class ServicesConventionsTests(TestCase):
 
         self.assertEqual(email_sent.to, ["fix@apilos.com"])
         self.assertEqual(email_sent.cc, [])
-        self.assertEqual(email_sent.from_email, "contact@apilos.beta.gouv.fr")
+        self.assertEqual(email_sent.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(email_sent.subject, f"Convention modifiée ({convention})")
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
         self.assertNotIn("Toto à un vélo", email_sent.body)
@@ -178,7 +179,7 @@ class ServicesConventionsTests(TestCase):
 
         self.assertEqual(email_sent.to, ["contact@apilos.beta.gouv.fr"])
         self.assertEqual(email_sent.cc, [])
-        self.assertEqual(email_sent.from_email, "contact@apilos.beta.gouv.fr")
+        self.assertEqual(email_sent.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(
             email_sent.subject,
             f"[ATTENTION pas de destinataire à cet email] Convention à modifier ({convention})",
@@ -195,7 +196,7 @@ class ServicesConventionsTests(TestCase):
 
         self.assertEqual(email_sent.to, ["contact@apilos.beta.gouv.fr"])
         self.assertEqual(email_sent.cc, [])
-        self.assertEqual(email_sent.from_email, "contact@apilos.beta.gouv.fr")
+        self.assertEqual(email_sent.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(
             email_sent.subject,
             f"[ATTENTION pas de destinataire à cet email] Convention modifiée ({convention})",

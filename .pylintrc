@@ -1,15 +1,17 @@
 [MASTER]
+load-plugins=pylint_django
+django-settings-module=core.settings
 ignore-paths=
+    core/settings.py,
     bailleurs/migrations,
     conventions/migrations,
     programmes/migrations,
     users/migrations,
 disable=
+    django-not-configured,
     C0103, # invalid-name
     C0114, # missing-module-docstring
     C0115, # missing-class-docstring
     C0116, # missing-function-docstring
-load-plugins=pylint_django
-django-settings-module=core.settings
 min-similarity-lines=20
 max-args = 10
