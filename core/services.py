@@ -14,29 +14,29 @@ from upload.services import UploadService
 # Using enum class create enumerations
 class EmailTemplateID(enum.Enum):
     # [PLATEFORME] BAILLEUR - Avenant à instruire - confirmation
-    B_AVENANT_A_INSTRUIRE = 106
+    B_AVENANT_A_INSTRUIRE_CONFIRMATION = 106  # OK
     # [PLATEFORME] BAILLEUR - Convention à instruire - confirmation
-    B_CONVENTION_A_INSTRUIRE_CONFIRMATION = 105
+    B_CONVENTION_A_INSTRUIRE_CONFIRMATION = 105  # OK
     # [PLATEFORME] BAILLEURS - Bienvenu sur la plateforme APiLos
-    B_WELCOME = 84
+    B_WELCOME = 84  # OK
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Avenant à instruire
-    BtoI_AVENANT_A_INSTRUIRE = 98
+    BtoI_AVENANT_A_INSTRUIRE = 98  # OK
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Convention à instruire
-    BtoI_CONVENTION_A_INSTRUIRE = 97
+    BtoI_CONVENTION_A_INSTRUIRE = 97  # OK
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Corrections faites - avenant à instruire à nouveau
-    BtoI_AVENANT_CORRECTIONS_FAITES = 100
+    BtoI_AVENANT_CORRECTIONS_FAITES = 100  # OK
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Corrections faites - convention à instruire à nouveau
-    BtoI_CONVENTION_CORRECTIONS_FAITES = 99
+    BtoI_CONVENTION_CORRECTIONS_FAITES = 99  # OK
     # [PLATEFORME] INSTRUCTEUR - Bienvenu sur la plateforme APiLos
-    I_WELCOME = 96
+    I_WELCOME = 96  # OK
     # [PLATEFORME] INSTRUCTEUR à BAILLEUR - Avenant validé
     ItoB_AVENANT_VALIDE = 104
     # [PLATEFORME] INSTRUCTEUR à BAILLEUR - Convention validée
     ItoB_CONVENTION_VALIDEE = 103
     # [PLATEFORME] INSTRUCTEUR à BAILLEUR - Corrections requises - avenant à corriger
-    ItoB_AVENANT_CORRECTIONS_REQUISES = 101
+    ItoB_AVENANT_CORRECTIONS_REQUISES = 101  # OK
     # [PLATEFORME] INSTRUCTEUR à BAILLEUR - Corrections requises - convention à corriger
-    ItoB_CONVENTION_CORRECTIONS_REQUISES = 102
+    ItoB_CONVENTION_CORRECTIONS_REQUISES = 102  # OK
 
 
 class EmailService:
@@ -73,6 +73,12 @@ class EmailService:
     ):
         if not settings.SENDINBLUE_API_KEY or not self.email_template_id:
             return
+
+        if not self.to_emails:
+            self.to_emails = ["contact@apilos.beta.gouv.fr"]
+            email_data[
+                "subject_prefix"
+            ] = "[ATTENTION pas de destinataire à cet email] "
 
         message = EmailMultiAlternatives(
             to=self.to_emails,
