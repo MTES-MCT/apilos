@@ -18,11 +18,12 @@
                         {% include "common/form/input_text.html" with form_input=form.nom  %}
                         {% include "common/form/input_text.html" with form_input=form.code editable=request.user.is_superuser %}
                         {% include "common/form/input_text.html" with form_input=form.ville_signature %}
+                        {% include "common/form/input_textarea.html" with form_input=form.signature_label_extra helptext_visible=True %}
                         {% include "common/form/input_text.html" with form_input=form.prefix_convention %}
 
                         {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_convention_exemplaires %}
 
-                        <h4>Adresse à laquelle les conventions doivent-être envoyées</h3>
+                        <h4>Adresse à laquelle les conventions doivent-être envoyées</h4>
                         <span class="fr-hint-text fr-mb-3w">Il est possible de préciser le service dans le champ de l'adresse, par exemple :<br>
                             <div class="fr-ml-3w">
                                 Service du Conventionnement APL<br>

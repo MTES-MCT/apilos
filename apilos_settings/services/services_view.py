@@ -138,6 +138,9 @@ def edit_administration(request, administration_uuid):
             administration.adresse = form.cleaned_data["adresse"]
             administration.code_postal = form.cleaned_data["code_postal"]
             administration.ville = form.cleaned_data["ville"]
+            administration.signature_label_extra = form.cleaned_data[
+                "signature_label_extra"
+            ]
             administration.nb_convention_exemplaires = form.cleaned_data[
                 "nb_convention_exemplaires"
             ]
@@ -603,9 +606,13 @@ class ImportBailleurUsersService:
             return self._process_formset()
 
     def _process_upload(self) -> ReturnStatus:
-        self.upload_form = BailleurListingUploadForm(self.request.POST, self.request.FILES)
+        self.upload_form = BailleurListingUploadForm(
+            self.request.POST, self.request.FILES
+        )
         if self.upload_form.is_valid():
-            self.formset = UserBailleurFormSet(self._build_formset_data(self.upload_form.cleaned_data['users']))
+            self.formset = UserBailleurFormSet(
+                self._build_formset_data(self.upload_form.cleaned_data["users"])
+            )
             return ReturnStatus.SUCCESS
 
         return ReturnStatus.ERROR
@@ -615,18 +622,18 @@ class ImportBailleurUsersService:
         if self.formset.is_valid():
             for form_user_bailleur in self.formset:
                 UserService.create_user_bailleur(
-                    form_user_bailleur.cleaned_data['first_name'],
-                    form_user_bailleur.cleaned_data['last_name'],
-                    form_user_bailleur.cleaned_data['email'],
-                    form_user_bailleur.cleaned_data['bailleur'],
-                    form_user_bailleur.cleaned_data['username'],
-                    self.request.build_absolute_uri("/accounts/login/")
+                    form_user_bailleur.cleaned_data["first_name"],
+                    form_user_bailleur.cleaned_data["last_name"],
+                    form_user_bailleur.cleaned_data["email"],
+                    form_user_bailleur.cleaned_data["bailleur"],
+                    form_user_bailleur.cleaned_data["username"],
+                    self.request.build_absolute_uri("/accounts/login/"),
                 )
 
             messages.success(
                 self.request,
                 f"{len(self.formset)} utilisateurs bailleurs ont été correctement créés à partir du listing",
-                extra_tags="Listing importé"
+                extra_tags="Listing importé",
             )
             return ReturnStatus.SUCCESS
 
@@ -634,10 +641,10 @@ class ImportBailleurUsersService:
 
     def _build_formset_data(self, results) -> dict:
         data = {
-            'form-TOTAL_FORMS': len(results),
-            'form-INITIAL_FORMS': len(results),
+            "form-TOTAL_FORMS": len(results),
+            "form-INITIAL_FORMS": len(results),
         }
         for index, user in enumerate(results):
             for key, value in user.items():
-                data[f'form-{index}-{key}'] = value
+                data[f"form-{index}-{key}"] = value
         return data

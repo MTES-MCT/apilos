@@ -62,6 +62,28 @@ class AdministrationForm(forms.Form):
             "max_length": "La ville de signature ne doit pas excéder 255 caractères",
         },
     )
+    signature_label_extra = forms.CharField(
+        required=False,
+        label="Élément additionnel de signature sur la convention",
+        max_length=5000,
+        help_text=mark_safe(
+            "Sur les documents de convention, vous avez la possibilité d'affiner l'identité du signataire&nbsp;"
+            + "<strong>à la suite</strong> de la mention obligatoire : <br/>"
+            + '<blockquote class="ml-5 my-2">Le préfet, le président de l\'établissement public de coopération'
+            + "intercommunale, du conseil"
+            + "départemental, de la métropole de Lyon ou du conseil exécutif de Corse,</blockquote>"
+        ),
+    )
+
+    def clean_signature_label_extra(self):
+        signature_label_extra = self.cleaned_data.get("signature_label_extra", 0)
+
+        # Automatically add a trailing comma so signature label remains compliant
+        signature_label_extra = signature_label_extra.strip(" ,") + ","
+
+
+        return signature_label_extra
+
     prefix_convention = forms.CharField(
         required=False,
         label="Préfixe du numéro de convention",
