@@ -25,6 +25,6 @@ class Migration(migrations.Migration):
         ),
         migrations.RunSQL(
             "UPDATE programmes_annexe SET typologie = 'COUR'  where typologie ='CAVE' ;",
-            "UPDATE programmes_annexe SET typologie = 'CAVE'  where typologie ='cOUR' ;",
+            "UPDATE programmes_annexe SET typologie = 'CAVE'  where typologie ='COUR' ;",
         ),
     ]
