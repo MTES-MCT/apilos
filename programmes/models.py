@@ -135,7 +135,7 @@ class TypeHabitat(models.TextChoices):
 class TypologieAnnexe(models.TextChoices):
     TERRASSE = "TERRASSE", "Terrasse"
     JARDIN = "JARDIN", "Jardin"
-    CAVE = "CAVE", "Cave"
+    COURS = "COURS", "Cours"
 
 
 class TypologieStationnement(models.TextChoices):
