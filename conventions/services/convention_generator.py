@@ -328,7 +328,7 @@ def _to_fr_float(value, d=2):
 
 
 def pluralize(value):
-    if value > 1:
+    if value is not None and value > 1:
         return "s"
     return ""
 
