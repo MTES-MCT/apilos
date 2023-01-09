@@ -722,7 +722,7 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
 .apilos-colored_status--Signee {
   background-color: #D4F4E1;
 }
-.apilos-colored_status--Resiliee {
+.apilos-colored_status--Resiliee, .apilos-colored_status--Annulee_en_suivi, .apilos-colored_status--Denoncee {
   background-color: #E2E2E2;
 }
 .fr-alert--Projet {
