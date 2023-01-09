@@ -83,10 +83,10 @@ docker-compose -f docker-compose.db.yml up -d
 Puis, mettre à jour les variable d'environnement dans le fichier [~/.env](~/.env), ci-dessous un exemple compatible avec la configuration docker-compose.db.yml
 
 ```
-DB_USER=appel
-DB_NAME=appel
+DB_USER=apilos
+DB_NAME=apilos
 DB_HOST=localhost
-DB_PASSWORD=appel
+DB_PASSWORD=apilos
 DB_PORT=5433
 ```
 
