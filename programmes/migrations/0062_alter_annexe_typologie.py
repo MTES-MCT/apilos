@@ -17,10 +17,14 @@ class Migration(migrations.Migration):
                 choices=[
                     ("TERRASSE", "Terrasse"),
                     ("JARDIN", "Jardin"),
-                    ("COURS", "Cours"),
+                    ("COUR", "Cour"),
                 ],
                 default="TERRASSE",
                 max_length=25,
             ),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_annexe SET typologie = 'COUR'  where typologie ='CAVE' ;",
+            "UPDATE programmes_annexe SET typologie = 'CAVE'  where typologie ='cOUR' ;",
         ),
     ]
