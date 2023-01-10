@@ -16,6 +16,7 @@ class NatureBailleur(models.TextChoices):
 
 class SousNatureBailleur(models.TextChoices):
     ASSOCIATIONS = "ASSOCIATIONS", "Associations"
+    ANAH = "ANAH", "ANAH"
     COMMERCIALES = "COMMERCIALES", "entreprises commerciales"
     COMMUNE = "COMMUNE", "Commune"
     COOPERATIVE_HLM_SCIC = "COOPERATIVE_HLM_SCIC", "Sté coopérative HLM /SCIC"
@@ -42,6 +43,7 @@ class SousNatureBailleur(models.TextChoices):
 
 NATURE_RELATIONSHIP = {
     SousNatureBailleur.ASSOCIATIONS: NatureBailleur.AUTRES,
+    SousNatureBailleur.ANAH: NatureBailleur.AUTRES,
     SousNatureBailleur.COMMERCIALES: NatureBailleur.AUTRES,
     SousNatureBailleur.COMMUNE: NatureBailleur.AUTRES,
     SousNatureBailleur.COOPERATIVE_HLM_SCIC: NatureBailleur.HLM,
