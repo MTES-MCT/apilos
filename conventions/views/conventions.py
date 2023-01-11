@@ -161,6 +161,7 @@ def validate_convention(request, convention_uuid):
         "conventions/recapitulatif.html",
         {
             **result,
+            "convention_form_steps": ConventionFormSteps(convention=convention),
         },
     )
 
