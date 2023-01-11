@@ -73,13 +73,11 @@ class EmailService:
     ):
         if not settings.SENDINBLUE_API_KEY or not self.email_template_id:
             return
-
         if not self.to_emails:
             self.to_emails = ["contact@apilos.beta.gouv.fr"]
             email_data[
                 "subject_prefix"
             ] = "[ATTENTION pas de destinataire à cet email] "
-
         message = EmailMultiAlternatives(
             to=self.to_emails,
             cc=self.cc_emails,
@@ -89,14 +87,13 @@ class EmailService:
         if email_data:
             message.merge_global_data = email_data
         if filepath:
-            f = default_storage.open(filepath, "rb")
-            message.attach(
-                filepath.name,
-                f.read(),
-                mimetypes.guess_type(filepath.name),
-                # "application/vnd.openxmlformats-officedocument.wordprocessingm",
-            )
-            f.close()
+            with default_storage.open(filepath, "rb") as f:
+                (content_type, _) = mimetypes.guess_type(filepath.name)
+                message.attach(
+                    filepath.name,
+                    f.read(),
+                    content_type,
+                )
         message.send()
 
     def build_msg(self) -> None:
@@ -149,7 +146,7 @@ class EmailService:
         cc: List,
         local_pdf_path: str | None = None,
     ) -> None:
-
+        # to be DEPRECATED after move to SNEDINBLUE templates
         self.subject = f"Convention validée ({convention})"
         self.to_emails = to
         self.cc_emails = cc

@@ -8,7 +8,7 @@ from django.core.files.storage import default_storage
 from conventions.services import convention_generator
 from conventions.models import Convention, PieceJointe
 from conventions.services.file import ConventionFileService
-from core.services import EmailService
+from core.services import EmailService, EmailTemplateID
 
 
 @dramatiq.actor
@@ -55,13 +55,31 @@ def generate_and_send(args):
                 with default_storage.open(zip_path, "wb") as desc_file:
                     desc_file.write(src_file.read())
 
-    EmailService().send_email_valide(
-        convention_recapitulatif_uri,
-        convention,
-        convention.get_email_bailleur_users(),
-        [convention_email_validator],
-        str(zip_path) if zip_path is not None else str(pdf_path),
-    )
+    if settings.SENDINBLUE_API_KEY:
+        # Send a confirmation email to bailleur
+        email_service_to_bailleur = EmailService(
+            to_emails=convention.get_email_bailleur_users(),
+            email_template_id=EmailTemplateID.ItoB_AVENANT_VALIDE
+            if convention.is_avenant()
+            else EmailTemplateID.ItoB_CONVENTION_VALIDEE,
+        )
+        email_service_to_bailleur.send_transactional_email(
+            email_data={
+                "convention_url": convention_recapitulatif_uri,
+                "convention": str(convention),
+                "administration": str(convention.programme.administration),
+            },
+            filepath=zip_path if zip_path is not None else Path(pdf_path),
+        )
+    else:
+
+        EmailService().send_email_valide(
+            convention_recapitulatif_uri,
+            convention,
+            convention.get_email_bailleur_users(),
+            [convention_email_validator],
+            str(zip_path) if zip_path is not None else str(pdf_path),
+        )
 
 
 @dramatiq.actor
