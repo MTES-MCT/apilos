@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+import glob
 from pathlib import Path
 from unittest import TestCase, skipIf
 
@@ -26,20 +27,26 @@ class EcolowebImportTest(TestCase):
 
     def _provision_database(self):
         if self._connection is not None:
-            # TODO import these files from a S3 bucket in CircleCI https://circleci.com/developer/orbs/orb/circleci/aws-s3
-            resource_dir = Path(os.path.join(os.path.dirname(__file__), "resources"))
+            resource_dir = Path(
+                os.path.join(os.path.dirname(__file__), "resources/sql")
+            )
 
-            for file in resource_dir.iterdir():
+            files = sorted(
+                list(glob.iglob(str(resource_dir) + "/**/*.sql", recursive=True))
+            )
 
-                if str(file).endswith(".sql"):
-                    self._connection.execute(open(file).read())
+            for file in files:
+                print(f" * Loading sql file {file}")
+                self._connection.execute(open(file).read())
 
     def test_import(self):
         # Skip test if no test database can be found
         if self._connection is None:
             self.skipTest("Ecoloweb tests skipped as no database correctly configured")
 
-        importer = ConventionImporter("50", datetime.today())
-        results = list(importer.get_all_by_departement())
+        importer = ConventionImporter("33", datetime.today())
+        instances = []
+        for result in importer.get_all():
+            instances.append(importer.process_result(result))
 
-        self.assertEqual(len(results), 2)
+        self.assertEqual(len(instances), 6)
