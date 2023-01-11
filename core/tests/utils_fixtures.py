@@ -345,7 +345,7 @@ def create_all_for_siap():
     create_convention(lot_plus, numero="0001")
     create_convention(lot_plai, numero="0002")
     log1 = create_logement(lot_plai, "PLAI 1", TypologieLogement.T1)
-    create_annexe(log1, TypologieAnnexe.CAVE)
+    create_annexe(log1, TypologieAnnexe.COUR)
     create_annexe(log1, TypologieAnnexe.JARDIN)
     create_logement(lot_plai, "PLAI 2", TypologieLogement.T2)
     create_logement(lot_plai, "PLAI 3", TypologieLogement.T3)

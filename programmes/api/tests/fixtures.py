@@ -83,7 +83,7 @@ convention1signed = {
 }
 annexes = [
     {
-        "typologie": "CAVE",
+        "typologie": "COUR",
         "surface_hors_surface_retenue": "5.00",
         "loyer_par_metre_carre": "0.10",
         "loyer": "0.50",
