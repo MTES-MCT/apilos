@@ -139,15 +139,7 @@
 
                                     <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action %}signed{% endif %}">
                                         <td title="{{convention.statut_for_template.statut_display}}">
-                                            <span class="fr-p-1w apilos-tag-status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
-                                                <strong>
-                                                    {% if request|is_instructeur %}
-                                                        {{convention.short_statut_for_instructeur}}
-                                                    {% else %}
-                                                        {{convention.short_statut_for_bailleur}}
-                                                    {% endif %}
-                                                </strong>
-                                            </span>
+                                            {% include "conventions/home/statut_tag.html"  %}
                                             <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                                 document.addEventListener('DOMContentLoaded', function () {
                                                     document.getElementById('convention_redirect_{{convention.uuid}}').addEventListener('click', function(){
@@ -171,13 +163,14 @@
                                             <td>{{convention.programme.administration}}</td>
                                         {% endif %}
                                         <td>
-                                            <strong>
-                                                <span class="apilos-long-name fr-mb-1w">{{convention.programme.nom}}</span>
-                                            </strong>
-                                            {% if convention.is_avenant %}
-                                                <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-status background-white">Avenant</span>
-                                            {%endif%}
-                                            <br/>
+                                            <div>
+                                                <strong>
+                                                    <span class="apilos-long-name">{{convention.programme.nom}}</span>
+                                                </strong>
+                                                {% if convention.is_avenant %}
+                                                    <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-avenant background-white">Avenant</span>
+                                                {%endif%}
+                                            </div>
                                             <em data-test-role="programme-galion-cell">{{convention.programme.numero_galion}}</em>
                                         </td>
                                         <td data-test-role="programme-financement-cell">{{convention.financement}}</td>
