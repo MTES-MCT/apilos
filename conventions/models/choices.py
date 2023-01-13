@@ -43,20 +43,20 @@ class ConventionStatut(TextChoices):
 
     """
 
-    PROJET = "1. Projet", "Création d'un projet de convention"
+    PROJET = "1. Projet", "Projet"
     INSTRUCTION = (
         "2. Instruction requise",
-        "Projet de convention soumis à l'instruction",
+        "En instruction",
     )
     CORRECTION = (
         "3. Corrections requises",
-        "Projet de convention à modifier par le bailleur",
+        "En correction",
     )
-    A_SIGNER = "4. A signer", "Convention à signer"
-    SIGNEE = "5. Signée", "Convention signée"
-    RESILIEE = "6. Résiliée", "Convention résiliée"
-    DENONCEE = "7. Dénoncée", "Convention dénoncée"
-    ANNULEE = "8. Annulée en suivi", "Convention annulée en suivi"
+    A_SIGNER = "4. A signer", "À signer"
+    SIGNEE = "5. Signée", "Finalisée"
+    RESILIEE = "6. Résiliée", "Résiliée"
+    DENONCEE = "7. Dénoncée", "Dénoncée"
+    ANNULEE = "8. Annulée en suivi", "Annulée en suivi"
 
     @classmethod
     def active_statuts(cls):
