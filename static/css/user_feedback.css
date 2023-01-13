@@ -14,17 +14,21 @@
     background-color: #000091;
     color: #fff;
     transition: width 0.7s;
+    display: block;
+    background-image: none;
   }
-  
-  .cta:hover {
+
+  a.cta:hover {
     width: 270px;
     transition: width 0.7s;
     color: #000091;
+    background-color: white;
   }
 
   .cta .apilos-icon{
     opacity: 1;
-    transition: opacity 0.5s
+    transition: opacity 0.5s;
+    line-height: 44px;
   }
 
   .cta:hover .apilos-icon{
@@ -39,8 +43,9 @@
     width: 100%;
     left: 0;
     font-size: 5px;
+    line-height: 44px;
   }
-  
+
   .cta:hover .button-text {
     opacity: 1;
     transition: opacity 0.5s, font-size 1s;
