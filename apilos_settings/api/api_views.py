@@ -160,7 +160,10 @@ class ConventionKPI(APIView):
         Return main settings of the application.
         """
         query_by_statuses = (
-            request.user.conventions().values("statut").annotate(total=Count("statut"))
+            request.user.conventions()
+            .filter(parent_id__isnull=True)
+            .values("statut")
+            .annotate(total=Count("statut"))
         )
         instruction = 0
         a_signer = 0

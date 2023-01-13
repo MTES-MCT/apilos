@@ -140,7 +140,7 @@
 
                                     <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action %}signed{% endif %}">
                                         <td title="{{convention.statut_for_template.statut_display}}">
-                                            <span class="fr-p-1w apilos-colored_status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
+                                            <span class="fr-p-1w apilos-tag-status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
                                                 <strong>
                                                     {{convention.short_statut_for_template}}
                                                 </strong>
@@ -168,7 +168,13 @@
                                             <td>{{convention.programme.administration}}</td>
                                         {% endif %}
                                         <td>
-                                            <strong>{{convention.programme.nom}}</strong><br/>
+                                            <strong>
+                                                <span class="apilos-long-name fr-mb-1w">{{convention.programme.nom}}</span>
+                                            </strong>
+                                            {% if convention.is_avenant %}
+                                                <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-status">Avenant</span>
+                                            {%endif%}
+                                            <br/>
                                             <em data-test-role="programme-galion-cell">{{convention.programme.numero_galion}}</em>
                                         </td>
                                         <td data-test-role="programme-financement-cell">{{convention.financement}}</td>

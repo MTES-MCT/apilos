@@ -319,7 +319,7 @@ class User(AbstractUser):
         whether it's active (A_SIGNER and below) or completed (SIGNEE and up).
         If omitted or None, no filter is applied
         """
-        convs = Convention.objects.filter(parent_id__isnull=True)
+        convs = Convention.objects
         if active is not None:
             convs = convs.filter(
                 statut__in=ConventionStatut.active_statuts()

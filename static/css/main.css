@@ -232,6 +232,13 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 .apilos-avenant_type:not(:last-child):after {
   content: ", ";
 }
+.apilos-long-name {
+  display: inline-block;
+  max-width: calc(100% - 100px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
 
 .block--row-strech {
   display: flex;
@@ -693,13 +700,13 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
  * Display convention status
  */
 
- .apilos-colored_status {
+ .apilos-tag-status {
   border-radius: 5px;
   border: 1px solid rgba(70, 75, 99, 0.2);
   white-space: nowrap;
 }
 
-.apilos-colored_status span{
+.apilos-tag-status span{
     color: #464B63;
 }
 
