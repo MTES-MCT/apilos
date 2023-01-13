@@ -395,6 +395,32 @@ class Convention(models.Model):
         }
         return f"{short_status.get(self.statut)}"
 
+    def short_statut_for_bailleur(self):
+        short_status = {
+            ConventionStatut.PROJET: "Projet",
+            ConventionStatut.INSTRUCTION: "En instruction",
+            ConventionStatut.CORRECTION: "À corriger",
+            ConventionStatut.A_SIGNER: "À signer",
+            ConventionStatut.SIGNEE: "Finalisée",
+            ConventionStatut.RESILIEE: "Résiliée",
+            ConventionStatut.DENONCEE: "Dénoncée",
+            ConventionStatut.ANNULEE: "Annulée",
+        }
+        return f"{short_status.get(self.statut)}"
+
+    def short_statut_for_instructeur(self):
+        short_status = {
+            ConventionStatut.PROJET: "Projet",
+            ConventionStatut.INSTRUCTION: "A instruire",
+            ConventionStatut.CORRECTION: "En correction",
+            ConventionStatut.A_SIGNER: "À signer",
+            ConventionStatut.SIGNEE: "Finalisée",
+            ConventionStatut.RESILIEE: "Résiliée",
+            ConventionStatut.DENONCEE: "Dénoncée",
+            ConventionStatut.ANNULEE: "Annulée",
+        }
+        return f"{short_status.get(self.statut)}"
+
     def mixity_option(self):
         """
         return True if the option regarding the number of lodging in addition to loan to people

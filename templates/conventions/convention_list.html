@@ -3,7 +3,6 @@
 <div class="fr-container">
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-md-12 ">
-
             <form class="fr-my-3w" method="get" action="" id="search_table">
                 <input type="hidden" id="order_by" name="order_by" value="{{conventions.order_by}}">
                 <input type="hidden" id="page" name="page" value="{{conventions.page}}">
@@ -142,7 +141,11 @@
                                         <td title="{{convention.statut_for_template.statut_display}}">
                                             <span class="fr-p-1w apilos-tag-status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
                                                 <strong>
-                                                    {{convention.short_statut_for_template}}
+                                                    {% if request|is_instructeur %}
+                                                        {{convention.short_statut_for_instructeur}}
+                                                    {% else %}
+                                                        {{convention.short_statut_for_bailleur}}
+                                                    {% endif %}
                                                 </strong>
                                             </span>
                                             <script type="text/javascript" nonce="{{request.csp_nonce}}">
@@ -172,7 +175,7 @@
                                                 <span class="apilos-long-name fr-mb-1w">{{convention.programme.nom}}</span>
                                             </strong>
                                             {% if convention.is_avenant %}
-                                                <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-status">Avenant</span>
+                                                <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-status background-white">Avenant</span>
                                             {%endif%}
                                             <br/>
                                             <em data-test-role="programme-galion-cell">{{convention.programme.numero_galion}}</em>
