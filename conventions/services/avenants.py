@@ -64,6 +64,7 @@ def search_result(request):
     conventions = []
     if departement and annee and num:
         conventions = request.user.conventions().filter(
+            parent_id__isnull=True,
             programme__code_postal__startswith=departement,
             valide_le__year=annee,
             numero__endswith=num,
