@@ -69,19 +69,11 @@
 
         {% block feedback %}
             <div class="container__feedback_btn">
-                <button class="cta" type="button" id="user_feedback_btn">
+                <a href="mailto:contact@apilos.fr" class="cta">
                     <span class="apilos-icon fr-fi-mail-line" aria-hidden="true"></span>
                     <span class="button-text">Faites nous part de vos retours</span>
-                </button>
+                </a>
             </div>
-            <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                document.addEventListener('DOMContentLoaded', function () {
-                    document.getElementById('user_feedback_btn')
-                        .addEventListener('click', function(){
-                        window.open("https://forms.gle/sKLSeAYwjLWbufhP6", '_blank').focus()
-                    });
-                });
-            </script>
         {% endblock %}
 
         {% include "layout/matomo.html" %}
