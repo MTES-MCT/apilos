@@ -28,7 +28,7 @@ function init_dropzone_from_file(form_id, accepted_files) {
         addRemoveLinks: true,
         accept:function(file, done) {
             if (file.name.includes('"')) {
-                done("Erreur! le fichier ne doit ps comprendre de double quote");
+                done("Erreur! le fichier ne doit pas comprendre de double quote");
             }
             else { done(); }
         },
