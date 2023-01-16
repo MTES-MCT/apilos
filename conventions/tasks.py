@@ -14,7 +14,7 @@ from core.services import EmailService, EmailTemplateID
 @dramatiq.actor
 def generate_and_send(args):
     convention_uuid = args["convention_uuid"]
-    convention_recapitulatif_uri = args["convention_recapitulatif_uri"]
+    convention_url = args["convention_url"]
     convention_email_validator = args["convention_email_validator"]
 
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -63,18 +63,25 @@ def generate_and_send(args):
             if convention.is_avenant()
             else EmailTemplateID.ItoB_CONVENTION_VALIDEE,
         )
+        administration = convention.administration
+
+        file_path = zip_path if zip_path is not None else Path(pdf_path)
+        # TODO test the if the size of file to attached if greater than 10 Mo
         email_service_to_bailleur.send_transactional_email(
             email_data={
-                "convention_url": convention_recapitulatif_uri,
+                "convention_url": convention_url,
                 "convention": str(convention),
-                "administration": str(convention.programme.administration),
+                "adresse": administration.adresse,
+                "code_postal": administration.code_postal,
+                "ville": administration.ville,
+                "nb_convention_exemplaires": administration.nb_convention_exemplaires,
             },
-            filepath=zip_path if zip_path is not None else Path(pdf_path),
+            filepath=file_path,
         )
     else:
 
         EmailService().send_email_valide(
-            convention_recapitulatif_uri,
+            convention_url,
             convention,
             convention.get_email_bailleur_users(),
             [convention_email_validator],

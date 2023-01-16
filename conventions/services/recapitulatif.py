@@ -424,8 +424,8 @@ def convention_validate(request: HttpRequest, convention: Convention):
         generate_and_send.send(
             {
                 "convention_uuid": str(convention.uuid),
-                "convention_recapitulatif_uri": request.build_absolute_uri(
-                    reverse("conventions:recapitulatif", args=[convention.uuid])
+                "convention_url": request.build_absolute_uri(
+                    reverse("conventions:preview", args=[convention.uuid])
                 ),
                 "convention_email_validator": request.user.email,
             }
