@@ -120,6 +120,10 @@ class ProgrammeCadastralForm(forms.Form):
     permis_construire = forms.CharField(
         required=False,
         label="Numéro de permis construire",
+        max_length=255,
+        error_messages={
+            "max_length": "Le permis de construire ne doit pas excéder 255 caractères",
+        },
     )
     date_acte_notarie = forms.DateField(
         required=False,
