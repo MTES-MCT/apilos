@@ -12,25 +12,27 @@
     {% endfor %}
 </button>
 <div class="fr-collapse fr-menu habilitation-bloc" id="list-habilitation">
-    <ul class="fr-menu__list">
-        {% for habilitation in request.session.habilitations %}
-            {% if habilitation.id != request.session.habilitation_id %}
-                <li>
-                    <a class="fr-nav__link fr-p-1w" href="{{ request|get_change_habilitation_url:habilitation.id }}"><strong>{{ habilitation.groupe.libelleRole }}</strong><br>
-                        {% if habilitation.sousTitre1 %}
-                            {{ habilitation.sousTitre1 }}<br>
-                        {% endif %}
-                        {% if habilitation.sousTitre2 %}
-                            {{ habilitation.sousTitre2 }}
-                        {% endif %}
-                    </a>
-                </li>
-            {% endif %}
-        {% endfor %}
-    </ul>
-    <a href="{{ request|get_manage_habilitation_url }}" class="fr-btn fr-px-2w fr-py-3v fr-text--md">
-        <span aria-hidden="true">Gérer mes habilitations</span>
-    </a>
+    <div class="fr-menu__list">
+        <ul>
+            {% for habilitation in request.session.habilitations %}
+                {% if habilitation.id != request.session.habilitation_id %}
+                    <li>
+                        <a class="fr-nav__link fr-p-1w" href="{{ request|get_change_habilitation_url:habilitation.id }}"><strong>{{ habilitation.groupe.libelleRole }}</strong><br>
+                            {% if habilitation.sousTitre1 %}
+                                {{ habilitation.sousTitre1 }}<br>
+                            {% endif %}
+                            {% if habilitation.sousTitre2 %}
+                                {{ habilitation.sousTitre2 }}
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <a href="{{ request|get_manage_habilitation_url }}" class="fr-btn fr-px-2w fr-py-3v fr-text--md">
+            <div aria-hidden="true">Gérer mes habilitations</div>
+        </a>
+    </div>
 </div>
 
 
