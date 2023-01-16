@@ -66,6 +66,9 @@ def generate_and_send(args):
         administration = convention.administration
 
         file_path = zip_path if zip_path is not None else Path(pdf_path)
+        if default_storage.size(file_path) > 10000000:
+
+            file_path = None
         # TODO test the if the size of file to attached if greater than 10 Mo
         email_service_to_bailleur.send_transactional_email(
             email_data={
