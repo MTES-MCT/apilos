@@ -38,7 +38,7 @@ services:
 
   dramatiq:
     <<: *apilos
-    command: python manage.py rundramatiq
+    command: python manage.py rundramatiq --reload
     ports: []
 
 

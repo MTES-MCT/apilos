@@ -2,6 +2,7 @@ from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
+from django.conf import settings
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.convention_number import ConventionNumberForm
@@ -12,7 +13,7 @@ from conventions.models.convention import Convention
 from conventions.models.convention_history import ConventionHistory
 from conventions.services import utils
 from conventions.tasks import generate_and_send
-from core.services import EmailService
+from core.services import EmailService, EmailTemplateID
 from programmes.models import Annexe
 from siap.siap_client.client import SIAPClient
 
@@ -172,66 +173,94 @@ def send_email_instruction(convention_url, convention, instructeur_emails):
     Send an email to all instructeur (except the ones who select AUCUN as email preference)
     """
     email_sent = []
+    if settings.SENDINBLUE_API_KEY:
+        # Send a confirmation email to bailleur
+        email_service_to_bailleur = EmailService(
+            to_emails=convention.get_email_bailleur_users(),
+            email_template_id=EmailTemplateID.B_AVENANT_A_INSTRUIRE_CONFIRMATION
+            if convention.is_avenant()
+            else EmailTemplateID.B_CONVENTION_A_INSTRUIRE_CONFIRMATION,
+        )
+        email_service_to_bailleur.send_transactional_email(
+            email_data={
+                "convention_url": convention_url,
+                "convention": str(convention),
+            },
+        )
 
-    if convention.is_avenant():
-        template_label = "avenants/toB_instruction"
+        # Send a notification email to instructeur
+        email_service_to_instructeur = EmailService(
+            to_emails=instructeur_emails,
+            email_template_id=EmailTemplateID.BtoI_AVENANT_A_INSTRUIRE
+            if convention.is_avenant()
+            else EmailTemplateID.BtoI_CONVENTION_A_INSTRUIRE,
+        )
+        email_service_to_instructeur.send_transactional_email(
+            email_data={
+                "convention_url": convention_url,
+                "convention": str(convention),
+            },
+        )
     else:
-        template_label = "conventions/toB_instruction"
+        if convention.is_avenant():
+            template_label = "avenants/toB_instruction"
+        else:
+            template_label = "conventions/toB_instruction"
 
-    # envoi au bailleur
-    text_content = render_to_string(
-        f"emails/{template_label}.txt",
-        {
-            "convention_url": convention_url,
-            "convention": convention,
-        },
-    )
-    html_content = render_to_string(
-        f"emails/{template_label}.html",
-        {
-            "convention_url": convention_url,
-            "convention": convention,
-        },
-    )
+        # envoi au bailleur
+        text_content = render_to_string(
+            f"emails/{template_label}.txt",
+            {
+                "convention_url": convention_url,
+                "convention": convention,
+            },
+        )
+        html_content = render_to_string(
+            f"emails/{template_label}.html",
+            {
+                "convention_url": convention_url,
+                "convention": convention,
+            },
+        )
 
-    email_service = EmailService(
-        subject=f"Convention à instruire ({convention})",
-        to_emails=convention.get_email_bailleur_users(),
-        text_content=text_content,
-        html_content=html_content,
-    )
-    email_service.send()
-    email_sent.append(email_service.msg)
+        email_service = EmailService(
+            subject=f"Convention à instruire ({convention})",
+            to_emails=convention.get_email_bailleur_users(),
+            text_content=text_content,
+            html_content=html_content,
+        )
+        email_service.send()
+        email_sent.append(email_service.msg)
 
-    if convention.is_avenant():
-        template_label = "avenants/BtoI_convention_to_instruction"
-    else:
-        template_label = "conventions/BtoI_convention_to_instruction"
+        if convention.is_avenant():
+            template_label = "avenants/BtoI_convention_to_instruction"
+        else:
+            template_label = "conventions/BtoI_convention_to_instruction"
 
-    # envoie à l'instructeur
-    text_content = render_to_string(
-        f"emails/{template_label}.txt",
-        {
-            "convention_url": convention_url,
-            "convention": convention,
-        },
-    )
-    html_content = render_to_string(
-        f"emails/{template_label}.html",
-        {
-            "convention_url": convention_url,
-            "convention": convention,
-        },
-    )
+        # envoie à l'instructeur
+        text_content = render_to_string(
+            f"emails/{template_label}.txt",
+            {
+                "convention_url": convention_url,
+                "convention": convention,
+            },
+        )
+        html_content = render_to_string(
+            f"emails/{template_label}.html",
+            {
+                "convention_url": convention_url,
+                "convention": convention,
+            },
+        )
 
-    email_service = EmailService(
-        subject=f"Convention à instruire ({convention})",
-        to_emails=instructeur_emails,
-        text_content=text_content,
-        html_content=html_content,
-    )
-    email_service.send()
-    email_sent.append(email_service.msg)
+        email_service = EmailService(
+            subject=f"Convention à instruire ({convention})",
+            to_emails=instructeur_emails,
+            text_content=text_content,
+            html_content=html_content,
+        )
+        email_service.send()
+        email_sent.append(email_service.msg)
 
     return email_sent
 
@@ -288,6 +317,41 @@ def send_email_correction(
         and bailleur who select TOUS as email preferences
     * corrections are done -> send email to instructeur who interact + PARTIEL and instructeur TOUS
     """
+
+    if settings.SENDINBLUE_API_KEY:
+        if from_instructeur:
+            # Get bailleurs list following email preferences and interaction with the convention
+            to = convention.get_email_bailleur_users(
+                all_bailleur_users=all_bailleur_users
+            )
+            if convention.is_avenant():
+                email_template_id = EmailTemplateID.ItoB_AVENANT_CORRECTIONS_REQUISES
+            else:
+                email_template_id = EmailTemplateID.ItoB_CONVENTION_CORRECTIONS_REQUISES
+
+        else:
+            # Get instructeurs list following email preferences and interaction with the convention
+            to = convention.get_email_instructeur_users()
+            if convention.is_avenant():
+                email_template_id = EmailTemplateID.BtoI_AVENANT_CORRECTIONS_FAITES
+            else:
+                email_template_id = EmailTemplateID.BtoI_CONVENTION_CORRECTIONS_FAITES
+
+        # Send a confirmation email to bailleur
+        email_service_to_bailleur = EmailService(
+            to_emails=to,
+            email_template_id=email_template_id,
+        )
+        email_service_to_bailleur.send_transactional_email(
+            email_data={
+                "convention_url": convention_url,
+                "convention": str(convention),
+                "commentaire": comment,
+            },
+        )
+
+        return email_service_to_bailleur
+
     if from_instructeur:
         # Get bailleurs list following email preferences and interaction with the convention
         to = convention.get_email_bailleur_users(all_bailleur_users=all_bailleur_users)
@@ -360,8 +424,8 @@ def convention_validate(request: HttpRequest, convention: Convention):
         generate_and_send.send(
             {
                 "convention_uuid": str(convention.uuid),
-                "convention_recapitulatif_uri": request.build_absolute_uri(
-                    reverse("conventions:recapitulatif", args=[convention.uuid])
+                "convention_url": request.build_absolute_uri(
+                    reverse("conventions:preview", args=[convention.uuid])
                 ),
                 "convention_email_validator": request.user.email,
             }

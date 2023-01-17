@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any
 
 from django.contrib import messages
 from django.http import HttpRequest
@@ -14,12 +14,12 @@ from apilos_settings.forms import BailleurListingUploadForm
 from bailleurs.forms import BailleurForm
 from bailleurs.models import Bailleur
 from conventions.services import utils
-from core.services import EmailService
+from conventions.services.utils import ReturnStatus
+from core.services import EmailService, EmailTemplateID
 from instructeurs.forms import AdministrationForm
 from instructeurs.models import Administration
 from users.forms import AddAdministrationForm, AddBailleurForm, AddUserForm, UserForm
 from users.models import User, Role, TypeRole
-from conventions.services.utils import ReturnStatus
 from users.forms import UserBailleurFormSet
 from users.services import UserService
 
@@ -436,10 +436,24 @@ def add_user(request):
             if form.cleaned_data["filtre_departements"] is not None:
                 user.filtre_departements.clear()
                 user.filtre_departements.add(*form.cleaned_data["filtre_departements"])
-            EmailService().send_welcome_email(
-                user, password, request.build_absolute_uri("/accounts/login/")
-            )
+            if not settings.SENDINBLUE_API_KEY:
+                EmailService().send_welcome_email(
+                    user, password, request.build_absolute_uri("/accounts/login/")
+                )
             if form.cleaned_data["user_type"] == "BAILLEUR":
+                EmailService(
+                    to_emails=[user.email],
+                    email_template_id=EmailTemplateID.B_WELCOME,
+                ).send_transactional_email(
+                    email_data={
+                        "email": user.email,
+                        "username": user.username,
+                        "firstname": user.first_name,
+                        "lastname": user.last_name,
+                        "password": password,
+                        "login_url": request.build_absolute_uri("/accounts/login/"),
+                    }
+                )
                 Role.objects.create(
                     typologie=TypeRole.BAILLEUR,
                     bailleur=request.user.bailleurs().get(
@@ -449,6 +463,17 @@ def add_user(request):
                     group=Group.objects.get(name="bailleur"),
                 )
             if form.cleaned_data["user_type"] == "INSTRUCTEUR":
+                EmailService(
+                    to_emails=[user.email],
+                    email_template_id=EmailTemplateID.I_WELCOME,
+                ).send_transactional_email(
+                    email_data={
+                        "password": password,
+                        "user": user,
+                        "login_url": request.build_absolute_uri("/accounts/login/")
+                        + "?instructeur=1",
+                    }
+                )
                 Role.objects.create(
                     typologie=TypeRole.INSTRUCTEUR,
                     administration=request.user.administrations().get(
@@ -602,8 +627,7 @@ class ImportBailleurUsersService:
         self.is_upload = self.request.POST.get("Upload", False)
         if self.is_upload:
             return self._process_upload()
-        else:
-            return self._process_formset()
+        return self._process_formset()
 
     def _process_upload(self) -> ReturnStatus:
         self.upload_form = BailleurListingUploadForm(
@@ -632,7 +656,8 @@ class ImportBailleurUsersService:
 
             messages.success(
                 self.request,
-                f"{len(self.formset)} utilisateurs bailleurs ont été correctement créés à partir du listing",
+                f"{len(self.formset)} utilisateurs bailleurs ont été correctement créés"
+                + " à partir du listing",
                 extra_tags="Listing importé",
             )
             return ReturnStatus.SUCCESS

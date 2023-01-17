@@ -1,4 +1,5 @@
-import mock
+from unittest.mock import patch
+from unittest import mock
 
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
@@ -13,6 +14,39 @@ from core.services import EmailService
 from core.tests import utils_fixtures
 from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
+
+
+class EmailServicesFromConventionTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        utils_fixtures.create_all()
+
+    def test_something(self):
+        with self.settings(SENDINBLUE_API_KEY="a"):
+            with patch(
+                "core.services.EmailService.send_transactional_email", autospec=True
+            ) as my_mock:
+                convention = Convention.objects.get(numero="0001")
+                service_recapitilatif.send_email_instruction(
+                    "https://apilos.beta.gouv.fr/my_convention",
+                    convention,
+                    ["fix@apilos.com"],
+                )
+                self.assertEqual(settings.SENDINBLUE_API_KEY, "a")
+                my_mock.assert_called()
+                self.assertEqual(my_mock.call_count, 2)
+                self.assertEqual(
+                    my_mock.mock_calls[0].kwargs,
+                    {
+                        "email_data": {
+                            "convention_url": "https://apilos.beta.gouv.fr/my_convention",
+                            "convention": str(convention),
+                        }
+                    },
+                )
+                self.assertEqual(
+                    my_mock.mock_calls[0].args[0].to_emails, ["raph@apilos.com"]
+                )
 
 
 class ServicesConventionsTests(TestCase):
@@ -141,7 +175,7 @@ class ServicesConventionsTests(TestCase):
             convention,
             ["me@apilos.com"],
             True,
-            "Toto à un vélo",
+            "Toto a un vélo",
         )
 
         self.assertEqual(email_sent.to, ["raph@apilos.com"])
@@ -149,7 +183,7 @@ class ServicesConventionsTests(TestCase):
         self.assertEqual(email_sent.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(email_sent.subject, f"Convention à modifier ({convention})")
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
-        self.assertIn("Toto à un vélo", email_sent.body)
+        self.assertIn("Toto a un vélo", email_sent.body)
 
         email_sent = service_recapitilatif.send_email_correction(
             "https://apilos.beta.gouv.fr/my_convention", convention, [], False
@@ -160,7 +194,7 @@ class ServicesConventionsTests(TestCase):
         self.assertEqual(email_sent.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(email_sent.subject, f"Convention modifiée ({convention})")
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
-        self.assertNotIn("Toto à un vélo", email_sent.body)
+        self.assertNotIn("Toto a un vélo", email_sent.body)
 
         User.objects.filter(username="raph").update(
             preferences_email=EmailPreferences.AUCUN
@@ -174,7 +208,7 @@ class ServicesConventionsTests(TestCase):
             convention,
             ["me@apilos.com"],
             True,
-            "Toto à un vélo",
+            "Toto a un vélo",
         )
 
         self.assertEqual(email_sent.to, ["contact@apilos.beta.gouv.fr"])
@@ -185,7 +219,7 @@ class ServicesConventionsTests(TestCase):
             f"[ATTENTION pas de destinataire à cet email] Convention à modifier ({convention})",
         )
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
-        self.assertIn("Toto à un vélo", email_sent.body)
+        self.assertIn("Toto a un vélo", email_sent.body)
 
         email_sent = service_recapitilatif.send_email_correction(
             "https://apilos.beta.gouv.fr/my_convention",
@@ -202,7 +236,7 @@ class ServicesConventionsTests(TestCase):
             f"[ATTENTION pas de destinataire à cet email] Convention modifiée ({convention})",
         )
         self.assertIn("https://apilos.beta.gouv.fr/my_convention", email_sent.body)
-        self.assertNotIn("Toto à un vélo", email_sent.body)
+        self.assertNotIn("Toto a un vélo", email_sent.body)
 
 
 class ServicesUtilsTests(TestCase):
