@@ -20,6 +20,7 @@
 .habilitation-bloc .fr-btn {
   display: block;
   text-align: left;
+  width: 100%;
 }
 
 .habilitation-bloc {
@@ -29,8 +30,7 @@
   font-size: 14px;
   right: 1rem;
   top: auto;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  padding: 0;
   margin-right: 0;
   box-shadow: 0 16px 16px -16px #00000052,0 8px 16px #0000001a;
 }
@@ -40,12 +40,13 @@
   max-height: 400px;
 }
 
-.habilitation-bloc .fr-menu__list {
+.habilitation-bloc .fr-menu__list ul {
   padding: 0;
+  margin-bottom: 0;
 }
-.habilitation-bloc .fr-menu__list li {
+.habilitation-bloc .fr-menu__list ul li {
   text-align: left;
 }
-.habilitation-bloc .fr-menu__list li:hover a {
+.habilitation-bloc .fr-menu__list ul li:hover a {
   text-decoration: none;
 }
