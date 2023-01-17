@@ -89,7 +89,7 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(convention.statut_for_template()["statut"], "1. Projet")
         self.assertEqual(
             convention.statut_for_template()["statut_display"],
-            "Création d'un projet de convention",
+            "Projet",
         )
         self.assertEqual(convention.statut_for_template()["key_statut"], "Projet")
         convention.statut = ConventionStatut.INSTRUCTION
@@ -98,7 +98,7 @@ class ConventionModelsTest(TestCase):
         )
         self.assertEqual(
             convention.statut_for_template()["statut_display"],
-            "Projet de convention soumis à l'instruction",
+            "En instruction",
         )
         self.assertEqual(
             convention.statut_for_template()["key_statut"], "Instruction_requise"
@@ -109,21 +109,19 @@ class ConventionModelsTest(TestCase):
         )
         self.assertEqual(
             convention.statut_for_template()["statut_display"],
-            "Projet de convention à modifier par le bailleur",
+            "En correction",
         )
         self.assertEqual(
             convention.statut_for_template()["key_statut"], "Corrections_requises"
         )
         convention.statut = ConventionStatut.A_SIGNER
         self.assertEqual(convention.statut_for_template()["statut"], "4. A signer")
-        self.assertEqual(
-            convention.statut_for_template()["statut_display"], "Convention à signer"
-        )
+        self.assertEqual(convention.statut_for_template()["statut_display"], "À signer")
         self.assertEqual(convention.statut_for_template()["key_statut"], "A_signer")
         convention.statut = ConventionStatut.SIGNEE
         self.assertEqual(convention.statut_for_template()["statut"], "5. Signée")
         self.assertEqual(
-            convention.statut_for_template()["statut_display"], "Convention signée"
+            convention.statut_for_template()["statut_display"], "Finalisée"
         )
         self.assertEqual(convention.statut_for_template()["key_statut"], "Signee")
 
@@ -145,6 +143,36 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(convention.short_statut_for_template(), "Finalisée")
         convention.statut = ConventionStatut.RESILIEE
         self.assertEqual(convention.short_statut_for_template(), "Résiliée")
+
+    def test_short_statut_for_bailleur(self):
+        convention = Convention.objects.order_by("uuid").first()
+        convention.statut = ConventionStatut.PROJET
+        self.assertEqual(convention.short_statut_for_bailleur(), "Projet")
+        convention.statut = ConventionStatut.INSTRUCTION
+        self.assertEqual(convention.short_statut_for_bailleur(), "En instruction")
+        convention.statut = ConventionStatut.CORRECTION
+        self.assertEqual(convention.short_statut_for_bailleur(), "À corriger")
+        convention.statut = ConventionStatut.A_SIGNER
+        self.assertEqual(convention.short_statut_for_bailleur(), "À signer")
+        convention.statut = ConventionStatut.SIGNEE
+        self.assertEqual(convention.short_statut_for_bailleur(), "Finalisée")
+        convention.statut = ConventionStatut.RESILIEE
+        self.assertEqual(convention.short_statut_for_bailleur(), "Résiliée")
+
+    def test_short_statut_for_instructeur(self):
+        convention = Convention.objects.order_by("uuid").first()
+        convention.statut = ConventionStatut.PROJET
+        self.assertEqual(convention.short_statut_for_instructeur(), "Projet")
+        convention.statut = ConventionStatut.INSTRUCTION
+        self.assertEqual(convention.short_statut_for_instructeur(), "A instruire")
+        convention.statut = ConventionStatut.CORRECTION
+        self.assertEqual(convention.short_statut_for_instructeur(), "En correction")
+        convention.statut = ConventionStatut.A_SIGNER
+        self.assertEqual(convention.short_statut_for_instructeur(), "À signer")
+        convention.statut = ConventionStatut.SIGNEE
+        self.assertEqual(convention.short_statut_for_instructeur(), "Finalisée")
+        convention.statut = ConventionStatut.RESILIEE
+        self.assertEqual(convention.short_statut_for_instructeur(), "Résiliée")
 
     def test_mixity_option(self):
         convention = Convention.objects.order_by("uuid").first()
