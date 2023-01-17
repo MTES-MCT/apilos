@@ -12,7 +12,8 @@
                 ele: '#id_bailleur',
                 multiple: false,
                 hideClearButton: true,
-                search: true
+                search: true,
+                searchPlaceholderText: "Rechercher votre bailleur..."
             });
             console.log("Ici");
         });
@@ -21,6 +22,7 @@
 
 {% block css_extras %}
     <link rel="stylesheet" href="{% static "virtual-select/dist/virtual-select.min.css" %}">
+    <link rel="stylesheet" href="{% static "css/searchselect.css" %}">
 {% endblock %}
 
 {% block content %}
