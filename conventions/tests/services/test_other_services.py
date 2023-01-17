@@ -16,7 +16,7 @@ from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
 
 
-class EmailServicesFromCoventionTests(TestCase):
+class EmailServicesFromConventionTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         utils_fixtures.create_all()
