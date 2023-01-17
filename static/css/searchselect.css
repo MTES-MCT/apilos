@@ -1,6 +1,12 @@
-#id_bailleur.fr-select {
+.select-search .fr-select {
   padding-left: 0;
   padding-right: 0;
+}
+.vscomp-toggle-button {
+  padding-left: 1rem;
+  font-family: Marianne, arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 400
 }
 .vscomp-wrapper:focus .vscomp-toggle-button,
 .vscomp-wrapper.focused .vscomp-toggle-button {
@@ -8,7 +14,7 @@
   padding: .5rem 0;
 }
 .vscomp-wrapper:not(.has-value) .vscomp-value {
-opacity: 0;
+  opacity: 0;
 }
 .vscomp-arrow {
   right: 3px;
