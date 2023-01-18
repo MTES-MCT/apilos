@@ -1,10 +1,25 @@
 # Migration des données depuis Ecoloweb
 
-La migration des données depuis Ecoloweb se fait via une commande CLI (_command line interface_) de [Django](https://docs.djangoproject.com/fr/4.1/howto/custom-management-commands/).  
+La migration des données depuis Ecoloweb se fait via une commande CLI (_command line interface_) de [Django](https://docs.djangoproject.com/fr/4.1/howto/custom-management-commands/).
+
+## Structure des données @ Ecoloweb
+
+Sur Ecoloweb, les informations clefs et pérennes d'une convention sont gardées _éternellement_ dans la table `ecolo_conventionapl`.
+On y trouve par exemple le numéro, l'administration qui en est à l'origine et globalement toutes les infos inaltérables.
+
+Pour autant une convention évolue avec le temps, en étant soit _reconduite_ sur une nouvelle période, soit _altérée_ via
+un **avenant**. Chaque altération crée une nouvelle entrée dans la table `ecolo_conventiondonneesgenerales`. Ces données
+générales incluent les dates de début et de fin, une éventuelle référence vers la table `ecolo_avenant`, toutes les
+dates d'évènements d'envoi, signature, publication ou encore le notaire ou le bureau CAF concerné. Surtout, à chaque
+_donnée générale_ sont associées des `ecolo_programmelogement`, eux-mêmes constitués de `ecolo_logement` et `ecolo_annexe`,
+soit plus largement des infos détaillant _le contenu_ de ce qui est conventionné.
+
+On peut donc obtenir rapidement le détail de toutes les altérations successives d'une convention en examinant le contenu
+derrière chaque _donnée générale_ liée à une même `ecolo_conventiondonneesgenerales.conventionapl_id`.
 
 ## Fonctionnement de la commande
 
-La commande se nomme `import_ecoloweb_data` est lancée via Django (i.e. `manage.py`).  
+La commande se nomme `import_ecoloweb_data` est lancée via Django (i.e. `manage.py`).
 
 Un accès en lecture seule à une base de données est nécessaire via la variable d'environnement `ECOLO_DATABASE_URL` qui
 reste optionnelle sur le reste du projet.
