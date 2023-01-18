@@ -4,6 +4,27 @@
 
 {% block page_title %}Selection - APiLos{% endblock%}
 
+{% block javascript_extras %}
+    <script src="{% static "virtual-select/dist/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+        document.addEventListener('DOMContentLoaded', function () {
+            VirtualSelect.init({
+                ele: '#id_bailleur',
+                multiple: false,
+                hideClearButton: true,
+                search: true,
+                searchPlaceholderText: "Rechercher votre bailleur..."
+            });
+            console.log("Ici");
+        });
+    </script>
+{% endblock %}
+
+{% block css_extras %}
+    <link rel="stylesheet" href="{% static "virtual-select/dist/virtual-select.min.css" %}">
+    <link rel="stylesheet" href="{% static "css/searchselect.css" %}">
+{% endblock %}
+
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
@@ -18,7 +39,9 @@
                     <form method="post" action="">
                         {% csrf_token %}
                         <div class="fr-col-12">
-                            {% include "common/form/input_select.html" with form_input=form.bailleur without_empty_option=form.bailleur.field.choices|length_is:1 %}
+                            <div class="select-search fr-mb-3w">
+                                {% include "common/form/input_select.html" with form_input=form.bailleur without_empty_option=form.bailleur.field.choices|length_is:1 %}
+                            </div>
 
                             {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
 
