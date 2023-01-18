@@ -37,6 +37,12 @@
         <!--Js-->
 
         {% block javascript_extras %}{% endblock %}
+        {% if CRISP_WEBSITE_ID %}
+            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                window.$crisp=[];window.CRISP_WEBSITE_ID="{{ CRISP_WEBSITE_ID }}";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();
+            </script>
+        {% endif %}
+
         {% if ENVIRONMENT == 'production' %}
             <!-- Matomo -->
             <script type="text/javascript" nonce="{{request.csp_nonce}}">
@@ -68,12 +74,15 @@
         {% endblock %}
 
         {% block feedback %}
-            <div class="container__feedback_btn">
-                <a href="mailto:contact@apilos.fr" class="cta">
-                    <span class="apilos-icon fr-fi-mail-line" aria-hidden="true"></span>
-                    <span class="button-text">Faites nous part de vos retours</span>
-                </a>
-            </div>
+            {# Enable the mailto feedback button only as a Crisp fallback #}
+            {% if not CRISP_WEBSITE_ID %}
+                <div class="container__feedback_btn">
+                    <a href="mailto:contact@apilos.fr" class="cta">
+                        <span class="apilos-icon fr-fi-mail-line" aria-hidden="true"></span>
+                        <span class="button-text">Faites nous part de vos retours</span>
+                    </a>
+                </div>
+            {% endif %}
         {% endblock %}
 
         {% include "layout/matomo.html" %}

@@ -6,6 +6,7 @@ from core import settings
 def get_environment(request):
     data = {}
     data["ENVIRONMENT"] = settings.ENVIRONMENT
+    data["CRISP_WEBSITE_ID"] = settings.CRISP_WEBSITE_ID
     data["CERBERE_AUTH"] = settings.CERBERE_AUTH
     data["CONVENTION_STATUT"] = {
         convention_statut.name: convention_statut.value
