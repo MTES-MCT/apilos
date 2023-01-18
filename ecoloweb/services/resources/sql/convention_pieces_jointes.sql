@@ -23,4 +23,3 @@ from ecolo.ecolo_piecejointe pj
 where
     c.id = %s
     and ff.code = %s
-    and cdg.datehistoriquedebut = %s

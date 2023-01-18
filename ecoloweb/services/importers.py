@@ -1,4 +1,5 @@
 import os
+import re
 import time
 from datetime import datetime
 from inspect import isclass
@@ -42,17 +43,20 @@ class ModelImporter(ABC):
         if len(self._get_o2o_dependencies()) > 0:
             self._o2o_importers = {}
             for key, dependency in self._get_o2o_dependencies().items():
-                if not isclass(dependency):
-                    raise ValueError(
-                        f"{dependency} must be a subclass of ModelImporter"
+                if isinstance(dependency, ModelImporter):
+                    self._o2o_importers[key] = dependency
+                else:
+                    if not isclass(dependency):
+                        raise ValueError(
+                            f"{dependency} must be a subclass of ModelImporter"
+                        )
+                    if not issubclass(dependency, ModelImporter):
+                        raise ValueError(
+                            f"{dependency} must be a subclass of ModelImporter"
+                        )
+                    self._o2o_importers[key] = dependency(
+                        self.departement, self.import_date, self.debug
                     )
-                if not issubclass(dependency, ModelImporter):
-                    raise ValueError(
-                        f"{dependency} must be a subclass of ModelImporter"
-                    )
-                self._o2o_importers[key] = dependency(
-                    self.departement, self.import_date, self.debug
-                )
 
         self._o2m_importers: List[ModelImporter] | None = None
         if len(self._get_o2m_dependencies()) > 0:
@@ -101,7 +105,12 @@ class ModelImporter(ABC):
         Simple primitive method to extract file content as string.
         """
         return "".join(
-            open(os.path.join(os.path.dirname(__file__), path), "r").readlines()
+            [
+                re.sub("--.*", "", line)
+                for line in open(
+                    os.path.join(os.path.dirname(__file__), path), "r"
+                ).readlines()
+            ]
         )
 
     def _get_sql_from_template(self, path: str, context: dict = {}):
@@ -227,6 +236,7 @@ class ModelImporter(ABC):
             else None
         )
 
+        instance = None
         # If model wasn't imported yet, import it now
         if ecolor_ref is None:
             # Extract from data the id of the associated object in the Ecoloweb DB (in string format as it can be a
@@ -249,22 +259,27 @@ class ModelImporter(ABC):
 
             else:
                 # Create a new instance...
-                instance = self.model.objects.create(**data)
+                if data is not None:
+                    instance = self.model.objects.create(**data)
 
-                # ...and mark it as imported
-                self._register_ecolo_reference(instance, ecolo_id)
-                self._nb_imported_models += 1
+                    # ...and mark it as imported
+                    self._register_ecolo_reference(instance, ecolo_id)
+                    self._nb_imported_models += 1
         else:
             ecolo_id = ecolor_ref.ecolo_id
             instance = ecolor_ref.resolve()
 
-        # Import one-to-many models
-        self._fetch_related_o2m_objects(ecolo_id)
+        if instance:
+            # Import one-to-many models
+            self._fetch_related_o2m_objects(ecolo_id)
 
-        # Perform post process operations
-        self._on_processed(instance)
+            # Perform post process operations
+            self._on_processed(instance)
 
         return instance
+
+    def toto(self, data):
+        pass
 
     def _on_processed(self, model: Model | None):
         pass
@@ -272,10 +287,13 @@ class ModelImporter(ABC):
     def _build_query_parameters(self, pk) -> list:
         return [pk]
 
-    def import_one(self, pk) -> Model | None:
+    def import_one(self, pk: str | int | None) -> Model | None:
         """
         Public entry point method to fetch a model from the Ecoloweb database based on its primary key
         """
+        if pk is None:
+            return None
+
         ecolo_ref = self._find_ecolo_ref(pk)
 
         # If an EcoloReference has been found

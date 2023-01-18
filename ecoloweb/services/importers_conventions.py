@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List
 
 from conventions.models import Convention, PieceJointe, PieceJointeType
 from conventions.tasks import promote_piece_jointe
@@ -20,31 +20,41 @@ class ConventionImporterSimple(ModelImporter):
     def _build_query_parameters(self, pk) -> list:
         args = pk.split(":")
 
-        return [int(args[0]), args[1], args[2]]
+        return [int(args[0]), args[1]]
+
+    def _get_o2o_dependencies(self):
+        return {
+            "parent": self,
+            "programme": ProgrammeImporter,
+            "lot": ProgrammeLotImporter,
+        }
 
 
 class ConventionImporter(ConventionImporterSimple):
     def _get_o2o_dependencies(self):
         return {
-            "programme": ProgrammeImporter,
-            "lot": ProgrammeLotImporter,
             "parent": ConventionImporterSimple,
         }
 
     def _get_o2m_dependencies(self) -> List:
         return [PieceJointeImporter]
 
-    def get_ids_by_departement(self) -> QueryResultIterator:
+    def get_all(self) -> QueryResultIterator:
         return QueryResultIterator(
             self._db_connection,
-            self._get_file_content("resources/sql/_conventions_by_departements.sql"),
+            self._get_file_content("resources/sql/conventions_many.sql"),
             [self.departement],
+            True,
         )
 
     def _on_processed(self, model: Convention | None):
         if model is not None:
             piece_jointe = (
-                model.pieces_jointes.filter(type=PieceJointeType.CONVENTION)
+                model.pieces_jointes.filter(
+                    type=PieceJointeType.AVENANT
+                    if model.is_avenant()
+                    else PieceJointeType.CONVENTION
+                )
                 .order_by("-cree_le")
                 .first()
             )

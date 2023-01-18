@@ -6,11 +6,12 @@ class QueryResultIterator:
     Iterator on rows returned by a SQL query. It computes rows count first and serves each one by one as dict.
     """
 
-    def __init__(self, connection, query, parameters=[]):
+    def __init__(self, connection, query, parameters=[], count=False):
         self._connection: CursorWrapper = connection
         # Compute result number, first
-        self._connection.execute(f'select count(*) from ({query}) q', parameters)
-        self.lines_total = self._connection.fetchone()[0]
+        if count:
+            self._connection.execute(f"select count(*) from ({query}) q", parameters)
+            self.lines_total = self._connection.fetchone()[0]
 
         # Execute query
         self.lines_fetched = 0

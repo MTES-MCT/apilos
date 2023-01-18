@@ -51,13 +51,13 @@ class Command(BaseCommand):
 
         try:
             importer = ConventionImporter(departement, import_date, debug)
-            results = importer.get_ids_by_departement()
+            results = importer.get_all()
             # Progress bar
             if not no_progress:
                 progress = tqdm(total=results.lines_total)
             # Actual processing
-            for result in list(results):
-                importer.import_one(result["id"])
+            for result in results:
+                importer.process_result(result)
                 if progress is not None:
                     progress.update(1)
                 else:
