@@ -88,6 +88,13 @@
         {% include "layout/matomo.html" %}
         {% include "layout/sentry.html" %}
         {% include "layout/javascript_load.html" %}
+        {% if CRISP_WEBSITE_ID and user %}
+            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                {# See Crisp documentation https://docs.crisp.chat/guides/chatbox-sdks/web-sdk/dollar-crisp/ #}
+                $crisp.push(["set", "user:email", "{{ user.email }}"]);
+                $crisp.push(["set", "user:nickname", "{{ user.first_name }} {{ user.last_name }}"]);
+            </script>
+        {% endif %}
         {% block js %}{% endblock %}
     </body>
 </html>
