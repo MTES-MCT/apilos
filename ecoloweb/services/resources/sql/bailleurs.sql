@@ -8,7 +8,7 @@
 select
     b.id,
     case when
-        b.raisonsociale = 'ANAH' then 'Personnes physiques'
+        b.raisonsociale = 'ANAH' then 'Personne(s) physique(s)'
         else b.raisonsociale
     end as nom,
     case when
