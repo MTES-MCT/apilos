@@ -44,7 +44,7 @@ class FinancementEDD(models.TextChoices):
 
 class TypologieLogementClassique(models.TextChoices):
     T1 = "T1", "T1"
-    T1BIS = "T1bis", "T1bis"
+    T1BIS = "T1bis", "T1 bis"
     T2 = "T2", "T2"
     T3 = "T3", "T3"
     T4 = "T4", "T4"
@@ -54,6 +54,7 @@ class TypologieLogementClassique(models.TextChoices):
 
 class TypologieLogementFoyerResidence(models.TextChoices):
     T1 = "T1", "T1"
+    T1BIS = "T1bis", "T1 bis"
     T1prime = "T1prime", "T1'"
     T2 = "T2", "T2"
     T3 = "T3", "T3"
@@ -65,7 +66,7 @@ class TypologieLogementFoyerResidence(models.TextChoices):
 
 class TypologieLogement(models.TextChoices):
     T1 = "T1", "T1"
-    T1BIS = "T1bis", "T1bis"
+    T1BIS = "T1bis", "T1 bis"
     T1prime = "T1prime", "T1'"
     T2 = "T2", "T2"
     T3 = "T3", "T3"
@@ -78,9 +79,9 @@ class TypologieLogement(models.TextChoices):
     def map_string(cls, value):
         mapping = {
             "1": "T1",
-            "1bis": "T1bis",
-            "T1 bis": "T1bis",
-            "1 bis": "T1bis",
+            "1bis": "T1 bis",
+            "1 bis": "T1 bis",
+            "T1bis": "T1 bis",
             "2": "T2",
             "3": "T3",
             "4": "T4",

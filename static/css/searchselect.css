@@ -2,16 +2,17 @@
   padding-left: 0;
   padding-right: 0;
 }
-.vscomp-toggle-button {
+.vscomp-toggle-button, .vscomp-option-text{
   padding-left: 1rem;
   font-family: Marianne, arial, sans-serif;
   font-size: 1rem;
-  font-weight: 400
+  font-weight: 400;
+  border: none!important;
 }
 .vscomp-wrapper:focus .vscomp-toggle-button,
 .vscomp-wrapper.focused .vscomp-toggle-button {
   box-shadow: none;
-  padding: .5rem 0;
+  padding: .5rem 1rem !important;
 }
 .vscomp-wrapper:not(.has-value) .vscomp-value {
   opacity: 0;
