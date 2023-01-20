@@ -14,7 +14,7 @@ class BailleurImporter(ModelImporter):
 
         try:
             self._siret_resolver = SiretResolver()
-        except ConnectionRefusedError:
+        except BaseException:
             self._siret_resolver = None
 
     def _get_query_one(self) -> str:
@@ -25,7 +25,10 @@ class BailleurImporter(ModelImporter):
 
     def _resolve_siret(self, codesiren: str, date_creation: str):
         if self._siret_resolver:
-            return self._siret_resolver.resolve(codesiren, date_creation)
+            try:
+                return self._siret_resolver.resolve(codesiren, date_creation)
+            except BaseException:
+                return None
 
         return None
 
