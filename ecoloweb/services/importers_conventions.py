@@ -3,11 +3,11 @@ from typing import List
 from conventions.models import Convention, PieceJointe, PieceJointeType
 from conventions.tasks import promote_piece_jointe
 from .importers import ModelImporter
-from .importers_programmes import ProgrammeImporter, ProgrammeLotImporter
+from .importers_programmes import ProgrammeImporter, LotImporter
 from .query_iterator import QueryResultIterator
 
 
-class ConventionImporterSimple(ModelImporter):
+class ConventionImporter(ModelImporter):
     """
     Importer for the Programme model, without one-to-one nor one-to-many dependency
     """
@@ -25,15 +25,8 @@ class ConventionImporterSimple(ModelImporter):
     def _get_o2o_dependencies(self):
         return {
             "parent": self,
-            "programme": ProgrammeImporter,
-            "lot": ProgrammeLotImporter,
-        }
-
-
-class ConventionImporter(ConventionImporterSimple):
-    def _get_o2o_dependencies(self):
-        return {
-            "parent": ConventionImporterSimple,
+            "programme": (ProgrammeImporter, False),
+            "lot": LotImporter,
         }
 
     def _get_o2m_dependencies(self) -> List:
@@ -71,4 +64,4 @@ class PieceJointeImporter(ModelImporter):
         return self._get_file_content("resources/sql/convention_pieces_jointes.sql")
 
     def _get_o2o_dependencies(self):
-        return {"convention": ConventionImporterSimple}
+        return {"convention": (ConventionImporter, False)}

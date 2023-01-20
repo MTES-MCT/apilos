@@ -13,7 +13,7 @@ from .importers_administrations import AdministrationImporter
 from .importers_bailleurs import BailleurImporter
 
 
-class ProgrammeImporterSimple(ModelImporter):
+class ProgrammeImporter(ModelImporter):
     """
     Importer for the Programme model, without one-to-one nor one-to-many dependency
     """
@@ -26,8 +26,6 @@ class ProgrammeImporterSimple(ModelImporter):
     def _get_identity_keys(self) -> List[str]:
         return ["numero_galion"]
 
-
-class ProgrammeImporter(ProgrammeImporterSimple):
     def _get_o2o_dependencies(self):
         return {
             "bailleur": BailleurImporter,
@@ -38,7 +36,7 @@ class ProgrammeImporter(ProgrammeImporterSimple):
         return [ReferenceCadastraleImporter]
 
 
-class ProgrammeLotImporterSimple(ModelImporter):
+class LotImporter(ModelImporter):
     """
     Importer for the ProgrammeLot model, without one-to-one nor one-to-many dependency
     """
@@ -51,18 +49,16 @@ class ProgrammeLotImporterSimple(ModelImporter):
     def _get_query_many(self) -> Optional[str]:
         return self._get_file_content("resources/sql/programme_lots_many.sql")
 
-
-class ProgrammeLotImporter(ProgrammeLotImporterSimple):
     def _get_o2o_dependencies(self):
         return {
-            "programme": ProgrammeImporterSimple,
+            "programme": ProgrammeImporter,
         }
 
     def _get_o2m_dependencies(self):
-        return [ProgrammeLogementImporter, TypeStationnementImporter]
+        return [LogementImporter, TypeStationnementImporter]
 
 
-class ProgrammeLogementImporter(ModelImporter):
+class LogementImporter(ModelImporter):
     model = Logement
 
     def _get_query_many(self) -> str:
@@ -70,7 +66,7 @@ class ProgrammeLogementImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {
-            "lot": ProgrammeLotImporterSimple,
+            "lot": LotImporter,
         }
 
     def _prepare_data(self, data: dict) -> dict:
@@ -112,7 +108,7 @@ class ReferenceCadastraleImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {
-            "programme": ProgrammeImporterSimple,
+            "programme": ProgrammeImporter,
         }
 
 
@@ -124,5 +120,5 @@ class TypeStationnementImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {
-            "lot": ProgrammeLotImporterSimple,
+            "lot": LotImporter,
         }
