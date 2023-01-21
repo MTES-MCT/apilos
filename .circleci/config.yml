@@ -188,3 +188,16 @@ workflows:
           filters:
             branches:
               only: master
+      - validate_deployment_in_siap_production:
+          type: approval
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy_siap_production:
+          requires:
+            - validate_deployment_in_siap_production
+          filters:
+            branches:
+              only: master
