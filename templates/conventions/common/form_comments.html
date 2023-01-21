@@ -3,7 +3,7 @@
 <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-md-12">
 
-        {% if convention.programme.is_foyer %}
+        {% if convention.programme.is_foyer or convention.programme.is_residence %}
             {% include "common/form/input_upload.html" with form_input=form.attached form_input_files=form.attached_files object_name='convention' object_uuid=convention.uuid file_list=convention.attached|get_files_from_textfiles textarea=False object_field="convention__attached__"|add:form.uuid.value %}
         {% endif %}
 

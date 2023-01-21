@@ -23,7 +23,7 @@ def generate_and_send(args):
     pdf_path = convention_generator.generate_pdf(file_stream, convention)
 
     zip_path = None
-    if convention.programme.is_foyer():
+    if convention.programme.is_foyer() or convention.programme.is_residence():
         zip_path = (
             Path("conventions")
             / str(convention.uuid)

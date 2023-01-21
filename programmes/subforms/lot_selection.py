@@ -19,8 +19,9 @@ class ProgrammeSelectionFromDBForm(forms.Form):
     nature_logement = forms.ChoiceField(
         label="Nature des logements",
         help_text=(
-            "Si la convention ne porte pas sur une résidence ou un foyer,"
-            + " vous devez selectionner «Logements ordinaires»"
+            "Le type de convention dépends de la nature des logements, attention, le"
+            + " choix de la nature des logements est définitif. Plus de détails dans"
+            + " notre FAQ"
         ),
         choices=OppenedNatureLogement.choices,
         error_messages={

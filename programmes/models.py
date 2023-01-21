@@ -101,7 +101,21 @@ class TypologieLogement(models.TextChoices):
 
 class OppenedNatureLogement(models.TextChoices):
     LOGEMENTSORDINAIRES = "LOGEMENTSORDINAIRES", "Logements ordinaires"
-    AUTRE = "AUTRE", "Autres logements foyers"
+    AUTRE = "AUTRE", "Autres logements foyers (Convention de type Foyer)"
+    HEBERGEMENT = "HEBERGEMENT", "Hébergement (Convention de type Résidence)"
+    RESISDENCESOCIALE = (
+        "RESISDENCESOCIALE",
+        "Résidence sociale (Convention de type Résidence)",
+    )
+    PENSIONSDEFAMILLE = (
+        "PENSIONSDEFAMILLE",
+        "Pensions de famille, maisons relais (Convention de type Résidence)",
+    )
+    RESIDENCEDACCUEIL = (
+        "RESIDENCEDACCUEIL",
+        "Résidence d'accueil (Convention de type Résidence)",
+    )
+    RESIDENCEUNIVERSITAIRE = "RESIDENCEUNIVERSITAIRE", "Résidence universitaire"
 
 
 class NatureLogement(models.TextChoices):
@@ -376,8 +390,6 @@ class Programme(IngestableModel):
             NatureLogement.RESISDENCESOCIALE,
             NatureLogement.PENSIONSDEFAMILLE,
             NatureLogement.RESIDENCEDACCUEIL,
-            NatureLogement.RESIDENCEUNIVERSITAIRE,
-            NatureLogement.RHVS,
         ]
 
 

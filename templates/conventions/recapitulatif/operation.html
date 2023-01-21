@@ -52,7 +52,7 @@
                     <div class="table--limited-height">
                         {% include "common/display_field_if_exists.html" with label="Numéro de permis construire" value=programme.permis_construire object_field="programme__permis_construire__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Date de l'acte notarié" value=programme.date_acte_notarie object_field="programme__date_acte_notarie__"|add:programme_uuid %}
-                        {% if convention.programme.is_foyer %}
+                        {% if convention.programme.is_foyer or convention.programme.is_residence %}
                             {% include "common/display_field_if_exists.html" with label="Date d'autorisation hors habitat inclusif" value=programme.date_autorisation_hors_habitat_inclusif object_field="programme__date_autorisation_hors_habitat_inclusif__"|add:programme_uuid %}
                             {% include "common/display_field_if_exists.html" with label="Date de la convention de location" value=programme.date_convention_location object_field="programme__date_convention_location__"|add:programme_uuid %}
                         {% endif %}

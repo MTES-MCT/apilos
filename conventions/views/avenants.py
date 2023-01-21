@@ -23,7 +23,7 @@ def new_avenant(request, convention_uuid):
         convention = result["convention"]
         target_pathname = None
         if result["avenant_type"].nom == "logements":
-            if convention.programme.is_foyer():
+            if convention.programme.is_foyer() or convention.programme.is_residence():
                 target_pathname = "conventions:avenant_foyer_residence_logements"
             else:
                 target_pathname = "conventions:avenant_logements"

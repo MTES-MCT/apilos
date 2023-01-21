@@ -118,6 +118,7 @@ class ConventionFinancementForm(forms.Form):
             # don't add a year for FOYER because end of convention is the 31/12
             if (
                 not self.convention.programme.is_foyer()
+                and not self.convention.programme.is_residence()
                 and end_conv
                 and end_conv.month > 6
             ):

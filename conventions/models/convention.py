@@ -188,6 +188,7 @@ class Convention(models.Model):
             or self.attribution_handicapes_autre
         ):
             return "handicapes"
+        # TODO : test inclusif to let it closed for the first time ?
         return "inclusif"
 
     # Needed for admin
