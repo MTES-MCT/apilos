@@ -436,10 +436,6 @@ def add_user(request):
             if form.cleaned_data["filtre_departements"] is not None:
                 user.filtre_departements.clear()
                 user.filtre_departements.add(*form.cleaned_data["filtre_departements"])
-            if not settings.SENDINBLUE_API_KEY:
-                EmailService().send_welcome_email(
-                    user, password, request.build_absolute_uri("/accounts/login/")
-                )
             if form.cleaned_data["user_type"] == "BAILLEUR":
                 EmailService(
                     to_emails=[user.email],

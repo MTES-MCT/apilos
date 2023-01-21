@@ -111,7 +111,6 @@ class ConventionSelectionService:
                     else ""
                 ),
             )
-            _send_email_staff(self.request, self.convention)
             self.convention.save()
             file = self.request.FILES.get("nom_fichier_signe", False)
             if file:
@@ -158,36 +157,3 @@ class ConventionSelectionService:
             )
             self.convention.save()
             self.return_status = utils.ReturnStatus.SUCCESS
-
-
-def _send_email_staff(request, convention):
-    # envoi d'un mail au staff APiLos lors de la création from scratch
-    convention_url = request.build_absolute_uri(
-        reverse("conventions:recapitulatif", args=[convention.uuid])
-    )
-    text_content = render_to_string(
-        "emails/alert_create_convention.txt",
-        {
-            "convention_url": convention_url,
-            "convention": convention,
-            "programme": convention.programme,
-            "user": request.user,
-        },
-    )
-    html_content = render_to_string(
-        "emails/alert_create_convention.html",
-        {
-            "convention_url": convention_url,
-            "convention": convention,
-            "programme": convention.programme,
-            "user": request.user,
-        },
-    )
-
-    subject = f"[{settings.ENVIRONMENT.upper()}] "
-    subject += f"Nouvelle convention créée de zéro ({convention})"
-    EmailService(
-        subject=subject,
-        text_content=text_content,
-        html_content=html_content,
-    ).send_to_devs()

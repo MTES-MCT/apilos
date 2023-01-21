@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group
 
 from bailleurs.models import Bailleur
-from core.services import EmailService
+from core.services import EmailService, EmailTemplateID
 from users.models import User, Role
 from users.type_models import TypeRole
 
@@ -9,13 +9,13 @@ from users.type_models import TypeRole
 class UserService:
     @classmethod
     def create_user_bailleur(
-            cls,
-            first_name: str,
-            last_name: str,
-            email: str,
-            bailleur: Bailleur,
-            username: str,
-            login_url: str
+        cls,
+        first_name: str,
+        last_name: str,
+        email: str,
+        bailleur: Bailleur,
+        username: str,
+        login_url: str,
     ) -> User:
 
         user_bailleur = User.objects.create_user(
@@ -35,10 +35,18 @@ class UserService:
         user_bailleur.set_password(password)
         user_bailleur.save()
 
-        EmailService().send_welcome_email(
-            user_bailleur,
-            password,
-            login_url
+        EmailService(
+            to_emails=[user_bailleur.email],
+            email_template_id=EmailTemplateID.B_WELCOME,
+        ).send_transactional_email(
+            email_data={
+                "email": user_bailleur.email,
+                "username": user_bailleur.username,
+                "firstname": user_bailleur.first_name,
+                "lastname": user_bailleur.last_name,
+                "password": password,
+                "login_url": login_url,
+            }
         )
 
         return user_bailleur
@@ -46,11 +54,11 @@ class UserService:
     @classmethod
     def extract_username_from_email(cls, email: str | None = None):
         if email is None:
-            return ''
+            return ""
 
-        parts = email.split('@', maxsplit=1)
+        parts = email.split("@", maxsplit=1)
 
         if len(parts) > 1:
             return parts[0].lower()
 
-        return ''
+        return ""

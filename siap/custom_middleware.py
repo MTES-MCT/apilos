@@ -10,7 +10,6 @@ from users.type_models import TypeRole
 
 
 class CerbereSessionMiddleware:
-    # pylint: disable=R0903
     def __init__(self, get_response):
         self.get_response = get_response
 

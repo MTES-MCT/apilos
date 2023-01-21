@@ -123,7 +123,6 @@ class ApilosConfiguration(APIView):
 
 
 class ConvKPI:
-    # pylint: disable=R0903
     def __init__(self, indicateur_redirection_url, indicateur_valeur, indicateur_label):
         self.indicateur_redirection_url = indicateur_redirection_url
         self.indicateur_valeur = indicateur_valeur

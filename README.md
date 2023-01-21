@@ -76,7 +76,7 @@ Cette commande est excutée lors du déploiement de l'application juste après l
 
 ### Envoi de mails
 
-Nous utilisons mailjet. Si les variables d'environnements MAILJET_API_KEY et MAILJET_API_SECRET sont configurées, le backend email Mailjet est utilisé. Sinon, le backend email console est utilisé et les mail sont imprimé dans a console (dans les logs)
+Nous utilisons sendinblue. Si la variable d'environnement SENDINBLUE_API_KEY est configurée, le backend email SendInBlue est utilisé. Sinon, le backend email console est utilisé et les emails sont imprimés dans a console (dans les logs)
 
 ### DNS
 

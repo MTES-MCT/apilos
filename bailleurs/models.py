@@ -69,7 +69,6 @@ NATURE_RELATIONSHIP = {
 
 
 class BailleurManager(models.Manager):
-    # pylint: disable=R0903
     def get_by_natural_key(self, field, value):
         if field == "siret":
             return self.get(siret=value)
