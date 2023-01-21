@@ -92,9 +92,9 @@ if SENDINBLUE_API_KEY:
         "SENDINBLUE_API_KEY": SENDINBLUE_API_KEY,
     }
     EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
-else:
-    # or anymail.backends.test.EmailBackend ?
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# else:
+#     # or anymail.backends.test.EmailBackend ?
+#     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 env_allowed_hosts = []
 try:

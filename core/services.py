@@ -8,7 +8,6 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.core.files.storage import default_storage
 
-
 logger = logging.getLogger(__name__)
 
 # Using enum class create enumerations
@@ -88,7 +87,7 @@ class EmailService:
         if settings.SENDINBLUE_API_KEY:
             message.send()
         else:
-            logger.info(
+            logger.warning(
                 """
 Email message:
     to: %s

@@ -273,6 +273,7 @@ def send_email_correction(
     # Send a confirmation email to bailleur
     email_service_to_bailleur = EmailService(
         to_emails=to,
+        cc_emails=cc,
         email_template_id=email_template_id,
     )
     email_service_to_bailleur.send_transactional_email(
