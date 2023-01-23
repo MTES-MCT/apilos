@@ -5,7 +5,10 @@
 -- avenant_type                       varchar(25)
 select
     cdg.id||':'||pl.financement as id,
-    cdg2.id||':'||pl.financement  parent_id,
+    case when
+        lag(cdg.id) over (partition by cdg.conventionapl_id order by numero nulls first) is not null then
+            lag(cdg.id) over (partition by cdg.conventionapl_id order by numero nulls first)||':'||pl.financement
+    end as parent_id,
     cdg.id as programme_id,
     md5(cdg.id||'-'||pl.financement) as lot_id, -- Les lots d'un programme sont tous les logements partageant le même financement
     pl.financement as financement,

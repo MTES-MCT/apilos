@@ -1,23 +1,13 @@
--- Recursive query to ensure a parent convention is always fetched before its children
-with recursive convention_parents (id, parent_id) as (
-  select cdg.id, null::bigint as parent_id
-  from ecolo.ecolo_conventiondonneesgenerales cdg
-  -- Root conventions
-  where cdg.avenant_id is null
-  union all
-  select cdg.id, a.conventionprecedente_id as parent_id
-  from ecolo.ecolo_conventiondonneesgenerales cdg
-      inner join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
-      inner join convention_parents cp on a.conventionprecedente_id = cp.id
-)
 select
     -- Only select id at this step
-    cp.id||':'||pl.financement as id,
-    case
-        when cp.parent_id is not null then cp.parent_id||':'||pl.financement
+    cdg.id||':'||pl.financement as id,
+    case when
+        lag(cdg.id) over (partition by cdg.conventionapl_id order by numero nulls first) is not null then
+            lag(cdg.id) over (partition by cdg.conventionapl_id order by numero nulls first)||':'||pl.financement
     end as parent_id,
     cdg.id as programme_id,
-    md5(cdg.id||'-'||pl.financement) as lot_id, -- Les lots d'un programme sont tous les logements partageant le même financement
+    -- Les lots d'un programme sont tous les logements partageant le même financement
+    md5(cdg.id||'-'||pl.financement) as lot_id,
     pl.financement as financement,
     c.noreglementaire as numero,
     case
@@ -45,9 +35,9 @@ select
     cdg.datepublication as date_envoi_spf,
     cdg.daterefushypotheque as date_refus_spf,
     cdg.motifrefushypotheque as motif_refus_spf
-from convention_parents cp
-    inner join ecolo.ecolo_conventiondonneesgenerales cdg on cp.id = cdg.conventionapl_id
+from ecolo.ecolo_conventiondonneesgenerales cdg
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
+    left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
     inner join ecolo.ecolo_valeurparamstatic pec on cdg.etatconvention_id = pec.id
     inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id
     inner join (
@@ -77,4 +67,5 @@ where
         having count(distinct(pl2.commune_id)) > 1 or count(distinct(pl2.bailleurproprietaire_id)) > 1
     )
     and pl.departement = %s
+order by cdg.conventionapl_id, cdg.datehistoriquedebut, a.numero nulls first
 
