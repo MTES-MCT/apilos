@@ -2,6 +2,7 @@
 with recursive convention_parents (id, parent_id) as (
   select cdg.id, null::bigint as parent_id
   from ecolo.ecolo_conventiondonneesgenerales cdg
+  -- Root conventions
   where cdg.avenant_id is null
   union all
   select cdg.id, a.conventionprecedente_id as parent_id
@@ -12,7 +13,9 @@ with recursive convention_parents (id, parent_id) as (
 select
     -- Only select id at this step
     cp.id||':'||pl.financement as id,
-    cp.parent_id||':'||pl.financement as parent_id,
+    case
+        when cp.parent_id is not null then cp.parent_id||':'||pl.financement
+    end as parent_id,
     cdg.id as programme_id,
     md5(cdg.id||'-'||pl.financement) as lot_id, -- Les lots d'un programme sont tous les logements partageant le même financement
     pl.financement as financement,
@@ -43,7 +46,7 @@ select
     cdg.daterefushypotheque as date_refus_spf,
     cdg.motifrefushypotheque as motif_refus_spf
 from convention_parents cp
-    inner join ecolo.ecolo_conventiondonneesgenerales cdg on cp.id = cdg.conventionapl_id and cdg.avenant_id is null
+    inner join ecolo.ecolo_conventiondonneesgenerales cdg on cp.id = cdg.conventionapl_id
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
     inner join ecolo.ecolo_valeurparamstatic pec on cdg.etatconvention_id = pec.id
     inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id
@@ -66,7 +69,7 @@ where
         select
             pl2.conventiondonneesgenerales_id
         from ecolo.ecolo_programmelogement pl2
-            inner join ecolo.ecolo_conventiondonneesgenerales cdg2 on cdg2.id = pl2.conventiondonneesgenerales_id and cdg2.avenant_id is null
+            inner join ecolo.ecolo_conventiondonneesgenerales cdg2 on cdg2.id = pl2.conventiondonneesgenerales_id
             inner join ecolo.ecolo_typefinancement tf2 on pl2.typefinancement_id = tf2.id
             inner join ecolo.ecolo_famillefinancement ff2 on tf2.famillefinancement_id = ff2.id
         where cdg2.id = cdg.id

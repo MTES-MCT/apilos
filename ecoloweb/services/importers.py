@@ -237,11 +237,10 @@ class ModelImporter(ABC):
         self._debug(f"Prcessing result {data} for handler {self.__class__.__name__}")
 
         # Look for a potentially already imported model
-        ecolor_ref = (
-            self._find_ecolo_ref(data[self.ecolo_id_field])
-            if self.ecolo_id_field in data
-            else None
-        )
+        if self.ecolo_id_field in data:
+            ecolor_ref = self._find_ecolo_ref(data[self.ecolo_id_field])
+        else:
+            ecolo_ref = None
 
         instance = None
         # If model wasn't imported yet, import it now

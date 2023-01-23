@@ -85,5 +85,4 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
         order by pl.conventiondonneesgenerales_id, pl.typefinancement_id, pl.ordre
     ) pl on pl.conventiondonneesgenerales_id = cdg.id
 where
-    cdg.avenant_id is null
-    and cdg.id = %s
+    cdg.id = %s
