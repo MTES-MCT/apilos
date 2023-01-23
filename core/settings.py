@@ -315,6 +315,7 @@ CSRF_COOKIE_SAMESITE = "Strict"
 SESSION_COOKIE_SAMESITE = "Lax"
 
 # https://django-csp.readthedocs.io/en/latest/configuration.html
+# Crisp configuration: https://docs.crisp.chat/guides/others/whitelisting-our-systems/crisp-domain-names/
 CSP_DEFAULT_SRC = "'none'"
 CSP_SCRIPT_SRC = (
     "https://stats.data.gouv.fr/piwik.js",
@@ -330,11 +331,18 @@ CSP_SCRIPT_SRC = (
     # Swagger UI
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.js",
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-standalone-preset.js",
+    # Crisp
+    "https://client.crisp.chat",
+    "https://settings.crisp.chat",
 )
 CSP_IMG_SRC = (
     "'self'",
     "data:",
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png",
+    # Crisp
+    "https://client.crisp.chat",
+    "https://image.crisp.chat",
+    "https://storage.crisp.chat",
 )
 CSP_OBJECT_SRC = "'none'"
 
@@ -343,14 +351,36 @@ CSP_FRAME_SRC = (
     "'self'",
     "https://www.dailymotion.com/embed/video/x8fkp4y",
     "https://www.dailymotion.com/embed/video/x8frr91",
+    # Crisp
+    "https://game.crisp.chat",
 )
-CSP_FONT_SRC = "'self'", "data:"
-CSP_CONNECT_SRC = ("'self'", "https://stats.data.gouv.fr/piwik.php")
+
+CSP_MEDIA_SRC = (
+    # Crisp
+    "https://client.crisp.chat"
+)
+CSP_FONT_SRC = (
+    "'self'",
+    "data:",
+    # Crisp
+    "https://client.crisp.chat",
+)
+CSP_CONNECT_SRC = (
+    "'self'",
+    "https://stats.data.gouv.fr/piwik.php",
+    # Crisp
+    "https://client.crisp.chat",
+    "https://storage.crisp.chat",
+    "wss://client.relay.crisp.chat",
+    "wss://stream.relay.crisp.chat",
+)
 CSP_STYLE_SRC = (
     "'self'",
     "https://code.highcharts.com/css/highcharts.css",
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui.css",
     "'unsafe-inline'",
+    # Crisp
+    "https://client.crisp.chat",
 )
 CSP_MANIFEST_SRC = "'self'"
 CSP_INCLUDE_NONCE_IN = [
@@ -437,6 +467,8 @@ if CERBERE_AUTH:
 
     LOGIN_URL = "/accounts/cerbere-login"
 
+# Sentry
+
 SENTRY_URL = get_env_variable("SENTRY_URL")
 
 if SENTRY_URL:  # pragma: no cover
@@ -456,6 +488,10 @@ if SENTRY_URL:  # pragma: no cover
         send_default_pii=True,
         ignore_errors=[PermissionDenied],
     )
+
+# Crisp
+
+CRISP_WEBSITE_ID = get_env_variable("CRISP_WEBSITE_ID", default=None)
 
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
