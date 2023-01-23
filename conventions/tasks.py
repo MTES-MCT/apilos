@@ -5,7 +5,11 @@ import dramatiq
 from django.conf import settings
 from django.core.files.storage import default_storage
 
-from conventions.services import convention_generator
+from conventions.services.convention_generator import (
+    generate_convention_doc,
+    generate_pdf,
+    get_files_attached,
+)
 from conventions.models import Convention, PieceJointe
 from conventions.services.file import ConventionFileService
 from core.services import EmailService, EmailTemplateID
@@ -19,11 +23,13 @@ def generate_and_send(args):
 
     convention = Convention.objects.get(uuid=convention_uuid)
 
-    file_stream = convention_generator.generate_convention_doc(convention, True)
-    pdf_path = convention_generator.generate_pdf(file_stream, convention)
+    file_stream = generate_convention_doc(convention, True)
+    pdf_path = generate_pdf(file_stream, convention)
 
     zip_path = None
-    if convention.programme.is_foyer() or convention.programme.is_residence():
+    if not convention.is_avenant() and (
+        convention.programme.is_foyer() or convention.programme.is_residence()
+    ):
         zip_path = (
             Path("conventions")
             / str(convention.uuid)
@@ -31,6 +37,8 @@ def generate_and_send(args):
             / f"convention_{convention.uuid}.zip"
         )
         local_zip_path = settings.MEDIA_ROOT / zip_path
+        local_zip_path.parent.mkdir(parents=True, exist_ok=True)
+
         if settings.DEFAULT_FILE_STORAGE == "storages.backends.s3boto3.S3Boto3Storage":
             with default_storage.open(pdf_path, "rb") as src_file:
                 with open(settings.MEDIA_ROOT / pdf_path, "wb") as desc_file:
@@ -42,7 +50,7 @@ def generate_and_send(args):
                 str(settings.MEDIA_ROOT / pdf_path),
                 arcname=(settings.MEDIA_ROOT / pdf_path).name,
             )
-            local_pathes = convention_generator.get_files_attached(convention)
+            local_pathes = get_files_attached(convention)
             for local_path in local_pathes:
                 myzip.write(
                     str(local_path),
@@ -66,10 +74,8 @@ def generate_and_send(args):
     administration = convention.administration
 
     file_path = zip_path if zip_path is not None else Path(pdf_path)
-    if default_storage.size(file_path) > 10000000:
-
+    if default_storage.size(file_path) > settings.MAX_EMAIL_ATTACHED_FILES_SIZE:
         file_path = None
-    # TODO test the if the size of file to attached if greater than 10 Mo
     email_service_to_bailleur.send_transactional_email(
         email_data={
             "convention_url": convention_url,
