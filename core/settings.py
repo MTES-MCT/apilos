@@ -491,7 +491,7 @@ if SENTRY_URL:  # pragma: no cover
 
 # Crisp
 
-CRISP_WEBSITE_ID = get_env_variable("CRISP_WEBSITE_ID", default=None)
+CRISP_WEBSITE_ID = get_env_variable("CRISP_WEBSITE_ID")
 
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
