@@ -468,8 +468,11 @@ def add_user(request):
                     email_template_id=EmailTemplateID.I_WELCOME,
                 ).send_transactional_email(
                     email_data={
+                        "email": user.email,
+                        "username": user.username,
+                        "firstname": user.first_name,
+                        "lastname": user.last_name,
                         "password": password,
-                        "user": user,
                         "login_url": request.build_absolute_uri("/accounts/login/")
                         + "?instructeur=1",
                     }
