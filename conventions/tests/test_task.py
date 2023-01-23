@@ -84,7 +84,7 @@ class GenerateAndSendTest(TestCase):
                     NatureLogement.RESIDENCEUNIVERSITAIRE
                 )
                 self.convention.programme.save()
-                generate_and_send.send(args)
+                generate_and_send(args)
                 self.assertEqual(
                     mail.outbox[0].anymail_test_params["attachments"][0].name,
                     "convention.pdf",
