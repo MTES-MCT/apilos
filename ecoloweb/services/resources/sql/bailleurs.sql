@@ -4,22 +4,27 @@
 -- signataire_fonction          varchar(255),
 -- signataire_date_deliberation date,
 -- operation_exceptionnelle     text,
--- capital_social               double precision,
--- sous_nature_bailleur varchar(25) not null
--- nature_bailleur varchar(255) not null
+-- capital_social               double precision
 select
     b.id,
-    b.raisonsociale as nom,
-    b.codesiret,
+    case when
+        b.raisonsociale = 'ANAH' then 'Personne(s) physique(s)'
+        else b.raisonsociale
+    end as nom,
+    case when
+        b.raisonsociale = 'ANAH' then 'XXXXXXXXXXXXXX'
+        else b.codesiret
+    end as codesiret,
     b.codesiren,
     b.codepersonne,
     case
-        when snb.code = '611' then 'Bailleurs privés'
+        when b.raisonsociale = 'ANAH' or snb.code = '611' then 'Bailleurs privés'
         when snb.code = '210' then 'SEM'
         when snb.code in ('110', '112', '114', '120', '130', '140') then 'HLM'
         else 'Autres bailleurs sociaux non HLM'
     end as nature_bailleur,
     case
+        when b.raisonsociale = 'ANAH' then 'ANAH'
         when snb.code = '110' then 'COOPERATIVE_HLM_SCIC'
         when snb.code = '112' then 'COOPERATIVE_HLM_SCIC'
         when snb.code = '114' then 'OFFICE_PUBLIC_HLM'
@@ -56,8 +61,7 @@ select
     b.datemodif as mis_a_jour_le,
     ab.ligne1||' '||ab.ligne2||' '||ab.ligne3||' '||ab.ligne4 as adresse,
     ab.codepostal as code_postal,
-    ab.ville as ville,
-    b.codesiren as siren
+    ab.ville as ville
 from ecolo.ecolo_bailleur b
     left join ecolo.ecolo_adressebailleur ab on b.adresse_id = ab.id
     left join ecolo.ecolo_departement ed on b.departement_id = ed.id
