@@ -30,7 +30,7 @@ class ProgrammeSelectionFromDBForm(forms.Form):
     )
 
 
-class ProgrammeSelectionFromZeroForm(forms.Form):
+class CreateConventionMinForm(forms.Form):
     def __init__(self, *args, bailleurs=None, administrations=None, **kwargs) -> None:
         self.declared_fields["bailleur"].choices = bailleurs
         self.declared_fields["administration"].choices = administrations
@@ -61,27 +61,6 @@ class ProgrammeSelectionFromZeroForm(forms.Form):
             "max_length": "Le nom du programme ne doit pas excéder 255 caractères",
         },
     )
-    numero_galion = forms.CharField(
-        label="N° de décision de financement",
-        required=False,
-        max_length=255,
-        error_messages={
-            "max_length": "Le Numéro d'opération ne doit pas excéder 255 caractères",
-        },
-    )
-    nb_logements = forms.IntegerField(
-        label="Nb logements à conventionner",
-        error_messages={
-            "required": "Le nombre de logements à conventionner est obligatoire",
-        },
-    )
-    type_habitat = forms.TypedChoiceField(
-        label="Type d'habitat",
-        choices=TypeHabitat.choices,
-        error_messages={
-            "required": "Le type d'habitat est obligatoire",
-        },
-    )
     financement = forms.TypedChoiceField(
         label="Financement",
         choices=FinancementEDD.choices,
@@ -108,6 +87,30 @@ class ProgrammeSelectionFromZeroForm(forms.Form):
             "max_length": "Le code postal ne doit pas excéder 255 caractères",
         },
     )
+
+
+class ProgrammeSelectionFromZeroForm(CreateConventionMinForm):
+    numero_galion = forms.CharField(
+        label="N° de décision de financement",
+        required=False,
+        max_length=255,
+        error_messages={
+            "max_length": "Le Numéro d'opération ne doit pas excéder 255 caractères",
+        },
+    )
+    nb_logements = forms.IntegerField(
+        label="Nb logements à conventionner",
+        error_messages={
+            "required": "Le nombre de logements à conventionner est obligatoire",
+        },
+    )
+    type_habitat = forms.TypedChoiceField(
+        label="Type d'habitat",
+        choices=TypeHabitat.choices,
+        error_messages={
+            "required": "Le type d'habitat est obligatoire",
+        },
+    )
     ville = forms.CharField(
         label="Ville",
         max_length=255,
@@ -116,13 +119,18 @@ class ProgrammeSelectionFromZeroForm(forms.Form):
             "max_length": "La ville ne doit pas excéder 255 caractères",
         },
     )
+
+
+class ConventionForAvenantForm(CreateConventionMinForm):
     statut = forms.CharField(
         required=False,
     )
     numero = forms.CharField(
-        required=False,
         label="Numéro de convention",
     )
     nom_fichier_signe = forms.FileField(
         required=False,
+    )
+    numero_avenant = forms.CharField(
+        label="Numéro d'avenant'",
     )

@@ -90,7 +90,7 @@ class SearchForAvenantResultView(LoginRequiredMixin, View):
     def get(self, request):
         result = search_result(request)
         service = ConventionSelectionService(request)
-        service.get_from_zero()
+        service.get_for_avenant()
         return render(
             request,
             "conventions/avenant/search_for_avenant_result.html",
@@ -103,7 +103,7 @@ class SearchForAvenantResultView(LoginRequiredMixin, View):
 
     def post(self, request):
         service = ConventionSelectionService(request)
-        service.post_from_zero()
+        service.post_for_avenant()
 
         if service.return_status == ReturnStatus.SUCCESS:
             return HttpResponseRedirect(

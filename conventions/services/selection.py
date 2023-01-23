@@ -20,6 +20,7 @@ from programmes.models import (
 from conventions.forms import (
     ProgrammeSelectionFromDBForm,
     ProgrammeSelectionFromZeroForm,
+    ConventionForAvenantForm,
 )
 
 
@@ -53,6 +54,12 @@ class ConventionSelectionService:
 
     def get_from_zero(self):
         self.form = ProgrammeSelectionFromZeroForm(
+            bailleurs=self._get_bailleur_choices(),
+            administrations=self._get_administration_choices(),
+        )
+
+    def get_for_avenant(self):
+        self.form = ConventionForAvenantForm(
             bailleurs=self._get_bailleur_choices(),
             administrations=self._get_administration_choices(),
         )
@@ -112,6 +119,59 @@ class ConventionSelectionService:
             if file:
                 ConventionFileService.upload_convention_file(self.convention, file)
             self.return_status = utils.ReturnStatus.SUCCESS
+
+    def post_for_avenant(self):
+        self.form = ConventionForAvenantForm(
+            self.request.POST,
+            self.request.FILES,
+            bailleurs=self._get_bailleur_choices(),
+            administrations=self._get_administration_choices(),
+        )
+        if self.form.is_valid():
+            bailleur = Bailleur.objects.get(uuid=self.form.cleaned_data["bailleur"])
+            administration = Administration.objects.get(
+                uuid=self.form.cleaned_data["administration"]
+            )
+            programme = Programme.objects.create(
+                nom=self.form.cleaned_data["nom"],
+                code_postal=self.form.cleaned_data["code_postal"],
+                bailleur=bailleur,
+                administration=administration,
+                nature_logement=self.form.cleaned_data["nature_logement"],
+                type_operation=(
+                    TypeOperation.SANSTRAVAUX
+                    if self.form.cleaned_data["financement"]
+                    == Financement.SANS_FINANCEMENT
+                    else TypeOperation.NEUF
+                ),
+            )
+            programme.save()
+            lot = Lot.objects.create(
+                financement=self.form.cleaned_data["financement"],
+                programme=programme,
+            )
+            lot.save()
+            self.convention = Convention.objects.create(
+                lot=lot,
+                programme_id=lot.programme_id,
+                financement=lot.financement,
+                cree_par=self.request.user,
+                statut=(ConventionStatut.SIGNEE),
+                numero=(self.form.cleaned_data["numero"]),
+            )
+            _send_email_staff(self.request, self.convention)
+            self.convention.save()
+            file = self.request.FILES.get("nom_fichier_signe", False)
+            if file:
+                ConventionFileService.upload_convention_file(self.convention, file)
+            self.return_status = utils.ReturnStatus.SUCCESS
+            parent_convention = (
+                Convention.objects.prefetch_related("programme")
+                .prefetch_related("lot")
+                .prefetch_related("avenants")
+                .get(uuid=self.convention.uuid)
+            )
+            print(parent_convention.uuid)
 
     def get_from_db(self):
         self.lots = (
