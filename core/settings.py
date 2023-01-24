@@ -149,6 +149,8 @@ INSTALLED_APPS = [
     "ecoloweb",
     "anymail",
     "simple_history",
+    "hijack",
+    "hijack.contrib.admin",
 ]
 
 MIDDLEWARE = [
@@ -161,6 +163,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
+    "hijack.middleware.HijackUserMiddleware",
 ]
 
 if not TESTING:
