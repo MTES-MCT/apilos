@@ -11,15 +11,11 @@ class QueryResultIterator:
         if parameters is None:
             parameters = []
         self._db_connection: CursorWrapper = connections["ecoloweb"].cursor()
-        # Compute result number, first
-        if count:
-            self._db_connection.execute(f"select count(*) from ({query}) q", parameters)
-            self.lines_total = self._db_connection.fetchone()[0]
-
         # Execute query
         self.lines_fetched = 0
         self._db_connection.execute(query, parameters)
         self._columns = [col[0] for col in self._db_connection.description]
+        self.lines_total = self._db_connection.rowcount
 
     def __iter__(self):
         return self
