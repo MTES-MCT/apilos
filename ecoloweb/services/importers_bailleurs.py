@@ -9,8 +9,14 @@ from bailleurs.models import Bailleur
 class BailleurImporter(ModelImporter):
     model = Bailleur
 
-    def __init__(self, departement: str, import_date: datetime, debug=False):
-        super().__init__(departement, import_date, debug)
+    def __init__(
+        self,
+        departement: str,
+        import_date: datetime,
+        with_dependencies=True,
+        debug=False,
+    ):
+        super().__init__(departement, import_date, with_dependencies, debug)
 
         try:
             self._siret_resolver = SiretResolver()

@@ -50,14 +50,14 @@ class Command(BaseCommand):
         progress = None
 
         try:
-            importer = ConventionImporter(departement, import_date, debug)
+            importer = ConventionImporter(departement, import_date, debug=debug)
             results = importer.get_all()
             # Progress bar
             if not no_progress:
                 progress = tqdm(total=results.lines_total)
             # Actual processing
             for result in results:
-                importer.process_result(result, True)
+                importer.process_result(result)
                 if progress is not None:
                     progress.update(1)
                 else:

@@ -51,7 +51,7 @@ class LotImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {
-            "programme": ProgrammeImporter,
+            "programme": (ProgrammeImporter, False),
         }
 
     def _get_o2m_dependencies(self):
@@ -66,7 +66,7 @@ class LogementImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {
-            "lot": LotImporter,
+            "lot": (LotImporter, False),
         }
 
     def _prepare_data(self, data: dict) -> dict:
@@ -108,7 +108,7 @@ class ReferenceCadastraleImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {
-            "programme": ProgrammeImporter,
+            "programme": (ProgrammeImporter, False),
         }
 
 
@@ -120,5 +120,5 @@ class TypeStationnementImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {
-            "lot": LotImporter,
+            "lot": (LotImporter, False),
         }

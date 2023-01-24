@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from conventions.models import Convention, PieceJointe, PieceJointeType, AvenantType
@@ -17,7 +18,7 @@ class ConventionImporter(ModelImporter):
     def _get_query_one(self) -> str | None:
         return self._get_file_content("resources/sql/conventions.sql")
 
-    def _build_query_parameters(self, pk) -> list:
+    def build_query_parameters(self, pk) -> list:
         args = pk.split(":")
 
         return [int(args[0]), args[1]]
@@ -25,12 +26,12 @@ class ConventionImporter(ModelImporter):
     def _get_o2o_dependencies(self):
         return {
             "parent": self,
-            "programme": (ProgrammeImporter, False),
+            "programme": ProgrammeImporter,
             "lot": LotImporter,
         }
 
     def _get_o2m_dependencies(self) -> List:
-        return [PieceJointeImporter]
+        return [(PieceJointeImporter, True)]
 
     def get_all(self) -> QueryResultIterator:
         return QueryResultIterator(
@@ -66,6 +67,11 @@ class PieceJointeImporter(ModelImporter):
 
     def _get_query_many(self) -> str | None:
         return self._get_file_content("resources/sql/convention_pieces_jointes.sql")
+
+    def build_query_parameters(self, pk) -> list:
+        args = pk.split(":")
+
+        return [int(args[0]), args[1]]
 
     def _get_o2o_dependencies(self):
         return {"convention": (ConventionImporter, False)}
