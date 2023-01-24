@@ -31,6 +31,7 @@ def _get_choices_from_object(object_list):
 class ConventionSelectionService:
     request: HttpRequest
     convention: Convention
+    avenant: Convention
     form: ProgrammeSelectionFromDBForm | ProgrammeSelectionFromZeroForm
     lots: QuerySet[Lot] | None = None
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
@@ -165,13 +166,18 @@ class ConventionSelectionService:
             if file:
                 ConventionFileService.upload_convention_file(self.convention, file)
             self.return_status = utils.ReturnStatus.SUCCESS
+
             parent_convention = (
                 Convention.objects.prefetch_related("programme")
                 .prefetch_related("lot")
                 .prefetch_related("avenants")
                 .get(uuid=self.convention.uuid)
             )
-            print(parent_convention.uuid)
+            self.avenant = parent_convention.clone(
+                self.request.user, convention_origin=parent_convention
+            )
+            self.avenant.numero = self.form.cleaned_data["numero_avenant"]
+            self.avenant.save()
 
     def get_from_db(self):
         self.lots = (

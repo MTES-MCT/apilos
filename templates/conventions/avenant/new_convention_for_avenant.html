@@ -61,11 +61,14 @@
                 {% include "common/form/input_text.html" with form_input=form.numero mandatory_input=True %}
             </div>
         </div>
-        <div class="fr-upload-group fr-mt-5w">
+        <div class="fr-upload-group fr-my-5w">
             <label class="fr-label" for="file-upload">Téléverser la convention (en PDF)
                 <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
             </label>
             <input class="fr-upload" type="file" id="file-upload" name="nom_fichier_signe">
+        </div>
+        <div class="fr-col-12 fr-mb-2w">
+            {% include "common/form/input_text.html" with form_input=form.numero_avenant mandatory_input=True %}
         </div>
     </div>
     <div class="form-button-footer fr-py-5w">

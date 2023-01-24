@@ -108,8 +108,8 @@ class SearchForAvenantResultView(LoginRequiredMixin, View):
         if service.return_status == ReturnStatus.SUCCESS:
             return HttpResponseRedirect(
                 reverse(
-                    "conventions:new_avenants_for_avenant",
-                    args=[service.convention.uuid],
+                    "conventions:recapitulatif",
+                    args=[service.avenant.uuid],
                 )
             )
         return render(

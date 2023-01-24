@@ -132,5 +132,5 @@ class ConventionForAvenantForm(CreateConventionMinForm):
         required=False,
     )
     numero_avenant = forms.CharField(
-        label="Numéro d'avenant'",
+        label="Numéro de l'avenant à créer",
     )
