@@ -57,7 +57,7 @@ class Command(BaseCommand):
                 progress = tqdm(total=results.lines_total)
             # Actual processing
             for result in results:
-                importer.process_result(result)
+                importer.process_result(result, True)
                 if progress is not None:
                     progress.update(1)
                 else:

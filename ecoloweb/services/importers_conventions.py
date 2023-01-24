@@ -40,11 +40,12 @@ class ConventionImporter(ModelImporter):
         )
 
     def _on_processed(self, model: Convention | None):
-        if model.is_avenant():
-            # Avenant are automatically assigned to the type "commentaires"
-            model.avenant_types.add(AvenantType.objects.get(nom="commentaires"))
-
         if model is not None:
+            if model.is_avenant():
+                # Avenant are automatically assigned to the type "commentaires"
+                model.avenant_types.add(AvenantType.objects.get(nom="commentaires"))
+                model.save()
+
             piece_jointe = (
                 model.pieces_jointes.filter(
                     type=PieceJointeType.AVENANT
