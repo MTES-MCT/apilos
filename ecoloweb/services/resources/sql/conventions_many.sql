@@ -2,9 +2,12 @@ select
     -- Only select id at this step
     cdg.id||':'||pl.financement as id,
     case when
-        lag(cdg.id) over (partition by cdg.conventionapl_id order by numero nulls first) is not null then
-            lag(cdg.id) over (partition by cdg.conventionapl_id order by numero nulls first)||':'||pl.financement
+        cp.parent_id is not null and cp.parent_id <> cdg.id then
+            cp.parent_id||':'||pl.financement
     end as parent_id,
+    -- Les avenants sont initialisés avec un type 'commentaires' dont la valeur est un résumé des altérations
+    -- déclarées depuis Ecoloweb
+    ('{"files": {}, "text": "Avenant issu d''Ecoloweb:\r\n\r\n'||ta.detail_avenant||'"}')::json as comments,
     cdg.id as programme_id,
     -- Les lots d'un programme sont tous les logements partageant le même financement
     md5(cdg.id||'-'||pl.financement) as lot_id,
@@ -36,8 +39,22 @@ select
     cdg.daterefushypotheque as date_refus_spf,
     cdg.motifrefushypotheque as motif_refus_spf
 from ecolo.ecolo_conventiondonneesgenerales cdg
+    left join (
+        select
+            cdg.id,
+            lag(cdg.id) over (partition by cdg.conventionapl_id order by a.numero nulls first) as parent_id
+        from ecolo.ecolo_conventiondonneesgenerales cdg
+            inner join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
+    ) cp on cp.id = cdg.id
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
     left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
+    left join (
+        select ta.avenant_id,
+            string_agg(pat.libelle, '\r\n') as detail_avenant
+        from ecolo.ecolo_avenant_typeavenant ta
+            left join ecolo.ecolo_valeurparamstatic pat on ta.typeavenant_id = pat.id
+        group by ta.avenant_id
+    ) ta on ta.avenant_id = cdg.avenant_id
     inner join ecolo.ecolo_valeurparamstatic pec on cdg.etatconvention_id = pec.id
     inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id
     inner join (

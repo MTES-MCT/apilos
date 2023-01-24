@@ -234,17 +234,18 @@ class ModelImporter(ABC):
         if data is None:
             return None
 
-        self._debug(f"Prcessing result {data} for handler {self.__class__.__name__}")
+        self._debug(f"Processing result {data} for handler {self.__class__.__name__}")
 
         # Look for a potentially already imported model
-        if self.ecolo_id_field in data:
-            ecolor_ref = self._find_ecolo_ref(data[self.ecolo_id_field])
-        else:
-            ecolo_ref = None
-
+        ecolo_ref = (
+            self._find_ecolo_ref(data[self.ecolo_id_field])
+            if self.ecolo_id_field in data
+            else None
+        )
         instance = None
+
         # If model wasn't imported yet, import it now
-        if ecolor_ref is None:
+        if ecolo_ref is None:
             # Extract from data the id of the associated object in the Ecoloweb DB (in string format as it can be a
             # hash function like for programme lots)
             ecolo_id = data.pop(self.ecolo_id_field)
@@ -272,8 +273,8 @@ class ModelImporter(ABC):
                     self._register_ecolo_reference(instance, ecolo_id)
                     self._nb_imported_models += 1
         else:
-            ecolo_id = ecolor_ref.ecolo_id
-            instance = ecolor_ref.resolve()
+            ecolo_id = ecolo_ref.ecolo_id
+            instance = ecolo_ref.resolve()
 
         if instance and recursively:
             # Import one-to-many models
@@ -341,9 +342,7 @@ class ModelImporter(ABC):
         Public entry point method to fetch a list of models from the Ecoloweb database based on its foreign key
         """
         if self._query_many is not None:
-            iterator = QueryResultIterator(
-                connections["ecoloweb"].cursor(), self._get_query_many(), parameters
-            )
+            iterator = QueryResultIterator(self._get_query_many(), parameters)
 
             for result in iterator:
                 self.process_result(result)

@@ -1,6 +1,6 @@
 from typing import List
 
-from conventions.models import Convention, PieceJointe, PieceJointeType
+from conventions.models import Convention, PieceJointe, PieceJointeType, AvenantType
 from conventions.tasks import promote_piece_jointe
 from .importers import ModelImporter
 from .importers_programmes import ProgrammeImporter, LotImporter
@@ -34,13 +34,16 @@ class ConventionImporter(ModelImporter):
 
     def get_all(self) -> QueryResultIterator:
         return QueryResultIterator(
-            self._db_connection,
             self._get_file_content("resources/sql/conventions_many.sql"),
             [self.departement],
             True,
         )
 
     def _on_processed(self, model: Convention | None):
+        if model.is_avenant():
+            # Avenant are automatically assigned to the type "commentaires"
+            model.avenant_types.add(AvenantType.objects.get(nom="commentaires"))
+
         if model is not None:
             piece_jointe = (
                 model.pieces_jointes.filter(
