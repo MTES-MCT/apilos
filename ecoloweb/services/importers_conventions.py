@@ -1,11 +1,14 @@
-from datetime import datetime
+import logging
+
 from typing import List
 
 from conventions.models import Convention, PieceJointe, PieceJointeType, AvenantType
-from conventions.tasks import promote_piece_jointe
+from conventions.services.file import ConventionFileService
 from .importers import ModelImporter
 from .importers_programmes import ProgrammeImporter, LotImporter
 from .query_iterator import QueryResultIterator
+
+logger = logging.getLogger(__name__)
 
 
 class ConventionImporter(ModelImporter):
@@ -58,7 +61,10 @@ class ConventionImporter(ModelImporter):
 
             # Automatically promote the latest piece jointe with type CONVENTION as official convention document
             if piece_jointe is not None:
-                ConventionFileService.promote_piece_jointe(piece_jointe)
+                if not ConventionFileService.promote_piece_jointe(piece_jointe):
+                    logger.info(
+                        f"Unable to automatically upload PDF for convention {model.uuid}"
+                    )
 
 
 class PieceJointeImporter(ModelImporter):
