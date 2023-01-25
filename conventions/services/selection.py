@@ -152,9 +152,11 @@ class ConventionSelectionService:
             )
             _send_email_staff(self.request, self.convention)
             self.convention.save()
-            file = self.request.FILES.get("nom_fichier_signe", False)
-            if file:
-                ConventionFileService.upload_convention_file(self.convention, file)
+            conventionfile = self.request.FILES.get("nom_fichier_signe", False)
+            if conventionfile:
+                ConventionFileService.upload_convention_file(
+                    self.convention, conventionfile
+                )
             self.return_status = utils.ReturnStatus.SUCCESS
 
             parent_convention = (
