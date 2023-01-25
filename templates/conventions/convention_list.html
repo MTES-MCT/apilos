@@ -102,7 +102,7 @@
                                 {% if active %}
                                     {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' label_order='Date de réalisation' %}
                                 {% else %}
-                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='signataire_date_deliberation' url_target='conventions:index' label_order='Date de signature' %}
+                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='televersement_convention_signee_le' url_target='conventions:index' label_order='Date de signature' %}
                                 {% endif %}
                             </div>
                         </div>
@@ -208,7 +208,7 @@
                                         {% if active %}
                                             <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
                                         {% else %}
-                                            <td>{{convention.signataire_date_deliberation|date:"d F Y"|default_if_none:'-' }}</td>
+                                            <td>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>
                                         {% endif %}
 
 

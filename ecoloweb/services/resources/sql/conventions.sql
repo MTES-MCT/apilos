@@ -28,7 +28,7 @@ select
         cdg.datesignatureentitegest::timestamp at time zone 'Europe/Paris',
         cdg.datesignaturebailleur::timestamp at time zone 'Europe/Paris',
         cdg.datesignatureprefet::timestamp at time zone 'Europe/Paris'
-    ) as valide_le,
+    ) as televersement_convention_signee_le,
     c.datesaisie::timestamp at time zone 'Europe/Paris' as cree_le,
     c.datemodification::timestamp at time zone 'Europe/Paris' as mis_a_jour_le,
     cdg.datesignatureentitegest::timestamp at time zone 'Europe/Paris' as premiere_soumission_le,
