@@ -104,16 +104,6 @@ class ConventionSelectionService:
                 programme_id=lot.programme_id,
                 financement=lot.financement,
                 cree_par=self.request.user,
-                statut=(
-                    ConventionStatut.SIGNEE
-                    if self.form.cleaned_data["statut"]
-                    else ConventionStatut.PROJET
-                ),
-                numero=(
-                    self.form.cleaned_data["numero"]
-                    if self.form.cleaned_data["numero"]
-                    else ""
-                ),
             )
             self.convention.save()
             file = self.request.FILES.get("nom_fichier_signe", False)
