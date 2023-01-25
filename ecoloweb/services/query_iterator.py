@@ -7,10 +7,12 @@ class QueryResultIterator:
     Iterator on rows returned by a SQL query. It computes rows count first and serves each one by one as dict.
     """
 
-    def __init__(self, query, parameters=None, count=False):
+    def __init__(self, query, connection: CursorWrapper | None = None, parameters=None):
         if parameters is None:
             parameters = []
-        self._db_connection: CursorWrapper = connections["ecoloweb"].cursor()
+        self._db_connection: CursorWrapper = (
+            connection if connection is not None else connections["ecoloweb"].cursor()
+        )
         # Execute query
         self.lines_fetched = 0
         self._db_connection.execute(query, parameters)

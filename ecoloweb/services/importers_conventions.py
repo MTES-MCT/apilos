@@ -36,8 +36,7 @@ class ConventionImporter(ModelImporter):
     def get_all(self) -> QueryResultIterator:
         return QueryResultIterator(
             self._get_file_content("resources/sql/conventions_many.sql"),
-            [self.departement],
-            True,
+            parameters=[self.departement],
         )
 
     def _on_processed(self, model: Convention | None):

@@ -359,7 +359,9 @@ class ModelImporter(ABC):
         Public entry point method to fetch a list of models from the Ecoloweb database based on its foreign key
         """
         if self._query_many is not None:
-            iterator = QueryResultIterator(self._query_many, parameters)
+            iterator = QueryResultIterator(
+                self._query_many, self._db_connection, parameters
+            )
 
             for result in iterator:
                 self.process_result(result)
