@@ -28,6 +28,7 @@ class ProgrammeImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {
+            "parent": self,
             "bailleur": BailleurImporter,
             "administration": AdministrationImporter,
         }
@@ -51,6 +52,7 @@ class LotImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {
+            "parent": self,
             "programme": (ProgrammeImporter, False),
         }
 

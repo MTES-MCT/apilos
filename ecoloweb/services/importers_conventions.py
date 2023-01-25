@@ -42,8 +42,8 @@ class ConventionImporter(ModelImporter):
             parameters=[self.departement],
         )
 
-    def _on_processed(self, model: Convention | None):
-        if model is not None:
+    def _on_processed(self, model: Convention | None, created: bool):
+        if created and model is not None:
             if model.is_avenant():
                 # Avenant are automatically assigned to the type "commentaires"
                 model.avenant_types.add(AvenantType.objects.get(nom="commentaires"))
@@ -61,9 +61,11 @@ class ConventionImporter(ModelImporter):
 
             # Automatically promote the latest piece jointe with type CONVENTION as official convention document
             if piece_jointe is not None:
-                if not ConventionFileService.promote_piece_jointe(piece_jointe):
+                try:
+                    ConventionFileService.promote_piece_jointe(piece_jointe)
+                except FileNotFoundError as e:
                     logger.info(
-                        f"Unable to automatically upload PDF for convention {model.uuid}"
+                        f"Unable to automatically upload PDF for convention {model.uuid}: {e}"
                     )
 
 

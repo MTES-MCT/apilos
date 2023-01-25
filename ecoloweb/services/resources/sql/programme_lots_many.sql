@@ -16,6 +16,9 @@
 
 select
     md5(pl.conventiondonneesgenerales_id||'-'||ff.code) as id, -- Les lots d'un programme sont tous les logements partageant le même financement
+    case
+        when cp.parent_id is not null then md5(cp.parent_id||'-'||ff.code)
+    end as parent_id,
     pl.conventiondonneesgenerales_id as programme_id,
     coalesce(pl.financementdate, now()) as cree_le,
     coalesce(pl.financementdate, now()) as mis_a_jour_le,
@@ -34,6 +37,13 @@ select
         when pl.estderogationloyer and coalesce(pl.logementsnombrecoltotal, 0) > 0 then pl.montantplafondloyercolinitial
     end as loyer_derogatoire
 from ecolo.ecolo_programmelogement pl
+    left join (
+        select
+            cdg.id,
+            lag(cdg.id) over (partition by cdg.conventionapl_id order by a.numero nulls first) as parent_id
+        from ecolo.ecolo_conventiondonneesgenerales cdg
+            inner join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
+    ) cp on cp.id = pl.conventiondonneesgenerales_id
     -- Financement
     inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
     inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id

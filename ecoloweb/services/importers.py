@@ -210,7 +210,12 @@ class ModelImporter(ABC):
         if self._o2o_importers is not None:
             for key, importer in self._o2o_importers.items():
                 # Try to resolve key suffixed by `_id` first, else try key as it is
-                pk = data.pop(f"{key}_id" if f"{key}_id" in data else key)
+                pk = None
+                if f"{key}_id" in data:
+                    pk = data.pop(f"{key}_id")
+                elif key in data:
+                    pk = data.pop(key)
+
                 if pk is not None:
                     data[key] = importer.import_one(pk)
 
@@ -261,6 +266,7 @@ class ModelImporter(ABC):
             if self.ecolo_id_field in data
             else None
         )
+        created = True
         instance = None
 
         # If model wasn't imported yet, import it now
@@ -294,20 +300,21 @@ class ModelImporter(ABC):
         else:
             ecolo_id = ecolo_ref.ecolo_id
             instance = ecolo_ref.resolve()
+            created = False
 
         if instance:
             # Import one-to-many models
             self._fetch_related_o2m_objects(ecolo_id)
 
             # Perform post process operations
-            self._on_processed(instance)
+            self._on_processed(instance, created)
 
         return instance
 
     def toto(self, data):
         pass
 
-    def _on_processed(self, model: Model | None):
+    def _on_processed(self, model: Model | None, created: bool):
         pass
 
     def build_query_parameters(self, pk) -> list:

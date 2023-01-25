@@ -26,6 +26,7 @@
 
 select
     cdg.id,
+    cp.parent_id,
     pl.bailleur_id,
     c.entitecreatrice_id as administration_id,
     pl.code_postal,
@@ -49,6 +50,13 @@ select
     coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as mis_a_jour_le
 from ecolo.ecolo_conventiondonneesgenerales cdg
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
+    left join (
+        select
+            cdg.id,
+            lag(cdg.id) over (partition by cdg.conventionapl_id order by a.numero nulls first) as parent_id
+        from ecolo.ecolo_conventiondonneesgenerales cdg
+            inner join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
+    ) cp on cp.id = cdg.id
     inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id and nl.code in ('1')
     inner join (
         select
