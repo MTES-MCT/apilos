@@ -95,7 +95,11 @@
                                 {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='lot__nb_logements' url_target='conventions:index' label_order='Nombre de logements' %}
                             </div>
                             <div class="fr-py-1w">
-                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' label_order='Date de réalisation' %}
+                                {% if active %}
+                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' label_order='Date de réalisation' %}
+                                {% else %}
+                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='signataire_date_deliberation' url_target='conventions:index' label_order='Date de signature' %}
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -129,9 +133,15 @@
                                     <th title="Nombre de logements à conventionner" scope="col">
                                         Logements
                                     </th>
-                                    <th title="Date de livraison et mise en service" scope="col">
-                                        Livraison
-                                    </th>
+                                    {% if active %}
+                                        <th title="Date de livraison et mise en service" scope="col">
+                                            Livraison
+                                        </th>
+                                    {% else %}
+                                        <th title="Date de signature" scope="col">
+                                            Signature
+                                        </th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
