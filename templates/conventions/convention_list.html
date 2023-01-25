@@ -80,7 +80,11 @@
                                 </div>
                             {% endif %}
                             <div  class="fr-py-1w">
-                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__nom' url_target='conventions:index' label_order='Nom du programme' %}
+                                {% if active %}
+                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__nom' url_target='conventions:index' label_order='Nom du programme' %}
+                                {% else %}
+                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='numero' url_target='conventions:index' label_order='Numéro' %}
+                                {% endif %}
                             </div>
                             <div class="fr-py-1w">
                                 {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='lot__financement' url_target='conventions:index' label_order='Financement'%}
@@ -121,9 +125,15 @@
                                     {% if request|display_administration %}
                                         <th scope="col">Instructeur</th>
                                     {% endif %}
-                                    <th title="Opération" scope="col">
-                                        Opération
-                                    </th>
+                                    {% if active %}
+                                        <th title="Opération" scope="col" class="col__width--150">
+                                            Opération
+                                        </th>
+                                    {% else %}
+                                        <th title="Numéro" scope="col">
+                                            Numéro
+                                        </th>
+                                    {% endif %}
                                     <th title="Financement" scope="col">
                                         Financement
                                     </th>
@@ -175,13 +185,19 @@
                                         <td>
                                             <div>
                                                 <strong>
-                                                    <span class="apilos-long-name">{{convention.programme.nom}}</span>
+                                                    {% if active %}
+                                                        <span class="apilos-long-name">{{convention.programme.nom}}</span>
+                                                    {% else %}
+                                                        <span class="apilos-long-name">{{convention.numero}}</span>
+                                                    {% endif %}
                                                 </strong>
                                                 {% if convention.is_avenant %}
                                                     <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-avenant background-white">Avenant</span>
                                                 {%endif%}
                                             </div>
-                                            <em data-test-role="programme-galion-cell">{{convention.programme.numero_galion}}</em>
+                                            {% if convention.programme.numero_galion %}
+                                                <em data-test-role="programme-galion-cell">{{convention.programme.numero_galion}}</em>
+                                            {% endif %}
                                         </td>
                                         <td data-test-role="programme-financement-cell">{{convention.financement}}</td>
                                         <td>
@@ -189,7 +205,13 @@
                                             <em>{{convention.programme.code_postal}}</em>
                                         </td>
                                         <td>{{convention.lot.nb_logements}}</td>
-                                        <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
+                                        {% if active %}
+                                            <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
+                                        {% else %}
+                                            <td>{{convention.signataire_date_deliberation|date:"d F Y"|default_if_none:'-' }}</td>
+                                        {% endif %}
+
+
                                     </tr>
                                 {% endfor %}
                             </tbody>
