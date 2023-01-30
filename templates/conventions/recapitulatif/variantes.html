@@ -12,10 +12,10 @@
                         </div>
                         {% include "conventions/actions/goto.html" %}
                     </div>
-                    {% include "common/display_checkbox.html" with value=convention.foyer_variante_1 label="Variante 1" object_field="convention__foyer_variante_1__"|add:convention_uuid %}
-                    {% include "common/display_checkbox.html" with value=convention.foyer_variante_2 label="Variante 2" object_field="convention__foyer_variante_2__"|add:convention_uuid %}
-                    {% include "common/display_textfield_if_exists.html" with label="Description du programme des travaux " value=convention.foyer_variante_2_travaux object_field="convention__foyer_variante_2_travaux__"|add:convention_uuid %}
-                    {% include "common/display_checkbox.html" with value=convention.foyer_variante_3 label="Variante 3" object_field="convention__foyer_variante_3__"|add:convention_uuid %}
+                    {% include "common/display_checkbox.html" with value=convention.foyer_residence_variante_1 label="Variante 1" object_field="convention__foyer_residence_variante_1__"|add:convention_uuid %}
+                    {% include "common/display_checkbox.html" with value=convention.foyer_residence_variante_2 label="Variante 2" object_field="convention__foyer_residence_variante_2__"|add:convention_uuid %}
+                    {% include "common/display_textfield_if_exists.html" with label="Description du programme des travaux " value=convention.foyer_residence_variante_2_travaux object_field="convention__foyer_residence_variante_2_travaux__"|add:convention_uuid %}
+                    {% include "common/display_checkbox.html" with value=convention.foyer_residence_variante_3 label="Variante 3" object_field="convention__foyer_residence_variante_3__"|add:convention_uuid %}
                 </div>
             </div>
         </div>

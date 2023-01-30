@@ -164,10 +164,16 @@ class Convention(models.Model):
         null=True, blank=True, max_length=5000
     )
 
-    foyer_variante_1 = models.BooleanField(default=True)
-    foyer_variante_2 = models.BooleanField(default=True)
-    foyer_variante_2_travaux = models.CharField(null=True, blank=True, max_length=5000)
-    foyer_variante_3 = models.BooleanField(default=True)
+    foyer_residence_variante_1 = models.BooleanField(default=True)
+    foyer_residence_variante_2 = models.BooleanField(default=True)
+    foyer_residence_variante_2_travaux = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    foyer_residence_variante_3 = models.BooleanField(default=True)
+
+    attribution_residence_sociale_ordinaire = models.BooleanField(default=False)
+    attribution_pension_de_famille = models.BooleanField(default=False)
+    attribution_residence_accueil = models.BooleanField(default=False)
 
     @property
     def attribution_type(self):

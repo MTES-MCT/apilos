@@ -37,14 +37,18 @@
 
                         {% include "common/form/input_text.html" with form_input=form.permis_construire object_field="programme__permis_construire__"|add:form.uuid.value %}
 
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                {% include "common/form/input_date.html" with form_input=form.date_autorisation_hors_habitat_inclusif object_field="programme__date_autorisation_hors_habitat_inclusif__"|add:form.uuid.value %}
+                        {% if convention.programme.is_foyer or convention.programme.is_residence %}
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                {% if convention.programme.is_foyer %}
+                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                                        {% include "common/form/input_date.html" with form_input=form.date_autorisation_hors_habitat_inclusif object_field="programme__date_autorisation_hors_habitat_inclusif__"|add:form.uuid.value %}
+                                    </div>
+                                {% endif %}
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_date.html" with form_input=form.date_convention_location object_field="programme__date_convention_location__"|add:form.uuid.value %}
+                                </div>
                             </div>
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_date.html" with form_input=form.date_convention_location object_field="programme__date_convention_location__"|add:form.uuid.value %}
-                            </div>
-                        </div>
+                        {% endif %}
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
                                 {% include "common/form/input_date.html" with form_input=form.date_achat object_field="programme__date_achat__"|add:form.uuid.value %}

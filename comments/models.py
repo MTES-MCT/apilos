@@ -184,10 +184,10 @@ class Comment(models.Model):
             "convention__attribution_reservation_prefectoral": (
                 "Part de réservations préfectorales"
             ),
-            "convention__foyer_variante_1": "Variante 1",
-            "convention__foyer_variante_2": "Variante 2",
-            "convention__foyer_variante_2_travaux": "Variante 2 travaux",
-            "convention__foyer_variante_3": "Variante 3",
+            "convention__foyer_residence_variante_1": "Variante 1",
+            "convention__foyer_residence_variante_2": "Variante 2",
+            "convention__foyer_residence_variante_2_travaux": "Variante 2 travaux",
+            "convention__foyer_residence_variante_3": "Variante 3",
             "convention__attached": "Fichiers à joindre à la convention",
             "convention__attribution_agees_autonomie": "Résidence autonomie",
             "convention__attribution_agees_ephad": (

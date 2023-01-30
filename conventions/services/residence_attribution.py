@@ -14,6 +14,15 @@ class ConventionResidenceAttributionService(ConventionService):
                 "attribution_reservation_prefectoral": (
                     self.convention.attribution_reservation_prefectoral
                 ),
+                "attribution_residence_sociale_ordinaire": (
+                    self.convention.attribution_residence_sociale_ordinaire
+                ),
+                "attribution_pension_de_famille": (
+                    self.convention.attribution_pension_de_famille
+                ),
+                "attribution_residence_accueil": (
+                    self.convention.attribution_residence_accueil
+                ),
                 "attribution_modalites_reservations": (
                     self.convention.attribution_modalites_reservations
                 ),
@@ -38,6 +47,9 @@ class ConventionResidenceAttributionService(ConventionService):
     def _save_convention_attribution(self):
         for field in [
             "attribution_reservation_prefectoral",
+            "attribution_residence_sociale_ordinaire",
+            "attribution_pension_de_famille",
+            "attribution_residence_accueil",
             "attribution_modalites_reservations",
             "attribution_modalites_choix_personnes",
             "attribution_prestations_integrees",

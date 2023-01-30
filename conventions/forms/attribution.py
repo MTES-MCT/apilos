@@ -43,7 +43,28 @@ class ConventionAttributionForm(forms.Form):
 
 
 class ConventionResidenceAttributionForm(ConventionAttributionForm):
-    pass
+
+    attribution_residence_sociale_ordinaire = forms.BooleanField(
+        required=False,
+        label="Résidence sociale ordinaire",
+        help_text="accueil de jeunes travailleurs ; de travailleurs migrants ; de personnes"
+        + " éprouvant des difficultés sociale et économique particulières au sens de"
+        + " l'article 1er de la loi n° 90-449 du 31 mai 1990 visant à la mise en œuvre"
+        + " du droit au logement ainsi que les étudiants en situation de rupture sociale"
+        + " et familiale qui peuvent, à titre exceptionnel, avoir accès à un nombre de"
+        + " places très minoritaires",
+    )
+    attribution_pension_de_famille = forms.BooleanField(
+        required=False,
+        label="Pension de famille",
+        help_text="accueil sans condition de durée de personnes dont la situation sociale"
+        + " et psychologique ne permet pas leur accès à un logement ordinaire",
+    )
+    attribution_residence_accueil = forms.BooleanField(
+        required=False,
+        label="Résidence accueil",
+        help_text="pension de famille pour personnes présentant un handicap psychique",
+    )
 
 
 class ConventionFoyerAttributionForm(ConventionAttributionForm):

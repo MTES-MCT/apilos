@@ -24,10 +24,10 @@ attribution_success_payload = {
 }
 
 variantes_success_payload = {
-    "foyer_variante_1": "on",
-    "foyer_variante_2": "on",
-    "foyer_variante_2_travaux": "TRAVAUX",
-    "foyer_variante_3": "on",
+    "foyer_residence_variante_1": "on",
+    "foyer_residence_variante_2": "on",
+    "foyer_residence_variante_2_travaux": "TRAVAUX",
+    "foyer_residence_variante_3": "on",
 }
 
 foyer_residence_logements_success_payload = {
