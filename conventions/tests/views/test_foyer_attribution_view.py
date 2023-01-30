@@ -11,20 +11,20 @@ class ConventionAttributionViewTests(AbstractEditViewTestCase, TestCase):
     def setUp(self):
         super().setUp()
         self.target_path = reverse(
-            "conventions:attribution", args=[self.convention_75.uuid]
+            "conventions:foyer_attribution", args=[self.convention_75.uuid]
         )
         self.next_target_path = reverse(
             "conventions:variantes", args=[self.convention_75.uuid]
         )
         self.convention_75.programme.nature_logement = NatureLogement.AUTRE
         self.convention_75.programme.save()
-        self.target_template = "conventions/attribution.html"
+        self.target_template = "conventions/foyer_attribution.html"
         self.error_payload = {
             **attribution_success_payload,
             "attribution_reservation_prefectoral": "",
         }
         self.success_payload = attribution_success_payload
-        self.msg_prefix = "[ConventionAttributionViewTests] "
+        self.msg_prefix = "[ConventionFoyerAttributionViewTests] "
 
     def _test_data_integrity(self):
         self.convention_75.refresh_from_db()

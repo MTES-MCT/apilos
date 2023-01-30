@@ -1,11 +1,53 @@
 from django import forms
 
 
-class ConventionFoyerAttributionForm(forms.Form):
-
+class ConventionAttributionForm(forms.Form):
     uuid = forms.UUIDField(
         required=False,
     )
+    attribution_reservation_prefectoral = forms.IntegerField(
+        label="Part de réservations préfectorales",
+        help_text="La part des locaux à usage privatif réservés par le préfet en pourcentage",
+        error_messages={
+            "required": "La part de réservations préfectoriales est obligatoire"
+        },
+    )
+
+    attribution_modalites_reservations = forms.CharField(
+        label="Modalités de gestion des reservations",
+        error_messages={
+            "required": "Les modalités de gestion des reservations sont obligatoires"
+        },
+    )
+
+    attribution_modalites_choix_personnes = forms.CharField(
+        label="Modalités de choix des personnes accueillies",
+        error_messages={
+            "required": "Les modalités de choix des personnes accueillies sont obligatoires"
+        },
+    )
+
+    attribution_prestations_integrees = forms.CharField(
+        required=False,
+        label="Prestation intégrées dans la redevance (Liste)",
+        help_text="Les prestations obligatoirement intégrées dans la redevance et non"
+        + " prises en compte pour le calcul de l'APL (non prises en compte au titre des"
+        + " charges récupérables)",
+    )
+
+    attribution_prestations_facultatives = forms.CharField(
+        required=False,
+        label="Prestations facultatives (Liste)",
+        help_text="Prestations facultatives à la demande du résident facturées séparément",
+    )
+
+
+class ConventionResidenceAttributionForm(ConventionAttributionForm):
+    pass
+
+
+class ConventionFoyerAttributionForm(ConventionAttributionForm):
+
     attribution_type = forms.ChoiceField(
         choices=[
             ("handicapees", "handicapees"),
@@ -81,41 +123,6 @@ class ConventionFoyerAttributionForm(forms.Form):
         required=False,
         label="Activités proposées à l’ensemble des résidents dans le cadre du projet"
         + " de vie sociale et partagée",
-    )
-    attribution_reservation_prefectoral = forms.IntegerField(
-        label="Part de réservations préfectorales",
-        help_text="La part des locaux à usage privatif réservés par le préfet en pourcentage",
-        error_messages={
-            "required": "La part de réservations préfectoriales est obligatoire"
-        },
-    )
-
-    attribution_modalites_reservations = forms.CharField(
-        label="Modalités de gestion des reservations",
-        error_messages={
-            "required": "Les modalités de gestion des reservations sont obligatoires"
-        },
-    )
-
-    attribution_modalites_choix_personnes = forms.CharField(
-        label="Modalités de choix des personnes accueillies",
-        error_messages={
-            "required": "Les modalités de choix des personnes accueillies sont obligatoires"
-        },
-    )
-
-    attribution_prestations_integrees = forms.CharField(
-        required=False,
-        label="Prestation intégrées dans la redevance (Liste)",
-        help_text="Les prestations obligatoirement intégrées dans la redevance et non"
-        + " prises en compte pour le calcul de l'APL (non prises en compte au titre des"
-        + " charges récupérables)",
-    )
-
-    attribution_prestations_facultatives = forms.CharField(
-        required=False,
-        label="Prestations facultatives (Liste)",
-        help_text="Prestations facultatives à la demande du résident facturées séparément",
     )
 
     def clean(self):

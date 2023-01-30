@@ -91,9 +91,15 @@ stationnements_step = ConventionFormStep(
 )
 
 foyer_attribution_step = ConventionFormStep(
-    pathname="conventions:attribution",
+    pathname="conventions:foyer_attribution",
     label="Attribution",
     classname="ConventionFoyerAttributionView",
+)
+
+residence_attribution_step = ConventionFormStep(
+    pathname="conventions:residence_attribution",
+    label="Attribution",
+    classname="ConventionResidenceAttributionView",
 )
 
 foyer_variante_step = ConventionFormStep(
@@ -184,6 +190,7 @@ residence_steps = [
     financement_step,
     foyer_residence_logements_step,
     collectif_step,
+    residence_attribution_step,
     foyer_variante_step,
     comments_step,
 ]

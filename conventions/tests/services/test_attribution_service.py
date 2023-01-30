@@ -7,7 +7,7 @@ from conventions.forms import ConventionFoyerAttributionForm
 from conventions.models import Convention
 from conventions.tests.fixtures import attribution_success_payload
 from conventions.services import (
-    attribution,
+    foyer_attribution,
     utils,
 )
 from core.tests import utils_fixtures
@@ -26,7 +26,7 @@ class ConventionFoyerAttributionServiceTests(TestCase):
         convention.programme.nature_logement = NatureLogement.AUTRE
         convention.programme.save()
         request.user = User.objects.get(username="fix")
-        self.service = attribution.ConventionFoyerAttributionService(
+        self.service = foyer_attribution.ConventionFoyerAttributionService(
             convention=convention, request=request
         )
 
