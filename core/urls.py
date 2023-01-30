@@ -26,12 +26,12 @@ from django.contrib.sitemaps.views import sitemap
 import django_cas_ng.views
 
 from core.sitemaps import SITEMAPS
-from . import signals
 
 
 urlpatterns = [
     path("admin/doc/", include("django.contrib.admindocs.urls")),
     path("admin/", admin.site.urls),
+    path("hijack/", include("hijack.urls")),
     path("", include(("users.urls", "users"), namespace="users")),
     path(
         "conventions/",
