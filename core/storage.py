@@ -7,7 +7,6 @@ from django.core.files import File
 
 
 class StorageClient:
-    # pylint: disable=R0903
     client = None
     is_s3 = False
 

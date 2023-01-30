@@ -55,41 +55,32 @@ def generate_and_send(args):
                 with default_storage.open(zip_path, "wb") as desc_file:
                     desc_file.write(src_file.read())
 
-    if settings.SENDINBLUE_API_KEY:
-        # Send a confirmation email to bailleur
-        email_service_to_bailleur = EmailService(
-            to_emails=convention.get_email_bailleur_users(),
-            email_template_id=EmailTemplateID.ItoB_AVENANT_VALIDE
-            if convention.is_avenant()
-            else EmailTemplateID.ItoB_CONVENTION_VALIDEE,
-        )
-        administration = convention.administration
+    # Send a confirmation email to bailleur
+    email_service_to_bailleur = EmailService(
+        to_emails=convention.get_email_bailleur_users(),
+        cc_emails=[convention_email_validator],
+        email_template_id=EmailTemplateID.ItoB_AVENANT_VALIDE
+        if convention.is_avenant()
+        else EmailTemplateID.ItoB_CONVENTION_VALIDEE,
+    )
+    administration = convention.administration
 
-        file_path = zip_path if zip_path is not None else Path(pdf_path)
-        if default_storage.size(file_path) > 10000000:
+    file_path = zip_path if zip_path is not None else Path(pdf_path)
+    if default_storage.size(file_path) > 10000000:
 
-            file_path = None
-        # TODO test the if the size of file to attached if greater than 10 Mo
-        email_service_to_bailleur.send_transactional_email(
-            email_data={
-                "convention_url": convention_url,
-                "convention": str(convention),
-                "adresse": administration.adresse,
-                "code_postal": administration.code_postal,
-                "ville": administration.ville,
-                "nb_convention_exemplaires": administration.nb_convention_exemplaires,
-            },
-            filepath=file_path,
-        )
-    else:
-
-        EmailService().send_email_valide(
-            convention_url,
-            convention,
-            convention.get_email_bailleur_users(),
-            [convention_email_validator],
-            str(zip_path) if zip_path is not None else str(pdf_path),
-        )
+        file_path = None
+    # TODO test the if the size of file to attached if greater than 10 Mo
+    email_service_to_bailleur.send_transactional_email(
+        email_data={
+            "convention_url": convention_url,
+            "convention": str(convention),
+            "adresse": administration.adresse,
+            "code_postal": administration.code_postal,
+            "ville": administration.ville,
+            "nb_convention_exemplaires": administration.nb_convention_exemplaires,
+        },
+        filepath=file_path,
+    )
 
 
 @dramatiq.actor

@@ -41,7 +41,7 @@ class ConventionService(ABC):
 
 
 class ConventionListService:
-    # pylint: disable=R0902,R0903,R0913
+    # pylint: disable=R0902,R0913
     search_input: str
     order_by: str
     page: str
