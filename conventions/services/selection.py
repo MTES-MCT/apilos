@@ -180,7 +180,7 @@ class ConventionSelectionService:
             .order_by(
                 "programme__ville", "programme__nom", "nb_logements", "financement"
             )
-            .filter(programme__parent_id__isnull=True)
+            .filter(programme__parent_id__isnull=True, conventions__isnull=True)
         )
         self.form = ProgrammeSelectionFromDBForm(
             lots=_get_choices_from_object(self.lots),
