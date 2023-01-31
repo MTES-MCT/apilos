@@ -9,7 +9,7 @@ from conventions.services import (
 )
 from core.tests import utils_fixtures
 from programmes.models import NatureLogement
-from conventions.forms.lot_collectif import LocauxCollectifsFormSet, LotCollectifForm
+from conventions.forms import LocauxCollectifsFormSet, LotCollectifForm
 from users.models import User
 
 

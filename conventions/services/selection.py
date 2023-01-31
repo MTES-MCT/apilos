@@ -17,7 +17,7 @@ from programmes.models import (
     Lot,
     TypeOperation,
 )
-from conventions.forms.lot_selection import (
+from conventions.forms import (
     ProgrammeSelectionFromDBForm,
     ProgrammeSelectionFromZeroForm,
 )

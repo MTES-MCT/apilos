@@ -38,6 +38,8 @@ variantes_success_payload = {
     "foyer_residence_variante_1": "on",
     "foyer_residence_variante_2": "on",
     "foyer_residence_variante_2_travaux": "TRAVAUX",
+    "foyer_residence_variante_2_nb_annees": "2",
+    "foyer_residence_variante_2_nb_tranches": "2",
     "foyer_residence_variante_3": "on",
 }
 

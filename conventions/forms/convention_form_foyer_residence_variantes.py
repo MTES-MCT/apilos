@@ -2,6 +2,12 @@ from django import forms
 
 
 class ConventionFoyerVariantesForm(forms.Form):
+    """
+    Validations:
+    - Au moins 1 variante doit-être sélectionnée
+    - La description des travaux est obligatoire si la variante 2 est sélectionnée
+    """
+
     uuid = forms.UUIDField(
         required=False,
     )
@@ -25,6 +31,12 @@ class ConventionFoyerVariantesForm(forms.Form):
         label="Description du programme des travaux ",
         help_text="A renseigner pour une Acquisition/Amélioration, conformément à"
         + " l’article 14 de la convention",
+    )
+    foyer_residence_variante_2_nb_tranches = forms.IntegerField(
+        required=False, label="Nombre de tranches"
+    )
+    foyer_residence_variante_2_nb_annees = forms.IntegerField(
+        required=False, label="Sur nombre d'années"
     )
     foyer_residence_variante_3 = forms.BooleanField(
         required=False,

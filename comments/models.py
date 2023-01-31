@@ -187,6 +187,8 @@ class Comment(models.Model):
             "convention__foyer_residence_variante_1": "Variante 1",
             "convention__foyer_residence_variante_2": "Variante 2",
             "convention__foyer_residence_variante_2_travaux": "Variante 2 travaux",
+            "convention__foyer_residence_variante_2_nb_tranches": "Variante 2 nombre de tranches",
+            "convention__foyer_residence_variante_2_nb_annees": "Variante 2 nombre d'annees",
             "convention__foyer_residence_variante_3": "Variante 3",
             "convention__attached": "Fichiers à joindre à la convention",
             "convention__attribution_agees_autonomie": "Résidence autonomie",

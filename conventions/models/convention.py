@@ -169,6 +169,9 @@ class Convention(models.Model):
     foyer_residence_variante_2_travaux = models.CharField(
         null=True, blank=True, max_length=5000
     )
+    foyer_residence_variante_2_nb_annees = models.IntegerField(null=True, blank=True)
+    foyer_residence_variante_2_nb_tranches = models.IntegerField(null=True, blank=True)
+
     foyer_residence_variante_3 = models.BooleanField(default=True)
 
     attribution_residence_sociale_ordinaire = models.BooleanField(default=False)

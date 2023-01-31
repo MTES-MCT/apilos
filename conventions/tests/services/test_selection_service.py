@@ -14,7 +14,7 @@ from conventions.services import (
 )
 from core.tests import utils_fixtures
 from instructeurs.models import Administration
-from conventions.forms.lot_selection import (
+from conventions.forms import (
     ProgrammeSelectionFromDBForm,
     ProgrammeSelectionFromZeroForm,
 )

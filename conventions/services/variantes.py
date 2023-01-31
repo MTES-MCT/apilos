@@ -14,6 +14,8 @@ class ConventionFoyerVariantesService(ConventionService):
                 "foyer_residence_variante_1": self.convention.foyer_residence_variante_1,
                 "foyer_residence_variante_2": self.convention.foyer_residence_variante_2,
                 "foyer_residence_variante_2_travaux": self.convention.foyer_residence_variante_2_travaux,
+                "foyer_residence_variante_2_nb_annees": self.convention.foyer_residence_variante_2_nb_annees,
+                "foyer_residence_variante_2_nb_tranches": self.convention.foyer_residence_variante_2_nb_tranches,
                 "foyer_residence_variante_3": self.convention.foyer_residence_variante_3,
             }
         )
@@ -32,10 +34,14 @@ class ConventionFoyerVariantesService(ConventionService):
         ]:
             utils.set_from_form_or_object(field, self.form, self.convention)
         if self.form.cleaned_data["foyer_residence_variante_2"]:
-            utils.set_from_form_or_object(
-                "foyer_residence_variante_2_travaux", self.form, self.convention
-            )
+            for field in [
+                "foyer_residence_variante_2_travaux",
+                "foyer_residence_variante_2_nb_annees",
+                "foyer_residence_variante_2_nb_tranches",
+            ]:
+                utils.set_from_form_or_object(field, self.form, self.convention)
         else:
             self.convention.foyer_residence_variante_2_travaux = ""
-
+            self.convention.foyer_residence_variante_2_nb_annees = None
+            self.convention.foyer_residence_variante_2_nb_tranches = None
         self.convention.save()

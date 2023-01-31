@@ -36,7 +36,19 @@
                             <div class="fr-col-12 fr-mb-2w">
                                 {% include "common/form/input_checkbox.html" with form_input=form.foyer_residence_variante_1 strike_unchecked=True object_field="convention__foyer_residence_variante_1__"|add:form.uuid.value %}
                                 {% include "common/form/input_checkbox.html" with form_input=form.foyer_residence_variante_2 strike_unchecked=True object_field="convention__foyer_residence_variante_2__"|add:form.uuid.value %}
-                                {% include "common/form/input_textarea.html" with form_input=form.foyer_residence_variante_2_travaux strike_unchecked=True object_field="convention__foyer_residence_variante_2_travaux__"|add:form.uuid.value %}
+                                <div id="foyer_residence_variante_2_details">
+                                    {% include "common/form/input_textarea.html" with form_input=form.foyer_residence_variante_2_travaux object_field="convention__foyer_residence_variante_2_travaux__"|add:form.uuid.value %}
+                                    {% if convention.programme.is_residence %}
+                                        <div class="fr-grid-row fr-grid-row--gutters">
+                                            <div class="fr-col-12 fr-col-lg-6 fr-mb-2w">
+                                                {% include "common/form/input_number.html" with form_input=form.foyer_residence_variante_2_nb_tranches display_inline=True object_field="convention__foyer_residence_variante_2_nb_tranches__"|add:form.uuid.value %}
+                                            </div>
+                                            <div class="fr-col-12 fr-col-lg-6 fr-mb-2w">
+                                                {% include "common/form/input_number.html" with form_input=form.foyer_residence_variante_2_nb_annees display_inline=True object_field="convention__foyer_residence_variante_2_nb_annees__"|add:form.uuid.value %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
                                 {% include "common/form/input_checkbox.html" with form_input=form.foyer_residence_variante_3 strike_unchecked=True object_field="convention__foyer_residence_variante_3__"|add:form.uuid.value %}
                             </div>
                         </div>
@@ -49,7 +61,7 @@
     <script type="text/javascript" nonce="{{request.csp_nonce}}">
         document.addEventListener('DOMContentLoaded', function(){
             if (!document.getElementById('foyer_residence_variante_2').checked) {
-                document.getElementById('id_foyer_residence_variante_2_travaux_group').hidden = true
+                document.getElementById('foyer_residence_variante_2_details').hidden = true
             }
         })
         function strike_checked_option(e, div_to_toggle_id) {
@@ -67,7 +79,7 @@
             }
         }
         document.getElementById('foyer_residence_variante_1').addEventListener('change', e => strike_checked_option(e, undefined));
-        document.getElementById('foyer_residence_variante_2').addEventListener('change', e => strike_checked_option(e, 'id_foyer_residence_variante_2_travaux_group'));
+        document.getElementById('foyer_residence_variante_2').addEventListener('change', e => strike_checked_option(e, 'foyer_residence_variante_2_details'));
         document.getElementById('foyer_residence_variante_3').addEventListener('change', e => strike_checked_option(e, undefined));
     </script>
 {% endblock %}
