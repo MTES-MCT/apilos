@@ -125,15 +125,9 @@
                                     {% if request|display_administration %}
                                         <th scope="col">Instructeur</th>
                                     {% endif %}
-                                    {% if active %}
-                                        <th title="Opération" scope="col" class="col__width--150">
-                                            Opération
-                                        </th>
-                                    {% else %}
-                                        <th title="Numéro" scope="col">
-                                            Numéro
-                                        </th>
-                                    {% endif %}
+                                    <th title="Opération" scope="col" class="col__width--150">
+                                        Opération
+                                    </th>
                                     <th title="Financement" scope="col">
                                         Financement
                                     </th>
@@ -185,11 +179,8 @@
                                         <td>
                                             <div>
                                                 <strong>
-                                                    {% if active %}
-                                                        <span class="apilos-long-name">{{convention.programme.nom}}</span>
-                                                    {% else %}
-                                                        <span class="apilos-long-name">{{convention.numero}}</span>
-                                                    {% endif %}
+                                                    <span class="apilos-long-name">{{convention.programme.nom}}</span>
+                                                    <span class="apilos-long-name">{{convention.numero}}</span>
                                                 </strong>
                                                 {% if convention.is_avenant %}
                                                     <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-avenant background-white">Avenant</span>

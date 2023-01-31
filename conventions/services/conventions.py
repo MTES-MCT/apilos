@@ -75,16 +75,12 @@ class ConventionListService:
     def paginate(self) -> None:
         total_user = self.my_convention_list.count()
         if self.search_input:
-            if self.active:
-                self.my_convention_list = self.my_convention_list.filter(
-                    Q(programme__ville__icontains=self.search_input)
-                    | Q(programme__nom__icontains=self.search_input)
-                    | Q(programme__numero_galion__icontains=self.search_input)
-                )
-            else:
-                self.my_convention_list = self.my_convention_list.filter(
-                    numero__endswith=self.search_input
-                )
+            self.my_convention_list = self.my_convention_list.filter(
+                Q(programme__ville__icontains=self.search_input)
+                | Q(programme__nom__icontains=self.search_input)
+                | Q(programme__numero_galion__icontains=self.search_input)
+                | Q(numero__endswith=self.search_input)
+            )
         if self.statut_filter:
             self.my_convention_list = self.my_convention_list.filter(
                 statut=self.statut_filter
