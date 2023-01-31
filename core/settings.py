@@ -28,7 +28,7 @@ from django.core.exceptions import PermissionDenied
 BASE_DIR = Path(__file__).resolve().parent.parent
 TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 if TESTING:
-    config = Config(RepositoryEnv(BASE_DIR / ".env.template"))
+    config = Config(RepositoryEnv(BASE_DIR / ".env.test"))
 else:
     config = decouple.config
 
@@ -86,6 +86,8 @@ LOGGING = {
 }
 
 SENDINBLUE_API_KEY = get_env_variable("SENDINBLUE_API_KEY")
+
+MAX_EMAIL_ATTACHED_FILES_SIZE = 10 * 1024 * 1024  # 10MB
 
 if SENDINBLUE_API_KEY:
     ANYMAIL = {

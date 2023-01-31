@@ -42,8 +42,8 @@ class ConventionFoyerAttributionService(ConventionService):
                     self.convention.attribution_inclusif_partenariats
                 ),
                 "attribution_inclusif_activites": self.convention.attribution_inclusif_activites,
-                "attribution_reservation_prefectoral": (
-                    self.convention.attribution_reservation_prefectoral
+                "attribution_reservation_prefectorale": (
+                    self.convention.attribution_reservation_prefectorale
                 ),
                 "attribution_modalites_reservations": (
                     self.convention.attribution_modalites_reservations
@@ -137,7 +137,7 @@ class ConventionFoyerAttributionService(ConventionService):
                 utils.set_from_form_or_object(field, self.form, self.convention)
 
         for field in [
-            "attribution_reservation_prefectoral",
+            "attribution_reservation_prefectorale",
             "attribution_modalites_reservations",
             "attribution_modalites_choix_personnes",
             "attribution_prestations_integrees",

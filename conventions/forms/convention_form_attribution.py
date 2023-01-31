@@ -1,11 +1,74 @@
 from django import forms
 
 
-class ConventionFoyerAttributionForm(forms.Form):
-
+class ConventionAttributionForm(forms.Form):
     uuid = forms.UUIDField(
         required=False,
     )
+    attribution_reservation_prefectorale = forms.IntegerField(
+        label="Part de réservations préfectorales",
+        help_text="La part des locaux à usage privatif réservés par le préfet en pourcentage",
+        error_messages={
+            "required": "La part de réservations préfectoriales est obligatoire"
+        },
+    )
+
+    attribution_modalites_reservations = forms.CharField(
+        label="Modalités de gestion des reservations",
+        error_messages={
+            "required": "Les modalités de gestion des reservations sont obligatoires"
+        },
+    )
+
+    attribution_modalites_choix_personnes = forms.CharField(
+        label="Modalités de choix des personnes accueillies",
+        error_messages={
+            "required": "Les modalités de choix des personnes accueillies sont obligatoires"
+        },
+    )
+
+    attribution_prestations_integrees = forms.CharField(
+        required=False,
+        label="Prestation intégrées dans la redevance (Liste)",
+        help_text="Les prestations obligatoirement intégrées dans la redevance et non"
+        + " prises en compte pour le calcul de l'APL (non prises en compte au titre des"
+        + " charges récupérables)",
+    )
+
+    attribution_prestations_facultatives = forms.CharField(
+        required=False,
+        label="Prestations facultatives (Liste)",
+        help_text="Prestations facultatives à la demande du résident facturées séparément",
+    )
+
+
+class ConventionResidenceAttributionForm(ConventionAttributionForm):
+
+    attribution_residence_sociale_ordinaire = forms.BooleanField(
+        required=False,
+        label="Résidence sociale ordinaire",
+        help_text="accueil de jeunes travailleurs ; de travailleurs migrants ; de personnes"
+        + " éprouvant des difficultés sociale et économique particulières au sens de"
+        + " l'article 1er de la loi n° 90-449 du 31 mai 1990 visant à la mise en œuvre"
+        + " du droit au logement ainsi que les étudiants en situation de rupture sociale"
+        + " et familiale qui peuvent, à titre exceptionnel, avoir accès à un nombre de"
+        + " places très minoritaires",
+    )
+    attribution_pension_de_famille = forms.BooleanField(
+        required=False,
+        label="Pension de famille",
+        help_text="accueil sans condition de durée de personnes dont la situation sociale"
+        + " et psychologique ne permet pas leur accès à un logement ordinaire",
+    )
+    attribution_residence_accueil = forms.BooleanField(
+        required=False,
+        label="Résidence accueil",
+        help_text="pension de famille pour personnes présentant un handicap psychique",
+    )
+
+
+class ConventionFoyerAttributionForm(ConventionAttributionForm):
+
     attribution_type = forms.ChoiceField(
         choices=[
             ("handicapees", "handicapees"),
@@ -81,41 +144,6 @@ class ConventionFoyerAttributionForm(forms.Form):
         required=False,
         label="Activités proposées à l’ensemble des résidents dans le cadre du projet"
         + " de vie sociale et partagée",
-    )
-    attribution_reservation_prefectoral = forms.IntegerField(
-        label="Part de réservations préfectorales",
-        help_text="La part des locaux à usage privatif réservés par le préfet en pourcentage",
-        error_messages={
-            "required": "La part de réservations préfectoriales est obligatoire"
-        },
-    )
-
-    attribution_modalites_reservations = forms.CharField(
-        label="Modalités de gestion des reservations",
-        error_messages={
-            "required": "Les modalités de gestion des reservations sont obligatoires"
-        },
-    )
-
-    attribution_modalites_choix_personnes = forms.CharField(
-        label="Modalités de choix des personnes accueillies",
-        error_messages={
-            "required": "Les modalités de choix des personnes accueillies sont obligatoires"
-        },
-    )
-
-    attribution_prestations_integrees = forms.CharField(
-        required=False,
-        label="Prestation intégrées dans la redevance (Liste)",
-        help_text="Les prestations obligatoirement intégrées dans la redevance et non"
-        + " prises en compte pour le calcul de l'APL (non prises en compte au titre des"
-        + " charges récupérables)",
-    )
-
-    attribution_prestations_facultatives = forms.CharField(
-        required=False,
-        label="Prestations facultatives (Liste)",
-        help_text="Prestations facultatives à la demande du résident facturées séparément",
     )
 
     def clean(self):

@@ -73,7 +73,7 @@
                             </div>
                         </div>
 
-                        <h4>Signataire de la convention{% if convention.programme.is_foyer %} (Propriétaire){% endif %}</h4>
+                        <h4>Signataire de la convention{% if convention.programme.is_foyer or convention.programme.is_residence %} (Propriétaire){% endif %}</h4>
 
                         {% include "common/form/input_text.html" with form_input=form.signataire_nom object_field="bailleur__signataire_nom__"|add:form.uuid.value %}
 
@@ -88,7 +88,7 @@
                             </div>
                         </div>
 
-                        {% if convention.programme.is_foyer %}
+                        {% if convention.programme.is_foyer or convention.programme.is_residence %}
                             <h4>Gestionnaire des logments conventionnés</h4>
                             {% with convention_uuid=convention.uuid|slugify %}
 

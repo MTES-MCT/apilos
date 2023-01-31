@@ -5,9 +5,9 @@ from django.test import TestCase
 
 from conventions.forms import ConventionFoyerAttributionForm
 from conventions.models import Convention
-from conventions.tests.fixtures import attribution_success_payload
+from conventions.tests.fixtures import foyer_attribution_success_payload
 from conventions.services import (
-    attribution,
+    foyer_attribution,
     utils,
 )
 from core.tests import utils_fixtures
@@ -26,7 +26,7 @@ class ConventionFoyerAttributionServiceTests(TestCase):
         convention.programme.nature_logement = NatureLogement.AUTRE
         convention.programme.save()
         request.user = User.objects.get(username="fix")
-        self.service = attribution.ConventionFoyerAttributionService(
+        self.service = foyer_attribution.ConventionFoyerAttributionService(
             convention=convention, request=request
         )
 
@@ -132,7 +132,7 @@ class ConventionFoyerAttributionServiceTests(TestCase):
 
     def test_save_success(self):
 
-        self.service.request.POST = attribution_success_payload
+        self.service.request.POST = foyer_attribution_success_payload
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
@@ -144,7 +144,7 @@ class ConventionFoyerAttributionServiceTests(TestCase):
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
 
         self.assertTrue(
-            self.service.form.has_error("attribution_reservation_prefectoral")
+            self.service.form.has_error("attribution_reservation_prefectorale")
         )
         self.assertTrue(self.service.form.has_error("attribution_type"))
         self.assertFalse(self.service.form.has_error("attribution_agees_autonomie"))
@@ -193,7 +193,7 @@ class ConventionFoyerAttributionServiceTests(TestCase):
 
     def test_save_failed_needed_fields_when_inclusif(self):
         self.service.request.POST = {
-            **attribution_success_payload,
+            **foyer_attribution_success_payload,
             "attribution_type": "inclusif",
             "attribution_inclusif_conditions_specifiques": "",
             "attribution_inclusif_conditions_admission": "",
@@ -215,7 +215,7 @@ class ConventionFoyerAttributionServiceTests(TestCase):
 
     def test_save_failed_needed_autre_details_agees(self):
         self.service.request.POST = {
-            **attribution_success_payload,
+            **foyer_attribution_success_payload,
             "attribution_type": "agees",
             "attribution_agees_autre": "on",
             "attribution_agees_autre_detail": "",
@@ -225,7 +225,7 @@ class ConventionFoyerAttributionServiceTests(TestCase):
 
     def test_save_failed_needed_autre_details_handicapes(self):
         self.service.request.POST = {
-            **attribution_success_payload,
+            **foyer_attribution_success_payload,
             "attribution_type": "handicapes",
             "attribution_handicapes_autre": "on",
             "attribution_handicapes_autre_detail": "",

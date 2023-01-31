@@ -1,5 +1,5 @@
 import datetime
-from conventions.forms.financement import ConventionFinancementForm, PretFormSet
+from conventions.forms import ConventionFinancementForm, PretFormSet
 from conventions.forms.upload import UploadForm
 from conventions.models.pret import Pret
 from conventions.services import upload_objects, utils
@@ -149,7 +149,10 @@ class ConventionFinancementService(ConventionService):
                 self.redirect_recap = self.request.POST.get("redirect_to_recap", False)
 
     def _save_convention_financement(self):
-        if self.convention.programme.is_foyer():
+        if (
+            self.convention.programme.is_foyer()
+            or self.convention.programme.is_residence()
+        ):
             self.convention.date_fin_conventionnement = datetime.date(
                 self.form.cleaned_data["annee_fin_conventionnement"], 12, 31
             )

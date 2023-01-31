@@ -20,7 +20,7 @@ class ConventionVariantesViewTests(AbstractEditViewTestCase, TestCase):
         self.target_template = "conventions/variantes.html"
         self.error_payload = {
             **variantes_success_payload,
-            "foyer_variante_2_travaux": "",
+            "foyer_residence_variante_2_travaux": "",
         }
         self.success_payload = variantes_success_payload
         self.msg_prefix = "[ConventionVariantesViewTests] "
@@ -28,7 +28,7 @@ class ConventionVariantesViewTests(AbstractEditViewTestCase, TestCase):
     def _test_data_integrity(self):
         self.convention_75.refresh_from_db()
         self.assertEqual(
-            self.convention_75.foyer_variante_2_travaux,
+            self.convention_75.foyer_residence_variante_2_travaux,
             "TRAVAUX",
             msg=f"{self.msg_prefix}",
         )

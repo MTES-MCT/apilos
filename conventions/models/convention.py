@@ -150,7 +150,7 @@ class Convention(models.Model):
     attribution_inclusif_activites = models.CharField(
         null=True, blank=True, max_length=5000
     )
-    attribution_reservation_prefectoral = models.IntegerField(null=True, blank=True)
+    attribution_reservation_prefectorale = models.IntegerField(null=True, blank=True)
     attribution_modalites_reservations = models.CharField(
         null=True, blank=True, max_length=5000
     )
@@ -164,10 +164,19 @@ class Convention(models.Model):
         null=True, blank=True, max_length=5000
     )
 
-    foyer_variante_1 = models.BooleanField(default=True)
-    foyer_variante_2 = models.BooleanField(default=True)
-    foyer_variante_2_travaux = models.CharField(null=True, blank=True, max_length=5000)
-    foyer_variante_3 = models.BooleanField(default=True)
+    foyer_residence_variante_1 = models.BooleanField(default=True)
+    foyer_residence_variante_2 = models.BooleanField(default=True)
+    foyer_residence_variante_2_travaux = models.CharField(
+        null=True, blank=True, max_length=5000
+    )
+    foyer_residence_variante_2_nb_annees = models.IntegerField(null=True, blank=True)
+    foyer_residence_variante_2_nb_tranches = models.IntegerField(null=True, blank=True)
+
+    foyer_residence_variante_3 = models.BooleanField(default=True)
+
+    attribution_residence_sociale_ordinaire = models.BooleanField(default=False)
+    attribution_pension_de_famille = models.BooleanField(default=False)
+    attribution_residence_accueil = models.BooleanField(default=False)
 
     @property
     def attribution_type(self):
@@ -188,6 +197,7 @@ class Convention(models.Model):
             or self.attribution_handicapes_autre
         ):
             return "handicapes"
+        # TODO : test inclusif to let it closed for the first time ?
         return "inclusif"
 
     # Needed for admin

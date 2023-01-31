@@ -1,10 +1,11 @@
+import uuid
 from rest_framework import serializers
 
 from django.test import TestCase
 from upload.models import UploadedFile, UploadedFileSerializer
 
 
-class ConventionModelsTest(TestCase):
+class UploadedFileTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         UploadedFile.objects.create(
@@ -13,6 +14,36 @@ class ConventionModelsTest(TestCase):
             size=12345,
             content_type="image/png",
         )
+
+    # create unittest for filepath method
+    def test_filepath_with_dirpath(self):
+        fake_uuid = uuid.uuid4()
+        uploaded_file = UploadedFile.objects.create(
+            filename="image.png",
+            dirpath="/path/to/file",
+            size=12345,
+            content_type="image/png",
+        )
+
+        expected_filepath = (
+            f"{uploaded_file.dirpath}/{uploaded_file.uuid}_{uploaded_file.filename}"
+        )
+        self.assertEqual(uploaded_file.filepath(fake_uuid), expected_filepath)
+
+    def test_filepath_without_dirpath(self):
+        uploaded_file = UploadedFile.objects.create(
+            filename="image.png",
+            dirpath=None,
+            size=12345,
+            content_type="image/png",
+        )
+        fake_uuid = uuid.uuid4()
+
+        expected_filepath = (
+            f"conventions/{fake_uuid}/media/"
+            f"{uploaded_file.uuid}_{uploaded_file.filename}"
+        )
+        self.assertEqual(uploaded_file.filepath(fake_uuid), expected_filepath)
 
     def test_object_str(self):
         uploaded_file = UploadedFile.objects.first()

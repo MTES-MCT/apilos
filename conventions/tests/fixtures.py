@@ -1,5 +1,5 @@
-attribution_success_payload = {
-    "attribution_reservation_prefectoral": "10",
+foyer_attribution_success_payload = {
+    "attribution_reservation_prefectorale": "10",
     "attribution_type": "agees",
     "attribution_agees_autonomie": "FALSE",
     "attribution_agees_ephad": "FALSE",
@@ -23,11 +23,24 @@ attribution_success_payload = {
     "attribution_prestations_facultatives": "",
 }
 
+residence_attribution_success_payload = {
+    "attribution_reservation_prefectorale": "10",
+    "attribution_residence_sociale_ordinaire": "on",
+    "attribution_pension_de_famille": "on",
+    "attribution_residence_accueil": "FALSE",
+    "attribution_modalites_reservations": "test",
+    "attribution_modalites_choix_personnes": "Top !!!",
+    "attribution_prestations_integrees": "OKOK",
+    "attribution_prestations_facultatives": "",
+}
+
 variantes_success_payload = {
-    "foyer_variante_1": "on",
-    "foyer_variante_2": "on",
-    "foyer_variante_2_travaux": "TRAVAUX",
-    "foyer_variante_3": "on",
+    "foyer_residence_variante_1": "on",
+    "foyer_residence_variante_2": "on",
+    "foyer_residence_variante_2_travaux": "TRAVAUX",
+    "foyer_residence_variante_2_nb_annees": "2",
+    "foyer_residence_variante_2_nb_tranches": "2",
+    "foyer_residence_variante_3": "on",
 }
 
 foyer_residence_logements_success_payload = {

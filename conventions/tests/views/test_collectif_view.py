@@ -18,7 +18,7 @@ class ConventionCollectifViewTests(AbstractEditViewTestCase, TestCase):
             "conventions:collectif", args=[self.convention_75.uuid]
         )
         self.next_target_path = reverse(
-            "conventions:attribution", args=[self.convention_75.uuid]
+            "conventions:foyer_attribution", args=[self.convention_75.uuid]
         )
         self.target_template = "conventions/collectif.html"
         self.error_payload = {

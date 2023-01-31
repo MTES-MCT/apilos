@@ -123,7 +123,7 @@
                                                         {% else %}
                                                             Année de signature de la convention + au moins la durée du prêt le plus long. <br>
                                                             Elle ne peut être inférieure à 9 ans.
-                                                            {% if not convention.programme.is_foyer %}
+                                                            {% if not convention.programme.is_foyer and not convention.programme.is_residence %}
                                                                 Si la convention est signée après le 30 juin, la durée de la convention à prendre en compte débute à l'année N+1.</div>
                                                             {% endif %}
                                                         {% endif %}
@@ -134,7 +134,7 @@
                                             </label>
                                             <div class="block--row-strech">
                                                 <div class="fr-mt-1w fr-mr-1w">
-                                                    {% if convention.programme.is_foyer %}
+                                                    {% if convention.programme.is_foyer or convention.programme.is_residence %}
                                                         <span>31&nbsp;/&nbsp;12&nbsp;/&nbsp;</span>
                                                     {% else %}
                                                         <span>30&nbsp;/&nbsp;06&nbsp;/&nbsp;</span>
@@ -147,7 +147,7 @@
                                         </div>
                                     </div>
                                     <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                        {% if convention.programme.is_foyer %}
+                                        {% if convention.programme.is_foyer  or convention.programme.is_residence %}
                                             {% include "common/form/input_textarea.html" with form_input=form.historique_financement_public helptext_visible=True object_field="convention__historique_financement_public__"|add:form.uuid.value %}
                                         {% else %}
                                             {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" object_field="convention__fond_propre__"|add:form.uuid.value %}

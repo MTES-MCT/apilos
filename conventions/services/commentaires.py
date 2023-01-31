@@ -1,4 +1,4 @@
-from conventions.forms.commentaires import ConventionCommentForm
+from conventions.forms import ConventionCommentForm
 from conventions.services import utils
 from conventions.services.conventions import ConventionService
 

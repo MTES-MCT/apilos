@@ -3,33 +3,33 @@ from django.test import TestCase
 from django.urls import reverse
 
 from conventions.tests.views.abstract import AbstractEditViewTestCase
-from conventions.tests.fixtures import attribution_success_payload
+from conventions.tests.fixtures import foyer_attribution_success_payload
 from programmes.models import NatureLogement
 
 
-class ConventionAttributionViewTests(AbstractEditViewTestCase, TestCase):
+class ConventionFoyerAttributionViewTests(AbstractEditViewTestCase, TestCase):
     def setUp(self):
         super().setUp()
         self.target_path = reverse(
-            "conventions:attribution", args=[self.convention_75.uuid]
+            "conventions:foyer_attribution", args=[self.convention_75.uuid]
         )
         self.next_target_path = reverse(
             "conventions:variantes", args=[self.convention_75.uuid]
         )
         self.convention_75.programme.nature_logement = NatureLogement.AUTRE
         self.convention_75.programme.save()
-        self.target_template = "conventions/attribution.html"
+        self.target_template = "conventions/foyer_attribution.html"
         self.error_payload = {
-            **attribution_success_payload,
-            "attribution_reservation_prefectoral": "",
+            **foyer_attribution_success_payload,
+            "attribution_reservation_prefectorale": "",
         }
-        self.success_payload = attribution_success_payload
-        self.msg_prefix = "[ConventionAttributionViewTests] "
+        self.success_payload = foyer_attribution_success_payload
+        self.msg_prefix = "[ConventionFoyerAttributionViewTests] "
 
     def _test_data_integrity(self):
         self.convention_75.refresh_from_db()
         self.assertEqual(
-            self.convention_75.attribution_reservation_prefectoral,
+            self.convention_75.attribution_reservation_prefectorale,
             10,
             msg=f"{self.msg_prefix}",
         )
@@ -58,7 +58,7 @@ class ConventionAttributionViewTests(AbstractEditViewTestCase, TestCase):
                     "attribution_modalites_choix_personnes",
                     "attribution_prestations_integrees",
                     "attribution_prestations_facultatives",
-                    "attribution_reservation_prefectoral",
+                    "attribution_reservation_prefectorale",
                 ],
             ),
             {
@@ -82,7 +82,7 @@ class ConventionAttributionViewTests(AbstractEditViewTestCase, TestCase):
                 "attribution_modalites_choix_personnes": "Top !!!",
                 "attribution_prestations_integrees": "OKOK",
                 "attribution_prestations_facultatives": "",
-                "attribution_reservation_prefectoral": 10,
+                "attribution_reservation_prefectorale": 10,
             },
             msg=f"{self.msg_prefix}",
         )
