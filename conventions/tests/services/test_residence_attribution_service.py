@@ -65,7 +65,7 @@ class ConventionResidenceAttributionServiceTests(TestCase):
             )
 
         for requiered_field in [
-            "attribution_reservation_prefectoral",
+            "attribution_reservation_prefectorale",
             "attribution_modalites_reservations",
             "attribution_modalites_choix_personnes",
         ]:

@@ -60,7 +60,6 @@ class GenerateAndSendTest(TestCase):
                     "convention_email_validator": "validator@apilos.fr",
                 }
                 generate_and_send(args)
-                # 'attachments': [Attachment<application/pdf, len=0, name='convention.pdf'>], 'template_id': 103, 'merge_global_data': {'convention_url': 'https://target.to.convention.display', 'convention': 'Paris - Programme 1 - None lgts - Collectif - PLAI', 'adresse': None, 'code_postal': None, 'ville': None, 'nb_convention_exemplaires': 3}
                 self.assertEqual(
                     mail.outbox[0].anymail_test_params["attachments"][0].name,
                     "convention.pdf",

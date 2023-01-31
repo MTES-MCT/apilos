@@ -21,7 +21,7 @@ class ConventionResidenceAttributionViewTests(AbstractEditViewTestCase, TestCase
         self.target_template = "conventions/residence_attribution.html"
         self.error_payload = {
             **residence_attribution_success_payload,
-            "attribution_reservation_prefectoral": "",
+            "attribution_reservation_prefectorale": "",
         }
         self.success_payload = residence_attribution_success_payload
         self.msg_prefix = "[ConventionResidenceAttributionViewTests] "
@@ -29,7 +29,7 @@ class ConventionResidenceAttributionViewTests(AbstractEditViewTestCase, TestCase
     def _test_data_integrity(self):
         self.convention_75.refresh_from_db()
         self.assertEqual(
-            self.convention_75.attribution_reservation_prefectoral,
+            self.convention_75.attribution_reservation_prefectorale,
             10,
             msg=f"{self.msg_prefix}",
         )
@@ -38,7 +38,7 @@ class ConventionResidenceAttributionViewTests(AbstractEditViewTestCase, TestCase
             model_to_dict(
                 self.convention_75,
                 fields=[
-                    "attribution_reservation_prefectoral",
+                    "attribution_reservation_prefectorale",
                     "attribution_residence_sociale_ordinaire",
                     "attribution_pension_de_famille",
                     "attribution_residence_accueil",
@@ -49,7 +49,7 @@ class ConventionResidenceAttributionViewTests(AbstractEditViewTestCase, TestCase
                 ],
             ),
             {
-                "attribution_reservation_prefectoral": 10,
+                "attribution_reservation_prefectorale": 10,
                 "attribution_residence_sociale_ordinaire": True,
                 "attribution_pension_de_famille": True,
                 "attribution_residence_accueil": False,

@@ -72,7 +72,7 @@ class ProgrammeCadastralForm(forms.Form):
             "max_length": "Le département ne doit pas excéder 255 caractères",
         },
     )
-    ville_signature_residence_argement_gestionnaire_intermediation = forms.CharField(
+    ville_signature_residence_agrement_gestionnaire_intermediation = forms.CharField(
         required=False,
         label="",
         max_length=255,

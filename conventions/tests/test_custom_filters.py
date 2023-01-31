@@ -11,7 +11,7 @@ from conventions.models import (
     ConventionType1and2,
 )
 from conventions.templatetags import custom_filters
-from programmes.models import OpenedNatureLogement
+from programmes.models import ActiveNatureLogement
 from users.models import GroupProfile, User
 
 
@@ -702,7 +702,7 @@ class CustomFiltersTest(TestCase):
                 sous_nature_bailleur
             )
 
-            for nature_logement, _ in OpenedNatureLogement.choices:
+            for nature_logement, _ in ActiveNatureLogement.choices:
                 self.convention.programme.nature_logement = nature_logement
 
                 for type1andtype2 in [
@@ -711,8 +711,8 @@ class CustomFiltersTest(TestCase):
                     None,
                 ]:
                     if nature_logement in [
-                        OpenedNatureLogement.LOGEMENTSORDINAIRES,
-                        OpenedNatureLogement.RESIDENCEUNIVERSITAIRE,
+                        ActiveNatureLogement.LOGEMENTSORDINAIRES,
+                        ActiveNatureLogement.RESIDENCEUNIVERSITAIRE,
                     ]:
                         self.assertTrue(
                             custom_filters.display_type1and2(self.convention)
@@ -788,7 +788,7 @@ class CustomFiltersTest(TestCase):
                 sous_nature_bailleur
             )
 
-            for nature_logement, _ in OpenedNatureLogement.choices:
+            for nature_logement, _ in ActiveNatureLogement.choices:
                 self.convention.programme.nature_logement = nature_logement
 
                 for type1andtype2 in [
@@ -803,8 +803,8 @@ class CustomFiltersTest(TestCase):
                     )
                 self.convention.type1and2 = None
                 if nature_logement in [
-                    OpenedNatureLogement.LOGEMENTSORDINAIRES,
-                    OpenedNatureLogement.RESIDENCEUNIVERSITAIRE,
+                    ActiveNatureLogement.LOGEMENTSORDINAIRES,
+                    ActiveNatureLogement.RESIDENCEUNIVERSITAIRE,
                 ]:
                     self.assertTrue(
                         custom_filters.display_deactivated_because_type1and2_config_is_needed(
@@ -843,7 +843,7 @@ class CustomFiltersTest(TestCase):
 
     def is_a_step(self):
         self.convention.programme.nature_logement = (
-            OpenedNatureLogement.LOGEMENTSORDINAIRES
+            ActiveNatureLogement.LOGEMENTSORDINAIRES
         )
         convention_form_steps = ConventionFormSteps(convention=self.convention)
         self.assertTrue(custom_filters.is_a_step(convention_form_steps, "Bailleur"))
@@ -851,7 +851,7 @@ class CustomFiltersTest(TestCase):
             custom_filters.is_a_step(convention_form_steps, "Stationnement")
         )
         self.assertFalse(custom_filters.is_a_step(convention_form_steps, "Attribution"))
-        self.convention.programme.nature_logement = OpenedNatureLogement.AUTRE
+        self.convention.programme.nature_logement = ActiveNatureLogement.AUTRE
         self.assertTrue(custom_filters.is_a_step(convention_form_steps, "Bailleur"))
         self.assertFalse(
             custom_filters.is_a_step(convention_form_steps, "Stationnement")

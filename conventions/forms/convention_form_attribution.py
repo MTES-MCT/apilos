@@ -5,7 +5,7 @@ class ConventionAttributionForm(forms.Form):
     uuid = forms.UUIDField(
         required=False,
     )
-    attribution_reservation_prefectoral = forms.IntegerField(
+    attribution_reservation_prefectorale = forms.IntegerField(
         label="Part de réservations préfectorales",
         help_text="La part des locaux à usage privatif réservés par le préfet en pourcentage",
         error_messages={

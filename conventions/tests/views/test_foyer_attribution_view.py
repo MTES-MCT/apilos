@@ -21,7 +21,7 @@ class ConventionFoyerAttributionViewTests(AbstractEditViewTestCase, TestCase):
         self.target_template = "conventions/foyer_attribution.html"
         self.error_payload = {
             **foyer_attribution_success_payload,
-            "attribution_reservation_prefectoral": "",
+            "attribution_reservation_prefectorale": "",
         }
         self.success_payload = foyer_attribution_success_payload
         self.msg_prefix = "[ConventionFoyerAttributionViewTests] "
@@ -29,7 +29,7 @@ class ConventionFoyerAttributionViewTests(AbstractEditViewTestCase, TestCase):
     def _test_data_integrity(self):
         self.convention_75.refresh_from_db()
         self.assertEqual(
-            self.convention_75.attribution_reservation_prefectoral,
+            self.convention_75.attribution_reservation_prefectorale,
             10,
             msg=f"{self.msg_prefix}",
         )
@@ -58,7 +58,7 @@ class ConventionFoyerAttributionViewTests(AbstractEditViewTestCase, TestCase):
                     "attribution_modalites_choix_personnes",
                     "attribution_prestations_integrees",
                     "attribution_prestations_facultatives",
-                    "attribution_reservation_prefectoral",
+                    "attribution_reservation_prefectorale",
                 ],
             ),
             {
@@ -82,7 +82,7 @@ class ConventionFoyerAttributionViewTests(AbstractEditViewTestCase, TestCase):
                 "attribution_modalites_choix_personnes": "Top !!!",
                 "attribution_prestations_integrees": "OKOK",
                 "attribution_prestations_facultatives": "",
-                "attribution_reservation_prefectoral": 10,
+                "attribution_reservation_prefectorale": 10,
             },
             msg=f"{self.msg_prefix}",
         )

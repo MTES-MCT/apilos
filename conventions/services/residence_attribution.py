@@ -11,8 +11,8 @@ class ConventionResidenceAttributionService(ConventionService):
         self.form = ConventionResidenceAttributionForm(
             initial={
                 "uuid": self.convention.uuid,
-                "attribution_reservation_prefectoral": (
-                    self.convention.attribution_reservation_prefectoral
+                "attribution_reservation_prefectorale": (
+                    self.convention.attribution_reservation_prefectorale
                 ),
                 "attribution_residence_sociale_ordinaire": (
                     self.convention.attribution_residence_sociale_ordinaire
@@ -46,7 +46,7 @@ class ConventionResidenceAttributionService(ConventionService):
 
     def _save_convention_attribution(self):
         for field in [
-            "attribution_reservation_prefectoral",
+            "attribution_reservation_prefectorale",
             "attribution_residence_sociale_ordinaire",
             "attribution_pension_de_famille",
             "attribution_residence_accueil",

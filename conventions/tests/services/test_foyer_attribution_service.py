@@ -144,7 +144,7 @@ class ConventionFoyerAttributionServiceTests(TestCase):
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
 
         self.assertTrue(
-            self.service.form.has_error("attribution_reservation_prefectoral")
+            self.service.form.has_error("attribution_reservation_prefectorale")
         )
         self.assertTrue(self.service.form.has_error("attribution_type"))
         self.assertFalse(self.service.form.has_error("attribution_agees_autonomie"))

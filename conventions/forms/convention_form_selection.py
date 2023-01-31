@@ -1,6 +1,6 @@
 from django import forms
 
-from programmes.models import FinancementEDD, OpenedNatureLogement, TypeHabitat
+from programmes.models import FinancementEDD, ActiveNatureLogement, TypeHabitat
 
 
 class ProgrammeSelectionFromDBForm(forms.Form):
@@ -23,7 +23,7 @@ class ProgrammeSelectionFromDBForm(forms.Form):
             + " choix de la nature des logements est définitif. Plus de détails dans"
             + " notre FAQ"
         ),
-        choices=OpenedNatureLogement.choices,
+        choices=ActiveNatureLogement.choices,
         error_messages={
             "required": "La selection de la nature des logements est obligatoire"
         },
@@ -95,7 +95,7 @@ class ProgrammeSelectionFromZeroForm(forms.Form):
             "Si la convention ne porte pas sur une résidence ou un foyer,"
             + " vous devez selectionner «Logements ordinaires»"
         ),
-        choices=OpenedNatureLogement.choices,
+        choices=ActiveNatureLogement.choices,
         error_messages={
             "required": "La selection de la nature des logements est obligatoire"
         },

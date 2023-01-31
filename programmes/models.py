@@ -99,7 +99,7 @@ class TypologieLogement(models.TextChoices):
         return value
 
 
-class OpenedNatureLogement(models.TextChoices):
+class ActiveNatureLogement(models.TextChoices):
     LOGEMENTSORDINAIRES = "LOGEMENTSORDINAIRES", "Logements ordinaires"
     AUTRE = "AUTRE", "Autres logements foyers (Convention de type Foyer)"
     HEBERGEMENT = "HEBERGEMENT", "Hébergement (Convention de type Résidence)"
@@ -271,7 +271,7 @@ class Programme(IngestableModel):
     departement_residence_argement_gestionnaire_intermediation = models.CharField(
         null=True, max_length=255
     )  # RESIDENCE
-    ville_signature_residence_argement_gestionnaire_intermediation = models.CharField(
+    ville_signature_residence_agrement_gestionnaire_intermediation = models.CharField(
         null=True, max_length=255
     )  # RESIDENCE
     date_residence_agrement = models.DateField(null=True)  # RESIDENCE

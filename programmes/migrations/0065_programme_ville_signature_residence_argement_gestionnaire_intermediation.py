@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="programme",
-            name="ville_signature_residence_argement_gestionnaire_intermediation",
+            name="ville_signature_residence_agrement_gestionnaire_intermediation",
             field=models.CharField(max_length=255, null=True),
         ),
     ]

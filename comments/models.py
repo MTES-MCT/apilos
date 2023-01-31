@@ -181,7 +181,7 @@ class Comment(models.Model):
                 "Prestation intégrées dans la redevance"
             ),
             "convention__attribution_prestations_facultatives": "Prestations facultatives",
-            "convention__attribution_reservation_prefectoral": (
+            "convention__attribution_reservation_prefectorale": (
                 "Part de réservations préfectorales"
             ),
             "convention__foyer_residence_variante_1": "Variante 1",

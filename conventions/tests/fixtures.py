@@ -1,5 +1,5 @@
 foyer_attribution_success_payload = {
-    "attribution_reservation_prefectoral": "10",
+    "attribution_reservation_prefectorale": "10",
     "attribution_type": "agees",
     "attribution_agees_autonomie": "FALSE",
     "attribution_agees_ephad": "FALSE",
@@ -24,7 +24,7 @@ foyer_attribution_success_payload = {
 }
 
 residence_attribution_success_payload = {
-    "attribution_reservation_prefectoral": "10",
+    "attribution_reservation_prefectorale": "10",
     "attribution_residence_sociale_ordinaire": "on",
     "attribution_pension_de_famille": "on",
     "attribution_residence_accueil": "FALSE",
