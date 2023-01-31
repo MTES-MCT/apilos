@@ -3,7 +3,7 @@ from django.http import HttpRequest
 from conventions.services.conventions import ConventionService
 from conventions.models import Convention
 from conventions.services import utils
-from programmes.forms import ProgrammeForm
+from conventions.forms import ProgrammeForm
 
 
 class ConventionProgrammeService(ConventionService):

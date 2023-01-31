@@ -1,7 +1,7 @@
 from conventions.forms import UploadForm
 from conventions.services.conventions import ConventionService
 from programmes.models import LocauxCollectifs
-from programmes.subforms.lot_collectif import LocauxCollectifsFormSet, LotCollectifForm
+from conventions.forms.lot_collectif import LocauxCollectifsFormSet, LotCollectifForm
 
 from . import upload_objects, utils
 
