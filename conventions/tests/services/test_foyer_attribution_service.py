@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from conventions.forms import ConventionFoyerAttributionForm
 from conventions.models import Convention
-from conventions.tests.fixtures import attribution_success_payload
+from conventions.tests.fixtures import foyer_attribution_success_payload
 from conventions.services import (
     foyer_attribution,
     utils,
@@ -132,7 +132,7 @@ class ConventionFoyerAttributionServiceTests(TestCase):
 
     def test_save_success(self):
 
-        self.service.request.POST = attribution_success_payload
+        self.service.request.POST = foyer_attribution_success_payload
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
@@ -193,7 +193,7 @@ class ConventionFoyerAttributionServiceTests(TestCase):
 
     def test_save_failed_needed_fields_when_inclusif(self):
         self.service.request.POST = {
-            **attribution_success_payload,
+            **foyer_attribution_success_payload,
             "attribution_type": "inclusif",
             "attribution_inclusif_conditions_specifiques": "",
             "attribution_inclusif_conditions_admission": "",
@@ -215,7 +215,7 @@ class ConventionFoyerAttributionServiceTests(TestCase):
 
     def test_save_failed_needed_autre_details_agees(self):
         self.service.request.POST = {
-            **attribution_success_payload,
+            **foyer_attribution_success_payload,
             "attribution_type": "agees",
             "attribution_agees_autre": "on",
             "attribution_agees_autre_detail": "",
@@ -225,7 +225,7 @@ class ConventionFoyerAttributionServiceTests(TestCase):
 
     def test_save_failed_needed_autre_details_handicapes(self):
         self.service.request.POST = {
-            **attribution_success_payload,
+            **foyer_attribution_success_payload,
             "attribution_type": "handicapes",
             "attribution_handicapes_autre": "on",
             "attribution_handicapes_autre_detail": "",

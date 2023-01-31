@@ -1,4 +1,4 @@
-attribution_success_payload = {
+foyer_attribution_success_payload = {
     "attribution_reservation_prefectoral": "10",
     "attribution_type": "agees",
     "attribution_agees_autonomie": "FALSE",
@@ -17,6 +17,17 @@ attribution_success_payload = {
     "attribution_inclusif_modalites_attribution": "",
     "attribution_inclusif_partenariats": "",
     "attribution_inclusif_activites": "",
+    "attribution_modalites_reservations": "test",
+    "attribution_modalites_choix_personnes": "Top !!!",
+    "attribution_prestations_integrees": "OKOK",
+    "attribution_prestations_facultatives": "",
+}
+
+residence_attribution_success_payload = {
+    "attribution_reservation_prefectoral": "10",
+    "attribution_residence_sociale_ordinaire": "on",
+    "attribution_pension_de_famille": "on",
+    "attribution_residence_accueil": "FALSE",
     "attribution_modalites_reservations": "test",
     "attribution_modalites_choix_personnes": "Top !!!",
     "attribution_prestations_integrees": "OKOK",

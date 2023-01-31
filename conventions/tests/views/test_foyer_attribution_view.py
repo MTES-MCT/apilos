@@ -3,11 +3,11 @@ from django.test import TestCase
 from django.urls import reverse
 
 from conventions.tests.views.abstract import AbstractEditViewTestCase
-from conventions.tests.fixtures import attribution_success_payload
+from conventions.tests.fixtures import foyer_attribution_success_payload
 from programmes.models import NatureLogement
 
 
-class ConventionAttributionViewTests(AbstractEditViewTestCase, TestCase):
+class ConventionFoyerAttributionViewTests(AbstractEditViewTestCase, TestCase):
     def setUp(self):
         super().setUp()
         self.target_path = reverse(
@@ -20,10 +20,10 @@ class ConventionAttributionViewTests(AbstractEditViewTestCase, TestCase):
         self.convention_75.programme.save()
         self.target_template = "conventions/foyer_attribution.html"
         self.error_payload = {
-            **attribution_success_payload,
+            **foyer_attribution_success_payload,
             "attribution_reservation_prefectoral": "",
         }
-        self.success_payload = attribution_success_payload
+        self.success_payload = foyer_attribution_success_payload
         self.msg_prefix = "[ConventionFoyerAttributionViewTests] "
 
     def _test_data_integrity(self):
