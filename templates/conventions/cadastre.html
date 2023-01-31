@@ -38,7 +38,7 @@
                         {% include "common/form/input_text.html" with form_input=form.permis_construire object_field="programme__permis_construire__"|add:form.uuid.value %}
 
                         {% if convention.programme.is_residence or convention.programme.is_foyer %}
-                            <h5>Date de la convention</h5>
+                            <h4>Date de la convention</h4>
                             <span><em>Le cas échéant, la convention de location, jointe à la présente convention, conclue entre le propriétaire et le gestionnaire</em></span>
                             <div class="fr-grid-row fr-grid-row--gutters fr-mb-5w">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6">
@@ -48,7 +48,7 @@
                         {% endif %}
 
                         {% if convention.programme.is_foyer %}
-                            <h5>Date d'autorisation hors habitat inclusif</h5>
+                            <h4>Date d'autorisation hors habitat inclusif</h4>
                             <span><em>Autorisation délivrée au gestionnaire par le président du conseil départemental ou par l'autorité compétente de l'état, au titre de l'article L. 313-3 du code de l'action sociale et des familles</em></span>
                             <div class="fr-grid-row fr-grid-row--gutters fr-mb-5w">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w">
@@ -59,18 +59,22 @@
                         {% endif %}
 
                         {% if convention.programme.is_residence %}
-                            <h5>Agrément de gestionnaire ou agrément d'intermédiation</h5>
+
+                            <h4>Agrément de gestionnaire ou agrément d'intermédiation</h4>
                             <span><em>Agrément de gestionnaire de résidence sociale prévu à l'article R. 353-165-1 ou agrément d'intermédiation locative et de gestion locative sociale mentionné à l'article L. 365-4 et délivré par le préfet du département</em></span>
                             <div class="fr-grid-row fr-grid-row--gutters fr-mb-5w">
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w">
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-pl-md-1w">
                                     {% include "common/form/input_text.html" with form_input=form.departement_residence_argement_gestionnaire_intermediation object_field="programme__departement_residence_argement_gestionnaire_intermediation__"|add:form.uuid.value placeholder="Département" %}
                                 </div>
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w">
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-pl-md-1w">
+                                    {% include "common/form/input_text.html" with form_input=form.ville_signature_residence_argement_gestionnaire_intermediation object_field="programme__ville_signature_residence_argement_gestionnaire_intermediation__"|add:form.uuid.value placeholder="Ville de signature" %}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-pl-md-1w">
                                     {% include "common/form/input_date.html" with form_input=form.date_residence_argement_gestionnaire_intermediation object_field="programme__date_residence_argement_gestionnaire_intermediation__"|add:form.uuid.value %}
                                 </div>
                             </div>
 
-                            <h5>Agrément prévu à l'article R. 353-156</h5>
+                            <h4>Agrément prévu à l'article R. 353-156</h4>
                             <span><em>Agrément prévu à l'article R. 353-156 du code de la construction et de l'habitation délivré par le préfet du département</em></span>
                             <div class="fr-grid-row fr-grid-row--gutters fr-mb-5w">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w">

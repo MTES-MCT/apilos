@@ -263,7 +263,22 @@ class Programme(IngestableModel):
     date_achat = models.DateField(null=True)
     date_achevement = models.DateField(null=True)
     date_autorisation_hors_habitat_inclusif = models.DateField(null=True)  # FOYER
-    date_convention_location = models.DateField(null=True)  # FOYER
+    date_convention_location = models.DateField(null=True)  # FOYER & RESIDENCE
+
+    date_residence_argement_gestionnaire_intermediation = models.DateField(
+        null=True
+    )  # RESIDENCE
+    departement_residence_argement_gestionnaire_intermediation = models.CharField(
+        null=True, max_length=255
+    )  # RESIDENCE
+    ville_signature_residence_argement_gestionnaire_intermediation = models.CharField(
+        null=True, max_length=255
+    )  # RESIDENCE
+    date_residence_agrement = models.DateField(null=True)  # RESIDENCE
+    departement_residence_agrement = models.CharField(
+        null=True, max_length=255
+    )  # RESIDENCE
+
     date_achevement_compile = models.DateField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
