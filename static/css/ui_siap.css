@@ -40,13 +40,18 @@
   max-height: 400px;
 }
 
-.habilitation-bloc .fr-menu__list ul {
-  padding: 0;
+.habilitation-bloc .fr-menu__list {
   margin-bottom: 0;
 }
+
+.habilitation-bloc .fr-menu__list ul {
+  padding: 0;
+}
+
 .habilitation-bloc .fr-menu__list ul li {
   text-align: left;
 }
+
 .habilitation-bloc .fr-menu__list ul li:hover a {
   text-decoration: none;
 }
