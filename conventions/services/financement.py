@@ -1,5 +1,5 @@
 import datetime
-from conventions.forms.financement import ConventionFinancementForm, PretFormSet
+from conventions.forms import ConventionFinancementForm, PretFormSet
 from conventions.forms.upload import UploadForm
 from conventions.models.pret import Pret
 from conventions.services import upload_objects, utils

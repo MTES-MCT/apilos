@@ -3,7 +3,7 @@ from conventions.forms.avenant import *
 from conventions.forms.commentaires import *
 from conventions.forms.convention_form_programme import *
 from conventions.forms.convention_number import *
-from conventions.forms.financement import *
+from conventions.forms.convention_form_financement import *
 from conventions.forms.foyer_residence_variantes import *
 from conventions.forms.notification import *
 from conventions.forms.resiliation import *
