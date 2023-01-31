@@ -138,14 +138,41 @@ class ProgrammeCadastralForm(forms.Form):
         required=False,
         label="Date d'achèvement ou d'obtention de certificat de conformité",
     )
+
     date_autorisation_hors_habitat_inclusif = forms.DateField(
         required=False,
-        label="Date d'autorisation hors habitat inclusif",
+        label="",
     )
     date_convention_location = forms.DateField(
         required=False,
-        label="Date de la convention de location",
+        label="",
     )
+
+    date_residence_argement_gestionnaire_intermediation = forms.DateField(
+        required=False,
+        label="",
+    )
+    departement_residence_argement_gestionnaire_intermediation = forms.CharField(
+        required=False,
+        label="",
+        max_length=255,
+        error_messages={
+            "max_length": "Le département ne doit pas excéder 255 caractères",
+        },
+    )
+    date_residence_agrement = forms.DateField(
+        required=False,
+        label="",
+    )
+    departement_residence_agrement = forms.CharField(
+        required=False,
+        label="",
+        max_length=255,
+        error_messages={
+            "max_length": "Le département ne doit pas excéder 255 caractères",
+        },
+    )
+
     vendeur = forms.CharField(
         required=False,
         label="Vendeur",
