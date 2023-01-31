@@ -28,7 +28,7 @@ from django.core.exceptions import PermissionDenied
 BASE_DIR = Path(__file__).resolve().parent.parent
 TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 if TESTING:
-    config = Config(RepositoryEnv(BASE_DIR / ".env.template"))
+    config = Config(RepositoryEnv(BASE_DIR / ".env.test"))
 else:
     config = decouple.config
 

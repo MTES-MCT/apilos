@@ -18,7 +18,7 @@ Pour installer APiLos sur votre système en local, vous avez 2 possibilités :
 
 #### Installation
 
-Configurer vos variable d'environnement dans le fichier .env (exemple dans le fichier .env.template)
+Configurer vos variables d'environnement dans le fichier .env (exemple dans le fichier .env.template)
 
 Toute l'application est disponible via docker-compose. L'avantage est l'isolation de la version de python et de la version de postgresql. Pas besoin d'installer un environment virtuel ni une version spécifique de postgresql, docker-compose le fait pour vous au plus proche des versions utilisées en production
 
@@ -131,6 +131,9 @@ Les tests sont organisés comme suit :
 * Tests integration : APPNAME/tests/test_view.py
 * Tests api : APPNAME/api/tests/test_apis.py
 
+### prérequis
+
+Copier vos variables d'environnement .env.template vers .env.test qui sera utilisé par les tests
 
 ### Lancement des tests
 
