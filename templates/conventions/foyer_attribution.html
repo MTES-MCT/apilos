@@ -26,11 +26,7 @@
                     <div class="fr-col-12">
                         <h3>Conditions d'attribution et d'occupation permanente du logement-foyer</h3>
 
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-mb-2w">
-                                {% include "common/form/input_number.html" with display_inline=True form_input=form.attribution_reservation_prefectoral object_field="convention__attribution_reservation_prefectoral__"|add:form.uuid.value %}
-                            </div>
-                        </div>
+                        {% include 'conventions/attribution/reservation_prefectoral.html' %}
 
                         <div class="fr-form-group">
                             <fieldset class="fr-fieldset">
@@ -123,11 +119,7 @@
                         </script>
                         <hr>
 
-                        <h4>Autres modalitées</h4>
-                        {% include "common/form/input_textarea.html" with form_input=form.attribution_modalites_reservations helptext_visible=True object_field="convention__attribution_modalites_reservations__"|add:form.uuid.value %}
-                        {% include "common/form/input_textarea.html" with form_input=form.attribution_modalites_choix_personnes helptext_visible=True object_field="convention__attribution_modalites_choix_personnes__"|add:form.uuid.value %}
-                        {% include "common/form/input_textarea.html" with form_input=form.attribution_prestations_integrees helptext_visible=True is_list=True object_field="convention__attribution_prestations_integrees__"|add:form.uuid.value %}
-                        {% include "common/form/input_textarea.html" with form_input=form.attribution_prestations_facultatives helptext_visible=True is_list=True object_field="convention__attribution_prestations_facultatives__"|add:form.uuid.value %}
+                        {% include 'conventions/attribution/autres_modalitees.html' %}
 
                     </div>
                 </div>

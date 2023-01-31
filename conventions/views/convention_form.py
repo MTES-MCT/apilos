@@ -91,9 +91,15 @@ stationnements_step = ConventionFormStep(
 )
 
 foyer_attribution_step = ConventionFormStep(
-    pathname="conventions:attribution",
+    pathname="conventions:foyer_attribution",
     label="Attribution",
     classname="ConventionFoyerAttributionView",
+)
+
+residence_attribution_step = ConventionFormStep(
+    pathname="conventions:residence_attribution",
+    label="Attribution",
+    classname="ConventionResidenceAttributionView",
 )
 
 foyer_variante_step = ConventionFormStep(
@@ -176,6 +182,19 @@ foyer_steps = [
     comments_step,
 ]
 
+residence_steps = [
+    bailleur_step,
+    programme_step,
+    cadastre_step,
+    edd_step,
+    financement_step,
+    foyer_residence_logements_step,
+    collectif_step,
+    residence_attribution_step,
+    foyer_variante_step,
+    comments_step,
+]
+
 
 class ConventionFormSteps:
     steps: List[ConventionFormStep]
@@ -195,7 +214,10 @@ class ConventionFormSteps:
         self.convention = convention
         if convention.is_avenant():
             if active_classname is None:
-                if convention.programme.is_foyer():
+                if (
+                    convention.programme.is_foyer()
+                    or convention.programme.is_residence()
+                ):
                     self.steps = [
                         avenant_bailleur_step,
                         avenant_financement_step,
@@ -233,6 +255,8 @@ class ConventionFormSteps:
                     self.steps = [avenant_comments_step]
         elif convention.programme.is_foyer():
             self.steps = foyer_steps
+        elif convention.programme.is_residence():
+            self.steps = residence_steps
         else:
             self.steps = hlm_sem_type_steps
 

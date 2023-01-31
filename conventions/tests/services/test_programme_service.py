@@ -7,7 +7,7 @@ from conventions.services import (
     utils,
 )
 from core.tests import utils_fixtures
-from programmes.forms import ProgrammeForm
+from conventions.forms import ProgrammeForm
 from users.models import User
 
 

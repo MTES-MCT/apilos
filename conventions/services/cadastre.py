@@ -57,6 +57,19 @@ class ConventionCadastreService(ConventionService):
                 "date_convention_location": utils.format_date_for_form(
                     self.convention.programme.date_convention_location
                 ),
+                "date_residence_argement_gestionnaire_intermediation": utils.format_date_for_form(
+                    self.convention.programme.date_residence_argement_gestionnaire_intermediation
+                ),
+                "departement_residence_argement_gestionnaire_intermediation": (
+                    self.convention.programme.departement_residence_argement_gestionnaire_intermediation
+                ),
+                "ville_signature_residence_agrement_gestionnaire_intermediation": (
+                    self.convention.programme.ville_signature_residence_agrement_gestionnaire_intermediation
+                ),
+                "date_residence_agrement": utils.format_date_for_form(
+                    self.convention.programme.date_residence_agrement
+                ),
+                "departement_residence_agrement": self.convention.programme.departement_residence_agrement,
                 "date_achevement": utils.format_date_for_form(
                     self.convention.programme.date_achevement
                 ),
@@ -149,6 +162,11 @@ class ConventionCadastreService(ConventionService):
                         "date_achevement_previsible",
                         "date_autorisation_hors_habitat_inclusif",
                         "date_convention_location",
+                        "date_residence_argement_gestionnaire_intermediation",
+                        "departement_residence_argement_gestionnaire_intermediation",
+                        "ville_signature_residence_agrement_gestionnaire_intermediation",
+                        "date_residence_agrement",
+                        "departement_residence_agrement",
                         "date_achat",
                         "date_achevement",
                     ],
@@ -218,55 +236,52 @@ class ConventionCadastreService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_programme_cadastrale(self):
-        self.convention.programme.permis_construire = self.form.cleaned_data[
-            "permis_construire"
-        ]
-        self.convention.programme.date_acte_notarie = self.form.cleaned_data[
-            "date_acte_notarie"
-        ]
-        self.convention.programme.date_achevement_previsible = self.form.cleaned_data[
-            "date_achevement_previsible"
-        ]
-        self.convention.programme.date_autorisation_hors_habitat_inclusif = (
-            self.form.cleaned_data["date_autorisation_hors_habitat_inclusif"]
-        )
-        self.convention.programme.date_convention_location = self.form.cleaned_data[
-            "date_convention_location"
-        ]
-        self.convention.programme.date_achat = self.form.cleaned_data["date_achat"]
-        self.convention.programme.date_achevement = self.form.cleaned_data[
-            "date_achevement"
-        ]
-        self.convention.programme.vendeur = utils.set_files_and_text_field(
-            self.form.cleaned_data["vendeur_files"],
-            self.form.cleaned_data["vendeur"],
-        )
-        self.convention.programme.acquereur = utils.set_files_and_text_field(
-            self.form.cleaned_data["acquereur_files"],
-            self.form.cleaned_data["acquereur"],
-        )
-        self.convention.programme.reference_notaire = utils.set_files_and_text_field(
-            self.form.cleaned_data["reference_notaire_files"],
-            self.form.cleaned_data["reference_notaire"],
-        )
-        self.convention.programme.reference_publication_acte = (
-            utils.set_files_and_text_field(
-                self.form.cleaned_data["reference_publication_acte_files"],
-                self.form.cleaned_data["reference_publication_acte"],
+
+        for field in [
+            "permis_construire",
+            "date_acte_notarie",
+            "date_achevement_previsible",
+            "date_autorisation_hors_habitat_inclusif",
+            "date_convention_location",
+            "date_residence_argement_gestionnaire_intermediation",
+            "departement_residence_argement_gestionnaire_intermediation",
+            "ville_signature_residence_agrement_gestionnaire_intermediation",
+            "date_residence_agrement",
+            "departement_residence_agrement",
+            "date_achat",
+            "date_achevement",
+        ]:
+            setattr(self.convention.programme, field, self.form.cleaned_data[field])
+
+        for text_and_files_field in [
+            "vendeur",
+            "acquereur",
+            "reference_notaire",
+            "reference_publication_acte",
+        ]:
+            setattr(
+                self.convention.programme,
+                text_and_files_field,
+                utils.set_files_and_text_field(
+                    self.form.cleaned_data[f"{text_and_files_field}_files"],
+                    self.form.cleaned_data[text_and_files_field],
+                ),
             )
-        )
-        self.convention.programme.effet_relatif = utils.set_files_and_text_field(
-            self.form.cleaned_data["effet_relatif_files"],
-        )
-        self.convention.programme.acte_de_propriete = utils.set_files_and_text_field(
-            self.form.cleaned_data["acte_de_propriete_files"],
-        )
-        self.convention.programme.certificat_adressage = utils.set_files_and_text_field(
-            self.form.cleaned_data["certificat_adressage_files"],
-        )
-        self.convention.programme.reference_cadastrale = utils.set_files_and_text_field(
-            self.form.cleaned_data["reference_cadastrale_files"],
-        )
+
+        for files_field in [
+            "effet_relatif",
+            "acte_de_propriete",
+            "certificat_adressage",
+            "reference_cadastrale",
+        ]:
+            setattr(
+                self.convention.programme,
+                files_field,
+                utils.set_files_and_text_field(
+                    self.form.cleaned_data[f"{files_field}_files"]
+                ),
+            )
+
         self.convention.programme.save()
 
     def _save_programme_reference_cadastrale(self):

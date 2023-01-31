@@ -1,3 +1,4 @@
+import datetime
 import os
 import io
 import math
@@ -137,6 +138,11 @@ def generate_convention_doc(convention: Convention, save_data=False):
             convention.lot.type_stationnements.all(), annexes
         ),
         "lc_sh_totale": _compute_total_locaux_collectifs(convention),
+        "nombre_annees_conventionnement": (
+            convention.date_fin_conventionnement.year - datetime.date.today().year
+            if convention.date_fin_conventionnement
+            else "---"
+        ),
     }
     context.update(_compute_mixte(convention))
     context.update(logements_totale)

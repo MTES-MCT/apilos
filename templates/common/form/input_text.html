@@ -15,6 +15,7 @@
             type="text"
             id="{{form_input.id_for_label}}"
             name="{{form_input.html_name}}"
+            placeholder="{{placeholder|default_if_none:''}}"
             value="{{ form_input.value|default_if_none:'' }}"
             {% include "common/form/disable_form_input.html" %}>
         {% include "common/utils/comments_field.html" %}

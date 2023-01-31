@@ -52,10 +52,30 @@
                     <div class="table--limited-height">
                         {% include "common/display_field_if_exists.html" with label="Numéro de permis construire" value=programme.permis_construire object_field="programme__permis_construire__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Date de l'acte notarié" value=programme.date_acte_notarie object_field="programme__date_acte_notarie__"|add:programme_uuid %}
-                        {% if convention.programme.is_foyer %}
+                        {% if convention.programme.is_foyer or convention.programme.is_residence %}
                             {% include "common/display_field_if_exists.html" with label="Date d'autorisation hors habitat inclusif" value=programme.date_autorisation_hors_habitat_inclusif object_field="programme__date_autorisation_hors_habitat_inclusif__"|add:programme_uuid %}
                             {% include "common/display_field_if_exists.html" with label="Date de la convention de location" value=programme.date_convention_location object_field="programme__date_convention_location__"|add:programme_uuid %}
+                            {% if programme.date_residence_argement_gestionnaire_intermediation or programme.date_residence_agrement %}
+                                <hr>
+                            {% endif %}
+                            {% if programme.date_residence_argement_gestionnaire_intermediation %}
+                                <h6>Agrément de gestionnaire ou agrément d'intermédiation</h6>
+                                {% include "common/display_field_if_exists.html" with label="Date" value=programme.date_residence_argement_gestionnaire_intermediation object_field="programme__date_residence_argement_gestionnaire_intermediation__"|add:programme_uuid %}
+                                {% include "common/display_field_if_exists.html" with label="Date" value=programme.ville_signature_residence_agrement_gestionnaire_intermediation object_field="programme__ville_signature_residence_agrement_gestionnaire_intermediation__"|add:programme_uuid %}
+                                {% include "common/display_field_if_exists.html" with label="Date" value=programme.departement_residence_argement_gestionnaire_intermediation object_field="programme__departement_residence_argement_gestionnaire_intermediation__"|add:programme_uuid %}
+                                <hr>
+                            {% endif %}
+                            {% if programme.date_residence_agrement %}
+                                <h6>Agrément prévu à l'article R. 353-156</h6>
+                                {% include "common/display_field_if_exists.html" with label="Date" value=programme.date_residence_agrement object_field="programme__date_residence_agrement__"|add:programme_uuid %}
+                                {% include "common/display_field_if_exists.html" with label="Date" value=programme.departement_residence_agrement object_field="programme__departement_residence_agrement__"|add:programme_uuid %}
+                                <hr>
+                            {% endif %}
+
                         {% endif %}
+
+
+
                         {% include "common/display_field_if_exists.html" with label="Date d'achat" value=programme.date_achat object_field="programme__date_achat__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Date d'achèvement previsible" value=programme.date_achevement_previsible object_field="programme__date_achevement_previsible__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Date d'achèvement ou d'obtention de certificat de conformité" value=programme.date_achevement object_field="programme__date_achevement__"|add:programme_uuid %}

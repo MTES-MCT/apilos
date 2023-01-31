@@ -1,0 +1,45 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% load custom_filters %}
+
+{% block page_title %}Attribution - APiLos{% endblock%}
+
+{% block javascript_extras %}
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner fr-pb-1w">
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/step_progressbar.html"%}
+        <div class="fr-container">
+            <form method="post" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input
+                    type="hidden"
+                    id="{{form.uuid.id_for_label}}"
+                    name="{{form.uuid.html_name}}"
+                    value="{{ form.uuid.value|default_if_none:'' }}">
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12">
+                        <h3>Conditions d'attribution et d'occupation permanente de la résidence</h3>
+
+                        {% include 'conventions/attribution/reservation_prefectoral.html' %}
+
+                        {% include "common/form/input_checkbox.html" with form_input=form.attribution_residence_sociale_ordinaire object_field="convention__attribution_residence_sociale_ordinaire__"|add:form.uuid.value %}
+                        {% include "common/form/input_checkbox.html" with form_input=form.attribution_pension_de_famille object_field="convention__attribution_pension_de_famille__"|add:form.uuid.value %}
+                        {% include "common/form/input_checkbox.html" with form_input=form.attribution_residence_accueil object_field="convention__attribution_residence_accueil__"|add:form.uuid.value %}
+
+                        {% include 'conventions/attribution/autres_modalitees.html' %}
+
+                    </div>
+                </div>
+
+                {% include "common/required_fields_info.html" %}
+                {% include "conventions/common/form_footer_button.html" %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

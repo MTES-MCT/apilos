@@ -6,6 +6,7 @@ from core.tests import utils_assertions, utils_fixtures
 
 from programmes.models import (
     LocauxCollectifs,
+    NatureLogement,
     Programme,
     Lot,
     LogementEDD,
@@ -239,6 +240,25 @@ class ProgrammeModelsTest(TestCase):
         programme.date_achevement_previsible = date(2022, 12, 31)
         programme.save()
         self.assertEqual(programme.date_achevement_compile, date(2022, 12, 31))
+
+    def test_is_residence(self):
+        programme = Programme.objects.order_by("-uuid").first()
+        for nature_logement in [
+            NatureLogement.HEBERGEMENT,
+            NatureLogement.PENSIONSDEFAMILLE,
+            NatureLogement.RESIDENCEDACCUEIL,
+            NatureLogement.RESISDENCESOCIALE,
+        ]:
+            programme.nature_logement = nature_logement
+            self.assertTrue(programme.is_residence())
+        for nature_logement in [
+            NatureLogement.LOGEMENTSORDINAIRES,
+            NatureLogement.AUTRE,
+            NatureLogement.RESIDENCEUNIVERSITAIRE,
+            NatureLogement.RHVS,
+        ]:
+            programme.nature_logement = nature_logement
+            self.assertFalse(programme.is_residence())
 
 
 class LotModelsTest(TestCase):

@@ -1,0 +1,5 @@
+<h4>Autres modalitées</h4>
+{% include "common/form/input_textarea.html" with form_input=form.attribution_modalites_reservations helptext_visible=True object_field="convention__attribution_modalites_reservations__"|add:form.uuid.value %}
+{% include "common/form/input_textarea.html" with form_input=form.attribution_modalites_choix_personnes helptext_visible=True object_field="convention__attribution_modalites_choix_personnes__"|add:form.uuid.value %}
+{% include "common/form/input_textarea.html" with form_input=form.attribution_prestations_integrees helptext_visible=True is_list=True object_field="convention__attribution_prestations_integrees__"|add:form.uuid.value %}
+{% include "common/form/input_textarea.html" with form_input=form.attribution_prestations_facultatives helptext_visible=True is_list=True object_field="convention__attribution_prestations_facultatives__"|add:form.uuid.value %}

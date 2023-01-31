@@ -47,28 +47,32 @@ class ConventionFoyerVarianteServiceTests(TestCase):
     def test_save_failed_variantes(self):
 
         self.service.request.POST = {
-            "foyer_variante_1": "FALSE",
-            "foyer_variante_2": "FALSE",
-            "foyer_variante_3": "FALSE",
+            "foyer_residence_variante_1": "FALSE",
+            "foyer_residence_variante_2": "FALSE",
+            "foyer_residence_variante_3": "FALSE",
         }
         self.service.save()
 
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
 
-        self.assertFalse(self.service.form.has_error("foyer_variante_2_travaux"))
+        self.assertFalse(
+            self.service.form.has_error("foyer_residence_variante_2_travaux")
+        )
         self.assertTrue(self.service.form.has_error(NON_FIELD_ERRORS))
 
     def test_save_failed_travaux_without_its_variante(self):
 
         self.service.request.POST = {
-            "foyer_variante_1": "on",
-            "foyer_variante_2": "on",
-            "foyer_variante_2_travaux": "",
-            "foyer_variante_3": "on",
+            "foyer_residence_variante_1": "on",
+            "foyer_residence_variante_2": "on",
+            "foyer_residence_variante_2_travaux": "",
+            "foyer_residence_variante_3": "on",
         }
         self.service.save()
 
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
 
-        self.assertTrue(self.service.form.has_error("foyer_variante_2_travaux"))
+        self.assertTrue(
+            self.service.form.has_error("foyer_residence_variante_2_travaux")
+        )
         self.assertFalse(self.service.form.has_error(NON_FIELD_ERRORS))

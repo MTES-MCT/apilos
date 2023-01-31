@@ -18,7 +18,7 @@ from conventions.services.convention_generator import (
     typologie_label,
 )
 from core.tests import utils_fixtures
-from programmes.models import NatureLogement, TypologieLogement
+from programmes.models import ActiveNatureLogement, TypologieLogement
 from users.models import User
 
 
@@ -47,7 +47,7 @@ class ConventionServiceGeneratorTest(TestCase):
             f"{settings.BASE_DIR}/documents/Avenant-template.docx",
         )
         avenant.delete()
-        convention.programme.nature_logement = NatureLogement.AUTRE
+        convention.programme.nature_logement = ActiveNatureLogement.AUTRE
         self.assertEqual(
             get_convention_template_path(convention),
             f"{settings.BASE_DIR}/documents/Foyer-template.docx",
@@ -59,20 +59,23 @@ class ConventionServiceGeneratorTest(TestCase):
         )
 
         for nature_logement in [
-            NatureLogement.HEBERGEMENT,
-            NatureLogement.RESISDENCESOCIALE,
-            NatureLogement.PENSIONSDEFAMILLE,
-            NatureLogement.RESIDENCEDACCUEIL,
-            NatureLogement.RESIDENCEUNIVERSITAIRE,
-            NatureLogement.RHVS,
+            ActiveNatureLogement.HEBERGEMENT,
+            ActiveNatureLogement.RESIDENCEDACCUEIL,
+            ActiveNatureLogement.PENSIONSDEFAMILLE,
+            ActiveNatureLogement.RESISDENCESOCIALE,
         ]:
             convention.programme.nature_logement = nature_logement
             self.assertEqual(
                 get_convention_template_path(convention),
                 f"{settings.BASE_DIR}/documents/Residence-template.docx",
             )
+        with self.assertRaises(ConventionTypeConfigurationError):
+            convention.programme.nature_logement = (
+                ActiveNatureLogement.LOGEMENTSORDINAIRES
+            )
+            get_convention_template_path(convention)
 
-        convention.programme.nature_logement = NatureLogement.LOGEMENTSORDINAIRES
+        convention.programme.nature_logement = ActiveNatureLogement.LOGEMENTSORDINAIRES
         convention.programme.bailleur.sous_nature_bailleur = SousNatureBailleur.SEM_EPL
         self.assertEqual(
             get_convention_template_path(convention),

@@ -1,7 +1,4 @@
 from django.http import HttpRequest
-from django.template.loader import render_to_string
-from django.urls import reverse
-from django.conf import settings
 from django.db.models.query import QuerySet
 
 from conventions.models import (
@@ -12,7 +9,6 @@ from conventions.templatetags.custom_filters import is_instructeur
 from conventions.models import Convention
 from conventions.services import utils
 from conventions.services.file import ConventionFileService
-from core.services import EmailService
 from instructeurs.models import Administration
 from bailleurs.models import Bailleur
 from programmes.models import (
@@ -21,7 +17,7 @@ from programmes.models import (
     Lot,
     TypeOperation,
 )
-from programmes.subforms.lot_selection import (
+from conventions.forms import (
     ProgrammeSelectionFromDBForm,
     ProgrammeSelectionFromZeroForm,
 )

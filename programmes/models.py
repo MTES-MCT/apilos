@@ -99,9 +99,23 @@ class TypologieLogement(models.TextChoices):
         return value
 
 
-class OppenedNatureLogement(models.TextChoices):
+class ActiveNatureLogement(models.TextChoices):
     LOGEMENTSORDINAIRES = "LOGEMENTSORDINAIRES", "Logements ordinaires"
-    AUTRE = "AUTRE", "Autres logements foyers"
+    AUTRE = "AUTRE", "Autres logements foyers (Convention de type Foyer)"
+    HEBERGEMENT = "HEBERGEMENT", "Hébergement (Convention de type Résidence)"
+    RESISDENCESOCIALE = (
+        "RESISDENCESOCIALE",
+        "Résidence sociale (Convention de type Résidence)",
+    )
+    PENSIONSDEFAMILLE = (
+        "PENSIONSDEFAMILLE",
+        "Pensions de famille, maisons relais (Convention de type Résidence)",
+    )
+    RESIDENCEDACCUEIL = (
+        "RESIDENCEDACCUEIL",
+        "Résidence d'accueil (Convention de type Résidence)",
+    )
+    RESIDENCEUNIVERSITAIRE = "RESIDENCEUNIVERSITAIRE", "Résidence universitaire"
 
 
 class NatureLogement(models.TextChoices):
@@ -249,7 +263,22 @@ class Programme(IngestableModel):
     date_achat = models.DateField(null=True)
     date_achevement = models.DateField(null=True)
     date_autorisation_hors_habitat_inclusif = models.DateField(null=True)  # FOYER
-    date_convention_location = models.DateField(null=True)  # FOYER
+    date_convention_location = models.DateField(null=True)  # FOYER & RESIDENCE
+
+    date_residence_argement_gestionnaire_intermediation = models.DateField(
+        null=True
+    )  # RESIDENCE
+    departement_residence_argement_gestionnaire_intermediation = models.CharField(
+        null=True, max_length=255
+    )  # RESIDENCE
+    ville_signature_residence_agrement_gestionnaire_intermediation = models.CharField(
+        null=True, max_length=255
+    )  # RESIDENCE
+    date_residence_agrement = models.DateField(null=True)  # RESIDENCE
+    departement_residence_agrement = models.CharField(
+        null=True, max_length=255
+    )  # RESIDENCE
+
     date_achevement_compile = models.DateField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
@@ -376,8 +405,6 @@ class Programme(IngestableModel):
             NatureLogement.RESISDENCESOCIALE,
             NatureLogement.PENSIONSDEFAMILLE,
             NatureLogement.RESIDENCEDACCUEIL,
-            NatureLogement.RESIDENCEUNIVERSITAIRE,
-            NatureLogement.RHVS,
         ]
 
 

@@ -100,9 +100,14 @@ urlpatterns = [
         name="stationnements",
     ),
     path(
-        "attribution/<convention_uuid>",
+        "foyer_attribution/<convention_uuid>",
         views.ConventionFoyerAttributionView.as_view(),
-        name="attribution",
+        name="foyer_attribution",
+    ),
+    path(
+        "residence_attribution/<convention_uuid>",
+        views.ConventionResidenceAttributionView.as_view(),
+        name="residence_attribution",
     ),
     path(
         "variantes/<convention_uuid>",
@@ -176,7 +181,11 @@ urlpatterns = [
         name="fiche_caf",
     ),
     path("new_avenant/<convention_uuid>", views.new_avenant, name="new_avenant"),
-    path("piece_jointe/<piece_jointe_uuid>", views.piece_jointe_access, name="piece_jointe"),
+    path(
+        "piece_jointe/<piece_jointe_uuid>",
+        views.piece_jointe_access,
+        name="piece_jointe",
+    ),
     path(
         "piece_jointe/<piece_jointe_uuid>/promote",
         views.piece_jointe_promote,
