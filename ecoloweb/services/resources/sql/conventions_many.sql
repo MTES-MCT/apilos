@@ -1,9 +1,3 @@
--- Champs à intégrer:
-
--- gestionnaire                                varchar(255),
--- gestionnaire_signataire_date_deliberation   date,
--- gestionnaire_signataire_fonction            varchar(255),
--- gestionnaire_signataire_nom                 varchar(255)
 select
     cdg.id||':'||pl.financement as id,
     case when
@@ -44,9 +38,8 @@ select
     cdg.daterefushypotheque as date_refus_spf,
     cdg.motifrefushypotheque as motif_refus_spf,
     -- Résidences et foyers
-    -- gestionnaire_signataire_date_deliberation
-    -- gestionnaire_signataire_fonction
-    -- gestionnaire_signataire_nom
+    pl.nom_bailleur as gestionnaire,
+    pl.bailleur_signataire_nom as gestionnaire_signataire_nom,
     nl.code == '2' as attribution_agees_autonomie,
     nl.code == '2' as attribution_agees_autre,
     '' as attribution_agees_autre_detail,
@@ -117,6 +110,8 @@ from (
             distinct on (pl.conventiondonneesgenerales_id, ff.code)
             pl.conventiondonneesgenerales_id,
             pl.reservationprefnombre,
+            cb.nom_bailleur,
+            cb.noms_contacts as bailleur_signataire_nom,
             ff.code as financement,
             ed.codeinsee as departement
         from ecolo.ecolo_programmelogement  pl
@@ -124,6 +119,16 @@ from (
             inner join ecolo.ecolo_departement ed on ec.departement_id = ed.id
             inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
             inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
+            left join (
+                select
+                    cb.bailleur_id,
+                    b.raisonsociale||'( '||coalesce(b.codesiret, b.codepersonne)||')' as nom_bailleur,
+                    string_agg(vps.libelle||' '||cb.prenom||' '||cb.nom, ', ') as noms_contacts
+                from ecolo.ecolo_bailleur b
+                    inner join ecolo_contactbailleur cb on cb.bailleur_id = b.id
+                    inner join ecolo.ecolo_valeurparamstatic vps on cb.civilite_id = vps
+                group by cb.bailleur_id
+            ) cb on cb.bailleur_id = pl.bailleurgestionnaire_id
     ) pl on pl.conventiondonneesgenerales_id = cdg.id
 where
     -- On exclue les conventions ayant (au moins) un lot associé à plus d'un bailleur ou d'une commune
