@@ -6,7 +6,10 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("conventions", "0053_alter_convention_statut_and_more"),
+        (
+            "conventions",
+            "0057_rename_attribution_reservation_prefectoral_convention_attribution_reservation_prefectorale",
+        ),
     ]
 
     operations = [
