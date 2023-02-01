@@ -40,36 +40,36 @@ select
     -- Résidences et foyers
     pl.nom_bailleur as gestionnaire,
     pl.bailleur_signataire_nom as gestionnaire_signataire_nom,
-    nl.code == '2' as attribution_agees_autonomie,
-    nl.code == '2' as attribution_agees_autre,
-    '' as attribution_agees_autre_detail,
-    nl.code == '2' as attribution_agees_desorientees,
-    nl.code == '2' as attribution_agees_ephad,
-    nl.code == '2' as attribution_agees_petite_unite,
-    nl.code == '3' as attribution_handicapes_autre,
-    '' as attribution_handicapes_autre_detail,
-    nl.code == '3' as attribution_handicapes_foyer,
-    nl.code == '3' as attribution_handicapes_foyer_de_vie,
-    nl.code == '3' as attribution_handicapes_foyer_medicalise,
-    case when nl.code == '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_activites,
-    case when nl.code == '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_conditions_admission,
-    case when nl.code == '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_conditions_specifiques,
-    case when nl.code == '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_modalites_attribution,
-    case when nl.code == '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_partenariats,
+    nl.code = '2' as attribution_agees_autonomie,
+    nl.code = '2' as attribution_agees_autre,
+    'Non renseigné (Ecoloweb)' as attribution_agees_autre_detail,
+    nl.code = '2' as attribution_agees_desorientees,
+    nl.code = '2' as attribution_agees_ephad,
+    nl.code = '2' as attribution_agees_petite_unite,
+    nl.code = '3' as attribution_handicapes_autre,
+    'Non renseigné (Ecoloweb)' as attribution_handicapes_autre_detail,
+    nl.code = '3' as attribution_handicapes_foyer,
+    nl.code = '3' as attribution_handicapes_foyer_de_vie,
+    nl.code = '3' as attribution_handicapes_foyer_medicalise,
+    case when nl.code = '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_activites,
+    case when nl.code = '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_conditions_admission,
+    case when nl.code = '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_conditions_specifiques,
+    case when nl.code = '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_modalites_attribution,
+    case when nl.code = '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_partenariats,
     case when nl.code in ('2', '3', '4', '5', '7') then 'Non renseigné (Ecoloweb)' end as attribution_modalites_choix_personnes,
     case when nl.code in ('2', '3', '4', '5', '7') then 'Non renseigné (Ecoloweb)' end as attribution_modalites_reservations,
     case when nl.code in ('2', '3', '4', '5', '7') then 'Non renseigné (Ecoloweb)' end as attribution_prestations_facultatives,
     case when nl.code in ('2', '3', '4', '5', '7') then 'Non renseigné (Ecoloweb)' end as attribution_prestations_integrees,
     case when nl.code in ('2', '3', '4', '5', '7') then pl.reservationprefnombre end as attribution_reservation_prefectorale,
-    nl <> '1' and 0 = '80' as foyer_residence_variante_1,
-    nl <> '1' and 0 = '5' as foyer_residence_variante_2,
-    case when nl <> '1' and 0 = '5' then '' end as  foyer_residence_variante_2_travaux,
+    case when nl.code <> '1' and pl.nature_operation_code = '80' then true else false end as foyer_residence_variante_1,
+    case when nl.code <> '1' and pl.nature_operation_code = '5' then true else false end as foyer_residence_variante_2,
+    case when nl.code <> '1' and pl.nature_operation_code = '5' then 'Non renseigné (Ecoloweb)' end as foyer_residence_variante_2_travaux,
     -- foyer_residence_variante_2_nb_tranches
     -- foyer_residence_variante_2_nb_annees
-    nl <> '1' and 0 = '1' as foyer_residence_variante_3,
-    nl.code == '6' as attribution_pension_de_famille, -- Résidence sociale ?
-    nl.code == '6' as attribution_residence_accueil, -- Résidence sociale ?
-    nl.code == '6' as attribution_residence_sociale_ordinaire -- Résidence sociale ?
+    case when nl.code <> '1' and pl.nature_operation_code = '1' then true else false end as foyer_residence_variante_3,
+    nl.code = '6' as attribution_pension_de_famille, -- Résidence sociale ?
+    nl.code = '6' as attribution_residence_accueil, -- Résidence sociale ?
+    nl.code = '6' as attribution_residence_sociale_ordinaire -- Résidence sociale ?
 -- Conventions à leur dernier état connu et actualisé, pour éviter les doublons de convention
 from (
     select
@@ -110,25 +110,26 @@ from (
             distinct on (pl.conventiondonneesgenerales_id, ff.code)
             pl.conventiondonneesgenerales_id,
             pl.reservationprefnombre,
-            cb.nom_bailleur,
+            nop.code as nature_operation_code,
+            b.raisonsociale||'( '||coalesce(b.codesiret, b.codepersonne)||')' as nom_bailleur,
             cb.noms_contacts as bailleur_signataire_nom,
             ff.code as financement,
             ed.codeinsee as departement
-        from ecolo.ecolo_programmelogement  pl
+        from ecolo.ecolo_programmelogement pl
             inner join ecolo.ecolo_commune ec on pl.commune_id = ec.id
             inner join ecolo.ecolo_departement ed on ec.departement_id = ed.id
             inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
             inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
+            left join ecolo.ecolo_valeurparamstatic nop on pl.natureoperation_id = nop.id
+            left join ecolo.ecolo_bailleur b on pl.bailleurgestionnaire_id = b.id
             left join (
                 select
                     cb.bailleur_id,
-                    b.raisonsociale||'( '||coalesce(b.codesiret, b.codepersonne)||')' as nom_bailleur,
                     string_agg(vps.libelle||' '||cb.prenom||' '||cb.nom, ', ') as noms_contacts
-                from ecolo.ecolo_bailleur b
-                    inner join ecolo_contactbailleur cb on cb.bailleur_id = b.id
-                    inner join ecolo.ecolo_valeurparamstatic vps on cb.civilite_id = vps
+                from ecolo_contactbailleur cb
+                    inner join ecolo.ecolo_valeurparamstatic vps on cb.civilite_id = vps.id
                 group by cb.bailleur_id
-            ) cb on cb.bailleur_id = pl.bailleurgestionnaire_id
+            ) cb on cb.bailleur_id = b.id
     ) pl on pl.conventiondonneesgenerales_id = cdg.id
 where
     -- On exclue les conventions ayant (au moins) un lot associé à plus d'un bailleur ou d'une commune

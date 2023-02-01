@@ -23,7 +23,6 @@
 -- zone_abc                             varchar(25),
 -- date_achevement_compile              date,
 -- effet_relatif                        text
--- nature_logement                         varchar(25)              not null,
 -- date_autorisation_hors_habitat_inclusif                        date,
 -- date_convention_location                                       date,
 -- date_residence_agrement                                        date,
@@ -52,8 +51,20 @@ select
     pl.code_insee_commune,
     pl.code_insee_departement,
     pl.code_insee_region,
+/*
+Valeurs Ecoloweb
+| 1 | Logements ordinaires |
+| 2 | Logements foyers pour personnes âgées | ex 1854431
+| 3 | Logements foyers pour personnes handicapées |
+| 4 | Logements foyers pour travailleurs migrants |
+| 5 | Logements foyers pour jeunes travailleurs |
+| 6 | Résidences sociales |
+| 7 | Logements foyers destinés à l'habitat inclusif |
+ */
     case
         when nl.code = '1' then 'LOGEMENTSORDINAIRES'
+        when nl.code = '6' then 'RESISDENCESOCIALE'
+        else 'AUTRE'
     end as nature_logement,
     cdg.datehistoriquedebut as date_achevement,
     coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as cree_le,
