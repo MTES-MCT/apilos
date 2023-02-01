@@ -23,6 +23,16 @@
 -- zone_abc                             varchar(25),
 -- date_achevement_compile              date,
 -- effet_relatif                        text
+-- nature_logement                         varchar(25)              not null,
+-- date_autorisation_hors_habitat_inclusif                        date,
+-- date_convention_location                                       date,
+-- date_residence_agrement                                        date,
+-- date_residence_argement_gestionnaire_intermediation            date,
+-- departement_residence_agrement                                 varchar(255),
+-- departement_residence_argement_gestionnaire_intermediation     varchar(255),
+-- ville_signature_residence_agrement_gestionnaire_intermediation varchar(255)
+
+
 
 select
     cdg.id,

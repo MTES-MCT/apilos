@@ -13,6 +13,10 @@
 -- edd_volumetrique             text,
 -- lgts_mixite_sociale_negocies integer                  not null,
 -- parent_id   FK(programmes_lot) dans le cas d'un avenant seulement ?
+-- surface_habitable_totale               numeric(7, 2),
+-- foyer_residence_dependance             text,
+-- foyer_residence_locaux_hors_convention text,
+-- foyer_residence_nb_garage_parking      integer
 
 select
     md5(pl.conventiondonneesgenerales_id||'-'||ff.code) as id, -- Les lots d'un programme sont tous les logements partageant le même financement
@@ -35,7 +39,9 @@ select
     case
         when pl.estderogationloyer and coalesce(pl.logementsnombreindtotal, 0) > 0 then pl.montantplafondloyerindinitial
         when pl.estderogationloyer and coalesce(pl.logementsnombrecoltotal, 0) > 0 then pl.montantplafondloyercolinitial
-    end as loyer_derogatoire
+    end as loyer_derogatoire,
+    round(pl.surfacehabitable:: numeric, 2) as surface_habitable_totale,
+    10 as foyer_residence_nb_garage_parking
 from ecolo.ecolo_programmelogement pl
     left join (
         select

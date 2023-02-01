@@ -1,3 +1,9 @@
+-- Champs à intégrer:
+
+-- gestionnaire                                varchar(255),
+-- gestionnaire_signataire_date_deliberation   date,
+-- gestionnaire_signataire_fonction            varchar(255),
+-- gestionnaire_signataire_nom                 varchar(255)
 select
     cdg.id||':'||pl.financement as id,
     case when
@@ -36,7 +42,41 @@ select
     cdg.referencepublication as reference_spf,
     cdg.datepublication as date_envoi_spf,
     cdg.daterefushypotheque as date_refus_spf,
-    cdg.motifrefushypotheque as motif_refus_spf
+    cdg.motifrefushypotheque as motif_refus_spf,
+    -- Résidences et foyers
+    -- gestionnaire_signataire_date_deliberation
+    -- gestionnaire_signataire_fonction
+    -- gestionnaire_signataire_nom
+    nl.code == '2' as attribution_agees_autonomie,
+    nl.code == '2' as attribution_agees_autre,
+    '' as attribution_agees_autre_detail,
+    nl.code == '2' as attribution_agees_desorientees,
+    nl.code == '2' as attribution_agees_ephad,
+    nl.code == '2' as attribution_agees_petite_unite,
+    nl.code == '3' as attribution_handicapes_autre,
+    '' as attribution_handicapes_autre_detail,
+    nl.code == '3' as attribution_handicapes_foyer,
+    nl.code == '3' as attribution_handicapes_foyer_de_vie,
+    nl.code == '3' as attribution_handicapes_foyer_medicalise,
+    case when nl.code == '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_activites,
+    case when nl.code == '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_conditions_admission,
+    case when nl.code == '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_conditions_specifiques,
+    case when nl.code == '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_modalites_attribution,
+    case when nl.code == '7' then 'Non renseigné (Ecoloweb)' end as attribution_inclusif_partenariats,
+    case when nl.code in ('2', '3', '4', '5', '7') then 'Non renseigné (Ecoloweb)' end as attribution_modalites_choix_personnes,
+    case when nl.code in ('2', '3', '4', '5', '7') then 'Non renseigné (Ecoloweb)' end as attribution_modalites_reservations,
+    case when nl.code in ('2', '3', '4', '5', '7') then 'Non renseigné (Ecoloweb)' end as attribution_prestations_facultatives,
+    case when nl.code in ('2', '3', '4', '5', '7') then 'Non renseigné (Ecoloweb)' end as attribution_prestations_integrees,
+    case when nl.code in ('2', '3', '4', '5', '7') then pl.reservationprefnombre end as attribution_reservation_prefectorale,
+    nl <> '1' and 0 = '80' as foyer_residence_variante_1,
+    nl <> '1' and 0 = '5' as foyer_residence_variante_2,
+    case when nl <> '1' and 0 = '5' then '' end as  foyer_residence_variante_2_travaux,
+    -- foyer_residence_variante_2_nb_tranches
+    -- foyer_residence_variante_2_nb_annees
+    nl <> '1' and 0 = '1' as foyer_residence_variante_3,
+    nl.code == '6' as attribution_pension_de_famille, -- Résidence sociale ?
+    nl.code == '6' as attribution_residence_accueil, -- Résidence sociale ?
+    nl.code == '6' as attribution_residence_sociale_ordinaire -- Résidence sociale ?
 -- Conventions à leur dernier état connu et actualisé, pour éviter les doublons de convention
 from (
     select
@@ -76,6 +116,7 @@ from (
         select
             distinct on (pl.conventiondonneesgenerales_id, ff.code)
             pl.conventiondonneesgenerales_id,
+            pl.reservationprefnombre,
             ff.code as financement,
             ed.codeinsee as departement
         from ecolo.ecolo_programmelogement  pl
@@ -85,9 +126,8 @@ from (
             inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
     ) pl on pl.conventiondonneesgenerales_id = cdg.id
 where
-    nl.code = '1' -- Seulement les "Logements ordinaires" pour le moment
     -- On exclue les conventions ayant (au moins) un lot associé à plus d'un bailleur ou d'une commune
-    and not exists (
+    not exists (
         select
             pl2.conventiondonneesgenerales_id
         from ecolo.ecolo_programmelogement pl2
