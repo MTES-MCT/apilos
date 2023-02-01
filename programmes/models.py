@@ -616,6 +616,9 @@ class Logement(models.Model):
     surface_habitable = models.DecimalField(
         max_digits=6, decimal_places=2, null=True, verbose_name="Surface habitable"
     )
+    surface_corrigee = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, verbose_name="Surface corrigée"
+    )
     surface_annexes = models.DecimalField(max_digits=6, decimal_places=2, null=True)
     surface_annexes_retenue = models.DecimalField(
         max_digits=6, decimal_places=2, null=True

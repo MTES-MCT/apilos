@@ -186,7 +186,7 @@ class User(AbstractUser):
         """
         Lots of the user following is role :
         * super admin = all lots
-        * instructeur = all lots of programme which belongs to its administrations
+        * instructeur = all lots of programme which belong to its administrations
         * bailleur = all lots which belongs to its bailleur entities
         else raise
         """
