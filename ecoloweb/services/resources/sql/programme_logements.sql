@@ -9,10 +9,10 @@ select
         when ptl.code in ('T1B', 'T1P') then 'T1bis'
         else ptl.code -- T2+ are exactly the same
     end as typologie,
-    l.surfacehabitable::float as surface_habitable,
-    l.surfaceannexe::float as surface_annexes,
-    l.surfaceannexe::float as surface_annexes_retenue,
-    l.surfaceutile::float as surface_utile,
+    round(cast(l.surfacehabitable as numeric), 2) as surface_habitable,
+    round(cast(l.surfaceannexe as numeric), 2) as surface_annexes,
+    round(cast(l.surfaceannexe as numeric), 2) as surface_annexes_retenue,
+    round(cast(l.surfaceutile as numeric), 2) as surface_utile,
     l.coefficientmodulation as coeficient,
     l.montantloyer as loyer,
     case

@@ -9,34 +9,52 @@ from bailleurs.models import Bailleur
 class BailleurImporter(ModelImporter):
     model = Bailleur
 
-    def __init__(self, departement: str, import_date: datetime, debug=False):
-        super().__init__(departement, import_date, debug)
+    def __init__(
+        self,
+        departement: str,
+        import_date: datetime,
+        with_dependencies=True,
+        debug=False,
+    ):
+        super().__init__(departement, import_date, with_dependencies, debug)
 
-        self._siret_resolver = SiretResolver()
+        try:
+            self._siret_resolver = SiretResolver()
+        except BaseException:
+            self._siret_resolver = None
 
     def _get_query_one(self) -> str:
-        return self._get_file_content('resources/sql/bailleurs.sql')
+        return self._get_file_content("resources/sql/bailleurs.sql")
 
     def _get_identity_keys(self) -> List[str]:
-        return ['siret']
+        return ["siret"]
+
+    def _resolve_siret(self, codesiren: str, date_creation: str):
+        if self._siret_resolver:
+            try:
+                return self._siret_resolver.resolve(codesiren, date_creation)
+            except BaseException:
+                return None
+
+        return None
 
     def _prepare_data(self, data: dict) -> dict:
-        codesiret = data.pop('codesiret')
-        codesiren = data.pop('codesiren')
-        codepersonne = data.pop('codepersonne')
-        date_creation = data['cree_le']
+        codesiret = data.pop("codesiret")
+        codesiren = data.pop("codesiren")
+        codepersonne = data.pop("codepersonne")
+        date_creation = data["cree_le"]
 
         # Clean SIRET code
         if codesiret is not None:
-            data['siret'] = codesiret
+            data["siret"] = codesiret
 
-        elif (siret := self._siret_resolver.resolve(codesiren, date_creation)) is not None:
-            data['siret'] = siret
+        elif (siret := self._resolve_siret(codesiren, date_creation)) is not None:
+            data["siret"] = siret
 
         elif codesiren is not None:
-            data['siret'] = codesiren
+            data["siret"] = codesiren
 
         else:
-            data['siret'] = codepersonne
+            data["siret"] = codepersonne
 
         return data

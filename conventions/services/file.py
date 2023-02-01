@@ -26,12 +26,8 @@ class ConventionFileService:
         convention.save()
 
     @classmethod
-    def promote_piece_jointe(cls, piece_jointe: PieceJointe) -> bool:
+    def promote_piece_jointe(cls, piece_jointe: PieceJointe):
         file = client.get_object(
             settings.AWS_ECOLOWEB_BUCKET_NAME, f"piecesJointes/{piece_jointe.fichier}"
         )
-        if file is None:
-            return False
-
         cls.upload_convention_file(piece_jointe.convention, file)
-        return True
