@@ -1,5 +1,4 @@
-from datetime import datetime
-from typing import List
+from datetime import datetime, date
 
 from . import SiretResolver
 from .importers import ModelImporter
@@ -13,23 +12,20 @@ class BailleurImporter(ModelImporter):
         self,
         departement: str,
         import_date: datetime,
-        with_dependencies=True,
         debug=False,
     ):
-        super().__init__(departement, import_date, with_dependencies, debug)
+        super().__init__(departement, import_date, debug)
 
         try:
             self._siret_resolver = SiretResolver()
         except BaseException:
             self._siret_resolver = None
 
-    def _get_query_one(self) -> str:
-        return self._get_file_content("resources/sql/bailleurs.sql")
+        self._identity_keys = ["siret"]
 
-    def _get_identity_keys(self) -> List[str]:
-        return ["siret"]
+        self._query_one = self._get_file_content("resources/sql/bailleurs.sql")
 
-    def _resolve_siret(self, codesiren: str, date_creation: str):
+    def _resolve_siret(self, codesiren: str, date_creation: date):
         if self._siret_resolver:
             try:
                 return self._siret_resolver.resolve(codesiren, date_creation)

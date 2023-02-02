@@ -1,4 +1,6 @@
-from typing import List, Optional
+from datetime import datetime
+
+from django.db.models import Model
 
 from programmes.models import (
     Programme,
@@ -13,6 +15,43 @@ from .importers_administrations import AdministrationImporter
 from .importers_bailleurs import BailleurImporter
 
 
+class ReferenceCadastraleImporter(ModelImporter):
+    model = ReferenceCadastrale
+
+    def __init__(self, departement: str, import_date: datetime, debug=False):
+        super().__init__(departement, import_date, debug)
+
+        self._query_many = self._get_file_content(
+            "resources/sql/programme_reference_cadastrale.sql"
+        )
+
+    def _prepare_data(self, data: dict) -> dict:
+        return {
+            "surface": ReferenceCadastrale.compute_surface(data.pop("superficie", 0)),
+            "programme": self.resolve_ecolo_reference(
+                ecolo_id=data.pop("programme_id"), model=Programme
+            ),
+            **data,
+        }
+
+
+class TypeStationnementImporter(ModelImporter):
+    model = TypeStationnement
+
+    def __init__(self, departement: str, import_date: datetime, debug=False):
+        super().__init__(departement, import_date, debug)
+
+        self._query_many = self._get_file_content(
+            "resources/sql/programme_type_stationnement.sql"
+        )
+
+    def _prepare_data(self, data: dict) -> dict:
+        return {
+            "lot": self.resolve_ecolo_reference(ecolo_id=data.pop("lot_id"), model=Lot),
+            **data,
+        }
+
+
 class ProgrammeImporter(ModelImporter):
     """
     Importer for the Programme model, without one-to-one nor one-to-many dependency
@@ -20,39 +59,32 @@ class ProgrammeImporter(ModelImporter):
 
     model = Programme
 
-    def _get_query_one(self) -> str:
-        return self._get_file_content("resources/sql/programmes.sql")
+    def __init__(self, departement: str, import_date: datetime, debug=False):
+        super().__init__(departement, import_date, debug)
 
-    def _get_identity_keys(self) -> List[str]:
-        return ["numero_galion"]
+        self._identity_keys = ["numero_galion"]
+        self._query_one = self._get_file_content("resources/sql/programmes.sql")
 
-    def _get_o2o_dependencies(self):
-        return {
-            "parent": self,
-            "bailleur": BailleurImporter,
-            "administration": AdministrationImporter,
-        }
-
-    def _get_o2m_dependencies(self) -> List:
-        return [ReferenceCadastraleImporter]
+        self._bailleur_importer = BailleurImporter(departement, import_date, debug)
+        self._administration_importer = AdministrationImporter(
+            departement, import_date, debug
+        )
+        self._reference_cadastrale_importer = ReferenceCadastraleImporter(
+            departement, import_date, debug
+        )
 
     def _prepare_data(self, data: dict) -> dict:
-        bailleur_importer = BailleurImporter(
-            departement=self.departement, import_date=self.import_date, debug=self.debug
-        )
-        data["bailleur"] = bailleur_importer.import_one(data.pop("bailleur_id"))
+        return {
+            "parent": self.import_one(data.pop("parent_id")),
+            "bailleur": self._bailleur_importer.import_one(data.pop("bailleur_id")),
+            "administration": self._administration_importer.import_one(
+                data.pop("administration_id")
+            ),
+            **data,
+        }
 
-        administration_importer = AdministrationImporter(
-            departement=self.departement, import_date=self.import_date, debug=self.debug
-        )
-        data["administration"] = administration_importer.import_one(
-            data.pop("administration_id")
-        )
-
-        # TODO handle parent
-        data.pop("parent_id")
-
-        return data
+    def _on_processed(self, ecolo_id: str | None, model: Model | None, created: bool):
+        self._reference_cadastrale_importer.import_many(ecolo_id)
 
 
 class LotImporter(ModelImporter):
@@ -62,96 +94,53 @@ class LotImporter(ModelImporter):
 
     model = Lot
 
-    def _get_query_one(self) -> str:
-        return self._get_file_content("resources/sql/programme_lots.sql")
+    def __init__(self, departement: str, import_date: datetime, debug=False):
+        super().__init__(departement, import_date, debug)
 
-    def _get_query_many(self) -> Optional[str]:
-        return self._get_file_content("resources/sql/programme_lots_many.sql")
+        self._query_one = self._get_file_content("resources/sql/programme_lots.sql")
+        self._query_many = self._get_file_content(
+            "resources/sql/programme_lots_many.sql"
+        )
 
-    def _get_o2o_dependencies(self):
-        return {
-            "parent": self,
-            "programme": (ProgrammeImporter, False),
-        }
-
-    def _get_o2m_dependencies(self):
-        return [LogementImporter, TypeStationnementImporter]
+        self._programme_importer = ProgrammeImporter(departement, import_date, debug)
+        self._logement_importer = LogementImporter(departement, import_date, debug)
+        self._type_stationnement_importer = TypeStationnementImporter(
+            departement, import_date, debug
+        )
 
     def _prepare_data(self, data: dict) -> dict:
-        programme_importer = ProgrammeImporter(
-            departement=self.departement, import_date=self.import_date, debug=self.debug
-        )
-        data["programme"] = programme_importer.find_ecolo_reference(
-            data.pop("programme_id")
-        ).resolve()
+        return {
+            "parent": self.import_one(data.pop("parent_id")),
+            "programme": self._programme_importer.import_one(data.pop("programme_id")),
+            **data,
+        }
 
-        # TODO handle parent
-        data.pop("parent_id")
-
-        return data
+    def _on_processed(self, ecolo_id: str | None, model: Model | None, created: bool):
+        self._logement_importer.import_many(ecolo_id)
+        self._type_stationnement_importer.import_many(ecolo_id)
 
 
 class LogementImporter(ModelImporter):
     model = Logement
 
-    def _get_query_many(self) -> str:
-        return self._get_file_content("resources/sql/programme_logements.sql")
+    def __init__(self, departement: str, import_date: datetime, debug=False):
+        super().__init__(departement, import_date, debug)
 
-    def _get_o2o_dependencies(self):
-        return {
-            "lot": (LotImporter, False),
-        }
-
-    def _prepare_data(self, data: dict) -> dict:
-        if (surface_habitable := data.pop("surface_habitable")) is not None:
-            data["surface_habitable"] = round(float(surface_habitable), 2)
-        else:
-            data["surface_habitable"] = None
-
-        if (surface_annexes := data.pop("surface_annexes")) is not None:
-            data["surface_annexes"] = round(float(surface_annexes), 2)
-        else:
-            data["surface_habitable"] = None
-
-        if (surface_annexes_retenue := data.pop("surface_annexes_retenue")) is not None:
-            data["surface_annexes_retenue"] = round(float(surface_annexes_retenue), 2)
-        else:
-            data["surface_annexes_retenue"] = None
-
-        if (surface_utile := data.pop("surface_utile")) is not None:
-            data["surface_utile"] = round(float(surface_utile), 2)
-        else:
-            data["surface_utile"] = None
-
-
-class ReferenceCadastraleImporter(ModelImporter):
-    model = ReferenceCadastrale
-
-    def _prepare_data(self, data: dict) -> dict:
-        superficie = data.pop("superficie", 0)
-
-        data["surface"] = ReferenceCadastrale.compute_surface(superficie)
-
-        return data
-
-    def _get_query_many(self) -> Optional[str]:
-        return self._get_file_content(
-            "resources/sql/programme_reference_cadastrale.sql"
+        self._query_many = self._get_file_content(
+            "resources/sql/programme_logements.sql"
         )
 
-    def _get_o2o_dependencies(self):
+    def _prepare_data(self, data: dict) -> dict:
         return {
-            "programme": (ProgrammeImporter, False),
+            "surface_habitable": self._rounded_value(data.pop("surface_habitable")),
+            "surface_annexes": self._rounded_value(data.pop("surface_annexes")),
+            "surface_annexes_retenue": self._rounded_value(
+                data.pop("surface_annexes_retenue")
+            ),
+            "surface_utile": self._rounded_value(data.pop("surface_utile")),
+            "lot": self.resolve_ecolo_reference(data.pop("lot_id"), Lot),
+            **data,
         }
 
-
-class TypeStationnementImporter(ModelImporter):
-    model = TypeStationnement
-
-    def _get_query_many(self) -> Optional[str]:
-        return self._get_file_content("resources/sql/programme_type_stationnement.sql")
-
-    def _get_o2o_dependencies(self):
-        return {
-            "lot": (LotImporter, False),
-        }
+    def _rounded_value(self, value):
+        return round(float(value), 2) if value is not None else None
