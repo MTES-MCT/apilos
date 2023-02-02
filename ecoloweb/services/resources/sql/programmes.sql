@@ -76,9 +76,9 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
             cdg.id,
             lag(cdg.id) over (partition by cdg.conventionapl_id order by a.numero nulls first) as parent_id
         from ecolo.ecolo_conventiondonneesgenerales cdg
-            inner join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
+            left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
     ) cp on cp.id = cdg.id
-    inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id and nl.code in ('1')
+    inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id
     inner join (
         select
             distinct on (pl.conventiondonneesgenerales_id, pl.typefinancement_id)

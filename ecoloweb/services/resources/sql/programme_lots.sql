@@ -49,7 +49,7 @@ from ecolo.ecolo_programmelogement pl
             cdg.naturelogement_id,
             lag(cdg.id) over (partition by cdg.conventionapl_id order by a.numero nulls first) as parent_id
         from ecolo.ecolo_conventiondonneesgenerales cdg
-            inner join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
+            left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
     ) cp on cp.id = pl.conventiondonneesgenerales_id
     inner join ecolo.ecolo_naturelogement nl on cp.naturelogement_id = nl.id
     -- Financement
