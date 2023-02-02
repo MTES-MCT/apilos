@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from typing import List
 
@@ -17,6 +18,15 @@ class ConventionImporter(ModelImporter):
     """
 
     model = Convention
+
+    def __init__(
+        self,
+        departement: str,
+        import_date: datetime,
+        with_dependencies=True,
+        debug=False,
+    ):
+        super().__init__(departement, import_date, with_dependencies, debug)
 
     def _get_query_one(self) -> str | None:
         return self._get_sql_from_template("conventions.sql")
@@ -42,7 +52,37 @@ class ConventionImporter(ModelImporter):
             parameters=[self.departement],
         )
 
-    def _on_processed(self, model: Convention | None, created: bool):
+    def _prepare_data(self, data: dict) -> dict:
+        programme_importer = ProgrammeImporter(
+            departement=self.departement, import_date=self.import_date, debug=self.debug
+        )
+        data["programme"] = programme_importer.import_one(data.pop("programme_id"))
+
+        lot_importer = LotImporter(
+            departement=self.departement, import_date=self.import_date, debug=self.debug
+        )
+        data["lot"] = lot_importer.import_one(data.pop("lot_id"))
+
+        parent_id = data.pop("parent_id")
+        if parent_id is not None:
+            print(parent_id)
+            self.import_one(parent_id)
+
+        return data
+
+    def _on_processed(
+        self, ecolo_id: str | None, model: Convention | None, created: bool
+    ):
+        if ecolo_id is not None:
+            piece_jointe_importer = PieceJointeImporter(
+                departement=self.departement,
+                import_date=self.import_date,
+                debug=self.debug,
+            )
+            piece_jointe_importer.import_many(
+                piece_jointe_importer.build_query_parameters(ecolo_id)
+            )
+
         if created and model is not None:
             if model.is_avenant():
                 # Avenant are automatically assigned to the type "commentaires"
@@ -82,3 +122,13 @@ class PieceJointeImporter(ModelImporter):
 
     def _get_o2o_dependencies(self):
         return {"convention": (ConventionImporter, False)}
+
+    def _prepare_data(self, data: dict) -> dict:
+        convention_importer = ConventionImporter(
+            departement=self.departement, import_date=self.import_date, debug=self.debug
+        )
+        data["convention"] = convention_importer.find_ecolo_reference(
+            data.pop("convention_id")
+        ).resolve()
+
+        return data

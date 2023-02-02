@@ -49,61 +49,6 @@ class ModelImporter(ABC):
 
         self._query_one = self._get_query_one()
         self._query_many = self._get_query_many()
-        self._o2o_importers: Dict[ModelImporter] | None = None
-
-        if with_dependencies and len(self._get_o2o_dependencies()) > 0:
-            self._o2o_importers = {}
-            for key, config in self._get_o2o_dependencies().items():
-                if type(config) == tuple:
-                    (target, recursively) = config
-                else:
-                    target = config
-                    recursively = True
-                self._register_o2o_dependency(key, target, recursively)
-
-        self._o2m_importers: List[ModelImporter] | None = None
-        if with_dependencies and len(self._get_o2m_dependencies()) > 0:
-            self._o2m_importers = []
-            for config in self._get_o2m_dependencies():
-                if type(config) == tuple:
-                    (target, recursively) = config
-                else:
-                    target = config
-                    recursively = True
-
-                self._register_o2m_dependency(target, recursively)
-
-    def _register_o2o_dependency(
-        self, key: str, target: Type[object] | object, recursively: bool = False
-    ):
-        if isclass(target):
-            if not issubclass(target, ModelImporter):
-                raise ValueError(f"{target} must be a subclass of ModelImporter")
-            self._o2o_importers[key] = target(
-                departement=self.departement,
-                import_date=self.import_date,
-                with_dependencies=recursively,
-                debug=self.debug,
-            )
-
-        elif isinstance(target, ModelImporter):
-            self._o2o_importers[key] = target
-        else:
-            raise ValueError(f"{target} must be an instance of ModelImporter")
-
-    def _register_o2m_dependency(self, target: Type[object], recursively: bool = False):
-        if not isclass(target):
-            raise ValueError(f"{target} must be a subclass of ModelImporter")
-        if not issubclass(target, ModelImporter):
-            raise ValueError(f"{target} must be a subclass of ModelImporter")
-        self._o2m_importers.append(
-            target(
-                departement=self.departement,
-                import_date=self.import_date,
-                with_dependencies=recursively,
-                debug=self.debug,
-            )
-        )
 
     @property
     @abstractmethod
@@ -154,7 +99,7 @@ class ModelImporter(ABC):
             path, Context(context | {"timezone": timezone.get_current_timezone()})
         )
 
-    def _find_ecolo_ref(self, id) -> EcoloReference | None:
+    def find_ecolo_reference(self, id) -> EcoloReference | None:
         """
         Based on input data, attempts to extract an existing EcoloReference, using the `ecolo_id_field` defined as
         attribute and, if found, resolve it. See EcoloReference class model definition to understand how it works.
@@ -269,7 +214,7 @@ class ModelImporter(ABC):
 
         # Look for a potentially already imported model
         ecolo_ref = (
-            self._find_ecolo_ref(data[self.ecolo_id_field])
+            self.find_ecolo_reference(data[self.ecolo_id_field])
             if self.ecolo_id_field in data
             else None
         )
@@ -309,19 +254,14 @@ class ModelImporter(ABC):
             instance = ecolo_ref.resolve()
             created = False
 
-        if instance:
-            # Import one-to-many models
-            self._fetch_related_o2m_objects(ecolo_id)
-
-            # Perform post process operations
-            self._on_processed(instance, created)
+        self._on_processed(ecolo_id, instance, created)
 
         return instance
 
     def toto(self, data):
         pass
 
-    def _on_processed(self, model: Model | None, created: bool):
+    def _on_processed(self, ecolo_id: str | None, model: Model | None, created: bool):
         pass
 
     def build_query_parameters(self, pk) -> list:
@@ -334,13 +274,11 @@ class ModelImporter(ABC):
         if pk is None:
             return None
 
-        ecolo_ref = self._find_ecolo_ref(pk)
+        ecolo_ref = self.find_ecolo_reference(pk)
 
-        # If an EcoloReference has been found
+        # If an EcoloReference has been found ...
         if ecolo_ref is not None:
-            # Fetch related one to many objects (in case previous import had crashed)
-            self._fetch_related_o2m_objects(ecolo_ref.ecolo_id)
-            # and return linked model
+            # ... return the associated model
             return ecolo_ref.resolve()
 
         # Otherwise perform SQL query and process result

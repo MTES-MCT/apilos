@@ -36,6 +36,24 @@ class ProgrammeImporter(ModelImporter):
     def _get_o2m_dependencies(self) -> List:
         return [ReferenceCadastraleImporter]
 
+    def _prepare_data(self, data: dict) -> dict:
+        bailleur_importer = BailleurImporter(
+            departement=self.departement, import_date=self.import_date, debug=self.debug
+        )
+        data["bailleur"] = bailleur_importer.import_one(data.pop("bailleur_id"))
+
+        administration_importer = AdministrationImporter(
+            departement=self.departement, import_date=self.import_date, debug=self.debug
+        )
+        data["administration"] = administration_importer.import_one(
+            data.pop("administration_id")
+        )
+
+        # TODO handle parent
+        data.pop("parent_id")
+
+        return data
+
 
 class LotImporter(ModelImporter):
     """
@@ -58,6 +76,19 @@ class LotImporter(ModelImporter):
 
     def _get_o2m_dependencies(self):
         return [LogementImporter, TypeStationnementImporter]
+
+    def _prepare_data(self, data: dict) -> dict:
+        programme_importer = ProgrammeImporter(
+            departement=self.departement, import_date=self.import_date, debug=self.debug
+        )
+        data["programme"] = programme_importer.find_ecolo_reference(
+            data.pop("programme_id")
+        ).resolve()
+
+        # TODO handle parent
+        data.pop("parent_id")
+
+        return data
 
 
 class LogementImporter(ModelImporter):
