@@ -19,7 +19,7 @@ class ConventionImporter(ModelImporter):
     model = Convention
 
     def _get_query_one(self) -> str | None:
-        return self._get_file_content("resources/sql/conventions.sql")
+        return self._get_sql_from_template("conventions.sql")
 
     def build_query_parameters(self, pk) -> list:
         args = pk.split(":")
@@ -38,7 +38,7 @@ class ConventionImporter(ModelImporter):
 
     def get_all(self) -> QueryResultIterator:
         return QueryResultIterator(
-            self._get_file_content("resources/sql/conventions_many.sql"),
+            self._get_sql_from_template("conventions_many.sql"),
             parameters=[self.departement],
         )
 
