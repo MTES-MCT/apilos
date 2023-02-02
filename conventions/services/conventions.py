@@ -59,6 +59,7 @@ class ConventionListService:
         statut_filter: str = "",
         financement_filter: str = "",
         departement_input: str = "",
+        active: bool = True,
         order_by: str = "",
         page: str = 1,
     ):
@@ -66,6 +67,7 @@ class ConventionListService:
         self.statut_filter = statut_filter
         self.financement_filter = financement_filter
         self.departement_input = departement_input
+        self.active = active
         self.order_by = order_by
         self.page = page
         self.my_convention_list = my_convention_list
@@ -77,6 +79,7 @@ class ConventionListService:
                 Q(programme__ville__icontains=self.search_input)
                 | Q(programme__nom__icontains=self.search_input)
                 | Q(programme__numero_galion__icontains=self.search_input)
+                | Q(numero__endswith=self.search_input)
             )
         if self.statut_filter:
             self.my_convention_list = self.my_convention_list.filter(

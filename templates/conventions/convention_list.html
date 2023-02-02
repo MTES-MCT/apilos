@@ -80,7 +80,11 @@
                                 </div>
                             {% endif %}
                             <div  class="fr-py-1w">
-                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__nom' url_target='conventions:index' label_order='Nom du programme' %}
+                                {% if active %}
+                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__nom' url_target='conventions:index' label_order='Nom du programme' %}
+                                {% else %}
+                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='numero' url_target='conventions:index' label_order='Numéro' %}
+                                {% endif %}
                             </div>
                             <div class="fr-py-1w">
                                 {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='lot__financement' url_target='conventions:index' label_order='Financement'%}
@@ -95,7 +99,11 @@
                                 {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='lot__nb_logements' url_target='conventions:index' label_order='Nombre de logements' %}
                             </div>
                             <div class="fr-py-1w">
-                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' label_order='Date de réalisation' %}
+                                {% if active %}
+                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' label_order='Date de réalisation' %}
+                                {% else %}
+                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='televersement_convention_signee_le' url_target='conventions:index' label_order='Date de signature' %}
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -117,7 +125,7 @@
                                     {% if request|display_administration %}
                                         <th scope="col">Instructeur</th>
                                     {% endif %}
-                                    <th title="Opération" scope="col">
+                                    <th title="Opération" scope="col" class="col__width--150">
                                         Opération
                                     </th>
                                     <th title="Financement" scope="col">
@@ -129,9 +137,15 @@
                                     <th title="Nombre de logements à conventionner" scope="col">
                                         Logements
                                     </th>
-                                    <th title="Date de livraison et mise en service" scope="col">
-                                        Livraison
-                                    </th>
+                                    {% if active %}
+                                        <th title="Date de livraison et mise en service" scope="col">
+                                            Livraison
+                                        </th>
+                                    {% else %}
+                                        <th title="Date de signature" scope="col">
+                                            Signature
+                                        </th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -166,12 +180,15 @@
                                             <div>
                                                 <strong>
                                                     <span class="apilos-long-name">{{convention.programme.nom}}</span>
+                                                    <span class="apilos-long-name">{{convention.numero}}</span>
                                                 </strong>
                                                 {% if convention.is_avenant %}
                                                     <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-avenant background-white">Avenant</span>
                                                 {%endif%}
                                             </div>
-                                            <em data-test-role="programme-galion-cell">{{convention.programme.numero_galion}}</em>
+                                            {% if convention.programme.numero_galion %}
+                                                <em data-test-role="programme-galion-cell">{{convention.programme.numero_galion}}</em>
+                                            {% endif %}
                                         </td>
                                         <td data-test-role="programme-financement-cell">{{convention.financement}}</td>
                                         <td>
@@ -179,7 +196,13 @@
                                             <em>{{convention.programme.code_postal}}</em>
                                         </td>
                                         <td>{{convention.lot.nb_logements}}</td>
-                                        <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
+                                        {% if active %}
+                                            <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
+                                        {% else %}
+                                            <td>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>
+                                        {% endif %}
+
+
                                     </tr>
                                 {% endfor %}
                             </tbody>

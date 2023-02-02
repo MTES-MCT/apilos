@@ -7,95 +7,97 @@
 {% block page_title %}Conventions - APiLos{% endblock%}
 
 {% block content %}
+    {% with total_conventions=nb_active_conventions|add:nb_completed_conventions %}
 
-    {% if conventions.total_conventions > 0 %}
+        {% if total_conventions > 0 %}
 
-        <div class="fr-container-fluid ds_banner">
-            <div class="fr-container">
-                <div class="fr-grid-row fr-mt-2w fr-grid-row--gutters">
-                    <div class="fr-col-12 fr-my-3w block--row-strech fr-grid-row--middle">
-                        {% if request|is_bailleur %}
-                            <div class="block--row-strech-1">
-                                <h1 class="m-0">Conventions et avenants</h1>
-                            </div>
-                            {% if not CERBERE_AUTH %}
-                                <div class="fr-mr-3w">
-                                    <a class="fr-btn" href="{% url 'conventions:selection' %}">
-                                        <span class="fr-fi-add-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
-                                    </a>
-                                    {% comment %}
-                                    {#  Disable as there is no route to initialize avenant from zero yet #}
-                                    <a class="fr-btn fr-btn--secondary" href="{% url 'avenants:selection' %}">
+            <div class="fr-container-fluid ds_banner">
+                <div class="fr-container">
+                    <div class="fr-grid-row fr-mt-2w fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-my-3w block--row-strech fr-grid-row--middle">
+                            {% if request|is_bailleur %}
+                                <div class="block--row-strech-1">
+                                    <h1 class="m-0">Conventions et avenants</h1>
+                                </div>
+                                {% if not CERBERE_AUTH %}
+                                    <div class="fr-mr-3w">
+                                        <a class="fr-btn" href="{% url 'conventions:selection' %}">
+                                            <span class="fr-fi-add-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
+                                        </a>
+                                        {% comment %}
+                                        {#  Disable as there is no route to initialize avenant from zero yet #}
+                                        <a class="fr-btn fr-btn--secondary" href="{% url 'avenants:selection' %}">
+                                            <span class="fr-fi-add-line fr-mr-1w" aria-hidden="true"></span>Créer un avenant
+                                        </a>
+                                        {% endcomment %}
+                                    </div>
+                                {% endif %}
+                                <div hidden>
+                                    <a class="fr-btn  fr-btn--secondary " href="{% url 'conventions:new_avenant_start' %}">
                                         <span class="fr-fi-add-line fr-mr-1w" aria-hidden="true"></span>Créer un avenant
                                     </a>
-                                    {% endcomment %}
                                 </div>
+                            {% elif request|is_instructeur or request.user.is_superuser %}
+                                <div class="block--row-strech-1">
+                                    <h2 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h2>
+                                    <p class="apilos-subtitle">{{total_conventions}} convention{{ total_conventions|pluralize }} liée{{ total_conventions|pluralize }} à votre administration trouvée{{ total_conventions|pluralize }} dans APiLos</p>
+                                </div>
+                            {% else %}
+                                <p class="fr-mb-3w">Votre profil n'est pas bien configuré, merci de vous rapprocher de votre instructeur</p>
                             {% endif %}
-                            <div hidden>
-                                <a class="fr-btn  fr-btn--secondary " href="{% url 'conventions:new_avenant_start' %}">
-                                    <span class="fr-fi-add-line fr-mr-1w" aria-hidden="true"></span>Créer un avenant
-                                </a>
-                            </div>
-                        {% elif request|is_instructeur or request.user.is_superuser %}
-                            <div class="block--row-strech-1">
-                                <h2 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h2>
-                                <p class="apilos-subtitle">{{conventions.total_conventions}} convention{{ conventions.total_conventions|pluralize }} liée{{ conventions.total_conventions|pluralize }} à votre administration trouvée{{ conventions.total_conventions|pluralize }} dans APiLos</p>
-                            </div>
-                        {% else %}
-                            <p class="fr-mb-3w">Votre profil n'est pas bien configuré, merci de vous rapprocher de votre instructeur</p>
-                        {% endif %}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="fr-container-fluid">
-                <div class="fr-tabs fr-col-12">
-                    <div class="fr-container">
-                        <ul class="fr-tabs__list" role="tablist" aria-label="list convention">
-                            {% include 'conventions/home/_tab.html' with tab_active=active count=nb_active_conventions label='en cours' title='Conventions en cours' route='conventions:search_active' %}
-                            {% include 'conventions/home/_tab.html' with tab_active=active|negate count=nb_completed_conventions label='finalisées' title='Conventions finalisées' route='conventions:search_completed' %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {% include "conventions/convention_list.html" %}
-
-        {% if not CERBERE_AUTH %}
-            <div class="fr-container-fluid">
-                <div class="fr-container">
-                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-                        <div class="fr-my-5w">
-                            <a class="fr-btn" href="{% url 'conventions:selection' %}">
-                                <span class="fr-fi-add-line fr-mr-1w" aria-hidden="true"></span>
-                                {% if request|is_instructeur %}
-                                    Créer une nouvelle convention comme un bailleur
-                                {% else %}
-                                    Créer une nouvelle convention
-                                {% endif %}
-                            </a>
+                <div class="fr-container-fluid">
+                    <div class="fr-tabs fr-col-12">
+                        <div class="fr-container">
+                            <ul class="fr-tabs__list" role="tablist" aria-label="list convention">
+                                {% include 'conventions/home/_tab.html' with tab_active=active count=nb_active_conventions label='en cours' title='Conventions en cours' route='conventions:search_active' %}
+                                {% include 'conventions/home/_tab.html' with tab_active=active|negate count=nb_completed_conventions label='finalisées' title='Conventions finalisées' route='conventions:search_completed' %}
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-        {% endif %}
 
-    {% else %}
-        {% if request|is_bailleur %}
-            {% if CERBERE_AUTH %}
-                {% include "conventions/home/bailleur_cerbere_no_convention.html" %}
-            {% else %}
-                {% include "conventions/home/bailleur_no_convention.html" %}
+            {% include "conventions/convention_list.html" %}
+
+            {% if not CERBERE_AUTH %}
+                <div class="fr-container-fluid">
+                    <div class="fr-container">
+                        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+                            <div class="fr-my-5w">
+                                <a class="fr-btn" href="{% url 'conventions:selection' %}">
+                                    <span class="fr-fi-add-line fr-mr-1w" aria-hidden="true"></span>
+                                    {% if request|is_instructeur %}
+                                        Créer une nouvelle convention comme un bailleur
+                                    {% else %}
+                                        Créer une nouvelle convention
+                                    {% endif %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             {% endif %}
-        {% elif  request|is_instructeur %}
-            {% if CERBERE_AUTH %}
-                {% include "conventions/home/instructeur_cerbere_no_convention.html" %}
-            {% else %}
-                {% include "conventions/home/instructeur_no_convention.html" %}
-            {% endif %}
+
         {% else %}
-            {% include "conventions/home/no_profile.html" %}
+            {% if request|is_bailleur %}
+                {% if CERBERE_AUTH %}
+                    {% include "conventions/home/bailleur_cerbere_no_convention.html" %}
+                {% else %}
+                    {% include "conventions/home/bailleur_no_convention.html" %}
+                {% endif %}
+            {% elif  request|is_instructeur %}
+                {% if CERBERE_AUTH %}
+                    {% include "conventions/home/instructeur_cerbere_no_convention.html" %}
+                {% else %}
+                    {% include "conventions/home/instructeur_no_convention.html" %}
+                {% endif %}
+            {% else %}
+                {% include "conventions/home/no_profile.html" %}
+            {% endif %}
         {% endif %}
-    {% endif %}
+    {% endwith %}
 
 {% endblock %}

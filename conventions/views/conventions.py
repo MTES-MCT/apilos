@@ -44,7 +44,13 @@ def search(request, active: bool = True):
 
     service = ConventionListService(
         search_input=request.GET.get("search_input", ""),
-        order_by=request.GET.get("order_by", "programme__date_achevement_compile"),
+        order_by=request.GET.get(
+            "order_by",
+            "programme__date_achevement_compile"
+            if active
+            else "televersement_convention_signee_le",
+        ),
+        active=active,
         page=request.GET.get("page", 1),
         statut_filter=request.GET.get("cstatut", ""),
         financement_filter=request.GET.get("financement", ""),
