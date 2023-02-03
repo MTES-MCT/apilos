@@ -1,3 +1,7 @@
+"""
+Étape Collectif du formulaire par étape de la convention (type Foyer et Résidence)
+"""
+
 from django import forms
 from django.forms import formset_factory
 

@@ -15,13 +15,14 @@ from bailleurs.forms import BailleurForm
 
 from bailleurs.models import Bailleur
 from comments.models import Comment
-from conventions.forms import ConventionFinancementForm, ProgrammeForm
-from conventions.models import Convention
-from programmes.forms import (
+from conventions.forms import (
+    ConventionFinancementForm,
     LotLgtsOptionForm,
     ProgrammeCadastralForm,
+    ProgrammeForm,
     ProgrammeEDDForm,
 )
+from conventions.models import Convention
 from programmes.models import Lot, Programme
 from stats.stats_from_sql_raw import average_instruction_delay
 from users.models import User

@@ -3,9 +3,12 @@ from django.http import HttpRequest
 from conventions.services.conventions import ConventionService
 from conventions.services import utils, upload_objects
 from conventions.models import Convention
-from conventions.forms import UploadForm
+from conventions.forms import (
+    UploadForm,
+    ProgrammeCadastralForm,
+    ReferenceCadastraleFormSet,
+)
 from programmes.models import ReferenceCadastrale
-from programmes.forms import ProgrammeCadastralForm, ReferenceCadastraleFormSet
 
 
 def _get_choices_from_object(object_list):

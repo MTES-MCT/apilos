@@ -1,3 +1,7 @@
+"""
+Étape Commentaires du formulaire par étape de la convention
+"""
+
 from django import forms
 
 

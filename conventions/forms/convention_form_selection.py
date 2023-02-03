@@ -1,3 +1,9 @@
+"""
+Étape Selection du formulaire par étape de la convention
+    - Selection d'un lot à conventionner
+    - création d'un programme/lot/convention à partir de zéro
+"""
+
 from django import forms
 
 from programmes.models import FinancementEDD, ActiveNatureLogement, TypeHabitat

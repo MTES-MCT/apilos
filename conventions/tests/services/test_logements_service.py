@@ -4,6 +4,10 @@ from django.http import HttpRequest
 from django.test import TestCase
 
 from conventions.forms import (
+    FoyerResidenceLogementFormSet,
+    LogementFormSet,
+    LotFoyerResidenceLgtsDetailsForm,
+    LotLgtsOptionForm,
     UploadForm,
 )
 from conventions.models import Convention
@@ -19,12 +23,6 @@ from conventions.tests.fixtures import (
     foyer_residence_logement_success_payload,
 )
 from core.tests import utils_fixtures
-from programmes.forms import (
-    FoyerResidenceLogementFormSet,
-    LogementFormSet,
-    LotFoyerResidenceLgtsDetailsForm,
-    LotLgtsOptionForm,
-)
 from programmes.models import Logement, NatureLogement
 from users.models import User
 

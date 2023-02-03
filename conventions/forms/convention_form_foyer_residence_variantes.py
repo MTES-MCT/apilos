@@ -1,3 +1,7 @@
+"""
+Étape Variantes du formulaire par étape de la convention (type Foyer et Résidence)
+"""
+
 from django import forms
 
 

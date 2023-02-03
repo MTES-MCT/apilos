@@ -3,16 +3,13 @@ from django.forms import model_to_dict
 from django.http import HttpRequest
 from django.test import TestCase
 
-from conventions.forms import (
-    UploadForm,
-)
+from conventions.forms import UploadForm, AnnexeFormSet, LotAnnexeForm
 from conventions.models import Convention
 from conventions.services.annexes import ConventionAnnexesService
 from conventions.services import (
     utils,
 )
 from core.tests import utils_fixtures
-from programmes.forms import AnnexeFormSet, LotAnnexeForm
 from programmes.models import Annexe, Logement, TypologieAnnexe, TypologieLogement
 from users.models import User
 

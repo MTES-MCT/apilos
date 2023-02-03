@@ -3,9 +3,8 @@ from django.http import HttpRequest
 from conventions.services.conventions import ConventionService
 from conventions.services import utils, upload_objects
 from conventions.models import Convention
-from conventions.forms import UploadForm
+from conventions.forms import UploadForm, ProgrammeEDDForm, LogementEDDFormSet
 from programmes.models import LogementEDD
-from programmes.forms import ProgrammeEDDForm, LogementEDDFormSet
 
 
 class ConventionEDDService(ConventionService):

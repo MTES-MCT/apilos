@@ -3,13 +3,10 @@ from django.test import TestCase
 
 from conventions.forms import UploadForm
 
+from conventions.forms import ProgrammeCadastralForm, ReferenceCadastraleFormSet
 from conventions.models import Convention
-from conventions.services import (
-    cadastre as service_cadatsre,
-    utils,
-)
+from conventions.services import cadastre as service_cadatsre, utils
 from core.tests import utils_fixtures
-from programmes.forms import ProgrammeCadastralForm, ReferenceCadastraleFormSet
 from users.models import User
 
 
