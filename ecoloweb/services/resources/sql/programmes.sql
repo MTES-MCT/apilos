@@ -23,6 +23,15 @@
 -- zone_abc                             varchar(25),
 -- date_achevement_compile              date,
 -- effet_relatif                        text
+-- date_autorisation_hors_habitat_inclusif                        date,
+-- date_convention_location                                       date,
+-- date_residence_agrement                                        date,
+-- date_residence_argement_gestionnaire_intermediation            date,
+-- departement_residence_agrement                                 varchar(255),
+-- departement_residence_argement_gestionnaire_intermediation     varchar(255),
+-- ville_signature_residence_agrement_gestionnaire_intermediation varchar(255)
+
+
 
 select
     cdg.id,
@@ -42,8 +51,20 @@ select
     pl.code_insee_commune,
     pl.code_insee_departement,
     pl.code_insee_region,
+/*
+Valeurs Ecoloweb
+| 1 | Logements ordinaires |
+| 2 | Logements foyers pour personnes âgées | ex 1854431
+| 3 | Logements foyers pour personnes handicapées |
+| 4 | Logements foyers pour travailleurs migrants |
+| 5 | Logements foyers pour jeunes travailleurs |
+| 6 | Résidences sociales |
+| 7 | Logements foyers destinés à l'habitat inclusif |
+ */
     case
         when nl.code = '1' then 'LOGEMENTSORDINAIRES'
+        when nl.code = '6' then 'RESISDENCESOCIALE'
+        else 'AUTRE'
     end as nature_logement,
     cdg.datehistoriquedebut as date_achevement,
     coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as cree_le,
@@ -55,9 +76,9 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
             cdg.id,
             lag(cdg.id) over (partition by cdg.conventionapl_id order by a.numero nulls first) as parent_id
         from ecolo.ecolo_conventiondonneesgenerales cdg
-            inner join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
+            left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
     ) cp on cp.id = cdg.id
-    inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id and nl.code in ('1')
+    inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id
     inner join (
         select
             distinct on (pl.conventiondonneesgenerales_id, pl.typefinancement_id)
