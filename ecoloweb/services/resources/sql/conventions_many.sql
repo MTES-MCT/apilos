@@ -1,5 +1,4 @@
 select
-    -- Only select id at this step
     cdg.id||':'||pl.financement as id,
     case when
         cp.parent_id is not null and cp.parent_id <> cdg.id then
@@ -17,7 +16,7 @@ select
         when cdg.dateannulation is not null then '8. Annulée en suivi'
         when cdg.datedemandedenonciation is not null then '7. Dénoncée'
         when cdg.dateresiliationprefet is not null then '6. Résiliée'
-        when pec.code = 'INS' and c.noreglementaire is null then '2. Instruction requise'
+        when c.etat_convention = 'INS' and c.noreglementaire is null then '2. Instruction requise'
         else '5. Signée'
     end as statut,
     cdg.datehistoriquefin as date_fin_conventionnement,
@@ -38,16 +37,33 @@ select
     cdg.datepublication as date_envoi_spf,
     cdg.daterefushypotheque as date_refus_spf,
     cdg.motifrefushypotheque as motif_refus_spf
-from ecolo.ecolo_conventiondonneesgenerales cdg
+-- Conventions à leur dernier état connu et actualisé, pour éviter les doublons de convention
+from (
+    select
+        distinct on (cdg.conventionapl_id)
+        c.id,
+        cdg.id as cdg_id,
+        ec.code as etat_convention,
+        c.noreglementaire,
+        c.datedepot,
+        c.datesaisie,
+        c.datemodification
+    from ecolo_conventiondonneesgenerales cdg
+        inner join ecolo_valeurparamstatic ec on ec.id = cdg.etatconvention_id
+        inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
+    order by cdg.conventionapl_id, ec.ordre desc
+    ) c
+    inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = c.cdg_id
+    -- Conventions et leur parent, soient les avenants par ordre d'ascendance
     left join (
         select
             cdg.id,
-            lag(cdg.id) over (partition by cdg.conventionapl_id order by a.numero nulls first) as parent_id
+            lag(cdg.id) over (partition by cdg.conventionapl_id order by a.numero nulls first) as parent_id,
+            a.numero
         from ecolo.ecolo_conventiondonneesgenerales cdg
-            inner join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
+            left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
     ) cp on cp.id = cdg.id
-    inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
-    left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
+    -- Détail des modifications, en cas d'avenant
     left join (
         select ta.avenant_id,
             string_agg(pat.libelle, '\r\n') as detail_avenant
@@ -55,7 +71,6 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
             left join ecolo.ecolo_valeurparamstatic pat on ta.typeavenant_id = pat.id
         group by ta.avenant_id
     ) ta on ta.avenant_id = cdg.avenant_id
-    inner join ecolo.ecolo_valeurparamstatic pec on cdg.etatconvention_id = pec.id
     inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id
     inner join (
         select
@@ -84,5 +99,5 @@ where
         having count(distinct(pl2.commune_id)) > 1 or count(distinct(pl2.bailleurproprietaire_id)) > 1
     )
     and pl.departement = %s
-order by cdg.conventionapl_id, cdg.datehistoriquedebut, a.numero nulls first
+order by cdg.conventionapl_id, cdg.datehistoriquedebut, cp.numero nulls first
 
