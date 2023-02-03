@@ -64,12 +64,10 @@ select
     case when nl.code <> '1' and pl.nature_operation_code = '80' then true else false end as foyer_residence_variante_1,
     case when nl.code <> '1' and pl.nature_operation_code = '5' then true else false end as foyer_residence_variante_2,
     case when nl.code <> '1' and pl.nature_operation_code = '5' then 'Non renseigné (Ecoloweb)' end as foyer_residence_variante_2_travaux,
-    -- foyer_residence_variante_2_nb_tranches
-    -- foyer_residence_variante_2_nb_annees
     case when nl.code <> '1' and pl.nature_operation_code = '1' then true else false end as foyer_residence_variante_3,
-    nl.code = '6' as attribution_pension_de_famille, -- Résidence sociale ?
-    nl.code = '6' as attribution_residence_accueil, -- Résidence sociale ?
-    nl.code = '6' as attribution_residence_sociale_ordinaire -- Résidence sociale ?
+    nl.code = '6' as attribution_pension_de_famille,
+    nl.code = '6' as attribution_residence_accueil,
+    nl.code in ('4', '5', '6') as attribution_residence_sociale_ordinaire
 -- Conventions à leur dernier état connu et actualisé, pour éviter les doublons de convention
 from (
     select
