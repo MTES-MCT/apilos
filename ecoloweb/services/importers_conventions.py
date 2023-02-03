@@ -2,7 +2,6 @@ import logging
 from datetime import datetime
 
 from conventions.models import Convention, PieceJointe, PieceJointeType, AvenantType
-from conventions.services.file import ConventionFileService
 from conventions.tasks import promote_piece_jointe
 from programmes.models import Programme
 from .importers import ModelImporter
@@ -42,7 +41,9 @@ class ConventionImporter(ModelImporter):
 
     def _prepare_data(self, data: dict) -> dict:
         return {
-            "parent": self.import_one(data.pop("parent_id")),
+            "parent": self.import_one(
+                data.pop("parent_id") if data.pop("is_avenant") else None
+            ),
             "lot": self._lot_importer.import_one(data.pop("lot_id")),
             "programme": self.resolve_ecolo_reference(
                 ecolo_id=data.pop("programme_id"), model=Programme
