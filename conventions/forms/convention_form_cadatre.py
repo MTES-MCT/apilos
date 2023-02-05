@@ -8,12 +8,7 @@ from django.forms import BaseFormSet, formset_factory
 
 class ProgrammeCadastralForm(forms.Form):
     """
-    Form to edit cadastral informations (step of convention builder)
-    content :
-    * Buildig premit
-    * Notarial and end dates
-    * Notarial elements (dates, files, image)
-    * Cadastral references
+    Formulaire définissant les informations cadastrales et notariale liées à une convention
     """
 
     uuid = forms.UUIDField(
@@ -183,6 +178,10 @@ class ProgrammeCadastralForm(forms.Form):
 
 
 class ReferenceCadastraleForm(forms.Form):
+    """
+    Formulaire référence cadastrale formant la liste des références cadastrales d'une convention :
+      une ligne du tableau des références cadastrales
+    """
 
     uuid = forms.UUIDField(
         required=False,

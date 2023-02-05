@@ -11,7 +11,7 @@ from django.contrib.auth.models import Group
 
 
 from apilos_settings.forms import BailleurListingUploadForm
-from bailleurs.forms import BailleurForm
+from conventions.forms import BailleurForm
 from bailleurs.models import Bailleur
 from conventions.services import utils
 from conventions.services.utils import ReturnStatus

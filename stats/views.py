@@ -11,7 +11,7 @@ from django.db.models import (
 )
 from django.db.models.functions import Substr, Concat
 from apilos_settings.models import Departement
-from bailleurs.forms import BailleurForm
+from conventions.forms import BailleurForm
 
 from bailleurs.models import Bailleur
 from comments.models import Comment

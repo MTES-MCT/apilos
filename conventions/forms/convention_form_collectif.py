@@ -7,6 +7,10 @@ from django.forms import formset_factory
 
 
 class LotCollectifForm(forms.Form):
+    """
+    Formulaire les informations générales des logements collectifs liées à une convention
+    """
+
     uuid = forms.UUIDField()
     foyer_residence_nb_garage_parking = forms.IntegerField(
         required=False,
@@ -33,6 +37,10 @@ class LotCollectifForm(forms.Form):
 
 
 class LocauxCollectifsForm(forms.Form):
+    """
+    Formulaire définissant un espace collectif d'une convention : une ligne du tableau des logements collectifs
+    """
+
     uuid = forms.UUIDField(required=False)
     type_local = forms.CharField(
         label="",

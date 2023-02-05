@@ -16,7 +16,7 @@ from programmes.models import (
 
 class LotAnnexeForm(forms.Form):
     """
-    Formulaire pour les types annexes d'une convention (tag ou case à cocher)
+    Formulaire pour les types d'annexes d'une convention (tag ou case à cocher)
     """
 
     uuid = forms.UUIDField(required=False)
