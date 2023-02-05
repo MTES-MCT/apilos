@@ -33,7 +33,7 @@ class ConventionAdmin(admin.ModelAdmin):
         "date_fin_conventionnement",
         "financement",
         "fond_propre",
-        "comments",
+        "commentaires",
         "statut",
         "cree_par",
         "cree_le",

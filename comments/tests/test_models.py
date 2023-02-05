@@ -49,7 +49,7 @@ class ConventionModelsTest(TestCase):
         comment.nom_objet = "convention"
         comment.champ_objet = "fond_propre"
         self.assertEqual(comment.object_detail(), "Fonds propres finançant l'opération")
-        comment.champ_objet = "comments"
+        comment.champ_objet = "commentaires"
         self.assertEqual(
             comment.object_detail(), "Commentaires à l'attention de l'instructeur"
         )

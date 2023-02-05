@@ -32,7 +32,7 @@ def new_avenant(request, convention_uuid):
         if result["avenant_type"].nom == "duree":
             target_pathname = "conventions:avenant_financement"
         if result["avenant_type"].nom == "commentaires":
-            target_pathname = "conventions:avenant_comments"
+            target_pathname = "conventions:avenant_commentaires"
         if target_pathname:
             return HttpResponseRedirect(
                 reverse(target_pathname, args=[result["convention"].uuid])
