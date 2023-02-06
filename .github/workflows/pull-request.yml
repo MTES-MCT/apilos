@@ -33,7 +33,8 @@ jobs:
         with:
           python-version: '3.10'
       - name: Install dependencies
-        run:
+        run: |
+          pip install --no-binary django-dramatiq django-dramatiq==0.11.2
           pip install -r requirements.txt -r dev-requirements.txt
       - name: Execute test with coverage
         run: |

@@ -16,6 +16,13 @@
   flex-wrap: wrap;
 }
 
+.apilos--flex-row-left-center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+}
+
 .apilos-d-inline {
   display: inline;
 }
@@ -231,13 +238,6 @@ textarea.fr-input:disabled, textarea.fr-input[disabled] {
 }
 .apilos-avenant_type:not(:last-child):after {
   content: ", ";
-}
-.apilos-long-name {
-  display: inline-block;
-  max-width: calc(100% - 100px);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  vertical-align: middle;
 }
 
 .block--row-strech {
