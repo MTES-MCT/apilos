@@ -10,6 +10,10 @@ from programmes.models import FinancementEDD, ActiveNatureLogement, TypeHabitat
 
 
 class ProgrammeSelectionFromDBForm(forms.Form):
+    """
+    Formulaire de sélection d'un couple programme/lot à conventionner connu en base de données
+    """
+
     def __init__(self, *args, lots=None, **kwargs) -> None:
         self.declared_fields["lot"].choices = lots
         super().__init__(*args, **kwargs)
@@ -96,6 +100,10 @@ class CreateConventionMinForm(forms.Form):
 
 
 class ProgrammeSelectionFromZeroForm(CreateConventionMinForm):
+    """
+    Formulaire de création d'un programme/lot/convention à partir de zéro
+    """
+
     numero_galion = forms.CharField(
         label="N° de décision de financement",
         required=False,
@@ -128,6 +136,11 @@ class ProgrammeSelectionFromZeroForm(CreateConventionMinForm):
 
 
 class ConventionForAvenantForm(CreateConventionMinForm):
+    """
+    Formulaire de création d'un programme/lot/convention pour un avenant sur une convention
+      non-connue d'APiLos
+    """
+
     statut = forms.CharField(
         required=False,
     )

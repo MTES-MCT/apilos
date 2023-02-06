@@ -8,7 +8,7 @@ from django.forms import BaseFormSet, formset_factory
 
 class ProgrammeCadastralForm(forms.Form):
     """
-    Formulaire définissant les informations cadastrales et notariale liées à une convention
+    Formulaire définissant les informations cadastrales et notariales générales liées à une convention
     """
 
     uuid = forms.UUIDField(

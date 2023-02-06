@@ -1,5 +1,5 @@
 """
-Étape EDD du formulaire par étape de la convention
+Étape EDD (État descriptif des divisions) du formulaire par étape de la convention
 """
 
 from django import forms
@@ -13,6 +13,9 @@ from programmes.models import (
 
 
 class ProgrammeEDDForm(forms.Form):
+    """
+    Formulaire définissant les informations générales de l'EDD liées à une convention
+    """
 
     uuid = forms.UUIDField(
         required=False,
@@ -103,6 +106,12 @@ class LogementEDDForm(forms.Form):
 
 
 class BaseLogementEDDFormSet(BaseFormSet):
+    """
+    Liste des formulaires définissant les logements de l'EDD liés à une convention:
+      tableau des logement dans l'EDD simplifié
+    """
+
+    # Ces attributs sont définis avant la validation du formulaire
     programme_id = None
     optional_errors = []
     ignore_optional_errors = False
@@ -114,6 +123,10 @@ class BaseLogementEDDFormSet(BaseFormSet):
         self.manage_edd_consistency()
 
     def manage_edd_consistency(self):
+        """
+        Validation: l'EDD simplifié doit comporter tous les logement de tous les types de financement du programme
+          il est possible de passr outre cette validation (cf. ignore_optional_errors)
+        """
         self.optional_errors = []
         if len(self.forms) == 0 or self.ignore_optional_errors:
             return

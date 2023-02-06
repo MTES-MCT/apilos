@@ -6,12 +6,6 @@ from django import forms
 
 
 class ConventionFoyerVariantesForm(forms.Form):
-    """
-    Validations:
-    - Au moins 1 variante doit-être sélectionnée
-    - La description des travaux est obligatoire si la variante 2 est sélectionnée
-    """
-
     uuid = forms.UUIDField(
         required=False,
     )
@@ -51,6 +45,12 @@ class ConventionFoyerVariantesForm(forms.Form):
     )
 
     def clean(self):
+        """
+        Validations:
+          - Au moins 1 variante doit-être sélectionnée
+          - La description des travaux est obligatoire si la variante 2 est sélectionnée
+        """
+
         cleaned_data = super().clean()
 
         if (

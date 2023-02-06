@@ -1,5 +1,6 @@
 """
-Étape Annexes du formulaire par étape de la convention
+Étape Logements du formulaire par étape de la convention,les formulaires ont différents
+selon le type de convention :
     - Type HLM, SEM, Type I & 2
     - Foyer Résidence
 """
@@ -18,6 +19,9 @@ from programmes.models import (
 
 
 class LotLgtsOptionForm(forms.Form):
+    """
+    Options liées à la déclaration des logements des conventions HLM, SEM, Type I & 2
+    """
 
     uuid = forms.UUIDField(
         required=False,
@@ -56,7 +60,14 @@ class LotLgtsOptionForm(forms.Form):
 
 
 class LotFoyerResidenceLgtsDetailsForm(forms.Form):
+    """
+    Options liées à la déclaration des logements des conventions de type Foyer & Résidence
+    """
+
+    # floor_surface_habitable_totale (somme des surface habitables des logements déclarés)
+    # est assigné au formuliaire avant sa validation.
     floor_surface_habitable_totale: float
+
     uuid = forms.UUIDField(
         required=False,
         label="Logement du programme",
@@ -74,6 +85,10 @@ class LotFoyerResidenceLgtsDetailsForm(forms.Form):
     )
 
     def clean_surface_habitable_totale(self):
+        """
+        Vérifie que la surface habitable totale du batiment est supérieur à la somme des
+        surfaces des logements
+        """
         surface_habitable_totale = self.cleaned_data.get("surface_habitable_totale", 0)
         if surface_habitable_totale < self.floor_surface_habitable_totale:
             raise ValidationError(
@@ -85,6 +100,10 @@ class LotFoyerResidenceLgtsDetailsForm(forms.Form):
 
 
 class LogementForm(forms.Form):
+    """
+    Formulaire Logement formant la liste des logements d'une convention de type HLM, SEM, type I & 2 :
+    une ligne du tableau des logements
+    """
 
     uuid = forms.UUIDField(
         required=False,
@@ -173,12 +192,16 @@ class LogementForm(forms.Form):
     )
 
     def clean_loyer(self):
+        """
+        Vérifcations:
+        - le loyer doit-être le produit de la surface utile, du loyer par mètre carré et
+          du coefficient (tolérance de 1 €)
+        """
         surface_utile = self.cleaned_data.get("surface_utile", 0)
         loyer_par_metre_carre = self.cleaned_data.get("loyer_par_metre_carre", 0)
         coeficient = self.cleaned_data.get("coeficient", 0)
         loyer = self.cleaned_data.get("loyer", 0)
 
-        # check that lot_id exist in DB
         if (
             abs(
                 round_half_up(loyer, 2)
@@ -197,6 +220,12 @@ class LogementForm(forms.Form):
 
 
 class BaseLogementFormSet(BaseFormSet):
+    """
+    Ensemble des formulaires 'Logement' formant la liste des logements d'une convention de type HLM, SEM, type I & 2
+    """
+
+    # les champs suivants sont utilisés pour la validation des données
+    # ils sont initialisés avant la validation
     programme_id = None
     lot_id = None
     nb_logements = None
@@ -210,39 +239,42 @@ class BaseLogementFormSet(BaseFormSet):
         self.manage_coefficient_propre()
 
     def manage_non_empty_validation(self):
+        """
+        Validation: la liste des logements ne peut pas être vide
+        """
         if len(self.forms) == 0:
             error = ValidationError("La liste des logements ne peut pas être vide")
             self._non_form_errors.append(error)
 
     def manage_designation_validation(self):
+        """
+        Validation: les designations de logement doivent être uniques par convention
+        """
         designations = {}
         error_on_designation = False
         for form in self.forms:
-            #            if self.can_delete() and self._should_delete_form(form):
-            #                continue
             designation = form.cleaned_data.get("designation")
             if designation:
                 if designation in designations:
                     error_on_designation = True
                     form.add_error(
                         "designation",
-                        "Les designations de logement doivent être distinct "
-                        + "lorsqu'ils sont définis",
+                        "Les designations de logement doivent être uniques",
                     )
                     if "designation" not in designations[designation].errors:
                         designations[designation].add_error(
                             "designation",
-                            "Les designations de logement doivent être distinct lorsqu'ils sont "
-                            + "définis",
+                            "Les designations de logement doivent être uniques",
                         )
                 designations[designation] = form
         if error_on_designation:
-            error = ValidationError(
-                "Les designations de logement doivent être distinct lorsqu'ils sont définis !!!"
-            )
+            error = ValidationError("Les designations de logement doivent être uniques")
             self._non_form_errors.append(error)
 
     def manage_same_loyer_par_metre_carre(self):
+        """
+        Validation: le loyer par mètre carré doit être le même pour tous les logements du lot
+        """
         lpmc = None
         error = None
         for form in self.forms:
@@ -263,6 +295,10 @@ class BaseLogementFormSet(BaseFormSet):
                 )
 
     def manage_edd_consistency(self):
+        """
+        Validation: les logements déclarés dans l'EDD simplifié pour le financement de la
+          convention doivent être déclarés dans la convention
+        """
         lgts_edd = LogementEDD.objects.filter(programme_id=self.programme_id)
         lot = Lot.objects.get(id=self.lot_id)
 
@@ -292,6 +328,10 @@ class BaseLogementFormSet(BaseFormSet):
                     )
 
     def manage_nb_logement_consistency(self):
+        """
+        Validation: le nombre de logements déclarés pour cette convention à l'étape Opération
+          doit correspondre au nombre de logements de la liste à l'étape Logements
+        """
         if self.nb_logements is None:
             lot = Lot.objects.get(id=self.lot_id)
             nb_logements = lot.nb_logements
@@ -305,6 +345,10 @@ class BaseLogementFormSet(BaseFormSet):
             self._non_form_errors.append(error)
 
     def manage_coefficient_propre(self):
+        """
+        Validation: La somme des loyers après application des coefficients ne peut excéder
+          la somme des loyers sans application des coefficients (tolérence de 1 € par logement)
+        """
         lot = Lot.objects.get(id=self.lot_id)
         loyer_with_coef = 0
         loyer_without_coef = 0
@@ -334,6 +378,10 @@ LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, ext
 
 
 class FoyerResidenceLogementForm(forms.Form):
+    """
+    Formulaire Logement formant la liste des logements d'une convention de type Foyer & Résidence :
+      une ligne du tableau des logements
+    """
 
     uuid = forms.UUIDField(
         required=False,
@@ -378,6 +426,13 @@ class FoyerResidenceLogementForm(forms.Form):
 
 
 class BaseFoyerResidenceLogementFormSet(BaseFormSet):
+    """
+    Ensemble des formulaires 'Logement' formant la liste des logements d'une convention
+      de type Foyer & Résidence
+    """
+
+    # les champs suivants sont utilisés pour la validation des données
+    # ils sont initialisés avant la validation
     nb_logements = None
     lot_id = None
 
@@ -386,6 +441,10 @@ class BaseFoyerResidenceLogementFormSet(BaseFormSet):
         self.manage_nb_logement_consistency()
 
     def manage_nb_logement_consistency(self):
+        """
+        Validation: le nombre de logements déclarés pour cette convention à l'étape Opération
+          doit correspondre au nombre de logements de la liste à l'étape Logements
+        """
         if self.nb_logements is None:
             lot = Lot.objects.get(id=self.lot_id)
             nb_logements = lot.nb_logements
@@ -399,6 +458,9 @@ class BaseFoyerResidenceLogementFormSet(BaseFormSet):
             self._non_form_errors.append(error)
 
     def loan_should_be_consistent(self):
+        """
+        Validation: les loyers doivent-être identiques pour les logements de typologie identique
+        """
         loan_by_type = {}
         loan_errors = {}
         for form in self.forms:

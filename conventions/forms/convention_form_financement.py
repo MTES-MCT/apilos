@@ -17,7 +17,12 @@ from conventions.models import Preteur
 
 
 class ConventionFinancementForm(forms.Form):
+    """
+    Formulaire définissant les informations de financement de la convention
+    """
 
+    # ces attributs sont initialisés avant la validation du formulaire
+    # ils sont utilisés pour valider la date de fin de conventionnement
     prets = []
     convention = None
 
@@ -64,6 +69,11 @@ class ConventionFinancementForm(forms.Form):
                 self._other_end_date_validation(annee_fin_conventionnement)
 
     def _pls_end_date_validation(self, annee_fin_conventionnement):
+        """
+        Validation: date de fin de conventionnement pour un PLS
+          entre 15 et 40 ans après la date de début de conventionnement (date courante)
+          et finissant au 30 juin
+        """
         today = datetime.date.today()
 
         min_years = today.year + 15
@@ -89,6 +99,11 @@ class ConventionFinancementForm(forms.Form):
             )
 
     def _sans_travaux_end_date_validation(self, annee_fin_conventionnement):
+        """
+        Validation: date de fin de conventionnement pour un programme sans travaux
+          minimum 9 ans après la date de début de conventionnement (date courante)
+          et finissant au 30 juin
+        """
         today = datetime.date.today()
 
         min_years = today.year + 9
@@ -104,6 +119,13 @@ class ConventionFinancementForm(forms.Form):
             )
 
     def _other_end_date_validation(self, annee_fin_conventionnement):
+        """
+        Validation: date de fin de conventionnement pour un programme avec travaux
+          minimum 9 ans après la date de début de conventionnement (date courante)
+          minimum après la fin du dernier prêt CDC
+          pour les convention de type HLM, SEM, type 1 & 2 : finissant au 30 juin
+          pour les convention de type Foyer & Résidence : finissant au 31 décembre
+        """
         end_conv = None
         cdc_pret = None
         for pret in self.prets:
@@ -138,6 +160,9 @@ class ConventionFinancementForm(forms.Form):
 
 
 class PretForm(forms.Form):
+    """
+    Formulaire pour un prêt : une ligne dans le tableau des prêts
+    """
 
     uuid = forms.UUIDField(
         required=False,
@@ -179,6 +204,11 @@ class PretForm(forms.Form):
     )
 
     def clean(self):
+        """
+        Validations:
+          - si le prêteur est CDCF ou CDCL, alors le numéro, la date d'octroi et la durée sont obligatoires
+          - si le prêteur est autre, alors le champ autre est obligatoire
+        """
         cleaned_data = super().clean()
         preteur = cleaned_data.get("preteur")
 
@@ -208,13 +238,20 @@ class PretForm(forms.Form):
 
 
 class BasePretFormSet(BaseFormSet):
+    """
+    Liste de formulaire Pret : tableau des prêts
+    """
 
+    # attrubut assigné avant la validation
     convention = None
 
     def clean(self):
         self.manage_cdc_validation()
 
     def manage_cdc_validation(self):
+        """
+        Validation : Hors convention PLS et Sans Travaux, au moins un prêt CDCF ou CDCL doit-être déclaré
+        """
         if (
             self.convention is not None
             and self.convention.financement != Financement.PLS
