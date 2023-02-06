@@ -99,7 +99,7 @@ class Bailleur(IngestableModel):
         related_name="bailleurs",
     )
     nom = models.CharField(max_length=255)
-    siret = models.CharField(max_length=14, unique=True)
+    siret = models.CharField(max_length=255, unique=True)
     siren = models.CharField(max_length=9, null=True)
     capital_social = models.FloatField(null=True, blank=True)
     adresse = models.CharField(max_length=255, null=True)

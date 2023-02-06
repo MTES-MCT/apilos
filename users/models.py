@@ -122,11 +122,9 @@ class User(AbstractUser):
 
     def is_bailleur(self, bailleur_id=None):
         if self.is_cerbere_user():
-            return (
-                "currently" in self.siap_habilitation
-                and self.siap_habilitation["currently"]
-                == GroupProfile.SIAP_MO_PERS_MORALE
-            )
+            return "currently" in self.siap_habilitation and self.siap_habilitation[
+                "currently"
+            ] in [GroupProfile.SIAP_MO_PERS_MORALE, GroupProfile.SIAP_MO_PERS_PHYS]
         if bailleur_id is not None:
             return self.roles.filter(bailleur_id=bailleur_id)
         return self._is_role(TypeRole.BAILLEUR) or self.is_superuser

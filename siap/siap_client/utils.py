@@ -53,11 +53,14 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
         nom = bailleur_from_siap["raisonSociale"]
 
     adresse = code_postal = ville = ""
-    # Adresse
     if "codePostal" in bailleur_from_siap:
         code_postal = bailleur_from_siap["codePostal"]
+
     if "ville" in bailleur_from_siap:
         ville = bailleur_from_siap["ville"]
+    elif "adresseLigne6" in bailleur_from_siap:
+        ville = bailleur_from_siap["adresseLigne6"]
+
     if "adresseLigne" in bailleur_from_siap:
         adresse = bailleur_from_siap["adresseLigne"]
 
