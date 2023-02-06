@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 from django.conf import settings
 from django.forms import model_to_dict
 from django.http import HttpRequest
+from bailleurs.models import NatureBailleur
 from siap.siap_client.utils import get_or_create_bailleur, get_or_create_administration
 from siap.siap_client.client import SIAPClient
 from users.models import Role, GroupProfile
@@ -155,11 +156,19 @@ def _find_or_create_entity(
             user=request.user,
             group=Group.objects.get(name__iexact="administrateur"),
         )
-    if (
-        from_habilitation["groupe"]["profil"]["code"]
-        == GroupProfile.SIAP_MO_PERS_MORALE
-    ):
-        bailleur = get_or_create_bailleur(from_habilitation["entiteMorale"])
+
+    if from_habilitation["groupe"]["profil"]["code"] in [
+        GroupProfile.SIAP_MO_PERS_MORALE,
+        GroupProfile.SIAP_MO_PERS_PHYS,
+    ]:
+        bailleur_details = from_habilitation["entiteMorale"]
+        if (
+            from_habilitation["groupe"]["profil"]["code"]
+            == GroupProfile.SIAP_MO_PERS_PHYS
+        ):
+            bailleur_details["siret"] = request.user.email
+            bailleur_details["codeFamilleMO"] = NatureBailleur.PRIVES
+        bailleur = get_or_create_bailleur(bailleur_details)
         request.session["bailleur"] = model_to_dict(
             bailleur,
             fields=[
