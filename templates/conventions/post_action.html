@@ -123,6 +123,33 @@
                         </form>
                     </div>
                 </div>
+                <hr>
+                <div class="fr-col-12">
+                    <div class="fr-mb-2w">
+                        <p class="fr-alert__title">
+                            Date de signature
+                        </p>
+                        <div class="fr-col-12 fr-my-2w block--row-strech">
+                            <div class="block--row-strech-1 fr-mr-6w">
+
+                                <p>
+                                    Votre convention a été signée le {{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-'}}.
+                                </p>
+                                <p>
+                                    Ce n'est pas la bonne date ? Vous pouvez la mettre à jour.
+                                </p>
+                            </div>
+                            <details>
+                                <summary>
+                                    <div class="fr-btn fr-my-1w fr-btn--secondary fr-my-1w">Mettre à jour la date de signature</div>
+                                </summary>
+                                {% include "conventions/actions/update_date_signature.html" %}
+                                <div>Mettre à jour la date</div>
+
+                            </details>
+                        </div>
+                    </div>
+                </div>
             {% endif %}
             {% if convention|display_back_to_instruction:request %}
                 <hr>

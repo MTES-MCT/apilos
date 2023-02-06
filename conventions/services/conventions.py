@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.db.models.functions import Substr
 from django.http.request import HttpRequest
 
-from conventions.forms import ConventionResiliationForm, UploadForm
+from conventions.forms import ConventionResiliationForm, UploadForm, ConventionDateForm
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
 from conventions.services.file import ConventionFileService
@@ -162,9 +162,17 @@ def convention_post_action(request, convention_uuid):
             convention.save()
             # SUCCESS
             result_status = utils.ReturnStatus.SUCCESS
+        updatedate_form = ConventionDateForm(request.POST)
+        if updatedate_form.is_valid():
+            convention.televersement_convention_signee_le = (
+                updatedate_form.cleaned_data["televersement_convention_signee_le"]
+            )
+            convention.save()
+            result_status = utils.ReturnStatus.SUCCESS
 
     else:
         resiliation_form = ConventionResiliationForm()
+        updatedate_form = ConventionDateForm()
 
     upform = UploadForm()
     avenant_list_service = ConventionListService(
