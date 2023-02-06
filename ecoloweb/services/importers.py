@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 from django.db import connections
 from django.db.backends.utils import CursorWrapper
 from django.db.models import Model
-from django.template import Template, Context
+from django.template import Template, Context, Engine
 from django.utils import timezone
 
 from ecoloweb.models import EcoloReference
@@ -43,9 +43,14 @@ class ModelImporter(ABC):
         self.debug = debug
         self.departement = departement
         self.import_date = import_date
+        self.engine = Engine(
+            dirs=[os.path.join(os.path.dirname(__file__), "resources/sql")]
+        )
+
         self._query_one = self._get_query_one()
         self._query_many = self._get_query_many()
         self._o2o_importers: Dict[ModelImporter] | None = None
+
         if with_dependencies and len(self._get_o2o_dependencies()) > 0:
             self._o2o_importers = {}
             for key, config in self._get_o2o_dependencies().items():
@@ -139,12 +144,14 @@ class ModelImporter(ABC):
             ]
         )
 
-    def _get_sql_from_template(self, path: str, context: dict = {}):
+    def _get_sql_from_template(self, path: str, context=None):
         """
         Generate SQL query from a Django template file, using the input `context` dictionary
         """
-        return Template(self._get_file_content(path)).render(
-            Context(context | {"timezone": timezone.get_current_timezone()})
+        if context is None:
+            context = {}
+        return self.engine.render_to_string(
+            path, Context(context | {"timezone": timezone.get_current_timezone()})
         )
 
     def _find_ecolo_ref(self, id) -> EcoloReference | None:
