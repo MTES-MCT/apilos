@@ -16,9 +16,8 @@
 
 select
     md5(pl.conventiondonneesgenerales_id||'-'||ff.code) as id, -- Les lots d'un programme sont tous les logements partageant le même financement
-    case
-        when cp.parent_id is not null then md5(cp.parent_id||'-'||ff.code)
-    end as parent_id,
+    lag(cdg.id) over (partition by cdg.conventionapl_id order by cdg.datehistoriquedebut)||'-'||ff.code as parent_id,
+    a.id is not null as is_avenant,
     pl.conventiondonneesgenerales_id as programme_id,
     coalesce(pl.financementdate, now()) as cree_le,
     coalesce(pl.financementdate, now()) as mis_a_jour_le,
@@ -35,15 +34,15 @@ select
     case
         when pl.estderogationloyer and coalesce(pl.logementsnombreindtotal, 0) > 0 then pl.montantplafondloyerindinitial
         when pl.estderogationloyer and coalesce(pl.logementsnombrecoltotal, 0) > 0 then pl.montantplafondloyercolinitial
-    end as loyer_derogatoire
+    end as loyer_derogatoire,
+    round(pl.surfacehabitable:: numeric, 2) as surface_habitable_totale,
+    case when nl.code <> '1' then a4.nombre end as foyer_residence_nb_garage_parking
 from ecolo.ecolo_programmelogement pl
-    left join (
-        select
-            cdg.id,
-            lag(cdg.id) over (partition by cdg.conventionapl_id order by a.numero nulls first) as parent_id
-        from ecolo.ecolo_conventiondonneesgenerales cdg
-            left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
-    ) cp on cp.id = pl.conventiondonneesgenerales_id
+    -- Parent
+    inner join ecolo.ecolo_conventiondonneesgenerales cdg on pl.conventiondonneesgenerales_id = cdg.id
+    left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
+    -- Nature logement
+    inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id
     -- Financement
     inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
     inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
@@ -54,5 +53,7 @@ from ecolo.ecolo_programmelogement pl
     left join ecolo.ecolo_valeurparamstatic ap2 on a2.typeannexe_id = ap2.id and ap2.subtype = 'TAN' and ap2.code = '5' -- Terrasse
     left join ecolo.ecolo_annexe a3 on a3.programmelogement_id = pl.id
     left join ecolo.ecolo_valeurparamstatic ap3 on a3.typeannexe_id = ap3.id and ap3.subtype = 'TAN' and ap3.code = '8' -- Box
+    left join ecolo.ecolo_annexe a4 on a4.programmelogement_id = pl.id
+    left join ecolo.ecolo_valeurparamstatic ap4 on a4.typeannexe_id = ap4.id and ap4.subtype = 'TAN' and ap3.code = '2' -- Parking
 where
     pl.conventiondonneesgenerales_id = %s

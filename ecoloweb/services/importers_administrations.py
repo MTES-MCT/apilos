@@ -1,4 +1,4 @@
-from typing import List
+from datetime import datetime
 
 from .importers import ModelImporter
 
@@ -6,10 +6,11 @@ from instructeurs.models import Administration
 
 
 class AdministrationImporter(ModelImporter):
+
     model = Administration
 
-    def _get_query_one(self) -> str:
-        return self._get_file_content('resources/sql/administrations.sql')
+    def __init__(self, departement: str, import_date: datetime, debug=False):
+        super().__init__(departement, import_date, debug)
 
-    def _get_identity_keys(self) -> List[str]:
-        return ['code']
+        self._identity_keys = ["code"]
+        self._query_one = self._get_file_content("resources/sql/administrations.sql")
