@@ -1,7 +1,7 @@
 from django.db import transaction
 from django.http import HttpRequest
 
-from bailleurs.forms import ConventionBailleurForm, ChangeBailleurForm
+from conventions.forms import ConventionBailleurForm, ChangeBailleurForm
 from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils

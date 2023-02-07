@@ -45,7 +45,7 @@
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:avenant_financement' %}
                     {% endif %}
                     {% if 'commentaires' in avenant_list %}
-                        {% include "conventions/recapitulatif/comments.html" with target_url='conventions:avenant_comments' %}
+                        {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' %}
                     {% endif %}
                     <hr class="fr-mt-3w">
 
@@ -64,7 +64,7 @@
                             <hr>
                         {% endif %}
                         {% if 'commentaires' not in avenant_list %}
-                            {% include "conventions/avenant/comments_update_start.html" with avenant_uuid=convention.uuid %}
+                            {% include "conventions/avenant/commentaires_update_start.html" with avenant_uuid=convention.uuid %}
                             <hr>
                         {% endif %}
                     {% endif %}
@@ -88,7 +88,7 @@
                     {% include "conventions/recapitulatif/foyer_attribution.html" with target_url='conventions:foyer_attribution' %}
                     {% include "conventions/recapitulatif/residence_attribution.html" with target_url='conventions:residence_attribution' %}
                     {% include "conventions/recapitulatif/variantes.html" with target_url='conventions:variantes' %}
-                    {% include "conventions/recapitulatif/comments.html" with target_url='conventions:comments' %}
+                    {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:commentaires' %}
                 {% endif %}
 
                 <turbo-frame id="convention_actions" data-turbo="true">

@@ -1,3 +1,7 @@
+"""
+Étape Programme du formulaire par étape de la convention
+"""
+
 from django import forms
 
 from programmes.models import (

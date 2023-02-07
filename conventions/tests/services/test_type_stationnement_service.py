@@ -2,12 +2,12 @@ from django.http import HttpRequest
 from django.test import TestCase
 
 from conventions.models import Convention
+from conventions.forms import TypeStationnementFormSet
 from conventions.services import (
     type_stationnement as service_type_stationnement,
     utils,
 )
 from core.tests import utils_fixtures
-from programmes.forms import TypeStationnementFormSet
 from programmes.models import TypeStationnement
 from users.models import User
 

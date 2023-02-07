@@ -3,7 +3,7 @@ import datetime
 from django.http import HttpRequest
 from django.test import TestCase
 
-from bailleurs.forms import ConventionBailleurForm
+from conventions.forms import ConventionBailleurForm
 from conventions.models import Convention
 from conventions.services import (
     bailleurs,

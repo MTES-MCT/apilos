@@ -1,7 +1,16 @@
+"""
+Étape Attribution du formulaire par étape de la convention (type Foyer et Résidence)
+"""
+
 from django import forms
 
 
 class ConventionAttributionForm(forms.Form):
+    """
+    Formulaire définissant les modalités d'attribution d'une convention commune
+      aux foyers et résidences
+    """
+
     uuid = forms.UUIDField(
         required=False,
     )
@@ -43,6 +52,10 @@ class ConventionAttributionForm(forms.Form):
 
 
 class ConventionResidenceAttributionForm(ConventionAttributionForm):
+    """
+    Formulaire définissant les modalités d'attribution d'une convention spécifique
+      aux résidences
+    """
 
     attribution_residence_sociale_ordinaire = forms.BooleanField(
         required=False,
@@ -68,6 +81,10 @@ class ConventionResidenceAttributionForm(ConventionAttributionForm):
 
 
 class ConventionFoyerAttributionForm(ConventionAttributionForm):
+    """
+    Formulaire définissant les modalités d'attribution d'une convention spécifique
+      aux foyers
+    """
 
     attribution_type = forms.ChoiceField(
         choices=[
@@ -147,6 +164,19 @@ class ConventionFoyerAttributionForm(ConventionAttributionForm):
     )
 
     def clean(self):
+        """
+        Selon le type d'attributions, certains champs sont requis:
+        - pour le type d'attribution "inclusif", les champs suivants sont requis:
+            - attribution_inclusif_conditions_specifiques
+            - attribution_inclusif_conditions_admission
+            - attribution_inclusif_modalites_attribution
+            - attribution_inclusif_partenariats
+            - attribution_inclusif_activites
+        - pour le type d'attribution "handicapees":
+            - si attribution_handicapes_autre est coché, attribution_handicapes_autre_detail est requis
+        - pour le type d'attribution "agees":
+            - si attribution_agees_autre est coché, attribution_agees_autre_detail est requis
+        """
         cleaned_data = super().clean()
         attribution_type = cleaned_data.get("attribution_type")
 

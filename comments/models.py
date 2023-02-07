@@ -113,7 +113,7 @@ class Comment(models.Model):
             "lot__annexe_balcons": "Option balcons dans les annexes",
             "lot__annexe_loggias": "Option loggias et vérandas dans les annexes",
             "lot__annexe_terrasses": "Option terrasses dans les annexes",
-            "convention__comments": "Commentaires à l'attention de l'instructeur",
+            "convention__commentaires": "Commentaires à l'attention de l'instructeur",
             "lot__edd_volumetrique": "EDD volumétrique",
             "lot__edd_classique": "EDD classique",
             "programme__mention_publication_edd_volumetrique": (

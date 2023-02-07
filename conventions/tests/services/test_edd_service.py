@@ -2,7 +2,7 @@ from django.http import HttpRequest
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-from conventions.forms import UploadForm
+from conventions.forms import UploadForm, ProgrammeEDDForm, LogementEDDFormSet
 
 from conventions.models import Convention
 from conventions.services import (
@@ -10,7 +10,6 @@ from conventions.services import (
     utils,
 )
 from core.tests import utils_fixtures
-from programmes.forms import ProgrammeEDDForm, LogementEDDFormSet
 from programmes.models import Financement
 from users.models import User
 

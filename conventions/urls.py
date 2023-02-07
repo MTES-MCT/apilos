@@ -115,14 +115,14 @@ urlpatterns = [
         name="variantes",
     ),
     path(
-        "comments/<convention_uuid>",
-        views.ConventionCommentsView.as_view(),
-        name="comments",
+        "commentaires/<convention_uuid>",
+        views.ConventionCommentairesView.as_view(),
+        name="commentaires",
     ),
     path(
-        "avenant_comments/<convention_uuid>",
+        "avenant_commentaires/<convention_uuid>",
         views.AvenantCommentsView.as_view(),
-        name="avenant_comments",
+        name="avenant_commentaires",
     ),
     path("recapitulatif/<convention_uuid>", views.recapitulatif, name="recapitulatif"),
     path(
