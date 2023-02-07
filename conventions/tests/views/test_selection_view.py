@@ -85,25 +85,22 @@ class ConventionSelectionFromZeroViewTests(AbstractCreateViewTestCase, TestCase)
         )
 
 
-class ConventionPostFromZeroAvenantViewTests(AbstractCreateViewTestCase, TestCase):
+class ConventionPostForAvenantViewTests(AbstractCreateViewTestCase, TestCase):
     def setUp(self):
         super().setUp()
 
         bailleur = Bailleur.objects.get(siret="987654321")
         administration = Administration.objects.get(code="75000")
-        self.target_path = reverse("conventions:selection_from_zero")
-        self.next_target_starts_with = "/conventions/bailleur"
-        self.target_template = "conventions/selection_from_zero.html"
+        self.target_path = reverse("conventions:search_for_avenant_result")
+        self.next_target_starts_with = "/conventions/recapitulatif"
+        self.target_template = "conventions/avenant/search_for_avenant_result.html"
         self.error_payload = {
             "bailleur": str(bailleur.uuid),
             "administration": str(administration.uuid),
             "nom": "Programme de test",
-            "nb_logements": "10",
             "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
-            "type_habitat": TypeHabitat.MIXTE,
             "financement": Financement.PLUS,
-            "code_postal": "20000",
-            "ville": "",
+            "code_postal": "",
             "statut": ConventionStatut.SIGNEE,
             "numero": "2022-75-Rivoli-02-213",
         }
@@ -111,21 +108,21 @@ class ConventionPostFromZeroAvenantViewTests(AbstractCreateViewTestCase, TestCas
             "bailleur": str(bailleur.uuid),
             "administration": str(administration.uuid),
             "nom": "Programme de test",
-            "nb_logements": "10",
             "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
-            "type_habitat": TypeHabitat.MIXTE,
             "financement": Financement.PLUS,
             "code_postal": "20000",
-            "ville": "Bisouville",
             "statut": ConventionStatut.SIGNEE,
             "numero": "2022-75-Rivoli-02-213",
+            "numero_avenant": "1",
         }
-        self.msg_prefix = "[ConventionPostFromZeroAvenantViewTests] "
+        self.msg_prefix = "[ConventionPostForAvenantViewTests] "
 
     def _test_data_integrity(self):
         self.assertTrue(
             Convention.objects.get(
-                programme__nom="Programme de test", financement=Financement.PLUS
+                programme__nom="Programme de test",
+                financement=Financement.PLUS,
+                parent_id__isnull=True,
             ),
             msg=f"{self.msg_prefix}",
         )

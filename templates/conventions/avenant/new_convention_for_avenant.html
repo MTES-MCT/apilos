@@ -1,3 +1,25 @@
+{% load static %}
+
+{% block javascript_extras %}
+    <script src="{% static "virtual-select/dist/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+        document.addEventListener('DOMContentLoaded', function () {
+            VirtualSelect.init({
+                ele: '#id_bailleur',
+                multiple: false,
+                hideClearButton: true,
+                search: true,
+                searchPlaceholderText: "Rechercher votre bailleur..."
+            });
+            console.log("Ici");
+        });
+    </script>
+{% endblock %}
+
+{% block css_extras %}
+    <link rel="stylesheet" href="{% static 'virtual-select/dist/virtual-select.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/searchselect.css' %}">
+{% endblock %}
 <div class="fr-col-12">
     <h2>Informations générales</h2>
     <p>Nous n'avons pas trouvé de convention correspondant à votre recherche.</p>
@@ -6,7 +28,9 @@
 <form method="post" action="" enctype="multipart/form-data" >
     {% csrf_token %}
     <div class="fr-col-12">
-        {% include "common/form/input_select.html" with form_input=form.bailleur without_empty_option=form.bailleur.field.choices|length_is:1 mandatory_input=True %}
+        <div class="select-search fr-mb-3w">
+            {% include "common/form/input_select.html" with form_input=form.bailleur without_empty_option=form.bailleur.field.choices|length_is:1 mandatory_input=True %}
+        </div>
         {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 mandatory_input=True %}
         {% include "common/form/input_text.html" with form_input=form.nom  mandatory_input=True %}
         <div class="fr-grid-row fr-grid-row--gutters">
@@ -14,33 +38,37 @@
                 {% include "common/form/input_text.html" with form_input=form.code_postal mandatory_input=True %}
             </div>
             <div class="fr-col-12 fr-col-lg-6 fr-mb-2w">
-                {% include "common/form/input_text.html" with form_input=form.ville mandatory_input=True %}
+                {% include "common/form/input_select.html" with form_input=form.financement mandatory_input=True %}
             </div>
-        </div>
-        <div class="fr-col-12 fr-mb-2w">
-            {% include "common/form/input_select.html" with form_input=form.financement mandatory_input=True %}
-        </div>
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-lg-6 fr-mb-2w">
-                {% include "common/form/input_number.html" with form_input=form.nb_logements mandatory_input=True %}
-            </div>
-            <div class="fr-col-12 fr-col-lg-6 fr-mb-2w">
-                {% include "common/form/input_select.html" with form_input=form.type_habitat mandatory_input=True %}
+            <div class="fr-col-12 fr-mb-2w">
+                <label class="fr-label " for="id_nature_logement">
+                    Nature des logements
+                    {% include "common/form/required_field.html" with form_input=form.nature_logement %}
+                    <span class="fr-hint-text">Si la convention ne porte pas sur une résidence ou un foyer, vous devez selectionner «Logements ordinaires»</span>
+                </label>
+                <div class="fr-mt-1w block--row-strech" id="id_nature_logement_div">
+                    <select class="fr-select " id="id_nature_logement" name="nature_logement">
+                        <option value="LOGEMENTSORDINAIRES" selected>
+                            Logements ordinaires
+                        </option>
+                        <option value="AUTRE">
+                            Autres logements foyers
+                        </option>
+                    </select>
+                </div>
             </div>
             <div class="fr-col-12 fr-mb-2w">
                 {% include "common/form/input_text.html" with form_input=form.numero mandatory_input=True %}
             </div>
         </div>
-        <input id="id_statut" name="statut" value="SIGNEE" hidden>
-        <select name="nature_logement" id="id_nature_logement" hidden>
-            <option value="LOGEMENTSORDINAIRES" selected>Logements ordinaires</option>
-            <option value="AUTRE">Autres logements foyers</option>
-        </select>
-        <div class="fr-upload-group fr-mt-5w">
-            <label class="fr-label" for="file-upload">Téléverser la convention (en PDF) {% include "common/form/required_field_star.html" %}
+        <div class="fr-upload-group fr-my-5w">
+            <label class="fr-label" for="file-upload">Téléverser la convention (en PDF)
                 <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
             </label>
-            <input class="fr-upload" type="file" id="file-upload" name="nom_fichier_signe" required>
+            <input class="fr-upload" type="file" id="file-upload" name="nom_fichier_signe">
+        </div>
+        <div class="fr-col-12 fr-mb-2w">
+            {% include "common/form/input_text.html" with form_input=form.numero_avenant mandatory_input=True %}
         </div>
     </div>
     <div class="form-button-footer fr-py-5w">
