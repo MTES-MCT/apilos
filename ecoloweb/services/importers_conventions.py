@@ -7,6 +7,7 @@ from programmes.models import Programme
 from .importers import ModelImporter
 from .importers_programmes import LotImporter
 from .query_iterator import QueryResultIterator
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +74,7 @@ class ConventionImporter(ModelImporter):
             )
 
             # Automatically promote the latest piece jointe with type CONVENTION as official convention document
-            if piece_jointe is not None:
+            if piece_jointe is not None and not settings.TESTING:
                 promote_piece_jointe.send(piece_jointe.id)
 
 
