@@ -1,3 +1,7 @@
+"""
+Étape Commentaires du formulaire par étape de la convention
+"""
+
 from django import forms
 
 
@@ -29,7 +33,7 @@ class ConventionCommentForm(forms.Form):
         required=False,
     )
 
-    comments = forms.CharField(
+    commentaires = forms.CharField(
         required=False,
         label="Ajoutez vos commentaires à l'attention de l'instructeur",
         max_length=5000,
@@ -38,7 +42,7 @@ class ConventionCommentForm(forms.Form):
         },
     )
 
-    comments_files = forms.CharField(
+    commentaires_files = forms.CharField(
         required=False,
         help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )

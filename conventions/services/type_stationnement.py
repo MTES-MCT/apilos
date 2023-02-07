@@ -2,12 +2,9 @@ from typing import List
 
 from django.http import HttpRequest
 
-from conventions.forms import UploadForm
+from conventions.forms import UploadForm, TypeStationnementFormSet
 from conventions.models import Convention
 from conventions.services.conventions import ConventionService
-from programmes.forms import (
-    TypeStationnementFormSet,
-)
 from programmes.models import TypeStationnement
 
 from . import upload_objects, utils

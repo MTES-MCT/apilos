@@ -108,10 +108,10 @@ foyer_variante_step = ConventionFormStep(
     classname="ConventionFoyerVariantesView",
 )
 
-comments_step = ConventionFormStep(
-    pathname="conventions:comments",
+commentaires_step = ConventionFormStep(
+    pathname="conventions:commentaires",
     label="Commentaires",
-    classname="ConventionCommentsView",
+    classname="ConventionCommentairesView",
 )
 
 avenant_bailleur_step = ConventionFormStep(
@@ -150,8 +150,8 @@ avenant_financement_step = ConventionFormStep(
     classname="AvenantFinancementView",
 )
 
-avenant_comments_step = ConventionFormStep(
-    pathname="conventions:avenant_comments",
+avenant_commentaires_step = ConventionFormStep(
+    pathname="conventions:avenant_commentaires",
     label="Commentaires",
     classname="AvenantCommentsView",
 )
@@ -166,7 +166,7 @@ hlm_sem_type_steps = [
     logements_step,
     annexes_step,
     stationnements_step,
-    comments_step,
+    commentaires_step,
 ]
 
 foyer_steps = [
@@ -179,7 +179,7 @@ foyer_steps = [
     collectif_step,
     foyer_attribution_step,
     foyer_variante_step,
-    comments_step,
+    commentaires_step,
 ]
 
 residence_steps = [
@@ -192,7 +192,7 @@ residence_steps = [
     collectif_step,
     residence_attribution_step,
     foyer_variante_step,
-    comments_step,
+    commentaires_step,
 ]
 
 
@@ -223,7 +223,7 @@ class ConventionFormSteps:
                         avenant_financement_step,
                         avenant_foyer_residence_logements_step,
                         avenant_collectif_step,
-                        avenant_comments_step,
+                        avenant_commentaires_step,
                     ]
                 else:
                     self.steps = [
@@ -231,7 +231,7 @@ class ConventionFormSteps:
                         avenant_financement_step,
                         avenant_logements_step,
                         avenant_annexes_step,
-                        avenant_comments_step,
+                        avenant_commentaires_step,
                     ]
             else:
                 if active_classname == "AvenantBailleurView":
@@ -252,7 +252,7 @@ class ConventionFormSteps:
                 if active_classname == "AvenantFinancementView":
                     self.steps = [avenant_financement_step]
                 if active_classname == "AvenantCommentsView":
-                    self.steps = [avenant_comments_step]
+                    self.steps = [avenant_commentaires_step]
         elif convention.programme.is_foyer():
             self.steps = foyer_steps
         elif convention.programme.is_residence():

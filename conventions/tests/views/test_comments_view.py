@@ -6,30 +6,30 @@ from conventions.tests.views.abstract import AbstractEditViewTestCase
 from users.models import User
 
 
-class ConventionCommentsViewTests(AbstractEditViewTestCase, TestCase):
+class ConventionCommentairesViewTests(AbstractEditViewTestCase, TestCase):
     def setUp(self):
         super().setUp()
         self.target_path = reverse(
-            "conventions:comments", args=[self.convention_75.uuid]
+            "conventions:commentaires", args=[self.convention_75.uuid]
         )
         self.next_target_path = reverse(
             "conventions:recapitulatif", args=[self.convention_75.uuid]
         )
-        self.target_template = "conventions/comments.html"
-        self.error_payload = {"comments": "O" * 5001}
-        self.success_payload = {"comments": "This is a comment"}
-        self.msg_prefix = "[ConventionCommentsViewTests] "
+        self.target_template = "conventions/commentaires.html"
+        self.error_payload = {"commentaires": "O" * 5001}
+        self.success_payload = {"commentaires": "This is a comment"}
+        self.msg_prefix = "[ConventionCommentairesViewTests] "
 
     def _test_data_integrity(self):
         self.convention_75.refresh_from_db()
         self.assertEqual(
-            self.convention_75.comments,
+            self.convention_75.commentaires,
             '{"files": [], "text": "This is a comment"}',
             msg=f"{self.msg_prefix}",
         )
 
 
-class AvenantCommentsViewTests(ConventionCommentsViewTests):
+class AvenantCommentsViewTests(ConventionCommentairesViewTests):
     def setUp(self):
         super().setUp()
         # force convention_75 to be an avenant
@@ -37,7 +37,7 @@ class AvenantCommentsViewTests(ConventionCommentsViewTests):
         convention = Convention.objects.get(numero="0001")
         self.convention_75 = convention.clone(user, convention_origin=convention)
         self.target_path = reverse(
-            "conventions:avenant_comments", args=[self.convention_75.uuid]
+            "conventions:avenant_commentaires", args=[self.convention_75.uuid]
         )
         self.next_target_path = reverse(
             "conventions:recapitulatif", args=[self.convention_75.uuid]

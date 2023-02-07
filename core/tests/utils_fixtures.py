@@ -317,7 +317,7 @@ def create_convention(lot: Lot, numero: str = "0001"):
         lot=lot,
         programme=lot.programme,
         financement=lot.financement,
-        comments=_create_upload_files(),
+        commentaires=_create_upload_files(),
     )
 
 

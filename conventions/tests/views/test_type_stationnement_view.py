@@ -11,7 +11,7 @@ class ConventionTypeStationnementViewTests(AbstractEditViewTestCase, TestCase):
             "conventions:stationnements", args=[self.convention_75.uuid]
         )
         self.next_target_path = reverse(
-            "conventions:comments", args=[self.convention_75.uuid]
+            "conventions:commentaires", args=[self.convention_75.uuid]
         )
         self.target_template = "conventions/stationnements.html"
         self.error_payload = {

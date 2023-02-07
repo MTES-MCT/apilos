@@ -188,18 +188,3 @@ class ConventionBailleurForm(forms.Form):
                     + " délibération du signataire du gestionnaire de la convention"
                     + " doit être renseignée",
                 )
-
-
-class BailleurForm(ConventionBailleurForm):
-    def __init__(self, *args, bailleurs=None, **kwargs) -> None:
-        if bailleurs:
-            self.declared_fields["bailleur"].choices = bailleurs
-        super().__init__(*args, **kwargs)
-
-    bailleur = forms.ChoiceField(
-        required=False,
-        label="Bailleur parent",
-        help_text="Les utilisateurs du bailleur parent à les mêmes droits sur ce bailleur",
-        initial=None,
-        choices=[],
-    )
