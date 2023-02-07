@@ -102,7 +102,7 @@ from ecolo.ecolo_conventionapl c
                 select
                     cb.bailleur_id,
                     string_agg(vps.libelle||' '||cb.prenom||' '||cb.nom, ', ') as noms_contacts
-                from ecolo_contactbailleur cb
+                from ecolo.ecolo_contactbailleur cb
                     inner join ecolo.ecolo_valeurparamstatic vps on cb.civilite_id = vps.id
                 group by cb.bailleur_id
             ) cb on cb.bailleur_id = b.id

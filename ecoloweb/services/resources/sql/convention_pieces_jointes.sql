@@ -15,7 +15,7 @@ select
     pj.date::timestamp at time zone 'Europe/Paris' as cree_le
 from ecolo.ecolo_piecejointe pj
     inner join ecolo.ecolo_conventionapl c on pj.conventionapl_id = c.id
-    inner join ecolo_valeurparamstatic vps on pj.typepiecejointe_id = vps.id and vps.subtype = 'TPJ'
+    inner join ecolo.ecolo_valeurparamstatic vps on pj.typepiecejointe_id = vps.id and vps.subtype = 'TPJ'
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.id = cdg.conventionapl_id
     inner join ecolo.ecolo_programmelogement pl on cdg.id = pl.conventiondonneesgenerales_id
     inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
