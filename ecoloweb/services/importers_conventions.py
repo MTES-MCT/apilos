@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from conventions.models import Convention, PieceJointe, PieceJointeType, AvenantType
-from conventions.services.file import ConventionFileService
+from conventions.tasks import promote_piece_jointe
 from programmes.models import Programme
 from .importers import ModelImporter
 from .importers_programmes import LotImporter
@@ -41,7 +41,9 @@ class ConventionImporter(ModelImporter):
 
     def _prepare_data(self, data: dict) -> dict:
         return {
-            "parent": self.import_one(data.pop("parent_id")),
+            "parent": self.import_one(
+                data.pop("parent_id") if data.pop("is_avenant") else None
+            ),
             "lot": self._lot_importer.import_one(data.pop("lot_id")),
             "programme": self.resolve_ecolo_reference(
                 ecolo_id=data.pop("programme_id"), model=Programme
@@ -72,12 +74,7 @@ class ConventionImporter(ModelImporter):
 
             # Automatically promote the latest piece jointe with type CONVENTION as official convention document
             if piece_jointe is not None:
-                try:
-                    ConventionFileService.promote_piece_jointe(piece_jointe)
-                except FileNotFoundError as e:
-                    logger.info(
-                        f"Unable to automatically upload PDF for convention {model.uuid}: {e}"
-                    )
+                promote_piece_jointe.send(piece_jointe.id)
 
 
 class PieceJointeImporter(ModelImporter):
