@@ -1,22 +1,22 @@
--- Requête pour alimenter la table conventions_convention
+-- Requête pour alimenter la table bailleurs_bailleur:
 
--- signataire_nom               varchar(255),
 -- signataire_fonction          varchar(255),
 -- signataire_date_deliberation date,
 -- operation_exceptionnelle     text,
 -- capital_social               double precision
 select
     b.id,
-    case when
-        b.raisonsociale = 'ANAH' then 'Personne(s) physique(s)'
+    case
+        when b.raisonsociale = 'ANAH' then 'Personne(s) physique(s)'
         else b.raisonsociale
     end as nom,
-    case when
-        b.raisonsociale = 'ANAH' then 'XXXXXXXXXXXXXX'
-        else b.codesiret
+    case
+        when b.raisonsociale = 'ANAH' then 'XXXXXXXXXXXXXX'
+        when b.codepersonne is not null or snb.code = '611' then b.codepersonne
+        when b.codesiret is not null then b.codesiret
+        else b.codesiren
     end as codesiret,
-    b.codesiren,
-    b.codepersonne,
+    cb.noms_contacts as signataire_nom,
     case
         when b.raisonsociale = 'ANAH' or snb.code = '611' then 'Bailleurs privés'
         when snb.code = '210' then 'SEM'
@@ -66,5 +66,12 @@ from ecolo.ecolo_bailleur b
     left join ecolo.ecolo_adressebailleur ab on b.adresse_id = ab.id
     left join ecolo.ecolo_departement ed on b.departement_id = ed.id
     inner join ecolo.ecolo_sousnaturebailleur snb on b.sousnaturebailleur_id = snb.id
+    left join (
+        select
+            cb.bailleur_id, string_agg(vps.libelle||' '||cb.prenom||' '||cb.nom, ', ') as noms_contacts
+        from ecolo.ecolo_contactbailleur cb
+            inner join ecolo.ecolo_valeurparamstatic vps on cb.civilite_id = vps.id
+        group by cb.bailleur_id
+    ) cb on cb.bailleur_id = b.id
 where
     b.id = %s
