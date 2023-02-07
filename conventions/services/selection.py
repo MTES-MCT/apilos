@@ -20,6 +20,7 @@ from programmes.models import (
 from conventions.forms import (
     ProgrammeSelectionFromDBForm,
     ProgrammeSelectionFromZeroForm,
+    ConventionForAvenantForm,
 )
 
 
@@ -30,6 +31,7 @@ def _get_choices_from_object(object_list):
 class ConventionSelectionService:
     request: HttpRequest
     convention: Convention
+    avenant: Convention
     form: ProgrammeSelectionFromDBForm | ProgrammeSelectionFromZeroForm
     lots: QuerySet[Lot] | None = None
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
@@ -53,6 +55,12 @@ class ConventionSelectionService:
 
     def get_from_zero(self):
         self.form = ProgrammeSelectionFromZeroForm(
+            bailleurs=self._get_bailleur_choices(),
+            administrations=self._get_administration_choices(),
+        )
+
+    def get_for_avenant(self):
+        self.form = ConventionForAvenantForm(
             bailleurs=self._get_bailleur_choices(),
             administrations=self._get_administration_choices(),
         )
@@ -96,22 +104,71 @@ class ConventionSelectionService:
                 programme_id=lot.programme_id,
                 financement=lot.financement,
                 cree_par=self.request.user,
-                statut=(
-                    ConventionStatut.SIGNEE
-                    if self.form.cleaned_data["statut"]
-                    else ConventionStatut.PROJET
-                ),
-                numero=(
-                    self.form.cleaned_data["numero"]
-                    if self.form.cleaned_data["numero"]
-                    else ""
-                ),
             )
             self.convention.save()
             file = self.request.FILES.get("nom_fichier_signe", False)
             if file:
                 ConventionFileService.upload_convention_file(self.convention, file)
             self.return_status = utils.ReturnStatus.SUCCESS
+
+    def post_for_avenant(self):
+        self.form = ConventionForAvenantForm(
+            self.request.POST,
+            self.request.FILES,
+            bailleurs=self._get_bailleur_choices(),
+            administrations=self._get_administration_choices(),
+        )
+        if self.form.is_valid():
+            bailleur = Bailleur.objects.get(uuid=self.form.cleaned_data["bailleur"])
+            administration = Administration.objects.get(
+                uuid=self.form.cleaned_data["administration"]
+            )
+            programme = Programme.objects.create(
+                nom=self.form.cleaned_data["nom"],
+                code_postal=self.form.cleaned_data["code_postal"],
+                bailleur=bailleur,
+                administration=administration,
+                nature_logement=self.form.cleaned_data["nature_logement"],
+                type_operation=(
+                    TypeOperation.SANSTRAVAUX
+                    if self.form.cleaned_data["financement"]
+                    == Financement.SANS_FINANCEMENT
+                    else TypeOperation.NEUF
+                ),
+            )
+            programme.save()
+            lot = Lot.objects.create(
+                financement=self.form.cleaned_data["financement"],
+                programme=programme,
+            )
+            lot.save()
+            self.convention = Convention.objects.create(
+                lot=lot,
+                programme_id=lot.programme_id,
+                financement=lot.financement,
+                cree_par=self.request.user,
+                statut=(ConventionStatut.SIGNEE),
+                numero=(self.form.cleaned_data["numero"]),
+            )
+            self.convention.save()
+            conventionfile = self.request.FILES.get("nom_fichier_signe", False)
+            if conventionfile:
+                ConventionFileService.upload_convention_file(
+                    self.convention, conventionfile
+                )
+            self.return_status = utils.ReturnStatus.SUCCESS
+
+            parent_convention = (
+                Convention.objects.prefetch_related("programme")
+                .prefetch_related("lot")
+                .prefetch_related("avenants")
+                .get(uuid=self.convention.uuid)
+            )
+            self.avenant = parent_convention.clone(
+                self.request.user, convention_origin=parent_convention
+            )
+            self.avenant.numero = self.form.cleaned_data["numero_avenant"]
+            self.avenant.save()
 
     def get_from_db(self):
         self.lots = (
