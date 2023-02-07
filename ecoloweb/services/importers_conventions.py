@@ -43,8 +43,12 @@ class ConventionImporter(ModelImporter):
     def _prepare_data(self, data: dict) -> dict:
         is_avenant = data.pop("is_avenant")
         parent_id = data.pop("parent_id")
+        rank = data.pop("rank")
         return {
             "parent": self.import_one(parent_id if is_avenant else None),
+            # For avenant conventions, "numero" is the rank of the iterations within the convention history,
+            # minus 1 as first row is the root convention ranked 1
+            "numero": rank - 1 if is_avenant else data.pop("numero"),
             "lot": self._lot_importer.import_one(data.pop("lot_id")),
             "programme": self.resolve_ecolo_reference(
                 ecolo_id=data.pop("programme_id"), model=Programme

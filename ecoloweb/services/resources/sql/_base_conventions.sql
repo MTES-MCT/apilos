@@ -1,6 +1,7 @@
 select
     cdg.id||':'||pl.financement as id,
-    lag(cdg.id) over (partition by cdg.conventionapl_id, pl.financement order by cdg.datehistoriquedebut)||':'||pl.financement as parent_id,
+    first_value(cdg.id) over (partition by cdg.conventionapl_id, pl.financement order by cdg.datehistoriquedebut)||':'||pl.financement as parent_id,
+    rank() over (partition by cdg.conventionapl_id, pl.financement order by cdg.datehistoriquedebut) as rank,
     a.id is not null as is_avenant,
     -- Les avenants sont initialisés avec un type 'commentaires' dont la valeur est un résumé des altérations
     -- déclarées depuis Ecoloweb
