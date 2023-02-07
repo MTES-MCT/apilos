@@ -21,9 +21,9 @@ class Command(BaseCommand):
             help="Départements on which restrict import of conventions",
         )
         parser.add_argument(
-            "--no-transaction",
+            "--use-transaction",
             action="store_true",
-            help="Perform queries under transaction",
+            help="Run queries inside a transaction",
         )
         parser.add_argument(
             "--debug", action="store_true", help="Print debug statement"
@@ -36,17 +36,17 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if "ecoloweb" not in connections:
-            print("No 'ecoloweb' connection defined, migration aborted!")
+            print("No 'ecoloweb' connection defined, import aborted!")
             sys.exit(1)
 
         departement: str = options["departement"][0]
         import_date: datetime = datetime.datetime.today()
-        no_transaction = options["no_transaction"]
+        use_transaction = options["use_transaction"]
 
         debug = options["debug"]
         no_progress = options["no_progress"]
 
-        transaction.set_autocommit(no_transaction)
+        transaction.set_autocommit(not use_transaction)
         progress = None
 
         try:
@@ -66,7 +66,7 @@ class Command(BaseCommand):
                     )
 
         except Exception as e:
-            if not no_transaction:
+            if use_transaction:
                 print("Rollabcking all changes due to runtime error")
                 transaction.rollback()
 
@@ -74,5 +74,5 @@ class Command(BaseCommand):
         else:
             if progress is not None:
                 progress.close()
-            if not no_transaction:
+            if use_transaction:
                 transaction.commit()

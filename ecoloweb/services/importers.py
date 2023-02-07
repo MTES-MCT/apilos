@@ -2,15 +2,14 @@ import os
 import re
 import time
 from datetime import datetime
-from inspect import isclass
 
-from typing import List, Dict, Type
+from typing import Dict, Type
 from abc import ABC, abstractmethod
 
 from django.db import connections
 from django.db.backends.utils import CursorWrapper
 from django.db.models import Model
-from django.template import Template, Context, Engine
+from django.template import Context, Engine
 from django.utils import timezone
 
 from ecoloweb.models import EcoloReference
@@ -35,7 +34,6 @@ class ModelImporter(ABC):
         self,
         departement: str,
         import_date: datetime,
-        with_dependencies=True,
         debug=False,
     ):
         self._nb_imported_models: int = 0
@@ -47,63 +45,10 @@ class ModelImporter(ABC):
             dirs=[os.path.join(os.path.dirname(__file__), "resources/sql")]
         )
 
-        self._query_one = self._get_query_one()
-        self._query_many = self._get_query_many()
-        self._o2o_importers: Dict[ModelImporter] | None = None
+        self._query_one = None
+        self._query_many = None
 
-        if with_dependencies and len(self._get_o2o_dependencies()) > 0:
-            self._o2o_importers = {}
-            for key, config in self._get_o2o_dependencies().items():
-                if type(config) == tuple:
-                    (target, recursively) = config
-                else:
-                    target = config
-                    recursively = True
-                self._register_o2o_dependency(key, target, recursively)
-
-        self._o2m_importers: List[ModelImporter] | None = None
-        if with_dependencies and len(self._get_o2m_dependencies()) > 0:
-            self._o2m_importers = []
-            for config in self._get_o2m_dependencies():
-                if type(config) == tuple:
-                    (target, recursively) = config
-                else:
-                    target = config
-                    recursively = True
-
-                self._register_o2m_dependency(target, recursively)
-
-    def _register_o2o_dependency(
-        self, key: str, target: Type[object] | object, recursively: bool = False
-    ):
-        if isclass(target):
-            if not issubclass(target, ModelImporter):
-                raise ValueError(f"{target} must be a subclass of ModelImporter")
-            self._o2o_importers[key] = target(
-                departement=self.departement,
-                import_date=self.import_date,
-                with_dependencies=recursively,
-                debug=self.debug,
-            )
-
-        elif isinstance(target, ModelImporter):
-            self._o2o_importers[key] = target
-        else:
-            raise ValueError(f"{target} must be an instance of ModelImporter")
-
-    def _register_o2m_dependency(self, target: Type[object], recursively: bool = False):
-        if not isclass(target):
-            raise ValueError(f"{target} must be a subclass of ModelImporter")
-        if not issubclass(target, ModelImporter):
-            raise ValueError(f"{target} must be a subclass of ModelImporter")
-        self._o2m_importers.append(
-            target(
-                departement=self.departement,
-                import_date=self.import_date,
-                with_dependencies=recursively,
-                debug=self.debug,
-            )
-        )
+        self._identity_keys = []
 
     @property
     @abstractmethod
@@ -114,18 +59,6 @@ class ModelImporter(ABC):
         Abstract property that must be overriden in children classes.
         """
         raise NotImplementedError
-
-    def _get_query_one(self) -> str | None:
-        """
-        Base method to declare SQL query for single model.
-        """
-        return None
-
-    def _get_query_many(self) -> str | None:
-        """
-        Method to declare SQL query for many to one models.
-        """
-        return None
 
     def _debug(self, message: str):
         if self.debug:
@@ -154,17 +87,29 @@ class ModelImporter(ABC):
             path, Context(context | {"timezone": timezone.get_current_timezone()})
         )
 
-    def _find_ecolo_ref(self, id) -> EcoloReference | None:
+    def find_ecolo_reference(
+        self, ecolo_id: str, model: Type[Model] | None = None
+    ) -> EcoloReference | None:
         """
         Based on input data, attempts to extract an existing EcoloReference, using the `ecolo_id_field` defined as
         attribute and, if found, resolve it. See EcoloReference class model definition to understand how it works.
 
         The external reference in the Ecoloweb database is a string, as sometimes there is no other choice than to use a
-        hashed value (like `md5` for Programe Lots for example).
+        hashed value (like `md5` for Programme Lots for example).
         """
         return EcoloReference.objects.filter(
-            apilos_model=EcoloReference.get_class_model_name(self.model), ecolo_id=id
+            apilos_model=EcoloReference.get_class_model_name(
+                model if model is not None else self.model
+            ),
+            ecolo_id=ecolo_id,
         ).first()
+
+    def resolve_ecolo_reference(
+        self, ecolo_id: str, model: Type[Model] | None = None
+    ) -> Model | None:
+        ecolo_reference = self.find_ecolo_reference(ecolo_id, model)
+
+        return ecolo_reference.resolve() if ecolo_reference is not None else None
 
     def _register_ecolo_reference(
         self, instance: Model, ecolo_id: int, id: int | None = None
@@ -180,71 +125,15 @@ class ModelImporter(ABC):
             importe_le=self.import_date,
         )
 
-    def _get_identity_keys(self) -> List[str]:
-        """
-        Return the list of field keys used to identify a model already existing in the APiLos database.
-
-        This is basically the list of keys that will be used to perform a <model>.objects.get_or_create() call.
-
-        In case there is no
-        """
-        return []
-
     def _get_matching_fields(self, data: dict) -> dict:
-        if len(self._get_identity_keys()) > 0:
+        if len(self._identity_keys) > 0:
             return {
                 key: data[key]
-                for key in self._get_identity_keys()
+                for key in self._identity_keys
                 if data[key] is not None and data[key] != ""
             }
 
         return {}
-
-    def _get_o2o_dependencies(self) -> Dict:
-        """
-        Return a dict of key -> tuple(class<ModelImportHandler>, bool)
-
-        This will replace fields with key `key` by their related model via the call of the related
-        ModelImportHandler.import_one()
-        """
-        return {}
-
-    def _fetch_related_o2o_objects(self, data) -> dict:
-        """
-        Hydrate the `data` dict by replacing external references (i.e. foreign keys) with the target
-        object by using the _dependencies_ importers defined using `_get_dependencies`
-        """
-        if self._o2o_importers is not None:
-            for key, importer in self._o2o_importers.items():
-                # Try to resolve key suffixed by `_id` first, else try key as it is
-                pk = None
-                if f"{key}_id" in data:
-                    pk = data.pop(f"{key}_id")
-                elif key in data:
-                    pk = data.pop(key)
-
-                if pk is not None:
-                    data[key] = importer.import_one(pk)
-
-        return data
-
-    def _get_o2m_dependencies(self) -> List:
-        """
-        Return a list of ModelImporter subclasses
-
-        This will replace fields with key `key` by their related model via the call of the related
-        ModelImporter.import_many(pk)
-        """
-        return []
-
-    def _fetch_related_o2m_objects(self, pk):
-        """ """
-        if self._o2m_importers is not None:
-            for importer in self._o2m_importers:
-                self._debug(
-                    f"Fetching o2m objects {importer.__class__.__name__} from {self.__class__.__name__} with FK {pk}"
-                )
-                importer.import_many(importer.build_query_parameters(pk))
 
     def _prepare_data(self, data: dict) -> dict:
         """
@@ -269,7 +158,7 @@ class ModelImporter(ABC):
 
         # Look for a potentially already imported model
         ecolo_ref = (
-            self._find_ecolo_ref(data[self.ecolo_id_field])
+            self.find_ecolo_reference(data[self.ecolo_id_field])
             if self.ecolo_id_field in data
             else None
         )
@@ -281,8 +170,8 @@ class ModelImporter(ABC):
             # Extract from data the id of the associated object in the Ecoloweb DB (in string format as it can be a
             # hash function like for programme lots)
             ecolo_id = data.pop(self.ecolo_id_field)
+
             # Compute data dictionary
-            data = self._fetch_related_o2o_objects(data)
             data = self._prepare_data(data)
 
             # Extract dict values from declared identity keys as filters dict
@@ -309,19 +198,11 @@ class ModelImporter(ABC):
             instance = ecolo_ref.resolve()
             created = False
 
-        if instance:
-            # Import one-to-many models
-            self._fetch_related_o2m_objects(ecolo_id)
-
-            # Perform post process operations
-            self._on_processed(instance, created)
+        self._on_processed(ecolo_id, instance, created)
 
         return instance
 
-    def toto(self, data):
-        pass
-
-    def _on_processed(self, model: Model | None, created: bool):
+    def _on_processed(self, ecolo_id: str | None, model: Model | None, created: bool):
         pass
 
     def build_query_parameters(self, pk) -> list:
@@ -334,13 +215,11 @@ class ModelImporter(ABC):
         if pk is None:
             return None
 
-        ecolo_ref = self._find_ecolo_ref(pk)
+        ecolo_ref = self.find_ecolo_reference(pk)
 
-        # If an EcoloReference has been found
+        # If an EcoloReference has been found ...
         if ecolo_ref is not None:
-            # Fetch related one to many objects (in case previous import had crashed)
-            self._fetch_related_o2m_objects(ecolo_ref.ecolo_id)
-            # and return linked model
+            # ... return the associated model
             return ecolo_ref.resolve()
 
         # Otherwise perform SQL query and process result
@@ -353,7 +232,7 @@ class ModelImporter(ABC):
         Execute a SQL query returning a single result, as dict
         """
         if self._query_one is None:
-            return None
+            raise NotImplementedError
 
         start = time.time()
         self._debug(
@@ -368,13 +247,18 @@ class ModelImporter(ABC):
 
         return dict(zip(columns, row)) if row else None
 
-    def import_many(self, parameters):
+    def import_many(self, ecolo_id: str | None):
         """
         Public entry point method to fetch a list of models from the Ecoloweb database based on its foreign key
         """
-        if self._query_many is not None:
+        if self._query_many is None:
+            raise NotImplementedError
+
+        if ecolo_id is not None:
             iterator = QueryResultIterator(
-                self._query_many, self._db_connection, parameters
+                self._query_many,
+                self._db_connection,
+                self.build_query_parameters(ecolo_id),
             )
 
             for result in iterator:

@@ -19,23 +19,22 @@ derrière chaque _donnée générale_ liée à une même `ecolo_conventiondonnee
 
 ## Fonctionnement de la commande
 
-La commande se nomme `import_ecoloweb_data` est lancée via Django (i.e. `manage.py`).
+La commande se nomme `ecoloweb_import_departement` est lancée via Django (i.e. `manage.py`).
 
 Un accès en lecture seule à une base de données est nécessaire via la variable d'environnement `ECOLO_DATABASE_URL` qui
 reste optionnelle sur le reste du projet.
 
-L'ensemble des données importées au cours d'un lancement sont enregistrés au
-sein d'une transaction SQL; soit tout est importé, soit rien. Il est cependant possible de ne pas utiliser de
-transaction via l'option `--no-transaction`. En outre, un système de _références_ est mis en place pour éviter
+L'ensemble des requêtes effectuées au cours d'un import n'est _pas_ joué au sein d'une transaction SQL. Il est cependant
+possible de le faire via l'option `--use-transaction`. En outre, un système de _références_ est mis en place pour éviter
 d'importer 2 fois une donnée vers la base APiLos.
 
 Pour lancer l'import des conventions sur un département, il faut ajouter le code INSEE de celui-ci en argument:
 
 ```bash
 # Importer les données des Bouches du Rhône:
-./manage.py import_ecoloweb_data 13
+./manage.py ecoloweb_import_departement 13
 # Importer les données de la Haute Corse
-./manage.py import_ecoloweb_data 2B
+./manage.py ecoloweb_import_departement 2B
 ```
 
 D'autres options, _réellement optionnelles_ celles-ci, sont disponibles:
@@ -50,13 +49,13 @@ va nous falloir suivre [la (très bonne) documentation concernant les "detached 
 Ex: pour lancer l'import des Bouches du Rhône :
 
 ```
-scalingo --app <app> run --detached 'python ./manage.py import_ecoloweb_data 13 --no-progress'
+scalingo --app <app> run --detached 'python ./manage.py ecoloweb_import_departement 13 --no-progress'
 ```
 
 Scaling va alors répondre avec un message comme suit :
 
 ```txt
-Starting one-off 'python ./manage.py import_ecoloweb_data 13 --no-progress' for app '<app>'.
+Starting one-off 'python ./manage.py ecoloweb_import_departement 13 --no-progress' for app '<app>'.
 Run `scalingo --region <region> --app <app> logs --filter one-off-<number>` to get the output
 ```
 
