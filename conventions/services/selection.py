@@ -150,7 +150,6 @@ class ConventionSelectionService:
                 statut=(ConventionStatut.SIGNEE),
                 numero=(self.form.cleaned_data["numero"]),
             )
-            _send_email_staff(self.request, self.convention)
             self.convention.save()
             conventionfile = self.request.FILES.get("nom_fichier_signe", False)
             if conventionfile:
