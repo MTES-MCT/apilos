@@ -1,19 +1,7 @@
 {% load static %}
 
 {% block javascript_extras %}
-    <script src="{% static "virtual-select/dist/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-    <script type="text/javascript" nonce="{{request.csp_nonce}}">
-        document.addEventListener('DOMContentLoaded', function () {
-            VirtualSelect.init({
-                ele: '#id_bailleur',
-                multiple: false,
-                hideClearButton: true,
-                search: true,
-                searchPlaceholderText: "Rechercher votre bailleur..."
-            });
-            console.log("Ici");
-        });
-    </script>
+    {% include "common/form/select_bailleur.html" %}
 {% endblock %}
 
 {% block css_extras %}
@@ -41,21 +29,7 @@
                 {% include "common/form/input_select.html" with form_input=form.financement mandatory_input=True %}
             </div>
             <div class="fr-col-12 fr-mb-2w">
-                <label class="fr-label " for="id_nature_logement">
-                    Nature des logements
-                    {% include "common/form/required_field.html" with form_input=form.nature_logement %}
-                    <span class="fr-hint-text">Si la convention ne porte pas sur une résidence ou un foyer, vous devez selectionner «Logements ordinaires»</span>
-                </label>
-                <div class="fr-mt-1w block--row-strech" id="id_nature_logement_div">
-                    <select class="fr-select " id="id_nature_logement" name="nature_logement">
-                        <option value="LOGEMENTSORDINAIRES" selected>
-                            Logements ordinaires
-                        </option>
-                        <option value="AUTRE">
-                            Autres logements foyers
-                        </option>
-                    </select>
-                </div>
+                {% include 'common/form/input_select.html' with form_input=form.nature_logement %}
             </div>
             <div class="fr-col-12 fr-mb-2w">
                 {% include "common/form/input_text.html" with form_input=form.numero mandatory_input=True %}
