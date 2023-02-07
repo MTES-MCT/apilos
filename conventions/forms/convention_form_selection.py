@@ -1,6 +1,7 @@
 from django import forms
 
 from programmes.models import FinancementEDD, ActiveNatureLogement, TypeHabitat
+from conventions.models import ConventionStatut
 
 
 class ProgrammeSelectionFromDBForm(forms.Form):
@@ -122,6 +123,19 @@ class ProgrammeSelectionFromZeroForm(CreateConventionMinForm):
 
 
 class ConventionForAvenantForm(CreateConventionMinForm):
+    nature_logement = forms.ChoiceField(
+        label="Nature des logements",
+        help_text=(
+            "Si la convention ne porte pas sur une résidence ou un foyer,"
+            + " vous devez selectionner «Logements ordinaires»"
+        ),
+        choices=ActiveNatureLogement.choices,
+        initial=ActiveNatureLogement.LOGEMENTSORDINAIRES,
+        error_messages={
+            "required": "La selection de la nature des logements est obligatoire"
+        },
+    )
+
     statut = forms.CharField(
         required=False,
     )
