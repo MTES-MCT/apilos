@@ -40,21 +40,13 @@ class BailleurImporter(ModelImporter):
 
     def _prepare_data(self, data: dict) -> dict:
         codesiret = data.pop("codesiret")
-        codesiren = data.pop("codesiren")
-        codepersonne = data.pop("codepersonne")
         date_creation = data["cree_le"]
 
         # Clean SIRET code
         if codesiret is not None:
-            data["siret"] = codesiret
-
-        elif (siret := self._resolve_siret(codesiren, date_creation)) is not None:
-            data["siret"] = siret
-
-        elif codesiren is not None:
-            data["siret"] = codesiren
-
-        else:
-            data["siret"] = codepersonne
+            if data["nature_bailleur"] == "Bailleurs privés" or len(codesiret) == 14:
+                data["siret"] = codesiret
+            elif (siret := self._resolve_siret(codesiret, date_creation)) is not None:
+                data["siret"] = siret
 
         return data
