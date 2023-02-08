@@ -2,6 +2,7 @@
 
 from django.db import migrations
 from django.db.models.functions import Substr
+from programmes.models import Programme
 
 # TODO: check if code_insee_departement returned by SIAP is always 2 digits
 # set code_insee_departement and code_insee_region to programmes
@@ -112,11 +113,8 @@ departements_regions = {
 
 
 def set_convention_departement(apps, schema_editor):
-    # We can't import the Person model directly as it may be a newer
-    # version than this migration expects. We use the historical version.
-
     Departement = apps.get_model("apilos_settings", "Departement")
-    Programme = apps.get_model("programmes", "Programme")
+    # Programme = apps.get_model("programmes", "Programme")
 
     for departement in Departement.objects.all():
         Programme.objects.annotate(departement=Substr("code_postal", 1, 2)).filter(

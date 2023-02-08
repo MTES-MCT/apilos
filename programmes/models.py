@@ -418,27 +418,36 @@ def compute_date_achevement_compile(sender, instance, *args, **kwargs):
     instance.date_achevement_compile = (
         instance.date_achevement or instance.date_achevement_previsible
     )
-    if len(instance.code_postal) == 5 and instance.code_insee_departement not in [
-        "2A",
-        "2B",
-    ]:
+    if len(instance.code_postal) == 5:
         code_departement = instance.code_postal[0:2]
-        try:
-            if code_departement == "20":
-                # Cas spécial de la Corse car in n'est pas possible de déterminer le département
-                # à partir du code postal
-                departement = Departement.objects.first(code_postal=code_departement)
-                instance.code_insee_departement = "20"
-            else:
-                departement = Departement.objects.get(code_postal=code_departement)
-                instance.code_insee_departement = departement.code_insee
-            instance.code_insee_region = departement.code_insee_region
-        except Departement.DoesNotExist:
-            logger.error(
-                "Le code postal %s n'existe pas depuis le code postal %s",
-                code_departement,
-                instance.code_postal,
-            )
+        if (
+            instance.code_insee_departement != code_departement
+            and instance.code_insee_departement
+            not in [
+                "2A",
+                "2B",
+            ]
+        ):
+            try:
+                if code_departement == "20":
+                    # Cas spécial de la Corse car in n'est pas possible de déterminer le département
+                    # à partir du code postal
+                    departement = Departement.objects.filter(
+                        code_postal=code_departement
+                    ).first()
+                    if departement:
+                        instance.code_insee_departement = "20"
+                        instance.code_insee_region = departement.code_insee_region
+                else:
+                    departement = Departement.objects.get(code_postal=code_departement)
+                    instance.code_insee_departement = departement.code_insee
+                    instance.code_insee_region = departement.code_insee_region
+            except (Departement.DoesNotExist, AttributeError):
+                logger.error(
+                    "Le code postal %s n'existe pas depuis le code postal %s",
+                    code_departement,
+                    instance.code_postal,
+                )
 
 
 class LogementEDD(models.Model):

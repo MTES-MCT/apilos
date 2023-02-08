@@ -19,12 +19,12 @@ class ConventionBailleurViewTests(AbstractEditViewTestCase, TestCase):
         self.error_payload = {
             "nom": "",
             "adresse": "fake adresse",
-            "code_postal": "00000",
+            "code_postal": "01000",
         }
         self.success_payload = {
             "nom": "fake nom",
             "adresse": "fake adresse",
-            "code_postal": "00000",
+            "code_postal": "01000",
         }
         self.msg_prefix = "[ConventionBailleurViewTests] "
 

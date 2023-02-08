@@ -6,8 +6,6 @@ from django.db import migrations
 
 
 def update_fields_with_images(apps, schema_editor):
-    # We can't import the Person model directly as it may be a newer
-    # version than this migration expects. We use the historical version.
 
     Programme = apps.get_model("programmes", "Programme")
 

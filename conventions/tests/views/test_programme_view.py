@@ -5,6 +5,8 @@ from conventions.tests.views.abstract import AbstractEditViewTestCase
 
 
 class ConventionProgrammeViewTests(AbstractEditViewTestCase, TestCase):
+    fixtures = ["departements.json"]
+
     def setUp(self):
         super().setUp()
         self.target_path = reverse(
@@ -17,7 +19,7 @@ class ConventionProgrammeViewTests(AbstractEditViewTestCase, TestCase):
         self.error_payload = {
             "nom": "Fake Opération",
             "adresse": "",
-            "code_postal": "00000",
+            "code_postal": "01000",
             "ville": "Fake ville",
             "nb_logements": "28",
             "anru": "FALSE",
@@ -30,7 +32,7 @@ class ConventionProgrammeViewTests(AbstractEditViewTestCase, TestCase):
         self.success_payload = {
             "nom": "Fake Opération",
             "adresse": "123 rue du fake",
-            "code_postal": "00000",
+            "code_postal": "01000",
             "ville": "Fake ville",
             "nb_logements": "28",
             "anru": "FALSE",

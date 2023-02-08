@@ -2,7 +2,9 @@ import random
 from datetime import date
 
 from django.test import TestCase
+from bailleurs.models import Bailleur
 from core.tests import utils_assertions, utils_fixtures
+from instructeurs.models import Administration
 
 from programmes.models import (
     LocauxCollectifs,
@@ -261,8 +263,40 @@ class ProgrammeModelsTest(TestCase):
             programme.nature_logement = nature_logement
             self.assertFalse(programme.is_residence())
 
+    def test_code_insee(self):
+        bailleur = Bailleur.objects.all().order_by("uuid").first()
+        administration = Administration.objects.all().order_by("uuid").first()
+        programme_75 = Programme.objects.create(
+            nom="test",
+            code_postal="75001",
+            bailleur=bailleur,
+            administration=administration,
+        )
+        self.assertEqual(programme_75.code_insee_departement, "75")
+        self.assertEqual(programme_75.code_insee_region, "11")
+
+        programme_00 = Programme.objects.create(
+            nom="test",
+            code_postal="00001",
+            bailleur=bailleur,
+            administration=administration,
+        )
+        self.assertIsNone(programme_00.code_insee_departement)
+        self.assertIsNone(programme_00.code_insee_region)
+
+        programme_20 = Programme.objects.create(
+            nom="test",
+            code_postal="20001",
+            bailleur=bailleur,
+            administration=administration,
+        )
+        self.assertEqual(programme_20.code_insee_departement, "20")
+        self.assertEqual(programme_20.code_insee_region, "94")
+
 
 class LotModelsTest(TestCase):
+    fixtures = ["departements.json"]
+
     @classmethod
     def setUpTestData(cls):
         utils_fixtures.create_all()
@@ -284,6 +318,3 @@ class LotModelsTest(TestCase):
     def test_lot_bailleur(self):
         lot = Lot.objects.order_by("uuid").first()
         self.assertEqual(lot.bailleur, lot.programme.bailleur)
-
-    def test_code_insee(self):
-        pass
