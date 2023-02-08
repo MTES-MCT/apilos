@@ -6,6 +6,7 @@ jobs:
       - image: circleci/python:3.10
         environment:
           DATABASE_URL: postgres://root:password@localhost/apilos_test
+          ECOLO_DATABASE_URL: postgres://root:password@localhost/ecolotest
           SECRET_KEY: secret-key
           DEBUG: False
       - image: circleci/postgres:12.2-postgis
@@ -17,6 +18,12 @@ jobs:
       - checkout
       - restore_cache:
           key: deps-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      - run:
+          name: Install AWS CLI
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
           name: Install dependencies
           command: |
@@ -30,6 +37,15 @@ jobs:
       - run:
           name: Wait for Postgres server
           command: dockerize -wait tcp://localhost:5432 -timeout 10s
+      - run:
+          name: Synchronize S3 bucket
+          command: |
+            AWS_ACCESS_KEY_ID=${CI_BUCKET_KEY} AWS_SECRET_ACCESS_KEY=${CI_BUCKET_SECRET} AWS_DEFAULT_REGION=${CI_BUCKET_REGION} aws s3 sync ${CI_BUCKET_URL} ecoloweb/tests/resources/ --endpoint-url=$CI_BUCKET_ENDPOINT_URL
+      - run:
+          command: |
+            sudo apt-get update && sudo apt-get install postgresql
+            PGPASSWORD=password psql -h localhost -U root -d apilos_test -c "create database ecolotest;"
+            PGPASSWORD=password psql -h localhost -U root -d ecolotest -c "create schema ecolo;"
       - run:
           name: Running tests
           command: |

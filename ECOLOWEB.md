@@ -72,3 +72,29 @@ scalingo --app <app> logs --filter one-off-<number> -f
 scalingo --app <app> one-off-stop one-off-<number>
 ```
 
+## Tests unitaires
+
+2 prérequis sont nécessaires pour pouvoir exécuter les tests unitaires:
+1. déclarer un accès à la base de données Ecoloweb via la variable `ECOLOWEB_DB_URL`
+2. ramener depuis le bucket S3 dédié les fichiers SQL de création et d'alimentation de cette base de données
+
+Pour cette seconde étape, il faut au préalable utiliser [la commande `aws`](https://aws.amazon.com/fr/cli/) pour récupérer
+la version la plus à jour:
+
+```bash
+aws s3 sync <S3_BUCKET> ecoloweb/tests/resources/
+```
+
+Ce bucket est structuré de cette façon:
+* un répertoire `sql` contenant toutes les requêtes de création des tables (`ddl` ou _Data Definition Language_) ainsi
+que l'alimentation de celles-ci (`dcl` ou _Data Creation Language_)
+* un autre répertoire `sources` contenant les requêtes qui ont permis l'extraction de certaines données depuis une source
+existante. Ces requête sont utiles pour isoler les requêtes de _DCL_, en conjonction de la fonction d'"Export as SQL inserts"
+des IDEs Jetbrain
+
+Si jamais vous éditez ces fichiers, pensez à bien les synchroniser sur le bucket S3:
+
+```bash
+```bash
+aws s3 sync --delete ecoloweb/tests/resources/ <S3_BUCKET>
+```
