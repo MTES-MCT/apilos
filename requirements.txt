@@ -129,9 +129,9 @@ docxtpl==0.16.5 \
     --hash=sha256:09b94f0cbbcc0384811be1b6a3ccd78950eac12f9bf23956e1309f5f0c879bb1 \
     --hash=sha256:41024bf2b60a9f013eeb08e9ce7e6139d4239468f8b702b1ff8ce5a28aeb7d2a
     # via -r requirements.in
-dramatiq==1.13.0 \
-    --hash=sha256:8ef7509ca62bc45c3f1e3b1a0248e9f774337100e32ba1502cfcca15df79ad61 \
-    --hash=sha256:b4fe0ca6b55b06bebf82cd14c88044fb267505a57d4aa47378194efa0cef5f47
+dramatiq==1.14.0 \
+    --hash=sha256:469ce543ff7d6f270910f5dac3ab4bbdabbd421e25b74f32d19acbc0a58ec66b \
+    --hash=sha256:fbf6caff95ccac3ac92e2e12506925c3069e65cd1bf27fa90990498def713882
     # via
     #   -r requirements.in
     #   django-dramatiq
