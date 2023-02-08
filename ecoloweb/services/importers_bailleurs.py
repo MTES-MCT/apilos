@@ -4,6 +4,8 @@ from . import SiretResolver
 from .importers import ModelImporter
 from bailleurs.models import Bailleur
 
+from django.conf import settings
+
 
 class BailleurImporter(ModelImporter):
     model = Bailleur
@@ -17,7 +19,7 @@ class BailleurImporter(ModelImporter):
         super().__init__(departement, import_date, debug)
 
         try:
-            self._siret_resolver = SiretResolver()
+            self._siret_resolver = SiretResolver(settings.INSEE_API_KEY, settings.INSEE_API_SECRET)
         except BaseException:
             self._siret_resolver = None
 
