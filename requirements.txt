@@ -43,9 +43,9 @@ charset-normalizer==2.1.1 \
     --hash=sha256:5a3d016c7c547f69d6f81fb0db9449ce888b418b5b9952cc5e6e66843e9dd845 \
     --hash=sha256:83e9a75d1911279afd89352c68b45348559d1fc0506b054b346651b5e7fee29f
     # via requests
-convertapi==1.5.0 \
-    --hash=sha256:da4bf41a2f08c7e7935b98fd6f20178710dc692ebbf6d204f6d6884bdaab31f8 \
-    --hash=sha256:edf2916d196fd8c04f193b375d366c9834fde432af6be63132e719ece0f890f2
+convertapi==1.6.0 \
+    --hash=sha256:2008938629849ff9551599db81295b7a35c3eb0de150caaa09827563af6a7b2b \
+    --hash=sha256:226e8bf0ca262a0f1c839d9ed2b5543247deca0a2f6703c2acdd6ed372e96a00
     # via -r requirements.in
 dill==0.3.6 \
     --hash=sha256:a07ffd2351b8c678dfc4a856a3005f8067aea51d6ba6c700796a4d9e280f39f0 \
