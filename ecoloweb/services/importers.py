@@ -130,7 +130,7 @@ class ModelImporter(ABC):
             return {
                 key: data[key]
                 for key in self._identity_keys
-                if data[key] is not None and data[key] != ""
+                if key in data and data[key] is not None and data[key] != ""
             }
 
         return {}
