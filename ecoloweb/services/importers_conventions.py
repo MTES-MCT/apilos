@@ -61,7 +61,7 @@ class ConventionImporter(ModelImporter):
     ):
         self._piece_jointe_importer.import_many(ecolo_id)
 
-        if created and model is not None:
+        if created and model is not None and not settings.TESTING:
             if model.is_avenant():
                 # Avenant are automatically assigned to the type "commentaires"
                 model.avenant_types.add(AvenantType.objects.get(nom="commentaires"))
@@ -78,7 +78,7 @@ class ConventionImporter(ModelImporter):
             )
 
             # Automatically promote the latest piece jointe with type CONVENTION as official convention document
-            if piece_jointe is not None and not settings.TESTING:
+            if piece_jointe is not None:
                 promote_piece_jointe.send(piece_jointe.id)
 
 

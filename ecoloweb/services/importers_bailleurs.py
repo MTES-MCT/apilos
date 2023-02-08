@@ -19,7 +19,9 @@ class BailleurImporter(ModelImporter):
         super().__init__(departement, import_date, debug)
 
         try:
-            self._siret_resolver = SiretResolver(settings.INSEE_API_KEY, settings.INSEE_API_SECRET)
+            self._siret_resolver = SiretResolver(
+                settings.INSEE_API_KEY, settings.INSEE_API_SECRET
+            )
         except BaseException:
             self._siret_resolver = None
 
@@ -40,11 +42,14 @@ class BailleurImporter(ModelImporter):
         codesiret = data.pop("codesiret")
         date_creation = data["cree_le"]
 
+        data["siret"] = codesiret
+
         # Clean SIRET code
-        if codesiret is not None:
-            if data["nature_bailleur"] == "Bailleurs privés" or len(codesiret) == 14:
-                data["siret"] = codesiret
-            elif (siret := self._resolve_siret(codesiret, date_creation)) is not None:
-                data["siret"] = siret
+        if (
+            data["nature_bailleur"] != "Bailleurs privés"
+            and len(codesiret) == 14
+            and (siret := self._resolve_siret(codesiret, date_creation)) is not None
+        ):
+            data["siret"] = siret
 
         return data
