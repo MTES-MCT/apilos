@@ -74,10 +74,10 @@ class ProgrammeImporter(ModelImporter):
         )
 
     def _prepare_data(self, data: dict) -> dict:
+        parent_id = data.pop("parent_id")
+        is_avenant = data.pop("is_avenant")
         return {
-            "parent": self.import_one(
-                data.pop("parent_id") if data.pop("is_avenant") else None
-            ),
+            "parent": self.import_one(parent_id) if is_avenant else None,
             "bailleur": self._bailleur_importer.import_one(data.pop("bailleur_id")),
             "administration": self._administration_importer.import_one(
                 data.pop("administration_id")
@@ -111,10 +111,10 @@ class LotImporter(ModelImporter):
         )
 
     def _prepare_data(self, data: dict) -> dict:
+        parent_id = data.pop("parent_id")
+        is_avenant = data.pop("is_avenant")
         return {
-            "parent": self.import_one(
-                data.pop("parent_id") if data.pop("is_avenant") else None
-            ),
+            "parent": self.import_one(parent_id) if is_avenant else None,
             "programme": self._programme_importer.import_one(data.pop("programme_id")),
             **data,
         }
