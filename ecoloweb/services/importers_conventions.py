@@ -46,7 +46,7 @@ class ConventionImporter(ModelImporter):
         rank = data.pop("rank")
         numero = data.pop("numero")
         return {
-            "parent": self.import_one(parent_id if is_avenant else None),
+            "parent": self.import_one(parent_id) if is_avenant else None,
             # For avenant conventions, "numero" is the rank of the iterations within the convention history,
             # minus 1 as first row is the root convention ranked 1
             "numero": (rank - 1) if is_avenant is True else numero,
