@@ -494,6 +494,8 @@ DRAMATIQ_BROKER = {
         "url": config("REDIS_URL", default="redis://redis:6379"),
     },
     "MIDDLEWARE": [
+        "dramatiq.middleware.AgeLimit",
+        "dramatiq.middleware.TimeLimit",
         "django_dramatiq.middleware.DbConnectionsMiddleware",
         "django_dramatiq.middleware.AdminMiddleware",
     ],
