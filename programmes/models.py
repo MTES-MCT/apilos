@@ -1,12 +1,16 @@
 import uuid
+import logging
 
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from conventions.models.choices import ConventionStatut
 
 from core.models import IngestableModel
 from core.utils import get_key_from_json_field
+from conventions.models.choices import ConventionStatut
+from apilos_settings.models import Departement
+
+logger = logging.getLogger(__name__)
 
 
 class Zone123(models.TextChoices):
@@ -207,9 +211,9 @@ class Programme(IngestableModel):
     administration = models.ForeignKey(
         "instructeurs.Administration", on_delete=models.SET_NULL, null=True
     )
-    adresse = models.TextField(null=True)
-    code_postal = models.CharField(max_length=10, null=True)
-    ville = models.CharField(max_length=255, null=True)
+    adresse = models.TextField(null=True, blank=True)
+    code_postal = models.CharField(max_length=5, null=True, blank=True)
+    ville = models.CharField(max_length=255, null=True, blank=True)
     code_insee_commune = models.CharField(max_length=10, null=True)
     code_insee_departement = models.CharField(max_length=10, null=True)
     code_insee_region = models.CharField(max_length=10, null=True)
@@ -414,6 +418,27 @@ def compute_date_achevement_compile(sender, instance, *args, **kwargs):
     instance.date_achevement_compile = (
         instance.date_achevement or instance.date_achevement_previsible
     )
+    if len(instance.code_postal) == 5 and instance.code_insee_departement not in [
+        "2A",
+        "2B",
+    ]:
+        code_departement = instance.code_postal[0:2]
+        try:
+            if code_departement == "20":
+                # Cas spécial de la Corse car in n'est pas possible de déterminer le département
+                # à partir du code postal
+                departement = Departement.objects.first(code_postal=code_departement)
+                instance.code_insee_departement = "20"
+            else:
+                departement = Departement.objects.get(code_postal=code_departement)
+                instance.code_insee_departement = departement.code_insee
+            instance.code_insee_region = departement.code_insee_region
+        except Departement.DoesNotExist:
+            logger.error(
+                "Le code postal %s n'existe pas depuis le code postal %s",
+                code_departement,
+                instance.code_postal,
+            )
 
 
 class LogementEDD(models.Model):

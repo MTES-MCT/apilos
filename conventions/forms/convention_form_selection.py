@@ -92,10 +92,12 @@ class CreateConventionMinForm(forms.Form):
     )
     code_postal = forms.CharField(
         label="Code postal",
-        max_length=255,
+        min_length=5,
+        max_length=5,
         error_messages={
             "required": "Le code postal est obligatoire",
-            "max_length": "Le code postal ne doit pas excéder 255 caractères",
+            "max_length": "Le code postal est une suite de 5 caractères",
+            "min_length": "Le code postal est une suite de 5 caractères",
         },
     )
 

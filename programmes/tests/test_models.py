@@ -41,6 +41,7 @@ def params_logement(index):
 
 
 class ProgrammeModelsTest(TestCase):
+    fixtures = ["departements.json"]
     # pylint: disable=E1101 no-member
     @classmethod
     def setUpTestData(cls):
@@ -283,3 +284,6 @@ class LotModelsTest(TestCase):
     def test_lot_bailleur(self):
         lot = Lot.objects.order_by("uuid").first()
         self.assertEqual(lot.bailleur, lot.programme.bailleur)
+
+    def test_code_insee(self):
+        pass
