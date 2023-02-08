@@ -3,32 +3,43 @@
 <div>
     <p class="fr-alert__title">Valider l'avenant</p>
     <p class="fr-mb-0">
-        Pour pouvoir valider cet avenant, vous devez remplir les informations suivantes.
+        {% if not convention.programme.ville or not convention.lot.nb_logements or convention.parent.nom_fichier_signe %}
+            Pour pouvoir valider cet avenant, vous devez remplir les informations suivantes.
+            {% if not convention.programme.ville %}
+                pas de ville
+            {% endif %}
+            {% if not convention.lot.nb_logements %}
+                - pas de logements
+            {% endif %}
+            {% if not convention.parent.nom_fichier_signe %}
+                - pas de fichier
+            {% endif %}
+        {% else %}
+            {% if convention.numero %}
+                <p class="fr-mb-0">L'avenant aura le numéro {{ convention.numero }}</p>
+            {% else %}
+                <div class="fr-col-md-12 block--row-strech">
+                    <div class="block--row-strech-1 fr-mr-6w">
+                        <p class="fr-alert__title">Valider l'avenant</p>
+                        <p class="fr-mb-0">L'avenant aura le numéro {{conventionNumberForm.convention_numero.value}}.</p>
+                    </div>
+                    <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
+                        {% csrf_token %}
+                        <input type="hidden"
+                            id="{{conventionNumberForm.convention_numero.id_for_label}}"
+                            name="{{conventionNumberForm.convention_numero.html_name}}"
+                            value="{{conventionNumberForm.convention_numero.value}}">
+                        <button class="fr-btn fr-btn--secondary">
+                            Valider l'avenant
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        {% endif %}
     </p>
 </div>
-<form method="post" action="{% url 'conventions:complete_form_for_avenants' convention_uuid=convention.uuid %}" data-turbo="false">
-    {% include "common/form/input_text.html" with form_input=form.ville object_field="programme__ville__"|add:form.uuid.value %}
 
-    <button class="fr-btn fr-btn--secondary">
-        Valider l'avenant
-    </button>
-</form>
-{% if convention.programme.ville %}
-    il y  a une ville au programme
-{% else %}
-    pas de ville
-{% endif %}
-{% if convention.lot.nb_logements %}
-    - il y a des logements
-{% else %}
-    - pas de logements
-{% endif %}
-{% if convention.parent.nom_fichier_signe %}
-    - un fichier
-{% else %}
-    - pas de fichier
-{% endif %}
-<div>
 
-    {{convention.numero}}
-</div>
+
+
+    
