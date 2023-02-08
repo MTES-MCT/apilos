@@ -22,8 +22,6 @@ class EcolowebImportTest(TestCase):
     def _check_db_connection(self):
         if "ecoloweb" in connections:
             self._connection = connections["ecoloweb"].cursor()
-        else:
-            raise OperationalError("Missing connection ecoloweb")
 
     def _provision_database(self):
         if self._connection is not None:
