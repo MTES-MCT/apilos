@@ -152,6 +152,7 @@ def convention_sent(request, convention_uuid):
 def convention_post_action(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     result_status = None
+    form_posted = None
     if request.method == "POST":
         resiliation_form = ConventionResiliationForm(request.POST)
         if resiliation_form.is_valid():
@@ -162,6 +163,7 @@ def convention_post_action(request, convention_uuid):
             convention.save()
             # SUCCESS
             result_status = utils.ReturnStatus.SUCCESS
+            form_posted = "resiliation"
         updatedate_form = ConventionDateForm(request.POST)
         if updatedate_form.is_valid():
             convention.televersement_convention_signee_le = (
@@ -169,6 +171,7 @@ def convention_post_action(request, convention_uuid):
             )
             convention.save()
             result_status = utils.ReturnStatus.SUCCESS
+            form_posted = "date_signature"
 
     else:
         resiliation_form = ConventionResiliationForm()
@@ -191,4 +194,6 @@ def convention_post_action(request, convention_uuid):
         "avenants": avenant_list_service,
         "total_avenants": total_avenants,
         "resiliation_form": resiliation_form,
+        "updatedate_form": updatedate_form,
+        "form_posted": form_posted,
     }
