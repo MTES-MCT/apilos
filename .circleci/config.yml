@@ -52,8 +52,6 @@ jobs:
             . .venv/bin/activate
             cp .env.template .env.test
             python3 manage.py test
-          environment:
-            ECOLO_DATABASE_URL: postgres://apilos:apilos@localhost:5432/ecolotest?currentSchema=ecolo
       - store_artifacts:
           path: test-reports/
           destination: python_app
