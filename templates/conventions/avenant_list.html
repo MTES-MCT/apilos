@@ -21,11 +21,7 @@
                 <div class="fr-col-11">
                     <div class="fr-grid-row">
                         Avenant du <span class="fr-ml-1v"><strong> {{convention.cree_le|date:"d F Y"|default_if_none:'-' }} </strong></span>
-                        <div class="fr-py-1v fr-px-1w fr-mb-0 fr-ml-2w fr-mt-n1v fr-text--sm apilos-tag-status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
-                            <span><strong>
-                                {{convention.short_statut_for_template}}
-                            </strong></span>
-                        </div>
+                        <div class="fr-ml-2w"><strong>{% include "conventions/home/statut_tag.html"  %}</strong></div>
                     </div>
                     <div class="fr-mb-3w fr-mt-n1v">
                         <a class="fr-link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" >Voir l'avenant</a>
