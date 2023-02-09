@@ -348,6 +348,8 @@ CSP_FRAME_SRC = (
     "https://www.dailymotion.com/embed/video/x8frr91",
     # Crisp
     "https://game.crisp.chat",
+    # Metabase
+    "https://metabase.apilos.beta.gouv.fr/public/dashboard/b91cd727-95e2-44c7-b8ae-0cf4a235abfb",
 )
 
 CSP_MEDIA_SRC = (
