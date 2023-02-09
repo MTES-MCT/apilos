@@ -31,12 +31,9 @@
 -- departement_residence_argement_gestionnaire_intermediation     varchar(255),
 -- ville_signature_residence_agrement_gestionnaire_intermediation varchar(255)
 
-
-
 select
     cdg.id,
-    lag(cdg.id) over (partition by cdg.conventionapl_id order by cdg.datehistoriquedebut) as parent_id,
-    a.id is not null as is_avenant,
+    ch.parent_id,
     pl.bailleur_id,
     c.entitecreatrice_id as administration_id,
     pl.code_postal,
@@ -52,16 +49,6 @@ select
     pl.code_insee_commune,
     pl.code_insee_departement,
     pl.code_insee_region,
-/*
-Valeurs Ecoloweb
-| 1 | Logements ordinaires |
-| 2 | Logements foyers pour personnes âgées | ex 1854431
-| 3 | Logements foyers pour personnes handicapées |
-| 4 | Logements foyers pour travailleurs migrants |
-| 5 | Logements foyers pour jeunes travailleurs |
-| 6 | Résidences sociales |
-| 7 | Logements foyers destinés à l'habitat inclusif |
- */
     case
         when nl.code = '1' then 'LOGEMENTSORDINAIRES'
         when nl.code = '6' then 'RESISDENCESOCIALE'
@@ -70,7 +57,8 @@ Valeurs Ecoloweb
     cdg.datehistoriquedebut as date_achevement,
     coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as cree_le,
     coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as mis_a_jour_le
-from ecolo.ecolo_conventiondonneesgenerales cdg
+from ecolo.ecolo_conventionhistorique ch
+    inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.id
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
     left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
     inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id
@@ -109,4 +97,4 @@ from ecolo.ecolo_conventiondonneesgenerales cdg
         order by pl.conventiondonneesgenerales_id, pl.typefinancement_id, pl.ordre
     ) pl on pl.conventiondonneesgenerales_id = cdg.id
 where
-    cdg.id = %s
+    ch.id = %s
