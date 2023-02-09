@@ -108,6 +108,7 @@ class Bailleur(IngestableModel):
     signataire_nom = models.CharField(max_length=255, null=True, blank=True)
     signataire_fonction = models.CharField(max_length=255, null=True, blank=True)
     signataire_date_deliberation = models.DateField(null=True, blank=True)
+    signataire_bloc_signature = models.CharField(max_length=5000, null=True, blank=True)
     operation_exceptionnelle = models.TextField(null=True, blank=True)
     nature_bailleur = models.CharField(
         max_length=255,

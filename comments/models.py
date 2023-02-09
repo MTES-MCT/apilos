@@ -56,6 +56,7 @@ class Comment(models.Model):
             "bailleur__signataire_date_deliberation": (
                 "Date de délibération du signataire du bailleur"
             ),
+            "bailleur__signataire_bloc_signature": "Bloc signature du bailleur",
             "programme__nom": "Nom de l'opération",
             "programme__adresse": "Adresse de l'opération",
             "programme__code_postal": "Code postal de l'opération",
@@ -156,6 +157,9 @@ class Comment(models.Model):
             ),
             "convention__gestionnaire_signataire_date_deliberation": (
                 "Date de délibération du signataire du gestionnaire"
+            ),
+            "convention__gestionnaire_signataire_bloc_signature": (
+                "Bloc signature du gestionnaire"
             ),
             "lot__foyer_residence_nb_garage_parking": "Garages et/ ou parking (nombre)",
             "lot__foyer_residence_dependance": "Dépendances (nombre et surface)",

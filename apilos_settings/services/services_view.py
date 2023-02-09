@@ -209,6 +209,9 @@ def edit_bailleur(request, bailleur_uuid):
             bailleur.signataire_date_deliberation = form.cleaned_data[
                 "signataire_date_deliberation"
             ]
+            bailleur.signataire_bloc_signature = form.cleaned_data[
+                "signataire_bloc_signature"
+            ]
             bailleur.save()
             success = True
     else:
@@ -227,6 +230,7 @@ def edit_bailleur(request, bailleur_uuid):
                         "ville",
                         "signataire_nom",
                         "signataire_fonction",
+                        "signataire_bloc_signature",
                     ],
                 ),
                 "bailleur": bailleur.parent.uuid if bailleur.parent else None,
