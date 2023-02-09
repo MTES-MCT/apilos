@@ -43,6 +43,8 @@ class EcolowebImportTest(TestCase):
             self.skipTest("Ecoloweb tests skipped as no database correctly configured")
 
         importer = ConventionImporter("33", datetime.today())
+        importer.setup_db()
+
         instances = []
         for result in importer.get_all():
             instances.append(importer.process_result(result))
