@@ -1,13 +1,13 @@
 select
-    cdg.id||':'||pl.financement as id,
-    ch.parent_id||':'||pl.financement as parent_id,
+    ch.id||':'||ch.financement as id,
+    ch.parent_id||':'||ch.financement as parent_id,
     -- Les avenants sont initialisés avec un type 'commentaires' dont la valeur est un résumé des altérations
     -- déclarées depuis Ecoloweb
     ('{"files": {}, "text": "Avenant issu d''Ecoloweb:\r\n\r\n'||ta.detail_avenant||'"}')::json as commentaires,
     cdg.id as programme_id,
     -- Les lots d'un programme sont tous les logements partageant le même financement
-    md5(cdg.id||'-'||pl.financement) as lot_id,
-    pl.financement as financement,
+    md5(cdg.id||'-'||ch.financement) as lot_id,
+    ch.financement as financement,
     case
         when
             ch.is_avenant then ch.numero::text
@@ -110,7 +110,7 @@ from ecolo.ecolo_conventionapl c
                     inner join ecolo.ecolo_valeurparamstatic vps on cb.civilite_id = vps.id
                 group by cb.bailleur_id
             ) cb on cb.bailleur_id = b.id
-    ) pl on pl.conventiondonneesgenerales_id = cdg.id
+    ) pl on pl.conventiondonneesgenerales_id = cdg.id and pl.financement = ch.financement
 {% endblock %}
 {% block where %}
 {% endblock %}

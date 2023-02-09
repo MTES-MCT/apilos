@@ -1,11 +1,12 @@
 select
     cdg.id,
     cdg.conventionapl_id,
+    cdg.financement,
     cdg.avenant_id is not null as is_avenant,
     case
         when
             cdg.avenant_id is not null
-        then rank() over (partition by cdg.conventionapl_id order by cdg.datehistoriquedebut) - 1
+        then rank() over (partition by cdg.conventionapl_id, cdg.financement order by cdg.datehistoriquedebut) - 1
     end as numero,
     case
         when first_value(cdg.id) over (partition by cdg.conventionapl_id order by cdg.datehistoriquedebut) <> id
@@ -14,18 +15,40 @@ select
     d.codeinsee as departement
 from (
     select
-        distinct on (cdg.conventionapl_id, cdg.avenant_id)
+        -- Restriction aux itérations de conventions les plus récentes, à savoir la dernière convention non avenant
+        -- suivie de tous ses avenants
+        distinct on (cdg.conventionapl_id, cdg.financement, cdg.avenant_id)
         cdg.*
     from (
-        select *
-        from ecolo.ecolo_conventiondonneesgenerales
-        order by conventionapl_id, datehistoriquedebut desc
+        select cdg.*, cf.financement
+        from ecolo.ecolo_conventiondonneesgenerales cdg
+            -- cf : convention financements
+            -- Récupération des financements de la convention
+            inner join (
+                select distinct on (pl.conventiondonneesgenerales_id, ff.code) pl.conventiondonneesgenerales_id, ff.code as financement
+                from ecolo.ecolo_programmelogement pl
+                    inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
+                    inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
+            ) cf on cf.conventiondonneesgenerales_id = cdg.id
+            -- fv : financements valides
+            -- Intersection avec les financements de la convention racine (pour éliminer les avenants ayant des
+            -- financements de programme autres (cas des changements / ajouts de financement en cours de route)
+            inner join (
+                select distinct on (cdg.conventionapl_id, ff.code) cdg.conventionapl_id, ff.code as financement
+                from ecolo.ecolo_conventiondonneesgenerales cdg
+                    inner join ecolo.ecolo_programmelogement pl on pl.conventiondonneesgenerales_id = cdg.id
+                    inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
+                    inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
+                where cdg.avenant_id is null
+                order by cdg.conventionapl_id, ff.code, cdg.datehistoriquedebut desc
+            ) fv on cdg.conventionapl_id = fv.conventionapl_id and cf.financement = fv.financement
+        order by cdg.conventionapl_id, cf.financement, cdg.datehistoriquedebut desc
     ) cdg
 ) cdg
     inner join (
         -- Récupération du département associé à la convention
         select distinct on (pl.conventiondonneesgenerales_id) pl.conventiondonneesgenerales_id, ed.codeinsee
-        from ecolo_programmelogement pl
+        from ecolo.ecolo_programmelogement pl
             inner join ecolo.ecolo_commune ec on pl.commune_id = ec.id
             inner join ecolo.ecolo_departement ed on ec.departement_id = ed.id
     ) d on d.conventiondonneesgenerales_id = cdg.id
