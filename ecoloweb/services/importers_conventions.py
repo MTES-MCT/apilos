@@ -34,6 +34,26 @@ class ConventionImporter(ModelImporter):
 
         return [int(args[0]), args[1]]
 
+    def setup_db(self, force: bool = False):
+        exist = False
+        try:
+            # Test if materialized view exists
+            self._db_connection.execute(
+                "select id from ecolo.ecolo_conventionhistorique limit 1"
+            )
+            exist = True
+        except BaseException:
+            pass
+
+        if not exist or force:
+            self._db_connection.execute(
+                "drop materialized view if exists ecolo.ecolo_conventionhistorique"
+            )
+            self._db_connection.execute(
+                "create materialized view ecolo.ecolo_conventionhistorique as "
+                + self._get_file_content("resources/sql/convention_historique.sql")
+            )
+
     def get_all(self) -> QueryResultIterator:
         return QueryResultIterator(
             self._get_sql_from_template("conventions_many.sql"),
