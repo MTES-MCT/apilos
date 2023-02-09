@@ -9,8 +9,8 @@ select
         then rank() over (partition by cdg.conventionapl_id, cdg.financement order by cdg.datehistoriquedebut) - 1
     end as numero,
     case
-        when first_value(cdg.id) over (partition by cdg.conventionapl_id order by cdg.datehistoriquedebut) <> id
-        then first_value(cdg.id) over (partition by cdg.conventionapl_id order by cdg.datehistoriquedebut)
+        when first_value(cdg.id) over (partition by cdg.conventionapl_id, cdg.financement order by cdg.datehistoriquedebut) <> id
+        then first_value(cdg.id) over (partition by cdg.conventionapl_id, cdg.financement order by cdg.datehistoriquedebut)
     end as parent_id,
     d.codeinsee as departement
 from (
