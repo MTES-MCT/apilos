@@ -28,6 +28,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--debug", action="store_true", help="Print debug statement"
         )
+        parser.add_argument("--setup", action="store_true", help="Force setup DB")
         parser.add_argument(
             "--no-progress",
             action="store_true",
@@ -44,6 +45,7 @@ class Command(BaseCommand):
         use_transaction = options["use_transaction"]
 
         debug = options["debug"]
+        setup = options["setup"]
         no_progress = options["no_progress"]
 
         transaction.set_autocommit(not use_transaction)
@@ -51,6 +53,8 @@ class Command(BaseCommand):
 
         try:
             importer = ConventionImporter(departement, import_date, debug=debug)
+            importer.setup_db(force=setup)
+
             results = importer.get_all()
             # Progress bar
             if not no_progress:
