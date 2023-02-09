@@ -1,8 +1,6 @@
 select
     cdg.id||':'||pl.financement as id,
-    first_value(cdg.id) over (partition by cdg.conventionapl_id, pl.financement order by cdg.datehistoriquedebut)||':'||pl.financement as parent_id,
-    rank() over (partition by cdg.conventionapl_id, pl.financement order by cdg.datehistoriquedebut) as rank,
-    a.id is not null as is_avenant,
+    ch.parent_id||':'||pl.financement as parent_id,
     -- Les avenants sont initialisés avec un type 'commentaires' dont la valeur est un résumé des altérations
     -- déclarées depuis Ecoloweb
     ('{"files": {}, "text": "Avenant issu d''Ecoloweb:\r\n\r\n'||ta.detail_avenant||'"}')::json as commentaires,
@@ -10,7 +8,11 @@ select
     -- Les lots d'un programme sont tous les logements partageant le même financement
     md5(cdg.id||'-'||pl.financement) as lot_id,
     pl.financement as financement,
-    c.noreglementaire as numero,
+    case
+        when
+            ch.is_avenant then ch.numero::text
+        else c.noreglementaire
+    end as numero,
     case
         when cdg.dateannulation is not null then '8. Annulée en suivi'
         when cdg.datedemandedenonciation is not null then '7. Dénoncée'
@@ -70,7 +72,8 @@ select
 -- Conventions à leur dernier état connu et actualisé, pour éviter les doublons de convention
 {% block from %}
 from ecolo.ecolo_conventionapl c
-    inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.id = cdg.conventionapl_id
+    inner join ecolo.ecolo_conventionhistorique ch on ch.conventionapl_id = c.id
+    inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.id
     left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
     inner join ecolo.ecolo_valeurparamstatic ec on ec.id = cdg.etatconvention_id
     -- Détail des modifications, en cas d'avenant

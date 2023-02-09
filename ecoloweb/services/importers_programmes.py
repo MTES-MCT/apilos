@@ -75,9 +75,10 @@ class ProgrammeImporter(ModelImporter):
 
     def _prepare_data(self, data: dict) -> dict:
         parent_id = data.pop("parent_id")
-        is_avenant = data.pop("is_avenant")
         return {
-            "parent": self.import_one(parent_id) if is_avenant else None,
+            "parent": self.resolve_ecolo_reference(ecolo_id=parent_id, model=self.model)
+            if parent_id is not None
+            else None,
             "bailleur": self._bailleur_importer.import_one(data.pop("bailleur_id")),
             "administration": self._administration_importer.import_one(
                 data.pop("administration_id")
@@ -100,9 +101,6 @@ class LotImporter(ModelImporter):
         super().__init__(departement, import_date, debug)
 
         self._query_one = self._get_file_content("resources/sql/programme_lots.sql")
-        self._query_many = self._get_file_content(
-            "resources/sql/programme_lots_many.sql"
-        )
 
         self._programme_importer = ProgrammeImporter(departement, import_date, debug)
         self._logement_importer = LogementImporter(departement, import_date, debug)
@@ -112,15 +110,17 @@ class LotImporter(ModelImporter):
 
     def _prepare_data(self, data: dict) -> dict:
         parent_id = data.pop("parent_id")
-        is_avenant = data.pop("is_avenant")
         surface_habitable_totale = data.pop("surface_habitable_totale")
+
         return {
-            "parent": self.import_one(parent_id) if is_avenant else None,
+            "parent": self.resolve_ecolo_reference(ecolo_id=parent_id, model=self.model)
+            if parent_id is not None
+            else None,
             "programme": self._programme_importer.import_one(data.pop("programme_id")),
-            **data,
             "surface_habitable_totale": int(surface_habitable_totale)
             if surface_habitable_totale is not None
             else None,
+            **data,
         }
 
     def _on_processed(self, ecolo_id: str | None, model: Model | None, created: bool):

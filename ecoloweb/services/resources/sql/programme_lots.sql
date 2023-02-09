@@ -20,8 +20,7 @@
 
 select
     md5(pl.conventiondonneesgenerales_id||'-'||ff.code) as id, -- Les lots d'un programme sont tous les logements partageant le même financement
-    lag(cdg.id) over (partition by cdg.conventionapl_id order by cdg.datehistoriquedebut)||'-'||ff.code as parent_id,
-    a.id is not null as is_avenant,
+    md5(ch.parent_id||'-'||ff.code) as parent_id,
     pl.conventiondonneesgenerales_id as programme_id,
     coalesce(pl.financementdate, now()) as cree_le,
     coalesce(pl.financementdate, now()) as mis_a_jour_le,
@@ -42,8 +41,8 @@ select
     pl.surfacehabitable:: int as surface_habitable_totale,
     case when nl.code <> '1' then a4.nombre end as foyer_residence_nb_garage_parking
 from ecolo.ecolo_programmelogement pl
-    -- Parent
-    inner join ecolo.ecolo_conventiondonneesgenerales cdg on pl.conventiondonneesgenerales_id = cdg.id
+    inner join ecolo.ecolo_conventionhistorique ch on pl.conventiondonneesgenerales_id = ch.id
+    inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.id
     left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
     -- Nature logement
     inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id

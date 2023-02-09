@@ -107,12 +107,17 @@ class ModelImporter(ABC):
             ecolo_id=ecolo_id,
         ).first()
 
-    def resolve_ecolo_reference(
-        self, ecolo_id: str, model: Type[Model] | None = None
-    ) -> Model | None:
-        ecolo_reference = self.find_ecolo_reference(ecolo_id, model)
+    def resolve_ecolo_reference(self, ecolo_id: str, model: Type[Model]) -> Model:
+        """
+        Find the EcoloReference of model type model with id ecolo_id in Ecolo DB
+        """
+        self._debug(f"Looking for ref of {model.__name__} with id {ecolo_id}")
+        ecolo_reference = EcoloReference.objects.get(
+            apilos_model=EcoloReference.get_class_model_name(model),
+            ecolo_id=ecolo_id,
+        )
 
-        return ecolo_reference.resolve() if ecolo_reference is not None else None
+        return ecolo_reference.resolve()
 
     def _register_ecolo_reference(
         self, instance: Model, ecolo_id: int, id: int | None = None
