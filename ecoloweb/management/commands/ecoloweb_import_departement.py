@@ -69,6 +69,10 @@ class Command(BaseCommand):
                         f"Processed convention #{results.lines_fetched} (out of {results.lines_total} total)"
                     )
 
+        except KeyboardInterrupt as e:
+            if use_transaction:
+                print("Rollabcking all changes due to runtime error")
+                transaction.rollback()
         except Exception as e:
             if use_transaction:
                 print("Rollabcking all changes due to runtime error")
