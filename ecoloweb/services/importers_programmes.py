@@ -113,10 +113,14 @@ class LotImporter(ModelImporter):
     def _prepare_data(self, data: dict) -> dict:
         parent_id = data.pop("parent_id")
         is_avenant = data.pop("is_avenant")
+        surface_habitable_totale = data.pop("surface_habitable_totale")
         return {
             "parent": self.import_one(parent_id) if is_avenant else None,
             "programme": self._programme_importer.import_one(data.pop("programme_id")),
             **data,
+            "surface_habitable_totale": int(surface_habitable_totale)
+            if surface_habitable_totale is not None
+            else None,
         }
 
     def _on_processed(self, ecolo_id: str | None, model: Model | None, created: bool):
@@ -145,6 +149,3 @@ class LogementImporter(ModelImporter):
             "lot": self.resolve_ecolo_reference(data.pop("lot_id"), Lot),
             **data,
         }
-
-    def _rounded_value(self, value):
-        return round(float(value), 2) if value is not None else None
