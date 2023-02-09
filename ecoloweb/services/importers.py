@@ -87,6 +87,9 @@ class ModelImporter(ABC):
             path, Context(context | {"timezone": timezone.get_current_timezone()})
         )
 
+    def _rounded_value(self, value):
+        return round(float(value), 2) if value is not None else None
+
     def find_ecolo_reference(
         self, ecolo_id: str, model: Type[Model] | None = None
     ) -> EcoloReference | None:
@@ -188,6 +191,10 @@ class ModelImporter(ABC):
             else:
                 # Create a new instance...
                 if data is not None:
+                    self._debug(
+                        f"Creating model for handler {self.__class__.__name__} with data {data}"
+                    )
+
                     instance = self.model.objects.create(**data)
 
                     # ...and mark it as imported
