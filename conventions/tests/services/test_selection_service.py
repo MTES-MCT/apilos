@@ -23,6 +23,8 @@ from users.models import GroupProfile, User
 
 
 class ConventionSelectionServiceForInstructeurTests(TestCase):
+    fixtures = ["departements.json"]
+
     @classmethod
     def setUpTestData(cls):
         utils_fixtures.create_all()
@@ -198,6 +200,8 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
 
 
 class ConventionSelectionServiceForBailleurTests(TestCase):
+    fixtures = ["departements.json"]
+
     @classmethod
     def setUpTestData(cls):
         utils_fixtures.create_all()

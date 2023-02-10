@@ -35,7 +35,7 @@ class GetAddressFromLocdataTest(TestCase):
             "adresse": "fake adresse",
             "adresseComplete": {
                 "adresse": "10 rue fake",
-                "codePostal": "00000",
+                "codePostal": "01000",
                 "commune": "Vile-sur-fake ok",
             },
         }
@@ -43,7 +43,7 @@ class GetAddressFromLocdataTest(TestCase):
             donneesLocalisation
         )
         self.assertEqual(adresse, "10 rue fake")
-        self.assertEqual(code_postal, "00000")
+        self.assertEqual(code_postal, "01000")
         self.assertEqual(ville, "Vile-sur-fake ok")
 
     def test__get_address_from_locdata_adresse_fallback(self):

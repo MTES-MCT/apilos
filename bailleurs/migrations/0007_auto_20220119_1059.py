@@ -6,8 +6,6 @@ from bailleurs.models import SousNatureBailleur
 
 
 def normalize_enum_data(apps, schema_editor):
-    # We can't import the Person model directly as it may be a newer
-    # version than this migration expects. We use the historical version.
 
     Bailleur = apps.get_model("bailleurs", "Bailleur")
 
