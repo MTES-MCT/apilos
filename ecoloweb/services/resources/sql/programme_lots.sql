@@ -38,7 +38,7 @@ select
         when pl.estderogationloyer and coalesce(pl.logementsnombreindtotal, 0) > 0 then pl.montantplafondloyerindinitial
         when pl.estderogationloyer and coalesce(pl.logementsnombrecoltotal, 0) > 0 then pl.montantplafondloyercolinitial
     end as loyer_derogatoire,
-    pl.surfacehabitable:: int as surface_habitable_totale,
+    round(cast(pl.surfacehabitable as numeric), 2) as surface_habitable_totale,
     case when nl.code <> '1' then a4.nombre end as foyer_residence_nb_garage_parking
 from ecolo.ecolo_programmelogement pl
     inner join ecolo.ecolo_conventionhistorique ch on pl.conventiondonneesgenerales_id = ch.id
