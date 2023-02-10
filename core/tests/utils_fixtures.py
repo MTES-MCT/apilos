@@ -227,6 +227,7 @@ def create_programme(
         administration=administration,
         bailleur=bailleur,
         code_postal=code_postal,
+        code_insee_departement=code_postal[0:2],
         ville="Paris",
         adresse="22 rue segur",
         numero_galion=numero_galion,

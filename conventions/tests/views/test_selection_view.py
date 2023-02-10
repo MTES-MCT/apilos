@@ -44,6 +44,8 @@ class ConventionSelectionFromDBViewTests(AbstractCreateViewTestCase, TestCase):
 
 
 class ConventionSelectionFromZeroViewTests(AbstractCreateViewTestCase, TestCase):
+    fixtures = ["departements.json"]
+
     def setUp(self):
         super().setUp()
 
@@ -86,6 +88,8 @@ class ConventionSelectionFromZeroViewTests(AbstractCreateViewTestCase, TestCase)
 
 
 class ConventionPostForAvenantViewTests(AbstractCreateViewTestCase, TestCase):
+    fixtures = ["departements.json"]
+
     def setUp(self):
         super().setUp()
 

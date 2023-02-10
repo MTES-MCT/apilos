@@ -50,6 +50,8 @@ operation_response = {
 
 
 class OperationDetailsAPITest(APITestCase):
+    fixtures = ["departements.json"]
+
     """
     As super user, I can do anything using the API
     """
@@ -144,6 +146,7 @@ class OperationDetailsAPITest(APITestCase):
 
 
 class OperationClosedAPITest(APITestCase):
+    fixtures = ["departements.json"]
     """
     As super user, I can do anything using the API
     """

@@ -47,7 +47,7 @@ class ConventionBailleurServiceTests(TestCase):
         self.service.request.POST = {
             "nom": "",
             "adresse": "fake_address",
-            "code_postal": "00000",
+            "code_postal": "01000",
         }
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
@@ -56,7 +56,7 @@ class ConventionBailleurServiceTests(TestCase):
         self.service.request.POST = {
             "nom": "nom bailleur",
             "adresse": "fake_address",
-            "code_postal": "00000",
+            "code_postal": "01000",
             "signataire_nom": "Johnny",
             "signataire_fonction": "Dirlo",
             "signataire_date_deliberation": "2022-02-01",

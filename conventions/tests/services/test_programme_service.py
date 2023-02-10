@@ -12,6 +12,8 @@ from users.models import User
 
 
 class ConventionProgrammeServiceTests(TestCase):
+    fixtures = ["departements.json"]
+
     @classmethod
     def setUpTestData(cls):
         utils_fixtures.create_all()
@@ -42,7 +44,7 @@ class ConventionProgrammeServiceTests(TestCase):
         self.service.request.POST = {
             "nom": "Fake Opération",
             "adresse": "",
-            "code_postal": "00000",
+            "code_postal": "01000",
             "ville": "Fake ville",
             "nb_logements": "28",
             "anru": "FALSE",
@@ -59,7 +61,7 @@ class ConventionProgrammeServiceTests(TestCase):
         self.service.request.POST = {
             "nom": "Fake Opération",
             "adresse": "123 rue du fake",
-            "code_postal": "00000",
+            "code_postal": "01000",
             "ville": "Fake ville",
             "nb_logements": "28",
             "anru": "FALSE",
