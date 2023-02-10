@@ -110,16 +110,15 @@ class LotImporter(ModelImporter):
 
     def _prepare_data(self, data: dict) -> dict:
         parent_id = data.pop("parent_id")
-        surface_habitable_totale = data.pop("surface_habitable_totale")
 
         return {
             "parent": self.resolve_ecolo_reference(ecolo_id=parent_id, model=self.model)
             if parent_id is not None
             else None,
             "programme": self._programme_importer.import_one(data.pop("programme_id")),
-            "surface_habitable_totale": int(surface_habitable_totale)
-            if surface_habitable_totale is not None
-            else None,
+            "surface_habitable_totale": self._rounded_value(
+                data.pop("surface_habitable_totale")
+            ),
             **data,
         }
 
