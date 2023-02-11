@@ -183,6 +183,10 @@ def default_str_if_none(text_field):
     return text_field if text_field else "---"
 
 
+def default_empty_if_none(text_field):
+    return text_field if text_field else ""
+
+
 def to_fr_date(date):
     """
     Display french date using the date function from django.template.defaultfilters
@@ -216,6 +220,7 @@ def _get_jinja_env():
     jinja_env.filters["inline_text_multiline"] = inline_text_multiline
     jinja_env.filters["get_text_as_list"] = get_text_as_list
     jinja_env.filters["default_str_if_none"] = default_str_if_none
+    jinja_env.filters["default_empty_if_none"] = default_empty_if_none
     jinja_env.filters["tl"] = typologie_label
 
     return jinja_env
