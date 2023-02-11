@@ -138,8 +138,8 @@ def edit_administration(request, administration_uuid):
             administration.adresse = form.cleaned_data["adresse"]
             administration.code_postal = form.cleaned_data["code_postal"]
             administration.ville = form.cleaned_data["ville"]
-            administration.signature_label_extra = form.cleaned_data[
-                "signature_label_extra"
+            administration.signataire_bloc_signature = form.cleaned_data[
+                "signataire_bloc_signature"
             ]
             administration.nb_convention_exemplaires = form.cleaned_data[
                 "nb_convention_exemplaires"
