@@ -67,11 +67,10 @@ class AdministrationForm(forms.Form):
         label="Élément additionnel de signature sur la convention",
         max_length=5000,
         help_text=mark_safe(
-            "Sur les documents de convention, vous avez la possibilité d'affiner l'identité du signataire&nbsp;"
-            + "<strong>à la suite</strong> de la mention obligatoire : <br/>"
-            + '<blockquote class="ml-5 my-2">Le préfet, le président de l\'établissement public de coopération'
-            + "intercommunale, du conseil"
-            + "départemental, de la métropole de Lyon ou du conseil exécutif de Corse,</blockquote>"
+            "Sur les documents de convention, vous avez la possibilité d'affiner l'identité"
+            + " du signataire&nbsp;<strong>à la suite</strong> de la mention obligatoire :&nbsp;"
+            + "«&nbsp;Le préfet, le président de l'établissement public de coopération"
+            + "intercommunale, du conseil départemental, de la métropole…&nbsp;»"
         ),
     )
 
@@ -146,7 +145,6 @@ class AdministrationForm(forms.Form):
             "Nombre d'exemplaire de la convention que le bailleur doit envoyer au service"
             + " instructeur"
         ),
-        help_text="""
-            Ce nombre d'exemplaire est utilisé pour customiser l'email envoyé au bailleur lorsque la convention est validée.
-        """,
+        help_text="Ce nombre d'exemplaire est utilisé pour customiser l'email envoyé au"
+        + " bailleur lorsque la convention est validée.",
     )

@@ -121,10 +121,9 @@ class ConventionBailleurForm(forms.Form):
         label="Élément additionnel de signature du bailleur sur la convention",
         max_length=5000,
         help_text=mark_safe(
-            "Sur les documents de convention, vous avez la possibilité d'affiner l'identité du signataire&nbsp;"
-            + "<strong>à la suite</strong> de la mention obligatoire : <br/>"
-            + '<blockquote class="ml-5 my-2">Le bailleur,</blockquote>'
-            + ' ou <blockquote class="ml-5 my-2">Le propriétaire,</blockquote>'
+            "Sur les documents de convention, vous avez la possibilité d'affiner l'identité"
+            + " du signataire&nbsp;<strong>à la suite</strong> de la mention obligatoire : "
+            + "«&nbsp;Le bailleur&nbsp;», ou «&nbsp;Le propriétaire&nbsp;»."
         ),
         error_messages={
             "max_length": "Le bloc signature ne doit pas excéder 5000 caractères",
