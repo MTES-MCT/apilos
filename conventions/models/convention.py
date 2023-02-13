@@ -89,9 +89,11 @@ class Convention(models.Model):
         related_name="avenant_types",
         verbose_name="Type d'avenant",
     )
-    signataire_nom = models.CharField(max_length=255, null=True)
-    signataire_fonction = models.CharField(max_length=255, null=True)
-    signataire_date_deliberation = models.DateField(null=True)
+    signataire_nom = models.CharField(max_length=255, null=True, blank=True)
+    signataire_fonction = models.CharField(max_length=255, null=True, blank=True)
+    signataire_date_deliberation = models.DateField(null=True, blank=True)
+    signataire_bloc_signature = models.CharField(max_length=5000, null=True, blank=True)
+
     # Champs liés au SPF (Service de Publication Foncière))
     date_publication_spf = models.DateField(null=True)
     reference_spf = models.CharField(max_length=50, null=True)
@@ -109,6 +111,9 @@ class Convention(models.Model):
         max_length=255, null=True, blank=True
     )
     gestionnaire_signataire_date_deliberation = models.DateField(null=True, blank=True)
+    gestionnaire_signataire_bloc_signature = models.CharField(
+        max_length=5000, null=True, blank=True
+    )
 
     donnees_validees = models.TextField(null=True, blank=True)
     nom_fichier_signe = models.CharField(max_length=255, null=True, blank=True)

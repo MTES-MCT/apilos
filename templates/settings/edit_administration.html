@@ -18,7 +18,7 @@
                         {% include "common/form/input_text.html" with form_input=form.nom  %}
                         {% include "common/form/input_text.html" with form_input=form.code editable=request.user.is_superuser %}
                         {% include "common/form/input_text.html" with form_input=form.ville_signature %}
-                        {% include "common/form/input_textarea.html" with form_input=form.signature_label_extra helptext_visible=True %}
+                        {% include "common/form/input_text.html" with form_input=form.signataire_bloc_signature helptext_visible=True %}
                         {% include "common/form/input_text.html" with form_input=form.prefix_convention %}
 
                         {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_convention_exemplaires %}

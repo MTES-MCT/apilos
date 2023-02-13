@@ -62,27 +62,27 @@ class AdministrationForm(forms.Form):
             "max_length": "La ville de signature ne doit pas excéder 255 caractères",
         },
     )
-    signature_label_extra = forms.CharField(
+    signataire_bloc_signature = forms.CharField(
         required=False,
         label="Élément additionnel de signature sur la convention",
         max_length=5000,
         help_text=mark_safe(
-            "Sur les documents de convention, vous avez la possibilité d'affiner l'identité du signataire&nbsp;"
-            + "<strong>à la suite</strong> de la mention obligatoire : <br/>"
-            + '<blockquote class="ml-5 my-2">Le préfet, le président de l\'établissement public de coopération'
-            + "intercommunale, du conseil"
-            + "départemental, de la métropole de Lyon ou du conseil exécutif de Corse,</blockquote>"
+            "Sur les documents de convention, vous avez la possibilité d'affiner l'identité"
+            + " du signataire&nbsp;<strong>à la suite</strong> de la mention obligatoire :&nbsp;"
+            + "«&nbsp;Le préfet, le président de l'établissement public de coopération"
+            + "intercommunale, du conseil départemental, de la métropole…&nbsp;»"
         ),
     )
 
-    def clean_signature_label_extra(self):
-        signature_label_extra = self.cleaned_data.get("signature_label_extra", 0)
+    def clean_signataire_bloc_signature(self):
+        signataire_bloc_signature = self.cleaned_data.get(
+            "signataire_bloc_signature", 0
+        )
 
         # Automatically add a trailing comma so signature label remains compliant
-        signature_label_extra = signature_label_extra.strip(" ,") + ","
+        signataire_bloc_signature = signataire_bloc_signature.strip(" ,") + ","
 
-
-        return signature_label_extra
+        return signataire_bloc_signature
 
     prefix_convention = forms.CharField(
         required=False,
@@ -145,7 +145,6 @@ class AdministrationForm(forms.Form):
             "Nombre d'exemplaire de la convention que le bailleur doit envoyer au service"
             + " instructeur"
         ),
-        help_text="""
-            Ce nombre d'exemplaire est utilisé pour customiser l'email envoyé au bailleur lorsque la convention est validée.
-        """,
+        help_text="Ce nombre d'exemplaire est utilisé pour customiser l'email envoyé au"
+        + " bailleur lorsque la convention est validée.",
     )

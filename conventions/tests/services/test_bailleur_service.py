@@ -43,6 +43,7 @@ class ConventionBailleurServiceTests(TestCase):
         bailleur_signataire_nom = bailleur.signataire_nom
         bailleur_signataire_fonction = bailleur.signataire_fonction
         bailleur_signataire_date_deliberation = bailleur.signataire_date_deliberation
+        bailleur_signataire_bloc_signature = bailleur.signataire_bloc_signature
 
         self.service.request.POST = {
             "nom": "",
@@ -60,6 +61,7 @@ class ConventionBailleurServiceTests(TestCase):
             "signataire_nom": "Johnny",
             "signataire_fonction": "Dirlo",
             "signataire_date_deliberation": "2022-02-01",
+            "signataire_bloc_signature": "Mon Dirlo",
         }
 
         self.service.save()
@@ -72,9 +74,13 @@ class ConventionBailleurServiceTests(TestCase):
         self.assertEqual(
             bailleur.signataire_date_deliberation, bailleur_signataire_date_deliberation
         )
+        self.assertEqual(
+            bailleur.signataire_bloc_signature, bailleur_signataire_bloc_signature
+        )
         self.assertEqual(self.service.convention.signataire_nom, "Johnny")
         self.assertEqual(self.service.convention.signataire_fonction, "Dirlo")
         self.assertEqual(
             self.service.convention.signataire_date_deliberation,
             datetime.date(2022, 2, 1),
         )
+        self.assertEqual(self.service.convention.signataire_bloc_signature, "Mon Dirlo")

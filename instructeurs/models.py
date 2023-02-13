@@ -33,7 +33,7 @@ class Administration(IngestableModel):
     prefix_convention = models.CharField(
         max_length=255, default="{département}/{zone}/{mois}/{année}/80.416/", null=True
     )
-    signature_label_extra = models.TextField(null=True, blank=True)
+    signataire_bloc_signature = models.TextField(null=True, blank=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 

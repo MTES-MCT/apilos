@@ -147,6 +147,7 @@ def create_bailleurs():
             signataire_nom="Pall Antoine",
             signataire_fonction="DG",
             signataire_date_deliberation=datetime.date(2001, 12, 1),
+            signataire_bloc_signature="Mon DG",
         ),
         Bailleur.objects.create(
             nom="SEM",
@@ -156,6 +157,7 @@ def create_bailleurs():
             signataire_nom="Polo Alto",
             signataire_fonction="PDG",
             signataire_date_deliberation=datetime.date(2011, 12, 1),
+            signataire_bloc_signature="Mon PDG",
         ),
     )
 
@@ -212,6 +214,7 @@ def create_bailleur():
         signataire_nom="Patrick Patoulachi",
         signataire_fonction="PDG",
         signataire_date_deliberation=datetime.date(2014, 10, 9),
+        signataire_bloc_signature="Mon PDG",
     )
 
 

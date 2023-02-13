@@ -34,6 +34,7 @@ bailleur = {
     "signataire_nom": "John Doe",
     "signataire_fonction": "Directeur",
     "signataire_date_deliberation": "2020-01-01",
+    "signataire_bloc_signature": "Notre Directeur",
 }
 
 administration = {
