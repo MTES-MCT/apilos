@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from django.conf import settings
 from django.core.files import File
@@ -8,10 +9,14 @@ from conventions.models import Convention, ConventionStatut, PieceJointe
 from core.storage import client
 from upload.services import UploadService
 
+logger = logging.getLogger(__name__)
+
 
 class ConventionFileService:
     @classmethod
-    def upload_convention_file(cls, convention: Convention, file: File):
+    def upload_convention_file(
+        cls, convention: Convention, file: File, update_statut: bool = True
+    ):
         now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
         filename = f"{now}_convention_{convention.uuid}_signed.pdf"
         upload_service = UploadService(
@@ -20,14 +25,19 @@ class ConventionFileService:
         )
         upload_service.upload_file(file)
 
-        convention.statut = ConventionStatut.SIGNEE
+        if update_statut:
+            convention.statut = ConventionStatut.SIGNEE
         convention.nom_fichier_signe = filename
         convention.televersement_convention_signee_le = timezone.now()
         convention.save()
 
     @classmethod
     def promote_piece_jointe(cls, piece_jointe: PieceJointe):
-        file = client.get_object(
-            settings.AWS_ECOLOWEB_BUCKET_NAME, f"piecesJointes/{piece_jointe.fichier}"
-        )
-        cls.upload_convention_file(piece_jointe.convention, file)
+        try:
+            file = client.get_object(
+                settings.AWS_ECOLOWEB_BUCKET_NAME,
+                f"piecesJointes/{piece_jointe.fichier}",
+            )
+            cls.upload_convention_file(piece_jointe.convention, file, False)
+        except FileNotFoundError as fnfe:
+            logger.warning(fnfe)

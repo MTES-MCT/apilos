@@ -318,3 +318,11 @@ class LotModelsTest(TestCase):
     def test_lot_bailleur(self):
         lot = Lot.objects.order_by("uuid").first()
         self.assertEqual(lot.bailleur, lot.programme.bailleur)
+
+
+class ReferenceCadastraleTest(TestCase):
+    def test_compute_surface(self):
+        self.assertEqual(
+            ReferenceCadastrale.compute_surface(529814), "52 ha 98 a 14 ca"
+        )
+        self.assertEqual(ReferenceCadastrale.compute_surface(), "0 ha 0 a 0 ca")
