@@ -1,6 +1,7 @@
 select
     cdg.id||':'||pl.financement as id,
-    lag(cdg.id) over (partition by cdg.conventionapl_id, pl.financement order by cdg.datehistoriquedebut)||':'||pl.financement as parent_id,
+    first_value(cdg.id) over (partition by cdg.conventionapl_id, pl.financement order by cdg.datehistoriquedebut)||':'||pl.financement as parent_id,
+    rank() over (partition by cdg.conventionapl_id, pl.financement order by cdg.datehistoriquedebut) as rank,
     a.id is not null as is_avenant,
     -- Les avenants sont initialisés avec un type 'commentaires' dont la valeur est un résumé des altérations
     -- déclarées depuis Ecoloweb
@@ -40,12 +41,12 @@ select
     pl.bailleur_signataire_nom as gestionnaire_signataire_nom,
     nl.code = '2' as attribution_agees_autonomie,
     nl.code = '2' as attribution_agees_autre,
-    'Non renseigné (Ecoloweb)' as attribution_agees_autre_detail,
+    case when nl.code = '2' then 'Non renseigné (Ecoloweb)' end as attribution_agees_autre_detail,
     nl.code = '2' as attribution_agees_desorientees,
     nl.code = '2' as attribution_agees_ephad,
     nl.code = '2' as attribution_agees_petite_unite,
     nl.code = '3' as attribution_handicapes_autre,
-    'Non renseigné (Ecoloweb)' as attribution_handicapes_autre_detail,
+    case when nl.code = '3' then 'Non renseigné (Ecoloweb)' end as attribution_handicapes_autre_detail,
     nl.code = '3' as attribution_handicapes_foyer,
     nl.code = '3' as attribution_handicapes_foyer_de_vie,
     nl.code = '3' as attribution_handicapes_foyer_medicalise,
