@@ -66,9 +66,6 @@ class ConventionImporter(ModelImporter):
             "parent": self.resolve_ecolo_reference(ecolo_id=parent_id, model=self.model)
             if parent_id is not None
             else None,
-            # For avenant conventions, "numero" is the rank of the iterations within the convention history,
-            # minus 1 as first row is the root convention ranked 1
-            "numero": (rank - 1) if is_avenant else numero,
             "lot": self._lot_importer.import_one(data.pop("lot_id")),
             "programme": self.resolve_ecolo_reference(
                 ecolo_id=data.pop("programme_id"), model=Programme
