@@ -138,8 +138,8 @@ def edit_administration(request, administration_uuid):
             administration.adresse = form.cleaned_data["adresse"]
             administration.code_postal = form.cleaned_data["code_postal"]
             administration.ville = form.cleaned_data["ville"]
-            administration.signature_label_extra = form.cleaned_data[
-                "signature_label_extra"
+            administration.signataire_bloc_signature = form.cleaned_data[
+                "signataire_bloc_signature"
             ]
             administration.nb_convention_exemplaires = form.cleaned_data[
                 "nb_convention_exemplaires"
@@ -209,6 +209,9 @@ def edit_bailleur(request, bailleur_uuid):
             bailleur.signataire_date_deliberation = form.cleaned_data[
                 "signataire_date_deliberation"
             ]
+            bailleur.signataire_bloc_signature = form.cleaned_data[
+                "signataire_bloc_signature"
+            ]
             bailleur.save()
             success = True
     else:
@@ -227,6 +230,7 @@ def edit_bailleur(request, bailleur_uuid):
                         "ville",
                         "signataire_nom",
                         "signataire_fonction",
+                        "signataire_bloc_signature",
                     ],
                 ),
                 "bailleur": bailleur.parent.uuid if bailleur.parent else None,

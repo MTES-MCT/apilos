@@ -88,6 +88,10 @@
                             </div>
                         </div>
 
+                        <div class="fr-mb-2w">
+                            {% include "common/form/input_text.html" with form_input=form.signataire_bloc_signature object_field="bailleur__signataire_bloc_signature__"|add:form.uuid.value %}
+                        </div>
+
                         {% if convention.programme.is_foyer or convention.programme.is_residence %}
                             <h4>Gestionnaire des logments conventionnés</h4>
                             {% with convention_uuid=convention.uuid|slugify %}
@@ -106,11 +110,13 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="fr-mb-2w">
+                                    {% include "common/form/input_text.html" with form_input=form.gestionnaire_signataire_bloc_signature object_field="convention__gestionnaire_signataire_bloc_signature__"|add:convention_uuid %}
+                                </div>
+
                             {% endwith %}
-
                         {% endif %}
-
-
                     </div>
                 </div>
                 {% include "common/required_fields_info.html" %}

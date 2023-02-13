@@ -55,6 +55,8 @@ class ConventionBailleurService(ConventionService):
                     self.convention.signataire_date_deliberation
                     or bailleur.signataire_date_deliberation
                 ),
+                "signataire_bloc_signature": self.convention.signataire_bloc_signature
+                or bailleur.signataire_bloc_signature,
                 "gestionnaire": self.convention.gestionnaire,
                 "gestionnaire_signataire_nom": (
                     self.convention.gestionnaire_signataire_nom
@@ -64,6 +66,9 @@ class ConventionBailleurService(ConventionService):
                 ),
                 "gestionnaire_signataire_date_deliberation": utils.format_date_for_form(
                     self.convention.gestionnaire_signataire_date_deliberation
+                ),
+                "gestionnaire_signataire_bloc_signature": (
+                    self.convention.gestionnaire_signataire_bloc_signature
                 ),
             },
         )
@@ -140,6 +145,11 @@ class ConventionBailleurService(ConventionService):
                     self.convention.signataire_date_deliberation
                     or bailleur.signataire_date_deliberation,
                 ),
+                "signataire_bloc_signature": self.request.POST.get(
+                    "signataire_bloc_signature",
+                    self.convention.signataire_bloc_signature
+                    or bailleur.signataire_bloc_signature,
+                ),
                 "gestionnaire": self.request.POST.get(
                     "gestionnaire", self.convention.gestionnaire
                 ),
@@ -154,6 +164,10 @@ class ConventionBailleurService(ConventionService):
                 "gestionnaire_signataire_date_deliberation": self.request.POST.get(
                     "gestionnaire_signataire_date_deliberation",
                     self.convention.gestionnaire_signataire_date_deliberation,
+                ),
+                "gestionnaire_signataire_bloc_signature": self.request.POST.get(
+                    "gestionnaire_signataire_bloc_signature",
+                    self.convention.gestionnaire_signataire_bloc_signature,
                 ),
             },
         )
@@ -178,6 +192,9 @@ class ConventionBailleurService(ConventionService):
         self.convention.signataire_date_deliberation = self.form.cleaned_data[
             "signataire_date_deliberation"
         ]
+        self.convention.signataire_bloc_signature = self.form.cleaned_data[
+            "signataire_bloc_signature"
+        ]
         self.convention.gestionnaire = self.form.cleaned_data["gestionnaire"]
         self.convention.gestionnaire_signataire_nom = self.form.cleaned_data[
             "gestionnaire_signataire_nom"
@@ -188,4 +205,7 @@ class ConventionBailleurService(ConventionService):
         self.convention.gestionnaire_signataire_date_deliberation = (
             self.form.cleaned_data["gestionnaire_signataire_date_deliberation"]
         )
+        self.convention.gestionnaire_signataire_bloc_signature = self.form.cleaned_data[
+            "gestionnaire_signataire_bloc_signature"
+        ]
         self.convention.save()

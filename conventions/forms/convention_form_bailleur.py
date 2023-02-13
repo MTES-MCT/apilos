@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 
 from bailleurs.models import Bailleur, SousNatureBailleur
 
@@ -115,6 +116,19 @@ class ConventionBailleurForm(forms.Form):
             + "permettant de signer la convention"
         ),
     )
+    signataire_bloc_signature = forms.CharField(
+        required=False,
+        label="Élément additionnel de signature du bailleur sur la convention",
+        max_length=5000,
+        help_text=mark_safe(
+            "Sur les documents de convention, vous avez la possibilité d'affiner l'identité"
+            + " du signataire&nbsp;<strong>à la suite</strong> de la mention obligatoire : "
+            + "«&nbsp;Le bailleur&nbsp;», ou «&nbsp;Le propriétaire&nbsp;»."
+        ),
+        error_messages={
+            "max_length": "Le bloc signature ne doit pas excéder 5000 caractères",
+        },
+    )
 
     sous_nature_bailleur = forms.TypedChoiceField(
         required=False, label="Type de bailleur", choices=SousNatureBailleur.choices
@@ -155,6 +169,20 @@ class ConventionBailleurForm(forms.Form):
             "Date à laquelle le signataire du gestionnaire a reçu le mandat lui "
             + "permettant de signer la convention"
         ),
+    )
+    gestionnaire_signataire_bloc_signature = forms.CharField(
+        label="Élément additionnel de signature du gestionnaire sur la convention",
+        help_text=mark_safe(
+            "Sur les documents de convention, vous avez la possibilité d'affiner l'identité du signataire&nbsp;"
+            + "<strong>à la suite</strong> de la mention obligatoire : <br/>"
+            + '<blockquote class="ml-5 my-2">Le gestionnaire,</blockquote>'
+        ),
+        required=False,
+        max_length=5000,
+        error_messages={
+            "max_length": "Bloc signature du gestionnaire"
+            + " ne doit pas excéder 5000 caractères",
+        },
     )
 
     def clean(self):
