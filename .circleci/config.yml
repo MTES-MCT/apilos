@@ -6,7 +6,7 @@ jobs:
       - image: circleci/python:3.10
         environment:
           DATABASE_URL: postgres://root:password@localhost/apilos_test
-          ECOLO_DATABASE_URL: postgres://root:password@localhost/ecolotest
+          #ECOLO_DATABASE_URL: postgres://root:password@localhost/ecolotest
           SECRET_KEY: secret-key
           DEBUG: False
       - image: circleci/postgres:12.2-postgis
