@@ -13,29 +13,33 @@ logger = logging.getLogger(__name__)
 # Using enum class create enumerations
 class EmailTemplateID(enum.Enum):
     # [PLATEFORME] BAILLEUR - Avenant à instruire - confirmation
-    B_AVENANT_A_INSTRUIRE_CONFIRMATION = 106  # OK
+    B_AVENANT_A_INSTRUIRE_CONFIRMATION = 106
     # [PLATEFORME] BAILLEUR - Convention à instruire - confirmation
-    B_CONVENTION_A_INSTRUIRE_CONFIRMATION = 105  # OK
+    B_CONVENTION_A_INSTRUIRE_CONFIRMATION = 105
     # [PLATEFORME] BAILLEURS - Bienvenu sur la plateforme APiLos
-    B_WELCOME = 84  # OK
+    B_WELCOME = 84
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Avenant à instruire
-    BtoI_AVENANT_A_INSTRUIRE = 98  # OK
+    BtoI_AVENANT_A_INSTRUIRE = 98
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Convention à instruire
-    BtoI_CONVENTION_A_INSTRUIRE = 97  # OK
+    BtoI_CONVENTION_A_INSTRUIRE = 97
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Corrections faites - avenant à instruire à nouveau
-    BtoI_AVENANT_CORRECTIONS_FAITES = 100  # OK
+    BtoI_AVENANT_CORRECTIONS_FAITES = 100
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Corrections faites - convention à instruire à nouveau
-    BtoI_CONVENTION_CORRECTIONS_FAITES = 99  # OK
+    BtoI_CONVENTION_CORRECTIONS_FAITES = 99
     # [PLATEFORME] INSTRUCTEUR - Bienvenu sur la plateforme APiLos
-    I_WELCOME = 96  # OK
+    I_WELCOME = 96
     # [PLATEFORME] INSTRUCTEUR à BAILLEUR - Avenant validé
     ItoB_AVENANT_VALIDE = 104
     # [PLATEFORME] INSTRUCTEUR à BAILLEUR - Convention validée
     ItoB_CONVENTION_VALIDEE = 103
     # [PLATEFORME] INSTRUCTEUR à BAILLEUR - Corrections requises - avenant à corriger
-    ItoB_AVENANT_CORRECTIONS_REQUISES = 101  # OK
+    ItoB_AVENANT_CORRECTIONS_REQUISES = 101
     # [PLATEFORME] INSTRUCTEUR à BAILLEUR - Corrections requises - convention à corriger
-    ItoB_CONVENTION_CORRECTIONS_REQUISES = 102  # OK
+    ItoB_CONVENTION_CORRECTIONS_REQUISES = 102
+    # [PLATEFORME] Bailleurs - 2 - RETENTION (Questionnaire de satisfaction)
+    B_SATISFACTION = 138
+    # [PLATEFORME] Instructeurs - 2 - RETENTION (Questionnaire de satisfaction)
+    I_SATISFACTION = 139
 
 
 class EmailService:
