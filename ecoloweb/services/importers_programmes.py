@@ -25,6 +25,11 @@ class ReferenceCadastraleImporter(ModelImporter):
             "resources/sql/programme_reference_cadastrale.sql"
         )
 
+    def build_query_parameters(self, pk) -> list:
+        args = pk.split(":")
+
+        return [int(args[0]), args[1]]
+
     def _prepare_data(self, data: dict) -> dict:
         return {
             "surface": ReferenceCadastrale.compute_surface(data.pop("superficie", 0)),
@@ -44,6 +49,11 @@ class TypeStationnementImporter(ModelImporter):
         self._query_many = self._get_file_content(
             "resources/sql/programme_type_stationnement.sql"
         )
+
+    def build_query_parameters(self, pk) -> list:
+        args = pk.split(":")
+
+        return [int(args[0]), args[1]]
 
     def _prepare_data(self, data: dict) -> dict:
         return {
@@ -72,6 +82,11 @@ class ProgrammeImporter(ModelImporter):
         self._reference_cadastrale_importer = ReferenceCadastraleImporter(
             departement, import_date, debug
         )
+
+    def build_query_parameters(self, pk) -> list:
+        args = pk.split(":")
+
+        return [int(args[0]), args[1]]
 
     def _prepare_data(self, data: dict) -> dict:
         parent_id = data.pop("parent_id")
@@ -108,6 +123,11 @@ class LotImporter(ModelImporter):
             departement, import_date, debug
         )
 
+    def build_query_parameters(self, pk) -> list:
+        args = pk.split(":")
+
+        return [int(args[0]), args[1]]
+
     def _prepare_data(self, data: dict) -> dict:
         parent_id = data.pop("parent_id")
 
@@ -136,6 +156,11 @@ class LogementImporter(ModelImporter):
         self._query_many = self._get_file_content(
             "resources/sql/programme_logements.sql"
         )
+
+    def build_query_parameters(self, pk) -> list:
+        args = pk.split(":")
+
+        return [int(args[0]), args[1]]
 
     def _prepare_data(self, data: dict) -> dict:
         return {

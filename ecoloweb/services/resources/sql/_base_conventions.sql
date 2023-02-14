@@ -4,9 +4,9 @@ select
     -- Les avenants sont initialisés avec un type 'commentaires' dont la valeur est un résumé des altérations
     -- déclarées depuis Ecoloweb
     ('{"files": {}, "text": "Avenant issu d''Ecoloweb:\r\n\r\n'||ta.detail_avenant||'"}')::json as commentaires,
-    cdg.id as programme_id,
+    cdg.id||':'||ch.financement as programme_id,
     -- Les lots d'un programme sont tous les logements partageant le même financement
-    md5(cdg.id||'-'||ch.financement) as lot_id,
+    ch.id||':'||ch.financement as lot_id,
     ch.financement as financement,
     case
         when

@@ -2,7 +2,7 @@
 
 select
     l.id,
-    md5(pl.conventiondonneesgenerales_id||'-'||ff.code) as lot_id,
+    pl.conventiondonneesgenerales_id||':'||ff.code as lot_id,
     coalesce(l.numerobatiment||' '||l.noescalier||' '||l.etage||' '||l.numerologement, '') as designation,
     case
         when ptl.code in ('ST1', 'T1') then 'T1'
@@ -30,4 +30,5 @@ from ecolo.ecolo_logement l
     inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
     inner join ecolo.ecolo_valeurparamstatic ptl on l.typelogement_id = ptl.id
 where
-    md5(pl.conventiondonneesgenerales_id||'-'||ff.code) = %s
+    pl.conventiondonneesgenerales_id = %s
+    and ff.code = %s

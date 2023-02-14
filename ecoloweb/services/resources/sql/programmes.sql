@@ -32,8 +32,10 @@
 -- ville_signature_residence_agrement_gestionnaire_intermediation varchar(255)
 
 select
-    cdg.id,
-    ch.parent_id,
+    ch.id||':'||ch.financement as id,
+    case
+        when ch.parent_id is not null then ch.parent_id||':'||ch.financement
+    end as parent_id,
     pl.bailleurproprietaire_id as bailleur_id,
     c.entitecreatrice_id as administration_id,
     pa.codepostal as code_postal,
@@ -77,3 +79,4 @@ from ecolo.ecolo_conventionhistorique ch
     inner join ecolo.ecolo_region er on ed.region_id = er.id
 where
     ch.id = %s
+    and ch.financement = %s
