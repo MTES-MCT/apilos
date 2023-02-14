@@ -49,4 +49,13 @@ class EcolowebImportTest(TestCase):
         for result in importer.get_all():
             instances.append(importer.process_result(result))
 
-        self.assertEqual(len(instances), 6)
+        self.assertEqual(len(instances), 11)
+
+        importer = ConventionImporter("29", datetime.today())
+        importer.setup_db()
+
+        instances = []
+        for result in importer.get_all():
+            instances.append(importer.process_result(result))
+
+        self.assertEqual(len(instances), 1)

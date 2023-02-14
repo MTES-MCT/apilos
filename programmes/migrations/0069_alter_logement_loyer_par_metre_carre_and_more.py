@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("programmes", "0066_add_logement_surface_corrigee"),
+        ("programmes", "0068_alter_logement_loyer_par_metre_carre_and_more"),
     ]
 
     operations = [
