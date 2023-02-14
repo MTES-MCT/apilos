@@ -34,7 +34,7 @@ class EcolowebImportTest(TestCase):
             )
 
             for file in files:
-                print(f" * Loading sql file {file}")
+                # print(f" * Loading sql file {file}")
                 self._connection.execute(open(file).read())
 
     def test_import(self):
