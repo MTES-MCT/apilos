@@ -17,7 +17,7 @@ select
         when cdg.dateannulation is not null then '8. Annulée en suivi'
         when cdg.datedemandedenonciation is not null then '7. Dénoncée'
         when cdg.dateresiliationprefet is not null then '6. Résiliée'
-        when ec.code = 'INS' and c.noreglementaire is null then '2. Instruction requise'
+        when vps.code = 'INS' and c.noreglementaire is null then '2. Instruction requise'
         else '5. Signée'
     end as statut,
     cdg.datehistoriquefin as date_fin_conventionnement,
@@ -39,8 +39,8 @@ select
     cdg.daterefushypotheque as date_refus_spf,
     cdg.motifrefushypotheque as motif_refus_spf,
     -- Résidences et foyers
-    pl.nom_bailleur as gestionnaire,
-    pl.bailleur_signataire_nom as gestionnaire_signataire_nom,
+    b.raisonsociale||'( '||coalesce(b.codesiret, b.codepersonne)||')' as gestionnaire,
+    cb.noms_contacts as gestionnaire_signataire_nom,
     nl.code = '2' as attribution_agees_autonomie,
     nl.code = '2' as attribution_agees_autre,
     case when nl.code = '2' then 'Non renseigné (Ecoloweb)' end as attribution_agees_autre_detail,
@@ -62,10 +62,10 @@ select
     case when nl.code in ('2', '3', '4', '5', '7') then 'Non renseigné (Ecoloweb)' end as attribution_prestations_facultatives,
     case when nl.code in ('2', '3', '4', '5', '7') then 'Non renseigné (Ecoloweb)' end as attribution_prestations_integrees,
     case when nl.code in ('2', '3', '4', '5', '7') then pl.reservationprefnombre end as attribution_reservation_prefectorale,
-    case when nl.code <> '1' and pl.nature_operation_code = '80' then true else false end as foyer_residence_variante_1,
-    case when nl.code <> '1' and pl.nature_operation_code = '5' then true else false end as foyer_residence_variante_2,
-    case when nl.code <> '1' and pl.nature_operation_code = '5' then 'Non renseigné (Ecoloweb)' end as foyer_residence_variante_2_travaux,
-    case when nl.code <> '1' and pl.nature_operation_code = '1' then true else false end as foyer_residence_variante_3,
+    case when nl.code <> '1' and nop.code = '80' then true else false end as foyer_residence_variante_1,
+    case when nl.code <> '1' and nop.code = '5' then true else false end as foyer_residence_variante_2,
+    case when nl.code <> '1' and nop.code = '5' then 'Non renseigné (Ecoloweb)' end as foyer_residence_variante_2_travaux,
+    case when nl.code <> '1' and nop.code = '1' then true else false end as foyer_residence_variante_3,
     nl.code = '6' as attribution_pension_de_famille,
     nl.code = '6' as attribution_residence_accueil,
     nl.code in ('4', '5', '6') as attribution_residence_sociale_ordinaire
@@ -75,7 +75,7 @@ from ecolo.ecolo_conventionapl c
     inner join ecolo.ecolo_conventionhistorique ch on ch.conventionapl_id = c.id
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.id
     left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
-    inner join ecolo.ecolo_valeurparamstatic ec on ec.id = cdg.etatconvention_id
+    inner join ecolo.ecolo_valeurparamstatic vps on vps.id = cdg.etatconvention_id
     -- Détail des modifications, en cas d'avenant
     left join (
         select ta.avenant_id,
@@ -85,32 +85,21 @@ from ecolo.ecolo_conventionapl c
         group by ta.avenant_id
     ) ta on ta.avenant_id = a.id
     inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id
-    inner join (
+    inner join ecolo.ecolo_programmelogement pl on ch.programme_ids[1] = pl.id
+    inner join ecolo.ecolo_commune ec on pl.commune_id = ec.id
+    inner join ecolo.ecolo_departement ed on ec.departement_id = ed.id
+    inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
+    inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
+    left join ecolo.ecolo_valeurparamstatic nop on pl.natureoperation_id = nop.id
+    left join ecolo.ecolo_bailleur b on pl.bailleurgestionnaire_id = b.id
+    left join (
         select
-            distinct on (pl.conventiondonneesgenerales_id, ff.code)
-            pl.conventiondonneesgenerales_id,
-            pl.reservationprefnombre,
-            nop.code as nature_operation_code,
-            b.raisonsociale||'( '||coalesce(b.codesiret, b.codepersonne)||')' as nom_bailleur,
-            cb.noms_contacts as bailleur_signataire_nom,
-            ff.code as financement,
-            ed.codeinsee as departement
-        from ecolo.ecolo_programmelogement pl
-            inner join ecolo.ecolo_commune ec on pl.commune_id = ec.id
-            inner join ecolo.ecolo_departement ed on ec.departement_id = ed.id
-            inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
-            inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
-            left join ecolo.ecolo_valeurparamstatic nop on pl.natureoperation_id = nop.id
-            left join ecolo.ecolo_bailleur b on pl.bailleurgestionnaire_id = b.id
-            left join (
-                select
-                    cb.bailleur_id,
-                    string_agg(vps.libelle||' '||cb.prenom||' '||cb.nom, ', ') as noms_contacts
-                from ecolo.ecolo_contactbailleur cb
-                    inner join ecolo.ecolo_valeurparamstatic vps on cb.civilite_id = vps.id
-                group by cb.bailleur_id
-            ) cb on cb.bailleur_id = b.id
-    ) pl on pl.conventiondonneesgenerales_id = cdg.id and pl.financement = ch.financement
+            cb.bailleur_id,
+            string_agg(vps.libelle||' '||cb.prenom||' '||cb.nom, ', ') as noms_contacts
+        from ecolo.ecolo_contactbailleur cb
+            inner join ecolo.ecolo_valeurparamstatic vps on cb.civilite_id = vps.id
+        group by cb.bailleur_id
+    ) cb on cb.bailleur_id = b.id
 {% endblock %}
 {% block where %}
 {% endblock %}
