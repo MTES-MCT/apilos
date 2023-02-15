@@ -41,7 +41,7 @@ class ConventionHistory(models.Model):
 
 # pylint: disable=W0613
 @receiver(pre_save, sender=ConventionHistory)
-def set_bailleur_nature(sender, instance, *args, **kwargs):
+def send_survey_email(sender, instance, *args, **kwargs):
     # send email to get user satisfaction after instructeur validate convention
     # or bailleur submit convention for the first time ?
 
