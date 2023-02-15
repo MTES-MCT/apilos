@@ -47,7 +47,7 @@ class BailleurImporter(ModelImporter):
         # Clean SIRET code
         if (
             data["nature_bailleur"] != "Bailleurs privés"
-            and len(codesiret) == 14
+            and len(codesiret) != 14
             and (siret := self._resolve_siret(codesiret, date_creation)) is not None
         ):
             data["siret"] = siret

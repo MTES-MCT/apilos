@@ -1,0 +1,4 @@
+INSERT INTO ecolo.ecolo_naturebailleur (id, code, ordre, libelle, debutvalidite, finvalidite, estenregistrable, dureeconvention, version) VALUES (100009, '1', 10, 'HLM', '1900-01-01', null, false, 50, 0);
+INSERT INTO ecolo.ecolo_naturebailleur (id, code, ordre, libelle, debutvalidite, finvalidite, estenregistrable, dureeconvention, version) VALUES (100010, '2', 20, 'SEM', '1900-01-01', null, true, 50, 0);
+INSERT INTO ecolo.ecolo_naturebailleur (id, code, ordre, libelle, debutvalidite, finvalidite, estenregistrable, dureeconvention, version) VALUES (100012, '6', 40, 'Bailleurs privés', '1900-01-01', null, true, 50, 0);
+INSERT INTO ecolo.ecolo_naturebailleur (id, code, ordre, libelle, debutvalidite, finvalidite, estenregistrable, dureeconvention, version) VALUES (100011, '3', 30, 'Autres bailleurs sociaux non HLM', '1900-01-01', null, true, 50, 1);

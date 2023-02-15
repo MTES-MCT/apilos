@@ -34,7 +34,7 @@ class EcolowebImportTest(TestCase):
             )
 
             for file in files:
-                print(f" * Loading sql file {file}")
+                # print(f" * Loading sql file {file}")
                 self._connection.execute(open(file).read())
 
     def test_import(self):
@@ -43,8 +43,19 @@ class EcolowebImportTest(TestCase):
             self.skipTest("Ecoloweb tests skipped as no database correctly configured")
 
         importer = ConventionImporter("33", datetime.today())
+        importer.setup_db()
+
         instances = []
         for result in importer.get_all():
             instances.append(importer.process_result(result))
 
-        self.assertEqual(len(instances), 6)
+        self.assertEqual(len(instances), 11)
+
+        importer = ConventionImporter("29", datetime.today())
+        importer.setup_db()
+
+        instances = []
+        for result in importer.get_all():
+            instances.append(importer.process_result(result))
+
+        self.assertEqual(len(instances), 1)

@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
 
+from django.db.utils import ProgrammingError
+
 from conventions.models import Convention, PieceJointe, PieceJointeType, AvenantType
 from conventions.tasks import promote_piece_jointe
 from programmes.models import Programme
@@ -34,6 +36,26 @@ class ConventionImporter(ModelImporter):
 
         return [int(args[0]), args[1]]
 
+    def setup_db(self, force: bool = False):
+
+        try:
+            # Test if materialized view exists
+            self._db_connection.execute(
+                "select id from ecolo.ecolo_conventionhistorique limit 1"
+            )
+            exist = True
+        except ProgrammingError:
+            exist = False
+
+        if not exist or force:
+            self._db_connection.execute(
+                "drop materialized view if exists ecolo.ecolo_conventionhistorique"
+            )
+            self._db_connection.execute(
+                "create materialized view ecolo.ecolo_conventionhistorique as "
+                + self._get_file_content("resources/sql/convention_historique.sql")
+            )
+
     def get_all(self) -> QueryResultIterator:
         return QueryResultIterator(
             self._get_sql_from_template("conventions_many.sql"),
@@ -41,15 +63,11 @@ class ConventionImporter(ModelImporter):
         )
 
     def _prepare_data(self, data: dict) -> dict:
-        is_avenant = data.pop("is_avenant")
         parent_id = data.pop("parent_id")
-        rank = data.pop("rank")
-        numero = data.pop("numero")
         return {
-            "parent": self.import_one(parent_id if is_avenant else None),
-            # For avenant conventions, "numero" is the rank of the iterations within the convention history,
-            # minus 1 as first row is the root convention ranked 1
-            "numero": (rank - 1) if is_avenant is True else numero,
+            "parent": self.resolve_ecolo_reference(ecolo_id=parent_id, model=self.model)
+            if parent_id is not None
+            else None,
             "lot": self._lot_importer.import_one(data.pop("lot_id")),
             "programme": self.resolve_ecolo_reference(
                 ecolo_id=data.pop("programme_id"), model=Programme

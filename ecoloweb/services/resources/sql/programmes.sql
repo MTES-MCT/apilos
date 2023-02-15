@@ -31,37 +31,33 @@
 -- departement_residence_argement_gestionnaire_intermediation     varchar(255),
 -- ville_signature_residence_agrement_gestionnaire_intermediation varchar(255)
 
-
-
 select
-    cdg.id,
-    lag(cdg.id) over (partition by cdg.conventionapl_id order by cdg.datehistoriquedebut) as parent_id,
-    a.id is not null as is_avenant,
-    pl.bailleur_id,
+    ch.id||':'||ch.financement as id,
+    case
+        when ch.parent_id is not null then ch.parent_id||':'||ch.financement
+    end as parent_id,
+    pl.bailleurproprietaire_id as bailleur_id,
     c.entitecreatrice_id as administration_id,
-    pl.code_postal,
-    pl.ville,
-    pl.adresse,
+    pa.codepostal as code_postal,
+    pa.ville,
+    pa.ligne1||' '||pa.ligne2||' '||pa.ligne3||' '||pa.ligne4 as adresse,
     c.libelle as nom,
-    coalesce(pl.type_operation, 'SANSOBJET') as type_operation,
-    pl.numero_galion,
-    pl.date_achat,
-    pl.date_achevement,
-    pl.date_achevement_previsible,
-    pl.surface_utile_totale,
-    pl.code_insee_commune,
-    pl.code_insee_departement,
-    pl.code_insee_region,
-/*
-Valeurs Ecoloweb
-| 1 | Logements ordinaires |
-| 2 | Logements foyers pour personnes âgées | ex 1854431
-| 3 | Logements foyers pour personnes handicapées |
-| 4 | Logements foyers pour travailleurs migrants |
-| 5 | Logements foyers pour jeunes travailleurs |
-| 6 | Résidences sociales |
-| 7 | Logements foyers destinés à l'habitat inclusif |
- */
+    case
+        when nop.libelle = 'Acquisition seule' then 'ACQUIS'
+        when nop.libelle = 'Neuf ou construction' then 'NEUF'
+        when nop.libelle = 'Acquisition/amélioration' then 'ACQUISAMELIORATION'
+        when nop.libelle = 'Amélioration' then 'REHABILITATION'
+        when nop.libelle = 'Parc existant' then 'USUFRUIT'
+        else 'SANSOBJET'
+    end as type_operation,
+    pl.financementreferencedossier as numero_galion,
+    pl.financementdate as date_achat,
+    pl.datemiseservice as date_achevement,
+    pl.datemiseservice as date_achevement_previsible,
+    pl.surfaceutile as surface_utile_totale,
+    ec.code as code_insee_commune,
+    ed.codeinsee as code_insee_departement,
+    er.codeinsee as code_insee_region,
     case
         when nl.code = '1' then 'LOGEMENTSORDINAIRES'
         when nl.code = '6' then 'RESISDENCESOCIALE'
@@ -70,43 +66,17 @@ Valeurs Ecoloweb
     cdg.datehistoriquedebut as date_achevement,
     coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as cree_le,
     coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as mis_a_jour_le
-from ecolo.ecolo_conventiondonneesgenerales cdg
+from ecolo.ecolo_conventionhistorique ch
+    inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.id
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
     left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
     inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id
-    inner join (
-        select
-            distinct on (pl.conventiondonneesgenerales_id, pl.typefinancement_id)
-            pl.id,
-            pl.conventiondonneesgenerales_id,
-            pl.bailleurproprietaire_id as bailleur_id,
-            pa.codepostal as code_postal,
-            pl.datemisechantier,
-            pl.surfaceutile as surface_utile_totale,
-            pl.financementdate as date_achat,
-            pl.datemiseservice as date_achevement,
-            pl.datemiseservice as date_achevement_previsible,
-            pa.ville,
-            pa.ligne1||' '||pa.ligne2||' '||pa.ligne3||' '||pa.ligne4 as adresse,
-            case
-                when nop.libelle = 'Acquisition seule' then 'ACQUIS'
-                when nop.libelle = 'Neuf ou construction' then 'NEUF'
-                when nop.libelle = 'Acquisition/amélioration' then 'ACQUISAMELIORATION'
-                when nop.libelle = 'Amélioration' then 'REHABILITATION'
-                when nop.libelle = 'Parc existant' then 'USUFRUIT'
-                else 'SANSOBJET'
-            end as type_operation,
-            ec.code as code_insee_commune,
-            ed.codeinsee as code_insee_departement,
-            er.codeinsee as code_insee_region,
-            pl.financementreferencedossier as numero_galion
-        from ecolo.ecolo_programmelogement pl
-            left join ecolo.ecolo_programmeadresse pa on pl.id = pa.programmelogement_id
-            left join ecolo.ecolo_valeurparamstatic nop on pl.natureoperation_id = nop.id
-            inner join ecolo.ecolo_commune ec on pl.commune_id = ec.id
-            inner join ecolo.ecolo_departement ed on ec.departement_id = ed.id
-            inner join ecolo.ecolo_region er on ed.region_id = er.id
-        order by pl.conventiondonneesgenerales_id, pl.typefinancement_id, pl.ordre
-    ) pl on pl.conventiondonneesgenerales_id = cdg.id
+    inner join ecolo.ecolo_programmelogement pl on  pl.id = ch.programme_ids[1]
+    left join ecolo.ecolo_programmeadresse pa on pl.id = pa.programmelogement_id
+    left join ecolo.ecolo_valeurparamstatic nop on pl.natureoperation_id = nop.id
+    inner join ecolo.ecolo_commune ec on pl.commune_id = ec.id
+    inner join ecolo.ecolo_departement ed on ec.departement_id = ed.id
+    inner join ecolo.ecolo_region er on ed.region_id = er.id
 where
-    cdg.id = %s
+    ch.id = %s
+    and ch.financement = %s
