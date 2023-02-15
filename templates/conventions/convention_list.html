@@ -3,7 +3,7 @@
 <div class="fr-container">
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-md-12 ">
-            <form class="fr-my-3w" method="get" action="" id="search_table">
+            <form class="fr-mt-2w" method="get" action="" id="search_table">
                 <input type="hidden" id="order_by" name="order_by" value="{{conventions.order_by}}">
                 <input type="hidden" id="page" name="page" value="{{conventions.page}}">
                 <div class="fr-grid-row fr-grid-row--gutters">
@@ -62,10 +62,10 @@
     </div>
 </div>
 <div class="fr-container-fluid ds_banner">
-    <div class="fr-container fr-py-3w">
+    <div class="fr-container fr-px-3w">
         <div class="fr-grid-row fr-grid-row--gutters fr-card fr-card--no-border">
             <div class="fr-col-md-12">
-                <details class="fr-py-2w apilos-order-menu">
+                <details class="apilos-order-menu">
                     <summary class="fr-grid-row fr-grid-row--right">Trier par  <span class="apilos-order-name fr-link"></span><span class="fr-icon-arrow-down-s-line"></span></summary>
                     <div class="fr-grid-row fr-grid-row--right">
                         <div class="apilos-order-menu--open fr-p-2w">
@@ -178,7 +178,7 @@
                                         {% endif %}
                                         <td>
                                             <div class="apilos--flex-row-left-center">
-                                                <strong>{{convention.programme.nom}}
+                                                <strong class="apilos--overflow_ellipsis">{{convention.programme.nom}}
                                                 </strong>
                                                 {% if convention.is_avenant %}
                                                     <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-avenant background-white">Avenant</span>
