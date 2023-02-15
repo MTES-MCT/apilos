@@ -3,5 +3,5 @@
 {% block where %}
 where
     cdg.id = %s
-    and pl.financement = %s
+    and ch.financement = %s
 {% endblock %}

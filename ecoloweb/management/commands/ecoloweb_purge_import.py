@@ -3,8 +3,8 @@ from typing import List
 
 from django.conf import settings
 from django.core.management import BaseCommand
+from django.db import transaction
 
-from conventions.models import Convention
 from ecoloweb.models import EcoloReference
 
 
@@ -19,9 +19,9 @@ class Command(BaseCommand):
             help="Départements on which purge import data",
         )
         parser.add_argument(
-            "--purge-models",
+            "--keep-models",
             action="store_true",
-            help="Also delete related APiLos models",
+            help="Keep related APiLos models, do not delete",
         )
 
     def handle(self, *args, **options):
@@ -30,21 +30,22 @@ class Command(BaseCommand):
             sys.exit(1)
 
         departements: List[str] = options["departements"]
+        keep_models = options["keep_models"]
 
-        purge_models = options["purge_models"]
-
-        if purge_models:
-            convention_ids = EcoloReference.objects.values_list(
-                "apilos_id", flat=True
-            ).filter(
-                departement__in=departements,
-                apilos_model=EcoloReference.get_class_model_name(Convention),
+        count = 0
+        references = EcoloReference.objects.filter(departement__in=departements)
+        transaction.set_autocommit(False)
+        try:
+            for reference in references:
+                target = reference.resolve()
+                if target is not None and not keep_models:
+                    target.delete()
+                reference.delete()
+                count += 1
+            print(
+                f"Deleted {count} Ecolo reference(s) linked to import on departement(s) {', '.join(departements)} deleted"
             )
-
-            Convention.objects.filter(id__in=convention_ids).delete()
-            print(f"Purged {len(convention_ids)} convention(s)")
-
-        EcoloReference.objects.filter(departement__in=departements).delete()
-        print(
-            f"Ecolo references linked to import on departement(s) {', '.join(departements)} deleted"
-        )
+        except KeyboardInterrupt:
+            transaction.rollback()
+        else:
+            transaction.commit()

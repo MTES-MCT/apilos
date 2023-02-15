@@ -25,6 +25,11 @@ class ReferenceCadastraleImporter(ModelImporter):
             "resources/sql/programme_reference_cadastrale.sql"
         )
 
+    def build_query_parameters(self, pk) -> list:
+        args = pk.split(":")
+
+        return [int(args[0]), args[1]]
+
     def _prepare_data(self, data: dict) -> dict:
         return {
             "surface": ReferenceCadastrale.compute_surface(data.pop("superficie", 0)),
@@ -44,6 +49,11 @@ class TypeStationnementImporter(ModelImporter):
         self._query_many = self._get_file_content(
             "resources/sql/programme_type_stationnement.sql"
         )
+
+    def build_query_parameters(self, pk) -> list:
+        args = pk.split(":")
+
+        return [int(args[0]), args[1]]
 
     def _prepare_data(self, data: dict) -> dict:
         return {
@@ -73,11 +83,17 @@ class ProgrammeImporter(ModelImporter):
             departement, import_date, debug
         )
 
+    def build_query_parameters(self, pk) -> list:
+        args = pk.split(":")
+
+        return [int(args[0]), args[1]]
+
     def _prepare_data(self, data: dict) -> dict:
+        parent_id = data.pop("parent_id")
         return {
-            "parent": self.import_one(
-                data.pop("parent_id") if data.pop("is_avenant") else None
-            ),
+            "parent": self.resolve_ecolo_reference(ecolo_id=parent_id, model=self.model)
+            if parent_id is not None
+            else None,
             "bailleur": self._bailleur_importer.import_one(data.pop("bailleur_id")),
             "administration": self._administration_importer.import_one(
                 data.pop("administration_id")
@@ -100,9 +116,6 @@ class LotImporter(ModelImporter):
         super().__init__(departement, import_date, debug)
 
         self._query_one = self._get_file_content("resources/sql/programme_lots.sql")
-        self._query_many = self._get_file_content(
-            "resources/sql/programme_lots_many.sql"
-        )
 
         self._programme_importer = ProgrammeImporter(departement, import_date, debug)
         self._logement_importer = LogementImporter(departement, import_date, debug)
@@ -110,12 +123,22 @@ class LotImporter(ModelImporter):
             departement, import_date, debug
         )
 
+    def build_query_parameters(self, pk) -> list:
+        args = pk.split(":")
+
+        return [int(args[0]), args[1]]
+
     def _prepare_data(self, data: dict) -> dict:
+        parent_id = data.pop("parent_id")
+
         return {
-            "parent": self.import_one(
-                data.pop("parent_id") if data.pop("is_avenant") else None
-            ),
+            "parent": self.resolve_ecolo_reference(ecolo_id=parent_id, model=self.model)
+            if parent_id is not None
+            else None,
             "programme": self._programme_importer.import_one(data.pop("programme_id")),
+            "surface_habitable_totale": self._rounded_value(
+                data.pop("surface_habitable_totale")
+            ),
             **data,
         }
 
@@ -134,6 +157,11 @@ class LogementImporter(ModelImporter):
             "resources/sql/programme_logements.sql"
         )
 
+    def build_query_parameters(self, pk) -> list:
+        args = pk.split(":")
+
+        return [int(args[0]), args[1]]
+
     def _prepare_data(self, data: dict) -> dict:
         return {
             "surface_habitable": self._rounded_value(data.pop("surface_habitable")),
@@ -145,6 +173,3 @@ class LogementImporter(ModelImporter):
             "lot": self.resolve_ecolo_reference(data.pop("lot_id"), Lot),
             **data,
         }
-
-    def _rounded_value(self, value):
-        return round(float(value), 2) if value is not None else None

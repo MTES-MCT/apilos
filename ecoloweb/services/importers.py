@@ -87,6 +87,9 @@ class ModelImporter(ABC):
             path, Context(context | {"timezone": timezone.get_current_timezone()})
         )
 
+    def _rounded_value(self, value):
+        return round(float(value), 2) if value is not None else None
+
     def find_ecolo_reference(
         self, ecolo_id: str, model: Type[Model] | None = None
     ) -> EcoloReference | None:
@@ -104,12 +107,17 @@ class ModelImporter(ABC):
             ecolo_id=ecolo_id,
         ).first()
 
-    def resolve_ecolo_reference(
-        self, ecolo_id: str, model: Type[Model] | None = None
-    ) -> Model | None:
-        ecolo_reference = self.find_ecolo_reference(ecolo_id, model)
+    def resolve_ecolo_reference(self, ecolo_id: str, model: Type[Model]) -> Model:
+        """
+        Find the EcoloReference of model type model with id ecolo_id in Ecolo DB
+        """
+        self._debug(f"Looking for ref of {model.__name__} with id {ecolo_id}")
+        ecolo_reference = EcoloReference.objects.get(
+            apilos_model=EcoloReference.get_class_model_name(model),
+            ecolo_id=ecolo_id,
+        )
 
-        return ecolo_reference.resolve() if ecolo_reference is not None else None
+        return ecolo_reference.resolve()
 
     def _register_ecolo_reference(
         self, instance: Model, ecolo_id: int, id: int | None = None
@@ -130,7 +138,7 @@ class ModelImporter(ABC):
             return {
                 key: data[key]
                 for key in self._identity_keys
-                if data[key] is not None and data[key] != ""
+                if key in data and data[key] is not None and data[key] != ""
             }
 
         return {}
@@ -188,6 +196,10 @@ class ModelImporter(ABC):
             else:
                 # Create a new instance...
                 if data is not None:
+                    self._debug(
+                        f"Creating model for handler {self.__class__.__name__} with data {data}"
+                    )
+
                     instance = self.model.objects.create(**data)
 
                     # ...and mark it as imported

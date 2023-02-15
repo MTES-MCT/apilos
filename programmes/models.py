@@ -418,7 +418,7 @@ def compute_date_achevement_compile(sender, instance, *args, **kwargs):
     instance.date_achevement_compile = (
         instance.date_achevement or instance.date_achevement_previsible
     )
-    if len(instance.code_postal) == 5:
+    if instance.code_postal and len(instance.code_postal) == 5:
         code_departement = instance.code_postal[0:2]
         if (
             instance.code_insee_departement != code_departement
@@ -573,7 +573,7 @@ class Lot(IngestableModel):
         verbose_name="Loyer dérogatoire",
     )
     surface_habitable_totale = models.DecimalField(
-        max_digits=7,
+        max_digits=12,
         decimal_places=2,
         null=True,
     )
@@ -648,20 +648,20 @@ class Logement(models.Model):
         default=TypologieLogement.T1,
     )
     surface_habitable = models.DecimalField(
-        max_digits=6, decimal_places=2, null=True, verbose_name="Surface habitable"
+        max_digits=12, decimal_places=2, null=True, verbose_name="Surface habitable"
     )
     surface_corrigee = models.DecimalField(
-        max_digits=6, decimal_places=2, null=True, verbose_name="Surface corrigée"
+        max_digits=12, decimal_places=2, null=True, verbose_name="Surface corrigée"
     )
     surface_annexes = models.DecimalField(max_digits=6, decimal_places=2, null=True)
     surface_annexes_retenue = models.DecimalField(
-        max_digits=6, decimal_places=2, null=True
+        max_digits=12, decimal_places=2, null=True
     )
     surface_utile = models.DecimalField(
-        max_digits=6, decimal_places=2, null=True, verbose_name="Surface utile"
+        max_digits=12, decimal_places=2, null=True, verbose_name="Surface utile"
     )
     loyer_par_metre_carre = models.DecimalField(
-        max_digits=6,
+        max_digits=12,
         decimal_places=2,
         null=True,
         verbose_name="Loyer maximum en € par m² de surface utile",

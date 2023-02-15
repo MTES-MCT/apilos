@@ -1,0 +1,3 @@
+INSERT INTO ecolo.ecolo_adressebailleur (id, ligne1, ligne2, ligne3, ligne4, codepostal, ville, telephone1, telephone2, fax, mail, version) VALUES (100189, ' ', null, '38 R MARECHAL LECLERC', null, '29100', 'DOUARNENEZ', null, null, null, null, 4);
+INSERT INTO ecolo.ecolo_adressebailleur (id, ligne1, ligne2, ligne3, ligne4, codepostal, ville, telephone1, telephone2, fax, mail, version) VALUES (100385, ' ', null, '110 AV DE LA JALLERE', null, '33300', 'BORDEAUX', null, null, null, null, 3);
+INSERT INTO ecolo.ecolo_adressebailleur (id, ligne1, ligne2, ligne3, ligne4, codepostal, ville, telephone1, telephone2, fax, mail, version) VALUES (100452, ' ', null, '12 R CHANTECRIT', 'B.P. 222', '33300', 'BORDEAUX', null, null, null, null, 2);
