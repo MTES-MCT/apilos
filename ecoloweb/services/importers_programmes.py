@@ -166,6 +166,10 @@ class LogementImporter(ModelImporter):
         return {
             "surface_habitable": self._rounded_value(data.pop("surface_habitable")),
             "surface_annexes": self._rounded_value(data.pop("surface_annexes")),
+            "loyer_par_metre_carre": self._rounded_value(
+                data.pop("loyer_par_metre_carre")
+            ),
+            "loyer": self._rounded_value(data.pop("loyer")),
             "surface_annexes_retenue": self._rounded_value(
                 data.pop("surface_annexes_retenue")
             ),

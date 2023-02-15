@@ -64,12 +64,15 @@ class Command(BaseCommand):
                 importer.process_result(result)
                 self._on_result(progress, results)
 
+        except KeyboardInterrupt:
+            if use_transaction:
+                print("Rollabcking all changes due to runtime error")
+                transaction.rollback()
         except BaseException as e:
             if use_transaction:
                 print("Rollabcking all changes due to runtime error")
                 transaction.rollback()
-            if not isinstance(e, KeyboardInterrupt):
-                raise e
+            raise e
         else:
             if progress is not None:
                 progress.close()

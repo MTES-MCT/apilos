@@ -667,12 +667,12 @@ class Logement(models.Model):
         verbose_name="Loyer maximum en € par m² de surface utile",
     )
     coeficient = models.DecimalField(
-        max_digits=6,
+        max_digits=12,
         decimal_places=4,
         null=True,
         verbose_name="Coefficient propre au logement",
     )
-    loyer = models.DecimalField(max_digits=6, decimal_places=2, null=True)
+    loyer = models.DecimalField(max_digits=12, decimal_places=2, null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
