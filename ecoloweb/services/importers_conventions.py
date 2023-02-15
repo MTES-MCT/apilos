@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
 
+from django.db.utils import ProgrammingError
+
 from conventions.models import Convention, PieceJointe, PieceJointeType, AvenantType
 from conventions.tasks import promote_piece_jointe
 from programmes.models import Programme
@@ -35,15 +37,15 @@ class ConventionImporter(ModelImporter):
         return [int(args[0]), args[1]]
 
     def setup_db(self, force: bool = False):
-        exist = False
+
         try:
             # Test if materialized view exists
             self._db_connection.execute(
                 "select id from ecolo.ecolo_conventionhistorique limit 1"
             )
             exist = True
-        except BaseException:
-            pass
+        except ProgrammingError:
+            exist = False
 
         if not exist or force:
             self._db_connection.execute(
