@@ -174,14 +174,12 @@ class ConventionBailleurForm(forms.Form):
         label="Élément additionnel de signature du gestionnaire sur la convention",
         help_text=mark_safe(
             "Sur les documents de convention, vous avez la possibilité d'affiner l'identité du signataire&nbsp;"
-            + "<strong>à la suite</strong> de la mention obligatoire : <br/>"
-            + '<blockquote class="ml-5 my-2">Le gestionnaire,</blockquote>'
+            + "<strong>à la suite</strong> de la mention obligatoire : «&nbsp;Le gestionnaire,&nbsp;»"
         ),
         required=False,
         max_length=5000,
         error_messages={
-            "max_length": "Bloc signature du gestionnaire"
-            + " ne doit pas excéder 5000 caractères",
+            "max_length": "Bloc signature du gestionnaire ne doit pas excéder 5000 caractères",
         },
     )
 

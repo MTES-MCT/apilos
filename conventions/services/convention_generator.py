@@ -12,6 +12,7 @@ from docx.shared import Inches
 from django.conf import settings
 from django.forms.models import model_to_dict
 from django.template.defaultfilters import date as template_date
+from django.core.files.storage import default_storage
 
 from conventions.models import Convention, ConventionType1and2
 from conventions.templatetags.custom_filters import (
@@ -351,14 +352,16 @@ def _build_files_for_docx(doc, convention_uuid, file_list):
     files = UploadedFile.objects.filter(uuid__in=file_list)
     for object_file in files:
         if "image" in object_file.content_type:
-            file = UploadService().get_file(object_file.filepath(convention_uuid))
-            local_path = (
-                settings.MEDIA_ROOT / f"{object_file.uuid}_{object_file.filename}"
-            )
-            local_file = open(local_path, "wb")
-            local_file.write(file.read())
-            file.close()
-            local_file.close()
+            with default_storage.open(
+                object_file.filepath(convention_uuid),
+                "rb",
+            ) as file:
+                local_path = (
+                    settings.MEDIA_ROOT / f"{object_file.uuid}_{object_file.filename}"
+                )
+                local_file = open(local_path, "wb")
+                local_file.write(file.read())
+                local_file.close()
             docx_images.append(
                 InlineImage(doc, image_descriptor=f"{local_path}", width=Inches(5))
             )
