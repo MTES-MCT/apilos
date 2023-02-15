@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.conf import settings
 
 from comments.models import Comment, CommentStatut
+from conventions.forms.avenant import CompleteforavenantForm
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.notification import NotificationForm
 from conventions.forms.type1and2 import ConventionType1and2Form
@@ -12,6 +13,7 @@ from conventions.models.choices import ConventionStatut
 from conventions.models.convention import Convention
 from conventions.models.convention_history import ConventionHistory
 from conventions.services import utils
+from conventions.services.file import ConventionFileService
 from conventions.tasks import generate_and_send
 from core.services import EmailService, EmailTemplateID
 from programmes.models import Annexe
@@ -321,6 +323,21 @@ def convention_validate(request: HttpRequest, convention: Convention):
         if not convention.valide_le:
             convention.valide_le = timezone.now()
         convention.save()
+
+        return {
+            "success": utils.ReturnStatus.SUCCESS,
+            "convention": convention,
+        }
+    complete_for_avenant_form = CompleteforavenantForm(request.POST)
+    if complete_for_avenant_form.is_valid():
+        convention.parent.programme.ville = complete_for_avenant_form.cleaned_data[
+            "ville"
+        ]
+        convention.parent.lot.nb_logements = complete_for_avenant_form.cleaned_data[
+            "nb_logements"
+        ]        
+        convention.save()
+        print(convention)
 
         return {
             "success": utils.ReturnStatus.SUCCESS,
