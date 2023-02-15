@@ -18,7 +18,7 @@
                                 <div class="block--row-strech-1">
                                     <h1 class="m-0">Conventions et avenants</h1>
                                 </div>
-                                {% if not CERBERE_AUTH %}
+                                {% if not CERBERE_AUTH and not request.user.is_staff %}
                                     <div class="fr-mr-3w">
                                         <a class="fr-btn" href="{% url 'conventions:selection' %}">
                                             <span class="fr-fi-add-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
@@ -66,7 +66,7 @@
 
             {% include "conventions/convention_list.html" %}
 
-            {% if not CERBERE_AUTH %}
+            {% if not CERBERE_AUTH and not request.user.is_staff %}
                 <div class="fr-container-fluid">
                     <div class="fr-container">
                         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">

@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -12,6 +13,9 @@ class ConventionSelectionFromDBView(LoginRequiredMixin, View):
 
     # @permission_required("convention.add_convention")
     def get(self, request):
+        # Temporarily forbid staff users to create conventions
+        if request.user.is_staff:
+            raise PermissionDenied
 
         service = ConventionSelectionService(request)
         service.get_from_db()
