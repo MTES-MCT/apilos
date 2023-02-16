@@ -42,6 +42,14 @@ class ConventionSelectionFromDBViewTests(AbstractCreateViewTestCase, TestCase):
             msg=f"{self.msg_prefix}",
         )
 
+    def test_view_superuser(self):
+        # login as superuser
+        response = self.client.post(
+            reverse("login"), {"username": "nicolas", "password": "12345"}
+        )
+        response = self.client.get(self.target_path)
+        self.assertEqual(response.status_code, 403, msg=f"{self.msg_prefix}")
+
 
 class ConventionSelectionFromZeroViewTests(AbstractCreateViewTestCase, TestCase):
     fixtures = ["departements.json"]
