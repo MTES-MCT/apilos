@@ -2,6 +2,7 @@ import uuid
 import logging
 
 from django.db import models
+from django.db.models import Index
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
@@ -913,3 +914,15 @@ class TypeStationnement(IngestableModel):
         return self.loyer
 
     l = property(_get_loyer)
+
+
+class IndiceEvolutionLoyer(models.Model):
+    class Meta:
+        indexes = [
+            models.Index(fields=["annee"], name="annee"),
+        ]
+
+    id = models.AutoField(primary_key=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    annee = models.IntegerField()
+    coefficient = models.IntegerField()
