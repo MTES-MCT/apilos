@@ -155,23 +155,26 @@ def convention_post_action(request, convention_uuid):
     form_posted = None
     if request.method == "POST":
         resiliation_form = ConventionResiliationForm(request.POST)
-        if resiliation_form.is_valid():
-            convention.statut = ConventionStatut.RESILIEE
-            convention.date_resiliation = resiliation_form.cleaned_data[
-                "date_resiliation"
-            ]
-            convention.save()
-            # SUCCESS
-            result_status = utils.ReturnStatus.SUCCESS
-            form_posted = "resiliation"
         updatedate_form = ConventionDateForm(request.POST)
-        if updatedate_form.is_valid():
-            convention.televersement_convention_signee_le = (
-                updatedate_form.cleaned_data["televersement_convention_signee_le"]
-            )
-            convention.save()
-            result_status = utils.ReturnStatus.SUCCESS
-            form_posted = "date_signature"
+        is_resiliation = request.POST.get("resiliation", False)
+        if is_resiliation:
+            if resiliation_form.is_valid():
+                convention.statut = ConventionStatut.RESILIEE
+                convention.date_resiliation = resiliation_form.cleaned_data[
+                    "date_resiliation"
+                ]
+                convention.save()
+                # SUCCESS
+                result_status = utils.ReturnStatus.SUCCESS
+                form_posted = "resiliation"
+        else:
+            if updatedate_form.is_valid():
+                convention.televersement_convention_signee_le = (
+                    updatedate_form.cleaned_data["televersement_convention_signee_le"]
+                )
+                convention.save()
+                result_status = utils.ReturnStatus.SUCCESS
+                form_posted = "date_signature"
 
     else:
         resiliation_form = ConventionResiliationForm()
