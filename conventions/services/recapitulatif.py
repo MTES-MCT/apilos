@@ -25,6 +25,7 @@ def convention_summary(request: HttpRequest, convention: Convention):
     convention_number_form = ConventionNumberForm(
         initial={"convention_numero": convention.get_default_convention_number()}
     )
+    complete_for_avenant_form = CompleteforavenantForm()
 
     opened_comments = Comment.objects.filter(
         convention=convention,
@@ -62,6 +63,7 @@ def convention_summary(request: HttpRequest, convention: Convention):
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
         "conventionNumberForm": convention_number_form,
+        "complete_for_avenant_form": complete_for_avenant_form,
         "ConventionType1and2Form": convention_type1_and_2_form,
     }
 
@@ -290,60 +292,86 @@ def send_email_correction(
 
 
 def convention_validate(request: HttpRequest, convention: Convention):
-    convention_number_form = ConventionNumberForm(request.POST)
-    convention_number_form.convention = convention
-    if convention_number_form.is_valid():
-        convention.numero = convention_number_form.cleaned_data["convention_numero"]
+    is_completeform = request.POST.get("completeform", False)
+    if is_completeform:
+        complete_for_avenant_form = CompleteforavenantForm(request.POST)
+        if complete_for_avenant_form.is_valid():
+            parentconvention = convention.parent
+            programme = convention.programme
+            parent_programme = parentconvention.programme
+            parent_programme.ville = complete_for_avenant_form.cleaned_data[
+                "ville"
+            ]
+            parent_programme.save()
+            if not programme.ville:
+                programme.ville = complete_for_avenant_form.cleaned_data[
+                    "ville"
+                ]
+                programme.save()
 
-        convention.save()
-
-    if convention_number_form.is_valid() or request.POST.get("Force"):
-
-        # Generate the doc should be placed after the status update
-        # because the watermark report the status of the convention
-        previous_status = convention.statut
-        convention.statut = ConventionStatut.A_SIGNER
-
-        ConventionHistory.objects.create(
-            convention=convention,
-            statut_convention=ConventionStatut.A_SIGNER,
-            statut_convention_precedent=previous_status,
-            user=request.user,
-        ).save()
-
-        generate_and_send.send(
-            {
-                "convention_uuid": str(convention.uuid),
-                "convention_url": request.build_absolute_uri(
-                    reverse("conventions:preview", args=[convention.uuid])
-                ),
-                "convention_email_validator": request.user.email,
+            lot = convention.lot
+            parent_lot = parentconvention.lot
+            parent_lot.nb_logements = complete_for_avenant_form.cleaned_data[
+                "nb_logements"
+            ]
+            parent_lot.save()
+            if not lot.nb_logements:
+                lot.nb_logements = complete_for_avenant_form.cleaned_data[
+                    "nb_logements"
+                ]
+                lot.save()
+                
+            conventionfile = request.FILES.get("nom_fichier_signe", False)
+            if conventionfile:
+                ConventionFileService.upload_convention_file(
+                    parentconvention, conventionfile
+                )
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "convention": convention,
+                "form": "complete_for_avenant_form",
             }
-        )
-        if not convention.valide_le:
-            convention.valide_le = timezone.now()
-        convention.save()
+    else:
+        
+        convention_number_form = ConventionNumberForm(request.POST)
+        convention_number_form.convention = convention
+        if convention_number_form.is_valid():
+            convention.numero = convention_number_form.cleaned_data["convention_numero"]
 
-        return {
-            "success": utils.ReturnStatus.SUCCESS,
-            "convention": convention,
-        }
-    complete_for_avenant_form = CompleteforavenantForm(request.POST)
-    if complete_for_avenant_form.is_valid():
-        convention.parent.programme.ville = complete_for_avenant_form.cleaned_data[
-            "ville"
-        ]
-        convention.parent.lot.nb_logements = complete_for_avenant_form.cleaned_data[
-            "nb_logements"
-        ]        
-        convention.save()
-        print(convention)
+            convention.save()
 
-        return {
-            "success": utils.ReturnStatus.SUCCESS,
-            "convention": convention,
-        }
+        if convention_number_form.is_valid() or request.POST.get("Force"):
 
+            # Generate the doc should be placed after the status update
+            # because the watermark report the status of the convention
+            previous_status = convention.statut
+            convention.statut = ConventionStatut.A_SIGNER
+
+            ConventionHistory.objects.create(
+                convention=convention,
+                statut_convention=ConventionStatut.A_SIGNER,
+                statut_convention_precedent=previous_status,
+                user=request.user,
+            ).save()
+
+            generate_and_send.send(
+                {
+                    "convention_uuid": str(convention.uuid),
+                    "convention_url": request.build_absolute_uri(
+                        reverse("conventions:preview", args=[convention.uuid])
+                    ),
+                    "convention_email_validator": request.user.email,
+                }
+            )
+            if not convention.valide_le:
+                convention.valide_le = timezone.now()
+            convention.save()
+
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "convention": convention,
+                "form": "convention_number_form",
+            }
     return {
         **utils.base_convention_response_error(request, convention),
         "bailleur": convention.programme.bailleur,
@@ -355,5 +383,5 @@ def convention_validate(request: HttpRequest, convention: Convention):
         "reference_cadastrales": convention.programme.referencecadastrales.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
-        "conventionNumberForm": convention_number_form,
+        "conventionNumberForm": convention_number_form,"complete_for_avenant_form": complete_for_avenant_form,
     }

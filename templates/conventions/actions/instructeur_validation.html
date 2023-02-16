@@ -17,6 +17,7 @@
                     <div>
                         <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
                             {% csrf_token %}
+                            <input id="numberform" type="hidden" name="numberform" value="true" disabled="disabled" />
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
                                 <div class="fr-col-12 fr-col-md-6">
                                     {% include "common/form/input_text.html" with form_input=conventionNumberForm.convention_numero editable=editable_validation %}

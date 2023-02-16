@@ -51,7 +51,7 @@ class CompleteforavenantForm(forms.Form):
     """
 
     ville = forms.CharField(
-        label="Ville",
+        label="Ville du programme",
         max_length=255,
         required=False,
         error_messages={

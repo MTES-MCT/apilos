@@ -3,23 +3,35 @@
 <div>
     <p class="fr-alert__title">Valider l'avenant</p>
     <p class="fr-mb-0">
-        {{convention.uuid}} _ 
-        {{convention.parent.uuid}} - 
-        {{convention.parent.programme.ville}} - {{convention.parent.lot.nb_logements}} - {{convention.parent.nom_fichier_signe}}
+        avenant : {{convention.uuid}} - 
+        ville : {{convention.programme.ville}} - nb logements : {{convention.lot.nb_logements}} <br/>
+        parent : {{convention.parent.uuid}} - 
+        ville : {{convention.parent.programme.ville}} - nb logements : {{convention.parent.lot.nb_logements}} - fichier : {{convention.parent.nom_fichier_signe}}
         {% if not convention.parent.programme.ville or not convention.parent.lot.nb_logements or not convention.parent.nom_fichier_signe %}
-            Pour pouvoir valider cet avenant, vous devez remplir les informations suivantes.
-            <form method="post" action="">
+            Pour pouvoir valider cet avenant, vous devez remplir les informations suivantes concernant la convention originale.
+            <form method="post"  action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
                 {% csrf_token %}
+                <input id="completeform" type="hidden" name="completeform" value="true">
                 {% if not convention.parent.programme.ville %}
-                    pas de ville
-                    {% include "common/form/input_text.html" with form_input=complete_for_avenant_form.ville editable=True %}
+                    <div class="fr-col-12 fr-col-md-6">
+                        pas de ville
+                        {% include "common/form/input_text.html" with form_input=complete_for_avenant_form.ville editable=True %}
+                    </div>
                 {% endif %}
                 {% if not convention.parent.lot.nb_logements %}
-                    - pas de logements
-                    {% include "common/form/input_number.html" with form_input=complete_for_avenant_form.nb_logements editable=True %}
+                    <div class="fr-col-12 fr-col-md-6">
+                        - pas de logements
+                        {% include "common/form/input_number.html" with form_input=complete_for_avenant_form.nb_logements editable=True %}
+                    </div>
                 {% endif %}
                 {% if not convention.parent.nom_fichier_signe %}
                 - pas de fichier
+                <div class="fr-upload-group fr-my-5w">
+                    <label class="fr-label" for="file-upload">Téléverser la convention (en PDF)
+                        <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
+                    </label>
+                    <input class="fr-upload" type="file" id="file-upload" name="nom_fichier_signe">
+                </div>
                 {% endif %}
                 <button>Envoyer</button>
             </form>
