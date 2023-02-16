@@ -42,3 +42,26 @@ class AvenantsforavenantForm(forms.Form):
     nom_fichier_signe = forms.FileField(
         required=False,
     )
+
+
+class CompleteforavenantForm(forms.Form):
+    """
+    Formulaire qui permet à l'instructeur de compléter les informations de la convention
+      non-connue d'Apilos avant la validation de l'avenant
+    """
+
+    ville = forms.CharField(
+        label="Ville du programme",
+        max_length=255,
+        required=False,
+        error_messages={
+            "max_length": "La ville ne doit pas excéder 255 caractères",
+        },
+    )
+    nb_logements = forms.IntegerField(
+        label="Nb logements à conventionner",
+        required=False,
+    )
+    nom_fichier_signe = forms.FileField(
+        required=False,
+    )

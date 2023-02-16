@@ -3,32 +3,62 @@
 <div>
     <p class="fr-alert__title">Valider l'avenant</p>
     <p class="fr-mb-0">
-        Pour pouvoir valider cet avenant, vous devez remplir les informations suivantes.
+        {% if not convention.parent.programme.ville or not convention.parent.lot.nb_logements or not convention.parent.nom_fichier_signe %}
+            Pour pouvoir valider cet avenant, vous devez remplir les informations suivantes concernant la convention originale.
+            <form method="post"  action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
+                {% csrf_token %}
+                <input id="completeform" type="hidden" name="completeform" value="true">
+                <div class="fr-grid-row fr-grid-row--gutters fr-mt-3w">
+
+                    {% if not convention.parent.programme.ville %}
+                        <div class="fr-col-12 fr-col-md-6">
+                            {% include "common/form/input_text.html" with form_input=complete_for_avenant_form.ville editable=True %}
+                        </div>
+                    {% endif %}
+                    {% if not convention.parent.lot.nb_logements %}
+                        <div class="fr-col-12 fr-col-md-6">
+                            {% include "common/form/input_number.html" with form_input=complete_for_avenant_form.nb_logements editable=True %}
+                        </div>
+                    {% endif %}
+                    {% if not convention.parent.nom_fichier_signe %}
+                        <div class="fr-col-12">
+                            <div class="fr-upload-group fr-my-4w">
+                                <label class="fr-label" for="file-upload">Téléverser la convention (en PDF)
+                                    <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
+                                </label>
+                                <input class="fr-upload" type="file" id="file-upload" name="nom_fichier_signe">
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <button>Envoyer</button>
+            </form>
+        {% else %}
+            {% if convention.numero %}
+                <p class="fr-mb-0">L'avenant aura le numéro {{ convention.numero }}</p>
+            {% else %}
+                <div class="fr-col-md-12 block--row-strech">
+                    <div class="block--row-strech-1 fr-mr-6w">
+                        <p class="fr-alert__title">Valider l'avenant</p>
+                        <p class="fr-mb-0">L'avenant aura le numéro {{conventionNumberForm.convention_numero.value}}.</p>
+                    </div>
+                    <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
+                        {% csrf_token %}
+                        <input type="hidden"
+                            id="{{conventionNumberForm.convention_numero.id_for_label}}"
+                            name="{{conventionNumberForm.convention_numero.html_name}}"
+                            value="{{conventionNumberForm.convention_numero.value}}">
+                        <button class="fr-btn fr-btn--secondary">
+                            Valider l'avenant
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        {% endif %}
     </p>
 </div>
-<form method="post" action="{% url 'conventions:complete_form_for_avenants' convention_uuid=convention.uuid %}" data-turbo="false">
-    {% include "common/form/input_text.html" with form_input=form.ville object_field="programme__ville__"|add:form.uuid.value %}
 
-    <button class="fr-btn fr-btn--secondary">
-        Valider l'avenant
-    </button>
-</form>
-{% if convention.programme.ville %}
-    il y  a une ville au programme
-{% else %}
-    pas de ville
-{% endif %}
-{% if convention.lot.nb_logements %}
-    - il y a des logements
-{% else %}
-    - pas de logements
-{% endif %}
-{% if convention.parent.nom_fichier_signe %}
-    - un fichier
-{% else %}
-    - pas de fichier
-{% endif %}
-<div>
 
-    {{convention.numero}}
-</div>
+
+
+

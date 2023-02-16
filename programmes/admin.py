@@ -18,6 +18,8 @@ class ProgrammeAdmin(admin.ModelAdmin):
     fields = (
         "uuid",
         "nom",
+        "code_postal",
+        "ville",
         "numero_galion",
         "administration",
         "bailleur",
