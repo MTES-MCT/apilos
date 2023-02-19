@@ -1,6 +1,7 @@
 from django.http import HttpRequest
 from django.db import transaction
 from django.db.models.query import QuerySet
+from django.db.models import Count
 
 from conventions.models import (
     ConventionStatut,
@@ -175,12 +176,12 @@ class ConventionSelectionService:
     def get_from_db(self):
         self.lots = (
             self.request.user.lots()
-            .prefetch_related("programme")
-            .prefetch_related("conventions")
+            .select_related("programme")
+            .annotate(nb_conventions=Count("conventions"))
             .order_by(
                 "programme__ville", "programme__nom", "nb_logements", "financement"
             )
-            .filter(programme__parent_id__isnull=True, conventions__isnull=True)
+            .filter(programme__parent_id__isnull=True, nb_conventions=0)
         )
         self.form = ProgrammeSelectionFromDBForm(
             lots=_get_choices_from_object(self.lots),

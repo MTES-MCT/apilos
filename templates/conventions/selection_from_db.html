@@ -23,8 +23,7 @@
                                 {% for lot in lots %}
                                     <option
                                         value="{{lot.uuid}}"
-                                        {% if lot.uuid|stringformat:"s"  == form.lot.value %}selected{% endif %}
-                                        {% if lot.conventions.all and lot.uuid|stringformat:"s"  != form.lot.value %}disabled="disabled"{% endif %}>
+                                        {% if lot.uuid|stringformat:"s"  == form.lot.value %}selected{% endif %}>
                                         {{ lot.programme.ville}} - {{ lot.programme.nom }} - {{lot.nb_logements}} lgts - {{ lot.get_type_habitat_display }} - {{ lot.financement }}
                                     </option>
                                 {% endfor %}
