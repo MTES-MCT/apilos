@@ -167,10 +167,7 @@ class ConventionKPI(APIView):
 
         nb_conventions_by_status = {
             convention_statut.value: 0 for convention_statut in ConventionStatut
-        }
-        nb_conventions_by_status.update(
-            {query["statut"]: query["total"] for query in query_by_statuses}
-        )
+        } | {query["statut"]: query["total"] for query in query_by_statuses}
         list_conv_kpi = []
 
         if request.user.is_administration():
