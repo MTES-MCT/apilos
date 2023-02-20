@@ -22,6 +22,13 @@
   align-items: center;
   justify-content: left;
 }
+.apilos--overflow_ellipsis {
+  display: block;
+  width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 .apilos-d-inline {
   display: inline;
@@ -276,8 +283,12 @@ a[href].apilos-block-faqlink:after {
 .apilos-block-faqlink .fr-icon-question-mark {
   color: white;
   background-color: #000091;
-  padding: 0.5rem;
+  padding: 0.2rem;
   border-radius: 2rem;
+}
+.apilos--icon-small:before {
+  --icon-size: 1rem;
+  width: 1.5rem;
 }
 
 

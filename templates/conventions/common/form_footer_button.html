@@ -1,6 +1,13 @@
 <div class="form-button-footer fr-col-md-12 fr-py-5w">
     {% if editable %}
-        {% include "common/button/next_and_save.html" %}
+        <div class="apilos--flex-row-left-center">
+            <div class="fr-mr-4w">
+                {% if form_step.next_target %}
+                <a href="{% url form_step.next_target convention_uuid=convention.uuid %}" class="fr-link">Passer cette étape</a>
+                {% endif %}
+            </div>
+            {% include "common/button/next_and_save.html" %}
+        </div>
         {% if form_step.previous_target %}
             {% include "common/button/previous.html" with precedent=form_step.previous_target convention_uuid=convention.uuid %}
         {% endif %}
