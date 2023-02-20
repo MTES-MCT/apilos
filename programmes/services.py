@@ -20,20 +20,19 @@ class LoyerRedevanceUpdateComputer:
     @staticmethod
     def compute_loyer_update(
         montant_initial: float,
-        nature_logement: str,
         date_initiale: date,
         date_actualisation: date | None = date.today(),
     ) -> float:
-        coefficients = (
+        coefficients = list(
             IndiceEvolutionLoyer.objects.filter(
-                annee__gt=date_initiale.year, annee__lte=date_actualisation.year
+                annee__gt=date_initiale.year, annee__lt=date_actualisation.year
             )
             .order_by("annee")
             .values_list("coefficient", flat=True)
         )
 
         return functools.reduce(
-            lambda loyer, coefficient: loyer * ((100 + coefficient) / 100),
+            lambda loyer, coefficient: loyer * coefficient,
             coefficients,
             montant_initial,
         )

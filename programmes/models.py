@@ -925,4 +925,7 @@ class IndiceEvolutionLoyer(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     annee = models.IntegerField()
-    coefficient = models.IntegerField()
+    coefficient = models.FloatField()
+
+    def __str__(self):
+        return f"{self.annee} => {self.coefficient}"

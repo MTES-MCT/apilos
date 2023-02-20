@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ("id", models.AutoField(primary_key=True, serialize=False)),
                 ("uuid", models.UUIDField(default=uuid.uuid4, editable=False)),
                 ("annee", models.IntegerField()),
-                ("coefficient", models.IntegerField()),
+                ("coefficient", models.FloatField()),
             ],
         ),
         migrations.AddIndex(

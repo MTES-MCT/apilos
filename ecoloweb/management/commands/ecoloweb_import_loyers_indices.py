@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """
-        Règles de calcul:
+        Règles de calcul :
 
         Il existe 3 indices annuels : ICC, IRL1 et IRL2, (les indices trimestriels ne sont plus utilisés)
             * l'ICC est valable avant 2005 (2005 inclus)
@@ -21,7 +21,7 @@ class Command(BaseCommand):
         """
         results: QueryResultIterator = QueryResultIterator(
             query="""
-select vps.libelle::int as annee, coalesce(il.irl2evol, il.irl1evol, il.iccaugmentation, il.icctrim4moyenne) as coefficient
+select vps.libelle::int as annee, coalesce(il.irl2evol, il.irl1evol, il.iccaugmentation, il.icctrim4moyenne / 100.) as coefficient
 from ecolo.ecolo_indiceloyer il
     inner join ecolo.ecolo_valeurparamstatic vps on il.annee_id = vps.id
         """
