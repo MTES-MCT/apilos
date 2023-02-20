@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 
 from apilos_settings.forms import BailleurListingUploadForm
 from conventions.forms import BailleurForm
-from bailleurs.models import Bailleur
+from bailleurs.models import Bailleur, NatureBailleur
 from conventions.services import utils
 from conventions.services.utils import ReturnStatus
 from core.services import EmailService, EmailTemplateID
@@ -279,13 +279,24 @@ def user_list(request):
 def edit_user(request, username):
     user = User.objects.get(username=username)
     status = ""
+    bailleurs = [
+        (b.uuid, b.nom)
+        for b in request.user.bailleurs(full_scope=True).exclude(
+            nature_bailleur=NatureBailleur.PRIVES
+        )
+    ]
+    administrations = [
+        (b.uuid, b.nom) for b in request.user.administrations(full_scope=True)
+    ]
     if request.method == "POST" and request.user.is_administrator(user):
 
         action_type = request.POST.get("action_type", "")
         if action_type == "remove_bailleur":
             form = UserForm(initial=model_to_dict(user))
-            form_add_bailleur = AddBailleurForm()
-            form_add_administration = AddAdministrationForm()
+            form_add_bailleur = AddBailleurForm(bailleurs=bailleurs)
+            form_add_administration = AddAdministrationForm(
+                administrations=administrations
+            )
             bailleur_uuid = request.POST.get("bailleur")
             Role.objects.get(
                 typologie=TypeRole.BAILLEUR,
@@ -294,8 +305,10 @@ def edit_user(request, username):
             ).delete()
         elif action_type == "add_bailleur":
             form = UserForm(initial=model_to_dict(user))
-            form_add_administration = AddAdministrationForm()
-            form_add_bailleur = AddBailleurForm(request.POST)
+            form_add_administration = AddAdministrationForm(
+                administrations=administrations
+            )
+            form_add_bailleur = AddBailleurForm(request.POST, bailleurs=bailleurs)
             if form_add_bailleur.is_valid() and request.user.is_administrator():
                 Role.objects.create(
                     typologie=TypeRole.BAILLEUR,
@@ -307,8 +320,10 @@ def edit_user(request, username):
                 )
         elif action_type == "remove_administration":
             form = UserForm(initial=model_to_dict(user))
-            form_add_bailleur = AddBailleurForm()
-            form_add_administration = AddAdministrationForm()
+            form_add_bailleur = AddBailleurForm(bailleurs=bailleurs)
+            form_add_administration = AddAdministrationForm(
+                administrations=administrations
+            )
             administration_uuid = request.POST.get("administration")
             Role.objects.get(
                 typologie=TypeRole.INSTRUCTEUR,
@@ -319,8 +334,10 @@ def edit_user(request, username):
             ).delete()
         elif action_type == "add_administration":
             form = UserForm(initial=model_to_dict(user))
-            form_add_bailleur = AddBailleurForm()
-            form_add_administration = AddAdministrationForm(request.POST)
+            form_add_bailleur = AddBailleurForm(bailleurs=bailleurs)
+            form_add_administration = AddAdministrationForm(
+                request.POST, administrations=administrations
+            )
             if form_add_administration.is_valid() and request.user.is_administrator():
                 Role.objects.create(
                     typologie=TypeRole.INSTRUCTEUR,
@@ -331,11 +348,13 @@ def edit_user(request, username):
                     group=Group.objects.get(name="instructeur"),
                 )
         else:
-            form_add_bailleur = AddBailleurForm()
-            form_add_administration = AddAdministrationForm()
+            form_add_bailleur = AddBailleurForm(bailleurs=bailleurs)
+            form_add_administration = AddAdministrationForm(
+                administrations=administrations
+            )
             # Erase admnistrateur de compte if current user is not admin
             # Because a non-administrator can't give this status himself
-            # --> need to chack the common scope of user and current user
+            # --> need to check the common scope of user and current user
             form = UserForm(
                 {
                     **request.POST.dict(),
@@ -350,11 +369,11 @@ def edit_user(request, username):
                         if request.user.is_superuser
                         else user.is_superuser
                     ),
+                    # Without virtualselect, we have a list of strings
+                    # "filtre_departements": request.POST.getlist("filtre_departements"),
+                    # With virtualselect, we have a string of comma separated values
                     "filtre_departements": (
-                        [
-                            int(num)
-                            for num in request.POST["filtre_departements"].split(",")
-                        ]
+                        [num for num in request.POST["filtre_departements"].split(",")]
                         if "filtre_departements" in request.POST
                         and request.POST["filtre_departements"]
                         else []
@@ -374,14 +393,14 @@ def edit_user(request, username):
                 ]
                 user.is_superuser = form.cleaned_data["is_superuser"]
                 user.save()
-                if form.cleaned_data["filtre_departements"] is not None:
-                    user.filtre_departements.clear()
-                    user.filtre_departements.add(
-                        *form.cleaned_data["filtre_departements"]
-                    )
+                user.filtre_departements.clear()
+                for departement in form.cleaned_data["filtre_departements"]:
+                    user.filtre_departements.add(departement)
                 status = "user_updated"
     else:
-        (form, form_add_bailleur, form_add_administration) = _init_user_form(user)
+        (form, form_add_bailleur, form_add_administration) = _init_user_form(
+            user, bailleurs=bailleurs, administrations=administrations
+        )
     return {
         "form": form,
         "user": user,
@@ -392,16 +411,30 @@ def edit_user(request, username):
     }
 
 
-def _init_user_form(user):
+def _init_user_form(user, bailleurs=None, administrations=None):
     return (
-        UserForm(initial=model_to_dict(user)),
-        AddBailleurForm(),
-        AddAdministrationForm(),
+        UserForm(
+            initial={
+                **model_to_dict(user),
+                "filtre_departements": user.filtre_departements.all(),
+            }
+        ),
+        AddBailleurForm(bailleurs=bailleurs),
+        AddAdministrationForm(administrations=administrations),
     )
 
 
 def add_user(request):
     status = ""
+    bailleurs = [
+        (b.uuid, b.nom)
+        for b in request.user.bailleurs(full_scope=True).exclude(
+            nature_bailleur=NatureBailleur.PRIVES
+        )
+    ]
+    administrations = [
+        (b.uuid, b.nom) for b in request.user.administrations(full_scope=True)
+    ]
     if request.method == "POST" and request.user.is_administrator():
         form = AddUserForm(
             {
@@ -412,7 +445,9 @@ def add_user(request):
                     and request.POST["filtre_departements"]
                     else []
                 ),
-            }
+            },
+            bailleurs=bailleurs,
+            administrations=administrations,
         )
         if form.is_valid():
             # Forbid non super users to grant super user role to new users
@@ -487,7 +522,10 @@ def add_user(request):
                 )
             status = "user_created"
     else:
-        form = AddUserForm()
+        form = AddUserForm(
+            bailleurs=bailleurs,
+            administrations=administrations,
+        )
     return {
         "form": form,
         "status": status,

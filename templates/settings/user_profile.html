@@ -35,7 +35,7 @@
                             {% include "common/form/input_text.html" with form_input=form.last_name %}
                             {% include "common/form/input_telephone.html" with form_input=form.telephone %}
                             {% if not request.user.is_superuser and request.user.is_bailleur %}
-                                {% include "common/form/input_multiselect.html" with form_input=form.filtre_departements enum=departements label="Filtrer par departements" label_class="fr-h4" help_text="Les programmes et conventions affichés à l'utilisateur seront filtrés en utilisant la liste des départements ci-dessous" %}
+                                {% include "common/form/input_multiselect.html" with form_input=form.filtre_departements label_class="fr-h4" %}
                             {% endif %}
                             {% include "settings/form/email_preferences.html" with user=request.user form_input=form.preferences_email %}
                             {% if request.user.is_superuser %}

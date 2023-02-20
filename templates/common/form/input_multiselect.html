@@ -1,33 +1,36 @@
-<div class="fr-select-group {% if form_input.errors %}fr-select-group--error{% endif %}">
-    {% if label %}
+<div class="fr-select-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{form_input.id_for_label}}_group">
+    {% if form_input.label %}
         <label class="fr-label {{ label_class }}" for="{{form_input.id_for_label}}">
-            {{ label }}
-            <span class="fr-hint-text apilos-text--normal">{{ help_text }}</span>
+            {{ form_input.label }}
+            {% include "common/form/required_field.html" with form_input=form_input %}
+            {% include "common/help_field.html" with form_input=form_input %}
         </label>
     {% endif %}
+
     <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
         <select
             multiple
-            placeholder="Ajouter les départements permettant de filtrer géographiquement"
-            class="apilos-multiselect"
-            id="testbase"
+            class="fr-select {% if form_input.errors %}fr-select--error{% endif %}"
+            id="{{form_input.id_for_label}}"
             name="{{form_input.html_name}}"
-            data-silent-initial-value-set="true">
-            {% for element in enum %}
-                <option value="{{element.id}}"
-                    {% if element.id in form_input.value %}selected{% endif %}>
-                    {{element}}
+            {% include "common/form/disable_form_input.html" %}>
+            {% for element in form_input.field.choices %}
+                <option value="{{element.0}}"
+                    {% if element.0 in form_input.value %}selected{% endif %}>
+                    {{element.1}}
                 </option>
             {% endfor %}
         </select>
-        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-            VirtualSelect.init({
-                ele: '#testbase',
-                optionsCount: 5,
-                search: true
-            });
-        </script>
+        {% include "common/utils/comments_field.html" %}
     </div>
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+        VirtualSelect.init({
+            ele: '#{{form_input.id_for_label}}',
+            optionsCount: 5,
+            search: true,
+            multiple: true
+        });
+    </script>
 
     {% for error in form_input.errors %}
         <p id="select-error-desc-error" class="fr-error-text">
@@ -35,5 +38,3 @@
         </p>
     {% endfor %}
 </div>
-
-

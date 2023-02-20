@@ -1,12 +1,11 @@
 {% load static %}
 
 {% block javascript_extras %}
-    {% include "common/form/select_bailleur.html" %}
+    <script src="{% static "virtual-select/dist/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
 {% block css_extras %}
     <link rel="stylesheet" href="{% static 'virtual-select/dist/virtual-select.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/searchselect.css' %}">
 {% endblock %}
 <div class="fr-col-12">
     <h2>Informations générales</h2>
@@ -16,10 +15,34 @@
 <form method="post" action="" enctype="multipart/form-data" >
     {% csrf_token %}
     <div class="fr-col-12">
-        <div class="select-search fr-mb-3w">
+        <div class="fr-mb-3w">
             {% include "common/form/input_select.html" with form_input=form.bailleur without_empty_option=form.bailleur.field.choices|length_is:1 mandatory_input=True %}
+            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                document.addEventListener('DOMContentLoaded', function () {
+                    VirtualSelect.init({
+                        ele: '#{{form.bailleur.id_for_label}}',
+                        multiple: false,
+                        hideClearButton: true,
+                        search: true,
+                        searchPlaceholderText: "Rechercher votre bailleur...",
+                        noSearchResultsText: "Aucun bailleur ne correspond à votre recherche"
+                    });
+                });
+            </script>
         </div>
         {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 mandatory_input=True %}
+        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+            document.addEventListener('DOMContentLoaded', function () {
+                VirtualSelect.init({
+                    ele: '#{{form.administration.id_for_label}}',
+                    multiple: false,
+                    hideClearButton: true,
+                    search: true,
+                    searchPlaceholderText: "Rechercher votre administration...",
+                    noSearchResultsText: "Aucune administration ne correspond à votre recherche"
+                });
+            });
+        </script>
         {% include "common/form/input_text.html" with form_input=form.nom  mandatory_input=True %}
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-6 fr-mb-2w">

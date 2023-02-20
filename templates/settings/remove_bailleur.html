@@ -14,12 +14,12 @@
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-title-modal-{{bailleur.uuid}}" class="fr-modal__title">
                                 <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
-                                Supprimer un bailleur à l'utilisateur ‹‹{{ form.username.value }}››
+                                Supprimer un bailleur à l'utilisateur « {{ form.username.value }} »
                             </h1>
                             <form method="post" action="{% url 'settings:edit_user' username=form.username.value %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="bailleur" value="{{bailleur.uuid}}">
-                                <p>Êtes vous certain de vouloir supprimer l'accès au conventions du bailleur ‹‹<em>{{bailleur}}</em>›› à l'utilisateur ‹‹{{ form.username.value }}››</p>
+                                <p>Êtes vous certain de vouloir supprimer l'accès au conventions du bailleur « <em>{{bailleur}}</em> » à l'utilisateur « {{ form.username.value }} »</p>
 
                                 <button class="fr-btn fr-mt-3w" name="action_type", value="remove_bailleur">
                                     Supprimer
