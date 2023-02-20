@@ -21,7 +21,7 @@ class Command(BaseCommand):
         """
         results: QueryResultIterator = QueryResultIterator(
             query="""
-select vps.libelle::int as annee, coalesce(il.irl2evol, il.irl1evol, il.iccaugmentation, il.icctrim4moyenne / 100.) as coefficient
+select vps.libelle::int as annee, 'LOGEMENTSORDINAIRES' as nature_logement, coalesce(il.irl2evol, il.irl1evol, il.iccaugmentation, il.icctrim4moyenne / 100.) as differentiel
 from ecolo.ecolo_indiceloyer il
     inner join ecolo.ecolo_valeurparamstatic vps on il.annee_id = vps.id
         """
@@ -30,5 +30,33 @@ from ecolo.ecolo_indiceloyer il
         with transaction.atomic():
             for result in results:
                 IndiceEvolutionLoyer.objects.update_or_create(
-                    defaults=result, annee=result["annee"]
+                    defaults=result,
+                    annee=result["annee"],
+                    nature_logement=result["nature_logement"],
+                )
+
+        results: QueryResultIterator = QueryResultIterator(
+            query="""
+select distinct on (ir.annee, ir.nature_logement) ir.annee, ir.nature_logement, ir.differentiel
+from (
+    select
+        vps.libelle::int as annee,
+        case
+            when nl.code = '6' then 'RESISDENCESOCIALE'
+        else 'AUTRE' end as nature_logement,
+        coalesce(ir.indicevariation, 1.) as differentiel
+    from ecolo.ecolo_indiceredevance ir
+        inner join ecolo.ecolo_valeurparamstatic vps on ir.annee_id = vps.id
+        inner join ecolo_naturelogement nl on ir.naturelogement_id = nl.id
+    where nl.code <> '1' --LOGEMENTSORDINAIRES
+) ir
+                """
+        )
+
+        with transaction.atomic():
+            for result in results:
+                IndiceEvolutionLoyer.objects.update_or_create(
+                    defaults=result,
+                    annee=result["annee"],
+                    nature_logement=result["nature_logement"],
                 )

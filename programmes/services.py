@@ -1,7 +1,7 @@
 import functools
 from datetime import date
 
-from programmes.models import IndiceEvolutionLoyer
+from programmes.models import IndiceEvolutionLoyer, NatureLogement
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.utils import get_or_create_conventions
 
@@ -20,19 +20,25 @@ class LoyerRedevanceUpdateComputer:
     @staticmethod
     def compute_loyer_update(
         montant_initial: float,
+        nature_logement: str,
         date_initiale: date,
         date_actualisation: date | None = date.today(),
     ) -> float:
+        if nature_logement not in NatureLogement.values:
+            raise Exception(f"Nature de logement invalide {nature_logement}")
+
         coefficients = list(
             IndiceEvolutionLoyer.objects.filter(
-                annee__gt=date_initiale.year, annee__lt=date_actualisation.year
+                nature_logement=nature_logement,
+                annee__gt=date_initiale.year,
+                annee__lt=date_actualisation.year,
             )
             .order_by("annee")
-            .values_list("coefficient", flat=True)
+            .values_list("differentiel", flat=True)
         )
 
         return functools.reduce(
-            lambda loyer, coefficient: loyer * coefficient,
+            lambda loyer, differentiel: loyer * ((100.0 + differentiel) / 100.0),
             coefficients,
             montant_initial,
         )

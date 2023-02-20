@@ -919,13 +919,19 @@ class TypeStationnement(IngestableModel):
 class IndiceEvolutionLoyer(models.Model):
     class Meta:
         indexes = [
-            models.Index(fields=["annee"], name="annee"),
+            models.Index(
+                fields=["annee", "nature_logement"], name="annee_nature_logement"
+            ),
         ]
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     annee = models.IntegerField()
-    coefficient = models.FloatField()
+    nature_logement = models.TextField(
+        choices=NatureLogement.choices, default=NatureLogement.AUTRE
+    )
+    # Différentiel, en pourcentage
+    differentiel = models.FloatField()
 
     def __str__(self):
-        return f"{self.annee} => {self.coefficient}"
+        return f"{self.annee} / {self.nature_logement} => {self.differentiel}"
