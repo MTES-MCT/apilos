@@ -46,6 +46,7 @@ class ConfigurationAPITest(APITestCase):
         self.assertEqual(response.data, expected)
 
 
+@override_settings(USE_MOCKED_SIAP_CLIENT=True)
 class ConventionKPIAPITest(APITestCase):
     fixtures = ["auth.json"]
 
