@@ -68,7 +68,7 @@
                                     {% include "settings/form/select_administration.html" with form_input=form.administration %}
                                 </div>
                                 <div id="select_bailleur" {% if form.user_type.value != 'BAILLEUR' %} hidden {% endif %}>
-                                    {% include "common/form/input_select.html" with form_input=form.bailleur %}
+                                    {% include "settings/form/select_bailleur.html" with form_input=form.bailleur %}
                                 </div>
                             {% else %}
                                 {% if request|is_bailleur %}
@@ -88,18 +88,6 @@
                                     {% include "settings/form/select_administration.html" with form_input=form.administration %}
                                 {% endif %}
                             {% endif %}
-                            <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    VirtualSelect.init({
-                                        ele: '#id_bailleur',
-                                        multiple: false,
-                                        hideClearButton: true,
-                                        search: true,
-                                        searchPlaceholderText: "Rechercher votre bailleur...",
-                                        noSearchResultsText: "Aucun bailleur ne correspond à votre recherche"
-                                    });
-                                });
-                            </script>
                             <button class="fr-btn fr-fi-save-line fr-btn--icon-left fr-mt-3w" type="submit">
                                 Enregistrer
                             </button>

@@ -85,7 +85,7 @@ class UserForm(forms.Form):
 
     filtre_departements = forms.ModelMultipleChoiceField(
         queryset=Departement.objects.all(),
-        label="Filtre par départements",
+        label="Filtrer par départements",
         help_text="Les programmes et conventions affichés à l'utilisateur seront filtrés"
         + " en utilisant la liste des départements ci-dessous",
         required=False,

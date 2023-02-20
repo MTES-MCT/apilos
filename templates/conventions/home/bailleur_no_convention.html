@@ -31,15 +31,9 @@
                         <h3>Je prépare mes tableaux</h3>
                         <p>Vous pouvez télécharger et remplir les tableaux nécessaires à la création de votre convention. Ces modèle vous seront aussi proposés à chaque étape.</p>
                         <div class="fr-col-offset-1">
-                            <button type="button" class="fr-btn fr-btn--secondary" id='download_model'>
+                            <a href="{% url 'conventions:load_xlsx_model' file_type='all' %}" } class="fr-btn fr-btn--secondary" id='download_model'>
                                 <img class="apilos-fi-btn--secondary fr-mr-1w" src="{% static "icons/download.svg" %}">Télécharger les modèles de tableaux
-                            </button>
-                            <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    document.getElementById('download_model')
-                                        .addEventListener('click', function(){ location.href="{% url 'conventions:load_xlsx_model' file_type='all' %}" });
-                                });
-                            </script>
+                            </a>
                         </div>
                     </div>
                     <div class="fr-mb-3w">

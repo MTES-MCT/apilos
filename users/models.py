@@ -50,7 +50,7 @@ class User(AbstractUser):
     filtre_departements = models.ManyToManyField(
         Departement,
         related_name="filtre_departements",
-        # label="Filtrer par departements",
+        # label="Filtrer par départements",
         help_text=(
             "Les programmes et conventions affichés à l'utilisateur seront filtrés en utilisant"
             + " la liste des départements ci-dessous"
