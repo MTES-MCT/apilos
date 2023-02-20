@@ -164,27 +164,73 @@ class ConventionKPI(APIView):
             .values("statut")
             .annotate(total=Count("statut"))
         )
-        instruction = 0
-        a_signer = 0
-        signee = 0
-        for q in query_by_statuses:
-            if q["statut"] == ConventionStatut.INSTRUCTION:
-                instruction = q["total"]
-            if q["statut"] == ConventionStatut.A_SIGNER:
-                a_signer = q["total"]
-            if q["statut"] == ConventionStatut.SIGNEE:
-                signee = q["total"]
 
-        list_conv_kpi = [
-            ConvKPI(
-                "/conventions/?cstatut=2.+Instruction+requise",
-                instruction,
-                "En instruction",
-            ),
-            ConvKPI("/conventions/?cstatut=4.+A+signer", a_signer, "A signer"),
-            ConvKPI("/conventions/?cstatut=5.+Signée", signee, "Signées"),
-        ]
+        nb_conventions_by_status = {
+            convention_statut.value: 0 for convention_statut in ConventionStatut
+        } | {query["statut"]: query["total"] for query in query_by_statuses}
+        list_conv_kpi = []
 
-        serializer = ConventionKPISerializer(list_conv_kpi, many=True)
-
-        return Response(serializer.data)
+        if request.user.is_administration():
+            # As an administrator, we want to see the number of conventions that are in status:
+            #   * en-cours
+            #   * SIGNEE
+            list_conv_kpi = [
+                ConvKPI(
+                    "/conventions/en-cours",
+                    nb_conventions_by_status[ConventionStatut.PROJET.value]
+                    + nb_conventions_by_status[ConventionStatut.INSTRUCTION.value]
+                    + nb_conventions_by_status[ConventionStatut.CORRECTION.value]
+                    + nb_conventions_by_status[ConventionStatut.A_SIGNER.value],
+                    "en cours",
+                ),
+                ConvKPI(
+                    "/conventions/en-cours?cstatut=5.+Signée",
+                    nb_conventions_by_status[ConventionStatut.SIGNEE.value],
+                    "finalisées",
+                ),
+            ]
+        elif request.user.is_instructeur():
+            # As an instructeur, we want to see the number of conventions that are in status:
+            #   * INSTRUCTION
+            #   * A_SIGNER
+            #   * SIGNEE
+            list_conv_kpi = [
+                ConvKPI(
+                    "/conventions/en-cours?cstatut=2.+Instruction",
+                    nb_conventions_by_status[ConventionStatut.INSTRUCTION.value],
+                    "en instruction",
+                ),
+                ConvKPI(
+                    "/conventions/en-cours?cstatut=4.+A+signer",
+                    nb_conventions_by_status[ConventionStatut.A_SIGNER.value],
+                    "à signer",
+                ),
+                ConvKPI(
+                    "/conventions/en-cours?cstatut=5.+Signée",
+                    nb_conventions_by_status[ConventionStatut.SIGNEE.value],
+                    "finalisées",
+                ),
+            ]
+        elif request.user.is_bailleur():
+            # As a bailleur, we want to see the number of conventions that are in status:
+            #   * PROJET
+            #   * CORRRECTION
+            #   * A_SIGNER
+            list_conv_kpi = [
+                ConvKPI(
+                    "/conventions/en-cours?cstatut=1.+Projet",
+                    nb_conventions_by_status[ConventionStatut.PROJET.value],
+                    "en projet",
+                ),
+                ConvKPI(
+                    "/conventions/en-cours?cstatut=3.+Corrections+requises",
+                    nb_conventions_by_status[ConventionStatut.CORRECTION.value],
+                    "en correction requise",
+                ),
+                ConvKPI(
+                    "/conventions/en-cours?cstatut=4.+A+signer",
+                    nb_conventions_by_status[ConventionStatut.A_SIGNER.value],
+                    "à signer",
+                ),
+            ]
+        return Response(ConventionKPISerializer(list_conv_kpi, many=True).data)

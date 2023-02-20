@@ -141,6 +141,16 @@ class User(AbstractUser):
             ]
         return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
 
+    def is_administration(self):
+        if self.is_cerbere_user():
+            return "currently" in self.siap_habilitation and self.siap_habilitation[
+                "currently"
+            ] in [
+                GroupProfile.SIAP_DIR_REG,
+                GroupProfile.SIAP_ADM_CENTRALE,
+            ]
+        return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
+
     def _is_role(self, role):
         return role in map(lambda r: r.typologie, self.roles.all())
 
