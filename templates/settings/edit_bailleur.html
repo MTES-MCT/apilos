@@ -12,7 +12,7 @@
                     {% include 'settings/common/side_menu.html' with active_menu='bailleurs' %}
                 </div>
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
-                    <h3>Modification du bailleur ‹‹{{ form.nom.value }}››</h3>
+                    <h3>Modification du bailleur « {{ form.nom.value }} »</h3>
                     <div role="warning" class="fr-alert fr-alert--warning fr-mb-3w">
                         <p>Les modifications que vous apportez à votre bailleur seront appliquées à toutes les conventions qui ne sont pas encore validées</p>
                     </div>
@@ -92,7 +92,7 @@
                     {% if bailleur.bailleurs.count > 0 %}
                         {% include 'settings/bailleur_list_table.html' with count=bailleur.bailleurs.count total_items=bailleur.bailleurs.count items=bailleur.bailleurs.all%}
                     {% endif %}
-                    <h3 class="fr-mt-3w">Utilisateurs du bailleur ‹‹{{ form.nom.value }}››</h3>
+                    <h3 class="fr-mt-3w">Utilisateurs du bailleur « {{ form.nom.value }} »</h3>
 
                     {% include 'settings/user_list.html' with users=user_list.paginated_users total_users=user_list.total_users read_only=True %}
 

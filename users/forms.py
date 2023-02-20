@@ -85,6 +85,9 @@ class UserForm(forms.Form):
 
     filtre_departements = forms.ModelMultipleChoiceField(
         queryset=Departement.objects.all(),
+        label="Filtrer par départements",
+        help_text="Les programmes et conventions affichés à l'utilisateur seront filtrés"
+        + " en utilisant la liste des départements ci-dessous",
         required=False,
     )
 
@@ -102,6 +105,11 @@ class UserForm(forms.Form):
 
 
 class AddUserForm(UserForm):
+    def __init__(self, *args, bailleurs=None, administrations=None, **kwargs) -> None:
+        self.declared_fields["bailleur"].choices = bailleurs
+        self.declared_fields["administration"].choices = administrations
+        super().__init__(*args, **kwargs)
+
     user_type = forms.ChoiceField(
         required=False, label="Type d'utilisateur", choices=TypeRole.choices
     )
@@ -190,7 +198,7 @@ class UserBailleurForm(forms.Form):
 
     bailleur = forms.ModelChoiceField(
         required=True,
-        queryset=Bailleur.objects.all().order_by('nom'),
+        queryset=Bailleur.objects.all().order_by("nom"),
         label="Entreprise bailleur",
     )
 
@@ -216,9 +224,16 @@ class UserBailleurForm(forms.Form):
 class BaseUserBailleurFormSet(BaseFormSet):
     pass
 
-UserBailleurFormSet = formset_factory(UserBailleurForm, formset=BaseUserBailleurFormSet, extra=0)
+
+UserBailleurFormSet = formset_factory(
+    UserBailleurForm, formset=BaseUserBailleurFormSet, extra=0
+)
+
 
 class AddBailleurForm(forms.Form):
+    def __init__(self, *args, bailleurs=None, **kwargs) -> None:
+        self.declared_fields["bailleur"].choices = bailleurs
+        super().__init__(*args, **kwargs)
 
     bailleur = forms.CharField(
         label="",
@@ -229,6 +244,9 @@ class AddBailleurForm(forms.Form):
 
 
 class AddAdministrationForm(forms.Form):
+    def __init__(self, *args, administrations=None, **kwargs) -> None:
+        self.declared_fields["administration"].choices = administrations
+        super().__init__(*args, **kwargs)
 
     administration = forms.CharField(
         label="",

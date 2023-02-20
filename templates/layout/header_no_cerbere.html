@@ -35,7 +35,33 @@
                 <div class="fr-header__tools">
                     <div class="fr-header__tools-links">
                         {% if user.is_authenticated %}
-                            <ul class="fr-links-group fr-mb-1w">
+                            <div class="fr-container--fluid">
+                                <div class="fr-mb-2w fr-grid-row fr-grid-row--right">
+                                    <span class="fr-text--sm fr-px-1w">{{ request.user }}</span>
+                                    <span>
+                                        <a href="{% url 'settings:profile' %}">
+                                            <span class="fr-icon-settings-5-line fr-mr-1w" aria-hidden="true" title="Paramètres"></span>
+                                        </a>
+                                    </span>
+                                    <span>
+                                        <a href="{% url 'logout' %}?next=/">
+                                            <span class="fr-fi-logout-box-r-line fr-mr-1w" aria-hidden="true" title="Déconnexion">
+                                            </span>
+                                        </a>
+                                    </span>
+                                </div>
+                                <div class="fr-grid-row fr-grid-row--right">
+                                    {% include "common/FAQ_link.html"%}
+                                </div>
+                            </div>
+
+
+                            {% comment %}
+
+
+
+
+                        <ul class="fr-links-group fr-mb-1w">
                                 <li class="fr-mx-2w apilos-flex-wrap">
                                     <div class="width-100 apilos-d-block fr-m-auto">
                                         <div class="fr-mb-1w">
@@ -60,7 +86,7 @@
                                         </div>
                                     </div>
                                 </li>
-                            </ul>
+                            </ul> {% endcomment %}
 
                         {% else %}
                             <ul class="fr-links-group">

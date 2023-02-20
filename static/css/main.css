@@ -648,27 +648,15 @@ table.fullwidth {
   width: 100%;
 }
 
-.vscomp-toggle-button {
-  /* padding: 7px 30px 7px 10px; */
-  border: none!important;
-  background-color: #eee!important;
-}
-
-.vscomp-ele {
-  max-width: 100%!important;
-}
-
 .apilos-text--normal {
   font-weight: normal;
 }
-
 
 .th_inline th {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 
 .apilos-btn--red {
   background-color: #dc3545;
@@ -855,4 +843,61 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
 }
 .apilos-stepper-align-right {
   text-align:right;
+}
+
+.vscomp-toggle-button, .vscomp-option-text{
+  padding-left: 1rem;
+  font-family: Marianne, arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  border: none!important;
+}
+
+.vscomp-toggle-button {
+  /* padding: 7px 30px 7px 10px; */
+  border: none!important;
+  background-color: #eee!important;
+}
+
+.vscomp-wrapper:focus .vscomp-toggle-button,
+.vscomp-wrapper.focused .vscomp-toggle-button {
+  box-shadow: none;
+  padding: .5rem 1rem !important;
+}
+
+.vscomp-wrapper:not(.has-value) .vscomp-value {
+  opacity: 0;
+}
+
+.vscomp-arrow {
+  right: 3px;
+  width: 40px;
+}
+
+.vscomp-arrow:after {
+  border: 2px solid transparent;
+  border-right-color: #111;
+  border-bottom-color: #111;
+  width: 9px;
+  height: 9px;
+}
+
+.pop-comp-wrapper{
+  width: 100%;
+  max-width: 100% !important;
+  transform: translate3d(0, 46px, 0) !important;
+}
+
+
+.vscomp-ele {
+  max-width: 100%!important;
+  --data-uri-svg: none;
+  padding-right: 1rem;
+}
+
+
+
+.no-target-blank::after {
+  --icon-size: none;
+  margin-left:0;
 }

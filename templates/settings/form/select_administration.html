@@ -10,10 +10,9 @@
             id="{{form_input.id_for_label}}"
             name="{{form_input.html_name}}">
             <option value="" selected disabled hidden></option>
-            {% for element in request.user.administrations %}
-                <option value="{{element.uuid}}"
-                    {% if element in user_administrations %}disabled{% endif %}>
-                    {{element}}
+            {% for element in form_input.field.choices %}
+                <option value="{{element.0}}">
+                    {{element.1}}
                 </option>
             {% endfor %}
         </select>
@@ -25,3 +24,16 @@
         </p>
     {% endfor %}
 </div>
+<script type="text/javascript" nonce="{{request.csp_nonce}}">
+    document.addEventListener('DOMContentLoaded', function () {
+        VirtualSelect.init({
+            ele: '#{{form_input.id_for_label}}',
+            multiple: false,
+            hideClearButton: true,
+            search: true,
+            searchPlaceholderText: "Rechercher votre administration...",
+            noSearchResultsText: "Aucune administration ne correspond à votre recherche"
+        });
+    });
+</script>
+

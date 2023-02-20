@@ -73,7 +73,7 @@ class ApilosSettingsViewTests(TestCase):
         )
         response = self.client.get(reverse("settings:profile"))
         self.assertNotContains(response, "Option d&#x27;envoi d&#x27;e-mail")
-        self.assertNotContains(response, "Filtrer par departements")
+        self.assertNotContains(response, "Filtrer par départements")
         self.assertContains(response, "Administrateur de compte")
         self.assertContains(response, "Super Utilisateur")
 
@@ -82,7 +82,7 @@ class ApilosSettingsViewTests(TestCase):
         )
         response = self.client.get(reverse("settings:profile"))
         self.assertContains(response, "Option d&#x27;envoi d&#x27;e-mail")
-        self.assertNotContains(response, "Filtrer par departements")
+        self.assertNotContains(response, "Filtrer par départements")
         self.assertContains(response, "Administrateur de compte")
         self.assertNotContains(response, "Super Utilisateur")
 
@@ -91,7 +91,7 @@ class ApilosSettingsViewTests(TestCase):
         )
         response = self.client.get(reverse("settings:profile"))
         self.assertContains(response, "Option d&#x27;envoi d&#x27;e-mail")
-        self.assertContains(response, "Filtrer par departements")
+        self.assertContains(response, "Filtrer par départements")
         self.assertContains(response, "Administrateur de compte")
         self.assertNotContains(response, "Super Utilisateur")
 
@@ -101,67 +101,75 @@ class ApilosSettingsViewTests(TestCase):
         """
 
         # login as superuser
-        self.client.post(
-            reverse("login"), {"username": "nicolas", "password": "12345"}
-        )
+        self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
         bailleur = Bailleur.objects.get(siret="987654321")
 
-        response = self.client.post(reverse('settings:add_user'), {
-            'email': "bailleur@apilos.com",
-            'username': "bailleur.test",
-            'first_name': "Bail",
-            'last_name': "Leur",
-            'preferences_email': "PARTIEL",
-            'telephone': "0612345678",
-            'administrateur_de_compte': False,
-            'is_superuser': False,
-            'user_type': "BAILLEUR",
-            'bailleur': bailleur.uuid
-        })
+        response = self.client.post(
+            reverse("settings:add_user"),
+            {
+                "email": "bailleur@apilos.com",
+                "username": "bailleur.test",
+                "first_name": "Bail",
+                "last_name": "Leur",
+                "preferences_email": "PARTIEL",
+                "telephone": "0612345678",
+                "administrateur_de_compte": False,
+                "is_superuser": False,
+                "user_type": "BAILLEUR",
+                "bailleur": bailleur.uuid,
+            },
+        )
 
         self.assertRedirects(response, reverse("settings:users"))
-        new_user = User.objects.get(username='bailleur.test')
+        new_user = User.objects.get(username="bailleur.test")
 
         self.assertFalse(new_user.is_superuser)
         self.assertTrue(new_user.is_bailleur())
-        self.assertEqual('nicolas', new_user.creator.username)
+        self.assertEqual("nicolas", new_user.creator.username)
 
     def test_import_bailleur_users_upload_ok(self):
         """
         Superuser will log in & upload a xlsx listing file
         """
         # login as superuser
-        self.client.post(
-            reverse("login"), {"username": "nicolas", "password": "12345"}
-        )
+        self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
-        with open(os.path.join(os.path.dirname(__file__), './resources/listing_bailleur_ok.xlsx'), 'rb') as listing_file:
+        with open(
+            os.path.join(
+                os.path.dirname(__file__), "./resources/listing_bailleur_ok.xlsx"
+            ),
+            "rb",
+        ) as listing_file:
             response = self.client.post(
                 reverse("settings:import_bailleur_users"),
                 {
-                    'file': listing_file,
-                    'Upload': True,
-                }
+                    "file": listing_file,
+                    "Upload": True,
+                },
             )
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            
+
     def test_import_bailleur_users_upload_ko(self):
         """
         Superuser will log in & upload an invalid xlsx listing file
         """
         # login as superuser
-        self.client.post(
-            reverse("login"), {"username": "nicolas", "password": "12345"}
-        )
+        self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
-        with open(os.path.join(os.path.dirname(__file__), './resources/listing_bailleur_missing_nom_bailleur.xlsx'), 'rb') as listing_file:
+        with open(
+            os.path.join(
+                os.path.dirname(__file__),
+                "./resources/listing_bailleur_missing_nom_bailleur.xlsx",
+            ),
+            "rb",
+        ) as listing_file:
             response = self.client.post(
                 reverse("settings:import_bailleur_users"),
                 {
-                    'file': listing_file,
-                    'Upload': True,
-                }
+                    "file": listing_file,
+                    "Upload": True,
+                },
             )
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -170,14 +178,12 @@ class ApilosSettingsViewTests(TestCase):
         Superuser will log in & submit a list of bailleurs users to create
         """
         # login as superuser
-        self.client.post(
-            reverse("login"), {"username": "nicolas", "password": "12345"}
-        )
+        self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
         response = self.client.post(reverse("settings:import_bailleur_users"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        bailleur = Bailleur.objects.get(nom='HLM')
+        bailleur = Bailleur.objects.get(nom="HLM")
 
         response = self.client.post(
             reverse("settings:import_bailleur_users"),
@@ -198,9 +204,8 @@ class ApilosSettingsViewTests(TestCase):
                 "form-2-last_name": "Bailleur",
                 "form-2-username": "chantal.bailleur",
                 "form-2-bailleur": bailleur.id,
-                "form-2-email": "chantal.bailleur2@apilos.com"
-
-            }
+                "form-2-email": "chantal.bailleur2@apilos.com",
+            },
         )
         self.assertRedirects(response, reverse("settings:users"))
 
@@ -209,14 +214,12 @@ class ApilosSettingsViewTests(TestCase):
         Superuser will log in & submit a list of bailleurs users to create
         """
         # login as superuser
-        self.client.post(
-            reverse("login"), {"username": "nicolas", "password": "12345"}
-        )
+        self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
         response = self.client.post(reverse("settings:import_bailleur_users"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        bailleur = Bailleur.objects.get(nom='HLM')
+        bailleur = Bailleur.objects.get(nom="HLM")
 
         response = self.client.post(
             reverse("settings:import_bailleur_users"),
@@ -227,7 +230,7 @@ class ApilosSettingsViewTests(TestCase):
                 "form-0-last_name": "L'autre",
                 "form-0-username": "sabine",
                 "form-0-bailleur": bailleur.id,
-                "form-0-email": "sabine@apilos.com"
-            }
+                "form-0-email": "sabine@apilos.com",
+            },
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
