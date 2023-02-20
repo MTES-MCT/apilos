@@ -15,13 +15,7 @@ select
     round(cast(l.surfaceutile as numeric), 2) as surface_utile,
     l.coefficientmodulation as coeficient,
     l.montantloyer as loyer,
-    case
-        when l.montantloyer is null then null
-        when l.montantloyer = 0 then 0
-        when l.surfacecorrigee is not null and l.surfacecorrigee <> 0 then l.montantloyer / l.surfacecorrigee
-        when l.surfaceutile is not null and l.surfaceutile <> 0 then l.montantloyer / l.surfaceutile
-        when l.surfacehabitable is not null and l.surfacehabitable <> 0 then l.montantloyer / l.surfacehabitable
-    end as loyer_par_metre_carre,
+    pl.montantplafondloyerindinitial as loyer_par_metre_carre,
     l.datecreation as cree_le,
     l.datecreation as mis_a_jour_le
 from ecolo.ecolo_logement l
