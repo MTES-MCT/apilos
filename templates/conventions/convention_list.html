@@ -171,34 +171,37 @@
                                             </script>
                                         </td>
                                         {% if request|is_instructeur %}
-                                            <td>{{convention.programme.bailleur}}</td>
+                                            <td>{{convention.programme.bailleur.nom|highlight:conventions.search_input}}</td>
                                         {% endif %}
                                         {% if request|display_administration %}
                                             <td>{{convention.programme.administration}}</td>
                                         {% endif %}
                                         <td>
                                             <div class="apilos--flex-row-left-center">
-                                                <strong class="apilos--overflow_ellipsis">{{convention.programme.nom}}
+                                                <strong class="apilos--overflow_ellipsis">
+                                                    {{convention.programme.nom|highlight:conventions.search_input}}
                                                 </strong>
                                                 {% if convention.is_avenant %}
                                                     <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-avenant background-white">Avenant</span>
                                                 {%endif%}
                                             </div>
                                             {% if active and convention.programme.numero_galion %}
-                                                <em data-test-role="programme-galion-cell">{{convention.programme.numero_galion}}</em>
+                                                <em data-test-role="programme-galion-cell">
+                                                    {{convention.programme.numero_galion|highlight:conventions.search_input}}
+                                                </em>
                                             {% endif %}
                                             {% if not active and convention.numero %}
                                                 {% if convention.is_avenant %}
-                                                    <em data-test-role="programme-galion-cell">{{convention.parent.numero}} - Avenant n°{{convention.numero}}</em>
+                                                    <em data-test-role="programme-galion-cell">{{convention.parent.numero|highlight:conventions.search_input}} - Avenant n°{{convention.numero}}</em>
                                                 {% else %}
-                                                    <em data-test-role="programme-galion-cell">{{convention.numero}}</em>
+                                                    <em data-test-role="programme-galion-cell">{{convention.numero|highlight:conventions.search_input}}</em>
                                                 {% endif %}
                                             {% endif %}
                                         </td>
                                         <td data-test-role="programme-financement-cell">{{convention.financement}}</td>
                                         <td>
-                                            <strong>{{convention.programme.ville}}</strong><br/>
-                                            <em>{{convention.programme.code_postal}}</em>
+                                            <strong>{{convention.programme.ville|highlight:conventions.search_input}}</strong><br/>
+                                            <em>{{convention.programme.code_postal|highlight:conventions.search_input}}</em>
                                         </td>
                                         <td>{{convention.lot.nb_logements}}</td>
                                         {% if active %}

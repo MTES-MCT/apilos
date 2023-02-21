@@ -55,6 +55,7 @@ def search(request, active: bool = True):
         statut_filter=request.GET.get("cstatut", ""),
         financement_filter=request.GET.get("financement", ""),
         departement_input=request.GET.get("departement_input", ""),
+        user=request.user,
         my_convention_list=query_set.prefetch_related("programme")
         .prefetch_related("programme__administration")
         .prefetch_related("lot"),

@@ -34,8 +34,8 @@ class ConventionIndexViewTests(TestCase):
 
         self.assertEqual(len(galion_refs), 4)
         self.assertEqual(len(financements), 4)
-        self.assertEqual({r.text for r in galion_refs}, {"12345", "98765"})
-        self.assertEqual({f.text for f in financements}, {"PLAI", "PLUS"})
+        self.assertEqual({r.text.strip() for r in galion_refs}, {"12345", "98765"})
+        self.assertEqual({f.text.strip() for f in financements}, {"PLAI", "PLUS"})
 
     def test_get_list_active_ordered_by_bailleur(self):
         """
@@ -54,5 +54,5 @@ class ConventionIndexViewTests(TestCase):
             attrs={"data-test-role": "programme-financement-cell"}
         )
 
-        self.assertEqual({r.text for r in galion_refs}, {"12345", "98765"})
-        self.assertEqual({f.text for f in financements}, {"PLUS", "PLAI"})
+        self.assertEqual({r.text.strip() for r in galion_refs}, {"12345", "98765"})
+        self.assertEqual({f.text.strip() for f in financements}, {"PLUS", "PLAI"})

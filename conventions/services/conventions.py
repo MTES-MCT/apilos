@@ -12,6 +12,7 @@ from conventions.forms import ConventionResiliationForm, UploadForm
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
 from conventions.services.file import ConventionFileService
+from users.models import User
 
 
 class ConventionService(ABC):
@@ -51,6 +52,7 @@ class ConventionListService:
     my_convention_list: Any  # list[Convention]
     paginated_conventions: Any  # list[Convention]
     total_conventions: int
+    user: User
 
     def __init__(
         self,
@@ -62,6 +64,7 @@ class ConventionListService:
         active: bool = True,
         order_by: str = "",
         page: str = 1,
+        user: User | None = None,
     ):
         self.search_input = search_input
         self.statut_filter = statut_filter
@@ -70,17 +73,32 @@ class ConventionListService:
         self.active = active
         self.order_by = order_by
         self.page = page
+        self.user = user
         self.my_convention_list = my_convention_list
+
+    def query_kept_params(self):
+        return f"search_input={self.search_input}&financement={self.financement_filter}"
 
     def paginate(self) -> None:
         total_user = self.my_convention_list.count()
         if self.search_input:
-            self.my_convention_list = self.my_convention_list.filter(
+            filter = (
                 Q(programme__ville__icontains=self.search_input)
                 | Q(programme__nom__icontains=self.search_input)
-                | Q(programme__numero_galion__icontains=self.search_input)
-                | Q(numero__endswith=self.search_input)
+                | Q(programme__code_postal__icontains=self.search_input)
             )
+            if self.active:
+                filter = filter | Q(
+                    programme__numero_galion__icontains=self.search_input
+                )
+            else:
+                filter = filter | Q(numero__icontains=self.search_input)
+            if self.user and self.user.is_instructeur():
+                filter = filter | Q(
+                    programme__bailleur__nom__icontains=self.search_input
+                )
+
+            self.my_convention_list = self.my_convention_list.filter(filter)
         if self.statut_filter:
             self.my_convention_list = self.my_convention_list.filter(
                 statut=self.statut_filter
