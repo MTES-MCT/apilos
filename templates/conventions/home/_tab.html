@@ -5,7 +5,7 @@
     </li>
 {% else %}
     <li>
-        <a class="fr-tabs__tab" href="{% url route %}" title="{{ title }}" aria-selected="false" >
+        <a class="fr-tabs__tab" href="{% url route %}?{{conventions.query_kept_params}}" title="{{ title }}" aria-selected="false" >
             <span class="fr-link">{{ count }} convention{% if count > 1 %}s{% endif %} {{ label }} </span>
         </a>
     </li>

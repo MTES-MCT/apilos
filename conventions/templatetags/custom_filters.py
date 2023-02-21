@@ -8,6 +8,23 @@ from conventions.models import ConventionStatut
 from users.models import GroupProfile
 
 
+from re import IGNORECASE, compile, escape as rescape
+from django.utils.safestring import mark_safe
+
+
+@register.filter(name="highlight")
+def highlight(text, search):
+    rgx = compile(rescape(search), IGNORECASE)
+    return mark_safe(
+        rgx.sub(
+            lambda m: '<span class="apilos-search-highlight">{}</span>'.format(
+                m.group()
+            ),
+            text,
+        )
+    )
+
+
 @register.filter
 def is_bailleur(request: HttpRequest) -> bool:
     return "currently" in request.session and request.session["currently"] in [

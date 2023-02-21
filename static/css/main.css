@@ -906,6 +906,9 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   padding-right: 1rem;
 }
 
+.apilos-search-highlight {
+  background-color: #ffff00;
+}
 
 
 .no-target-blank::after {
