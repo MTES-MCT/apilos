@@ -60,7 +60,7 @@ class User(AbstractUser):
     creator = models.ForeignKey(
         "users.User", on_delete=models.SET_NULL, blank=True, null=True
     )
-    history = HistoricalRecords()
+    history = HistoricalRecords(excluded_fields=["last_login"])
 
     def has_object_permission(self, obj):
         if isinstance(obj, (Convention, Lot)):
