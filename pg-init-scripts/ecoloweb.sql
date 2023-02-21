@@ -1,3 +1,3 @@
 create database ecolotest;
 
-create schema if not exists ecolotest.ecolo;
+--create schema if not exists ecolotest.ecolo;
