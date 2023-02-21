@@ -13,7 +13,11 @@ select
     case
         when b.raisonsociale = 'ANAH' then 'XXXXXXXXXXXXXX'
         when b.codepersonne is not null or snb.code = '611' then coalesce(b.codepersonne, b.codesiret, b.codesiren)
+<<<<<<< HEAD
         else coalesce(b.codesiret, b.codesiren, b.codepersonne)
+=======
+        else coalesce(b.codesiret, b.codesiren, b.codepersonne, )
+>>>>>>> a736a15d (Fallback to siret / siren values if no codepersonne (#563))
     end as codesiret,
     cb.noms_contacts as signataire_nom,
     case
