@@ -12,9 +12,8 @@ select
     end as nom,
     case
         when b.raisonsociale = 'ANAH' then 'XXXXXXXXXXXXXX'
-        when b.codepersonne is not null or snb.code = '611' then b.codepersonne
-        when b.codesiret is not null then b.codesiret
-        else b.codesiren
+        when b.codepersonne is not null or snb.code = '611' then coalesce(b.codepersonne, b.codesiret, b.codesiren)
+        else coalesce(b.codesiret, b.codesiren, b.codepersonne, )
     end as codesiret,
     cb.noms_contacts as signataire_nom,
     case
