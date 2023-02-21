@@ -1,3 +1,4 @@
+from datetime import datetime, date
 from zipfile import ZipFile
 
 from django.conf import settings
@@ -15,8 +16,10 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
+from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from core.storage import client
-from programmes.models import Financement
+from programmes.models import Financement, NatureLogement
+from programmes.services import LoyerRedevanceUpdateComputer
 from upload.services import UploadService
 from conventions.services import convention_generator
 from conventions.services.recapitulatif import (
@@ -72,6 +75,42 @@ def search(request, active: bool = True):
             "nb_active_conventions": request.user.conventions(active=True).count(),
             "nb_completed_conventions": request.user.conventions(active=False).count(),
             "conventions": service,
+        },
+    )
+
+
+@login_required
+def loyer_simulateur(request):
+    montant_actualise = None
+
+    if request.method == "POST":
+        loyer_simulateur_form = LoyerSimulateurForm(request.POST)
+
+        if loyer_simulateur_form.is_valid():
+            montant_actualise = LoyerRedevanceUpdateComputer.compute_loyer_update(
+                montant_initial=float(loyer_simulateur_form.cleaned_data["montant"]),
+                nature_logement=loyer_simulateur_form.cleaned_data["nature_logement"],
+                date_initiale=loyer_simulateur_form.cleaned_data["date_initiale"],
+                date_actualisation=loyer_simulateur_form.cleaned_data[
+                    "date_actualisation"
+                ],
+            )
+    else:
+        loyer_simulateur_form = LoyerSimulateurForm(
+            initial=dict(
+                date_actualisation=date.today().isoformat(),
+                nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
+            )
+        )
+
+    return render(
+        request,
+        "conventions/loyer.html",
+        {
+            "form": loyer_simulateur_form,
+            "montant_actualise": montant_actualise,
+            "nb_active_conventions": request.user.conventions(active=True).count(),
+            "nb_completed_conventions": request.user.conventions(active=False).count(),
         },
     )
 
