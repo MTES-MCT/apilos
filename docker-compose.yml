@@ -9,6 +9,7 @@ services:
       - ./pg-init-scripts:/docker-entrypoint-initdb.d
       # Use: delegated to get better performances on docker write workloads where the sync with the host is not mandatory
       - ./pgdata:/var/lib/postgresql/data:delegated
+      - ./pgconf/postgresql.conf:/etc/postgresql/postgresql.conf
     ports:
       - 5433:5432
   redis:
