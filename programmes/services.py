@@ -32,7 +32,7 @@ class LoyerRedevanceUpdateComputer:
                 nature_logement=nature_logement
                 if nature_logement != NatureLogement.LOGEMENTSORDINAIRES
                 else None,
-                is_loyer=nature_logement != NatureLogement.LOGEMENTSORDINAIRES,
+                is_loyer=nature_logement == NatureLogement.LOGEMENTSORDINAIRES,
                 annee__gt=date_initiale.year,
                 annee__lte=date_actualisation.year,
             )

@@ -27,8 +27,8 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
                 NatureLogement.RESIDENCEDACCUEIL,
                 NatureLogement.LOGEMENTSORDINAIRES,
             ]:
-                is_loyer = nature_logement != NatureLogement.LOGEMENTSORDINAIRES
-                nature_logement = nature_logement if is_loyer else None
+                is_loyer = nature_logement == NatureLogement.LOGEMENTSORDINAIRES
+                nature_logement = nature_logement if not is_loyer else None
                 IndiceEvolutionLoyer.objects.update_or_create(
                     annee=annee,
                     is_loyer=is_loyer,
