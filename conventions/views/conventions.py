@@ -1,10 +1,12 @@
 from datetime import datetime, date
 from zipfile import ZipFile
+import mimetypes
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
+from django.core.files import File
 from django.http import (
     FileResponse,
     HttpResponse,
@@ -417,23 +419,25 @@ def piece_jointe_access(request, piece_jointe_uuid):
     Display the raw file associated to the pièce jointe
     """
     piece_jointe_from_db = PieceJointe.objects.get(uuid=piece_jointe_uuid)
-    s3_object = client.get_object(
-        settings.AWS_ECOLOWEB_BUCKET_NAME,
-        f"piecesJointes/{piece_jointe_from_db.fichier}",
-    )
 
-    if s3_object is None:
+    try:
+        file: File = client.get_object(
+            settings.AWS_ECOLOWEB_BUCKET_NAME,
+            f"piecesJointes/{piece_jointe_from_db.fichier}",
+        )
+
+        return FileResponse(
+            file,
+            filename=piece_jointe_from_db.nom_reel,
+            content_type=mimetypes.guess_type(piece_jointe_from_db.fichier)[0],
+        )
+    except FileNotFoundError:
         return HttpResponseNotFound()
-    return FileResponse(
-        s3_object["Body"],
-        filename=piece_jointe_from_db.nom_reel,
-        content_type=s3_object["ContentType"],
-    )
 
 
 @login_required
 @permission_required("convention.add_convention")
-def piece_jointe_promote(piece_jointe_uuid):
+def piece_jointe_promote(request, piece_jointe_uuid):
     """
     Promote a pièce jointe to the official PDF document of a convention
     """
@@ -448,9 +452,7 @@ def piece_jointe_promote(piece_jointe_uuid):
     if not piece_jointe.is_convention():
         return HttpResponseForbidden()
 
-    if not ConventionFileService.promote_piece_jointe(piece_jointe):
-        return HttpResponseNotFound
-
+    ConventionFileService.promote_piece_jointe(piece_jointe)
     return HttpResponseRedirect(
         reverse("conventions:preview", args=[piece_jointe.convention.uuid])
     )
