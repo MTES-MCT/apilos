@@ -915,3 +915,22 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   --icon-size: none;
   margin-left:0;
 }
+
+.apilos-recap {
+  box-sizing: border-box;
+  background: #F2FAFF;
+  border: 1px solid #AAD6FF;
+  border-radius: 5px;
+}
+
+.apilos-recap ul {
+  list-style: none;
+}
+
+.apilos-recap ul li {
+  margin: 5px 0;
+}
+
+.apilos-text-blue-sun {
+  color: #000091;
+}

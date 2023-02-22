@@ -81,6 +81,7 @@ def search(request, active: bool = True):
 
 @login_required
 def loyer_simulateur(request):
+    annee_validite = None
     montant_actualise = None
 
     if request.method == "POST":
@@ -95,6 +96,10 @@ def loyer_simulateur(request):
                     "date_actualisation"
                 ],
             )
+
+            annee_validite = loyer_simulateur_form.cleaned_data[
+                "date_actualisation"
+            ].year
     else:
         loyer_simulateur_form = LoyerSimulateurForm(
             initial=dict(
@@ -109,6 +114,7 @@ def loyer_simulateur(request):
         {
             "form": loyer_simulateur_form,
             "montant_actualise": montant_actualise,
+            "annee_validite": annee_validite,
             "nb_active_conventions": request.user.conventions(active=True).count(),
             "nb_completed_conventions": request.user.conventions(active=False).count(),
         },
