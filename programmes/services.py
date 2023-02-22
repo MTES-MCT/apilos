@@ -24,21 +24,24 @@ class LoyerRedevanceUpdateComputer:
         date_initiale: date,
         date_actualisation: date | None = date.today(),
     ) -> float:
-        if nature_logement not in NatureLogement.values:
+        if nature_logement not in NatureLogement.eligible_for_update():
             raise Exception(f"Nature de logement invalide {nature_logement}")
 
-        coefficients = list(
+        evolutions = list(
             IndiceEvolutionLoyer.objects.filter(
-                nature_logement=nature_logement,
+                nature_logement=nature_logement
+                if nature_logement != NatureLogement.LOGEMENTSORDINAIRES
+                else None,
+                is_loyer=nature_logement != NatureLogement.LOGEMENTSORDINAIRES,
                 annee__gt=date_initiale.year,
-                annee__lt=date_actualisation.year,
+                annee__lte=date_actualisation.year,
             )
             .order_by("annee")
-            .values_list("differentiel", flat=True)
+            .values_list("evolution", flat=True)
         )
 
         return functools.reduce(
-            lambda loyer, differentiel: loyer * ((100.0 + differentiel) / 100.0),
-            coefficients,
+            lambda loyer, evolution: loyer * ((100.0 + evolution) / 100.0),
+            evolutions,
             montant_initial,
         )

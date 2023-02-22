@@ -21,7 +21,7 @@ class Command(BaseCommand):
         """
         results: QueryResultIterator = QueryResultIterator(
             query="""
-select vps.libelle::int as annee, 'LOGEMENTSORDINAIRES' as nature_logement, coalesce(il.irl2evol, il.irl1evol, il.iccaugmentation, il.icctrim4moyenne / 100.) as differentiel
+select vps.libelle::int as annee, true as is_loyer, null as nature_logement, coalesce(il.irl2evol, il.irl1evol, il.iccaugmentation, il.icctrim4moyenne / 100.) as evolution
 from ecolo.ecolo_indiceloyer il
     inner join ecolo.ecolo_valeurparamstatic vps on il.annee_id = vps.id
         """
@@ -37,18 +37,21 @@ from ecolo.ecolo_indiceloyer il
 
         results: QueryResultIterator = QueryResultIterator(
             query="""
-select distinct on (ir.annee, ir.nature_logement) ir.annee, ir.nature_logement, ir.differentiel
+select distinct on (ir.annee, ir.nature_logement) ir.annee, false as is_loyer, ir.nature_logement, ir.evolution
 from (
     select
         vps.libelle::int as annee,
+        nl.code,
+        nl.libelle,
         case
-            when nl.code = '6' then 'RESISDENCESOCIALE'
-        else 'AUTRE' end as nature_logement,
-        coalesce(ir.indicevariation, 1.) as differentiel
+            when nl.code = '1' then 'LOGEMENTSORDINAIRES' -- Logements ordinaires
+            when nl.code in ('4', '6') then 'RESISDENCESOCIALE' -- Résidences sociales, Logements foyers pour travailleurs migrants
+            when nl.code in ('2', '3', '5', '7') then 'AUTRE' --  Logements foyers pour personnes âgées, Logements foyers pour personnes handicapées, Logements foyers pour jeunes travailleurs, Logements foyers destinés à l'habitat inclusif
+        end as nature_logement,
+        coalesce(ir.indicevariation, 1.) as evolution
     from ecolo.ecolo_indiceredevance ir
         inner join ecolo.ecolo_valeurparamstatic vps on ir.annee_id = vps.id
-        inner join ecolo_naturelogement nl on ir.naturelogement_id = nl.id
-    where nl.code <> '1' --LOGEMENTSORDINAIRES
+        inner join ecolo.ecolo_naturelogement nl on ir.naturelogement_id = nl.id
 ) ir
                 """
         )
