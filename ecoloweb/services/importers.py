@@ -217,9 +217,6 @@ class ModelImporter(ABC):
 
                 # Compute data dictionary
                 data = self._prepare_data(data)
-                self._debug(
-                    f"Updating instance of {ecolo_ref.apilos_model} with id {ecolo_ref.ecolo_id}"
-                )
                 ecolo_ref.update(data)
 
         self._on_processed(ecolo_id, instance, created)

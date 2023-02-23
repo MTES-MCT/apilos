@@ -1,11 +1,12 @@
 select
-    ch.id,
+    ch.conventionapl_id||':'||ch.financement||':'||ch.numero as id,
+    ch.id as conventiondonneesgenerales_id,
     ch.conventionapl_id,
     ch.financement,
-    ch.is_avenant and ch.rank > 1 as is_avenant,
-    ch.rank - 1 as numero,
-    case when
-        ch.parent_id is not null and ch.parent_id <> ch.id and ch.rank > 1 then ch.parent_id
+    ch.is_avenant,
+    ch.numero,
+    case
+        when ch.parent_id is not null then ch.conventionapl_id||':'||ch.financement||':'||(ch.numero -1)
     end as parent_id,
     cd.programme_ids,
     --cd.communes,
@@ -20,25 +21,44 @@ from (
     -- * si au contraire un financement disparait en cours de route, les avenants suivants ne figurent pas dans son his-
     --   torique
     select
-        cdg.id,
-        cdg.conventionapl_id,
-        cdg.datehistoriquedebut,
-        cdg.avenant_id,
-        cdg.avenant_id is not null as is_avenant,
-        ff.code as financement,
-        rank() over (partition by cdg.conventionapl_id, ff.code order by cdg.datehistoriquedebut) as rank,
-        first_value(cdg.id) over (partition by cdg.conventionapl_id, ff.code order by cdg.datehistoriquedebut) as parent_id
-    from ecolo.ecolo_conventiondonneesgenerales cdg
-        -- convention courante (cc): pour chaque conventionapl_id la conventiondonneesgenerales non avenant la plus récente
+    c.conventiondonneesgenerales_id as id,
+    c.conventionapl_id,
+    pf.financement,
+    c.numero > 0 as is_avenant,
+    c.numero,
+    case
+        when c.numero > 0 then first_value(c.conventiondonneesgenerales_id) over (partition by c.conventionapl_id, pf.financement order by c.numero)
+    end as parent_id
+from (
+    -- Refactorisation: désormais la convention racine est la convention instruite suivie de tous les avenants avec
+    -- éventuellement une conventiondonnesgenerales s'ils en ont une sinon celle du parent. Le toute séparé en
+    -- différents historiques par financement
+    select
+        case
+            when c.conventiondonneesgenerales_id is not null then c.conventiondonneesgenerales_id
+            else first_value(c.conventiondonneesgenerales_id) over (partition by c.conventionapl_id order by c.numero nulls first)
+        end as conventiondonneesgenerales_id,
+        c.conventionapl_id,
+        c.numero
+    from
+        (
+            select c.id as conventionapl_id, cdg.id as conventiondonneesgenerales_id, 0 as numero
+            from ecolo.ecolo_conventionapl c
+                inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.conventioninstruite_id = cdg.id
+            union all
+            select a.conventionapl_id, cdg.id as conventiondonneesgenerales_id, a.numero
+            from ecolo_avenant a
+                left join ecolo_conventiondonneesgenerales cdg on cdg.avenant_id = a.id
+            where numero > 0
+        ) c
+        order by c.conventionapl_id, c.numero nulls first
+    ) c
         inner join (
-            select distinct on (cdg.conventionapl_id) cdg.id, cdg.datehistoriquedebut, cdg.conventionapl_id
-            from ecolo.ecolo_conventiondonneesgenerales cdg
-                where cdg.avenant_id is null
-            order by cdg.conventionapl_id,  cdg.datehistoriquedebut desc
-        ) cc on cc.conventionapl_id = cdg.conventionapl_id and cdg.datehistoriquedebut >= cc.datehistoriquedebut
-        inner join ecolo.ecolo_programmelogement pl on cdg.id = pl.conventiondonneesgenerales_id
-        inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
-        inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
+            select distinct on (pl.conventiondonneesgenerales_id, ff.code) pl.conventiondonneesgenerales_id, ff.code as financement
+            from ecolo.ecolo_programmelogement pl
+                inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
+                inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
+        ) pf on pf.conventiondonneesgenerales_id = c.conventiondonneesgenerales_id
 ) ch
     inner join (
         -- convention details (cd): départements et bailleurs associés à la convention
@@ -58,4 +78,4 @@ from (
         -- Exclusion des conventions multi, i.e. ayant (au moins) un lot associé à plus d'un bailleur ou d'une commune
         having count(distinct(ec.code)) = 1 and count(distinct(pl.bailleurproprietaire_id)) = 1
     ) cd on cd.conventiondonneesgenerales_id = ch.id and cd.financement = ch.financement
-order by ch.conventionapl_id, ch.financement, ch.datehistoriquedebut
+order by ch.conventionapl_id, ch.financement, ch.numero

@@ -35,11 +35,6 @@ class ConventionImporter(ModelImporter):
             departement, import_date, debug=debug, update=update
         )
 
-    def build_query_parameters(self, pk) -> list:
-        args = pk.split(":")
-
-        return [int(args[0]), args[1]]
-
     def setup_db(self, force: bool = False):
 
         try:
@@ -58,6 +53,9 @@ class ConventionImporter(ModelImporter):
             self._db_connection.execute(
                 "create materialized view ecolo.ecolo_conventionhistorique as "
                 + self._get_file_content("resources/sql/convention_historique.sql")
+            )
+            self._db_connection.execute(
+                "create unique index on ecolo.ecolo_conventionhistorique (id)"
             )
 
     def get_all(self) -> QueryResultIterator:
