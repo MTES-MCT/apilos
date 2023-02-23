@@ -30,6 +30,9 @@ class Command(BaseCommand):
         )
         parser.add_argument("--setup", action="store_true", help="Force setup DB")
         parser.add_argument(
+            "--update", action="store_true", help="Enable models update mode"
+        )
+        parser.add_argument(
             "--no-progress",
             action="store_true",
             help="Disable progress bar, only print info into newlines",
@@ -46,13 +49,16 @@ class Command(BaseCommand):
 
         debug = options["debug"]
         setup = options["setup"]
+        update = options["update"]
         no_progress = options["no_progress"]
 
         transaction.set_autocommit(not use_transaction)
         progress = None
 
         try:
-            importer = ConventionImporter(departement, import_date, debug=debug)
+            importer = ConventionImporter(
+                departement, import_date, debug=debug, update=update
+            )
             importer.setup_db(force=setup)
 
             results = importer.get_all()

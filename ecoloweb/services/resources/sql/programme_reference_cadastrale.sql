@@ -8,8 +8,8 @@ select ic.id,
     ic.numero::int,
     pl.description as lieudit,
     ic.superficie,
-    coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as cree_le,
-    coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as mis_a_jour_le
+    coalesce(pl.datemisechantier, cdg.datehistoriquedebut)::timestamp at time zone 'Europe/Paris' as cree_le,
+    coalesce(pl.datemisechantier, cdg.datehistoriquedebut)::timestamp at time zone 'Europe/Paris' as mis_a_jour_le
 from ecolo.ecolo_programmelogement pl
     inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
     inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id

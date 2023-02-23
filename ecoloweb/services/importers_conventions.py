@@ -21,14 +21,18 @@ class ConventionImporter(ModelImporter):
 
     model = Convention
 
-    def __init__(self, departement: str, import_date: datetime, debug=False):
-        super().__init__(departement, import_date, debug)
+    def __init__(
+        self, departement: str, import_date: datetime, debug=False, update=False
+    ):
+        super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_one = self._get_sql_from_template("conventions.sql")
 
-        self._lot_importer = LotImporter(departement, import_date, debug)
+        self._lot_importer = LotImporter(
+            departement, import_date, debug=debug, update=update
+        )
         self._piece_jointe_importer = PieceJointeImporter(
-            departement, import_date, debug
+            departement, import_date, debug=debug, update=update
         )
 
     def build_query_parameters(self, pk) -> list:
@@ -114,8 +118,10 @@ class ConventionImporter(ModelImporter):
 class PieceJointeImporter(ModelImporter):
     model = PieceJointe
 
-    def __init__(self, departement: str, import_date: datetime, debug=False):
-        super().__init__(departement, import_date, debug)
+    def __init__(
+        self, departement: str, import_date: datetime, debug=False, update=False
+    ):
+        super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content(
             "resources/sql/convention_pieces_jointes.sql"
