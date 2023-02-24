@@ -449,7 +449,7 @@ def piece_jointe_promote(request, piece_jointe_uuid):
     if piece_jointe.convention.ecolo_reference is None:
         return HttpResponseForbidden()
 
-    if not piece_jointe.is_convention():
+    if not piece_jointe.is_promotable():
         return HttpResponseForbidden()
 
     ConventionFileService.promote_piece_jointe(piece_jointe)
