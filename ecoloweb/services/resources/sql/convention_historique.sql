@@ -6,7 +6,7 @@ select
     ch.is_avenant,
     ch.numero,
     case
-        when ch.parent_id is not null then ch.conventionapl_id||':'||ch.financement||':'||(ch.numero -1)
+        when ch.parent_id is not null and ch.parent_id <> ch.id then ch.conventionapl_id||':'||ch.financement||':'||(ch.numero -1)
     end as parent_id,
     cd.programme_ids,
     --cd.communes,

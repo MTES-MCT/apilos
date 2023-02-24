@@ -1,6 +1,6 @@
 select
     pj.id,
-    cdg.id||':'||ff.code as convention_id,
+    ch.id as convention_id,
     case
         when vps.code = '1' then 'CONVENTION'
         when vps.code = '2' then 'RECTIFICATION'
@@ -14,12 +14,7 @@ select
     pj.description,
     pj.date::timestamp at time zone 'Europe/Paris' as cree_le
 from ecolo.ecolo_piecejointe pj
-    inner join ecolo.ecolo_conventionapl c on pj.conventionapl_id = c.id
+    inner join ecolo.ecolo_conventionhistorique ch on pj.conventionapl_id = ch.conventionapl_id
     inner join ecolo.ecolo_valeurparamstatic vps on pj.typepiecejointe_id = vps.id and vps.subtype = 'TPJ'
-    inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.id = cdg.conventionapl_id
-    inner join ecolo.ecolo_programmelogement pl on cdg.id = pl.conventiondonneesgenerales_id
-    inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
-    inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
 where
-    cdg.id = %s
-    and ff.code = %s
+    ch.id = %s

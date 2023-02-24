@@ -125,11 +125,6 @@ class PieceJointeImporter(ModelImporter):
             "resources/sql/convention_pieces_jointes.sql"
         )
 
-    def build_query_parameters(self, pk) -> list:
-        args = pk.split(":")
-
-        return [int(args[0]), args[1]]
-
     def _prepare_data(self, data: dict) -> dict:
         return {
             "convention": self.resolve_ecolo_reference(
