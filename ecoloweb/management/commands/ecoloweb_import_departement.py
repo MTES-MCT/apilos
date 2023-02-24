@@ -1,5 +1,5 @@
 import sys
-import datetime
+from datetime import date
 
 from django.core.management import BaseCommand
 from django.db import connections
@@ -15,8 +15,9 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "departement",
-            nargs=1,
+            "departements",
+            nargs="+",
+            type=str,
             default=[],
             help="Départements on which restrict import of conventions",
         )
@@ -43,8 +44,8 @@ class Command(BaseCommand):
             print("No 'ecoloweb' connection defined, import aborted!")
             sys.exit(1)
 
-        departement: str = options["departement"][0]
-        import_date: datetime = datetime.date.today()
+        departements: list = options["departements"]
+        import_date: date = date.today()
         use_transaction = options["use_transaction"]
 
         debug = options["debug"]
@@ -56,19 +57,20 @@ class Command(BaseCommand):
         progress = None
 
         try:
-            importer = ConventionImporter(
-                departement, import_date, debug=debug, update=update
-            )
-            importer.setup_db(force=setup)
+            for departement in departements:
+                importer = ConventionImporter(
+                    departement, import_date, debug=debug, update=update
+                )
+                importer.setup_db(force=setup)
 
-            results = importer.get_all()
-            # Progress bar
-            if not no_progress:
-                progress = tqdm(total=results.lines_total)
-            # Actual processing
-            for result in results:
-                importer.process_result(result)
-                self._on_result(progress, results)
+                results = importer.get_all()
+                # Progress bar
+                if not no_progress:
+                    progress = tqdm(total=results.lines_total)
+                # Actual processing
+                for result in results:
+                    convention = importer.process_result(result)
+                    self._on_result(departement, convention, progress, results)
 
         except KeyboardInterrupt:
             if use_transaction:
@@ -85,10 +87,10 @@ class Command(BaseCommand):
             if use_transaction:
                 transaction.commit()
 
-    def _on_result(self, progress, results):
+    def _on_result(self, departement, convention, progress, results):
         if progress is not None:
             progress.update(1)
         else:
             print(
-                f"Processed convention #{results.lines_fetched} (out of {results.lines_total} total)"
+                f"({departement}) traité convention #{convention.id} ({results.lines_fetched} / {results.lines_total} => {round(results.lines_fetched / results.lines_total * 100, 1)} %)"
             )
