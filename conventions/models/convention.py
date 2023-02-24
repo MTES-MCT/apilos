@@ -1,4 +1,5 @@
 import uuid
+import json
 
 from django.db import models
 from django.db.models import Q
@@ -220,6 +221,21 @@ class Convention(models.Model):
             return EcoloReference.objects.filter(
                 apilos_model="conventions.Convention", apilos_id=self.id
             ).first()
+
+        return None
+
+    @property
+    def description_avenant(self):
+        try:
+            json_data = json.loads(self.commentaires)
+            if "text" in json_data:
+                if (
+                    isinstance(json_data["text"], dict)
+                    and "description_avenant" in json_data["text"]
+                ):
+                    return json_data["text"]["description_avenant"]
+        except json.decoder.JSONDecodeError:
+            pass
 
         return None
 

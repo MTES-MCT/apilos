@@ -11,16 +11,22 @@
             {% if convention|display_redirect_post_action %}
                 <div class="fr-col-11">
                     <div class="fr-grid-row">
-                        Avenant du <span class="fr-ml-1v"><strong> {{convention.cree_le|date:"d F Y"|default_if_none:'-' }} </strong></span>
+                        <p class="fr-m-0">
+                            Avenant du <span class="fr-ml-1v"><strong> {{convention.valide_le|date:"d F Y"|default_if_none:'-' }} </strong></span>:&nbsp;{% if convention.description_avenant %}
+                                {{ convention.description_avenant|linebreaksbr }}
+                            {% endif %}
+                        </p>
                     </div>
+
                     <div class="fr-mb-3w">
                         <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}"> Voir en PDF</a>
                     </div>
+
                 </div>
             {% else %}
                 <div class="fr-col-11">
                     <div class="fr-grid-row">
-                        Avenant du <span class="fr-ml-1v"><strong> {{convention.cree_le|date:"d F Y"|default_if_none:'-' }} </strong></span>
+                        Avenant du <span class="fr-ml-1v"><strong> {{convention.valide_le|date:"d F Y"|default_if_none:'-' }} </strong></span>
                         <div class="fr-ml-2w"><strong>{% include "conventions/home/statut_tag.html"  %}</strong></div>
                     </div>
                     <div class="fr-mb-3w fr-mt-n1v">
