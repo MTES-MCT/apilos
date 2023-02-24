@@ -2,11 +2,12 @@ select
     ch.conventionapl_id||':'||ch.financement||':'||ch.numero as id,
     ch.id as conventiondonneesgenerales_id,
     ch.conventionapl_id,
+    ch.avenant_id,
     ch.financement,
     ch.is_avenant,
     ch.numero,
     case
-        when ch.parent_id is not null and ch.parent_id <> ch.id then ch.conventionapl_id||':'||ch.financement||':'||(ch.numero -1)
+        when ch.parent_id is not null then ch.conventionapl_id||':'||ch.financement||':0'
     end as parent_id,
     cd.programme_ids,
     --cd.communes,
@@ -23,6 +24,7 @@ from (
     select
     c.conventiondonneesgenerales_id as id,
     c.conventionapl_id,
+    c.avenant_id,
     pf.financement,
     c.numero > 0 as is_avenant,
     c.numero,
@@ -39,14 +41,15 @@ from (
             else first_value(c.conventiondonneesgenerales_id) over (partition by c.conventionapl_id order by c.numero nulls first)
         end as conventiondonneesgenerales_id,
         c.conventionapl_id,
+        c.avenant_id,
         c.numero
     from
         (
-            select c.id as conventionapl_id, cdg.id as conventiondonneesgenerales_id, 0 as numero
+            select c.id as conventionapl_id, cdg.id as conventiondonneesgenerales_id, null as avenant_id, 0 as numero
             from ecolo.ecolo_conventionapl c
                 inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.conventioninstruite_id = cdg.id
             union all
-            select a.conventionapl_id, cdg.id as conventiondonneesgenerales_id, a.numero
+            select a.conventionapl_id, cdg.id as conventiondonneesgenerales_id, a.id as avenant_id, a.numero
             from ecolo_avenant a
                 left join ecolo_conventiondonneesgenerales cdg on cdg.avenant_id = a.id
             where numero > 0

@@ -1,6 +1,6 @@
 select
     ch.id as id,
-    ch.parent_id as parent_id,
+    chp.id as parent_id,
     -- Les avenants sont initialisés avec un type 'commentaires' dont la valeur est un résumé des altérations
     -- déclarées depuis Ecoloweb
     ('{"files": {}, "text": "Avenant issu d''Ecoloweb:\r\n\r\n'||ta.detail_avenant||'"}')::json as commentaires,
@@ -74,8 +74,10 @@ select
 {% block from %}
 from ecolo.ecolo_conventionapl c
     inner join ecolo.ecolo_conventionhistorique ch on ch.conventionapl_id = c.id
+    -- Vérification qu'il existe bien une ligne pour le parent de parent_id (au cas où exclure les changements de financement)
+    left join ecolo.ecolo_conventionhistorique chp on chp.id = ch.parent_id
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.conventiondonneesgenerales_id
-    left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
+    left join ecolo.ecolo_avenant a on ch.avenant_id = a.id
     inner join ecolo.ecolo_valeurparamstatic vps on vps.id = cdg.etatconvention_id
     -- Détail des modifications, en cas d'avenant
     left join (

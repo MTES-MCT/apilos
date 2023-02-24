@@ -33,7 +33,7 @@
 
 select
     ch.id,
-    ch.parent_id,
+    chp.id as parent_id,
     pl.bailleurproprietaire_id as bailleur_id,
     c.entitecreatrice_id as administration_id,
     pa.codepostal as code_postal,
@@ -65,6 +65,8 @@ select
     coalesce(pl.datemisechantier, cdg.datehistoriquedebut)::timestamp at time zone 'Europe/Paris' as cree_le,
     coalesce(pl.datemisechantier, cdg.datehistoriquedebut)::timestamp at time zone 'Europe/Paris' as mis_a_jour_le
 from ecolo.ecolo_conventionhistorique ch
+    -- Vérification qu'il existe bien une ligne pour le parent de parent_id (au cas où exclure les changements de financement)
+    left join ecolo.ecolo_conventionhistorique chp on chp.id = ch.parent_id
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.conventiondonneesgenerales_id
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
     left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
