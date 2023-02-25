@@ -29,13 +29,6 @@ docker-compose build
 docker-compose up -d
 ```
 
-Si vous souhaitez installer le shell `ipython` avec l'autoreload, définissez la variable d'environnement
-`IPYTHON_AUTORELOAD` au moment du build:
-
-```bash
-IPYTHON_AUTORELOAD=yes docker-compose build apilos
-```
-
 Pensez à rebuilder le container docker lorsque vous ajouter une dépendance. les dépendances sont listées dans le fichier requirements.txt à la base du projet.
 
 le code local est attaché au volume `/code/` à l'interieur du docker apilos. une seconde instance docker est executée pour la base de données. de même, les données de la base de données sont persisté car le dossier de données de la base de donnée est attaché en local dans un répéertoire pgdata ignoré par git.
