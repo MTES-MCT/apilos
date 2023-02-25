@@ -143,9 +143,9 @@ et-xmlfile==1.1.0 \
     --hash=sha256:8eb9e2bc2f8c97e37a2dc85a09ecdcdec9d8a396530a6d5a33b30b9a92da0c5c \
     --hash=sha256:a2ba85d1d6a74ef63837eed693bcb89c3f752169b0e3e7ae5b16ca5e1b3deada
     # via openpyxl
-faker==17.0.0 \
-    --hash=sha256:17cf85aeb0363a3384ccd4c1f52b52ec8f414c7afaab74ae1f4c3e09a06e14de \
-    --hash=sha256:21c3c6c45183308151c14f62afe59bf54ace68f663e0180973698ba2a9a3b2c4
+faker==17.3.0 \
+    --hash=sha256:1dfffa43b4492b899a839619f2056060b585ba0bc76f329525194ca04dde0988 \
+    --hash=sha256:26b2864a5332094f2c7f3968deebabce69be39ed5db4dbf22b4fa0ba3d1acdae
     # via -r requirements.in
 gevent==22.10.2 \
     --hash=sha256:018f93de7d5318d2fb440f846839a4464738468c3476d5c9cf7da45bb71c18bd \
