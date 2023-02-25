@@ -275,7 +275,33 @@ AUTH_USER_MODEL = "users.User"
 
 AUTHENTICATION_BACKENDS = [
     "core.backends.EmailBackend",
+    "core.backends.CerbereCASBackend",
 ]
+
+
+MIDDLEWARE = MIDDLEWARE + [
+    "django_cas_ng.middleware.CASMiddleware",
+    "siap.custom_middleware.CerbereSessionMiddleware",
+]
+
+AUTHENTICATION_BACKENDS = AUTHENTICATION_BACKENDS + []  # custom backend CAS
+
+CERBERE_AUTH = get_env_variable("CERBERE_AUTH")
+
+
+# CAS config
+CAS_SERVER_URL = CERBERE_AUTH
+CAS_VERSION = "CAS_2_SAML_1_0"
+CAS_USERNAME_ATTRIBUTE = "username"
+CAS_APPLY_ATTRIBUTES_TO_USER = True
+CAS_RENAME_ATTRIBUTES = {
+    "UTILISATEUR.ID": "username",
+    "UTILISATEUR.LOGIN": "cerbere_login",
+    "UTILISATEUR.NOM": "last_name",
+    "UTILISATEUR.PRENOM": "first_name",
+    "UTILISATEUR.MEL": "email",
+}
+
 
 # Redirect to home URL after login
 LOGIN_REDIRECT_URL = "/"

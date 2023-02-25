@@ -66,22 +66,15 @@ urlpatterns = [
         "api-siap/v0/", include(("api.siap.v0.urls", "api-siap"), namespace="api-siap")
     ),
     path("explorer/", include("explorer.urls")),
+    path(
+        "accounts/cerbere-login",
+        django_cas_ng.views.LoginView.as_view(),
+        name="cas_ng_login",
+    ),
+    path(
+        "accounts/cerbere-logout",
+        django_cas_ng.views.LogoutView.as_view(),
+        name="cas_ng_logout",
+    ),
+    path("accounts/", include("django.contrib.auth.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-if settings.CERBERE_AUTH:
-    urlpatterns = urlpatterns + [
-        path(
-            "accounts/cerbere-login",
-            django_cas_ng.views.LoginView.as_view(),
-            name="cas_ng_login",
-        ),
-        path(
-            "accounts/cerbere-logout",
-            django_cas_ng.views.LogoutView.as_view(),
-            name="cas_ng_logout",
-        ),
-    ]
-else:
-    urlpatterns = urlpatterns + [
-        path("accounts/", include("django.contrib.auth.urls")),
-    ]

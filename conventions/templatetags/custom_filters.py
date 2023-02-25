@@ -16,7 +16,6 @@ from django.utils.safestring import mark_safe
 def highlight(text, search):
     if not search:
         return text
-
     rgx = compile(rescape(search), IGNORECASE)
     return mark_safe(
         rgx.sub(

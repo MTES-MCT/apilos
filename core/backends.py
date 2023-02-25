@@ -16,7 +16,12 @@ class CerbereCASBackend(CASBackend):
     """
 
     def user_can_authenticate(self, user):
+        print("CAN AUTH CERBERE authenticate")
         return True
+
+    def authenticate(self, request, username=None, password=None, **kwargs):
+        print("CERBERE AUTHENTICATE")
+        super().authenticate(request, username, password, **kwargs)
 
 
 UserModel = get_user_model()
@@ -28,7 +33,13 @@ class EmailBackend(ModelBackend):
     Accept email and username
     """
 
+    def user_can_authenticate(self, user):
+        print("CAN AUTH authenticate")
+        return True
+
     def authenticate(self, request, username=None, password=None, **kwargs):
+        print("BASIC AUTHENTICATE")
+        return False
         try:
             user = UserModel.objects.get(
                 Q(username__iexact=username) | Q(email__iexact=username)
