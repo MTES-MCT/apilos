@@ -14,16 +14,13 @@ from django.utils.safestring import mark_safe
 
 @register.filter(name="highlight")
 def highlight(text, search):
-    if not search:
-        return text
-
     rgx = compile(rescape(search), IGNORECASE)
     return mark_safe(
         rgx.sub(
             lambda m: '<span class="apilos-search-highlight">{}</span>'.format(
                 m.group()
             ),
-            text,
+            str(text),
         )
     )
 

@@ -171,7 +171,7 @@
                                             </script>
                                         </td>
                                         {% if request|is_instructeur %}
-                                            <td>{{convention.programme.bailleur.nom|highlight:conventions.search_input}}</td>
+                                            <td>{{convention.programme.bailleur|highlight:conventions.search_input}}</td>
                                         {% endif %}
                                         {% if request|display_administration %}
                                             <td>{{convention.programme.administration}}</td>
@@ -179,7 +179,7 @@
                                         <td>
                                             <div class="apilos--flex-row-left-center">
                                                 <strong class="apilos--overflow_ellipsis">
-                                                    {{convention.programme.nom|highlight:conventions.search_input}}
+                                                    {{convention.programme|highlight:conventions.search_input}}
                                                 </strong>
                                                 {% if convention.is_avenant %}
                                                     <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-avenant background-white">Avenant</span>
