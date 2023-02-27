@@ -2,7 +2,7 @@
 
 select
     l.id,
-    pl.conventiondonneesgenerales_id||':'||ff.code as lot_id,
+    ch.id as lot_id,
     coalesce(l.numerobatiment||' '||l.noescalier||' '||l.etage||' '||l.numerologement, '') as designation,
     case
         when ptl.code in ('ST1', 'T1') then 'T1'
@@ -19,10 +19,8 @@ select
     l.datecreation as cree_le,
     l.datecreation as mis_a_jour_le
 from ecolo.ecolo_logement l
-    inner join ecolo.ecolo_programmelogement pl on l.programmelogement_id = pl.id
-    inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
-    inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
     inner join ecolo.ecolo_valeurparamstatic ptl on l.typelogement_id = ptl.id
+    inner join ecolo.ecolo_programmelogement pl on l.programmelogement_id = pl.id
+    inner join ecolo.ecolo_conventionhistorique ch on pl.conventiondonneesgenerales_id = ch.conventiondonneesgenerales_id
 where
-    pl.conventiondonneesgenerales_id = %s
-    and ff.code = %s
+    ch.id = %s

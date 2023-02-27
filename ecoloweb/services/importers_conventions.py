@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import date
 
 from django.db.utils import ProgrammingError
 
@@ -21,20 +21,17 @@ class ConventionImporter(ModelImporter):
 
     model = Convention
 
-    def __init__(self, departement: str, import_date: datetime, debug=False):
-        super().__init__(departement, import_date, debug)
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
+        super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_one = self._get_sql_from_template("conventions.sql")
 
-        self._lot_importer = LotImporter(departement, import_date, debug)
-        self._piece_jointe_importer = PieceJointeImporter(
-            departement, import_date, debug
+        self._lot_importer = LotImporter(
+            departement, import_date, debug=debug, update=update
         )
-
-    def build_query_parameters(self, pk) -> list:
-        args = pk.split(":")
-
-        return [int(args[0]), args[1]]
+        self._piece_jointe_importer = PieceJointeImporter(
+            departement, import_date, debug=debug, update=update
+        )
 
     def setup_db(self, force: bool = False):
 
@@ -54,6 +51,9 @@ class ConventionImporter(ModelImporter):
             self._db_connection.execute(
                 "create materialized view ecolo.ecolo_conventionhistorique as "
                 + self._get_file_content("resources/sql/convention_historique.sql")
+            )
+            self._db_connection.execute(
+                "create unique index on ecolo.ecolo_conventionhistorique (id)"
             )
 
     def get_all(self) -> QueryResultIterator:
@@ -108,23 +108,18 @@ class ConventionImporter(ModelImporter):
 
             # Automatically promote the latest piece jointe with type CONVENTION as official convention document
             if piece_jointe is not None:
-                promote_piece_jointe.send(piece_jointe.id)
+                promote_piece_jointe.delay(piece_jointe.id)
 
 
 class PieceJointeImporter(ModelImporter):
     model = PieceJointe
 
-    def __init__(self, departement: str, import_date: datetime, debug=False):
-        super().__init__(departement, import_date, debug)
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
+        super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content(
             "resources/sql/convention_pieces_jointes.sql"
         )
-
-    def build_query_parameters(self, pk) -> list:
-        args = pk.split(":")
-
-        return [int(args[0]), args[1]]
 
     def _prepare_data(self, data: dict) -> dict:
         return {

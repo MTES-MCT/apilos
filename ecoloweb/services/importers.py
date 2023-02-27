@@ -1,7 +1,7 @@
 import os
 import re
 import time
-from datetime import datetime
+from datetime import date
 
 from typing import Dict, Type
 from abc import ABC, abstractmethod
@@ -33,11 +33,13 @@ class ModelImporter(ABC):
     def __init__(
         self,
         departement: str,
-        import_date: datetime,
+        import_date: date,
+        update: bool = False,
         debug=False,
     ):
         self._nb_imported_models: int = 0
         self._db_connection: CursorWrapper = connections["ecoloweb"].cursor()
+        self.update = update
         self.debug = debug
         self.departement = departement
         self.import_date = import_date
@@ -210,6 +212,13 @@ class ModelImporter(ABC):
             instance = ecolo_ref.resolve()
             created = False
 
+            if self.update:
+                ecolo_id = data.pop(self.ecolo_id_field)
+
+                # Compute data dictionary
+                data = self._prepare_data(data)
+                ecolo_ref.update(data)
+
         self._on_processed(ecolo_id, instance, created)
 
         return instance
@@ -227,12 +236,15 @@ class ModelImporter(ABC):
         if pk is None:
             return None
 
-        ecolo_ref = self.find_ecolo_reference(pk)
+        # If update mode is not enabled ...
+        if not self.update:
+            # ... then look for potentially already imported model before executing the query
+            ecolo_ref = self.find_ecolo_reference(pk)
 
-        # If an EcoloReference has been found ...
-        if ecolo_ref is not None:
-            # ... return the associated model
-            return ecolo_ref.resolve()
+            # If an EcoloReference has been found ...
+            if ecolo_ref is not None:
+                # ... return the associated model
+                return ecolo_ref.resolve()
 
         # Otherwise perform SQL query and process result
         return self.process_result(

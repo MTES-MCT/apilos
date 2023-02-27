@@ -1,0 +1,121 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% load custom_filters %}
+
+{% block page_title %}Conventions - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner fr-mb-8w">
+        {# Main title & optionnal CTAs #}
+        <div class="fr-container">
+            <div class="fr-grid-row fr-mt-2w fr-grid-row--gutters">
+                <div class="fr-col-12 fr-my-3w block--row-strech fr-grid-row--middle">
+                    {% if request|is_bailleur %}
+                        <div class="block--row-strech-1">
+                            <h1 class="m-0">Conventions et avenants</h1>
+                        </div>
+                        {% if not CERBERE_AUTH %}
+                            <div class="fr-mr-3w">
+                                <a class="fr-btn" href="{% url 'conventions:selection' %}">
+                                    <span class="fr-fi-add-line fr-mr-1w" aria-hidden="true"></span>Créer une nouvelle convention
+                                </a>
+                                {% comment %}
+                                {#  Disable as there is no route to initialize avenant from zero yet #}
+                                <a class="fr-btn fr-btn--secondary" href="{% url 'avenants:selection' %}">
+                                    <span class="fr-fi-add-line fr-mr-1w" aria-hidden="true"></span>Créer un avenant
+                                </a>
+                                {% endcomment %}
+                            </div>
+                        {% endif %}
+                        <div hidden>
+                            <a class="fr-btn  fr-btn--secondary " href="{% url 'conventions:new_avenant_start' %}">
+                                <span class="fr-fi-add-line fr-mr-1w" aria-hidden="true"></span>Créer un avenant
+                            </a>
+                        </div>
+                    {% elif request|is_instructeur or request.user.is_superuser %}
+                        <div class="block--row-strech-1">
+                            <h2 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h2>
+                            <p class="apilos-subtitle">{{total_conventions}} convention{{ total_conventions|pluralize }} liée{{ total_conventions|pluralize }} à votre administration trouvée{{ total_conventions|pluralize }} dans APiLos</p>
+                        </div>
+                    {% else %}
+                        <p class="fr-mb-3w">Votre profil n'est pas bien configuré, merci de vous rapprocher de votre instructeur</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {# Navigation tabs #}
+        <div class="fr-container-fluid">
+            <div class="fr-tabs fr-col-12">
+                <div class="fr-container">
+                    <ul class="fr-tabs__list" role="tablist" aria-label="Liste des conventions">
+                        {% include 'conventions/home/_tab.html' with tab_active=false count=nb_active_conventions label='en cours' title='Conventions en cours' route='conventions:search_active' %}
+                        {% include 'conventions/home/_tab.html' with tab_active=false count=nb_completed_conventions label='finalisées' title='Conventions finalisées' route='conventions:search_completed' %}
+                        <li class="fr-ml-md-auto">
+                            <div class="fr-tabs__tab" aria-selected="true">
+                                <span aria-hidden="true" class="fr-icon-equalizer-fill"></span> Calculatrice de loyers
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Page's actual inner content #}
+    <div class="fr-container fr-my-3w">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-md-12 ">
+                <h4 class="fr-mb-1v">Calculer l’actualisation d’un loyer</h4>
+                <p>Complétez le formulaire pour obtenir l’actualisation légale des vos loyers</p>
+
+                <form action="{% url 'conventions:loyer_simulateur' %}" method="post">
+                    {% csrf_token %}
+
+                    <div class="fr-col-12">
+                        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_select.html" with form_input=form.nature_logement editable=True %}
+                            </div>
+
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_date.html" with form_input=form.date_initiale editable=True %}
+                            </div>
+
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_number.html" with form_input=form.montant editable=True %}
+                            </div>
+
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                {% include "common/form/input_date.html" with form_input=form.date_actualisation editable=True %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="fr-btn fr-icon-equalizer-fill fr-btn--icon-right">
+                        Calculer
+                    </button>
+
+                </form>
+            </div>
+
+            <div class="fr-col-md-6 apilos-recap fr-mt-2w">
+                <ul>
+                    <li>
+                        <span class="fr-text--bold apilos-text-blue-sun">Résultat</span>
+                    </li>
+                    <li>
+                        <span class="fr-text--bold">Montant actualisé</span><br/>
+                        <span class="fr-display-md">{% if montant_actualise %}{{ montant_actualise|floatformat:2 }} €{% endif %}</span>
+
+                    </li>
+                    <li>
+                        <span class="fr-text--bold">Période de validité</span><br/>
+                        <p>{% if annee_validite %}Du 1er janvier {{ annee_validite }} au 31 décembre {{ annee_validite }}{% endif %}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

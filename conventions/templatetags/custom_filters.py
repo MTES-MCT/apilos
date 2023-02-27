@@ -4,7 +4,7 @@ from django.template.defaulttags import register
 from core.utils import is_valid_uuid, get_key_from_json_field
 from programmes.models import Financement
 from siap.siap_client.client import SIAPClient
-from conventions.models import ConventionStatut
+from conventions.models import ConventionStatut, PieceJointe
 from users.models import GroupProfile
 
 
@@ -396,3 +396,8 @@ def get_text_as_list(text_field):
 @register.filter
 def negate(condition: bool):
     return not condition
+
+
+@register.filter
+def can_promote(piece_jointe: PieceJointe):
+    return piece_jointe.is_promotable()

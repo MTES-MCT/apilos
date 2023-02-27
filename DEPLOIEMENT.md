@@ -4,7 +4,7 @@
 
 La solution souveraine PaaS de [Scalingo](https://dashboard.scalingo.com/apps/osc-fr1/fabnum-apilos) est utilisée avec les composants suivants :
 * webapp : Application Django incluant interface et APIs, la webapp est déployé un système Ubunti 20.x
-* worker : worker Dramatiq pour déléguer des tâches longues qui s'executeront de manière asynchrone
+* worker : worker Celery pour déléguer des tâches longues qui s'executeront de manière asynchrone
 * Une base de données postgres en version 12.7.0
 
 Les applications lancées sont configurées dans le fichier [Procfile](Procfile)

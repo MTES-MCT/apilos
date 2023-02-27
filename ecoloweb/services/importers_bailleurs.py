@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import date
 
 from . import SiretResolver
 from .importers import ModelImporter
@@ -10,13 +10,8 @@ from django.conf import settings
 class BailleurImporter(ModelImporter):
     model = Bailleur
 
-    def __init__(
-        self,
-        departement: str,
-        import_date: datetime,
-        debug=False,
-    ):
-        super().__init__(departement, import_date, debug)
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
+        super().__init__(departement, import_date, debug=debug, update=update)
 
         try:
             self._siret_resolver = SiretResolver(

@@ -56,8 +56,8 @@ select
             when snb.code = '611' then 'PARTICULIERS'
         else 'NONRENSEIGNE'
     end as sous_nature_bailleur,
-    b.datemodif as cree_le,
-    b.datemodif as mis_a_jour_le,
+    b.datemodif::timestamp at time zone 'Europe/Paris' as cree_le,
+    b.datemodif::timestamp at time zone 'Europe/Paris' as mis_a_jour_le,
     ab.ligne1||' '||ab.ligne2||' '||ab.ligne3||' '||ab.ligne4 as adresse,
     ab.codepostal as code_postal,
     ab.ville as ville

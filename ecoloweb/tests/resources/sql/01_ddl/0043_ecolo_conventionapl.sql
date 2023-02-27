@@ -17,6 +17,9 @@ create table ecolo.ecolo_conventionapl
     identifiantreprise             varchar(10),
     repertoirepiecesjointesreprise varchar(100),
     memoreprise                    varchar(1000),
+    conventioninstruite_id         bigint
+        constraint fk_ecolo_conventionapl_conventioninstruite
+            references ecolo.ecolo_conventiondonneesgenerales,
     entitecreatrice_id             bigint            not null
         constraint fk_ecolo_conventionapl_entitecreatrice
             references ecolo.ecolo_entitegest,

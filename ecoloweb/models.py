@@ -26,7 +26,7 @@ class EcoloReference(models.Model):
     """
 
     class Meta:
-        unique_together = ('apilos_model', 'ecolo_id')
+        unique_together = ("apilos_model", "ecolo_id")
 
     id = models.AutoField(primary_key=True)
     apilos_model = models.CharField(max_length=64, null=False)
@@ -35,9 +35,15 @@ class EcoloReference(models.Model):
     departement = models.CharField(max_length=3, null=False, default=None)
     importe_le = models.DateField(null=True)
 
+    def _get_model(self):
+        app_label, model_name = self.apilos_model.split(".")
+        return apps.get_model(app_label, model_name)
+
     def resolve(self) -> Optional[Model]:
-        model = apps.get_model(self.apilos_model.split('.')[0], self.apilos_model.split('.')[1])
-        return model.objects.filter(pk=self.apilos_id).first()
+        return self._get_model().objects.filter(pk=self.apilos_id).first()
+
+    def update(self, data: dict):
+        return self._get_model().objects.filter(pk=self.apilos_id).update(**data)
 
     @classmethod
     def get_instance_model_name(cls, instance: Model) -> str:
@@ -45,4 +51,4 @@ class EcoloReference(models.Model):
 
     @classmethod
     def get_class_model_name(cls, clazz) -> str:
-        return f'{clazz._meta.app_label}.{clazz._meta.object_name}'
+        return f"{clazz._meta.app_label}.{clazz._meta.object_name}"

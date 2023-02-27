@@ -10,6 +10,11 @@ urlpatterns = [
     path("en-cours", views.search, {"active": True}, name="search_active"),
     path("finalisees", views.search, {"active": False}, name="search_completed"),
     path(
+        "simulateur-de-loyer",
+        views.loyer_simulateur,
+        name="loyer_simulateur",
+    ),
+    path(
         "selection",
         permission_required("convention.add_convention")(
             views.ConventionSelectionFromDBView.as_view()

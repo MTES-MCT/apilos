@@ -1,9 +1,12 @@
+from datetime import datetime, date
 from zipfile import ZipFile
+import mimetypes
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
+from django.core.files import File
 from django.http import (
     FileResponse,
     HttpResponse,
@@ -15,8 +18,10 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
+from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from core.storage import client
-from programmes.models import Financement
+from programmes.models import Financement, NatureLogement
+from programmes.services import LoyerRedevanceUpdateComputer
 from upload.services import UploadService
 from conventions.services import convention_generator
 from conventions.services.recapitulatif import (
@@ -72,6 +77,48 @@ def search(request, active: bool = True):
             "nb_active_conventions": request.user.conventions(active=True).count(),
             "nb_completed_conventions": request.user.conventions(active=False).count(),
             "conventions": service,
+        },
+    )
+
+
+@login_required
+def loyer_simulateur(request):
+    annee_validite = None
+    montant_actualise = None
+
+    if request.method == "POST":
+        loyer_simulateur_form = LoyerSimulateurForm(request.POST)
+
+        if loyer_simulateur_form.is_valid():
+            montant_actualise = LoyerRedevanceUpdateComputer.compute_loyer_update(
+                montant_initial=float(loyer_simulateur_form.cleaned_data["montant"]),
+                nature_logement=loyer_simulateur_form.cleaned_data["nature_logement"],
+                date_initiale=loyer_simulateur_form.cleaned_data["date_initiale"],
+                date_actualisation=loyer_simulateur_form.cleaned_data[
+                    "date_actualisation"
+                ],
+            )
+
+            annee_validite = loyer_simulateur_form.cleaned_data[
+                "date_actualisation"
+            ].year
+    else:
+        loyer_simulateur_form = LoyerSimulateurForm(
+            initial=dict(
+                date_actualisation=date.today().isoformat(),
+                nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
+            )
+        )
+
+    return render(
+        request,
+        "conventions/loyer.html",
+        {
+            "form": loyer_simulateur_form,
+            "montant_actualise": montant_actualise,
+            "annee_validite": annee_validite,
+            "nb_active_conventions": request.user.conventions(active=True).count(),
+            "nb_completed_conventions": request.user.conventions(active=False).count(),
         },
     )
 
@@ -372,23 +419,25 @@ def piece_jointe_access(request, piece_jointe_uuid):
     Display the raw file associated to the pièce jointe
     """
     piece_jointe_from_db = PieceJointe.objects.get(uuid=piece_jointe_uuid)
-    s3_object = client.get_object(
-        settings.AWS_ECOLOWEB_BUCKET_NAME,
-        f"piecesJointes/{piece_jointe_from_db.fichier}",
-    )
 
-    if s3_object is None:
+    try:
+        file: File = client.get_object(
+            settings.AWS_ECOLOWEB_BUCKET_NAME,
+            f"piecesJointes/{piece_jointe_from_db.fichier}",
+        )
+
+        return FileResponse(
+            file,
+            filename=piece_jointe_from_db.nom_reel,
+            content_type=mimetypes.guess_type(piece_jointe_from_db.fichier)[0],
+        )
+    except FileNotFoundError:
         return HttpResponseNotFound()
-    return FileResponse(
-        s3_object["Body"],
-        filename=piece_jointe_from_db.nom_reel,
-        content_type=s3_object["ContentType"],
-    )
 
 
 @login_required
 @permission_required("convention.add_convention")
-def piece_jointe_promote(piece_jointe_uuid):
+def piece_jointe_promote(request, piece_jointe_uuid):
     """
     Promote a pièce jointe to the official PDF document of a convention
     """
@@ -400,12 +449,10 @@ def piece_jointe_promote(piece_jointe_uuid):
     if piece_jointe.convention.ecolo_reference is None:
         return HttpResponseForbidden()
 
-    if not piece_jointe.is_convention():
+    if not piece_jointe.is_promotable():
         return HttpResponseForbidden()
 
-    if not ConventionFileService.promote_piece_jointe(piece_jointe):
-        return HttpResponseNotFound
-
+    ConventionFileService.promote_piece_jointe(piece_jointe)
     return HttpResponseRedirect(
         reverse("conventions:preview", args=[piece_jointe.convention.uuid])
     )

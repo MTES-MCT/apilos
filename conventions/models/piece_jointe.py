@@ -37,3 +37,9 @@ class PieceJointe(models.Model):
 
     def is_convention(self) -> bool:
         return self.type == PieceJointeType.CONVENTION
+
+    def is_promotable(self):
+        if self.convention.is_avenant():
+            return self.type == PieceJointeType.AVENANT
+
+        return self.type == PieceJointeType.CONVENTION
