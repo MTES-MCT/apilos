@@ -108,7 +108,7 @@ class ConventionImporter(ModelImporter):
 
             # Automatically promote the latest piece jointe with type CONVENTION as official convention document
             if piece_jointe is not None:
-                promote_piece_jointe.send(piece_jointe.id)
+                promote_piece_jointe.delay(piece_jointe.id)
 
 
 class PieceJointeImporter(ModelImporter):
