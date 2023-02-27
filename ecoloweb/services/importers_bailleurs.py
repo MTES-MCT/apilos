@@ -11,12 +11,9 @@ class BailleurImporter(ModelImporter):
     model = Bailleur
 
     def __init__(
-        self,
-        departement: str,
-        import_date: datetime,
-        debug=False,
+        self, departement: str, import_date: datetime, debug=False, update=False
     ):
-        super().__init__(departement, import_date, debug)
+        super().__init__(departement, import_date, debug=debug, update=update)
 
         try:
             self._siret_resolver = SiretResolver(

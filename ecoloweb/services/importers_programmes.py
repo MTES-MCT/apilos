@@ -18,8 +18,10 @@ from .importers_bailleurs import BailleurImporter
 class ReferenceCadastraleImporter(ModelImporter):
     model = ReferenceCadastrale
 
-    def __init__(self, departement: str, import_date: datetime, debug=False):
-        super().__init__(departement, import_date, debug)
+    def __init__(
+        self, departement: str, import_date: datetime, debug=False, update=False
+    ):
+        super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content(
             "resources/sql/programme_reference_cadastrale.sql"
@@ -43,8 +45,10 @@ class ReferenceCadastraleImporter(ModelImporter):
 class TypeStationnementImporter(ModelImporter):
     model = TypeStationnement
 
-    def __init__(self, departement: str, import_date: datetime, debug=False):
-        super().__init__(departement, import_date, debug)
+    def __init__(
+        self, departement: str, import_date: datetime, debug=False, update=False
+    ):
+        super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content(
             "resources/sql/programme_type_stationnement.sql"
@@ -69,18 +73,22 @@ class ProgrammeImporter(ModelImporter):
 
     model = Programme
 
-    def __init__(self, departement: str, import_date: datetime, debug=False):
-        super().__init__(departement, import_date, debug)
+    def __init__(
+        self, departement: str, import_date: datetime, debug=False, update=False
+    ):
+        super().__init__(departement, import_date, debug=debug, update=update)
 
         self._identity_keys = ["numero_galion"]
         self._query_one = self._get_file_content("resources/sql/programmes.sql")
 
-        self._bailleur_importer = BailleurImporter(departement, import_date, debug)
+        self._bailleur_importer = BailleurImporter(
+            departement, import_date, debug=debug, update=update
+        )
         self._administration_importer = AdministrationImporter(
-            departement, import_date, debug
+            departement, import_date, debug=debug, update=update
         )
         self._reference_cadastrale_importer = ReferenceCadastraleImporter(
-            departement, import_date, debug
+            departement, import_date, debug=debug, update=update
         )
 
     def build_query_parameters(self, pk) -> list:
@@ -112,15 +120,21 @@ class LotImporter(ModelImporter):
 
     model = Lot
 
-    def __init__(self, departement: str, import_date: datetime, debug=False):
-        super().__init__(departement, import_date, debug)
+    def __init__(
+        self, departement: str, import_date: datetime, debug=False, update=False
+    ):
+        super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_one = self._get_file_content("resources/sql/programme_lots.sql")
 
-        self._programme_importer = ProgrammeImporter(departement, import_date, debug)
-        self._logement_importer = LogementImporter(departement, import_date, debug)
+        self._programme_importer = ProgrammeImporter(
+            departement, import_date, debug=debug, update=update
+        )
+        self._logement_importer = LogementImporter(
+            departement, import_date, debug=debug, update=update
+        )
         self._type_stationnement_importer = TypeStationnementImporter(
-            departement, import_date, debug
+            departement, import_date, debug=debug, update=update
         )
 
     def build_query_parameters(self, pk) -> list:
@@ -150,8 +164,10 @@ class LotImporter(ModelImporter):
 class LogementImporter(ModelImporter):
     model = Logement
 
-    def __init__(self, departement: str, import_date: datetime, debug=False):
-        super().__init__(departement, import_date, debug)
+    def __init__(
+        self, departement: str, import_date: datetime, debug=False, update=False
+    ):
+        super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content(
             "resources/sql/programme_logements.sql"

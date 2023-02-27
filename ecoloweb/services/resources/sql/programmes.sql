@@ -64,8 +64,8 @@ select
         else 'AUTRE'
     end as nature_logement,
     cdg.datehistoriquedebut as date_achevement,
-    coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as cree_le,
-    coalesce(pl.datemisechantier, cdg.datehistoriquedebut) as mis_a_jour_le
+    coalesce(pl.datemisechantier, cdg.datehistoriquedebut)::timestamp at time zone 'Europe/Paris' as cree_le,
+    coalesce(pl.datemisechantier, cdg.datehistoriquedebut)::timestamp at time zone 'Europe/Paris' as mis_a_jour_le
 from ecolo.ecolo_conventionhistorique ch
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.id
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
