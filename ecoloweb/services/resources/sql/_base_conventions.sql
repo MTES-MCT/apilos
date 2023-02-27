@@ -1,12 +1,12 @@
 select
-    ch.id||':'||ch.financement as id,
-    ch.parent_id||':'||ch.financement as parent_id,
+    ch.id as id,
+    chp.id as parent_id,
     -- Les avenants sont initialisés avec un type 'commentaires' dont la valeur est un résumé des altérations
     -- déclarées depuis Ecoloweb
-    ('{"files": {}, "text": "Avenant issu d''Ecoloweb:\r\n\r\n'||ta.detail_avenant||'"}')::json as commentaires,
-    cdg.id||':'||ch.financement as programme_id,
+    '{"files": {}, "text": {"description_avenant": "'||replace(a.description, '"', E'\\"')||'"} }' as commentaires,
+    ch.id as programme_id,
     -- Les lots d'un programme sont tous les logements partageant le même financement
-    ch.id||':'||ch.financement as lot_id,
+    ch.id as lot_id,
     ch.financement as financement,
     case
         when
@@ -14,25 +14,21 @@ select
         else c.noreglementaire
     end as numero,
     case
-        when cdg.dateannulation is not null then '8. Annulée en suivi'
-        when cdg.datedemandedenonciation is not null then '7. Dénoncée'
-        when cdg.dateresiliationprefet is not null then '6. Résiliée'
-        when vps.code = 'INS' and c.noreglementaire is null then '2. Instruction requise'
+        when vps.code = 'ANS' then '8. Annulée en suivi'
+        when vps.code = 'RES' then '7. Dénoncée'
+        when vps.code = 'RES' then '6. Résiliée'
+        when vps.code = 'INS' then '2. Instruction requise'
+
         else '5. Signée'
     end as statut,
+    -- Dates
     cdg.datehistoriquefin as date_fin_conventionnement,
-    -- Financement
     c.datedepot::timestamp at time zone 'Europe/Paris' as soumis_le,
-    cdg.datesignatureprefet::timestamp at time zone 'Europe/Paris' as televersement_convention_signee_le,
-     -- The latest non null signature date is the one considered as accurate
-    greatest(
-        cdg.datesignatureentitegest::timestamp at time zone 'Europe/Paris',
-        cdg.datesignaturebailleur::timestamp at time zone 'Europe/Paris',
-        cdg.datesignatureprefet::timestamp at time zone 'Europe/Paris'
-    ) as valide_le,
-    cdg.datehistoriquedebut::timestamp at time zone 'Europe/Paris' as cree_le,
-    coalesce(c.datemodification::timestamp, c.datesaisie::timestamp, cdg.datehistoriquedebut::timestamp) at time zone 'Europe/Paris' as mis_a_jour_le,
-    cdg.datesignatureentitegest::timestamp at time zone 'Europe/Paris' as premiere_soumission_le,
+    coalesce(a.datesignatureprefet, cdg.datesignatureprefet)::timestamp at time zone 'Europe/Paris' as televersement_convention_signee_le,
+    coalesce(a.datesignatureprefet, cdg.datesignatureprefet, cdg.datesignatureentitegest, cdg.datehistoriquedebut)::timestamp at time zone 'Europe/Paris' as valide_le,
+    coalesce(c.datesaisie, c.datedepot, a.datesignatureprefet, cdg.datesignatureprefet, cdg.datehistoriquedebut)::timestamp at time zone 'Europe/Paris' as cree_le,
+    coalesce(c.datemodification, a.datesignatureprefet, cdg.datesignatureprefet, c.datesaisie, cdg.datehistoriquedebut)::timestamp at time zone 'Europe/Paris' as mis_a_jour_le,
+    coalesce(c.datesaisie, c.datedepot, a.datesignatureprefet)::timestamp at time zone 'Europe/Paris' as premiere_soumission_le,
     cdg.dateresiliationprefet as date_resiliation,
     cdg.datepublication as date_publication_spf,
     cdg.referencepublication as reference_spf,
@@ -74,17 +70,11 @@ select
 {% block from %}
 from ecolo.ecolo_conventionapl c
     inner join ecolo.ecolo_conventionhistorique ch on ch.conventionapl_id = c.id
-    inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.id
-    left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
+    -- Vérification qu'il existe bien une ligne pour le parent de parent_id (au cas où exclure les changements de financement)
+    left join ecolo.ecolo_conventionhistorique chp on chp.id = ch.parent_id
+    inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.conventiondonneesgenerales_id
+    left join ecolo.ecolo_avenant a on ch.avenant_id = a.id
     inner join ecolo.ecolo_valeurparamstatic vps on vps.id = cdg.etatconvention_id
-    -- Détail des modifications, en cas d'avenant
-    left join (
-        select ta.avenant_id,
-            string_agg(pat.libelle, '\r\n') as detail_avenant
-        from ecolo.ecolo_avenant_typeavenant ta
-            left join ecolo.ecolo_valeurparamstatic pat on ta.typeavenant_id = pat.id
-        group by ta.avenant_id
-    ) ta on ta.avenant_id = a.id
     inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id
     inner join ecolo.ecolo_programmelogement pl on ch.programme_ids[1] = pl.id
     inner join ecolo.ecolo_commune ec on pl.commune_id = ec.id

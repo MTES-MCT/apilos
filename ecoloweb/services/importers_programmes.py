@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 from django.db.models import Model
 
@@ -18,19 +18,12 @@ from .importers_bailleurs import BailleurImporter
 class ReferenceCadastraleImporter(ModelImporter):
     model = ReferenceCadastrale
 
-    def __init__(
-        self, departement: str, import_date: datetime, debug=False, update=False
-    ):
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content(
             "resources/sql/programme_reference_cadastrale.sql"
         )
-
-    def build_query_parameters(self, pk) -> list:
-        args = pk.split(":")
-
-        return [int(args[0]), args[1]]
 
     def _prepare_data(self, data: dict) -> dict:
         return {
@@ -45,19 +38,12 @@ class ReferenceCadastraleImporter(ModelImporter):
 class TypeStationnementImporter(ModelImporter):
     model = TypeStationnement
 
-    def __init__(
-        self, departement: str, import_date: datetime, debug=False, update=False
-    ):
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content(
             "resources/sql/programme_type_stationnement.sql"
         )
-
-    def build_query_parameters(self, pk) -> list:
-        args = pk.split(":")
-
-        return [int(args[0]), args[1]]
 
     def _prepare_data(self, data: dict) -> dict:
         return {
@@ -73,9 +59,7 @@ class ProgrammeImporter(ModelImporter):
 
     model = Programme
 
-    def __init__(
-        self, departement: str, import_date: datetime, debug=False, update=False
-    ):
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._identity_keys = ["numero_galion"]
@@ -90,11 +74,6 @@ class ProgrammeImporter(ModelImporter):
         self._reference_cadastrale_importer = ReferenceCadastraleImporter(
             departement, import_date, debug=debug, update=update
         )
-
-    def build_query_parameters(self, pk) -> list:
-        args = pk.split(":")
-
-        return [int(args[0]), args[1]]
 
     def _prepare_data(self, data: dict) -> dict:
         parent_id = data.pop("parent_id")
@@ -120,9 +99,7 @@ class LotImporter(ModelImporter):
 
     model = Lot
 
-    def __init__(
-        self, departement: str, import_date: datetime, debug=False, update=False
-    ):
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_one = self._get_file_content("resources/sql/programme_lots.sql")
@@ -136,11 +113,6 @@ class LotImporter(ModelImporter):
         self._type_stationnement_importer = TypeStationnementImporter(
             departement, import_date, debug=debug, update=update
         )
-
-    def build_query_parameters(self, pk) -> list:
-        args = pk.split(":")
-
-        return [int(args[0]), args[1]]
 
     def _prepare_data(self, data: dict) -> dict:
         parent_id = data.pop("parent_id")
@@ -164,19 +136,12 @@ class LotImporter(ModelImporter):
 class LogementImporter(ModelImporter):
     model = Logement
 
-    def __init__(
-        self, departement: str, import_date: datetime, debug=False, update=False
-    ):
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content(
             "resources/sql/programme_logements.sql"
         )
-
-    def build_query_parameters(self, pk) -> list:
-        args = pk.split(":")
-
-        return [int(args[0]), args[1]]
 
     def _prepare_data(self, data: dict) -> dict:
         return {

@@ -1,7 +1,7 @@
 import os
 import re
 import time
-from datetime import datetime
+from datetime import date
 
 from typing import Dict, Type
 from abc import ABC, abstractmethod
@@ -33,7 +33,7 @@ class ModelImporter(ABC):
     def __init__(
         self,
         departement: str,
-        import_date: datetime,
+        import_date: date,
         update: bool = False,
         debug=False,
     ):
@@ -217,9 +217,6 @@ class ModelImporter(ABC):
 
                 # Compute data dictionary
                 data = self._prepare_data(data)
-                self._debug(
-                    f"Updating instance of {ecolo_ref.apilos_model} with id {ecolo_ref.ecolo_id}"
-                )
                 ecolo_ref.update(data)
 
         self._on_processed(ecolo_id, instance, created)

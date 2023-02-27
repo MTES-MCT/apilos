@@ -32,16 +32,20 @@
 -- ville_signature_residence_agrement_gestionnaire_intermediation varchar(255)
 
 select
-    ch.id||':'||ch.financement as id,
-    case
-        when ch.parent_id is not null then ch.parent_id||':'||ch.financement
-    end as parent_id,
+    ch.id,
+    chp.id as parent_id,
     pl.bailleurproprietaire_id as bailleur_id,
     c.entitecreatrice_id as administration_id,
     pa.codepostal as code_postal,
     pa.ville,
     pa.ligne1||' '||pa.ligne2||' '||pa.ligne3||' '||pa.ligne4 as adresse,
-    c.libelle as nom,
+    case
+        when (pl.description <> '') is true then pl.description
+        when (pa.ligne1 <> '') is true then pa.ligne1||' - '||coalesce(pl.logementsnombretotal, coalesce(pl.logementsnombreindtotal, 0) + coalesce(pl.logementsnombrecoltotal, 0))||' - '||ch.financement
+        when (pa.ligne2 <> '') is true then pa.ligne2||' - '||coalesce(pl.logementsnombretotal, coalesce(pl.logementsnombreindtotal, 0) + coalesce(pl.logementsnombrecoltotal, 0))||' - '||ch.financement
+        when (pa.ligne3 <> '') is true then pa.ligne3||' - '||coalesce(pl.logementsnombretotal, coalesce(pl.logementsnombreindtotal, 0) + coalesce(pl.logementsnombrecoltotal, 0))||' - '||ch.financement
+        else ec.libelle||' - '||coalesce(pl.logementsnombretotal, coalesce(pl.logementsnombreindtotal, 0) + coalesce(pl.logementsnombrecoltotal, 0))||' - '||ch.financement
+    end as nom,
     case
         when nop.libelle = 'Acquisition seule' then 'ACQUIS'
         when nop.libelle = 'Neuf ou construction' then 'NEUF'
@@ -67,7 +71,9 @@ select
     coalesce(pl.datemisechantier, cdg.datehistoriquedebut)::timestamp at time zone 'Europe/Paris' as cree_le,
     coalesce(pl.datemisechantier, cdg.datehistoriquedebut)::timestamp at time zone 'Europe/Paris' as mis_a_jour_le
 from ecolo.ecolo_conventionhistorique ch
-    inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.id
+    -- Vérification qu'il existe bien une ligne pour le parent de parent_id (au cas où exclure les changements de financement)
+    left join ecolo.ecolo_conventionhistorique chp on chp.id = ch.parent_id
+    inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.conventiondonneesgenerales_id
     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
     left join ecolo.ecolo_avenant a on cdg.avenant_id = a.id
     inner join ecolo.ecolo_naturelogement nl on cdg.naturelogement_id = nl.id
@@ -79,4 +85,3 @@ from ecolo.ecolo_conventionhistorique ch
     inner join ecolo.ecolo_region er on ed.region_id = er.id
 where
     ch.id = %s
-    and ch.financement = %s

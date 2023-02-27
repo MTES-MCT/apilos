@@ -44,7 +44,7 @@ class Command(BaseCommand):
             sys.exit(1)
 
         departement: str = options["departement"][0]
-        import_date: datetime = datetime.datetime.today()
+        import_date: datetime = datetime.date.today()
         use_transaction = options["use_transaction"]
 
         debug = options["debug"]
