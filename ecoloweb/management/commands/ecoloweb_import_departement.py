@@ -40,6 +40,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        # pylint: disable=R0912,R0914,R0915
         if "ecoloweb" not in connections:
             print("No 'ecoloweb' connection defined, import aborted!")
             sys.exit(1)

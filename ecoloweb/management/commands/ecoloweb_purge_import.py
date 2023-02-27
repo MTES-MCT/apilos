@@ -3,9 +3,8 @@ from typing import List
 
 from django.conf import settings
 from django.core.management import BaseCommand
-from django.db import transaction
-
-from ecoloweb.models import EcoloReference
+from django.db import transaction, connections
+from django.db.backends.utils import CursorWrapper
 
 
 class Command(BaseCommand):
@@ -15,6 +14,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "departements",
             nargs="+",
+            type=str,
             default=[],
             help="Départements on which purge import data",
         )
@@ -29,23 +29,147 @@ class Command(BaseCommand):
             print("This command can't be executed on prod environment")
             sys.exit(1)
 
-        departements: List[str] = options["departements"]
+        departements = options["departements"]
         keep_models = options["keep_models"]
 
-        count = 0
-        references = EcoloReference.objects.filter(departement__in=departements)
-        transaction.set_autocommit(False)
-        try:
-            for reference in references:
-                target = reference.resolve()
-                if target is not None and not keep_models:
-                    target.delete()
-                reference.delete()
-                count += 1
-            print(
-                f"Deleted {count} Ecolo reference(s) linked to import on departement(s) {', '.join(departements)} deleted"
+        connection: CursorWrapper = connections["default"].cursor()
+
+        with transaction.atomic():
+            if not keep_models:
+                # Purge related ReferenceCadasatrale objects
+                connection.execute(
+                    """
+delete
+from programmes_referencecadastrale rc
+where exists(
+    select *
+    from ecoloweb_ecoloreference er
+    where
+        er.apilos_model = 'programmes.ReferenceCadastrale'
+        and er.apilos_id = rc.id
+        and departement = any(%s)
+)
+                    """,
+                    [departements],
+                )
+
+                # Purge related PieceJointe objects
+                connection.execute(
+                    """
+delete
+from conventions_piecejointe pj
+where exists(
+    select *
+    from ecoloweb_ecoloreference er
+    where
+        er.apilos_model = 'conventions.PieceJointe'
+        and er.apilos_id = pj.id
+        and departement = any(%s)
+)
+                    """,
+                    [departements],
+                )
+
+                # Purge related Logement objects
+                connection.execute(
+                    """
+delete
+from programmes_logement lg
+where exists(
+    select *
+    from ecoloweb_ecoloreference er
+    where
+        er.apilos_model = 'programmes.Logement'
+        and er.apilos_id = lg.id
+        and departement = any(%s)
+)
+                    """,
+                    [departements],
+                )
+
+                # Purge related Lot objects
+                connection.execute(
+                    """
+delete
+from programmes_lot l
+where exists(
+    select *
+    from ecoloweb_ecoloreference er
+    where
+        er.apilos_model = 'programmes.Lot'
+        and er.apilos_id = l.id
+        and departement = any(%s)
+)
+                    """,
+                    [departements],
+                )
+
+                # Purge related AvenantType objects
+                connection.execute(
+                    """
+delete
+from conventions_convention_avenant_types cat
+where exists(
+    select *
+    from ecoloweb_ecoloreference er
+    where
+        er.apilos_model = 'conventions.Convention'
+        and er.apilos_id = cat.convention_id
+        and departement = any(%s)
+)
+                    """,
+                    [departements],
+                )
+
+                # Purge related Comments objects
+                connection.execute(
+                    """
+delete
+from comments_comment cc
+where exists(
+    select *
+    from ecoloweb_ecoloreference er
+    where
+        er.apilos_model = 'conventions.Convention'
+        and er.apilos_id = cc.convention_id
+        and departement = any(%s)
+)
+                    """,
+                    [departements],
+                )
+
+                # Purge related Convention objects
+                connection.execute(
+                    """
+delete
+from conventions_convention c
+where exists(
+    select *
+    from ecoloweb_ecoloreference er
+    where
+        er.apilos_model = 'conventions.Convention'
+        and er.apilos_id = c.id
+        and departement = any(%s)
+)
+                    """,
+                    [departements],
+                )
+
+                # Deleting orphan Programme objects
+                connection.execute(
+                    """
+delete
+from programmes_programme p
+where not exists(
+    select *
+    from programmes_lot l
+    where
+        l.programme_id = p.id
+)
+            """
+                )
+
+            connection.execute(
+                "delete from public.ecoloweb_ecoloreference where departement = any(%s)",
+                [departements],
             )
-        except KeyboardInterrupt:
-            transaction.rollback()
-        else:
-            transaction.commit()
