@@ -60,8 +60,11 @@ def _call_siap_api(
     )
     if response.status_code >= 400:
         logger.error("ERROR from SIAP API: %s", response.content)
-    logger.debug(
-        "[Status code: %s] SIAP API : %s", response.status_code, response.content
+    logger.warning(
+        "[Status code: %s] SIAP API : %s, WITH JWT  : %s",
+        response.status_code,
+        response.content,
+        myjwt,
     )
     return response
 
