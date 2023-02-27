@@ -309,7 +309,7 @@ def convention_validate(request: HttpRequest, convention: Convention):
             user=request.user,
         ).save()
 
-        generate_and_send.send(
+        generate_and_send.delay(
             {
                 "convention_uuid": str(convention.uuid),
                 "convention_url": request.build_absolute_uri(

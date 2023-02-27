@@ -121,7 +121,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
-    "django_dramatiq",
     "bailleurs.apps.BailleursConfig",
     "conventions.apps.ConventionsConfig",
     "instructeurs.apps.InstructeursConfig",
@@ -143,6 +142,7 @@ INSTALLED_APPS = [
     "simple_history",
     "hijack",
     "hijack.contrib.admin",
+    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -487,21 +487,16 @@ if SENTRY_URL:  # pragma: no cover
     )
 
 # Crisp
-
 CRISP_WEBSITE_ID = get_env_variable("CRISP_WEBSITE_ID")
 
-DRAMATIQ_BROKER = {
-    "BROKER": "dramatiq.brokers.redis.RedisBroker",
-    "OPTIONS": {
-        "url": config("REDIS_URL", default="redis://redis:6379"),
-    },
-    "MIDDLEWARE": [
-        "dramatiq.middleware.AgeLimit",
-        "dramatiq.middleware.TimeLimit",
-        "django_dramatiq.middleware.DbConnectionsMiddleware",
-        "django_dramatiq.middleware.AdminMiddleware",
-    ],
-}
+# Celery (see https://docs.celeryq.dev/en/stable/userguide/configuration.html#configuration)
+CELERY_TIMEZONE = "Europe/Paris"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 10 * 60
+CELERY_BROKER_URL = get_env_variable("REDIS_URL")
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_RESULT_EXTENDED = True
+
 
 # limit reach when an operation has 167 logements
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000

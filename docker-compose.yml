@@ -36,9 +36,9 @@ services:
       - postgres
       - redis
 
-  dramatiq:
+  worker:
     <<: *apilos
-    command: python manage.py rundramatiq --reload
+    command: python -m celery -A core worker -l INFO
     ports: []
 
 
