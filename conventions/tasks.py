@@ -1,7 +1,7 @@
 from pathlib import Path
 from zipfile import ZipFile
 
-import dramatiq
+from celery import shared_task
 from django.conf import settings
 from django.core.files.storage import default_storage
 
@@ -15,7 +15,7 @@ from conventions.services.file import ConventionFileService
 from core.services import EmailService, EmailTemplateID
 
 
-@dramatiq.actor
+@shared_task()
 def generate_and_send(args):
     convention_uuid = args["convention_uuid"]
     convention_url = args["convention_url"]
@@ -89,7 +89,7 @@ def generate_and_send(args):
     )
 
 
-@dramatiq.actor
+@shared_task()
 def promote_piece_jointe(pk: int):
     piece_jointe = PieceJointe.objects.get(id=pk)
     if piece_jointe.convention.nom_fichier_signe is None:
