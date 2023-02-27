@@ -228,12 +228,12 @@ class Convention(models.Model):
     def description_avenant(self):
         try:
             json_data = json.loads(self.commentaires)
-            if "text" in json_data:
-                if (
-                    isinstance(json_data["text"], dict)
-                    and "description_avenant" in json_data["text"]
-                ):
-                    return json_data["text"]["description_avenant"]
+            if (
+                "text" in json_data
+                and isinstance(json_data["text"], dict)
+                and "description_avenant" in json_data["text"]
+            ):
+                return json_data["text"]["description_avenant"]
         except json.decoder.JSONDecodeError:
             pass
 

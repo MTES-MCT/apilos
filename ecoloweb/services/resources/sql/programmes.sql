@@ -39,7 +39,13 @@ select
     pa.codepostal as code_postal,
     pa.ville,
     pa.ligne1||' '||pa.ligne2||' '||pa.ligne3||' '||pa.ligne4 as adresse,
-    c.libelle as nom,
+    case
+        when (pl.description <> '') is true then pl.description
+        when (pa.ligne1 <> '') is true then pa.ligne1||' - '||coalesce(pl.logementsnombretotal, coalesce(pl.logementsnombreindtotal, 0) + coalesce(pl.logementsnombrecoltotal, 0))||' - '||ch.financement
+        when (pa.ligne2 <> '') is true then pa.ligne2||' - '||coalesce(pl.logementsnombretotal, coalesce(pl.logementsnombreindtotal, 0) + coalesce(pl.logementsnombrecoltotal, 0))||' - '||ch.financement
+        when (pa.ligne3 <> '') is true then pa.ligne3||' - '||coalesce(pl.logementsnombretotal, coalesce(pl.logementsnombreindtotal, 0) + coalesce(pl.logementsnombrecoltotal, 0))||' - '||ch.financement
+        else ec.libelle||' - '||coalesce(pl.logementsnombretotal, coalesce(pl.logementsnombreindtotal, 0) + coalesce(pl.logementsnombrecoltotal, 0))||' - '||ch.financement
+    end as nom,
     case
         when nop.libelle = 'Acquisition seule' then 'ACQUIS'
         when nop.libelle = 'Neuf ou construction' then 'NEUF'

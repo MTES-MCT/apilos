@@ -25,7 +25,12 @@ select
     coalesce(pl.financementdate, now()) as cree_le,
     coalesce(pl.financementdate, now()) as mis_a_jour_le,
     ch.financement,
-    pl.logementsnombretotal as nb_logements,
+    coalesce(pl.logementsnombretotal, coalesce(pl.logementsnombreindtotal, 0) + coalesce(pl.logementsnombrecoltotal, 0)) as nb_logements,
+    case
+        when pl.logementsnombreindtotal > 0 and (pl.logementsnombrecoltotal is null or pl.logementsnombrecoltotal = 0) then 'INDIVIDUEL'
+        when pl.logementsnombrecoltotal > 0 and (pl.logementsnombreindtotal is null or pl.logementsnombreindtotal = 0) then 'COLLECTIF'
+        else 'MIXTE'
+    end as type_habitat,
     case
         when coalesce(pl.logementsnombreindtotal, 0) > 0 and coalesce(pl.logementsnombrecoltotal, 0) > 0 then 'MIXTE'
         when coalesce(pl.logementsnombreindtotal, 0) > 0 then 'INDIVIDUEL'

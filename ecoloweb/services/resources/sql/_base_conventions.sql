@@ -14,13 +14,13 @@ select
         else c.noreglementaire
     end as numero,
     case
-        when cdg.dateannulation is not null then '8. Annulée en suivi'
-        when cdg.datedemandedenonciation is not null then '7. Dénoncée'
-        when cdg.dateresiliationprefet is not null then '6. Résiliée'
-        when vps.code = 'INS' and c.noreglementaire is null then '2. Instruction requise'
+        when vps.code = 'ANS' then '8. Annulée en suivi'
+        when vps.code = 'RES' then '7. Dénoncée'
+        when vps.code = 'RES' then '6. Résiliée'
+        when vps.code = 'INS' then '2. Instruction requise'
+
         else '5. Signée'
     end as statut,
-
     -- Dates
     cdg.datehistoriquefin as date_fin_conventionnement,
     c.datedepot::timestamp at time zone 'Europe/Paris' as soumis_le,

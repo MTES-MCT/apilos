@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 from django.db.models import Model
 
@@ -18,9 +18,7 @@ from .importers_bailleurs import BailleurImporter
 class ReferenceCadastraleImporter(ModelImporter):
     model = ReferenceCadastrale
 
-    def __init__(
-        self, departement: str, import_date: datetime, debug=False, update=False
-    ):
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content(
@@ -40,9 +38,7 @@ class ReferenceCadastraleImporter(ModelImporter):
 class TypeStationnementImporter(ModelImporter):
     model = TypeStationnement
 
-    def __init__(
-        self, departement: str, import_date: datetime, debug=False, update=False
-    ):
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content(
@@ -63,9 +59,7 @@ class ProgrammeImporter(ModelImporter):
 
     model = Programme
 
-    def __init__(
-        self, departement: str, import_date: datetime, debug=False, update=False
-    ):
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._identity_keys = ["numero_galion"]
@@ -105,9 +99,7 @@ class LotImporter(ModelImporter):
 
     model = Lot
 
-    def __init__(
-        self, departement: str, import_date: datetime, debug=False, update=False
-    ):
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_one = self._get_file_content("resources/sql/programme_lots.sql")
@@ -144,9 +136,7 @@ class LotImporter(ModelImporter):
 class LogementImporter(ModelImporter):
     model = Logement
 
-    def __init__(
-        self, departement: str, import_date: datetime, debug=False, update=False
-    ):
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content(

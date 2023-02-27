@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import date
 
 from django.db.utils import ProgrammingError
 
@@ -21,9 +21,7 @@ class ConventionImporter(ModelImporter):
 
     model = Convention
 
-    def __init__(
-        self, departement: str, import_date: datetime, debug=False, update=False
-    ):
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_one = self._get_sql_from_template("conventions.sql")
@@ -116,9 +114,7 @@ class ConventionImporter(ModelImporter):
 class PieceJointeImporter(ModelImporter):
     model = PieceJointe
 
-    def __init__(
-        self, departement: str, import_date: datetime, debug=False, update=False
-    ):
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content(

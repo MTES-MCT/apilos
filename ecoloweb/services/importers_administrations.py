@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 from .importers import ModelImporter
 
@@ -9,9 +9,7 @@ class AdministrationImporter(ModelImporter):
 
     model = Administration
 
-    def __init__(
-        self, departement: str, import_date: datetime, debug=False, update=False
-    ):
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._identity_keys = ["code"]

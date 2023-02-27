@@ -45,19 +45,29 @@ from (
         c.numero
     from
         (
-            select c.id as conventionapl_id, cdg.id as conventiondonneesgenerales_id, null as avenant_id, 0 as numero
-            from ecolo.ecolo_conventionapl c
-                inner join ecolo.ecolo_conventiondonneesgenerales cdg on c.conventioninstruite_id = cdg.id
+            select c.conventionapl_id, c.conventiondonneesgenerales_id, c.avenant_id, c.numero
+            from (
+                select distinct on (c.id) c.id as conventionapl_id, cdg.id as conventiondonneesgenerales_id, null::bigint as avenant_id, 0 as numero
+                from ecolo.ecolo_conventiondonneesgenerales cdg
+                    inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
+                where cdg.avenant_id is null
+                order by c.id, cdg.datehistoriquedebut desc
+            ) c
             union all
             select a.conventionapl_id, cdg.id as conventiondonneesgenerales_id, a.id as avenant_id, a.numero
-            from ecolo_avenant a
-                left join ecolo_conventiondonneesgenerales cdg on cdg.avenant_id = a.id
+            from ecolo.ecolo_avenant a
+                left join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.avenant_id = a.id
             where numero > 0
         ) c
         order by c.conventionapl_id, c.numero nulls first
     ) c
         inner join (
-            select distinct on (pl.conventiondonneesgenerales_id, ff.code) pl.conventiondonneesgenerales_id, ff.code as financement
+            select distinct on (pl.conventiondonneesgenerales_id, ff.code)
+                pl.conventiondonneesgenerales_id,
+                case
+                    when tf.code in ('18', '22', '93') then 'SANS_FINANCEMENT'
+                    else ff.code
+                end as financement
             from ecolo.ecolo_programmelogement pl
                 inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
                 inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
@@ -67,7 +77,7 @@ from (
         -- convention details (cd): départements et bailleurs associés à la convention
         select
             pl.conventiondonneesgenerales_id,
-            ff.code as financement,
+            tf.financement,
             pg_catalog.array_agg(distinct(pl.id) ) as programme_ids,
             --pg_catalog.array_agg(distinct(ec.code)) as communes,
             pg_catalog.array_agg(distinct(ed.codeinsee)) as departements
@@ -75,9 +85,17 @@ from (
         from ecolo.ecolo_programmelogement pl
             inner join ecolo.ecolo_commune ec on pl.commune_id = ec.id
             inner join ecolo.ecolo_departement ed on ec.departement_id = ed.id
-            inner join ecolo.ecolo_typefinancement tf on pl.typefinancement_id = tf.id
-            inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
-        group by pl.conventiondonneesgenerales_id, ff.code
+            inner join (
+                select
+                    tf.id,
+                    case
+                        when tf.code in ('18', '22', '93') then 'SANS_FINANCEMENT'
+                        else ff.code
+                    end as financement
+                from ecolo.ecolo_typefinancement tf
+                    inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
+            ) tf on pl.typefinancement_id = tf.id
+        group by pl.conventiondonneesgenerales_id, tf.financement
         -- Exclusion des conventions multi, i.e. ayant (au moins) un lot associé à plus d'un bailleur ou d'une commune
         having count(distinct(ec.code)) = 1 and count(distinct(pl.bailleurproprietaire_id)) = 1
     ) cd on cd.conventiondonneesgenerales_id = ch.id and cd.financement = ch.financement

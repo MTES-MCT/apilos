@@ -1,7 +1,7 @@
 import os
 import re
 import time
-from datetime import datetime
+from datetime import date
 
 from typing import Dict, Type
 from abc import ABC, abstractmethod
@@ -33,7 +33,7 @@ class ModelImporter(ABC):
     def __init__(
         self,
         departement: str,
-        import_date: datetime,
+        import_date: date,
         update: bool = False,
         debug=False,
     ):

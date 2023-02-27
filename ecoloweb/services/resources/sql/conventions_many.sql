@@ -3,7 +3,8 @@
 
 {% block where %}
 where
-    ch.departement = %s
+    vps.code <> 'ANI' -- Conventions annulées en instruction donc obsolètes
+    and ch.departement = %s
 {% endblock %}
 
 {% block order %}
