@@ -495,6 +495,7 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 10 * 60
 CELERY_BROKER_URL = get_env_variable("REDIS_URL")
 CELERY_RESULT_BACKEND = "django-db"
+CELERY_RESULT_EXTENDED = True
 
 
 # limit reach when an operation has 167 logements
