@@ -38,7 +38,7 @@ services:
 
   worker:
     <<: *apilos
-    command: python -m celery -A core worker -l INFO
+    command: python -m celery -A core.worker worker -l INFO
     ports: []
 
 
