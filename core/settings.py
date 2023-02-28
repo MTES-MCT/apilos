@@ -491,12 +491,13 @@ CRISP_WEBSITE_ID = get_env_variable("CRISP_WEBSITE_ID")
 
 # Celery (see https://docs.celeryq.dev/en/stable/userguide/configuration.html#configuration)
 CELERY_TIMEZONE = "Europe/Paris"
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 10 * 60
+# CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 60 * 60
 CELERY_BROKER_URL = get_env_variable("REDIS_URL")
 CELERY_RESULT_BACKEND = "django-db"
-CELERY_RESULT_EXTENDED = True
-
+CELERY_SEND_EVENTS = True
+CELERY_ACKS_LATE = True
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 5000
 
 # limit reach when an operation has 167 logements
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000

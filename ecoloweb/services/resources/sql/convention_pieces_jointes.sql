@@ -1,5 +1,5 @@
 select
-    pj.id,
+    ch.id||'-'||pj.id as id,
     ch.id as convention_id,
     case
         when vps.code = '1' then 'CONVENTION'

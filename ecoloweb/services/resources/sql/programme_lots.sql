@@ -22,8 +22,8 @@ select
     ch.id as id, -- Les lots d'un programme sont tous les logements partageant le même financement
     chp.id as parent_id,
     ch.id as programme_id,
-    coalesce(pl.financementdate, now()) as cree_le,
-    coalesce(pl.financementdate, now()) as mis_a_jour_le,
+    coalesce(pl.financementdate::timestamp at time zone 'Europe/Paris', now()) as cree_le,
+    coalesce(pl.financementdate::timestamp at time zone 'Europe/Paris', now()) as mis_a_jour_le,
     ch.financement,
     coalesce(pl.logementsnombretotal, coalesce(pl.logementsnombreindtotal, 0) + coalesce(pl.logementsnombrecoltotal, 0)) as nb_logements,
     case

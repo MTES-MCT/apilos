@@ -80,7 +80,7 @@ class ConventionImporter(ModelImporter):
     ):
         self._piece_jointe_importer.import_many(ecolo_id)
 
-        if created and model is not None and not settings.TESTING:
+        if model is not None and not settings.TESTING:
             piece_jointe = None
             if model.is_avenant():
                 # Avenant are automatically assigned to the type "commentaires"
