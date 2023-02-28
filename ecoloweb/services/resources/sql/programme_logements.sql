@@ -16,8 +16,8 @@ select
     l.coefficientmodulation as coeficient,
     l.montantloyer as loyer,
     pl.montantplafondloyerindinitial as loyer_par_metre_carre,
-    l.datecreation as cree_le,
-    l.datecreation as mis_a_jour_le
+    to_timestamp(l.datecreation / 1000)::timestamp at time zone 'Europe/Paris' as cree_le,
+    to_timestamp(l.datecreation / 1000)::timestamp at time zone 'Europe/Paris' as mis_a_jour_le
 from ecolo.ecolo_logement l
     inner join ecolo.ecolo_valeurparamstatic ptl on l.typelogement_id = ptl.id
     inner join ecolo.ecolo_programmelogement pl on l.programmelogement_id = pl.id
