@@ -617,6 +617,9 @@ table.fullwidth {
   background-color: #fff;
   z-index: 999;
 }
+#loading[hidden] {
+  display: none;
+}
 
 #loading-image {
   position: absolute;
