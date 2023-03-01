@@ -60,7 +60,6 @@ class ProgrammeImporter(ModelImporter):
     def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
-        self._identity_keys = ["numero_galion"]
         self._query_one = self._get_file_content("importers/programme.sql")
 
         self._bailleur_importer = BailleurImporter(
