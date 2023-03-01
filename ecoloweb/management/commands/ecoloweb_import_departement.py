@@ -73,7 +73,7 @@ class Command(BaseCommand):
                     progress = tqdm(total=results.lines_total)
                 # Actual processing
                 for result in results:
-                    convention = importer.process_result(result)
+                    convention = importer.import_one(result["id"])
                     self._on_result(departement, convention, progress, results)
 
         except KeyboardInterrupt:

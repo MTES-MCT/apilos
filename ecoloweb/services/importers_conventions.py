@@ -2,7 +2,6 @@ import logging
 from datetime import date
 
 from django.db import transaction
-from django.db.utils import ProgrammingError
 
 from conventions.models import Convention, PieceJointe, PieceJointeType, AvenantType
 from conventions.tasks import promote_piece_jointe
@@ -42,7 +41,7 @@ class ConventionImporter(ModelImporter):
 
     def get_all(self) -> QueryResultIterator:
         return QueryResultIterator(
-            self._get_sql_from_template("importers/conventions.sql"),
+            "select ch.id from ecolo.ecolo_conventionhistorique ch where ch.departement = %s order by ch.conventionapl_id, ch.financement, ch.numero nulls first",
             parameters=[self.departement],
         )
 

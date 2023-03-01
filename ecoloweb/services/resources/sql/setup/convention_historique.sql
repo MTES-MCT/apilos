@@ -52,6 +52,8 @@ from (
                 select distinct on (c.id) c.id as conventionapl_id, cdg.id as conventiondonneesgenerales_id, null::bigint as avenant_id, 0 as numero
                 from ecolo.ecolo_conventiondonneesgenerales cdg
                     inner join ecolo.ecolo_conventionapl c on cdg.conventionapl_id = c.id
+                    -- Exclusion des conventions annulées en instruction, donc obsolètes
+                    inner join ecolo.ecolo_valeurparamstatic vps on vps.id = cdg.etatconvention_id and vps.code <> 'ANI'
                 where cdg.avenant_id is null
                 order by c.id, cdg.datehistoriquedebut desc
             ) c

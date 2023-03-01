@@ -46,7 +46,7 @@ select
     round(cast(pl.surfacehabitable as numeric), 2) as surface_habitable_totale,
     case when nl.code <> '1' then a4.nombre end as foyer_residence_nb_garage_parking
 from ecolo.ecolo_programmelogement pl
-    inner join ecolo.ecolo_conventionhistorique ch on pl.conventiondonneesgenerales_id = ch.conventiondonneesgenerales_id
+    inner join ecolo.ecolo_conventionhistorique ch on pl.conventiondonneesgenerales_id = ch.conventiondonneesgenerales_id and ch.programme_ids[1] = pl.id
     -- Vérification qu'il existe bien une ligne pour le parent de parent_id (au cas où exclure les changements de financement)
     left join ecolo.ecolo_conventionhistorique chp on chp.id = ch.parent_id
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.conventiondonneesgenerales_id

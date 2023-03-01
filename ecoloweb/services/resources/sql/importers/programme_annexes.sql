@@ -13,7 +13,7 @@
 -- Requête pas encore utilisée par un importer, puisque les annexes sont liées au programme sur Ecolo,
 -- quand elles sont liées au logement sur APiLos
 
--- Pas de notion de surface ni de loyer au m2 ...
+-- Pas de notion de surface ni de loyer au m2 ... => ABANDONNE
 
 select
     upper(ev.libelle) as typologie,
