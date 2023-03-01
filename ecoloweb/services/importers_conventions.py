@@ -1,6 +1,7 @@
 import logging
 from datetime import date
 
+from django.db import transaction
 from django.db.utils import ProgrammingError
 
 from conventions.models import Convention, PieceJointe, PieceJointeType, AvenantType
@@ -33,18 +34,8 @@ class ConventionImporter(ModelImporter):
             departement, import_date, debug=debug, update=update
         )
 
-    def setup_db(self, force: bool = False):
-
-        try:
-            # Test if materialized view exists
-            self._db_connection.execute(
-                "select id from ecolo.ecolo_conventionhistorique limit 1"
-            )
-            exist = True
-        except ProgrammingError:
-            exist = False
-
-        if not exist or force:
+    def setup_db(self):
+        with transaction.atomic("ecoloweb"):
             self._db_connection.execute(
                 "drop materialized view if exists ecolo.ecolo_conventionhistorique"
             )
