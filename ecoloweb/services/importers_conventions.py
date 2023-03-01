@@ -11,6 +11,8 @@ from .importers_programmes import LotImporter
 from .query_iterator import QueryResultIterator
 from django.conf import settings
 
+from ..models import EcoloReference
+
 logger = logging.getLogger(__name__)
 
 
@@ -40,6 +42,18 @@ class ConventionImporter(ModelImporter):
             )
 
     def get_all(self) -> QueryResultIterator:
+        if not self.update:
+            ids_to_skip = list(
+                EcoloReference.objects.filter(
+                    apilos_model="conventions.Convention", departement=self.departement
+                ).values_list("ecolo_id", flat=True)
+            )
+
+            return QueryResultIterator(
+                "select ch.id from ecolo.ecolo_conventionhistorique ch where ch.departement = %s and not ch.id = any(%s) order by ch.conventionapl_id, ch.financement, ch.numero nulls first",
+                parameters=[self.departement, ids_to_skip],
+            )
+
         return QueryResultIterator(
             "select ch.id from ecolo.ecolo_conventionhistorique ch where ch.departement = %s order by ch.conventionapl_id, ch.financement, ch.numero nulls first",
             parameters=[self.departement],
