@@ -13,7 +13,8 @@ select
         when ch.parent_id is not null then ch.conventionapl_id||':'||ch.financement||':0'
     end as parent_id,
     cd.programme_ids,
-    first_value(cd.departements[1]) over (partition by ch.conventionapl_id) as departement
+    first_value(cd.departements[1]) over (partition by ch.conventionapl_id) as departement,
+    row_number() over (partition by ch.conventionapl_id, ch.financement order by ch.numero desc) = 1 as is_last
 from (
     -- convention historique (ch): restriction à l'itération de convention non avenant la plus récente (i.e. dont la
     -- valeur de `datehistorique` est la plus grande) suivie de tous les avenants qui suivent.
