@@ -29,6 +29,26 @@ class GroupProfile(models.TextChoices):
     SIAP_MO_PERS_MORALE = "MO_PERS_MORALE", "Maitre d'ouvrage - personne morale"
     SIAP_MO_PERS_PHYS = "MO_PERS_PHYS", "Maitre d'ouvrage - personne physique"
 
+    @classmethod
+    def instructeur_profiles(cls):
+        return [
+            GroupProfile.STAFF,
+            GroupProfile.INSTRUCTEUR,
+            GroupProfile.SIAP_SER_GEST,
+            GroupProfile.SIAP_ADM_CENTRALE,
+            GroupProfile.SIAP_DIR_REG,
+            GroupProfile.SIAP_SER_DEP,
+        ]
+
+    @classmethod
+    def bailleur_profiles(cls):
+        return [
+            GroupProfile.STAFF,
+            GroupProfile.BAILLEUR,
+            GroupProfile.SIAP_MO_PERS_MORALE,
+            GroupProfile.SIAP_MO_PERS_PHYS,
+        ]
+
 
 class User(AbstractUser):
     # pylint: disable=R0904

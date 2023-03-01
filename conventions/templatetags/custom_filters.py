@@ -27,24 +27,18 @@ def highlight(text, search):
 
 @register.filter
 def is_bailleur(request: HttpRequest) -> bool:
-    return "currently" in request.session and request.session["currently"] in [
-        GroupProfile.STAFF,
-        GroupProfile.BAILLEUR,
-        GroupProfile.SIAP_MO_PERS_MORALE,
-        GroupProfile.SIAP_MO_PERS_PHYS,
-    ]
+    if "currently" in request.session:
+        return request.session["currently"] in GroupProfile.bailleur_profiles()
+
+    return request.user.is_bailleur()
 
 
 @register.filter
 def is_instructeur(request: HttpRequest) -> bool:
-    return "currently" in request.session and request.session["currently"] in [
-        GroupProfile.STAFF,
-        GroupProfile.INSTRUCTEUR,
-        GroupProfile.SIAP_SER_GEST,
-        GroupProfile.SIAP_ADM_CENTRALE,
-        GroupProfile.SIAP_DIR_REG,
-        GroupProfile.SIAP_SER_DEP,
-    ]
+    if "currently" in request.session:
+        return request.session["currently"] in GroupProfile.instructeur_profiles()
+
+    return request.user.is_instructeur()
 
 
 @register.filter
