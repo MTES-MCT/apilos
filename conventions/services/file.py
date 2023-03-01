@@ -38,6 +38,8 @@ class ConventionFileService:
                 settings.AWS_ECOLOWEB_BUCKET_NAME,
                 f"piecesJointes/{piece_jointe.fichier}",
             )
-            cls.upload_convention_file(piece_jointe.convention, file, False)
+            if file is not None:
+                # TODO mark piece jointe as missing
+                cls.upload_convention_file(piece_jointe.convention, file, False)
         except FileNotFoundError as fnfe:
             logger.warning(fnfe)
