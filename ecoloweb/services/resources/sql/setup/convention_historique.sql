@@ -1,3 +1,6 @@
+drop materialized view if exists ecolo.ecolo_conventionhistorique;
+
+create materialized view ecolo.ecolo_conventionhistorique as
 select
     ch.conventionapl_id||':'||ch.financement||':'||ch.numero as id,
     ch.id as conventiondonneesgenerales_id,
@@ -97,4 +100,6 @@ from (
         -- Exclusion des conventions multi, i.e. ayant (au moins) un lot associé à plus d'un bailleur ou d'une commune
         having count(distinct(ec.code)) = 1 and count(distinct(pl.bailleurproprietaire_id)) = 1
     ) cd on cd.conventiondonneesgenerales_id = ch.id and cd.financement = ch.financement
-order by ch.conventionapl_id, ch.financement, ch.numero
+order by ch.conventionapl_id, ch.financement, ch.numero;
+
+create unique index on ecolo.ecolo_conventionhistorique (id);

@@ -74,7 +74,7 @@ class ModelImporter(ABC):
             [
                 re.sub("--.*", "", line)
                 for line in open(
-                    os.path.join(os.path.dirname(__file__), path), "r"
+                    os.path.join(os.path.dirname(__file__), "resources/sql", path), "r"
                 ).readlines()
             ]
         )
