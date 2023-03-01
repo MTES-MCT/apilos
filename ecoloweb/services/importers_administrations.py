@@ -13,4 +13,4 @@ class AdministrationImporter(ModelImporter):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._identity_keys = ["code"]
-        self._query_one = self._get_file_content("resources/sql/administrations.sql")
+        self._query_one = self._get_file_content("importers/administration.sql")

@@ -58,11 +58,14 @@ class Command(BaseCommand):
         progress = None
 
         try:
-            for departement in departements:
+            for index, departement in enumerate(departements):
                 importer = ConventionImporter(
                     departement, import_date, debug=debug, update=update
                 )
-                importer.setup_db(force=setup)
+                # Installation uniquement pour le premier département, sans quoi la matview tombe et les autres
+                # processes tombent
+                if setup and index == 0:
+                    importer.setup_db()
 
                 results = importer.get_all()
                 # Progress bar

@@ -22,7 +22,7 @@ class ReferenceCadastraleImporter(ModelImporter):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content(
-            "resources/sql/programme_reference_cadastrale.sql"
+            "importers/references_cadastrales.sql"
         )
 
     def _prepare_data(self, data: dict) -> dict:
@@ -41,9 +41,7 @@ class TypeStationnementImporter(ModelImporter):
     def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
-        self._query_many = self._get_file_content(
-            "resources/sql/programme_type_stationnement.sql"
-        )
+        self._query_many = self._get_file_content("importers/types_stationnement.sql")
 
     def _prepare_data(self, data: dict) -> dict:
         return {
@@ -63,7 +61,7 @@ class ProgrammeImporter(ModelImporter):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._identity_keys = ["numero_galion"]
-        self._query_one = self._get_file_content("resources/sql/programmes.sql")
+        self._query_one = self._get_file_content("importers/programme.sql")
 
         self._bailleur_importer = BailleurImporter(
             departement, import_date, debug=debug, update=update
@@ -102,7 +100,7 @@ class LotImporter(ModelImporter):
     def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
-        self._query_one = self._get_file_content("resources/sql/programme_lots.sql")
+        self._query_one = self._get_file_content("importers/lot.sql")
 
         self._programme_importer = ProgrammeImporter(
             departement, import_date, debug=debug, update=update
@@ -139,9 +137,7 @@ class LogementImporter(ModelImporter):
     def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
-        self._query_many = self._get_file_content(
-            "resources/sql/programme_logements.sql"
-        )
+        self._query_many = self._get_file_content("importers/logement.sql")
 
     def _prepare_data(self, data: dict) -> dict:
         return {

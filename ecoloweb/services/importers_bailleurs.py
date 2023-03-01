@@ -22,7 +22,7 @@ class BailleurImporter(ModelImporter):
 
         self._identity_keys = ["siret"]
 
-        self._query_one = self._get_file_content("resources/sql/bailleurs.sql")
+        self._query_one = self._get_file_content("importers/bailleur.sql")
 
     def _resolve_siret(self, codesiren: str, date_creation: date):
         if self._siret_resolver:

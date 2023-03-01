@@ -1,6 +1,7 @@
 import logging
 from datetime import date
 
+from django.db import transaction
 from django.db.utils import ProgrammingError
 
 from conventions.models import Convention, PieceJointe, PieceJointeType, AvenantType
@@ -24,7 +25,7 @@ class ConventionImporter(ModelImporter):
     def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
-        self._query_one = self._get_sql_from_template("conventions.sql")
+        self._query_one = self._get_sql_from_template("importers/convention.sql")
 
         self._lot_importer = LotImporter(
             departement, import_date, debug=debug, update=update
@@ -33,32 +34,15 @@ class ConventionImporter(ModelImporter):
             departement, import_date, debug=debug, update=update
         )
 
-    def setup_db(self, force: bool = False):
-
-        try:
-            # Test if materialized view exists
+    def setup_db(self):
+        with transaction.atomic("ecoloweb"):
             self._db_connection.execute(
-                "select id from ecolo.ecolo_conventionhistorique limit 1"
-            )
-            exist = True
-        except ProgrammingError:
-            exist = False
-
-        if not exist or force:
-            self._db_connection.execute(
-                "drop materialized view if exists ecolo.ecolo_conventionhistorique"
-            )
-            self._db_connection.execute(
-                "create materialized view ecolo.ecolo_conventionhistorique as "
-                + self._get_file_content("resources/sql/convention_historique.sql")
-            )
-            self._db_connection.execute(
-                "create unique index on ecolo.ecolo_conventionhistorique (id)"
+                self._get_file_content("setup/convention_historique.sql")
             )
 
     def get_all(self) -> QueryResultIterator:
         return QueryResultIterator(
-            self._get_sql_from_template("conventions_many.sql"),
+            self._get_sql_from_template("importers/conventions.sql"),
             parameters=[self.departement],
         )
 
@@ -117,9 +101,7 @@ class PieceJointeImporter(ModelImporter):
     def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
-        self._query_many = self._get_file_content(
-            "resources/sql/convention_pieces_jointes.sql"
-        )
+        self._query_many = self._get_file_content("importers/pieces_jointes.sql")
 
     def _prepare_data(self, data: dict) -> dict:
         return {

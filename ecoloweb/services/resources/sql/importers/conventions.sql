@@ -1,5 +1,4 @@
-{% extends "_base_conventions.sql" %}
-
+{% extends "importers/_base_conventions.sql" %}
 
 {% block where %}
 where
