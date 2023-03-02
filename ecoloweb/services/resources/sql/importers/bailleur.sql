@@ -12,8 +12,17 @@ select
     end as nom,
     case
         when b.raisonsociale = 'ANAH' then 'XXXXXXXXXXXXXX'
-        when b.codepersonne is not null or snb.code = '611' then coalesce(b.codepersonne, b.codesiret, b.codesiren)
-        else coalesce(b.codesiret, b.codesiren, b.codepersonne)
+        -- Bailleurs privés (codepersonne > codesiret > codesiren)
+        when snb.code = '611' and (trim(b.codepersonne) <> '') is true then trim(b.codepersonne)
+        when snb.code = '611' and (trim(b.codepersonne) <> '') is not true and (trim(b.codesiret) <> '') is true then trim(b.codesiret)
+        when snb.code = '611' and (trim(b.codepersonne) <> '') is not true and (trim(b.codesiret) <> '') is not true and (trim(b.codesiren) <> '') is true then trim(b.codesiren)
+        -- Autres bailleurs (codesiret > codesiren > codepersonne)
+        when (trim(b.codesiret) <> '') is true then trim(b.codesiret)
+        when (trim(b.codesiret) <> '') is not true and (trim(b.codesiren) <> '') is true then trim(b.codesiren)
+        when (trim(b.codesiret) <> '') is not true and (trim(b.codesiren) <> '') is not true and (trim(b.codepersonne) <> '') is true then trim(b.codepersonne)
+        -- Dernier recours: la raison sociale privée de ses caractères non alpha numériques, en majuscules et limitée à
+        -- 14 caractères (format SIRET)
+        else substring(upper(regexp_replace(b.raisonsociale, '[^a-zA-Z0-9]+', '', 'g')), 1, 14)
     end as codesiret,
     cb.noms_contacts as signataire_nom,
     case
