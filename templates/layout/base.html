@@ -64,6 +64,9 @@
             {% include "layout/header.html" with without_action_button=False %}
         {% endblock %}
         <main role="main" class="contentAll">
+            {% if user.is_authenticated %}
+                {% include "layout/popup.html" %}
+            {% endif %}
             {% block content %}{% endblock %}
         </main>
         {% block footer %}
