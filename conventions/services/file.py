@@ -27,8 +27,9 @@ class ConventionFileService:
 
         if update_statut:
             convention.statut = ConventionStatut.SIGNEE
+            convention.televersement_convention_signee_le = timezone.now()
+
         convention.nom_fichier_signe = filename
-        convention.televersement_convention_signee_le = timezone.now()
         convention.save()
 
     @classmethod
