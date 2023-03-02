@@ -9,7 +9,7 @@ select
         when ptl.code in ('T1B', 'T1P') then 'T1bis'
         else ptl.code -- T2+ are exactly the same
     end as typologie,
-    coalesce(round(cast(l.surfacecorrigee as numeric), 2),  as surface_corrigee,
+    coalesce(round(cast(l.surfacecorrigee as numeric), 2))  as surface_corrigee,
     round(cast(l.surfaceutile as numeric), 2) as surface_utile,
     round(cast(l.surfacehabitable as numeric), 2) as surface_habitable,
     round(cast(l.surfaceannexe as numeric), 2) as surface_annexes,
