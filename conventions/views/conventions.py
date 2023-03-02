@@ -337,9 +337,14 @@ def post_action(request, convention_uuid):
     # Step 12/12
     result = convention_post_action(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
-        return HttpResponseRedirect(
-            reverse("conventions:recapitulatif", args=[convention_uuid])
-        )
+        if result["form_posted"] == "resiliation":
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[convention_uuid])
+            )
+        else:
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
+            )
     return render(
         request,
         "conventions/post_action.html",

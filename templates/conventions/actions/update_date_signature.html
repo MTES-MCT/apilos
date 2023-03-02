@@ -1,0 +1,17 @@
+<form method="post" action="" data-turbo="false">
+    {% csrf_token %}
+    <input id="update_date_signature" type="hidden" name="update_date_signature" value="true">
+    <div class="fr-col-12 fr-my-2w block--row-strech">
+        <div class="block--row-strech-1 fr-mr-6w">
+
+            <p>
+                Votre convention a été signée le {{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-'}}.<br/>
+                Ce n'est pas la bonne date ?
+            </p>
+            {% include "common/form/input_date.html" with form_input=updatedate_form.televersement_convention_signee_le editable=True %}
+        </div>
+        <button class="fr-btn fr-btn--secondary">
+            Mettre à jour la date
+        </button>
+    </div>
+</form>

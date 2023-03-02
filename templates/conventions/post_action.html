@@ -57,7 +57,7 @@
             </div>
             <hr>
             <div class="fr-col-12">
-                <div class="fr-mb-2w fr-pt-2w block--row-strech">
+                <div class="fr-mb-2w block--row-strech">
                     <div class="block--row-strech-1 fr-my-2w">
                         <p class="fr-alert__title">
                             Générer la fiche CAF
@@ -68,7 +68,7 @@
                     </div>
                     <form action="{% url 'conventions:fiche_caf' convention_uuid=convention.uuid %}">
                         {% csrf_token %}
-                        <button class="fr-btn fr-my-1w fr-btn--secondary fr-my-1w fr-icon-download-line fr-btn--icon-left">
+                        <button class="fr-btn fr-btn--secondary fr-my-1w fr-icon-download-line fr-btn--icon-left">
                             Générer la fiche CAF
                         </button>
                     </form>
@@ -77,7 +77,7 @@
             {% if request|is_instructeur %}
                 <hr>
                 <div class="fr-col-12">
-                    <div class="fr-mb-2w fr-pt-2w block--row-strech">
+                    <div class="fr-mb-2w block--row-strech">
                         <div class="block--row-strech-1 fr-my-2w">
                             <p class="fr-alert__title">
                                 Téléverser à nouveau la convention
@@ -96,7 +96,7 @@
                                 accept="application/pdf">
                             <div class="block--row-strech">
                                 <div>
-                                    <button id="{{upform.file.id_for_label}}_upload_button" class="fr-icon-upload-line fr-btn--icon-left fr-btn fr-my-1w fr-btn--secondary fr-my-1w" type="button">
+                                    <button id="{{upform.file.id_for_label}}_upload_button" class="fr-icon-upload-line fr-btn--icon-left fr-btn fr-btn--secondary fr-my-1w" type="button">
                                         Téléverser la convention signée
                                     </button>
                                     {% for error in upform.file.errors %}
@@ -123,6 +123,15 @@
                         </form>
                     </div>
                 </div>
+                <hr>
+                <div class="fr-col-12">
+                    <div class="fr-mb-5w fr-pt-2w">
+                        <p class="fr-alert__title">
+                            Date de signature
+                        </p>
+                        {% include "conventions/actions/update_date_signature.html" %}
+                    </div>
+                </div>
             {% endif %}
             {% if convention|display_back_to_instruction:request %}
                 <hr>
@@ -135,7 +144,7 @@
             <div class="fr-col-12">
                 {% if request|is_instructeur %}
                     <hr>
-                    <div class="fr-mb-5w fr-pt-2w">
+                    <div class="fr-mb-5w">
                         <div class="fr-my-2w">
                             <p class="fr-alert__title">
                                 Résiliation/dénonciation de la convention
@@ -144,6 +153,7 @@
 
                             <form method="post" action="" id="{{resiliation_form.date_resiliation.id_for_label}}_validation_form">
                                 {% csrf_token %}
+                                <input id="resiliation" type="hidden" name="resiliation" value="true">
                                 <div class="block--row-strech">
                                     <div class="block--row-strech-1  fr-mr-6w">
 
