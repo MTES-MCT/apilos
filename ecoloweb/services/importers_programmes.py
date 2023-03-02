@@ -150,6 +150,7 @@ class LogementImporter(ModelImporter):
                 data.pop("surface_annexes_retenue")
             ),
             "surface_utile": self._rounded_value(data.pop("surface_utile")),
+            "surface_corrigee": self._rounded_value(data.pop("surface_corrigee")),
             "lot": self.resolve_ecolo_reference(data.pop("lot_id"), Lot),
             **data,
         }
