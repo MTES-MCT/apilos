@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.conf import settings
@@ -33,9 +33,6 @@ def update_currently(request):
 @login_required
 @require_POST
 def update_user_popup(request):
-    print("popup", request.user.read_popup)
     request.user.read_popup = "True"
     request.user.save()
-    return HttpResponseRedirect(
-        request.POST.get("redirect_to", reverse("conventions:index"))
-    )
+    return redirect(request.POST.get("redirect_to", reverse("conventions:index")))

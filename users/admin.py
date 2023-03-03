@@ -18,5 +18,11 @@ class CustomAdministrationAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-admin.site.register(User, UserAdmin)
+class CustomUserAdmin(UserAdmin):
+    UserAdmin.fieldsets += (
+        ("Informations supplémentaires", {"fields": ("read_popup",)}),
+    )
+
+
+admin.site.register(User, CustomUserAdmin)
 admin.site.register(Role, CustomAdministrationAdmin)
