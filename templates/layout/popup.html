@@ -20,22 +20,12 @@
                         <div class="fr-modal__footer button-bar">
                             <form method="post" action="{% url 'users:read_popup' %}">
                                 {% csrf_token %}
-                                <input
-                                    type="hidden"
-                                    name="redirect_to"
-                                    value="{{ request.get_full_path }}"
-                                >
                                 <button class="fr-btn fr-btn--secondary" type="submit">
                                     Je n'utilise pas Ecoloweb
                                 </button>
                             </form>
                             <form method="post" action="{% url 'users:read_popup' %}">
                                 {% csrf_token %}
-                                <input
-                                    type="hidden"
-                                    name="redirect_to"
-                                    value="{{ request.get_full_path }}"
-                                >
                                 <button type="submit" class="fr-btn">
                                     J'ai compris
                                 </button>

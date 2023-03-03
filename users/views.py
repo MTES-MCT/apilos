@@ -35,4 +35,4 @@ def update_currently(request):
 def update_user_popup(request):
     request.user.read_popup = "True"
     request.user.save()
-    return redirect(request.POST.get("redirect_to", reverse("conventions:index")))
+    return redirect(request.META.get("HTTP_REFERER", reverse("conventions:index")))
