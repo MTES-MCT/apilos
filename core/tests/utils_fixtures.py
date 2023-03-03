@@ -129,9 +129,12 @@ def create_administrations():
             nom="Métropole de Marseille",
             code="67890",
         ),
+        Administration.objects.create(nom="Paris", code="75000", code_postal="75001"),
         Administration.objects.create(
-            nom="Paris",
-            code="75000",
+            nom="DDT Paris",
+            code="DD075",
+            code_postal="75015",
+            adresse="5 rue Leblanc Le Ponant",
         ),
     )
 
@@ -374,6 +377,7 @@ def create_all():
         administration,
         administration_metropole,
         administration_paris,
+        ddt_paris,
     ) = create_administrations()
     (bailleur, bailleur_hlm, bailleur_sem) = create_bailleurs()
     group_instructeur = create_group("instructeur", rwd=["logement", "convention"])

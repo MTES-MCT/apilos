@@ -1,7 +1,6 @@
 from typing import Set
 
 from django.contrib.auth.models import Group
-from django.core.exceptions import ValidationError
 from django.core.management import BaseCommand
 from django.core.validators import validate_email
 
@@ -44,7 +43,6 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        # TODO write unit tests https://adamj.eu/tech/2020/09/07/how-to-unit-test-a-django-management-command/
         prenom = options["prenom"]
         nom = options["nom"]
         email = options["email"]
@@ -53,71 +51,67 @@ class Command(BaseCommand):
         for code in options["administrations"]:
             administrations.add(Administration.objects.get(code=code))
 
+        validate_email(email)
+
         if len(administrations) == 0:
             print("Aucune administration trouvée, création annulée")
-            return 0
-        try:
-            validate_email(email)
-        except ValidationError as e:
-            print(f"L'email {email} est invalide ({e})")
-            return 1
 
-        if User.objects.filter(email=email).first() is not None:
+        elif User.objects.filter(email=email).first() is not None:
             print(
                 f"L'instructeur {prenom} {nom} ({email}) existe déjà, création annulée"
             )
-            return 0
 
-        # Si une seule administration est donnée et qu'il s'agit d'une DDT alors on lui rajoute toutes les autres
-        # administrations sur son territoire, c'est-à-dire ses délégataires
-        if len(administrations) == 1:
-            root_administration = list(administrations)[0]
+        else:
+            # Si une seule administration est donnée et qu'il s'agit d'une DDT alors on lui rajoute toutes les autres
+            # administrations sur son territoire, c'est-à-dire ses délégataires
+            if len(administrations) == 1:
+                root_administration = list(administrations)[0]
 
-            if (
-                root_administration.is_ddt()
-                and root_administration.get_departement_code() is not None
-            ):
-                delegataires = (
-                    Administration.objects.filter(
-                        code_postal__startswith=root_administration.get_departement_code()
+                if (
+                    root_administration.is_ddt()
+                    and root_administration.get_departement_code() is not None
+                ):
+                    delegataires = (
+                        Administration.objects.filter(
+                            code_postal__startswith=root_administration.get_departement_code()
+                        )
+                        .exclude(code__startswith="DD")
+                        .all()
                     )
-                    .exclude(code__startswith="DD")
-                    .all()
-                )
-                for delegataire in delegataires:
-                    administrations.add(delegataire)
+                    for delegataire in delegataires:
+                        administrations.add(delegataire)
 
-        with transaction.atomic():
-            user = User.objects.create(
-                email=email,
-                username=email,
-                first_name=prenom,
-                last_name=nom,
-            )
-
-            password = User.objects.make_random_password()
-            user.set_password(password)
-            user.save()
-
-            for administration in administrations:
-                Role.objects.create(
-                    typologie=TypeRole.INSTRUCTEUR,
-                    administration=administration,
-                    user=user,
-                    group=Group.objects.get(name="instructeur"),
+            with transaction.atomic():
+                user = User.objects.create(
+                    email=email,
+                    username=email,
+                    first_name=prenom,
+                    last_name=nom,
                 )
 
-            # Envoi de l'email de bienvenue
-            EmailService(
-                to_emails=[user.email],
-                email_template_id=EmailTemplateID.I_WELCOME,
-            ).send_transactional_email(
-                email_data={
-                    "email": user.email,
-                    "username": user.username,
-                    "firstname": user.first_name,
-                    "lastname": user.last_name,
-                    "password": password,
-                    "login_url": "https://apilos.beta.gouv.fr/accounts/login/?instructeur=1",
-                }
-            )
+                password = User.objects.make_random_password()
+                user.set_password(password)
+                user.save()
+
+                for administration in administrations:
+                    Role.objects.create(
+                        typologie=TypeRole.INSTRUCTEUR,
+                        administration=administration,
+                        user=user,
+                        group=Group.objects.get(name="instructeur"),
+                    )
+
+                # Envoi de l'email de bienvenue
+                EmailService(
+                    to_emails=[user.email],
+                    email_template_id=EmailTemplateID.I_WELCOME,
+                ).send_transactional_email(
+                    email_data={
+                        "email": user.email,
+                        "username": user.username,
+                        "firstname": user.first_name,
+                        "lastname": user.last_name,
+                        "password": password,
+                        "login_url": "https://apilos.beta.gouv.fr/accounts/login/?instructeur=1",
+                    }
+                )
