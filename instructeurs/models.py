@@ -1,6 +1,8 @@
 import uuid
 
 from django.db import models
+
+from apilos_settings.models import Departement
 from core.models import IngestableModel
 
 
@@ -49,6 +51,12 @@ class Administration(IngestableModel):
 
     def natural_key(self) -> tuple:
         return tuple(self.code)
+
+    def get_departement_code(self) -> str:
+        return self.code_postal[0:2]
+
+    def is_ddt(self) -> bool:
+        return self.code.startswith("DD")
 
     def _get_id(self):
         return self.id
