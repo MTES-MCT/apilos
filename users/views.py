@@ -20,16 +20,6 @@ def home(request):
     # test si authentifié, si oui, rediriger vers convention/index...
     return render(request, "index.html")
 
-
-@login_required
-@require_POST
-def update_currently(request):
-    if request.user.is_staff or request.user.is_superuser:
-        request.session["currently"] = request.POST.get("currently")
-        return HttpResponseRedirect(reverse("conventions:index"))
-    raise PermissionError("This function is available only for staff")
-
-
 @login_required
 @require_POST
 def update_user_popup(request):
