@@ -13,7 +13,7 @@ from conventions.models import (
 )
 from programmes.models import Financement
 from users.models import User
-from users.type_models import EmailPreferences
+from users.type_models import EmailPreferences, TypeRole
 
 
 class ConventionModelsTest(TestCase):
@@ -216,30 +216,53 @@ class ConventionHistoryModelsTest(TestCase):
     def setUpTestData(cls):
         utils_fixtures.create_all()
 
-    def test_object_str(self):
+    def test_email_survey_for_bailleur(self):
         convention = Convention.objects.all().order_by("uuid").first()
-        user = User.objects.all().first()
-        for convention_statut in [
-            ConventionStatut.A_SIGNER,
-            ConventionStatut.INSTRUCTION,
-        ]:
-            with mock.patch(
-                "core.services.EmailService.send_transactional_email"
-            ) as mock_send_email:
+        bailleur = User.objects.filter(roles__typologie=TypeRole.BAILLEUR).first()
+        with mock.patch(
+            "core.services.EmailService.send_transactional_email"
+        ) as mock_send_email:
+            for convention_statut in [
+                ConventionStatut.A_SIGNER,
+                ConventionStatut.A_SIGNER,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.INSTRUCTION,
+            ]:
                 ConventionHistory.objects.create(
                     convention=convention,
                     statut_convention=convention_statut,
-                    user=user,
+                    user=bailleur,
                 )
+            mock_send_email.assert_called_once_with(
+                email_data={
+                    "email": bailleur.email,
+                    "firstname": bailleur.first_name,
+                    "lastname": bailleur.last_name,
+                }
+            )
+
+    def test_email_survey_for_intructeur(self):
+        convention = Convention.objects.all().order_by("uuid").first()
+        instructeur = User.objects.filter(roles__typologie=TypeRole.INSTRUCTEUR).first()
+
+        with mock.patch(
+            "core.services.EmailService.send_transactional_email"
+        ) as mock_send_email:
+            for convention_statut in [
+                ConventionStatut.A_SIGNER,
+                ConventionStatut.A_SIGNER,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.INSTRUCTION,
+            ]:
                 ConventionHistory.objects.create(
                     convention=convention,
                     statut_convention=convention_statut,
-                    user=user,
+                    user=instructeur,
                 )
-                mock_send_email.assert_called_once_with(
-                    email_data={
-                        "email": user.email,
-                        "firstname": user.first_name,
-                        "lastname": user.last_name,
-                    }
-                )
+            mock_send_email.assert_called_once_with(
+                email_data={
+                    "email": instructeur.email,
+                    "firstname": instructeur.first_name,
+                    "lastname": instructeur.last_name,
+                }
+            )
