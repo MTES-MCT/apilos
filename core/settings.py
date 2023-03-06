@@ -261,7 +261,11 @@ USE_TZ = True
 # Static files
 STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, "staticfiles"))
 STATIC_URL = "/static/"
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    ("dsfr", BASE_DIR / "node_modules" / "@gouvfr" / "dsfr" / "dist"),
+    ("virtual-select", BASE_DIR / "node_modules" / "virtual-select-plugin" / "dist"),
+]
 
 # Why STAGING = FALSE ?
 STAGING = False

@@ -10,15 +10,15 @@ __pycache__
 ~$*
 .coverage
 
-#local repo to store DB data
+#local repo to store DB data, static and npm lib
 pgdata/
 /media/
 staticfiles/
 redis-data/
+node_modules/
 
 #IDE
 .vscode/
 
 #temporaire
-static/icons/ikonate/
 /.tgitconfig
