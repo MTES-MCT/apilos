@@ -1,7 +1,7 @@
 import uuid
 
 from django.db import models
-from django.db.models.signals import pre_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from conventions.models.choices import ConventionStatut
@@ -40,17 +40,18 @@ class ConventionHistory(models.Model):
 
 
 # pylint: disable=W0613
-@receiver(pre_save, sender=ConventionHistory)
+@receiver(post_save, sender=ConventionHistory)
 def send_survey_email(sender, instance, *args, **kwargs):
     # send email to get user satisfaction after instructeur validate convention
     # or bailleur submit convention for the first time ?
 
-    # check if it is the first time the user submit a convention
+    # check if it is the first time the bailleur user submit a convention
     if (
         instance.statut_convention == ConventionStatut.INSTRUCTION
         and not ConventionHistory.objects.filter(
             user=instance.user, statut_convention=ConventionStatut.INSTRUCTION
-        )
+        ).exclude(id=instance.id)
+        and instance.user.is_bailleur()
     ):
         EmailService(
             to_emails=[instance.user.email],
@@ -63,12 +64,13 @@ def send_survey_email(sender, instance, *args, **kwargs):
             }
         )
 
-    # check if it is the first time the user validate a convention
+    # check if it is the first time the instructeur user validate a convention
     if (
         instance.statut_convention == ConventionStatut.A_SIGNER
         and not ConventionHistory.objects.filter(
             user=instance.user, statut_convention=ConventionStatut.A_SIGNER
-        )
+        ).exclude(id=instance.id)
+        and instance.user.is_instructeur()
     ):
         EmailService(
             to_emails=[instance.user.email],
