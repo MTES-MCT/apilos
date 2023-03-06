@@ -12,4 +12,5 @@ urlpatterns = [
         views.update_currently,
         name="update_currently",
     ),
+    path("read_popup", views.update_user_popup, name="read_popup"),
 ]

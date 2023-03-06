@@ -61,6 +61,7 @@ class User(AbstractUser):
         "users.User", on_delete=models.SET_NULL, blank=True, null=True
     )
     history = HistoricalRecords(excluded_fields=["last_login"])
+    read_popup = models.BooleanField(default=False)
 
     def has_object_permission(self, obj):
         if isinstance(obj, (Convention, Lot)):

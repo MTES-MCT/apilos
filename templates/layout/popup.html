@@ -1,0 +1,45 @@
+{% load static %}
+{% if user.read_popup is False %}
+    <dialog aria-labelledby="fr-modal-popup" id="fr-modal-popup" class="fr-modal fr-modal--opened" role="dialog">
+        <div class="fr-container fr-container--fluid fr-container-md">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header fr-grid-row--center">
+                            <img class="fr-col-6" src="{% static 'img/data-rafiki.svg' %}" alt="popup-illustration">
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-popup-title" class="fr-modal__title">
+                                <span class="fr-icon-arrow-right-line fr-icon--lg"></span>
+                                Vos données Ecoloweb sont arrivées
+                            </h1>
+                            <div>
+                                <p>
+                                    Bonne nouvelle !<br/>
+                                    Toutes les conventions que vous avez préalablement saisies dans Ecoloweb sont désormais disponibles sur APiLos.<br/>
+                                    Vous les retrouverez dans la liste de vos conventions.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="fr-modal__footer button-bar">
+                            <form method="post" action="{% url 'users:read_popup' %}">
+                                {% csrf_token %}
+                                <input id="ecolo" type="hidden" name="ecolo" value="true">
+                                <button type="submit" class="fr-btn">
+                                    Voir mes conventions
+                                </button>
+                            </form>
+                            <form method="post" action="{% url 'users:read_popup' %}">
+                                {% csrf_token %}
+                                <button class="fr-btn fr-btn--secondary" type="submit">
+                                    Passer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </dialog>
+{% endif %}
