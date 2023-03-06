@@ -14,20 +14,25 @@
                                 Vos données Ecoloweb sont arrivées
                             </h1>
                             <div>
-                                <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit. Nulla tempor sed neque a dictum. Pellentesque tempor, ipsum quis sollicitudin mollis, massa lacus aliquam sem, non interdum dui diam sit amet eros. </p>
+                                <p>
+                                    Bonne nouvelle !<br/>
+                                    Toutes les conventions que vous avez préalablement saisies dans Ecoloweb sont désormais disponibles sur APiLos.<br/>
+                                    Vous les retrouverez dans la liste de vos conventions.
+                                </p>
                             </div>
                         </div>
                         <div class="fr-modal__footer button-bar">
                             <form method="post" action="{% url 'users:read_popup' %}">
                                 {% csrf_token %}
-                                <button class="fr-btn fr-btn--secondary" type="submit">
-                                    Je n'utilise pas Ecoloweb
+                                <input id="ecolo" type="hidden" name="ecolo" value="true">
+                                <button type="submit" class="fr-btn">
+                                    Voir mes conventions
                                 </button>
                             </form>
                             <form method="post" action="{% url 'users:read_popup' %}">
                                 {% csrf_token %}
-                                <button type="submit" class="fr-btn">
-                                    J'ai compris
+                                <button class="fr-btn fr-btn--secondary" type="submit">
+                                    Passer
                                 </button>
                             </form>
                         </div>

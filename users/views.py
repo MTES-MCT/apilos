@@ -35,4 +35,8 @@ def update_currently(request):
 def update_user_popup(request):
     request.user.read_popup = "True"
     request.user.save()
-    return redirect(request.META.get("HTTP_REFERER", reverse("conventions:index")))
+    is_ecolo = request.POST.get("ecolo", False)
+    if is_ecolo:
+        return HttpResponseRedirect(reverse("conventions:search_completed"))
+    else:
+        return redirect(request.META.get("HTTP_REFERER", reverse("conventions:index")))
