@@ -198,9 +198,15 @@ class UserBailleurForm(forms.Form):
 
     bailleur = forms.ModelChoiceField(
         required=True,
-        queryset=Bailleur.objects.all().order_by("nom"),
+        queryset=Bailleur.objects.none(),
         label="Entreprise bailleur",
     )
+
+    def __init__(self, *args, bailleur_queryset=None, **kwargs) -> None:
+        if bailleur_queryset:
+            self.declared_fields["bailleur"].queryset = bailleur_queryset
+
+        super().__init__(*args, **kwargs)
 
     def clean_email(self):
         email = self.cleaned_data["email"]

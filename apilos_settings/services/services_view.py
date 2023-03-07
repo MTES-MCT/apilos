@@ -675,15 +675,34 @@ class ImportBailleurUsersService:
             self.request.POST, self.request.FILES
         )
         if self.upload_form.is_valid():
+            data = self.upload_form.cleaned_data["users"]
             self.formset = UserBailleurFormSet(
-                self._build_formset_data(self.upload_form.cleaned_data["users"])
+                self._build_formset_data(data),
+                form_kwargs={
+                    "bailleur_queryset": Bailleur.objects.filter(
+                        id__in=[
+                            d["bailleur"].id for d in data if d["bailleur"] is not None
+                        ]
+                    )
+                },
             )
             return ReturnStatus.SUCCESS
 
         return ReturnStatus.ERROR
 
     def _process_formset(self) -> ReturnStatus:
-        self.formset = UserBailleurFormSet(self.request.POST)
+        self.formset = UserBailleurFormSet(
+            self.request.POST,
+            form_kwargs={
+                "bailleur_queryset": Bailleur.objects.filter(
+                    id__in=[
+                        value
+                        for key, value in self.request.POST.items()
+                        if key.endswith("bailleur")
+                    ]
+                )
+            },
+        )
         if self.formset.is_valid():
             for form_user_bailleur in self.formset:
                 UserService.create_user_bailleur(
