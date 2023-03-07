@@ -691,7 +691,18 @@ class ImportBailleurUsersService:
         return ReturnStatus.ERROR
 
     def _process_formset(self) -> ReturnStatus:
-        self.formset = UserBailleurFormSet(self.request.POST)
+        self.formset = UserBailleurFormSet(
+            self.request.POST,
+            form_kwargs={
+                "bailleur_queryset": Bailleur.objects.filter(
+                    id__in=[
+                        value
+                        for key, value in self.request.POST.items()
+                        if key.endswith("bailleur")
+                    ]
+                )
+            },
+        )
         if self.formset.is_valid():
             for form_user_bailleur in self.formset:
                 UserService.create_user_bailleur(

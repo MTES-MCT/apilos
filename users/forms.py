@@ -203,7 +203,8 @@ class UserBailleurForm(forms.Form):
     )
 
     def __init__(self, *args, bailleur_queryset=None, **kwargs) -> None:
-        self.declared_fields["bailleur"].queryset = bailleur_queryset
+        if bailleur_queryset:
+            self.declared_fields["bailleur"].queryset = bailleur_queryset
 
         super().__init__(*args, **kwargs)
 
