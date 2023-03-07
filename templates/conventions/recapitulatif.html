@@ -8,7 +8,7 @@
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
-    <script src="{% static "js/turbo.es2017-umd.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "turbo/turbo.es2017-umd.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script type="text/javascript" src="{% static "js/type1and2.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script nonce="{{request.csp_nonce}}">
         Turbo.session.drive = false

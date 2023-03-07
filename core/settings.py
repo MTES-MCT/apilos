@@ -265,6 +265,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
     ("dsfr", BASE_DIR / "node_modules" / "@gouvfr" / "dsfr" / "dist"),
     ("virtual-select", BASE_DIR / "node_modules" / "virtual-select-plugin" / "dist"),
+    ("turbo", BASE_DIR / "node_modules" / "@hotwired" / "turbo" / "dist"),
 ]
 
 # Why STAGING = FALSE ?
