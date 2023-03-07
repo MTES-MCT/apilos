@@ -377,7 +377,7 @@ def create_all():
         administration,
         administration_metropole,
         administration_paris,
-        ddt_paris,
+        _,
     ) = create_administrations()
     (bailleur, bailleur_hlm, bailleur_sem) = create_bailleurs()
     group_instructeur = create_group("instructeur", rwd=["logement", "convention"])

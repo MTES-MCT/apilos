@@ -5,7 +5,7 @@ class TypeRole(models.TextChoices):
     INSTRUCTEUR = "INSTRUCTEUR", "Instructeur"
     BAILLEUR = "BAILLEUR", "Bailleur"
     # Administration centrale et direction régionale
-    ADMINISTRATEUR = "ADMINISTRATEUR", "administrateur"
+    ADMINISTRATEUR = "ADMINISTRATEUR", "Administrateur"
 
 
 class EmailPreferences(models.TextChoices):
