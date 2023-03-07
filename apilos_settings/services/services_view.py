@@ -675,8 +675,16 @@ class ImportBailleurUsersService:
             self.request.POST, self.request.FILES
         )
         if self.upload_form.is_valid():
+            data = self.upload_form.cleaned_data["users"]
             self.formset = UserBailleurFormSet(
-                self._build_formset_data(self.upload_form.cleaned_data["users"])
+                self._build_formset_data(data),
+                form_kwargs={
+                    "bailleur_queryset": Bailleur.objects.filter(
+                        id__in=[
+                            d["bailleur"].id for d in data if d["bailleur"] is not None
+                        ]
+                    )
+                },
             )
             return ReturnStatus.SUCCESS
 
