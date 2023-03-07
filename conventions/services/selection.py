@@ -57,13 +57,11 @@ class ConventionSelectionService:
 
     def get_from_zero(self):
         self.form = ProgrammeSelectionFromZeroForm(
-            bailleurs=self._get_bailleur_choices(),
             administrations=self._get_administration_choices(),
         )
 
     def get_for_avenant(self):
         self.form = ConventionForAvenantForm(
-            bailleurs=self._get_bailleur_choices(),
             administrations=self._get_administration_choices(),
         )
 
@@ -71,11 +69,10 @@ class ConventionSelectionService:
         self.form = ProgrammeSelectionFromZeroForm(
             self.request.POST,
             self.request.FILES,
-            bailleurs=self._get_bailleur_choices(),
             administrations=self._get_administration_choices(),
         )
         if self.form.is_valid():
-            bailleur = Bailleur.objects.get(uuid=self.form.cleaned_data["bailleur"])
+            bailleur = Bailleur.objects.get(id=self.form.cleaned_data["bailleur"])
             administration = Administration.objects.get(
                 uuid=self.form.cleaned_data["administration"]
             )
@@ -117,7 +114,6 @@ class ConventionSelectionService:
         self.form = ConventionForAvenantForm(
             self.request.POST,
             self.request.FILES,
-            bailleurs=self._get_bailleur_choices(),
             administrations=self._get_administration_choices(),
         )
         if self.form.is_valid():

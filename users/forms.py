@@ -204,9 +204,8 @@ class UserBailleurForm(forms.Form):
         label="Entreprise bailleur",
     )
 
-    def __init__(self, *args, bailleur_queryset=None, **kwargs) -> None:
-        if bailleur_queryset:
-            self.declared_fields["bailleur"].queryset = bailleur_queryset
+    def __init__(self, *args, data=None, bailleur_queryset=None, **kwargs) -> None:
+        self.declared_fields["bailleur"].queryset = bailleur_queryset
 
         super().__init__(*args, **kwargs)
 
