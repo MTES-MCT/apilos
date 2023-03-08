@@ -53,14 +53,14 @@ class CompleteforavenantForm(forms.Form):
     ville = forms.CharField(
         label="Ville du programme",
         max_length=255,
-        required=False,
+        required=True,
         error_messages={
             "max_length": "La ville ne doit pas excéder 255 caractères",
         },
     )
     nb_logements = forms.IntegerField(
         label="Nb logements à conventionner",
-        required=False,
+        required=True,
     )
     nom_fichier_signe = forms.FileField(
         required=False,

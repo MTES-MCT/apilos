@@ -25,7 +25,12 @@ def convention_summary(request: HttpRequest, convention: Convention):
     convention_number_form = ConventionNumberForm(
         initial={"convention_numero": convention.get_default_convention_number()}
     )
-    complete_for_avenant_form = CompleteforavenantForm()
+    complete_for_avenant_form = CompleteforavenantForm(
+        initial={
+            "ville": convention.parent.programme.ville,
+            "nb_logements": convention.parent.lot.nb_logements,
+        }
+    )
 
     opened_comments = Comment.objects.filter(
         convention=convention,
@@ -294,30 +299,33 @@ def send_email_correction(
 
 
 def convention_validate(request: HttpRequest, convention: Convention):
+    convention_number_form = ConventionNumberForm(request.POST)
+    complete_for_avenant_form = CompleteforavenantForm(request.POST)
     is_completeform = request.POST.get("completeform", False)
     if is_completeform:
-        complete_for_avenant_form = CompleteforavenantForm(request.POST)
         if complete_for_avenant_form.is_valid():
             parentconvention = convention.parent
             programme = convention.programme
             parent_programme = parentconvention.programme
-            parent_programme.ville = complete_for_avenant_form.cleaned_data["ville"]
-            parent_programme.save()
-            if not programme.ville:
-                programme.ville = complete_for_avenant_form.cleaned_data["ville"]
-                programme.save()
+            if complete_for_avenant_form.cleaned_data["ville"]:
+                parent_programme.ville = complete_for_avenant_form.cleaned_data["ville"]
+                parent_programme.save()
+                if not programme.ville:
+                    programme.ville = complete_for_avenant_form.cleaned_data["ville"]
+                    programme.save()
 
             lot = convention.lot
             parent_lot = parentconvention.lot
-            parent_lot.nb_logements = complete_for_avenant_form.cleaned_data[
-                "nb_logements"
-            ]
-            parent_lot.save()
-            if not lot.nb_logements:
-                lot.nb_logements = complete_for_avenant_form.cleaned_data[
+            if complete_for_avenant_form.cleaned_data["nb_logements"]:
+                parent_lot.nb_logements = complete_for_avenant_form.cleaned_data[
                     "nb_logements"
                 ]
-                lot.save()
+                parent_lot.save()
+                if not lot.nb_logements:
+                    lot.nb_logements = complete_for_avenant_form.cleaned_data[
+                        "nb_logements"
+                    ]
+                    lot.save()
 
             conventionfile = request.FILES.get("nom_fichier_signe", False)
             if conventionfile:
@@ -327,11 +335,8 @@ def convention_validate(request: HttpRequest, convention: Convention):
             return {
                 "success": utils.ReturnStatus.SUCCESS,
                 "convention": convention,
-                "form": "complete_for_avenant_form",
             }
     else:
-
-        convention_number_form = ConventionNumberForm(request.POST)
         convention_number_form.convention = convention
         if convention_number_form.is_valid():
             convention.numero = convention_number_form.cleaned_data["convention_numero"]
