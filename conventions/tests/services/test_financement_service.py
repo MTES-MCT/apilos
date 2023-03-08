@@ -18,10 +18,16 @@ from users.models import User
 
 class ConventionFinancementServiceTests(TestCase):
     service_class = financement_service.ConventionFinancementService
-
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
 
     def setUp(self):
         request = HttpRequest()

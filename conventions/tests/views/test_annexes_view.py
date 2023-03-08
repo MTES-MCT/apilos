@@ -8,6 +8,17 @@ from users.models import User
 
 
 class ConventionAnnexesViewTests(AbstractEditViewTestCase, TestCase):
+    fixtures = [
+        "auth.json",
+        # "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
+
     def setUp(self):
         super().setUp()
         for designation in ["B1", "B2"]:

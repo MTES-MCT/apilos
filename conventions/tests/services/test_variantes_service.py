@@ -15,9 +15,16 @@ from users.models import User
 
 
 class ConventionFoyerVarianteServiceTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
 
     def setUp(self):
         request = HttpRequest()

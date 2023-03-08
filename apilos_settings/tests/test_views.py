@@ -11,9 +11,16 @@ from users.models import User
 
 
 class ApilosSettingsViewTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
 
     def test_display_bailleurs_or_administrations(self):
         """

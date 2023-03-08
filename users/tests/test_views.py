@@ -6,10 +6,19 @@ from core.tests import utils_fixtures
 
 
 class UserViewTests(TestCase):
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
+
     @classmethod
     def setUpTestData(cls):
-        # pylint: disable=R0914
-        utils_fixtures.create_all()
         settings.CERBERE = None
 
     def test_no_login(self):
@@ -43,9 +52,15 @@ class UserViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
 
         response = self.client.get(reverse("users:home"))
-        self.assertRedirects(response, reverse("conventions:index"), fetch_redirect_response=False)
+        self.assertRedirects(
+            response, reverse("conventions:index"), fetch_redirect_response=False
+        )
         response = self.client.get(reverse("conventions:index"))
-        self.assertRedirects(response, reverse("conventions:search_active"), fetch_redirect_response=False)
+        self.assertRedirects(
+            response,
+            reverse("conventions:search_active"),
+            fetch_redirect_response=False,
+        )
         response = self.client.get(reverse("conventions:search_active"))
 
         self.assertContains(response, "Déconnexion")

@@ -7,9 +7,16 @@ from core.tests import utils_fixtures
 
 
 class ConventionIndexViewTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
 
     def test_get_index(self):
         # login as superuser

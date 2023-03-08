@@ -23,11 +23,16 @@ from users.models import GroupProfile, User
 
 
 class ConventionSelectionServiceForInstructeurTests(TestCase):
-    fixtures = ["departements.json"]
-
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
 
     def setUp(self):
         self.request = RequestFactory().get("/conventions/selection")
@@ -200,11 +205,16 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
 
 
 class ConventionSelectionServiceForBailleurTests(TestCase):
-    fixtures = ["departements.json"]
-
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
 
     def setUp(self):
         self.request = RequestFactory().get("/conventions/selection")

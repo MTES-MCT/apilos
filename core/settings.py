@@ -185,36 +185,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-try:
-    # dj_database_url is used in scalingo environment to interpret the
-    # connection configuration to the DB from a single URL with all path
-    # and credentials
-    config("DATABASE_URL")
-    default_settings = dj_database_url.config()
-except decouple.UndefinedValueError:
-    default_settings = {
-        "ENGINE": "django.db.backends.postgresql",
-        "USER": get_env_variable("DB_USER"),
-        "NAME": get_env_variable("DB_NAME"),
-        "HOST": get_env_variable("DB_HOST"),
-        "PASSWORD": get_env_variable("DB_PASSWORD"),
-        "PORT": get_env_variable("DB_PORT", default="5432"),
-        "TEST": {
-            "NAME": get_env_variable("DB_NAME") + "-test",
-        },
-        "ATOMIC_REQUESTS": True,
-    }
+DATABASE_URL = config("DATABASE_URL")
+default_settings = dj_database_url.parse(DATABASE_URL)
 
 # EXPLORER settings
 # from https://django-sql-explorer.readthedocs.io/en/latest/install.html
-# The readonly access is configured with fake access when DB_READONLY env
-# variable is not set.
+# The readonly access is configured with fake access when DB_READONLY env variable is not set.
 DB_READONLY = config(
     "DB_READONLY", default="postgres://fakeusername:fakepassword@postgres:5432/database"
 )
 readonly_settings = dj_database_url.parse(DB_READONLY)
 
-DATABASES = {"default": default_settings, "readonly": readonly_settings}
+DATABASES = {
+    "default": default_settings,
+    "readonly": readonly_settings,
+}
 
 if get_env_variable("ECOLO_DATABASE_URL") != "":
     DATABASES["ecoloweb"] = dj_database_url.parse(

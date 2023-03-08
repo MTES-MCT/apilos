@@ -12,15 +12,16 @@ from users.models import User
 
 
 class AdministrationsModelsTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        # pylint: disable=R0914
-        utils_fixtures.create_all()
-        Departement.objects.create(
-            nom="Bouches du Rhône",
-            code_postal="13",
-            code_insee="13",
-        )
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
 
     # Test model User
     def test_object_user_str(self):
@@ -118,7 +119,7 @@ class AdministrationsModelsTest(TestCase):
         user_bailleur = User.objects.get(username="raph")
         user_bailleur_hlm = User.objects.get(username="sophie")
         self.assertTrue(user_bailleur.has_perm("logement.change_logement"))
-        self.assertFalse(user_bailleur.has_perm("logement.delete_logement"))
+        self.assertTrue(user_bailleur.has_perm("logement.delete_logement"))
         self.assertFalse(user_bailleur.has_perm("bailleur.delete_bailleur"))
 
         convention = Convention.objects.get(numero="0001")

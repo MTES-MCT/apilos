@@ -1,0 +1,74 @@
+[
+  {
+    "model": "instructeurs.administration",
+    "pk": 1,
+    "fields": {
+      "uuid": "f0032749-ca44-4d92-933f-a73eca346baf",
+      "nom": "CA d'Arles-Crau-Camargue-Montagnette",
+      "code": "12345",
+      "ville_signature": null,
+      "adresse": null,
+      "code_postal": null,
+      "ville": null,
+      "nb_convention_exemplaires": 3,
+      "prefix_convention": "{département}/{zone}/{mois}/{année}/80.416/",
+      "signataire_bloc_signature": null,
+      "cree_le": "2023-03-08T17:47:06.185Z",
+      "mis_a_jour_le": "2023-03-08T17:47:06.185Z"
+    }
+  },
+  {
+    "model": "instructeurs.administration",
+    "pk": 2,
+    "fields": {
+      "uuid": "8b21f223-7121-4304-87ab-e2873cc1dcc1",
+      "nom": "Métropole de Marseille",
+      "code": "67890",
+      "ville_signature": null,
+      "adresse": null,
+      "code_postal": null,
+      "ville": null,
+      "nb_convention_exemplaires": 3,
+      "prefix_convention": "{département}/{zone}/{mois}/{année}/80.416/",
+      "signataire_bloc_signature": null,
+      "cree_le": "2023-03-08T17:47:06.186Z",
+      "mis_a_jour_le": "2023-03-08T17:47:06.187Z"
+    }
+  },
+  {
+    "model": "instructeurs.administration",
+    "pk": 3,
+    "fields": {
+      "uuid": "298690ca-e856-46d0-a9d9-6727244a824b",
+      "nom": "Paris",
+      "code": "75000",
+      "ville_signature": null,
+      "adresse": null,
+      "code_postal": "75001",
+      "ville": null,
+      "nb_convention_exemplaires": 3,
+      "prefix_convention": "{département}/{zone}/{mois}/{année}/80.416/",
+      "signataire_bloc_signature": null,
+      "cree_le": "2023-03-08T17:47:06.188Z",
+      "mis_a_jour_le": "2023-03-08T17:47:06.188Z"
+    }
+  },
+  {
+    "model": "instructeurs.administration",
+    "pk": 13,
+    "fields": {
+      "uuid": "be906087-bc24-4de1-ae36-b05a0f37494b",
+      "nom": "DDT Paris",
+      "code": "DD075",
+      "ville_signature": null,
+      "adresse": "5 rue Leblanc Le Ponant",
+      "code_postal": "75015",
+      "ville": null,
+      "nb_convention_exemplaires": 3,
+      "prefix_convention": "{département}/{zone}/{mois}/{année}/80.416/",
+      "signataire_bloc_signature": null,
+      "cree_le": "2023-03-08T17:47:06.190Z",
+      "mis_a_jour_le": "2023-03-08T17:47:06.190Z"
+    }
+  }
+]

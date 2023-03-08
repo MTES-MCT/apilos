@@ -15,10 +15,6 @@ class AbstractCreateViewTestCase:
     success_payload: dict
     msg_prefix: str
 
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
-
     def setUp(self):
         self.convention_75 = Convention.objects.filter(numero="0001").first()
         self.target_path = ""

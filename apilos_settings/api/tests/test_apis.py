@@ -1,11 +1,9 @@
-from django.conf import settings
 from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
 from users.models import User
 from siap.siap_client.client import build_jwt
-from core.tests import utils_fixtures
 
 
 @override_settings(USE_MOCKED_SIAP_CLIENT=True)

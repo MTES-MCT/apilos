@@ -1,0 +1,74 @@
+[
+  {
+    "model": "bailleurs.bailleur",
+    "pk": 1,
+    "fields": {
+      "uuid": "7225b3ea-0abd-4e44-9247-f7ddec0b90f0",
+      "parent": null,
+      "nom": "3F",
+      "siret": "12345678901234",
+      "siren": null,
+      "capital_social": 123000.5,
+      "adresse": null,
+      "code_postal": null,
+      "ville": "Marseille",
+      "signataire_nom": "Patrick Patoulachi",
+      "signataire_fonction": "PDG",
+      "signataire_date_deliberation": "2014-10-09",
+      "signataire_bloc_signature": "Mon PDG",
+      "operation_exceptionnelle": null,
+      "nature_bailleur": "Autres bailleurs sociaux non HLM",
+      "sous_nature_bailleur": "NONRENSEIGNE",
+      "cree_le": "2023-03-08T20:43:45.924Z",
+      "mis_a_jour_le": "2023-03-08T20:43:45.924Z"
+    }
+  },
+  {
+    "model": "bailleurs.bailleur",
+    "pk": 2,
+    "fields": {
+      "uuid": "b30a2b79-b0fb-49e9-acd7-08a9c5851c3a",
+      "parent": null,
+      "nom": "HLM",
+      "siret": "987654321",
+      "siren": null,
+      "capital_social": 123456.0,
+      "adresse": null,
+      "code_postal": null,
+      "ville": "Marseille",
+      "signataire_nom": "Pall Antoine",
+      "signataire_fonction": "DG",
+      "signataire_date_deliberation": "2001-12-01",
+      "signataire_bloc_signature": "Mon DG",
+      "operation_exceptionnelle": null,
+      "nature_bailleur": "Autres bailleurs sociaux non HLM",
+      "sous_nature_bailleur": "NONRENSEIGNE",
+      "cree_le": "2023-03-08T20:43:45.933Z",
+      "mis_a_jour_le": "2023-03-08T20:43:45.933Z"
+    }
+  },
+  {
+    "model": "bailleurs.bailleur",
+    "pk": 3,
+    "fields": {
+      "uuid": "59b9571d-1e77-4235-90be-f869c971ecc3",
+      "parent": null,
+      "nom": "SEM",
+      "siret": "2345678901",
+      "siren": null,
+      "capital_social": 123456.0,
+      "adresse": null,
+      "code_postal": null,
+      "ville": "Marseille",
+      "signataire_nom": "Polo Alto",
+      "signataire_fonction": "PDG",
+      "signataire_date_deliberation": "2011-12-01",
+      "signataire_bloc_signature": "Mon PDG",
+      "operation_exceptionnelle": null,
+      "nature_bailleur": "Autres bailleurs sociaux non HLM",
+      "sous_nature_bailleur": "NONRENSEIGNE",
+      "cree_le": "2023-03-08T20:43:45.934Z",
+      "mis_a_jour_le": "2023-03-08T20:43:45.934Z"
+    }
+  }
+]

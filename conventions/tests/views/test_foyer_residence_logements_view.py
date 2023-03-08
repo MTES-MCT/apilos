@@ -7,6 +7,17 @@ from programmes.models import NatureLogement
 
 
 class ConventionLogementsViewTests(AbstractEditViewTestCase, TestCase):
+    fixtures = [
+        "auth.json",
+        # "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
+
     def setUp(self):
         super().setUp()
 

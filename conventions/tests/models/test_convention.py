@@ -17,9 +17,16 @@ from users.type_models import EmailPreferences, TypeRole
 
 
 class ConventionModelsTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
 
     def test_object_str(self):
         convention = Convention.objects.get(numero="0001")
@@ -212,9 +219,16 @@ class ConventionModelsTest(TestCase):
 
 
 class ConventionHistoryModelsTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
 
     def test_email_survey_for_bailleur(self):
         convention = Convention.objects.all().order_by("uuid").first()

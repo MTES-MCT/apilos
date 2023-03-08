@@ -10,9 +10,19 @@ from conventions.models import (
 
 
 class PretModelsTest(TestCase):
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
+
     @classmethod
     def setUpTestData(cls):
-        utils_fixtures.create_all()
         convention = Convention.objects.get(numero="0001")
         Pret.objects.create(
             convention=convention,

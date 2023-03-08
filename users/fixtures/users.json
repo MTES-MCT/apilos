@@ -1,0 +1,356 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$QcjOcnGG78wKeEIimdKENT$BjQTxPF2FHhrOhPgK4cZSuX/aeixOyl/rUy9492iw1o=",
+      "last_login": null,
+      "is_superuser": true,
+      "username": "nicolas",
+      "first_name": "",
+      "last_name": "",
+      "email": "nico@apilos.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2023-03-08T20:43:43.845Z",
+      "administrateur_de_compte": false,
+      "telephone": null,
+      "cerbere_login": null,
+      "preferences_email": "PARTIEL",
+      "creator": null,
+      "read_popup": false,
+      "groups": [],
+      "user_permissions": [],
+      "filtre_departements": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$LeqyZQ9dWedFkaEBqERMUz$luyKn3A/qk3SzVmylcXQYyvb+FE4VBsEgbqH6mXps3I=",
+      "last_login": null,
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "nico@apilos.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2023-03-08T20:43:44.097Z",
+      "administrateur_de_compte": false,
+      "telephone": null,
+      "cerbere_login": null,
+      "preferences_email": "PARTIEL",
+      "creator": null,
+      "read_popup": false,
+      "groups": [],
+      "user_permissions": [],
+      "filtre_departements": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$eWurkRePLjJz38i2hgaHdS$TQzhW2k2Y8LPRrioq3EgVHlS3jNrLE7dAfO+hD7R+CM=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "sabine",
+      "first_name": "Sabine",
+      "last_name": "Marini",
+      "email": "sabine@apilos.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-08T20:43:44.295Z",
+      "administrateur_de_compte": false,
+      "telephone": null,
+      "cerbere_login": null,
+      "preferences_email": "TOUS",
+      "creator": null,
+      "read_popup": false,
+      "groups": [],
+      "user_permissions": [],
+      "filtre_departements": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 4,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$6BArizch6yhZZYt7Ecczpu$GXPaVVwOieFfkomUrFAPju4b2dp8GmziES0h0dP3UKo=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "roger",
+      "first_name": "Roger",
+      "last_name": "Dupont",
+      "email": "roger@apilos.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-08T20:43:44.499Z",
+      "administrateur_de_compte": false,
+      "telephone": null,
+      "cerbere_login": null,
+      "preferences_email": "TOUS",
+      "creator": null,
+      "read_popup": false,
+      "groups": [],
+      "user_permissions": [],
+      "filtre_departements": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 5,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$5yXF58NS57vBP9sMSgWZqq$JYEsjVwSGdRlkCayFIpfQsvH6mabIEz0AFYw5cXZFMM=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "fix",
+      "first_name": "François",
+      "last_name": "Xavier",
+      "email": "fix@apilos.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-08T20:43:44.697Z",
+      "administrateur_de_compte": false,
+      "telephone": null,
+      "cerbere_login": null,
+      "preferences_email": "TOUS",
+      "creator": null,
+      "read_popup": false,
+      "groups": [],
+      "user_permissions": [],
+      "filtre_departements": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 6,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$7gJnXkWRARUgEO4gNIoc4I$6z6QXFM+/FVK5y/z6OwoV8JpEBv+SVq+X9/JW3NFi5s=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "raph",
+      "first_name": "Raphaëlle",
+      "last_name": "Neyton",
+      "email": "raph@apilos.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-08T20:43:44.901Z",
+      "administrateur_de_compte": false,
+      "telephone": null,
+      "cerbere_login": null,
+      "preferences_email": "TOUS",
+      "creator": null,
+      "read_popup": false,
+      "groups": [],
+      "user_permissions": [],
+      "filtre_departements": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 7,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$gpsRaYiWzWcdzCfXsNKHtC$qHVmOKyxvA5j8hu/G3RUWE/M7DzVBTg1C/2F5z4NjCM=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "sophie",
+      "first_name": "Sophie",
+      "last_name": "Eaubonne",
+      "email": "sophie@apilos.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-08T20:43:45.102Z",
+      "administrateur_de_compte": false,
+      "telephone": null,
+      "cerbere_login": null,
+      "preferences_email": "TOUS",
+      "creator": null,
+      "read_popup": false,
+      "groups": [],
+      "user_permissions": [],
+      "filtre_departements": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 8,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$8JjcvMVTFEQ1GPoyOyKShL$qPiC/udWmJ5I/bNhfz1UbcXFohW5Lb+15qC9509fUjs=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "sylvie",
+      "first_name": "Sylvie",
+      "last_name": "Vartan",
+      "email": "sylvie@apilos.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-08T20:43:45.299Z",
+      "administrateur_de_compte": false,
+      "telephone": null,
+      "cerbere_login": null,
+      "preferences_email": "TOUS",
+      "creator": null,
+      "read_popup": false,
+      "groups": [],
+      "user_permissions": [],
+      "filtre_departements": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 9,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$YLStrRxgVqcGQj1vbQWcgJ$2luqYFEFohYWOCeKIhpgXw8AobgpbO05Wu3iBxnvYWs=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "jean.bailleur",
+      "first_name": "Jean",
+      "last_name": "Bailleur",
+      "email": "jean.bailleur@apilos.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-08T20:43:45.514Z",
+      "administrateur_de_compte": false,
+      "telephone": null,
+      "cerbere_login": null,
+      "preferences_email": "AUCUN",
+      "creator": null,
+      "read_popup": false,
+      "groups": [],
+      "user_permissions": [],
+      "filtre_departements": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 10,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$YqTFcsrYOGBwp8Ab9BUjeY$YvsQSic3lFcp9OSe4bHzPi+u+SCdJ5U6ZD0GseX/L/Y=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "chantal.bailleur2",
+      "first_name": "Chantal",
+      "last_name": "Bailleur",
+      "email": "chantal@apilos.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-08T20:43:45.713Z",
+      "administrateur_de_compte": false,
+      "telephone": null,
+      "cerbere_login": null,
+      "preferences_email": "PARTIEL",
+      "creator": null,
+      "read_popup": false,
+      "groups": [],
+      "user_permissions": [],
+      "filtre_departements": []
+    }
+  },
+  {
+    "model": "users.role",
+    "pk": 1,
+    "fields": {
+      "typologie": "BAILLEUR",
+      "bailleur": 1,
+      "administration": null,
+      "user": 6,
+      "group": ["bailleur"],
+      "perimetre_region": null,
+      "perimetre_departement": null
+    }
+  },
+  {
+    "model": "users.role",
+    "pk": 2,
+    "fields": {
+      "typologie": "BAILLEUR",
+      "bailleur": 2,
+      "administration": null,
+      "user": 6,
+      "group": ["bailleur"],
+      "perimetre_region": null,
+      "perimetre_departement": null
+    }
+  },
+  {
+    "model": "users.role",
+    "pk": 3,
+    "fields": {
+      "typologie": "BAILLEUR",
+      "bailleur": 2,
+      "administration": null,
+      "user": 7,
+      "group": ["bailleur"],
+      "perimetre_region": null,
+      "perimetre_departement": null
+    }
+  },
+  {
+    "model": "users.role",
+    "pk": 4,
+    "fields": {
+      "typologie": "BAILLEUR",
+      "bailleur": 3,
+      "administration": null,
+      "user": 8,
+      "group": ["bailleur"],
+      "perimetre_region": null,
+      "perimetre_departement": null
+    }
+  },
+  {
+    "model": "users.role",
+    "pk": 5,
+    "fields": {
+      "typologie": "INSTRUCTEUR",
+      "bailleur": null,
+      "administration": 1,
+      "user": 3,
+      "group": ["instructeur"],
+      "perimetre_region": null,
+      "perimetre_departement": null
+    }
+  },
+  {
+    "model": "users.role",
+    "pk": 6,
+    "fields": {
+      "typologie": "INSTRUCTEUR",
+      "bailleur": null,
+      "administration": 2,
+      "user": 3,
+      "group": ["instructeur"],
+      "perimetre_region": null,
+      "perimetre_departement": null
+    }
+  },
+  {
+    "model": "users.role",
+    "pk": 7,
+    "fields": {
+      "typologie": "INSTRUCTEUR",
+      "bailleur": null,
+      "administration": 2,
+      "user": 4,
+      "group": ["instructeur"],
+      "perimetre_region": null,
+      "perimetre_departement": null
+    }
+  },
+  {
+    "model": "users.role",
+    "pk": 8,
+    "fields": {
+      "typologie": "INSTRUCTEUR",
+      "bailleur": null,
+      "administration": 3,
+      "user": 5,
+      "group": ["instructeur"],
+      "perimetre_region": null,
+      "perimetre_departement": null
+    }
+  }
+]

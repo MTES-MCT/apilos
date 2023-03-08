@@ -16,8 +16,18 @@ from users.models import GroupProfile, User
 
 
 class CustomFiltersTest(TestCase):
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
+
     def setUp(self):
-        utils_fixtures.create_all()
         self.convention = Convention.objects.get(numero="0001")
         get_response = mock.MagicMock()
         self.request = RequestFactory().get("/conventions")

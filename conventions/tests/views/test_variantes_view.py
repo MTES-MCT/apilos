@@ -7,6 +7,18 @@ from programmes.models import NatureLogement
 
 
 class ConventionVariantesViewTests(AbstractEditViewTestCase, TestCase):
+
+    fixtures = [
+        "auth.json",
+        # "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
+
     def setUp(self):
         super().setUp()
         self.target_path = reverse(

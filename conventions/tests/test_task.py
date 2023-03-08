@@ -17,9 +17,19 @@ from users.models import User
 @override_settings(EMAIL_BACKEND="anymail.backends.test.EmailBackend")
 @override_settings(SENDINBLUE_API_KEY="fake_sendinblue_api_key")
 class GenerateAndSendTest(TestCase):
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs.json",
+        "instructeurs.json",
+        "programmes.json",
+        "conventions.json",
+        "users.json",
+    ]
+
     @classmethod
     def setUpTestData(cls):
-        utils_fixtures.create_all()
         with (Path(__file__).parent / "fixtures" / "convention.pdf").open("r") as f:
             default_storage.save("convention.pdf", f)
 
