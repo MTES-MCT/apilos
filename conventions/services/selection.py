@@ -23,6 +23,7 @@ from conventions.forms import (
     ProgrammeSelectionFromDBForm,
     ProgrammeSelectionFromZeroForm,
     ConventionForAvenantForm,
+    CreateConventionMinForm,
 )
 
 
@@ -34,19 +35,15 @@ class ConventionSelectionService:
     request: HttpRequest
     convention: Convention
     avenant: Convention
-    form: ProgrammeSelectionFromDBForm | ProgrammeSelectionFromZeroForm
+    form: ProgrammeSelectionFromDBForm | CreateConventionMinForm
     lots: QuerySet[Lot] | None = None
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
 
     def __init__(self, request: HttpRequest) -> None:
         self.request = request
 
-    def _get_bailleur_choices(self):
-        return _get_choices_from_object(
-            Bailleur.objects.all().order_by("nom")
-            if is_instructeur(self.request)
-            else self.request.user.bailleurs()
-        )
+    def _get_bailleur_query(self):
+        return self.request.user.bailleurs(full_scope=True)
 
     def _get_administration_choices(self):
         return _get_choices_from_object(
@@ -58,11 +55,13 @@ class ConventionSelectionService:
     def get_from_zero(self):
         self.form = ProgrammeSelectionFromZeroForm(
             administrations=self._get_administration_choices(),
+            bailleur_query=self._get_bailleur_query(),
         )
 
     def get_for_avenant(self):
         self.form = ConventionForAvenantForm(
             administrations=self._get_administration_choices(),
+            bailleur_query=self._get_bailleur_query(),
         )
 
     def post_from_zero(self):
@@ -70,9 +69,10 @@ class ConventionSelectionService:
             self.request.POST,
             self.request.FILES,
             administrations=self._get_administration_choices(),
+            bailleur_query=self._get_bailleur_query(),
         )
         if self.form.is_valid():
-            bailleur = Bailleur.objects.get(id=self.form.cleaned_data["bailleur"])
+            bailleur = self.form.cleaned_data["bailleur"]
             administration = Administration.objects.get(
                 uuid=self.form.cleaned_data["administration"]
             )
@@ -115,9 +115,9 @@ class ConventionSelectionService:
             self.request.POST,
             self.request.FILES,
             administrations=self._get_administration_choices(),
+            bailleur_query=self._get_bailleur_query(),
         )
         if self.form.is_valid():
-            bailleur = Bailleur.objects.get(uuid=self.form.cleaned_data["bailleur"])
             administration = Administration.objects.get(
                 uuid=self.form.cleaned_data["administration"]
             )
@@ -125,7 +125,7 @@ class ConventionSelectionService:
                 programme = Programme.objects.create(
                     nom=self.form.cleaned_data["nom"],
                     code_postal=self.form.cleaned_data["code_postal"],
-                    bailleur=bailleur,
+                    bailleur=self.form.cleaned_data["bailleur"],
                     administration=administration,
                     nature_logement=self.form.cleaned_data["nature_logement"],
                     type_operation=(

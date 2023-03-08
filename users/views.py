@@ -32,7 +32,7 @@ def search_bailleur(request):
             [
                 {
                     "label": b.nom,
-                    "value": b.id,
+                    "value": b.uuid,
                 }
                 for b in request.user.bailleurs().filter(nom__icontains=query)[:20]
             ],

@@ -14,7 +14,7 @@
         name="{{ form_input.html_name }}"
         {% include "common/form/disable_form_input.html" %}>
         {% if form_input.field.instance %}
-            <option value="{{ form_input.field.instance.id }}" selected>{{ form_input.field.instance }}</option>
+            <option value="{{ form_input.field.instance.uuid }}" selected>{{ form_input.field.instance }}</option>
         {% endif %}
     </select>
     {% include "common/utils/comments_field.html" %}
