@@ -7,7 +7,7 @@ from conventions.tests.views.abstract import AbstractEditViewTestCase
 class ConventionProgrammeViewTests(AbstractEditViewTestCase, TestCase):
     fixtures = [
         "auth.json",
-        # "departements.json",
+        "departements.json",
         "avenant_types.json",
         "bailleurs_for_tests.json",
         "instructeurs_for_tests.json",

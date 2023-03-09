@@ -454,7 +454,7 @@ def compute_date_achevement_compile(sender, instance, *args, **kwargs):
                     instance.code_insee_region = departement.code_insee_region
             except (Departement.DoesNotExist, AttributeError):
                 logger.error(
-                    "Le code postal %s n'existe pas depuis le code postal %s",
+                    "Le numero de departement %s n'existe pas depuis le code postal %s",
                     code_departement,
                     instance.code_postal,
                 )
