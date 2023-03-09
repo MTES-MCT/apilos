@@ -10,7 +10,7 @@
                     <div class="fr-col-12 fr-col-md-6" {% if convention.parent.programme.ville %}hidden{% endif %}>
                         {% include "common/form/input_text.html" with form_input=complete_for_avenant_form.ville editable=True %}
                     </div>
-                    <div class="fr-col-12 fr-col-md-4" {% if convention.parent.lot.nb_logements %}{% endif %}>
+                    <div class="fr-col-12 fr-col-md-4" {% if convention.parent.lot.nb_logements %}hidden{% endif %}>
                         {% include "common/form/input_number.html" with form_input=complete_for_avenant_form.nb_logements editable=True %}
                     </div>
                     {% if not convention.parent.nom_fichier_signe %}
@@ -29,13 +29,21 @@
         </div>
     </form>
 {% else %}
-    {% if convention.numero %}
-        <p class="fr-mb-0">L'avenant aura le numéro {{ convention.numero }}</p>
-    {% else %}
-        <div class="fr-col-md-12 block--row-strech">
+    <div class="fr-col-md-12 block--row-strech">
+        {% if convention.numero and convention.numero != conventionNumberForm.convention_numero.value %}
             <div class="block--row-strech-1 fr-mr-6w">
-                <p class="fr-alert__title">Valider l'avenant</p>
-                <p class="fr-mb-0">L'avenant aura le numéro {{conventionNumberForm.convention_numero.value}}.</p>
+                <p class="fr-mb-0">Le bailleur a indiqué qu'il s'agissait de l'avenant numéro <strong>{{ convention.numero }}</strong>.</p>
+                <p>En fonction du nombre d'avenants répertoriés dans APiLos, il devrait porter le numéro {{conventionNumberForm.convention_numero.value}}</p>
+            </div>
+            <div><a href="{% url 'conventions:form_avenants_for_avenant' convention_uuid=convention.parent.uuid %}" class="fr-btn fr-btn--secondary fr-icon-upload-line fr-btn--icon-left">Importer les avenants précédents</a></div>
+        {% else %}
+            <div class="block--row-strech-1 fr-mr-6w">
+                {% if convention.numero %}
+                    <p class="fr-mb-0">Le bailleur a indiqué qu'il s'agissait de l'avenant numéro <strong>{{ convention.numero }}</strong>.</p>
+                    <p>Cette déclaration est cohérente avec l'historique connu dans APiLos.</p>
+                {% else %}
+                    <p class="fr-mb-0">L'avenant aura le numéro {{conventionNumberForm.convention_numero.value}}.</p>
+                {% endif %}
             </div>
             <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
                 {% csrf_token %}
@@ -47,8 +55,8 @@
                     Valider l'avenant
                 </button>
             </form>
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
 {% endif %}
 
 
