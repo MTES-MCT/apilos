@@ -5,11 +5,10 @@ services:
     environment:
       - POSTGRES_USER=apilos
       - POSTGRES_PASSWORD=apilos
+      - PGDATA=./pgdata
     volumes:
       - ./pg-init-scripts:/docker-entrypoint-initdb.d
-      # Use: delegated to get better performances on docker write workloads where the sync with the host is not mandatory
-      - ./pgdata:/var/lib/postgresql/data:delegated
-      - ./pgconf/postgresql.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c shared_buffers=512MB -c max_connections=200 -c work_mem=256MB -c listen_addresses='*' -c fsync=false
     ports:
       - 5433:5432
   redis:

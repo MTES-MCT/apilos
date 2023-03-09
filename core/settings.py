@@ -29,6 +29,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 if TESTING:
     config = Config(RepositoryEnv(BASE_DIR / ".env.test"))
+
+    class DisableMigrations(object):
+        def __contains__(self, item):
+            return True
+
+        def __getitem__(self, item):
+            return None
+
+    MIGRATION_MODULES = DisableMigrations()
 else:
     config = decouple.config
 
