@@ -1,7 +1,7 @@
 import datetime
 
 from django.test import TestCase
-from core.tests import utils_assertions, utils_fixtures
+from core.tests import utils_assertions
 from conventions.models import (
     Convention,
     Pret,
@@ -10,9 +10,19 @@ from conventions.models import (
 
 
 class PretModelsTest(TestCase):
+    fixtures = [
+        "auth.json",
+        # "departements.json",
+        "avenant_types.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
+    ]
+
     @classmethod
     def setUpTestData(cls):
-        utils_fixtures.create_all()
         convention = Convention.objects.get(numero="0001")
         Pret.objects.create(
             convention=convention,

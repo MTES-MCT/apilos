@@ -1,16 +1,22 @@
 import uuid
 
 from django.test import TestCase
-from core.tests import utils_fixtures
 from conventions.models import Convention
 from comments.models import Comment, CommentStatut
 from users.models import User
 
 
 class ConventionModelsTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
+    fixtures = [
+        "auth.json",
+        # "departements.json",
+        "avenant_types.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
+    ]
 
     def test_object_detail(self):
         convention = Convention.objects.get(numero="0001")

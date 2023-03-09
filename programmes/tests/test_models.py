@@ -295,11 +295,16 @@ class ProgrammeModelsTest(TestCase):
 
 
 class LotModelsTest(TestCase):
-    fixtures = ["departements.json"]
-
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
+    ]
 
     def test_mixity_option(self):
         lot = Lot.objects.order_by("uuid").first()

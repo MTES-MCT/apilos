@@ -94,9 +94,6 @@ if SENDINBLUE_API_KEY:
         "SENDINBLUE_API_KEY": SENDINBLUE_API_KEY,
     }
     EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
-# else:
-#     # or anymail.backends.test.EmailBackend ?
-#     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 env_allowed_hosts = []
 try:
@@ -189,8 +186,8 @@ try:
     # dj_database_url is used in scalingo environment to interpret the
     # connection configuration to the DB from a single URL with all path
     # and credentials
-    config("DATABASE_URL")
-    default_settings = dj_database_url.config()
+    DATABASE_URL = config("DATABASE_URL")
+    default_settings = dj_database_url.parse(DATABASE_URL)
 except decouple.UndefinedValueError:
     default_settings = {
         "ENGINE": "django.db.backends.postgresql",

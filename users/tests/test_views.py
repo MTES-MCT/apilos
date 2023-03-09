@@ -1,16 +1,20 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.conf import settings
 
-from core.tests import utils_fixtures
 
-
+@override_settings(CERBERE=None)
 class UserViewTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        # pylint: disable=R0914
-        utils_fixtures.create_all()
-        settings.CERBERE = None
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
+    ]
 
     def test_no_login(self):
         """
@@ -43,9 +47,15 @@ class UserViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
 
         response = self.client.get(reverse("users:home"))
-        self.assertRedirects(response, reverse("conventions:index"), fetch_redirect_response=False)
+        self.assertRedirects(
+            response, reverse("conventions:index"), fetch_redirect_response=False
+        )
         response = self.client.get(reverse("conventions:index"))
-        self.assertRedirects(response, reverse("conventions:search_active"), fetch_redirect_response=False)
+        self.assertRedirects(
+            response,
+            reverse("conventions:search_active"),
+            fetch_redirect_response=False,
+        )
         response = self.client.get(reverse("conventions:search_active"))
 
         self.assertContains(response, "Déconnexion")

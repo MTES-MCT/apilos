@@ -17,8 +17,7 @@ from programmes.models import (
 )
 from bailleurs.models import Bailleur
 from upload.models import UploadedFile
-from users.models import User, Role
-from users.type_models import EmailPreferences, TypeRole
+from users.models import User
 from instructeurs.models import Administration
 
 FILES = [
@@ -51,72 +50,6 @@ def _create_upload_files():
             **file,
         }
     return json.dumps(files_and_text)
-
-
-def create_users_superuser():
-    return (
-        User.objects.create_superuser("nicolas", "nico@apilos.com", "12345"),
-        User.objects.create_superuser("admin", "nico@apilos.com", "67890"),
-    )
-
-
-def create_users_instructeur():
-    user1 = User.objects.create_user("sabine", "sabine@apilos.com", "12345")
-    user1.first_name = "Sabine"
-    user1.last_name = "Marini"
-    user1.preferences_email = EmailPreferences.TOUS
-    user1.save()
-    user2 = User.objects.create_user("roger", "roger@apilos.com", "567890")
-    user2.first_name = "Roger"
-    user2.last_name = "Dupont"
-    user2.preferences_email = EmailPreferences.TOUS
-    user2.save()
-    user3 = User.objects.create_user("fix", "fix@apilos.com", "654321")
-    user3.first_name = "François"
-    user3.last_name = "Xavier"
-    user3.preferences_email = EmailPreferences.TOUS
-    user3.save()
-    return (
-        user1,
-        user2,
-        user3,
-    )
-
-
-def create_users_bailleur():
-    user1 = User.objects.create_user("raph", "raph@apilos.com", "12345")
-    user1.first_name = "Raphaëlle"
-    user1.last_name = "Neyton"
-    user1.preferences_email = EmailPreferences.TOUS
-    user1.save()
-    user2 = User.objects.create_user("sophie", "sophie@apilos.com", "567890")
-    user2.first_name = "Sophie"
-    user2.last_name = "Eaubonne"
-    user2.preferences_email = EmailPreferences.TOUS
-    user2.save()
-    user3 = User.objects.create_user("sylvie", "sylvie@apilos.com", "01234")
-    user3.first_name = "Sylvie"
-    user3.last_name = "Vartan"
-    user3.preferences_email = EmailPreferences.TOUS
-    user3.save()
-    # Users not returned as write-only
-    user4 = User.objects.create_user(
-        "jean.bailleur", "jean.bailleur@apilos.com", "01234"
-    )
-    user4.first_name = "Jean"
-    user4.last_name = "Bailleur"
-    user4.preferences_email = EmailPreferences.AUCUN
-    user4.save()
-    user5 = User.objects.create_user("chantal.bailleur2", "chantal@apilos.com", "01234")
-    user5.first_name = "Chantal"
-    user5.last_name = "Bailleur"
-    user5.preferences_email = EmailPreferences.PARTIEL
-    user5.save()
-    return (
-        user1,
-        user2,
-        user3,
-    )
 
 
 def create_administrations():
@@ -357,96 +290,3 @@ def create_all_for_siap():
     create_logement(lot_plai, "PLAI 2", TypologieLogement.T2)
     create_logement(lot_plai, "PLAI 3", TypologieLogement.T3)
     create_logement(lot_plus, "PLUS 1", TypologieLogement.T1)
-
-
-def create_all():
-
-    # pylint: disable=R0914
-    create_users_superuser()
-    (
-        user_instructeur,
-        user_instructeur_metropole,
-        user_instructeur_paris,
-    ) = create_users_instructeur()
-    (
-        user_bailleur,
-        user_bailleur_hlm,
-        user_bailleur_sem,
-    ) = create_users_bailleur()
-    (
-        administration,
-        administration_metropole,
-        administration_paris,
-        _,
-    ) = create_administrations()
-    (bailleur, bailleur_hlm, bailleur_sem) = create_bailleurs()
-    group_instructeur = create_group("instructeur", rwd=["logement", "convention"])
-    group_bailleur = create_group("bailleur", rw=["logement", "convention"])
-
-    Role.objects.create(
-        typologie=TypeRole.BAILLEUR,
-        bailleur=bailleur,
-        user=user_bailleur,
-        group=group_bailleur,
-    )
-    Role.objects.create(
-        typologie=TypeRole.BAILLEUR,
-        bailleur=bailleur_hlm,
-        user=user_bailleur,
-        group=group_bailleur,
-    )
-    Role.objects.create(
-        typologie=TypeRole.BAILLEUR,
-        bailleur=bailleur_hlm,
-        user=user_bailleur_hlm,
-        group=group_bailleur,
-    )
-    Role.objects.create(
-        typologie=TypeRole.BAILLEUR,
-        bailleur=bailleur_sem,
-        user=user_bailleur_sem,
-        group=group_bailleur,
-    )
-
-    Role.objects.create(
-        typologie=TypeRole.INSTRUCTEUR,
-        administration=administration,
-        user=user_instructeur,
-        group=group_instructeur,
-    )
-    Role.objects.create(
-        typologie=TypeRole.INSTRUCTEUR,
-        administration=administration_metropole,
-        user=user_instructeur,
-        group=group_instructeur,
-    )
-    Role.objects.create(
-        typologie=TypeRole.INSTRUCTEUR,
-        administration=administration_metropole,
-        user=user_instructeur_metropole,
-        group=group_instructeur,
-    )
-    Role.objects.create(
-        typologie=TypeRole.INSTRUCTEUR,
-        administration=administration_paris,
-        user=user_instructeur_paris,
-        group=group_instructeur,
-    )
-
-    programme_75 = create_programme(bailleur, administration_paris, nom="Programme 1")
-    lot_plai = create_lot(programme_75, Financement.PLAI)
-    lot_plus = create_lot(programme_75, Financement.PLUS)
-    create_convention(lot_plus, numero="0001")
-    create_convention(lot_plai, numero="0002")
-
-    programme_13 = create_programme(
-        bailleur,
-        administration_metropole,
-        nom="Programme 1",
-        numero_galion="98765",
-        code_postal="13001",
-    )
-    lot_plai = create_lot(programme_13, Financement.PLAI)
-    lot_plus = create_lot(programme_13, Financement.PLUS)
-    create_convention(lot_plus, numero="0003")
-    create_convention(lot_plai, numero="0004")

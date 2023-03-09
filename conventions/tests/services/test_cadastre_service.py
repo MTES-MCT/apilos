@@ -6,16 +6,21 @@ from conventions.forms import UploadForm
 from conventions.forms import ProgrammeCadastralForm, ReferenceCadastraleFormSet
 from conventions.models import Convention
 from conventions.services import cadastre as service_cadatsre, utils
-from core.tests import utils_fixtures
 from users.models import User
 
 
 class ConventionCadastreServiceTests(TestCase):
     service_class = service_cadatsre.ConventionCadastreService
-
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
+    fixtures = [
+        "auth.json",
+        # "departements.json",
+        "avenant_types.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
+    ]
 
     def setUp(self):
         request = HttpRequest()

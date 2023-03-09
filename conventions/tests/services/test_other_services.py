@@ -1,17 +1,13 @@
-from unittest.mock import patch
 from unittest import mock
 
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
-from django.conf import settings
 
 from conventions.models import Convention, ConventionStatut
 from conventions.services import (
-    recapitulatif as service_recapitilatif,
     utils,
 )
 from core.services import EmailService, EmailTemplateID
-from core.tests import utils_fixtures
 from users.models import GroupProfile
 
 
@@ -41,9 +37,16 @@ class EmailServiceTests(TestCase):
 
 
 class ServicesUtilsTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
+    fixtures = [
+        "auth.json",
+        # "departements.json",
+        "avenant_types.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
+    ]
 
     # set session in request object
     def setUp(self):

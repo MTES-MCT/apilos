@@ -1,7 +1,6 @@
 from django.urls import reverse
 
 from conventions.models import Convention
-from core.tests import utils_fixtures
 
 
 class AbstractCreateViewTestCase:
@@ -14,10 +13,6 @@ class AbstractCreateViewTestCase:
     error_payload: dict
     success_payload: dict
     msg_prefix: str
-
-    @classmethod
-    def setUpTestData(cls):
-        utils_fixtures.create_all()
 
     def setUp(self):
         self.convention_75 = Convention.objects.filter(numero="0001").first()
