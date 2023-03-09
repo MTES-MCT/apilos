@@ -1,7 +1,6 @@
 from django.urls import reverse
 
 from conventions.models import Convention
-from core.tests import utils_fixtures
 
 
 class AbstractCreateViewTestCase:

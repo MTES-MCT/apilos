@@ -11,7 +11,6 @@ from conventions.services import (
     financement as financement_service,
     utils,
 )
-from core.tests import utils_fixtures
 from programmes.models import TypeOperation
 from users.models import User
 
@@ -20,13 +19,13 @@ class ConventionFinancementServiceTests(TestCase):
     service_class = financement_service.ConventionFinancementService
     fixtures = [
         "auth.json",
-        "departements.json",
+        # "departements.json",
         "avenant_types.json",
-        "bailleurs.json",
-        "instructeurs.json",
-        "programmes.json",
-        "conventions.json",
-        "users.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
     ]
 
     def setUp(self):

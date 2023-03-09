@@ -4,7 +4,6 @@ from django.core.exceptions import ValidationError
 from django.core.management import call_command
 from django.test import TestCase
 
-from core.tests import utils_fixtures
 from instructeurs.models import Administration
 from users.models import User
 
@@ -12,13 +11,13 @@ from users.models import User
 class CreateInstructeurCommandTests(TestCase):
     fixtures = [
         "auth.json",
-        "departements.json",
+        # "departements.json",
         "avenant_types.json",
-        "bailleurs.json",
-        "instructeurs.json",
-        "programmes.json",
-        "conventions.json",
-        "users.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
     ]
 
     def call_command(self, *args, **kwargs):

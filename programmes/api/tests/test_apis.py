@@ -1,3 +1,6 @@
+import json
+from operator import itemgetter
+
 from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
@@ -184,9 +187,21 @@ class OperationClosedAPITest(APITestCase):
 
         expected_data = {
             "nom": "Programme 1",
-            "bailleur": fixtures.bailleur,
-            "administration": fixtures.administration,
-            "conventions": [fixtures.convention1, fixtures.convention2],
+            "bailleur": {
+                "nom": "3F",
+                "siren": None,
+                "siret": "12345678901234",
+                "adresse": None,
+                "code_postal": None,
+                "ville": "Marseille",
+                "capital_social": 123000.5,
+                "sous_nature_bailleur": "NONRENSEIGNE",
+            },
+            "administration": {
+                "nom": "CA d'Arles-Crau-Camargue-Montagnette",
+                "code": "12345",
+                "ville_signature": None,
+            },
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
@@ -195,13 +210,139 @@ class OperationClosedAPITest(APITestCase):
             "zone_abc": "B1",
             "type_operation": "NEUF",
             "anru": False,
+            "date_achevement_previsible": "2024-01-02",
+            "date_achat": "2022-01-02",
+            "date_achevement": "2024-04-11",
             "all_conventions_are_signed": False,
             "last_conventions_state": [],
         }
-        for key, value in expected_data.items():
-            self.assertEqual(response.data[key], value)
-        for key in ["date_achevement_previsible", "date_achat", "date_achevement"]:
-            self.assertTrue(response.data[key])
+        expected_conventions = [
+            {
+                "date_fin_conventionnement": None,
+                "financement": "PLUS",
+                "fond_propre": None,
+                "lot": {
+                    "nb_logements": None,
+                    "financement": "PLUS",
+                    "type_habitat": "COLLECTIF",
+                    "logements": [
+                        {
+                            "designation": "PLUS 1",
+                            "typologie": "T1",
+                            "surface_habitable": "50.00",
+                            "surface_annexes": "20.00",
+                            "surface_annexes_retenue": "10.00",
+                            "surface_utile": "60.00",
+                            "loyer_par_metre_carre": "5.50",
+                            "coeficient": "0.9000",
+                            "loyer": "297.00",
+                            "annexes": [],
+                        }
+                    ],
+                    "type_stationnements": [],
+                },
+                "operation_version": {
+                    "nom": "Programme 1",
+                    "code_postal": "75007",
+                    "ville": "Paris",
+                    "adresse": "22 rue segur",
+                    "numero_galion": "20220600005",
+                    "zone_123": "3",
+                    "zone_abc": "B1",
+                    "type_operation": "NEUF",
+                    "anru": False,
+                    "date_achevement_previsible": "2024-01-02",
+                    "date_achat": "2022-01-02",
+                    "date_achevement": "2024-04-11",
+                },
+                "numero": "0001",
+                "statut": "1. Projet",
+            },
+            {
+                "date_fin_conventionnement": None,
+                "financement": "PLAI",
+                "fond_propre": None,
+                "lot": {
+                    "nb_logements": None,
+                    "financement": "PLAI",
+                    "type_habitat": "MIXTE",
+                    "logements": [
+                        {
+                            "designation": "PLAI 1",
+                            "typologie": "T1",
+                            "surface_habitable": "50.00",
+                            "surface_annexes": "20.00",
+                            "surface_annexes_retenue": "10.00",
+                            "surface_utile": "60.00",
+                            "loyer_par_metre_carre": "5.50",
+                            "coeficient": "0.9000",
+                            "loyer": "297.00",
+                            "annexes": [
+                                {
+                                    "typologie": "COUR",
+                                    "surface_hors_surface_retenue": "5.00",
+                                    "loyer_par_metre_carre": "0.10",
+                                    "loyer": "0.50",
+                                },
+                                {
+                                    "typologie": "JARDIN",
+                                    "surface_hors_surface_retenue": "5.00",
+                                    "loyer_par_metre_carre": "0.10",
+                                    "loyer": "0.50",
+                                },
+                            ],
+                        },
+                        {
+                            "designation": "PLAI 2",
+                            "typologie": "T2",
+                            "surface_habitable": "50.00",
+                            "surface_annexes": "20.00",
+                            "surface_annexes_retenue": "10.00",
+                            "surface_utile": "60.00",
+                            "loyer_par_metre_carre": "5.50",
+                            "coeficient": "0.9000",
+                            "loyer": "297.00",
+                            "annexes": [],
+                        },
+                        {
+                            "designation": "PLAI 3",
+                            "typologie": "T3",
+                            "surface_habitable": "50.00",
+                            "surface_annexes": "20.00",
+                            "surface_annexes_retenue": "10.00",
+                            "surface_utile": "60.00",
+                            "loyer_par_metre_carre": "5.50",
+                            "coeficient": "0.9000",
+                            "loyer": "297.00",
+                            "annexes": [],
+                        },
+                    ],
+                    "type_stationnements": [],
+                },
+                "operation_version": {
+                    "nom": "Programme 1",
+                    "code_postal": "75007",
+                    "ville": "Paris",
+                    "adresse": "22 rue segur",
+                    "numero_galion": "20220600005",
+                    "zone_123": "3",
+                    "zone_abc": "B1",
+                    "type_operation": "NEUF",
+                    "anru": False,
+                    "date_achevement_previsible": "2024-01-02",
+                    "date_achat": "2022-01-02",
+                    "date_achevement": "2024-04-11",
+                },
+                "numero": "0002",
+                "statut": "1. Projet",
+            },
+        ]
+        returned_conventions = response.data.pop("conventions")
+        self.assertEqual(response.data, expected_data)
+
+        self.assertEqual(
+            sorted(returned_conventions, key=itemgetter("numero")), expected_conventions
+        )
 
     def test_get_operation_convention_signed(self):
         Convention.objects.filter(numero__in=["0001", "0002"]).update(
@@ -219,10 +360,6 @@ class OperationClosedAPITest(APITestCase):
             "nom": "Programme 1",
             "bailleur": fixtures.bailleur,
             "administration": fixtures.administration,
-            "conventions": [
-                fixtures.convention1signed,
-                fixtures.convention2signed,
-            ],
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
@@ -231,12 +368,145 @@ class OperationClosedAPITest(APITestCase):
             "zone_abc": "B1",
             "type_operation": "NEUF",
             "anru": False,
+            "date_achevement_previsible": "2024-01-02",
+            "date_achat": "2022-01-02",
+            "date_achevement": "2024-04-11",
             "all_conventions_are_signed": True,
-            "last_conventions_state": [
-                fixtures.convention1signed,
-                fixtures.convention2signed,
-            ],
         }
+        expected_convention_list = [
+            {
+                "date_fin_conventionnement": None,
+                "financement": "PLUS",
+                "fond_propre": None,
+                "lot": {
+                    "nb_logements": None,
+                    "financement": "PLUS",
+                    "type_habitat": "COLLECTIF",
+                    "logements": [
+                        {
+                            "designation": "PLUS 1",
+                            "typologie": "T1",
+                            "surface_habitable": "50.00",
+                            "surface_annexes": "20.00",
+                            "surface_annexes_retenue": "10.00",
+                            "surface_utile": "60.00",
+                            "loyer_par_metre_carre": "5.50",
+                            "coeficient": "0.9000",
+                            "loyer": "297.00",
+                            "annexes": [],
+                        }
+                    ],
+                    "type_stationnements": [],
+                },
+                "operation_version": {
+                    "nom": "Programme 1",
+                    "code_postal": "75007",
+                    "ville": "Paris",
+                    "adresse": "22 rue segur",
+                    "numero_galion": "20220600005",
+                    "zone_123": "3",
+                    "zone_abc": "B1",
+                    "type_operation": "NEUF",
+                    "anru": False,
+                    "date_achevement_previsible": "2024-01-02",
+                    "date_achat": "2022-01-02",
+                    "date_achevement": "2024-04-11",
+                },
+                "numero": "0001",
+                "statut": "5. Signée",
+            },
+            {
+                "date_fin_conventionnement": None,
+                "financement": "PLAI",
+                "fond_propre": None,
+                "lot": {
+                    "nb_logements": None,
+                    "financement": "PLAI",
+                    "type_habitat": "MIXTE",
+                    "logements": [
+                        {
+                            "designation": "PLAI 1",
+                            "typologie": "T1",
+                            "surface_habitable": "50.00",
+                            "surface_annexes": "20.00",
+                            "surface_annexes_retenue": "10.00",
+                            "surface_utile": "60.00",
+                            "loyer_par_metre_carre": "5.50",
+                            "coeficient": "0.9000",
+                            "loyer": "297.00",
+                            "annexes": [
+                                {
+                                    "typologie": "COUR",
+                                    "surface_hors_surface_retenue": "5.00",
+                                    "loyer_par_metre_carre": "0.10",
+                                    "loyer": "0.50",
+                                },
+                                {
+                                    "typologie": "JARDIN",
+                                    "surface_hors_surface_retenue": "5.00",
+                                    "loyer_par_metre_carre": "0.10",
+                                    "loyer": "0.50",
+                                },
+                            ],
+                        },
+                        {
+                            "designation": "PLAI 2",
+                            "typologie": "T2",
+                            "surface_habitable": "50.00",
+                            "surface_annexes": "20.00",
+                            "surface_annexes_retenue": "10.00",
+                            "surface_utile": "60.00",
+                            "loyer_par_metre_carre": "5.50",
+                            "coeficient": "0.9000",
+                            "loyer": "297.00",
+                            "annexes": [],
+                        },
+                        {
+                            "designation": "PLAI 3",
+                            "typologie": "T3",
+                            "surface_habitable": "50.00",
+                            "surface_annexes": "20.00",
+                            "surface_annexes_retenue": "10.00",
+                            "surface_utile": "60.00",
+                            "loyer_par_metre_carre": "5.50",
+                            "coeficient": "0.9000",
+                            "loyer": "297.00",
+                            "annexes": [],
+                        },
+                    ],
+                    "type_stationnements": [],
+                },
+                "operation_version": {
+                    "nom": "Programme 1",
+                    "code_postal": "75007",
+                    "ville": "Paris",
+                    "adresse": "22 rue segur",
+                    "numero_galion": "20220600005",
+                    "zone_123": "3",
+                    "zone_abc": "B1",
+                    "type_operation": "NEUF",
+                    "anru": False,
+                    "date_achevement_previsible": "2024-01-02",
+                    "date_achat": "2022-01-02",
+                    "date_achevement": "2024-04-11",
+                },
+                "numero": "0002",
+                "statut": "5. Signée",
+            },
+        ]
+        last_conventions_states = response.data.pop("last_conventions_state")
+        conventions = response.data.pop("conventions")
+        self.assertEqual(response.data, expected_data)
+
+        self.assertEqual(
+            sorted(last_conventions_states, key=itemgetter("numero")),
+            expected_convention_list,
+        )
+        self.assertEqual(
+            sorted(conventions, key=itemgetter("numero")),
+            expected_convention_list,
+        )
+
         for key, value in expected_data.items():
             self.assertEqual(response.data[key], value)
         for key in ["date_achevement_previsible", "date_achat", "date_achevement"]:
@@ -260,12 +530,132 @@ class OperationClosedAPITest(APITestCase):
 
         self.assertEqual(len(response.data["conventions"]), 3)
         self.assertFalse(response.data["all_conventions_are_signed"])
+
+        expected_last_conventions_state = [
+            {
+                "date_fin_conventionnement": None,
+                "financement": "PLUS",
+                "fond_propre": None,
+                "lot": {
+                    "nb_logements": None,
+                    "financement": "PLUS",
+                    "type_habitat": "COLLECTIF",
+                    "logements": [
+                        {
+                            "designation": "PLUS 1",
+                            "typologie": "T1",
+                            "surface_habitable": "50.00",
+                            "surface_annexes": "20.00",
+                            "surface_annexes_retenue": "10.00",
+                            "surface_utile": "60.00",
+                            "loyer_par_metre_carre": "5.50",
+                            "coeficient": "0.9000",
+                            "loyer": "297.00",
+                            "annexes": [],
+                        }
+                    ],
+                    "type_stationnements": [],
+                },
+                "operation_version": {
+                    "nom": "Programme 1",
+                    "code_postal": "75007",
+                    "ville": "Paris",
+                    "adresse": "22 rue segur",
+                    "numero_galion": "20220600005",
+                    "zone_123": "3",
+                    "zone_abc": "B1",
+                    "type_operation": "NEUF",
+                    "anru": False,
+                    "date_achevement_previsible": "2024-01-02",
+                    "date_achat": "2022-01-02",
+                    "date_achevement": "2024-04-11",
+                },
+                "numero": "0001",
+                "statut": "5. Signée",
+            },
+            {
+                "date_fin_conventionnement": None,
+                "financement": "PLAI",
+                "fond_propre": None,
+                "lot": {
+                    "nb_logements": None,
+                    "financement": "PLAI",
+                    "type_habitat": "MIXTE",
+                    "logements": [
+                        {
+                            "designation": "PLAI 1",
+                            "typologie": "T1",
+                            "surface_habitable": "50.00",
+                            "surface_annexes": "20.00",
+                            "surface_annexes_retenue": "10.00",
+                            "surface_utile": "60.00",
+                            "loyer_par_metre_carre": "5.50",
+                            "coeficient": "0.9000",
+                            "loyer": "297.00",
+                            "annexes": [
+                                {
+                                    "typologie": "COUR",
+                                    "surface_hors_surface_retenue": "5.00",
+                                    "loyer_par_metre_carre": "0.10",
+                                    "loyer": "0.50",
+                                },
+                                {
+                                    "typologie": "JARDIN",
+                                    "surface_hors_surface_retenue": "5.00",
+                                    "loyer_par_metre_carre": "0.10",
+                                    "loyer": "0.50",
+                                },
+                            ],
+                        },
+                        {
+                            "designation": "PLAI 2",
+                            "typologie": "T2",
+                            "surface_habitable": "50.00",
+                            "surface_annexes": "20.00",
+                            "surface_annexes_retenue": "10.00",
+                            "surface_utile": "60.00",
+                            "loyer_par_metre_carre": "5.50",
+                            "coeficient": "0.9000",
+                            "loyer": "297.00",
+                            "annexes": [],
+                        },
+                        {
+                            "designation": "PLAI 3",
+                            "typologie": "T3",
+                            "surface_habitable": "50.00",
+                            "surface_annexes": "20.00",
+                            "surface_annexes_retenue": "10.00",
+                            "surface_utile": "60.00",
+                            "loyer_par_metre_carre": "5.50",
+                            "coeficient": "0.9000",
+                            "loyer": "297.00",
+                            "annexes": [],
+                        },
+                    ],
+                    "type_stationnements": [],
+                },
+                "operation_version": {
+                    "nom": "Programme 1",
+                    "code_postal": "75007",
+                    "ville": "Paris",
+                    "adresse": "22 rue segur",
+                    "numero_galion": "20220600005",
+                    "zone_123": "3",
+                    "zone_abc": "B1",
+                    "type_operation": "NEUF",
+                    "anru": False,
+                    "date_achevement_previsible": "2024-01-02",
+                    "date_achat": "2022-01-02",
+                    "date_achevement": "2024-04-11",
+                },
+                "numero": "0002",
+                "statut": "5. Signée",
+            },
+        ]
+
         self.assertEqual(
-            response.data["last_conventions_state"],
-            [
-                fixtures.convention1signed,
-                fixtures.convention2signed,
-            ],
+            sorted(response.data["last_conventions_state"], key=itemgetter("numero")),
+            expected_last_conventions_state,
         )
 
         avenant1.lot.nb_logements = 10
@@ -279,6 +669,7 @@ class OperationClosedAPITest(APITestCase):
         self.assertEqual(len(response.data["conventions"]), 3)
         self.assertTrue(response.data["all_conventions_are_signed"])
         self.assertEqual(len(response.data["last_conventions_state"]), 2)
+        # FILTER on numero = None
         self.assertEqual(
             response.data["last_conventions_state"][0]["lot"]["nb_logements"],
             10,

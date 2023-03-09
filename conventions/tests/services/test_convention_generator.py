@@ -17,7 +17,6 @@ from conventions.services.convention_generator import (
     to_fr_short_date_or_default,
     typologie_label,
 )
-from core.tests import utils_fixtures
 from programmes.models import ActiveNatureLogement, TypologieLogement
 from users.models import User
 
@@ -33,13 +32,13 @@ class ConventionUtilGeneratorTest(unittest.TestCase):
 class ConventionServiceGeneratorTest(TestCase):
     fixtures = [
         "auth.json",
-        "departements.json",
+        # "departements.json",
         "avenant_types.json",
-        "bailleurs.json",
-        "instructeurs.json",
-        "programmes.json",
-        "conventions.json",
-        "users.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
     ]
 
     def setUp(self):

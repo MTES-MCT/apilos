@@ -3,7 +3,6 @@ import mock
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 from bailleurs.models import SousNatureBailleur
-from core.tests import utils_fixtures
 from conventions.views import ConventionFormSteps
 from conventions.models import (
     Convention,
@@ -18,13 +17,13 @@ from users.models import GroupProfile, User
 class CustomFiltersTest(TestCase):
     fixtures = [
         "auth.json",
-        "departements.json",
+        # "departements.json",
         "avenant_types.json",
-        "bailleurs.json",
-        "instructeurs.json",
-        "programmes.json",
-        "conventions.json",
-        "users.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
     ]
 
     def setUp(self):

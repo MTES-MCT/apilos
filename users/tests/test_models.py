@@ -2,8 +2,6 @@ from django.db.models.functions import Substr
 from django.test import TestCase
 from bailleurs.models import Bailleur
 
-from core.tests import utils_fixtures
-
 from apilos_settings.models import Departement
 from instructeurs.models import Administration
 from conventions.models import Convention, ConventionStatut
@@ -16,11 +14,11 @@ class AdministrationsModelsTest(TestCase):
         "auth.json",
         "departements.json",
         "avenant_types.json",
-        "bailleurs.json",
-        "instructeurs.json",
-        "programmes.json",
-        "conventions.json",
-        "users.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
     ]
 
     # Test model User

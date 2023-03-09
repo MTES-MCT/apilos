@@ -1,25 +1,20 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.conf import settings
 
-from core.tests import utils_fixtures
 
-
+@override_settings(CERBERE=None)
 class UserViewTests(TestCase):
     fixtures = [
         "auth.json",
         "departements.json",
         "avenant_types.json",
-        "bailleurs.json",
-        "instructeurs.json",
-        "programmes.json",
-        "conventions.json",
-        "users.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
     ]
-
-    @classmethod
-    def setUpTestData(cls):
-        settings.CERBERE = None
 
     def test_no_login(self):
         """

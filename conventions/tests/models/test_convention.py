@@ -1,15 +1,10 @@
-import datetime
 from unittest import mock
 
 from django.test import TestCase
-from core.services import EmailService, EmailTemplateID
-from core.tests import utils_assertions, utils_fixtures
 from conventions.models import (
     Convention,
     ConventionHistory,
     ConventionStatut,
-    Pret,
-    Preteur,
 )
 from programmes.models import Financement
 from users.models import User
@@ -19,13 +14,13 @@ from users.type_models import EmailPreferences, TypeRole
 class ConventionModelsTest(TestCase):
     fixtures = [
         "auth.json",
-        "departements.json",
+        # "departements.json",
         "avenant_types.json",
-        "bailleurs.json",
-        "instructeurs.json",
-        "programmes.json",
-        "conventions.json",
-        "users.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
     ]
 
     def test_object_str(self):
@@ -221,13 +216,13 @@ class ConventionModelsTest(TestCase):
 class ConventionHistoryModelsTest(TestCase):
     fixtures = [
         "auth.json",
-        "departements.json",
+        # "departements.json",
         "avenant_types.json",
-        "bailleurs.json",
-        "instructeurs.json",
-        "programmes.json",
-        "conventions.json",
-        "users.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
     ]
 
     def test_email_survey_for_bailleur(self):
