@@ -66,7 +66,7 @@ def get_env_variable(name, cast=str, default=""):
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 SECRET_KEY = get_env_variable("SECRET_KEY")
-DEBUG = get_env_variable("DEBUG", cast=bool)
+DEBUG = False if TESTING else get_env_variable("DEBUG", cast=bool)
 ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
 
 LOGLEVEL = get_env_variable("LOGLEVEL", default="error").upper()
