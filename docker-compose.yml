@@ -6,9 +6,9 @@ services:
       - POSTGRES_USER=apilos
       - POSTGRES_PASSWORD=apilos
     volumes:
-      - ./pg-init-scripts:/docker-entrypoint-initdb.d
-      - ./pgdata:/var/lib/postgresql/data:delegated
-    command: postgres -c shared_buffers=512MB -c max_connections=200 -c work_mem=256MB -c listen_addresses='*' -c fsync=false
+      - ./.docker/postgres/data:/var/lib/postgresql/data
+      - ./.docker/postgres/scripts/:/docker-entrypoint-initdb.d
+      - ./.docker/postgres/conf/postgresql.conf:/etc/postgresql/postgresql.conf
     ports:
       - 5433:5432
   redis:
@@ -18,8 +18,8 @@ services:
       - 6379
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
-      - ./redis-data:/data:delegated
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - ./.docker/redis/data:/data:delegated
+      - ./.docker/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
   apilos: &apilos
     build:
       context: .
