@@ -2,6 +2,7 @@ from django.http import HttpRequest
 from django.db import transaction
 from django.db.models.query import QuerySet
 from django.db.models import Count
+from django.conf import settings
 
 from conventions.models import (
     ConventionStatut,
@@ -12,7 +13,6 @@ from conventions.models import Convention
 from conventions.services import utils
 from conventions.services.file import ConventionFileService
 from instructeurs.models import Administration
-from bailleurs.models import Bailleur
 from programmes.models import (
     Financement,
     Programme,
@@ -43,7 +43,9 @@ class ConventionSelectionService:
         self.request = request
 
     def _get_bailleur_query(self):
-        return self.request.user.bailleurs(full_scope=True)
+        queryset = self.request.user.bailleurs(full_scope=True)
+        queryset.query.set_limits(0, settings.APILOS_MAX_DROPDOWN_COUNT)
+        return queryset
 
     def _get_administration_choices(self):
         return _get_choices_from_object(

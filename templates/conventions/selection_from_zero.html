@@ -27,7 +27,7 @@
                         {% csrf_token %}
                         <div class="fr-col-12">
                             <div class="fr-mb-3w">
-                                {% include "common/form/input_search_select.html" with form_input=form.bailleur %}
+                                {% include "common/form/input_search_select.html" with form_input=form.bailleur queryset=form.bailleur.field.queryset field=form.bailleur.field.field %}
                             </div>
 
                             {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}

@@ -447,6 +447,9 @@ SPECTACULAR_SETTINGS = {
 }
 
 APILOS_PAGINATION_PER_PAGE = 20
+APILOS_MAX_DROPDOWN_COUNT = get_env_variable(
+    "APILOS_MAX_DROPDOWN_COUNT", cast=int, default=20
+)
 
 # to do : deprecate drf_yasg
 SWAGGER_SETTINGS = {

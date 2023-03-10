@@ -25,7 +25,11 @@ class ModelField(forms.ModelChoiceField):
         super().__init__(queryset=queryset, *args, **kwargs)
 
     def _find_instance(self, value):
-        self.instance = self.queryset.get(**{self.field: value})
+        # Recreating root query to avoid "TypeError: Cannot filter a query once a slice has been taken" due to potential
+        # slice already attached to
+        self.instance = self.queryset.model.objects.get(
+            **{self.field: value, "id__in": self.queryset}
+        )
         return self.instance
 
     def clean(self, value):

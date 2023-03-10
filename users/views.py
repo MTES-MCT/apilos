@@ -5,8 +5,6 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST, require_GET
 
-from bailleurs.models import Bailleur
-
 
 def home(request):
     """
@@ -34,7 +32,9 @@ def search_bailleur(request):
                     "label": b.nom,
                     "value": b.uuid,
                 }
-                for b in request.user.bailleurs().filter(nom__icontains=query)[:20]
+                for b in request.user.bailleurs(full_scope=True).filter(
+                    nom__icontains=query
+                )[: settings.APILOS_MAX_DROPDOWN_COUNT]
             ],
             safe=False,
         )
