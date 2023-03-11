@@ -85,3 +85,10 @@ else:
     urlpatterns = urlpatterns + [
         path("accounts/", include("django.contrib.auth.urls")),
     ]
+
+if "django_browser_reload" in settings.INSTALLED_APPS:
+    urlpatterns.extend(
+        [
+            path("__reload__/", include("django_browser_reload.urls")),
+        ]
+    )

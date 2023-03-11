@@ -142,6 +142,15 @@ INSTALLED_APPS = [
     "django_celery_results",
 ]
 
+if ENVIRONMENT == "development":
+    INSTALLED_APPS.extend(
+        [
+            "django_extensions",
+            "django_browser_reload",
+        ]
+    )
+    SHELL_PLUS_PRINT_SQL = True
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -159,6 +168,13 @@ if not TESTING:
     MIDDLEWARE = MIDDLEWARE + [
         "whitenoise.middleware.WhiteNoiseMiddleware",
     ]
+
+if "django_browser_reload" in INSTALLED_APPS:
+    MIDDLEWARE.extend(
+        [
+            "django_browser_reload.middleware.BrowserReloadMiddleware",
+        ]
+    )
 
 ROOT_URLCONF = "core.urls"
 

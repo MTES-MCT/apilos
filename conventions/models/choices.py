@@ -44,6 +44,7 @@ class ConventionStatut(TextChoices):
     """
 
     PROJET = "1. Projet", "Projet"
+
     INSTRUCTION = (
         "2. Instruction requise",
         "En instruction",
