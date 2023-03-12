@@ -1,16 +1,8 @@
-import sys
-from datetime import date
-
 from django.core.management import BaseCommand
-from django.db import connections
-from django.db import transaction
-
-from tqdm import tqdm
 
 from conventions.models import Convention, PieceJointeType
 from conventions.services.file import ConventionFileService
 from ecoloweb.models import EcoloReference
-from ecoloweb.services import ConventionImporter
 
 
 class Command(BaseCommand):
