@@ -7,4 +7,6 @@ mock
 pre-commit
 pylint
 beautifulsoup4
-
+django-extensions
+django-browser-reload
+ptpython
