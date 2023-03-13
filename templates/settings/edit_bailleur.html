@@ -13,6 +13,7 @@
                 </div>
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
                     <h3>Modification du bailleur « {{ form.nom.value }} »</h3>
+                    {% include "common/messages.html" %}
                     <div role="warning" class="fr-alert fr-alert--warning fr-mb-3w">
                         <p>Les modifications que vous apportez à votre bailleur seront appliquées à toutes les conventions qui ne sont pas encore validées</p>
                     </div>
@@ -25,12 +26,14 @@
 
                                 {% include "common/form/input_text.html" with form_input=form.nom object_field="bailleur__nom__"|add:form.uuid.value %}
 
-                                {% if request.user.is_superuser or request.user.administrateur_de_compte %}
-                                    {% if form.bailleur.field.choices|length > 0 and bailleur.bailleurs.count == 0 %}
-                                        {% include "common/form/input_select.html" with form_input=form.bailleur with_empty_option=True %}
+                                {% if not CERBERE_AUTH %}
+                                    {% if request.user.is_superuser or request.user.administrateur_de_compte %}
+                                        {% if form.bailleur.field.choices|length > 0 and bailleur.bailleurs.count == 0 %}
+                                            {% include "common/form/input_select.html" with form_input=form.bailleur with_empty_option=True %}
+                                        {% endif %}
+                                    {% else %}
+                                        {% include "common/form/input_select.html" with form_input=form.bailleur editable=False %}
                                     {% endif %}
-                                {% else %}
-                                    {% include "common/form/input_select.html" with form_input=form.bailleur editable=False %}
                                 {% endif %}
                                 {% if form.bailleur.value %}
                                     <div class="fr-mb-3w">
@@ -42,10 +45,13 @@
 
                                 <div class="fr-mb-2w">
                                     <div class="fr-grid-row fr-grid-row--gutters">
-                                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
                                             {% include "common/form/input_text.html" with form_input=form.siret object_field="bailleur__siret__"|add:form.uuid.value %}
                                         </div>
-                                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                                            {% include "common/form/input_text.html" with form_input=form.siren editable=false %}
+                                        </div>
+                                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-4 fr-pl-md-1w fr-mb-2w">
                                             {% include "common/form/input_number.html" with step="0.01" form_input=form.capital_social object_field="bailleur__capital_social__"|add:form.uuid.value %}
                                         </div>
                                     </div>
@@ -89,13 +95,13 @@
                             Enregistrer
                         </button>
                     </form>
-                    {% if bailleur.bailleurs.count > 0 %}
-                        {% include 'settings/bailleur_list_table.html' with count=bailleur.bailleurs.count total_items=bailleur.bailleurs.count items=bailleur.bailleurs.all%}
+                    {% if not CERBERE_AUTH %}
+                        {% if bailleur.bailleurs.count > 0 %}
+                            {% include 'settings/bailleur_list_table.html' with count=bailleur.bailleurs.count total_items=bailleur.bailleurs.count items=bailleur.bailleurs.all%}
+                        {% endif %}
+                        <h3 class="fr-mt-3w">Utilisateurs du bailleur « {{ form.nom.value }} »</h3>
+                        {% include 'settings/user_list.html' with users=user_list.paginated_users total_users=user_list.total_users read_only=True %}
                     {% endif %}
-                    <h3 class="fr-mt-3w">Utilisateurs du bailleur « {{ form.nom.value }} »</h3>
-
-                    {% include 'settings/user_list.html' with users=user_list.paginated_users total_users=user_list.total_users read_only=True %}
-
                 </div>
             </div>
         </div>

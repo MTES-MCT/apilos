@@ -25,6 +25,7 @@ class ConventionBailleurForm(forms.Form):
     nom = forms.CharField(
         required=True,
         label="Nom du bailleur",
+        help_text="Tel qu'il sera affiché dans la convention",
         error_messages={
             "required": "Le nom du bailleur est obligatoire",
             "max_length": "Le nom du bailleur ne doit pas excéder 255 caractères",
@@ -39,6 +40,10 @@ class ConventionBailleurForm(forms.Form):
             "max_length": "Le SIRET doit comporter 14 caractères",
             "min_length": "Le SIRET doit comporter 14 caractères",
         },
+    )
+    siren = forms.CharField(
+        label="SIREN",
+        required=False,
     )
 
     def clean_siret(self):

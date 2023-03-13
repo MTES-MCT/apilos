@@ -8,7 +8,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import Group
-
+from django.contrib import messages
 
 from apilos_settings.forms import BailleurListingUploadForm
 from conventions.forms import BailleurForm
@@ -18,7 +18,13 @@ from conventions.services.utils import ReturnStatus
 from core.services import EmailService, EmailTemplateID
 from instructeurs.forms import AdministrationForm
 from instructeurs.models import Administration
-from users.forms import AddAdministrationForm, AddBailleurForm, AddUserForm, UserForm
+from users.forms import (
+    AddAdministrationForm,
+    AddBailleurForm,
+    AddUserForm,
+    UserForm,
+    UserNotificationForm,
+)
 from users.models import User, Role, TypeRole
 from users.forms import UserBailleurFormSet
 from users.services import UserService
@@ -28,59 +34,79 @@ def user_profile(request):
     # display user form
     success = False
     if request.method == "POST":
-        posted_request = request.POST.dict()
-        posted_request["username"] = request.user.username
-        # Erase admnistrateur de compte if current user is not admin
-        # Because a non-administrator can't give this status himself
-        userform = UserForm(
-            {
-                **request.POST.dict(),
-                "username": request.user.username,
-                "administrateur_de_compte": (
-                    request.POST.get("administrateur_de_compte", False)
-                    if request.user.is_administrator()
-                    else request.user.administrateur_de_compte
-                ),
-                "is_superuser": (
-                    request.POST.get("is_superuser", False)
-                    if request.user.is_superuser
-                    else request.user.is_superuser
-                ),
-                "filtre_departements": (
-                    [int(num) for num in request.POST["filtre_departements"].split(",")]
-                    if "filtre_departements" in request.POST
-                    and request.POST["filtre_departements"]
-                    else []
-                ),
-            }
-        )
-        if userform.is_valid():
-            request.user.email = userform.cleaned_data["email"]
-            request.user.first_name = userform.cleaned_data["first_name"]
-            request.user.last_name = userform.cleaned_data["last_name"]
-            request.user.telephone = userform.cleaned_data["telephone"]
-            if userform.cleaned_data["preferences_email"] is not None:
-                request.user.preferences_email = userform.cleaned_data[
-                    "preferences_email"
-                ]
-            request.user.administrateur_de_compte = userform.cleaned_data[
-                "administrateur_de_compte"
-            ]
-            request.user.is_superuser = userform.cleaned_data["is_superuser"]
-            request.user.save()
-            if userform.cleaned_data["filtre_departements"] is not None:
-                request.user.filtre_departements.clear()
-                request.user.filtre_departements.add(
-                    *userform.cleaned_data["filtre_departements"]
+        if settings.CERBERE_AUTH:
+            userform = UserNotificationForm(request.POST)
+            if userform.is_valid():
+                if userform.cleaned_data["preferences_email"] is not None:
+                    request.user.preferences_email = userform.cleaned_data[
+                        "preferences_email"
+                    ]
+                request.user.save()
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    "Votre profil a été enregistré avec succès",
                 )
-            success = True
+        else:
+            posted_request = request.POST.dict()
+            posted_request["username"] = request.user.username
+            # Erase admnistrateur de compte if current user is not admin
+            # Because a non-administrator can't give this status himself
+            userform = UserForm(
+                {
+                    **request.POST.dict(),
+                    "username": request.user.username,
+                    "administrateur_de_compte": (
+                        request.POST.get("administrateur_de_compte", False)
+                        if request.user.is_administrator()
+                        else request.user.administrateur_de_compte
+                    ),
+                    "is_superuser": (
+                        request.POST.get("is_superuser", False)
+                        if request.user.is_superuser
+                        else request.user.is_superuser
+                    ),
+                    "filtre_departements": (
+                        [
+                            int(num)
+                            for num in request.POST["filtre_departements"].split(",")
+                        ]
+                        if "filtre_departements" in request.POST
+                        and request.POST["filtre_departements"]
+                        else []
+                    ),
+                }
+            )
+            if userform.is_valid():
+                request.user.email = userform.cleaned_data["email"]
+                request.user.first_name = userform.cleaned_data["first_name"]
+                request.user.last_name = userform.cleaned_data["last_name"]
+                request.user.telephone = userform.cleaned_data["telephone"]
+                if userform.cleaned_data["preferences_email"] is not None:
+                    request.user.preferences_email = userform.cleaned_data[
+                        "preferences_email"
+                    ]
+                request.user.administrateur_de_compte = userform.cleaned_data[
+                    "administrateur_de_compte"
+                ]
+                request.user.is_superuser = userform.cleaned_data["is_superuser"]
+                request.user.save()
+                if userform.cleaned_data["filtre_departements"] is not None:
+                    request.user.filtre_departements.clear()
+                    request.user.filtre_departements.add(
+                        *userform.cleaned_data["filtre_departements"]
+                    )
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    "Votre profil a été enregistré avec succès",
+                )
     else:
         userform = UserForm(initial=model_to_dict(request.user))
 
     return {
         "form": userform,
         "editable": True,
-        "success": success,
     }
 
 
@@ -124,6 +150,7 @@ def edit_administration(request, administration_uuid):
             {
                 **request.POST.dict(),
                 "uuid": administration_uuid,
+                "nom": request.POST.get("nom", administration.nom),
                 "code": (
                     request.POST.get("code", False)
                     if request.user.is_superuser
@@ -146,6 +173,11 @@ def edit_administration(request, administration_uuid):
             ]
             administration.prefix_convention = form.cleaned_data["prefix_convention"]
             administration.save()
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                "L'administration a été enregistrée avec succès",
+            )
             success = True
     else:
         form = AdministrationForm(initial=model_to_dict(administration))
@@ -174,6 +206,7 @@ def edit_bailleur(request, bailleur_uuid):
             {
                 **request.POST.dict(),
                 "uuid": bailleur_uuid,
+                "siren": bailleur.siren,
                 "sous_nature_bailleur": (
                     request.POST.get("sous_nature_bailleur", False)
                     if request.user.is_superuser
@@ -213,7 +246,11 @@ def edit_bailleur(request, bailleur_uuid):
                 "signataire_bloc_signature"
             ]
             bailleur.save()
-            success = True
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                "L'entité bailleur a été enregistrée avec succès",
+            )
     else:
         form = BailleurForm(
             initial={
@@ -224,6 +261,7 @@ def edit_bailleur(request, bailleur_uuid):
                         "sous_nature_bailleur",
                         "nom",
                         "siret",
+                        "siren",
                         "capital_social",
                         "adresse",
                         "code_postal",
