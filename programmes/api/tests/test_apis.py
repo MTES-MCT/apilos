@@ -23,7 +23,7 @@ operation_response = {
         "siret": "782855696",
         "adresse": "",
         "code_postal": "",
-        "ville": "13004 MARSEILLE 4",
+        "ville": "MARSEILLE 4",
         "capital_social": None,
         "sous_nature_bailleur": "NONRENSEIGNE",
     },

@@ -20,6 +20,7 @@ class BailleurModelsTest(TestCase):
         bailleur = Bailleur.objects.order_by("uuid").first()
         for k, _ in SousNatureBailleur.choices:
             bailleur.sous_nature_bailleur = k
+            bailleur.save()
             if k in [
                 SousNatureBailleur.OFFICE_PUBLIC_HLM,
                 SousNatureBailleur.SA_HLM_ESH,

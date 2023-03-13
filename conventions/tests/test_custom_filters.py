@@ -675,9 +675,9 @@ class CustomFiltersTest(TestCase):
             SousNatureBailleur.COOPERATIVE_HLM_SCIC,
             SousNatureBailleur.SEM_EPL,
         ]:
-            self.convention.programme.bailleur.sous_nature_bailleur = (
-                sous_nature_bailleur
-            )
+            bailleur = self.convention.programme.bailleur
+            bailleur.sous_nature_bailleur = sous_nature_bailleur
+            bailleur.save()
             for type1andtype2 in [
                 ConventionType1and2.TYPE1,
                 ConventionType1and2.TYPE2,
@@ -707,9 +707,9 @@ class CustomFiltersTest(TestCase):
             SousNatureBailleur.SACI_CAP,
             SousNatureBailleur.UES,
         ]:
-            self.convention.programme.bailleur.sous_nature_bailleur = (
-                sous_nature_bailleur
-            )
+            bailleur = self.convention.programme.bailleur
+            bailleur.sous_nature_bailleur = sous_nature_bailleur
+            bailleur.save()
 
             for nature_logement, _ in ActiveNatureLogement.choices:
                 self.convention.programme.nature_logement = nature_logement
@@ -757,9 +757,9 @@ class CustomFiltersTest(TestCase):
             SousNatureBailleur.COOPERATIVE_HLM_SCIC,
             SousNatureBailleur.SEM_EPL,
         ]:
-            self.convention.programme.bailleur.sous_nature_bailleur = (
-                sous_nature_bailleur
-            )
+            bailleur = self.convention.programme.bailleur
+            bailleur.sous_nature_bailleur = sous_nature_bailleur
+            bailleur.save()
             for type1andtype2 in [
                 ConventionType1and2.TYPE1,
                 ConventionType1and2.TYPE2,
@@ -793,9 +793,9 @@ class CustomFiltersTest(TestCase):
             SousNatureBailleur.SACI_CAP,
             SousNatureBailleur.UES,
         ]:
-            self.convention.programme.bailleur.sous_nature_bailleur = (
-                sous_nature_bailleur
-            )
+            bailleur = self.convention.programme.bailleur
+            bailleur.sous_nature_bailleur = sous_nature_bailleur
+            bailleur.save()
 
             for nature_logement, _ in ActiveNatureLogement.choices:
                 self.convention.programme.nature_logement = nature_logement

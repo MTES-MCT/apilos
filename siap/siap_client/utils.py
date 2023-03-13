@@ -17,7 +17,14 @@ from conventions.models import Convention
 
 def get_or_create_conventions(operation: dict, user: User):
     try:
-        bailleur = get_or_create_bailleur(operation["donneesMo"])
+        # Waiting fix on SIAP
+        # https://airtable.com/appqEzValO6eQoHbM/tblNIOUJttSKoH866/viwarZ7MJFl9MSfsi/recuXwXkRXzvssine?blocks=hide
+        mo_data = (
+            operation["entiteMorale"]
+            if "entiteMorale" in operation
+            else operation["donneesMo"]
+        )
+        bailleur = get_or_create_bailleur(mo_data)
     except (KeyError, TypeError) as ke:
         raise KeyError(
             f"Operation not well formatted, related to `donneesMo` : {operation}"
@@ -59,7 +66,7 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
     if "ville" in bailleur_from_siap:
         ville = bailleur_from_siap["ville"]
     elif "adresseLigne6" in bailleur_from_siap:
-        ville = bailleur_from_siap["adresseLigne6"]
+        ville = bailleur_from_siap["adresseLigne6"].lstrip("1234567890 ")
 
     if "adresseLigne" in bailleur_from_siap:
         adresse = bailleur_from_siap["adresseLigne"]
@@ -70,7 +77,7 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
         else bailleur_from_siap["siren"]
     )
 
-    (bailleur, _) = Bailleur.objects.get_or_create(
+    (bailleur, is_created) = Bailleur.objects.get_or_create(
         siren=bailleur_from_siap["siren"],
         defaults={
             "siret": siret,
@@ -81,6 +88,14 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
             "nature_bailleur": _get_nature_bailleur(bailleur_from_siap),
         },
     )
+    # Workaround waiting fix on SIAP Side :
+    # https://airtable.com/appqEzValO6eQoHbM/tblNIOUJttSKoH866/viwarZ7MJFl9MSfsi/recuXwXkRXzvssine?blocks=hide
+    if not is_created and bailleur.nature_bailleur != _get_nature_bailleur(
+        bailleur_from_siap
+    ):
+        bailleur.nature_bailleur = _get_nature_bailleur(bailleur_from_siap)
+        bailleur.save()
+
     return bailleur
 
 
