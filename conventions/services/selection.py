@@ -42,10 +42,12 @@ class ConventionSelectionService:
     def __init__(self, request: HttpRequest) -> None:
         self.request = request
 
-    def _get_bailleur_query(self):
+    def _get_bailleur_query(self, uuid: str | None = None):
         queryset = self.request.user.bailleurs(full_scope=True)
-        queryset.query.set_limits(0, settings.APILOS_MAX_DROPDOWN_COUNT)
-        return queryset
+        if uuid:
+            return queryset.all()
+
+        return queryset[0 : settings.APILOS_MAX_DROPDOWN_COUNT]
 
     def _get_administration_choices(self):
         return _get_choices_from_object(
@@ -67,11 +69,12 @@ class ConventionSelectionService:
         )
 
     def post_from_zero(self):
+        bailleur_uuid = self.request.POST.get("bailleur")
         self.form = ProgrammeSelectionFromZeroForm(
             self.request.POST,
             self.request.FILES,
             administrations=self._get_administration_choices(),
-            bailleur_query=self._get_bailleur_query(),
+            bailleur_query=self._get_bailleur_query(bailleur_uuid),
         )
         if self.form.is_valid():
             bailleur = self.form.cleaned_data["bailleur"]
@@ -113,11 +116,12 @@ class ConventionSelectionService:
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def post_for_avenant(self):
+        bailleur_uuid = self.request.POST.get("bailleur")
         self.form = ConventionForAvenantForm(
             self.request.POST,
             self.request.FILES,
             administrations=self._get_administration_choices(),
-            bailleur_query=self._get_bailleur_query(),
+            bailleur_query=self._get_bailleur_query(uuid=bailleur_uuid),
         )
         if self.form.is_valid():
             administration = Administration.objects.get(

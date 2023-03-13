@@ -30,7 +30,7 @@
             ele: '#{{form_input.id_for_label}}',
             search: true,
             onServerSearch: function (search, select) {
-                fetch('{% url 'users:search_bailleur' %}?q=' + search)
+                fetch('{{ url }}?q=' + search)
                     .then((response) => response.json())
                     .then(data => select.setServerOptions(data));
             },

@@ -6,7 +6,6 @@
 from django.db.models import QuerySet
 
 from bailleurs.models import Bailleur
-from core import forms as apilos_forms
 from django import forms
 
 from programmes.models import FinancementEDD, ActiveNatureLogement, TypeHabitat
@@ -51,10 +50,10 @@ class CreateConventionMinForm(forms.Form):
         self.declared_fields["bailleur"].queryset = bailleur_query
         super().__init__(*args, **kwargs)
 
-    bailleur = apilos_forms.ModelField(
+    bailleur = forms.ModelChoiceField(
         label="Bailleur",
         queryset=Bailleur.objects.none(),
-        field="uuid",
+        to_field_name="uuid",
         error_messages={
             "required": "Le bailleur est obligatoire",
         },

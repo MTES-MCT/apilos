@@ -25,21 +25,18 @@ def home(request):
 def search_bailleur(request):
     query = request.GET.get("q", "")
 
-    if len(query) > 2:
-        return JsonResponse(
-            [
-                {
-                    "label": b.nom,
-                    "value": b.uuid,
-                }
-                for b in request.user.bailleurs(full_scope=True).filter(
-                    nom__icontains=query
-                )[: settings.APILOS_MAX_DROPDOWN_COUNT]
-            ],
-            safe=False,
-        )
-
-    return JsonResponse([], safe=False)
+    return JsonResponse(
+        [
+            {
+                "label": b.nom,
+                "value": b.uuid,
+            }
+            for b in request.user.bailleurs(full_scope=True).filter(
+                nom__icontains=query
+            )[: settings.APILOS_MAX_DROPDOWN_COUNT]
+        ],
+        safe=False,
+    )
 
 
 @login_required
