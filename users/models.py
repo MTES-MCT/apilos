@@ -457,6 +457,9 @@ class User(AbstractUser):
 
 
 class Role(models.Model):
+    class Meta:
+        unique_together = ("typologie", "bailleur", "administration", "user")
+
     id = models.AutoField(primary_key=True)
     typologie = models.CharField(
         max_length=25,
