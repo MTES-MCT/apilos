@@ -1,4 +1,4 @@
-import mock
+from unittest import mock
 
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase

@@ -3,7 +3,6 @@
 coverage[toml]
 black
 djhtml
-mock
 pre-commit
 pylint
 beautifulsoup4
