@@ -1,7 +1,7 @@
 from unittest import mock
 
 from django.contrib.sessions.middleware import SessionMiddleware
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from bailleurs.models import SousNatureBailleur
 from conventions.views import ConventionFormSteps
 from conventions.models import (
@@ -166,6 +166,26 @@ class CustomFiltersTest(TestCase):
 
         self.convention.statut = ConventionStatut.RESILIEE
         self.assertFalse(custom_filters.display_redirect_sent(self.convention))
+
+    def test_display_redirect_project_without_cerbere(self):
+        for statut in ConventionStatut:
+            self.convention.statut = statut
+            self.assertFalse(custom_filters.display_redirect_project(self.convention))
+
+    @override_settings(CERBERE_AUTH="htpps://cerbere.com")
+    def test_display_redirect_project_with_cerbere(self):
+        self.convention.statut = ConventionStatut.PROJET
+        self.assertTrue(custom_filters.display_redirect_project(self.convention))
+
+        for statut in [
+            ConventionStatut.INSTRUCTION,
+            ConventionStatut.CORRECTION,
+            ConventionStatut.A_SIGNER,
+            ConventionStatut.SIGNEE,
+            ConventionStatut.RESILIEE,
+        ]:
+            self.convention.statut = statut
+            self.assertFalse(custom_filters.display_redirect_project(self.convention))
 
     def test_display_redirect_post_action(self):
 

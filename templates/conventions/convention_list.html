@@ -1,66 +1,68 @@
 {% load custom_filters %}
 
-<div class="fr-container">
-    <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-md-12 ">
-            <form class="fr-mt-2w" method="get" action="" id="search_table">
-                <input type="hidden" id="order_by" name="order_by" value="{{conventions.order_by}}">
-                <input type="hidden" id="page" name="page" value="{{conventions.page}}">
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-5 fr-mb-2w">
-                        <input class="fr-input" placeholder="par nom, code d’opération ou ville" type="search" id="search_input" name="search_input" value="{{conventions.search_input}}">
-                    </div>
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
-                        <div class="fr-select-group">
-                            <select class="fr-select" id="cstatut" name="cstatut">
-                                <option value="">Statut</option>
-                                {% for statut in statuts %}
-                                    <option value="{{statut.value}}"
-                                        {% if statut.value  == conventions.statut_filter %}selected{% endif %}>
-                                        {{statut.label}}
-                                    </option>
-                                {% endfor %}
-                            </select>
+{% if not siap_operation %}
+    <div class="fr-container">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-md-12 ">
+                <form class="fr-mt-2w" method="get" action="" id="search_table">
+                    <input type="hidden" id="order_by" name="order_by" value="{{conventions.order_by}}">
+                    <input type="hidden" id="page" name="page" value="{{conventions.page}}">
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-5 fr-mb-2w">
+                            <input class="fr-input" placeholder="par nom, code d’opération ou ville" type="search" id="search_input" name="search_input" value="{{conventions.search_input}}">
                         </div>
-                    </div>
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
-                        <div class="fr-select-group">
-
-                            <select class="fr-select" name="financement">
-                                <option value="">Financement</option>
-                                {% for financement in financements %}
-                                    <option value="{{financement.value}}"
-                                        {% if financement.value  == conventions.financement_filter %}selected{% endif %}>
-                                        {{financement.label}}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="fr-col-1 fr-grid-row fr-grid-row--right">
-                        <button class="fr-btn fr-fi-search-line" title="Rechercher" id="search_btn">
-                        </button>
-                    </div>
-                </div>
-                {% if request.user.is_staff %}
-                    <div class="apilos-bordered fr-my-3w fr-col-12 fr-col-md-12 fr-col-lg-11">
-                        <p class="notes">
-                            <em>Les paramètres de recherche dans cet encadré sont disponibles uniquement pour les utilisateurs avancés.</em>
-                        </p>
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
-                                <label class="fr-label" for="search_input">
-                                    Préciser un département
-                                </label>
-                                <input class="fr-input" placeholder="Ex : 13" type="recherche" name="departement_input" value="{{conventions.departement_input}}">
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                            <div class="fr-select-group">
+                                <select class="fr-select" id="cstatut" name="cstatut">
+                                    <option value="">Statut</option>
+                                    {% for statut in statuts %}
+                                        <option value="{{statut.value}}"
+                                            {% if statut.value  == conventions.statut_filter %}selected{% endif %}>
+                                            {{statut.label}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                            <div class="fr-select-group">
+
+                                <select class="fr-select" name="financement">
+                                    <option value="">Financement</option>
+                                    {% for financement in financements %}
+                                        <option value="{{financement.value}}"
+                                            {% if financement.value  == conventions.financement_filter %}selected{% endif %}>
+                                            {{financement.label}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="fr-col-1 fr-grid-row fr-grid-row--right">
+                            <button class="fr-btn fr-fi-search-line" title="Rechercher" id="search_btn">
+                            </button>
+                        </div>
                     </div>
-                {% endif %}
-            </form>
+                    {% if request.user.is_staff %}
+                        <div class="apilos-bordered fr-my-3w fr-col-12 fr-col-md-12 fr-col-lg-11">
+                            <p class="notes">
+                                <em>Les paramètres de recherche dans cet encadré sont disponibles uniquement pour les utilisateurs avancés.</em>
+                            </p>
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                                    <label class="fr-label" for="search_input">
+                                        Préciser un département
+                                    </label>
+                                    <input class="fr-input" placeholder="Ex : 13" type="recherche" name="departement_input" value="{{conventions.departement_input}}">
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </form>
+            </div>
         </div>
     </div>
-</div>
+{% endif %}
 <div class="fr-container-fluid ds_banner">
     <div class="fr-container fr-px-3w">
         <div class="fr-grid-row fr-grid-row--gutters fr-card fr-card--no-border">
@@ -137,7 +139,7 @@
                                     <th title="Nombre de logements à conventionner" scope="col">
                                         Logements
                                     </th>
-                                    {% if active %}
+                                    {% if active or siap_operation %}
                                         <th title="Date de livraison et mise en service" scope="col">
                                             Livraison
                                         </th>
@@ -151,7 +153,7 @@
                             <tbody>
                                 {% for convention in conventions.paginated_conventions %}
 
-                                    <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action %}signed{% endif %}">
+                                    <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_project %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action %}signed{% endif %}">
                                         <td title="{{convention.statut_for_template.statut_display}}">
                                             {% include "conventions/home/statut_tag.html"  %}
                                             <script type="text/javascript" nonce="{{request.csp_nonce}}">
@@ -162,6 +164,9 @@
                                                         }
                                                         else if (this.classList.contains("signed")) {
                                                             location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
+                                                        }
+                                                        else if (this.classList.contains("project")) {
+                                                            location.href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
                                                         }
                                                         else {
                                                             location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
@@ -185,7 +190,7 @@
                                                     <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-avenant background-white">Avenant</span>
                                                 {%endif%}
                                             </div>
-                                            {% if active and convention.programme.numero_galion %}
+                                            {% if active or siap_operation and convention.programme.numero_galion %}
                                                 <em data-test-role="programme-galion-cell">
                                                     {{convention.programme.numero_galion|highlight:conventions.search_input}}
                                                 </em>
@@ -204,13 +209,11 @@
                                             <em>{{convention.programme.code_postal|highlight:conventions.search_input}}</em>
                                         </td>
                                         <td>{{convention.lot.nb_logements}}</td>
-                                        {% if active %}
+                                        {% if active or siap_operation %}
                                             <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
                                         {% else %}
                                             <td>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>
                                         {% endif %}
-
-
                                     </tr>
                                 {% endfor %}
                             </tbody>

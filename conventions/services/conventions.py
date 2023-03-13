@@ -61,7 +61,7 @@ class ConventionListService:
         statut_filter: str = "",
         financement_filter: str = "",
         departement_input: str = "",
-        active: bool = True,
+        active: bool | None = None,
         order_by: str = "",
         page: str = 1,
         user: User | None = None,
