@@ -29,7 +29,7 @@ plus d'information sur les interactions entre les 2 plateformes sont disponibles
 
 Cependant, certaines briques logicielles sont partagées (voir l'illustration ci-dessous)
 
-![Architecture APilos](static/img/ArchitectureAPilos.jpg)
+![Architecture APilos](static/img/ArchitectureAPiLos.jpg)
 
 ### Qualité de code
 
