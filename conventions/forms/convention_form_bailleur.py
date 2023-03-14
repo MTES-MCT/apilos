@@ -1,18 +1,21 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import QuerySet
 from django.utils.safestring import mark_safe
 
 from bailleurs.models import Bailleur, NatureBailleur, SousNatureBailleur
 
 
 class ChangeBailleurForm(forms.Form):
-    def __init__(self, *args, bailleurs=None, **kwargs) -> None:
-        self.declared_fields["bailleur"].choices = bailleurs
+    def __init__(self, *args, bailleur_query: QuerySet, **kwargs) -> None:
+        self.declared_fields["bailleur"].queryset = bailleur_query
+
         super().__init__(*args, **kwargs)
 
-    bailleur = forms.ChoiceField(
+    bailleur = forms.ModelChoiceField(
         label="Bailleur",
-        choices=[],
+        queryset=Bailleur.objects.none(),
+        to_field_name="uuid",
         error_messages={
             "required": "Vous devez choisir un bailleur",
         },

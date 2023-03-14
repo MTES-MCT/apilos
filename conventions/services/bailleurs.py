@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import transaction
 from django.http import HttpRequest
 
@@ -19,24 +20,12 @@ class ConventionBailleurService(ConventionService):
 
     def get(self):
         bailleur = self.convention.programme.bailleur
-        # Check if programme has validated convention
-        convention_validee = [
-            programme_convention
-            for programme_convention in self.convention.programme.conventions.all()
-            if programme_convention.statut
-            in [
-                ConventionStatut.A_SIGNER,
-                ConventionStatut.SIGNEE,
-            ]
-        ]
-        bailleurs = (
-            []
-            if convention_validee
-            else [(b.uuid, b.nom) for b in self.request.user.bailleurs(full_scope=True)]
-        )
+
         self.upform = ChangeBailleurForm(
-            bailleurs=bailleurs,
-            initial={"bailleur": bailleur.uuid},
+            bailleur_query=self.request.user.bailleurs(full_scope=True)[
+                : settings.APILOS_MAX_DROPDOWN_COUNT
+            ],
+            initial={"bailleur": bailleur},
         )
         self.form = ConventionBailleurForm(
             initial={
@@ -78,9 +67,9 @@ class ConventionBailleurService(ConventionService):
 
         self.upform = ChangeBailleurForm(
             self.request.POST,
-            bailleurs=[
-                (b.uuid, b.nom) for b in self.request.user.bailleurs(full_scope=True)
-            ],
+            bailleur_query=self.request.user.bailleurs(full_scope=True).filter(
+                uuid=self.request.POST.get("bailleur")
+            ),
         )
         update_bailleur = bool(self.request.POST.get("update_bailleur", False))
         if update_bailleur:
@@ -93,7 +82,7 @@ class ConventionBailleurService(ConventionService):
 
     def _update_bailleur(self):
         if self.upform.is_valid():
-            bailleur = Bailleur.objects.get(uuid=self.request.POST["bailleur"])
+            bailleur = self.upform.cleaned_data["bailleur"]
             programme = (
                 Programme.objects.prefetch_related("lots__logements__annexes")
                 .prefetch_related("lots__type_stationnements")

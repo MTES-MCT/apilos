@@ -48,6 +48,7 @@ class CreateConventionMinForm(forms.Form):
     ) -> None:
         self.declared_fields["administration"].choices = administrations
         self.declared_fields["bailleur"].queryset = bailleur_query
+
         super().__init__(*args, **kwargs)
 
     bailleur = forms.ModelChoiceField(

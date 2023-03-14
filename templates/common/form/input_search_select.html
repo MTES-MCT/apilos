@@ -13,7 +13,11 @@
             id="{{ form_input.id_for_label }}"
             name="{{ form_input.html_name }}"
             {% include "common/form/disable_form_input.html" %}>
-            {% if queryset %}
+            {% if form_input.initial %}
+                <option value="{{ form_input.initial|attribute:field }}">
+                    {{ form_input.initial }}
+                </option>
+            {% elif queryset %}
                 {% for element in queryset %}
                     <option value="{{ element|attribute:field }}">
                         {{ element }}
