@@ -32,21 +32,24 @@ from users.services import UserService
 
 def user_profile(request):
     # display user form
-    success = False
     if request.method == "POST":
+
         if settings.CERBERE_AUTH:
             userform = UserNotificationForm(request.POST)
-            if userform.is_valid():
-                if userform.cleaned_data["preferences_email"] is not None:
-                    request.user.preferences_email = userform.cleaned_data[
-                        "preferences_email"
-                    ]
+            if (
+                userform.is_valid()
+                and userform.cleaned_data["preferences_email"] is not None
+            ):
+                request.user.preferences_email = userform.cleaned_data[
+                    "preferences_email"
+                ]
                 request.user.save()
                 messages.add_message(
                     request,
                     messages.SUCCESS,
                     "Votre profil a été enregistré avec succès",
                 )
+
         else:
             posted_request = request.POST.dict()
             posted_request["username"] = request.user.username
