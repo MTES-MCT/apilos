@@ -154,3 +154,8 @@ class Bailleur(IngestableModel):
 def set_bailleur_nature(sender, instance, *args, **kwargs):
     if instance.sous_nature_bailleur in NATURE_RELATIONSHIP:
         instance.nature_bailleur = NATURE_RELATIONSHIP[instance.sous_nature_bailleur]
+    if not instance.siren:
+        if len(instance.siret) == 14 and instance.siret.isdigit():
+            instance.siren = instance.siret[:9]
+        else:
+            instance.siren = instance.siret
