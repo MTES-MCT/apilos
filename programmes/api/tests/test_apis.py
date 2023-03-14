@@ -189,7 +189,7 @@ class OperationClosedAPITest(APITestCase):
             "nom": "Programme 1",
             "bailleur": {
                 "nom": "3F",
-                "siren": None,
+                "siren": "123456789",
                 "siret": "12345678901234",
                 "adresse": None,
                 "code_postal": None,
