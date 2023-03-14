@@ -221,17 +221,15 @@ def edit_bailleur(request, bailleur_uuid):
                     else bailleur.nature_bailleur
                 ),
             },
-            bailleurs=[
-                (b.uuid, b.nom)
-                for b in request.user.bailleurs(full_scope=True)
-                .exclude(id=bailleur.id)
-                .filter(parent_id__isnull=True)
-            ],
+            bailleur_query=request.user.bailleurs(full_scope=True)
+            .exclude(id=bailleur.id)
+            .filter(parent_id__isnull=True)
+            .filter(uuid=request.POST.get("bailleur")),
         )
         if form.is_valid():
             if request.user.is_superuser or request.user.administrateur_de_compte:
                 parent = (
-                    Bailleur.objects.get(uuid=form.cleaned_data["bailleur"])
+                    form.cleaned_data["bailleur"]
                     if form.cleaned_data["bailleur"]
                     else None
                 )
@@ -286,12 +284,9 @@ def edit_bailleur(request, bailleur_uuid):
                     bailleur.signataire_date_deliberation
                 ),
             },
-            bailleurs=[
-                (b.uuid, b.nom)
-                for b in request.user.bailleurs(full_scope=True)
-                .exclude(id=bailleur.id)
-                .filter(parent_id__isnull=True)
-            ],
+            bailleur_query=request.user.bailleurs(full_scope=True)
+            .exclude(id=bailleur.id)
+            .filter(parent_id__isnull=True)[:20],
         )
     user_list_service = UserListService(
         search_input=request.GET.get("search_input", ""),
