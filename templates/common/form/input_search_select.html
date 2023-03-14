@@ -13,9 +13,7 @@
             id="{{ form_input.id_for_label }}"
             name="{{ form_input.html_name }}"
             {% include "common/form/disable_form_input.html" %}>
-            {% if form_input.field.instance %}
-                <option value="{{ form_input.field.instance.uuid }}" selected>{{ form_input.field.instance }}</option>
-            {% elif queryset %}
+            {% if queryset %}
                 {% for element in queryset %}
                     <option value="{{ element|attribute:field }}">
                         {{ element }}
