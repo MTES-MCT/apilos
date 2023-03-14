@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 
-from bailleurs.models import Bailleur, SousNatureBailleur
+from bailleurs.models import Bailleur, NatureBailleur, SousNatureBailleur
 
 
 class ChangeBailleurForm(forms.Form):
@@ -130,6 +130,9 @@ class ConventionBailleurForm(forms.Form):
         },
     )
 
+    nature_bailleur = forms.TypedChoiceField(
+        required=False, label="Nature du bailleur", choices=NatureBailleur.choices
+    )
     sous_nature_bailleur = forms.TypedChoiceField(
         required=False, label="Type de bailleur", choices=SousNatureBailleur.choices
     )

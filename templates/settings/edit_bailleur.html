@@ -38,6 +38,7 @@
                                     </div>
                                 {% endif %}
 
+                                {% include "common/form/input_select.html" with form_input=form.nature_bailleur editable=request.user.is_superuser %}
                                 {% include "common/form/input_select.html" with form_input=form.sous_nature_bailleur editable=request.user.is_superuser %}
 
                                 <div class="fr-mb-2w">

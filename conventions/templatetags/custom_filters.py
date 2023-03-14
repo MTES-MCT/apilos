@@ -294,6 +294,11 @@ def display_redirect_sent(convention):
 
 
 @register.filter
+def display_redirect_project(convention):
+    return settings.CERBERE_AUTH and convention.statut == ConventionStatut.PROJET
+
+
+@register.filter
 def display_redirect_post_action(convention):
     return convention.statut == ConventionStatut.SIGNEE
 

@@ -14,73 +14,8 @@
     <div class="fr-container">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-my-5w fr-table fr-table--bordered table--layout-fixed">
-                <table>
-                    <caption><em>{{ conventions|length }} convention{{ conventions|length|pluralize }} associée{{ conventions|length|pluralize }}</em></caption>
-                    <thead>
-                        <tr class="th_inline">
-                            <th title="Date de livraison et mise en service" scope="col">
-                                Livraison
-                            </th>
-                            <th title="Nom de l'opération" scope="col">
-                                Opération
-                            </th>
-                            <th title="Financement" scope="col">
-                                Fin.
-                            </th>
-                            <th title="Code postal" scope="col">
-                                CP
-                            </th>
-                            <th title="Ville" scope="col">
-                                Ville
-                            </th>
-                            <th title="Nombre de logements à conventionner" scope="col">
-                                Nb Lgts
-                            </th>
-                            <th title="Statut de la convention" scope="col">
-                                Statut
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for convention in conventions %}
-                            <tr id="convention_redirect_{{convention.uuid}}" class="clickable">
-                                <td>{{convention.programme.date_achevement_compile|date:"d/m/Y"|default_if_none:'-' }}</td>
-                                <td>{{convention.programme.nom}}</td>
-                                <td>{{convention.financement}}</td>
-                                <td>{{convention.programme.code_postal}}</td>
-                                <td>{{convention.programme.ville}}</td>
-                                <td>{{convention.lot.nb_logements}}</td>
-                                <td title="{{convention.statut_for_template.statut_display}}">
-                                    <div class="fr-p-1w apilos-tag-status apilos-colored_status--{{convention.statut_for_template.key_statut}}">
-                                        <span><strong>
-                                            {{convention.short_statut_for_template}}
-                                        </strong></span>
-                                    </div>
-                                    {% if convention.statut == CONVENTION_STATUT.PROJET %}
-                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                            document.addEventListener('DOMContentLoaded', function () {
-                                                document.getElementById('convention_redirect_{{convention.uuid}}')
-                                                    .addEventListener('click', function(){ location.href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}" });
-                                            });
-                                        </script>
-                                    {% else %}
-                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                            document.addEventListener('DOMContentLoaded', function () {
-                                                document.getElementById('convention_redirect_{{convention.uuid}}')
-                                                    .addEventListener('click', function(){ location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" });
-                                            });
-                                        </script>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                {% include "conventions/convention_list.html" with siap_operation=True %}
             </div>
         </div>
     </div>
-
-
-
-
 {% endblock%}

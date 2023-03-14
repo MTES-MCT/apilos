@@ -137,14 +137,10 @@ class Bailleur(IngestableModel):
     label = property(_get_nom)
 
     def is_hlm(self):
-        return self.sous_nature_bailleur in [
-            SousNatureBailleur.OFFICE_PUBLIC_HLM,
-            SousNatureBailleur.SA_HLM_ESH,
-            SousNatureBailleur.COOPERATIVE_HLM_SCIC,
-        ]
+        return self.nature_bailleur == NatureBailleur.HLM
 
     def is_sem(self):
-        return self.sous_nature_bailleur in [SousNatureBailleur.SEM_EPL]
+        return self.nature_bailleur == NatureBailleur.SEM
 
     def is_type1and2(self):
         return not self.is_hlm() and not self.is_sem()

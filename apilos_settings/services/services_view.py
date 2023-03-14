@@ -179,6 +179,11 @@ def edit_bailleur(request, bailleur_uuid):
                     if request.user.is_superuser
                     else bailleur.sous_nature_bailleur
                 ),
+                "nature_bailleur": (
+                    request.POST.get("nature_bailleur", False)
+                    if request.user.is_superuser
+                    else bailleur.nature_bailleur
+                ),
             },
             bailleurs=[
                 (b.uuid, b.nom)
@@ -196,6 +201,7 @@ def edit_bailleur(request, bailleur_uuid):
                 )
             else:
                 parent = bailleur.parent
+            bailleur.nature_bailleur = form.cleaned_data["nature_bailleur"]
             bailleur.sous_nature_bailleur = form.cleaned_data["sous_nature_bailleur"]
             bailleur.nom = form.cleaned_data["nom"]
             bailleur.parent = parent
@@ -221,6 +227,7 @@ def edit_bailleur(request, bailleur_uuid):
                     bailleur,
                     fields=[
                         "uuid",
+                        "nature_bailleur",
                         "sous_nature_bailleur",
                         "nom",
                         "siret",

@@ -83,6 +83,7 @@ class ConventionServiceGeneratorTest(TestCase):
 
         convention.programme.nature_logement = ActiveNatureLogement.LOGEMENTSORDINAIRES
         convention.programme.bailleur.sous_nature_bailleur = SousNatureBailleur.SEM_EPL
+        convention.programme.bailleur.save()
         self.assertEqual(
             get_convention_template_path(convention),
             f"{settings.BASE_DIR}/documents/SEM-template.docx",
@@ -94,6 +95,7 @@ class ConventionServiceGeneratorTest(TestCase):
             SousNatureBailleur.COOPERATIVE_HLM_SCIC,
         ]:
             convention.programme.bailleur.sous_nature_bailleur = sous_nature
+            convention.programme.bailleur.save()
             self.assertEqual(
                 get_convention_template_path(convention),
                 f"{settings.BASE_DIR}/documents/HLM-template.docx",
@@ -103,6 +105,7 @@ class ConventionServiceGeneratorTest(TestCase):
             SousNatureBailleur.ASSOCIATIONS,
         ]:
             convention.programme.bailleur.sous_nature_bailleur = sous_nature
+            convention.programme.bailleur.save()
             convention.type1and2 = ConventionType1and2.TYPE1
             self.assertEqual(
                 get_convention_template_path(convention),

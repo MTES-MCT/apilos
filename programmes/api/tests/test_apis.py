@@ -23,7 +23,7 @@ operation_response = {
         "siret": "782855696",
         "adresse": "",
         "code_postal": "",
-        "ville": "13004 MARSEILLE 4",
+        "ville": "MARSEILLE 4",
         "capital_social": None,
         "sous_nature_bailleur": "NONRENSEIGNE",
     },
@@ -669,9 +669,13 @@ class OperationClosedAPITest(APITestCase):
         self.assertEqual(len(response.data["conventions"]), 3)
         self.assertTrue(response.data["all_conventions_are_signed"])
         self.assertEqual(len(response.data["last_conventions_state"]), 2)
-        # FILTER on numero = None
         self.assertEqual(
-            response.data["last_conventions_state"][0]["lot"]["nb_logements"],
+            list(
+                filter(
+                    lambda x: x["numero"] is None,
+                    response.data["last_conventions_state"],
+                )
+            )[0]["lot"]["nb_logements"],
             10,
         )
 
