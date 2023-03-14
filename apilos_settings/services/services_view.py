@@ -286,17 +286,20 @@ def user_list(request):
 def edit_user(request, username):
     user = User.objects.get(username=username)
     status = ""
+
     bailleurs = [
         (b.uuid, b.nom)
-        for b in request.user.bailleurs(full_scope=True).exclude(
-            nature_bailleur=NatureBailleur.PRIVES
-        )
+        for b in request.user.bailleurs(full_scope=True)
+        .exclude(nature_bailleur=NatureBailleur.PRIVES)
+        .exclude(id__in=user.get_active_bailleurs())
     ]
     administrations = [
-        (b.uuid, b.nom) for b in request.user.administrations(full_scope=True)
+        (b.uuid, b.nom)
+        for b in request.user.administrations(full_scope=True).exclude(
+            id__in=user.get_active_administrations()
+        )
     ]
     if request.method == "POST" and request.user.is_administrator(user):
-
         action_type = request.POST.get("action_type", "")
         if action_type == "remove_bailleur":
             form = UserForm(initial=model_to_dict(user))
