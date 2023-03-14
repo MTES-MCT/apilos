@@ -280,6 +280,7 @@ class ConventionFormSteps:
 
     def get_form_step(self):
         form_step = {
+            "steps": self.steps,
             "number": self.current_step_number,
             "total": self.total_step_number,
             "title": self.current_step.label,

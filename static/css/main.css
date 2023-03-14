@@ -617,6 +617,7 @@ table.fullwidth {
   background-color: #fff;
   z-index: 999;
 }
+
 #loading[hidden] {
   display: none;
 }
@@ -831,7 +832,8 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   background-color: #fff;
 }
 
-
+/* Form progress bar */
+/* related to step > 9 */
 .fr-stepper__steps[data-fr-steps="9"] {
   --steps: 9;
   --step-width: 11.1%;
@@ -855,8 +857,33 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
 .fr-stepper__steps[data-fr-current-step="11"] {
   --current-step: 11;
 }
+
+/* adapt progress bar */
 .apilos-stepper-align-right {
   text-align:right;
+}
+
+.apilos-stepper__steps-details{
+  display: inherit;
+  width:100%;
+}
+
+.apilos-stepper__steps-details div {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  margin-left: 0;
+  margin-right: 0;
+  float:left;
+}
+
+.apilos-stepper__steps-details[data-apilos-total-steps="9"] div {
+  width: 11.1%;
+}
+div[hidden] {
+  display: none;
 }
 
 .vscomp-toggle-button, .vscomp-option-text{
