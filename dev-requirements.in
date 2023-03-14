@@ -9,3 +9,4 @@ beautifulsoup4
 django-extensions
 django-browser-reload
 ptpython
+gunicorn
