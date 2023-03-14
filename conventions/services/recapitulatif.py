@@ -25,12 +25,14 @@ def convention_summary(request: HttpRequest, convention: Convention):
     convention_number_form = ConventionNumberForm(
         initial={"convention_numero": convention.get_default_convention_number()}
     )
-    complete_for_avenant_form = CompleteforavenantForm(
-        initial={
-            "ville": convention.parent.programme.ville,
-            "nb_logements": convention.parent.lot.nb_logements,
-        }
-    )
+    complete_for_avenant_form = None
+    if convention.is_avenant() and convention.is_imported():
+        complete_for_avenant_form = CompleteforavenantForm(
+            initial={
+                "ville": convention.parent.programme.ville,
+                "nb_logements": convention.parent.lot.nb_logements,
+            }
+        )
 
     opened_comments = Comment.objects.filter(
         convention=convention,
