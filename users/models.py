@@ -150,6 +150,13 @@ class User(AbstractUser):
             return self.roles.filter(bailleur_id=bailleur_id)
         return self._is_role(TypeRole.BAILLEUR) or self.is_superuser
 
+    def get_active_bailleurs(self):
+        return (
+            self.roles.filter(typologie=TypeRole.BAILLEUR)
+            .values_list("bailleur", flat=True)
+            .distinct()
+        )
+
     def is_instructeur(self):
         if self.is_cerbere_user():
             return "currently" in self.siap_habilitation and self.siap_habilitation[
@@ -161,6 +168,13 @@ class User(AbstractUser):
                 GroupProfile.SIAP_ADM_CENTRALE,
             ]
         return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
+
+    def get_active_administrations(self):
+        return (
+            self.roles.filter(typologie=TypeRole.INSTRUCTEUR)
+            .values_list("administration", flat=True)
+            .distinct()
+        )
 
     def is_administration(self):
         if self.is_cerbere_user():
