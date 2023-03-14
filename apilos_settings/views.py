@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
@@ -36,7 +37,7 @@ def administrations(request):
 @login_required
 def edit_administration(request, administration_uuid):
     result = services_view.edit_administration(request, administration_uuid)
-    if result["success"]:
+    if result["success"] and not settings.CERBERE_AUTH:
         return HttpResponseRedirect(reverse("settings:administrations"))
     return render(
         request,
@@ -65,7 +66,7 @@ def bailleurs(request):
 @login_required
 def edit_bailleur(request, bailleur_uuid):
     result = services.edit_bailleur(request, bailleur_uuid)
-    if result["success"]:
+    if result["success"] and not settings.CERBERE_AUTH:
         return HttpResponseRedirect(reverse("settings:bailleurs"))
     return render(
         request,
@@ -75,7 +76,6 @@ def edit_bailleur(request, bailleur_uuid):
 
 
 class ImportBailleurUsersView(LoginRequiredMixin, View):
-
     def get(self, request):
         if not request.user.is_staff:
             return HttpResponseRedirect(reverse("settings:users"))
@@ -86,9 +86,9 @@ class ImportBailleurUsersView(LoginRequiredMixin, View):
             request,
             "settings/import_bailleur_users.html",
             {
-                'upform': service.upload_form,
-                'formset': service.formset,
-            }
+                "upform": service.upload_form,
+                "formset": service.formset,
+            },
         )
 
     def post(self, request):
@@ -105,9 +105,9 @@ class ImportBailleurUsersView(LoginRequiredMixin, View):
             request,
             "settings/import_bailleur_users.html",
             {
-                'upform': service.upload_form,
-                'formset': service.formset,
-            }
+                "upform": service.upload_form,
+                "formset": service.formset,
+            },
         )
 
 
@@ -119,7 +119,6 @@ def profile(request):
         "settings/user_profile.html",
         {
             **result,
-            "departements": Departement.objects.all(),
         },
     )
 

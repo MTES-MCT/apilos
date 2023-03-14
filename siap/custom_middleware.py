@@ -143,6 +143,9 @@ def _manage_role(from_habilitation, session_only=False, **kwargs):
 def _find_or_create_entity(
     request: HttpRequest, from_habilitation: dict, session_only: bool = False
 ):
+    request.session["bailleur"] = None
+    request.session["administration"] = None
+    request.session["role"] = None
     request.session["currently"] = from_habilitation["groupe"]["profil"]["code"]
     if from_habilitation["groupe"]["profil"]["code"] in [
         GroupProfile.SIAP_ADM_CENTRALE,

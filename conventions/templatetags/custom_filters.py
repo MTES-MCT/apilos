@@ -1,7 +1,9 @@
 from django.http.request import HttpRequest
 from django.conf import settings
 from django.template.defaulttags import register
+from bailleurs.models import Bailleur
 from core.utils import is_valid_uuid, get_key_from_json_field
+from instructeurs.models import Administration
 from programmes.models import Financement
 from siap.siap_client.client import SIAPClient
 from conventions.models import ConventionStatut, PieceJointe
@@ -37,8 +39,25 @@ def is_bailleur(request: HttpRequest) -> bool:
 def is_instructeur(request: HttpRequest) -> bool:
     if "currently" in request.session:
         return request.session["currently"] in GroupProfile.instructeur_profiles()
-
     return request.user.is_instructeur()
+
+
+@register.filter
+def current_administration(request: HttpRequest) -> None | int:
+    if is_instructeur(request) and request.session["administration"]:
+        administration = Administration.objects.get(
+            id=request.session["administration"]["id"]
+        )
+        return administration.uuid
+    return None
+
+
+@register.filter
+def current_bailleur(request: HttpRequest) -> None | int:
+    if is_bailleur(request) and request.session["bailleur"]:
+        bailleur = Bailleur.objects.get(id=request.session["bailleur"]["id"])
+        return bailleur.uuid
+    return None
 
 
 @register.filter

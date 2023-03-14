@@ -4,6 +4,9 @@
             <legend class="fr-fieldset__legend fr-h4" id='radio-legend'>
                 {{ form_input.label }}
             </legend>
+            {% if CERBERE_AUTH %}
+                {% include "common/messages.html" %}
+            {% endif %}
             <div class="fr-fieldset__content">
                 <div class="fr-radio-group">
                     <input

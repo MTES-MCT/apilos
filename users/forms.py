@@ -10,7 +10,19 @@ from users.models import User
 from users.type_models import TypeRole, EmailPreferences
 
 
-class UserForm(forms.Form):
+class UserNotificationForm(forms.Form):
+    preferences_email = forms.TypedChoiceField(
+        required=True,
+        initial=EmailPreferences.PARTIEL,
+        label="Option d'envoi d'e-mail",
+        choices=EmailPreferences.choices,
+        error_messages={
+            "required": "Les préférences emails sont obligatoires",
+        },
+    )
+
+
+class UserForm(UserNotificationForm):
     username = forms.CharField(
         required=True,
         label="Nom d'utilisateur",
@@ -71,16 +83,6 @@ class UserForm(forms.Form):
         required=False,
         label="Super Utilisateur",
         help_text="Un super utilisateur a tous les droits",
-    )
-
-    preferences_email = forms.TypedChoiceField(
-        required=True,
-        initial=EmailPreferences.PARTIEL,
-        label="Option d'envoi d'e-mail",
-        choices=EmailPreferences.choices,
-        error_messages={
-            "required": "Les préférences emails sont obligatoires",
-        },
     )
 
     filtre_departements = forms.ModelMultipleChoiceField(
