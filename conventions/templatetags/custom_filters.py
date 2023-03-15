@@ -416,10 +416,7 @@ def negate(condition: bool):
 @register.filter
 def attribute(object, key):
     """Gets an attribute of an object dynamically from a string key"""
-    if hasattr(object, str(key)):
-        return getattr(object, key)
-
-    return None
+    return getattr(object, key, None)
 
 
 @register.filter
