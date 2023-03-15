@@ -68,39 +68,37 @@ class EmailService:
             raise Exception("missing email_template_id")
 
         if not self.to_emails:
-            self.to_emails = ["contact@apilos.beta.gouv.fr"]
-            email_data[
-                "subject_prefix"
-            ] = "[ATTENTION pas de destinataire à cet email] "
-        message = EmailMultiAlternatives(
-            to=self.to_emails,
-            cc=self.cc_emails,
-        )
-        message.template_id = self.email_template_id.value
-        message.from_email = None  # to use the template's default sender
-        if email_data:
-            message.merge_global_data = email_data
-        if filepath:
-            with default_storage.open(filepath, "rb") as f:
-                (content_type, _) = mimetypes.guess_type(filepath.name)
-                message.attach(
-                    filepath.name,
-                    f.read(),
-                    content_type,
-                )
-        if settings.SENDINBLUE_API_KEY:
-            message.send()
+            logger.warning("No recipient for email")
         else:
-            logger.warning(
-                """
-Email message:
-    to: %s
-    cc: %s
-    template_id: %s
-    data: %s
-            """,
-                message.to,
-                message.cc,
-                message.template_id,
-                message.merge_global_data,
+            message = EmailMultiAlternatives(
+                to=self.to_emails,
+                cc=self.cc_emails,
             )
+            message.template_id = self.email_template_id.value
+            message.from_email = None  # to use the template's default sender
+            if email_data:
+                message.merge_global_data = email_data
+            if filepath:
+                with default_storage.open(filepath, "rb") as f:
+                    (content_type, _) = mimetypes.guess_type(filepath.name)
+                    message.attach(
+                        filepath.name,
+                        f.read(),
+                        content_type,
+                    )
+            if settings.SENDINBLUE_API_KEY:
+                message.send()
+            else:
+                logger.warning(
+                    """
+    Email message:
+        to: %s
+        cc: %s
+        template_id: %s
+        data: %s
+                """,
+                    message.to,
+                    message.cc,
+                    message.template_id,
+                    message.merge_global_data,
+                )

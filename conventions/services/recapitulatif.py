@@ -173,32 +173,35 @@ def send_email_instruction(convention_url, convention, instructeur_emails):
     Send an email to all instructeur (except the ones who select AUCUN as email preference)
     """
     # Send a confirmation email to bailleur
-    email_service_to_bailleur = EmailService(
-        to_emails=convention.get_email_bailleur_users(),
-        email_template_id=EmailTemplateID.B_AVENANT_A_INSTRUIRE_CONFIRMATION
-        if convention.is_avenant()
-        else EmailTemplateID.B_CONVENTION_A_INSTRUIRE_CONFIRMATION,
-    )
-    email_service_to_bailleur.send_transactional_email(
-        email_data={
-            "convention_url": convention_url,
-            "convention": str(convention),
-        },
-    )
+
+    if len(destinataires_bailleur := convention.get_email_bailleur_users()) > 0:
+        email_service_to_bailleur = EmailService(
+            to_emails=destinataires_bailleur,
+            email_template_id=EmailTemplateID.B_AVENANT_A_INSTRUIRE_CONFIRMATION
+            if convention.is_avenant()
+            else EmailTemplateID.B_CONVENTION_A_INSTRUIRE_CONFIRMATION,
+        )
+        email_service_to_bailleur.send_transactional_email(
+            email_data={
+                "convention_url": convention_url,
+                "convention": str(convention),
+            },
+        )
 
     # Send a notification email to instructeur
-    email_service_to_instructeur = EmailService(
-        to_emails=instructeur_emails,
-        email_template_id=EmailTemplateID.BtoI_AVENANT_A_INSTRUIRE
-        if convention.is_avenant()
-        else EmailTemplateID.BtoI_CONVENTION_A_INSTRUIRE,
-    )
-    email_service_to_instructeur.send_transactional_email(
-        email_data={
-            "convention_url": convention_url,
-            "convention": str(convention),
-        },
-    )
+    if len(instructeur_emails) > 0:
+        email_service_to_instructeur = EmailService(
+            to_emails=instructeur_emails,
+            email_template_id=EmailTemplateID.BtoI_AVENANT_A_INSTRUIRE
+            if convention.is_avenant()
+            else EmailTemplateID.BtoI_CONVENTION_A_INSTRUIRE,
+        )
+        email_service_to_instructeur.send_transactional_email(
+            email_data={
+                "convention_url": convention_url,
+                "convention": str(convention),
+            },
+        )
 
 
 def convention_feedback(request: HttpRequest, convention: Convention):
@@ -271,20 +274,19 @@ def send_email_correction(
             email_template_id = EmailTemplateID.BtoI_CONVENTION_CORRECTIONS_FAITES
 
     # Send a confirmation email to bailleur
-    email_service_to_bailleur = EmailService(
-        to_emails=to,
-        cc_emails=cc,
-        email_template_id=email_template_id,
-    )
-    email_service_to_bailleur.send_transactional_email(
-        email_data={
-            "convention_url": convention_url,
-            "convention": str(convention),
-            "commentaire": comment,
-        },
-    )
-
-    return email_service_to_bailleur
+    if len(to) > 0:
+        email_service_to_bailleur = EmailService(
+            to_emails=to,
+            cc_emails=cc,
+            email_template_id=email_template_id,
+        )
+        email_service_to_bailleur.send_transactional_email(
+            email_data={
+                "convention_url": convention_url,
+                "convention": str(convention),
+                "commentaire": comment,
+            },
+        )
 
 
 def convention_validate(request: HttpRequest, convention: Convention):
