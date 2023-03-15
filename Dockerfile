@@ -15,5 +15,4 @@ SHELL ["/bin/bash", "-c"]
 
 RUN pip install -r requirements.txt -r dev-requirements.txt
 
-#CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
-CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "--timeout", "30", "core.wsgi:application", "--reload"]
+CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
