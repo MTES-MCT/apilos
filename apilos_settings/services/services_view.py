@@ -322,13 +322,11 @@ def user_list(request):
 def edit_user(request, username):
     user = User.objects.get(username=username)
     status = ""
-
-    bailleurs = [
-        (b.uuid, b.nom)
-        for b in request.user.bailleurs(full_scope=True)
+    bailleur_query = (
+        request.user.bailleurs(full_scope=True)
         .exclude(nature_bailleur=NatureBailleur.PRIVES)
         .exclude(id__in=user.get_active_bailleurs())
-    ]
+    )
     administrations = [
         (b.uuid, b.nom)
         for b in request.user.administrations(full_scope=True).exclude(
@@ -339,7 +337,7 @@ def edit_user(request, username):
         action_type = request.POST.get("action_type", "")
         if action_type == "remove_bailleur":
             form = UserForm(initial=model_to_dict(user))
-            form_add_bailleur = AddBailleurForm(bailleurs=bailleurs)
+            form_add_bailleur = AddBailleurForm(bailleur_query=bailleur_query)
             form_add_administration = AddAdministrationForm(
                 administrations=administrations
             )
@@ -354,7 +352,9 @@ def edit_user(request, username):
             form_add_administration = AddAdministrationForm(
                 administrations=administrations
             )
-            form_add_bailleur = AddBailleurForm(request.POST, bailleurs=bailleurs)
+            form_add_bailleur = AddBailleurForm(
+                request.POST, bailleur_query=bailleur_query
+            )
             if form_add_bailleur.is_valid() and request.user.is_administrator():
                 Role.objects.create(
                     typologie=TypeRole.BAILLEUR,
@@ -366,7 +366,7 @@ def edit_user(request, username):
                 )
         elif action_type == "remove_administration":
             form = UserForm(initial=model_to_dict(user))
-            form_add_bailleur = AddBailleurForm(bailleurs=bailleurs)
+            form_add_bailleur = AddBailleurForm(bailleur_query=bailleur_query)
             form_add_administration = AddAdministrationForm(
                 administrations=administrations
             )
@@ -380,7 +380,7 @@ def edit_user(request, username):
             ).delete()
         elif action_type == "add_administration":
             form = UserForm(initial=model_to_dict(user))
-            form_add_bailleur = AddBailleurForm(bailleurs=bailleurs)
+            form_add_bailleur = AddBailleurForm(bailleur_query=bailleur_query)
             form_add_administration = AddAdministrationForm(
                 request.POST, administrations=administrations
             )
@@ -394,11 +394,11 @@ def edit_user(request, username):
                     group=Group.objects.get(name="instructeur"),
                 )
         else:
-            form_add_bailleur = AddBailleurForm(bailleurs=bailleurs)
+            form_add_bailleur = AddBailleurForm(bailleur_query=bailleur_query)
             form_add_administration = AddAdministrationForm(
                 administrations=administrations
             )
-            # Erase admnistrateur de compte if current user is not admin
+            # Erase administrateur de compte if current user is not admin
             # Because a non-administrator can't give this status himself
             # --> need to check the common scope of user and current user
             form = UserForm(
@@ -445,7 +445,7 @@ def edit_user(request, username):
                 status = "user_updated"
     else:
         (form, form_add_bailleur, form_add_administration) = _init_user_form(
-            user, bailleurs=bailleurs, administrations=administrations
+            user, bailleur_query=bailleur_query, administrations=administrations
         )
     return {
         "form": form,
@@ -457,7 +457,7 @@ def edit_user(request, username):
     }
 
 
-def _init_user_form(user, bailleurs=None, administrations=None):
+def _init_user_form(user, bailleur_query=None, administrations=None):
     return (
         UserForm(
             initial={
@@ -465,7 +465,7 @@ def _init_user_form(user, bailleurs=None, administrations=None):
                 "filtre_departements": user.filtre_departements.all(),
             }
         ),
-        AddBailleurForm(bailleurs=bailleurs),
+        AddBailleurForm(bailleur_query=bailleur_query),
         AddAdministrationForm(administrations=administrations),
     )
 
@@ -486,9 +486,9 @@ def add_user(request):
                     else []
                 ),
             },
-            bailleur_query=request.user.bailleurs(full_scope=True)
-            .exclude(nature_bailleur=NatureBailleur.PRIVES)
-            .filter(uuid=request.POST.get("bailleur")),
+            bailleur_query=request.user.bailleurs(full_scope=True).filter(
+                uuid=request.POST.get("bailleur")
+            ),
             administrations=administrations,
         )
         if form.is_valid():
@@ -564,9 +564,9 @@ def add_user(request):
     else:
         form = AddUserForm(
             administrations=administrations,
-            bailleur_query=request.user.bailleurs(full_scope=True).exclude(
-                nature_bailleur=NatureBailleur.PRIVES
-            )[: settings.APILOS_MAX_DROPDOWN_COUNT],
+            bailleur_query=request.user.bailleurs(full_scope=True)[
+                : settings.APILOS_MAX_DROPDOWN_COUNT
+            ],
         )
     return {
         "form": form,
