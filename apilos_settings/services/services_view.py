@@ -221,17 +221,15 @@ def edit_bailleur(request, bailleur_uuid):
                     else bailleur.nature_bailleur
                 ),
             },
-            bailleurs=[
-                (b.uuid, b.nom)
-                for b in request.user.bailleurs(full_scope=True)
-                .exclude(id=bailleur.id)
-                .filter(parent_id__isnull=True)
-            ],
+            bailleur_query=request.user.bailleurs(full_scope=True)
+            .exclude(id=bailleur.id)
+            .filter(parent_id__isnull=True)
+            .filter(uuid=request.POST.get("bailleur")),
         )
         if form.is_valid():
             if request.user.is_superuser or request.user.administrateur_de_compte:
                 parent = (
-                    Bailleur.objects.get(uuid=form.cleaned_data["bailleur"])
+                    form.cleaned_data["bailleur"]
                     if form.cleaned_data["bailleur"]
                     else None
                 )
@@ -286,12 +284,9 @@ def edit_bailleur(request, bailleur_uuid):
                     bailleur.signataire_date_deliberation
                 ),
             },
-            bailleurs=[
-                (b.uuid, b.nom)
-                for b in request.user.bailleurs(full_scope=True)
-                .exclude(id=bailleur.id)
-                .filter(parent_id__isnull=True)
-            ],
+            bailleur_query=request.user.bailleurs(full_scope=True)
+            .exclude(id=bailleur.id)
+            .filter(parent_id__isnull=True)[: settings.APILOS_MAX_DROPDOWN_COUNT],
         )
     user_list_service = UserListService(
         search_input=request.GET.get("search_input", ""),
@@ -477,12 +472,6 @@ def _init_user_form(user, bailleurs=None, administrations=None):
 
 def add_user(request):
     status = ""
-    bailleurs = [
-        (b.uuid, b.nom)
-        for b in request.user.bailleurs(full_scope=True).exclude(
-            nature_bailleur=NatureBailleur.PRIVES
-        )
-    ]
     administrations = [
         (b.uuid, b.nom) for b in request.user.administrations(full_scope=True)
     ]
@@ -497,7 +486,9 @@ def add_user(request):
                     else []
                 ),
             },
-            bailleurs=bailleurs,
+            bailleur_query=request.user.bailleurs(full_scope=True)
+            .exclude(nature_bailleur=NatureBailleur.PRIVES)
+            .filter(uuid=request.POST.get("bailleur")),
             administrations=administrations,
         )
         if form.is_valid():
@@ -542,9 +533,7 @@ def add_user(request):
                 )
                 Role.objects.create(
                     typologie=TypeRole.BAILLEUR,
-                    bailleur=request.user.bailleurs().get(
-                        uuid=form.cleaned_data["bailleur"]
-                    ),
+                    bailleur=form.cleaned_data["bailleur"],
                     user=user,
                     group=Group.objects.get(name="bailleur"),
                 )
@@ -574,8 +563,10 @@ def add_user(request):
             status = "user_created"
     else:
         form = AddUserForm(
-            bailleurs=bailleurs,
             administrations=administrations,
+            bailleur_query=request.user.bailleurs(full_scope=True).exclude(
+                nature_bailleur=NatureBailleur.PRIVES
+            )[: settings.APILOS_MAX_DROPDOWN_COUNT],
         )
     return {
         "form": form,

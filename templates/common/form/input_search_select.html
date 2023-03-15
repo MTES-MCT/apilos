@@ -1,0 +1,46 @@
+<div class="fr-select-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{form_input.id_for_label}}_group">
+    {% if form_input.label %}
+        <label class="fr-label {{ label_class }}" for="{{form_input.id_for_label}}">
+            {{ form_input.label }}
+            {% include "common/form/required_field.html" with form_input=form_input %}
+            {% include "common/help_field.html" with form_input=form_input %}
+        </label>
+    {% endif %}
+
+    <div class="fr-mt-1w block--row-strech" id="{{ form_input.id_for_label }}_div">
+        <select
+            class="fr-select {% if form_input.errors %}fr-select--error{% endif %}"
+            id="{{ form_input.id_for_label }}"
+            name="{{ form_input.html_name }}"
+            {% include "common/form/disable_form_input.html" %}>
+            {% if form_input.initial %}
+                <option value="{{ form_input.initial|attribute:field }}">
+                    {{ form_input.initial }}
+                </option>
+            {% elif queryset %}
+                {% for element in queryset %}
+                    <option value="{{ element|attribute:field }}">
+                        {{ element }}
+                    </option>
+                {% endfor %}
+            {% endif %}
+        </select>
+        {% include "common/utils/comments_field.html" %}
+    </div>
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+        VirtualSelect.init({
+            ele: '#{{form_input.id_for_label}}',
+            search: true,
+            onServerSearch: function (search, select) {
+                fetch('{{ url }}?q=' + search)
+                    .then((response) => response.json())
+                    .then(data => select.setServerOptions(data));
+            },
+        });
+    </script>
+    {% for error in form_input.errors %}
+        <p id="select-error-desc-error" class="fr-error-text">
+            {{ error }}
+        </p>
+    {% endfor %}
+</div>

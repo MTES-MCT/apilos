@@ -6,6 +6,11 @@
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
+
+{% block css_extras %}
+    <link rel="stylesheet" href="{% static 'virtual-select/virtual-select.min.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -36,7 +41,8 @@
                                         <div>
                                             {% csrf_token %}
                                             {% with convention_uuid_str=convention.uuid|stringformat:"s" %}
-                                                {% include "common/form/input_select.html" with form_input=upform.bailleur mandatory_input=True object_field="bailleur__uuid__"|add:convention_uuid_str %}
+                                                {% url 'users:search_bailleur' as search_bailleur_url %}
+                                                {% include "common/form/input_search_select.html" with form_input=upform.bailleur queryset=upform.bailleur.field.queryset field=upform.bailleur.field.to_field_name url=search_bailleur_url %}
                                             {% endwith %}
                                             <button class="fr-btn" name="update_bailleur" value="True">
                                                 Changer le bailleur de la convention et de son opération

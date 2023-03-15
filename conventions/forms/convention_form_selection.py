@@ -3,11 +3,12 @@
     - Selection d'un lot à conventionner
     - création d'un programme/lot/convention à partir de zéro
 """
+from django.db.models import QuerySet
 
+from bailleurs.models import Bailleur
 from django import forms
 
 from programmes.models import FinancementEDD, ActiveNatureLogement, TypeHabitat
-from conventions.models import ConventionStatut
 
 
 class ProgrammeSelectionFromDBForm(forms.Form):
@@ -42,14 +43,18 @@ class ProgrammeSelectionFromDBForm(forms.Form):
 
 
 class CreateConventionMinForm(forms.Form):
-    def __init__(self, *args, bailleurs=None, administrations=None, **kwargs) -> None:
-        self.declared_fields["bailleur"].choices = bailleurs
+    def __init__(
+        self, *args, bailleur_query: QuerySet, administrations=None, **kwargs
+    ) -> None:
         self.declared_fields["administration"].choices = administrations
+        self.declared_fields["bailleur"].queryset = bailleur_query
+
         super().__init__(*args, **kwargs)
 
-    bailleur = forms.ChoiceField(
+    bailleur = forms.ModelChoiceField(
         label="Bailleur",
-        choices=[],
+        queryset=Bailleur.objects.none(),
+        to_field_name="uuid",
         error_messages={
             "required": "Le bailleur est obligatoire",
         },

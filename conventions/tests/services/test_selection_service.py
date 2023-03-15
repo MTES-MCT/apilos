@@ -103,17 +103,12 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
 
     def test_get_from_zero(self):
         administration = Administration.objects.get(code="75000")
-        bailleurs = Bailleur.objects.all().order_by("nom")
         self.service.get_from_zero()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
         self.assertIsInstance(self.service.form, ProgrammeSelectionFromZeroForm)
         self.assertEqual(
             self.service.form.declared_fields["administration"].choices,
             [(administration.uuid, str(administration))],
-        )
-        self.assertEqual(
-            self.service.form.declared_fields["bailleur"].choices,
-            [(bailleur.uuid, str(bailleur)) for bailleur in bailleurs],
         )
 
     def test_post_from_zero_failed_form(self):
@@ -303,8 +298,8 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             ],
         )
         self.assertEqual(
-            self.service.form.declared_fields["bailleur"].choices,
-            [(bailleur.uuid, str(bailleur)) for bailleur in bailleurs],
+            self.service.form.declared_fields["bailleur"].queryset.count(),
+            bailleurs.count(),
         )
 
     def test_post_from_zero_failed_form(self):

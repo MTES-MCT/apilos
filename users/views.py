@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
+
+from bailleurs.models import Bailleur
 
 
 def home(request):
@@ -19,6 +21,46 @@ def home(request):
         return HttpResponseRedirect(reverse("cas_ng_login"))
     # test si authentifié, si oui, rediriger vers convention/index...
     return render(request, "index.html")
+
+
+@login_required
+@require_GET
+def search_bailleur(request):
+    query = request.GET.get("q", "")
+
+    return JsonResponse(
+        [
+            {
+                "label": b.nom,
+                "value": b.uuid,
+            }
+            for b in request.user.bailleurs(full_scope=True).filter(
+                nom__icontains=query
+            )[: settings.APILOS_MAX_DROPDOWN_COUNT]
+        ],
+        safe=False,
+    )
+
+
+@login_required
+@require_GET
+def search_parent_bailleur(request, bailleur_uuid: str):
+    query = request.GET.get("q", "")
+
+    return JsonResponse(
+        [
+            {
+                "label": b.nom,
+                "value": b.uuid,
+            }
+            for b in request.user.bailleurs(full_scope=True)
+            .exclude(uuid=bailleur_uuid)
+            .filter(parent_id__isnull=True)
+            .filter(nom__icontains=query)[: settings.APILOS_MAX_DROPDOWN_COUNT]
+        ],
+        safe=False,
+    )
+
 
 @login_required
 @require_POST
