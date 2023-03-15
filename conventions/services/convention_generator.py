@@ -73,14 +73,11 @@ def _compute_total_logement(convention):
     }
     nb_logements_par_type = {}
     for logement in convention.lot.logements.order_by("typologie").all():
-        logements_totale["sh_totale"] += logement.surface_habitable
-        if logement.surface_annexes is not None:
-            logements_totale["sa_totale"] += logement.surface_annexes
-        if logement.surface_annexes_retenue is not None:
-            logements_totale["sar_totale"] += logement.surface_annexes_retenue
-        if logement.surface_utile is not None:
-            logements_totale["su_totale"] += logement.surface_utile
-        logements_totale["loyer_total"] += logement.loyer
+        logements_totale["sh_totale"] += logement.surface_habitable or 0
+        logements_totale["sa_totale"] += logement.surface_annexes or 0
+        logements_totale["sar_totale"] += logement.surface_annexes_retenue or 0
+        logements_totale["su_totale"] += logement.surface_utile or 0
+        logements_totale["loyer_total"] += logement.loyer or 0
         if logement.get_typologie_display() not in nb_logements_par_type:
             nb_logements_par_type[logement.get_typologie_display()] = 0
         nb_logements_par_type[logement.get_typologie_display()] += 1
