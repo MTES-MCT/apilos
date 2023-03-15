@@ -64,29 +64,30 @@ def generate_and_send(args):
                     desc_file.write(src_file.read())
 
     # Send a confirmation email to bailleur
-    email_service_to_bailleur = EmailService(
-        to_emails=convention.get_email_bailleur_users(),
-        cc_emails=[convention_email_validator],
-        email_template_id=EmailTemplateID.ItoB_AVENANT_VALIDE
-        if convention.is_avenant()
-        else EmailTemplateID.ItoB_CONVENTION_VALIDEE,
-    )
-    administration = convention.administration
+    if len(destinataires_bailleur := convention.get_email_bailleur_users()) > 0:
+        email_service_to_bailleur = EmailService(
+            to_emails=destinataires_bailleur,
+            cc_emails=[convention_email_validator],
+            email_template_id=EmailTemplateID.ItoB_AVENANT_VALIDE
+            if convention.is_avenant()
+            else EmailTemplateID.ItoB_CONVENTION_VALIDEE,
+        )
+        administration = convention.administration
 
-    file_path = zip_path if zip_path is not None else Path(pdf_path)
-    if default_storage.size(file_path) > settings.MAX_EMAIL_ATTACHED_FILES_SIZE:
-        file_path = None
-    email_service_to_bailleur.send_transactional_email(
-        email_data={
-            "convention_url": convention_url,
-            "convention": str(convention),
-            "adresse": administration.adresse,
-            "code_postal": administration.code_postal,
-            "ville": administration.ville,
-            "nb_convention_exemplaires": administration.nb_convention_exemplaires,
-        },
-        filepath=file_path,
-    )
+        file_path = zip_path if zip_path is not None else Path(pdf_path)
+        if default_storage.size(file_path) > settings.MAX_EMAIL_ATTACHED_FILES_SIZE:
+            file_path = None
+        email_service_to_bailleur.send_transactional_email(
+            email_data={
+                "convention_url": convention_url,
+                "convention": str(convention),
+                "adresse": administration.adresse,
+                "code_postal": administration.code_postal,
+                "ville": administration.ville,
+                "nb_convention_exemplaires": administration.nb_convention_exemplaires,
+            },
+            filepath=file_path,
+        )
 
 
 @shared_task()
