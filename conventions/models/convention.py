@@ -1,6 +1,5 @@
 import uuid
 import json
-import logging
 
 from django.db import models
 from django.db.models import Q
@@ -21,8 +20,6 @@ from programmes.models import (
     TypeStationnement,
 )
 from users.type_models import EmailPreferences, TypeRole
-
-logger = logging.getLogger(__name__)
 
 
 class Convention(models.Model):
@@ -237,8 +234,8 @@ class Convention(models.Model):
                 and "description_avenant" in json_data["text"]
             ):
                 return json_data["text"]["description_avenant"]
-        except (json.decoder.JSONDecodeError, TypeError) as e:
-            logger.warning(e)
+        except json.decoder.JSONDecodeError:
+            pass
 
         return None
 
