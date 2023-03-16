@@ -6,6 +6,14 @@
 
 {% block page_title %}Conventions - APiLos{% endblock%}
 
+{% block javascript_extras %}
+    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
+
+{% block css_extras %}
+    <link rel="stylesheet" href="{% static 'virtual-select/virtual-select.min.css' %}">
+{% endblock %}
+
 {% block content %}
     {% with total_conventions=nb_active_conventions|add:nb_completed_conventions %}
         {% if total_conventions > 0 %}

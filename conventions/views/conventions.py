@@ -19,6 +19,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
+from bailleurs.models import Bailleur
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from conventions.models import Convention, ConventionStatut, PieceJointe
 from conventions.permissions import (
@@ -130,6 +131,7 @@ def search(request, active: bool = True):
         financement_filter=request.GET.get("financement", ""),
         departement_input=request.GET.get("departement_input", ""),
         user=request.user,
+        bailleur=Bailleur.objects.filter(uuid=request.GET.get("bailleur", "")).first(),
         my_convention_list=query_set.prefetch_related("programme")
         .prefetch_related("programme__administration")
         .prefetch_related("lot"),
@@ -146,6 +148,11 @@ def search(request, active: bool = True):
             "nb_active_conventions": request.user.conventions(active=True).count(),
             "nb_completed_conventions": request.user.conventions(active=False).count(),
             "conventions": service,
+            "bailleur_query": request.user.bailleurs(full_scope=True).exclude(
+                nom__exact=""
+            )[: settings.APILOS_MAX_DROPDOWN_COUNT]
+            if not active and request.user.is_instructeur()
+            else None,
         },
     )
 

@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.db.models.functions import Substr
 from django.http.request import HttpRequest
 
+from bailleurs.models import Bailleur
 from conventions.forms import ConventionResiliationForm, UploadForm, ConventionDateForm
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
@@ -65,6 +66,7 @@ class ConventionListService:
         order_by: str = "",
         page: str = 1,
         user: User | None = None,
+        bailleur: Bailleur | None = None,
     ):
         self.search_input = search_input
         self.statut_filter = statut_filter
@@ -74,6 +76,7 @@ class ConventionListService:
         self.order_by = order_by
         self.page = page
         self.user = user
+        self.bailleur = bailleur
         self.my_convention_list = my_convention_list
 
     def query_kept_params(self):
@@ -111,6 +114,11 @@ class ConventionListService:
             self.my_convention_list = self.my_convention_list.annotate(
                 departement=Substr("programme__code_postal", 1, 2)
             ).filter(departement=self.departement_input)
+
+        if self.bailleur:
+            self.my_convention_list = self.my_convention_list.filter(
+                lot__programme__bailleur=self.bailleur
+            )
 
         if self.order_by:
             self.my_convention_list = self.my_convention_list.order_by(self.order_by)
