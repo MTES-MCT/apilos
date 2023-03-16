@@ -242,7 +242,10 @@ class Programme(IngestableModel):
     )
 
     surface_utile_totale = models.DecimalField(
-        max_digits=8, decimal_places=2, null=True
+        max_digits=10, decimal_places=2, null=True
+    )
+    surface_corrigee_totale = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True
     )
     type_operation = models.CharField(
         max_length=25,
@@ -529,6 +532,38 @@ class ReferenceCadastrale(models.Model):
 
     def __str__(self):
         return f"{self.section} - {self.numero} - {self.lieudit}"
+
+
+class RepartitionSurface(models.Model):
+    """
+    Répartition du nombre de logements par typologie de surface (T1, T2, etc...) et type d'habitat (individuel ou
+    collectif).
+
+    Ces informations étaient déclarées dans Ecoloweb et ne sont donc destinées qu'à un usage consultatif.
+    """
+
+    class Meta:
+        unique_together = ("lot", "typologie", "type_habitat")
+
+    id = models.AutoField(primary_key=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    lot = models.ForeignKey(
+        "Lot",
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="surfaces",
+    )
+    typologie = models.CharField(
+        max_length=25,
+        choices=TypologieLogement.choices,
+        default=TypologieLogement.T1,
+    )
+    type_habitat = models.CharField(
+        max_length=25,
+        choices=filter(lambda th: th[0] != TypeHabitat.MIXTE, TypeHabitat.choices),
+        default=TypeHabitat.INDIVIDUEL,
+    )
+    quantite = models.IntegerField()
 
 
 class Lot(IngestableModel):

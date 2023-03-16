@@ -8,6 +8,7 @@ from programmes.models import (
     Logement,
     ReferenceCadastrale,
     TypeStationnement,
+    RepartitionSurface,
 )
 
 from .importers import ModelImporter
@@ -31,6 +32,21 @@ class ReferenceCadastraleImporter(ModelImporter):
             "programme": self.resolve_ecolo_reference(
                 ecolo_id=data.pop("programme_id"), model=Programme
             ),
+            **data,
+        }
+
+
+class RepartitionSurfaceImporter(ModelImporter):
+    model = RepartitionSurface
+
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
+        super().__init__(departement, import_date, debug=debug, update=update)
+
+        self._query_many = self._get_file_content("importers/repartitions_surface.sql")
+
+    def _prepare_data(self, data: dict) -> dict:
+        return {
+            "lot": self.resolve_ecolo_reference(ecolo_id=data.pop("lot_id"), model=Lot),
             **data,
         }
 
@@ -110,6 +126,9 @@ class LotImporter(ModelImporter):
         self._type_stationnement_importer = TypeStationnementImporter(
             departement, import_date, debug=debug, update=update
         )
+        self._repartition_surface_importer = RepartitionSurfaceImporter(
+            departement, import_date, debug=debug, update=update
+        )
 
     def _prepare_data(self, data: dict) -> dict:
         parent_id = data.pop("parent_id")
@@ -128,6 +147,7 @@ class LotImporter(ModelImporter):
     def _on_processed(self, ecolo_id: str | None, model: Model | None, created: bool):
         self._logement_importer.import_many(ecolo_id)
         self._type_stationnement_importer.import_many(ecolo_id)
+        self._repartition_surface_importer.import_many(ecolo_id)
 
 
 class LogementImporter(ModelImporter):
