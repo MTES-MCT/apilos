@@ -13,6 +13,7 @@ from conventions.forms import ConventionResiliationForm, UploadForm, ConventionD
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
 from conventions.services.file import ConventionFileService
+from instructeurs.models import Administration
 from users.models import User
 
 
@@ -54,6 +55,8 @@ class ConventionListService:
     paginated_conventions: Any  # list[Convention]
     total_conventions: int
     user: User
+    bailleur: Bailleur | None
+    administration: Administration | None
 
     def __init__(
         self,
@@ -67,6 +70,7 @@ class ConventionListService:
         page: str = 1,
         user: User | None = None,
         bailleur: Bailleur | None = None,
+        administration: Administration | None = None,
     ):
         self.search_input = search_input
         self.statut_filter = statut_filter
@@ -77,6 +81,7 @@ class ConventionListService:
         self.page = page
         self.user = user
         self.bailleur = bailleur
+        self.administration = administration
         self.my_convention_list = my_convention_list
 
     def query_kept_params(self):
@@ -118,6 +123,11 @@ class ConventionListService:
         if self.bailleur:
             self.my_convention_list = self.my_convention_list.filter(
                 lot__programme__bailleur=self.bailleur
+            )
+
+        if self.administration:
+            self.my_convention_list = self.my_convention_list.filter(
+                lot__programme__administration=self.administration
             )
 
         if self.order_by:

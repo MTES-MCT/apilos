@@ -1,3 +1,5 @@
+from datetime import date
+from zipfile import ZipFile
 import mimetypes
 from datetime import date
 from zipfile import ZipFile
@@ -26,6 +28,12 @@ from conventions.permissions import (
     has_campaign_permission,
     has_campaign_permission_view_function,
 )
+from core.storage import client
+from core.utils import is_valid_uuid
+from instructeurs.models import Administration
+from programmes.models import Financement, NatureLogement
+from programmes.services import LoyerRedevanceUpdateComputer
+from upload.services import UploadService
 from conventions.services import convention_generator
 from conventions.services.convention_generator import fiche_caf_doc
 from conventions.services.conventions import (
@@ -116,6 +124,31 @@ class RecapitulatifView(BaseConventionView):
 @require_GET
 def search(request, active: bool = True):
     query_set = request.user.conventions(active=active)
+    uuid_bailleur = request.GET.get("bailleur")
+    bailleur = (
+        Bailleur.objects.filter(uuid=uuid_bailleur).first()
+        if is_valid_uuid(uuid_bailleur)
+        else None
+    )
+    bailleur_query = (
+        request.user.bailleurs(full_scope=True).exclude(nom__exact="")[
+            : settings.APILOS_MAX_DROPDOWN_COUNT
+        ]
+        if not active and request.user.is_instructeur()
+        else None
+    )
+
+    uuid_administration = request.GET.get("administration")
+    administration = (
+        Administration.objects.filter(uuid=uuid_administration).first()
+        if is_valid_uuid(uuid_administration)
+        else None
+    )
+    administration_query = (
+        request.user.administrations()[: settings.APILOS_MAX_DROPDOWN_COUNT]
+        if not active and request.user.is_bailleur()
+        else None
+    )
 
     service = ConventionListService(
         search_input=request.GET.get("search_input", ""),
@@ -131,7 +164,8 @@ def search(request, active: bool = True):
         financement_filter=request.GET.get("financement", ""),
         departement_input=request.GET.get("departement_input", ""),
         user=request.user,
-        bailleur=Bailleur.objects.filter(uuid=request.GET.get("bailleur", "")).first(),
+        bailleur=bailleur,
+        administration=administration,
         my_convention_list=query_set.prefetch_related("programme")
         .prefetch_related("programme__administration")
         .prefetch_related("lot"),
@@ -148,11 +182,8 @@ def search(request, active: bool = True):
             "nb_active_conventions": request.user.conventions(active=True).count(),
             "nb_completed_conventions": request.user.conventions(active=False).count(),
             "conventions": service,
-            "bailleur_query": request.user.bailleurs(full_scope=True).exclude(
-                nom__exact=""
-            )[: settings.APILOS_MAX_DROPDOWN_COUNT]
-            if not active and request.user.is_instructeur()
-            else None,
+            "bailleur_query": bailleur_query,
+            "administration_query": administration_query,
         },
     )
 

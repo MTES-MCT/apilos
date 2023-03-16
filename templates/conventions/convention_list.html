@@ -43,14 +43,6 @@
                             <input class="fr-input" placeholder="par nom, code d’opération ou ville" type="search" id="search_input" name="search_input" value="{{conventions.search_input}}">
                         </div>
 
-                        {# Champs commune #}
-                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
-                            <div class="fr-select-group">
-                                <select class="fr-select" name="commune" id="search-field-commune">
-                                </select>
-                            </div>
-                        </div>
-
                         {# Champs bailleur #}
                         {% if bailleur_query %}
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
@@ -87,6 +79,42 @@
                         {% endif %}
 
                         {# Champs administration #}
+                        {% if administration_query %}
+
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                                <div class="fr-select-group">
+                                    {% url 'users:search_administration' as search_administration_url %}
+                                    <select class="fr-select" name="administration" id="search-field-administration">
+                                        {% if conventions.administration %}
+                                            <option selected value="{{ conventions.administration.uuid }}">{{ conventions.administration }}</option>
+                                        {% else %}
+                                            <option selected value>Instructeur</option>
+                                            {% for administration in administration_query %}
+                                                <option value="{{ administration.uuid }}">
+                                                    {{ administration }}
+                                                </option>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </select>
+                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                        VirtualSelect.init({
+                                            ele: '#search-field-administration',
+                                            search: true,
+                                            placeholder: "Instructeur",
+                                            selectedValue: null,
+                                            searchPlaceholderText: "Nom du l'administration'",
+                                            onServerSearch: function (search, select) {
+                                                fetch('{{ search_administration_url }}?q=' + search)
+                                                    .then((response) => response.json())
+                                                    .then(data => select.setServerOptions(data));
+                                            },
+                                        });
+                                    </script>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {# Champs commune #}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
                             <div class="fr-select-group">
                                 <select class="fr-select" name="commune" id="search-field-commune">
