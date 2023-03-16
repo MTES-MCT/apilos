@@ -648,6 +648,32 @@ class Lot(IngestableModel):
     def annexes(self):
         return Annexe.objects.filter(logement__lot=self)
 
+    def repartition_surfaces(self):
+        """
+        Construit un dictionnaire à 2 niveaux TypeHabitat<Typologie<int>> détaillant le nombre de logements par type
+        d'habitat et typologie de logement, ou 0 si no renseigné.
+        """
+        return dict(
+            (
+                type_habitat,
+                dict(
+                    (
+                        typologie,
+                        self.surfaces.filter(
+                            type_habitat=type_habitat, typologie=typologie
+                        )
+                        .values_list("quantite", flat=True)
+                        .first()
+                        or 0,
+                    )
+                    for typologie, _1 in TypologieLogement.choices
+                ),
+            )
+            for type_habitat, _2 in filter(
+                lambda th: th[0] != TypeHabitat.MIXTE, TypeHabitat.choices
+            )
+        )
+
     def edd_volumetrique_text(self):
         return get_key_from_json_field(self.edd_volumetrique, "text")
 

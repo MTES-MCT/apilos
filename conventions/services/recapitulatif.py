@@ -60,6 +60,7 @@ def get_convention_recapitulatif(request: HttpRequest, convention: Convention):
         "conventionNumberForm": convention_number_form,
         "complete_for_avenant_form": complete_for_avenant_form,
         "ConventionType1and2Form": convention_type1_and_2_form,
+        "repartition_surfaces": convention.lot.repartition_surfaces(),
     }
 
 
