@@ -223,8 +223,7 @@ def edit_bailleur(request, bailleur_uuid):
             },
             bailleur_query=request.user.bailleurs(full_scope=True)
             .exclude(id=bailleur.id)
-            .filter(parent_id__isnull=True)
-            .filter(uuid=request.POST.get("bailleur")),
+            .filter(parent_id__isnull=True),
         )
         if form.is_valid():
             if request.user.is_superuser or request.user.administrateur_de_compte:
@@ -279,7 +278,7 @@ def edit_bailleur(request, bailleur_uuid):
                         "signataire_bloc_signature",
                     ],
                 ),
-                "bailleur": bailleur.parent.uuid if bailleur.parent else None,
+                "bailleur": bailleur.parent if bailleur.parent else "",
                 "signataire_date_deliberation": utils.format_date_for_form(
                     bailleur.signataire_date_deliberation
                 ),
@@ -358,9 +357,7 @@ def edit_user(request, username):
             if form_add_bailleur.is_valid() and request.user.is_administrator():
                 Role.objects.create(
                     typologie=TypeRole.BAILLEUR,
-                    bailleur=request.user.bailleurs().get(
-                        uuid=form_add_bailleur.cleaned_data["bailleur"]
-                    ),
+                    bailleur=form_add_bailleur.cleaned_data["bailleur"],
                     user=user,
                     group=Group.objects.get(name="bailleur"),
                 )
