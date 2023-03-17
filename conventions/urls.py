@@ -129,7 +129,11 @@ urlpatterns = [
         views.AvenantCommentsView.as_view(),
         name="avenant_commentaires",
     ),
-    path("recapitulatif/<convention_uuid>", views.recapitulatif, name="recapitulatif"),
+    path(
+        "recapitulatif/<convention_uuid>",
+        views.RecapitulatifView.as_view(),
+        name="recapitulatif",
+    ),
     path(
         "save/<convention_uuid>",
         views.save_convention,

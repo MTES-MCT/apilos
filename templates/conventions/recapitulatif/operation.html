@@ -25,7 +25,7 @@
                         {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville object_field="programme__ville__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements object_field="programme__nb_logements__"|add:programme_uuid %}
                         {% include "common/display_checkbox.html" with label="ANRU" value=programme.anru object_field="programme__anru__"|add:programme_uuid %}
-                        {% include "common/display_field_if_exists.html" with label="Type d'habitat" value=programme.get_type_habitat_display object_field="programme__type_habitat__"|add:programme_uuid %}
+                        {% include "common/display_field_if_exists.html" with label="Type d'habitat" value=lot.get_type_habitat_display object_field="lot__type_habitat__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Type d'opération" value=programme.get_type_operation_display object_field="programme__type_operation__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Nombre de locaux commerciaux (non-conventionnés)" value=programme.nb_locaux_commerciaux object_field="programme__nb_locaux_commerciaux__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Nombre de bureaux (non-conventionnés)" value=programme.nb_bureaux object_field="programme__nb_bureaux__"|add:programme_uuid %}
