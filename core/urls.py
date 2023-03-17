@@ -26,7 +26,7 @@ from django.contrib.sitemaps.views import sitemap
 import django_cas_ng.views
 
 from core.sitemaps import SITEMAPS
-
+from core.views import SecurePasswordResetConfirmView
 
 urlpatterns = [
     path("admin/doc/", include("django.contrib.admindocs.urls")),
@@ -84,6 +84,11 @@ if settings.CERBERE_AUTH:
 else:
     urlpatterns = urlpatterns + [
         path("accounts/", include("django.contrib.auth.urls")),
+        path(
+            "accounts/reset/<uidb64>/<token>/",
+            SecurePasswordResetConfirmView.as_view(),
+            name="password_reset_confirm",
+        ),
     ]
 
 if "django_browser_reload" in settings.INSTALLED_APPS:
