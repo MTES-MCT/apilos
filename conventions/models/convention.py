@@ -409,6 +409,15 @@ class Convention(models.Model):
     def is_avenant(self):
         return self.parent_id is not None
 
+    def is_imported(self):
+        if (
+            not self.parent.programme.ville
+            or not self.parent.lot.nb_logements
+            or not self.parent.nom_fichier_signe
+        ):
+            return self
+        return None
+
     def statut_for_template(self):
         return {
             "statut": self.statut,

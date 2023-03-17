@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.conf import settings
 
 from comments.models import Comment, CommentStatut
+from conventions.forms.avenant import CompleteforavenantForm
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.notification import NotificationForm
 from conventions.forms.type1and2 import ConventionType1and2Form
@@ -12,6 +13,7 @@ from conventions.models.choices import ConventionStatut
 from conventions.models.convention import Convention
 from conventions.models.convention_history import ConventionHistory
 from conventions.services import utils
+from conventions.services.file import ConventionFileService
 from conventions.tasks import generate_and_send
 from core.services import EmailService, EmailTemplateID
 from programmes.models import Annexe
@@ -23,6 +25,14 @@ def convention_summary(request: HttpRequest, convention: Convention):
     convention_number_form = ConventionNumberForm(
         initial={"convention_numero": convention.get_default_convention_number()}
     )
+    complete_for_avenant_form = None
+    if convention.is_avenant() and convention.is_imported():
+        complete_for_avenant_form = CompleteforavenantForm(
+            initial={
+                "ville": convention.parent.programme.ville,
+                "nb_logements": convention.parent.lot.nb_logements,
+            }
+        )
 
     opened_comments = Comment.objects.filter(
         convention=convention,
@@ -60,6 +70,7 @@ def convention_summary(request: HttpRequest, convention: Convention):
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
         "conventionNumberForm": convention_number_form,
+        "complete_for_avenant_form": complete_for_avenant_form,
         "ConventionType1and2Form": convention_type1_and_2_form,
     }
 
@@ -291,25 +302,55 @@ def send_email_correction(
 
 def convention_validate(request: HttpRequest, convention: Convention):
     convention_number_form = ConventionNumberForm(request.POST)
-    convention_number_form.convention = convention
-    if convention_number_form.is_valid():
-        convention.numero = convention_number_form.cleaned_data["convention_numero"]
+    complete_for_avenant_form = CompleteforavenantForm(request.POST)
+    is_completeform = request.POST.get("completeform", False)
+    if is_completeform:
+        if complete_for_avenant_form.is_valid():
+            parentconvention = convention.parent
+            programme = convention.programme
+            parent_programme = parentconvention.programme
+            if complete_for_avenant_form.cleaned_data["ville"]:
+                parent_programme.ville = complete_for_avenant_form.cleaned_data["ville"]
+                parent_programme.save()
+                if not programme.ville:
+                    programme.ville = complete_for_avenant_form.cleaned_data["ville"]
+                    programme.save()
 
-        convention.save()
+            lot = convention.lot
+            parent_lot = parentconvention.lot
+            if complete_for_avenant_form.cleaned_data["nb_logements"]:
+                parent_lot.nb_logements = complete_for_avenant_form.cleaned_data[
+                    "nb_logements"
+                ]
+                parent_lot.save()
+                if not lot.nb_logements:
+                    lot.nb_logements = complete_for_avenant_form.cleaned_data[
+                        "nb_logements"
+                    ]
+                    lot.save()
 
-    if convention_number_form.is_valid() or request.POST.get("Force"):
+            conventionfile = request.FILES.get("nom_fichier_signe", False)
+            if conventionfile:
+                ConventionFileService.upload_convention_file(
+                    parentconvention, conventionfile
+                )
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "convention": convention,
+            }
+    else:
+        convention_number_form.convention = convention
+        if convention_number_form.is_valid():
+            convention.numero = convention_number_form.cleaned_data["convention_numero"]
 
-        # Generate the doc should be placed after the status update
-        # because the watermark report the status of the convention
-        previous_status = convention.statut
-        convention.statut = ConventionStatut.A_SIGNER
+            convention.save()
 
-        ConventionHistory.objects.create(
-            convention=convention,
-            statut_convention=ConventionStatut.A_SIGNER,
-            statut_convention_precedent=previous_status,
-            user=request.user,
-        ).save()
+        if convention_number_form.is_valid() or request.POST.get("Force"):
+
+            # Generate the doc should be placed after the status update
+            # because the watermark report the status of the convention
+            previous_status = convention.statut
+            convention.statut = ConventionStatut.A_SIGNER
 
         generate_and_send.delay(
             {
@@ -341,4 +382,5 @@ def convention_validate(request: HttpRequest, convention: Convention):
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
         "conventionNumberForm": convention_number_form,
+        "complete_for_avenant_form": complete_for_avenant_form,
     }

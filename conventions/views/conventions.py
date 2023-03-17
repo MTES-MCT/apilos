@@ -206,10 +206,17 @@ def validate_convention(request, convention_uuid):
     )
     request.user.check_perm("convention.change_convention", convention)
     result = convention_validate(request, convention)
-    if result["success"] == ReturnStatus.SUCCESS:
-        return HttpResponseRedirect(
-            reverse("conventions:sent", args=[result["convention"].uuid])
-        )
+    is_complete_avenant_form = request.POST.get("completeform", False)
+    if is_complete_avenant_form:
+        if result["success"] == ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            )
+    else:
+        if result["success"] == ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(
+                reverse("conventions:sent", args=[result["convention"].uuid])
+            )
     return render(
         request,
         "conventions/recapitulatif.html",

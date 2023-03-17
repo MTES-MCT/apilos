@@ -1,34 +1,68 @@
-{% load custom_filters %}
-
-<div>
-    <p class="fr-alert__title">Valider l'avenant</p>
-    <p class="fr-mb-0">
-        Pour pouvoir valider cet avenant, vous devez remplir les informations suivantes.
-    </p>
-</div>
-<form method="post" action="{% url 'conventions:complete_form_for_avenants' convention_uuid=convention.uuid %}" data-turbo="false">
-    {% include "common/form/input_text.html" with form_input=form.ville object_field="programme__ville__"|add:form.uuid.value %}
-
-    <button class="fr-btn fr-btn--secondary">
-        Valider l'avenant
-    </button>
-</form>
-{% if convention.programme.ville %}
-    il y  a une ville au programme
+<p class="fr-alert__title">Valider l'avenant</p>
+{% if form %}
+    <p class="fr-mb-0">Pour pouvoir valider cet avenant, vous devez remplir les informations suivantes concernant la convention originale.</p>
+    <form method="post"  action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false"  enctype="multipart/form-data">
+        {% csrf_token %}
+        <input id="completeform" type="hidden" name="completeform" value="true">
+        <div class="block--row-strech fr-mt-2w">
+            <div class="block--row-strech-1 fr-mr-5w">
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-col-md-6" {% if convention.parent.programme.ville %}hidden{% endif %}>
+                        {% include "common/form/input_text.html" with form_input=complete_for_avenant_form.ville editable=True %}
+                    </div>
+                    <div class="fr-col-12 fr-col-md-4" {% if convention.parent.lot.nb_logements %}hidden{% endif %}>
+                        {% include "common/form/input_number.html" with form_input=complete_for_avenant_form.nb_logements editable=True %}
+                    </div>
+                    {% if not convention.parent.nom_fichier_signe %}
+                        <div class="fr-col-12">
+                            <div class="fr-upload-group">
+                                <label class="fr-label" for="file-upload">Téléverser la convention initiale (en PDF)
+                                    <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
+                                </label>
+                                <input class="fr-upload" type="file" id="file-upload" name="nom_fichier_signe">
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <button class="fr-btn fr-btn--secondary">Envoyer</button>
+        </div>
+    </form>
 {% else %}
-    pas de ville
+    <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
+        {% csrf_token %}
+        <div class="fr-col-md-12 block--row-strech">
+            <div class="block--row-strech-1 fr-mr-6w">
+                {% if convention.numero and convention.numero != conventionNumberForm.convention_numero.value %}
+                    <p class="fr-mb-0">Le bailleur a indiqué qu'il s'agissait de l'avenant numéro <strong>{{ convention.numero }}</strong>.</p>
+                    <p>En fonction du nombre d'avenants répertoriés dans APiLos, il devrait porter le numéro {{conventionNumberForm.convention_numero.value}}</p>
+                {% else %}
+                    {% if convention.numero %}
+                        <p class="fr-mb-0">Le bailleur a indiqué qu'il s'agissait de l'avenant numéro <strong>{{ convention.numero }}</strong>.</p>
+                        <p>Cette déclaration est cohérente avec l'historique connu dans APiLos.</p>
+                    {% else %}
+                        <p>L'avenant aura le numéro {{conventionNumberForm.convention_numero.value}}.</p>
+                    {% endif %}
+                {% endif %}
+                <p class="fr-mb-0">Vous pouvez le valider avec ce numéro ou modifier le numéro ci-dessous avant de valider.</p>
+                <p><em>N'oubliez pas d'importer les avenants manquants, le cas échéant.</em></p>
+                <input class="fr-input fr-col-6"
+                    id="{{conventionNumberForm.convention_numero.id_for_label}}"
+                    name="{{conventionNumberForm.convention_numero.html_name}}"
+                    {% if convention.numero %}
+                        value="{{convention.numero}}"
+                    {% else %}
+                        value="{{conventionNumberForm.convention_numero.value}}"
+                    {% endif %}
+                >
+            </div>
+            <button class="fr-btn fr-btn--secondary">
+                Valider l'avenant {% if convention.numero and convention.numero != conventionNumberForm.convention_numero.value %}avec ce numéro{% endif %}
+            </button>
+        </div>
+    </form>
 {% endif %}
-{% if convention.lot.nb_logements %}
-    - il y a des logements
-{% else %}
-    - pas de logements
-{% endif %}
-{% if convention.parent.nom_fichier_signe %}
-    - un fichier
-{% else %}
-    - pas de fichier
-{% endif %}
-<div>
 
-    {{convention.numero}}
-</div>
+
+
+

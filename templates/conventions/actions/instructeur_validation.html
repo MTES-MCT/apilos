@@ -4,22 +4,7 @@
     <div class="fr-col-md-12 fr-mb-5w fr-mt-3w">
         <div role="alert">
             {% if convention.is_avenant %}
-                <div class="fr-col-md-12 block--row-strech">
-                    <div class="block--row-strech-1 fr-mr-6w">
-                        <p class="fr-alert__title">Valider l'avenant</p>
-                        <p class="fr-mb-0">L'avenant aura le numéro {{conventionNumberForm.convention_numero.value}}.</p>
-                    </div>
-                    <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
-                        {% csrf_token %}
-                        <input type="hidden"
-                            id="{{conventionNumberForm.convention_numero.id_for_label}}"
-                            name="{{conventionNumberForm.convention_numero.html_name}}"
-                            value="{{conventionNumberForm.convention_numero.value}}">
-                        <button class="fr-btn fr-btn--secondary">
-                            Valider l'avenant
-                        </button>
-                    </form>
-                </div>
+                {% include "conventions/avenant/complete_form_for_avenants.html" with form=complete_for_avenant_form %}
             {% else %}
                 <p class="fr-alert__title">Valider la convention</p>
                 {% with editable_validation=convention|display_deactivated_because_type1and2_config_is_needed|not_op %}
@@ -32,6 +17,7 @@
                     <div>
                         <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
                             {% csrf_token %}
+                            <input id="numberform" type="hidden" name="numberform" value="true" disabled="disabled" />
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
                                 <div class="fr-col-12 fr-col-md-6">
                                     {% include "common/form/input_text.html" with form_input=conventionNumberForm.convention_numero editable=editable_validation %}
