@@ -17,6 +17,5 @@ class BailleurForm(ConventionBailleurForm):
 
     def __init__(self, *args, bailleur_query: QuerySet, **kwargs) -> None:
         self.declared_fields["bailleur"].queryset = bailleur_query
-        print(self.declared_fields["bailleur"].queryset)
 
         super().__init__(*args, **kwargs)
