@@ -9,6 +9,7 @@ from django.core.files.storage import default_storage
 from django.core.files import File
 from django.http import (
     FileResponse,
+    HttpRequest,
     HttpResponse,
     HttpResponseRedirect,
     HttpResponseNotFound,
@@ -19,6 +20,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
+from conventions.permissions import has_campaign_permission
 from core.storage import client
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
@@ -27,11 +29,12 @@ from conventions.services import convention_generator
 from conventions.services.recapitulatif import (
     convention_feedback,
     convention_submit,
-    convention_summary,
+    get_convention_recapitulatif,
     convention_validate,
+    save_convention_TypeIandII,
 )
 from conventions.services.file import ConventionFileService
-from conventions.views.convention_form import ConventionFormSteps
+from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from conventions.models import Convention, ConventionStatut, PieceJointe
 from conventions.services.convention_generator import fiche_caf_doc
 from conventions.services.conventions import (
@@ -40,6 +43,54 @@ from conventions.services.conventions import (
     ConventionListService,
 )
 from conventions.services.utils import ReturnStatus
+
+
+class RecapitulatifView(BaseConventionView):
+    def _get_convention(self, convention_uuid):
+        return (
+            Convention.objects.prefetch_related("programme")
+            .prefetch_related("programme__referencecadastrales")
+            .prefetch_related("programme__logementedds")
+            .prefetch_related("lot")
+            .prefetch_related("lot__type_stationnements")
+            .prefetch_related("lot__logements")
+            .prefetch_related("programme__administration")
+            .get(uuid=convention_uuid)
+        )
+
+    @has_campaign_permission("convention.view_convention")
+    def get(self, request: HttpRequest, convention_uuid: int):
+        result = get_convention_recapitulatif(request, self.convention)
+        if self.convention.is_avenant():
+            result["avenant_list"] = [
+                avenant_type.nom for avenant_type in self.convention.avenant_types.all()
+            ]
+
+        return render(
+            request,
+            "conventions/recapitulatif.html",
+            {
+                **result,
+                "convention_form_steps": ConventionFormSteps(
+                    convention=self.convention
+                ),
+            },
+        )
+
+    @has_campaign_permission("convention.change_convention")
+    def post(self, request: HttpRequest, convention_uuid: int):
+        result = save_convention_TypeIandII(request, self.convention)
+
+        return render(
+            request,
+            "conventions/recapitulatif.html",
+            {
+                **result,
+                "convention_form_steps": ConventionFormSteps(
+                    convention=self.convention
+                ),
+            },
+        )
 
 
 @login_required
@@ -120,32 +171,6 @@ def loyer_simulateur(request):
             "nb_active_conventions": request.user.conventions(active=True).count(),
             "nb_completed_conventions": request.user.conventions(active=False).count(),
         },
-    )
-
-
-@login_required
-def recapitulatif(request, convention_uuid):
-    # Step 11/11
-    convention = (
-        Convention.objects.prefetch_related("programme")
-        .prefetch_related("programme__referencecadastrales")
-        .prefetch_related("programme__logementedds")
-        .prefetch_related("lot")
-        .prefetch_related("lot__type_stationnements")
-        .prefetch_related("lot__logements")
-        .prefetch_related("programme__administration")
-        .get(uuid=convention_uuid)
-    )
-    result = convention_summary(request, convention)
-    if convention.is_avenant():
-        result["avenant_list"] = [
-            avenant_type.nom for avenant_type in convention.avenant_types.all()
-        ]
-
-    return render(
-        request,
-        "conventions/recapitulatif.html",
-        {**result, "convention_form_steps": ConventionFormSteps(convention=convention)},
     )
 
 

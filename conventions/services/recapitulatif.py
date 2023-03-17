@@ -1,8 +1,6 @@
 from django.http import HttpRequest
-from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
-from django.conf import settings
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
@@ -20,13 +18,14 @@ from programmes.models import Annexe
 from siap.siap_client.client import SIAPClient
 
 
-def convention_summary(request: HttpRequest, convention: Convention):
+def get_convention_recapitulatif(request: HttpRequest, convention: Convention):
     request.user.check_perm("convention.view_convention", convention)
+
     convention_number_form = ConventionNumberForm(
         initial={"convention_numero": convention.get_default_convention_number()}
     )
     complete_for_avenant_form = None
-    if convention.is_avenant() and convention.is_imported():
+    if convention.is_incompleted_avenant_parent():
         complete_for_avenant_form = CompleteforavenantForm(
             initial={
                 "ville": convention.parent.programme.ville,
@@ -39,34 +38,23 @@ def convention_summary(request: HttpRequest, convention: Convention):
         statut=CommentStatut.OUVERT,
     )
     opened_comments = opened_comments.order_by("cree_le")
-    if request.method == "POST":
-        convention_type1_and_2_form = _save_convention_type(request, convention)
-    else:
-        convention_type1_and_2_form = ConventionType1and2Form(
-            initial={
-                "uuid": convention.uuid,
-                "type1and2": convention.type1and2,
-                "type2_lgts_concernes_option1": convention.type2_lgts_concernes_option1,
-                "type2_lgts_concernes_option2": convention.type2_lgts_concernes_option2,
-                "type2_lgts_concernes_option3": convention.type2_lgts_concernes_option3,
-                "type2_lgts_concernes_option4": convention.type2_lgts_concernes_option4,
-                "type2_lgts_concernes_option5": convention.type2_lgts_concernes_option5,
-                "type2_lgts_concernes_option6": convention.type2_lgts_concernes_option6,
-                "type2_lgts_concernes_option7": convention.type2_lgts_concernes_option7,
-                "type2_lgts_concernes_option8": convention.type2_lgts_concernes_option8,
-            }
-        )
+    convention_type1_and_2_form = ConventionType1and2Form(
+        initial={
+            "uuid": convention.uuid,
+            "type1and2": convention.type1and2,
+            "type2_lgts_concernes_option1": convention.type2_lgts_concernes_option1,
+            "type2_lgts_concernes_option2": convention.type2_lgts_concernes_option2,
+            "type2_lgts_concernes_option3": convention.type2_lgts_concernes_option3,
+            "type2_lgts_concernes_option4": convention.type2_lgts_concernes_option4,
+            "type2_lgts_concernes_option5": convention.type2_lgts_concernes_option5,
+            "type2_lgts_concernes_option6": convention.type2_lgts_concernes_option6,
+            "type2_lgts_concernes_option7": convention.type2_lgts_concernes_option7,
+            "type2_lgts_concernes_option8": convention.type2_lgts_concernes_option8,
+        }
+    )
     return {
         **utils.base_convention_response_error(request, convention),
         "opened_comments": opened_comments,
-        "bailleur": convention.programme.bailleur,
-        "lot": convention.lot,
-        "locaux_collectifs": convention.lot.locaux_collectifs.all(),
-        "programme": convention.programme,
-        "logement_edds": convention.programme.logementedds.all(),
-        "logements": convention.lot.logements.all(),
-        "stationnements": convention.lot.type_stationnements.all(),
-        "reference_cadastrales": convention.programme.referencecadastrales.all(),
         "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
         "conventionNumberForm": convention_number_form,
@@ -75,7 +63,7 @@ def convention_summary(request: HttpRequest, convention: Convention):
     }
 
 
-def _save_convention_type(request: HttpRequest, convention: Convention):
+def save_convention_TypeIandII(request: HttpRequest, convention: Convention):
     convention_type1_and_2_form = ConventionType1and2Form(request.POST)
     if convention_type1_and_2_form.is_valid():
         convention.type1and2 = (
@@ -116,7 +104,7 @@ def _save_convention_type(request: HttpRequest, convention: Convention):
                 convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option8"]
             )
         convention.save()
-    return convention_type1_and_2_form
+    return get_convention_recapitulatif(request, convention)
 
 
 def convention_submit(request: HttpRequest, convention: Convention):
@@ -351,6 +339,12 @@ def convention_validate(request: HttpRequest, convention: Convention):
             # because the watermark report the status of the convention
             previous_status = convention.statut
             convention.statut = ConventionStatut.A_SIGNER
+            ConventionHistory.objects.create(
+                convention=convention,
+                statut_convention=ConventionStatut.A_SIGNER,
+                statut_convention_precedent=previous_status,
+                user=request.user,
+            ).save()
 
         generate_and_send.delay(
             {

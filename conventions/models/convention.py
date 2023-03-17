@@ -409,8 +409,8 @@ class Convention(models.Model):
     def is_avenant(self):
         return self.parent_id is not None
 
-    def is_imported(self):
-        if (
+    def is_incompleted_avenant_parent(self):
+        if self.is_avenant() and (
             not self.parent.programme.ville
             or not self.parent.lot.nb_logements
             or not self.parent.nom_fichier_signe

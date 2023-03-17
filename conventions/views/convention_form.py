@@ -302,14 +302,22 @@ class ConventionFormSteps:
         return self.current_step.pathname
 
 
-class ConventionView(ABC, LoginRequiredMixin, View):
+class BaseConventionView(LoginRequiredMixin, View):
     convention: Convention
-    steps: ConventionFormSteps
-    target_template: str
-    service_class: ConventionService
 
     def _get_convention(self, convention_uuid):
         return Convention.objects.get(uuid=convention_uuid)
+
+    # pylint: disable=W0221
+    def setup(self, request, convention_uuid, *args, **kwargs):
+        self.convention = self._get_convention(convention_uuid)
+        super().setup(request, convention_uuid, *args, **kwargs)
+
+
+class ConventionView(ABC, BaseConventionView):
+    steps: ConventionFormSteps
+    target_template: str
+    service_class: ConventionService
 
     @property
     def next_path_redirect(self):
@@ -320,11 +328,10 @@ class ConventionView(ABC, LoginRequiredMixin, View):
 
     # pylint: disable=W0221
     def setup(self, request, convention_uuid, *args, **kwargs):
-        self.convention = self._get_convention(convention_uuid)
+        super().setup(request, convention_uuid, *args, **kwargs)
         self.steps = ConventionFormSteps(
             convention=self.convention, active_classname=self.__class__.__name__
         )
-        return super().setup(request, convention_uuid, *args, **kwargs)
 
     # pylint: disable=W0613
     @has_campaign_permission("convention.view_convention")
