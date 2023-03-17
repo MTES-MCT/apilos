@@ -14,13 +14,12 @@ select
         else c.noreglementaire
     end as numero,
     case
-        -- Si la convention (ou l'avenant) n'est pas le dernier dans l'historique alors il est systématiquement finalisé
-        when ch.is_last then '5. Signée'
-        -- Sinon on se base sur l'état déclaré dans Ecolo
+        -- On se base sur l'état déclaré dans Ecolo
         when vps.code = 'ANS' then '8. Annulée en suivi'
         when vps.code = 'RES' then '7. Dénoncée'
         when vps.code = 'RES' then '6. Résiliée'
-        when vps.code = 'INS' then '2. Instruction requise'
+        -- Convention en instruction si état = 'INS' ET aucune date de signature
+        when vps.code = 'INS' and coalesce(a.datesignatureprefet, cdg.datesignatureprefet, cdg.datesignatureentitegest) is null then '2. Instruction requise'
         else '5. Signée'
     end as statut,
     -- Dates
