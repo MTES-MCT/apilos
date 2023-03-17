@@ -964,3 +964,11 @@ div[hidden] {
 .apilos-text-blue-sun {
   color: #000091;
 }
+
+.progress_bar_block div.apilos-stepper__steps-details{
+  display: none;
+}
+
+.progress_bar_block:hover div.apilos-stepper__steps-details{
+  display: inherit;
+}

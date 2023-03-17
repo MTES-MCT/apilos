@@ -7,24 +7,13 @@
                 <span class="fr-stepper__state">Étape {{form_step.number}} sur {{form_step.total}}</span>
                 {{form_step.title}}
             </h2>
-            <div id="progress_bar_block">
+            <div id="progress_bar_block" class="progress_bar_block">
                 <div class="fr-stepper__steps" data-fr-current-step="{{form_step.number}}" data-fr-steps="{{form_step.total}}"></div>
-                <div id="progress_bar_links" hidden class="apilos-stepper__steps-details" data-apilos-total-steps="9">
+                <div id="progress_bar_links" class="apilos-stepper__steps-details" data-apilos-total-steps="9">
                     {% for step in form_step.steps %}
                         <div><a class="fr-text--xs" href={% url step.pathname convention_uuid=convention.uuid %}>{{step.label}}</a></div>
                     {% endfor %}
                 </div>
-                <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                    document.addEventListener('DOMContentLoaded', function () {
-                        progress_bar_block = document.getElementById('progress_bar_block');
-                        progress_bar_block.addEventListener('mouseleave', function(event){
-                            document.getElementById('progress_bar_links').hidden = true;
-                        });
-                        progress_bar_block.addEventListener('mouseover', function(event){
-                            document.getElementById('progress_bar_links').hidden = false;
-                        });
-                    });
-                </script>
             </div>
             {% if form_step.next %}
                 <div class="fr-grid-row">
