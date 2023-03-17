@@ -208,9 +208,10 @@ def validate_convention(request, convention_uuid):
     result = convention_validate(request, convention)
     is_complete_avenant_form = request.POST.get("completeform", False)
     if is_complete_avenant_form:
-        return HttpResponseRedirect(
-            reverse("conventions:recapitulatif", args=[result["convention"].uuid])
-        )
+        if result["success"] == ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            )
     else:
         if result["success"] == ReturnStatus.SUCCESS:
             return HttpResponseRedirect(
