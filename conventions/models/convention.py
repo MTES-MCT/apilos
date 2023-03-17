@@ -428,6 +428,9 @@ class Convention(models.Model):
         description: str = "",
         survenu_le: date | None = None,
     ):
+        """
+        Déclare un nouvel évènement pour la convention
+        """
         # To avoid circular import, refer to Evenement class model via apps.get_model
         apps.get_model("conventions", "Evenement").objects.create(
             convention=self,
@@ -435,6 +438,12 @@ class Convention(models.Model):
             survenu_le=survenu_le,
             description=description,
         )
+
+    def journal(self):
+        """
+        Retourne tous les évènements liés à la convention, par ordre croissant de data d'évènement
+        """
+        return self.evenements.all().order_by("survenu_le")
 
     def statut_for_template(self):
         return {

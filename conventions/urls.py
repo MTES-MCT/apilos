@@ -6,6 +6,7 @@ from django.views.generic import RedirectView
 from . import views
 
 urlpatterns = [
+    # Pages de premier niveau : recherche et calculette de loyer
     path("", RedirectView.as_view(url="/conventions/en-cours"), name="index"),
     path("en-cours", views.search, {"active": True}, name="search_active"),
     path("finalisees", views.search, {"active": False}, name="search_completed"),
@@ -14,6 +15,28 @@ urlpatterns = [
         views.loyer_simulateur,
         name="loyer_simulateur",
     ),
+    # Pages de second niveau : onglet de la vue convention
+    path(
+        "recapitulatif/<convention_uuid>",
+        views.RecapitulatifView.as_view(),
+        name="recapitulatif",
+    ),
+    path(
+        "post_action/<convention_uuid>",
+        views.post_action,
+        name="post_action",
+    ),
+    path(
+        "preview/<convention_uuid>",
+        views.preview,
+        name="preview",
+    ),
+    path(
+        "journal/<convention_uuid>",
+        views.journal,
+        name="journal",
+    ),
+    # Pages de troisième niveau : funnel d'instruction et d'action sur les conventions et avenants
     path(
         "selection",
         permission_required("convention.add_convention")(
@@ -130,11 +153,6 @@ urlpatterns = [
         name="avenant_commentaires",
     ),
     path(
-        "recapitulatif/<convention_uuid>",
-        views.RecapitulatifView.as_view(),
-        name="recapitulatif",
-    ),
-    path(
         "save/<convention_uuid>",
         views.save_convention,
         name="save",
@@ -165,19 +183,9 @@ urlpatterns = [
         name="load_xlsx_model",
     ),
     path(
-        "preview/<convention_uuid>",
-        views.preview,
-        name="preview",
-    ),
-    path(
         "sent/<convention_uuid>",
         views.sent,
         name="sent",
-    ),
-    path(
-        "post_action/<convention_uuid>",
-        views.post_action,
-        name="post_action",
     ),
     path(
         "display_pdf/<convention_uuid>",

@@ -1,12 +1,12 @@
-from datetime import datetime, date
-from zipfile import ZipFile
 import mimetypes
+from datetime import date
+from zipfile import ZipFile
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
-from django.core.files.storage import default_storage
 from django.core.files import File
+from django.core.files.storage import default_storage
 from django.http import (
     FileResponse,
     HttpRequest,
@@ -20,15 +20,19 @@ from django.urls import reverse
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
+from conventions.models import Convention, ConventionStatut, PieceJointe
 from conventions.permissions import (
     has_campaign_permission,
     has_campaign_permission_view_function,
 )
-from core.storage import client
-from programmes.models import Financement, NatureLogement
-from programmes.services import LoyerRedevanceUpdateComputer
-from upload.services import UploadService
 from conventions.services import convention_generator
+from conventions.services.convention_generator import fiche_caf_doc
+from conventions.services.conventions import (
+    convention_post_action,
+    convention_sent,
+    ConventionListService,
+)
+from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
     convention_feedback,
     convention_submit,
@@ -36,16 +40,12 @@ from conventions.services.recapitulatif import (
     convention_validate,
     save_convention_TypeIandII,
 )
-from conventions.services.file import ConventionFileService
-from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
-from conventions.models import Convention, ConventionStatut, PieceJointe
-from conventions.services.convention_generator import fiche_caf_doc
-from conventions.services.conventions import (
-    convention_post_action,
-    convention_sent,
-    ConventionListService,
-)
 from conventions.services.utils import ReturnStatus
+from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
+from core.storage import client
+from programmes.models import Financement, NatureLogement
+from programmes.services import LoyerRedevanceUpdateComputer
+from upload.services import UploadService
 
 
 class RecapitulatifView(BaseConventionView):
@@ -62,7 +62,7 @@ class RecapitulatifView(BaseConventionView):
         )
 
     @has_campaign_permission("convention.view_convention")
-    def get(self, request: HttpRequest, convention_uuid: int):
+    def get(self, request: HttpRequest):
         result = get_convention_recapitulatif(request, self.convention)
         if self.convention.is_avenant():
             result["avenant_list"] = [
@@ -81,7 +81,7 @@ class RecapitulatifView(BaseConventionView):
         )
 
     @has_campaign_permission("convention.change_convention")
-    def post(self, request: HttpRequest, convention_uuid: int):
+    def post(self, request: HttpRequest):
         result = save_convention_TypeIandII(request, self.convention)
 
         return render(
@@ -385,10 +385,9 @@ def post_action(request, convention_uuid):
             return HttpResponseRedirect(
                 reverse("conventions:recapitulatif", args=[convention_uuid])
             )
-        else:
-            return HttpResponseRedirect(
-                reverse("conventions:post_action", args=[convention_uuid])
-            )
+        return HttpResponseRedirect(
+            reverse("conventions:post_action", args=[convention_uuid])
+        )
     return render(
         request,
         "conventions/post_action.html",
@@ -438,6 +437,18 @@ def display_pdf(request, convention_uuid):
     return render(
         request,
         "conventions/no_convention_document.html",
+    )
+
+
+@require_GET
+@login_required
+def journal(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+
+    return render(
+        request,
+        "conventions/journal.html",
+        {"convention": convention},
     )
 
 
