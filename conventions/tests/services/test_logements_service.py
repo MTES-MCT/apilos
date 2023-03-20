@@ -131,7 +131,7 @@ class ConventionLogementsServiceTests(TestCase):
         self.assertEqual(
             self.service.formset.non_form_errors(),
             [
-                "Le nombre de logement a conventionner (3) ne correspond pas au nombre"
+                "Le nombre de logement à conventionner (3) ne correspond pas au nombre"
                 + " de logements déclaré (2)"
             ],
         )
@@ -146,7 +146,7 @@ class ConventionLogementsServiceTests(TestCase):
         self.assertEqual(
             self.service.formset.non_form_errors(),
             [
-                "Le nombre de logement a conventionner (4) ne correspond pas au nombre"
+                "Le nombre de logement à conventionner (4) ne correspond pas au nombre"
                 + " de logements déclaré (2)"
             ],
         )
@@ -262,7 +262,7 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
         self.assertEqual(
             self.service.formset.non_form_errors(),
             [
-                "Le nombre de logement a conventionner (2) "
+                "Le nombre de logement à conventionner (2) "
                 + "ne correspond pas au nombre de logements déclaré (3)"
             ],
         )

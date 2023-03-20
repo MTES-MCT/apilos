@@ -339,7 +339,7 @@ class BaseLogementFormSet(BaseFormSet):
             nb_logements = int(self.nb_logements)
         if nb_logements != self.total_form_count():
             error = ValidationError(
-                f"Le nombre de logement a conventionner ({nb_logements}) "
+                f"Le nombre de logement à conventionner ({nb_logements}) "
                 + f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
             )
             self._non_form_errors.append(error)
@@ -452,7 +452,7 @@ class BaseFoyerResidenceLogementFormSet(BaseFormSet):
             nb_logements = int(self.nb_logements)
         if nb_logements != self.total_form_count():
             error = ValidationError(
-                f"Le nombre de logement a conventionner ({nb_logements}) "
+                f"Le nombre de logement à conventionner ({nb_logements}) "
                 + f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
             )
             self._non_form_errors.append(error)

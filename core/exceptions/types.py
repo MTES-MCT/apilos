@@ -1,0 +1,2 @@
+class TimeoutSIAPException(Exception):
+    pass

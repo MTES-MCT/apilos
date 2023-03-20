@@ -142,9 +142,9 @@ class AdministrationForm(forms.Form):
     nb_convention_exemplaires = forms.IntegerField(
         required=True,
         label=(
-            "Nombre d'exemplaire de la convention que le bailleur doit envoyer au service"
+            "Nombre d'exemplaires de la convention que le bailleur doit envoyer au service"
             + " instructeur"
         ),
-        help_text="Ce nombre d'exemplaire est utilisé pour customiser l'email envoyé au"
+        help_text="Ce nombre d'exemplaires est utilisé pour customiser l'email envoyé au"
         + " bailleur lorsque la convention est validée.",
     )

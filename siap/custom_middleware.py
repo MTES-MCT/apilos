@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 from django.conf import settings
 from django.forms import model_to_dict
 from django.http import HttpRequest
+from core.exceptions.handler import TimeoutSIAPException
 from bailleurs.models import NatureBailleur
 from siap.siap_client.utils import get_or_create_bailleur, get_or_create_administration
 from siap.siap_client.client import SIAPClient
@@ -32,9 +33,12 @@ class CerbereSessionMiddleware:
                 elif "habilitation_id" in request.session:
                     habilitation_id = request.session["habilitation_id"]
 
-                set_habilitation_in_session(
-                    request, request.user.cerbere_login, habilitation_id
-                )
+                try:
+                    set_habilitation_in_session(
+                        request, request.user.cerbere_login, habilitation_id
+                    )
+                except TimeoutError:
+                    raise TimeoutSIAPException("SIAP API doesn't answer")
 
                 if settings.NO_SIAP_MENU:
                     request.session["menu"] = None

@@ -8,6 +8,10 @@
                     <p class="fr-mb-3w">
                         Une erreur est survenue. Nous vous prions de nous excuser.
                     </p>
+                    {{ specific_error|safe }}
+                    {% if not CERBERE_AUTH %}
+                        <a class="fr-btn fr-btn--secondary fr-mb-3w" value="Retour à l'accueil" href="https://siap.logement.gouv.fr/tableau-bord">Retourner au tableau de bord</a>
+                    {% endif %}
                     <p class="fr-mb-3w">
                         Si le problème persiste merci de contacter l'équipe <a href="mailto:contact@apilos.beta.gouv.fr" target="_blank">APiLos</a>
                     </p>
