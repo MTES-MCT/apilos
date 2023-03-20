@@ -7,6 +7,10 @@ import jwt
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from core.exceptions.types import (
+    UnauthorizedSIAPException,
+    UnavailableServiceSIAPException,
+)
 
 from siap.siap_client.mock_data import (
     config_mock,
@@ -58,6 +62,14 @@ def _call_siap_api(
         headers={"siap-Authorization": f"Bearer {myjwt}"},
         timeout=5,
     )
+    if response.status_code == 401:
+        raise UnauthorizedSIAPException(
+            response.content["detail"]
+            if "detail" in response.content
+            else "Unauthorized"
+        )
+    if response.status_code == 503:
+        raise UnavailableServiceSIAPException()
     if response.status_code >= 400:
         logger.error("ERROR from SIAP API: %s", response.content)
     logger.warning(
