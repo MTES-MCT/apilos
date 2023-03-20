@@ -36,7 +36,7 @@ class ProgrammeEDDForm(forms.Form):
     mention_publication_edd_volumetrique = forms.CharField(
         required=False,
         label="Mention de publication de l'EDD volumétrique",
-        max_length=1000,
+        max_length=5000,
         error_messages={
             "max_length": "La mention de publication de l'EDD volumétrique "
             + "ne doit pas excéder 1000 caractères",
@@ -61,7 +61,7 @@ class ProgrammeEDDForm(forms.Form):
     mention_publication_edd_classique = forms.CharField(
         required=False,
         label="Mention de publication de l'EDD classique",
-        max_length=1000,
+        max_length=5000,
         error_messages={
             "max_length": "La mention de publication de l'EDD classique "
             + "ne doit pas excéder 1000 caractères",
@@ -124,8 +124,9 @@ class BaseLogementEDDFormSet(BaseFormSet):
 
     def manage_edd_consistency(self):
         """
-        Validation: l'EDD simplifié doit comporter tous les logement de tous les types de financement du programme
-          il est possible de passr outre cette validation (cf. ignore_optional_errors)
+        Validation: l'EDD simplifié doit comporter tous les logement de tous les types
+         de financement du programme il est possible de passr outre cette validation
+         (cf. ignore_optional_errors)
         """
         self.optional_errors = []
         if len(self.forms) == 0 or self.ignore_optional_errors:

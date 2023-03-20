@@ -2,7 +2,6 @@ import uuid
 import logging
 
 from django.db import models
-from django.db.models import Index
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
@@ -269,9 +268,9 @@ class Programme(IngestableModel):
     certificat_adressage = models.TextField(null=True)
     reference_cadastrale = models.TextField(null=True)
     edd_volumetrique = models.TextField(max_length=5000, null=True)
-    mention_publication_edd_volumetrique = models.TextField(max_length=1000, null=True)
+    mention_publication_edd_volumetrique = models.TextField(max_length=5000, null=True)
     edd_classique = models.TextField(max_length=5000, null=True)
-    mention_publication_edd_classique = models.TextField(max_length=1000, null=True)
+    mention_publication_edd_classique = models.TextField(max_length=5000, null=True)
     permis_construire = models.CharField(max_length=255, null=True)
     date_achevement_previsible = models.DateField(null=True)
     date_achat = models.DateField(null=True)
