@@ -97,3 +97,6 @@ if "django_browser_reload" in settings.INSTALLED_APPS:
             path("__reload__/", include("django_browser_reload.urls")),
         ]
     )
+
+
+handler500 = "core.exceptions.handler.handle_error_500"

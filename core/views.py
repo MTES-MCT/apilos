@@ -8,7 +8,8 @@ from django.contrib.auth import login as auth_login
 
 class SecurePasswordResetConfirmView(PasswordResetConfirmView):
     """
-    Redéfinition de la vue de confirmation du mot de passe afin d'éviter une erreur de clef manquante dans la session
+    Redéfinition de la vue de confirmation du mot de passe afin d'éviter une erreur de
+    clef manquante dans la session
     https://code.djangoproject.com/ticket/30952
     """
 
