@@ -15,7 +15,7 @@ class ConventionCommentForm(forms.Form):
     attached = forms.CharField(
         required=False,
         label="Fichiers à joindre à la convention",
-        help_text="Téléversez ici les fichiers à joindre à votre convention le cas"
+        help_text="Déposez ici les fichiers à joindre à votre convention le cas"
         + " echéant et si nécessaire, par exemple"
         + " \r\n  • Autorisation délivrée au gestionnaire par le président du conseil"
         + " départemental ou par l'autorité compétente de l'état dans le cadre d'un"

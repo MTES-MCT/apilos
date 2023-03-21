@@ -50,7 +50,7 @@
                 {% endif %}
 
                 <button type="button" class="fr-btn  fr-icon-upload-line fr-btn--icon-left fr-mb-1w" id="{{form_input_files.id_for_label}}_dz_button">
-                    Téléverser une image{% if not image_only %} ou un document{% endif %}
+                    Déposer une image{% if not image_only %} ou un document{% endif %}
                 </button>
 
                 <script type="text/javascript" nonce="{{request.csp_nonce}}">
@@ -65,7 +65,7 @@
                 class="fr-col-12 dropzone dz"
                 id="{{form_input_files.id_for_label}}_dropzone">
                 <div class="fallback">
-                    Votre navigateur ne permet pas de téléverser des documents.
+                    Votre navigateur ne permet pas de déposer des documents.
                     Nous vous conseillons de modifier vos paramètres concernant
                     l'application des scripts javascript ou d'utiliser un autre navigateur.
                 </div>

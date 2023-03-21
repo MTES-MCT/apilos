@@ -1,6 +1,6 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %} Téléverser les avenants{% endblock%}
+{% block page_title %} Déposer les avenants{% endblock%}
 
 {% load static %}
 
@@ -12,7 +12,7 @@
             {% include "conventions/avenant/televersement_avenants_for_avenant_start.html" with ongoing_avenants=ongoing_avenants %}
             <hr>
             <h2 class="fr-mt-4w fr-text--lg">Créer un nouvel avenant</h2>
-            <p>Après avoir téléversé l'ensemble des avenants existants, vous pouvez créer votre nouvel avenant.</p>
+            <p>Après avoir déposé l'ensemble des avenants existants, vous pouvez créer votre nouvel avenant.</p>
             <a class="fr-btn" href="{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}">
                 Aller à la création du nouvel avenant
             </a>

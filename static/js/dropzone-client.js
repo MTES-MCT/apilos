@@ -80,7 +80,7 @@ function init_dropzone_from_file(form_id, accepted_files) {
         dictCancelUpload: "Annuler",
         dictCancelUploadConfirmation: "Etes vous certain de vouloir supprimer ce fichier ?",
         dictRemoveFile: "Supprimer",
-        dictMaxFilesExceeded: "Vous ne pouvez plus téléverser d'autres documents",
+        dictMaxFilesExceeded: "Vous ne pouvez plus déposer d'autres documents",
         headers: {'X-CSRFToken': csrf_token},
         params: parameters
     });

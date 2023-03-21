@@ -11,7 +11,7 @@ class BailleurListingUploadForm(forms.Form):
         error_messages={
             "required": (
                 "Vous devez sélectionner un fichier avant "
-                + "de cliquer sur le bouton 'Téléverser'"
+                + "de cliquer sur le bouton 'Déposer'"
             ),
         }
     )
@@ -20,9 +20,11 @@ class BailleurListingUploadForm(forms.Form):
         cleaned_data = super().clean()
 
         try:
-            processor = BailleurListingProcessor(filename=BytesIO(cleaned_data.get('file').read()))
-            cleaned_data['users'] = processor.process()
+            processor = BailleurListingProcessor(
+                filename=BytesIO(cleaned_data.get("file").read())
+            )
+            cleaned_data["users"] = processor.process()
         except Exception as e:
-            self.add_error('file', e)
+            self.add_error("file", e)
 
         return cleaned_data

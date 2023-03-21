@@ -1,6 +1,6 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %} Téléverser un avenant{% endblock%}
+{% block page_title %} Déposer un avenant{% endblock%}
 
 {% load static %}
 
@@ -10,7 +10,7 @@
             <h2>{{parent}}</h2>
             {% include "conventions/avenant/list_avenants_for_avenant.html" with conventions=avenants_parent %}
             <div class="fr-col-12">
-                <h2 class="fr-text--lg">Téléverser l'avenant {{avenant_numero}} </h2>
+                <h2 class="fr-text--lg">Déposer l'avenant {{avenant_numero}} </h2>
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <label class="fr-label" for="avenant_types">Sélectionner les types d'avenant {% include "common/form/required_field_star.html" %}</label>
@@ -18,7 +18,7 @@
                     <label class="fr-label fr-mt-4w" for="desc_avenant">Vous pouvez décrire en quelques mots l'objet de cet avenant. {% include "common/form/required_field_star.html" %}</label>
                     <textarea class="fr-input" name="desc_avenant" cols="40" rows="10" id="id_desc_avenant"></textarea>
                     <div class="fr-upload-group fr-mt-5w">
-                        <label class="fr-label" for="file-upload">Téléverser l'avenant (en PDF) {% include "common/form/required_field_star.html" %}
+                        <label class="fr-label" for="file-upload">Déposer l'avenant (en PDF) {% include "common/form/required_field_star.html" %}
                             <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
                         </label>
                         <input class="fr-upload" type="file" id="file-upload" name="nom_fichier_signe" required>

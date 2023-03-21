@@ -43,7 +43,7 @@ class ConventionFinancementService(ConventionService):
         self.editable_after_upload = self.request.POST.get(
             "editable_after_upload", False
         )
-        # When the user cliked on "Téléverser" button
+        # When the user cliked on "Déposer" button
         if self.request.POST.get("Upload", False):
             self.form = ConventionFinancementForm(initial=self.request.POST)
             self._upload_prets()

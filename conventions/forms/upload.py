@@ -7,7 +7,7 @@ class UploadForm(forms.Form):
         error_messages={
             "required": (
                 "Vous devez sélectionner un fichier avant "
-                + "de cliquer sur le bouton 'Téléverser'"
+                + "de cliquer sur le bouton 'Déposer'"
             ),
         }
     )
