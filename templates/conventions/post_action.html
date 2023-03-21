@@ -24,7 +24,7 @@
                         {% if convention.televersement_convention_signee_le %}
                             <div class="fr-grid-row">Convention signée le <span class="fr-ml-1v"><strong>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-'}}</strong></span></div>
                         {% else %}
-                            <div class="fr-grid-row">Votre convention signée a déjà été téléversée</div>
+                            <div class="fr-grid-row">Votre convention signée a déjà été déposée</div>
                         {% endif %}
                         <div class="fr-mb-3w">
                             <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}"> Voir en PDF</a>
@@ -80,10 +80,10 @@
                     <div class="fr-mb-2w block--row-strech">
                         <div class="block--row-strech-1 fr-my-2w">
                             <p class="fr-alert__title">
-                                Téléverser à nouveau la convention
+                                Déposer à nouveau la convention
                             </p>
                             <p class="fr-mb-0">
-                                Si nécessaire, vous pouvez téléverser une nouvelle version de la convention signée ici.
+                                Si nécessaire, vous pouvez déposer une nouvelle version de la convention signée ici.
                             </p>
                         </div>
                         <form method="post" action="{% url 'conventions:sent' convention_uuid=convention.uuid %}" enctype="multipart/form-data" id="{{upform.file.id_for_label}}_form">
@@ -97,7 +97,7 @@
                             <div class="block--row-strech">
                                 <div>
                                     <button id="{{upform.file.id_for_label}}_upload_button" class="fr-icon-upload-line fr-btn--icon-left fr-btn fr-btn--secondary fr-my-1w" type="button">
-                                        Téléverser la convention signée
+                                        Déposer la convention signée
                                     </button>
                                     {% for error in upform.file.errors %}
                                         <p id="text-input-error-desc-error" class="fr-error-text">

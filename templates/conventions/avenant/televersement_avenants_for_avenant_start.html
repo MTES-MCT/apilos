@@ -2,21 +2,21 @@
 {% for ongoing_avenant in ongoing_avenants %}
     <div class="fr-col-12 block--row-strech">
         <div class="block--row-strech-1 fr-mr-6w">
-            <h2 class="fr-text--lg">Téléverser un avenant</h2>
-            <p>Le téléversement d'un avenant est en cours. Vous devez finaliser son importation avant de pouvoir en téléverser un autre.</p>
+            <h2 class="fr-text--lg">Déposer un avenant</h2>
+            <p>L'envoi d'un avenant est en cours. Vous devez finaliser son importation avant de pouvoir en déposer un autre.</p>
         </div>
-        <div><a class="fr-btn  fr-btn--secondary" href="{% url 'conventions:form_avenants_for_avenant' convention_uuid=ongoing_avenant.uuid %}">Terminer le téléversement de l'avenant</a></div>
+        <div><a class="fr-btn  fr-btn--secondary" href="{% url 'conventions:form_avenants_for_avenant' convention_uuid=ongoing_avenant.uuid %}">Terminer l'envoi de l'avenant</a></div>
     </div>
 {% empty %}
     <div class="fr-col-12 block--row-strech">
         <div class="block--row-strech-1 fr-mr-6w">
-            <h2 class="fr-text--lg">Téléverser un avenant</h2>
-            <p>Vous pouvez téléverser un avenant déjà existant en précisant quelques informations le concernant</p>
+            <h2 class="fr-text--lg">Déposer un avenant</h2>
+            <p>Vous pouvez déposer un avenant déjà existant en précisant quelques informations le concernant</p>
         </div>
         <form method="post">
             {% csrf_token %}
             <input type="hidden" value="{{avenant_uuid}}" name="uuid">
-            <button class="fr-btn fr-btn--secondary fr-icon-upload-line fr-btn--icon-left">Téléverser</button>
+            <button class="fr-btn fr-btn--secondary fr-icon-upload-line fr-btn--icon-left">Déposer</button>
         </form>
     </div>
 {% endfor %}

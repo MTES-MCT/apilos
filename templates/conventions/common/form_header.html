@@ -114,7 +114,7 @@
                         </p>
                         <p>Il porte le numéro <strong>{{ convention.numero }}</strong></p>
                         {% if request|is_instructeur %}
-                            Vous pouvez <a class="fr-link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>téléverser l'avenant signé</a>
+                            Vous pouvez <a class="fr-link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>déposer l'avenant signé</a>
                         {% else %}
                             {% if convention.programme.administration.adresse and convention.programme.administration.code_postal and convention.programme.administration.ville %}
                                 <p>Imprimez-le, signez-le et envoyez le à l'adresse suivante : {{ convention.programme.administration.adresse }} - {{ convention.programme.administration.code_postal }} {{ convention.programme.administration.ville }}</p>
@@ -129,7 +129,7 @@
                         </p>
                         <p>Elle porte le numéro <strong>{{ convention.numero }}</strong></p>
                         {% if request|is_instructeur %}
-                            Vous pouvez <a class="fr-link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>téléverser la convention signée</a>
+                            Vous pouvez <a class="fr-link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>déposer la convention signée</a>
                         {% else %}
                             {% if convention.programme.administration.adresse and convention.programme.administration.code_postal and convention.programme.administration.ville %}
                                 <p>Imprimez-la, signez-la et envoyez la à l'adresse suivante : {{ convention.programme.administration.adresse }} - {{ convention.programme.administration.code_postal }} {{ convention.programme.administration.ville }}</p>

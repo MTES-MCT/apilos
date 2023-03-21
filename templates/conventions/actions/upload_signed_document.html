@@ -2,10 +2,10 @@
     {% if request|is_instructeur %}
         <div role="alert" class="fr-alert fr-alert--info fr-icon-arrow-right-s-line-double">
             <p class="fr-alert__title">
-                Téléverser {% if convention.is_avenant %}l'avenant signé{% else %}la convention signée{% endif %}
+                Déposer {% if convention.is_avenant %}l'avenant signé{% else %}la convention signée{% endif %}
             </p>
             <p class="fr-mb-2w">
-                Ici, vous pouvez téléverser votre {% if convention.is_avenant %}avenant signé afin qu'il puisse être transmis.{% else %}convention signée afin qu'elle puisse être transmise.{% endif %}
+                Ici, vous pouvez déposer votre {% if convention.is_avenant %}avenant signé afin qu'il puisse être transmis.{% else %}convention signée afin qu'elle puisse être transmise.{% endif %}
             </p>
             <div class="block--row-strech">
 
@@ -20,7 +20,7 @@
                     <div class="block--row-strech">
                         <div>
                             <button id="{{upform.file.id_for_label}}_upload_button" class="fr-btn fr-icon-upload-line fr-btn--icon-left" type="button">
-                                Téléverser {% if convention.is_avenant %}l'avenant signé{% else %}la convention signée{% endif %}
+                                Déposer {% if convention.is_avenant %}l'avenant signé{% else %}la convention signée{% endif %}
                             </button>
                             {% for error in upform.file.errors %}
                                 <p id="text-input-error-desc-error" class="fr-error-text">
@@ -52,10 +52,10 @@
     {% else %}
         <div role="alert" class="fr-alert fr-alert--success">
             {% if convention.is_avenant %}
-                <p >Ici, l'avenant pourra être téléversé par l'administration en charge dès qu'il sera signé.
+                <p >Ici, l'avenant pourra être déposé par l'administration en charge dès qu'il sera signé.
                 </p>
             {% else %}
-                <p >Ici, la convention pourra être téléversée par l'administration en charge dès qu'elle sera signée.
+                <p >Ici, la convention pourra être déposée par l'administration en charge dès qu'elle sera signée.
                 </p>
             {% endif %}
             <a class="fr-my-1w fr-link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
