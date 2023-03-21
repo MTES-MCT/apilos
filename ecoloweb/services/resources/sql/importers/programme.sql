@@ -36,8 +36,8 @@ select
     chp.id as parent_id,
     pl.bailleurproprietaire_id as bailleur_id,
     c.entitecreatrice_id as administration_id,
-    pa.codepostal as code_postal,
-    pa.ville,
+    coalesce(cp.codepostal, pa.codepostal, ec.code) as code_postal,
+    ec.libelle as ville,
     pa.ligne1||' '||pa.ligne2||' '||pa.ligne3||' '||pa.ligne4 as adresse,
     case
         when (pl.description <> '') is true then pl.description
@@ -81,6 +81,7 @@ from ecolo.ecolo_conventionhistorique ch
     left join ecolo.ecolo_programmeadresse pa on pl.id = pa.programmelogement_id
     left join ecolo.ecolo_valeurparamstatic nop on pl.natureoperation_id = nop.id
     inner join ecolo.ecolo_commune ec on pl.commune_id = ec.id
+    left join ecolo.ecolo_codepostal cp on ec.code = cp.codeinsee
     inner join ecolo.ecolo_departement ed on ec.departement_id = ed.id
     inner join ecolo.ecolo_region er on ed.region_id = er.id
 where

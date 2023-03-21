@@ -25,7 +25,7 @@ select
     coalesce(pl.financementdate::timestamp at time zone 'Europe/Paris', now()) as cree_le,
     coalesce(pl.financementdate::timestamp at time zone 'Europe/Paris', now()) as mis_a_jour_le,
     ch.financement,
-    coalesce(pl.logementsnombretotal, coalesce(pl.logementsnombreindtotal, 0) + coalesce(pl.logementsnombrecoltotal, 0)) as nb_logements,
+    pl2.nb_logements as nb_logements,
     case
         when pl.logementsnombreindtotal > 0 and (pl.logementsnombrecoltotal is null or pl.logementsnombrecoltotal = 0) then 'INDIVIDUEL'
         when pl.logementsnombrecoltotal > 0 and (pl.logementsnombreindtotal is null or pl.logementsnombreindtotal = 0) then 'COLLECTIF'
@@ -47,6 +47,25 @@ select
     case when nl.code <> '1' then a4.nombre end as foyer_residence_nb_garage_parking
 from ecolo.ecolo_programmelogement pl
     inner join ecolo.ecolo_conventionhistorique ch on pl.conventiondonneesgenerales_id = ch.conventiondonneesgenerales_id and ch.programme_ids[1] = pl.id
+    inner join (
+        -- Nombre total de logement sur tous les programmes d'un même cdg et même financement
+        select
+            plg.conventiondonneesgenerales_id, plg.financement, sum(plg.nb_logements) as nb_logements
+        from (
+            select
+
+                pl2.conventiondonneesgenerales_id,
+                case
+                    when tf.code in ('18', '22', '93') then 'SANS_FINANCEMENT'
+                    else ff.code
+                end as financement,
+                coalesce(pl2.logementsnombretotal, coalesce(pl2.logementsnombreindtotal, 0) + coalesce(pl2.logementsnombrecoltotal, 0)) as nb_logements
+            from ecolo.ecolo_programmelogement pl2
+                inner join ecolo.ecolo_typefinancement tf on pl2.typefinancement_id = tf.id
+                inner join ecolo.ecolo_famillefinancement ff on tf.famillefinancement_id = ff.id
+        ) plg
+        group by plg.conventiondonneesgenerales_id, plg.financement
+    ) pl2 on pl2.conventiondonneesgenerales_id = ch.conventiondonneesgenerales_id and pl2.financement = ch.financement
     -- Vérification qu'il existe bien une ligne pour le parent de parent_id (au cas où exclure les changements de financement)
     left join ecolo.ecolo_conventionhistorique chp on chp.id = ch.parent_id
     inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.conventiondonneesgenerales_id
