@@ -63,12 +63,6 @@ class ProgrammeForm(forms.Form):
             "max_length": "La ville ne doit pas excéder 255 caractères",
         },
     )
-    nb_logements = forms.IntegerField(
-        label="Nombre de logements à conventionner",
-        error_messages={
-            "required": "Le nombre de logements à conventionner est obligatoire",
-        },
-    )
     type_habitat = forms.TypedChoiceField(
         required=False, label="Type d'habitat", choices=TypeHabitat.choices
     )

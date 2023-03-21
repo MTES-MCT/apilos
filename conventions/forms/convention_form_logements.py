@@ -54,8 +54,10 @@ class LotLgtsOptionForm(forms.Form):
         },
     )
     nb_logements = forms.IntegerField(
-        required=False,
         label="Nombre de logements",
+        error_messages={
+            "required": "Le nombre de logements est obligatoire",
+        },
     )
 
 
@@ -362,6 +364,9 @@ class BaseLogementFormSet(BaseFormSet):
             loyer_with_coef += coeficient * surface_utile * loyer_par_metre_carre
             loyer_without_coef += surface_utile * loyer_par_metre_carre
         nb_logements = self.nb_logements if self.nb_logements else lot.nb_logements
+        if None in [nb_logements]:
+            # Another error is catch before and need to be managed before
+            return
         if (
             round_half_up(loyer_with_coef, 2)
             > round_half_up(loyer_without_coef, 2) + nb_logements

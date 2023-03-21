@@ -178,8 +178,7 @@ class ConventionLogementsService(ConventionService):
             self.form.cleaned_data["lgts_mixite_sociale_negocies"] or 0
         )
         lot.loyer_derogatoire = self.form.cleaned_data["loyer_derogatoire"]
-        if "nb_logements" in self.form.cleaned_data:
-            lot.nb_logements = self.form.cleaned_data["nb_logements"]
+        lot.nb_logements = self.form.cleaned_data["nb_logements"]
         lot.save()
 
     def _save_logements(self):

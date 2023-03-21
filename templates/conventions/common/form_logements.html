@@ -2,11 +2,9 @@
 {% load custom_filters %}
 
 <div class="fr-grid-row fr-grid-row--gutters">
-    {% if convention.is_avenant %}
-        <div class="fr-col-12 fr-mb-2w">
-            {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements object_field="lot__nb_logements__"|add:form.uuid.value %}
-        </div>
-    {% endif %}
+    <div class="fr-col-12 fr-mb-2w">
+        {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements object_field="lot__nb_logements__"|add:form.uuid.value %}
+    </div>
     <div class="fr-col-md-12">
 
         <h4>Logements associés à la convention</h4>

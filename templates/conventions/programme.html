@@ -41,9 +41,6 @@
                         <h4 class="fr-mt-2w">Détails de l'opération</h4>
 
                         <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_number.html" with form_input=form.nb_logements object_field="programme__nb_logements__"|add:form.uuid.value %}
-                            </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w fr-mt-3w">
                                 {% include "common/form/input_checkbox.html" with form_input=form.anru object_field="programme__anru__"|add:form.uuid.value %}
                             </div>
