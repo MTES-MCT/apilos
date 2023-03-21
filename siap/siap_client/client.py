@@ -8,6 +8,7 @@ import jwt
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from core.exceptions.types import (
+    TimeoutSIAPException,
     UnauthorizedSIAPException,
     UnavailableServiceSIAPException,
 )
@@ -57,11 +58,14 @@ def _call_siap_api(
         settings.SIAP_CLIENT_HOST + base_route + settings.SIAP_CLIENT_PATH + route
     )
     myjwt = build_jwt(user_login=user_login, habilitation_id=habilitation_id)
-    response = requests.get(
-        siap_url_config,
-        headers={"siap-Authorization": f"Bearer {myjwt}"},
-        timeout=5,
-    )
+    try:
+        response = requests.get(
+            siap_url_config,
+            headers={"siap-Authorization": f"Bearer {myjwt}"},
+            timeout=5,
+        )
+    except requests.ReadTimeout as e:
+        raise TimeoutSIAPException() from e
     if response.status_code == 401:
         raise UnauthorizedSIAPException(
             response.content["detail"]
