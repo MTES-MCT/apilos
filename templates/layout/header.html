@@ -26,15 +26,18 @@
 {% if not CERBERE_AUTH %}
     <div class="apilos-warning-band">
         <div class="fr-container fr-p-4w">
-            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-                <img class="fr-mr-3w"  src="{% static 'icons/warning.svg' %}" alt="warning">
-                <div>
-                    <p class="fr-mb-0 fr-text--lead">Le SIAP sera prochainement votre unique porte d’entrée vers APiLos !</p>
-                    <p class="fr-mb-0">Vous pourrez retrouver Apilos en vous connectant depuis le SIAP.
-                        <a class="fr-link" href="https://docs.apilos.beta.gouv.fr/passage-vers-le-siap/passage-au-siap" target="_blank"  rel="noopener">En savoir plus</a>
+            <div class="block--row-strech">
+                <div class="block--row-strech-1 fr-mr-4w fr-grid-row fr-grid-row--gutters fr-grid-row--middle ">
+                    <img class="fr-mr-3w"  src="{% static 'icons/warning.svg' %}" alt="warning">
+                    <div>
+                        <p class="fr-mb-0 fr-text--lead">Le SIAP sera prochainement votre unique porte d’entrée vers APiLos !</p>
+                        <p class="fr-mb-0">Vous pourrez retrouver Apilos en vous connectant depuis le SIAP.
+                            <a class="fr-link" href="https://docs.apilos.beta.gouv.fr/passage-vers-le-siap/passage-au-siap" target="_blank"  rel="noopener">En savoir plus</a>
 
-                    </p>
+                        </p>
+                    </div>
                 </div>
+                <a href="https://siap.logement.gouv.fr/" class="fr-btn" alt="siap-link">Aller vers le SIAP</a>
             </div>
         </div>
     </div>
