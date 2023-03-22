@@ -25,10 +25,10 @@
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12">
 
-                        <h4>Financement : Prêts & Subventions</h4>
+                        <h4>Financement : Prêts et Subventions</h4>
 
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-                            {% include "common/form/download_upload_form.html" with file_type='financement' upform=upform  what='prêts' %}
+                            {% include "common/form/download_upload_form.html" with file_type='financement' upform=upform  what='prêts et subventions' %}
                             <hr class="fr-col-12 fr-my-3w">
                         </div>
 
@@ -50,7 +50,7 @@
                                 <thead>
                                     <tr>
                                         {% if convention|display_comments %}
-                                            {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et financements' %}
+                                            {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et subventions' %}
                                         {% endif %}
                                         <th scope="col">Numéro</th>
                                         <th scope="col">Date d'octroi</th>
@@ -102,8 +102,16 @@
                         <hr class="fr-col-12 fr-my-3w">
 
                         <h4>Préciser aussi</h4>
-
                         <div class="fr-mb-2w">
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-3w">
+                                    {% if convention.programme.is_foyer  or convention.programme.is_residence %}
+                                        {% include "common/form/input_textarea.html" with form_input=form.historique_financement_public helptext_visible=True object_field="convention__historique_financement_public__"|add:form.uuid.value %}
+                                    {% else %}
+                                        {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" object_field="convention__fond_propre__"|add:form.uuid.value %}
+                                    {% endif %}
+                                </div>
+                            </div>
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                                     <div class="fr-input-group {% if form.annee_fin_conventionnement.errors %}fr-select-group--error{% endif %}">
@@ -145,13 +153,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                        {% if convention.programme.is_foyer  or convention.programme.is_residence %}
-                                            {% include "common/form/input_textarea.html" with form_input=form.historique_financement_public helptext_visible=True object_field="convention__historique_financement_public__"|add:form.uuid.value %}
-                                        {% else %}
-                                            {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" object_field="convention__fond_propre__"|add:form.uuid.value %}
-                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
