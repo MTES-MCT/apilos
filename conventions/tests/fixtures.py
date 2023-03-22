@@ -98,6 +98,7 @@ logement_success_payload = {
     "form-1-coeficient": "1.0000",
     "form-1-loyer": "135.00",
     "loyer_derogatoire": "10",
+    "surface_locaux_collectifs_residentiels": "25",
     "lgts_mixite_sociale_negocies": "2",
     "nb_logements": "2",
 }

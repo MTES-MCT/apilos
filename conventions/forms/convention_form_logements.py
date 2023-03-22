@@ -53,6 +53,15 @@ class LotLgtsOptionForm(forms.Form):
             "max_digits": "Le loyer dérogatoire par m² doit-être inférieur à 10000 €",
         },
     )
+    surface_locaux_collectifs_residentiels = forms.DecimalField(
+        required=False,
+        label="Surface des locaux collectifs résidentiels",
+        max_digits=12,
+        decimal_places=2,
+        error_messages={
+            "max_digits": "La surface des locaux collectifs résidentiels doit-être inférieur à 100000 m²",
+        },
+    )
     nb_logements = forms.IntegerField(
         label="Nombre de logements",
         error_messages={
