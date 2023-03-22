@@ -14,5 +14,6 @@ disable=
     C0115, # missing-class-docstring
     C0116, # missing-function-docstring
     R0903, # too-few-public-methods
+    W0511, # fixme
 min-similarity-lines=20
 max-args = 10

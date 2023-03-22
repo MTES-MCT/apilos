@@ -3,7 +3,7 @@ from django.http import HttpRequest
 
 from bailleurs.models import Bailleur
 from conventions.forms import ConventionBailleurForm, ChangeBailleurForm
-from conventions.models import Convention
+from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
 from conventions.services.conventions import ConventionService
 

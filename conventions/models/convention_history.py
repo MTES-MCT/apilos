@@ -20,12 +20,12 @@ class ConventionHistory(models.Model):
     statut_convention = models.CharField(
         max_length=25,
         choices=ConventionStatut.choices,
-        default=ConventionStatut.PROJET,
+        default=ConventionStatut.PROJET.label,
     )
     statut_convention_precedent = models.CharField(
         max_length=25,
         choices=ConventionStatut.choices,
-        default=ConventionStatut.PROJET,
+        default=ConventionStatut.PROJET.label,
     )
     commentaire = models.TextField(null=True, blank=True)
     user = models.ForeignKey(
@@ -47,9 +47,9 @@ def send_survey_email(sender, instance, *args, **kwargs):
 
     # check if it is the first time the bailleur user submit a convention
     if (
-        instance.statut_convention == ConventionStatut.INSTRUCTION
+        instance.statut_convention == ConventionStatut.INSTRUCTION.label
         and not ConventionHistory.objects.filter(
-            user=instance.user, statut_convention=ConventionStatut.INSTRUCTION
+            user=instance.user, statut_convention=ConventionStatut.INSTRUCTION.label
         ).exclude(id=instance.id)
         and instance.user.is_bailleur()
     ):
@@ -66,9 +66,9 @@ def send_survey_email(sender, instance, *args, **kwargs):
 
     # check if it is the first time the instructeur user validate a convention
     if (
-        instance.statut_convention == ConventionStatut.A_SIGNER
+        instance.statut_convention == ConventionStatut.A_SIGNER.label
         and not ConventionHistory.objects.filter(
-            user=instance.user, statut_convention=ConventionStatut.A_SIGNER
+            user=instance.user, statut_convention=ConventionStatut.A_SIGNER.label
         ).exclude(id=instance.id)
         and instance.user.is_instructeur()
     ):

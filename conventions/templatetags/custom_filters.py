@@ -1,27 +1,25 @@
-from django.http.request import HttpRequest
+from re import IGNORECASE, compile as rcompile, escape as rescape
+
 from django.conf import settings
+from django.http.request import HttpRequest
 from django.template.defaulttags import register
+from django.utils.safestring import mark_safe
+
 from bailleurs.models import Bailleur
+from conventions.models import ConventionStatut, PieceJointe
 from core.utils import is_valid_uuid, get_key_from_json_field
 from instructeurs.models import Administration
 from programmes.models import Financement
 from siap.siap_client.client import SIAPClient
-from conventions.models import ConventionStatut, PieceJointe
 from users.models import GroupProfile
-
-
-from re import IGNORECASE, compile, escape as rescape
-from django.utils.safestring import mark_safe
 
 
 @register.filter(name="highlight")
 def highlight(text, search):
-    rgx = compile(rescape(search), IGNORECASE)
+    rgx = rcompile(rescape(search), IGNORECASE)
     return mark_safe(
         rgx.sub(
-            lambda m: '<span class="apilos-search-highlight">{}</span>'.format(
-                m.group()
-            ),
+            lambda m: f'<span class="apilos-search-highlight">{m.group()}</span>',
             str(text),
         )
     )
@@ -138,7 +136,10 @@ def has_own_active_comment(comments, user_id):
     return user_id in list(
         map(
             lambda x: x.user_id,
-            filter(lambda comment: comment.statut != ConventionStatut.SIGNEE, comments),
+            filter(
+                lambda comment: comment.statut != ConventionStatut.SIGNEE.label,
+                comments,
+            ),
         )
     )
 
@@ -151,7 +152,7 @@ def hasnt_active_comments(comments, object_field):
     return not (
         list(
             filter(
-                lambda comment: (comment.statut != ConventionStatut.SIGNEE),
+                lambda comment: (comment.statut != ConventionStatut.SIGNEE.label),
                 object_comments,
             )
         )
@@ -216,18 +217,18 @@ def with_financement(convention):
 @register.filter
 def display_comments(convention):
     return convention.statut in [
-        ConventionStatut.INSTRUCTION,
-        ConventionStatut.CORRECTION,
-        ConventionStatut.A_SIGNER,
-        ConventionStatut.SIGNEE,
+        ConventionStatut.INSTRUCTION.label,
+        ConventionStatut.CORRECTION.label,
+        ConventionStatut.A_SIGNER.label,
+        ConventionStatut.SIGNEE.label,
     ]
 
 
 @register.filter
 def display_comments_summary(convention):
     return convention.statut in [
-        ConventionStatut.INSTRUCTION,
-        ConventionStatut.CORRECTION,
+        ConventionStatut.INSTRUCTION.label,
+        ConventionStatut.CORRECTION.label,
     ]
 
 
@@ -235,10 +236,13 @@ def display_comments_summary(convention):
 def display_validation(convention, request):
     if not is_instructeur(request):
         return False
-    if convention.statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
+    if convention.statut in [
+        ConventionStatut.INSTRUCTION.label,
+        ConventionStatut.CORRECTION.label,
+    ]:
         return True
     return (
-        convention.statut == ConventionStatut.PROJET
+        convention.statut == ConventionStatut.PROJET.label
         and convention.cree_par is not None
         and convention.cree_par.is_instructeur()
     )
@@ -247,9 +251,9 @@ def display_validation(convention, request):
 @register.filter
 def display_is_validated(convention):
     return convention.statut in [
-        ConventionStatut.A_SIGNER,
-        ConventionStatut.SIGNEE,
-        ConventionStatut.RESILIEE,
+        ConventionStatut.A_SIGNER.label,
+        ConventionStatut.SIGNEE.label,
+        ConventionStatut.RESILIEE.label,
     ]
 
 
@@ -258,7 +262,7 @@ def display_is_resiliated(convention):
     return (
         convention.statut
         in [
-            ConventionStatut.RESILIEE,
+            ConventionStatut.RESILIEE.label,
         ]
         and not convention.is_avenant()
     )
@@ -275,23 +279,23 @@ def display_spf_info(convention):
 @register.filter
 def display_notification_instructeur_to_bailleur(convention, request):
     return convention.statut in [
-        ConventionStatut.INSTRUCTION,
-        ConventionStatut.CORRECTION,
+        ConventionStatut.INSTRUCTION.label,
+        ConventionStatut.CORRECTION.label,
     ] and is_instructeur(request)
 
 
 @register.filter
 def display_notification_bailleur_to_instructeur(convention, request):
     return convention.statut in [
-        ConventionStatut.INSTRUCTION,
-        ConventionStatut.CORRECTION,
+        ConventionStatut.INSTRUCTION.label,
+        ConventionStatut.CORRECTION.label,
     ] and is_bailleur(request)
 
 
 @register.filter
 def display_notification_new_convention_instructeur_to_bailleur(convention, request):
     return (
-        convention.statut == ConventionStatut.PROJET
+        convention.statut == ConventionStatut.PROJET.label
         and is_instructeur(request)
         and convention.cree_par is not None
         and convention.cree_par.is_instructeur()
@@ -300,35 +304,35 @@ def display_notification_new_convention_instructeur_to_bailleur(convention, requ
 
 @register.filter
 def display_demande_correction(convention):
-    return convention.statut == ConventionStatut.INSTRUCTION
+    return convention.statut == ConventionStatut.INSTRUCTION.label
 
 
 @register.filter
 def display_demande_instruction(convention):
-    return convention.statut == ConventionStatut.CORRECTION
+    return convention.statut == ConventionStatut.CORRECTION.label
 
 
 @register.filter
 def display_redirect_sent(convention):
-    return convention.statut == ConventionStatut.A_SIGNER
+    return convention.statut == ConventionStatut.A_SIGNER.label
 
 
 @register.filter
 def display_redirect_project(convention):
-    return settings.CERBERE_AUTH and convention.statut == ConventionStatut.PROJET
+    return settings.CERBERE_AUTH and convention.statut == ConventionStatut.PROJET.label
 
 
 @register.filter
 def display_redirect_post_action(convention):
-    return convention.statut == ConventionStatut.SIGNEE
+    return convention.statut == ConventionStatut.SIGNEE.label
 
 
 @register.filter
 def display_convention_form_progressbar(convention):
     return convention.statut in [
-        ConventionStatut.PROJET,
-        ConventionStatut.INSTRUCTION,
-        ConventionStatut.CORRECTION,
+        ConventionStatut.PROJET.label,
+        ConventionStatut.INSTRUCTION.label,
+        ConventionStatut.CORRECTION.label,
     ]
 
 
@@ -350,9 +354,9 @@ def display_deactivated_because_type1and2_config_is_needed(convention):
 @register.filter
 def display_type1and2_editable(convention):
     return convention.statut in [
-        ConventionStatut.PROJET,
-        ConventionStatut.INSTRUCTION,
-        ConventionStatut.CORRECTION,
+        ConventionStatut.PROJET.label,
+        ConventionStatut.INSTRUCTION.label,
+        ConventionStatut.CORRECTION.label,
     ]
 
 
@@ -364,22 +368,22 @@ def not_op(boolean_value):
 @register.filter
 def display_back_to_instruction(convention, request):
     return convention.statut in [
-        ConventionStatut.A_SIGNER,
-        ConventionStatut.SIGNEE,
+        ConventionStatut.A_SIGNER.label,
+        ConventionStatut.SIGNEE.label,
     ] and is_instructeur(request)
 
 
 @register.filter
 def display_submit_convention(convention, request):
-    return convention.statut == ConventionStatut.PROJET and is_bailleur(request)
+    return convention.statut == ConventionStatut.PROJET.label and is_bailleur(request)
 
 
 @register.filter
 def display_delete_convention(convention):
     return convention.statut in [
-        ConventionStatut.PROJET,
-        ConventionStatut.INSTRUCTION,
-        ConventionStatut.CORRECTION,
+        ConventionStatut.PROJET.label,
+        ConventionStatut.INSTRUCTION.label,
+        ConventionStatut.CORRECTION.label,
     ]
 
 
@@ -387,9 +391,9 @@ def display_delete_convention(convention):
 def display_create_avenant(convention):
     return not (
         {
-            ConventionStatut.PROJET,
-            ConventionStatut.INSTRUCTION,
-            ConventionStatut.CORRECTION,
+            ConventionStatut.PROJET.label,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
         }
         & {avenant.statut for avenant in convention.avenants.all()}
     )
@@ -415,9 +419,9 @@ def negate(condition: bool):
 
 
 @register.filter
-def attribute(object, key):
+def attribute(object_from_template, key):
     """Gets an attribute of an object dynamically from a string key"""
-    return getattr(object, key, None)
+    return getattr(object_from_template, key, None)
 
 
 @register.filter

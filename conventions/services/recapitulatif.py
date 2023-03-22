@@ -114,11 +114,11 @@ def convention_submit(request: HttpRequest, convention: Convention):
     if request.POST.get("BackToInstruction", False):
         ConventionHistory.objects.create(
             convention=convention,
-            statut_convention=ConventionStatut.INSTRUCTION,
+            statut_convention=ConventionStatut.INSTRUCTION.label,
             statut_convention_precedent=convention.statut,
             user=request.user,
         ).save()
-        convention.statut = ConventionStatut.INSTRUCTION
+        convention.statut = ConventionStatut.INSTRUCTION.label
         convention.save()
         submitted = utils.ReturnStatus.ERROR
     # Submit the convention to the instruction
@@ -126,7 +126,7 @@ def convention_submit(request: HttpRequest, convention: Convention):
 
         ConventionHistory.objects.create(
             convention=convention,
-            statut_convention=ConventionStatut.INSTRUCTION,
+            statut_convention=ConventionStatut.INSTRUCTION.label,
             statut_convention_precedent=convention.statut,
             user=request.user,
         ).save()
@@ -134,7 +134,7 @@ def convention_submit(request: HttpRequest, convention: Convention):
         if convention.premiere_soumission_le is None:
             convention.premiere_soumission_le = timezone.now()
         convention.soumis_le = timezone.now()
-        convention.statut = ConventionStatut.INSTRUCTION
+        convention.statut = ConventionStatut.INSTRUCTION.label
         convention.save()
 
         instructeur_emails = []
@@ -218,9 +218,9 @@ def convention_feedback(request: HttpRequest, convention: Convention):
             notification_form.cleaned_data["comment"],
             all_bailleur_users=(notification_form.cleaned_data["all_bailleur_users"]),
         )
-        target_status = ConventionStatut.INSTRUCTION
+        target_status = ConventionStatut.INSTRUCTION.label
         if notification_form.cleaned_data["from_instructeur"]:
-            target_status = ConventionStatut.CORRECTION
+            target_status = ConventionStatut.CORRECTION.label
         ConventionHistory.objects.create(
             convention=convention,
             statut_convention=target_status,
@@ -339,10 +339,10 @@ def convention_validate(request: HttpRequest, convention: Convention):
             # Generate the doc should be placed after the status update
             # because the watermark report the status of the convention
             previous_status = convention.statut
-            convention.statut = ConventionStatut.A_SIGNER
+            convention.statut = ConventionStatut.A_SIGNER.label
             ConventionHistory.objects.create(
                 convention=convention,
-                statut_convention=ConventionStatut.A_SIGNER,
+                statut_convention=ConventionStatut.A_SIGNER.label,
                 statut_convention_precedent=previous_status,
                 user=request.user,
             ).save()
