@@ -37,15 +37,15 @@ class ConventionModelsTest(TestCase):
     def test_is_functions(self):
         convention = Convention.objects.get(numero="0001")
         self.assertTrue(convention.is_bailleur_editable())
-        convention.statut = ConventionStatut.INSTRUCTION
+        convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertFalse(convention.is_bailleur_editable())
-        convention.statut = ConventionStatut.CORRECTION
+        convention.statut = ConventionStatut.CORRECTION.label
         self.assertTrue(convention.is_bailleur_editable())
-        convention.statut = ConventionStatut.A_SIGNER
+        convention.statut = ConventionStatut.A_SIGNER.label
         self.assertFalse(convention.is_bailleur_editable())
-        convention.statut = ConventionStatut.SIGNEE
+        convention.statut = ConventionStatut.SIGNEE.label
         self.assertFalse(convention.is_bailleur_editable())
-        convention.statut = ConventionStatut.RESILIEE
+        convention.statut = ConventionStatut.RESILIEE.label
         self.assertFalse(convention.is_bailleur_editable())
 
     def test_get_email_bailleur_users(self):
@@ -60,8 +60,8 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(convention.get_email_bailleur_users(), [])
         ConventionHistory.objects.create(
             convention=convention,
-            statut_convention=ConventionStatut.INSTRUCTION,
-            statut_convention_precedent=ConventionStatut.PROJET,
+            statut_convention=ConventionStatut.INSTRUCTION.label,
+            statut_convention_precedent=ConventionStatut.PROJET.label,
             user=raph,
         ).save()
         self.assertEqual(convention.get_email_bailleur_users(), [raph.email])
@@ -81,22 +81,22 @@ class ConventionModelsTest(TestCase):
         )
         ConventionHistory.objects.create(
             convention=convention,
-            statut_convention=ConventionStatut.INSTRUCTION,
-            statut_convention_precedent=ConventionStatut.PROJET,
+            statut_convention=ConventionStatut.INSTRUCTION.label,
+            statut_convention_precedent=ConventionStatut.PROJET.label,
             user=fix,
         ).save()
         self.assertEqual(convention.get_email_instructeur_users(), [fix.email])
 
     def test_statut_for_template(self):
         convention = Convention.objects.order_by("uuid").first()
-        convention.statut = ConventionStatut.PROJET
+        convention.statut = ConventionStatut.PROJET.label
         self.assertEqual(convention.statut_for_template()["statut"], "1. Projet")
         self.assertEqual(
             convention.statut_for_template()["statut_display"],
             "Projet",
         )
         self.assertEqual(convention.statut_for_template()["key_statut"], "Projet")
-        convention.statut = ConventionStatut.INSTRUCTION
+        convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertEqual(
             convention.statut_for_template()["statut"], "2. Instruction requise"
         )
@@ -107,7 +107,7 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(
             convention.statut_for_template()["key_statut"], "Instruction_requise"
         )
-        convention.statut = ConventionStatut.CORRECTION
+        convention.statut = ConventionStatut.CORRECTION.label
         self.assertEqual(
             convention.statut_for_template()["statut"], "3. Corrections requises"
         )
@@ -118,11 +118,11 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(
             convention.statut_for_template()["key_statut"], "Corrections_requises"
         )
-        convention.statut = ConventionStatut.A_SIGNER
+        convention.statut = ConventionStatut.A_SIGNER.label
         self.assertEqual(convention.statut_for_template()["statut"], "4. A signer")
         self.assertEqual(convention.statut_for_template()["statut_display"], "À signer")
         self.assertEqual(convention.statut_for_template()["key_statut"], "A_signer")
-        convention.statut = ConventionStatut.SIGNEE
+        convention.statut = ConventionStatut.SIGNEE.label
         self.assertEqual(convention.statut_for_template()["statut"], "5. Signée")
         self.assertEqual(
             convention.statut_for_template()["statut_display"], "Finalisée"
@@ -131,51 +131,51 @@ class ConventionModelsTest(TestCase):
 
     def test_short_statut_for_template(self):
         convention = Convention.objects.order_by("uuid").first()
-        convention.statut = ConventionStatut.PROJET
+        convention.statut = ConventionStatut.PROJET.label
         self.assertEqual(convention.short_statut_for_template(), "Projet")
-        convention.statut = ConventionStatut.INSTRUCTION
+        convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertEqual(convention.short_statut_for_template(), "A instruire")
-        convention.statut = ConventionStatut.CORRECTION
+        convention.statut = ConventionStatut.CORRECTION.label
         self.assertEqual(
             convention.short_statut_for_template(), "En attente de corrections"
         )
-        convention.statut = ConventionStatut.A_SIGNER
+        convention.statut = ConventionStatut.A_SIGNER.label
         self.assertEqual(
             convention.short_statut_for_template(), "En attente de signature"
         )
-        convention.statut = ConventionStatut.SIGNEE
+        convention.statut = ConventionStatut.SIGNEE.label
         self.assertEqual(convention.short_statut_for_template(), "Finalisée")
-        convention.statut = ConventionStatut.RESILIEE
+        convention.statut = ConventionStatut.RESILIEE.label
         self.assertEqual(convention.short_statut_for_template(), "Résiliée")
 
     def test_short_statut_for_bailleur(self):
         convention = Convention.objects.order_by("uuid").first()
-        convention.statut = ConventionStatut.PROJET
+        convention.statut = ConventionStatut.PROJET.label
         self.assertEqual(convention.short_statut_for_bailleur(), "Projet")
-        convention.statut = ConventionStatut.INSTRUCTION
+        convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertEqual(convention.short_statut_for_bailleur(), "En instruction")
-        convention.statut = ConventionStatut.CORRECTION
+        convention.statut = ConventionStatut.CORRECTION.label
         self.assertEqual(convention.short_statut_for_bailleur(), "À corriger")
-        convention.statut = ConventionStatut.A_SIGNER
+        convention.statut = ConventionStatut.A_SIGNER.label
         self.assertEqual(convention.short_statut_for_bailleur(), "À signer")
-        convention.statut = ConventionStatut.SIGNEE
+        convention.statut = ConventionStatut.SIGNEE.label
         self.assertEqual(convention.short_statut_for_bailleur(), "Finalisée")
-        convention.statut = ConventionStatut.RESILIEE
+        convention.statut = ConventionStatut.RESILIEE.label
         self.assertEqual(convention.short_statut_for_bailleur(), "Résiliée")
 
     def test_short_statut_for_instructeur(self):
         convention = Convention.objects.order_by("uuid").first()
-        convention.statut = ConventionStatut.PROJET
+        convention.statut = ConventionStatut.PROJET.label
         self.assertEqual(convention.short_statut_for_instructeur(), "Projet")
-        convention.statut = ConventionStatut.INSTRUCTION
+        convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertEqual(convention.short_statut_for_instructeur(), "A instruire")
-        convention.statut = ConventionStatut.CORRECTION
+        convention.statut = ConventionStatut.CORRECTION.label
         self.assertEqual(convention.short_statut_for_instructeur(), "En correction")
-        convention.statut = ConventionStatut.A_SIGNER
+        convention.statut = ConventionStatut.A_SIGNER.label
         self.assertEqual(convention.short_statut_for_instructeur(), "À signer")
-        convention.statut = ConventionStatut.SIGNEE
+        convention.statut = ConventionStatut.SIGNEE.label
         self.assertEqual(convention.short_statut_for_instructeur(), "Finalisée")
-        convention.statut = ConventionStatut.RESILIEE
+        convention.statut = ConventionStatut.RESILIEE.label
         self.assertEqual(convention.short_statut_for_instructeur(), "Résiliée")
 
     def test_mixity_option(self):
@@ -189,23 +189,23 @@ class ConventionModelsTest(TestCase):
 
     def test_display_not_validated_status(self):
         convention = Convention.objects.order_by("uuid").first()
-        convention.statut = ConventionStatut.PROJET
+        convention.statut = ConventionStatut.PROJET.label
         self.assertEqual(
             convention.display_not_validated_status(), "Projet de convention"
         )
-        convention.statut = ConventionStatut.INSTRUCTION
+        convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertEqual(
             convention.display_not_validated_status(),
             "Convention en cours d'instruction",
         )
-        convention.statut = ConventionStatut.CORRECTION
+        convention.statut = ConventionStatut.CORRECTION.label
         self.assertEqual(
             convention.display_not_validated_status(),
             "Convention en cours d'instruction",
         )
-        convention.statut = ConventionStatut.A_SIGNER
+        convention.statut = ConventionStatut.A_SIGNER.label
         self.assertEqual(convention.display_not_validated_status(), "")
-        convention.statut = ConventionStatut.SIGNEE
+        convention.statut = ConventionStatut.SIGNEE.label
         self.assertEqual(convention.display_not_validated_status(), "")
 
     def test_convention_bailleur(self):
@@ -232,10 +232,10 @@ class ConventionHistoryModelsTest(TestCase):
             "core.services.EmailService.send_transactional_email"
         ) as mock_send_email:
             for convention_statut in [
-                ConventionStatut.A_SIGNER,
-                ConventionStatut.A_SIGNER,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.INSTRUCTION,
+                ConventionStatut.A_SIGNER.label,
+                ConventionStatut.A_SIGNER.label,
+                ConventionStatut.INSTRUCTION.label,
+                ConventionStatut.INSTRUCTION.label,
             ]:
                 ConventionHistory.objects.create(
                     convention=convention,
@@ -258,10 +258,10 @@ class ConventionHistoryModelsTest(TestCase):
             "core.services.EmailService.send_transactional_email"
         ) as mock_send_email:
             for convention_statut in [
-                ConventionStatut.A_SIGNER,
-                ConventionStatut.A_SIGNER,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.INSTRUCTION,
+                ConventionStatut.A_SIGNER.label,
+                ConventionStatut.A_SIGNER.label,
+                ConventionStatut.INSTRUCTION.label,
+                ConventionStatut.INSTRUCTION.label,
             ]:
                 ConventionHistory.objects.create(
                     convention=convention,

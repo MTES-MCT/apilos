@@ -1,7 +1,15 @@
+from enum import Enum
+from typing import NamedTuple
 from django.db.models import TextChoices
 
 
-class ConventionStatut(TextChoices):
+class StatutByRole(NamedTuple):
+    label: str
+    icon_html_class: str | None = None
+    call_to_action: str | None = None
+
+
+class ConventionStatut(Enum):
     """
     A/ PROJET : Projet - Création d'un projet de convention
         Le bailleur crée un projet de convention APL, il ajoute à ce projet des documents
@@ -43,29 +51,73 @@ class ConventionStatut(TextChoices):
 
     """
 
-    PROJET = "1. Projet", "Projet"
+    _ignore_ = "Definition"
 
-    INSTRUCTION = (
+    class Definition(NamedTuple):
+        label: str
+        bailleurs: StatutByRole
+        instructeurs: StatutByRole
+
+    PROJET = Definition("1. Projet", StatutByRole("Projet"), StatutByRole("Projet"))
+
+    INSTRUCTION = Definition(
         "2. Instruction requise",
-        "En instruction",
+        StatutByRole("En cours d'instruction"),
+        StatutByRole("À instruire"),
     )
-    CORRECTION = (
+    CORRECTION = Definition(
         "3. Corrections requises",
-        "En correction",
+        StatutByRole("À corriger"),
+        StatutByRole("Encopurs de correction"),
     )
-    A_SIGNER = "4. A signer", "À signer"
-    SIGNEE = "5. Signée", "Finalisée"
-    RESILIEE = "6. Résiliée", "Résiliée"
-    DENONCEE = "7. Dénoncée", "Dénoncée"
-    ANNULEE = "8. Annulée en suivi", "Annulée en suivi"
+    A_SIGNER = Definition(
+        "4. A signer", StatutByRole("À signer"), StatutByRole("À signer")
+    )
+    SIGNEE = Definition(
+        "5. Signée", StatutByRole("Finalisée"), StatutByRole("Finalisée")
+    )
+    RESILIEE = Definition(
+        "6. Résiliée", StatutByRole("Résiliée"), StatutByRole("Résiliée")
+    )
+    DENONCEE = Definition(
+        "7. Dénoncée", StatutByRole("Dénoncée"), StatutByRole("Dénoncée")
+    )
+    ANNULEE = Definition(
+        "8. Annulée en suivi",
+        StatutByRole("Annulée en suivi"),
+        StatutByRole("Annulée en suivi"),
+    )
+
+    # @classmethod
+    # @property
+    # def choices(cls) -> list[tuple[str, str]]:
+    #     return [(member.name, member.label) for member in cls]
+    @classmethod
+    @property
+    def choices(cls) -> list[tuple[str, str]]:
+        return [(member.name, member.label) for member in cls]
 
     @classmethod
     def active_statuts(cls):
-        return [cls.PROJET, cls.INSTRUCTION, cls.CORRECTION, cls.A_SIGNER]
+        return [
+            c.label for c in [cls.PROJET, cls.INSTRUCTION, cls.CORRECTION, cls.A_SIGNER]
+        ]
 
     @classmethod
     def completed_statuts(cls):
-        return [cls.SIGNEE, cls.RESILIEE, cls.DENONCEE, cls.ANNULEE]
+        return [c.label for c in [cls.SIGNEE, cls.RESILIEE, cls.DENONCEE, cls.ANNULEE]]
+
+    @property
+    def label(self):
+        return self.value.label
+
+    @property
+    def bailleur_label(self):
+        return self.value.bailleur.label
+
+    @property
+    def instructeur_label(self):
+        return self.value.instructeur.label
 
 
 class ConventionType1and2(TextChoices):

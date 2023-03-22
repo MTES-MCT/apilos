@@ -3,7 +3,6 @@ from django.db import transaction
 from django.http import HttpRequest
 
 from conventions.forms import ConventionBailleurForm, ChangeBailleurForm
-from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
 from conventions.services.conventions import ConventionService
@@ -92,12 +91,12 @@ class ConventionBailleurService(ConventionService):
             ).get(id=self.convention.programme_id)
             for convention in programme.conventions.all():
                 if convention.statut in [
-                    ConventionStatut.A_SIGNER,
-                    ConventionStatut.SIGNEE,
+                    ConventionStatut.A_SIGNER.label,
+                    ConventionStatut.SIGNEE.label,
                 ]:
                     raise Exception(
                         "It is not possible to update bailleur of the programme"
-                        + " because some convention are validated"
+                        + " because some conventions are validated"
                     )
 
             with transaction.atomic():

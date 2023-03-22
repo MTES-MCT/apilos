@@ -166,7 +166,7 @@ class ConventionKPI(APIView):
         )
 
         nb_conventions_by_status = {
-            convention_statut.value: 0 for convention_statut in ConventionStatut
+            convention_statut.label: 0 for convention_statut in ConventionStatut
         } | {query["statut"]: query["total"] for query in query_by_statuses}
         list_conv_kpi = []
 
@@ -177,15 +177,15 @@ class ConventionKPI(APIView):
             list_conv_kpi = [
                 ConvKPI(
                     "/conventions/en-cours",
-                    nb_conventions_by_status[ConventionStatut.PROJET.value]
-                    + nb_conventions_by_status[ConventionStatut.INSTRUCTION.value]
-                    + nb_conventions_by_status[ConventionStatut.CORRECTION.value]
-                    + nb_conventions_by_status[ConventionStatut.A_SIGNER.value],
+                    nb_conventions_by_status[ConventionStatut.PROJET.label]
+                    + nb_conventions_by_status[ConventionStatut.INSTRUCTION.label]
+                    + nb_conventions_by_status[ConventionStatut.CORRECTION.label]
+                    + nb_conventions_by_status[ConventionStatut.A_SIGNER.label],
                     "en cours",
                 ),
                 ConvKPI(
                     "/conventions/en-cours?cstatut=5.+Signée",
-                    nb_conventions_by_status[ConventionStatut.SIGNEE.value],
+                    nb_conventions_by_status[ConventionStatut.SIGNEE.label],
                     "finalisées",
                 ),
             ]
@@ -197,17 +197,17 @@ class ConventionKPI(APIView):
             list_conv_kpi = [
                 ConvKPI(
                     "/conventions/en-cours?cstatut=2.+Instruction",
-                    nb_conventions_by_status[ConventionStatut.INSTRUCTION.value],
+                    nb_conventions_by_status[ConventionStatut.INSTRUCTION.label],
                     "en instruction",
                 ),
                 ConvKPI(
                     "/conventions/en-cours?cstatut=4.+A+signer",
-                    nb_conventions_by_status[ConventionStatut.A_SIGNER.value],
+                    nb_conventions_by_status[ConventionStatut.A_SIGNER.label],
                     "à signer",
                 ),
                 ConvKPI(
                     "/conventions/en-cours?cstatut=5.+Signée",
-                    nb_conventions_by_status[ConventionStatut.SIGNEE.value],
+                    nb_conventions_by_status[ConventionStatut.SIGNEE.label],
                     "finalisées",
                 ),
             ]
@@ -219,17 +219,17 @@ class ConventionKPI(APIView):
             list_conv_kpi = [
                 ConvKPI(
                     "/conventions/en-cours?cstatut=1.+Projet",
-                    nb_conventions_by_status[ConventionStatut.PROJET.value],
+                    nb_conventions_by_status[ConventionStatut.PROJET.label],
                     "en projet",
                 ),
                 ConvKPI(
                     "/conventions/en-cours?cstatut=3.+Corrections+requises",
-                    nb_conventions_by_status[ConventionStatut.CORRECTION.value],
+                    nb_conventions_by_status[ConventionStatut.CORRECTION.label],
                     "en correction requise",
                 ),
                 ConvKPI(
                     "/conventions/en-cours?cstatut=4.+A+signer",
-                    nb_conventions_by_status[ConventionStatut.A_SIGNER.value],
+                    nb_conventions_by_status[ConventionStatut.A_SIGNER.label],
                     "à signer",
                 ),
             ]

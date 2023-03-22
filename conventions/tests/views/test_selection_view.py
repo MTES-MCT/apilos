@@ -142,7 +142,7 @@ class ConventionPostForAvenantViewTests(AbstractCreateViewTestCase, TestCase):
             "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "financement": Financement.PLUS,
             "code_postal": "",
-            "statut": ConventionStatut.SIGNEE,
+            "statut": ConventionStatut.SIGNEE.label,
             "numero": "2022-75-Rivoli-02-213",
         }
         self.success_payload = {
@@ -152,7 +152,7 @@ class ConventionPostForAvenantViewTests(AbstractCreateViewTestCase, TestCase):
             "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "financement": Financement.PLUS,
             "code_postal": "20000",
-            "statut": ConventionStatut.SIGNEE,
+            "statut": ConventionStatut.SIGNEE.label,
             "numero": "2022-75-Rivoli-02-213",
             "numero_avenant": "1",
         }

@@ -62,7 +62,7 @@ class Convention(models.Model):
     statut = models.CharField(
         max_length=25,
         choices=ConventionStatut.choices,
-        default=ConventionStatut.PROJET,
+        default=ConventionStatut.PROJET.label,
     )
     soumis_le = models.DateTimeField(null=True, blank=True)
     premiere_soumission_le = models.DateTimeField(null=True, blank=True)
@@ -252,8 +252,8 @@ class Convention(models.Model):
 
     def is_bailleur_editable(self):
         return self.statut in (
-            ConventionStatut.PROJET,
-            ConventionStatut.CORRECTION,
+            ConventionStatut.PROJET.label,
+            ConventionStatut.CORRECTION.label,
         )
 
     def get_comments_dict(self):
@@ -278,8 +278,8 @@ class Convention(models.Model):
                 .prefetch_related("user__roles")
                 .filter(
                     statut_convention__in=[
-                        ConventionStatut.INSTRUCTION,
-                        ConventionStatut.CORRECTION,
+                        ConventionStatut.INSTRUCTION.label,
+                        ConventionStatut.CORRECTION.label,
                     ],
                     user__roles__typologie=role,
                 )
@@ -298,8 +298,8 @@ class Convention(models.Model):
         try:
             return self.conventionhistories.filter(
                 statut_convention__in=[
-                    ConventionStatut.INSTRUCTION,
-                    ConventionStatut.CORRECTION,
+                    ConventionStatut.INSTRUCTION.label,
+                    ConventionStatut.CORRECTION.label,
                 ],
             ).latest("cree_le")
         except ConventionHistory.DoesNotExist:
@@ -427,40 +427,40 @@ class Convention(models.Model):
 
     def short_statut_for_template(self):
         short_status = {
-            ConventionStatut.PROJET: "Projet",
-            ConventionStatut.INSTRUCTION: "A instruire",
-            ConventionStatut.CORRECTION: "En attente de corrections",
-            ConventionStatut.A_SIGNER: "En attente de signature",
-            ConventionStatut.SIGNEE: "Finalisée",
-            ConventionStatut.RESILIEE: "Résiliée",
-            ConventionStatut.DENONCEE: "Dénoncée",
-            ConventionStatut.ANNULEE: "Annulée",
+            ConventionStatut.PROJET.label: "Projet",
+            ConventionStatut.INSTRUCTION.label: "A instruire",
+            ConventionStatut.CORRECTION.label: "En attente de corrections",
+            ConventionStatut.A_SIGNER.label: "En attente de signature",
+            ConventionStatut.SIGNEE.label: "Finalisée",
+            ConventionStatut.RESILIEE.label: "Résiliée",
+            ConventionStatut.DENONCEE.label: "Dénoncée",
+            ConventionStatut.ANNULEE.label: "Annulée",
         }
         return f"{short_status.get(self.statut)}"
 
     def short_statut_for_bailleur(self):
         short_status = {
-            ConventionStatut.PROJET: "Projet",
-            ConventionStatut.INSTRUCTION: "En instruction",
-            ConventionStatut.CORRECTION: "À corriger",
-            ConventionStatut.A_SIGNER: "À signer",
-            ConventionStatut.SIGNEE: "Finalisée",
-            ConventionStatut.RESILIEE: "Résiliée",
-            ConventionStatut.DENONCEE: "Dénoncée",
-            ConventionStatut.ANNULEE: "Annulée",
+            ConventionStatut.PROJET.label: "Projet",
+            ConventionStatut.INSTRUCTION.label: "En instruction",
+            ConventionStatut.CORRECTION.label: "À corriger",
+            ConventionStatut.A_SIGNER.label: "À signer",
+            ConventionStatut.SIGNEE.label: "Finalisée",
+            ConventionStatut.RESILIEE.label: "Résiliée",
+            ConventionStatut.DENONCEE.label: "Dénoncée",
+            ConventionStatut.ANNULEE.label: "Annulée",
         }
         return f"{short_status.get(self.statut)}"
 
     def short_statut_for_instructeur(self):
         short_status = {
-            ConventionStatut.PROJET: "Projet",
-            ConventionStatut.INSTRUCTION: "A instruire",
-            ConventionStatut.CORRECTION: "En correction",
-            ConventionStatut.A_SIGNER: "À signer",
-            ConventionStatut.SIGNEE: "Finalisée",
-            ConventionStatut.RESILIEE: "Résiliée",
-            ConventionStatut.DENONCEE: "Dénoncée",
-            ConventionStatut.ANNULEE: "Annulée",
+            ConventionStatut.PROJET.label: "Projet",
+            ConventionStatut.INSTRUCTION.label: "A instruire",
+            ConventionStatut.CORRECTION.label: "En correction",
+            ConventionStatut.A_SIGNER.label: "À signer",
+            ConventionStatut.SIGNEE.label: "Finalisée",
+            ConventionStatut.RESILIEE.label: "Résiliée",
+            ConventionStatut.DENONCEE.label: "Dénoncée",
+            ConventionStatut.ANNULEE.label: "Annulée",
         }
         return f"{short_status.get(self.statut)}"
 
@@ -476,11 +476,11 @@ class Convention(models.Model):
         """
         Text display as Watermark when the convention is in project or instruction status
         """
-        if self.statut == ConventionStatut.PROJET:
+        if self.statut == ConventionStatut.PROJET.label:
             return "Projet de convention"
         if self.statut in [
-            ConventionStatut.INSTRUCTION,
-            ConventionStatut.CORRECTION,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
         ]:
             return "Convention en cours d'instruction"
         return ""
@@ -557,7 +557,7 @@ class Convention(models.Model):
                 "programme": cloned_programme,
                 "lot": cloned_lot,
                 "parent_id": convention_origin.id,
-                "statut": ConventionStatut.PROJET,
+                "statut": ConventionStatut.PROJET.label,
                 "cree_par": user,
             }
         )
@@ -640,9 +640,9 @@ class Convention(models.Model):
             parent = self.parent
             nb_validated_avenants = parent.avenants.exclude(
                 statut__in=[
-                    ConventionStatut.PROJET,
-                    ConventionStatut.INSTRUCTION,
-                    ConventionStatut.CORRECTION,
+                    ConventionStatut.PROJET.label,
+                    ConventionStatut.INSTRUCTION.label,
+                    ConventionStatut.CORRECTION.label,
                 ]
             ).count()
             return str(nb_validated_avenants + 1)

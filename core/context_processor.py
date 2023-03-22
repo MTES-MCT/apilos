@@ -9,7 +9,7 @@ def get_environment(request):
     data["CRISP_WEBSITE_ID"] = settings.CRISP_WEBSITE_ID
     data["CERBERE_AUTH"] = settings.CERBERE_AUTH
     data["CONVENTION_STATUT"] = {
-        convention_statut.name: convention_statut.value
+        convention_statut.name: convention_statut.label
         for convention_statut in ConventionStatut
     }
 

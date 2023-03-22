@@ -114,9 +114,9 @@ def upload_avenants_for_avenant(request, convention_uuid):
 def _get_last_avenant(convention):
     avenants_status = {avenant.statut for avenant in convention.avenants.all()}
     if {
-        ConventionStatut.PROJET,
-        ConventionStatut.INSTRUCTION,
-        ConventionStatut.CORRECTION,
+        ConventionStatut.PROJET.label,
+        ConventionStatut.INSTRUCTION.label,
+        ConventionStatut.CORRECTION.label,
     } & avenants_status:
         raise Exception("Ongoing avenant already exists")
     ordered_avenants = convention.avenants.order_by("-cree_le")
@@ -151,7 +151,7 @@ def complete_avenants_for_avenant(request, convention_uuid):
                 avenanttype = AvenantType.objects.get(nom=avenant_type)
                 avenant.avenant_types.add(avenanttype)
             avenant.televersement_convention_signee_le = timezone.now()
-            avenant.statut = ConventionStatut.SIGNEE
+            avenant.statut = ConventionStatut.SIGNEE.label
             avenant.numero = avenant.get_default_convention_number()
             avenant.desc_avenant = avenant_form.cleaned_data["desc_avenant"]
             avenant.save()

@@ -56,115 +56,115 @@ class CustomFiltersTest(TestCase):
             self.assertTrue(custom_filters.is_instructeur(self.request))
 
     def test_display_comments(self):
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.assertFalse(custom_filters.display_comments(self.convention))
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertTrue(custom_filters.display_comments(self.convention))
 
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.CORRECTION.label
         self.assertTrue(custom_filters.display_comments(self.convention))
 
-        self.convention.statut = ConventionStatut.A_SIGNER
+        self.convention.statut = ConventionStatut.A_SIGNER.label
         self.assertTrue(custom_filters.display_comments(self.convention))
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.assertFalse(custom_filters.display_comments(self.convention))
 
     def test_display_comments_summary(self):
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.assertFalse(custom_filters.display_comments_summary(self.convention))
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertTrue(custom_filters.display_comments_summary(self.convention))
 
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.CORRECTION.label
         self.assertTrue(custom_filters.display_comments_summary(self.convention))
 
-        self.convention.statut = ConventionStatut.A_SIGNER
+        self.convention.statut = ConventionStatut.A_SIGNER.label
         self.assertFalse(custom_filters.display_comments_summary(self.convention))
 
-        self.convention.statut = ConventionStatut.SIGNEE
+        self.convention.statut = ConventionStatut.SIGNEE.label
         self.assertFalse(custom_filters.display_comments_summary(self.convention))
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.assertFalse(custom_filters.display_comments_summary(self.convention))
 
     def test_display_is_validated(self):
 
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.assertFalse(custom_filters.display_is_validated(self.convention))
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertFalse(custom_filters.display_is_validated(self.convention))
 
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.CORRECTION.label
         self.assertFalse(custom_filters.display_is_validated(self.convention))
 
-        self.convention.statut = ConventionStatut.A_SIGNER
+        self.convention.statut = ConventionStatut.A_SIGNER.label
         self.assertTrue(custom_filters.display_is_validated(self.convention))
 
-        self.convention.statut = ConventionStatut.SIGNEE
+        self.convention.statut = ConventionStatut.SIGNEE.label
         self.assertTrue(custom_filters.display_is_validated(self.convention))
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.assertTrue(custom_filters.display_is_validated(self.convention))
 
     def test_display_demande_correction(self):
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.assertFalse(custom_filters.display_demande_correction(self.convention))
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertTrue(custom_filters.display_demande_correction(self.convention))
 
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.CORRECTION.label
         self.assertFalse(custom_filters.display_demande_correction(self.convention))
 
-        self.convention.statut = ConventionStatut.A_SIGNER
+        self.convention.statut = ConventionStatut.A_SIGNER.label
         self.assertFalse(custom_filters.display_demande_correction(self.convention))
 
-        self.convention.statut = ConventionStatut.SIGNEE
+        self.convention.statut = ConventionStatut.SIGNEE.label
         self.assertFalse(custom_filters.display_demande_correction(self.convention))
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.assertFalse(custom_filters.display_demande_correction(self.convention))
 
     def test_display_demande_instruction(self):
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.assertFalse(custom_filters.display_demande_instruction(self.convention))
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertFalse(custom_filters.display_demande_instruction(self.convention))
 
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.CORRECTION.label
         self.assertTrue(custom_filters.display_demande_instruction(self.convention))
 
-        self.convention.statut = ConventionStatut.A_SIGNER
+        self.convention.statut = ConventionStatut.A_SIGNER.label
         self.assertFalse(custom_filters.display_demande_instruction(self.convention))
 
-        self.convention.statut = ConventionStatut.SIGNEE
+        self.convention.statut = ConventionStatut.SIGNEE.label
         self.assertFalse(custom_filters.display_demande_instruction(self.convention))
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.assertFalse(custom_filters.display_demande_instruction(self.convention))
 
     def test_display_redirect_sent(self):
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.assertFalse(custom_filters.display_redirect_sent(self.convention))
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertFalse(custom_filters.display_redirect_sent(self.convention))
 
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.CORRECTION.label
         self.assertFalse(custom_filters.display_redirect_sent(self.convention))
 
-        self.convention.statut = ConventionStatut.A_SIGNER
+        self.convention.statut = ConventionStatut.A_SIGNER.label
         self.assertTrue(custom_filters.display_redirect_sent(self.convention))
 
-        self.convention.statut = ConventionStatut.SIGNEE
+        self.convention.statut = ConventionStatut.SIGNEE.label
         self.assertFalse(custom_filters.display_redirect_sent(self.convention))
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.assertFalse(custom_filters.display_redirect_sent(self.convention))
 
     def test_display_redirect_project_without_cerbere(self):
@@ -174,87 +174,87 @@ class CustomFiltersTest(TestCase):
 
     @override_settings(CERBERE_AUTH="htpps://cerbere.com")
     def test_display_redirect_project_with_cerbere(self):
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.assertTrue(custom_filters.display_redirect_project(self.convention))
 
         for statut in [
-            ConventionStatut.INSTRUCTION,
-            ConventionStatut.CORRECTION,
-            ConventionStatut.A_SIGNER,
-            ConventionStatut.SIGNEE,
-            ConventionStatut.RESILIEE,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+            ConventionStatut.A_SIGNER.label,
+            ConventionStatut.SIGNEE.label,
+            ConventionStatut.RESILIEE.label,
         ]:
             self.convention.statut = statut
             self.assertFalse(custom_filters.display_redirect_project(self.convention))
 
     def test_display_redirect_post_action(self):
 
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.assertFalse(custom_filters.display_redirect_post_action(self.convention))
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertFalse(custom_filters.display_redirect_post_action(self.convention))
 
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.CORRECTION.label
         self.assertFalse(custom_filters.display_redirect_post_action(self.convention))
 
-        self.convention.statut = ConventionStatut.A_SIGNER
+        self.convention.statut = ConventionStatut.A_SIGNER.label
         self.assertFalse(custom_filters.display_redirect_post_action(self.convention))
 
-        self.convention.statut = ConventionStatut.SIGNEE
+        self.convention.statut = ConventionStatut.SIGNEE.label
         self.assertTrue(custom_filters.display_redirect_post_action(self.convention))
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.assertFalse(custom_filters.display_redirect_post_action(self.convention))
 
     def test_display_convention_form_progressbar(self):
 
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.assertTrue(
             custom_filters.display_convention_form_progressbar(self.convention)
         )
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertTrue(
             custom_filters.display_convention_form_progressbar(self.convention)
         )
 
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.CORRECTION.label
         self.assertTrue(
             custom_filters.display_convention_form_progressbar(self.convention)
         )
 
-        self.convention.statut = ConventionStatut.SIGNEE
+        self.convention.statut = ConventionStatut.SIGNEE.label
         self.assertFalse(
             custom_filters.display_convention_form_progressbar(self.convention)
         )
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.assertFalse(
             custom_filters.display_convention_form_progressbar(self.convention)
         )
 
     def test_display_type1and2_editable(self):
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.assertTrue(custom_filters.display_type1and2_editable(self.convention))
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertTrue(custom_filters.display_type1and2_editable(self.convention))
 
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.CORRECTION.label
         self.assertTrue(custom_filters.display_type1and2_editable(self.convention))
 
-        self.convention.statut = ConventionStatut.A_SIGNER
+        self.convention.statut = ConventionStatut.A_SIGNER.label
         self.assertFalse(custom_filters.display_type1and2_editable(self.convention))
 
-        self.convention.statut = ConventionStatut.SIGNEE
+        self.convention.statut = ConventionStatut.SIGNEE.label
         self.assertFalse(custom_filters.display_type1and2_editable(self.convention))
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.assertFalse(custom_filters.display_type1and2_editable(self.convention))
 
     def test_display_validation(self):
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_validation(self.convention, self.request)
@@ -272,7 +272,7 @@ class CustomFiltersTest(TestCase):
             custom_filters.display_validation(self.convention, self.request)
         )
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertTrue(
             custom_filters.display_validation(self.convention, self.request)
@@ -282,7 +282,7 @@ class CustomFiltersTest(TestCase):
             custom_filters.display_validation(self.convention, self.request)
         )
 
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.CORRECTION.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertTrue(
             custom_filters.display_validation(self.convention, self.request)
@@ -292,7 +292,7 @@ class CustomFiltersTest(TestCase):
             custom_filters.display_validation(self.convention, self.request)
         )
 
-        self.convention.statut = ConventionStatut.A_SIGNER
+        self.convention.statut = ConventionStatut.A_SIGNER.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_validation(self.convention, self.request)
@@ -302,7 +302,7 @@ class CustomFiltersTest(TestCase):
             custom_filters.display_validation(self.convention, self.request)
         )
 
-        self.convention.statut = ConventionStatut.SIGNEE
+        self.convention.statut = ConventionStatut.SIGNEE.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_validation(self.convention, self.request)
@@ -312,7 +312,7 @@ class CustomFiltersTest(TestCase):
             custom_filters.display_validation(self.convention, self.request)
         )
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_validation(self.convention, self.request)
@@ -323,7 +323,7 @@ class CustomFiltersTest(TestCase):
         )
 
     def test_display_notification_instructeur_to_bailleur(self):
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_notification_instructeur_to_bailleur(
@@ -337,21 +337,7 @@ class CustomFiltersTest(TestCase):
             )
         )
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
-        self.request.session["currently"] = GroupProfile.INSTRUCTEUR
-        self.assertTrue(
-            custom_filters.display_notification_instructeur_to_bailleur(
-                self.convention, self.request
-            )
-        )
-        self.request.session["currently"] = GroupProfile.BAILLEUR
-        self.assertFalse(
-            custom_filters.display_notification_instructeur_to_bailleur(
-                self.convention, self.request
-            )
-        )
-
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertTrue(
             custom_filters.display_notification_instructeur_to_bailleur(
@@ -365,7 +351,21 @@ class CustomFiltersTest(TestCase):
             )
         )
 
-        self.convention.statut = ConventionStatut.A_SIGNER
+        self.convention.statut = ConventionStatut.CORRECTION.label
+        self.request.session["currently"] = GroupProfile.INSTRUCTEUR
+        self.assertTrue(
+            custom_filters.display_notification_instructeur_to_bailleur(
+                self.convention, self.request
+            )
+        )
+        self.request.session["currently"] = GroupProfile.BAILLEUR
+        self.assertFalse(
+            custom_filters.display_notification_instructeur_to_bailleur(
+                self.convention, self.request
+            )
+        )
+
+        self.convention.statut = ConventionStatut.A_SIGNER.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_notification_instructeur_to_bailleur(
@@ -379,7 +379,7 @@ class CustomFiltersTest(TestCase):
             )
         )
 
-        self.convention.statut = ConventionStatut.SIGNEE
+        self.convention.statut = ConventionStatut.SIGNEE.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_notification_instructeur_to_bailleur(
@@ -393,7 +393,7 @@ class CustomFiltersTest(TestCase):
             )
         )
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_notification_instructeur_to_bailleur(
@@ -408,7 +408,7 @@ class CustomFiltersTest(TestCase):
         )
 
     def test_display_notification_bailleur_to_instructeur(self):
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_notification_bailleur_to_instructeur(
@@ -424,23 +424,7 @@ class CustomFiltersTest(TestCase):
             )
         )
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
-        self.request.session["currently"] = GroupProfile.INSTRUCTEUR
-        self.assertFalse(
-            custom_filters.display_notification_bailleur_to_instructeur(
-                self.convention,
-                self.request,
-            )
-        )
-        self.request.session["currently"] = GroupProfile.BAILLEUR
-        self.assertTrue(
-            custom_filters.display_notification_bailleur_to_instructeur(
-                self.convention,
-                self.request,
-            )
-        )
-
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_notification_bailleur_to_instructeur(
@@ -456,7 +440,23 @@ class CustomFiltersTest(TestCase):
             )
         )
 
-        self.convention.statut = ConventionStatut.A_SIGNER
+        self.convention.statut = ConventionStatut.CORRECTION.label
+        self.request.session["currently"] = GroupProfile.INSTRUCTEUR
+        self.assertFalse(
+            custom_filters.display_notification_bailleur_to_instructeur(
+                self.convention,
+                self.request,
+            )
+        )
+        self.request.session["currently"] = GroupProfile.BAILLEUR
+        self.assertTrue(
+            custom_filters.display_notification_bailleur_to_instructeur(
+                self.convention,
+                self.request,
+            )
+        )
+
+        self.convention.statut = ConventionStatut.A_SIGNER.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_notification_bailleur_to_instructeur(
@@ -472,7 +472,7 @@ class CustomFiltersTest(TestCase):
             )
         )
 
-        self.convention.statut = ConventionStatut.SIGNEE
+        self.convention.statut = ConventionStatut.SIGNEE.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_notification_bailleur_to_instructeur(
@@ -488,7 +488,7 @@ class CustomFiltersTest(TestCase):
             )
         )
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_notification_bailleur_to_instructeur(
@@ -505,7 +505,7 @@ class CustomFiltersTest(TestCase):
         )
 
     def test_display_back_to_instruction(self):
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_back_to_instruction(
@@ -521,7 +521,7 @@ class CustomFiltersTest(TestCase):
             )
         )
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_back_to_instruction(
@@ -537,7 +537,7 @@ class CustomFiltersTest(TestCase):
             )
         )
 
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.CORRECTION.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_back_to_instruction(
@@ -553,23 +553,7 @@ class CustomFiltersTest(TestCase):
             )
         )
 
-        self.convention.statut = ConventionStatut.A_SIGNER
-        self.request.session["currently"] = GroupProfile.INSTRUCTEUR
-        self.assertTrue(
-            custom_filters.display_back_to_instruction(
-                self.convention,
-                self.request,
-            )
-        )
-        self.request.session["currently"] = GroupProfile.BAILLEUR
-        self.assertFalse(
-            custom_filters.display_back_to_instruction(
-                self.convention,
-                self.request,
-            )
-        )
-
-        self.convention.statut = ConventionStatut.SIGNEE
+        self.convention.statut = ConventionStatut.A_SIGNER.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertTrue(
             custom_filters.display_back_to_instruction(
@@ -585,7 +569,23 @@ class CustomFiltersTest(TestCase):
             )
         )
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.SIGNEE.label
+        self.request.session["currently"] = GroupProfile.INSTRUCTEUR
+        self.assertTrue(
+            custom_filters.display_back_to_instruction(
+                self.convention,
+                self.request,
+            )
+        )
+        self.request.session["currently"] = GroupProfile.BAILLEUR
+        self.assertFalse(
+            custom_filters.display_back_to_instruction(
+                self.convention,
+                self.request,
+            )
+        )
+
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_back_to_instruction(
@@ -602,7 +602,7 @@ class CustomFiltersTest(TestCase):
         )
 
     def test_display_submit_convention(self):
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertFalse(
             custom_filters.display_submit_convention(self.convention, self.request)
@@ -613,10 +613,10 @@ class CustomFiltersTest(TestCase):
         )
 
         for convention_statut in [
-            ConventionStatut.INSTRUCTION,
-            ConventionStatut.CORRECTION,
-            ConventionStatut.A_SIGNER,
-            ConventionStatut.RESILIEE,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+            ConventionStatut.A_SIGNER.label,
+            ConventionStatut.RESILIEE.label,
         ]:
             self.convention.statut = convention_statut
             for group_profile in [GroupProfile.INSTRUCTEUR, GroupProfile.BAILLEUR]:
@@ -629,62 +629,63 @@ class CustomFiltersTest(TestCase):
 
     def test_display_delete_convention(self):
 
-        self.convention.statut = ConventionStatut.PROJET
+        self.convention.statut = ConventionStatut.PROJET.label
         self.assertTrue(custom_filters.display_delete_convention(self.convention))
 
-        self.convention.statut = ConventionStatut.INSTRUCTION
+        self.convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertTrue(custom_filters.display_delete_convention(self.convention))
 
-        self.convention.statut = ConventionStatut.CORRECTION
+        self.convention.statut = ConventionStatut.CORRECTION.label
         self.assertTrue(custom_filters.display_delete_convention(self.convention))
 
-        self.convention.statut = ConventionStatut.A_SIGNER
+        self.convention.statut = ConventionStatut.A_SIGNER.label
         self.assertFalse(custom_filters.display_delete_convention(self.convention))
 
-        self.convention.statut = ConventionStatut.SIGNEE
+        self.convention.statut = ConventionStatut.SIGNEE.label
         self.assertFalse(custom_filters.display_delete_convention(self.convention))
 
-        self.convention.statut = ConventionStatut.RESILIEE
+        self.convention.statut = ConventionStatut.RESILIEE.label
         self.assertFalse(custom_filters.display_delete_convention(self.convention))
 
     def test_display_create_avenant(self):
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
         Convention.objects.create(
-            statut=ConventionStatut.A_SIGNER,
+            statut=ConventionStatut.A_SIGNER.label,
             parent=self.convention,
             lot=self.convention.lot,
             programme=self.convention.programme,
         ).save()
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
         Convention.objects.create(
-            statut=ConventionStatut.SIGNEE,
+            statut=ConventionStatut.SIGNEE.label,
             parent=self.convention,
             lot=self.convention.lot,
             programme=self.convention.programme,
         ).save()
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
         Convention.objects.create(
-            statut=ConventionStatut.RESILIEE,
+            statut=ConventionStatut.RESILIEE.label,
             parent=self.convention,
             lot=self.convention.lot,
             programme=self.convention.programme,
         ).save()
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
         ongoing_avenant = Convention.objects.create(
-            statut=ConventionStatut.PROJET,
+            statut=ConventionStatut.PROJET.label,
             parent=self.convention,
             lot=self.convention.lot,
             programme=self.convention.programme,
         )
         ongoing_avenant.save()
+        ongoing_avenant = Convention.objects.get(pk=ongoing_avenant.pk)
         self.assertFalse(custom_filters.display_create_avenant(self.convention))
-        ongoing_avenant.statut = ConventionStatut.INSTRUCTION
+        ongoing_avenant.statut = ConventionStatut.INSTRUCTION.label
         ongoing_avenant.save()
         self.assertFalse(custom_filters.display_create_avenant(self.convention))
-        ongoing_avenant.statut = ConventionStatut.CORRECTION
+        ongoing_avenant.statut = ConventionStatut.CORRECTION.label
         ongoing_avenant.save()
         self.assertFalse(custom_filters.display_create_avenant(self.convention))
-        ongoing_avenant.statut = ConventionStatut.A_SIGNER
+        ongoing_avenant.statut = ConventionStatut.A_SIGNER.label
         ongoing_avenant.save()
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
 
@@ -752,7 +753,7 @@ class CustomFiltersTest(TestCase):
                         )
 
         avenant = Convention.objects.create(
-            statut=ConventionStatut.SIGNEE,
+            statut=ConventionStatut.SIGNEE.label,
             parent=self.convention,
             lot=self.convention.lot,
             programme=self.convention.programme,
@@ -848,7 +849,7 @@ class CustomFiltersTest(TestCase):
                     )
 
         avenant = Convention.objects.create(
-            statut=ConventionStatut.SIGNEE,
+            statut=ConventionStatut.SIGNEE.label,
             parent=self.convention,
             lot=self.convention.lot,
             programme=self.convention.programme,

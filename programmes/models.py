@@ -303,10 +303,10 @@ class Programme(IngestableModel):
             for convention in self.all_conventions
             if convention.statut
             in [
-                ConventionStatut.PROJET,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-                ConventionStatut.A_SIGNER,
+                ConventionStatut.PROJET.label,
+                ConventionStatut.INSTRUCTION.label,
+                ConventionStatut.CORRECTION.label,
+                ConventionStatut.A_SIGNER.label,
             ]
         ]
         return not not_signed_conventions
@@ -319,10 +319,10 @@ class Programme(IngestableModel):
             for convention in self.all_conventions
             if convention.statut
             not in [
-                ConventionStatut.PROJET,
-                ConventionStatut.INSTRUCTION,
-                ConventionStatut.CORRECTION,
-                ConventionStatut.A_SIGNER,
+                ConventionStatut.PROJET.label,
+                ConventionStatut.INSTRUCTION.label,
+                ConventionStatut.CORRECTION.label,
+                ConventionStatut.A_SIGNER.label,
             ]
         ]
         for convention in conventions:
