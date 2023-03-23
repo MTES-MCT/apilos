@@ -163,8 +163,7 @@ class ConventionLogementsService(ConventionService):
         self.formset = LogementFormSet(initformset)
         self.formset.programme_id = self.convention.programme_id
         self.formset.lot_id = self.convention.lot_id
-        nb_logements = self.request.POST.get("nb_logements", None)
-        self.formset.nb_logements = int(nb_logements) if nb_logements else None
+        self.formset.nb_logements = int(self.request.POST.get("nb_logements") or 0)
         formset_is_valid = self.formset.is_valid()
 
         if form_is_valid and formset_is_valid:
@@ -178,8 +177,7 @@ class ConventionLogementsService(ConventionService):
             self.form.cleaned_data["lgts_mixite_sociale_negocies"] or 0
         )
         lot.loyer_derogatoire = self.form.cleaned_data["loyer_derogatoire"]
-        if "nb_logements" in self.form.cleaned_data:
-            lot.nb_logements = self.form.cleaned_data["nb_logements"]
+        lot.nb_logements = self.form.cleaned_data["nb_logements"]
         lot.save()
 
     def _save_logements(self):
@@ -247,6 +245,7 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
             initial={
                 "uuid": self.convention.lot.uuid,
                 "surface_habitable_totale": self.convention.lot.surface_habitable_totale,
+                "nb_logements": self.convention.lot.nb_logements,
             }
         )
 
@@ -335,8 +334,7 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                 }
         self.formset = FoyerResidenceLogementFormSet(initformset)
         self.formset.lot_id = self.convention.lot_id
-        # nb_logements = self.request.POST.get("nb_logements", None)
-        # self.formset.nb_logements = int(nb_logements) if nb_logements else None
+        self.formset.nb_logements = int(self.request.POST.get("nb_logements") or 0)
         formset_is_valid = self.formset.is_valid()
 
         self.form = LotFoyerResidenceLgtsDetailsForm(
@@ -345,6 +343,9 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                 "surface_habitable_totale": self.request.POST.get(
                     "surface_habitable_totale",
                     getattr(self.convention.lot, "surface_habitable_totale"),
+                ),
+                "nb_logements": self.request.POST.get(
+                    "nb_logements", getattr(self.convention.lot, "nb_logements")
                 ),
             }
         )
@@ -361,6 +362,7 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
         self.convention.lot.surface_habitable_totale = self.form.cleaned_data[
             "surface_habitable_totale"
         ]
+        self.convention.lot.nb_logements = self.form.cleaned_data["nb_logements"]
         self.convention.lot.save()
 
     def _save_foyer_residence_logements(self):

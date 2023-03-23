@@ -22,12 +22,13 @@
                         {% include "common/editable_fields_info.html" %}
 
                         {% include "common/form/input_text.html" with form_input=form.nom object_field="programme__nom__"|add:form.uuid.value %}
-                        {% include "common/form/input_textarea.html" with form_input=form.adresse helptext_visible="True" object_field="programme__adresse__"|add:form.uuid.value %}
-                        {% if not form.adresse.value is None %}
-                            <div class="fr-mt-1w fr-mb-3w fr-hint-text">
-                                <em>Si ce champs est déjà pré-rempli, c'est que des adresses ont déjà été associées à cette opération. <br/>Veuillez-vous assurer d'avoir renseigné l'exhaustivité des adresses de l'opération.</em>
-                            </div>
-                        {% endif %}
+                        {% include "common/form/input_checkbox.html" with form_input=form.anru object_field="programme__anru__"|add:form.uuid.value %}
+                        <div class="fr-my-3w">
+                            {% include "common/form/input_textarea.html" with form_input=form.adresse helptext_visible="True" object_field="programme__adresse__"|add:form.uuid.value %}
+                            {% if form.adresse.value is not None %}
+                                <em class=" fr-hint-text">Si ce champs est déjà pré-rempli, c'est que des adresses ont déjà été associées à cette opération. <br/>Veuillez-vous assurer d'avoir renseigné l'exhaustivité des adresses de l'opération.</em>
+                            {% endif %}
+                        </div>
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
@@ -39,15 +40,6 @@
                         </div>
 
                         <h4 class="fr-mt-2w">Détails de l'opération</h4>
-
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_number.html" with form_input=form.nb_logements object_field="programme__nb_logements__"|add:form.uuid.value %}
-                            </div>
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w fr-mt-3w">
-                                {% include "common/form/input_checkbox.html" with form_input=form.anru object_field="programme__anru__"|add:form.uuid.value %}
-                            </div>
-                        </div>
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">

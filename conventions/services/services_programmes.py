@@ -23,7 +23,6 @@ class ConventionProgrammeService(ConventionService):
                 "adresse": programme.adresse,
                 "code_postal": programme.code_postal,
                 "ville": programme.ville,
-                "nb_logements": lot.nb_logements,
                 "type_habitat": lot.type_habitat,
                 "type_operation": programme.type_operation,
                 "anru": programme.anru,
@@ -41,9 +40,6 @@ class ConventionProgrammeService(ConventionService):
         self.form = ProgrammeForm(
             {
                 "uuid": self.convention.programme.uuid,
-                "nb_logements": self.request.POST.get(
-                    "nb_logements", self.convention.lot.nb_logements
-                ),
                 "type_habitat": self.request.POST.get(
                     "type_habitat", self.convention.lot.type_habitat
                 ),
@@ -85,6 +81,5 @@ def _save_programme_and_lot(programme, lot, form):
     programme.nb_locaux_commerciaux = form.cleaned_data["nb_locaux_commerciaux"]
     programme.nb_bureaux = form.cleaned_data["nb_bureaux"]
     programme.save()
-    lot.nb_logements = form.cleaned_data["nb_logements"]
     lot.type_habitat = form.cleaned_data["type_habitat"]
     lot.save()
