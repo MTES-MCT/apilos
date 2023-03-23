@@ -57,6 +57,7 @@ foyer_residence_logements_success_payload = {
     "form-1-surface_habitable": "30.00",
     "form-1-loyer": "135.00",
     "surface_habitable_totale": "50.55",
+    "nb_logements": "2",
 }
 
 collectif_success_payload = {
@@ -98,21 +99,5 @@ logement_success_payload = {
     "form-1-loyer": "135.00",
     "loyer_derogatoire": "10",
     "lgts_mixite_sociale_negocies": "2",
-}
-
-
-foyer_residence_logement_success_payload = {
-    "form-TOTAL_FORMS": "2",
-    "form-INITIAL_FORMS": "2",
-    "form-0-uuid": "",
-    "form-0-designation": "b1",
-    "form-0-typologie": "T2",
-    "form-0-surface_habitable": "16.00",
-    "form-0-loyer": "160.00",
-    "form-1-uuid": "",
-    "form-1-designation": "b2",
-    "form-1-typologie": "T2",
-    "form-1-surface_habitable": "16.00",
-    "form-1-loyer": "160.00",
-    "surface_habitable_totale": "309.00",
+    "nb_logements": "2",
 }

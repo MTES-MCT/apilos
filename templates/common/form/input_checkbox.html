@@ -11,7 +11,7 @@
                 {% include "common/form/disable_form_input.html" %}>
             <label class="fr-label {% if strike_unchecked and not form_input.value %}apilos-form-label--strike{% endif %}" for="{{form_input.html_name}}">
                 {% if form_input.label %}
-                    {{ form_input.label }}
+                    {{ form_input.label|safe }}
                 {% endif %}
                 {% include "common/form/required_field.html" with form_input=form_input %}
                 {% if form_input.help_text %}

@@ -71,8 +71,7 @@ class ProgrammeForm(forms.Form):
     )
     anru = forms.BooleanField(
         required=False,
-        label="ANRU",
-        help_text="L'opération bénéficie d'un financement ANRU",
+        label="L'opération bénéficie d'un financement&nbsp;<strong>ANRU</strong>",
     )
     nb_locaux_commerciaux = forms.IntegerField(
         required=False,

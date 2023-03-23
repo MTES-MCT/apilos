@@ -20,7 +20,7 @@ from conventions.services import (
 )
 from conventions.tests.fixtures import (
     logement_success_payload,
-    foyer_residence_logement_success_payload,
+    foyer_residence_logements_success_payload,
 )
 from programmes.models import Logement, NatureLogement
 from users.models import User
@@ -123,30 +123,15 @@ class ConventionLogementsServiceTests(TestCase):
 
     def test_save_fails_on_nb_logements(self):
         self.service.request.POST = {
-            "nb_logements": "3",
             "uuid": str(self.service.convention.lot.uuid),
             **logement_success_payload,
+            "nb_logements": "3",
         }
         self.service.save()
         self.assertEqual(
             self.service.formset.non_form_errors(),
             [
                 "Le nombre de logement à conventionner (3) ne correspond pas au nombre"
-                + " de logements déclaré (2)"
-            ],
-        )
-
-        self.service.convention.lot.nb_logements = 4
-        self.service.convention.lot.save()
-        self.service.request.POST = {
-            "uuid": str(self.service.convention.lot.uuid),
-            **logement_success_payload,
-        }
-        self.service.save()
-        self.assertEqual(
-            self.service.formset.non_form_errors(),
-            [
-                "Le nombre de logement à conventionner (4) ne correspond pas au nombre"
                 + " de logements déclaré (2)"
             ],
         )
@@ -196,16 +181,15 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
 
     def test_save(self):
         self.service.request.POST = {
-            "nb_logements": "2",
             "uuid": str(self.service.convention.lot.uuid),
-            **foyer_residence_logement_success_payload,
+            **foyer_residence_logements_success_payload,
         }
 
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
         logement_B1 = Logement.objects.prefetch_related("lot").get(
-            lot=self.service.convention.lot, designation="b1"
+            lot=self.service.convention.lot, designation="B1"
         )
 
         self.assertEqual(
@@ -219,17 +203,17 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
                 ],
             ),
             {
-                "designation": "b1",
-                "typologie": "T2",
-                "surface_habitable": Decimal("16.00"),
-                "loyer": Decimal("160.00"),
+                "designation": "B1",
+                "typologie": "T1prime",
+                "surface_habitable": Decimal("12.12"),
+                "loyer": Decimal("135.00"),
             },
         )
-        self.assertEqual(logement_B1.lot.surface_habitable_totale, 309.00)
+        self.assertEqual(logement_B1.lot.surface_habitable_totale, Decimal("50.55"))
 
     def test_save_fails_on_loyer(self):
         self.service.request.POST = {
-            **foyer_residence_logement_success_payload,
+            **foyer_residence_logements_success_payload,
             "form-0-typologie": "T2",
             "form-0-loyer": "160.00",
             "form-1-typologie": "T2",
@@ -247,7 +231,7 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
 
     def test_save_fails_on_nb_logements(self):
         self.service.request.POST = {
-            **foyer_residence_logement_success_payload,
+            **foyer_residence_logements_success_payload,
             "form-TOTAL_FORMS": "3",
             "form-INITIAL_FORMS": "3",
             "form-2-uuid": "",
@@ -269,7 +253,7 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
 
     def test_save_fails_on_surface_habitable_totale(self):
         self.service.request.POST = {
-            **foyer_residence_logement_success_payload,
+            **foyer_residence_logements_success_payload,
             "form-0-surface_habitable": "16.00",
             "form-1-surface_habitable": "16.00",
             "surface_habitable_totale": "31.00",

@@ -85,6 +85,12 @@ class LotFoyerResidenceLgtsDetailsForm(forms.Form):
             "max_digits": "La surface habitable doit-être inférieur à 100000 m²",
         },
     )
+    nb_logements = forms.IntegerField(
+        label="Nombre de logements",
+        error_messages={
+            "required": "Le nombre de logements est obligatoire",
+        },
+    )
 
     def clean_surface_habitable_totale(self):
         """
@@ -103,8 +109,8 @@ class LotFoyerResidenceLgtsDetailsForm(forms.Form):
 
 class LogementForm(forms.Form):
     """
-    Formulaire Logement formant la liste des logements d'une convention de type HLM, SEM, type I & 2 :
-    une ligne du tableau des logements
+    Formulaire Logement formant la liste des logements d'une convention de type HLM,
+    SEM, type I & 2 : une ligne du tableau des logements
     """
 
     uuid = forms.UUIDField(
@@ -223,14 +229,15 @@ class LogementForm(forms.Form):
 
 class BaseLogementFormSet(BaseFormSet):
     """
-    Ensemble des formulaires 'Logement' formant la liste des logements d'une convention de type HLM, SEM, type I & 2
+    Ensemble des formulaires 'Logement' formant la liste des logements d'une convention
+    de type HLM, SEM, type I & 2
     """
 
     # les champs suivants sont utilisés pour la validation des données
     # ils sont initialisés avant la validation
-    programme_id = None
-    lot_id = None
-    nb_logements = None
+    programme_id: int = None
+    lot_id: int = None
+    nb_logements: int = None
 
     def clean(self):
         self.manage_non_empty_validation()
@@ -334,14 +341,9 @@ class BaseLogementFormSet(BaseFormSet):
         Validation: le nombre de logements déclarés pour cette convention à l'étape Opération
           doit correspondre au nombre de logements de la liste à l'étape Logements
         """
-        if self.nb_logements is None:
-            lot = Lot.objects.get(id=self.lot_id)
-            nb_logements = lot.nb_logements
-        else:
-            nb_logements = int(self.nb_logements)
-        if nb_logements != self.total_form_count():
+        if self.nb_logements != self.total_form_count():
             error = ValidationError(
-                f"Le nombre de logement à conventionner ({nb_logements}) "
+                f"Le nombre de logement à conventionner ({self.nb_logements}) "
                 + f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
             )
             self._non_form_errors.append(error)
@@ -351,7 +353,6 @@ class BaseLogementFormSet(BaseFormSet):
         Validation: La somme des loyers après application des coefficients ne peut excéder
           la somme des loyers sans application des coefficients (tolérence de 1 € par logement)
         """
-        lot = Lot.objects.get(id=self.lot_id)
         loyer_with_coef = 0
         loyer_without_coef = 0
         for form in self.forms:
@@ -363,18 +364,15 @@ class BaseLogementFormSet(BaseFormSet):
                 return
             loyer_with_coef += coeficient * surface_utile * loyer_par_metre_carre
             loyer_without_coef += surface_utile * loyer_par_metre_carre
-        nb_logements = self.nb_logements if self.nb_logements else lot.nb_logements
-        if None in [nb_logements]:
-            # Another error is catch before and need to be managed before
-            return
         if (
-            round_half_up(loyer_with_coef, 2)
-            > round_half_up(loyer_without_coef, 2) + nb_logements
+            self.nb_logements is not None
+            and round_half_up(loyer_with_coef, 2)
+            > round_half_up(loyer_without_coef, 2) + self.nb_logements
         ):
             error = ValidationError(
                 "La somme des loyers après application des coefficients ne peut excéder "
                 + "la somme des loyers sans application des coefficients, c'est à dire "
-                + f"{round_half_up(loyer_without_coef,2)} € (tolérance de {nb_logements} €)"
+                + f"{round_half_up(loyer_without_coef,2)} € (tolérance de {self.nb_logements} €)"
             )
             self._non_form_errors.append(error)
 
@@ -438,8 +436,7 @@ class BaseFoyerResidenceLogementFormSet(BaseFormSet):
 
     # les champs suivants sont utilisés pour la validation des données
     # ils sont initialisés avant la validation
-    nb_logements = None
-    lot_id = None
+    nb_logements: int = None
 
     def clean(self):
         self.loan_should_be_consistent()
@@ -450,14 +447,9 @@ class BaseFoyerResidenceLogementFormSet(BaseFormSet):
         Validation: le nombre de logements déclarés pour cette convention à l'étape Opération
           doit correspondre au nombre de logements de la liste à l'étape Logements
         """
-        if self.nb_logements is None:
-            lot = Lot.objects.get(id=self.lot_id)
-            nb_logements = lot.nb_logements
-        else:
-            nb_logements = int(self.nb_logements)
-        if nb_logements != self.total_form_count():
+        if self.nb_logements != self.total_form_count():
             error = ValidationError(
-                f"Le nombre de logement à conventionner ({nb_logements}) "
+                f"Le nombre de logement à conventionner ({self.nb_logements}) "
                 + f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
             )
             self._non_form_errors.append(error)

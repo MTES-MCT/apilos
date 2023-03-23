@@ -36,7 +36,6 @@ class ConventionLogementsViewTests(AbstractEditViewTestCase, TestCase):
         self.error_payload = {
             **foyer_residence_logements_success_payload,
             "surface_habitable_totale": "1",
-            # FIXME "nb_logements": "2",
         }
         self.success_payload = foyer_residence_logements_success_payload
 
