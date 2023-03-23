@@ -55,8 +55,8 @@ class ConventionStatut(Enum):
 
     class Definition(NamedTuple):
         label: str
-        bailleurs: StatutByRole
-        instructeurs: StatutByRole
+        bailleur: StatutByRole
+        instructeur: StatutByRole
 
     PROJET = Definition("1. Projet", StatutByRole("Projet"), StatutByRole("Projet"))
 
@@ -88,14 +88,14 @@ class ConventionStatut(Enum):
         StatutByRole("Annulée en suivi"),
     )
 
-    # @classmethod
-    # @property
-    # def choices(cls) -> list[tuple[str, str]]:
-    #     return [(member.name, member.label) for member in cls]
     @classmethod
     @property
     def choices(cls) -> list[tuple[str, str]]:
         return [(member.name, member.label) for member in cls]
+
+    @classmethod
+    def get_by_label(cls, label):
+        return [c for c in cls if c.label == label][0]
 
     @classmethod
     def active_statuts(cls):

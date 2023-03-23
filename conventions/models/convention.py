@@ -680,3 +680,6 @@ class Convention(models.Model):
             if self.programme.administration
             else ""
         )
+
+    def get_status_definition(self):
+        return ConventionStatut.get_by_label(self.statut)
