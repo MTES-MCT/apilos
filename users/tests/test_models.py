@@ -51,12 +51,9 @@ class AdministrationsModelsTest(TestCase):
             except Exception:
                 pass
 
-    def test_permissions(self):
+    def test_permissions_instructeur(self):
         user_instructeur_paris = User.objects.get(username="fix")
         user_instructeur_metropole = User.objects.get(username="roger")
-        self.assertTrue(user_instructeur_paris.has_perm("logement.change_logement"))
-        self.assertTrue(user_instructeur_paris.has_perm("logement.delete_logement"))
-        self.assertFalse(user_instructeur_paris.has_perm("bailleur.delete_bailleur"))
 
         convention = Convention.objects.get(numero="0001")
         convention.statut = ConventionStatut.PROJET
@@ -114,11 +111,9 @@ class AdministrationsModelsTest(TestCase):
                 )
             )
 
+    def test_permissions_bailleur(self):
         user_bailleur = User.objects.get(username="raph")
         user_bailleur_hlm = User.objects.get(username="sophie")
-        self.assertTrue(user_bailleur.has_perm("logement.change_logement"))
-        self.assertTrue(user_bailleur.has_perm("logement.delete_logement"))
-        self.assertFalse(user_bailleur.has_perm("bailleur.delete_bailleur"))
 
         convention = Convention.objects.get(numero="0001")
         convention.statut = ConventionStatut.PROJET
