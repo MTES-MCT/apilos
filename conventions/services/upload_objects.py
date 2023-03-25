@@ -26,7 +26,7 @@ def handle_uploaded_xlsx(
     class_field_mapping="import_mapping",
     class_field_needed_mapping="needed_in_mapping",
 ):
-    # pylint: disable=R0912
+    # pylint: disable=R0912,R0914
     try:
         my_file.seek(0)
         my_wb = load_workbook(filename=BytesIO(my_file.read()), data_only=True)
@@ -304,6 +304,8 @@ def _extract_float_from_string(my_string: str):
 
 
 def all_words_in_key_of_dict(value, dict_keys):
+    if not isinstance(value, str):
+        return None
     for key in dict_keys:
         words = key.split()
         if all(word in value for word in words):
