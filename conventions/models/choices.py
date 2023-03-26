@@ -9,6 +9,16 @@ class StatutByRole(NamedTuple):
     call_to_action: str | None = None
 
 
+class ReverseConventionStatut:
+    _reverse: dict = {}
+
+    @classmethod
+    def get_by_label(cls, label: str):
+        if not cls._reverse:
+            cls._reverse = {c.label: c for c in ConventionStatut}
+        return cls._reverse[label]
+
+
 class ConventionStatut(Enum):
     """
     A/ PROJET : Projet - Création d'un projet de convention
@@ -95,7 +105,7 @@ class ConventionStatut(Enum):
 
     @classmethod
     def get_by_label(cls, label):
-        return [c for c in cls if c.label == label][0]
+        return ReverseConventionStatut.get_by_label(label)
 
     @classmethod
     def active_statuts(cls):
