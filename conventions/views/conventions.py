@@ -20,7 +20,10 @@ from django.urls import reverse
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
-from conventions.permissions import has_campaign_permission
+from conventions.permissions import (
+    has_campaign_permission,
+    has_campaign_permission_view_function,
+)
 from core.storage import client
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
@@ -176,7 +179,7 @@ def loyer_simulateur(request):
 
 @require_POST
 @login_required
-@has_campaign_permission("convention.change_convention")
+@has_campaign_permission_view_function("convention.change_convention")
 def save_convention(request, convention_uuid):
     # could be in a summary service
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -200,7 +203,7 @@ def save_convention(request, convention_uuid):
 
 
 @login_required
-@has_campaign_permission("convention.delete_convention")
+@has_campaign_permission_view_function("convention.delete_convention")
 def delete_convention(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     request.user.check_perm("convention.change_convention", convention)
@@ -210,7 +213,7 @@ def delete_convention(request, convention_uuid):
 
 @require_POST
 @login_required
-@has_campaign_permission("convention.change_convention")
+@has_campaign_permission_view_function("convention.change_convention")
 def feedback_convention(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     request.user.check_perm("convention.view_convention", convention)
@@ -222,7 +225,7 @@ def feedback_convention(request, convention_uuid):
 
 @require_POST
 @login_required
-@has_campaign_permission("convention.change_convention")
+@has_campaign_permission_view_function("convention.change_convention")
 def validate_convention(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme__bailleur")
@@ -258,7 +261,7 @@ def validate_convention(request, convention_uuid):
 
 @login_required
 @require_POST
-@has_campaign_permission("convention.view_convention")
+@has_campaign_permission_view_function("convention.view_convention")
 def generate_convention(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme__bailleur")
@@ -343,7 +346,7 @@ def load_xlsx_model(request, file_type):
 
 @require_GET
 @login_required
-@has_campaign_permission("convention.view_convention")
+@has_campaign_permission_view_function("convention.view_convention")
 def preview(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     request.user.check_perm("convention.view_convention", convention)
@@ -355,7 +358,7 @@ def preview(request, convention_uuid):
 
 
 @login_required
-@has_campaign_permission("convention.change_convention")
+@has_campaign_permission_view_function("convention.change_convention")
 def sent(request, convention_uuid):
     result = convention_sent(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
@@ -373,7 +376,7 @@ def sent(request, convention_uuid):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-@has_campaign_permission("convention.change_convention")
+@has_campaign_permission_view_function("convention.change_convention")
 def post_action(request, convention_uuid):
     # Step 12/12
     result = convention_post_action(request, convention_uuid)
@@ -396,7 +399,7 @@ def post_action(request, convention_uuid):
 
 
 @login_required
-@has_campaign_permission("convention.view_convention")
+@has_campaign_permission_view_function("convention.view_convention")
 def display_pdf(request, convention_uuid):
     # récupérer le doc PDF
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -440,7 +443,7 @@ def display_pdf(request, convention_uuid):
 
 @login_required
 @require_GET
-@has_campaign_permission("convention.view_convention")
+@has_campaign_permission_view_function("convention.view_convention")
 def fiche_caf(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("lot")
