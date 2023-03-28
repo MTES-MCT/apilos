@@ -67,11 +67,12 @@ def _call_siap_api(
     except requests.ReadTimeout as e:
         raise TimeoutSIAPException() from e
     if response.status_code == 401:
-        raise UnauthorizedSIAPException(
-            response.content["detail"]
-            if "detail" in response.content
-            else "Unauthorized"
-        )
+        error_text = "Unauthorized"
+        try:
+            error_text = str(response.content["detail"])
+        except:
+            pass
+        raise UnauthorizedSIAPException(error_text)
     if response.status_code == 503:
         raise UnavailableServiceSIAPException()
     if response.status_code >= 400:
