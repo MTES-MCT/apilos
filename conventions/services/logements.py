@@ -39,6 +39,9 @@ class ConventionLogementsService(ConventionService):
                 "uuid": self.convention.lot.uuid,
                 "lgts_mixite_sociale_negocies": self.convention.lot.lgts_mixite_sociale_negocies,
                 "loyer_derogatoire": self.convention.lot.loyer_derogatoire,
+                "surface_locaux_collectifs_residentiels": (
+                    self.convention.lot.surface_locaux_collectifs_residentiels
+                ),
                 "nb_logements": self.convention.lot.nb_logements,
             }
         )
@@ -89,6 +92,7 @@ class ConventionLogementsService(ConventionService):
                     [
                         "lgts_mixite_sociale_negocies",
                         "loyer_derogatoire",
+                        "surface_locaux_collectifs_residentiels",
                         "nb_logements",
                     ],
                 ),
@@ -178,6 +182,9 @@ class ConventionLogementsService(ConventionService):
         )
         lot.loyer_derogatoire = self.form.cleaned_data["loyer_derogatoire"]
         lot.nb_logements = self.form.cleaned_data["nb_logements"]
+        lot.surface_locaux_collectifs_residentiels = (
+            self.form.cleaned_data["surface_locaux_collectifs_residentiels"] or 0
+        )
         lot.save()
 
     def _save_logements(self):

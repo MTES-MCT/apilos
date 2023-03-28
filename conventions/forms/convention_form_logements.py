@@ -43,14 +43,27 @@ class LotLgtsOptionForm(forms.Form):
         required=False,
         label="Loyer dérogatoire",
         help_text="""
-            Montant de loyer d'une opération d'acquisition qui n'est pas liée à la réalisation de travaux mais
-            fait suite à une nouvelle acquisition pour un locataire ou un occupant de bonne foi dont les
-            ressources excèdent les plafonds de ressources par dérogation et à titre transitoire
+            Montant de loyer d'une opération d'acquisition qui n'est pas liée à la réalisation
+            de travaux mais fait suite à une nouvelle acquisition pour un locataire
+            ou un occupant de bonne foi dont les ressources excèdent
+            les plafonds de ressources par dérogation et à titre transitoire
         """,
         max_digits=6,
         decimal_places=2,
         error_messages={
             "max_digits": "Le loyer dérogatoire par m² doit-être inférieur à 10000 €",
+        },
+    )
+    surface_locaux_collectifs_residentiels = forms.DecimalField(
+        required=False,
+        label="Surface des locaux collectifs résidentiels",
+        max_digits=9,
+        decimal_places=2,
+        error_messages={
+            "max_digits": """
+                La surface des locaux collectifs
+                résidentiels doit-être inférieur à 100000 m²
+            """,
         },
     )
     nb_logements = forms.IntegerField(

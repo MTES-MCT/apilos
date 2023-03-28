@@ -586,6 +586,13 @@ class Lot(IngestableModel):
         decimal_places=2,
         null=True,
     )
+    surface_locaux_collectifs_residentiels = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name="Surface des locaux collectifs résidentiels",
+    )
     foyer_residence_nb_garage_parking = models.IntegerField(blank=True, null=True)
     foyer_residence_dependance = models.TextField(
         max_length=5000, blank=True, null=True

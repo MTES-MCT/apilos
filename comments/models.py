@@ -102,6 +102,7 @@ class Comment(models.Model):
             "convention__annee_fin_conventionnement": "Date de fin de la convention",
             "convention__fond_propre": "Fonds propres finançant l'opération",
             "lot__loyer_derogatoire": "Loyer dérogatoire des logements",
+            "lot__surface_locaux_collectifs_residentiels": "Surface des locaux collectifs résidentiels",
             "lot__lgts_mixite_sociale_negocies": "Option de mixité sociale négociée",
             "lot__annexe_caves": "Option caves dans les annexes",
             "lot__annexe_soussols": "Option sous-sol dans les annexes",

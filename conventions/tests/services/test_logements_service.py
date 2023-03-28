@@ -56,6 +56,7 @@ class ConventionLogementsServiceTests(TestCase):
             "uuid",
             "lgts_mixite_sociale_negocies",
             "loyer_derogatoire",
+            "surface_locaux_collectifs_residentiels",
             "nb_logements",
         ]:
             self.assertEqual(
@@ -107,6 +108,7 @@ class ConventionLogementsServiceTests(TestCase):
             },
         )
         self.assertEqual(logement_B1.lot.loyer_derogatoire, 10.00)
+        self.assertEqual(logement_B1.lot.surface_locaux_collectifs_residentiels, 25.00)
         self.assertEqual(logement_B1.lot.lgts_mixite_sociale_negocies, 2)
 
     def test_save_fails_on_loyer(self):
