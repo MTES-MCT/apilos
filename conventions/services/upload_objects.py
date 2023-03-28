@@ -26,7 +26,6 @@ def handle_uploaded_xlsx(
     class_field_mapping="import_mapping",
     class_field_needed_mapping="needed_in_mapping",
 ):
-    # pylint: disable=R0912
     try:
         my_file.seek(0)
         my_wb = load_workbook(filename=BytesIO(my_file.read()), data_only=True)
@@ -51,6 +50,36 @@ def handle_uploaded_xlsx(
 
     _save_uploaded_file(my_file, convention, file_name)
 
+    column_from_index, import_warnings = _check_not_useful_columns(
+        my_ws, myClass, class_field_mapping
+    )
+
+    if _has_error_column_header_exist(
+        upform, myClass, class_field_mapping, column_from_index
+    ):
+        return {"success": utils.ReturnStatus.ERROR}
+
+    # transform each line into object
+    my_objects, import_warnings = _get_object_from_worksheet(
+        my_ws,
+        column_from_index,
+        myClass,
+        import_warnings,
+        min_row,
+        class_field_mapping=class_field_mapping,
+        class_field_needed_mapping=class_field_needed_mapping,
+    )
+
+    return {
+        "success": utils.ReturnStatus.SUCCESS
+        if len(import_warnings) == 0
+        else utils.ReturnStatus.WARNING,
+        "objects": my_objects,
+        "import_warnings": import_warnings,
+    }
+
+
+def _check_not_useful_columns(my_ws, myClass, class_field_mapping):
     import_warnings = []
     column_from_index = {}
     for col in my_ws.iter_cols(
@@ -73,39 +102,24 @@ def handle_uploaded_xlsx(
                 )
                 continue
             column_from_index[cell.column] = key
+    return column_from_index, import_warnings
 
+
+def _has_error_column_header_exist(
+    upform, myClass, class_field_mapping, column_from_index
+):
     error_column = False
     for key in getattr(myClass, class_field_mapping):
         if not all_words_in_key_of_dict(key, list(column_from_index.values())):
             upform.add_error(
                 "file",
                 (
-                    "Le fichier importé doit avoir une colonne avec "
+                    "Le fichier importé doit avoir une entête de colonne avec "
                     + f"le contenu '{key}'"
                 ),
             )
             error_column = True
-    if error_column:
-        return {"success": utils.ReturnStatus.ERROR}
-
-    # transform each line into object
-    my_objects, import_warnings = _get_object_from_worksheet(
-        my_ws,
-        column_from_index,
-        myClass,
-        import_warnings,
-        min_row,
-        class_field_mapping=class_field_mapping,
-        class_field_needed_mapping=class_field_needed_mapping,
-    )
-
-    return {
-        "success": utils.ReturnStatus.SUCCESS
-        if len(import_warnings) == 0
-        else utils.ReturnStatus.WARNING,
-        "objects": my_objects,
-        "import_warnings": import_warnings,
-    }
+    return error_column
 
 
 def _get_object_from_worksheet(
@@ -304,6 +318,8 @@ def _extract_float_from_string(my_string: str):
 
 
 def all_words_in_key_of_dict(value, dict_keys):
+    if not isinstance(value, str):
+        return None
     for key in dict_keys:
         words = key.split()
         if all(word in value for word in words):
