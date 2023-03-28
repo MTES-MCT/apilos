@@ -75,9 +75,10 @@ def get_manage_habilitation_url(request: HttpRequest) -> str:
     if settings.CERBERE_AUTH:
         client = SIAPClient.get_instance()
         # https://minlog-siap.gateway.intapi.recette.sully-group.fr/gerer-habilitations
-        return (
-            f"{client.racine_url_acces_web}/gerer-habilitations"
-            + f"?habilitation_id={request.session['habilitation_id']}"
+        return f"{client.racine_url_acces_web}/gerer-habilitations" + (
+            f"?habilitation_id={request.session['habilitation_id']}"
+            if "habilitation_id" in request.session
+            else ""
         )
     return ""
 
