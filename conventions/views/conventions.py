@@ -62,7 +62,8 @@ class RecapitulatifView(BaseConventionView):
         )
 
     @has_campaign_permission("convention.view_convention")
-    def get(self, request: HttpRequest):
+    def get(self, request: HttpRequest, convention_uuid: int):
+        # pylint: disable=unused-argument
         result = get_convention_recapitulatif(request, self.convention)
         if self.convention.is_avenant():
             result["avenant_list"] = [
@@ -81,7 +82,8 @@ class RecapitulatifView(BaseConventionView):
         )
 
     @has_campaign_permission("convention.change_convention")
-    def post(self, request: HttpRequest):
+    def post(self, request: HttpRequest, convention_uuid: int):
+        # pylint: disable=unused-argument
         result = save_convention_TypeIandII(request, self.convention)
 
         return render(
