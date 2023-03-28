@@ -1,5 +1,5 @@
 {% load static %}
-{% if request.user.read_popup is False %}
+{% if not request.user.read_popup and request.status_code >= 400 %}
     <dialog aria-labelledby="fr-modal-popup" id="fr-modal-popup" class="fr-modal fr-modal--opened" role="dialog">
         <div class="fr-container fr-container--fluid fr-container-md">
             <div class="fr-grid-row fr-grid-row--center">
