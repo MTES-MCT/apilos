@@ -1,13 +1,11 @@
 from django.conf import settings
-from django.db import transaction
 from django.http import HttpRequest
 
-from conventions.forms import ConventionBailleurForm, ChangeBailleurForm
 from bailleurs.models import Bailleur
-from conventions.models import Convention, ConventionStatut
+from conventions.forms import ConventionBailleurForm, ChangeBailleurForm
+from conventions.models import Convention
 from conventions.services import utils
 from conventions.services.conventions import ConventionService
-from programmes.models import Programme
 
 
 class ConventionBailleurService(ConventionService):
@@ -22,9 +20,12 @@ class ConventionBailleurService(ConventionService):
         bailleur = self.convention.programme.bailleur
 
         self.upform = ChangeBailleurForm(
-            bailleur_query=self.request.user.bailleurs(full_scope=True)[
-                : settings.APILOS_MAX_DROPDOWN_COUNT
-            ],
+            bailleur_query=(
+                self.request.user.bailleurs(full_scope=True).filter(uuid=bailleur.uuid)
+                | self.request.user.bailleurs(full_scope=True)[
+                    : settings.APILOS_MAX_DROPDOWN_COUNT
+                ]
+            ),
             initial={"bailleur": bailleur},
         )
         self.form = ConventionBailleurForm(
@@ -68,8 +69,11 @@ class ConventionBailleurService(ConventionService):
         self.upform = ChangeBailleurForm(
             self.request.POST,
             bailleur_query=self.request.user.bailleurs(full_scope=True).filter(
-                uuid=self.request.POST.get("bailleur")
-            ),
+                uuid=self.request.POST.get("bailleur") or None
+            )
+            | self.request.user.bailleurs(full_scope=True)[
+                : settings.APILOS_MAX_DROPDOWN_COUNT
+            ],
         )
         update_bailleur = bool(self.request.POST.get("update_bailleur", False))
         if update_bailleur:
@@ -83,28 +87,17 @@ class ConventionBailleurService(ConventionService):
     def _update_bailleur(self):
         if self.upform.is_valid():
             bailleur = self.upform.cleaned_data["bailleur"]
-            programme = (
-                Programme.objects.prefetch_related("lots__logements__annexes")
-                .prefetch_related("lots__type_stationnements")
-                .prefetch_related("logementedds")
-                .prefetch_related("conventions__prets")
-                .prefetch_related("referencecadastrales")
-            ).get(id=self.convention.programme_id)
-            for convention in programme.conventions.all():
-                if convention.statut in [
-                    ConventionStatut.A_SIGNER,
-                    ConventionStatut.SIGNEE,
-                ]:
-                    raise Exception(
-                        "It is not possible to update bailleur of the programme"
-                        + " because some convention are validated"
-                    )
-
-            with transaction.atomic():
-                programme.bailleur = bailleur
-                programme.save()
-
+            self.convention.programme.bailleur = bailleur
+            self.convention.programme.save()
             self.return_status = utils.ReturnStatus.REFRESH
+        else:
+            self.upform.declared_fields[
+                "bailleur"
+            ].queryset = self.request.user.bailleurs(full_scope=True)[
+                : settings.APILOS_MAX_DROPDOWN_COUNT
+            ] | Bailleur.objects.filter(
+                uuid=self.request.POST.get("bailleur") or None
+            )
 
     def _bailleur_atomic_update(self):
         bailleur = self.convention.programme.bailleur

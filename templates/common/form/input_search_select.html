@@ -13,17 +13,11 @@
             id="{{ form_input.id_for_label }}"
             name="{{ form_input.html_name }}"
             {% include "common/form/disable_form_input.html" %}>
-            {% if form_input.initial %}
-                <option value="{{ form_input.initial|attribute:field }}">
-                    {{ form_input.initial }}
+            {% for element in form_input.field.queryset %}
+                <option value="{{ element|attribute:form_input.field.to_field_name }}">
+                    {{ element }}
                 </option>
-            {% elif queryset %}
-                {% for element in queryset %}
-                    <option value="{{ element|attribute:field }}">
-                        {{ element }}
-                    </option>
-                {% endfor %}
-            {% endif %}
+            {% endfor %}
         </select>
         {% include "common/utils/comments_field.html" %}
     </div>
@@ -31,6 +25,7 @@
         VirtualSelect.init({
             ele: '#{{form_input.id_for_label}}',
             search: true,
+            selectedValue: '{{ form_input.value }}',
             onServerSearch: function (search, select) {
                 fetch('{{ url }}?q=' + search)
                     .then((response) => response.json())

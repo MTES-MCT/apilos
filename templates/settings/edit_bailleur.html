@@ -38,7 +38,7 @@
                                     {% if request.user.is_superuser or request.user.administrateur_de_compte %}
                                         {% if form.bailleur.field.queryset.count > 0 and bailleur.bailleurs.count == 0 %}
                                             {% url 'users:search_parent_bailleur' bailleur_uuid=bailleur.uuid as search_bailleur_url %}
-                                            {% include "common/form/input_search_select.html" with form_input=form.bailleur queryset=form.bailleur.field.queryset field=form.bailleur.field.to_field_name url=search_bailleur_url %}
+                                            {% include "common/form/input_search_select.html" with form_input=form.bailleur   url=search_bailleur_url %}
                                         {% endif %}
                                     {% endif %}
                                 {% endif %}
