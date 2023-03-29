@@ -18,6 +18,8 @@ class ChangeBailleurForm(forms.Form):
         to_field_name="uuid",
         error_messages={
             "required": "Vous devez choisir un bailleur",
+            "min_length": "min : Vous devez choisir un bailleur",
+            "invalid_choice": "invalid : Vous devez choisir un bailleur",
         },
     )
 
@@ -186,8 +188,9 @@ class ConventionBailleurForm(forms.Form):
     gestionnaire_signataire_bloc_signature = forms.CharField(
         label="Élément additionnel de signature du gestionnaire sur la convention",
         help_text=mark_safe(
-            "Sur les documents de convention, vous avez la possibilité d'affiner l'identité du signataire&nbsp;"
-            + "<strong>à la suite</strong> de la mention obligatoire : «&nbsp;Le gestionnaire,&nbsp;»"
+            "Sur les documents de convention, vous avez la possibilité d'affiner"
+            + " l'identité du signataire&nbsp;<strong>à la suite</strong> de la mention"
+            + " obligatoire : «&nbsp;Le gestionnaire,&nbsp;»"
         ),
         required=False,
         max_length=5000,
