@@ -15,8 +15,8 @@ select
     end as numero,
     case
         -- On se base sur l'état déclaré dans Ecolo
-        when vps.code = 'ANS' then '8. Annulée en suivi'
-        when vps.code = 'RES' then '7. Dénoncée'
+        when vps.code in ('ANS', 'ANI') then '8. Annulée en suivi'
+        when vps.code = 'DEN' then '7. Dénoncée'
         when vps.code = 'RES' then '6. Résiliée'
         -- Convention en instruction si état = 'INS' ET aucune date de signature
         when vps.code = 'INS' and coalesce(a.datesignatureprefet, cdg.datesignatureprefet, cdg.datesignatureentitegest) is null then '2. Instruction requise'
