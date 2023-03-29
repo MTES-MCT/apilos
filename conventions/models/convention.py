@@ -1,11 +1,15 @@
 import uuid
 import json
 import logging
+from datetime import date
 
 from django.db import models
 from django.db.models import Q
 from django.forms import model_to_dict
 from django.utils import timezone
+from django.apps import apps
+
+from conventions.models import TypeEvenement
 from conventions.models.avenant_type import AvenantType
 from conventions.models.choices import ConventionStatut, ConventionType1and2
 from conventions.models.convention_history import ConventionHistory
@@ -417,6 +421,29 @@ class Convention(models.Model):
         ):
             return self
         return None
+
+    def evenement(
+        self,
+        type_evenement: TypeEvenement,
+        description: str = "",
+        survenu_le: date | None = None,
+    ):
+        """
+        Déclare un nouvel évènement pour la convention
+        """
+        # To avoid circular import, refer to Evenement class model via apps.get_model
+        apps.get_model("conventions", "Evenement").objects.create(
+            convention=self,
+            type_evenement=type_evenement,
+            survenu_le=survenu_le,
+            description=description,
+        )
+
+    def journal(self):
+        """
+        Retourne tous les évènements liés à la convention, par ordre croissant de data d'évènement
+        """
+        return self.evenements.all().order_by("survenu_le")
 
     def statut_for_template(self):
         return {

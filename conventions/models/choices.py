@@ -83,3 +83,84 @@ class Preteur(TextChoices):
     COMMUNE = "COMMUNE", "Commune et action logement"
     ANRU = "ANRU", "ANRU"
     AUTRE = "AUTRE", "Autre"
+
+
+class TypeEvenement(TextChoices):
+    DEPOT_BAILLEUR = "DEPOT_BAILLEUR", "Dépôt de la convention APL par le bailleur"
+    MODIFICATION = (
+        "MODIFICATION",
+        "Modification de la convention (valeur du loyer plafond, surface, clauses, etc...)",
+    )
+    ECHANGE = (
+        "ECHANGE",
+        "Echanges téléphoniques, électroniques ou transmission par courrier de la convention APL au bailleur",
+    )
+    ENVOI_PREFET = (
+        "ENVOI_PREFET",
+        "Transmission de la convention APL à la signature du préfet",
+    )
+    RETOUR_PREFET = "RETOUR_PREFET", "Retour de la convention APL signée par le préfet"
+    ENVOI_HYPOTHEQUE = (
+        "ENVOI_HYPOTHEQUE",
+        "Transmission de la convention APL au bureau des hypothèques ou au livre foncier",
+    )
+    RETOUR_HYPOTHEQUE = (
+        "RETOUR_HYPOTHEQUE",
+        "Retour du bureau des hypothèques ou au livre foncier, pour modification",
+    )
+    ENVOI_RECTIFICATIF_PREFET = (
+        "ENVOI_RECTIFICATIF_PREFET",
+        "Transmission de l'attestation rectificative à la signature du préfet",
+    )
+    RETOUR_RECTIFICATIF_PREFET = (
+        "RETOUR_RECTIFICATIF_PREFET",
+        "Retour de l'attestation préfectorale de la convention APL",
+    )
+    PUBLICATION_HYPOTHEQUE = (
+        "PUBLICATION_HYPOTHEQUE",
+        "Publication de la convention APL au bureau des hypothèques",
+    )
+    ENVOI_CAF = "ENVOI_CAF", "Transmission de la convention APL à la CAF"
+    DEPOT_AVENANT = "DEPOT_AVENANT", "Dépôt d'un avenant par le bailleur"
+    INSTRUCTION_AVENANT = (
+        "INSTRUCTION_AVENANT",
+        "Instruction d'un avenant, objet de l'avenant, etc...",
+    )
+    CORRECTION_AVENANT = (
+        "CORRECTION_AVENANT",
+        "Modification de l'avenant sur demande de l'instructeur auprès du bailleur",
+    )
+    ENVOI_AVENANT_PREFET = (
+        "ENVOI_AVENANT_PREFET",
+        "Transmission de l'avenant à la signature du préfet",
+    )
+    SIGNATURE_AVENANT_PREFET = (
+        "SIGNATURE_AVENANT_PREFET",
+        "Retour de l'avenant signé par le préfet",
+    )
+    ENVOI_AVENANT_HYPOTHEQUE = (
+        "ENVOI_AVENANT_HYPOTHEQUE",
+        "Transmission de l'avenant au bureau des hypothèques ou au livre foncier",
+    )
+    RETOUR_AVENANT_HYPOTHEQUE = (
+        "RETOUR_AVENANT_HYPOTHEQUE",
+        "Retour de l'avenant du bureau des hypothèques ou du livre foncier, pour modification",
+    )
+    ENVOI_RECTIFICATIF_AVENANT_PREFET = (
+        "ENVOI_RECTIFICATIF_AVENANT_PREFET",
+        "Transmission de l'attestation rectificative d'avenant à la signature du préfet",
+    )
+    RETOUR_RECTIFICATIF_AVENANT_PREFET = (
+        "RETOUR_RECTIFICATIF_AVENANT_PREFET",
+        "Retour de l'attestation préfectorale de l'avenant",
+    )
+    PUBLICATION_AVENANT_HYPOTHEQUE = (
+        "PUBLICATION_AVENANT_HYPOTHEQUE",
+        "Publication de l'avenant de la convention APL au bureau des hypothèques",
+    )
+    EXPIRATION_CONVENTION = "EXPIRATION_CONVENTION", "Expiration de la convention APL"
+    ENVOI_FIN_DENONCIATION = (
+        "ENVOI_FIN_DENONCIATION",
+        "Information auprès du bailleur de la date butoir de dénonciation de la convention APL",
+    )
+    AUTRE = "AUTRE", "Autres"

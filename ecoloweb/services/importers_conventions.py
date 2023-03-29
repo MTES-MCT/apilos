@@ -4,6 +4,7 @@ from datetime import date
 from django.db import transaction
 
 from conventions.models import Convention, PieceJointe, PieceJointeType, AvenantType
+from conventions.models.evenement import Evenement
 from conventions.tasks import promote_piece_jointe
 from programmes.models import Programme
 from .importers import ModelImporter
@@ -32,6 +33,9 @@ class ConventionImporter(ModelImporter):
             departement, import_date, debug=debug, update=update
         )
         self._piece_jointe_importer = PieceJointeImporter(
+            departement, import_date, debug=debug, update=update
+        )
+        self._evenement_importer = EvenementImporter(
             departement, import_date, debug=debug, update=update
         )
 
@@ -76,6 +80,7 @@ class ConventionImporter(ModelImporter):
         self, ecolo_id: str | None, model: Convention | None, created: bool
     ):
         self._piece_jointe_importer.import_many(ecolo_id)
+        self._evenement_importer.import_many(ecolo_id)
 
         if model is not None and not settings.TESTING:
             piece_jointe = None
@@ -115,6 +120,23 @@ class PieceJointeImporter(ModelImporter):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content("importers/pieces_jointes.sql")
+
+    def _prepare_data(self, data: dict) -> dict:
+        return {
+            "convention": self.resolve_ecolo_reference(
+                data.pop("convention_id"), Convention
+            ),
+            **data,
+        }
+
+
+class EvenementImporter(ModelImporter):
+    model = Evenement
+
+    def __init__(self, departement: str, import_date: date, debug=False, update=False):
+        super().__init__(departement, import_date, debug=debug, update=update)
+
+        self._query_many = self._get_file_content("importers/evenements.sql")
 
     def _prepare_data(self, data: dict) -> dict:
         return {

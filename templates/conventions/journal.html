@@ -1,0 +1,35 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %}Prévisualisation - APiLos{% endblock%}
+
+{% load static %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/nav_bar.html" with nav_bar_step="journal" %}
+
+        <div class="fr-container fr-my-6w">
+            <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
+                <table aria-label="Journal de bord">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="col__width--100">Date</th>
+                            <th scope="col" class="col__width--150">Type d'évènement</th>
+                            <th scope="col" class="col__width--300">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for evenement in convention.journal %}
+                            <tr>
+                                <td>{{ evenement.survenu_le|date:"d/m/Y" }}</td>
+                                <td>{{ evenement.type_evenement }}</td>
+                                <td>{{ evenement.description }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
