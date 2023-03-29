@@ -242,7 +242,10 @@ class Programme(IngestableModel):
     )
 
     surface_utile_totale = models.DecimalField(
-        max_digits=8, decimal_places=2, null=True
+        max_digits=10, decimal_places=2, null=True
+    )
+    surface_corrigee_totale = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True
     )
     type_operation = models.CharField(
         max_length=25,
@@ -531,6 +534,38 @@ class ReferenceCadastrale(models.Model):
         return f"{self.section} - {self.numero} - {self.lieudit}"
 
 
+class RepartitionSurface(models.Model):
+    """
+    Répartition du nombre de logements par typologie de surface (T1, T2, etc...) et type d'habitat (individuel ou
+    collectif).
+
+    Ces informations étaient déclarées dans Ecoloweb et ne sont donc destinées qu'à un usage consultatif.
+    """
+
+    class Meta:
+        unique_together = ("lot", "typologie", "type_habitat")
+
+    id = models.AutoField(primary_key=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    lot = models.ForeignKey(
+        "Lot",
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="surfaces",
+    )
+    typologie = models.CharField(
+        max_length=25,
+        choices=TypologieLogement.choices,
+        default=TypologieLogement.T1,
+    )
+    type_habitat = models.CharField(
+        max_length=25,
+        choices=filter(lambda th: th[0] != TypeHabitat.MIXTE, TypeHabitat.choices),
+        default=TypeHabitat.INDIVIDUEL,
+    )
+    quantite = models.IntegerField()
+
+
 class Lot(IngestableModel):
     pivot = ["financement", "programme", "type_habitat"]
     mapping = {
@@ -612,6 +647,32 @@ class Lot(IngestableModel):
     @property
     def annexes(self):
         return Annexe.objects.filter(logement__lot=self)
+
+    def repartition_surfaces(self):
+        """
+        Construit un dictionnaire à 2 niveaux TypeHabitat<Typologie<int>> détaillant le nombre de logements par type
+        d'habitat et typologie de logement, ou 0 si no renseigné.
+        """
+        return dict(
+            (
+                type_habitat,
+                dict(
+                    (
+                        typologie,
+                        self.surfaces.filter(
+                            type_habitat=type_habitat, typologie=typologie
+                        )
+                        .values_list("quantite", flat=True)
+                        .first()
+                        or 0,
+                    )
+                    for typologie, _1 in TypologieLogement.choices
+                ),
+            )
+            for type_habitat, _2 in filter(
+                lambda th: th[0] != TypeHabitat.MIXTE, TypeHabitat.choices
+            )
+        )
 
     def edd_volumetrique_text(self):
         return get_key_from_json_field(self.edd_volumetrique, "text")

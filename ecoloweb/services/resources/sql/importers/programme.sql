@@ -59,6 +59,7 @@ select
     pl.datemiseservice as date_achevement,
     pl.datemiseservice as date_achevement_previsible,
     pl.surfaceutile as surface_utile_totale,
+    pl.surfacecorrigee as surface_corrigee_totale,
     ec.code as code_insee_commune,
     ed.codeinsee as code_insee_departement,
     er.codeinsee as code_insee_region,
