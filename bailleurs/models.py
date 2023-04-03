@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from simple_history.models import HistoricalRecords
 
 from core.models import IngestableModel
 
@@ -122,6 +123,8 @@ class Bailleur(IngestableModel):
     )
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return f"{self.nom}"

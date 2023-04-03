@@ -1,8 +1,8 @@
 import uuid
 
 from django.db import models
+from simple_history.models import HistoricalRecords
 
-from apilos_settings.models import Departement
 from core.models import IngestableModel
 
 
@@ -38,6 +38,7 @@ class Administration(IngestableModel):
     signataire_bloc_signature = models.TextField(null=True, blank=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.nom
