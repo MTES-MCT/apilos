@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from simple_history.models import HistoricalRecords
 
 from core.models import IngestableModel
+from core.utils import custom_history_user_setter
 
 
 class NatureBailleur(models.TextChoices):
@@ -124,7 +125,10 @@ class Bailleur(IngestableModel):
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(
+        history_user_id_field=models.IntegerField(null=True),
+        history_user_setter=custom_history_user_setter,
+    )
 
     def __str__(self):
         return f"{self.nom}"

@@ -31,3 +31,14 @@ def get_key_from_json_field(json_field, key, default=""):
         return default
     except TypeError:
         return default
+
+
+def custom_history_user_setter(instance, history_user):
+    """
+    Used by django_simple_history to set the history_user_id because sometimes the user is
+    not saved in DB, when the API is called from SIAP for example.
+    So we can't use the user.pk, we use set it to None.
+    """
+    instance.history_user_id = (
+        history_user.pk if history_user and history_user.pk else None
+    )
