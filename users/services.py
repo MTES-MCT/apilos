@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Group
+from django.db.models import Q
 
 from bailleurs.models import Bailleur
 from core.services import EmailService, EmailTemplateID
@@ -62,3 +63,57 @@ class UserService:
             return parts[0].lower()
 
         return ""
+
+    @classmethod
+    def email_mensuel(cls):
+        instructeur_tous_mails = Q(
+            roles__typologie="INSTRUCTEUR",
+            preferences_email="TOUS",
+            roles__administration__programme__conventions__statut__in=[
+                "2. Instruction requise",
+                "4. A signer",
+            ],
+        )
+        instructeur_partiel_instruction = Q(
+            roles__typologie="INSTRUCTEUR",
+            preferences_email="PARTIEL",
+            roles__administration__programme__conventions__statut="2. Instruction requise",
+        )
+        instructeur_partiel_signature = Q(
+            roles__typologie="INSTRUCTEUR",
+            preferences_email="PARTIEL",
+            valide_par__convention__statut="4. A signer",
+        )
+
+        users_instructeurs = User.objects.filter(
+            instructeur_tous_mails
+            | instructeur_partiel_instruction
+            | instructeur_partiel_signature
+        ).distinct()
+
+        bailleurs_tous_mails = Q(
+            roles__typologie="BAILLEUR",
+            preferences_email="TOUS",
+            roles__bailleur__programme__conventions__statut__in=[
+                "1. Projet",
+                "3. Corrections requises",
+            ],
+        )
+        bailleurs_partiel_projet = Q(
+            roles__typologie="BAILLEUR",
+            preferences_email="PARTIEL",
+            convention__statut="1. Projet",
+        )
+        bailleurs_partiel_corrections = Q(
+            roles__typologie="BAILLEUR",
+            preferences_email="PARTIEL",
+            valide_par__convention__statut="3. Corrections requises",
+        )
+
+        users_bailleurs = User.objects.filter(
+            bailleurs_tous_mails
+            | bailleurs_partiel_projet
+            | bailleurs_partiel_corrections
+        ).distinct()
+
+        return users_instructeurs, users_bailleurs
