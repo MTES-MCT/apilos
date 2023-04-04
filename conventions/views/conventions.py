@@ -1,5 +1,3 @@
-from datetime import date
-from zipfile import ZipFile
 import mimetypes
 from datetime import date
 from zipfile import ZipFile
@@ -28,12 +26,6 @@ from conventions.permissions import (
     has_campaign_permission,
     has_campaign_permission_view_function,
 )
-from core.storage import client
-from core.utils import is_valid_uuid
-from instructeurs.models import Administration
-from programmes.models import Financement, NatureLogement
-from programmes.services import LoyerRedevanceUpdateComputer
-from upload.services import UploadService
 from conventions.services import convention_generator
 from conventions.services.convention_generator import fiche_caf_doc
 from conventions.services.conventions import (
@@ -51,6 +43,8 @@ from conventions.services.recapitulatif import (
 from conventions.services.utils import ReturnStatus, base_convention_response_error
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from core.storage import client
+from core.utils import is_valid_uuid
+from instructeurs.models import Administration
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
 from upload.services import UploadService
@@ -134,7 +128,7 @@ def search(request, active: bool = True):
         request.user.bailleurs(full_scope=True).exclude(nom__exact="")[
             : settings.APILOS_MAX_DROPDOWN_COUNT
         ]
-        if not active and request.user.is_instructeur()
+        if request.user.is_instructeur()
         else None
     )
 
@@ -146,7 +140,7 @@ def search(request, active: bool = True):
     )
     administration_query = (
         request.user.administrations()[: settings.APILOS_MAX_DROPDOWN_COUNT]
-        if not active and request.user.is_bailleur()
+        if request.user.is_bailleur()
         else None
     )
 

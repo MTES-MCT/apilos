@@ -867,7 +867,7 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
 }
 
 .vscomp-toggle-button {
-  /* padding: 7px 30px 7px 10px; */
+  padding: 0!important;
   border: none!important;
   background-color: #eee!important;
 }
