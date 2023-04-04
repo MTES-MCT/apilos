@@ -47,6 +47,9 @@ jobs:
             PGPASSWORD=password psql -h localhost -U root -d apilos_test -c "create database ecolotest;"
             PGPASSWORD=password psql -h localhost -U root -d ecolotest -c "create schema ecolo;"
       - run:
+          name: Check no missing migrations
+          command: .venv/bin/python3 manage.py makemigrations --check --dry-run
+      - run:
           name: Running tests
           command: |
             . .venv/bin/activate
