@@ -40,7 +40,6 @@
                                         </summary>
                                         <div>
                                             {% csrf_token %}
-                                            {{ upform.bailleur.field.queryset }}
                                             {% with convention_uuid_str=convention.uuid|stringformat:"s" %}
                                                 {% url 'users:search_bailleur' as search_bailleur_url %}
                                                 {% include "common/form/input_search_select.html" with form_input=upform.bailleur url=search_bailleur_url %}
