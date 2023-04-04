@@ -245,7 +245,7 @@ class ModelImporter(ABC):
             return None
 
         ecolo_ref = self.find_ecolo_reference(pk)
-        existing = ecolo_ref.resolve()
+        existing = ecolo_ref.resolve() if ecolo_ref is not None else None
 
         # Si une référence vers un objet Ecolo est trouvée
         if ecolo_ref is not None:

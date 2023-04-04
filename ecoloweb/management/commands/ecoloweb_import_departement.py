@@ -62,8 +62,8 @@ class Command(BaseCommand):
                 importer = ConventionImporter(
                     departement, import_date, debug=debug, update=update
                 )
-                # Installation uniquement pour le premier département, sans quoi la matview tombe et les autres
-                # processes tombent
+                # Installation uniquement pour le premier département, sans quoi
+                # la matview tombe et les autres processes tombent
                 if setup and index == 0:
                     importer.setup_db()
 
@@ -95,6 +95,10 @@ class Command(BaseCommand):
         if progress is not None:
             progress.update(1)
         else:
+            pct = round(results.lines_fetched / results.lines_total * 100, 1)
+            label = f"#{convention.id}" if convention is not None else "<ref supprimée>"
             print(
-                f"({departement}) traité convention #{convention.id} ({results.lines_fetched} / {results.lines_total} => {round(results.lines_fetched / results.lines_total * 100, 1)} %)"
+                f"({departement}) traité convention {label} "
+                f"({results.lines_fetched} / {results.lines_total} => "
+                f"{pct} %)"
             )
