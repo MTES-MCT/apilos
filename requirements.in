@@ -9,7 +9,6 @@ django-anymail[sendinblue]
 django-cas-ng>=4.3.0
 django-celery-results>=2.4.0
 django-csp>=3.7
-django-filter>=21.1
 django-hijack>=3.2
 django-simple-history
 django-sql-explorer[xls]

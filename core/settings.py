@@ -132,7 +132,6 @@ INSTALLED_APPS = [
     "comments.apps.CommentsConfig",
     "rest_framework",
     "drf_spectacular",
-    "django_filters",
     "django_cas_ng",
     "django.contrib.admindocs",
     "explorer",

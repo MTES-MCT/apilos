@@ -102,7 +102,6 @@ django==4.1.7 \
     #   django-cas-ng
     #   django-celery-results
     #   django-csp
-    #   django-filter
     #   django-hijack
     #   django-sql-explorer
     #   django-storages
@@ -125,14 +124,9 @@ django-csp==3.7 \
     --hash=sha256:01443a07723f9a479d498bd7bb63571aaa771e690f64bde515db6cdb76e8041a \
     --hash=sha256:01eda02ad3f10261c74131cdc0b5a6a62b7c7ad4fd017fbefb7a14776e0a9727
     # via -r requirements.in
-django-filter==22.1 \
-    --hash=sha256:ed429e34760127e3520a67f415bec4c905d4649fbe45d0d6da37e6ff5e0287eb \
-    --hash=sha256:ed473b76e84f7e83b2511bb2050c3efb36d135207d0128dfe3ae4b36e3594ba5
-    # via -r requirements.in
 django-hijack==3.3.0 \
     --hash=sha256:795cd0087596a21c9bf641fa5cf1787f4edf144e16a423014afbcf2838e8e124 \
     --hash=sha256:976ae3bc7e9db0bcb5f5b85a58fba98f5ff1d7a6e92e1b65854289cc79a351d4
-    # via -r requirements.in
 django-simple-history==3.3.0 \
     --hash=sha256:2313d2d346f15a1e7a92adb3b6696b226f1cd0c1d920869ec40c4c4076614c41 \
     --hash=sha256:dc1f98e558a0a1e0b6371c3b8efb85f86e02a6db56e83d0ec198343b7408d00a
