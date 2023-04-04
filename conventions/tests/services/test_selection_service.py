@@ -4,20 +4,14 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 
 from bailleurs.models import Bailleur
-from conventions.models import (
-    Convention,
-    ConventionStatut,
-)
-from conventions.services import (
-    selection,
-    utils,
-)
-from core.tests import utils_fixtures
-from instructeurs.models import Administration
 from conventions.forms import (
     ProgrammeSelectionFromDBForm,
     ProgrammeSelectionFromZeroForm,
 )
+from conventions.models import Convention, ConventionStatut
+from conventions.services import selection, utils
+from core.tests import utils_fixtures
+from instructeurs.models import Administration
 from programmes.models import Financement, Lot, NatureLogement, TypeHabitat
 from users.models import GroupProfile, User
 
@@ -182,7 +176,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
             "financement": Financement.PLAI,
             "code_postal": "20000",
             "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
-            "statut": ConventionStatut.SIGNEE,
+            "statut": ConventionStatut.SIGNEE.label,
             "numero": "2022-75-Rivoli-02-213",
             "numero_avenant": "1",
         }
@@ -377,7 +371,7 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "financement": Financement.PLUS,
             "code_postal": "20000",
-            "statut": ConventionStatut.SIGNEE,
+            "statut": ConventionStatut.SIGNEE.label,
             "numero": "2022-75-Rivoli-02-213",
             "numero_avenant": "1",
         }

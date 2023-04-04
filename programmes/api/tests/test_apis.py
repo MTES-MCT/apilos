@@ -1,18 +1,17 @@
-import json
 from operator import itemgetter
 
 from django.conf import settings
+
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
+
 from conventions.models.choices import ConventionStatut
 from conventions.models.convention import Convention
-
-from users.models import User
-from siap.siap_client.client import build_jwt
-
 from core.tests import utils_fixtures
 from programmes.api.tests import fixtures
 from programmes.models import Programme
+from siap.siap_client.client import build_jwt
+from users.models import User
 
 
 operation_response = {
@@ -338,6 +337,7 @@ class OperationClosedAPITest(APITestCase):
             },
         ]
         returned_conventions = response.data.pop("conventions")
+
         self.assertEqual(response.data, expected_data)
 
         self.assertEqual(
@@ -346,7 +346,7 @@ class OperationClosedAPITest(APITestCase):
 
     def test_get_operation_convention_signed(self):
         Convention.objects.filter(numero__in=["0001", "0002"]).update(
-            statut=ConventionStatut.SIGNEE
+            statut=ConventionStatut.SIGNEE.label
         )
         client = APIClient()
         accesstoken = build_jwt(
@@ -514,7 +514,7 @@ class OperationClosedAPITest(APITestCase):
 
     def test_get_operation_with_avenant(self):
         Convention.objects.filter(numero__in=["0001", "0002"]).update(
-            statut=ConventionStatut.SIGNEE
+            statut=ConventionStatut.SIGNEE.label
         )
         user = User.objects.get(cerbere_login="nicolas.oudard@beta.gouv.fr")
         convention1 = Convention.objects.get(numero="0001")
@@ -660,7 +660,7 @@ class OperationClosedAPITest(APITestCase):
 
         avenant1.lot.nb_logements = 10
         avenant1.lot.save()
-        avenant1.statut = ConventionStatut.SIGNEE
+        avenant1.statut = ConventionStatut.SIGNEE.label
         avenant1.save()
 
         response = client.get("/api-siap/v0/close_operation/20220600005/")

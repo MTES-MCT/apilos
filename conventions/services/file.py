@@ -26,7 +26,7 @@ class ConventionFileService:
         upload_service.upload_file(file)
 
         if update_statut:
-            convention.statut = ConventionStatut.SIGNEE
+            convention.statut = ConventionStatut.SIGNEE.label
             convention.televersement_convention_signee_le = timezone.now()
 
         convention.nom_fichier_signe = filename

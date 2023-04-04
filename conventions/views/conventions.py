@@ -61,6 +61,7 @@ class RecapitulatifView(BaseConventionView):
             .get(uuid=convention_uuid)
         )
 
+    # pylint: disable=W0613
     @has_campaign_permission("convention.view_convention")
     def get(self, request: HttpRequest, convention_uuid: int):
         # pylint: disable=unused-argument
@@ -81,6 +82,7 @@ class RecapitulatifView(BaseConventionView):
             },
         )
 
+    # pylint: disable=W0613
     @has_campaign_permission("convention.change_convention")
     def post(self, request: HttpRequest, convention_uuid: int):
         # pylint: disable=unused-argument
@@ -408,10 +410,10 @@ def display_pdf(request, convention_uuid):
     if (
         convention.statut
         in [
-            ConventionStatut.SIGNEE,
-            ConventionStatut.RESILIEE,
-            ConventionStatut.DENONCEE,
-            ConventionStatut.ANNULEE,
+            ConventionStatut.SIGNEE.label,
+            ConventionStatut.RESILIEE.label,
+            ConventionStatut.DENONCEE.label,
+            ConventionStatut.ANNULEE.label,
         ]
         and convention.nom_fichier_signe
         and default_storage.exists(

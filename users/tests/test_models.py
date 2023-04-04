@@ -56,7 +56,7 @@ class AdministrationsModelsTest(TestCase):
         user_instructeur_metropole = User.objects.get(username="roger")
 
         convention = Convention.objects.get(numero="0001")
-        convention.statut = ConventionStatut.PROJET
+        convention.statut = ConventionStatut.PROJET.label
         self.assertTrue(
             user_instructeur_paris.has_perm("convention.change_convention", convention)
         )
@@ -88,7 +88,10 @@ class AdministrationsModelsTest(TestCase):
                 "convention.add_convention", convention.lot
             )
         )
-        for statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
+        for statut in [
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+        ]:
             convention.statut = statut
             self.assertTrue(
                 user_instructeur_paris.has_perm(
@@ -116,7 +119,7 @@ class AdministrationsModelsTest(TestCase):
         user_bailleur_hlm = User.objects.get(username="sophie")
 
         convention = Convention.objects.get(numero="0001")
-        convention.statut = ConventionStatut.PROJET
+        convention.statut = ConventionStatut.PROJET.label
         self.assertFalse(
             user_bailleur_hlm.has_perm("convention.change_convention", convention)
         )
@@ -134,7 +137,10 @@ class AdministrationsModelsTest(TestCase):
         self.assertFalse(
             user_bailleur_hlm.has_perm("convention.add_convention", convention.lot)
         )
-        for statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
+        for statut in [
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+        ]:
             convention.statut = statut
             self.assertTrue(
                 user_bailleur.has_perm("convention.change_convention", convention)

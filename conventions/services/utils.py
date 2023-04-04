@@ -124,12 +124,12 @@ def base_convention_response_error(request, convention):
 def editable_convention(request: HttpRequest, convention: Convention):
     if is_instructeur(request):
         return convention.statut in [
-            ConventionStatut.PROJET,
-            ConventionStatut.INSTRUCTION,
-            ConventionStatut.CORRECTION,
+            ConventionStatut.PROJET.label,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
         ]
     if is_bailleur(request):
-        return convention.statut == ConventionStatut.PROJET
+        return convention.statut == ConventionStatut.PROJET.label
     return False
 
 

@@ -1,18 +1,14 @@
 from unittest import mock
 
 from django.contrib.sessions.middleware import SessionMiddleware
+from django.core import mail
 from django.test import RequestFactory, TestCase
+from django.test.utils import override_settings
 
 from conventions.models import Convention, ConventionStatut
-from conventions.services import (
-    utils,
-)
+from conventions.services import utils
 from core.services import EmailService, EmailTemplateID
 from users.models import GroupProfile
-
-
-from django.core import mail
-from django.test.utils import override_settings
 
 
 @override_settings(EMAIL_BACKEND="anymail.backends.test.EmailBackend")
@@ -33,7 +29,7 @@ class EmailServiceTests(TestCase):
         with self.assertRaises(
             Exception,
         ):
-            EmailService(to_emails=["bailleur@apilos.fr"]).send_transactional_email(),
+            EmailService(to_emails=["bailleur@apilos.fr"]).send_transactional_email()
 
 
 class ServicesUtilsTests(TestCase):
@@ -59,7 +55,7 @@ class ServicesUtilsTests(TestCase):
     def test_editable_convention(self):
 
         convention = Convention.objects.get(numero="0001")
-        convention.statut = ConventionStatut.PROJET
+        convention.statut = ConventionStatut.PROJET.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.assertTrue(utils.editable_convention(self.request, convention))
         self.request.session["currently"] = GroupProfile.BAILLEUR
@@ -67,7 +63,10 @@ class ServicesUtilsTests(TestCase):
         self.request.session["currently"] = GroupProfile.STAFF
         self.assertTrue(utils.editable_convention(self.request, convention))
 
-        for statut in [ConventionStatut.INSTRUCTION, ConventionStatut.CORRECTION]:
+        for statut in [
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+        ]:
             convention.statut = statut
             self.request.session["currently"] = GroupProfile.INSTRUCTEUR
             self.assertTrue(utils.editable_convention(self.request, convention))
@@ -76,7 +75,7 @@ class ServicesUtilsTests(TestCase):
             self.request.session["currently"] = GroupProfile.STAFF
             self.assertTrue(utils.editable_convention(self.request, convention))
 
-        for statut in [ConventionStatut.A_SIGNER, ConventionStatut.SIGNEE]:
+        for statut in [ConventionStatut.A_SIGNER.label, ConventionStatut.SIGNEE.label]:
             convention.statut = statut
             self.request.session["currently"] = GroupProfile.INSTRUCTEUR
             self.assertFalse(utils.editable_convention(self.request, convention))

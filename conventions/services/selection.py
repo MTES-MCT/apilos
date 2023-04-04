@@ -4,26 +4,22 @@ from django.db.models.query import QuerySet
 from django.db.models import Count
 from django.conf import settings
 
-from conventions.models import (
-    ConventionStatut,
+from conventions.forms import (
+    ProgrammeSelectionFromDBForm,
+    ProgrammeSelectionFromZeroForm,
+    ConventionForAvenantForm,
+    CreateConventionMinForm,
 )
-
-from conventions.templatetags.custom_filters import is_instructeur
-from conventions.models import Convention
+from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
 from conventions.services.file import ConventionFileService
+from conventions.templatetags.custom_filters import is_instructeur
 from instructeurs.models import Administration
 from programmes.models import (
     Financement,
     Programme,
     Lot,
     TypeOperation,
-)
-from conventions.forms import (
-    ProgrammeSelectionFromDBForm,
-    ProgrammeSelectionFromZeroForm,
-    ConventionForAvenantForm,
-    CreateConventionMinForm,
 )
 
 
@@ -152,7 +148,7 @@ class ConventionSelectionService:
                     programme_id=lot.programme_id,
                     financement=lot.financement,
                     cree_par=self.request.user,
-                    statut=(ConventionStatut.SIGNEE),
+                    statut=(ConventionStatut.SIGNEE.label),
                     numero=(self.form.cleaned_data["numero"]),
                 )
                 self.convention.save()

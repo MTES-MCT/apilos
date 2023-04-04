@@ -82,23 +82,23 @@ class ConventionListService:
     def paginate(self) -> None:
         total_user = self.my_convention_list.count()
         if self.search_input:
-            filter = (
+            my_filter = (
                 Q(programme__ville__icontains=self.search_input)
                 | Q(programme__nom__icontains=self.search_input)
                 | Q(programme__code_postal__icontains=self.search_input)
             )
             if self.active:
-                filter = filter | Q(
+                my_filter = my_filter | Q(
                     programme__numero_galion__icontains=self.search_input
                 )
             else:
-                filter = filter | Q(numero__icontains=self.search_input)
+                my_filter = my_filter | Q(numero__icontains=self.search_input)
             if self.user and self.user.is_instructeur():
-                filter = filter | Q(
+                my_filter = my_filter | Q(
                     programme__bailleur__nom__icontains=self.search_input
                 )
 
-            self.my_convention_list = self.my_convention_list.filter(filter)
+            self.my_convention_list = self.my_convention_list.filter(my_filter)
         if self.statut_filter:
             self.my_convention_list = self.my_convention_list.filter(
                 statut=self.statut_filter
@@ -159,7 +159,7 @@ def convention_post_action(request, convention_uuid):
         is_resiliation = request.POST.get("resiliation", False)
         if is_resiliation:
             if resiliation_form.is_valid():
-                convention.statut = ConventionStatut.RESILIEE
+                convention.statut = ConventionStatut.RESILIEE.label
                 convention.date_resiliation = resiliation_form.cleaned_data[
                     "date_resiliation"
                 ]
