@@ -39,7 +39,7 @@ from conventions.services.recapitulatif import (
     convention_submit,
     convention_validate,
 )
-from conventions.services.utils import ReturnStatus
+from conventions.services.utils import ReturnStatus, base_convention_response_error
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from core.storage import client
 from programmes.models import Financement, NatureLogement
@@ -78,6 +78,7 @@ class RecapitulatifView(BaseConventionView):
             request,
             "conventions/recapitulatif.html",
             {
+                **base_convention_response_error(request, self.convention),
                 **result,
                 "convention_form_steps": ConventionFormSteps(
                     convention=self.convention
@@ -97,11 +98,11 @@ class RecapitulatifView(BaseConventionView):
             result = service.update_programme_number()
         else:
             result = service.save_convention_TypeIandII()
-
         return render(
             request,
             "conventions/recapitulatif.html",
             {
+                **base_convention_response_error(request, self.convention),
                 **result,
                 "convention_form_steps": ConventionFormSteps(
                     convention=self.convention

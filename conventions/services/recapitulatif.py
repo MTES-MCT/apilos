@@ -78,7 +78,6 @@ class ConventionRecapitulatifService(ConventionService):
                 }
             )
         return {
-            **utils.base_convention_response_error(self.request, self.convention),
             "opened_comments": opened_comments,
             "annexes": Annexe.objects.filter(
                 logement__lot_id=self.convention.lot.id
