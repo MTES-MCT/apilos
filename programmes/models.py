@@ -536,10 +536,11 @@ class ReferenceCadastrale(models.Model):
 
 class RepartitionSurface(models.Model):
     """
-    Répartition du nombre de logements par typologie de surface (T1, T2, etc...) et type d'habitat (individuel ou
-    collectif).
+    Répartition du nombre de logements par typologie de surface (T1, T2, etc...)
+    et type d'habitat (individuel ou collectif).
 
-    Ces informations étaient déclarées dans Ecoloweb et ne sont donc destinées qu'à un usage consultatif.
+    Ces informations étaient déclarées dans Ecoloweb et ne sont donc destinées qu'à un
+    usage consultatif.
     """
 
     class Meta:
@@ -624,7 +625,7 @@ class Lot(IngestableModel):
     surface_locaux_collectifs_residentiels = models.DecimalField(
         max_digits=12,
         decimal_places=2,
-        null=True,
+        default=0,
         blank=True,
         verbose_name="Surface des locaux collectifs résidentiels",
     )
@@ -650,8 +651,8 @@ class Lot(IngestableModel):
 
     def repartition_surfaces(self):
         """
-        Construit un dictionnaire à 2 niveaux TypeHabitat<Typologie<int>> détaillant le nombre de logements par type
-        d'habitat et typologie de logement, ou 0 si no renseigné.
+        Construit un dictionnaire à 2 niveaux TypeHabitat<Typologie<int>> détaillant le
+        nombre de logements par type d'habitat et typologie de logement, ou 0 si no renseigné.
         """
         return dict(
             (
