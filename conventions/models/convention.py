@@ -443,7 +443,7 @@ class Convention(models.Model):
         """
         Retourne tous les évènements liés à la convention, par ordre croissant de data d'évènement
         """
-        return self.evenements.all().order_by("survenu_le")
+        return self.evenements.all().order_by("-survenu_le")
 
     def statut_for_template(self):
         return {

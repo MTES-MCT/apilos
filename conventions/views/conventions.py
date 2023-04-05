@@ -20,7 +20,8 @@ from django.urls import reverse
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
-from conventions.models import Convention, ConventionStatut, PieceJointe
+from conventions.forms.evenement import EvenementForm
+from conventions.models import Convention, ConventionStatut, PieceJointe, Evenement
 from conventions.permissions import (
     has_campaign_permission,
     has_campaign_permission_view_function,
@@ -444,15 +445,57 @@ def display_pdf(request, convention_uuid):
     )
 
 
-@require_GET
+@require_http_methods(["GET", "POST"])
 @login_required
 def journal(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
 
+    action = None
+    form = None
+    selected = None
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+        # Show create form
+        if action == "create":
+            form = EvenementForm()
+        # Show edit form
+        if action == "edit":
+            selected = Evenement.objects.filter(
+                convention=convention, uuid=request.POST.get("evenement")
+            ).first()
+            form = EvenementForm(
+                initial=dict(
+                    uuid=selected.uuid,
+                    description=selected.description,
+                    type_evenement=selected.type_evenement,
+                )
+            )
+        # Handle submitted data
+        if action == "submit":
+            form = EvenementForm(request.POST)
+            if form.is_valid():
+                if form.cleaned_data["uuid"] is not None:
+                    evenement = Evenement.objects.get(uuid=form.cleaned_data["uuid"])
+                    evenement.description = form.cleaned_data["description"]
+                    evenement.type_evenement = form.cleaned_data["type_evenement"]
+                    evenement.save()
+                else:
+                    Evenement.objects.create(
+                        convention=convention,
+                        description=form.cleaned_data["description"],
+                        type_evenement=form.cleaned_data["type_evenement"],
+                    )
+
     return render(
         request,
         "conventions/journal.html",
-        {"convention": convention},
+        {
+            "convention": convention,
+            "action": action,
+            "form": form,
+            "selected": selected,
+        },
     )
 
 
