@@ -16,13 +16,14 @@ from ecoloweb.models import EcoloReference
 from ecoloweb.services.query_iterator import QueryResultIterator
 
 
+# pylint: disable=too-many-instance-attributes
 class ModelImporter(ABC):
     """
-    Base importer service class whose responsibility is to ensure imports of entities from Ecoloweb database of a single
-    model.
+    Base importer service class whose responsibility is to ensure imports of entities from Ecoloweb
+    database of a single model.
 
-    It relies on a SQL query to fetch and hydrate new models, with some extra layers like Ecolo references or identity
-    fields to avoid duplicate imports.
+    It relies on a SQL query to fetch and hydrate new models, with some extra layers like Ecolo
+    references or identity fields to avoid duplicate imports.
 
     Thus, if one Ecolo entity has already been imported, changes that may have
     occurred in the meantime in the Ecolo database won't be echoed to the APiLos database /!\
@@ -74,7 +75,9 @@ class ModelImporter(ABC):
             [
                 re.sub("--.*", "", line)
                 for line in open(
-                    os.path.join(os.path.dirname(__file__), "resources/sql", path), "r"
+                    os.path.join(os.path.dirname(__file__), "resources/sql", path),
+                    "r",
+                    encoding="utf8",
                 ).readlines()
             ]
         )
@@ -96,11 +99,13 @@ class ModelImporter(ABC):
         self, ecolo_id: str, model: Type[Model] | None = None
     ) -> EcoloReference | None:
         """
-        Based on input data, attempts to extract an existing EcoloReference, using the `ecolo_id_field` defined as
-        attribute and, if found, resolve it. See EcoloReference class model definition to understand how it works.
+        Based on input data, attempts to extract an existing EcoloReference, using the
+        `ecolo_id_field` defined as attribute and, if found, resolve it. See EcoloReference
+        class model definition to understand how it works.
 
-        The external reference in the Ecoloweb database is a string, as sometimes there is no other choice than to use a
-        hashed value (like `md5` for Programme Lots for example).
+        The external reference in the Ecoloweb database is a string, as sometimes there is
+        no other choice than to use a hashed value (like `md5` for Programme Lots for
+        example).
         """
         return EcoloReference.objects.filter(
             apilos_model=EcoloReference.get_class_model_name(
@@ -122,15 +127,16 @@ class ModelImporter(ABC):
         return ecolo_reference.resolve()
 
     def _register_ecolo_reference(
-        self, instance: Model, ecolo_id: int, id: int | None = None
+        self, instance: Model, ecolo_id: int, apilos_id: int | None = None
     ):
         """
-        Create and save an EcoloReference model to mark an entity from the Ecoloweb database as imported
+        Create and save an EcoloReference model to mark an entity from the Ecoloweb
+        database as imported
         """
         EcoloReference.objects.create(
             apilos_model=EcoloReference.get_instance_model_name(instance),
             ecolo_id=str(ecolo_id),
-            apilos_id=id if id is not None else instance.id,
+            apilos_id=apilos_id if apilos_id is not None else instance.id,
             departement=self.departement,
             importe_le=self.import_date,
         )
@@ -147,8 +153,8 @@ class ModelImporter(ABC):
 
     def _prepare_data(self, data: dict) -> dict:
         """
-        Prepare data dict before it's used to create a new instance. This is where you can add, remove or update an
-        attribute
+        Prepare data dict before it's used to create a new instance. This is where you can
+        add, remove or update an attribute
         """
         return data
 
@@ -156,8 +162,8 @@ class ModelImporter(ABC):
         """
         For each result row from the base SQL query, process it by following these steps:
         1. look for an already imported model and if found return it
-        2. if some identity fields are declared in the `_get_identity_keys`, attempt to find a matching model from the
-        APiLos database
+        2. if some identity fields are declared in the `_get_identity_keys`, attempt to
+        find a matching model from the APiLos database
         3. if still no model can be found, let's create it
         4. mark the newly created model as imported to avoid duplicate imports
         """
@@ -177,8 +183,8 @@ class ModelImporter(ABC):
 
         # If model wasn't imported yet, import it now
         if ecolo_ref is None:
-            # Extract from data the id of the associated object in the Ecoloweb DB (in string format as it can be a
-            # hash function like for programme lots)
+            # Extract from data the id of the associated object in the Ecoloweb DB (in
+            # string format as it can be a hash function like for programme lots)
             ecolo_id = data.pop(self.ecolo_id_field)
 
             # Compute data dictionary
@@ -199,7 +205,8 @@ class ModelImporter(ABC):
                 # Create a new instance...
                 if data is not None:
                     self._debug(
-                        f"Creating model for handler {self.__class__.__name__} with data {data}"
+                        f"Creating model for handler {self.__class__.__name__} with"
+                        f"data {data}"
                     )
 
                     instance = self.model.objects.create(**data)
@@ -231,22 +238,30 @@ class ModelImporter(ABC):
 
     def import_one(self, pk: str | int | None) -> Model | None:
         """
-        Public entry point method to fetch a model from the Ecoloweb database based on its primary key
+        Public entry point method to fetch a model from the Ecoloweb database
+        based on its primary key
         """
         if pk is None:
             return None
 
-        # If update mode is not enabled ...
-        if not self.update:
-            # ... then look for potentially already imported model before executing the query
-            ecolo_ref = self.find_ecolo_reference(pk)
+        ecolo_ref = self.find_ecolo_reference(pk)
+        existing = ecolo_ref.resolve() if ecolo_ref is not None else None
 
-            # If an EcoloReference has been found ...
-            if ecolo_ref is not None:
-                # ... return the associated model
-                return ecolo_ref.resolve()
+        # Si une référence vers un objet Ecolo est trouvée
+        if ecolo_ref is not None:
+            # Si celle-ci a été marquée comme supprimée depuis alors rien
+            if ecolo_ref.est_supprime:
+                return None
+            # Si l'objet cible a été supprimé depuis alors on marque la
+            # référence comme supprimée
+            if existing is None:
+                ecolo_ref.marquer_supprime()
+                return None
+            # Si pas en mode update alors on retourne l'instance cible
+            if not self.update:
+                return existing
 
-        # Otherwise perform SQL query and process result
+        # Dans tous les autres cas on effectue la requête vers Ecolo
         return self.process_result(
             self._query_single_row(self.build_query_parameters(pk))
         )
@@ -260,7 +275,8 @@ class ModelImporter(ABC):
 
         start = time.time()
         self._debug(
-            f"Start query for handler {self.__class__.__name__} with parameters {parameters}"
+            f"Start query for handler {self.__class__.__name__} with parameters"
+            f"{parameters}"
         )
         self._db_connection.execute(self._query_one, parameters)
         stop = time.time()
@@ -273,7 +289,8 @@ class ModelImporter(ABC):
 
     def import_many(self, ecolo_id: str | None):
         """
-        Public entry point method to fetch a list of models from the Ecoloweb database based on its foreign key
+        Public entry point method to fetch a list of models from the Ecoloweb
+        database based on its foreign key
         """
         if self._query_many is None:
             raise NotImplementedError

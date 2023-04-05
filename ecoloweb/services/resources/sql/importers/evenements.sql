@@ -30,7 +30,7 @@ select
     end as type_evenement,
     e.date as survenu_le,
     e.description
-from ecolo_evenement e
+from ecolo.ecolo_evenement e
     inner join ecolo.ecolo_conventionhistorique ch on e.conventionapl_id = ch.conventionapl_id and ch.numero = 0
     inner join ecolo.ecolo_valeurparamstatic vps on e.typeevenement_id = vps.id and vps.estgeneresysteme = false
 where
