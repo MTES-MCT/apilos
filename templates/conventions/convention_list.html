@@ -82,13 +82,13 @@
 
                         {# Champs commune #}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3">
-                            <input class="fr-input" placeholder="Commune" type="text" name="commune" value="{{ conventions.departement_input }}" />
+                            <input class="fr-input" placeholder="Commune" type="text" name="ville" value="{{ conventions.ville|default_if_none:"" }}" />
                         </div>
 
                         {% if request.user.is_staff %}
 
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-3">
-                                <input class="fr-input" placeholder="Département" type="text" name="departement_input" value="{{conventions.departement_input}}" />
+                                <input class="fr-input" placeholder="Département" type="text" name="departement_input" value="{{ conventions.departement_input|default_if_none:"" }}" />
                             </div>
                         {% endif %}
 
@@ -101,9 +101,9 @@
                                 <select class="fr-select" id="cstatut" name="cstatut">
                                     <option value="">Statut</option>
                                     {% for statut in statuts %}
-                                        <option value="{{statut.value}}"
+                                        <option value="{{ statut.value }}"
                                             {% if statut.value  == conventions.statut_filter %}selected{% endif %}>
-                                            {{statut.label}}
+                                            {{ statut.label }}
                                         </option>
                                     {% endfor %}
                                 </select>
@@ -116,26 +116,26 @@
                                 <select class="fr-select" name="financement">
                                     <option value="">Financement</option>
                                     {% for financement in financements %}
-                                        <option value="{{financement.value}}"
+                                        <option value="{{ financement.value }}"
                                             {% if financement.value  == conventions.financement_filter %}selected{% endif %}>
-                                            {{financement.label}}
+                                            {{ financement.label }}
                                         </option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
 
-                        {# Champs "Code opération / numéro de convention" #}
+                        {# Champs "Libre" (code opération / numéro de convention, code postal ou nom du programme) #}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
-                            <input class="fr-input" placeholder="{% if active %}Code d'opération{% else %}Numéro de convention{% endif %}" type="search" id="search_input" name="search_input" value="{{conventions.search_input}}" />
+                            <input class="fr-input" placeholder="{% if active %}Code{% else %}N° convention{% endif %}, programme ou code postal" type="search" id="search_input" name="search_input" value="{{ conventions.search_input }}" />
                         </div>
 
                         {# Champs ANRU #}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
                             <div class="fr-fieldset__element">
                                 <div class="fr-checkbox-group fr-checkbox-group--sm">
-                                    <input name="checkboxes-hint-el-sm-3" id="checkboxes-hint-el-sm-3" type="checkbox" aria-describedby="checkboxes-hint-el-sm-3-messages" data-fr-js-checkbox-actionee="true">
-                                    <label class="fr-label" for="checkboxes-hint-el-sm-3">
+                                    <input name="anru" id="checkbox-restrict-to-anru" type="checkbox" {% if conventions.anru %}checked{% endif %}>
+                                    <label class="fr-label" for="checkbox-restrict-to-anru">
                                         ANRU
                                         <span class="fr-hint-text">N'afficher que les conventions ANRU</span>
                                     </label>

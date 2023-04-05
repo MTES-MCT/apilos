@@ -48,9 +48,11 @@ class ConventionListService:
     search_input: str
     order_by: str
     page: str
-    statut_filter: str
-    financement_filter: str
-    departement_input: str
+    statut_filter: str | None
+    financement_filter: str | None
+    departement_input: str | None
+    ville: str | None
+    anru: bool
     my_convention_list: Any  # list[Convention]
     paginated_conventions: Any  # list[Convention]
     total_conventions: int
@@ -62,9 +64,11 @@ class ConventionListService:
         self,
         my_convention_list: Any,
         search_input: str = "",
-        statut_filter: str = "",
-        financement_filter: str = "",
-        departement_input: str = "",
+        statut_filter: str | None = None,
+        financement_filter: str | None = None,
+        departement_input: str | None = None,
+        ville: str | None = None,
+        anru: bool = False,
         active: bool | None = None,
         order_by: str = "",
         page: str = 1,
@@ -76,6 +80,8 @@ class ConventionListService:
         self.statut_filter = statut_filter
         self.financement_filter = financement_filter
         self.departement_input = departement_input
+        self.ville = ville
+        self.anru = anru
         self.active = active
         self.order_by = order_by
         self.page = page
@@ -84,16 +90,12 @@ class ConventionListService:
         self.administration = administration
         self.my_convention_list = my_convention_list
 
-    def query_kept_params(self):
-        return f"search_input={self.search_input}&financement={self.financement_filter}"
-
+    # pylint: disable=R0912
     def paginate(self) -> None:
         total_user = self.my_convention_list.count()
         if self.search_input:
-            my_filter = (
-                Q(programme__ville__icontains=self.search_input)
-                | Q(programme__nom__icontains=self.search_input)
-                | Q(programme__code_postal__icontains=self.search_input)
+            my_filter = Q(programme__nom__icontains=self.search_input) | Q(
+                programme__code_postal__icontains=self.search_input
             )
             if self.active:
                 my_filter = my_filter | Q(
@@ -101,20 +103,29 @@ class ConventionListService:
                 )
             else:
                 my_filter = my_filter | Q(numero__icontains=self.search_input)
-            if self.user and self.user.is_instructeur():
-                my_filter = my_filter | Q(
-                    programme__bailleur__nom__icontains=self.search_input
-                )
 
             self.my_convention_list = self.my_convention_list.filter(my_filter)
+
         if self.statut_filter:
             self.my_convention_list = self.my_convention_list.filter(
                 statut=self.statut_filter
             )
+
         if self.financement_filter:
             self.my_convention_list = self.my_convention_list.filter(
                 financement=self.financement_filter
             )
+
+        if self.anru:
+            self.my_convention_list = self.my_convention_list.filter(
+                programme__anru=True
+            )
+
+        if self.ville:
+            self.my_convention_list = self.my_convention_list.filter(
+                programme__ville__icontains=self.ville
+            )
+
         if self.departement_input:
             self.my_convention_list = self.my_convention_list.annotate(
                 departement=Substr("programme__code_postal", 1, 2)
