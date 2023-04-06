@@ -2,6 +2,7 @@ from django.contrib.auth.models import Group
 from django.db.models import Q
 
 from bailleurs.models import Bailleur
+from conventions.models import Convention
 from core.services import EmailService, EmailTemplateID
 from users.models import User, Role
 from users.type_models import TypeRole
@@ -66,6 +67,9 @@ class UserService:
 
     @classmethod
     def email_mensuel(cls):
+
+        # liste des instructeurs concernés par le mail
+        # ceuxi qui ont coché la case "tous"
         instructeur_tous_mails = Q(
             roles__typologie="INSTRUCTEUR",
             preferences_email="TOUS",
@@ -74,23 +78,36 @@ class UserService:
                 "4. A signer",
             ],
         )
+        # "partiel" : au moins une convention en instruction dans l'administration
         instructeur_partiel_instruction = Q(
             roles__typologie="INSTRUCTEUR",
             preferences_email="PARTIEL",
             roles__administration__programme__conventions__statut="2. Instruction requise",
         )
+        # "partiel" : les instructeurs ayant validé au moins une convention en isntruction
         instructeur_partiel_signature = Q(
             roles__typologie="INSTRUCTEUR",
             preferences_email="PARTIEL",
             valide_par__convention__statut="4. A signer",
         )
 
-        users_instructeurs = User.objects.filter(
+        initial_instructeur = []
+        for instructeur in User.objects.filter(
             instructeur_tous_mails
             | instructeur_partiel_instruction
             | instructeur_partiel_signature
-        ).distinct()
+        ).distinct():
+            initial_instructeur.append(
+                {
+                    "first": instructeur.first_name,
+                    "last": instructeur.last_name,
+                    "email": instructeur.email,
+                    "conventions": Convention.objects.filter(statut="4. A signer"),
+                }
+            )
 
+        # liste des bailleurs concernés par le mail
+        # ceux qui ont coché la case "tous"
         bailleurs_tous_mails = Q(
             roles__typologie="BAILLEUR",
             preferences_email="TOUS",
@@ -99,21 +116,65 @@ class UserService:
                 "3. Corrections requises",
             ],
         )
+        # "partiel" : on importe ceux qui ont créé au moins un projet de convention en cours
         bailleurs_partiel_projet = Q(
             roles__typologie="BAILLEUR",
             preferences_email="PARTIEL",
             convention__statut="1. Projet",
         )
+        # "partiel" : on importe ceux qui ont validé au moins une convention en statut de correction
         bailleurs_partiel_corrections = Q(
             roles__typologie="BAILLEUR",
             preferences_email="PARTIEL",
             valide_par__convention__statut="3. Corrections requises",
         )
 
-        users_bailleurs = User.objects.filter(
+        initial_bailleur = []
+        for bailleur in User.objects.filter(
             bailleurs_tous_mails
             | bailleurs_partiel_projet
             | bailleurs_partiel_corrections
-        ).distinct()
+        ).distinct():
+            # pour filter sur les bonnes entités bailleurs
+            bailleur_societe = User.objects.filter(username=bailleur.username).values(
+                "roles__bailleur"
+            )
+            if bailleur.preferences_email == "PARTIEL":
+                # on importe toutes les conventions en projet créées par le bailleur
+                # conventions en corrections créées par le bailleur ou soumise par lui
+                conventions_correc_cree = Q(
+                    statut="3. Corrections requises", cree_par=bailleur
+                )
+                conventions_correc_valid = Q(
+                    statut="3. Corrections requises", conventionhistories__user=bailleur
+                )
+                initial_bailleur.append(
+                    {
+                        "firstname": bailleur.first_name,
+                        "lastname": bailleur.last_name,
+                        "email": bailleur.email,
+                        "conventions_projet": Convention.objects.filter(
+                            statut="1. Projet", cree_par=bailleur
+                        ),
+                        "conventions_correction": Convention.objects.filter(
+                            conventions_correc_cree | conventions_correc_valid
+                        ),
+                    }
+                )
+            elif bailleur.preferences_email == "TOUS":
+                initial_bailleur.append(
+                    {
+                        "firstname": bailleur.first_name,
+                        "lastname": bailleur.last_name,
+                        "email": bailleur.email,
+                        "conventions_projet": Convention.objects.filter(
+                            statut="1. Projet", programme__bailleur__in=bailleur_societe
+                        ),
+                        "conventions_correction": Convention.objects.filter(
+                            statut="3. Corrections requises",
+                            programme__bailleur__in=bailleur_societe,
+                        ),
+                    }
+                )
 
-        return users_instructeurs, users_bailleurs
+        return initial_instructeur, initial_bailleur
