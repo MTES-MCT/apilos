@@ -45,19 +45,19 @@
                             {% endif %}
                         </th>
                         <th scope="col" class="col__width--120">
-                            Surface habitable{%if convention.is_avenant %} / corrigée{% endif %} {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                            Surface habitable {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                         <th scope="col" class="col__width--120">
                             Surface des annexes réelle {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                         <th scope="col" class="col__width--120">
                             Surface des annexes retenue dans la SU {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}
                         </th>
                         <th scope="col" class="col__width--120">
-                            Surface Utile
+                            Surface utile{%if convention.is_avenant %} / corrigée{% endif %}
                             {% if formset.total_form_count %}
                                 {% include "common/form/required_field_star.html" %}
                             {% endif %}</th>
                         <th scope="col" class="col__width--120">
-                            Loyer maximum en € par m² de surface utile
+                            Loyer maximum en € par m² de surface utile{%if convention.is_avenant %} / corrigée{% endif %}
                             {% if formset.total_form_count %}
                                 {% include "common/form/required_field_star.html" %}
                             {% endif %}
