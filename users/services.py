@@ -97,14 +97,47 @@ class UserService:
             | instructeur_partiel_instruction
             | instructeur_partiel_signature
         ).distinct():
-            initial_instructeur.append(
-                {
-                    "first": instructeur.first_name,
-                    "last": instructeur.last_name,
-                    "email": instructeur.email,
-                    "conventions": Convention.objects.filter(statut="4. A signer"),
-                }
-            )
+            if instructeur.preferences_email == "PARTIEL":
+                initial_instructeur.append(
+                    {
+                        "firstname": instructeur.first_name,
+                        "lastname": instructeur.last_name,
+                        "email": instructeur.email,
+                        "administration": User.objects.filter(
+                            username=instructeur.username
+                        ).values("roles__administration"),
+                        "conventions_instruction": Convention.objects.filter(
+                            statut="2. Instruction requise",
+                            programme__administration__in=User.objects.filter(
+                                username=instructeur.username
+                            ).values("roles__administration"),
+                        ),
+                        "conventions_asigner": Convention.objects.filter(
+                            statut="4. A signer", conventionhistories__user=instructeur
+                        ),
+                    }
+                )
+            elif instructeur.preferences_email == "TOUS":
+                initial_instructeur.append(
+                    {
+                        "mail": "TOUS",
+                        "firstname": instructeur.first_name,
+                        "lastname": instructeur.last_name,
+                        "email": instructeur.email,
+                        "conventions_instruction": Convention.objects.filter(
+                            statut="2. Instruction requise",
+                            programme__administration__in=User.objects.filter(
+                                username=instructeur.username
+                            ).values("roles__administration"),
+                        ),
+                        "conventions_asigner": Convention.objects.filter(
+                            statut="4. A signer",
+                            programme__administration__in=User.objects.filter(
+                                username=instructeur.username
+                            ).values("roles__administration"),
+                        ),
+                    }
+                )
 
         # liste des bailleurs concernés par le mail
         # ceux qui ont coché la case "tous"
@@ -135,10 +168,7 @@ class UserService:
             | bailleurs_partiel_projet
             | bailleurs_partiel_corrections
         ).distinct():
-            # pour filter sur les bonnes entités bailleurs
-            bailleur_societe = User.objects.filter(username=bailleur.username).values(
-                "roles__bailleur"
-            )
+
             if bailleur.preferences_email == "PARTIEL":
                 # on importe toutes les conventions en projet créées par le bailleur
                 # conventions en corrections créées par le bailleur ou soumise par lui
@@ -168,11 +198,16 @@ class UserService:
                         "lastname": bailleur.last_name,
                         "email": bailleur.email,
                         "conventions_projet": Convention.objects.filter(
-                            statut="1. Projet", programme__bailleur__in=bailleur_societe
+                            statut="1. Projet",
+                            programme__bailleur__in=User.objects.filter(
+                                username=bailleur.username
+                            ).values("roles__bailleur"),
                         ),
                         "conventions_correction": Convention.objects.filter(
                             statut="3. Corrections requises",
-                            programme__bailleur__in=bailleur_societe,
+                            programme__bailleur__in=User.objects.filter(
+                                username=bailleur.username
+                            ).values("roles__bailleur"),
                         ),
                     }
                 )
