@@ -103,9 +103,6 @@ class UserService:
                         "firstname": instructeur.first_name,
                         "lastname": instructeur.last_name,
                         "email": instructeur.email,
-                        "administration": User.objects.filter(
-                            username=instructeur.username
-                        ).values("roles__administration"),
                         "conventions_instruction": Convention.objects.filter(
                             statut="2. Instruction requise",
                             programme__administration__in=User.objects.filter(
@@ -120,7 +117,6 @@ class UserService:
             elif instructeur.preferences_email == "TOUS":
                 initial_instructeur.append(
                     {
-                        "mail": "TOUS",
                         "firstname": instructeur.first_name,
                         "lastname": instructeur.last_name,
                         "email": instructeur.email,
