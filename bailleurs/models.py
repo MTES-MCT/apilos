@@ -92,7 +92,9 @@ class Bailleur(IngestableModel):
     }
 
     id = models.AutoField(primary_key=True)
-    uuid = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(
+        primary_key=False, unique=True, default=uuid.uuid4, editable=False
+    )
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -102,7 +104,7 @@ class Bailleur(IngestableModel):
     )
     nom = models.CharField(max_length=255)
     siret = models.CharField(max_length=255, unique=True)
-    siren = models.CharField(max_length=255, null=True)
+    siren = models.CharField(max_length=255, unique=True, null=True)
     capital_social = models.FloatField(null=True, blank=True)
     adresse = models.CharField(max_length=255, null=True, blank=True)
     code_postal = models.CharField(max_length=5, null=True, blank=True)
