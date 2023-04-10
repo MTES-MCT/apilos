@@ -3,7 +3,7 @@ from django.http import HttpRequest
 
 from bailleurs.models import Bailleur
 from conventions.forms import ConventionBailleurForm, ChangeBailleurForm
-from conventions.models import Convention, ConventionStatut
+from conventions.models import Convention
 from conventions.services import utils
 from conventions.services.conventions import ConventionService
 
@@ -16,16 +16,29 @@ class ConventionBailleurService(ConventionService):
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
     redirect_recap: bool = False
 
+    def _get_bailleur_query(self, bailleur_uuid: str):
+        if self.request.user.is_cerbere_user():
+            sirens = []
+            for habilitation in self.request.session["habilitations"]:
+                if (
+                    habilitation["groupe"]["profil"]["code"] == "MO_PERS_MORALE"
+                    and habilitation["porteeTerritComp"]["regComp"]["code"]
+                    == self.convention.programme.code_insee_region
+                ):
+                    sirens.append(habilitation["entiteMorale"]["siren"])
+            return Bailleur.objects.filter(siren__in=sirens)
+        return (
+            self.request.user.bailleurs(full_scope=True).filter(uuid=bailleur_uuid)
+            | self.request.user.bailleurs(full_scope=True)[
+                : settings.APILOS_MAX_DROPDOWN_COUNT
+            ]
+        )
+
     def get(self):
         bailleur = self.convention.programme.bailleur
 
         self.upform = ChangeBailleurForm(
-            bailleur_query=(
-                self.request.user.bailleurs(full_scope=True).filter(uuid=bailleur.uuid)
-                | self.request.user.bailleurs(full_scope=True)[
-                    : settings.APILOS_MAX_DROPDOWN_COUNT
-                ]
-            ),
+            bailleur_query=self._get_bailleur_query(bailleur.uuid),
             initial={"bailleur": bailleur},
         )
         self.form = ConventionBailleurForm(
@@ -63,26 +76,22 @@ class ConventionBailleurService(ConventionService):
             },
         )
 
-    def save(self):
+    def _init_forms(self):
         self.form = ConventionBailleurForm(self.request.POST)
-
         self.upform = ChangeBailleurForm(
             self.request.POST,
-            bailleur_query=self.request.user.bailleurs(full_scope=True).filter(
-                uuid=self.request.POST.get("bailleur") or None
-            )
-            | self.request.user.bailleurs(full_scope=True)[
-                : settings.APILOS_MAX_DROPDOWN_COUNT
-            ],
+            bailleur_query=self._get_bailleur_query(
+                self.request.POST.get("bailleur") or None
+            ),
         )
-        update_bailleur = bool(self.request.POST.get("update_bailleur", False))
-        if update_bailleur:
-            self._update_bailleur()
-        else:
-            self.redirect_recap = bool(
-                self.request.POST.get("redirect_to_recap", False)
-            )
-            self._bailleur_atomic_update()
+
+    def change_bailleur(self):
+        self._init_forms()
+        self._update_bailleur()
+
+    def update_bailleur(self):
+        self._init_forms()
+        self._bailleur_atomic_update()
 
     def _update_bailleur(self):
         if self.upform.is_valid():

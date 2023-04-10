@@ -43,22 +43,24 @@ class ConventionBailleurServiceTests(TestCase):
         )
         self.assertEqual(self.service.form.initial["nom"], bailleur.nom)
 
-    def test_save(self):
-
-        bailleur = self.service.convention.programme.bailleur
-        bailleur_signataire_nom = bailleur.signataire_nom
-        bailleur_signataire_fonction = bailleur.signataire_fonction
-        bailleur_signataire_date_deliberation = bailleur.signataire_date_deliberation
-        bailleur_signataire_bloc_signature = bailleur.signataire_bloc_signature
+    def test_update_bailleur_nom_error(self):
 
         self.service.request.POST = {
             "nom": "",
             "adresse": "fake_address",
             "code_postal": "01000",
         }
-        self.service.save()
+        self.service.update_bailleur()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
         self.assertTrue(self.service.form.has_error("nom"))
+
+    def test_update_bailleur_success(self):
+
+        bailleur = self.service.convention.programme.bailleur
+        bailleur_signataire_nom = bailleur.signataire_nom
+        bailleur_signataire_fonction = bailleur.signataire_fonction
+        bailleur_signataire_date_deliberation = bailleur.signataire_date_deliberation
+        bailleur_signataire_bloc_signature = bailleur.signataire_bloc_signature
 
         self.service.request.POST = {
             "nom": "nom bailleur",
@@ -70,7 +72,7 @@ class ConventionBailleurServiceTests(TestCase):
             "signataire_bloc_signature": "Mon Dirlo",
         }
 
-        self.service.save()
+        self.service.update_bailleur()
         bailleur.refresh_from_db()
         self.service.convention.refresh_from_db()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
