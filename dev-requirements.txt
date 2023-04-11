@@ -217,9 +217,9 @@ platformdirs==2.5.4 \
     #   black
     #   pylint
     #   virtualenv
-pre-commit==3.1.1 \
-    --hash=sha256:b80254e60668e1dd1f5c03a1c9e0413941d61f568a57d745add265945f65bfe8 \
-    --hash=sha256:d63e6537f9252d99f65755ae5b79c989b462d511ebbc481b561db6a297e1e865
+pre-commit==3.2.2 \
+    --hash=sha256:0b4210aea813fe81144e87c5a291f09ea66f199f367fa1df41b55e1d26e1e2b4 \
+    --hash=sha256:5b808fcbda4afbccf6d6633a56663fed35b6c2bc08096fd3d47ce197ac351d9d
     # via -r dev-requirements.in
 prompt-toolkit==3.0.37 \
     --hash=sha256:6a2948ec427dfcc7c983027b1044b355db6aaa8be374f54ad2015471f7d81c5b \
