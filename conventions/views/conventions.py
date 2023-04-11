@@ -173,7 +173,11 @@ def search(request, active: bool = True):
         "conventions/index.html",
         {
             "active": active,
-            "statuts": ConventionStatut,
+            "statuts": ConventionStatut.active_statuts(
+                False, request.user.is_instructeur()
+            )
+            if active
+            else ConventionStatut.completed_statuts(False, request.user.is_bailleur()),
             "financements": Financement,
             "nb_active_conventions": request.user.conventions(active=True).count(),
             "nb_completed_conventions": request.user.conventions(active=False).count(),

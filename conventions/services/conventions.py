@@ -77,7 +77,10 @@ class ConventionListService:
         administration: Administration | None = None,
     ):
         self.search_input = search_input
-        self.statut_filter = statut_filter
+        try:
+            self.statut = ConventionStatut[statut_filter]
+        except KeyError:
+            self.statut = None
         self.financement_filter = financement_filter
         self.departement_input = departement_input
         self.ville = ville
@@ -106,9 +109,9 @@ class ConventionListService:
 
             self.my_convention_list = self.my_convention_list.filter(my_filter)
 
-        if self.statut_filter:
+        if self.statut:
             self.my_convention_list = self.my_convention_list.filter(
-                statut=self.statut_filter
+                statut=self.statut.label
             )
 
         if self.financement_filter:

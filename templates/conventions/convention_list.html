@@ -85,25 +85,23 @@
                             <input class="fr-input" placeholder="Commune" type="text" name="ville" value="{{ conventions.ville|default_if_none:"" }}" />
                         </div>
 
+                        {# Champs département (réservé aux utilsiateurs staff) #}
                         {% if request.user.is_staff %}
-
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-3">
                                 <input class="fr-input" placeholder="Département" type="text" name="departement_input" value="{{ conventions.departement_input|default_if_none:"" }}" />
                             </div>
                         {% endif %}
 
-                    </div>
-                    {# Champs de recherche génériques (affichés à tous les utilisateurs) #}
-                    <div class="fr-grid-row fr-grid-row--gutters">
+                        {# Champs de recherche génériques (affichés à tous les utilisateurs) #}
                         {# Champs Statut #}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
                             <div class="">
                                 <select class="fr-select" id="cstatut" name="cstatut">
                                     <option value="">Statut</option>
                                     {% for statut in statuts %}
-                                        <option value="{{ statut.value }}"
-                                            {% if statut.value  == conventions.statut_filter %}selected{% endif %}>
-                                            {{ statut.label }}
+                                        <option value="{{ statut.0 }}"
+                                            {% if statut.0  == conventions.statut.name %}selected{% endif %}>
+                                            {{ statut.1 }}
                                         </option>
                                     {% endfor %}
                                 </select>
