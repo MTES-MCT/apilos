@@ -34,13 +34,12 @@ from conventions.services.conventions import (
 )
 from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
+    ConventionRecapitulatifService,
     convention_feedback,
     convention_submit,
-    get_convention_recapitulatif,
     convention_validate,
-    save_convention_TypeIandII,
 )
-from conventions.services.utils import ReturnStatus
+from conventions.services.utils import ReturnStatus, base_convention_response_error
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from core.storage import client
 from programmes.models import Financement, NatureLogement
@@ -65,7 +64,11 @@ class RecapitulatifView(BaseConventionView):
     @has_campaign_permission("convention.view_convention")
     def get(self, request: HttpRequest, convention_uuid: int):
         # pylint: disable=unused-argument
-        result = get_convention_recapitulatif(request, self.convention)
+        service = ConventionRecapitulatifService(
+            request=request, convention=self.convention
+        )
+        result = service.get_convention_recapitulatif()
+
         if self.convention.is_avenant():
             result["avenant_list"] = [
                 avenant_type.nom for avenant_type in self.convention.avenant_types.all()
@@ -75,6 +78,7 @@ class RecapitulatifView(BaseConventionView):
             request,
             "conventions/recapitulatif.html",
             {
+                **base_convention_response_error(request, self.convention),
                 **result,
                 "convention_form_steps": ConventionFormSteps(
                     convention=self.convention
@@ -86,12 +90,19 @@ class RecapitulatifView(BaseConventionView):
     @has_campaign_permission("convention.change_convention")
     def post(self, request: HttpRequest, convention_uuid: int):
         # pylint: disable=unused-argument
-        result = save_convention_TypeIandII(request, self.convention)
+        service = ConventionRecapitulatifService(
+            request=request, convention=self.convention
+        )
 
+        if request.POST.get("update_programme_number"):
+            result = service.update_programme_number()
+        else:
+            result = service.save_convention_TypeIandII()
         return render(
             request,
             "conventions/recapitulatif.html",
             {
+                **base_convention_response_error(request, self.convention),
                 **result,
                 "convention_form_steps": ConventionFormSteps(
                     convention=self.convention

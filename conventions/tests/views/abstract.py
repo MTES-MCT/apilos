@@ -13,6 +13,7 @@ class AbstractCreateViewTestCase:
     error_payload: dict
     success_payload: dict
     msg_prefix: str
+    post_success_http_code: int = 302
 
     def setUp(self):
         self.convention_75 = Convention.objects.filter(numero="0001").first()
@@ -52,7 +53,9 @@ class AbstractCreateViewTestCase:
             self.target_path,
             self.success_payload,
         )
-        self.assertEqual(response.status_code, 302, msg=f"{self.msg_prefix}")
+        self.assertEqual(
+            response.status_code, self.post_success_http_code, msg=f"{self.msg_prefix}"
+        )
         self._test_redirect(response)
         self._test_data_integrity()
 
@@ -75,7 +78,9 @@ class AbstractCreateViewTestCase:
         self.assertEqual(response.status_code, 200, msg=f"{self.msg_prefix}")
 
         response = self.client.post(self.target_path, self.success_payload)
-        self.assertEqual(response.status_code, 302, msg=f"{self.msg_prefix}")
+        self.assertEqual(
+            response.status_code, self.post_success_http_code, msg=f"{self.msg_prefix}"
+        )
         self._test_redirect(response)
 
     def test_view_bailleur_ok(self):
@@ -87,7 +92,9 @@ class AbstractCreateViewTestCase:
         self.assertEqual(response.status_code, 200, msg=f"{self.msg_prefix}")
 
         response = self.client.post(self.target_path, self.success_payload)
-        self.assertEqual(response.status_code, 302, msg=f"{self.msg_prefix}")
+        self.assertEqual(
+            response.status_code, self.post_success_http_code, msg=f"{self.msg_prefix}"
+        )
         self._test_redirect(response)
 
 

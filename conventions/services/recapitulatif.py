@@ -6,11 +6,13 @@ from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.notification import NotificationForm
+from conventions.forms.programme_number import ProgrammeNumberForm
 from conventions.forms.type1and2 import ConventionType1and2Form
 from conventions.models.choices import ConventionStatut
 from conventions.models.convention import Convention
 from conventions.models.convention_history import ConventionHistory
 from conventions.services import utils
+from conventions.services.conventions import ConventionService
 from conventions.services.file import ConventionFileService
 from conventions.tasks import generate_and_send
 from core.services import EmailService, EmailTemplateID
@@ -18,94 +20,160 @@ from programmes.models import Annexe
 from siap.siap_client.client import SIAPClient
 
 
-def get_convention_recapitulatif(request: HttpRequest, convention: Convention):
-    request.user.check_perm("convention.view_convention", convention)
+class ConventionRecapitulatifService(ConventionService):
+    def get(self):
+        pass
 
-    convention_number_form = ConventionNumberForm(
-        initial={"convention_numero": convention.get_default_convention_number()}
-    )
-    complete_for_avenant_form = None
-    if convention.is_incompleted_avenant_parent():
-        complete_for_avenant_form = CompleteforavenantForm(
+    def update_programme_number(self):
+        programme_number_form = ProgrammeNumberForm(self.request.POST)
+        if programme_number_form.is_valid():
+            self.convention.programme.numero_galion = (
+                programme_number_form.cleaned_data["numero_galion"]
+            )
+            self.convention.programme.save()
+        return self.get_convention_recapitulatif(
+            programme_number_form=programme_number_form
+        )
+
+    def get_convention_recapitulatif(
+        self, convention_type1_and_2_form=None, programme_number_form=None
+    ):
+
+        convention_number_form = ConventionNumberForm(
             initial={
-                "ville": convention.parent.programme.ville,
-                "nb_logements": convention.parent.lot.nb_logements,
+                "convention_numero": self.convention.get_default_convention_number()
             }
         )
+        if programme_number_form is None:
+            programme_number_form = ProgrammeNumberForm(
+                initial={"numero_galion": self.convention.programme.numero_galion}
+            )
+        complete_for_avenant_form = None
+        if self.convention.is_incompleted_avenant_parent():
+            complete_for_avenant_form = CompleteforavenantForm(
+                initial={
+                    "ville": self.convention.parent.programme.ville,
+                    "nb_logements": self.convention.parent.lot.nb_logements,
+                }
+            )
 
-    opened_comments = Comment.objects.filter(
-        convention=convention,
-        statut=CommentStatut.OUVERT,
-    )
-    opened_comments = opened_comments.order_by("cree_le")
-    convention_type1_and_2_form = ConventionType1and2Form(
-        initial={
-            "uuid": convention.uuid,
-            "type1and2": convention.type1and2,
-            "type2_lgts_concernes_option1": convention.type2_lgts_concernes_option1,
-            "type2_lgts_concernes_option2": convention.type2_lgts_concernes_option2,
-            "type2_lgts_concernes_option3": convention.type2_lgts_concernes_option3,
-            "type2_lgts_concernes_option4": convention.type2_lgts_concernes_option4,
-            "type2_lgts_concernes_option5": convention.type2_lgts_concernes_option5,
-            "type2_lgts_concernes_option6": convention.type2_lgts_concernes_option6,
-            "type2_lgts_concernes_option7": convention.type2_lgts_concernes_option7,
-            "type2_lgts_concernes_option8": convention.type2_lgts_concernes_option8,
-        }
-    )
-    return {
-        **utils.base_convention_response_error(request, convention),
-        "opened_comments": opened_comments,
-        "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
-        "notificationForm": NotificationForm(),
-        "conventionNumberForm": convention_number_form,
-        "complete_for_avenant_form": complete_for_avenant_form,
-        "ConventionType1and2Form": convention_type1_and_2_form,
-        "repartition_surfaces": convention.lot.repartition_surfaces(),
-    }
-
-
-def save_convention_TypeIandII(request: HttpRequest, convention: Convention):
-    convention_type1_and_2_form = ConventionType1and2Form(request.POST)
-    if convention_type1_and_2_form.is_valid():
-        convention.type1and2 = (
-            convention_type1_and_2_form.cleaned_data["type1and2"]
-            if convention_type1_and_2_form.cleaned_data["type1and2"]
-            else None
+        opened_comments = Comment.objects.filter(
+            convention=self.convention,
+            statut=CommentStatut.OUVERT,
         )
-        if "type2_lgts_concernes_option1" in convention_type1_and_2_form.cleaned_data:
-            convention.type2_lgts_concernes_option1 = (
-                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option1"]
+        opened_comments = opened_comments.order_by("cree_le")
+        if convention_type1_and_2_form is None:
+            convention_type1_and_2_form = ConventionType1and2Form(
+                initial={
+                    "uuid": self.convention.uuid,
+                    "type1and2": self.convention.type1and2,
+                    "type2_lgts_concernes_option1": self.convention.type2_lgts_concernes_option1,
+                    "type2_lgts_concernes_option2": self.convention.type2_lgts_concernes_option2,
+                    "type2_lgts_concernes_option3": self.convention.type2_lgts_concernes_option3,
+                    "type2_lgts_concernes_option4": self.convention.type2_lgts_concernes_option4,
+                    "type2_lgts_concernes_option5": self.convention.type2_lgts_concernes_option5,
+                    "type2_lgts_concernes_option6": self.convention.type2_lgts_concernes_option6,
+                    "type2_lgts_concernes_option7": self.convention.type2_lgts_concernes_option7,
+                    "type2_lgts_concernes_option8": self.convention.type2_lgts_concernes_option8,
+                }
             )
-        if "type2_lgts_concernes_option2" in convention_type1_and_2_form.cleaned_data:
-            convention.type2_lgts_concernes_option2 = (
-                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option2"]
+        return {
+            "opened_comments": opened_comments,
+            "annexes": Annexe.objects.filter(
+                logement__lot_id=self.convention.lot.id
+            ).all(),
+            "notificationForm": NotificationForm(),
+            "conventionNumberForm": convention_number_form,
+            "complete_for_avenant_form": complete_for_avenant_form,
+            "ConventionType1and2Form": convention_type1_and_2_form,
+            "programmeNumberForm": programme_number_form,
+            "repartition_surfaces": self.convention.lot.repartition_surfaces(),
+        }
+
+    def save_convention_TypeIandII(self):
+        convention_type1_and_2_form = ConventionType1and2Form(self.request.POST)
+        if convention_type1_and_2_form.is_valid():
+            self.convention.type1and2 = (
+                convention_type1_and_2_form.cleaned_data["type1and2"]
+                if convention_type1_and_2_form.cleaned_data["type1and2"]
+                else None
             )
-        if "type2_lgts_concernes_option3" in convention_type1_and_2_form.cleaned_data:
-            convention.type2_lgts_concernes_option3 = (
-                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option3"]
-            )
-        if "type2_lgts_concernes_option4" in convention_type1_and_2_form.cleaned_data:
-            convention.type2_lgts_concernes_option4 = (
-                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option4"]
-            )
-        if "type2_lgts_concernes_option5" in convention_type1_and_2_form.cleaned_data:
-            convention.type2_lgts_concernes_option5 = (
-                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option5"]
-            )
-        if "type2_lgts_concernes_option6" in convention_type1_and_2_form.cleaned_data:
-            convention.type2_lgts_concernes_option6 = (
-                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option6"]
-            )
-        if "type2_lgts_concernes_option7" in convention_type1_and_2_form.cleaned_data:
-            convention.type2_lgts_concernes_option7 = (
-                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option7"]
-            )
-        if "type2_lgts_concernes_option8" in convention_type1_and_2_form.cleaned_data:
-            convention.type2_lgts_concernes_option8 = (
-                convention_type1_and_2_form.cleaned_data["type2_lgts_concernes_option8"]
-            )
-        convention.save()
-    return get_convention_recapitulatif(request, convention)
+            if (
+                "type2_lgts_concernes_option1"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                self.convention.type2_lgts_concernes_option1 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option1"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option2"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                self.convention.type2_lgts_concernes_option2 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option2"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option3"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                self.convention.type2_lgts_concernes_option3 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option3"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option4"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                self.convention.type2_lgts_concernes_option4 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option4"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option5"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                self.convention.type2_lgts_concernes_option5 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option5"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option6"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                self.convention.type2_lgts_concernes_option6 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option6"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option7"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                self.convention.type2_lgts_concernes_option7 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option7"
+                    ]
+                )
+            if (
+                "type2_lgts_concernes_option8"
+                in convention_type1_and_2_form.cleaned_data
+            ):
+                self.convention.type2_lgts_concernes_option8 = (
+                    convention_type1_and_2_form.cleaned_data[
+                        "type2_lgts_concernes_option8"
+                    ]
+                )
+            self.convention.save()
+        return self.get_convention_recapitulatif(
+            convention_type1_and_2_form=convention_type1_and_2_form
+        )
 
 
 def convention_submit(request: HttpRequest, convention: Convention):
