@@ -105,7 +105,7 @@
                             <p class="fr-mb-0 notes"><em>Vous n'avez indiqué aucun logement.</em></p>
                             <a class="fr-my-1w fr-link" href="{% url target_url convention_uuid=convention.uuid %}">Ajouter des logements</a>
 
-                            {% if conventions.ecolo_reference and repartition_surfaces %}
+                            {% if convention.ecolo_reference and repartition_surfaces %}
                                 <p class="fr-my-2w notes"><em>Cependant, vous avez déclaré depuis Ecoloweb la répartition des logement suivante:</em></p>
                                 <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
                                     <table aria-label="Répartion des logements par surface">
