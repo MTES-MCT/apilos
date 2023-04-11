@@ -1,10 +1,10 @@
 from datetime import date
 
-from . import SiretResolver
-from .importers import ModelImporter
-from bailleurs.models import Bailleur
-
 from django.conf import settings
+
+from bailleurs.models import Bailleur
+from .importers import ModelImporter
+from . import SiretResolver
 
 
 class BailleurImporter(ModelImporter):
@@ -13,6 +13,7 @@ class BailleurImporter(ModelImporter):
     def __init__(self, departement: str, import_date: date, debug=False, update=False):
         super().__init__(departement, import_date, debug=debug, update=update)
 
+        self._identity_keys = ["siren"]
         try:
             self._siret_resolver = SiretResolver(
                 settings.INSEE_API_KEY, settings.INSEE_API_SECRET
