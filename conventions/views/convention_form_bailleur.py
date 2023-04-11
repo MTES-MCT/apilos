@@ -7,6 +7,12 @@ class ConventionBailleurView(ConventionView):
     current_path_redirect: str = "conventions:bailleur"
     service_class = ConventionBailleurService
 
+    def post_action(self):
+        if bool(self.request.POST.get("change_bailleur", False)):
+            self.service.change_bailleur()
+        else:
+            self.service.update_bailleur()
+
 
 class AvenantBailleurView(ConventionBailleurView):
     current_path_redirect: str = "conventions:avenant_bailleur"

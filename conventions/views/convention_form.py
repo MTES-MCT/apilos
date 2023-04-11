@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import (
+    HttpRequest,
     HttpResponseRedirect,
 )
 from django.shortcuts import render
@@ -318,6 +319,8 @@ class ConventionView(ABC, BaseConventionView):
     steps: ConventionFormSteps
     target_template: str
     service_class: ConventionService
+    request: HttpRequest
+    service: ConventionService
 
     @property
     def next_path_redirect(self):
@@ -354,20 +357,24 @@ class ConventionView(ABC, BaseConventionView):
             },
         )
 
+    def post_action(self):
+        self.service.save()
+
     # pylint: disable=W0613
     @has_campaign_permission("convention.change_convention")
     def post(self, request, convention_uuid):
-        service = self.service_class(convention=self.convention, request=request)
-        service.save()
-        if service.return_status == ReturnStatus.SUCCESS:
-            if service.redirect_recap:
+        self.request = request
+        self.service = self.service_class(convention=self.convention, request=request)
+        self.post_action()
+        if self.service.return_status == ReturnStatus.SUCCESS:
+            if self.service.redirect_recap:
                 return HttpResponseRedirect(
                     reverse("conventions:recapitulatif", args=[self.convention.uuid])
                 )
             return HttpResponseRedirect(
                 reverse(self.next_path_redirect, args=[self.convention.uuid])
             )
-        if service.return_status == ReturnStatus.REFRESH:
+        if self.service.return_status == ReturnStatus.REFRESH:
             return HttpResponseRedirect(
                 reverse(self.current_path_redirect, args=[self.convention.uuid])
             )
@@ -375,17 +382,17 @@ class ConventionView(ABC, BaseConventionView):
             request,
             self.target_template,
             {
-                **base_convention_response_error(request, service.convention),
-                **({"form": service.form} if service.form else {}),
-                **({"upform": service.upform} if service.upform else {}),
-                **({"formset": service.formset} if service.formset else {}),
+                **base_convention_response_error(request, self.service.convention),
+                **({"form": self.service.form} if self.service.form else {}),
+                **({"upform": self.service.upform} if self.service.upform else {}),
+                **({"formset": self.service.formset} if self.service.formset else {}),
                 "form_step": self.steps.get_form_step(),
                 **(
-                    {"import_warnings": service.import_warnings}
-                    if service.import_warnings
+                    {"import_warnings": self.service.import_warnings}
+                    if self.service.import_warnings
                     else {}
                 ),
                 "editable_after_upload": editable_convention(request, self.convention)
-                or service.editable_after_upload,
+                or self.service.editable_after_upload,
             },
         )
