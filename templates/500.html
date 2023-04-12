@@ -10,7 +10,7 @@
                     </p>
                     {{ specific_error|safe }}
                     {% if CERBERE_AUTH %}
-                        <a class="fr-btn fr-btn--secondary fr-mb-3w" value="Retour à l'accueil" href="https://siap.logement.gouv.fr/tableau-bord">Retourner au tableau de bord</a>
+                        <a class="fr-btn fr-btn--secondary fr-mb-3w" value="Retour à l'accueil" href="{{SIAP_CLIENT_HOST}}/tableau-bord">Retourner au tableau de bord</a>
                     {% endif %}
                     <p class="fr-mb-3w">
                         Si le problème persiste merci de contacter l'équipe <a href="mailto:contact@apilos.beta.gouv.fr" target="_blank">APiLos</a>
