@@ -139,8 +139,8 @@ django-extensions==3.2.1 \
     --hash=sha256:2a4f4d757be2563cd1ff7cfdf2e57468f5f931cc88b23cf82ca75717aae504a4 \
     --hash=sha256:421464be390289513f86cb5e18eb43e5dc1de8b4c27ba9faa3b91261b0d67e09
     # via -r dev-requirements.in
-djhtml==1.5.2 \
-    --hash=sha256:b54c4ab6effaf3dbe87d616ba30304f1dba22f07127a563df4130a71acc290ea
+djhtml==3.0.6 \
+    --hash=sha256:abfc4d7b4730432ca6a98322fbdf8ae9d6ba254ea57ba3759a10ecb293bc57de
     # via -r dev-requirements.in
 filelock==3.8.0 \
     --hash=sha256:55447caa666f2198c5b6b13a26d2084d26fa5b115c00d065664b2124680c4edc \
