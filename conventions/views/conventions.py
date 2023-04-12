@@ -19,6 +19,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
+from bailleurs.models import Bailleur
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from conventions.models import Convention, ConventionStatut, PieceJointe
 from conventions.permissions import (
@@ -42,6 +43,8 @@ from conventions.services.recapitulatif import (
 from conventions.services.utils import ReturnStatus, base_convention_response_error
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from core.storage import client
+from core.utils import is_valid_uuid
+from instructeurs.models import Administration
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
 from upload.services import UploadService
@@ -115,6 +118,31 @@ class RecapitulatifView(BaseConventionView):
 @require_GET
 def search(request, active: bool = True):
     query_set = request.user.conventions(active=active)
+    uuid_bailleur = request.GET.get("bailleur")
+    bailleur = (
+        Bailleur.objects.filter(uuid=uuid_bailleur).first()
+        if is_valid_uuid(uuid_bailleur)
+        else None
+    )
+    bailleur_query = (
+        request.user.bailleurs(full_scope=True).exclude(nom__exact="")[
+            : settings.APILOS_MAX_DROPDOWN_COUNT
+        ]
+        if request.user.is_instructeur()
+        else None
+    )
+
+    uuid_administration = request.GET.get("administration")
+    administration = (
+        Administration.objects.filter(uuid=uuid_administration).first()
+        if is_valid_uuid(uuid_administration)
+        else None
+    )
+    administration_query = (
+        request.user.administrations()[: settings.APILOS_MAX_DROPDOWN_COUNT]
+        if request.user.is_bailleur()
+        else None
+    )
 
     service = ConventionListService(
         search_input=request.GET.get("search_input", ""),
@@ -129,7 +157,11 @@ def search(request, active: bool = True):
         statut_filter=request.GET.get("cstatut", ""),
         financement_filter=request.GET.get("financement", ""),
         departement_input=request.GET.get("departement_input", ""),
+        ville=request.GET.get("ville"),
+        anru=(request.GET.get("anru") is not None),  # As anru is a checkbox
         user=request.user,
+        bailleur=bailleur,
+        administration=administration,
         my_convention_list=query_set.prefetch_related("programme")
         .prefetch_related("programme__administration")
         .prefetch_related("lot"),
@@ -141,11 +173,17 @@ def search(request, active: bool = True):
         "conventions/index.html",
         {
             "active": active,
-            "statuts": ConventionStatut,
+            "statuts": ConventionStatut.active_statuts(
+                False, request.user.is_instructeur()
+            )
+            if active
+            else ConventionStatut.completed_statuts(False, request.user.is_bailleur()),
             "financements": Financement,
             "nb_active_conventions": request.user.conventions(active=True).count(),
             "nb_completed_conventions": request.user.conventions(active=False).count(),
             "conventions": service,
+            "bailleur_query": bailleur_query,
+            "administration_query": administration_query,
         },
     )
 

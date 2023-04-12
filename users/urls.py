@@ -17,5 +17,10 @@ urlpatterns = [
         views.search_parent_bailleur,
         name="search_parent_bailleur",
     ),
+    path(
+        "search/administration",
+        views.search_administration,
+        name="search_administration",
+    ),
     path("read_popup", views.update_user_popup, name="read_popup"),
 ]

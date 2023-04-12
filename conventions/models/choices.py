@@ -78,7 +78,7 @@ class ConventionStatut(Enum):
     CORRECTION = Definition(
         "3. Corrections requises",
         StatutByRole("À corriger"),
-        StatutByRole("Encopurs de correction"),
+        StatutByRole("En cours de correction"),
     )
     A_SIGNER = Definition(
         "4. A signer", StatutByRole("À signer"), StatutByRole("À signer")
@@ -108,14 +108,45 @@ class ConventionStatut(Enum):
         return ReverseConventionStatut.get_by_label(label)
 
     @classmethod
-    def active_statuts(cls):
+    def active_statuts(cls, flat: bool = True, as_instructeur: bool = True):
+        if flat:
+            return [
+                statut.label
+                for statut in [
+                    cls.PROJET,
+                    cls.INSTRUCTION,
+                    cls.CORRECTION,
+                    cls.A_SIGNER,
+                ]
+            ]
+
         return [
-            c.label for c in [cls.PROJET, cls.INSTRUCTION, cls.CORRECTION, cls.A_SIGNER]
+            (
+                statut.name,
+                statut.value.instructeur.label
+                if as_instructeur
+                else statut.value.bailleur.label,
+            )
+            for statut in [cls.PROJET, cls.INSTRUCTION, cls.CORRECTION, cls.A_SIGNER]
         ]
 
     @classmethod
-    def completed_statuts(cls):
-        return [c.label for c in [cls.SIGNEE, cls.RESILIEE, cls.DENONCEE, cls.ANNULEE]]
+    def completed_statuts(cls, flat: bool = True, as_instructeur: bool = True):
+        if flat:
+            return [
+                statut.label
+                for statut in [cls.SIGNEE, cls.RESILIEE, cls.DENONCEE, cls.ANNULEE]
+            ]
+
+        return [
+            (
+                statut.name,
+                statut.value.instructeur.label
+                if as_instructeur
+                else statut.value.bailleur.label,
+            )
+            for statut in [cls.SIGNEE, cls.RESILIEE, cls.DENONCEE, cls.ANNULEE]
+        ]
 
     @property
     def label(self):
@@ -148,27 +179,33 @@ class Preteur(TextChoices):
 
 
 class TypeEvenement(TextChoices):
-    DEPOT_BAILLEUR = "DEPOT_BAILLEUR", "Dépôt de la convention APL par le bailleur"
+    DEPOT_BAILLEUR = "DEPOT_BAILLEUR", "Dépôt de la convention APL par" "le bailleur"
     MODIFICATION = (
         "MODIFICATION",
-        "Modification de la convention (valeur du loyer plafond, surface, clauses, etc...)",
+        "Modification de la convention (valeur du loyer plafond, surface,"
+        "clauses, etc...)",
     )
     ECHANGE = (
         "ECHANGE",
-        "Echanges téléphoniques, électroniques ou transmission par courrier de la convention APL au bailleur",
+        "Echanges téléphoniques, électroniques ou transmission par courrier"
+        "de la convention APL au bailleur",
     )
     ENVOI_PREFET = (
         "ENVOI_PREFET",
         "Transmission de la convention APL à la signature du préfet",
     )
-    RETOUR_PREFET = "RETOUR_PREFET", "Retour de la convention APL signée par le préfet"
+    RETOUR_PREFET = (
+        "RETOUR_PREFET",
+        "Retour de la convention APL signée par" "le préfet",
+    )
     ENVOI_HYPOTHEQUE = (
         "ENVOI_HYPOTHEQUE",
-        "Transmission de la convention APL au bureau des hypothèques ou au livre foncier",
+        "Transmission de la convention APL au bureau des hypothèques ou au"
+        "livre foncier",
     )
     RETOUR_HYPOTHEQUE = (
         "RETOUR_HYPOTHEQUE",
-        "Retour du bureau des hypothèques ou au livre foncier, pour modification",
+        "Retour du bureau des hypothèques ou au livre foncier, pour" "modification",
     )
     ENVOI_RECTIFICATIF_PREFET = (
         "ENVOI_RECTIFICATIF_PREFET",
@@ -190,7 +227,7 @@ class TypeEvenement(TextChoices):
     )
     CORRECTION_AVENANT = (
         "CORRECTION_AVENANT",
-        "Modification de l'avenant sur demande de l'instructeur auprès du bailleur",
+        "Modification de l'avenant sur demande de l'instructeur auprès du" "bailleur",
     )
     ENVOI_AVENANT_PREFET = (
         "ENVOI_AVENANT_PREFET",
@@ -202,15 +239,17 @@ class TypeEvenement(TextChoices):
     )
     ENVOI_AVENANT_HYPOTHEQUE = (
         "ENVOI_AVENANT_HYPOTHEQUE",
-        "Transmission de l'avenant au bureau des hypothèques ou au livre foncier",
+        "Transmission de l'avenant au bureau des hypothèques ou au livre" "foncier",
     )
     RETOUR_AVENANT_HYPOTHEQUE = (
         "RETOUR_AVENANT_HYPOTHEQUE",
-        "Retour de l'avenant du bureau des hypothèques ou du livre foncier, pour modification",
+        "Retour de l'avenant du bureau des hypothèques ou du livre foncier,"
+        "pour modification",
     )
     ENVOI_RECTIFICATIF_AVENANT_PREFET = (
         "ENVOI_RECTIFICATIF_AVENANT_PREFET",
-        "Transmission de l'attestation rectificative d'avenant à la signature du préfet",
+        "Transmission de l'attestation rectificative d'avenant à la signature"
+        "du préfet",
     )
     RETOUR_RECTIFICATIF_AVENANT_PREFET = (
         "RETOUR_RECTIFICATIF_AVENANT_PREFET",
@@ -218,11 +257,12 @@ class TypeEvenement(TextChoices):
     )
     PUBLICATION_AVENANT_HYPOTHEQUE = (
         "PUBLICATION_AVENANT_HYPOTHEQUE",
-        "Publication de l'avenant de la convention APL au bureau des hypothèques",
+        "Publication de l'avenant de la convention APL au bureau des" "hypothèques",
     )
-    EXPIRATION_CONVENTION = "EXPIRATION_CONVENTION", "Expiration de la convention APL"
+    EXPIRATION_CONVENTION = "EXPIRATION_CONVENTION", "Expiration de la" "convention APL"
     ENVOI_FIN_DENONCIATION = (
         "ENVOI_FIN_DENONCIATION",
-        "Information auprès du bailleur de la date butoir de dénonciation de la convention APL",
+        "Information auprès du bailleur de la date butoir de dénonciation de"
+        "la convention APL",
     )
     AUTRE = "AUTRE", "Autres"

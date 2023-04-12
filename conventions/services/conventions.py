@@ -8,10 +8,12 @@ from django.db.models import Q
 from django.db.models.functions import Substr
 from django.http.request import HttpRequest
 
+from bailleurs.models import Bailleur
 from conventions.forms import ConventionResiliationForm, UploadForm, ConventionDateForm
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
 from conventions.services.file import ConventionFileService
+from instructeurs.models import Administration
 from users.models import User
 
 
@@ -46,46 +48,57 @@ class ConventionListService:
     search_input: str
     order_by: str
     page: str
-    statut_filter: str
-    financement_filter: str
-    departement_input: str
+    statut_filter: str | None
+    financement_filter: str | None
+    departement_input: str | None
+    ville: str | None
+    anru: bool
     my_convention_list: Any  # list[Convention]
     paginated_conventions: Any  # list[Convention]
     total_conventions: int
     user: User
+    bailleur: Bailleur | None
+    administration: Administration | None
 
     def __init__(
         self,
         my_convention_list: Any,
         search_input: str = "",
-        statut_filter: str = "",
-        financement_filter: str = "",
-        departement_input: str = "",
+        statut_filter: str | None = None,
+        financement_filter: str | None = None,
+        departement_input: str | None = None,
+        ville: str | None = None,
+        anru: bool = False,
         active: bool | None = None,
         order_by: str = "",
         page: str = 1,
         user: User | None = None,
+        bailleur: Bailleur | None = None,
+        administration: Administration | None = None,
     ):
         self.search_input = search_input
-        self.statut_filter = statut_filter
+        try:
+            self.statut = ConventionStatut[statut_filter]
+        except KeyError:
+            self.statut = None
         self.financement_filter = financement_filter
         self.departement_input = departement_input
+        self.ville = ville
+        self.anru = anru
         self.active = active
         self.order_by = order_by
         self.page = page
         self.user = user
+        self.bailleur = bailleur
+        self.administration = administration
         self.my_convention_list = my_convention_list
 
-    def query_kept_params(self):
-        return f"search_input={self.search_input}&financement={self.financement_filter}"
-
+    # pylint: disable=R0912
     def paginate(self) -> None:
         total_user = self.my_convention_list.count()
         if self.search_input:
-            my_filter = (
-                Q(programme__ville__icontains=self.search_input)
-                | Q(programme__nom__icontains=self.search_input)
-                | Q(programme__code_postal__icontains=self.search_input)
+            my_filter = Q(programme__nom__icontains=self.search_input) | Q(
+                programme__code_postal__icontains=self.search_input
             )
             if self.active:
                 my_filter = my_filter | Q(
@@ -93,24 +106,43 @@ class ConventionListService:
                 )
             else:
                 my_filter = my_filter | Q(numero__icontains=self.search_input)
-            if self.user and self.user.is_instructeur():
-                my_filter = my_filter | Q(
-                    programme__bailleur__nom__icontains=self.search_input
-                )
 
             self.my_convention_list = self.my_convention_list.filter(my_filter)
-        if self.statut_filter:
+
+        if self.statut:
             self.my_convention_list = self.my_convention_list.filter(
-                statut=self.statut_filter
+                statut=self.statut.label
             )
+
         if self.financement_filter:
             self.my_convention_list = self.my_convention_list.filter(
                 financement=self.financement_filter
             )
+
+        if self.anru:
+            self.my_convention_list = self.my_convention_list.filter(
+                programme__anru=True
+            )
+
+        if self.ville:
+            self.my_convention_list = self.my_convention_list.filter(
+                programme__ville__icontains=self.ville
+            )
+
         if self.departement_input:
             self.my_convention_list = self.my_convention_list.annotate(
                 departement=Substr("programme__code_postal", 1, 2)
             ).filter(departement=self.departement_input)
+
+        if self.bailleur:
+            self.my_convention_list = self.my_convention_list.filter(
+                lot__programme__bailleur=self.bailleur
+            )
+
+        if self.administration:
+            self.my_convention_list = self.my_convention_list.filter(
+                lot__programme__administration=self.administration
+            )
 
         if self.order_by:
             self.my_convention_list = self.my_convention_list.order_by(self.order_by)

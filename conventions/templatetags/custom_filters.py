@@ -1,4 +1,5 @@
 from re import IGNORECASE, compile as rcompile, escape as rescape
+from urllib.parse import urlencode
 
 from django.conf import settings
 from django.http.request import HttpRequest
@@ -411,6 +412,11 @@ def get_text_as_list(text_field):
     if text_field is None:
         return ""
     return [line.strip(" -*") for line in text_field.splitlines() if line.strip(" -*")]
+
+
+@register.filter
+def to_query_params(data: dict):
+    return urlencode(data)
 
 
 @register.filter

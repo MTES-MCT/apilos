@@ -5,8 +5,6 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST, require_GET
 
-from bailleurs.models import Bailleur
-
 
 def home(request):
     """
@@ -57,6 +55,25 @@ def search_parent_bailleur(request, bailleur_uuid: str):
             .exclude(uuid=bailleur_uuid)
             .filter(parent_id__isnull=True)
             .filter(nom__icontains=query)[: settings.APILOS_MAX_DROPDOWN_COUNT]
+        ],
+        safe=False,
+    )
+
+
+@login_required
+@require_GET
+def search_administration(request):
+    query = request.GET.get("q", "")
+
+    return JsonResponse(
+        [
+            {
+                "label": a.nom,
+                "value": a.uuid,
+            }
+            for a in request.user.administrations().filter(nom__icontains=query)[
+                : settings.APILOS_MAX_DROPDOWN_COUNT
+            ]
         ],
         safe=False,
     )
