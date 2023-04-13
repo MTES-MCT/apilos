@@ -10,7 +10,7 @@ class LoyerSimulateurForm(forms.Form):
         choices=NatureLogement.choices,
     )
     montant = forms.DecimalField(
-        label="Loyer actuel",
+        label="Loyer initial",
         max_digits=6,
         decimal_places=2,
         error_messages={

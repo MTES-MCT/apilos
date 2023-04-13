@@ -1010,6 +1010,8 @@ class IndiceEvolutionLoyer(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     is_loyer = models.BooleanField(default=True)
     annee = models.IntegerField()
+    date_debut = models.DateField()
+    date_fin = models.DateField()
     nature_logement = models.TextField(
         choices=NatureLogement.choices,
         default=NatureLogement.LOGEMENTSORDINAIRES,

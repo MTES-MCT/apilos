@@ -1,6 +1,8 @@
 import functools
 from datetime import date
 
+from django.db.models import Q
+
 from programmes.models import IndiceEvolutionLoyer, NatureLogement
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.utils import get_or_create_conventions
@@ -27,18 +29,27 @@ class LoyerRedevanceUpdateComputer:
         if nature_logement not in NatureLogement.eligible_for_update():
             raise Exception(f"Nature de logement invalide {nature_logement}")
 
-        evolutions = list(
+        qs = (
             IndiceEvolutionLoyer.objects.filter(
                 nature_logement=nature_logement
                 if nature_logement != NatureLogement.LOGEMENTSORDINAIRES
                 else None,
                 is_loyer=nature_logement == NatureLogement.LOGEMENTSORDINAIRES,
-                annee__gt=date_initiale.year,
-                annee__lte=date_actualisation.year,
             )
-            .order_by("annee")
-            .values_list("evolution", flat=True)
+            .filter(
+                # Soit la plage de dates "englobe" la période
+                Q(date_debut__gt=date_initiale, date_fin__lt=date_actualisation)
+                |
+                # Soit la date initiale est située sur la période
+                Q(date_debut__lte=date_initiale, date_fin__gte=date_initiale)
+                |
+                # Soit la date d'actualisation est située sur la période
+                Q(date_debut__lte=date_actualisation, date_fin__gte=date_actualisation)
+            )
+            .order_by("date_debut")
         )
+
+        evolutions = list(qs.values_list("evolution", flat=True))
 
         return functools.reduce(
             lambda loyer, evolution: loyer * ((100.0 + evolution) / 100.0),
