@@ -40,6 +40,10 @@ class EmailTemplateID(enum.Enum):
     B_SATISFACTION = 138
     # [PLATEFORME] Instructeurs - 2 - RETENTION (Questionnaire de satisfaction)
     I_SATISFACTION = 139
+    # Instructeurs - 5 - ACTIVATION (récapitulatif mensuel)
+    I_MENSUEL = 151
+    # Bailleurs - 5 - ACTIVATION (récapitulatif mensuel)
+    B_MENSUEL = 152
 
 
 class EmailService:

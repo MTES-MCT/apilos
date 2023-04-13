@@ -98,6 +98,7 @@ class UserService:
             | instructeur_partiel_signature
         ).distinct():
             if instructeur.preferences_email == "PARTIEL":
+
                 initial_instructeur.append(
                     {
                         "firstname": instructeur.first_name,
@@ -112,6 +113,31 @@ class UserService:
                         "conventions_asigner": Convention.objects.filter(
                             statut="4. A signer", conventionhistories__user=instructeur
                         ),
+                    }
+                )
+                EmailService(
+                    to_emails=[instructeur.email],
+                    email_template_id=EmailTemplateID.I_MENSUEL,
+                ).send_transactional_email(
+                    email_data={
+                        "firstname": instructeur.first_name,
+                        "lastname": instructeur.last_name,
+                        "conventions_instruction": [
+                            {"nom": str(c), "uuid": str(c.uuid)}
+                            for c in Convention.objects.filter(
+                                statut="2. Instruction requise",
+                                programme__administration__in=User.objects.filter(
+                                    username=instructeur.username
+                                ).values("roles__administration"),
+                            )
+                        ],
+                        "conventions_asigner": [
+                            {"nom": str(c), "uuid": str(c.uuid)}
+                            for c in Convention.objects.filter(
+                                statut="4. A signer",
+                                conventionhistories__user=instructeur,
+                            )
+                        ],
                     }
                 )
             elif instructeur.preferences_email == "TOUS":
@@ -132,6 +158,34 @@ class UserService:
                                 username=instructeur.username
                             ).values("roles__administration"),
                         ),
+                    }
+                )
+
+                EmailService(
+                    to_emails=[instructeur.email],
+                    email_template_id=EmailTemplateID.I_MENSUEL,
+                ).send_transactional_email(
+                    email_data={
+                        "firstname": instructeur.first_name,
+                        "lastname": instructeur.last_name,
+                        "conventions_instruction": [
+                            {"nom": str(c), "uuid": str(c.uuid)}
+                            for c in Convention.objects.filter(
+                                statut="2. Instruction requise",
+                                programme__administration__in=User.objects.filter(
+                                    username=instructeur.username
+                                ).values("roles__administration"),
+                            )
+                        ],
+                        "conventions_asigner": [
+                            {"nom": str(c), "uuid": str(c.uuid)}
+                            for c in Convention.objects.filter(
+                                statut="4. A signer",
+                                programme__administration__in=User.objects.filter(
+                                    username=instructeur.username
+                                ).values("roles__administration"),
+                            )
+                        ],
                     }
                 )
 
