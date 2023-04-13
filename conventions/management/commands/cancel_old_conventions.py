@@ -41,16 +41,21 @@ class Command(BaseCommand):
             programme__date_achevement__lt=older_than,
             statut=ConventionStatut.INSTRUCTION.label,
         )
-        # if departement:
-        #     conventions = conventions.filter(
-        #         programme__code_insee_departement=departement
-        #     )
+        if departement:
+            conventions = conventions.filter(
+                programme__code_insee_departement=departement
+            )
         if administration_code:
             conventions = conventions.filter(
                 programme__administration__code=administration_code
             )
 
         nb_conventions = conventions.count()
+        for convention in conventions:
+            logging.warning(
+                f" {convention.uuid} - {convention} - {convention.programme.date_achevement}"
+            )
+
         go = input(
             f"{nb_conventions} conventions older than {older_than} will be canceled,"
             + " are you sure (No/yes)?"
