@@ -2,6 +2,22 @@
 
 La migration des données depuis Ecoloweb se fait via une commande CLI (_command line interface_) de [Django](https://docs.djangoproject.com/fr/4.1/howto/custom-management-commands/).
 
+## Installation de la base de données
+
+Les exports de données nous sont transmis au format `.pgsql`. Pour pouvoir les charger
+sur la base @ Scalingo, le seul moyen stable est de [créer un tunnel SSH](https://doc.scalingo.com/platform/databases/access#encrypted-tunnel).
+Une fois celui-ci en place, il reste à supprimer les tables existantes et importer
+le fichier de dump:
+
+```bash
+DB_URL=postgres://<user>:<password>@localhost:10000/<dbname>
+
+for table in $(psql "${DB_URL}" -t -c "SELECT \"tablename\" FROM pg_tables WHERE schemaname='ecolo'"); do
+     psql "${DB_URL}" -c "DROP TABLE IF EXISTS \"${table}\" CASCADE;"
+done
+pg_restore -d "${DB_URL}" --clean --no-acl --no-owner --no-privileges <fichier_dump>.pgsql
+```
+
 ## Structure des données @ Ecoloweb
 
 Sur Ecoloweb, les informations clefs et pérennes d'une convention sont gardées _éternellement_ dans la table `ecolo_conventionapl`.
@@ -40,6 +56,13 @@ Pour lancer l'import des conventions sur un département, il faut ajouter le cod
 D'autres options, _réellement optionnelles_ celles-ci, sont disponibles:
 * `--no-progress`: ne pas afficher la barre de progression dynamique (utile pour analyser les logs depuis Scalingo)
 * `--debug`: affiche des informations supplémentaires au développeur (à conjuguer avec l'option `--no-progress`)
+* `--setup`: supprime et recrée la _materialized view_ `ecolo_conventionhistorique`, en charge
+de retranscrire l'historique Ecolo vers celui d'Apilos. Comme cette étape est assez longue, cette
+option n'est utile qu'après un changement de structure de cette _view_ **ou** après l'import d'un
+dump de base de données Ecolo
+* `--update`: si une convention a déjà été importée depuis Ecolo, et non supprimée depuis, cette option
+force la mise à jour des données sur Apilos avec celles issues d'Ecoloweb (⚠️ tout changement survenu entre
+temps sera écrasé)
 
 ## Exécution de depuis Scalingo
 
