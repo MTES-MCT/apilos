@@ -151,6 +151,12 @@ class ModelImporter(ABC):
 
         return {}
 
+    def _find_existing_model(self, data: dict) -> Model | None:
+        # Extract dict values from declared identity keys as filters dict
+        filters = self._get_matching_fields(data)
+
+        return self.model.objects.filter(**filters).first()
+
     def _prepare_data(self, data: dict) -> dict:
         """
         Prepare data dict before it's used to create a new instance. This is
@@ -173,58 +179,58 @@ class ModelImporter(ABC):
 
         self._debug(f"Processing result {data} for handler {self.__class__.__name__}")
 
-        # Look for a potentially already imported model
+        # Extraction de l'identifiant du modèle dans la base Ecolo
+        ecolo_id = data.pop(self.ecolo_id_field)
+
+        # Préparation des valeurs pour enregistrement (avec résolution récursive
+        # des modèles liés dans la base Apilos)
+        data = self._prepare_data(data)
+
+        # Recherche d'une instance déjà existante dans la base Apilos selon les
+        # critères d'unicité (cf. champs _identity_keys)
+        existing = self._find_existing_model(data)
+
+        # Recherche d'une éventuelle référence existante vers ce modèle issue
+        # d'un précédent import
         ecolo_ref = (
-            self.find_ecolo_reference(data[self.ecolo_id_field])
-            if self.ecolo_id_field in data
-            else None
+            self.find_ecolo_reference(ecolo_id) if ecolo_id is not None else None
         )
+
         created = True
-        instance = None
 
-        # If model wasn't imported yet, import it now
+        # Si le modèle n'a encore jamais été importé depuis Ecolo ...
         if ecolo_ref is None:
-            # Extract from data the id of the associated object in the Ecoloweb DB (in
-            # string format as it can be a hash function like for programme lots)
-            ecolo_id = data.pop(self.ecolo_id_field)
-
-            # Compute data dictionary
-            data = self._prepare_data(data)
-
-            # Extract dict values from declared identity keys as filters dict
-            filters = self._get_matching_fields(data)
-            if len(filters) > 0:
-                instance, created = self.model.objects.get_or_create(
-                    **filters, defaults=data
-                )
-
-                self._register_ecolo_reference(instance, ecolo_id)
-                if created:
-                    self._nb_imported_models += 1
-
+            # ... et qu'aucun modèle ne correspond dans la base Apilos ...
+            if existing is not None:
+                # ... alors on associe l'entité existante
+                instance = existing
+                created = False
+            # ... mais qu'un modèle correspond dans la base Apilos ...
             else:
-                # Create a new instance...
-                if data is not None:
-                    self._debug(
-                        f"Creating model for handler {self.__class__.__name__} with"
-                        f"data {data}"
-                    )
-
-                    instance = self.model.objects.create(**data)
-
-                    # ...and mark it as imported
-                    self._register_ecolo_reference(instance, ecolo_id)
-                    self._nb_imported_models += 1
+                # ... alors on le crée
+                instance = self.model.objects.create(**data)
+            # On enregistre l'entité Apilos comme associé à la base Ecolo
+            self._register_ecolo_reference(instance, ecolo_id)
+            self._nb_imported_models += 1
+        # Si le modèle a déjà été importé depuis Ecolo avant ...
         else:
-            ecolo_id = ecolo_ref.ecolo_id
-            instance = ecolo_ref.resolve()
             created = False
-
-            if self.update:
-                ecolo_id = data.pop(self.ecolo_id_field)
-
-                # Compute data dictionary
-                data = self._prepare_data(data)
+            instance = ecolo_ref.resolve()
+            # ... mais que le modèle Apilos a été supprimé depuis ...
+            if instance is None:
+                # ... alors on marque la référence comme "supprimée"
+                ecolo_ref.marquer_supprime()
+                instance = None
+            # ... mais qu'il existe une entité correspondante dans la base
+            # Apilos ET une référence
+            elif existing:
+                # ... alors on met à jour la référence Ecolo avec le bon modèle
+                ecolo_ref.apilos_id = existing.id
+                ecolo_ref.save(update_fields=["apilos_id"])
+            # ... et que la référence existe toujours ...
+            elif self.update:
+                # ... alors si l'import est en mode "update" on met à jour le
+                # modèle cible averc les données issues d'Ecoloweb
                 ecolo_ref.update(data)
 
         self._on_processed(ecolo_id, instance, created)
