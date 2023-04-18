@@ -18,17 +18,18 @@ class BailleurImporter(ModelImporter):
             self._siret_resolver = SiretResolver(
                 settings.INSEE_API_KEY, settings.INSEE_API_SECRET
             )
+        # pylint: disable=W0703
         except BaseException:
             self._siret_resolver = None
-
-        self._identity_keys = ["siret"]
 
         self._query_one = self._get_file_content("importers/bailleur.sql")
 
     def _resolve_siret(self, codesiren: str, date_creation: date):
+
         if self._siret_resolver:
             try:
                 return self._siret_resolver.resolve(codesiren, date_creation)
+            # pylint: disable=W0703
             except BaseException:
                 return None
 

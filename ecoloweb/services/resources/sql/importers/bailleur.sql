@@ -24,6 +24,7 @@ select
         -- 14 caractères (format SIRET)
         else substring(upper(regexp_replace(b.raisonsociale, '[^a-zA-Z0-9]+', '', 'g')), 1, 14)
     end as codesiret,
+    coalesce(b.codesiren, substr(codesiret, 9)) as siren,
     cb.noms_contacts as signataire_nom,
     case
         when b.raisonsociale = 'ANAH' or snb.code = '611' then 'Bailleurs privés'

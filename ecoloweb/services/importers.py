@@ -153,16 +153,17 @@ class ModelImporter(ABC):
 
     def _prepare_data(self, data: dict) -> dict:
         """
-        Prepare data dict before it's used to create a new instance. This is where you can
-        add, remove or update an attribute
+        Prepare data dict before it's used to create a new instance. This is
+        where you can add, remove or update an attribute
         """
         return data
 
     def process_result(self, data: dict | None) -> Model | None:
         """
-        For each result row from the base SQL query, process it by following these steps:
+        For each result row from the base SQL query, process it by following
+        these steps:
         1. look for an already imported model and if found return it
-        2. if some identity fields are declared in the `_get_identity_keys`, attempt to
+        2. if some identity fields are declared in  `_identity_keys`, attempt to
         find a matching model from the APiLos database
         3. if still no model can be found, let's create it
         4. mark the newly created model as imported to avoid duplicate imports
