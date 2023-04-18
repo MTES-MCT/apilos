@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db.models import Q
+from django.urls import reverse
 
 from bailleurs.models import Bailleur
 from conventions.models import Convention
@@ -90,31 +92,16 @@ class UserService:
             preferences_email="PARTIEL",
             valide_par__convention__statut="4. A signer",
         )
-
-        initial_instructeur = []
-        for instructeur in User.objects.filter(
-            instructeur_tous_mails
-            | instructeur_partiel_instruction
-            | instructeur_partiel_signature
-        ).distinct():
+        for instructeur in (
+            User.objects.filter(cerbere_login__isnull=True)
+            .filter(
+                instructeur_tous_mails
+                | instructeur_partiel_instruction
+                | instructeur_partiel_signature
+            )
+            .distinct()
+        ):
             if instructeur.preferences_email == "PARTIEL":
-
-                initial_instructeur.append(
-                    {
-                        "firstname": instructeur.first_name,
-                        "lastname": instructeur.last_name,
-                        "email": instructeur.email,
-                        "conventions_instruction": Convention.objects.filter(
-                            statut="2. Instruction requise",
-                            programme__administration__in=User.objects.filter(
-                                username=instructeur.username
-                            ).values("roles__administration"),
-                        ),
-                        "conventions_asigner": Convention.objects.filter(
-                            statut="4. A signer", conventionhistories__user=instructeur
-                        ),
-                    }
-                )
                 EmailService(
                     to_emails=[instructeur.email],
                     email_template_id=EmailTemplateID.I_MENSUEL,
@@ -141,26 +128,6 @@ class UserService:
                     }
                 )
             elif instructeur.preferences_email == "TOUS":
-                initial_instructeur.append(
-                    {
-                        "firstname": instructeur.first_name,
-                        "lastname": instructeur.last_name,
-                        "email": instructeur.email,
-                        "conventions_instruction": Convention.objects.filter(
-                            statut="2. Instruction requise",
-                            programme__administration__in=User.objects.filter(
-                                username=instructeur.username
-                            ).values("roles__administration"),
-                        ),
-                        "conventions_asigner": Convention.objects.filter(
-                            statut="4. A signer",
-                            programme__administration__in=User.objects.filter(
-                                username=instructeur.username
-                            ).values("roles__administration"),
-                        ),
-                    }
-                )
-
                 EmailService(
                     to_emails=[instructeur.email],
                     email_template_id=EmailTemplateID.I_MENSUEL,
@@ -169,7 +136,12 @@ class UserService:
                         "firstname": instructeur.first_name,
                         "lastname": instructeur.last_name,
                         "conventions_instruction": [
-                            {"nom": str(c), "uuid": str(c.uuid)}
+                            {
+                                "nom": str(c),
+                                "uuid": str(c.uuid),
+                                "url": settings.APPLICATION_DOMAIN_URL
+                                + reverse("conventions:recapitulatif", args=[c.uuid]),
+                            }
                             for c in Convention.objects.filter(
                                 statut="2. Instruction requise",
                                 programme__administration__in=User.objects.filter(
@@ -178,7 +150,12 @@ class UserService:
                             )
                         ],
                         "conventions_asigner": [
-                            {"nom": str(c), "uuid": str(c.uuid)}
+                            {
+                                "nom": str(c),
+                                "uuid": str(c.uuid),
+                                "url": settings.APPLICATION_DOMAIN_URL
+                                + reverse("conventions:recapitulatif", args=[c.uuid]),
+                            }
                             for c in Convention.objects.filter(
                                 statut="4. A signer",
                                 programme__administration__in=User.objects.filter(
@@ -212,54 +189,91 @@ class UserService:
             valide_par__convention__statut="3. Corrections requises",
         )
 
-        initial_bailleur = []
-        for bailleur in User.objects.filter(
-            bailleurs_tous_mails
-            | bailleurs_partiel_projet
-            | bailleurs_partiel_corrections
-        ).distinct():
+        for bailleur in (
+            User.objects.filter(cerbere_login__isnull=True)
+            .filter(
+                bailleurs_tous_mails
+                | bailleurs_partiel_projet
+                | bailleurs_partiel_corrections
+            )
+            .distinct()
+        ):
 
             if bailleur.preferences_email == "PARTIEL":
                 # on importe toutes les conventions en projet créées par le bailleur
                 # conventions en corrections créées par le bailleur ou soumise par lui
-                conventions_correc_cree = Q(
-                    statut="3. Corrections requises", cree_par=bailleur
-                )
-                conventions_correc_valid = Q(
-                    statut="3. Corrections requises", conventionhistories__user=bailleur
-                )
-                initial_bailleur.append(
-                    {
+
+                EmailService(
+                    to_emails=[bailleur.email],
+                    email_template_id=EmailTemplateID.B_MENSUEL,
+                ).send_transactional_email(
+                    email_data={
                         "firstname": bailleur.first_name,
                         "lastname": bailleur.last_name,
-                        "email": bailleur.email,
-                        "conventions_projet": Convention.objects.filter(
-                            statut="1. Projet", cree_par=bailleur
-                        ),
-                        "conventions_correction": Convention.objects.filter(
-                            conventions_correc_cree | conventions_correc_valid
-                        ),
+                        "conventions_projet": [
+                            {
+                                "nom": str(c),
+                                "uuid": str(c.uuid),
+                                "url": settings.APPLICATION_DOMAIN_URL
+                                + reverse("conventions:recapitulatif", args=[c.uuid]),
+                            }
+                            for c in Convention.objects.filter(
+                                statut="1. Projet",
+                                cree_par=bailleur,
+                            )
+                        ],
+                        "conventions_correction": [
+                            {
+                                "nom": str(c),
+                                "uuid": str(c.uuid),
+                                "url": settings.APPLICATION_DOMAIN_URL
+                                + reverse("conventions:recapitulatif", args=[c.uuid]),
+                            }
+                            for c in Convention.objects.filter(
+                                Q(statut="3. Corrections requises", cree_par=bailleur)
+                                | Q(
+                                    statut="3. Corrections requises",
+                                    conventionhistories__user=bailleur,
+                                )
+                            )
+                        ],
                     }
                 )
             elif bailleur.preferences_email == "TOUS":
-                initial_bailleur.append(
-                    {
+                EmailService(
+                    to_emails=[bailleur.email],
+                    email_template_id=EmailTemplateID.B_MENSUEL,
+                ).send_transactional_email(
+                    email_data={
                         "firstname": bailleur.first_name,
                         "lastname": bailleur.last_name,
-                        "email": bailleur.email,
-                        "conventions_projet": Convention.objects.filter(
-                            statut="1. Projet",
-                            programme__bailleur__in=User.objects.filter(
-                                username=bailleur.username
-                            ).values("roles__bailleur"),
-                        ),
-                        "conventions_correction": Convention.objects.filter(
-                            statut="3. Corrections requises",
-                            programme__bailleur__in=User.objects.filter(
-                                username=bailleur.username
-                            ).values("roles__bailleur"),
-                        ),
+                        "conventions_projet": [
+                            {
+                                "nom": str(c),
+                                "uuid": str(c.uuid),
+                                "url": settings.APPLICATION_DOMAIN_URL
+                                + reverse("conventions:recapitulatif", args=[c.uuid]),
+                            }
+                            for c in Convention.objects.filter(
+                                statut="1. Projet",
+                                programme__bailleur__in=User.objects.filter(
+                                    username=bailleur.username
+                                ).values("roles__bailleur"),
+                            )
+                        ],
+                        "conventions_correction": [
+                            {
+                                "nom": str(c),
+                                "uuid": str(c.uuid),
+                                "url": settings.APPLICATION_DOMAIN_URL
+                                + reverse("conventions:recapitulatif", args=[c.uuid]),
+                            }
+                            for c in Convention.objects.filter(
+                                statut="3. Corrections requises",
+                                programme__bailleur__in=User.objects.filter(
+                                    username=bailleur.username
+                                ).values("roles__bailleur"),
+                            )
+                        ],
                     }
                 )
-
-        return initial_instructeur, initial_bailleur
