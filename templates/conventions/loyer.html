@@ -96,22 +96,24 @@
                 </form>
             </div>
 
-            <div class="fr-col-md-6 apilos-recap fr-mt-2w">
-                <ul>
-                    <li>
-                        <span class="fr-text--bold apilos-text-blue-sun">Résultat</span>
-                    </li>
-                    <li>
-                        <span class="fr-text--bold">Montant actualisé</span><br/>
-                        <span class="fr-display-md">{% if montant_actualise %}{{ montant_actualise|floatformat:2 }} €{% endif %}</span>
+            {% if montant_actualise %}
+                <div class="fr-col-md-6 apilos-recap fr-mt-2w">
+                    <ul>
+                        <li>
+                            <span class="fr-text--bold apilos-text-blue-sun">Résultat</span>
+                        </li>
+                        <li>
+                            <span class="fr-text--bold">Montant actualisé</span><br/>
+                            <span class="fr-display-md">{% if montant_actualise %}{{ montant_actualise|floatformat:2 }} €{% endif %}</span>
 
-                    </li>
-                    <li>
-                        <span class="fr-text--bold">Période de validité</span><br/>
-                        <p>{% if annee_validite %}Du 1er janvier {{ annee_validite }} au 31 décembre {{ annee_validite }}{% endif %}</p>
-                    </li>
-                </ul>
-            </div>
+                        </li>
+                        <li>
+                            <span class="fr-text--bold">Période de validité</span><br/>
+                            <p>{% if annee_validite %}Du 1er janvier {{ annee_validite }} au 31 décembre {{ annee_validite }}{% endif %}</p>
+                        </li>
+                    </ul>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

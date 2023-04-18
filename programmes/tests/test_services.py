@@ -218,9 +218,28 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
         )
 
     def test_compute_loyer_update_pensions_de_famille(self):
+        """
+        Teste que pour un logement de nature incompatible (pension de famille,
+        résidence universitaire, hébergement) avec la calculette, une exception
+        est levée
+        """
         with self.assertRaises(Exception):
             LoyerRedevanceUpdateComputer.compute_loyer_update(
                 montant_initial=400,
                 nature_logement=NatureLogement.PENSIONSDEFAMILLE,
+                date_initiale=date.fromisoformat("2013-07-12"),
+            )
+
+        with self.assertRaises(Exception):
+            LoyerRedevanceUpdateComputer.compute_loyer_update(
+                montant_initial=400,
+                nature_logement=NatureLogement.HEBERGEMENT,
+                date_initiale=date.fromisoformat("2013-07-12"),
+            )
+
+        with self.assertRaises(Exception):
+            LoyerRedevanceUpdateComputer.compute_loyer_update(
+                montant_initial=400,
+                nature_logement=NatureLogement.RESIDENCEUNIVERSITAIRE,
                 date_initiale=date.fromisoformat("2013-07-12"),
             )
