@@ -132,9 +132,9 @@ class ConventionPostForAvenantViewTests(AbstractCreateViewTestCase, TestCase):
 
         bailleur = Bailleur.objects.get(siret="987654321")
         administration = Administration.objects.get(code="75000")
-        self.target_path = reverse("conventions:search_for_avenant_result")
+        self.target_path = reverse("conventions:search_for_avenant")
         self.next_target_starts_with = "/conventions/recapitulatif"
-        self.target_template = "conventions/avenant/search_for_avenant_result.html"
+        self.target_template = "conventions/avenant/search_for_avenant.html"
         self.error_payload = {
             "bailleur": str(bailleur.uuid),
             "administration": str(administration.uuid),

@@ -5,9 +5,9 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 
+from conventions.forms import AvenantSearchForm
 from conventions.services.avenants import (
     create_avenant,
-    search_result,
     upload_avenants_for_avenant,
     complete_avenants_for_avenant,
 )
@@ -88,17 +88,38 @@ def form_avenants_for_avenant(request, convention_uuid):
 
 class SearchForAvenantResultView(LoginRequiredMixin, View):
     def get(self, request):
-        result = search_result(request)
-        service = ConventionSelectionService(request)
-        service.get_for_avenant()
+        is_submitted = request.GET.get("departement", None) is not None
+        search_form = (
+            AvenantSearchForm(request.GET) if is_submitted else AvenantSearchForm()
+        )
+
+        if is_submitted and search_form.is_valid():
+            conventions = request.user.conventions().filter(
+                parent_id__isnull=True,
+                programme__code_postal__startswith=search_form.cleaned_data[
+                    "departement"
+                ].code_postal,
+                valide_le__year=search_form.cleaned_data["annee"],
+                numero__endswith=search_form.cleaned_data["numero"],
+            )
+
+            service = ConventionSelectionService(request)
+            service.get_for_avenant()
+
+            return render(
+                request,
+                "conventions/avenant/search_for_avenant.html",
+                {
+                    "conventions": conventions,
+                    "form": service.form,
+                    "editable": True,
+                },
+            )
+
         return render(
             request,
-            "conventions/avenant/search_for_avenant_result.html",
-            {
-                **result,
-                "form": service.form,
-                "editable": True,
-            },
+            "conventions/avenant/search_for_avenant.html",
+            {"conventions": None, "search_form": search_form},
         )
 
     def post(self, request):
@@ -114,7 +135,7 @@ class SearchForAvenantResultView(LoginRequiredMixin, View):
             )
         return render(
             request,
-            "conventions/avenant/search_for_avenant_result.html",
+            "conventions/avenant/search_for_avenant.html",
             {
                 "form": service.form,
                 "editable": True,
