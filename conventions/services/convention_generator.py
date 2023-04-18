@@ -480,24 +480,21 @@ def _compute_mixte(convention):
         "mixPLUS_30pc": 0,
         "mixPLUS_10pc": 0,
     }
+    nb_logements = convention.lot.nb_logements or 0
     if convention.lot.financement == Financement.PLUS:
-        mixite["mixPLUS_10pc"] = round_half_up(convention.lot.nb_logements * 0.1)
+        mixite["mixPLUS_10pc"] = round_half_up(nb_logements * 0.1)
         # cf. convention : 30 % au moins des logements
-        if convention.lot.nb_logements < 10:
+        if nb_logements < 10:
             # cf. convention : 30 % au moins des logements (ce nombre s'obtenant en arrondissant
             # à l'unité la plus proche le résultat de l'application du pourcentage)
-            mixite["mixPLUS_30pc"] = round_half_up(convention.lot.nb_logements * 0.3)
-            mixite["mixPLUSinf10_30pc"] = round_half_up(
-                convention.lot.nb_logements * 0.3
-            )
+            mixite["mixPLUS_30pc"] = round_half_up(nb_logements * 0.3)
+            mixite["mixPLUSinf10_30pc"] = round_half_up(nb_logements * 0.3)
             # cf. convention : 10 % des logements
-            mixite["mixPLUSinf10_10pc"] = round_half_up(
-                convention.lot.nb_logements * 0.1
-            )
+            mixite["mixPLUSinf10_10pc"] = round_half_up(nb_logements * 0.1)
         else:
             # cf. convention : 30 % au moins des logements
-            mixite["mixPLUSsup10_30pc"] = math.ceil(convention.lot.nb_logements * 0.3)
-            mixite["mixPLUS_30pc"] = math.ceil(convention.lot.nb_logements * 0.3)
+            mixite["mixPLUSsup10_30pc"] = math.ceil(nb_logements * 0.3)
+            mixite["mixPLUS_30pc"] = math.ceil(nb_logements * 0.3)
 
     return mixite
 
