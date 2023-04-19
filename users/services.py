@@ -68,8 +68,11 @@ class UserService:
         return ""
 
     @classmethod
-    def email_mensuel(cls):
-
+    def email_mensuel(cls) -> dict:
+        nb_sent_emails = {
+            "bailleur": 0,
+            "instructeur": 0,
+        }
         # liste des instructeurs concernés par le mail
         # ceuxi qui ont coché la case "tous"
         instructeur_tous_mails = Q(
@@ -127,6 +130,7 @@ class UserService:
                         ],
                     }
                 )
+                nb_sent_emails["instructeur"] += 1
             elif instructeur.preferences_email == "TOUS":
                 EmailService(
                     to_emails=[instructeur.email],
@@ -165,6 +169,7 @@ class UserService:
                         ],
                     }
                 )
+                nb_sent_emails["instructeur"] += 1
 
         # liste des bailleurs concernés par le mail
         # ceux qui ont coché la case "tous"
@@ -239,6 +244,7 @@ class UserService:
                         ],
                     }
                 )
+                nb_sent_emails["bailleur"] += 1
             elif bailleur.preferences_email == "TOUS":
                 EmailService(
                     to_emails=[bailleur.email],
@@ -277,3 +283,6 @@ class UserService:
                         ],
                     }
                 )
+                nb_sent_emails["bailleur"] += 1
+
+        return nb_sent_emails
