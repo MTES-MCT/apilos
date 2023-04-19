@@ -35,7 +35,7 @@ class ConventionNumberForm(forms.Form):
             .exists()
         ):
             raise ValidationError(
-                f"La convention de numero {convention_numero} exists déjà,"
+                f"La convention de numero {convention_numero} existe déjà,"
                 + " merci de choisir un autre numéro de convention."
             )
         return convention_numero
