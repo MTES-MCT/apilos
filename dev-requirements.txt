@@ -131,9 +131,9 @@ django==4.1.7 \
     #   -c requirements.txt
     #   django-browser-reload
     #   django-extensions
-django-browser-reload==1.7.0 \
-    --hash=sha256:0d7cc4308ebbdf9b5637e28ee7b41ae28d4fcdf350d55ce007515b44cd10291b \
-    --hash=sha256:712d0a4d6caa6833c8c205d4ce177b474feb45583cd6ee684c9ea7b71dd921b6
+django-browser-reload==1.8.0 \
+    --hash=sha256:054ef5ce8b80f46e0beda1a3c847becdff51272cad6f2bda607e201a7afe7425 \
+    --hash=sha256:6db7e6c5807fff87e421b53926c50cfa3de0115e438f3c2de6103d3069557adb
     # via -r dev-requirements.in
 django-extensions==3.2.1 \
     --hash=sha256:2a4f4d757be2563cd1ff7cfdf2e57468f5f931cc88b23cf82ca75717aae504a4 \
