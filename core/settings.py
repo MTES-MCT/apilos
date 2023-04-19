@@ -151,7 +151,7 @@ if ENVIRONMENT == "development":
             "django_browser_reload",
         ]
     )
-    SHELL_PLUS_PRINT_SQL = get_env_variable("SHELL_PLUS_PRINT_SQL", cast=bool)
+    SHELL_PLUS_PRINT_SQL = get_env_variable("SHELL_PLUS_PRINT_SQL", default=True, cast=bool)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
