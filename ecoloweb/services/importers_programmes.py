@@ -43,6 +43,7 @@ class RepartitionSurfaceImporter(ModelImporter):
         super().__init__(departement, import_date, debug=debug, update=update)
 
         self._query_many = self._get_file_content("importers/repartitions_surface.sql")
+        self._identity_keys = ["lot", "typologie", "type_habitat"]
 
     def _prepare_data(self, data: dict) -> dict:
         return {
