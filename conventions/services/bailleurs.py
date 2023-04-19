@@ -44,12 +44,6 @@ class ConventionBailleurService(ConventionService):
         self.form = ConventionBailleurForm(
             initial={
                 "uuid": bailleur.uuid,
-                "nom": bailleur.nom,
-                "siret": bailleur.siret,
-                "capital_social": bailleur.capital_social,
-                "adresse": bailleur.adresse,
-                "code_postal": bailleur.code_postal,
-                "ville": bailleur.ville,
                 "signataire_nom": self.convention.signataire_nom
                 or bailleur.signataire_nom,
                 "signataire_fonction": self.convention.signataire_fonction
