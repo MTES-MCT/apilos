@@ -86,6 +86,7 @@ LOGGING = {
 }
 
 SENDINBLUE_API_KEY = get_env_variable("SENDINBLUE_API_KEY")
+APPLICATION_DOMAIN_URL = get_env_variable("APPLICATION_DOMAIN_URL")
 
 MAX_EMAIL_ATTACHED_FILES_SIZE = 10 * 1024 * 1024  # 10MB
 
@@ -150,7 +151,7 @@ if ENVIRONMENT == "development":
             "django_browser_reload",
         ]
     )
-    SHELL_PLUS_PRINT_SQL = True
+    SHELL_PLUS_PRINT_SQL = get_env_variable("SHELL_PLUS_PRINT_SQL", default=True, cast=bool)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
