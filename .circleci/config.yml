@@ -148,76 +148,112 @@ workflows:
           requires:
             - build
           filters:
+            tags:
+              only:
+                - /^v.*/
             branches:
-              only: master
+              ignore: /.*/
       - deploy_staging:
           requires:
             - validate_deployment_in_staging
           filters:
+            tags:
+              only:
+                - /^v.*/
             branches:
-              only: master
+              ignore: /.*/
       - validate_deployment_in_prod:
           type: approval
           requires:
             - build
           filters:
+            tags:
+              only:
+                - /^v.*/
             branches:
-              only: master
+              ignore: /.*/
       - deploy_prod:
           requires:
             - validate_deployment_in_prod
           filters:
+            tags:
+              only:
+                - /^v.*/
             branches:
-              only: master
+              ignore: /.*/
       - validate_deployment_in_siap_integration:
           type: approval
           requires:
             - build
           filters:
+            tags:
+              only:
+                - /^v.*/
             branches:
-              only: master
+              ignore: /.*/
       - deploy_siap_integration:
           requires:
             - validate_deployment_in_siap_integration
           filters:
+            tags:
+              only:
+                - /^v.*/
             branches:
-              only: master
+              ignore: /.*/
       - validate_deployment_in_siap_recette:
           type: approval
           requires:
             - build
           filters:
+            tags:
+              only:
+                - /^v.*/
             branches:
-              only: master
+              ignore: /.*/
       - deploy_siap_recette:
           requires:
             - validate_deployment_in_siap_recette
           filters:
+            tags:
+              only:
+                - /^v.*/
             branches:
-              only: master
+              ignore: /.*/
       - validate_deployment_in_siap_ecole:
           type: approval
           requires:
             - build
           filters:
+            tags:
+              only:
+                - /^v.*/
             branches:
-              only: master
+              ignore: /.*/
       - deploy_siap_ecole:
           requires:
             - validate_deployment_in_siap_ecole
           filters:
+            tags:
+              only:
+                - /^v.*/
             branches:
-              only: master
+              ignore: /.*/
       - validate_deployment_in_siap_production:
           type: approval
           requires:
             - build
           filters:
+            tags:
+              only:
+                - /^v.*/
             branches:
-              only: master
+              ignore: /.*/
       - deploy_siap_production:
           requires:
             - validate_deployment_in_siap_production
           filters:
+            tags:
+              only:
+                - /^v.*/
             branches:
-              only: master
+              ignore: /.*/
