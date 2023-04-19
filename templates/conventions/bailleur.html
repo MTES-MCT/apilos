@@ -67,7 +67,7 @@
                     </div>
                 {% endif %}
                 <div class="fr-col-12 fr-mb-0 fr-text--sm"><em>Vous pouvez{% if upform.bailleur.field.choices%} également{% endif %} mettre à jour les informations de votre bailleur, si celles-ci sont erronées, dans
-                    <a href="{% url 'settings:edit_bailleur' bailleur_uuid=convention.bailleur.uuid %}" target="_blank">votre espace d'administration</a></em>
+                    <a href="{% url 'settings:edit_bailleur' bailleur_uuid=convention.bailleur.uuid %}" target="_blank" rel="noopener">votre espace d'administration</a></em>
                 </div>
                 <hr class="fr-col-12 fr-my-3w">
             </div>

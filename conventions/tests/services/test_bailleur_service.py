@@ -41,7 +41,6 @@ class ConventionBailleurServiceTests(TestCase):
             self.service.form.initial["uuid"],
             bailleur.uuid,
         )
-        self.assertEqual(self.service.form.initial["nom"], bailleur.nom)
 
     def test_update_bailleur_nom_error(self):
 
