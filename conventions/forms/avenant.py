@@ -1,5 +1,8 @@
+import datetime
+
 from django import forms
 
+from apilos_settings.models import Departement
 from conventions.models import AvenantType
 
 
@@ -64,4 +67,24 @@ class CompleteforavenantForm(forms.Form):
     )
     nom_fichier_signe = forms.FileField(
         required=False,
+    )
+
+
+class AvenantSearchForm(forms.Form):
+    """
+    Formulaire de recherche d'avenant
+    """
+
+    departement = forms.ModelChoiceField(
+        label="Département",
+        queryset=Departement.objects.all(),
+        required=True,
+        empty_label=None,
+    )
+
+    annee = forms.IntegerField(
+        label="Année de signature", required=True, initial=datetime.date.today().year
+    )
+    numero = forms.CharField(
+        label="4 derniers chiffres de votre numéro de convention", required=True
     )

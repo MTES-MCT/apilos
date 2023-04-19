@@ -217,17 +217,10 @@ urlpatterns = [
     ),
     path(
         "search_for_avenant",
-        TemplateView.as_view(
-            template_name="conventions/avenant/search_for_avenant.html"
-        ),
-        name="search_for_avenant",
-    ),
-    path(
-        "search_for_avenant_result",
         permission_required("convention.add_convention")(
             views.SearchForAvenantResultView.as_view()
         ),
-        name="search_for_avenant_result",
+        name="search_for_avenant",
     ),
     path(
         "new_avenants_for_avenant/<convention_uuid>",

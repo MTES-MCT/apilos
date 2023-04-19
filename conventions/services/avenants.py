@@ -57,21 +57,6 @@ def create_avenant(request, convention_uuid):
     }
 
 
-def search_result(request):
-    departement = request.GET.get("departement", None)
-    annee = request.GET.get("annee", None)
-    num = request.GET.get("num", None)
-    conventions = []
-    if departement and annee and num:
-        conventions = request.user.conventions().filter(
-            parent_id__isnull=True,
-            programme__code_postal__startswith=departement,
-            valide_le__year=annee,
-            numero__endswith=num,
-        )
-    return {"conventions": conventions}
-
-
 def upload_avenants_for_avenant(request, convention_uuid):
     parent_convention = (
         Convention.objects.prefetch_related("programme")
