@@ -75,9 +75,9 @@ class ConventionFinancementForm(forms.Form):
           et finissant au 30 juin
         """
         today = datetime.date.today()
-        date_signature = self.convention.parent.televersement_convention_signee_le
-        if date_signature:
-            today = date_signature
+        if self.convention.parent:
+            if self.convention.parent.televersement_convention_signee_le:
+                today = self.convention.parent.televersement_convention_signee_le
         min_years = today.year + 15
         max_years = today.year + 40
         if today.month > 6:
@@ -107,9 +107,9 @@ class ConventionFinancementForm(forms.Form):
           et finissant au 30 juin
         """
         today = datetime.date.today()
-        date_signature = self.convention.parent.televersement_convention_signee_le
-        if date_signature:
-            today = date_signature
+        if self.convention.parent:
+            if self.convention.parent.televersement_convention_signee_le:
+                today = self.convention.parent.televersement_convention_signee_le
 
         min_years = today.year + 9
         if today.month > 6:
