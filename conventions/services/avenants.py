@@ -24,6 +24,13 @@ def create_avenant(request, convention_uuid):
         .prefetch_related("avenants")
         .get(uuid=convention_uuid)
     )
+    if parent_convention.is_avenant():
+        parent_convention = (
+            Convention.objects.prefetch_related("programme")
+            .prefetch_related("lot")
+            .prefetch_related("avenants")
+            .get(id=parent_convention.parent_id)
+        )
     if request.method == "POST":
         avenant_form = AvenantForm(request.POST)
         if avenant_form.is_valid():

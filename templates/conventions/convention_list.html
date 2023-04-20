@@ -246,7 +246,7 @@
                             <tbody>
                                 {% for convention in conventions.paginated_conventions %}
 
-                                    <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_project %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action %}signed{% endif %}">
+                                    <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
                                         <td title="{{convention.statut_for_template.statut_display}}">
                                             {% include "conventions/home/statut_tag.html"  %}
                                             <script type="text/javascript" nonce="{{request.csp_nonce}}">
