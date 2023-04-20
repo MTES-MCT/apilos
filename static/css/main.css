@@ -42,7 +42,6 @@
   color: var(--text-action-high-blue-france);
 }
 
-
 .fr-fi--xxl {
   --icon-size: 4rem;
 }
@@ -61,6 +60,35 @@
 .fr-alert__title {
   margin-bottom: 0.5rem;
 }
+@media (min-width: 62em) {
+
+  .fr-pl-lg-5w {
+    padding-left: 2.5rem !important;
+  }
+  .fr-pr-lg-5w {
+    padding-right: 2.5rem !important
+  }
+  .apilos-or-border {
+    position: relative;
+    border-left: solid 1px var(--border-default-grey);
+  }
+  .apilos-or-border:before {
+    content: "ou";
+    font-style: italic;
+    height: 70px;
+    line-height: 70px;
+    width: 30px;
+    text-align: center;
+    position: absolute;
+    left: -15px;
+    top: calc(50% - 35px);
+    background-color: white;
+  }
+}
+.h-100 {
+  height: 100%
+}
+
 #recap_navigation,
 .apilos-sticky.no_navbar {
   border-bottom: solid 1px var(--border-default-grey);

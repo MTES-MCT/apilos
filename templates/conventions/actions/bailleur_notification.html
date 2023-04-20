@@ -1,9 +1,9 @@
 {% load custom_filters %}
 
 {% if convention|display_notification_new_convention_instructeur_to_bailleur:request %}
-    <div class="fr-col-12 fr-mb-5w fr-mt-3w">
-        <div role="alert" class="fr-alert fr-alert--info">
-            <h4>Vous avez créé cette convention en lieu et place du bailleur et vous souhaitez sa relecture<h4>
+    <div class="fr-col-12 fr-col-lg-6 fr-py-5w fr-pr-lg-5w">
+        <div role="alert" class="fr-alert fr-alert--Corrections_requises fr-icon-arrow-right-s-line-double h-100">
+            <p class="fr-alert__title">Vous avez créé cette convention en lieu et place du bailleur et vous souhaitez sa relecture<p>
                 <p>Faites en part au bailleur, cette convention passera en statut « En attente de corrections » et
                     le bailleur pourra vous la renvoyer avec le statut « A instruire »</p>
                 <div>
@@ -29,7 +29,7 @@
                             <label class="fr-label" for="{{notificationForm.send_copy.id_for_label}}">Envoyez-moi une copie du message envoyé
                             </label>
                         </div>
-                        <button class="fr-btn">
+                        <button class="fr-btn fr-mt-2w">
                             Notifier le bailleur
                         </button>
                     </form>
@@ -40,17 +40,17 @@
 {% endif %}
 
 {% if convention|display_notification_instructeur_to_bailleur:request %}
-    <div class="fr-col-12 fr-py-5w">
-        <div role="alert" class="fr-alert fr-alert--info">
+    <div class="fr-col-12 fr-col-lg-6 fr-py-5w fr-pr-lg-5w">
+        <div role="alert" class="fr-alert fr-alert--Corrections_requises fr-icon-arrow-right-s-line-double h-100">
             {% if convention.get_last_instructeur_notification %}
                 <p>Denière notification du bailleur : {{ convention.get_last_instructeur_notification.cree_le }}</p>
             {% endif %}
             {% if convention|display_demande_correction %}
-                <h4>Vous avez ajouté des commentaires à l'attention du bailleur<br>
-                    Demandez des corrections ou précisions</h4>
+                <p class="fr-alert__title">Vous avez ajouté des commentaires à l'attention du bailleur<br>
+                    Demandez des corrections ou précisions</p>
             {% else %}
-                <h4>Vous avez ajouté des commentaires à l'attention du bailleur<br>
-                    Faites en part au bailleur</h4>
+                <p class="fr-alert__title">Vous avez ajouté des commentaires à l'attention du bailleur<br>
+                    Faites en part au bailleur</p>
             {% endif %}
             <div>
                 <form method="post" action="{% url 'conventions:feedback' convention_uuid=convention.uuid %}" data-turbo="false">
@@ -71,11 +71,11 @@
                         </label>
                     </div>
                     {% if convention|display_demande_correction %}
-                        <button class="fr-btn">
+                        <button class="fr-btn fr-mt-2w">
                             Demander des corrections au bailleur
                         </button>
                     {% else %}
-                        <button class="fr-btn">
+                        <button class="fr-btn fr-mt-2w">
                             Notifier le bailleur
                         </button>
                     {% endif %}
