@@ -34,7 +34,7 @@ class ConventionFinancementForm(forms.Form):
         required=True,
         label="",
         coerce=int,
-        choices=[(str(year), str(year)) for year in range(2021, 2121)],
+        choices=[(str(year), str(year)) for year in range(2010, 2121)],
         error_messages={
             "required": "La date de fin de conventionnement est obligatoire",
         },
@@ -75,7 +75,9 @@ class ConventionFinancementForm(forms.Form):
           et finissant au 30 juin
         """
         today = datetime.date.today()
-
+        date_signature = self.convention.parent.televersement_convention_signee_le
+        if date_signature:
+            today = date_signature
         min_years = today.year + 15
         max_years = today.year + 40
         if today.month > 6:
@@ -105,6 +107,9 @@ class ConventionFinancementForm(forms.Form):
           et finissant au 30 juin
         """
         today = datetime.date.today()
+        date_signature = self.convention.parent.televersement_convention_signee_le
+        if date_signature:
+            today = date_signature
 
         min_years = today.year + 9
         if today.month > 6:
@@ -206,8 +211,8 @@ class PretForm(forms.Form):
     def clean(self):
         """
         Validations:
-          - si le prêteur est CDCF ou CDCL, alors le numéro, la date d'octroi et la durée sont obligatoires
-          - si le prêteur est autre, alors le champ autre est obligatoire
+          - si le prêteur est CDCF ou CDCL, numéro,date d'octroi et durée sont obligatoires
+          - si le prêteur est autre, le champ autre est obligatoire
         """
         cleaned_data = super().clean()
         preteur = cleaned_data.get("preteur")
@@ -250,7 +255,8 @@ class BasePretFormSet(BaseFormSet):
 
     def manage_cdc_validation(self):
         """
-        Validation : Hors convention PLS et Sans Travaux, au moins un prêt CDCF ou CDCL doit-être déclaré
+        Validation : Hors convention PLS et Sans Travaux,
+        au moins un prêt CDCF ou CDCL doit-être déclaré
         """
         if (
             self.convention is not None
