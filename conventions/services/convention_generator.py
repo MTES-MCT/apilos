@@ -86,7 +86,7 @@ def _compute_total_logement(convention):
 
 def _compute_total_locaux_collectifs(convention):
     return sum(
-        locaux_collectif.surface_habitable
+        locaux_collectif.surface_habitable * locaux_collectif.nombre
         for locaux_collectif in convention.lot.locaux_collectifs.all()
     )
 
