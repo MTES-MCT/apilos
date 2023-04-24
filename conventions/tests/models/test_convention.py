@@ -1,4 +1,6 @@
+import datetime
 from unittest import mock
+import uuid
 
 from django.test import TestCase
 from conventions.models import (
@@ -211,6 +213,56 @@ class ConventionModelsTest(TestCase):
     def test_convention_bailleur(self):
         convention = Convention.objects.order_by("uuid").first()
         self.assertEqual(convention.bailleur, convention.programme.bailleur)
+
+
+class ConventionPrefixTest(TestCase):
+    fixtures = [
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+    ]
+
+    def clone_convention(self, convention):
+        programme = convention.programme
+        programme.pk = None
+        programme.uuid = uuid.uuid4()
+        programme.save()
+        lot = convention.lot
+        lot.pk = None
+        lot.uuid = uuid.uuid4()
+        lot.save()
+        return Convention(
+            programme=programme,
+            lot=lot,
+        )
+
+    def test_get_convention_prefix_same_admin(self):
+        convention = Convention.objects.order_by("uuid").first()
+        self.assertEqual(convention.get_convention_prefix(), "13.67890.23.0001")
+        convention2 = self.clone_convention(convention)
+        convention2.numero = "13.67890.23.0001"
+        convention2.statut = ConventionStatut.A_SIGNER
+        convention2.valide_le = datetime.date.today()
+        convention2.save()
+
+        self.assertEqual(convention.get_convention_prefix(), "13.67890.23.0002")
+        convention3 = self.clone_convention(convention)
+        convention3.numero = "13.67890.23.9998"
+        convention3.statut = ConventionStatut.A_SIGNER
+        convention3.valide_le = datetime.date.today()
+        convention3.save()
+        self.assertEqual(convention.get_convention_prefix(), "13.67890.23.9999")
+
+    def test_get_convention_prefix_different_admin(self):
+        convention = Convention.objects.order_by("uuid").first()
+        self.assertEqual(convention.get_convention_prefix(), "13.67890.23.0001")
+        convention2 = self.clone_convention(convention)
+        convention2.numero = "13.D.23.0001"
+        convention2.statut = ConventionStatut.A_SIGNER
+        convention2.valide_le = datetime.date.today()
+        convention2.save()
+        self.assertEqual(convention.get_convention_prefix(), "13.67890.23.0002")
 
 
 class ConventionHistoryModelsTest(TestCase):

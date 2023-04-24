@@ -60,8 +60,7 @@ class ConventionRecapitulatifService(ConventionService):
         opened_comments = Comment.objects.filter(
             convention=self.convention,
             statut=CommentStatut.OUVERT,
-        )
-        opened_comments = opened_comments.order_by("cree_le")
+        ).order_by("cree_le")
         if convention_type1_and_2_form is None:
             convention_type1_and_2_form = ConventionType1and2Form(
                 initial={
@@ -399,11 +398,7 @@ def convention_validate(request: HttpRequest, convention: Convention):
         convention_number_form.convention = convention
         if convention_number_form.is_valid():
             convention.numero = convention_number_form.cleaned_data["convention_numero"]
-
             convention.save()
-
-        if convention_number_form.is_valid() or request.POST.get("Force"):
-
             # Generate the doc should be placed after the status update
             # because the watermark report the status of the convention
             previous_status = convention.statut
@@ -414,36 +409,36 @@ def convention_validate(request: HttpRequest, convention: Convention):
                 statut_convention_precedent=previous_status,
                 user=request.user,
             ).save()
+            if not convention.valide_le:
+                convention.valide_le = timezone.now()
+            convention.save()
 
-        generate_and_send.delay(
-            {
-                "convention_uuid": str(convention.uuid),
-                "convention_url": request.build_absolute_uri(
-                    reverse("conventions:preview", args=[convention.uuid])
-                ),
-                "convention_email_validator": request.user.email,
+            generate_and_send.delay(
+                {
+                    "convention_uuid": str(convention.uuid),
+                    "convention_url": request.build_absolute_uri(
+                        reverse("conventions:preview", args=[convention.uuid])
+                    ),
+                    "convention_email_validator": request.user.email,
+                }
+            )
+
+            return {
+                "success": utils.ReturnStatus.SUCCESS,
+                "convention": convention,
             }
-        )
-        if not convention.valide_le:
-            convention.valide_le = timezone.now()
-        convention.save()
 
-        return {
-            "success": utils.ReturnStatus.SUCCESS,
-            "convention": convention,
-        }
+    convention_type1_and_2_form = ConventionType1and2Form(request.POST)
+    opened_comments = Comment.objects.filter(
+        convention=convention,
+        statut=CommentStatut.OUVERT,
+    ).order_by("cree_le")
 
     return {
         **utils.base_convention_response_error(request, convention),
-        "bailleur": convention.programme.bailleur,
-        "lot": convention.lot,
-        "programme": convention.programme,
-        "logement_edds": convention.programme.logementedds.all(),
-        "logements": convention.lot.logements.all(),
-        "stationnements": convention.lot.type_stationnements.all(),
-        "reference_cadastrales": convention.programme.referencecadastrales.all(),
-        "annexes": Annexe.objects.filter(logement__lot_id=convention.lot.id).all(),
         "notificationForm": NotificationForm(),
         "conventionNumberForm": convention_number_form,
         "complete_for_avenant_form": complete_for_avenant_form,
+        "opened_comments": opened_comments,
+        "ConventionType1and2Form": convention_type1_and_2_form,
     }

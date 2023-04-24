@@ -1,18 +1,17 @@
 from typing import Any
 
+from django.conf import settings
 from django.contrib import messages
-from django.http import HttpRequest
-from django.forms.models import model_to_dict
-from django.views.decorators.http import require_GET
+from django.contrib.auth.models import Group
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-from django.conf import settings
-from django.contrib.auth.models import Group
-from django.contrib import messages
+from django.forms.models import model_to_dict
+from django.http import HttpRequest
+from django.views.decorators.http import require_GET
 
 from apilos_settings.forms import BailleurListingUploadForm
-from conventions.forms import BailleurForm
 from bailleurs.models import Bailleur, NatureBailleur
+from conventions.forms import BailleurForm
 from conventions.services import utils
 from conventions.services.utils import ReturnStatus
 from core.services import EmailService, EmailTemplateID
@@ -24,9 +23,9 @@ from users.forms import (
     AddUserForm,
     UserForm,
     UserNotificationForm,
+    UserBailleurFormSet,
 )
 from users.models import User, Role, TypeRole
-from users.forms import UserBailleurFormSet
 from users.services import UserService
 
 
@@ -174,7 +173,6 @@ def edit_administration(request, administration_uuid):
             administration.nb_convention_exemplaires = form.cleaned_data[
                 "nb_convention_exemplaires"
             ]
-            administration.prefix_convention = form.cleaned_data["prefix_convention"]
             administration.save()
             messages.add_message(
                 request,
@@ -416,7 +414,7 @@ def edit_user(request, username):
                     # "filtre_departements": request.POST.getlist("filtre_departements"),
                     # With virtualselect, we have a string of comma separated values
                     "filtre_departements": (
-                        [num for num in request.POST["filtre_departements"].split(",")]
+                        request.POST["filtre_departements"].split(",")
                         if "filtre_departements" in request.POST
                         and request.POST["filtre_departements"]
                         else []

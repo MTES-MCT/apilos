@@ -1,3 +1,4 @@
+import datetime
 import uuid
 import json
 import logging
@@ -396,19 +397,35 @@ class Convention(models.Model):
         return users_partial + users_all_email
 
     def get_convention_prefix(self):
-        if self.programme.administration:
-            return (
-                self.programme.administration.prefix_convention.replace(
-                    "{département}",
-                    self.programme.code_postal[:-3]
-                    if self.programme.code_postal
-                    else "",
-                )
-                .replace("{zone}", str(self.programme.zone_123))
-                .replace("{mois}", str(timezone.now().month))
-                .replace("{année}", str(timezone.now().year))
+        dept_code = self.programme.code_insee_departement
+        admin_code = (
+            "D"
+            if self.programme.administration.code.startswith("D")
+            else self.programme.administration.code
+        )
+        year = datetime.date.today().year
+
+        convention_numbers_in_year = (
+            Convention.objects.filter(
+                numero__startswith=f"{dept_code}.",
+                valide_le__year=year,
             )
-        return None
+            .exclude(
+                statut__in=[
+                    ConventionStatut.PROJET,
+                    ConventionStatut.INSTRUCTION,
+                    ConventionStatut.CORRECTION,
+                ],
+            )
+            .values("numero")
+        )
+        max_number = 0
+        for convention_number in convention_numbers_in_year:
+            number = convention_number["numero"].split(".")[-1]
+            if number.isdigit() and int(number) > max_number:
+                max_number = int(number)
+        max_number = "%04d" % (max_number + 1)
+        return f"{dept_code}.{admin_code}.{year%100}.{max_number}"
 
     def is_avenant(self):
         return self.parent_id is not None

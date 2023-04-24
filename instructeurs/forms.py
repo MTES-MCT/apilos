@@ -1,4 +1,3 @@
-import re
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
@@ -83,36 +82,6 @@ class AdministrationForm(forms.Form):
         signataire_bloc_signature = signataire_bloc_signature.strip(" ,") + ","
 
         return signataire_bloc_signature
-
-    prefix_convention = forms.CharField(
-        required=False,
-        label="Préfixe du numéro de convention",
-        max_length=255,
-        error_messages={
-            "max_length": "Le préfixe du numéro de convention ne doit pas excéder 255 caractères",
-        },
-        help_text=mark_safe(
-            "Pour remplir le préfixe dynamiquement, vous pouvez utiliser les caractères "
-            + "automatiques suivants : <br/>"
-            + " <strong>{département}</strong> : numéro du département <br/>"
-            + " <strong>{zone}</strong> : numéro de la zone <br/>"
-            + " <strong>{mois} et {année}</strong> : mois et année en cours. <br/>"
-            + "Vous pouvez également choisir les séparateurs de votre choix entre ces caractères "
-            + "ainsi qu'ajouter le texte qui vous convient."
-        ),
-    )
-
-    def clean_prefix_convention(self):
-        prefix_convention = self.cleaned_data.get("prefix_convention", 0)
-
-        test_prefix = re.findall(r"\{\w+\}", prefix_convention)
-        for element in test_prefix:
-            if element not in ["{département}", "{zone}", "{mois}", "{année}"]:
-                raise ValidationError(
-                    f"Vous ne pouvez pas utiliser {element} comme élement dynamique."
-                    + "Seuls {département}, {zone}, {mois} et {année} sont autorisés"
-                )
-        return prefix_convention
 
     adresse = forms.CharField(
         required=False,

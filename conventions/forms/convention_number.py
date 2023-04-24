@@ -1,5 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
+
+from conventions.models.convention import Convention
 
 
 class ConventionNumberForm(forms.Form):
@@ -7,6 +10,13 @@ class ConventionNumberForm(forms.Form):
     convention_numero = forms.CharField(
         max_length=250,
         label="Numéro de convention",
+        help_text=mark_safe(
+            "Le format de numéro de convention est standardisé, pour en savoir plus,"
+            + ' consulter <a class="fr-link fr-text--xs"'
+            + ' href="//docs.apilos.beta.gouv.fr/apres-la-validation-de-la-convention/'
+            + 'instructeurs-parametres/numeration-convention"'
+            + ' data-turbo="false" target="blank">notre FAQ</a>'
+        ),
         error_messages={
             "max_length": (
                 "La longueur totale du numéro de convention ne peut pas excéder"
@@ -18,10 +28,14 @@ class ConventionNumberForm(forms.Form):
 
     def clean_convention_numero(self):
         convention_numero = self.cleaned_data.get("convention_numero", 0)
-        if convention_numero == self.convention.get_convention_prefix():
+        if (
+            not self.convention.is_avenant()
+            and Convention.objects.filter(numero=convention_numero)
+            .exclude(pk=self.convention.pk)
+            .exists()
+        ):
             raise ValidationError(
-                "Attention, le champ est uniquement prérempli avec le préfixe du numéro de "
-                + "convention déterminé pour votre administration. Il semble que vous n'ayez pas "
-                + "ajouté, à la suite de ce préfixe, de numéro d'ordre de la convention."
+                f"La convention de numero {convention_numero} existe déjà,"
+                + " merci de choisir un autre numéro de convention."
             )
         return convention_numero
