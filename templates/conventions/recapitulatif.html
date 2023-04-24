@@ -95,8 +95,12 @@
                     {% include "conventions/actions/submit_convention.html" %}
                     {% include "conventions/actions/instructeur_notification.html" %}
                     <div class="fr-grid-row fr-grid-row--gutters fr-mt-3w">
-                        {% include "conventions/actions/bailleur_notification.html" %}
-                        {% include "conventions/actions/instructeur_validation.html" %}
+                        <div class="fr-col-6 fr-py-5w fr-px-3w">
+                            {% include "conventions/actions/bailleur_notification.html" %}
+                        </div>
+                        <div class="fr-col-6 fr-py-5w fr-px-3w apilos-or-border">
+                            {% include "conventions/actions/instructeur_validation.html" %}
+                        </div>
                     </div>
                     {% include "conventions/actions/type1and2_options.html" %}
                     {% include "conventions/actions/generate_convention.html" %}
