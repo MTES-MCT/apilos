@@ -53,6 +53,7 @@ class SendMonthlyEmailsCommandTest(TestCase):
         )
         self.assertEqual(err.getvalue().strip(), "")
 
+    @override_settings(APPLICATION_DOMAIN_URL=None)
     def test_run_forced_misconfigured(self):
         """
         Teste de lancer la commande en mode forcé du mois, mais avec une
@@ -83,6 +84,7 @@ abandon",
         )
 
     @override_settings(CRON_ENABLED=True)
+    @override_settings(APPLICATION_DOMAIN_URL=None)
     @mock.patch(
         "users.management.commands.send_monthly_emails.datetime", wraps=datetime
     )
