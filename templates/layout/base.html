@@ -74,8 +74,8 @@
         {% endblock %}
 
         {% block feedback %}
-            {# Enable the mailto feedback button only as a Crisp fallback #}
-            {% if not CRISP_WEBSITE_ID %}
+            {# Enable the mailto feedback button only as a Crisp fallback and no in SIAP context#}
+            {% if not CRISP_WEBSITE_ID and not CERBERE_AUTH %}
                 <div class="container__feedback_btn">
                     <a href="mailto:contact@apilos.beta.gouv.fr" class="cta">
                         <span class="apilos-icon fr-fi-mail-line" aria-hidden="true"></span>
