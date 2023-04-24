@@ -5,11 +5,11 @@
 La solution souveraine PaaS de [Scalingo](https://dashboard.scalingo.com/apps/osc-fr1/fabnum-apilos) est utilisée avec les composants suivants :
 * webapp : Application Django incluant interface et APIs, la webapp est déployé un système Ubunti 20.x
 * worker : worker Celery pour déléguer des tâches longues qui s'executeront de manière asynchrone
-* Une base de données postgres en version 12.7.0
+* Une base de données postgres en version 12.11.0
 
 Les applications lancées sont configurées dans le fichier [Procfile](Procfile)
 
-La base de données est backupée toute les nuits et Scalingo propose une solution PITR (Point-in-time recovery) pour sa restauration
+La base de données est sauvegardée toutes les nuits et Scalingo propose une solution PITR (Point-in-time recovery) pour sa restauration.
 
 ## CI/CD et branch git
 
@@ -22,15 +22,15 @@ La config est ici : [.circleci/config.yaml](.circleci/config.yaml)
 
 ### CI
 
-A chaque push sur [Github](https://github.com/MTES-MCT/apilos), le projet est buildé et les tests sont passés
+A chaque push sur [Github](https://github.com/MTES-MCT/apilos), le projet est _buildé_ et les tests sont passés
 
 ### CD
 
-A chaque push sur la branche `develop`, le projet est déployé en [staging](https://staging.apilos.incubateur.net/)
+A chaque push sur la branche `develop`, le projet est déployé en [staging](https://staging.apilos.incubateur.net/).
 
 ## Déploiement
 
-Lors du déploiement, les étapes définient dans le script [bin/post_deploy](bin/post_deploy) sont éxécutées:
+Lors du déploiement, les étapes définis dans le script [bin/post_deploy](bin/post_deploy) sont exécutées :
 
 1. Execution des migrations de la base de données
 2. Population des roles et des permissions
@@ -46,15 +46,17 @@ Pour forcer le déploiement en staging, il est aussi possible de pousser la bran
 
 ### Déploiement en production
 
-Pour pousser en production, la version à pousser en production doit être préparée sur la branche `master` soit en mergeant les développements de la branche `develop`, soit à l'aide de la commande `cherry-pick`
-
-Le code est déployé en production automatiquement via [CircleCI](https://app.circleci.com/pipelines/github/MTES-MCT/apilos) quand il est poussé sur la branch `master` du repository [Github](https://github.com/MTES-MCT/apilos). Cependant, il est nécessaire d'approuver le déploiement sur l'environnement de [CircleCI](https://app.circleci.com/pipelines/github/MTES-MCT/apilos)
+Une nouvelle version de l'application peut être poussée en production à chaque ajout de _tag de version_ (voir [la documentation _semantic versioning_](https://semver.org/))
+consécutif à un _merge_ de la branche `develop` dans la branche `master`. Un déploiement sur tous les environnements est alors demandé,
+sous réserve de validation, automatiquement via [CircleCI](https://app.circleci.com/pipelines/github/MTES-MCT/apilos).
 
 ![CircleCI integration](static/img/circleci.png)
 
-Pour forcer la mise en production il est aussi possible de pousser la branche master sur le repo git du projet sur Scalingo
+Pour forcer la mise en production il est aussi possible de pousser la branche `master` sur le repo git du projet sur Scalingo :
 
-```git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master```
+```bash
+git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master
+```
 
 ## Déployer un nouvel environnement
 
@@ -69,14 +71,14 @@ Pour forcer la mise en production il est aussi possible de pousser la branche ma
 
 Pour le SIAP,
 
-9. Créer un utilisateur siap et transmettre son id au équipe du SIAP
+9. Créer un utilisateur SIAP et transmettre son id à l'équipe du SIAP
 
 ## Executer une commande python sur un Scalingo
 
 Il suffit d'ajouter avant `python manage.py` le début de commande :
 
-```
-$> scalingo --app <app_name> run ...
+```bash
+scalingo --app <app_name> run ...
 ```
 
 ## Modification de l'appartenance d'un programme à un bailleur ou une administration
