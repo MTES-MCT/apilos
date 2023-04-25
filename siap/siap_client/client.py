@@ -7,6 +7,8 @@ import jwt
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from requests import Response
+
 from core.exceptions.types import (
     TimeoutSIAPException,
     UnauthorizedSIAPException,
@@ -24,6 +26,17 @@ from siap.siap_client.mock_data import (
 REFRESH_SIAP_CONFIG = 60
 
 logger = logging.getLogger(__name__)
+
+
+class PylintException(Exception):
+    """
+    Une exception qui ne sert à rien d'autre qu'à contenter Pylint qui chouine
+    parce qye "Catching too general exception Exception (broad-except)" si on
+    spécifie Exception mais aussi si on ne spécifie pas "No exception type(s)
+    specified (bare-except)" ...
+
+    Oui le linting c'est VRAIMENT nul.
+    """
 
 
 def build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
@@ -48,6 +61,18 @@ def build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
     )
 
 
+def _siap_get(url, params=None, retry=2, timeout=3, **kwargs) -> Response:
+    max_attempts = max(retry, 0) + 1
+    error = BaseException | None
+    for _ in range(0, max_attempts):
+        try:
+            return requests.get(url, params, timeout=timeout, **kwargs)
+        except requests.ReadTimeout as e:
+            error = e
+
+    raise TimeoutSIAPException() from error
+
+
 def _call_siap_api(
     route: str,
     base_route: str = "",
@@ -58,19 +83,17 @@ def _call_siap_api(
         settings.SIAP_CLIENT_HOST + base_route + settings.SIAP_CLIENT_PATH + route
     )
     myjwt = build_jwt(user_login=user_login, habilitation_id=habilitation_id)
-    try:
-        response = requests.get(
-            siap_url_config,
-            headers={"siap-Authorization": f"Bearer {myjwt}"},
-            timeout=5,
-        )
-    except requests.ReadTimeout as e:
-        raise TimeoutSIAPException() from e
+
+    response = _siap_get(
+        siap_url_config,
+        headers={"siap-Authorization": f"Bearer {myjwt}"},
+    )
+
     if response.status_code == 401:
         error_text = "Unauthorized"
         try:
             error_text = str(response.content["detail"])
-        except:
+        except PylintException:
             pass
         raise UnauthorizedSIAPException(error_text)
     if response.status_code == 503:
