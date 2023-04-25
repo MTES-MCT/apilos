@@ -30,11 +30,10 @@ class ConventionFinancementForm(forms.Form):
         required=False,
         label="Prêts et financements",
     )
-    annee_fin_conventionnement = forms.TypedChoiceField(
+    annee_fin_conventionnement = forms.IntegerField(
         required=True,
         label="",
-        coerce=int,
-        choices=[(str(year), str(year)) for year in range(2010, 2121)],
+        initial=datetime.date.today().year,
         error_messages={
             "required": "La date de fin de conventionnement est obligatoire",
         },
@@ -70,7 +69,7 @@ class ConventionFinancementForm(forms.Form):
 
     def _pls_end_date_validation(self, annee_fin_conventionnement):
         """
-        Validation: date de fin de conventionnement pour un PLS
+        Validation : date de fin de conventionnement pour un PLS
           entre 15 et 40 ans après la date de début de conventionnement (date courante)
           et finissant au 30 juin
         """
