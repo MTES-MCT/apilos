@@ -142,7 +142,10 @@ class User(AbstractUser):
             raise PermissionDenied
 
     def is_bailleur(self, bailleur_id=None):
-        if self.is_cerbere_user():
+        # Si l'utilisateur a un login Cerbere et le champs siap_habilitation est
+        # proprement initialisé (i.e. dans un contexte web connecté de cet
+        # utilisateur avec session)
+        if self.is_cerbere_user() and self.siap_habilitation:
             return "currently" in self.siap_habilitation and self.siap_habilitation[
                 "currently"
             ] in [GroupProfile.SIAP_MO_PERS_MORALE, GroupProfile.SIAP_MO_PERS_PHYS]
@@ -304,7 +307,7 @@ class User(AbstractUser):
         )
 
     def _bailleur_ids(self) -> list:
-        if self.is_cerbere_user():
+        if self.is_cerbere_user() and self.siap_habilitation:
             return [self.siap_habilitation["bailleur"]["id"]]
 
         bailleur_ids = list(
