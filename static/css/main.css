@@ -957,3 +957,6 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
 .apilos-text-blue-sun {
   color: #000091;
 }
+.apilos-warning-band {
+  background: #FEF4EF;
+}
