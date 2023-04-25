@@ -2,6 +2,9 @@
     "jobs": [
         {
             "command": "10 2 * * * ./bin/restart_workers_script.sh"
+        },
+        {
+            "command": "0 7 * * 1 ./manage.py send_monthly_emails && [ -n $HEALTHCHECKS_URL ] && curl -fsS -m 10 --retry 5 -o /dev/null $HEALTHCHECKS_URL"
         }
     ]
 }

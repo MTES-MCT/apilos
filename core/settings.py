@@ -59,6 +59,7 @@ def get_env_variable(name, cast=str, default=""):
 SECRET_KEY = get_env_variable("SECRET_KEY")
 DEBUG = get_env_variable("DEBUG", cast=bool)
 ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
+CRON_ENABLED = get_env_variable("CRON_ENABLED", default=False, cast=bool)
 
 LOGLEVEL = get_env_variable("LOGLEVEL", default="error").upper()
 
@@ -151,7 +152,9 @@ if ENVIRONMENT == "development":
             "django_browser_reload",
         ]
     )
-    SHELL_PLUS_PRINT_SQL = get_env_variable("SHELL_PLUS_PRINT_SQL", default=True, cast=bool)
+    SHELL_PLUS_PRINT_SQL = get_env_variable(
+        "SHELL_PLUS_PRINT_SQL", default=True, cast=bool
+    )
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
