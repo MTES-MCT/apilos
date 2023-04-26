@@ -3,7 +3,6 @@ from django.contrib.auth.admin import UserAdmin
 
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
-from users.models import User
 from .models import User, Role
 
 
@@ -18,11 +17,5 @@ class CustomAdministrationAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-class CustomUserAdmin(UserAdmin):
-    UserAdmin.fieldsets += (
-        ("Informations supplémentaires", {"fields": ("read_popup",)}),
-    )
-
-
-admin.site.register(User, CustomUserAdmin)
+admin.site.register(User, UserAdmin)
 admin.site.register(Role, CustomAdministrationAdmin)
