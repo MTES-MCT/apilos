@@ -8,6 +8,7 @@ import jwt
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from requests import Response
+from tenacity import retry, stop_after_attempt
 
 from core.exceptions.types import (
     TimeoutSIAPException,
@@ -61,16 +62,12 @@ def build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
     )
 
 
-def _siap_get(url, params=None, retry=2, timeout=3, **kwargs) -> Response:
-    max_attempts = max(retry, 0) + 1
-    error = BaseException | None
-    for _ in range(0, max_attempts):
-        try:
-            return requests.get(url, params, timeout=timeout, **kwargs)
-        except requests.ReadTimeout as e:
-            error = e
-
-    raise TimeoutSIAPException() from error
+@retry(stop=stop_after_attempt(3))
+def _siap_get(url, params=None, timeout=3, **kwargs) -> Response:
+    try:
+        return requests.get(url, params, timeout=timeout, **kwargs)
+    except requests.ReadTimeout as e:
+        raise TimeoutSIAPException() from e
 
 
 def _call_siap_api(
