@@ -7,6 +7,8 @@ import jwt
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from tenacity import retry, stop_after_attempt, retry_if_exception_type
+
 from core.exceptions.types import (
     TimeoutSIAPException,
     UnauthorizedSIAPException,
@@ -48,6 +50,7 @@ def build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
     )
 
 
+@retry(retry=retry_if_exception_type(TimeoutSIAPException), stop=stop_after_attempt(2))
 def _call_siap_api(
     route: str,
     base_route: str = "",
@@ -70,6 +73,7 @@ def _call_siap_api(
         error_text = "Unauthorized"
         try:
             error_text = str(response.content["detail"])
+        # pylint: disable=W0702, bare-except
         except:
             pass
         raise UnauthorizedSIAPException(error_text)
