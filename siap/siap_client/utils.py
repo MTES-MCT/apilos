@@ -2,6 +2,7 @@ import re
 from typing import Tuple
 
 from bailleurs.models import Bailleur, NatureBailleur
+from core.exceptions.types import InconsistentDataSIAPException
 from instructeurs.models import Administration
 from programmes.models import (
     Financement,
@@ -65,7 +66,7 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
 
     if "ville" in bailleur_from_siap:
         ville = bailleur_from_siap["ville"]
-    elif "adresseLigne6" in bailleur_from_siap:
+    elif "adresseLigne6" in bailleur_from_siap and bailleur_from_siap["adresseLigne6"]:
         ville = bailleur_from_siap["adresseLigne6"].lstrip("1234567890 ")
 
     if "adresseLigne" in bailleur_from_siap:
@@ -76,6 +77,11 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
         if "siret" in bailleur_from_siap
         else bailleur_from_siap["siren"]
     )
+
+    if siret is None:
+        raise InconsistentDataSIAPException(
+            "Missing Bailleur siret, can't get or create it"
+        )
 
     (bailleur, is_created) = Bailleur.objects.get_or_create(
         siren=bailleur_from_siap["siren"],
