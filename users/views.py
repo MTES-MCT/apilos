@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_GET
 
 
 def home(request):
@@ -77,15 +77,3 @@ def search_administration(request):
         ],
         safe=False,
     )
-
-
-@login_required
-@require_POST
-def update_user_popup(request):
-    request.user.read_popup = "True"
-    request.user.save()
-    is_ecolo = request.POST.get("ecolo", False)
-    if is_ecolo:
-        return HttpResponseRedirect(reverse("conventions:search_completed"))
-    else:
-        return redirect(request.META.get("HTTP_REFERER", reverse("conventions:index")))
