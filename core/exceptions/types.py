@@ -8,3 +8,7 @@ class UnauthorizedSIAPException(Exception):
 
 class UnavailableServiceSIAPException(Exception):
     pass
+
+
+class InconsistentDataSIAPException(Exception):
+    pass
