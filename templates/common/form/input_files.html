@@ -6,7 +6,13 @@
         {% include "common/form/required_field.html" with form_input=form_input %}
         <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
     </label>
-    <input class="fr-upload fr-mt-0 {% if form_input.errors %}fr-input--error{% endif %}" type="file" id="file-upload" name="{{form_input.html_name}}">
+    <input
+        class="fr-upload fr-mt-0 {% if form_input.errors %}fr-input--error{% endif %}"
+        type="file"
+        id="file-upload"
+        name="{{form_input.html_name}}"
+        accept="application/pdf"
+    >
     {% for error in form_input.errors %}
         <p id="text-input-error-desc-error" class="fr-error-text">
             {{ error }}
