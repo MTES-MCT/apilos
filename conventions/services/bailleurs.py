@@ -25,7 +25,12 @@ class ConventionBailleurService(ConventionService):
                     and habilitation["porteeTerritComp"]["regComp"]["code"]
                     == self.convention.programme.code_insee_region
                 ):
-                    sirens.append(habilitation["entiteMorale"]["siren"])
+                    if (
+                        "regComp" in habilitation["porteeTerritComp"]
+                        and habilitation["porteeTerritComp"]["regComp"]["code"]
+                        == self.convention.programme.code_insee_region
+                    ) or "regComp" not in habilitation["porteeTerritComp"]:
+                        sirens.append(habilitation["entiteMorale"]["siren"])
             return Bailleur.objects.filter(siren__in=sirens)
         return (
             self.request.user.bailleurs(full_scope=True).filter(uuid=bailleur_uuid)
