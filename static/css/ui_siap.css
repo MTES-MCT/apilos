@@ -16,6 +16,9 @@
   color: #fff;
   text-decoration: none;
 }
+.fr-nav__btn[aria-current].orange-background::after {
+  margin-left: auto;
+}
 
 .habilitation-bloc .fr-btn {
   display: block;
