@@ -6,6 +6,10 @@ class TimeoutSIAPException(Exception):
     pass
 
 
+class AssociationHLMSIAPException(Exception):
+    pass
+
+
 class UnauthorizedSIAPException(Exception):
     pass
 

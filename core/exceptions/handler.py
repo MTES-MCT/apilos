@@ -7,6 +7,9 @@ from core.exceptions.types import (
     TimeoutSIAPException,
     UnauthorizedSIAPException,
     UnavailableServiceSIAPException,
+    AssociationHLMSIAPException,
+    InconsistentDataSIAPException,
+    HabilitationSIAPException,
 )
 
 
@@ -17,6 +20,9 @@ def handle_error_500(request):
         UnauthorizedSIAPException,
         TimeoutSIAPException,
         UnavailableServiceSIAPException,
+        AssociationHLMSIAPException,
+        InconsistentDataSIAPException,
+        HabilitationSIAPException,
     ]:
         if request.path.startswith("/api-siap"):
             return JsonResponse(
@@ -26,6 +32,21 @@ def handle_error_500(request):
                 },
                 status=500,
             )
+        if exception_type == AssociationHLMSIAPException:
+            return render(
+                request,
+                "500.html",
+                {
+                    "specific_error": """
+                        <p class="fr-mb-3w">
+                            Le module de conventionnement n'est accessible avec
+                              l'habilitation « Association HLM ».
+                        </p>
+                    """,
+                },
+                status=500,
+            )
+
         return render(
             request,
             "500.html",

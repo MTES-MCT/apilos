@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.conf import settings
 from django.forms import model_to_dict
 from django.http import HttpRequest
-from core.exceptions.types import TimeoutSIAPException, HabilitationSIAPException
+from core.exceptions.types import TimeoutSIAPException, HabilitationSIAPException, AssociationHLMSIAPException
 from bailleurs.models import NatureBailleur
 from siap.siap_client.utils import get_or_create_bailleur, get_or_create_administration
 from siap.siap_client.client import SIAPClient
@@ -25,7 +25,6 @@ class CerbereSessionMiddleware:
                 "habilitation_id" in request.GET
                 or "habilitations" not in request.session
             ):
-
                 # get habilitation_id from params if exists
                 habilitation_id = 0
                 if "habilitation_id" in request.GET:
@@ -151,6 +150,14 @@ def _find_or_create_entity(
     request.session["administration"] = None
     request.session["role"] = None
     request.session["currently"] = from_habilitation["groupe"]["profil"]["code"]
+
+    if from_habilitation["groupe"]["profil"]["code"] in [
+        GroupProfile.SIAP_ASS_HLM,
+    ]:
+        raise AssociationHLMSIAPException(
+            "Le module de conventionnement n'est accessible avec l'habilitation « Association HLM »"
+        )
+
     if from_habilitation["groupe"]["profil"]["code"] in [
         GroupProfile.SIAP_ADM_CENTRALE,
         GroupProfile.SIAP_SER_DEP,
