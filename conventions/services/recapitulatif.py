@@ -358,7 +358,7 @@ def send_email_correction(
 
 def convention_validate(request: HttpRequest, convention: Convention):
     convention_number_form = ConventionNumberForm(request.POST)
-    complete_for_avenant_form = CompleteforavenantForm(request.POST)
+    complete_for_avenant_form = CompleteforavenantForm(request.POST, request.FILES)
     is_completeform = request.POST.get("completeform", False)
     if is_completeform:
         if complete_for_avenant_form.is_valid():

@@ -14,13 +14,9 @@
                 </div>
                 {% if not convention.parent.nom_fichier_signe %}
                     <div class="fr-col-12">
-                        <div class="fr-upload-group">
-                            <label class="fr-label" for="file-upload">Déposer la convention initiale (en PDF)
-                                <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
-                            </label>
-                            <input class="fr-upload fr-mt-0" type="file" id="file-upload" name="nom_fichier_signe">
-                        </div>
+                        {% include "common/form/input_files.html" with form_input=complete_for_avenant_form.nom_fichier_signe editable=True %}
                     </div>
+
                 {% endif %}
             </div>
             <button class="fr-btn fr-mt-2w">Envoyer</button>

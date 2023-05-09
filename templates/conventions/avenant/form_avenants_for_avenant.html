@@ -21,7 +21,14 @@
                         <label class="fr-label" for="file-upload">Déposer l'avenant (en PDF) {% include "common/form/required_field_star.html" %}
                             <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
                         </label>
-                        <input class="fr-upload" type="file" id="file-upload" name="nom_fichier_signe" required>
+                        <input
+                            class="fr-upload"
+                            type="file"
+                            id="file-upload"
+                            name="nom_fichier_signe"
+                            required
+                            accept="application/pdf"
+                        >
                     </div>
                     <button class="fr-btn fr-btn--secondary fr-mt-3w">Créer l'avenant</button>
                 </form>
