@@ -116,9 +116,9 @@ django-cas-ng==4.3.0 \
     --hash=sha256:6fcc9f52b9fb8765369e1a78e6abc1e7d4ed71fe01e604a304a3d1376a9dea19 \
     --hash=sha256:d15a3a7934732fd8f602a449fc0e59631972d74d9bd8b98710d165e1cea1f5fc
     # via -r requirements.in
-django-celery-results==2.5.0 \
-    --hash=sha256:8631fd68158c41afddfc378840ecee2f10ddd7d4879e964f2597f483e4203269 \
-    --hash=sha256:efb68932bde8938794068a9d0929bea8601ec5f6a4150a7f7ab6e2a83a735938
+django-celery-results==2.5.1 \
+    --hash=sha256:0da4cd5ecc049333e4524a23fcfc3460dfae91aa0a60f1fae4b6b2889c254e01 \
+    --hash=sha256:3ecb7147f773f34d0381bac6246337ce4cf88a2ea7b82774ed48e518b67bb8fd
     # via -r requirements.in
 django-csp==3.7 \
     --hash=sha256:01443a07723f9a479d498bd7bb63571aaa771e690f64bde515db6cdb76e8041a \
