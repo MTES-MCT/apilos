@@ -39,7 +39,7 @@ def handle_error_500(request):
                 {
                     "specific_error": """
                         <p class="fr-mb-3w">
-                            Le module de conventionnement n'est accessible avec
+                            Le module de conventionnement n'est pas accessible avec
                               l'habilitation « Association HLM ».
                         </p>
                     """,
