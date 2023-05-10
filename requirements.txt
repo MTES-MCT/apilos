@@ -85,16 +85,16 @@ dill==0.3.6 \
     --hash=sha256:a07ffd2351b8c678dfc4a856a3005f8067aea51d6ba6c700796a4d9e280f39f0 \
     --hash=sha256:e5db55f3687856d8fbdab002ed78544e1c4559a130302693d839dfe8f93f2373
     # via pylint
-dj-database-url==1.3.0 \
-    --hash=sha256:80a115bd7675c9fe14a900b2f8b5c8b1822b5a279b333bf9b2804de681656c7c \
-    --hash=sha256:87be5f7c4c83d9b3d8ce94b834f96cea14b3986f3629aac097afdd9318d7b098
+dj-database-url==2.0.0 \
+    --hash=sha256:9c9e5f7224f62635a787e9cc3c6762c9be2b19541a21e3c08fa573bd01609b4b \
+    --hash=sha256:a35a9f0f43775ca6f90d819dc456233ef7bcc76b47377d5d908b75c7eb320624
     # via -r requirements.in
 dj-static==0.0.6 \
     --hash=sha256:032ec1c532617922e6e3e956d504a6fb1acce4fc1c7c94612d0fda21828ce8ef
     # via -r requirements.in
-django==4.2 \
-    --hash=sha256:ad33ed68db9398f5dfb33282704925bce044bef4261cd4fb59e4e7f9ae505a78 \
-    --hash=sha256:c36e2ab12824e2ac36afa8b2515a70c53c7742f0d6eaefa7311ec379558db997
+django==4.2.1 \
+    --hash=sha256:066b6debb5ac335458d2a713ed995570536c8b59a580005acb0732378d5eb1ee \
+    --hash=sha256:7efa6b1f781a6119a10ac94b4794ded90db8accbe7802281cd26f8664ffed59c
     # via
     #   -r requirements.in
     #   dj-database-url
@@ -116,9 +116,9 @@ django-cas-ng==4.3.0 \
     --hash=sha256:6fcc9f52b9fb8765369e1a78e6abc1e7d4ed71fe01e604a304a3d1376a9dea19 \
     --hash=sha256:d15a3a7934732fd8f602a449fc0e59631972d74d9bd8b98710d165e1cea1f5fc
     # via -r requirements.in
-django-celery-results==2.5.0 \
-    --hash=sha256:8631fd68158c41afddfc378840ecee2f10ddd7d4879e964f2597f483e4203269 \
-    --hash=sha256:efb68932bde8938794068a9d0929bea8601ec5f6a4150a7f7ab6e2a83a735938
+django-celery-results==2.5.1 \
+    --hash=sha256:0da4cd5ecc049333e4524a23fcfc3460dfae91aa0a60f1fae4b6b2889c254e01 \
+    --hash=sha256:3ecb7147f773f34d0381bac6246337ce4cf88a2ea7b82774ed48e518b67bb8fd
     # via -r requirements.in
 django-csp==3.7 \
     --hash=sha256:01443a07723f9a479d498bd7bb63571aaa771e690f64bde515db6cdb76e8041a \
@@ -154,9 +154,9 @@ djangorestframework-simplejwt==5.2.2 \
 docxcompose==1.3.6 \
     --hash=sha256:224f62525bdd3ed6587274e35d2f1baf8901e5b235efc0b5620c0c78cd795214
     # via docxtpl
-docxtpl==0.16.6 \
-    --hash=sha256:42c1f6250c655a1aff00818a14a83f2abb3c8293171e5fd3d5f338fd397e3860 \
-    --hash=sha256:c5938dd891bf13958dd5dfd513816c688999060f037c316756a005cdebf9a322
+docxtpl==0.16.7 \
+    --hash=sha256:7174c17e658114ade31e16ab39128567cabba5bb58b373a1b2e509d92b518c39 \
+    --hash=sha256:b20eec4073319b6eab01dd6e41fc30a4969d52b14ded69fd9a62bfb8fbf3a9b2
     # via -r requirements.in
 drf-spectacular==0.26.2 \
     --hash=sha256:005623d6bb9de37d2d0ec24ccd59c636e4a42f9af252f1470129ac32ccab38cb \
@@ -506,9 +506,9 @@ pyyaml==6.0 \
     --hash=sha256:e61ceaab6f49fb8bdfaa0f92c4b57bcfbea54c09277b1b4f7ac376bfb7a7c174 \
     --hash=sha256:f84fbc98b019fef2ee9a1cb3ce93e3187a6df0b2538a651bfb890254ba9f90b5
     # via drf-spectacular
-redis==4.5.4 \
-    --hash=sha256:2c19e6767c474f2e85167909061d525ed65bea9301c0770bb151e041b7ac89a2 \
-    --hash=sha256:73ec35da4da267d6847e47f68730fdd5f62e2ca69e3ef5885c6a78a9374c3893
+redis==4.5.5 \
+    --hash=sha256:77929bc7f5dab9adf3acba2d3bb7d7658f1e0c2f1cafe7eb36434e751c471119 \
+    --hash=sha256:dc87a0bdef6c8bfe1ef1e1c40be7034390c2ae02d92dcd0c7ca1729443899880
     # via -r requirements.in
 requests==2.28.1 \
     --hash=sha256:7c5599b102feddaa661c826c56ab4fee28bfd17f5abca1ebbe3e7f19d7c97983 \
