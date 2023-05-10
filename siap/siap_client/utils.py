@@ -72,21 +72,28 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
     if "adresseLigne" in bailleur_from_siap:
         adresse = bailleur_from_siap["adresseLigne"]
 
-    siret = (
-        bailleur_from_siap["siret"]
-        if "siret" in bailleur_from_siap
-        else bailleur_from_siap["siren"]
-    )
+    if not (
+        (bailleur_siren := bailleur_from_siap["siren"])
+        if "siren" in bailleur_from_siap
+        else None
+    ):
+        raise InconsistentDataSIAPException(
+            "Missing Bailleur siren (can't be empty or null), bailleur can't be get or created"
+        )
 
-    if siret is None:
+    if (
+        bailleur_siret := (bailleur_from_siap["siret"])
+        if "siret" in bailleur_from_siap
+        else bailleur_siren
+    ) is None:
         raise InconsistentDataSIAPException(
             "Missing Bailleur siret, can't get or create it"
         )
 
     (bailleur, is_created) = Bailleur.objects.get_or_create(
-        siren=bailleur_from_siap["siren"],
+        siren=bailleur_siren,
         defaults={
-            "siret": siret,
+            "siret": bailleur_siret,
             "nom": nom,
             "adresse": adresse,
             "code_postal": code_postal,
