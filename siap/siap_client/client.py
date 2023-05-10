@@ -50,7 +50,7 @@ def build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
     )
 
 
-@retry(retry=retry_if_exception_type(TimeoutSIAPException), stop=stop_after_attempt(2))
+@retry(retry=retry_if_exception_type(TimeoutSIAPException), stop=stop_after_attempt(3))
 def _call_siap_api(
     route: str,
     base_route: str = "",
@@ -65,9 +65,9 @@ def _call_siap_api(
         response = requests.get(
             siap_url_config,
             headers={"siap-Authorization": f"Bearer {myjwt}"},
-            timeout=5,
+            timeout=3,
         )
-    except requests.ReadTimeout as e:
+    except (requests.ReadTimeout, requests.ConnectTimeout) as e:
         raise TimeoutSIAPException() from e
     if response.status_code == 401:
         error_text = "Unauthorized"
