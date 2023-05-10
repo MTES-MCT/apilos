@@ -162,31 +162,38 @@ def get_or_create_programme(
     (adresse, code_postal, ville) = _get_address_from_locdata(
         programme_from_siap["donneesLocalisation"]
     )
-    (programme, _) = Programme.objects.get_or_create(
+
+    programme = Programme.objects.filter(
         numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"],
         bailleur=bailleur,
         administration=administration,
         parent=None,
-        defaults={
-            "nom": programme_from_siap["donneesOperation"]["nomOperation"],
-            "adresse": adresse,
-            "code_postal": code_postal,
-            "ville": ville,
-            "code_insee_commune": programme_from_siap["donneesLocalisation"]["commune"][
+    ).first()
+
+    if programme is None:
+        programme = Programme.objects.create(
+            numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"],
+            bailleur=bailleur,
+            administration=administration,
+            parent=None,
+            nom=programme_from_siap["donneesOperation"]["nomOperation"],
+            adresse=adresse,
+            code_postal=code_postal,
+            ville=ville,
+            code_insee_commune=programme_from_siap["donneesLocalisation"]["commune"][
                 "codeInsee"
             ],
-            "code_insee_departement": programme_from_siap["donneesLocalisation"][
+            code_insee_departement=programme_from_siap["donneesLocalisation"][
                 "departement"
             ]["codeInsee"],
-            "code_insee_region": programme_from_siap["donneesLocalisation"]["region"][
+            code_insee_region=programme_from_siap["donneesLocalisation"]["region"][
                 "codeInsee"
             ],
-            "zone_abc": programme_from_siap["donneesLocalisation"]["zonage123"],
-            "zone_123": programme_from_siap["donneesLocalisation"]["zonageABC"],
-            "type_operation": type_operation,
-            "nature_logement": nature_logement,
-        },
-    )
+            zone_abc=programme_from_siap["donneesLocalisation"]["zonage123"],
+            zone_123=programme_from_siap["donneesLocalisation"]["zonageABC"],
+            type_operation=type_operation,
+            nature_logement=nature_logement,
+        )
     # force type opération = sans travaux
     if (
         type_operation == TypeOperation.SANSTRAVAUX
