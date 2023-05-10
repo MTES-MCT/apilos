@@ -20,15 +20,10 @@ class ConventionBailleurService(ConventionService):
         if self.request.user.is_cerbere_user():
             sirens = []
             for habilitation in self.request.session["habilitations"]:
-                if (
-                    habilitation["groupe"]["profil"]["code"] == "MO_PERS_MORALE"
-                    and habilitation["porteeTerritComp"]["regComp"]["code"]
-                    == self.convention.programme.code_insee_region
-                ):
+                if habilitation["groupe"]["profil"]["code"] == "MO_PERS_MORALE":
                     if (
                         "regComp" in habilitation["porteeTerritComp"]
-                        and habilitation["porteeTerritComp"]["regComp"][
-                            "code"]
+                        and habilitation["porteeTerritComp"]["regComp"]["code"]
                         == self.convention.programme.code_insee_region
                     ) or "regComp" not in habilitation["porteeTerritComp"]:
                         sirens.append(habilitation["entiteMorale"]["siren"])
