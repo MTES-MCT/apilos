@@ -27,7 +27,8 @@ class ConventionBailleurService(ConventionService):
                 ):
                     if (
                         "regComp" in habilitation["porteeTerritComp"]
-                        and habilitation["porteeTerritComp"]["regComp"]["code"]
+                        and habilitation["porteeTerritComp"]["regComp"][
+                            "code"]
                         == self.convention.programme.code_insee_region
                     ) or "regComp" not in habilitation["porteeTerritComp"]:
                         sirens.append(habilitation["entiteMorale"]["siren"])
