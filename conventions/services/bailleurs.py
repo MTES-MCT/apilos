@@ -23,6 +23,7 @@ class ConventionBailleurService(ConventionService):
                 if habilitation["groupe"]["profil"]["code"] == "MO_PERS_MORALE":
                     if (
                         "regComp" in habilitation["porteeTerritComp"]
+                        and "code" in habilitation["porteeTerritComp"]["regComp"]
                         and habilitation["porteeTerritComp"]["regComp"]["code"]
                         == self.convention.programme.code_insee_region
                     ) or "regComp" not in habilitation["porteeTerritComp"]:
