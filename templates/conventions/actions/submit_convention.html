@@ -12,14 +12,23 @@
             <p>
                 Si vous avez encore des modifications à apporter au projet {% if convention.is_avenant %}d'avenant{% else %}de convention{% endif %}, vous pouvez y revenir plus tard.
             </p>
-            <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
-                {% csrf_token %}
-                <button name="SubmitConvention" value=True class="fr-btn fr-my-3w">
-                    Soumettre au service instructeur
-                </button>
-            </form>
+            {% with numero_galion=convention.programme.numero_galion %}
+                {% if not numero_galion %}
+                    <div>
+                        <em>le numero d'opération n'est pas défini pour l'opération de cette convention. Merci de le renseigner avant de continuer</em>
+                    </div>
+                    {% include "conventions/actions/edit_numero_galion.html" %}
+                {% endif %}
+                <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
+                    {% csrf_token %}
+                    <button name="SubmitConvention" value=True class="fr-btn fr-my-3w" {% if not numero_galion %}disabled{% endif %}>
+                        Soumettre au service instructeur
+                    </button>
+                </form>
+            {% endwith %}
+
             <p class="fr-text--xs notes">
-                <em>Votre projet de convention est enregistré.Si vous le souhaitez, vous pouvez quitter cette page et y revenir plus tard.</em>
+                <em>Votre projet de convention est enregistré. Si vous le souhaitez, vous pouvez quitter cette page et y revenir plus tard.</em>
             </p>
         </div>
     </div>

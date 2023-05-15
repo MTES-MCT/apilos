@@ -239,13 +239,16 @@ def save_convention(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     request.user.check_perm("convention.change_convention", convention)
     result = convention_submit(request, convention)
-    if result["success"] == ReturnStatus.SUCCESS:
+    if result["success"] in [ReturnStatus.SUCCESS, ReturnStatus.WARNING]:
+        result.update(
+            {"siap_operation_not_found": result["success"] == ReturnStatus.WARNING}
+        )
         return render(
             request,
             "conventions/submitted.html",
             result,
         )
-    if result["success"] == ReturnStatus.WARNING:
+    if result["success"] == ReturnStatus.REFRESH:
         return render(
             request,
             "conventions/saved.html",
