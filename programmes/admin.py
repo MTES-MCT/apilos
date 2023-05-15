@@ -4,11 +4,11 @@ from bailleurs.models import Bailleur
 from instructeurs.models import Administration
 
 from .models import (
+    Annexe,
+    Logement,
+    Lot,
     Programme,
     ReferenceCadastrale,
-    Lot,
-    Logement,
-    Annexe,
     TypeStationnement,
 )
 
@@ -42,9 +42,31 @@ class ProgrammeAdmin(admin.ModelAdmin):
     search_fields = ["nom"]
 
 
+@admin.display(description="Programme")
+def view_programme(lot):
+    return f"{lot.programme.ville} -  {lot.programme.nom}"
+
+
+class LotAdmin(admin.ModelAdmin):
+    list_display = (view_programme, "financement", "uuid")
+
+    fields = (
+        "uuid",
+        "financement",
+        "nb_logements",
+        "type_habitat",
+        "programme",
+    )
+
+    readonly_fields = (
+        "uuid",
+        "programme",
+    )
+
+
 admin.site.register(Programme, ProgrammeAdmin)
 admin.site.register(ReferenceCadastrale)
-admin.site.register(Lot)
+admin.site.register(Lot, LotAdmin)
 admin.site.register(Logement)
 admin.site.register(Annexe)
 admin.site.register(TypeStationnement)

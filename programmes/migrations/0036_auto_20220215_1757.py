@@ -14,12 +14,7 @@ def copy_edd_to_lot(apps, schema_editor):
         lot.save()
 
 
-def nothing_to_do(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
-
     dependencies = [
         ("programmes", "0035_auto_20220207_1248"),
     ]
@@ -35,5 +30,5 @@ class Migration(migrations.Migration):
             name="edd_volumetrique",
             field=models.TextField(max_length=50000, null=True),
         ),
-        migrations.RunPython(copy_edd_to_lot, nothing_to_do),
+        migrations.RunPython(copy_edd_to_lot, migrations.RunPython.noop),
     ]

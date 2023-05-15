@@ -2,9 +2,8 @@
 
 import os
 
-from django.db import migrations, models
 from django.conf import settings
-
+from django.db import migrations, models
 from openpyxl import load_workbook
 
 from bailleurs.models import SousNatureBailleur
@@ -14,12 +13,7 @@ def update_type_bailleur(apps, schema_editor):
     pass
 
 
-def nothing_to_do(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bailleurs", "0007_auto_20220119_1059"),
     ]
@@ -58,5 +52,5 @@ class Migration(migrations.Migration):
                 max_length=25,
             ),
         ),
-        migrations.RunPython(update_type_bailleur, nothing_to_do),
+        migrations.RunPython(update_type_bailleur, migrations.RunPython.noop),
     ]

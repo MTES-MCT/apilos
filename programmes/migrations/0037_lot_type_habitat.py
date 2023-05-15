@@ -12,12 +12,7 @@ def copy_type_habitat_to_lot(apps, schema_editor):
         lot.save()
 
 
-def nothing_to_do(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
-
     dependencies = [
         ("programmes", "0036_auto_20220215_1757"),
     ]
@@ -36,5 +31,5 @@ class Migration(migrations.Migration):
                 max_length=25,
             ),
         ),
-        migrations.RunPython(copy_type_habitat_to_lot, nothing_to_do),
+        migrations.RunPython(copy_type_habitat_to_lot, migrations.RunPython.noop),
     ]

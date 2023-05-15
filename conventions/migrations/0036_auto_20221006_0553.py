@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 def assign_signataire(apps, schema_editor):
-
     Convention = apps.get_model("conventions", "Convention")
 
     for convention in Convention.objects.prefetch_related("bailleur").all():
@@ -16,12 +15,7 @@ def assign_signataire(apps, schema_editor):
         convention.save()
 
 
-def nothing_to_do(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
-
     dependencies = [
         ("conventions", "0035_convention_cree_par"),
     ]
@@ -42,5 +36,5 @@ class Migration(migrations.Migration):
             name="signataire_nom",
             field=models.CharField(max_length=255, null=True),
         ),
-        migrations.RunPython(assign_signataire, nothing_to_do),
+        migrations.RunPython(assign_signataire, migrations.RunPython.noop),
     ]

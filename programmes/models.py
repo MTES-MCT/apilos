@@ -1,14 +1,14 @@
-import uuid
 import logging
+import uuid
 
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
+from apilos_settings.models import Departement
+from conventions.models.choices import ConventionStatut
 from core.models import IngestableModel
 from core.utils import get_key_from_json_field
-from conventions.models.choices import ConventionStatut
-from apilos_settings.models import Departement
 
 logger = logging.getLogger(__name__)
 
@@ -712,7 +712,6 @@ class Lot(IngestableModel):
 
 
 class Logement(models.Model):
-
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     designation = models.CharField(
@@ -849,7 +848,6 @@ class Logement(models.Model):
 
 
 class Annexe(models.Model):
-
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     logement = models.ForeignKey(
@@ -914,7 +912,6 @@ class Annexe(models.Model):
 
 
 class LocauxCollectifs(models.Model):
-
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     lot = models.ForeignKey(
