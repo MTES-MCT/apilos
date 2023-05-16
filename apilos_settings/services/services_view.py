@@ -3,7 +3,7 @@ from typing import Any
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.http import HttpRequest
@@ -21,18 +21,17 @@ from users.forms import (
     AddAdministrationForm,
     AddBailleurForm,
     AddUserForm,
+    UserBailleurFormSet,
     UserForm,
     UserNotificationForm,
-    UserBailleurFormSet,
 )
-from users.models import User, Role, TypeRole
+from users.models import Role, TypeRole, User
 from users.services import UserService
 
 
 def user_profile(request):
     # display user form
     if request.method == "POST":
-
         if settings.CERBERE_AUTH:
             userform = UserNotificationForm(request.POST)
             if (
@@ -304,7 +303,6 @@ def edit_bailleur(request, bailleur_uuid):
 
 @require_GET
 def user_list(request):
-
     user_list_service = UserListService(
         search_input=request.GET.get("search_input", ""),
         order_by=request.GET.get("order_by", "username"),

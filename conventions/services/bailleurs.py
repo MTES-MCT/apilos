@@ -2,7 +2,7 @@ from django.conf import settings
 from django.http import HttpRequest
 
 from bailleurs.models import Bailleur
-from conventions.forms import ConventionBailleurForm, ChangeBailleurForm
+from conventions.forms import ChangeBailleurForm, ConventionBailleurForm
 from conventions.models import Convention
 from conventions.services import utils
 from conventions.services.conventions import ConventionService
@@ -108,17 +108,8 @@ class ConventionBailleurService(ConventionService):
         bailleur = self.convention.programme.bailleur
         self.form = ConventionBailleurForm(
             {
+                # FIXME : uuid needed ?
                 "uuid": bailleur.uuid,
-                "nom": self.request.POST.get("nom", bailleur.nom),
-                "siret": self.request.POST.get("siret", bailleur.siret),
-                "capital_social": self.request.POST.get(
-                    "capital_social", bailleur.capital_social
-                ),
-                "adresse": self.request.POST.get("adresse", bailleur.adresse),
-                "code_postal": self.request.POST.get(
-                    "code_postal", bailleur.code_postal
-                ),
-                "ville": self.request.POST.get("ville", bailleur.ville),
                 "signataire_nom": self.request.POST.get(
                     "signataire_nom",
                     self.convention.signataire_nom or bailleur.signataire_nom,
@@ -160,18 +151,10 @@ class ConventionBailleurService(ConventionService):
         )
 
         if self.form.is_valid():
-            self._save_bailleur()
+            self._save_convention_signataire()
             self.return_status = utils.ReturnStatus.SUCCESS
 
-    def _save_bailleur(self):
-        bailleur = self.convention.programme.bailleur
-        bailleur.nom = self.form.cleaned_data["nom"]
-        bailleur.siret = self.form.cleaned_data["siret"]
-        bailleur.capital_social = self.form.cleaned_data["capital_social"]
-        bailleur.adresse = self.form.cleaned_data["adresse"]
-        bailleur.code_postal = self.form.cleaned_data["code_postal"]
-        bailleur.ville = self.form.cleaned_data["ville"]
-        bailleur.save()
+    def _save_convention_signataire(self):
         self.convention.signataire_nom = self.form.cleaned_data["signataire_nom"]
         self.convention.signataire_fonction = self.form.cleaned_data[
             "signataire_fonction"
