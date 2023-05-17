@@ -5,7 +5,8 @@ from django.db.models import TextChoices
 
 class StatutByRole(NamedTuple):
     label: str
-    icon_html_class: str | None = None
+    description_entete_convention: str | None = ""
+    description_entete_avenant: str | None = ""
     call_to_action: str | None = None
 
 
@@ -67,35 +68,112 @@ class ConventionStatut(Enum):
         label: str
         bailleur: StatutByRole
         instructeur: StatutByRole
+        icone: str
 
-    PROJET = Definition("1. Projet", StatutByRole("Projet"), StatutByRole("Projet"))
+    PROJET = Definition(
+        "1. Projet",
+        StatutByRole(
+            "Projet",
+            "Complétez ses informations, puis soumettez-la à votre service d'instruction",
+            "Complétez ses informations, puis soumettez-le à votre service d'instruction",
+        ),
+        StatutByRole(
+            "Projet",
+            "Complétez ses informations, puis soumettez-la à votre service d'instruction",
+            "Complétez ses informations, puis soumettez-le à votre service d'instruction",
+        ),
+        "pencil",
+    )
 
     INSTRUCTION = Definition(
         "2. Instruction requise",
-        StatutByRole("En cours d'instruction"),
-        StatutByRole("À instruire"),
+        StatutByRole(
+            "En instruction",
+            "Elle sera prochainement validée ou votre instructeur vous demandera des corrections",
+            "Il sera prochainement validé ou votre instructeur vous demandera des corrections",
+        ),
+        StatutByRole(
+            "À instruire",
+            "Elle sera prochainement validée ou votre instructeur vous demandera des corrections",
+            "Il sera prochainement validé ou votre instructeur vous demandera des corrections",
+        ),
+        "eye",
     )
     CORRECTION = Definition(
         "3. Corrections requises",
-        StatutByRole("À corriger"),
-        StatutByRole("En cours de correction"),
+        StatutByRole(
+            "À corriger",
+            "Corrigez les demandes de votre instructeur puis soumettez-la à nouveau",
+            "Corrigez les demandes de votre instructeur puis soumettez-le à nouveau",
+        ),
+        StatutByRole(
+            "En correction",
+            "Corrigez les demandes de votre instructeur puis soumettez-la à nouveau",
+            "Corrigez les demandes de votre instructeur puis soumettez-le à nouveau",
+        ),
+        "question-answer",
     )
     A_SIGNER = Definition(
-        "4. A signer", StatutByRole("À signer"), StatutByRole("À signer")
+        "4. A signer",
+        StatutByRole("À signer"),
+        StatutByRole("À signer"),
+        "draft",
     )
     SIGNEE = Definition(
-        "5. Signée", StatutByRole("Finalisée"), StatutByRole("Finalisée")
+        "5. Signée",
+        StatutByRole(
+            "Finalisée",
+            "Vous devrez désormais créer un avenant si vous souhaitez mettre à jour une information",
+            "Vous devrez désormais créer un autre avenant si vous souhaitez mettre à jour une information",
+        ),
+        StatutByRole(
+            "Finalisée",
+            "Vous devrez désormais créer un avenant si vous souhaitez mettre à jour une information",
+            "Vous devrez désormais créer un autre avenant si vous souhaitez mettre à jour une information",
+        ),
+        "success",
     )
     RESILIEE = Definition(
-        "6. Résiliée", StatutByRole("Résiliée"), StatutByRole("Résiliée")
+        "6. Résiliée",
+        StatutByRole(
+            "Résiliée",
+            "Il n'est pas possible d'y apporter des modifications",
+            "Il n'est pas possible d'y apporter des modifications",
+        ),
+        StatutByRole(
+            "Résiliée",
+            "Il n'est pas possible d'y apporter des modifications",
+            "Il n'est pas possible d'y apporter des modifications",
+        ),
+        "close",
     )
     DENONCEE = Definition(
-        "7. Dénoncée", StatutByRole("Dénoncée"), StatutByRole("Dénoncée")
+        "7. Dénoncée",
+        StatutByRole(
+            "Dénoncée",
+            "Il n'est pas possible d'y apporter des modifications",
+            "Il n'est pas possible d'y apporter des modifications",
+        ),
+        StatutByRole(
+            "Dénoncée",
+            "Il n'est pas possible d'y apporter des modifications",
+            "Il n'est pas possible d'y apporter des modifications",
+        ),
+        "close",
     )
     ANNULEE = Definition(
         "8. Annulée en suivi",
-        StatutByRole("Annulée en suivi"),
-        StatutByRole("Annulée en suivi"),
+        StatutByRole(
+            "Annulée en suivi",
+            "Il n'est pas possible d'y apporter des modifications",
+            "Il n'est pas possible d'y apporter des modifications",
+        ),
+        StatutByRole(
+            "Annulée en suivi",
+            "Il n'est pas possible d'y apporter des modifications",
+            "Il n'est pas possible d'y apporter des modifications",
+        ),
+        "close",
     )
 
     @classmethod
@@ -160,6 +238,10 @@ class ConventionStatut(Enum):
     def instructeur_label(self):
         return self.value.instructeur.label
 
+    @property
+    def icone(self):
+        return self.value.icone
+
 
 class ConventionType1and2(TextChoices):
     TYPE1 = "Type1", "Type I"
@@ -179,7 +261,7 @@ class Preteur(TextChoices):
 
 
 class TypeEvenement(TextChoices):
-    DEPOT_BAILLEUR = "DEPOT_BAILLEUR", "Dépôt de la convention APL par" "le bailleur"
+    DEPOT_BAILLEUR = "DEPOT_BAILLEUR", "Dépôt de la convention APL par le bailleur"
     MODIFICATION = (
         "MODIFICATION",
         "Modification de la convention (valeur du loyer plafond, surface,"
@@ -196,7 +278,7 @@ class TypeEvenement(TextChoices):
     )
     RETOUR_PREFET = (
         "RETOUR_PREFET",
-        "Retour de la convention APL signée par" "le préfet",
+        "Retour de la convention APL signée par le préfet",
     )
     ENVOI_HYPOTHEQUE = (
         "ENVOI_HYPOTHEQUE",
@@ -205,7 +287,7 @@ class TypeEvenement(TextChoices):
     )
     RETOUR_HYPOTHEQUE = (
         "RETOUR_HYPOTHEQUE",
-        "Retour du bureau des hypothèques ou au livre foncier, pour" "modification",
+        "Retour du bureau des hypothèques ou au livre foncier, pour modification",
     )
     ENVOI_RECTIFICATIF_PREFET = (
         "ENVOI_RECTIFICATIF_PREFET",
@@ -227,7 +309,7 @@ class TypeEvenement(TextChoices):
     )
     CORRECTION_AVENANT = (
         "CORRECTION_AVENANT",
-        "Modification de l'avenant sur demande de l'instructeur auprès du" "bailleur",
+        "Modification de l'avenant sur demande de l'instructeur auprès du bailleur",
     )
     ENVOI_AVENANT_PREFET = (
         "ENVOI_AVENANT_PREFET",
@@ -239,7 +321,7 @@ class TypeEvenement(TextChoices):
     )
     ENVOI_AVENANT_HYPOTHEQUE = (
         "ENVOI_AVENANT_HYPOTHEQUE",
-        "Transmission de l'avenant au bureau des hypothèques ou au livre" "foncier",
+        "Transmission de l'avenant au bureau des hypothèques ou au livre foncier",
     )
     RETOUR_AVENANT_HYPOTHEQUE = (
         "RETOUR_AVENANT_HYPOTHEQUE",
@@ -257,9 +339,9 @@ class TypeEvenement(TextChoices):
     )
     PUBLICATION_AVENANT_HYPOTHEQUE = (
         "PUBLICATION_AVENANT_HYPOTHEQUE",
-        "Publication de l'avenant de la convention APL au bureau des" "hypothèques",
+        "Publication de l'avenant de la convention APL au bureau des hypothèques",
     )
-    EXPIRATION_CONVENTION = "EXPIRATION_CONVENTION", "Expiration de la" "convention APL"
+    EXPIRATION_CONVENTION = "EXPIRATION_CONVENTION", "Expiration de la convention APL"
     ENVOI_FIN_DENONCIATION = (
         "ENVOI_FIN_DENONCIATION",
         "Information auprès du bailleur de la date butoir de dénonciation de"
