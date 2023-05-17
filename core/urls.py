@@ -31,6 +31,7 @@ from core.views import SecurePasswordResetConfirmView
 urlpatterns = [
     path("admin/doc/", include("django.contrib.admindocs.urls")),
     path("admin/", admin.site.urls),
+    path("admin/defender/", include("defender.urls")),
     path("hijack/", include("hijack.urls")),
     path("", include(("users.urls", "users"), namespace="users")),
     path(

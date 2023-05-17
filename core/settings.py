@@ -143,6 +143,7 @@ INSTALLED_APPS = [
     "hijack",
     "hijack.contrib.admin",
     "django_celery_results",
+    "defender",
 ]
 
 if ENVIRONMENT == "development":
@@ -167,6 +168,7 @@ MIDDLEWARE = [
     "csp.middleware.CSPMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
     "hijack.middleware.HijackUserMiddleware",
+    "defender.middleware.FailedLoginMiddleware",
 ]
 
 if not TESTING:
@@ -407,6 +409,14 @@ CSP_INCLUDE_NONCE_IN = [
     "script-src",
 ]
 CSP_EXCLUDE_URL_PREFIXES = ("/explorer",)
+
+# Django defender (doc https://github.com/jazzband/django-defender#customizing-django-defender)
+DEFENDER_LOGIN_FAILURE_LIMIT = 5
+DEFENDER_BEHIND_REVERSE_PROXY = get_env_variable(
+    "DEFENDER_BEHIND_REVERSE_PROXY", cast=bool, default=False
+)
+DEFENDER_REDIS_URL = get_env_variable("REDIS_URL")
+DEFENDER_COOLOFF_TIME = 6 * 60 * 60
 
 # Disable whitenoise for test
 STATICFILES_STORAGE = (
