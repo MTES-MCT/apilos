@@ -39,6 +39,7 @@ from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
     convention_feedback,
     convention_submit,
+    convention_cancel,
     convention_validate,
 )
 from conventions.services.utils import ReturnStatus, base_convention_response_error
@@ -266,6 +267,22 @@ def delete_convention(request, convention_uuid):
     request.user.check_perm("convention.change_convention", convention)
     convention.delete()
     return HttpResponseRedirect(reverse("conventions:index"))
+
+
+@require_POST
+@login_required
+@has_campaign_permission_view_function("convention.change_convention")
+def cancel_convention(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    request.user.check_perm("convention.change_convention", convention)
+    result = convention_cancel(request, convention)
+    if result["success"] == ReturnStatus.SUCCESS:
+        return HttpResponseRedirect(
+            reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+        )
+    return HttpResponseRedirect(
+        reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+    )
 
 
 @require_POST

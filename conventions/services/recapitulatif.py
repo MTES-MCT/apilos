@@ -453,3 +453,19 @@ def convention_validate(request: HttpRequest, convention: Convention):
         "opened_comments": opened_comments,
         "ConventionType1and2Form": convention_type1_and_2_form,
     }
+
+
+def convention_cancel(request: HttpRequest, convention: Convention):
+    previous_status = convention.statut
+    convention.statut = ConventionStatut.ANNULEE.label
+    convention.save()
+    ConventionHistory.objects.create(
+        convention=convention,
+        statut_convention=ConventionStatut.ANNULEE.label,
+        statut_convention_precedent=previous_status,
+        user=request.user,
+    ).save()
+    return {
+        "success": utils.ReturnStatus.SUCCESS,
+        "convention": convention,
+    }

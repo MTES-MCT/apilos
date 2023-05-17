@@ -163,6 +163,11 @@ urlpatterns = [
         name="delete",
     ),
     path(
+        "cancel/<convention_uuid>",
+        views.cancel_convention,
+        name="cancel",
+    ),
+    path(
         "feedback/<convention_uuid>",
         views.feedback_convention,
         name="feedback",
