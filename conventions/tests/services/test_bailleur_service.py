@@ -5,10 +5,7 @@ from django.test import TestCase
 
 from conventions.forms import ConventionBailleurForm
 from conventions.models import Convention
-from conventions.services import (
-    bailleurs,
-    utils,
-)
+from conventions.services import bailleurs, utils
 from users.models import User
 
 
@@ -43,18 +40,16 @@ class ConventionBailleurServiceTests(TestCase):
         )
 
     def test_update_bailleur_nom_error(self):
-
         self.service.request.POST = {
-            "nom": "",
-            "adresse": "fake_address",
-            "code_postal": "01000",
+            "signataire_nom": "",
+            "signataire_fonction": "DG",
+            "signataire_date_deliberation": "2022-12-31",
         }
         self.service.update_bailleur()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertTrue(self.service.form.has_error("nom"))
+        self.assertTrue(self.service.form.has_error("signataire_nom"))
 
     def test_update_bailleur_success(self):
-
         bailleur = self.service.convention.programme.bailleur
         bailleur_signataire_nom = bailleur.signataire_nom
         bailleur_signataire_fonction = bailleur.signataire_fonction
@@ -62,9 +57,6 @@ class ConventionBailleurServiceTests(TestCase):
         bailleur_signataire_bloc_signature = bailleur.signataire_bloc_signature
 
         self.service.request.POST = {
-            "nom": "nom bailleur",
-            "adresse": "fake_address",
-            "code_postal": "01000",
             "signataire_nom": "Johnny",
             "signataire_fonction": "Dirlo",
             "signataire_date_deliberation": "2022-02-01",
@@ -75,7 +67,6 @@ class ConventionBailleurServiceTests(TestCase):
         bailleur.refresh_from_db()
         self.service.convention.refresh_from_db()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
-        self.assertEqual(bailleur.nom, "nom bailleur")
         self.assertEqual(bailleur.signataire_nom, bailleur_signataire_nom)
         self.assertEqual(bailleur.signataire_fonction, bailleur_signataire_fonction)
         self.assertEqual(

@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
-from conventions.models import Convention
 
+from conventions.models import Convention
 from conventions.tests.views.abstract import AbstractEditViewTestCase
 from users.models import User
 
@@ -28,22 +28,22 @@ class ConventionBailleurViewTests(AbstractEditViewTestCase, TestCase):
         )
         self.target_template = "conventions/bailleur.html"
         self.error_payload = {
-            "nom": "",
-            "adresse": "fake adresse",
-            "code_postal": "01000",
+            "signataire_nom": "",
+            "signataire_fonction": "DG",
+            "signataire_date_deliberation": "2022-12-31",
         }
         self.success_payload = {
-            "nom": "fake nom",
-            "adresse": "fake adresse",
-            "code_postal": "01000",
+            "signataire_nom": "Lady Gaga",
+            "signataire_fonction": "DG",
+            "signataire_date_deliberation": "2022-12-31",
         }
         self.msg_prefix = "[ConventionBailleurViewTests] "
 
     def _test_data_integrity(self):
         self.convention_75.refresh_from_db()
         self.assertEqual(
-            self.convention_75.programme.bailleur.adresse,
-            "fake adresse",
+            self.convention_75.signataire_nom,
+            "Lady Gaga",
             msg=f"{self.msg_prefix}",
         )
 

@@ -13,8 +13,10 @@
             id="{{ form_input.id_for_label }}"
             name="{{ form_input.html_name }}"
             {% include "common/form/disable_form_input.html" %}>
+            <option value="" hidden></option>
             {% for element in form_input.field.queryset %}
-                <option value="{{ element|attribute:form_input.field.to_field_name }}">
+                <option value="{{ element|attribute:form_input.field.to_field_name }}"
+                    {% if form_input.value|stringformat:'s' == element|attribute:form_input.field.to_field_name|stringformat:'s' %}selected{% endif %}>
                     {{ element }}
                 </option>
             {% endfor %}
@@ -25,7 +27,6 @@
         VirtualSelect.init({
             ele: '#{{form_input.id_for_label}}',
             search: true,
-            selectedValue: '{{ form_input.value }}',
             onServerSearch: function (search, select) {
                 fetch('{{ url }}?q=' + search)
                     .then((response) => response.json())
