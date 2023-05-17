@@ -115,7 +115,7 @@ ALLOWED_HOSTS = ["localhost"] + env_allowed_hosts
 
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
+    "admin.apps.ApilosAdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
