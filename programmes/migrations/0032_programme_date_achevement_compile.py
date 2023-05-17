@@ -7,19 +7,13 @@ def update_date_achevement_compile(apps, schema_editor):
     Programme = apps.get_model("programmes", "Programme")
 
     for prog in Programme.objects.all():
-
         prog.date_achevement_compile = (
             prog.date_achevement or prog.date_achevement_previsible
         )
         prog.save()
 
 
-def nothing_to_do(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
-
     dependencies = [
         ("programmes", "0031_auto_20220107_1634"),
     ]
@@ -30,5 +24,5 @@ class Migration(migrations.Migration):
             name="date_achevement_compile",
             field=models.DateField(null=True),
         ),
-        migrations.RunPython(update_date_achevement_compile, nothing_to_do),
+        migrations.RunPython(update_date_achevement_compile, migrations.RunPython.noop),
     ]

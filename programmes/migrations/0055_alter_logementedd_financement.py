@@ -8,12 +8,7 @@ def remove_plai_adp(apps, schema_editor):
     LogementEDD.objects.filter(financement="PLAI_ADP").update(financement="PLAI")
 
 
-def nothing_to_do(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
-
     dependencies = [
         ("programmes", "0054_remove_bailleur"),
     ]
@@ -33,5 +28,5 @@ class Migration(migrations.Migration):
                 max_length=25,
             ),
         ),
-        migrations.RunPython(remove_plai_adp, nothing_to_do),
+        migrations.RunPython(remove_plai_adp, migrations.RunPython.noop),
     ]

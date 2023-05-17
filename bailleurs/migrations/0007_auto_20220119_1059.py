@@ -6,11 +6,9 @@ from bailleurs.models import SousNatureBailleur
 
 
 def normalize_enum_data(apps, schema_editor):
-
     Bailleur = apps.get_model("bailleurs", "Bailleur")
 
     for bailleur in Bailleur.objects.all():
-
         for value, label in SousNatureBailleur.choices:
             if bailleur.type_bailleur == label:
                 bailleur.type_bailleur = value
@@ -20,16 +18,11 @@ def normalize_enum_data(apps, schema_editor):
         bailleur.save()
 
 
-def nothing_to_do(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bailleurs", "0006_bailleur_type_bailleur"),
     ]
 
     operations = [
-        migrations.RunPython(normalize_enum_data, nothing_to_do),
+        migrations.RunPython(normalize_enum_data, migrations.RunPython.noop),
     ]

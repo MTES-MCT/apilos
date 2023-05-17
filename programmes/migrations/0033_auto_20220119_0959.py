@@ -12,7 +12,6 @@ def normalize_enum_data(apps, schema_editor):
     Programme = apps.get_model("programmes", "Programme")
 
     for prog in Programme.objects.all():
-
         for value, label in ZoneABC.choices:
             if (
                 prog.zone_abc_bis is not None
@@ -53,16 +52,11 @@ def normalize_enum_data(apps, schema_editor):
         # VENDEUR
 
 
-def nothing_to_do(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
-
     dependencies = [
         ("programmes", "0032_programme_date_achevement_compile"),
     ]
 
     operations = [
-        migrations.RunPython(normalize_enum_data, nothing_to_do),
+        migrations.RunPython(normalize_enum_data, migrations.RunPython.noop),
     ]

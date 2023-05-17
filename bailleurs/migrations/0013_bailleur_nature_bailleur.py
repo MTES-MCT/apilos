@@ -13,12 +13,7 @@ def set_nature_bailleur(apps, schema_editor):
         )
 
 
-def nothing_to_do(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bailleurs", "0012_rename_type_bailleur_bailleur_sous_nature_bailleur"),
     ]
@@ -41,5 +36,5 @@ class Migration(migrations.Migration):
                 max_length=255,
             ),
         ),
-        migrations.RunPython(set_nature_bailleur, nothing_to_do),
+        migrations.RunPython(set_nature_bailleur, migrations.RunPython.noop),
     ]
