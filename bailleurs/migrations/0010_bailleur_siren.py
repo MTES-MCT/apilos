@@ -11,12 +11,7 @@ def update_siren(apps, schema_editor):
         bailleur.save()
 
 
-def nothing_to_do(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bailleurs", "0009_alter_bailleur_siret"),
     ]
@@ -27,5 +22,5 @@ class Migration(migrations.Migration):
             name="siren",
             field=models.CharField(max_length=9, null=True),
         ),
-        migrations.RunPython(update_siren, nothing_to_do),
+        migrations.RunPython(update_siren, migrations.RunPython.noop),
     ]

@@ -2,18 +2,18 @@ import re
 from typing import Tuple
 
 from bailleurs.models import Bailleur, NatureBailleur
+from conventions.models import Convention
 from core.exceptions.types import InconsistentDataSIAPException
 from instructeurs.models import Administration
 from programmes.models import (
     Financement,
     Lot,
+    NatureLogement,
     Programme,
     TypeHabitat,
     TypeOperation,
-    NatureLogement,
 )
 from users.models import User
-from conventions.models import Convention
 
 
 def get_or_create_conventions(operation: dict, user: User):
@@ -233,7 +233,10 @@ def get_or_create_lots_and_conventions(
     else:
         for aide in operation["detailsOperation"]:
             financement = _financement(aide["aide"]["code"])
-            if financement == Financement.PLAI_ADP:
+            if (
+                financement == Financement.PLAI_ADP
+                or financement not in Financement.values
+            ):
                 continue
             (lot, _) = Lot.objects.get_or_create(
                 programme=programme,

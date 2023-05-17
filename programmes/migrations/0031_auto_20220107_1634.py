@@ -14,12 +14,7 @@ def update_fields_zone_bis(apps, schema_editor):
         prog.save()
 
 
-def nothing_to_do(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
-
     dependencies = [
         ("programmes", "0030_alter_programme_type_habitat"),
     ]
@@ -69,5 +64,5 @@ class Migration(migrations.Migration):
                 max_length=25,
             ),
         ),
-        migrations.RunPython(update_fields_zone_bis, nothing_to_do),
+        migrations.RunPython(update_fields_zone_bis, migrations.RunPython.noop),
     ]
