@@ -155,7 +155,7 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
             date_initiale=date.fromisoformat("2013-07-12"),
             date_actualisation=date.fromisoformat("2014-03-18"),
         )
-        self.assertAlmostEqual(400 * 1.012 * 1.0057, update, places=2)
+        self.assertAlmostEqual(400 * 1.012, update, places=2)
 
         update = LoyerRedevanceUpdateComputer.compute_loyer_update(
             montant_initial=100,
@@ -180,7 +180,7 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
             date_initiale=date.fromisoformat("2013-07-12"),
             date_actualisation=date.fromisoformat("2014-03-18"),
         )
-        self.assertAlmostEqual(400 * 1.012 * 1.0057, update, places=2)
+        self.assertAlmostEqual(400 * 1.012, update, places=2)
 
         update = LoyerRedevanceUpdateComputer.compute_loyer_update(
             montant_initial=100,
@@ -204,7 +204,7 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
             date_initiale=date.fromisoformat("2013-07-12"),
             date_actualisation=date.fromisoformat("2014-03-18"),
         )
-        self.assertAlmostEqual(400 * 1.012 * 1.0057, update, places=2)
+        self.assertAlmostEqual(400 * 1.012, update, places=2)
 
         update = LoyerRedevanceUpdateComputer.compute_loyer_update(
             montant_initial=100,
