@@ -1,20 +1,20 @@
-from datetime import datetime, timedelta
 import logging
-import uuid
 import threading
-import requests
-import jwt
+import uuid
+from datetime import datetime, timedelta
 
+import jwt
+import requests
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from tenacity import retry, stop_after_attempt, retry_if_exception_type
+from tenacity import retry, retry_if_exception_type, stop_after_attempt
 
 from core.exceptions.types import (
+    SIAPException,
     TimeoutSIAPException,
     UnauthorizedSIAPException,
     UnavailableServiceSIAPException,
 )
-
 from siap.siap_client.mock_data import (
     config_mock,
     habilitations_mock,
@@ -91,7 +91,6 @@ def _call_siap_api(
 
 
 class SIAPClient:
-
     __singleton_lock = threading.Lock()
     __singleton_instance = None
     __should_update_at = datetime.now() + timedelta(minutes=REFRESH_SIAP_CONFIG)
@@ -99,7 +98,6 @@ class SIAPClient:
     # define the classmethod
     @classmethod
     def get_instance(cls):
-
         # check for the singleton instance
         if not cls.__singleton_instance:
             with cls.__singleton_lock:
@@ -217,7 +215,7 @@ class SIAPClientRemote(SIAPClientInterface):
         )
         if response.status_code >= 200 and response.status_code < 300:
             return response.json()
-        raise Exception(
+        raise SIAPException(
             f"user doesn't have enough rights to display operation {response}"
         )
 

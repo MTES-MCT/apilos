@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
@@ -15,8 +16,9 @@ from conventions.services import utils
 from conventions.services.conventions import ConventionService
 from conventions.services.file import ConventionFileService
 from conventions.tasks import generate_and_send
+from core.exceptions.types import SIAPException
 from core.services import EmailService, EmailTemplateID
-from programmes.models import Annexe
+from programmes.models import Annexe, Programme
 from siap.siap_client.client import SIAPClient
 
 
@@ -30,7 +32,14 @@ class ConventionRecapitulatifService(ConventionService):
             self.convention.programme.numero_galion = (
                 programme_number_form.cleaned_data["numero_galion"]
             )
-            self.convention.programme.save()
+            programme_id = (
+                self.convention.parent.programme_id
+                if self.convention.parent
+                else self.convention.programme_id
+            )
+            Programme.objects.filter(
+                Q(id=programme_id) | Q(parent_id=programme_id)
+            ).update(numero_galion=programme_number_form.cleaned_data["numero_galion"])
         return self.get_convention_recapitulatif(
             programme_number_form=programme_number_form
         )
@@ -38,7 +47,6 @@ class ConventionRecapitulatifService(ConventionService):
     def get_convention_recapitulatif(
         self, convention_type1_and_2_form=None, programme_number_form=None
     ):
-
         convention_number_form = ConventionNumberForm(
             initial={
                 "convention_numero": self.convention.get_default_convention_number()
@@ -176,7 +184,7 @@ class ConventionRecapitulatifService(ConventionService):
 
 
 def convention_submit(request: HttpRequest, convention: Convention):
-    submitted = utils.ReturnStatus.WARNING
+    submitted = utils.ReturnStatus.REFRESH
     # Set back the onvention to the instruction
     if request.POST.get("BackToInstruction", False):
         ConventionHistory.objects.create(
@@ -190,7 +198,6 @@ def convention_submit(request: HttpRequest, convention: Convention):
         submitted = utils.ReturnStatus.ERROR
     # Submit the convention to the instruction
     if request.POST.get("SubmitConvention", False):
-
         ConventionHistory.objects.create(
             convention=convention,
             statut_convention=ConventionStatut.INSTRUCTION.label,
@@ -206,14 +213,17 @@ def convention_submit(request: HttpRequest, convention: Convention):
 
         instructeur_emails = []
         if request.user.is_cerbere_user():
-            client = SIAPClient.get_instance()
-            operation = client.get_operation(
-                user_login=request.user.cerbere_login,
-                habilitation_id=request.session["habilitation_id"],
-                operation_identifier=convention.programme.numero_galion,
-            )
-            for utilisateur in operation["gestionnaire"]["utilisateurs"]:
-                instructeur_emails.append(utilisateur["email"])
+            try:
+                client = SIAPClient.get_instance()
+                operation = client.get_operation(
+                    user_login=request.user.cerbere_login,
+                    habilitation_id=request.session["habilitation_id"],
+                    operation_identifier=convention.programme.numero_galion,
+                )
+                for utilisateur in operation["gestionnaire"]["utilisateurs"]:
+                    instructeur_emails.append(utilisateur["email"])
+            except SIAPException:
+                submitted = utils.ReturnStatus.WARNING
         else:
             instructeur_emails = convention.get_email_instructeur_users(
                 include_partial=True
@@ -226,7 +236,8 @@ def convention_submit(request: HttpRequest, convention: Convention):
             convention,
             instructeur_emails,
         )
-        submitted = utils.ReturnStatus.SUCCESS
+        if submitted != utils.ReturnStatus.WARNING:
+            submitted = utils.ReturnStatus.SUCCESS
     return {
         "success": submitted,
         "convention": convention,

@@ -7,6 +7,15 @@
         {% include "conventions/common/form_header.html"%}
         <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters">
+
+                {% if siap_operation_not_found %}
+                    <div class="fr-col-md-12 fr-mb-5w fr-mt-3w">
+                        <div role="alert" class="fr-alert fr-alert--warning">
+                            <p class="fr-alert__title">L'operation numéro « {{convention.programme.numero_galion}} » n'est pas disponible sur l'espace de financement du SIAP</p>
+                        </div>
+                    </div>
+                {% endif %}
+
                 <div class="fr-col-md-12  fr-my-5w">
                     <h2>Félicitations</h2>
                     <h4 class="fr-mb-3w">Bravo, vous venez de soumettre votre {% if convention.is_avenant %}avenant de {% endif %}convention à l'instruction en date du {{convention.soumis_le}}</h4>

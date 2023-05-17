@@ -7,7 +7,6 @@ from programmes.services import get_or_create_conventions_from_operation_number
 
 @login_required
 def operation_conventions(request, numero_operation):
-
     # Décorator ?
     if not request.user.is_cerbere_user():
         raise PermissionError("this function is available only for CERBERE user")
@@ -33,7 +32,6 @@ def operation_conventions(request, numero_operation):
         {
             "numero_operation": numero_operation,
             "programme": programme,
-            #            "lots": lots,
             "conventions": service,
         },
     )

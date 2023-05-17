@@ -7,10 +7,10 @@
                 {% if programme.numero_galion %}
                     Opération n°{{programme.numero_galion}}
                 {% endif %}
-                {% if request|is_instructeur %}
+                {% if request|is_instructeur and programme.bailleur %}
                     (Entreprise bailleur : {{ programme.bailleur }})
                 {% endif %}
-                {% if request|is_bailleur %}
+                {% if request|is_bailleur and programme.administration %}
                     (Service instructeur : {{ programme.administration }})
                 {% endif %}
             </div>
