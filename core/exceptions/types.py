@@ -1,3 +1,7 @@
+class SIAPException(Exception):
+    pass
+
+
 class HabilitationSIAPException(Exception):
     pass
 

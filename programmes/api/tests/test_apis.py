@@ -1,9 +1,8 @@
 from operator import itemgetter
 
 from django.conf import settings
-
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APIClient, APITestCase
 
 from conventions.models.choices import ConventionStatut
 from conventions.models.convention import Convention
@@ -12,7 +11,6 @@ from programmes.api.tests import fixtures
 from programmes.models import Programme
 from siap.siap_client.client import build_jwt
 from users.models import User
-
 
 operation_response = {
     **fixtures.programme2,
