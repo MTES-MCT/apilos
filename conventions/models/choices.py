@@ -5,8 +5,7 @@ from django.db.models import TextChoices
 
 class StatutByRole(NamedTuple):
     label: str
-    description_entete_convention: str | None = ""
-    description_entete_avenant: str | None = ""
+    description_entete: str | None = ""
     call_to_action: str | None = None
 
 
@@ -74,13 +73,11 @@ class ConventionStatut(Enum):
         "1. Projet",
         StatutByRole(
             "Projet",
-            "Complétez ses informations, puis soumettez-la à votre service d'instruction",
-            "Complétez ses informations, puis soumettez-le à votre service d'instruction",
+            "Complétez ses informations, puis soumettez-{article} à votre service d'instruction",
         ),
         StatutByRole(
             "Projet",
-            "Complétez ses informations, puis soumettez-la à votre service d'instruction",
-            "Complétez ses informations, puis soumettez-le à votre service d'instruction",
+            "Complétez ses informations, puis soumettez-{article} à votre service d'instruction",
         ),
         "pencil",
     )
@@ -89,13 +86,11 @@ class ConventionStatut(Enum):
         "2. Instruction requise",
         StatutByRole(
             "En instruction",
-            "Elle sera prochainement validée ou votre instructeur vous demandera des corrections",
-            "Il sera prochainement validé ou votre instructeur vous demandera des corrections",
+            "{pronom} sera prochainement validé{accord} ou votre instructeur vous demandera des corrections",
         ),
         StatutByRole(
             "À instruire",
-            "Elle sera prochainement validée ou votre instructeur vous demandera des corrections",
-            "Il sera prochainement validé ou votre instructeur vous demandera des corrections",
+            "{pronom} sera prochainement validé{accord} ou votre instructeur vous demandera des corrections",
         ),
         "eye",
     )
@@ -103,13 +98,11 @@ class ConventionStatut(Enum):
         "3. Corrections requises",
         StatutByRole(
             "À corriger",
-            "Corrigez les demandes de votre instructeur puis soumettez-la à nouveau",
-            "Corrigez les demandes de votre instructeur puis soumettez-le à nouveau",
+            "Corrigez les demandes de votre instructeur puis soumettez-{article} à nouveau",
         ),
         StatutByRole(
             "En correction",
-            "Corrigez les demandes de votre instructeur puis soumettez-la à nouveau",
-            "Corrigez les demandes de votre instructeur puis soumettez-le à nouveau",
+            "Corrigez les demandes de votre instructeur puis soumettez-{article} à nouveau",
         ),
         "question-answer",
     )
@@ -123,13 +116,11 @@ class ConventionStatut(Enum):
         "5. Signée",
         StatutByRole(
             "Finalisée",
-            "Vous devrez désormais créer un avenant si vous souhaitez mettre à jour une information",
-            "Vous devrez désormais créer un autre avenant si vous souhaitez mettre à jour une information",
+            "Vous devrez désormais créer un {autre} avenant si vous souhaitez mettre à jour une information",
         ),
         StatutByRole(
             "Finalisée",
-            "Vous devrez désormais créer un avenant si vous souhaitez mettre à jour une information",
-            "Vous devrez désormais créer un autre avenant si vous souhaitez mettre à jour une information",
+            "Vous devrez désormais créer un {autre} avenant si vous souhaitez mettre à jour une information",
         ),
         "success",
     )
@@ -138,11 +129,9 @@ class ConventionStatut(Enum):
         StatutByRole(
             "Résiliée",
             "Il n'est pas possible d'y apporter des modifications",
-            "Il n'est pas possible d'y apporter des modifications",
         ),
         StatutByRole(
             "Résiliée",
-            "Il n'est pas possible d'y apporter des modifications",
             "Il n'est pas possible d'y apporter des modifications",
         ),
         "close",
@@ -152,11 +141,9 @@ class ConventionStatut(Enum):
         StatutByRole(
             "Dénoncée",
             "Il n'est pas possible d'y apporter des modifications",
-            "Il n'est pas possible d'y apporter des modifications",
         ),
         StatutByRole(
             "Dénoncée",
-            "Il n'est pas possible d'y apporter des modifications",
             "Il n'est pas possible d'y apporter des modifications",
         ),
         "close",
@@ -166,11 +153,9 @@ class ConventionStatut(Enum):
         StatutByRole(
             "Annulée en suivi",
             "Il n'est pas possible d'y apporter des modifications",
-            "Il n'est pas possible d'y apporter des modifications",
         ),
         StatutByRole(
             "Annulée en suivi",
-            "Il n'est pas possible d'y apporter des modifications",
             "Il n'est pas possible d'y apporter des modifications",
         ),
         "close",
