@@ -4,17 +4,33 @@
         <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-lg-11 fr-col-offset-lg-1 fr-mb-2w">
-                    <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Erreur serveur</h2>
-                    <p class="fr-mb-3w">
-                        Une erreur est survenue. Nous vous prions de nous excuser.
-                    </p>
-                    {{ specific_error|safe }}
+
+                    {% if specific_error == 'not_handled_bailleur_prive' %}
+                        <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Cet fonctionnalité n'est pas encore prise en charge par la plateforme SIAP-APiLos</h2>
+                        <p class="fr-mb-3w">
+                            Le conventionnement des opérations portées par des bailleurs privés (personnes physiques sans SIREN) n'est pas pris en charge actuellement par la plateforme SIAP-APiLos.<br>
+                            Nos équipes techniques travaillent actuellement à la mise en place de cette fonctionnalité.
+                        </p>
+                        <p class="fr-mb-3w">
+                            Nous vous prions de nous excuser pour la gène occasionnée. Si votre besoin est urgent, merci de contacter notre assistance à l'adresse suivante : <a href="mailto:contact@apilos.beta.gouv.fr" target="_blank">contact@apilos.beta.gouv.fr</a>.
+                        </p>
+                    {% elif specific_error == 'not_handled_association_hlm' %}
+                        <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Votre habilitation n'est pas prise en charge par le module conventionnement du SIAP (APiLos).</h2>
+                        <p class="fr-mb-3w">
+                            Le module de conventionnement n'est pas accessible avec l'habilitation « Association HLM ».
+                        </p>
+                    {% else %}
+                        <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Erreur serveur</h2>
+                        <p class="fr-mb-3w">
+                            Une erreur est survenue. Nous vous prions de nous excuser.
+                        </p>
+                        <p class="fr-mb-3w">
+                            Si le problème persiste merci de contacter l'équipe <a href="mailto:contact@apilos.beta.gouv.fr" target="_blank">APiLos</a>
+                        </p>
+                    {% endif %}
                     {% if CERBERE_AUTH %}
                         <a class="fr-btn fr-btn--secondary fr-mb-3w" value="Retour à l'accueil" href="{{SIAP_CLIENT_HOST}}/tableau-bord">Retourner au tableau de bord</a>
                     {% endif %}
-                    <p class="fr-mb-3w">
-                        Si le problème persiste merci de contacter l'équipe <a href="mailto:contact@apilos.beta.gouv.fr" target="_blank">APiLos</a>
-                    </p>
                 </div>
             </div>
         </div>

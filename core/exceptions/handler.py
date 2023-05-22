@@ -1,15 +1,16 @@
 import sys
-from django.http import JsonResponse
 
+from django.http import JsonResponse
 from django.shortcuts import render
 
 from core.exceptions.types import (
+    AssociationHLMSIAPException,
+    HabilitationSIAPException,
+    InconsistentDataSIAPException,
+    NotHandledBailleurPriveSIAPException,
     TimeoutSIAPException,
     UnauthorizedSIAPException,
     UnavailableServiceSIAPException,
-    AssociationHLMSIAPException,
-    InconsistentDataSIAPException,
-    HabilitationSIAPException,
 )
 
 
@@ -23,6 +24,7 @@ def handle_error_500(request):
         AssociationHLMSIAPException,
         InconsistentDataSIAPException,
         HabilitationSIAPException,
+        NotHandledBailleurPriveSIAPException,
     ]:
         if request.path.startswith("/api-siap"):
             return JsonResponse(
@@ -32,17 +34,21 @@ def handle_error_500(request):
                 },
                 status=500,
             )
+        if exception_type == NotHandledBailleurPriveSIAPException:
+            return render(
+                request,
+                "500.html",
+                {
+                    "specific_error": "not_handled_bailleur_prive",
+                },
+                status=500,
+            )
         if exception_type == AssociationHLMSIAPException:
             return render(
                 request,
                 "500.html",
                 {
-                    "specific_error": """
-                        <p class="fr-mb-3w">
-                            Le module de conventionnement n'est pas accessible avec
-                              l'habilitation « Association HLM ».
-                        </p>
-                    """,
+                    "specific_error": "not_handled_association_hlm",
                 },
                 status=500,
             )
