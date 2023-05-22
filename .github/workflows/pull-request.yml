@@ -24,6 +24,8 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      redis:
+        image: redis
 
     runs-on: ubuntu-latest
     steps:
@@ -41,7 +43,7 @@ jobs:
           coverage run --source='.' manage.py test
         env:
           DB_HOST: localhost
-          REDIS_URL: ""
+          REDIS_URL: redis://localhost:6379
       - name: Create coverage report
         run:
           coverage xml -o coverage.xml
