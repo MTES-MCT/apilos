@@ -98,5 +98,11 @@ if "django_browser_reload" in settings.INSTALLED_APPS:
         ]
     )
 
+if "defender" in settings.INSTALLED_APPS:
+    urlpatterns.extend(
+        [
+            path("admin/defender/", include("defender.urls")),
+        ]
+    )
 
 handler500 = "core.exceptions.handler.handle_error_500"

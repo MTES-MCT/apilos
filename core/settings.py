@@ -490,6 +490,21 @@ if CERBERE_AUTH:
 
     LOGIN_URL = "/accounts/cerbere-login"
 
+# Django defender (doc https://github.com/jazzband/django-defender#customizing-django-defender)
+REDIS_URL = get_env_variable("REDIS_URL")
+if REDIS_URL and not CERBERE_AUTH:
+    print("Defender!")
+    INSTALLED_APPS += ["defender"]
+    MIDDLEWARE += ["defender.middleware.FailedLoginMiddleware"]
+
+    DEFENDER_LOGIN_FAILURE_LIMIT = 5
+    DEFENDER_BEHIND_REVERSE_PROXY = get_env_variable(
+        "DEFENDER_BEHIND_REVERSE_PROXY", cast=bool, default=False
+    )
+    DEFENDER_REDIS_URL = REDIS_URL
+    DEFENDER_COOLOFF_TIME = 6 * 60 * 60
+
+
 # Sentry
 
 SENTRY_URL = get_env_variable("SENTRY_URL")
