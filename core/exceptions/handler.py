@@ -34,8 +34,6 @@ def handle_error_500(request):
                 },
                 status=500,
             )
-        print(exception_type)
-        print(exception_type == NotHandledBailleurPriveSIAPException)
         if exception_type == NotHandledBailleurPriveSIAPException:
             return render(
                 request,
