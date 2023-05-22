@@ -26,8 +26,9 @@ class Administration(IngestableModel):
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
-    nom = models.CharField(max_length=255, unique=True)
+    nom = models.CharField(max_length=255)
     code = models.CharField(max_length=255, unique=True)
+    code_dans_galion = models.CharField(max_length=255, null=True)
     ville_signature = models.CharField(max_length=255, null=True)
     adresse = models.TextField(null=True, blank=True)
     code_postal = models.CharField(max_length=5, null=True, blank=True)
