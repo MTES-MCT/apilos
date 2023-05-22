@@ -167,7 +167,6 @@ MIDDLEWARE = [
     "csp.middleware.CSPMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
     "hijack.middleware.HijackUserMiddleware",
-    "defender.middleware.FailedLoginMiddleware",
 ]
 
 if not TESTING:
@@ -412,6 +411,7 @@ CSP_EXCLUDE_URL_PREFIXES = ("/explorer",)
 # Django defender (doc https://github.com/jazzband/django-defender#customizing-django-defender)
 if get_env_variable("REDIS_URL", default=None) is not None:
     INSTALLED_APPS += ["defender"]
+    MIDDLEWARE += ["defender.middleware.FailedLoginMiddleware"]
 
     DEFENDER_LOGIN_FAILURE_LIMIT = 5
     DEFENDER_BEHIND_REVERSE_PROXY = get_env_variable(
