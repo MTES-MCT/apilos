@@ -21,11 +21,11 @@ def move_dd_to_ddi(apps, schema_editor):
                 code="DDI" + administration.code[2:],
                 **model_to_dict(administration, exclude=["id", "code"]),
             )
-        Role.objects.filter(administration=administration).update(
-            administration=new_administration
+        Role.objects.filter(administration_id=administration.id).update(
+            administration_id=new_administration.id
         )
-        Programme.objects.filter(administration=administration).update(
-            administration=new_administration
+        Programme.objects.filter(administration_id=administration.id).update(
+            administration_id=new_administration.id
         )
 
 
