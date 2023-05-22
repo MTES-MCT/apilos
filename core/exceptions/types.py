@@ -24,3 +24,7 @@ class UnavailableServiceSIAPException(Exception):
 
 class InconsistentDataSIAPException(Exception):
     pass
+
+
+class NotHandledBailleurPriveSIAPException(Exception):
+    pass

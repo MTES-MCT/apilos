@@ -50,7 +50,11 @@ def build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
     )
 
 
-@retry(retry=retry_if_exception_type(TimeoutSIAPException), stop=stop_after_attempt(3))
+@retry(
+    retry=retry_if_exception_type(TimeoutSIAPException),
+    stop=stop_after_attempt(3),
+    reraise=True,
+)
 def _call_siap_api(
     route: str,
     base_route: str = "",

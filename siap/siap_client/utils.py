@@ -3,7 +3,10 @@ from typing import Tuple
 
 from bailleurs.models import Bailleur, NatureBailleur
 from conventions.models import Convention
-from core.exceptions.types import InconsistentDataSIAPException
+from core.exceptions.types import (
+    InconsistentDataSIAPException,
+    NotHandledBailleurPriveSIAPException,
+)
 from instructeurs.models import Administration
 from programmes.models import (
     Financement,
@@ -77,6 +80,13 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
         if "siren" in bailleur_from_siap
         else None
     ):
+        if bailleur_from_siap["codeFamilleMO"] in [
+            "Bailleurs privés",
+            NatureBailleur.PRIVES,
+        ]:
+            raise NotHandledBailleurPriveSIAPException(
+                "The « Bailleur privée » type of bailleur is not handled yet"
+            )
         raise InconsistentDataSIAPException(
             "Missing Bailleur siren (can't be empty or null), bailleur can't be get or created"
         )
