@@ -175,3 +175,20 @@ Et installer
 ```sh
 pip-sync requirements.txt dev-requirements.txt
 ```
+
+## Manipulations de développement
+
+### Restaurer un dump de base de données
+
+Afin de restaurer _proprement_ un fichier de dump de base de données, en supprimant au préalable les tables existantes,
+on peut jouer le script suivant :
+
+```bash
+DUMP_FILE=</path/to/dump/file>
+DB_URL=postgres://apilos:apilos@localhost:5433/apilos
+
+for table in $(psql "${DB_URL}" -t -c "SELECT \"tablename\" FROM pg_tables WHERE schemaname='public'"); do
+     psql "${DB_URL}" -c "DROP TABLE IF EXISTS \"${table}\" CASCADE;"
+done
+pg_restore -d "${DB_URL}" --clean --no-acl --no-owner --no-privileges "${DUMP_FILE}"
+```
