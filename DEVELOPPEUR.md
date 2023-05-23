@@ -192,3 +192,5 @@ for table in $(psql "${DB_URL}" -t -c "SELECT \"tablename\" FROM pg_tables WHERE
 done
 pg_restore -d "${DB_URL}" --clean --no-acl --no-owner --no-privileges "${DUMP_FILE}"
 ```
+
+Note : le fichier de dump est a l'extension `pgsql`
