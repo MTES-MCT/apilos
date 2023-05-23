@@ -1,7 +1,7 @@
 -- Requête pour alimenter la table programmes_reference_cadastrale
 
 select ic.id,
-    ch.id as programme_id,
+    ch.conventionapl_id||':'||ch.numero as programme_id,
     ic.id,
     ic.section,
     -- le champs Parcelle d'Ecolo est "splitté" en autant de lignes qu'il y a de valeurs séparées par un caractère non alphanumérique

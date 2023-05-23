@@ -32,8 +32,8 @@
 -- ville_signature_residence_agrement_gestionnaire_intermediation varchar(255)
 
 select
-    ch.id,
-    chp.id as parent_id,
+    ch.conventionapl_id||':'||ch.numero,
+    chp.conventionapl_id||':'||chp.numero as parent_id,
     pl.bailleurproprietaire_id as bailleur_id,
     c.entitecreatrice_id as administration_id,
     coalesce(cp.codepostal, pa.codepostal, ec.code) as code_postal,
@@ -86,4 +86,4 @@ from ecolo.ecolo_conventionhistorique ch
     inner join ecolo.ecolo_departement ed on ec.departement_id = ed.id
     inner join ecolo.ecolo_region er on ed.region_id = er.id
 where
-    ch.id = %s
+    (ch.conventionapl_id||':'||ch.numero) = %s
