@@ -8,6 +8,8 @@ def get_environment(request):
     data["ENVIRONMENT"] = settings.ENVIRONMENT
     data["SIAP_CLIENT_HOST"] = settings.SIAP_CLIENT_HOST
     data["CRISP_WEBSITE_ID"] = settings.CRISP_WEBSITE_ID
+    # Is Mocked Cerbere currently active ?
+    data["CERBERE_MOCKED"] = "cerbere" in settings.INSTALLED_APPS
     data["CERBERE_AUTH"] = settings.CERBERE_AUTH
     data["CONVENTION_STATUT"] = {
         convention_statut.name: convention_statut.label

@@ -489,6 +489,8 @@ if CERBERE_AUTH:
             "core.backends.MockedCerbereCASBackend",
         ]  # custom backend CAS
         INSTALLED_APPS += ["cerbere"]
+        NO_SIAP_MENU = True
+        USE_MOCKED_SIAP_CLIENT = False
     else:
         AUTHENTICATION_BACKENDS += [
             "core.backends.CerbereCASBackend",
