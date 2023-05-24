@@ -484,9 +484,15 @@ if CERBERE_AUTH:
         "siap.custom_middleware.CerbereSessionMiddleware",
     ]
 
-    AUTHENTICATION_BACKENDS = AUTHENTICATION_BACKENDS + [
-        "core.backends.CerbereCASBackend",
-    ]  # custom backend CAS
+    if ENVIRONMENT in ["development", "test"]:
+        AUTHENTICATION_BACKENDS += [
+            "core.backends.MockedCerbereCASBackend",
+        ]  # custom backend CAS
+        INSTALLED_APPS += ["cerbere"]
+    else:
+        AUTHENTICATION_BACKENDS += [
+            "core.backends.CerbereCASBackend",
+        ]  # custom backend CAS
 
     # CAS config
     CAS_SERVER_URL = CERBERE_AUTH
@@ -506,7 +512,6 @@ if CERBERE_AUTH:
 # Django defender (doc https://github.com/jazzband/django-defender#customizing-django-defender)
 REDIS_URL = get_env_variable("REDIS_URL")
 if REDIS_URL and not CERBERE_AUTH:
-    print("Defender!")
     INSTALLED_APPS += ["defender"]
     MIDDLEWARE += ["defender.middleware.FailedLoginMiddleware"]
 

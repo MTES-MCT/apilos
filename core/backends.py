@@ -1,11 +1,11 @@
 """
 Manage Auth backends
 """
-from django_cas_ng.backends import CASBackend
-
-from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import get_user_model
+from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
+from django.http import HttpRequest
+from django_cas_ng.backends import CASBackend
 
 from users.models import GroupProfile
 
@@ -17,6 +17,18 @@ class CerbereCASBackend(CASBackend):
 
     def user_can_authenticate(self, user):
         return True
+
+
+class MockedCerbereCASBackend(CerbereCASBackend):
+    """
+    Backend d'authentifcation truqué pour remplacer CERBERE. À n'utiliser qu'en
+    développement ou pour les tests unitaires.
+
+    Résoud le ticker utilisateur par l'identifiant Cerbère.
+    """
+
+    def authenticate(self, request: HttpRequest, ticket: str, service: str):
+        return get_user_model().objects.filter(cerbere_login=ticket).first()
 
 
 UserModel = get_user_model()

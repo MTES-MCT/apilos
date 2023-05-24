@@ -110,4 +110,11 @@ if "debug_toolbar" in settings.INSTALLED_APPS:
         ]
     )
 
+if "cerbere" in settings.INSTALLED_APPS:
+    urlpatterns.extend(
+        [
+            path("cerbere/", include("cerbere.urls")),
+        ]
+    )
+
 handler500 = "core.exceptions.handler.handle_error_500"
