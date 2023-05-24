@@ -1,0 +1,39 @@
+{% extends "layout/base.html" %}
+
+{% load custom_filters %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner fr-pb-3w">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-lg-6 fr-col-offset-lg-3 fr-my-2w">
+                    <h3>Connexion</h3>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="fr-input-group">
+                            <label class="fr-label" for="login">
+                                Identifiant
+                            </label>
+                        </div>
+                        <div class="fr-mt-1w block--row-strech">
+                            <input
+                                class="fr-input"
+                                type="text"
+                                id="login"
+                                name="login"
+                                placeholder="john.doe"
+                                value="{{ user.cerbere_login }}" />
+                        </div>
+
+                        <button type="submit" class="fr-btn fr-btn--primary fr-my-1w">Connexion</button>
+                    </form>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
