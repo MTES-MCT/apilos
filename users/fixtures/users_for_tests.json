@@ -240,6 +240,30 @@
     }
   },
   {
+    "model": "users.user",
+    "pk": 11,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$YqTFcsrYOGBwp8Ab9BUjeY$YvsQSic3lFcp9OSe4bHzPi+u+SCdJ5U6ZD0GseX/L/Y=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "sabine.cerbere",
+      "first_name": "Sabine",
+      "last_name": "Marini",
+      "email": "sabine@apilos.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-08T20:43:44.295Z",
+      "administrateur_de_compte": false,
+      "telephone": null,
+      "cerbere_login": "sabine.cerbere",
+      "preferences_email": "TOUS",
+      "creator": null,
+      "groups": [],
+      "user_permissions": [],
+      "filtre_departements": []
+    }
+  },
+  {
     "model": "users.role",
     "pk": 1,
     "fields": {

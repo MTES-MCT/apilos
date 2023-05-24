@@ -475,26 +475,29 @@ SWAGGER_SETTINGS = {
 }
 
 CERBERE_AUTH = get_env_variable("CERBERE_AUTH")
+CERBERE_MOCKED = get_env_variable("CERBERE_MOCKED", cast=bool, default=False)
 USE_MOCKED_SIAP_CLIENT = get_env_variable("USE_MOCKED_SIAP_CLIENT", cast=bool)
 NO_SIAP_MENU = get_env_variable("NO_SIAP_MENU", cast=bool)
 
+# Cerbere truqué (non activable ailleurs qu'en développement et test par sécurité)
+if CERBERE_MOCKED and ENVIRONMENT in ["development", "test"]:
+    CERBERE_AUTH = "/cerbere/login"
+    AUTHENTICATION_BACKENDS += [
+        "core.backends.MockedCerbereCASBackend",
+    ]  # custom backend CAS
+    INSTALLED_APPS += ["cerbere"]
+    NO_SIAP_MENU = True
+    USE_MOCKED_SIAP_CLIENT = False
+
 if CERBERE_AUTH:
-    MIDDLEWARE = MIDDLEWARE + [
+    MIDDLEWARE += [
         "django_cas_ng.middleware.CASMiddleware",
         "siap.custom_middleware.CerbereSessionMiddleware",
     ]
 
-    if ENVIRONMENT in ["development", "test"]:
-        AUTHENTICATION_BACKENDS += [
-            "core.backends.MockedCerbereCASBackend",
-        ]  # custom backend CAS
-        INSTALLED_APPS += ["cerbere"]
-        NO_SIAP_MENU = True
-        USE_MOCKED_SIAP_CLIENT = False
-    else:
-        AUTHENTICATION_BACKENDS += [
-            "core.backends.CerbereCASBackend",
-        ]  # custom backend CAS
+    AUTHENTICATION_BACKENDS += [
+        "core.backends.CerbereCASBackend",
+    ]  # custom backend CAS
 
     # CAS config
     CAS_SERVER_URL = CERBERE_AUTH
@@ -510,6 +513,7 @@ if CERBERE_AUTH:
     }
 
     LOGIN_URL = "/accounts/cerbere-login"
+
 
 # Django defender (doc https://github.com/jazzband/django-defender#customizing-django-defender)
 REDIS_URL = get_env_variable("REDIS_URL")
