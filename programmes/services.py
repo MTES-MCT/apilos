@@ -47,9 +47,6 @@ class LoyerRedevanceUpdateComputer:
                 |
                 # Soit la date initiale est située sur la période
                 Q(date_debut__lte=date_initiale, date_fin__gte=date_initiale)
-                |
-                # Soit la date d'actualisation est située sur la période
-                Q(date_debut__lte=date_actualisation, date_fin__gte=date_actualisation)
             )
             .order_by("date_debut")
         )

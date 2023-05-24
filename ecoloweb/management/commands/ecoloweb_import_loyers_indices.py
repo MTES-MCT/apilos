@@ -65,8 +65,14 @@ where coalesce(il.irl2evol, il.irl1evol, il.iccaugmentation) is not null
 select
     distinct on (ir.annee, ir.nature_logement)
     ir.annee,
-    make_date(ir.annee, 1, 1) as date_debut,
-    make_date(ir.annee, 12, 31) as date_fin,
+    case
+        when ir.annee > 2010 then make_date(ir.annee - 1, 1, 1)
+        else make_date(ir.annee - 1, 7, 1)
+    end as date_debut,
+    case
+        when ir.annee >= 2010 then make_date(ir.annee - 1, 12, 31)
+        else make_date(ir.annee, 6, 30)
+    end as date_fin,
     false as is_loyer,
     ir.nature_logement,
     ir.evolution
