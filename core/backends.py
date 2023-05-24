@@ -21,10 +21,10 @@ class CerbereCASBackend(CASBackend):
 
 class MockedCerbereCASBackend(CerbereCASBackend):
     """
-    Backend d'authentifcation truqué pour remplacer CERBERE. À n'utiliser qu'en
+    Backend truqué d'authentification pour contourner CERBERE. À n'utiliser qu'en
     développement ou pour les tests unitaires.
 
-    Résoud le ticker utilisateur par l'identifiant Cerbère.
+    Résout l'utilisateur en traitant le ticket SAML comme l'identifiant Cerbère.
     """
 
     def authenticate(self, request: HttpRequest, ticket: str, service: str):
