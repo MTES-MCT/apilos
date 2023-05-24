@@ -17,7 +17,8 @@
             {% for habilitation in request.session.habilitations %}
                 {% if habilitation.id != request.session.habilitation_id %}
                     <li>
-                        <a class="fr-nav__link fr-p-1w" href="{{ request|get_change_habilitation_url:habilitation.id }}"><strong>{{ habilitation.groupe.libelleRole }}</strong><br>
+                        <a class="fr-nav__link fr-p-1w" href="{% if CERBERE_MOCKED %}{{ request.path }}?habilitation_id={{ habilitation.id }}{% else %}{{ request|get_change_habilitation_url:habilitation.id }}{% endif %}">
+                            <strong>{{ habilitation.groupe.libelleRole }}</strong><br>
                             {% if habilitation.sousTitre1 %}
                                 {{ habilitation.sousTitre1 }}<br>
                             {% endif %}
@@ -29,9 +30,11 @@
                 {% endif %}
             {% endfor %}
         </ul>
-        <a href="{{ request|get_manage_habilitation_url }}" class="fr-btn fr-px-2w fr-py-3v fr-text--md">
-            <div aria-hidden="true">Gérer mes habilitations</div>
-        </a>
+        {% if not CERBERE_MOCKED %}
+            <a href="{{ request|get_manage_habilitation_url }}" class="fr-btn fr-px-2w fr-py-3v fr-text--md">
+                <div aria-hidden="true">Gérer mes habilitations</div>
+            </a>
+        {% endif %}
     </div>
 </div>
 
