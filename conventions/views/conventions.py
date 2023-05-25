@@ -11,18 +11,18 @@ from django.http import (
     FileResponse,
     HttpRequest,
     HttpResponse,
-    HttpResponseRedirect,
-    HttpResponseNotFound,
     HttpResponseForbidden,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
 )
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.decorators.http import require_GET, require_POST, require_http_methods
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from bailleurs.models import Bailleur
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from conventions.forms.evenement import EvenementForm
-from conventions.models import Convention, ConventionStatut, PieceJointe, Evenement
+from conventions.models import Convention, ConventionStatut, Evenement, PieceJointe
 from conventions.permissions import (
     has_campaign_permission,
     has_campaign_permission_view_function,
@@ -30,9 +30,9 @@ from conventions.permissions import (
 from conventions.services import convention_generator
 from conventions.services.convention_generator import fiche_caf_doc
 from conventions.services.conventions import (
+    ConventionListService,
     convention_post_action,
     convention_sent,
-    ConventionListService,
 )
 from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
@@ -547,6 +547,7 @@ def journal(request, convention_uuid):
             "action": action,
             "form": form,
             "selected": selected,
+            "events": convention.evenements.all().order_by("-survenu_le"),
         },
     )
 

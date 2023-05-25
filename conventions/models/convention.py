@@ -1,20 +1,18 @@
 import datetime
-import uuid
 import json
 import logging
+import uuid
 from datetime import date
 
+from django.apps import apps
 from django.db import models
 from django.db.models import Q
 from django.forms import model_to_dict
-from django.utils import timezone
-from django.apps import apps
 
 from conventions.models import TypeEvenement
 from conventions.models.avenant_type import AvenantType
 from conventions.models.choices import ConventionStatut, ConventionType1and2
 from conventions.models.convention_history import ConventionHistory
-
 from ecoloweb.models import EcoloReference
 from programmes.models import (
     Annexe,
@@ -31,6 +29,11 @@ logger = logging.getLogger(__name__)
 
 
 class Convention(models.Model):
+    class Meta:
+        indexes = [
+            models.Index(fields=["statut"]),
+        ]
+
     # pylint: disable=R0904
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
@@ -424,6 +427,7 @@ class Convention(models.Model):
             number = convention_number["numero"].split(".")[-1]
             if number.isdigit() and int(number) > max_number:
                 max_number = int(number)
+        # pylint: disable=C0209 consider-using-f-string
         max_number = "%04d" % (max_number + 1)
         return f"{dept_code}.{admin_code}.{year%100}.{max_number}"
 
