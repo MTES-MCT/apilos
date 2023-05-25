@@ -10,20 +10,18 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-from pathlib import Path
-from datetime import timedelta
 import os
 import sys
+from contextlib import suppress
+from datetime import timedelta
+from pathlib import Path
 
 import decouple
-from decouple import Config, RepositoryEnv
 import dj_database_url
-
 import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
-
+from decouple import Config, RepositoryEnv
 from django.core.exceptions import PermissionDenied
-
+from sentry_sdk.integrations.django import DjangoIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
@@ -150,6 +148,7 @@ if ENVIRONMENT == "development":
         [
             "django_extensions",
             "django_browser_reload",
+            "debug_toolbar",
         ]
     )
     SHELL_PLUS_PRINT_SQL = get_env_variable(
@@ -180,6 +179,20 @@ if "django_browser_reload" in INSTALLED_APPS:
             "django_browser_reload.middleware.BrowserReloadMiddleware",
         ]
     )
+if "debug_toolbar" in INSTALLED_APPS:
+    MIDDLEWARE.extend(
+        [
+            "debug_toolbar.middleware.DebugToolbarMiddleware",
+        ]
+    )
+    with suppress(ModuleNotFoundError):
+        from debug_toolbar.settings import CONFIG_DEFAULTS
+
+        DEBUG_TOOLBAR_CONFIG = {
+            "SHOW_TOOLBAR_CALLBACK": "operator.truth",
+            "HIDE_IN_STACKTRACES": CONFIG_DEFAULTS["HIDE_IN_STACKTRACES"]
+            + ("sentry_sdk",),
+        }
 
 ROOT_URLCONF = "core.urls"
 
