@@ -31,12 +31,15 @@ logger = logging.getLogger(__name__)
 class Convention(models.Model):
     class Meta:
         indexes = [
+            models.Index(fields=["numero"], name="convention_numero_idx"),
             models.Index(fields=["statut"]),
+            models.Index(fields=["uuid"], name="convention_uuid_idx"),
+            models.Index(fields=["valide_le"], name="convention_valid_le_idx"),
         ]
 
     # pylint: disable=R0904
     id = models.AutoField(primary_key=True)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
