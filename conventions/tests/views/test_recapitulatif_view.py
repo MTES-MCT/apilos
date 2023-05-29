@@ -1,4 +1,6 @@
-from django.test import TestCase, override_settings, modify_settings
+import os
+
+from django.test import TestCase
 from django.urls import reverse
 
 from conventions.tests.views.abstract import AbstractCreateViewTestCase
@@ -34,24 +36,23 @@ class ConventionRecapitulatifTests(AbstractCreateViewTestCase, TestCase):
         }
         self.msg_prefix = "[ConventionRecapitulatifTests] "
 
-    @override_settings(CERBERE_MOCKED=True)
-    @override_settings(CERBERE_AUTH="/cerbere/login")
-    @modify_settings(
-        AUTHENTICATION_BACKENDS={"append": "core.backends.MockedCerbereCASBackend"}
-    )
-    @modify_settings(INSTALLED_APPS={"append": "cerbere"})
-    @override_settings(NO_SIAP_MENU=True)
-    @override_settings(USE_MOCKED_SIAP_CLIENT=True)
-    def test_view_instructeur_cerebere_ok(self):
-        self.skipTest("overriden settings cant be applied to urlcong")
-        # login as user_instructeur_paris
-        response = self.client.get(
-            "/accounts/cerbere-login", {"ticket": "sabine.cerbere"}
+    def tearDown(self) -> None:
+        self.client.session.clear()
+
+    def test_view_instructeur_cerbere_ok(self):
+        self.client.get(
+            reverse("cas_ng_login", "core.urls.siap"),
+            data={"ticket": "sabine.cerbere", "next": "/"},
+            SERVER_NAME="test.apilos.logement.fr",
         )
-        self.assertRedirects(response, "/")
-        self.assertEqual(response.status_code, 200)
 
         response = self.client.get(
-            reverse("recapitulatif", ["f590c593-e37f-4258-b38a-f8d2869969c4"])
+            reverse(
+                "conventions:recapitulatif",
+                "core.urls.siap",
+                ["f590c593-e37f-4258-b38a-f8d2869969c4"],
+            ),
+            data={"habilitation_id": 3},
+            SERVER_NAME="test.apilos.logement.fr",
         )
         self.assertEqual(response.status_code, 200)

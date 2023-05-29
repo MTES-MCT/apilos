@@ -85,12 +85,7 @@ def _call_siap_api(
         raise UnavailableServiceSIAPException()
     if response.status_code >= 400:
         logger.error("ERROR from SIAP API: %s", response.content)
-    logger.warning(
-        "[Status code: %s] SIAP API : %s, WITH JWT  : %s",
-        response.status_code,
-        response.content,
-        myjwt,
-    )
+
     return response
 
 
@@ -130,10 +125,13 @@ class SIAPClientInterface:
         self.update_siap_config()
 
     def update_siap_config(self) -> None:
-        pass
+        config = self.get_siap_config()
+        self.racine_url_acces_web = config["racineUrlAccesWeb"].rstrip("/")
+        self.url_acces_web = config["urlAccesWeb"]
+        self.url_acces_web_operation = config["urlAccesWebOperation"]
 
     def get_siap_config(self) -> dict:
-        pass
+        return {}
 
     def get_habilitations(self, user_login: str, habilitation_id: int = 0) -> dict:
         pass
@@ -173,12 +171,6 @@ class SIAPClientRemote(SIAPClientInterface):
     def get_siap_config(self) -> dict:
         response = _call_siap_api("/config")
         return response.json()
-
-    def update_siap_config(self) -> None:
-        config = self.get_siap_config()
-        self.racine_url_acces_web = config["racineUrlAccesWeb"].rstrip("/")
-        self.url_acces_web = config["urlAccesWeb"]
-        self.url_acces_web_operation = config["urlAccesWebOperation"]
 
     def get_habilitations(self, user_login: str, habilitation_id: int = 0) -> dict:
         response = _call_siap_api(
@@ -226,22 +218,20 @@ class SIAPClientRemote(SIAPClientInterface):
 
 # Manage SiapClient as a Singleton
 class SIAPClientMock(SIAPClientInterface):
+    HABILITATIONS = habilitations_mock
+    MENU = menu_mock
+    OPERATION = operation_mock
+
     def get_siap_config(self) -> dict:
         return config_mock
 
-    def update_siap_config(self) -> None:
-        config = self.get_siap_config()
-        self.racine_url_acces_web = config["racineUrlAccesWeb"].rstrip("/")
-        self.url_acces_web = config["urlAccesWeb"]
-        self.url_acces_web_operation = config["urlAccesWebOperation"]
-
     def get_habilitations(self, user_login: str, habilitation_id: int = 0) -> dict:
-        return habilitations_mock
+        return self.HABILITATIONS
 
     def get_menu(self, user_login: str, habilitation_id: int = 0) -> dict:
-        return menu_mock
+        return self.MENU
 
     def get_operation(
         self, user_login: str, habilitation_id: int, operation_identifier: str
     ) -> dict:
-        return operation_mock
+        return self.OPERATION

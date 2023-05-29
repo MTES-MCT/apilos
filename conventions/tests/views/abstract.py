@@ -37,7 +37,7 @@ class AbstractCreateViewTestCase:
         self.assertEqual(response.status_code, 302, msg=f"{self.msg_prefix}")
         self.assertRedirects(
             response,
-            f'{reverse("login")}?next={self.target_path}',
+            f'{reverse("login", "core.urls.standalone")}?next={self.target_path}',
             msg_prefix=self.msg_prefix,
         )
 

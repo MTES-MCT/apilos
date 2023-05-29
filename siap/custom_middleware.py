@@ -3,7 +3,13 @@ from django.contrib.auth.models import Group
 from django.conf import settings
 from django.forms import model_to_dict
 from django.http import HttpRequest
-from core.exceptions.types import TimeoutSIAPException, HabilitationSIAPException, AssociationHLMSIAPException
+from django.utils.deprecation import MiddlewareMixin
+
+from core.exceptions.types import (
+    TimeoutSIAPException,
+    HabilitationSIAPException,
+    AssociationHLMSIAPException,
+)
 from bailleurs.models import NatureBailleur
 from siap.siap_client.utils import get_or_create_bailleur, get_or_create_administration
 from siap.siap_client.client import SIAPClient

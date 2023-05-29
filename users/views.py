@@ -15,7 +15,7 @@ def home(request):
     """
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse("conventions:index"))
-    if settings.CERBERE_AUTH:
+    if "siap" in request.get_host() or "logement" in request.get_host():
         return HttpResponseRedirect(reverse("cas_ng_login"))
     # test si authentifié, si oui, rediriger vers convention/index...
     return render(request, "index.html")
