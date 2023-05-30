@@ -2,14 +2,11 @@ from unittest import mock
 
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase, override_settings
+
 from bailleurs.models import SousNatureBailleur
-from conventions.views import ConventionFormSteps
-from conventions.models import (
-    Convention,
-    ConventionStatut,
-    ConventionType1and2,
-)
+from conventions.models import Convention, ConventionStatut, ConventionType1and2
 from conventions.templatetags import custom_filters
+from conventions.views import ConventionFormSteps
 from programmes.models import ActiveNatureLogement
 from users.models import GroupProfile, User
 
@@ -91,7 +88,6 @@ class CustomFiltersTest(TestCase):
         self.assertFalse(custom_filters.display_comments_summary(self.convention))
 
     def test_display_is_validated(self):
-
         self.convention.statut = ConventionStatut.PROJET.label
         self.assertFalse(custom_filters.display_is_validated(self.convention))
 
@@ -188,7 +184,6 @@ class CustomFiltersTest(TestCase):
             self.assertFalse(custom_filters.display_redirect_project(self.convention))
 
     def test_display_redirect_post_action(self):
-
         self.convention.statut = ConventionStatut.PROJET.label
         self.assertFalse(custom_filters.display_redirect_post_action(self.convention))
 
@@ -208,7 +203,6 @@ class CustomFiltersTest(TestCase):
         self.assertFalse(custom_filters.display_redirect_post_action(self.convention))
 
     def test_display_convention_form_progressbar(self):
-
         self.convention.statut = ConventionStatut.PROJET.label
         self.assertTrue(
             custom_filters.display_convention_form_progressbar(self.convention)
@@ -627,25 +621,37 @@ class CustomFiltersTest(TestCase):
                     )
                 )
 
-    def test_display_delete_convention(self):
+    def test_display_reactive_convention(self):
+        for statut in [
+            s.label
+            for s in ConventionStatut
+            if s.label != ConventionStatut.ANNULEE.label
+        ]:
+            self.convention.statut = statut
+            self.assertFalse(
+                custom_filters.display_reactive_convention(self.convention)
+            )
+        self.convention.statut = ConventionStatut.ANNULEE.label
+        self.assertTrue(custom_filters.display_reactive_convention(self.convention))
 
+    def test_display_cancel_convention(self):
         self.convention.statut = ConventionStatut.PROJET.label
-        self.assertTrue(custom_filters.display_delete_convention(self.convention))
+        self.assertTrue(custom_filters.display_cancel_convention(self.convention))
 
         self.convention.statut = ConventionStatut.INSTRUCTION.label
-        self.assertTrue(custom_filters.display_delete_convention(self.convention))
+        self.assertTrue(custom_filters.display_cancel_convention(self.convention))
 
         self.convention.statut = ConventionStatut.CORRECTION.label
-        self.assertTrue(custom_filters.display_delete_convention(self.convention))
+        self.assertTrue(custom_filters.display_cancel_convention(self.convention))
 
         self.convention.statut = ConventionStatut.A_SIGNER.label
-        self.assertFalse(custom_filters.display_delete_convention(self.convention))
+        self.assertFalse(custom_filters.display_cancel_convention(self.convention))
 
         self.convention.statut = ConventionStatut.SIGNEE.label
-        self.assertFalse(custom_filters.display_delete_convention(self.convention))
+        self.assertFalse(custom_filters.display_cancel_convention(self.convention))
 
         self.convention.statut = ConventionStatut.RESILIEE.label
-        self.assertFalse(custom_filters.display_delete_convention(self.convention))
+        self.assertFalse(custom_filters.display_cancel_convention(self.convention))
 
     def test_display_create_avenant(self):
         self.assertTrue(custom_filters.display_create_avenant(self.convention))

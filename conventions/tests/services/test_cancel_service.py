@@ -10,7 +10,6 @@ from users.models import User
 class ConventionCancelServiceTest(TestCase):
     fixtures = [
         "auth.json",
-        # "departements.json",
         "avenant_types.json",
         "bailleurs_for_tests.json",
         "instructeurs_for_tests.json",
@@ -22,16 +21,60 @@ class ConventionCancelServiceTest(TestCase):
     def setUp(self):
         self.convention = Convention.objects.get(numero="0001")
 
-    def test_instructeur_cancel_convention_projet(self):
+    def test_cancel_convention(self):
         request = HttpRequest()
-        request.user = User.objects.get(username="roger")
-        recapitulatif.convention_cancel(request, self.convention)
-        self.convention.refresh_from_db()
-        self.assertTrue(self.convention.statut, ConventionStatut.ANNULEE.label)
+        for username in ["roger", "raph"]:
+            request.user = User.objects.get(username=username)
+            service_recap = recapitulatif.ConventionRecapitulatifService(
+                convention=self.convention, request=request
+            )
+            for statut in [
+                ConventionStatut.PROJET.label,
+                ConventionStatut.INSTRUCTION.label,
+                ConventionStatut.CORRECTION.label,
+            ]:
+                self.convention.statut = statut
+                self.convention.save()
+                service_recap.cancel_convention()
+                self.convention.refresh_from_db()
+                self.assertEqual(self.convention.statut, ConventionStatut.ANNULEE.label)
 
-    def test_bailleur_cancel_convention_projet(self):
+            for statut in [
+                ConventionStatut.A_SIGNER.label,
+                ConventionStatut.SIGNEE.label,
+                ConventionStatut.RESILIEE.label,
+                ConventionStatut.DENONCEE.label,
+            ]:
+                self.convention.statut = statut
+                self.convention.save()
+                service_recap.cancel_convention()
+                self.convention.refresh_from_db()
+                self.assertEqual(self.convention.statut, statut)
+
+    def test_reactive_convention(self):
         request = HttpRequest()
-        request.user = User.objects.get(username="raph")
-        recapitulatif.convention_cancel(request, self.convention)
-        self.convention.refresh_from_db()
-        self.assertTrue(self.convention.statut, ConventionStatut.ANNULEE.label)
+        for username in ["roger", "raph"]:
+            request.user = User.objects.get(username=username)
+            service_recap = recapitulatif.ConventionRecapitulatifService(
+                convention=self.convention, request=request
+            )
+            for statut in [
+                ConventionStatut.PROJET.label,
+                ConventionStatut.INSTRUCTION.label,
+                ConventionStatut.CORRECTION.label,
+                ConventionStatut.A_SIGNER.label,
+                ConventionStatut.SIGNEE.label,
+                ConventionStatut.RESILIEE.label,
+                ConventionStatut.DENONCEE.label,
+            ]:
+                self.convention.statut = statut
+                self.convention.save()
+                service_recap.reactive_convention()
+                self.convention.refresh_from_db()
+                self.assertEqual(self.convention.statut, statut)
+
+            self.convention.statut = ConventionStatut.ANNULEE.label
+            self.convention.save()
+            service_recap.reactive_convention()
+            self.convention.refresh_from_db()
+            self.assertEqual(self.convention.statut, ConventionStatut.PROJET.label)

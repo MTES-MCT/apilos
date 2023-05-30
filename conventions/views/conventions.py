@@ -11,18 +11,18 @@ from django.http import (
     FileResponse,
     HttpRequest,
     HttpResponse,
-    HttpResponseRedirect,
-    HttpResponseNotFound,
     HttpResponseForbidden,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
 )
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.decorators.http import require_GET, require_POST, require_http_methods
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from bailleurs.models import Bailleur
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from conventions.forms.evenement import EvenementForm
-from conventions.models import Convention, ConventionStatut, PieceJointe, Evenement
+from conventions.models import Convention, ConventionStatut, Evenement, PieceJointe
 from conventions.permissions import (
     has_campaign_permission,
     has_campaign_permission_view_function,
@@ -30,16 +30,15 @@ from conventions.permissions import (
 from conventions.services import convention_generator
 from conventions.services.convention_generator import fiche_caf_doc
 from conventions.services.conventions import (
+    ConventionListService,
     convention_post_action,
     convention_sent,
-    ConventionListService,
 )
 from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
     convention_feedback,
     convention_submit,
-    convention_cancel,
     convention_validate,
 )
 from conventions.services.utils import ReturnStatus, base_convention_response_error
@@ -101,6 +100,10 @@ class RecapitulatifView(BaseConventionView):
 
         if request.POST.get("update_programme_number"):
             result = service.update_programme_number()
+        elif request.POST.get("cancel_convention"):
+            result = service.cancel_convention()
+        elif request.POST.get("reactive_convention"):
+            result = service.reactive_convention()
         else:
             result = service.save_convention_TypeIandII()
         return render(
@@ -254,31 +257,6 @@ def save_convention(request, convention_uuid):
             request,
             "conventions/saved.html",
             result,
-        )
-    return HttpResponseRedirect(
-        reverse("conventions:recapitulatif", args=[result["convention"].uuid])
-    )
-
-
-@login_required
-@has_campaign_permission_view_function("convention.delete_convention")
-def delete_convention(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
-    request.user.check_perm("convention.change_convention", convention)
-    convention.delete()
-    return HttpResponseRedirect(reverse("conventions:index"))
-
-
-@require_POST
-@login_required
-@has_campaign_permission_view_function("convention.change_convention")
-def cancel_convention(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
-    request.user.check_perm("convention.change_convention", convention)
-    result = convention_cancel(request, convention)
-    if result["success"] == ReturnStatus.SUCCESS:
-        return HttpResponseRedirect(
-            reverse("conventions:recapitulatif", args=[result["convention"].uuid])
         )
     return HttpResponseRedirect(
         reverse("conventions:recapitulatif", args=[result["convention"].uuid])

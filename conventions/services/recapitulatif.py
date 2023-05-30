@@ -26,6 +26,38 @@ class ConventionRecapitulatifService(ConventionService):
     def get(self):
         pass
 
+    def cancel_convention(self):
+        if self.convention.statut not in [
+            ConventionStatut.PROJET.label,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+        ]:
+            return {}
+        previous_status = self.convention.statut
+        self.convention.statut = ConventionStatut.ANNULEE.label
+        self.convention.save()
+        ConventionHistory.objects.create(
+            convention=self.convention,
+            statut_convention=ConventionStatut.ANNULEE.label,
+            statut_convention_precedent=previous_status,
+            user=self.request.user,
+        ).save()
+        return {}
+
+    def reactive_convention(self):
+        if self.convention.statut != ConventionStatut.ANNULEE.label:
+            return {}
+        previous_status = self.convention.statut
+        self.convention.statut = ConventionStatut.PROJET.label
+        self.convention.save()
+        ConventionHistory.objects.create(
+            convention=self.convention,
+            statut_convention=ConventionStatut.PROJET.label,
+            statut_convention_precedent=previous_status,
+            user=self.request.user,
+        ).save()
+        return {}
+
     def update_programme_number(self):
         programme_number_form = ProgrammeNumberForm(self.request.POST)
         if programme_number_form.is_valid():
@@ -452,20 +484,4 @@ def convention_validate(request: HttpRequest, convention: Convention):
         "complete_for_avenant_form": complete_for_avenant_form,
         "opened_comments": opened_comments,
         "ConventionType1and2Form": convention_type1_and_2_form,
-    }
-
-
-def convention_cancel(request: HttpRequest, convention: Convention):
-    previous_status = convention.statut
-    convention.statut = ConventionStatut.ANNULEE.label
-    convention.save()
-    ConventionHistory.objects.create(
-        convention=convention,
-        statut_convention=ConventionStatut.ANNULEE.label,
-        statut_convention_precedent=previous_status,
-        user=request.user,
-    ).save()
-    return {
-        "success": utils.ReturnStatus.SUCCESS,
-        "convention": convention,
     }
