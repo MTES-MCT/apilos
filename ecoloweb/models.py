@@ -1,8 +1,8 @@
 from typing import Optional
 
+from django.apps import apps
 from django.db import models
 from django.db.models import Model
-from django.apps import apps
 
 
 class EcoloReference(models.Model):
@@ -33,6 +33,11 @@ class EcoloReference(models.Model):
 
     class Meta:
         unique_together = ("apilos_model", "ecolo_id")
+        indexes = [
+            models.Index(
+                fields=["apilos_model", "apilos_id"], name="apilos_model_id_idx"
+            ),
+        ]
 
     id = models.AutoField(primary_key=True)
     apilos_model = models.CharField(max_length=64, null=False)
