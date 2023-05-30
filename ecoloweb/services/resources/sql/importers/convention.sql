@@ -4,7 +4,7 @@ select
     -- Les avenants sont initialisés avec un type 'commentaires' dont la valeur est un résumé des altérations
     -- déclarées depuis Ecoloweb
     '{"files": {}, "text": {"description_avenant": "'||replace(a.description, '"', E'\\"')||'"} }' as commentaires,
-    ch.id as programme_id,
+    ch.conventionapl_id||':'||ch.numero as programme_id,
     -- Les lots d'un programme sont tous les logements partageant le même financement
     ch.id as lot_id,
     ch.financement as financement,
