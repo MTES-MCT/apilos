@@ -26,6 +26,38 @@ class ConventionRecapitulatifService(ConventionService):
     def get(self):
         pass
 
+    def cancel_convention(self):
+        if self.convention.statut not in [
+            ConventionStatut.PROJET.label,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+        ]:
+            return {}
+        previous_status = self.convention.statut
+        self.convention.statut = ConventionStatut.ANNULEE.label
+        self.convention.save()
+        ConventionHistory.objects.create(
+            convention=self.convention,
+            statut_convention=ConventionStatut.ANNULEE.label,
+            statut_convention_precedent=previous_status,
+            user=self.request.user,
+        ).save()
+        return {}
+
+    def reactive_convention(self):
+        if self.convention.statut != ConventionStatut.ANNULEE.label:
+            return {}
+        previous_status = self.convention.statut
+        self.convention.statut = ConventionStatut.PROJET.label
+        self.convention.save()
+        ConventionHistory.objects.create(
+            convention=self.convention,
+            statut_convention=ConventionStatut.PROJET.label,
+            statut_convention_precedent=previous_status,
+            user=self.request.user,
+        ).save()
+        return {}
+
     def update_programme_number(self):
         programme_number_form = ProgrammeNumberForm(self.request.POST)
         if programme_number_form.is_valid():

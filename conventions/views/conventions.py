@@ -100,6 +100,10 @@ class RecapitulatifView(BaseConventionView):
 
         if request.POST.get("update_programme_number"):
             result = service.update_programme_number()
+        elif request.POST.get("cancel_convention"):
+            result = service.cancel_convention()
+        elif request.POST.get("reactive_convention"):
+            result = service.reactive_convention()
         else:
             result = service.save_convention_TypeIandII()
         return render(
@@ -257,15 +261,6 @@ def save_convention(request, convention_uuid):
     return HttpResponseRedirect(
         reverse("conventions:recapitulatif", args=[result["convention"].uuid])
     )
-
-
-@login_required
-@has_campaign_permission_view_function("convention.delete_convention")
-def delete_convention(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
-    request.user.check_perm("convention.change_convention", convention)
-    convention.delete()
-    return HttpResponseRedirect(reverse("conventions:index"))
 
 
 @require_POST

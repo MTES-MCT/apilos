@@ -1,7 +1,6 @@
-from django.urls import path
-from django.views.generic import TemplateView
 from django.contrib.auth.decorators import permission_required
-from django.views.generic import RedirectView
+from django.urls import path
+from django.views.generic import RedirectView, TemplateView
 
 from . import views
 
@@ -156,11 +155,6 @@ urlpatterns = [
         "save/<convention_uuid>",
         views.save_convention,
         name="save",
-    ),
-    path(
-        "delete/<convention_uuid>",
-        views.delete_convention,
-        name="delete",
     ),
     path(
         "feedback/<convention_uuid>",

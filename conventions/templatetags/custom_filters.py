@@ -1,4 +1,6 @@
-from re import IGNORECASE, compile as rcompile, escape as rescape
+from re import IGNORECASE
+from re import compile as rcompile
+from re import escape as rescape
 from urllib.parse import urlencode
 
 from django.conf import settings
@@ -8,7 +10,7 @@ from django.utils.safestring import mark_safe
 
 from bailleurs.models import Bailleur
 from conventions.models import ConventionStatut, PieceJointe
-from core.utils import is_valid_uuid, get_key_from_json_field
+from core.utils import get_key_from_json_field, is_valid_uuid
 from instructeurs.models import Administration
 from programmes.models import Financement
 from siap.siap_client.client import SIAPClient
@@ -380,12 +382,17 @@ def display_submit_convention(convention, request):
 
 
 @register.filter
-def display_delete_convention(convention):
+def display_cancel_convention(convention):
     return convention.statut in [
         ConventionStatut.PROJET.label,
         ConventionStatut.INSTRUCTION.label,
         ConventionStatut.CORRECTION.label,
     ]
+
+
+@register.filter
+def display_reactive_convention(convention):
+    return convention.statut == ConventionStatut.ANNULEE.label
 
 
 @register.filter

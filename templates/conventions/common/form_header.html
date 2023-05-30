@@ -182,6 +182,27 @@
                     {% endif %}
                 </div>
             {% endif %}
+            {% if convention.statut == CONVENTION_STATUT.ANNULEE %}
+                <div role="alert" class="fr-col-12 fr-mb-3w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} fr-icon-success-line">
+                    {% if convention.is_avenant %}
+                        <p class="fr-text--lg">
+                            Votre avenant est
+                            <span class="fr-text--bold">
+                                annulé
+                            </span>
+                        </p>
+                        <p>Il n'est pas possible d'y apporter des modifications</p>
+                    {% else %}
+                        <p class="fr-text--lg">
+                            Votre convention est
+                            <span class="fr-text--bold">
+                                annulée
+                            </span>
+                        </p>
+                        <p>Il n'est pas possible d'y apporter des modifications</p>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endif %}
