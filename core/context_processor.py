@@ -1,6 +1,7 @@
+from django.conf import settings
+
 from conventions.models import ConventionStatut
 from siap.siap_client.client import SIAPClient
-from django.conf import settings
 
 
 def get_environment(request):
@@ -15,7 +16,7 @@ def get_environment(request):
         for convention_statut in ConventionStatut
     }
 
-    if "siap" in request.get_host() or "logement" in request.get_host():
+    if request.get_host() in settings.SIAP_DOMAINS:
         data["CERBERE_MOCKED"] = settings.CERBERE_MOCKED
         data["CERBERE_AUTH"] = settings.CERBERE_AUTH
 

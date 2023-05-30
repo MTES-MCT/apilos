@@ -479,6 +479,8 @@ SWAGGER_SETTINGS = {
 
 CERBERE_AUTH = get_env_variable("CERBERE_AUTH")
 CERBERE_MOCKED = get_env_variable("CERBERE_MOCKED", cast=bool, default=False)
+# List of domains on which SIAP integration is enabled
+SIAP_DOMAINS = get_env_variable("SIAP_DOMAINS").split(",")
 USE_MOCKED_SIAP_CLIENT = get_env_variable("USE_MOCKED_SIAP_CLIENT", cast=bool)
 NO_SIAP_MENU = get_env_variable("NO_SIAP_MENU", cast=bool)
 

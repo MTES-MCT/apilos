@@ -5,7 +5,7 @@ from django.conf import settings
 
 class ApilosMultisiteMiddleware(MiddlewareMixin):
     def process_request(self, request: HttpRequest):
-        if "siap" in request.get_host() or "logement" in request.get_host():
+        if request.get_host() in settings.SIAP_DOMAINS:
             # Configuration du site en version "SIAP"
             request.urlconf = "core.urls.siap"
 
