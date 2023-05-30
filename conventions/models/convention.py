@@ -32,7 +32,7 @@ class Convention(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["numero"], name="convention_numero_idx"),
-            models.Index(fields=["statut"]),
+            models.Index(fields=["statut"], name="convention_statut_idx"),
             models.Index(fields=["uuid"], name="convention_uuid_idx"),
             models.Index(fields=["valide_le"], name="convention_valid_le_idx"),
         ]
