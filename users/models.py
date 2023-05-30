@@ -51,8 +51,7 @@ class GroupProfile(models.TextChoices):
 
 
 class User(AbstractUser):
-    # pylint: disable=R0904
-    siap_habilitation = {}
+
     administrateur_de_compte = models.BooleanField(default=False)
     telephone = models.CharField(
         null=True,
@@ -81,6 +80,10 @@ class User(AbstractUser):
         "users.User", on_delete=models.SET_NULL, blank=True, null=True
     )
     history = HistoricalRecords(excluded_fields=["last_login"])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.siap_habilitation = {}
 
     def has_object_permission(self, obj):
         if isinstance(obj, (Convention, Lot)):
