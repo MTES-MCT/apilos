@@ -1,11 +1,12 @@
 --constraint=requirements.txt
 
-coverage[toml]
+beautifulsoup4
 black
+coverage[toml]
+django-browser-reload
+django-debug-toolbar
+django-extensions
 djhtml
 pre-commit
-pylint
-beautifulsoup4
-django-extensions
-django-browser-reload
 ptpython
+pylint

@@ -130,10 +130,15 @@ django==4.2.1 \
     # via
     #   -c requirements.txt
     #   django-browser-reload
+    #   django-debug-toolbar
     #   django-extensions
 django-browser-reload==1.8.0 \
     --hash=sha256:054ef5ce8b80f46e0beda1a3c847becdff51272cad6f2bda607e201a7afe7425 \
     --hash=sha256:6db7e6c5807fff87e421b53926c50cfa3de0115e438f3c2de6103d3069557adb
+    # via -r dev-requirements.in
+django-debug-toolbar==4.1.0 \
+    --hash=sha256:a0b532ef5d52544fd745d1dcfc0557fa75f6f0d1962a8298bd568427ef2fa436 \
+    --hash=sha256:f57882e335593cb8e74c2bda9f1116bbb9ca8fc0d81b50a75ace0f83de5173c7
     # via -r dev-requirements.in
 django-extensions==3.2.1 \
     --hash=sha256:2a4f4d757be2563cd1ff7cfdf2e57468f5f931cc88b23cf82ca75717aae504a4 \
@@ -295,6 +300,7 @@ sqlparse==0.4.3 \
     # via
     #   -c requirements.txt
     #   django
+    #   django-debug-toolbar
 tomli==2.0.1 \
     --hash=sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc \
     --hash=sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f

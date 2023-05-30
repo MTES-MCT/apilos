@@ -15,15 +15,13 @@ Including another URLconf
 """
 # pylint: disable=W0611
 
-from django.contrib import admin
-from django.urls import path
+import django_cas_ng.views
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import include
-
-from django.views.generic import TemplateView
+from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
-import django_cas_ng.views
+from django.urls import include, path
+from django.views.generic import TemplateView
 
 from core.sitemaps import SITEMAPS
 from core.views import SecurePasswordResetConfirmView
@@ -102,6 +100,13 @@ if "defender" in settings.INSTALLED_APPS:
     urlpatterns.extend(
         [
             path("admin/defender/", include("defender.urls")),
+        ]
+    )
+
+if "debug_toolbar" in settings.INSTALLED_APPS:
+    urlpatterns.extend(
+        [
+            path("__debug__/", include("debug_toolbar.urls")),
         ]
     )
 
