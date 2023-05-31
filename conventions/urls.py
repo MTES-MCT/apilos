@@ -3,12 +3,22 @@ from django.urls import path
 from django.views.generic import RedirectView, TemplateView
 
 from . import views
+from .views import (
+    ConventionEnInstructionSearchView,
+    ConventionTermineesSearchView,
+    ActiveConventionActivesSearchView,
+)
 
 urlpatterns = [
     # Pages de premier niveau : recherche et calculette de loyer
     path("", RedirectView.as_view(url="/conventions/en-cours"), name="index"),
-    path("en-cours", views.search, {"active": True}, name="search_active"),
-    path("finalisees", views.search, {"active": False}, name="search_completed"),
+    path(
+        "en-cours",
+        ConventionEnInstructionSearchView.as_view(),
+        name="search_instruction",
+    ),
+    path("actives", ActiveConventionActivesSearchView.as_view(), name="search_active"),
+    path("resiliees", ConventionTermineesSearchView.as_view(), name="search_resiliees"),
     path(
         "simulateur-de-loyer",
         views.loyer_simulateur,

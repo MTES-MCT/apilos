@@ -5,8 +5,8 @@
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-md-12 fr-mb-2w">
                 <form class="fr-mt-2w" method="get" action="" id="search_table">
-                    <input type="hidden" id="order_by" name="order_by" value="{{conventions.order_by}}">
-                    <input type="hidden" id="page" name="page" value="{{conventions.page}}">
+                    <input type="hidden" id="order_by" name="order_by" value="{{ order_by }}">
+                    <input type="hidden" id="page" name="page" value="{{ page }}">
                     {# Champs de recherche spécifiques (dépend du rôle de l'utilisateur) #}
                     <div class="fr-grid-row fr-grid-row--gutters">
                         {# Champs bailleur #}
@@ -125,7 +125,7 @@
 
                         {# Champs "Libre" (code opération / numéro de convention, code postal ou nom du programme) #}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
-                            <input class="fr-input" placeholder="{% if active %}Code{% else %}N° convention{% endif %}, programme ou code postal" type="search" id="search_input" name="search_input" value="{{ conventions.search_input }}" />
+                            <input class="fr-input" placeholder="{% if active %}Code{% else %}N° convention{% endif %}, programme ou code postal" type="search" id="search_input" name="search_input" value="{{ search_input }}" />
                         </div>
 
                         {# Champs ANRU #}
@@ -203,12 +203,14 @@
                         </div>
                     </div>
                 </details>
-                {% if conventions.paginated_conventions %}
+                {% if conventions|length > 0 %}
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table aria-label="Conventions">
+                            {# TODO réactiver ceci
                             {% if conventions.paginated_conventions.paginator.count != conventions.total_conventions %}
                                 <caption><em>{{ conventions.paginated_conventions.paginator.count }} convention{{ conventions.paginated_conventions.paginator.count|pluralize }} correspond{{ conventions.paginated_conventions.paginator.count|pluralize:'ent' }} à votre recherche</em></caption>
                             {% endif %}
+                            #}
                             <thead>
                                 <tr class="th_inline">
                                     <th title="Statut de la convention" scope="col">
@@ -244,7 +246,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for convention in conventions.paginated_conventions %}
+                                {% for convention in conventions %}
 
                                     <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
                                         <td title="{{convention.statut_for_template.statut_display}}">
@@ -269,7 +271,7 @@
                                             </script>
                                         </td>
                                         {% if request|is_instructeur %}
-                                            <td>{{convention.programme.bailleur|highlight:conventions.search_input}}</td>
+                                            <td>{{convention.programme.bailleur|highlight:search_input}}</td>
                                         {% endif %}
                                         {% if request|display_administration %}
                                             <td>{{convention.programme.administration}}</td>
@@ -277,7 +279,7 @@
                                         <td>
                                             <div class="apilos--flex-row-left-center">
                                                 <strong class="apilos--overflow_ellipsis">
-                                                    {{convention.programme|highlight:conventions.search_input}}
+                                                    {{convention.programme|highlight:search_input}}
                                                 </strong>
                                                 {% if convention.is_avenant %}
                                                     <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-avenant background-white">Avenant</span>
@@ -285,21 +287,21 @@
                                             </div>
                                             {% if active or siap_operation and convention.programme.numero_galion %}
                                                 <em data-test-role="programme-galion-cell">
-                                                    {{convention.programme.numero_galion|highlight:conventions.search_input}}
+                                                    {{convention.programme.numero_galion|highlight:search_input}}
                                                 </em>
                                             {% endif %}
                                             {% if not active and convention.numero %}
                                                 {% if convention.is_avenant %}
-                                                    <em data-test-role="programme-galion-cell">{{convention.parent.numero|highlight:conventions.search_input}} - Avenant n°{{convention.numero}}</em>
+                                                    <em data-test-role="programme-galion-cell">{{convention.parent.numero|highlight:search_input}} - Avenant n°{{convention.numero}}</em>
                                                 {% else %}
-                                                    <em data-test-role="programme-galion-cell">{{convention.numero|highlight:conventions.search_input}}</em>
+                                                    <em data-test-role="programme-galion-cell">{{convention.numero|highlight:search_input}}</em>
                                                 {% endif %}
                                             {% endif %}
                                         </td>
                                         <td data-test-role="programme-financement-cell">{{convention.financement}}</td>
                                         <td>
-                                            <strong>{{convention.programme.ville|highlight:conventions.search_input}}</strong><br/>
-                                            <em>{{convention.programme.code_postal|highlight:conventions.search_input}}</em>
+                                            <strong>{{convention.programme.ville|highlight:search_input}}</strong><br/>
+                                            <em>{{convention.programme.code_postal|highlight:search_input}}</em>
                                         </td>
                                         <td>{{convention.lot.nb_logements}}</td>
                                         {% if active or siap_operation %}

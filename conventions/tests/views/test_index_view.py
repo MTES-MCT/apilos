@@ -21,7 +21,7 @@ class ConventionIndexViewTests(TestCase):
         self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
         response = self.client.get(reverse("conventions:index"))
-        self.assertRedirects(response, reverse("conventions:search_active"))
+        self.assertRedirects(response, reverse("conventions:search_instruction"))
 
     def test_get_list_active(self):
         """
@@ -30,7 +30,7 @@ class ConventionIndexViewTests(TestCase):
         # login as superuser
         self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
-        response = self.client.get(reverse("conventions:search_active"))
+        response = self.client.get(reverse("conventions:search_instruction"))
         soup = BeautifulSoup(response.content, "html.parser")
         galion_refs = soup.find_all(attrs={"data-test-role": "programme-galion-cell"})
         financements = soup.find_all(
@@ -50,7 +50,7 @@ class ConventionIndexViewTests(TestCase):
         self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
         response = self.client.get(
-            reverse("conventions:search_active"),
+            reverse("conventions:search_instruction"),
             data={"order_by": "programme__bailleur__nom"},
         )
         soup = BeautifulSoup(response.content, "html.parser")

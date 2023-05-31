@@ -5,6 +5,9 @@ from django.utils import timezone
 from conventions.forms import (
     InitavenantsforavenantForm,
     AvenantsforavenantForm,
+    ConventionResiliationForm,
+    UploadForm,
+    ConventionDateForm,
 )
 from conventions.forms.avenant import AvenantForm
 from conventions.models import (
@@ -13,7 +16,7 @@ from conventions.models import (
     ConventionStatut,
 )
 from conventions.services import utils
-from conventions.services.conventions import ConventionListService
+from conventions.services.search import AvenantListSearchService
 from upload.services import UploadService
 
 
@@ -71,14 +74,11 @@ def upload_avenants_for_avenant(request, convention_uuid):
         .prefetch_related("avenants")
         .get(uuid=convention_uuid)
     )
-    avenant_list_service = ConventionListService(
-        my_convention_list=parent_convention.avenants.all()
-        .prefetch_related("programme")
-        .prefetch_related("lot"),
-        order_by="cree_le",
+    avenant_search_service = AvenantListSearchService(
+        parent_convention, order_by_numero=True
     )
+
     ongoing_avenant_list_service = parent_convention.avenants.all().filter(numero=None)
-    avenant_list_service.paginate()
     if request.method == "POST":
         avenant_form = InitavenantsforavenantForm(request.POST)
         if avenant_form.is_valid():
@@ -98,8 +98,56 @@ def upload_avenants_for_avenant(request, convention_uuid):
         "success": utils.ReturnStatus.ERROR,
         "form": avenant_form,
         "convention": parent_convention,
-        "avenants": avenant_list_service,
+        "avenants": avenant_search_service.get_results(),
         "ongoing_avenants": ongoing_avenant_list_service,
+    }
+
+
+def convention_post_action(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    result_status = None
+    form_posted = None
+    if request.method == "POST":
+        resiliation_form = ConventionResiliationForm(request.POST)
+        updatedate_form = ConventionDateForm(request.POST)
+        is_resiliation = request.POST.get("resiliation", False)
+        if is_resiliation:
+            if resiliation_form.is_valid():
+                convention.statut = ConventionStatut.RESILIEE.label
+                convention.date_resiliation = resiliation_form.cleaned_data[
+                    "date_resiliation"
+                ]
+                convention.save()
+                # SUCCESS
+                result_status = utils.ReturnStatus.SUCCESS
+                form_posted = "resiliation"
+        else:
+            if updatedate_form.is_valid():
+                convention.televersement_convention_signee_le = (
+                    updatedate_form.cleaned_data["televersement_convention_signee_le"]
+                )
+                convention.save()
+                result_status = utils.ReturnStatus.SUCCESS
+                form_posted = "date_signature"
+
+    else:
+        resiliation_form = ConventionResiliationForm()
+        updatedate_form = ConventionDateForm()
+
+    upform = UploadForm()
+    avenant_search_service = AvenantListSearchService(convention, order_by_numero=True)
+
+    total_avenants = convention.avenants.all().count()
+
+    return {
+        "success": result_status,
+        "upform": upform,
+        "convention": convention,
+        "avenants": avenant_search_service.get_results(),
+        "total_avenants": total_avenants,
+        "resiliation_form": resiliation_form,
+        "updatedate_form": updatedate_form,
+        "form_posted": form_posted,
     }
 
 
@@ -118,13 +166,10 @@ def _get_last_avenant(convention):
 def complete_avenants_for_avenant(request, convention_uuid):
     avenant = Convention.objects.get(uuid=convention_uuid)
     convention_parent = avenant.parent
-    avenant_list_service = ConventionListService(
-        my_convention_list=avenant.parent.avenants.all()
-        .prefetch_related("programme")
-        .prefetch_related("lot"),
-        order_by="numero",
+    avenant_search_service = AvenantListSearchService(
+        avenant.parent, order_by_numero=True
     )
-    avenant_list_service.paginate()
+
     avenant_numero = avenant.get_default_convention_number()
     if request.method == "POST":
         avenant_form = AvenantsforavenantForm(request.POST, request.FILES)
@@ -158,7 +203,7 @@ def complete_avenants_for_avenant(request, convention_uuid):
     return {
         "success": utils.ReturnStatus.ERROR,
         "avenant_numero": avenant_numero,
-        "avenants_parent": avenant_list_service,
+        "avenants_parent": avenant_search_service.get_results(),
         "avenant_form": avenant_form,
         "convention_parent": convention_parent,
     }

@@ -62,8 +62,9 @@
                     <div class="fr-tabs fr-col-12">
                         <div class="fr-container">
                             <ul class="fr-tabs__list" role="tablist" aria-label="Liste des conventions">
-                                {% include 'conventions/home/_tab.html' with tab_active=active count=nb_active_conventions label='en cours' title='Conventions en cours' route='conventions:search_active' %}
-                                {% include 'conventions/home/_tab.html' with tab_active=active|negate count=nb_completed_conventions label='finalisées' title='Conventions finalisées' route='conventions:search_completed' %}
+                                {% for name, tab in tabs.items %}
+                                  {% include 'conventions/home/_tab.html' with tab_active=tab.is_active count=tab.count title=tab.title route=tab.route %}
+                                {% endfor %}
                                 <li class="fr-ml-md-auto">
                                     <a class="fr-tabs__tab " href="{% url 'conventions:loyer_simulateur' %}" title="Calculatrice de loyers" aria-selected="false">
                                         <span class="fr-link"><span aria-hidden="true" class="fr-icon-equalizer-fill"></span> Calculatrice de loyers</span>
@@ -122,7 +123,7 @@
                     {% include "conventions/home/instructeur_no_convention.html" %}
                 {% endif %}
             {% else %}
-                {% include "conventions/home/no_profile.html" %}
+                {% include "conventions/home/bailleur_no_convention.html" %}
             {% endif %}
         {% endif %}
     {% endwith %}

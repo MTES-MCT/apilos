@@ -1,12 +1,16 @@
 import mimetypes
+from abc import ABC, abstractmethod
 from datetime import date
+from typing import List
 from zipfile import ZipFile
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.files import File
 from django.core.files.storage import default_storage
+from django.db.models import QuerySet
 from django.http import (
     FileResponse,
     HttpRequest,
@@ -17,9 +21,9 @@ from django.http import (
 )
 from django.shortcuts import render
 from django.urls import reverse
+from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
-from bailleurs.models import Bailleur
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from conventions.forms.evenement import EvenementForm
 from conventions.models import Convention, ConventionStatut, Evenement, PieceJointe
@@ -28,10 +32,9 @@ from conventions.permissions import (
     has_campaign_permission_view_function,
 )
 from conventions.services import convention_generator
+from conventions.services.avenants import convention_post_action
 from conventions.services.convention_generator import fiche_caf_doc
 from conventions.services.conventions import (
-    ConventionListService,
-    convention_post_action,
     convention_sent,
 )
 from conventions.services.file import ConventionFileService
@@ -41,6 +44,7 @@ from conventions.services.recapitulatif import (
     convention_submit,
     convention_validate,
 )
+from conventions.services.search import UserConventionSearchService
 from conventions.services.utils import ReturnStatus, base_convention_response_error
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from core.storage import client
@@ -49,6 +53,7 @@ from instructeurs.models import Administration
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
 from upload.services import UploadService
+from users.models import User
 
 
 class RecapitulatifView(BaseConventionView):
@@ -119,78 +124,123 @@ class RecapitulatifView(BaseConventionView):
         )
 
 
-@login_required
-@require_GET
-def search(request, active: bool = True):
-    query_set = request.user.conventions(active=active)
-    uuid_bailleur = request.GET.get("bailleur")
-    bailleur = (
-        Bailleur.objects.filter(uuid=uuid_bailleur).first()
-        if is_valid_uuid(uuid_bailleur)
-        else None
-    )
-    bailleur_query = (
-        request.user.bailleurs(full_scope=True).exclude(nom__exact="")[
-            : settings.APILOS_MAX_DROPDOWN_COUNT
-        ]
-        if request.user.is_instructeur()
-        else None
-    )
-
-    uuid_administration = request.GET.get("administration")
-    administration = (
-        Administration.objects.filter(uuid=uuid_administration).first()
-        if is_valid_uuid(uuid_administration)
-        else None
-    )
-    administration_query = (
-        request.user.administrations()[: settings.APILOS_MAX_DROPDOWN_COUNT]
-        if request.user.is_bailleur()
-        else None
-    )
-
-    service = ConventionListService(
-        search_input=request.GET.get("search_input", ""),
-        order_by=request.GET.get(
-            "order_by",
-            "programme__date_achevement_compile"
-            if active
-            else "televersement_convention_signee_le",
-        ),
-        active=active,
-        page=request.GET.get("page", 1),
-        statut_filter=request.GET.get("cstatut", ""),
-        financement_filter=request.GET.get("financement", ""),
-        departement_input=request.GET.get("departement_input", ""),
-        ville=request.GET.get("ville"),
-        anru=(request.GET.get("anru") is not None),  # As anru is a checkbox
-        user=request.user,
-        bailleur=bailleur,
-        administration=administration,
-        my_convention_list=query_set.prefetch_related("programme")
-        .prefetch_related("programme__administration")
-        .prefetch_related("lot"),
-    )
-    service.paginate()
-
-    return render(
-        request,
-        "conventions/index.html",
-        {
-            "active": active,
-            "statuts": ConventionStatut.active_statuts(
-                False, request.user.is_instructeur()
-            )
-            if active
-            else ConventionStatut.completed_statuts(False, request.user.is_bailleur()),
-            "financements": Financement,
-            "nb_active_conventions": request.user.conventions(active=True).count(),
-            "nb_completed_conventions": request.user.conventions(active=False).count(),
-            "conventions": service,
-            "bailleur_query": bailleur_query,
-            "administration_query": administration_query,
+class ConventionSearchView(ABC, LoginRequiredMixin, View):
+    _TABS = {
+        "EN_INSTRUCTION": {
+            "title": "en instruction",
+            "route": "conventions:search_instruction",
+            "statuses": [
+                ConventionStatut.PROJET,
+                ConventionStatut.INSTRUCTION,
+                ConventionStatut.CORRECTION,
+                ConventionStatut.A_SIGNER,
+            ],
         },
-    )
+        "ACTIVES": {
+            "title": "active(s)",
+            "route": "conventions:search_active",
+            "statuses": [ConventionStatut.SIGNEE],
+        },
+        "RESILIEES": {
+            "title": "résiliée(s)",
+            "route": "conventions:search_resiliees",
+            "statuses": [
+                ConventionStatut.RESILIEE,
+                ConventionStatut.DENONCEE,
+                ConventionStatut.ANNULEE,
+            ],
+        },
+    }
+
+    @abstractmethod
+    def get_tab_name(self) -> str:
+        pass
+
+    def get_convention_statuses(self) -> List[ConventionStatut]:
+        return ConventionSearchView._TABS[self.get_tab_name()]["statuses"]
+
+    def _administration(self, uuid: str) -> Administration | None:
+        if uuid is None:
+            return None
+
+        return Administration.objects.filter(uuid=uuid).first()
+
+    def _bailleur_query(self, user: User) -> QuerySet | None:
+        if user.is_instructeur():
+            return user.bailleurs(full_scope=True).exclude(nom__exact="")[
+                : settings.APILOS_MAX_DROPDOWN_COUNT
+            ]
+
+        return None
+
+    def _administration_query(self, user: User) -> QuerySet | None:
+        if user.is_bailleur():
+            return user.administrations()[: settings.APILOS_MAX_DROPDOWN_COUNT]
+
+        return None
+
+    def _user_convention_statuses_choices(self, user: User) -> list[tuple[str, str]]:
+        return [
+            (
+                statut.name,
+                statut.value.instructeur.label
+                if user.is_instructeur()
+                else statut.value.bailleur.label,
+            )
+            for statut in self.get_convention_statuses()
+        ]
+
+    def _tab_data(self, user: User):
+        # TODO replace by actual query
+        return {
+            key: value
+            | {
+                "count": user.conventions()
+                .filter(statut__in=map(lambda s: s.label, value["statuses"]))
+                .count(),
+                "is_active": key == self.get_tab_name(),
+            }
+            for key, value in self._TABS.items()
+        }
+
+    def get(self, request: HttpRequest):
+        search_service = UserConventionSearchService(
+            request.user, self.get_convention_statuses()
+        )
+        tabs = self._tab_data(request.user)
+
+        return render(
+            request,
+            "conventions/index.html",
+            {
+                "financements": Financement.choices,
+                "tabs": tabs,
+                "total_conventions": sum(map(lambda tab: tab["count"], tabs.values())),
+                "conventions": search_service.get_results(),
+                "search_input": request.GET.get("search_input", ""),
+                "bailleur_query": self._bailleur_query(request.user),
+                "administration_query": self._administration_query(request.user),
+            },
+        )
+
+    @staticmethod
+    def get_uuid_value(request: HttpRequest, name: str):
+        return request.GET.get(name) if is_valid_uuid(request.GET.get(name)) else None
+
+
+class ConventionEnInstructionSearchView(ConventionSearchView):
+    def get_tab_name(self) -> str:
+        return "EN_INSTRUCTION"
+
+
+class ActiveConventionActivesSearchView(ConventionSearchView):
+    def get_tab_name(self) -> str:
+        return "ACTIVES"
+
+
+class ConventionTermineesSearchView(ConventionSearchView):
+    def get_tab_name(self) -> str:
+        return "ACTIVES"
 
 
 @login_required
