@@ -483,7 +483,7 @@ class Convention(models.Model):
     def short_statut_for_instructeur(self):
         return ConventionStatut.get_by_label(self.statut).instructeur_label
 
-    def genderise_desc(self, desc):
+    def genderize_desc(self, desc):
         if self.is_avenant():
             return desc.format(pronom="il", accord="", article="le", autre="autre")
         return desc.format(pronom="elle", accord="e", article="la", autre="")
@@ -492,13 +492,13 @@ class Convention(models.Model):
         desc = ConventionStatut.get_by_label(
             self.statut
         ).value.bailleur.description_entete
-        return self.genderise_desc(desc)
+        return self.genderize_desc(desc)
 
     def entete_desc_for_instructeur(self):
         desc = ConventionStatut.get_by_label(
             self.statut
         ).value.instructeur.description_entete
-        return self.genderise_desc(desc)
+        return self.genderize_desc(desc)
 
     def statut_icone(self):
         return ConventionStatut.get_by_label(self.statut).icone

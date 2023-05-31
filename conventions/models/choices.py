@@ -6,7 +6,6 @@ from django.db.models import TextChoices
 class StatutByRole(NamedTuple):
     label: str
     description_entete: str | None = ""
-    call_to_action: str | None = None
 
 
 class ReverseConventionStatut:
@@ -77,7 +76,7 @@ class ConventionStatut(Enum):
         ),
         StatutByRole(
             "Projet",
-            "Complétez ses informations, puis soumettez-{article} à votre service d'instruction",
+            "Une fois que votre bailleur aura complété ses informations, il vous {article} soumettra en instruction",
         ),
         "pencil",
     )
@@ -90,7 +89,8 @@ class ConventionStatut(Enum):
         ),
         StatutByRole(
             "À instruire",
-            "{pronom} sera prochainement validé{accord} ou votre instructeur vous demandera des corrections",
+            "Vous pouvez désormais procéder à son instruction et "
+            "{article} valider ou demander des corrections à votre bailleur",
         ),
         "eye",
     )
@@ -102,7 +102,7 @@ class ConventionStatut(Enum):
         ),
         StatutByRole(
             "En correction",
-            "Corrigez les demandes de votre instructeur puis soumettez-{article} à nouveau",
+            "Une fois que votre bailleur aura procédé aux corrections, il pourra vous {article} soumettre à nouveau",
         ),
         "question-answer",
     )
@@ -120,7 +120,7 @@ class ConventionStatut(Enum):
         ),
         StatutByRole(
             "Finalisée",
-            "Vous devrez désormais créer un {autre} avenant si vous souhaitez mettre à jour une information",
+            "Un {autre} avenant devra désormais être créé pour mettre à jour une information",
         ),
         "success",
     )
