@@ -20,16 +20,20 @@ class ConfigurationAPITest(APITestCase):
         user.save()
 
     def test_get_config_route(self):
-        response = self.client.get("/api-siap/v0/config/")
+        response = self.client.get(
+            "/api-siap/v0/config/", SERVER_NAME="test.apilos.logement.fr"
+        )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         accesstoken = build_jwt(user_login="toto")
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
-        response = client.get("/api-siap/v0/config/")
+        response = client.get(
+            "/api-siap/v0/config/", SERVER_NAME="test.apilos.logement.fr"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         expected = {
-            "racine_url_acces_web": "http://testserver",
+            "racine_url_acces_web": "http://test.apilos.logement.fr",
             "url_acces_web_operation": "/operations/{NUMERO_OPERATION_SIAP}",
             "url_acces_web_recherche": "/conventions",
             "url_acces_api_kpi": "/api-siap/v0/convention_kpi/",
@@ -58,7 +62,9 @@ class ConventionKPIAPITest(APITestCase):
         )  # bailleur
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
-        response = client.get("/api-siap/v0/convention_kpi/")
+        response = client.get(
+            "/api-siap/v0/convention_kpi/", SERVER_NAME="test.apilos.logement.fr"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         expected = [
@@ -86,7 +92,9 @@ class ConventionKPIAPITest(APITestCase):
         )  # instructeur
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
-        response = client.get("/api-siap/v0/convention_kpi/")
+        response = client.get(
+            "/api-siap/v0/convention_kpi/", SERVER_NAME="test.apilos.logement.fr"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         expected = [
             {
@@ -114,7 +122,9 @@ class ConventionKPIAPITest(APITestCase):
         )  # administrateur
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
-        response = client.get("/api-siap/v0/convention_kpi/")
+        response = client.get(
+            "/api-siap/v0/convention_kpi/", SERVER_NAME="test.apilos.logement.fr"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         expected = [
             {

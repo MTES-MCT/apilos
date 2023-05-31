@@ -22,13 +22,6 @@ class SIAPSimpleJWTAuthentication(JWTAuthentication):
         if raw_token is None:
             return None
 
-        logger.warning(
-            "[SIAP call] METHOD : %s, PATH: %s, JWT TOKEN : %s",
-            request.method,
-            request.path,
-            raw_token,
-        )
-
         validated_token = self.get_validated_token(raw_token)
         return User(), validated_token
 

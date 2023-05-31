@@ -51,8 +51,7 @@ class GroupProfile(models.TextChoices):
 
 
 class User(AbstractUser):
-    # pylint: disable=R0904
-    siap_habilitation = {}
+
     administrateur_de_compte = models.BooleanField(default=False)
     telephone = models.CharField(
         null=True,
@@ -82,8 +81,13 @@ class User(AbstractUser):
     )
     history = HistoricalRecords(excluded_fields=["last_login"])
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.siap_habilitation = {}
+
     def has_object_permission(self, obj):
         if isinstance(obj, (Convention, Lot)):
+
             if (
                 "role" in self.siap_habilitation
                 and self.siap_habilitation["role"]["typologie"]
@@ -107,11 +111,16 @@ class User(AbstractUser):
                 id=obj.programme.bailleur_id
             )
             bailleur_ids = [obj.programme.bailleur_id]
+
             if bailleur.parent:
                 bailleur_ids.append(bailleur.parent.id)
             # is bailleur of the convention or is instructeur of the convention
-            return self.roles.filter(bailleur_id__in=bailleur_ids) or self.roles.filter(
-                administration_id=obj.programme.administration_id
+            return (
+                self.roles.filter(bailleur_id__in=bailleur_ids).count() > 0
+                or self.roles.filter(
+                    administration_id=obj.programme.administration_id
+                ).count()
+                > 0
             )
         raise Exception(
             "Les permissions ne sont pas correctement configurer, un "
@@ -127,6 +136,7 @@ class User(AbstractUser):
             return False
         # check permission itself
         permissions = []
+
         for role in self.roles.all():
             permissions += map(
                 lambda permission: permission.content_type.name

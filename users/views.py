@@ -10,13 +10,13 @@ from django.views.decorators.http import require_GET
 def home(request):
     """
     Default access to APiLos Application.
-    The user will be redirected folowing :
+    The user will be redirected following :
       * user is authenticated
       * Application configuration -> redirect to CERBERE if CERBERE is active
     """
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse("conventions:index"))
-    if settings.CERBERE_AUTH:
+    if request.get_host() in settings.SIAP_DOMAINS:
         return HttpResponseRedirect(reverse("cas_ng_login"))
     # test si authentifié, si oui, rediriger vers convention/index...
     return render(request, "index.html")

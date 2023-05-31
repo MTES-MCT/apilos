@@ -160,12 +160,15 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "core.middleware.ApilosMultisiteMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
     "hijack.middleware.HijackUserMiddleware",
+    "django_cas_ng.middleware.CASMiddleware",
+    "siap.custom_middleware.CerbereSessionMiddleware",
 ]
 
 if not TESTING:
@@ -194,7 +197,7 @@ if "debug_toolbar" in INSTALLED_APPS:
             + ("sentry_sdk",),
         }
 
-ROOT_URLCONF = "core.urls"
+ROOT_URLCONF = "core.urls.standalone"
 
 TEMPLATES = [
     {
@@ -476,29 +479,16 @@ SWAGGER_SETTINGS = {
 
 CERBERE_AUTH = get_env_variable("CERBERE_AUTH")
 CERBERE_MOCKED = get_env_variable("CERBERE_MOCKED", cast=bool, default=False)
+# List of domains on which SIAP integration is enabled
+SIAP_DOMAINS = get_env_variable("SIAP_DOMAINS").split(",")
 USE_MOCKED_SIAP_CLIENT = get_env_variable("USE_MOCKED_SIAP_CLIENT", cast=bool)
 NO_SIAP_MENU = get_env_variable("NO_SIAP_MENU", cast=bool)
 
 # Cerbere truqué (non activable ailleurs qu'en développement et test par sécurité)
 if CERBERE_MOCKED and ENVIRONMENT in ["development", "test"]:
-    CERBERE_AUTH = "/cerbere/login"
-    AUTHENTICATION_BACKENDS += [
-        "core.backends.MockedCerbereCASBackend",
-    ]  # custom backend CAS
     INSTALLED_APPS += ["cerbere"]
-    NO_SIAP_MENU = True
-    USE_MOCKED_SIAP_CLIENT = False
 
-if CERBERE_AUTH:
-    MIDDLEWARE += [
-        "django_cas_ng.middleware.CASMiddleware",
-        "siap.custom_middleware.CerbereSessionMiddleware",
-    ]
-
-    AUTHENTICATION_BACKENDS += [
-        "core.backends.CerbereCASBackend",
-    ]  # custom backend CAS
-
+if CERBERE_AUTH or (CERBERE_MOCKED and ENVIRONMENT in ["development", "test"]):
     # CAS config
     CAS_SERVER_URL = CERBERE_AUTH
     CAS_VERSION = "CAS_2_SAML_1_0"
@@ -511,8 +501,6 @@ if CERBERE_AUTH:
         "UTILISATEUR.PRENOM": "first_name",
         "UTILISATEUR.MEL": "email",
     }
-
-    LOGIN_URL = "/accounts/cerbere-login"
 
 
 # Django defender (doc https://github.com/jazzband/django-defender#customizing-django-defender)
