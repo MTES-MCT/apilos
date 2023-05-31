@@ -24,6 +24,7 @@ from django.urls import reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
+from bailleurs.models import Bailleur
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from conventions.forms.evenement import EvenementForm
 from conventions.models import Convention, ConventionStatut, Evenement, PieceJointe
@@ -159,11 +160,21 @@ class ConventionSearchView(ABC, LoginRequiredMixin, View):
     def get_convention_statuses(self) -> List[ConventionStatut]:
         return ConventionSearchView._TABS[self.get_tab_name()]["statuses"]
 
-    def _administration(self, uuid: str) -> Administration | None:
+    @abstractmethod
+    def get_default_order_by(self):
+        pass
+
+    def _administration(self, uuid: str | None) -> Administration | None:
         if uuid is None:
             return None
 
         return Administration.objects.filter(uuid=uuid).first()
+
+    def _bailleur(self, uuid: str | None) -> Bailleur | None:
+        if uuid is None:
+            return None
+
+        return Bailleur.objects.filter(uuid=uuid).first()
 
     def _bailleur_query(self, user: User) -> QuerySet | None:
         if user.is_instructeur():
@@ -205,7 +216,21 @@ class ConventionSearchView(ABC, LoginRequiredMixin, View):
 
     def get(self, request: HttpRequest):
         search_service = UserConventionSearchService(
-            request.user, self.get_convention_statuses()
+            user=request.user,
+            statuses=self.get_convention_statuses(),
+            order_by=request.GET.get("order_by", self.get_default_order_by()),
+            statut=request.GET.get("cstatut", ""),
+            financement=request.GET.get("financement", ""),
+            departement=request.GET.get("departement_input", ""),
+            commune=request.GET.get("ville"),
+            search_input=request.GET.get("search_input", ""),
+            anru=(request.GET.get("anru") is not None),
+            bailleur=self._bailleur(
+                ConventionSearchView.get_uuid_value(request, "bailleur")
+            ),
+            administration=self._administration(
+                ConventionSearchView.get_uuid_value(request, "administration")
+            ),
         )
         tabs = self._tab_data(request.user)
 
@@ -216,7 +241,7 @@ class ConventionSearchView(ABC, LoginRequiredMixin, View):
                 "financements": Financement.choices,
                 "tabs": tabs,
                 "total_conventions": sum(map(lambda tab: tab["count"], tabs.values())),
-                "conventions": search_service.get_results(),
+                "conventions": search_service.get_results(request.GET.get("page", 1)),
                 "search_input": request.GET.get("search_input", ""),
                 "bailleur_query": self._bailleur_query(request.user),
                 "administration_query": self._administration_query(request.user),
@@ -224,7 +249,7 @@ class ConventionSearchView(ABC, LoginRequiredMixin, View):
         )
 
     @staticmethod
-    def get_uuid_value(request: HttpRequest, name: str):
+    def get_uuid_value(request: HttpRequest, name: str) -> str | None:
         return request.GET.get(name) if is_valid_uuid(request.GET.get(name)) else None
 
 
@@ -232,15 +257,24 @@ class ConventionEnInstructionSearchView(ConventionSearchView):
     def get_tab_name(self) -> str:
         return "EN_INSTRUCTION"
 
+    def get_default_order_by(self):
+        return "programme__date_achevement_compile"
+
 
 class ActiveConventionActivesSearchView(ConventionSearchView):
     def get_tab_name(self) -> str:
         return "ACTIVES"
 
+    def get_default_order_by(self):
+        return "televersement_convention_signee_le"
+
 
 class ConventionTermineesSearchView(ConventionSearchView):
     def get_tab_name(self) -> str:
-        return "ACTIVES"
+        return "RESILIEES"
+
+    def get_default_order_by(self):
+        return "televersement_convention_signee_le"
 
 
 @login_required

@@ -5,8 +5,10 @@ from django.conf import settings
 from django.db.models import QuerySet
 from django.core.paginator import Paginator
 
+from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
-from programmes.models import Programme
+from instructeurs.models import Administration
+from programmes.models import Programme, Financement
 from users.models import User
 
 
@@ -74,32 +76,31 @@ class ProgrammeConventionSearchService(ConventionSearchBaseService):
 
 
 class UserConventionSearchService(ConventionSearchBaseService):
-
-    # TODO: process these filters
-    #     search_input=request.GET.get("search_input", ""),
-    #     order_by=request.GET.get(
-    #         "order_by",
-    #         "programme__date_achevement_compile"
-    #         if active
-    #         else "televersement_convention_signee_le",
-    #     ),
-    #     active=active,
-    #     page=request.GET.get("page", 1),
-    #     statut_filter=request.GET.get("cstatut", ""),
-    #     financement_filter=request.GET.get("financement", ""),
-    #     departement_input=request.GET.get("departement_input", ""),
-    #     ville=request.GET.get("ville"),
-    #     anru=(request.GET.get("anru") is not None),  # As anru is a checkbox
-    #     user=request.user,
-    #     bailleur=bailleur,
-    #     administration=administration,
-
     def __init__(
-        self, user: User, statuses: List[ConventionStatut], order_by: str | None = None
+        self,
+        user: User,
+        statuses: List[ConventionStatut],
+        order_by: str | None = None,
+        statut: str | None = None,
+        financement: str | None = None,
+        departement: str | None = None,
+        commune: str | None = None,
+        search_input: str | None = None,
+        anru: bool = False,
+        bailleur: Bailleur | None = None,
+        administration: Administration | None = None,
     ):
         self.user: User = user
         self.order_by: str | None = order_by
         self.statuses = statuses
+        self.statut: ConventionStatut | None = ConventionStatut.get_by_label(statut)
+        self.financement: str | None = financement
+        self.departement: str | None = departement
+        self.commune: str | None = commune
+        self.search_input: str | None = search_input
+        self.anru: bool = anru
+        self.bailleur: Bailleur | None = bailleur
+        self.administration: Administration | None = administration
 
     def get_base_query_set(self) -> QuerySet:
         return (
@@ -108,4 +109,11 @@ class UserConventionSearchService(ConventionSearchBaseService):
             .prefetch_related("programme__administration")
             .prefetch_related("lot")
             .filter(statut__in=map(lambda s: s.label, self.statuses))
+            .filter(
+                **{
+                    # Application du filtre "statut de la convention"
+                    **({"statut": self.statut.label} if self.statut is not None else {})
+                }
+            )
+            # TODO appliquer les autres filtres
         )
