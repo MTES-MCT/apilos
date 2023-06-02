@@ -147,7 +147,7 @@ convertapi==1.6.0 \
     --hash=sha256:2008938629849ff9551599db81295b7a35c3eb0de150caaa09827563af6a7b2b \
     --hash=sha256:226e8bf0ca262a0f1c839d9ed2b5543247deca0a2f6703c2acdd6ed372e96a00
     # via -r requirements.in
-cryptography==40.0.2 \
+cryptography==41.0.0 \
     --hash=sha256:05dc219433b14046c476f6f09d7636b92a1c3e5808b9a6536adf4932b3b2c440 \
     --hash=sha256:0dcca15d3a19a66e63662dc8d30f8036b07be851a8680eda92d079868f106288 \
     --hash=sha256:142bae539ef28a1c76794cca7f49729e7c54423f615cfd9b0b1fa90ebe53244b \
