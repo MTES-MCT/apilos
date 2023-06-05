@@ -176,6 +176,22 @@ class SIAPClientRemote(SIAPClientInterface):
 
     def update_siap_config(self) -> None:
         config = self.get_siap_config()
+        if [
+            k
+            for k, v in config.items()
+            if k in ["racineUrlAccesWeb", "urlAccesWeb", "urlAccesWebOperation"] and v
+        ] != ["racineUrlAccesWeb", "urlAccesWeb", "urlAccesWebOperation"]:
+            raise SIAPException(
+                "SIAP configuration is not well formed"
+                ", racineUrlAccesWeb: %s"
+                ", urlAccesWeb: %s"
+                ", urlAccesWebOperation: %s"
+                % (
+                    config["racineUrlAccesWeb"],
+                    config["urlAccesWeb"],
+                    config["urlAccesWebOperation"],
+                )
+            )
         self.racine_url_acces_web = config["racineUrlAccesWeb"].rstrip("/")
         self.url_acces_web = config["urlAccesWeb"]
         self.url_acces_web_operation = config["urlAccesWebOperation"]

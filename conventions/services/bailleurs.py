@@ -21,12 +21,16 @@ class ConventionBailleurService(ConventionService):
             sirens = []
             for habilitation in self.request.session["habilitations"]:
                 if habilitation["groupe"]["profil"]["code"] == "MO_PERS_MORALE":
+                    try:
+                        region_code = habilitation["porteeTerritComp"]["regComp"][
+                            "code"
+                        ]
+                    except (KeyError, TypeError):
+                        region_code = None
                     if (
-                        "regComp" in habilitation["porteeTerritComp"]
-                        and "code" in habilitation["porteeTerritComp"]["regComp"]
-                        and habilitation["porteeTerritComp"]["regComp"]["code"]
-                        == self.convention.programme.code_insee_region
-                    ) or "regComp" not in habilitation["porteeTerritComp"]:
+                        region_code is None
+                        or region_code == self.convention.programme.code_insee_region
+                    ):
                         sirens.append(habilitation["entiteMorale"]["siren"])
             return Bailleur.objects.filter(siren__in=sirens)
         return (
