@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
+from programmes.models.models import IndiceEvolutionLoyer
 
 from .models import (
     Annexe,
@@ -70,3 +71,4 @@ admin.site.register(Lot, LotAdmin)
 admin.site.register(Logement)
 admin.site.register(Annexe)
 admin.site.register(TypeStationnement)
+admin.site.register(IndiceEvolutionLoyer)
