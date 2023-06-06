@@ -382,6 +382,11 @@ def display_submit_convention(convention, request):
 
 
 @register.filter
+def display_delete_convention(convention):
+    return convention.statut == ConventionStatut.ANNULEE.label
+
+
+@register.filter
 def display_cancel_convention(convention):
     return convention.statut in [
         ConventionStatut.PROJET.label,
