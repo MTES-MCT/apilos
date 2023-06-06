@@ -71,11 +71,11 @@ class ConventionStatut(Enum):
     PROJET = Definition(
         "1. Projet",
         StatutByRole(
-            "Projet",
+            "En projet",
             "Complétez ses informations, puis soumettez-{article} à votre service d'instruction",
         ),
         StatutByRole(
-            "Projet",
+            "En projet",
             "Une fois que votre bailleur aura complété ses informations, il vous {article} soumettra en instruction",
         ),
         "pencil",
