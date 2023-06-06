@@ -140,4 +140,4 @@ https://doc.incubateur.net/startups/la-vie-dune-se/construction/kit-de-demarrage
 
 ## Edition des indices de loyer pour la calculette des loyers (reprise d'Ecoloweb)
 
-Pour editer les indices de loyer par année, il faut et suffit de se connecter avec un utilisateur qui à le droit de se connecter à l'administration et accéder à [l'interface d'administration des indices de loyer](https://apilos.logements.gouv.fr/admin/programmes/indiceevolutionloyer/)
+Pour éditer les indices de loyer par année, il faut et suffit de se connecter à l'administration Django et accéder à l'[administration des indices de loyer](https://apilos.logements.gouv.fr/admin/programmes/indiceevolutionloyer/) 
