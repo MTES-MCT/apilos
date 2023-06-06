@@ -16,22 +16,27 @@ class ConventionBailleurService(ConventionService):
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
     redirect_recap: bool = False
 
+    def should_add_sirens(self, habilitation):
+        if (
+            habilitation["groupe"]["profil"]["code"] != "MO_PERS_MORALE"
+            or habilitation["statut"] != "VALIDEE"
+        ):
+            return False
+        try:
+            region_code = habilitation["porteeTerritComp"]["regComp"]["code"]
+        except (KeyError, TypeError):
+            region_code = None
+        return (
+            region_code is None
+            or region_code == self.convention.programme.code_insee_region
+        )
+
     def _get_bailleur_query(self, bailleur_uuid: str):
         if self.request.user.is_cerbere_user():
             sirens = []
             for habilitation in self.request.session["habilitations"]:
-                if habilitation["groupe"]["profil"]["code"] == "MO_PERS_MORALE":
-                    try:
-                        region_code = habilitation["porteeTerritComp"]["regComp"][
-                            "code"
-                        ]
-                    except (KeyError, TypeError):
-                        region_code = None
-                    if (
-                        region_code is None
-                        or region_code == self.convention.programme.code_insee_region
-                    ):
-                        sirens.append(habilitation["entiteMorale"]["siren"])
+                if self.should_add_sirens(habilitation):
+                    sirens.append(habilitation["entiteMorale"]["siren"])
             return Bailleur.objects.filter(siren__in=sirens)
         return (
             self.request.user.bailleurs(full_scope=True).filter(uuid=bailleur_uuid)

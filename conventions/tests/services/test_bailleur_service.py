@@ -82,3 +82,23 @@ class ConventionBailleurServiceTests(TestCase):
             datetime.date(2022, 2, 1),
         )
         self.assertEqual(self.service.convention.signataire_bloc_signature, "Mon Dirlo")
+
+    def test_should_add_siren(self):
+        habilitation = {
+            # …
+            "groupe": {
+                # …
+                "profil": {
+                    "code": "MO_PERS_MORALE",
+                },
+            },
+            "porteeTerritComp": {
+                # …
+                "codePortee": "NAT",
+                "regComp": None,
+            },
+            "statut": "VALIDEE",
+        }
+        self.assertTrue(self.service.should_add_sirens(habilitation))
+        habilitation["statut"] = "A_VALIDER"
+        self.assertFalse(self.service.should_add_sirens(habilitation))
