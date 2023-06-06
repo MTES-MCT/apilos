@@ -19,7 +19,7 @@
                         <a class="fr-nav__link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "preview" %}aria-current="page"{% endif %}>Visualiser votre document</a>
                     </li>
                     {# Accès au journal de board restreint à l'équipe Apilos le temps de la validation #}
-                    {% if user.is_staff %}
+                    {% if user.is_instructeur %}
                         <li class="fr-nav__item">
                             <a class="fr-nav__link" href="{% url 'conventions:journal' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "journal" %}aria-current="page"{% endif %}>Journal de bord</a>
                         </li>

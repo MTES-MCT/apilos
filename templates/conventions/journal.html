@@ -10,98 +10,98 @@
         {% include "common/nav_bar.html" with nav_bar_step="journal" %}
 
         <div class="fr-container fr-my-6w">
-            <div class="fr-table fr-table--bordered table--layout-fixed">
-                <table aria-label="Journal de bord">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="col__width--100">Date</th>
-                            <th scope="col" class="col__width--150">Type d'évènement</th>
-                            <th scope="col" colspan="2" class="col__width--300">Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {# Création d'évènements #}
-                        <tr>
-                            <td colspan="4">
-                                {% if action == 'create' %}
-                                    <div class="fr-container fr-container--fluid fr-container-md">
-                                        <form method="POST">
-                                            {% csrf_token %}
-                                            <div class="fr-grid-row fr-grid-row--center">
-                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-p-1w">
-                                                    {% include "common/form/input_select.html" with form_input=form.type_evenement editable=True %}
-                                                </div>
+            <div class="fr-card fr-card--no-arrow">
+                <div class="fr-card__body fr-my-2w">
+                    <h2 class="fr-text--lg">Ajouter un évènement au journal</h2>
+                    {% if action == 'create' %}
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="fr-col-12 fr-mb-2w">
+                                {% include "common/form/input_select.html" with form_input=form.type_evenement editable=True %}
+                            </div>
 
-                                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-p-1w">
-                                                    {% include "common/form/input_textarea.html" with form_input=form.description editable=True %}
-                                                </div>
-                                            </div>
+                            <div class="fr-col-12 fr-mb-4w">
+                                {% include "common/form/input_textarea.html" with form_input=form.description editable=True %}
+                            </div>
 
-                                            <div class="fr-grid-row fr-grid-row--right">
-                                                <button class="fr-btn" name="action" value="submit" type="submit">
-                                                    <span class="fr-icon-save-line fr-mr-1w" aria-hidden="true"></span>Enregistrer
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                {% else %}
-                                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-                                        <form method="POST">
-                                            {% csrf_token %}
-
-                                            <button class="fr-btn fr-my-1w fr-mr-2w" name="action" value="create" type="submit">
-                                                <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>Ajouter un évènement
-                                            </button>
-                                        </form>
-                                    </div>
-                                {% endif %}
-                            </td>
-                        </tr>
-
-                        {% for evenement in events %}
-                            <tr>
-                                {% if action == 'edit' and selected == evenement %}
-                                    <td colspan="4">
-                                        <div class="fr-container fr-container--fluid fr-container-md">
-                                            <form method="POST">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="uuid" value="{{ form.uuid.value }}" />
-                                                <div class="fr-grid-row fr-grid-row--center">
-                                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-p-1w">
-                                                        {% include "common/form/input_select.html" with form_input=form.type_evenement editable=True %}
-                                                    </div>
-
-                                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-p-1w">
-                                                        {% include "common/form/input_textarea.html" with form_input=form.description editable=True %}
-                                                    </div>
-                                                </div>
-
-                                                <div class="fr-grid-row fr-grid-row--right">
-                                                    <button class="fr-btn" name="action" value="submit" type="submit">
-                                                        <span class="fr-icon-save-line fr-mr-1w" aria-hidden="true"></span>Enregistrer
-                                                    </button>
-                                                </div>
-                                            </form>
+                            <div class="fr-grid-row fr-grid-row--right">
+                                <div class="fr-mr-4w fr-mt-1w">
+                                    <a class="fr-link" href={% url 'conventions:journal' convention_uuid=convention.uuid %}>Annuler</a>
+                                </div>
+                                <button class="fr-btn" name="action" value="submit" type="submit">
+                                    <span class="fr-icon-save-line fr-mr-1w" aria-hidden="true"></span>Enregistrer
+                                </button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="fr-col-12 block--row-strech">
+                            <div class="block--row-strech-1 fr-mr-6w">
+                                <p>Un nouvel évènement est survenu dans la vie de la convention, vous pouvez le signaler ici.</p>
+                            </div>
+                            <form method="POST">
+                                {% csrf_token %}
+                                <button class="fr-btn fr-btn--secondary fr-icon-add-circle-line fr-btn--icon-left fr-my-1w fr-mr-2w" name="action" value="create" type="submit">Ajouter un évènement
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="fr-mt-4w">
+                {% for evenement in events %}
+                    {% if action == 'edit' and selected == evenement %}
+                        <div class="fr-card fr-card--no-arrow fr-my-4w">
+                            <div class="fr-card__body fr-my-2w">
+                                <div class="fr-col-12 block--row-strech">
+                                    <h2 class="fr-mr-2w fr-text--lg">Modifier l'évènement du {{ evenement.survenu_le|date:"d/m/Y" }}</h2>
+                                </div>
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="uuid" value="{{ form.uuid.value }}" />
+                                    <div class="fr-grid-row fr-grid-row--center">
+                                        <div class="fr-col-12 fr-mb-2w">
+                                            {% include "common/form/input_select.html" with form_input=form.type_evenement editable=True %}
                                         </div>
-                                    </td>
-                                {% else %}
-                                    <td>{{ evenement.survenu_le|date:"d/m/Y" }}</td>
-                                    <td>{{ evenement.type_evenement }}</td>
-                                    <td>{{ evenement.description|linebreaksbr }}</td>
-                                    <td>
-                                        <form method="POST">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="evenement" value="{{ evenement.uuid }}" />
-                                            <button class="fr-btn fr-btn--tertiary-no-outline fr-my-1w fr-mr-2w" name="action" value="edit" type="submit">
-                                                <span class="fr-icon-edit-line fr-mr-1w" aria-hidden="true"></span>Modifier
-                                            </button>
-                                        </form>
-                                    </td>
+
+                                        <div class="fr-col-12 fr-mb-4w">
+                                            {% include "common/form/input_textarea.html" with form_input=form.description editable=True %}
+                                        </div>
+                                    </div>
+                                    <div class="fr-grid-row fr-grid-row--right">
+                                        <div class="fr-mr-4w fr-mt-2w">
+                                            <a class="fr-link" href={% url 'conventions:journal' convention_uuid=convention.uuid %}>Annuler</a>
+                                        </div>
+                                        <button class="fr-btn fr-btn--icon-left fr-my-1w fr-icon-save-line fr-mr-2w" name="action" value="submit" type="submit">Modifier
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="fr-grid-row">
+                            <div class="apilos-step-post-action fr-mr-2w">
+                                <div class="apilos-step-post-action--bubble fr-mr-2w"></div>
+                                {% if not forloop.last %}
+                                    <div class="apilos-step-post-action--line"></div>
                                 {% endif %}
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                            </div>
+                            <div class="fr-col-11 fr-pb-3w">
+                                <div class="block--row-strech">
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="evenement" value="{{ evenement.uuid }}" />
+                                        <button class="fr-link" name="action" value="edit" type="submit">
+                                            <span class="fr-icon-edit-line fr-mr-1w" aria-hidden="true"></span>
+                                        </button>
+                                    </form>
+                                    <div class="fr-mr-6w"><strong>Le {{ evenement.survenu_le|date:"d/m/Y" }} - {{ evenement.type_evenement }} : </strong>
+                                    </div>
+                                </div>
+                                <div class="fr-col-12 fr-ml-4w">{{ evenement.description|linebreaksbr }}</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>
