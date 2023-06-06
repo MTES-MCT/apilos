@@ -403,6 +403,7 @@ class Convention(models.Model):
         return users_partial + users_all_email
 
     def get_convention_prefix(self):
+        # pylint: disable=C0209
         dept_code = self.programme.code_insee_departement
         admin_code = (
             "D"
@@ -476,44 +477,31 @@ class Convention(models.Model):
             "key_statut": self.statut[3:].replace(" ", "_").replace("é", "e"),
         }
 
-    def short_statut_for_template(self):
-        short_status = {
-            ConventionStatut.PROJET.label: "Projet",
-            ConventionStatut.INSTRUCTION.label: "A instruire",
-            ConventionStatut.CORRECTION.label: "En attente de corrections",
-            ConventionStatut.A_SIGNER.label: "En attente de signature",
-            ConventionStatut.SIGNEE.label: "Finalisée",
-            ConventionStatut.RESILIEE.label: "Résiliée",
-            ConventionStatut.DENONCEE.label: "Dénoncée",
-            ConventionStatut.ANNULEE.label: "Annulée",
-        }
-        return f"{short_status.get(self.statut)}"
-
     def short_statut_for_bailleur(self):
-        short_status = {
-            ConventionStatut.PROJET.label: "Projet",
-            ConventionStatut.INSTRUCTION.label: "En instruction",
-            ConventionStatut.CORRECTION.label: "À corriger",
-            ConventionStatut.A_SIGNER.label: "À signer",
-            ConventionStatut.SIGNEE.label: "Finalisée",
-            ConventionStatut.RESILIEE.label: "Résiliée",
-            ConventionStatut.DENONCEE.label: "Dénoncée",
-            ConventionStatut.ANNULEE.label: "Annulée",
-        }
-        return f"{short_status.get(self.statut)}"
+        return ConventionStatut.get_by_label(self.statut).bailleur_label
 
     def short_statut_for_instructeur(self):
-        short_status = {
-            ConventionStatut.PROJET.label: "Projet",
-            ConventionStatut.INSTRUCTION.label: "A instruire",
-            ConventionStatut.CORRECTION.label: "En correction",
-            ConventionStatut.A_SIGNER.label: "À signer",
-            ConventionStatut.SIGNEE.label: "Finalisée",
-            ConventionStatut.RESILIEE.label: "Résiliée",
-            ConventionStatut.DENONCEE.label: "Dénoncée",
-            ConventionStatut.ANNULEE.label: "Annulée",
-        }
-        return f"{short_status.get(self.statut)}"
+        return ConventionStatut.get_by_label(self.statut).instructeur_label
+
+    def genderize_desc(self, desc):
+        if self.is_avenant():
+            return desc.format(pronom="il", accord="", article="le", autre="autre")
+        return desc.format(pronom="elle", accord="e", article="la", autre="")
+
+    def entete_desc_for_bailleur(self):
+        desc = ConventionStatut.get_by_label(
+            self.statut
+        ).value.bailleur.description_entete
+        return self.genderize_desc(desc)
+
+    def entete_desc_for_instructeur(self):
+        desc = ConventionStatut.get_by_label(
+            self.statut
+        ).value.instructeur.description_entete
+        return self.genderize_desc(desc)
+
+    def statut_icone(self):
+        return ConventionStatut.get_by_label(self.statut).icone
 
     def mixity_option(self):
         """

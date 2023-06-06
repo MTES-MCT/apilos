@@ -12,7 +12,7 @@ from programmes.models import Financement
 from users.models import User
 from users.type_models import EmailPreferences, TypeRole
 
-
+# pylint: disable=R0201
 class ConventionModelsTest(TestCase):
     fixtures = [
         "auth.json",
@@ -130,25 +130,6 @@ class ConventionModelsTest(TestCase):
             convention.statut_for_template()["statut_display"], "Finalisée"
         )
         self.assertEqual(convention.statut_for_template()["key_statut"], "Signee")
-
-    def test_short_statut_for_template(self):
-        convention = Convention.objects.order_by("uuid").first()
-        convention.statut = ConventionStatut.PROJET.label
-        self.assertEqual(convention.short_statut_for_template(), "Projet")
-        convention.statut = ConventionStatut.INSTRUCTION.label
-        self.assertEqual(convention.short_statut_for_template(), "A instruire")
-        convention.statut = ConventionStatut.CORRECTION.label
-        self.assertEqual(
-            convention.short_statut_for_template(), "En attente de corrections"
-        )
-        convention.statut = ConventionStatut.A_SIGNER.label
-        self.assertEqual(
-            convention.short_statut_for_template(), "En attente de signature"
-        )
-        convention.statut = ConventionStatut.SIGNEE.label
-        self.assertEqual(convention.short_statut_for_template(), "Finalisée")
-        convention.statut = ConventionStatut.RESILIEE.label
-        self.assertEqual(convention.short_statut_for_template(), "Résiliée")
 
     def test_short_statut_for_bailleur(self):
         convention = Convention.objects.order_by("uuid").first()

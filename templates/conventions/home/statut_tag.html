@@ -1,20 +1,6 @@
 
 
-<div class="fr-mb-1w fr-py-1w fr-pr-2w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} apilos-tag-status
-    {% if convention.statut == CONVENTION_STATUT.PROJET %}
-        fr-icon-pencil-line
-    {% elif convention.statut == CONVENTION_STATUT.INSTRUCTION %}
-        fr-icon-eye-line
-    {% elif convention.statut == CONVENTION_STATUT.CORRECTION %}
-        fr-icon-question-answer-line
-    {% elif convention.statut == CONVENTION_STATUT.A_SIGNER %}
-        fr-icon-draft-line
-    {% elif convention.statut == CONVENTION_STATUT.SIGNEE %}
-        fr-icon-success-line
-    {% elif convention.statut == CONVENTION_STATUT.RESILIEE %}
-        fr-icon-close-line
-    {% endif %}
-    ">
+<div class="fr-mb-1w fr-py-1w fr-pr-2w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} apilos-tag-status fr-icon-{{convention.statut_icone}}-line">
     {% if request|is_instructeur %}
         {{convention.short_statut_for_instructeur}}
     {% else %}
