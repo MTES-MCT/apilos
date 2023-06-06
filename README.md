@@ -135,3 +135,9 @@ Dans ce cas, l'utilisateur est directement redirigé vers CERBERE lors de l'acc�
 
 https://fabrique-numerique.gitbook.io/guide/developpement/etat-de-lart-de-lincubateur
 https://doc.incubateur.net/startups/la-vie-dune-se/construction/kit-de-demarrage
+
+# Administration métier
+
+## Edition des indices de loyer pour la calculette des loyers (reprise d'Ecoloweb)
+
+Pour éditer les indices de loyer par année, il faut et suffit de se connecter à l'administration Django et accéder à l'[administration des indices de loyer](https://apilos.logements.gouv.fr/admin/programmes/indiceevolutionloyer/) 
