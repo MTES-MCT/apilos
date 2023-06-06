@@ -339,7 +339,7 @@ class Convention(models.Model):
             set(
                 map(
                     lambda x: x.user.email,
-                    self.conventionhistories.filter(
+                    self.conventionhistories.prefetch_related("user").filter(
                         user__preferences_email=EmailPreferences.PARTIEL,
                         user__roles__typologie=TypeRole.BAILLEUR,
                     ),
@@ -350,7 +350,7 @@ class Convention(models.Model):
             set(
                 map(
                     lambda x: x.user.email,
-                    self.programme.bailleur.roles.filter(
+                    self.programme.bailleur.roles.prefetch_related("user").filter(
                         user__preferences_email=EmailPreferences.TOUS
                     ),
                 )
@@ -372,7 +372,9 @@ class Convention(models.Model):
                 set(
                     map(
                         lambda x: x.user.email,
-                        self.programme.administration.roles.filter(
+                        self.programme.administration.roles.prefetch_related(
+                            "user"
+                        ).filter(
                             Q(user__preferences_email=EmailPreferences.PARTIEL)
                             | Q(user__preferences_email=EmailPreferences.TOUS)
                         ),
@@ -383,7 +385,7 @@ class Convention(models.Model):
             set(
                 map(
                     lambda x: x.user.email,
-                    self.conventionhistories.filter(
+                    self.conventionhistories.prefetch_related("user").filter(
                         user__preferences_email=EmailPreferences.PARTIEL,
                         user__roles__typologie=TypeRole.INSTRUCTEUR,
                     ),
@@ -394,7 +396,7 @@ class Convention(models.Model):
             set(
                 map(
                     lambda x: x.user.email,
-                    self.programme.administration.roles.filter(
+                    self.programme.administration.roles.prefetch_related("user").filter(
                         user__preferences_email=EmailPreferences.TOUS
                     ),
                 )
