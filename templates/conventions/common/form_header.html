@@ -25,7 +25,7 @@
                     </div>
                 {% endif %}
             </div>
-            {% if request.session.is_expert %}
+            {% if request.session.is_expert and convention.statut == CONVENTION_STATUT.SIGNEE %}
                 <div class="fr-alert fr-alert--warning">
                     <h3 class="fr-alert__title">Mode expert - Les modifications sont sous votre responsabilité.</h3>
                     <a href="{% url 'conventions:expert_mode' convention_uuid=convention.uuid %}">Sortir du mode expert</a>
