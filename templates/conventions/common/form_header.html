@@ -3,8 +3,8 @@
 
 {% if convention %}
     <div class="apilos-sticky fr-container fr-pt-2w {% if convention|display_convention_form_progressbar %}no_navbar{% endif %}">
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-py-3w">
+        <div class="fr-grid-row fr-grid-row--gutters block--row-strech">
+            <div class="block--row-strech-1 fr-py-3w fr-mr-2w apilos--overflow_ellipsis">
                 <h1 class="fr-h2 apilos-d-inline">{{convention.programme.nom}}</h1>
                 {% if convention.is_avenant %}
                     <span class="apilos-h2-thin"> - Avenant{% if convention.numero %} n°{{ convention.numero }}{% endif %}</span>
@@ -25,6 +25,12 @@
                     </div>
                 {% endif %}
             </div>
+            {% if request.session.is_expert %}
+                <div class="fr-alert fr-alert--warning">
+                    <h3 class="fr-alert__title">Mode expert - Les modifications sont sous votre responsabilité.</h3>
+                    <a href="{% url 'conventions:expert_mode' convention_uuid=convention.uuid %}">Sortir du mode expert</a>
+                </div>
+            {% endif %}
         </div>
     </div>
     <div>
