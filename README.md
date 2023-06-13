@@ -20,12 +20,15 @@ Le design de l'interface suit le [Système de design de l'état](https://gouvfr.
 
 La génération de document .docx est prise en charge par la librairie [python-docx-template](https://docxtpl.readthedocs.io/en/latest/) qui utilise le moteur de template Jinja2 pour générer des documents docx
 
-Le package openpyxl est utilisé pour l'interprétation des fichier xlsx
+Le package openpyxl est utilisé pour l'interprétation des fichier xlsx (import de tableaux)
 
 La plateforme est déployée 2 fois par environnement:
+
 - 1 fois avec une authentification CERBERE (SSO du MTE), les conventions sont alors très fortement liées à la plateforme SIAP
 plus d'information sur les interactions entre les 2 plateformes sont disponibles sur le document [SIAPClient.md](./SIAPClient.md)
+aka. APiLos version SIAP
 - 1 fois indépendante du SIAP
+aka. APiLos autonome
 
 Cependant, certaines briques logicielles sont partagées (voir l'illustration ci-dessous)
 
@@ -48,40 +51,20 @@ Plusieurs outils sont utilisés pour gérer la qualité de code:
 
 [DEPLOIEMENT.md](DEPLOIEMENT.md)
 
-### import SISAL
-
-SISAL est le datawarehouse des APL dont nous exportons les données des agréments nécessaires au conventionnement APL
-
-Pour faire cet import nous avons ajouté une commande django `import_galion` éditable ici : bailleurs/management/commands/import_galion.py
-
-Pour executer cet import en local:
-
-```(docker-compose exec apilos) python3 manage.py import_galion```
-
-Sur Scalingo
-
-```scalingo --app apilos-staging/fabnum-apilos run python3 manage.py import_galion```
-
 ### Populer les permissions
 
-Pour modifier les permissions, il suffit de modifier dans l'interface d'administration puis d'exporter les données d'authentification :
-
-```(docker-compose exec apilos) python manage.py dumpdata auth --natural-foreign --natural-primary > users/fixtures/auth.json```
-
-et pour populer ces données :
-
-```(docker-compose exec apilos) python manage.py loaddata auth.json```
+```python manage.py loaddata auth.json departements.json```
 
 Cette commande est excutée lors du déploiement de l'application juste après la migration
 
 ### Envoi de mails
 
-Nous utilisons sendinblue. Si la variable d'environnement SENDINBLUE_API_KEY est configurée, le backend email SendInBlue est utilisé. Sinon, le backend email console est utilisé et les emails sont imprimés dans a console (dans les logs)
+Nous utilisons [Brevo](https://app.brevo.com/) (anciennement sendinblue). Si la variable d'environnement SENDINBLUE_API_KEY est configurée, le backend email SendInBlue est utilisé. Sinon, le backend email console est utilisé et les emails sont imprimés dans a console (dans les logs)
 
 ### DNS
 
 Les DNS sont configurés dans [Alwaysdata](https://admin.alwaysdata.com/)
-les emails et mailing list sous le domaine apilos.beta.gouv.fr sont aussi géré avec Alwaysdata : contact@apilos.beta.gouv.fr, recrutement@apilos.beta.gouv.fr, staff@apilos.beta.gouv.fr
+les emails et mailing list sous le domaine apilos.beta.gouv.fr sont aussi géré avec Alwaysdata : contact@apilos.beta.gouv.fr, recrutement@apilos.beta.gouv.fr, equipe@apilos.beta.gouv.fr…
 
 ### Bases de données
 
@@ -89,14 +72,14 @@ les emails et mailing list sous le domaine apilos.beta.gouv.fr sont aussi géré
 
 ### Stockage de fichiers
 
-Les documents sont stockés sur un répertoire distant et souverain compuatible avec le protocole S3 sur [Scaleway](https://console.scaleway.com/object-storage/buckets)
+Les documents sont stockés sur un répertoire distant et souverain compatible avec le protocole S3 sur [Scaleway](https://console.scaleway.com/object-storage/buckets)
 
 La librairie python boto en combinaison avec le package default_storage de Django
 
 Ce stockage est activé lorsque les variable d'environnement AWS... sont définit. La configuration est faite dans core/settings.yml
 
-```
-   DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+```python
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 ```
 
 ### Analytics
@@ -125,8 +108,9 @@ Les statistiques d'usage et le suivi des KPIs de la start up d'état sont dispon
 ## Utilisation du SSO CERBERE pour se logger à l'application
 
 2 modes d'authentification à l'interface sont possibles mais ne cohabite pas :
-  * soit l'authentification Basic de django est utilisé (par défaut)
-  * soit le SSO CERBERE est utilisé
+
+- soit l'authentification Basic de django est utilisé (par défaut)
+- soit le SSO CERBERE est utilisé
 
 Pour utiliser le SSO Cerbere, il suffit de déterminer sont url en tant que variable d'environnement CERBERE_AUTH. \
 Dans ce cas, l'utilisateur est directement redirigé vers CERBERE lors de l'accès à la plateforme
@@ -136,8 +120,30 @@ Dans ce cas, l'utilisateur est directement redirigé vers CERBERE lors de l'acc�
 https://fabrique-numerique.gitbook.io/guide/developpement/etat-de-lart-de-lincubateur
 https://doc.incubateur.net/startups/la-vie-dune-se/construction/kit-de-demarrage
 
-# Administration métier
+## Administration métier
 
-## Edition des indices de loyer pour la calculette des loyers (reprise d'Ecoloweb)
+### Edition des indices de loyer pour la calculette des loyers (reprise d'Ecoloweb)
 
-Pour éditer les indices de loyer par année, il faut et suffit de se connecter à l'administration Django et accéder à l'[administration des indices de loyer](https://apilos.logements.gouv.fr/admin/programmes/indiceevolutionloyer/) 
+Pour éditer les indices de loyer par année, il faut et suffit de se connecter à l'administration Django et accéder à l'[administration des indices de loyer](https://apilos.logements.gouv.fr/admin/programmes/indiceevolutionloyer/)
+
+## DEPRECATED
+
+### import SISAL / Galion
+
+⚠️ Galion étant fermé, ce processus n'a plus lieu d'être.
+
+SISAL est le datawarehouse des APL dont nous exportons les données des agréments nécessaires au conventionnement APL
+
+Pour faire cet import nous avons ajouté une commande django `import_galion` éditable ici : bailleurs/management/commands/import_galion.py
+
+Pour executer cet import en local:
+
+```sh
+python manage.py import_galion
+```
+
+Sur Scalingo
+
+```sh
+scalingo --app apilos-staging/fabnum-apilos run python3 manage.py import_galion
+```
