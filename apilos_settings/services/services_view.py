@@ -468,6 +468,8 @@ def add_user(request):
     administrations = [
         (b.uuid, b.nom) for b in request.user.administrations(full_scope=True)
     ]
+    bailleur_query = request.user.bailleurs(full_scope=True)
+
     if request.method == "POST" and request.user.is_administrator():
         form = AddUserForm(
             {
@@ -479,9 +481,9 @@ def add_user(request):
                     else []
                 ),
             },
-            bailleur_query=request.user.bailleurs(full_scope=True).filter(
-                uuid=request.POST.get("bailleur")
-            ),
+            bailleur_query=bailleur_query.filter(uuid=request.POST.get("bailleur"))
+            if request.POST.get("bailleur")
+            else bailleur_query,
             administrations=administrations,
         )
         if form.is_valid():
@@ -557,9 +559,7 @@ def add_user(request):
     else:
         form = AddUserForm(
             administrations=administrations,
-            bailleur_query=request.user.bailleurs(full_scope=True)[
-                : settings.APILOS_MAX_DROPDOWN_COUNT
-            ],
+            bailleur_query=bailleur_query[: settings.APILOS_MAX_DROPDOWN_COUNT],
         )
     return {
         "form": form,
