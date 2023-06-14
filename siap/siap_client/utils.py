@@ -2,7 +2,7 @@ import re
 from typing import Tuple
 
 from bailleurs.models import Bailleur, NatureBailleur
-from conventions.models import Convention
+from conventions.models import Convention, ConventionStatut
 from core.exceptions.types import (
     InconsistentDataSIAPException,
     NotHandledBailleurPriveSIAPException,
@@ -225,7 +225,9 @@ def get_or_create_lots_and_conventions(
             },
         )
         lots.append(lot)
-        (convention, _) = Convention.objects.get_or_create(
+        (convention, _) = Convention.objects.exclude(
+            statut=ConventionStatut.ANNULEE.label,
+        ).get_or_create(
             programme=programme,
             lot=lot,
             financement=Financement.SANS_FINANCEMENT,
@@ -257,7 +259,9 @@ def get_or_create_lots_and_conventions(
                 },
             )
             lots.append(lot)
-            (convention, _) = Convention.objects.get_or_create(
+            (convention, _) = Convention.objects.exclude(
+                statut=ConventionStatut.ANNULEE.label,
+            ).get_or_create(
                 programme=programme,
                 lot=lot,
                 financement=financement,
