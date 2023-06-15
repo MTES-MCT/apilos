@@ -11,11 +11,7 @@
                                 Opération
                             </h4>
                         </div>
-                        {% if convention|display_convention_form_progressbar  or request.session.is_expert and convention.statut == CONVENTION_STATUT.SIGNEE %}
-                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:programme' convention_uuid=convention.uuid %}" >
-                                <span class="fr-icon-edit-line" aria-hidden="true">Aller à cette étape</span>
-                            </a>
-                        {% endif %}
+                        {% include "conventions/actions/goto.html" %}
                     </div>
                     <div class="table--limited-height">
 

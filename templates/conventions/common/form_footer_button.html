@@ -1,5 +1,5 @@
 <div class="form-button-footer fr-col-md-12 fr-py-5w">
-    {% if editable or request.session.is_expert and convention.statut == CONVENTION_STATUT.SIGNEE %}
+    {% if editable %}
         <div class="apilos--flex-row-left-center">
             <div class="fr-mr-4w">
                 {% if form_step.next_target %}
