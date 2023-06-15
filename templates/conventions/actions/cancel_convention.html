@@ -25,7 +25,11 @@
         <div class="block--row-strech">
             <div class="block--row-strech-1 fr-mr-6w">
                 <p class="fr-mb-0">
-                    {% if convention.is_avenant %}L'avenant{% else %}La convention{% endif %} est annulé{% if not convention.is_avenant %}e{% endif %} mais {% if convention.is_avenant %}il{% else %}elle{% endif %} peut-être réactivé{% if not convention.is_avenant %}e{% endif %}.<br/> Son statut passera à nouveau à {% if convention.is_avenant %}Avenant{% else %}Convention{% endif %} en Projet
+                    {% if convention.is_avenant %}
+                        L'avenant est annulé mais il peut-être réactivé. Son statut passera à nouveau en Avenant en Projet
+                    {% else %}
+                        La convention est annulée mais elle peut-être réactivée. Son statut passera à nouveau en Convention en Projet
+                    {% endif %}
                 </p>
             </div>
             {% if convention.is_avenant and convention.parent|display_create_avenant or not convention.is_avenant %}
