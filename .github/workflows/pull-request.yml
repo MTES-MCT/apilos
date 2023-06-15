@@ -39,7 +39,8 @@ jobs:
           cp .env.citest .env.test
           coverage run --source='.' manage.py test
         env:
-          DB_HOST: localhost
+          DATABASE_URL: postgres://apilos:apilos@localhost:5432/apilos
+          DB_READONLY: postgres://apilos:apilos@localhost:5432/apilos
       - name: Create coverage report
         run: coverage xml -o coverage.xml
       - name: Post coverage to PR
