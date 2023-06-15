@@ -53,7 +53,7 @@ jobs:
           name: Running tests
           command: |
             . .venv/bin/activate
-            cp .env.template .env.test
+            cp .env.citest .env.test
             python3 manage.py test
       - store_artifacts:
           path: test-reports/
@@ -130,7 +130,6 @@ jobs:
           name: Deploy Staging APiLos on Scalingo
           command: |
             git push -f git@ssh.osc-fr1.scalingo.com:apilos-siap-production.git $CIRCLE_SHA1:master
-
 
 workflows:
   version: 2
