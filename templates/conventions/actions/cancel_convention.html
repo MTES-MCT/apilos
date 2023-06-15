@@ -6,7 +6,11 @@
         <div class="block--row-strech">
             <div class="block--row-strech-1 fr-mr-6w">
                 <p class="fr-mb-0">
-                    {% if convention.is_avenant %}L'avenant{% else %}La convention{% endif %} peut être annulé{% if not convention.is_avenant %}e{% endif %}. {% if convention.is_avenant %}Il{% else %}Elle{% endif %} sera encore accessible dans la liste des {% if convention.is_avenant %}avenants{% else %}conventions{% endif %}
+                    {% if convention.is_avenant %}
+                        L'avenant peut être annulé. Il sera encore accessible dans la liste des avenants
+                    {% else %}
+                        La convention peut être annulée. Elle sera encore accessible dans la liste des conventions
+                    {% endif %}
                 </p>
             </div>
             <form method="post" data-turbo="false" action="#top">
