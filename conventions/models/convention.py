@@ -36,6 +36,22 @@ class Convention(models.Model):
             models.Index(fields=["uuid"], name="convention_uuid_idx"),
             models.Index(fields=["valide_le"], name="convention_valid_le_idx"),
         ]
+        constraints = [
+            # https://github.com/betagouv/SPPNautInterface/issues/227
+            models.UniqueConstraint(
+                fields=["programme_id", "lot_id", "financement"],
+                condition=models.Q(
+                    statut__in=[
+                        ConventionStatut.PROJET.label,
+                        ConventionStatut.INSTRUCTION.label,
+                        ConventionStatut.CORRECTION.label,
+                        ConventionStatut.A_SIGNER.label,
+                        ConventionStatut.SIGNEE.label,
+                    ]
+                ),
+                name="unique_display_name",
+            )
+        ]
 
     # pylint: disable=R0904
     id = models.AutoField(primary_key=True)
