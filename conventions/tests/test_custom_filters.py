@@ -634,6 +634,19 @@ class CustomFiltersTest(TestCase):
         self.convention.statut = ConventionStatut.ANNULEE.label
         self.assertTrue(custom_filters.display_reactive_convention(self.convention))
 
+    def test_display_delete_convention(self):
+        for statut in [
+            s.label
+            for s in ConventionStatut
+            if s.label != ConventionStatut.ANNULEE.label
+        ]:
+            self.convention.statut = statut
+            self.assertFalse(
+                custom_filters.display_reactive_convention(self.convention)
+            )
+        self.convention.statut = ConventionStatut.ANNULEE.label
+        self.assertTrue(custom_filters.display_reactive_convention(self.convention))
+
     def test_display_cancel_convention(self):
         self.convention.statut = ConventionStatut.PROJET.label
         self.assertTrue(custom_filters.display_cancel_convention(self.convention))

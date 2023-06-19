@@ -265,6 +265,15 @@ def save_convention(request, convention_uuid):
 
 @require_POST
 @login_required
+@has_campaign_permission_view_function("convention.delete_convention")
+def delete_convention(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    convention.delete()
+    return HttpResponseRedirect(reverse("conventions:index"))
+
+
+@require_POST
+@login_required
 @has_campaign_permission_view_function("convention.change_convention")
 def feedback_convention(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
