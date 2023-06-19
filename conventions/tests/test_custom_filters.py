@@ -655,12 +655,16 @@ class CustomFiltersTest(TestCase):
 
     def test_display_create_avenant(self):
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
+
+        cloned_programme = self.convention.programme.clone()
+        cloned_lot = self.convention.lot.clone(cloned_programme)
         Convention.objects.create(
             statut=ConventionStatut.A_SIGNER.label,
             parent=self.convention,
-            lot=self.convention.lot,
-            programme=self.convention.programme,
+            lot=cloned_lot,
+            programme=cloned_programme,
         ).save()
+
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
         Convention.objects.create(
             statut=ConventionStatut.SIGNEE.label,
@@ -758,11 +762,13 @@ class CustomFiltersTest(TestCase):
                             custom_filters.display_type1and2(self.convention)
                         )
 
+        cloned_programme = self.convention.programme.clone()
+        cloned_lot = self.convention.lot.clone(cloned_programme)
         avenant = Convention.objects.create(
             statut=ConventionStatut.SIGNEE.label,
             parent=self.convention,
-            lot=self.convention.lot,
-            programme=self.convention.programme,
+            lot=cloned_lot,
+            programme=cloned_programme,
         )
         avenant.type1and2 = None
         avenant.programme.bailleur.sous_nature_bailleur = (
@@ -854,11 +860,13 @@ class CustomFiltersTest(TestCase):
                         )
                     )
 
+        cloned_programme = self.convention.programme.clone()
+        cloned_lot = self.convention.lot.clone(cloned_programme)
         avenant = Convention.objects.create(
             statut=ConventionStatut.SIGNEE.label,
             parent=self.convention,
-            lot=self.convention.lot,
-            programme=self.convention.programme,
+            lot=cloned_lot,
+            programme=cloned_programme,
         )
         avenant.type1and2 = None
         avenant.programme.bailleur.sous_nature_bailleur = (

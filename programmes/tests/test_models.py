@@ -2,26 +2,26 @@ import random
 from datetime import date
 
 from django.test import TestCase
+
 from bailleurs.models import Bailleur
 from core.tests import utils_assertions, utils_fixtures
 from instructeurs.models import Administration
-
 from programmes.models import (
+    Annexe,
+    Financement,
     LocauxCollectifs,
+    Logement,
+    LogementEDD,
+    Lot,
     NatureLogement,
     Programme,
-    Lot,
-    LogementEDD,
-    Logement,
-    Financement,
     ReferenceCadastrale,
-    TypologieLogement,
-    TypologieAnnexe,
-    TypologieStationnement,
-    TypeStationnement,
     TypeHabitat,
     TypeOperation,
-    Annexe,
+    TypeStationnement,
+    TypologieAnnexe,
+    TypologieLogement,
+    TypologieStationnement,
 )
 
 
@@ -44,6 +44,7 @@ def params_logement(index):
 
 class ProgrammeModelsTest(TestCase):
     fixtures = ["departements.json"]
+
     # pylint: disable=E1101 no-member
     @classmethod
     def setUpTestData(cls):
@@ -293,6 +294,22 @@ class ProgrammeModelsTest(TestCase):
         self.assertEqual(programme_20.code_insee_departement, "20")
         self.assertEqual(programme_20.code_insee_region, "94")
 
+    def test_clone(self):
+        programme = Programme.objects.order_by("-uuid").first()
+        self.assertIsNone(programme.parent_id)
+        cloned_programme1 = programme.clone()
+        self.assertEqual(cloned_programme1.parent_id, programme.id)
+        self.assertEqual(cloned_programme1.bailleur_id, programme.bailleur_id)
+        self.assertEqual(
+            cloned_programme1.administration_id, programme.administration_id
+        )
+        cloned_programme2 = cloned_programme1.clone()
+        self.assertEqual(cloned_programme2.parent_id, programme.id)
+        self.assertEqual(cloned_programme2.bailleur_id, programme.bailleur_id)
+        self.assertEqual(
+            cloned_programme2.administration_id, programme.administration_id
+        )
+
 
 class LotModelsTest(TestCase):
     fixtures = [
@@ -323,6 +340,21 @@ class LotModelsTest(TestCase):
     def test_lot_bailleur(self):
         lot = Lot.objects.order_by("uuid").first()
         self.assertEqual(lot.bailleur, lot.programme.bailleur)
+
+    def test_clone(self):
+        lot = Lot.objects.order_by("-uuid").first()
+        cloned_programme1 = lot.programme.clone()
+        cloned_lot1 = lot.clone(cloned_programme1)
+
+        self.assertIsNone(lot.parent_id)
+        self.assertEqual(cloned_lot1.parent_id, lot.id)
+        self.assertEqual(cloned_lot1.programme_id, cloned_programme1.id)
+
+        cloned_programme2 = cloned_programme1.clone()
+        cloned_lot2 = cloned_lot1.clone(cloned_programme2)
+
+        self.assertEqual(cloned_lot2.parent_id, lot.id)
+        self.assertEqual(cloned_lot2.programme_id, cloned_programme2.id)
 
 
 class ReferenceCadastraleTest(TestCase):
