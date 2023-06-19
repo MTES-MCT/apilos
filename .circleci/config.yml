@@ -6,7 +6,6 @@ jobs:
       - image: circleci/python:3.10
         environment:
           DATABASE_URL: postgres://root:password@localhost/apilos_test
-          #ECOLO_DATABASE_URL: postgres://root:password@localhost/ecolotest
           SECRET_KEY: secret-key
           DEBUG: False
       - image: circleci/postgres:12.2-postgis
@@ -53,7 +52,6 @@ jobs:
           name: Running tests
           command: |
             . .venv/bin/activate
-            cp .env.template .env.test
             python3 manage.py test
       - store_artifacts:
           path: test-reports/
@@ -130,7 +128,6 @@ jobs:
           name: Deploy Staging APiLos on Scalingo
           command: |
             git push -f git@ssh.osc-fr1.scalingo.com:apilos-siap-production.git $CIRCLE_SHA1:master
-
 
 workflows:
   version: 2

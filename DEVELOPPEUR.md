@@ -4,78 +4,42 @@ Cette documentation décrit toutes les étapes nécessaires à l'intallation et 
 
 Les règles et standards de codage y sont décrits
 
-## Installation local
+## Installation
 
 La plateforme APiLos est open source et la gestion de version est assuré via Github. La première étape est donc de cloner ce repository github.
 
-La gestion de dépendance est assurée via le fichier requirements.
+### Prérequis
 
-Pour installer APiLos sur votre système en local, vous avez 2 possibilités :
-* utiliser docker-compose
-* utiliser un environnement virtuel python (pyenv, asdf...)
+Les services Postgresql et Redis utilisés par APiLos sont dockerisés
+Python et Node sont nécessaires pour faire lacer l'application
+Il est conseillé d'installer un environnment virtuel pour isoler l'environnement python et node d'APiLos (asdf par exemple)
 
-### Via docker-compose
+- Python >=3.10
+- Node >=18.14
+- docker
+- docker-compose
 
-#### Installation
-
-Configurer vos variables d'environnement dans le fichier .env (exemple dans le fichier .env.template)
-
-Toute l'application est disponible via docker-compose. L'avantage est l'isolation de la version de python et de la version de postgresql. Pas besoin d'installer un environment virtuel ni une version spécifique de postgresql, docker-compose le fait pour vous au plus proche des versions utilisées en production
-
-Pour installer et lancer l'application,
-
-```
-docker-compose build
-docker-compose up -d
-```
-
-Pensez à rebuilder le container docker lorsque vous ajouter une dépendance. les dépendances sont listées dans le fichier requirements.txt à la base du projet.
-
-le code local est attaché au volume `/code/` à l'interieur du docker apilos. une seconde instance docker est executée pour la base de données. de même, les données de la base de données sont persisté car le dossier de données de la base de donnée est attaché en local dans un répéertoire pgdata ignoré par git.
-
-Pour Lancer un script django, vous devrez l'éxecuter dans l'environnement docker
-
-```
-(docker-compose exec apilos) python manage.py ...
-```
-
-Par exemple pour lancer les migrations :
-
-```
-(docker-compose exec apilos) python manage.py migrate
-```
-
-Enfin, pour afficher les logs :
-
-```
-docker-compose logs -f --tail=10
-```
-
-### Via l'environnement virtuel
-
-#### Prérequis
-
-* APiLos marche sur un distribution python 3.10
-* Il est conseillé d'installer un environnment virtuel pour isoler l'environnement python d'APiLos
-
-Ex:
+### Environment virtuel python
 
 ```sh
 python -m venv .venv --prompt $(basename $(pwd))
 source .venv/bin/activate
 ```
 
-#### Installation
+### Services docker
 
-Lancer de la base de données en utilisant une installation local de postgresql ou en lançant l'instance via docker-compose
-
+```sh
+docker-compose build
+docker-compose up -d
 ```
-docker-compose -f docker-compose.db.yml up -d
-```
 
-Puis, mettre à jour les variable d'environnement dans le fichier [~/.env](~/.env), ci-dessous un exemple compatible avec la configuration docker-compose.db.yml
+### Variables d'environnement
 
-```
+Copier le [.env.template](.env.template) dans un fichier `.env` puis mettre à jour les variables d'environements.
+
+Par exemple:
+
+```ini
 DB_USER=apilos
 DB_NAME=apilos
 DB_HOST=localhost
@@ -83,74 +47,96 @@ DB_PASSWORD=apilos
 DB_PORT=5433
 ```
 
-Installer les dépendances
+### Installer les dépendances python
 
 ```sh
 pip install pip-tools
-pip-sync requirements.txt dev-requirements.txt
+pip install -r requirements.txt -r dev-requirements.txt
 ```
 
-## Finalisation de l'installation
+### Installer les dependances npm
 
-Ajouter `docker-compose exec apilos` en prefix de vos commande lorsque vous avez installé via `docker-compose`
+```sh
+npm install
+```
 
 ### Executer les migrations
 
-```
-(docker-compose exec apilos) python manage.py migrate
+```sh
+python manage.py migrate
 ```
 
 ### Populer les permissions et les roles et les departements
 
+```sh
+python manage.py loaddata auth.json departements.json
 ```
-(docker-compose exec apilos) python manage.py loaddata auth.json departements.json
+
+#### Modifier les permissions
+
+Pour modifier les permissions, il suffit de modifier dans l'interface d'administration puis d'exporter les données d'authentification :
+
+```sh
+python manage.py dumpdata auth --natural-foreign --natural-primary > users/fixtures/auth.json
+```
+
+### Créer un super utilisateur
+
+```sh
+python manage.py createsuperuser
 ```
 
 ## Lancer de l'application
 
-```
-(docker-compose exec apilos) python manage.py runserver 0.0.0.0:8001
+```sh
+python manage.py runserver 0.0.0.0:8001
 ```
 
 L'application est désormais disponible [http://localhost:8001](http://localhost:8001)
 
+### Population de la base de donnnées en environnement de développement
+
+Ajout les bailleurs, administrations, programmes, lots, logements, types de stationnement issue galion
+
+```sh
+python manage.py import_galion
+```
+
+Ajout de bailleurs, administrations, programmes et lots de test
+
+```sh
+python manage.py load_test_fixtures
+```
 
 ## Qualité de code
 
 ### Tests
 
 Les tests sont organisés comme suit :
-* Tests unitaires : APPNAME/tests/test_models.py
-* Tests integration : APPNAME/tests/test_view.py
-* Tests api : APPNAME/api/tests/test_apis.py
 
-### prérequis
-
-Copier vos variables d'environnement .env.template vers .env.test qui sera utilisé par les tests
+- Tests unitaires : APPNAME/tests/models/…
+- Tests integration : APPNAME/tests/views/… APPNAME/tests/services/…
 
 ### Lancement des tests
 
 L'application prend en charge des test unitaire et des tests d'intégration. Pour les lancer:
 
-```
-(docker-compose exec apilos) python manage.py test
+```sh
+python manage.py test
 ```
 
 et pour les lancer avec un test de coverage et afficher le rapport :
 
-```
-(docker-compose exec apilos) coverage run --source='.' manage.py test
-(docker-compose exec apilos) coverage report
+```sh
+coverage run --source='.' manage.py test
+coverage report
 ```
 
 ### Installer les hooks de pre-commit
 
-TODO:
-[] executer les hook de précommit dans docker si installation docker ?
-
 Pour installer les git hook de pre-commit, installer le package precommit et installer les hooks en executant pre-commit
 
-```
+```sh
 pip install pre-commit
 pre-commit install
 ```
@@ -166,6 +152,7 @@ Ajouter les dépendances dans requirements.in ou dev-requirements.in
 Puis compiler (recquiert l'installation de `pip-tools`):
 
 ```sh
+pip install pip-tools
 pip-compile --resolver=backtracking requirements.in --generate-hashes
 pip-compile --resolver=backtracking dev-requirements.in --generate-hashes
 ```
@@ -173,7 +160,7 @@ pip-compile --resolver=backtracking dev-requirements.in --generate-hashes
 Et installer
 
 ```sh
-pip-sync requirements.txt dev-requirements.txt
+pip install -r requirements.txt -r dev-requirements.txt
 ```
 
 ## Manipulations de développement

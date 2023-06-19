@@ -17,30 +17,12 @@ services:
     restart: always
     expose:
       - 6379
+    ports:
+      - 6379:6379
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
       - ./.docker/redis/data:/data:delegated
       - ./.docker/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
-  apilos: &apilos
-    build:
-      context: .
-      args:
-        - IPYTHON_AUTORELOAD=${IPYTHON_AUTORELOAD:-}
-    volumes:
-      # Use: cached to get better performances on read-heavy workloads, typically here the mounted code will be edited on the host
-      - .:/code:cached
-    ports:
-      - "8001:8000"
-    restart: on-failure # Automatically restart on failure (if PG not up yet)
-    depends_on:
-      - postgres
-      - redis
-
-  worker:
-    <<: *apilos
-    command: python -m celery -A core.worker worker -l INFO
-    ports: []
-
 
 volumes:
   cache:
