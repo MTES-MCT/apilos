@@ -658,33 +658,41 @@ class CustomFiltersTest(TestCase):
 
         cloned_programme = self.convention.programme.clone()
         cloned_lot = self.convention.lot.clone(cloned_programme)
-        Convention.objects.create(
+        av = Convention.objects.create(
             statut=ConventionStatut.A_SIGNER.label,
             parent=self.convention,
             lot=cloned_lot,
             programme=cloned_programme,
-        ).save()
-
+        )
+        av.save()
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
-        Convention.objects.create(
+        av.delete()
+
+        av = Convention.objects.create(
             statut=ConventionStatut.SIGNEE.label,
             parent=self.convention,
-            lot=self.convention.lot,
-            programme=self.convention.programme,
-        ).save()
+            lot=cloned_lot,
+            programme=cloned_programme,
+        )
+        av.save()
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
-        Convention.objects.create(
+        av.delete()
+
+        av = Convention.objects.create(
             statut=ConventionStatut.RESILIEE.label,
             parent=self.convention,
-            lot=self.convention.lot,
-            programme=self.convention.programme,
-        ).save()
+            lot=cloned_lot,
+            programme=cloned_programme,
+        )
+        av.save()
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
+        av.delete()
+
         ongoing_avenant = Convention.objects.create(
             statut=ConventionStatut.PROJET.label,
             parent=self.convention,
-            lot=self.convention.lot,
-            programme=self.convention.programme,
+            lot=cloned_lot,
+            programme=cloned_programme,
         )
         ongoing_avenant.save()
         ongoing_avenant = Convention.objects.get(pk=ongoing_avenant.pk)
