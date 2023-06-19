@@ -31,6 +31,19 @@
                         {% include "comments/opened_comments.html" %}
                     </turbo-frame>
                 {% endif %}
+                {% if convention.statut == CONVENTION_STATUT.SIGNEE and request|is_instructeur %}
+                    <div class="fr-grid-row fr-grid-row--right">
+                        <a href="{% url 'conventions:expert_mode' convention_uuid=convention.uuid %}" class="fr-btn fr-btn--secondary">
+                            {% if request.session.is_expert %}
+                                <span class="fr-icon-close-circle-line fr-mr-1w"></span>
+                                Sortir du mode expert
+                            {% else %}
+                                <span class="fr-icon-ball-pen-line fr-mr-1w"></span>
+                                Passer en mode expert
+                            {% endif %}
+                        </a>
+                    </div>
+                {% endif %}
                 {% if convention.is_avenant %}
                     {% if 'bailleur' in avenant_list %}
                         {% include "conventions/recapitulatif/bailleur.html" with target_url='conventions:avenant_bailleur' bailleur=convention.bailleur %}

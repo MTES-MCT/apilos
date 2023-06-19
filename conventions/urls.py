@@ -226,4 +226,9 @@ urlpatterns = [
         views.form_avenants_for_avenant,
         name="form_avenants_for_avenant",
     ),
+    path(
+        "expert_mode/<convention_uuid>",
+        views.expert_mode,
+        name="expert_mode",
+    ),
 ]

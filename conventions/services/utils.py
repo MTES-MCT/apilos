@@ -123,6 +123,8 @@ def base_convention_response_error(request, convention):
 
 def editable_convention(request: HttpRequest, convention: Convention):
     if is_instructeur(request):
+        if "is_expert" in request.session and request.session["is_expert"] is True:
+            return True
         return convention.statut in [
             ConventionStatut.PROJET.label,
             ConventionStatut.INSTRUCTION.label,
