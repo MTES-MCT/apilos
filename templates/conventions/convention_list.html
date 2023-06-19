@@ -21,7 +21,7 @@
                                             <option selected value>Bailleur</option>
                                             {% for bailleur in bailleur_query %}
                                                 <option value="{{ bailleur.uuid }}">
-                                                    {{ bailleur }}
+                                                    {{ bailleur }} ( {{ bailleur.siren }} )
                                                 </option>
                                             {% endfor %}
                                         {% endif %}
@@ -33,7 +33,7 @@
                                         search: true,
                                         placeholder: "Bailleur",
                                         selectedValue: null,
-                                        searchPlaceholderText: "Nom du bailleur",
+                                        searchPlaceholderText: "Nom du bailleur ( SIREN )",
                                         onServerSearch: function (search, select) {
                                             fetch('{{ search_bailleur_url }}?q=' + search)
                                                 .then((response) => response.json())
