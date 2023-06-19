@@ -20,7 +20,6 @@ from programmes.models import (
     LocauxCollectifs,
     Logement,
     Lot,
-    Programme,
     TypeStationnement,
 )
 from users.type_models import EmailPreferences, TypeRole
@@ -35,6 +34,22 @@ class Convention(models.Model):
             models.Index(fields=["statut"], name="convention_statut_idx"),
             models.Index(fields=["uuid"], name="convention_uuid_idx"),
             models.Index(fields=["valide_le"], name="convention_valid_le_idx"),
+        ]
+        constraints = [
+            # https://github.com/betagouv/SPPNautInterface/issues/227
+            models.UniqueConstraint(
+                fields=["programme_id", "lot_id", "financement"],
+                condition=models.Q(
+                    statut__in=[
+                        ConventionStatut.PROJET.label,
+                        ConventionStatut.INSTRUCTION.label,
+                        ConventionStatut.CORRECTION.label,
+                        ConventionStatut.A_SIGNER.label,
+                        ConventionStatut.SIGNEE.label,
+                    ]
+                ),
+                name="unique_display_name",
+            )
         ]
 
     # pylint: disable=R0904
@@ -528,25 +543,7 @@ class Convention(models.Model):
 
     def clone(self, user, *, convention_origin):
         # pylint: disable=R0914
-        programme_fields = model_to_dict(
-            self.programme,
-            exclude=[
-                "id",
-                "parent",
-                "parent_id",
-                "cree_le",
-                "mis_a_jour_le",
-            ],
-        )
-        programme_fields.update(
-            {
-                "bailleur_id": programme_fields.pop("bailleur"),
-                "administration_id": programme_fields.pop("administration"),
-                "parent_id": convention_origin.programme_id,
-            }
-        )
-        cloned_programme = Programme.objects.create(**programme_fields)
-        cloned_programme.save()
+        cloned_programme = self.programme.clone()
 
         lot_fields = model_to_dict(
             self.lot,

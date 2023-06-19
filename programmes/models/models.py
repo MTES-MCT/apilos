@@ -4,6 +4,7 @@ import uuid
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.forms import model_to_dict
 
 from apilos_settings.models import Departement
 from conventions.models.choices import ConventionStatut
@@ -196,6 +197,29 @@ class Programme(IngestableModel):
 
     def __str__(self):
         return self.nom
+
+    def clone(self):
+        parent_id = self.parent_id or self.id
+        programme_fields = model_to_dict(
+            self,
+            exclude=[
+                "id",
+                "parent",
+                "parent_id",
+                "cree_le",
+                "mis_a_jour_le",
+            ],
+        )
+        programme_fields.update(
+            {
+                "bailleur_id": programme_fields.pop("bailleur"),
+                "administration_id": programme_fields.pop("administration"),
+                "parent_id": parent_id,
+            }
+        )
+        cloned_programme = Programme(**programme_fields)
+        cloned_programme.save()
+        return cloned_programme
 
     def get_type_operation_advanced_display(self):
         prefix = "en "
@@ -493,6 +517,30 @@ class Lot(IngestableModel):
     @property
     def annexes(self):
         return Annexe.objects.filter(logement__lot=self)
+
+    def clone(self, cloned_programme):
+        parent_id = self.parent_id or self.id
+        lot_fields = model_to_dict(
+            self,
+            exclude=[
+                "id",
+                "parent",
+                "parent_id",
+                "programme",
+                "programme_id",
+                "cree_le",
+                "mis_a_jour_le",
+            ],
+        )
+        lot_fields.update(
+            {
+                "programme": cloned_programme,
+                "parent_id": parent_id,
+            }
+        )
+        cloned_lot = Lot(**lot_fields)
+        cloned_lot.save()
+        return cloned_lot
 
     def repartition_surfaces(self):
         """
