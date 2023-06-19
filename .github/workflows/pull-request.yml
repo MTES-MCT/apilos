@@ -36,7 +36,6 @@ jobs:
         run: pip install -r requirements.txt -r dev-requirements.txt
       - name: Execute test with coverage
         run: |
-          cp .env.citest .env.test
           coverage run --source='.' manage.py test
         env:
           DATABASE_URL: postgres://apilos:apilos@localhost:5432/apilos
