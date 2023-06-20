@@ -124,6 +124,16 @@ Sur MacOS, la dépendance est disponible via Homebrew :
 brew install clamav
 ```
 
+ClamAV requiert une étape de configuration sur certains systèmes d'exploitations.
+Celle-ci consiste à copier des fichier de configuration :
+
+```sh
+# Sur MacOS, avec ClamAV installé via Homebrew
+cp /opt/homebrew/etc/clamav/freshclam.conf.sample /opt/homebrew/etc/clamav/freshclam.conf
+cp /opt/homebrew/etc/clamd/clamd.conf.sample /opt/homebrew/etc/clamd/clamd.conf
+
+```
+
 
 ## Qualité de code
 
