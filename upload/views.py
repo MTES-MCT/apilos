@@ -66,5 +66,5 @@ def upload_file(request):
         paths_to_scan.append(upload_service.path)
         uploaded_files.append(UploadedFileSerializer(uploaded_file).data)
 
-    scan_uploaded_files.delay(paths_to_scan)
+    scan_uploaded_files.delay(paths_to_scan, request.user.id)
     return JsonResponse({"success": "true", "uploaded_file": uploaded_files})

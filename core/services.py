@@ -44,6 +44,8 @@ class EmailTemplateID(enum.Enum):
     I_MENSUEL = 151
     # Bailleurs - 5 - ACTIVATION (récapitulatif mensuel)
     B_MENSUEL = 152
+    # Virus - 163 - Warning
+    VIRUS_WARNING = 163
 
 
 class EmailService:
@@ -90,19 +92,5 @@ class EmailService:
                         f.read(),
                         content_type,
                     )
-            if settings.SENDINBLUE_API_KEY:
-                message.send()
-            else:
-                logger.warning(
-                    """
-    Email message:
-        to: %s
-        cc: %s
-        template_id: %s
-        data: %s
-                """,
-                    message.to,
-                    message.cc,
-                    message.template_id,
-                    message.merge_global_data,
-                )
+
+            message.send()
