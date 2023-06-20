@@ -9,7 +9,8 @@ on:
 
 env:
   S3_HOST: https://s3.fr-par.scw.cloud
-  S3_BUCKET: s3://apilos-prod
+  S3_BUCKET_SOURCE: s3://apilos-prod
+  S3_BUCKET_DESTINATION: s3://apilos-glacier
   BACKUP_NAME: s3_production
 
 jobs:
@@ -38,7 +39,7 @@ jobs:
       #     mkdir ${{ env.BACKUP_NAME }}
       #     aws s3 cp --recursive --dryrun ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}
       - name: Backup
-        run: aws s3 cp --recursive ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}
+        run: aws s3 cp --recursive ${{ env.S3_BUCKET_SOURCE }} ${{ env.S3_BUCKET_DESTINATION }} --storage-class GLACIER
       - name: Compress backup
         run: tar cfz ${{ env.BACKUP_NAME }}.tar.gz ${{ env.BACKUP_NAME }}
       - name: Upload Backup as Artifact
