@@ -16,6 +16,9 @@ jobs:
   backup-production:
     name: Backup S3 in Production environment
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_KEY }}
 
     steps:
       - name: Install AWS CLI dependencies
@@ -30,9 +33,6 @@ jobs:
           aws configure set s3.max_queue_size 1000
           aws configure set s3.multipart_threshold '50 MB'
           aws configure set s3api.endpoint_url ${{ env.S3_HOST }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_KEY }}
       - name: Backup in dry run mode
         run: |
           mkdir ${{ env.BACKUP_NAME }}
