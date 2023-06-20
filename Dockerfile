@@ -3,10 +3,6 @@ FROM python:3.10
 ENV PYTHONUNBUFFERED=1
 ARG IPYTHON_AUTORELOAD
 
-# clamav is used in celery to scan uploads before after they reach the file system
-RUN apt update
-RUN apt install clamav -y
-
 WORKDIR /code
 COPY requirements.txt .
 COPY dev-requirements.txt .
