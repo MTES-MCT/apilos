@@ -6,7 +6,6 @@ from celery import shared_task
 from django.conf import settings
 
 from core.services import EmailService, EmailTemplateID
-from upload.models import UploadedFile, UploadedFileSerializer
 from users.models import User
 
 logger = logging.getLogger(__name__)
