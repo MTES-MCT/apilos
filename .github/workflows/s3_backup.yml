@@ -8,7 +8,7 @@ on:
     - cron: '27 1 * * 1'
 
 env:
-  S3_HOST: s3.fr-par.scw.cloud
+  S3_HOST: https://s3.fr-par.scw.cloud
   S3_BUCKET: s3://apilos-prod
   BACKUP_NAME: s3_production
 
@@ -20,11 +20,19 @@ jobs:
     steps:
       - name: Backup
         run: |
-          pip install s3cmd
+          pip install awscli
+          pip install awscli-plugin-endpoint
+          aws configure set plugins.endpoint awscli_plugin_endpoint
+          aws configure set s3.endpoint_url ${{ env.S3_HOST }}
+          aws configure set s3api.endpoint_url ${{ env.S3_HOST }}
+          pip install awscli-plugin-endpoint
           mkdir ${{ env.BACKUP_NAME }}
-          echo 's3cmd --host=${{ env.S3_HOST }} --host-bucket= --access_key=${{ secrets.S3_ACCESS_KEY }} --secret_key=${{ secrets.S3_SECRET_KEY }} cp --recursive --dry-run ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}'
-          s3cmd --host=${{ env.S3_HOST }} --host-bucket= --access_key=${{ secrets.S3_ACCESS_KEY }} --secret_key=${{ secrets.S3_SECRET_KEY }} cp --recursive ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}
+          aws s3 cp --recursive --dry-run ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}
+          aws s3 cp --recursive ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}
           tar cfz ${{ env.BACKUP_NAME }}.tar.gz ${{ env.BACKUP_NAME }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_KEY }}
       - name: Upload Backup as Artifact
         uses: actions/upload-artifact@v2
         with:
