@@ -23,9 +23,12 @@ jobs:
           pip install awscli
           pip install awscli-plugin-endpoint
       - name: configure AWS CLI for Scaleway
-        run: |
+        run: | # Source : https://www.scaleway.com/en/docs/storage/object/api-cli/object-storage-aws-cli/
           aws configure set plugins.endpoint awscli_plugin_endpoint
           aws configure set s3.endpoint_url ${{ env.S3_HOST }}
+          aws configure set s3.max_concurrent_requests 100
+          aws configure set s3.max_queue_size 1000
+          aws configure set s3.multipart_threshold '50 MB'
           aws configure set s3api.endpoint_url ${{ env.S3_HOST }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY }}
