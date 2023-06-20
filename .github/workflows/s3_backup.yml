@@ -27,7 +27,7 @@ jobs:
           aws configure set s3api.endpoint_url ${{ env.S3_HOST }}
           pip install awscli-plugin-endpoint
           mkdir ${{ env.BACKUP_NAME }}
-          aws s3 cp --recursive --dry-run ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}
+          aws s3 cp --recursive --dryrun ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}
           aws s3 cp --recursive ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}
           tar cfz ${{ env.BACKUP_NAME }}.tar.gz ${{ env.BACKUP_NAME }}
         env:
