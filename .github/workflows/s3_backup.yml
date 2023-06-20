@@ -34,9 +34,5 @@ jobs:
           aws configure set s3.max_queue_size 1000
           aws configure set s3.multipart_threshold '50 MB'
           aws configure set s3api.endpoint_url ${{ env.S3_HOST }}
-      # - name: Backup in dry run mode
-      #   run: |
-      #     mkdir ${{ env.BACKUP_NAME }}
-      #     aws s3 cp --recursive --dryrun ${{ env.S3_BUCKET }} ${{ env.BACKUP_NAME }}
       - name: Backup
-        run: aws s3 cp --recursive ${{ env.S3_BUCKET_SOURCE }} ${{ env.S3_BUCKET_DESTINATION }} --storage-class GLACIER
+        run: aws s3 sync --quiet ${{ env.S3_BUCKET_SOURCE }} ${{ env.S3_BUCKET_DESTINATION }} --storage-class GLACIER
