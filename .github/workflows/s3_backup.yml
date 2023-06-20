@@ -2,6 +2,7 @@ name: Backup S3 Production Bucket
 
 on:
   workflow_dispatch:
+  pull_request:
   schedule:
     # At 01:27 UTC every Monday
     - cron: '27 1 * * 1'
