@@ -48,6 +48,7 @@
                     <ul class="fr-tabs__list" role="tablist" aria-label="Liste des conventions">
                         {% include 'conventions/home/_tab.html' with tab_active=false count=nb_active_conventions label='en cours' title='Conventions en cours' route='conventions:search_active' %}
                         {% include 'conventions/home/_tab.html' with tab_active=false count=nb_completed_conventions label='finalisées' title='Conventions finalisées' route='conventions:search_completed' %}
+                        {% include 'conventions/home/_tab.html' with tab_active=false count=nb_completed_conventions label='finalisées' title='Conventions terminées' route='conventions:search_completed' %}
                         <li class="fr-ml-md-auto">
                             <div class="fr-tabs__tab" aria-selected="true">
                                 <span aria-hidden="true" class="fr-icon-equalizer-fill"></span> Calculatrice de loyers

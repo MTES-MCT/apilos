@@ -77,7 +77,7 @@ def generate_programmes(num):
             {
                 "nom": secrets.choice(random_title)
                 + f"{''.join(secrets.choice(random_name))}",
-                "code_postal": f"001{secrets.randbelow(9)}{secrets.randbelow(9)}",
+                "code_postal": f"011{secrets.randbelow(9)}{secrets.randbelow(9)}",
                 "ville": fake.city(),
                 "adresse": None,
                 "numero_galion": f"{secrets.randbelow(9)}{secrets.randbelow(9)}"
