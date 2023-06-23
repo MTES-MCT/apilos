@@ -7,8 +7,9 @@ from . import views
 urlpatterns = [
     # Pages de premier niveau : recherche et calculette de loyer
     path("", RedirectView.as_view(url="/conventions/en-cours"), name="index"),
-    path("en-cours", views.search, {"active": True}, name="search_active"),
+    path("en-cours", views.search, {"active": True}, name="search_in_progress"),
     path("finalisees", views.search, {"active": False}, name="search_completed"),
+    path("actives", views.search, {"active": False}, name="search_active"),
     path(
         "simulateur-de-loyer",
         views.loyer_simulateur,
