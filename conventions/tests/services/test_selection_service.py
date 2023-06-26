@@ -106,21 +106,18 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
         )
 
     def test_post_from_zero_failed_form(self):
-        bailleur = Bailleur.objects.get(siret="987654321")
-        administration = Administration.objects.get(code="75000")
-        self.service.request.POST = {
-            "bailleur": str(bailleur.uuid),
-            "administration": str(administration.uuid),
-            "nom": "Programme de test",
-            "nb_logements": "10",
-            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
-            "type_habitat": TypeHabitat.MIXTE,
-            "financement": Financement.PLUS,
-            "code_postal": "20000",
-            "ville": "",
-        }
+        self.service.request.POST = {}
         self.service.post_from_zero()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertTrue(self.service.form.has_error("numero_galion"))
+        self.assertTrue(self.service.form.has_error("bailleur"))
+        self.assertTrue(self.service.form.has_error("administration"))
+        self.assertTrue(self.service.form.has_error("nom"))
+        self.assertTrue(self.service.form.has_error("nb_logements"))
+        self.assertTrue(self.service.form.has_error("nature_logement"))
+        self.assertTrue(self.service.form.has_error("type_habitat"))
+        self.assertTrue(self.service.form.has_error("financement"))
+        self.assertTrue(self.service.form.has_error("code_postal"))
         self.assertTrue(self.service.form.has_error("ville"))
 
     def test_post_from_zero_failed_scope(self):
@@ -149,6 +146,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
             "bailleur": str(bailleur.uuid),
             "administration": str(administration.uuid),
             "nom": "Programme de test",
+            "numero_galion": "123456789",
             "nb_logements": "10",
             "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "type_habitat": TypeHabitat.MIXTE,
@@ -253,7 +251,6 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
         self.assertTrue(self.service.form.has_error("lot"))
 
     def test_post_from_db_success(self):
-
         bailleur = Bailleur.objects.get(siret="987654321")
         administration = Administration.objects.get(code="75000")
         programme_2 = utils_fixtures.create_programme(
@@ -340,6 +337,7 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             "bailleur": str(bailleur.uuid),
             "administration": str(administration.uuid),
             "nom": "Programme de test",
+            "numero_galion": "123456789",
             "nb_logements": "10",
             "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "type_habitat": TypeHabitat.MIXTE,
