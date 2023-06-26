@@ -181,3 +181,12 @@ pg_restore -d "${DB_URL}" --clean --no-acl --no-owner --no-privileges "${DUMP_FI
 ```
 
 Note : le fichier de dump est a l'extension `pgsql`
+
+## Utilisateurs
+
+L'import des fixtures crée plusieurs utilisateurs utiles lors du développement
+
+|             | identifiant      | mot de passe | email                       |
+|-------------|------------------|--------------|-----------------------------|
+| bailleur    | demo.bailleur    | demo.12345   | demo.bailleur@oudard.org    |
+| instructeur | demo.instructeur | instru12345  | demo.instructeur@oudard.org |
