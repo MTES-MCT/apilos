@@ -17,7 +17,7 @@
                     <div class="fr-header__navbar">
                         {% if user.is_authenticated %}
                             </li>
-                            <a class="fr-btn fr-fi-close-circle-line" href="{% url 'logout' %}"></a>
+                            <a class="fr-btn fr-icon-close-circle-line" href="{% url 'logout' %}"></a>
                         {% else %}
                             <a class="fr-btn fr-icon-account-circle-line apilos-mobile-header" href="{% url 'login' %}"></a>
                         {% endif %}
@@ -45,7 +45,7 @@
                                     </span>
                                     <span>
                                         <a href="{% url 'logout' %}?next=/">
-                                            <span class="fr-fi-logout-box-r-line fr-mr-1w" aria-hidden="true" title="Déconnexion">
+                                            <span class="fr-icon-logout-box-r-line fr-mr-1w" aria-hidden="true" title="Déconnexion">
                                             </span>
                                         </a>
                                     </span>
@@ -74,14 +74,14 @@
                                 <li class="apilos-navbar">
                                     <div class="btn-group">
                                         <button type="button" class="dropdown-toggle fr-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <span class="fr-fi-menu-fill" aria-hidden="true"></span>
+                                            <span class="fr-icon-menu-fill" aria-hidden="true"></span>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-right apilos-dropdown-menu">
                                             <a href="{% url 'settings:profile' %}">
-                                                <span class="fr-fi-equalizer-line fr-mr-1w" aria-hidden="true"></span>Paramètres
+                                                <span class="fr-icon-equalizer-line fr-mr-1w" aria-hidden="true"></span>Paramètres
                                             </a>
                                             <a href="{% url 'logout' %}">
-                                                <span class="fr-fi-logout-box-r-line fr-mr-1w" aria-hidden="true"></span>Déconnexion
+                                                <span class="fr-icon-logout-box-r-line fr-mr-1w" aria-hidden="true"></span>Déconnexion
                                             </a>
                                         </div>
                                     </div>
@@ -103,7 +103,7 @@
                             </li>
                             <li>
                                 <a class="fr-link fr-text--lg" href="//docs.apilos.beta.gouv.fr" alt="Aide en ligne" title="Aide en ligne" target="_blank" rel="noopener">
-                                    <span class="fr-fi-question-line" aria-hidden="true"></span>
+                                    <span class="fr-icon-question-line" aria-hidden="true"></span>
                                 </a>
                             </li>
                             </ul>

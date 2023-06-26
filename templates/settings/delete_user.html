@@ -1,6 +1,6 @@
 
 <div class="fr-mt-3w">
-    <button type="button" class="fr-btn apilos-btn--red fr-btn--icon-left fr-fi-delete-line" data-fr-opened="false" aria-controls="fr-modal-{{user.id}}">
+    <button type="button" class="fr-btn apilos-btn--red fr-btn--icon-left fr-icon-delete-line" data-fr-opened="false" aria-controls="fr-modal-{{user.id}}">
         Supprimer cet utilisateur
     </button>
     <dialog aria-labelledby="fr-modal-{{user.id}}-title" id="fr-modal-{{user.id}}" class="fr-modal" role="dialog" >
@@ -13,7 +13,7 @@
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-{{user.id}}-title" class="fr-modal__title">
-                                <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+                                <span class="fr-icon-arrow-right-line fr-icon--lg"></span>
                                 {{ user }}
                             </h1>
                             <p>Vous vous apprétez à supprimer cet utilisateur "{{user}}", êtes-vous sur de vouloir supprimer cet utilisateur ?</p>
@@ -23,7 +23,7 @@
                                 <li>
                                     <form method="post" action="{% url 'settings:delete_user' username=user.username %}">
                                         {% csrf_token %}
-                                        <button class="fr-btn apilos-btn--red fr-btn--icon-left fr-fi-delete-line" id='delete_{{user.id}}'>
+                                        <button class="fr-btn apilos-btn--red fr-btn--icon-left fr-icon-delete-line" id='delete_{{user.id}}'>
                                             Supprimer l'utilisateur
                                         </button>
                                     </form>

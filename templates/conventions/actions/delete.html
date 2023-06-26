@@ -16,7 +16,7 @@
                 {% endif %}
             </p>
         </div>
-        <button type="button" class="fr-btn apilos-btn--secondary--red fr-btn--icon-left fr-fi-delete-line fr-my-1w" data-fr-opened="false" aria-controls="fr-modal-{{convention.uuid}}">
+        <button type="button" class="fr-btn apilos-btn--secondary--red fr-btn--icon-left fr-icon-delete-line fr-my-1w" data-fr-opened="false" aria-controls="fr-modal-{{convention.uuid}}">
             Supprimer définitivement {% if convention.is_avenant %}cet avenant{% else %}cette convention{% endif %}
         </button>
     </div>
@@ -31,7 +31,7 @@
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-{{convention.uuid}}-title" class="fr-modal__title">
-                                <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+                                <span class="fr-icon-arrow-right-line fr-icon--lg"></span>
                                 {{ convention }}{% if convention.is_avenant %} - Avenant{% if convention.numero %} n°{{ convention.numero }}{% endif %}{% endif %}
                             </h1>
                             <p>Vous vous apprétez à supprimer {% if convention.is_avenant %}l'avenant à la convention{% else %}la convention{% endif %} "{{convention}}", êtes-vous sur de vouloir supprimer {% if convention.is_avenant %}cet avenant{% else %}cette convention{% endif %} ?</p>
@@ -41,7 +41,7 @@
                                 <li>
                                     <form action="{% url 'conventions:delete' convention_uuid=convention.uuid %}" method="post" data-turbo="false">
                                         {% csrf_token %}
-                                        <button type="submit" class="fr-btn fr-btn--icon-left fr-fi-delete-line">
+                                        <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-delete-line">
                                             Supprimer définitivement {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}
                                         </button>
                                     </form>
