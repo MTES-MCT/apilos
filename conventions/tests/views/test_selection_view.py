@@ -1,15 +1,12 @@
 from django.test import TestCase
 from django.urls import reverse
-from conventions.models import (
-    Convention,
-    ConventionStatut,
-)
 
-from conventions.tests.views.abstract import AbstractCreateViewTestCase
 from bailleurs.models import Bailleur
+from conventions.models import Convention, ConventionStatut
+from conventions.tests.views.abstract import AbstractCreateViewTestCase
+from core.tests import utils_fixtures
 from instructeurs.models import Administration
 from programmes.models import Financement, NatureLogement, TypeHabitat
-from core.tests import utils_fixtures
 
 
 class ConventionSelectionFromDBViewTests(AbstractCreateViewTestCase, TestCase):
@@ -96,6 +93,7 @@ class ConventionSelectionFromZeroViewTests(AbstractCreateViewTestCase, TestCase)
         self.success_payload = {
             "bailleur": str(bailleur.uuid),
             "administration": str(administration.uuid),
+            "numero_galion": "123456789",
             "nom": "Programme de test",
             "nb_logements": "10",
             "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,

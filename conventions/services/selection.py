@@ -1,26 +1,21 @@
-from django.http import HttpRequest
-from django.db import transaction
-from django.db.models.query import QuerySet
-from django.db.models import Count
 from django.conf import settings
+from django.db import transaction
+from django.db.models import Count
+from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from conventions.forms import (
-    ProgrammeSelectionFromDBForm,
-    ProgrammeSelectionFromZeroForm,
     ConventionForAvenantForm,
     CreateConventionMinForm,
+    ProgrammeSelectionFromDBForm,
+    ProgrammeSelectionFromZeroForm,
 )
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
 from conventions.services.file import ConventionFileService
 from conventions.templatetags.custom_filters import is_instructeur
 from instructeurs.models import Administration
-from programmes.models import (
-    Financement,
-    Programme,
-    Lot,
-    TypeOperation,
-)
+from programmes.models import Financement, Lot, Programme, TypeOperation
 
 
 def _get_choices_from_object(object_list):
@@ -90,6 +85,8 @@ class ConventionSelectionService:
                     == Financement.SANS_FINANCEMENT
                     else TypeOperation.NEUF
                 ),
+                # default ANRU when it is SIAP version
+                anru=bool(settings.CERBERE_AUTH),
             )
             programme.save()
             lot = Lot.objects.create(

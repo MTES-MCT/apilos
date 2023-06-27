@@ -1,6 +1,6 @@
 {% if request.user|is_administration_administrator:administration %}
     <button type="button" class="fr-link fr-mb-1w" data-fr-opened="false" aria-controls="fr-modal-{{administration.uuid}}">
-        <span class="fr-fi-delete-line" aria-hidden="true"></span>
+        <span class="fr-icon-delete-line" aria-hidden="true"></span>
     </button>
 
     <dialog aria-labelledby="fr-modal-title-modal-{{administration.uuid}}" role="dialog" id="fr-modal-{{administration.uuid}}" class="fr-modal">
@@ -13,7 +13,7 @@
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-title-modal-{{administration.uuid}}" class="fr-modal__title">
-                                <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+                                <span class="fr-icon-arrow-right-line fr-icon--lg"></span>
                                 Supprimer une administration à l'utilisateur « {{ form.username.value }} »
                             </h1>
                             <form method="post" action="{% url 'settings:edit_user' username=form.username.value %}">

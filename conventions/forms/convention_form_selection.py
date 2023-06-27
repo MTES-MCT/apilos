@@ -3,12 +3,11 @@
     - Selection d'un lot à conventionner
     - création d'un programme/lot/convention à partir de zéro
 """
+from django import forms
 from django.db.models import QuerySet
 
 from bailleurs.models import Bailleur
-from django import forms
-
-from programmes.models import FinancementEDD, ActiveNatureLogement, TypeHabitat
+from programmes.models import ActiveNatureLogement, FinancementEDD, TypeHabitat
 
 
 class ProgrammeSelectionFromDBForm(forms.Form):
@@ -114,7 +113,7 @@ class ProgrammeSelectionFromZeroForm(CreateConventionMinForm):
 
     numero_galion = forms.CharField(
         label="N° de décision de financement",
-        required=False,
+        required=True,
         max_length=255,
         error_messages={
             "max_length": "Le Numéro d'opération ne doit pas excéder 255 caractères",

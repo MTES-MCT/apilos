@@ -1,5 +1,5 @@
 {% if request.user.is_administrator %}
-    <button class="fr-btn fr-fi-add-circle-line fr-btn--icon-left" type="button" data-fr-opened="false" aria-controls="fr-modal-1">
+    <button class="fr-btn fr-icon-add-circle-line fr-btn--icon-left" type="button" data-fr-opened="false" aria-controls="fr-modal-1">
         Ajouter un bailleur
     </button>
     <dialog aria-labelledby="fr-modal-title-modal-1" role="dialog" id="fr-modal-1" class="fr-modal">
@@ -12,7 +12,7 @@
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-title-modal-1" class="fr-modal__title">
-                                <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+                                <span class="fr-icon-arrow-right-line fr-icon--lg"></span>
                                 Ajouter un bailleur à l'utilisateur « {{ form.username.value }} »
                             </h1>
                             <form method="post" action="{% url 'settings:edit_user' username=form.username.value %}">
