@@ -63,7 +63,7 @@ def upload_file(request):
         upload_service.upload_file(file)
 
         uploaded_file.save()
-        paths_to_scan.append(upload_service.path)
+        paths_to_scan.append((upload_service.path, uploaded_file.pk))
         uploaded_files.append(UploadedFileSerializer(uploaded_file).data)
 
     scan_uploaded_files.delay(paths_to_scan, request.user.id)
