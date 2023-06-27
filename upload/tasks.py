@@ -1,11 +1,12 @@
-import subprocess
 import logging
+import subprocess
 from pathlib import Path
 
 from celery import shared_task
 from django.conf import settings
 
 from core.services import EmailService, EmailTemplateID
+from upload.models import UploadedFile
 from users.models import User
 
 logger = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
     # refresh the database on demand before the scan starts
     subprocess.run("freshclam", shell=True, check=True)
 
-    for path in paths_to_scan:
+    for (path, uploaded_file_id) in paths_to_scan:
         path = Path(settings.MEDIA_ROOT / path).resolve()
         output = subprocess.run(["clamscan", path], capture_output=True, text=True)
 
@@ -36,6 +37,7 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
                 }
             )
             path.unlink()
+            UploadedFile.objects.get(id=id).delete()
             logger.warning(
                 "An infected file has been detected. The user has been warned by email and the file has succesfully been removed. | File location : %s"
                 % path
