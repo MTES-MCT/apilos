@@ -61,67 +61,63 @@ class CommentFactory {
       );
       dialog_modal.setAttribute("role", "dialog");
       const comment_dialog_content =
-        '<div class="fr-container fr-container--fluid fr-container-md">\
-    <div class="fr-grid-row fr-grid-row--center">\
-        <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">\
-            <div id="loading">\
-                <img id="loading-image" src="' +
+        '<div class="fr-container fr-container--fluid fr-container-md">' +
+        '<div class="fr-grid-row fr-grid-row--center">' +
+        '<div class="fr-col-12 fr-col-md-8 fr-col-lg-6">' +
+        '<div id="loading">' +
+        '<img id="loading-image" src="' +
         this.loading_img +
-        '" alt="Loading..." />\
-            </div>\
-            <div class="fr-modal__body">\
-                <div class="fr-modal__header">\
-                    <button type="button" class="fr-link--close fr-link" aria-controls="' +
+        '" alt="Loading..." />' +
+        "</div>" +
+        '<div class="fr-modal__body">' +
+        '<div class="fr-modal__header">' +
+        '<button type="button" class="fr-link--close fr-link" aria-controls="' +
         this.comment_dialog_id +
-        '-dialog">Fermer</button>\
-                </div>\
-                <div class="fr-modal__content fr-mb-1w" id="global_in_page_modal_comment">\
-                    <h3 id="' +
+        '-dialog">Fermer</button>' +
+        "</div>" +
+        '<div class="fr-modal__content fr-mb-1w" id="global_in_page_modal_comment">' +
+        '<h3 id="' +
         this.comment_dialog_id +
-        '-title" class="fr-modal__title">\
-                        <span class="fr-icon-arrow-right-line fr-icon--lg"></span>\
-                        <span id="' +
+        '-title" class="fr-modal__title">' +
+        '<span class="fr-icon-arrow-right-line fr-icon--lg"></span>' +
+        '<span id="' +
         this.comment_dialog_id +
-        '-title_text"></span>\
-                    </h3>\
-                    <div id="' +
+        '-title_text"></span>' +
+        "</h3>" +
+        '<div id="' +
         this.comment_dialog_id +
-        '_comments">\
-                    </div>\
-                    <div id="global_in_page_new_comment">\
-                        <div class="fr-mt-3w fr-mb-1w"><strong>Ajouter un commentaire :</strong></div>\
-                        <textarea\
-                            class="fr-input"\
-                            aria-describedby="text-input-error-desc-error"\
-                            type="text"\
-                            id="textarea_' +
+        '_comments">' +
+        "</div>" +
+        '<div id="global_in_page_new_comment">' +
+        '<div class="fr-mt-3w fr-mb-1w"><strong>Ajouter un commentaire :</strong></div>' +
+        "<textarea" +
+        ' class="fr-input"' +
+        ' aria-describedby="text-input-error-desc-error"' +
+        ' type="text"' +
+        ' id="textarea_' +
         this.comment_dialog_id +
-        '"\
-                            name="textarea_' +
+        '" name="textarea_' +
         this.comment_dialog_id +
-        '"></textarea>\
-                        <ul class="fr-mt-1w fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--sm">\
-                            <li>\
-                                <button id="' +
+        '"></textarea>' +
+        '<ul class="fr-mt-1w fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--sm">' +
+        "<li>" +
+        '<button id="' +
         this.comment_dialog_id +
-        '-submit" type="button" class="fr-btn fr-btn--sm">\
-                                    Commenter\
-                                </button>\
-                            </li>\
-                        </ul>\
-                    </div>\
-                </div>\
-            </div>\
-       </div>\
-    </div>\
-</div>\
-';
+        '-submit" type="button" class="fr-btn fr-btn--sm">Commenter</button>' +
+        "</li>" +
+        "</ul>" +
+        "</div>" +
+        "</div>" +
+        "</div>" +
+        "</div>" +
+        "</div>" +
+        "</div>";
       dialog_modal.innerHTML = comment_dialog_content;
       document.body.append(dialog_modal);
       document
         .getElementById("textarea_" + this.comment_dialog_id)
         .addEventListener("input", function () {
-          var rows = this.value.split(/\r\n|\r|\n/).length;
+          let rows = this.value.split(/\r\n|\r|\n/).length;
           this.setAttribute("rows", rows);
         });
     }
@@ -188,9 +184,8 @@ class CommentFactory {
   }
 
   create_global_comment_input(comment, is_instructeur = false) {
-    var inside_id = this.comment_dialog_id + "_comments";
+    let inside_id = this.comment_dialog_id + "_comments";
 
-    var comments_block = document.getElementById(inside_id);
     const container_div = this.create_comment_container(comment.uuid);
     const comment_header = this.create_comment_header(comment.uuid);
 
@@ -352,11 +347,11 @@ class CommentFactory {
   }
 
   display_comment_icon() {
-    var status_name = this.comment_icon_id + "_comment_statut";
-    var statuts = document.getElementsByName(status_name);
-    var nb_open = 0;
-    var nb_resolu = 0;
-    var nb_clos = 0;
+    let status_name = this.comment_icon_id + "_comment_statut";
+    let statuts = document.getElementsByName(status_name);
+    let nb_open = 0;
+    let nb_resolu = 0;
+    let nb_clos = 0;
     for (var i = 0; i < statuts.length; i++) {
       if (statuts[i].value == "OUVERT") {
         nb_open += 1;
@@ -375,9 +370,9 @@ class CommentFactory {
   display_global_comment_icon() {
     this.get_comments((res) => {
       if (res.success) {
-        var nb_open = 0;
-        var nb_resolu = 0;
-        var nb_clos = 0;
+        let nb_open = 0;
+        let nb_resolu = 0;
+        let nb_clos = 0;
         for (var i = 0; i < res.comments.length; i++) {
           if (res.comments[i].statut == "OUVERT") {
             nb_open += 1;
@@ -396,7 +391,8 @@ class CommentFactory {
   }
 
   update_comment_icon(nb_open, nb_resolu, nb_clos) {
-    var comment_icon = document.getElementById(this.comment_icon_id);
+    let comment_icon = document.getElementById(this.comment_icon_id);
+    let parent_parent = comment_icon.parentNode.parentNode;
     if (nb_open) {
       // orange & displayed
       comment_icon.classList.add("content__icons--opened");
@@ -411,7 +407,6 @@ class CommentFactory {
         this.empty_toggle_on.onmouseleave = null;
       }
       // specific, pourrait être passé en callback
-      var parent_parent = comment_icon.parentNode.parentNode;
       if (
         (parent_parent.tagName == "TR" || parent_parent.tagName == "TH") &&
         document.getElementById("download_upload_block") !== null
@@ -425,15 +420,15 @@ class CommentFactory {
 
       // NOT APPLICABLE FOR GLOBAL COMMENT
       if (this.empty_toggle_on) {
-        var inputs = this.empty_toggle_on.getElementsByTagName("input");
+        let inputs = this.empty_toggle_on.getElementsByTagName("input");
         for (var i = 0; i < inputs.length; i++) {
           inputs[i].disabled = false;
         }
-        var selects = this.empty_toggle_on.getElementsByTagName("select");
+        let selects = this.empty_toggle_on.getElementsByTagName("select");
         for (var i = 0; i < selects.length; i++) {
           selects[i].disabled = false;
         }
-        var textareas = this.empty_toggle_on.getElementsByTagName("textarea");
+        let textareas = this.empty_toggle_on.getElementsByTagName("textarea");
         for (var i = 0; i < textareas.length; i++) {
           textareas[i].disabled = false;
         }
@@ -451,7 +446,6 @@ class CommentFactory {
       comment_icon.classList.remove("content__icons--add");
       comment_icon.removeAttribute("title");
       comment_icon.hidden = false;
-      var parent_parent = comment_icon.parentNode.parentNode;
       if (
         (parent_parent.tagName == "TR" || parent_parent.tagName == "TH") &&
         document.getElementById("download_upload_block") !== null
@@ -472,7 +466,6 @@ class CommentFactory {
       comment_icon.classList.remove("content__icons--add");
       comment_icon.removeAttribute("title");
       comment_icon.hidden = false;
-      var parent_parent = comment_icon.parentNode.parentNode;
       if (
         (parent_parent.tagName == "TR" || parent_parent.tagName == "TH") &&
         document.getElementById("download_upload_block") !== null
@@ -517,11 +510,11 @@ class CommentFactory {
 
   // get comments
   get_comments(callback) {
-    var headers = {
+    let headers = {
       Accept: "application/json",
       "Content-Type": "application/json",
     };
-    var params = {
+    let params = {
       object_name: this.object_name,
     };
     if (this.object_field && this.object_field != "all") {
@@ -543,7 +536,7 @@ class CommentFactory {
     )
       .then(function (response) {
         if (response.status == 200) {
-          var res = response.json();
+          let res = response.json();
           return res;
         }
       })
@@ -554,10 +547,10 @@ class CommentFactory {
 
   // Create a new comment
   create_comment() {
-    var comment = document.getElementById("textarea_" + this.comment_dialog_id);
-    var csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+    let comment = document.getElementById("textarea_" + this.comment_dialog_id);
+    let csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
 
-    var headers = {
+    let headers = {
       "X-CSRFToken": csrf_token,
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -576,7 +569,7 @@ class CommentFactory {
     })
       .then(function (response) {
         if (response.status == 200) {
-          var res = response.json();
+          let res = response.json();
           return res;
         }
       })
@@ -597,18 +590,18 @@ class CommentFactory {
 
   // update comment (including status)
   update_comment(uuid, status) {
-    var message = document.getElementById(
+    let message = document.getElementById(
       "comment_" + this.comment_icon_id + "_" + uuid
     ).value;
-    var csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-    var body_content = {
+    let csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+    let body_content = {
       message: message,
     };
     if (status !== null) {
       body_content["statut"] = status;
     }
 
-    var headers = {
+    let headers = {
       "X-CSRFToken": csrf_token,
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -626,7 +619,7 @@ class CommentFactory {
       })
       .then((res) => {
         if (res.success) {
-          var comment = res.comment;
+          let comment = res.comment;
           document.getElementById(
             "comment_statut_" + this.comment_icon_id + "_" + comment.uuid
           ).value = res.comment.statut;
@@ -641,7 +634,7 @@ class CommentFactory {
           // if (comment.is_owner && comment.statut == 'CLOS') {
           //     document.getElementById('textarea_' + this.comment_dialog_id).value = ''
           // }
-          var common_textarea_div = document.getElementById(
+          let common_textarea_div = document.getElementById(
             "comment_textarea_div_" + this.comment_icon_id + "_" + comment.uuid
           );
           if (status == "CLOS" || status == "RESOLU") {
@@ -719,7 +712,7 @@ class CommentFactory {
     const owner_span = document.createElement("span");
     owner_span.classList.add("block--row-strech-1");
     owner_span.classList.add("apilos-text--bold");
-    var inner_text = username;
+    let inner_text = username;
     if (is_owner && is_owner != "False") {
       inner_text = inner_text + " (vous)";
     }
@@ -808,7 +801,7 @@ class CommentFactory {
     );
 
     textarea_textarea.addEventListener("input", function () {
-      var rows = this.value.split(/\r\n|\r|\n/).length;
+      let rows = this.value.split(/\r\n|\r|\n/).length;
       this.setAttribute("rows", rows);
     });
 
