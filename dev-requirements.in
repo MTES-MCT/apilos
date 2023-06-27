@@ -10,3 +10,4 @@ djhtml
 pre-commit
 ptpython
 pylint
+pylint-django
