@@ -1,10 +1,10 @@
 from django.db.models.functions import Substr
 from django.test import TestCase
-from bailleurs.models import Bailleur
 
 from apilos_settings.models import Departement
-from instructeurs.models import Administration
+from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
+from instructeurs.models import Administration
 from programmes.models import Programme
 from users.models import User
 
@@ -46,7 +46,7 @@ class AdministrationsModelsTest(TestCase):
                 user_instructeur.has_perm(perm, user_instructeur)
                 self.fail(
                     f"has_perm '{perm}' "
-                    + "with non convention object shold raise an Exception"
+                    + "with non convention object should raise an Exception"
                 )
             except Exception:
                 pass
