@@ -1,6 +1,8 @@
 [MASTER]
+# Cf https://stackoverflow.com/a/39207275
+# Pylint needs to be aware of the modules' parent directories to be able to load them
+init-hook="from pylint.config import find_pylintrc; import os, sys; sys.path.append(os.path.dirname(find_pylintrc()))"
 load-plugins=pylint_django
-django-settings-module=core.settings
 ignore-paths=
     core/settings.py,
     bailleurs/migrations,
