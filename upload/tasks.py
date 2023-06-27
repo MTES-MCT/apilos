@@ -40,6 +40,7 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
             )
             path.unlink()
             UploadedFile.objects.get(id=uploaded_file_id).delete()
+
             logger.warning(
                 "An infected file has been detected."
                 "The user has been warned by email "
