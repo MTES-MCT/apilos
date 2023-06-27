@@ -20,7 +20,7 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
     for path, uploaded_file_id in paths_to_scan:
         path = Path(settings.MEDIA_ROOT / path).resolve()
         output = subprocess.run(
-            ["clamscan", path], capture_output=True, text=True, check=True
+            ["clamscan", path], capture_output=True, text=True, check=False
         )
 
         if (
