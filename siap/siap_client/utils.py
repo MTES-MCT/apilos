@@ -183,12 +183,19 @@ def get_or_create_programme(
     (adresse, code_postal, ville) = _get_address_from_locdata(
         programme_from_siap["donneesLocalisation"]
     )
+    if (
+        Programme.objects.filter(
+            numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"]
+        ).count()
+        > 1
+    ):
+        pass
     (programme, _) = Programme.objects.get_or_create(
         numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"],
-        bailleur=bailleur,
-        administration=administration,
         parent=None,
         defaults={
+            "bailleur": bailleur,
+            "administration": administration,
             "nom": programme_from_siap["donneesOperation"]["nomOperation"],
             "adresse": adresse,
             "code_postal": code_postal,
