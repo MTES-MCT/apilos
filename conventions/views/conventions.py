@@ -155,8 +155,13 @@ class ConventionTabsMixin:
         },
     }
 
+    def get_tab_name(self):
+        pass
+
     def get_convention_statuses(self) -> List[ConventionStatut]:
-        return ConventionTabsMixin._TABS[self.get_tab_name()]["statuses"]
+        if tab_name := self.get_tab_name():
+            return ConventionTabsMixin._TABS[tab_name]["statuses"]
+        return []
 
     def _get_tabs_for(self, user: User):
         # TODO replace by actual query
@@ -172,11 +177,11 @@ class ConventionTabsMixin:
         }
 
     @property
-    def nb_completed_conventions(self):
+    def completed_conventions_count(self):
         return self.request.user.conventions(active=False).count()
 
     @property
-    def nb_active_conventions(self):
+    def active_conventions_count(self):
         return self.request.user.conventions(active=True).count()
 
 
@@ -190,15 +195,9 @@ class ConventionSearchView(ABC, ConventionTabsMixin, LoginRequiredMixin, View):
         pass
 
     def _administration(self, uuid: str | None) -> Administration | None:
-        if uuid is None:
-            return None
-
         return Administration.objects.filter(uuid=uuid).first()
 
     def _bailleur(self, uuid: str | None) -> Bailleur | None:
-        if uuid is None:
-            return None
-
         return Bailleur.objects.filter(uuid=uuid).first()
 
     def _bailleur_query(self, user: User) -> QuerySet | None:
@@ -245,7 +244,6 @@ class ConventionSearchView(ABC, ConventionTabsMixin, LoginRequiredMixin, View):
             ),
         )
         tabs = self._get_tabs_for(self.request.user)
-
         paginator = search_service.paginate()
 
         return render(
@@ -262,8 +260,8 @@ class ConventionSearchView(ABC, ConventionTabsMixin, LoginRequiredMixin, View):
                 "search_input": request.GET.get("search_input", ""),
                 "bailleur_query": self._bailleur_query(request.user),
                 "administration_query": self._administration_query(request.user),
-                "nb_active_conventions": self.nb_active_conventions,
-                "nb_completed_conventions": self.nb_completed_conventions,
+                "active_conventions_count": self.active_conventions_count,
+                "completed_conventions_count": self.completed_conventions_count,
             },
         )
 
@@ -322,8 +320,8 @@ class LoyerSimulateurView(ConventionTabsMixin, LoginRequiredMixin, View):
                 "tabs": self._get_tabs_for(self.request.user),
                 "montant_actualise": montant_actualise,
                 "annee_validite": annee_validite,
-                "nb_active_conventions": self.nb_active_conventions,
-                "nb_completed_conventions": self.nb_completed_conventions,
+                "active_conventions_count": self.active_conventions_count,
+                "completed_conventions_count": self.completed_conventions_count,
             },
         )
 
@@ -340,8 +338,8 @@ class LoyerSimulateurView(ConventionTabsMixin, LoginRequiredMixin, View):
             {
                 "form": loyer_simulateur_form,
                 "tabs": self._get_tabs_for(self.request.user),
-                "nb_active_conventions": self.nb_active_conventions,
-                "nb_completed_conventions": self.nb_completed_conventions,
+                "active_conventions_count": self.active_conventions_count,
+                "completed_conventions_count": self.completed_conventions_count,
             },
         )
 
