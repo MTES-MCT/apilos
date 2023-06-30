@@ -1,0 +1,20 @@
+<div class="fr-tabs fr-col-12">
+    <div class="fr-container">
+        <ul class="fr-tabs__list" role="tablist" aria-label="Liste des conventions">
+            {% for name, tab in tabs.items %}
+                {% include 'conventions/home/_tab.html' with tab_active=tab.is_active count=tab.count title=tab.title route=tab.route %}
+            {% endfor %}
+
+            <li class="fr-ml-md-auto">
+                <a
+                    class="fr-tabs__tab"
+                    href="{% url 'conventions:loyer_simulateur' %}"
+                    title="Calculatrice de loyers"
+                    aria-selected="{% if request.resolver_match.view_name == "conventions:loyer_simulateur" %}true{% else %}false{% endif %}"
+                >
+                    <span class="fr-link"><span aria-hidden="true" class="fr-icon-equalizer-fill"></span> Calculatrice de loyers</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -46,7 +46,6 @@
 
                         {# Champs administration #}
                         {% if administration_query %}
-
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-3">
                                 <div class="">
                                     {% url 'users:search_administration' as search_administration_url %}
@@ -203,11 +202,11 @@
                         </div>
                     </div>
                 </details>
-                {% if conventions|length > 0 %}
+                {% if filtered_conventions_count > 0 %}
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table aria-label="Conventions">
                             {% if filtered_conventions_count != all_conventions_count %}
-                                <caption><em>{{ filtered_conventions_count }} convention{{ all_conventions_count|pluralize }} correspond{{ conventions|length|pluralize:'ent' }} à votre recherche</em></caption>
+                                <caption><em>{{ filtered_conventions_count }} convention{{ all_conventions_count|pluralize }} correspond{{ filtered_conventions_count|pluralize:'ent' }} à votre recherche</em></caption>
                             {% endif %}
                             <thead>
                                 <tr class="th_inline">
