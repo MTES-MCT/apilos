@@ -55,6 +55,10 @@ from upload.services import UploadService
 from users.models import User
 
 
+class AuthenticatedHttpRequest(HttpRequest):
+    user: User
+
+
 class RecapitulatifView(BaseConventionView):
     def _get_convention(self, convention_uuid):
         return (
@@ -96,7 +100,7 @@ class RecapitulatifView(BaseConventionView):
 
     # pylint: disable=W0613
     @has_campaign_permission("convention.change_convention")
-    def post(self, request: HttpRequest, convention_uuid: int):
+    def post(self, request: AuthenticatedHttpRequest, convention_uuid: int):
         # pylint: disable=unused-argument
         service = ConventionRecapitulatifService(
             request=request, convention=self.convention
@@ -212,7 +216,7 @@ class ConventionSearchView(ABC, LoginRequiredMixin, View):
             for key, value in self._TABS.items()
         }
 
-    def get(self, request: HttpRequest):
+    def get(self, request: AuthenticatedHttpRequest):
         search_service = UserConventionSearchService(
             user=request.user,
             statuses=self.get_convention_statuses(),
