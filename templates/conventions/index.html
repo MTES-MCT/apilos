@@ -17,7 +17,6 @@
 {% block content %}
     {% with total_conventions=nb_active_conventions|add:nb_completed_conventions %}
         {% if total_conventions > 0 %}
-
             <div class="fr-container-fluid ds_banner">
                 <div class="fr-container">
                     <div class="fr-grid-row fr-mt-2w fr-grid-row--gutters">
@@ -63,7 +62,7 @@
                         <div class="fr-container">
                             <ul class="fr-tabs__list" role="tablist" aria-label="Liste des conventions">
                                 {% for name, tab in tabs.items %}
-                                  {% include 'conventions/home/_tab.html' with tab_active=tab.is_active count=tab.count title=tab.title route=tab.route %}
+                                    {% include 'conventions/home/_tab.html' with tab_active=tab.is_active count=tab.count title=tab.title route=tab.route %}
                                 {% endfor %}
                                 <li class="fr-ml-md-auto">
                                     <a class="fr-tabs__tab " href="{% url 'conventions:loyer_simulateur' %}" title="Calculatrice de loyers" aria-selected="false">

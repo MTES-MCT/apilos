@@ -35,9 +35,7 @@ from conventions.permissions import (
 from conventions.services import convention_generator
 from conventions.services.avenants import convention_post_action
 from conventions.services.convention_generator import fiche_caf_doc
-from conventions.services.conventions import (
-    convention_sent,
-)
+from conventions.services.conventions import convention_sent
 from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
@@ -245,6 +243,8 @@ class ConventionSearchView(ABC, LoginRequiredMixin, View):
                 "search_input": request.GET.get("search_input", ""),
                 "bailleur_query": self._bailleur_query(request.user),
                 "administration_query": self._administration_query(request.user),
+                # FIXME: comprendre d'où vient cette variable
+                "nb_completed_conventions": 0,
             },
         )
 

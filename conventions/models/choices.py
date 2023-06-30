@@ -168,6 +168,7 @@ class ConventionStatut(Enum):
 
     @classmethod
     def get_by_label(cls, label):
+        # FIXME: supprimer cette conditionnelle ou vérifier son utilité
         if not label:
             return None
         return ReverseConventionStatut.get_by_label(label)
