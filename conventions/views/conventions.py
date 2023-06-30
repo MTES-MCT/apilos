@@ -297,6 +297,8 @@ class ConventionTermineesSearchView(ConventionSearchView):
 class LoyerSimulateurView(ConventionTabsMixin, LoginRequiredMixin, View):
     def post(self, request: AuthenticatedHttpRequest):
         loyer_simulateur_form = LoyerSimulateurForm(request.POST)
+        montant_actualise = None
+        annee_validite = None
 
         if loyer_simulateur_form.is_valid():
             montant_actualise = LoyerRedevanceUpdateComputer.compute_loyer_update(
