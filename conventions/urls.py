@@ -7,6 +7,7 @@ from .views import (
     ConventionEnInstructionSearchView,
     ConventionTermineesSearchView,
     ActiveConventionActivesSearchView,
+    LoyerSimulateurView,
 )
 
 urlpatterns = [
@@ -21,7 +22,7 @@ urlpatterns = [
     path("resiliees", ConventionTermineesSearchView.as_view(), name="search_resiliees"),
     path(
         "simulateur-de-loyer",
-        views.loyer_simulateur,
+        LoyerSimulateurView.as_view(),
         name="loyer_simulateur",
     ),
     # Pages de second niveau : onglet de la vue convention

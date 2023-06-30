@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import List, Sequence
+from typing import List
 
 from django.conf import settings
-from django.db.models import QuerySet
 from django.core.paginator import Paginator
+from django.db.models import QuerySet
 
 from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
 from instructeurs.models import Administration
-from programmes.models import Programme, Financement
+from programmes.models import Programme
 from users.models import User
 
 
@@ -29,20 +29,18 @@ class ConventionSearchBaseService(ABC):
         """
         return self.get_query_set().count()
 
-    def get_results(
-        self, page: int = 1, size: int | None = None
-    ) -> Sequence[Convention]:
+    def paginate(self, size: int | None = None) -> Paginator:
         """
         Return the paginated list of matched conventions
         """
         return Paginator(
             self.get_query_set(), size or settings.APILOS_PAGINATION_PER_PAGE
-        ).get_page(page)
+        )
 
 
 class AvenantListSearchService(ConventionSearchBaseService):
     def __init__(self, convention: Convention, order_by_numero: bool = False):
-        self.convention: convention = (
+        self.convention: Convention = (
             convention.parent if convention.is_avenant() else convention
         )
         self.order_by_numero: bool = order_by_numero
@@ -60,7 +58,7 @@ class AvenantListSearchService(ConventionSearchBaseService):
 
 class ProgrammeConventionSearchService(ConventionSearchBaseService):
     def __init__(self, programme: Programme, order_by: str | None = None):
-        self.programme: programme
+        self.programme: Programme = programme
         self.order_by: str | None = order_by
 
     def get_base_query_set(self) -> QuerySet:

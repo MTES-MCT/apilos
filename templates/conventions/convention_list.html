@@ -206,11 +206,9 @@
                 {% if conventions|length > 0 %}
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table aria-label="Conventions">
-                            {# TODO réactiver ceci
-                            {% if conventions.paginated_conventions.paginator.count != conventions.total_conventions %}
-                                <caption><em>{{ conventions.paginated_conventions.paginator.count }} convention{{ conventions.paginated_conventions.paginator.count|pluralize }} correspond{{ conventions.paginated_conventions.paginator.count|pluralize:'ent' }} à votre recherche</em></caption>
+                            {% if filtered_conventions_count != all_conventions_count %}
+                                <caption><em>{{ filtered_conventions_count }} convention{{ all_conventions_count|pluralize }} correspond{{ conventions|length|pluralize:'ent' }} à votre recherche</em></caption>
                             {% endif %}
-                            #}
                             <thead>
                                 <tr class="th_inline">
                                     <th title="Statut de la convention" scope="col">
@@ -247,7 +245,6 @@
                             </thead>
                             <tbody>
                                 {% for convention in conventions %}
-
                                     <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
                                         <td title="{{convention.statut_for_template.statut_display}}">
                                             {% include "conventions/home/statut_tag.html"  %}

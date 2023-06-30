@@ -41,22 +41,8 @@
                 </div>
             </div>
         </div>
-        {# Navigation tabs #}
-        <div class="fr-container-fluid">
-            <div class="fr-tabs fr-col-12">
-                <div class="fr-container">
-                    <ul class="fr-tabs__list" role="tablist" aria-label="Liste des conventions">
-                        {% include 'conventions/home/_tab.html' with tab_active=false count=nb_active_conventions label='en cours' title='Conventions en cours' route='conventions:search_active' %}
-                        {% include 'conventions/home/_tab.html' with tab_active=false count=nb_completed_conventions label='finalisées' title='Conventions finalisées' route='conventions:search_completed' %}
-                        <li class="fr-ml-md-auto">
-                            <div class="fr-tabs__tab" aria-selected="true">
-                                <span aria-hidden="true" class="fr-icon-equalizer-fill"></span> Calculatrice de loyers
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+
+        {% include "./_partial/tabs.html" %}
     </div>
 
     {# Page's actual inner content #}

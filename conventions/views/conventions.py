@@ -127,7 +127,7 @@ class RecapitulatifView(BaseConventionView):
         )
 
 
-class ConventionSearchView(ABC, LoginRequiredMixin, View):
+class ConventionTabsMixin:
     _TABS = {
         "EN_INSTRUCTION": {
             "title": "en instruction",
@@ -155,15 +155,38 @@ class ConventionSearchView(ABC, LoginRequiredMixin, View):
         },
     }
 
-    @abstractmethod
-    def get_tab_name(self) -> str:
-        pass
-
     def get_convention_statuses(self) -> List[ConventionStatut]:
-        return ConventionSearchView._TABS[self.get_tab_name()]["statuses"]
+        return ConventionTabsMixin._TABS[self.get_tab_name()]["statuses"]
 
+    def _get_tabs_for(self, user: User):
+        # TODO replace by actual query
+        return {
+            key: value
+            | {
+                "count": user.conventions()
+                .filter(statut__in=map(lambda s: s.label, value["statuses"]))
+                .count(),
+                "is_active": key == self.get_tab_name(),
+            }
+            for key, value in self._TABS.items()
+        }
+
+    @property
+    def nb_completed_conventions(self):
+        return self.request.user.conventions(active=False).count()
+
+    @property
+    def nb_active_conventions(self):
+        return self.request.user.conventions(active=True).count()
+
+
+class ConventionSearchView(ABC, ConventionTabsMixin, LoginRequiredMixin, View):
     @abstractmethod
     def get_default_order_by(self):
+        pass
+
+    @abstractmethod
+    def get_tab_name(self) -> str:
         pass
 
     def _administration(self, uuid: str | None) -> Administration | None:
@@ -203,19 +226,6 @@ class ConventionSearchView(ABC, LoginRequiredMixin, View):
             for statut in self.get_convention_statuses()
         ]
 
-    def _tab_data(self, user: User):
-        # TODO replace by actual query
-        return {
-            key: value
-            | {
-                "count": user.conventions()
-                .filter(statut__in=map(lambda s: s.label, value["statuses"]))
-                .count(),
-                "is_active": key == self.get_tab_name(),
-            }
-            for key, value in self._TABS.items()
-        }
-
     def get(self, request: AuthenticatedHttpRequest):
         search_service = UserConventionSearchService(
             user=request.user,
@@ -234,7 +244,9 @@ class ConventionSearchView(ABC, LoginRequiredMixin, View):
                 ConventionSearchView.get_uuid_value(request, "administration")
             ),
         )
-        tabs = self._tab_data(request.user)
+        tabs = self._get_tabs_for(self.request.user)
+
+        paginator = search_service.paginate()
 
         return render(
             request,
@@ -242,18 +254,16 @@ class ConventionSearchView(ABC, LoginRequiredMixin, View):
             {
                 "financements": Financement.choices,
                 "tabs": tabs,
-                "total_conventions": sum(map(lambda tab: tab["count"], tabs.values())),
-                "conventions": search_service.get_results(request.GET.get("page", 1)),
+                "all_conventions_count": sum(
+                    map(lambda tab: tab["count"], tabs.values())
+                ),
+                "filtered_conventions_count": paginator.count,
+                "conventions": paginator.get_page(request.GET.get("page", 1)),
                 "search_input": request.GET.get("search_input", ""),
                 "bailleur_query": self._bailleur_query(request.user),
                 "administration_query": self._administration_query(request.user),
-                # FIXME: comprendre d'où vient cette variable
-                # "nb_completed_conventions": 0,
-                # "nb_active_conventions": 1,
-                "nb_active_conventions": request.user.conventions(active=True).count(),
-                "nb_completed_conventions": request.user.conventions(
-                    active=False
-                ).count(),
+                "nb_active_conventions": self.nb_active_conventions,
+                "nb_completed_conventions": self.nb_completed_conventions,
             },
         )
 
@@ -286,12 +296,8 @@ class ConventionTermineesSearchView(ConventionSearchView):
         return "televersement_convention_signee_le"
 
 
-@login_required
-def loyer_simulateur(request):
-    annee_validite = None
-    montant_actualise = None
-
-    if request.method == "POST":
+class LoyerSimulateurView(ConventionTabsMixin, LoginRequiredMixin, View):
+    def post(self, request: AuthenticatedHttpRequest):
         loyer_simulateur_form = LoyerSimulateurForm(request.POST)
 
         if loyer_simulateur_form.is_valid():
@@ -307,25 +313,37 @@ def loyer_simulateur(request):
             annee_validite = loyer_simulateur_form.cleaned_data[
                 "date_actualisation"
             ].year
-    else:
+
+        return render(
+            request,
+            "conventions/loyer.html",
+            {
+                "form": loyer_simulateur_form,
+                "tabs": self._get_tabs_for(self.request.user),
+                "montant_actualise": montant_actualise,
+                "annee_validite": annee_validite,
+                "nb_active_conventions": self.nb_active_conventions,
+                "nb_completed_conventions": self.nb_completed_conventions,
+            },
+        )
+
+    def get(self, request: AuthenticatedHttpRequest):
         loyer_simulateur_form = LoyerSimulateurForm(
             initial=dict(
                 date_actualisation=date.today().isoformat(),
                 nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
             )
         )
-
-    return render(
-        request,
-        "conventions/loyer.html",
-        {
-            "form": loyer_simulateur_form,
-            "montant_actualise": montant_actualise,
-            "annee_validite": annee_validite,
-            "nb_active_conventions": request.user.conventions(active=True).count(),
-            "nb_completed_conventions": request.user.conventions(active=False).count(),
-        },
-    )
+        return render(
+            request,
+            "conventions/loyer.html",
+            {
+                "form": loyer_simulateur_form,
+                "tabs": self._get_tabs_for(self.request.user),
+                "nb_active_conventions": self.nb_active_conventions,
+                "nb_completed_conventions": self.nb_completed_conventions,
+            },
+        )
 
 
 @require_POST
