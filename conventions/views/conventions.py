@@ -248,7 +248,12 @@ class ConventionSearchView(ABC, LoginRequiredMixin, View):
                 "bailleur_query": self._bailleur_query(request.user),
                 "administration_query": self._administration_query(request.user),
                 # FIXME: comprendre d'où vient cette variable
-                "nb_completed_conventions": 0,
+                # "nb_completed_conventions": 0,
+                # "nb_active_conventions": 1,
+                "nb_active_conventions": request.user.conventions(active=True).count(),
+                "nb_completed_conventions": request.user.conventions(
+                    active=False
+                ).count(),
             },
         )
 
