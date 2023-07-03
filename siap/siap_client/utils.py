@@ -308,7 +308,7 @@ def _nature_logement(nature_logement_from_siap: str) -> TypeOperation:
     elif nature_logement_from_siap in ["LOO", NatureLogement.LOGEMENTSORDINAIRES]:
         nature_logement = NatureLogement.LOGEMENTSORDINAIRES
     else:
-        raise InconsistentDataSIAPException("Missing NatureLogement")
+        raise InconsistentDataSIAPException(f"The NatureLogement value coming from SIAP is missing or unexpected : {nature_logement_from_siap}")
     return nature_logement
 
 
