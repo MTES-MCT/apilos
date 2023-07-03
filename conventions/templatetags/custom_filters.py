@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 from re import IGNORECASE
 from re import compile as rcompile
 from re import escape as rescape
@@ -222,8 +221,11 @@ def without_missing_files(files):
 
     files_as_json = json.loads(files)
     for convention_id, file in files_as_json.items():
-        instance = UploadedFile(uuid=file["convention_id"], filename=file["filename"])
-        if not Path.is_file(Path(instance.filepath(convention_id))):
+        try:
+            UploadedFile.objects.get(
+                uuid=file["convention_id"], filename=file["filename"]
+            )
+        except UploadedFile.DoesNotExist:
             del files_as_json[convention_id]
 
     return files_as_json
