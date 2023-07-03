@@ -46,7 +46,7 @@ class AdministrationsModelsTest(TestCase):
                 user_instructeur.has_perm(perm, user_instructeur)
                 self.fail(
                     f"has_perm '{perm}' "
-                    + "with non convention object should raise an Exception"
+                    "with non convention object should raise an Exception"
                 )
             except Exception:
                 pass
