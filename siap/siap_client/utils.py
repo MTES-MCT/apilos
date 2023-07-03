@@ -156,12 +156,12 @@ def _get_address_from_locdata(loc_data: dict) -> Tuple[str]:
 def get_or_create_programme(
     programme_from_siap: dict, bailleur: Bailleur, administration: Administration
 ) -> Programme:
+    nature_logement = NatureLogement.LOGEMENTSORDINAIRES
     if (
         "sansTravaux" in programme_from_siap["donneesOperation"]
         and programme_from_siap["donneesOperation"]["sansTravaux"]
     ):
         type_operation = TypeOperation.SANSTRAVAUX
-        nature_logement = NatureLogement.LOGEMENTSORDINAIRES
     else:
         type_operation = _type_operation(
             programme_from_siap["donneesOperation"]["sousNatureOperation"]
@@ -197,13 +197,12 @@ def get_or_create_programme(
             "nature_logement": nature_logement,
         },
     )
-    # force type opération = sans travaux
-    if (
-        type_operation == TypeOperation.SANSTRAVAUX
-        and programme.type_operation != TypeOperation.SANSTRAVAUX
-    ):
+    # force nature_logement
+    programme.nature_logement = nature_logement
+    # force type operation if it is sans travaux
+    if type_operation == TypeOperation.SANSTRAVAUX:
         programme.type_operation = TypeOperation.SANSTRAVAUX
-        programme.save()
+    programme.save()
     return programme
 
 
@@ -292,21 +291,24 @@ def _type_operation(type_operation_from_siap: str) -> TypeOperation:
 
 
 def _nature_logement(nature_logement_from_siap: str) -> TypeOperation:
-    nature_logement = NatureLogement.LOGEMENTSORDINAIRES
     if nature_logement_from_siap in ["ALF", NatureLogement.AUTRE]:
         nature_logement = NatureLogement.AUTRE
-    if nature_logement_from_siap in ["HEB", NatureLogement.HEBERGEMENT]:
+    elif nature_logement_from_siap in ["HEB", NatureLogement.HEBERGEMENT]:
         nature_logement = NatureLogement.HEBERGEMENT
-    if nature_logement_from_siap in ["RES", NatureLogement.RESISDENCESOCIALE]:
+    elif nature_logement_from_siap in ["RES", NatureLogement.RESISDENCESOCIALE]:
         nature_logement = NatureLogement.RESISDENCESOCIALE
-    if nature_logement_from_siap in ["PEF", NatureLogement.PENSIONSDEFAMILLE]:
+    elif nature_logement_from_siap in ["PEF", NatureLogement.PENSIONSDEFAMILLE]:
         nature_logement = NatureLogement.PENSIONSDEFAMILLE
-    if nature_logement_from_siap in ["REA", NatureLogement.RESIDENCEDACCUEIL]:
+    elif nature_logement_from_siap in ["REA", NatureLogement.RESIDENCEDACCUEIL]:
         nature_logement = NatureLogement.RESIDENCEDACCUEIL
-    if nature_logement_from_siap in ["REU", NatureLogement.RESIDENCEUNIVERSITAIRE]:
+    elif nature_logement_from_siap in ["REU", NatureLogement.RESIDENCEUNIVERSITAIRE]:
         nature_logement = NatureLogement.RESIDENCEUNIVERSITAIRE
-    if nature_logement_from_siap in ["RHVS", NatureLogement.RHVS]:
+    elif nature_logement_from_siap in ["RHVS", NatureLogement.RHVS]:
         nature_logement = NatureLogement.RHVS
+    elif nature_logement_from_siap in ["LOO", NatureLogement.LOGEMENTSORDINAIRES]:
+        nature_logement = NatureLogement.LOGEMENTSORDINAIRES
+    else:
+        raise InconsistentDataSIAPException(f"The NatureLogement value coming from SIAP is missing or unexpected : {nature_logement_from_siap}")
     return nature_logement
 
 
