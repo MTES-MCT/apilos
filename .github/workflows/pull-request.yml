@@ -2,6 +2,14 @@ name: "coverage"
 on:
   - pull_request
 
+
+# Explicitely set permissions to allow Dependabot workflow runs to write in the PR
+# for coverage's reporting.
+# By default, these are read-only when the actions are ran by Dependabot
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions#changing-github_token-permissions
+permissions:
+  pull-requests: write
+
 jobs:
   coverage:
     name: Test & Coverage
