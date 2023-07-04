@@ -1,4 +1,6 @@
-{% load static custom_filters %}
+{% load static %}
+
+{% load custom_filters %}
 
 <div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{form_input.id_for_label}}_group">
     <div class="fr-mb-2w">
@@ -73,9 +75,7 @@
                 type="hidden"
                 id="{{form_input_files.id_for_label}}"
                 name="{{form_input_files.html_name}}"
-                value="{{form_input_files.value|without_missing_files}}"
-            />
-
+                value="{{form_input_files.value}}" />
             <div id="{{form_input_files.id_for_label}}_errors"></div>
             <input
                 type="hidden"

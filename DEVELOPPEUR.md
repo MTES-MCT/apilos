@@ -18,7 +18,6 @@ Il est conseillé d'installer un environnment virtuel pour isoler l'environnemen
 - Node >=18.14
 - docker
 - docker-compose
-- clamav (optionnel)
 
 ### Environment virtuel python
 
@@ -108,32 +107,6 @@ Ajout de bailleurs, administrations, programmes et lots de test
 ```sh
 python manage.py load_test_fixtures
 ```
-
-### ClamAV (optionnel)
-
-ClamAV est utilisé pour le scan des fichiers uploadés.
-Il est disponible dans sur la majorité des [systèmes d'exploitation](https://www.clamav.net/downloads).
-
-Sur les systèmes `debian` (ubuntu, Windows Subsystem for Linux) :
-```sh
-apt install clamav
-```
-
-Sur MacOS, la dépendance est disponible via Homebrew :
-```sh
-brew install clamav
-```
-
-ClamAV requiert une étape de configuration sur certains systèmes d'exploitations.
-Celle-ci consiste à copier des fichier de configuration :
-
-```sh
-# Sur MacOS, avec ClamAV installé via Homebrew
-cp /opt/homebrew/etc/clamav/freshclam.conf.sample /opt/homebrew/etc/clamav/freshclam.conf
-cp /opt/homebrew/etc/clamd/clamd.conf.sample /opt/homebrew/etc/clamd/clamd.conf
-
-```
-
 
 ## Qualité de code
 
