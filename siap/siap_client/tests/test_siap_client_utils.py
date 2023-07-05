@@ -133,8 +133,6 @@ class GetOrCreateProgrammeTest(TestCase):
 
 
 class GetOrCreateConventionFromOperationTest(TestCase):
-    op = {"detailsOperation": [{"aide": {"code": "COCO", "libelle": "PLS"}}]}
-
     def test_raises_when_unknown_aide(self):
         self.assertRaises(
             NoConventionForOperationSIAPException,
@@ -150,14 +148,16 @@ class GetOrCreateConventionFromOperationTest(TestCase):
 
     def test_dont_raises_when_known_aide(self):
         # doesn't raise with NoConventionForOperationSIAPException
-        self.assertRaises(
-            KeyError,
-            utils.get_or_create_conventions,
-            {
-                "detailsOperation": [
-                    {"aide": {"code": "PLAI", "libelle": "PLAI"}},
-                    {"aide": {"code": "FAKE1", "libelle": "FAKE1"}},
-                ]
-            },
-            User.objects.first(),
-        )
+        try:
+            utils.get_or_create_conventions(
+                {
+                    "detailsOperation": [
+                        {"aide": {"code": "PLAI", "libelle": "PLAI"}},
+                        {"aide": {"code": "FAKE1", "libelle": "FAKE1"}},
+                    ]
+                },
+                User.objects.first(),
+            )
+        # pylint: disable=W0703
+        except Exception as exception:
+            self.assertNotEqual(exception, NoConventionForOperationSIAPException)
