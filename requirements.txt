@@ -258,9 +258,9 @@ et-xmlfile==1.1.0 \
     --hash=sha256:8eb9e2bc2f8c97e37a2dc85a09ecdcdec9d8a396530a6d5a33b30b9a92da0c5c \
     --hash=sha256:a2ba85d1d6a74ef63837eed693bcb89c3f752169b0e3e7ae5b16ca5e1b3deada
     # via openpyxl
-faker==18.11.1 \
-    --hash=sha256:02980fe15acd58861305568bae0a277680792a505a5a45a309d352f79c452dd1 \
-    --hash=sha256:df4ee36d058a6a96de9d5e645571ef8536946a0b62db841494f8a3bc3bcdc5af
+faker==18.11.2 \
+    --hash=sha256:21c2c29638e98502f3bba9ad6a4f07a4b09c5e2150bb491ff02411a5888f6955 \
+    --hash=sha256:ec6e2824bb1d3546b36c156324b9df6bca5a3d6d03adf991e6a5586756dcab9d
     # via -r requirements.in
 gunicorn==20.1.0 \
     --hash=sha256:9dcc4547dbb1cb284accfb15ab5667a0e5d1881cc443e0677b4882a4067a807e \
@@ -765,6 +765,5 @@ xlsxwriter==3.0.3 \
     # via django-sql-explorer
 
 # WARNING: The following packages were not pinned, but pip requires them to be
-# pinned when the requirements file includes hashes and the requirement is not
-# satisfied by a package already installed. Consider using the --allow-unsafe flag.
+# pinned when the requirements file includes hashes. Consider using the --allow-unsafe flag.
 # setuptools
