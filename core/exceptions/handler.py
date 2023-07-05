@@ -2,75 +2,26 @@ import sys
 
 from django.http import JsonResponse
 from django.shortcuts import render
-
-from core.exceptions.types import (
-    AssociationHLMSIAPException,
-    HabilitationSIAPException,
-    InconsistentDataSIAPException,
-    NotHandledBailleurPriveSIAPException,
-    TimeoutSIAPException,
-    UnauthorizedSIAPException,
-    UnavailableServiceSIAPException,
-)
+from core.exceptions.types import SIAPException
 
 
 def handle_error_500(request):
-    exception_type, _, _ = sys.exc_info()
+    exception_type, exception, _ = sys.exc_info()
 
-    if exception_type in [
-        UnauthorizedSIAPException,
-        TimeoutSIAPException,
-        UnavailableServiceSIAPException,
-        AssociationHLMSIAPException,
-        InconsistentDataSIAPException,
-        HabilitationSIAPException,
-        NotHandledBailleurPriveSIAPException,
-    ]:
-        if request.path.startswith("/api-siap"):
-            return JsonResponse(
-                {
-                    "error": "Une erreur est survenue lors de la communication avec la"
-                    + " plateforme SIAP. Veuillez réessayer ultérieurement."
-                },
-                status=500,
-            )
-        if exception_type == NotHandledBailleurPriveSIAPException:
-            return render(
-                request,
-                "500.html",
-                {
-                    "specific_error": "not_handled_bailleur_prive",
-                },
-                status=500,
-            )
-        if exception_type == AssociationHLMSIAPException:
-            return render(
-                request,
-                "500.html",
-                {
-                    "specific_error": "not_handled_association_hlm",
-                },
-                status=500,
-            )
-
-        return render(
-            request,
-            "500.html",
+    if request.path.startswith("/api-siap") and isinstance(exception, SIAPException):
+        return JsonResponse(
             {
-                "specific_error": """
-                    <p class="fr-mb-3w">
-                        Une erreur est survenue lors de la communication avec la plateforme SIAP.
-                        Veuillez réessayer ultérieurement.
-                    </p>
-                """,
+                "error": "Une erreur est survenue lors de la communication avec la"
+                + " plateforme SIAP. Veuillez réessayer ultérieurement."
             },
             status=500,
         )
+
     return render(
         request,
         "500.html",
         {
-            "specific_error": "",
+            "exception_type": exception_type.__name__,
         },
         status=500,
     )

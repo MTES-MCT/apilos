@@ -1,11 +1,15 @@
 from django.test import TestCase
 
 from bailleurs.models import Bailleur
-from core.exceptions.types import InconsistentDataSIAPException
+from core.exceptions.types import (
+    InconsistentDataSIAPException,
+    NoConventionForOperationSIAPException,
+)
 from core.tests import utils_fixtures
 from instructeurs.models import Administration
 from programmes.models.choices import NatureLogement, TypeOperation
 from siap.siap_client import utils
+from users.models import User
 
 
 class GetAddressFromLocdataTest(TestCase):
@@ -126,3 +130,34 @@ class GetOrCreateProgrammeTest(TestCase):
             Bailleur.objects.first(),
             Administration.objects.first(),
         )
+
+
+class GetOrCreateConventionFromOperationTest(TestCase):
+    def test_raises_when_unknown_aide(self):
+        self.assertRaises(
+            NoConventionForOperationSIAPException,
+            utils.get_or_create_conventions,
+            {
+                "detailsOperation": [
+                    {"aide": {"code": "FAKE1", "libelle": "FAKE1"}},
+                    {"aide": {"code": "FAKE2", "libelle": "FAKE2"}},
+                ]
+            },
+            User.objects.first(),
+        )
+
+    def test_dont_raises_when_known_aide(self):
+        # doesn't raise with NoConventionForOperationSIAPException
+        try:
+            utils.get_or_create_conventions(
+                {
+                    "detailsOperation": [
+                        {"aide": {"code": "PLAI", "libelle": "PLAI"}},
+                        {"aide": {"code": "FAKE1", "libelle": "FAKE1"}},
+                    ]
+                },
+                User.objects.first(),
+            )
+        # pylint: disable=W0703
+        except Exception as exception:
+            self.assertNotEqual(exception, NoConventionForOperationSIAPException)

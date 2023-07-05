@@ -2,29 +2,33 @@ class SIAPException(Exception):
     pass
 
 
-class HabilitationSIAPException(Exception):
+class HabilitationSIAPException(SIAPException):
     pass
 
 
-class TimeoutSIAPException(Exception):
+class TimeoutSIAPException(SIAPException):
     pass
 
 
-class AssociationHLMSIAPException(Exception):
+class AssociationHLMSIAPException(SIAPException):
     pass
 
 
-class UnauthorizedSIAPException(Exception):
+class UnauthorizedSIAPException(SIAPException):
     pass
 
 
-class UnavailableServiceSIAPException(Exception):
+class UnavailableServiceSIAPException(SIAPException):
     pass
 
 
-class InconsistentDataSIAPException(Exception):
+class NoConventionForOperationSIAPException(SIAPException):
     pass
 
 
-class NotHandledBailleurPriveSIAPException(Exception):
+class InconsistentDataSIAPException(SIAPException):
+    pass
+
+
+class NotHandledBailleurPriveSIAPException(SIAPException):
     pass
