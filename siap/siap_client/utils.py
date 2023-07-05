@@ -5,6 +5,7 @@ from bailleurs.models import Bailleur, NatureBailleur
 from conventions.models import Convention, ConventionStatut
 from core.exceptions.types import (
     InconsistentDataSIAPException,
+    NoConventionForOperationSIAPException,
     NotHandledBailleurPriveSIAPException,
 )
 from instructeurs.models import Administration
@@ -20,6 +21,11 @@ from users.models import User
 
 
 def get_or_create_conventions(operation: dict, user: User):
+    op_aides = [aide["aide"]["code"] for aide in operation["detailsOperation"]]
+    filtered_op_aides = [aide for aide in op_aides if aide in Financement.values]
+    if len(filtered_op_aides) == 0:
+        raise NoConventionForOperationSIAPException()
+
     try:
         # Waiting fix on SIAP
         # https://airtable.com/appqEzValO6eQoHbM/tblNIOUJttSKoH866/viwarZ7MJFl9MSfsi/recuXwXkRXzvssine?blocks=hide
@@ -308,7 +314,9 @@ def _nature_logement(nature_logement_from_siap: str) -> TypeOperation:
     elif nature_logement_from_siap in ["LOO", NatureLogement.LOGEMENTSORDINAIRES]:
         nature_logement = NatureLogement.LOGEMENTSORDINAIRES
     else:
-        raise InconsistentDataSIAPException(f"The NatureLogement value coming from SIAP is missing or unexpected : {nature_logement_from_siap}")
+        raise InconsistentDataSIAPException(
+            f"The NatureLogement value coming from SIAP is missing or unexpected : {nature_logement_from_siap}"
+        )
     return nature_logement
 
 
