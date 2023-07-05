@@ -21,10 +21,15 @@ from users.models import User
 
 
 def get_or_create_conventions(operation: dict, user: User):
-    op_aides = [aide["aide"]["code"] for aide in operation["detailsOperation"]]
-    filtered_op_aides = [aide for aide in op_aides if aide in Financement.values]
-    if len(filtered_op_aides) == 0:
-        raise NoConventionForOperationSIAPException()
+    if operation["detailsOperation"]:
+        op_aides = [
+            aide["aide"]["code"]
+            for aide in operation["detailsOperation"]
+            if "aide" in aide and "code" in aide["aide"]
+        ]
+        filtered_op_aides = [aide for aide in op_aides if aide in Financement.values]
+        if len(filtered_op_aides) == 0:
+            raise NoConventionForOperationSIAPException()
 
     try:
         # Waiting fix on SIAP
