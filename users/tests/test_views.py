@@ -1,6 +1,5 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse
-from django.conf import settings
 
 
 @override_settings(CERBERE=None)
@@ -53,7 +52,7 @@ class UserViewTests(TestCase):
         response = self.client.get(reverse("conventions:index"))
         self.assertRedirects(
             response,
-            reverse("conventions:search_active"),
+            reverse("conventions:search_instruction"),
             fetch_redirect_response=False,
         )
         response = self.client.get(reverse("conventions:search_active"))
