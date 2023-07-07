@@ -109,7 +109,7 @@ class ConventionStatut(ReverseEnumMixin, Enum):
         "question-answer",
     )
     A_SIGNER = Definition(
-        "4. À signer",
+        "4. A signer",
         StatutByRole("À signer"),
         StatutByRole("À signer"),
         "draft",
