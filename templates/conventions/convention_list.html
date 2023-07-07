@@ -81,13 +81,13 @@
 
                         {# Champs commune #}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3">
-                            <input class="fr-input" placeholder="Commune" type="text" name="ville" value="{{ conventions.ville|default_if_none:"" }}" />
+                            <input class="fr-input" placeholder="Commune" type="text" name="ville" value="{{ request.GET.ville }}" />
                         </div>
 
                         {# Champs département (réservé aux utilsiateurs staff) #}
                         {% if request.user.is_staff %}
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-3">
-                                <input class="fr-input" placeholder="Département" type="text" name="departement_input" value="{{ conventions.departement_input|default_if_none:"" }}" />
+                                <input class="fr-input" placeholder="Département" type="text" name="departement_input" value="{{ request.GET.departement_input }}" />
                             </div>
                         {% endif %}
 
@@ -97,10 +97,10 @@
                             <div class="">
                                 <select class="fr-select" id="cstatut" name="cstatut">
                                     <option value="">Statut</option>
-                                    {% for statut in statuts %}
-                                        <option value="{{ statut.0 }}"
-                                            {% if statut.0  == conventions.statut.name %}selected{% endif %}>
-                                            {{ statut.1 }}
+                                    {% for value, label in statuts %}
+                                        <option value="{{ label }}"
+                                            {% if label == request.GET.cstatut %}selected{% endif %}>
+                                            {{ label }}
                                         </option>
                                     {% endfor %}
                                 </select>
@@ -109,13 +109,12 @@
                         {# Champs financement #}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
                             <div class="">
-
                                 <select class="fr-select" name="financement">
                                     <option value="">Financement</option>
-                                    {% for financement in financements %}
-                                        <option value="{{ financement.value }}"
-                                            {% if financement.value  == conventions.financement_filter %}selected{% endif %}>
-                                            {{ financement.label }}
+                                    {% for value, label in financements %}
+                                        <option value="{{ label }}"
+                                            {% if value == request.GET.financement %}selected{% endif %}>
+                                            {{ label }}
                                         </option>
                                     {% endfor %}
                                 </select>

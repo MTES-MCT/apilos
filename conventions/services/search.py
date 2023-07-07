@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from collections import defaultdict
 from typing import List
 
 from django.conf import settings
@@ -13,28 +14,32 @@ from users.models import User
 
 
 class ConventionSearchBaseService(ABC):
+    order_by = None
+    filters = defaultdict()
+
     @abstractmethod
-    def get_base_query_set(self) -> QuerySet:
+    def get_base_queryset(self) -> QuerySet:
         pass
 
     def get_order_by_fields(self) -> List:
-        return ["cree_le"]
+        if not self.order_by:
+            return ["cree_le"]
+        return [self.order_by]
 
-    def get_query_set(self) -> QuerySet:
-        return self.get_base_query_set().order_by(*self.get_order_by_fields())
+    def get_count_for_tab(self, tab):
+        filters = {**self.filters, "statut__in": [statut.label for statut in tab]}
+        return self.get_base_queryset().filter(**filters).count()
 
-    def get_total(self) -> int:
-        """
-        Return the total number of lines targeted by the base query, without filters
-        """
-        return self.get_query_set().count()
+    def get_queryset(self) -> QuerySet:
+        return (
+            self.get_base_queryset()
+            .filter(**self.filters)
+            .order_by(*self.get_order_by_fields())
+        )
 
     def paginate(self, size: int | None = None) -> Paginator:
-        """
-        Return the paginated list of matched conventions
-        """
         return Paginator(
-            self.get_query_set(), size or settings.APILOS_PAGINATION_PER_PAGE
+            self.get_queryset(), size or settings.APILOS_PAGINATION_PER_PAGE
         )
 
 
@@ -48,7 +53,7 @@ class AvenantListSearchService(ConventionSearchBaseService):
     def get_order_by_fields(self) -> List:
         return ["numero"] if self.order_by_numero else super().get_order_by_fields()
 
-    def get_base_query_set(self) -> QuerySet:
+    def get_base_queryset(self) -> QuerySet:
         return (
             self.convention.avenants.all()
             .prefetch_related("programme")
@@ -61,7 +66,7 @@ class ProgrammeConventionSearchService(ConventionSearchBaseService):
         self.programme: Programme = programme
         self.order_by: str | None = order_by
 
-    def get_base_query_set(self) -> QuerySet:
+    def get_base_queryset(self) -> QuerySet:
         return (
             Convention.objects.filter(programme=self.programme)
             .prefetch_related("programme")
@@ -100,18 +105,21 @@ class UserConventionSearchService(ConventionSearchBaseService):
         self.bailleur: Bailleur | None = bailleur
         self.administration: Administration | None = administration
 
-    def get_base_query_set(self) -> QuerySet:
+    def get_base_queryset(self) -> QuerySet:
+        self.filters["statut__in"] = map(lambda s: s.label, self.statuses)
+
+        if self.statut:
+            self.filters["statut"] = self.statut.label
+
+        if self.commune:
+            self.filters["programme__ville__icontains"] = self.commune
+
+        if self.financement:
+            self.filters["financement"] = self.financement
+
         return (
             self.user.conventions()
             .prefetch_related("programme")
             .prefetch_related("programme__administration")
             .prefetch_related("lot")
-            .filter(statut__in=map(lambda s: s.label, self.statuses))
-            .filter(
-                **{
-                    # Application du filtre "statut de la convention"
-                    **({"statut": self.statut.label} if self.statut is not None else {})
-                }
-            )
-            # TODO appliquer les autres filtres
         )

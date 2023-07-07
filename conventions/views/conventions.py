@@ -163,14 +163,11 @@ class ConventionTabsMixin:
             return ConventionTabsMixin._TABS[tab_name]["statuses"]
         return []
 
-    def _get_tabs_for(self, user: User):
-        # TODO replace by actual query
+    def _get_tabs_for(self, service):
         return {
             key: value
             | {
-                "count": user.conventions()
-                .filter(statut__in=map(lambda s: s.label, value["statuses"]))
-                .count(),
+                "count": service.get_count_for_tab(value["statuses"]),
                 "is_active": key == self.get_tab_name(),
             }
             for key, value in self._TABS.items()
@@ -243,7 +240,7 @@ class ConventionSearchView(ABC, ConventionTabsMixin, LoginRequiredMixin, View):
                 ConventionSearchView.get_uuid_value(request, "administration")
             ),
         )
-        tabs = self._get_tabs_for(self.request.user)
+        tabs = self._get_tabs_for(search_service)
         paginator = search_service.paginate()
 
         return render(
@@ -251,6 +248,7 @@ class ConventionSearchView(ABC, ConventionTabsMixin, LoginRequiredMixin, View):
             "conventions/index.html",
             {
                 "financements": Financement.choices,
+                "statuts": ConventionStatut.choices,
                 "tabs": tabs,
                 "all_conventions_count": sum(
                     map(lambda tab: tab["count"], tabs.values())
