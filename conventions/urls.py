@@ -6,7 +6,7 @@ from . import views
 from .views import (
     ConventionEnInstructionSearchView,
     ConventionTermineesSearchView,
-    ActiveConventionActivesSearchView,
+    ConventionActivesSearchView,
     LoyerSimulateurView,
 )
 
@@ -18,7 +18,7 @@ urlpatterns = [
         ConventionEnInstructionSearchView.as_view(),
         name="search_instruction",
     ),
-    path("actives", ActiveConventionActivesSearchView.as_view(), name="search_active"),
+    path("actives", ConventionActivesSearchView.as_view(), name="search_active"),
     path("resiliees", ConventionTermineesSearchView.as_view(), name="search_resiliees"),
     path(
         "simulateur-de-loyer",

@@ -278,7 +278,7 @@ class ConventionEnInstructionSearchView(ConventionSearchView):
         return "programme__date_achevement_compile"
 
 
-class ActiveConventionActivesSearchView(ConventionSearchView):
+class ConventionActivesSearchView(ConventionSearchView):
     def get_tab_name(self) -> str:
         return "ACTIVES"
 
@@ -316,7 +316,7 @@ class LoyerSimulateurView(ConventionTabsMixin, LoginRequiredMixin, View):
 
         return render(
             request,
-            "conventions/loyer.html",
+            "conventions/calculette_loyer.html",
             {
                 "form": loyer_simulateur_form,
                 "tabs": self._get_tabs_for(self.request.user),
@@ -336,7 +336,7 @@ class LoyerSimulateurView(ConventionTabsMixin, LoginRequiredMixin, View):
         )
         return render(
             request,
-            "conventions/loyer.html",
+            "conventions/calculette_loyer.html",
             {
                 "form": loyer_simulateur_form,
                 "tabs": self._get_tabs_for(self.request.user),
