@@ -118,6 +118,37 @@ des IDEs Jetbrain
 Si jamais vous éditez ces fichiers, pensez à bien les synchroniser sur le bucket S3:
 
 ```bash
-```bash
 aws s3 sync --delete ecoloweb/tests/resources/ <S3_BUCKET>
+```
+
+## Retrouver une convention dans Ecoloweb
+
+```sh
+# se connecter à la base de données via le CLI Scalingo
+scalingo -a <app> pgsql-console
+```
+
+À noter : `\dt` ne retourne aucune table, c'est *normal*.
+
+
+### Retrouver le statut d'une convention
+
+Par exemple à partir de l'uuid d'une convention, en se connectant au django shell
+```shell
+from conventions.models import Convention
+from ecoloweb.models import EcoloReference
+
+convention_id = Convention.objects.get(uuid="c8e67014-14db-4cb2-bd28-6db24bb6cabc").id
+EcoloReference.objects.get(apilos_model="conventions.Convention", apilos_id=convention_id).ecolo_id
+# '12345678:PLAI:0'
+```
+
+Dans l'exemple ci-dessus, le première partie de l'id avant le premier `:` est à utiliser dans la requête ci-desos :
+```sql
+SELECT vps.*
+from ecolo.ecolo_conventionhistorique ch
+    inner join ecolo.ecolo_conventiondonneesgenerales cdg on cdg.id = ch.conventiondonneesgenerales_id
+    inner join ecolo.ecolo_valeurparamstatic vps on vps.id = cdg.etatconvention_id
+where ch.conventionapl_id = '12345678';
+
 ```
