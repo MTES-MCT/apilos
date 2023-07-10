@@ -143,7 +143,7 @@ EcoloReference.objects.get(apilos_model="conventions.Convention", apilos_id=conv
 # '12345678:PLAI:0'
 ```
 
-Dans l'exemple ci-dessus, le première partie de l'id avant le premier `:` est à utiliser dans la requête ci-desos :
+Dans l'exemple ci-dessus, le première partie de l'id avant le premier `:` est à utiliser dans la requête ci-dessous :
 ```sql
 SELECT vps.*
 from ecolo.ecolo_conventionhistorique ch
