@@ -160,7 +160,7 @@ class ConventionTabsMixin:
 
     def get_convention_statuses(self) -> List[ConventionStatut]:
         if tab_name := self.get_tab_name():
-            return ConventionTabsMixin._TABS[tab_name]["statuses"]
+            return self._TABS[tab_name]["statuses"]
         return []
 
     def _get_tabs_for(self, service):
@@ -312,12 +312,17 @@ class LoyerSimulateurView(ConventionTabsMixin, LoginRequiredMixin, View):
                 "date_actualisation"
             ].year
 
+        search_service = UserConventionSearchService(
+            user=request.user,
+            statuses=self.get_convention_statuses(),
+        )
+
         return render(
             request,
             "conventions/calculette_loyer.html",
             {
                 "form": loyer_simulateur_form,
-                "tabs": self._get_tabs_for(self.request.user),
+                "tabs": self._get_tabs_for(search_service),
                 "montant_actualise": montant_actualise,
                 "annee_validite": annee_validite,
                 "active_conventions_count": self.active_conventions_count,
@@ -332,12 +337,17 @@ class LoyerSimulateurView(ConventionTabsMixin, LoginRequiredMixin, View):
                 nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
             )
         )
+
+        search_service = UserConventionSearchService(
+            user=request.user,
+            statuses=self.get_convention_statuses(),
+        )
         return render(
             request,
             "conventions/calculette_loyer.html",
             {
                 "form": loyer_simulateur_form,
-                "tabs": self._get_tabs_for(self.request.user),
+                "tabs": self._get_tabs_for(search_service),
                 "active_conventions_count": self.active_conventions_count,
                 "completed_conventions_count": self.completed_conventions_count,
             },

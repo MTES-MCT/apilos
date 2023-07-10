@@ -36,6 +36,7 @@ class ConventionIndexViewTests(TestCase):
         financements = soup.find_all(
             attrs={"data-test-role": "programme-financement-cell"}
         )
+        print(str(galion_refs))
 
         self.assertEqual(len(galion_refs), 4)
         self.assertEqual(len(financements), 4)
