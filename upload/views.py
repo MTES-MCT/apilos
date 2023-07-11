@@ -5,6 +5,7 @@ from programmes.models import Lot, Programme
 
 from upload.services import UploadService
 from upload.models import UploadedFile, UploadedFileSerializer
+from upload.tasks import scan_uploaded_files
 
 
 def _compute_dirpath(request):
@@ -43,6 +44,7 @@ def display_file(request, convention_uuid, uploaded_file_uuid):
 def upload_file(request):
     files = request.FILES
     uploaded_files = []
+    paths_to_scan = []
     dirpath = _compute_dirpath(request)
 
     for file in files.values():
@@ -61,5 +63,8 @@ def upload_file(request):
         upload_service.upload_file(file)
 
         uploaded_file.save()
+        paths_to_scan.append((upload_service.path, uploaded_file.pk))
         uploaded_files.append(UploadedFileSerializer(uploaded_file).data)
+
+    scan_uploaded_files.delay(paths_to_scan, request.user.id)
     return JsonResponse({"success": "true", "uploaded_file": uploaded_files})
