@@ -280,12 +280,12 @@
                                                     <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-avenant background-white">Avenant</span>
                                                 {%endif%}
                                             </div>
-                                            {% if active or siap_operation and convention.programme.numero_galion %}
+                                            {% if not active or siap_operation and convention.programme.numero_galion %}
                                                 <em data-test-role="programme-galion-cell">
                                                     {{convention.programme.numero_galion|highlight:search_input}}
                                                 </em>
                                             {% endif %}
-                                            {% if not active and convention.numero %}
+                                            {% if active and convention.numero %}
                                                 {% if convention.is_avenant %}
                                                     <em data-test-role="programme-galion-cell">{{convention.parent.numero|highlight:search_input}} - Avenant n°{{convention.numero}}</em>
                                                 {% else %}
@@ -299,7 +299,7 @@
                                             <em>{{convention.programme.code_postal|highlight:search_input}}</em>
                                         </td>
                                         <td>{{convention.lot.nb_logements}}</td>
-                                        {% if active or siap_operation %}
+                                        {% if not active or siap_operation %}
                                             <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
                                         {% else %}
                                             <td>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>

@@ -1,4 +1,5 @@
 import mimetypes
+
 from abc import ABC, abstractmethod
 from datetime import date
 from typing import List
@@ -20,7 +21,7 @@ from django.http import (
     HttpResponseRedirect,
 )
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import reverse, resolve
 from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
@@ -253,6 +254,7 @@ class ConventionSearchView(ABC, ConventionTabsMixin, LoginRequiredMixin, View):
                 "all_conventions_count": sum(
                     map(lambda tab: tab["count"], tabs.values())
                 ),
+                "inactive": resolve(request.path_info).url_name == "search_instruction",
                 "filtered_conventions_count": paginator.count,
                 "conventions": paginator.get_page(request.GET.get("page", 1)),
                 "search_input": request.GET.get("search_input", ""),
