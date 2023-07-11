@@ -20,11 +20,6 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
         shell=True,
         check=True,
     )
-    subprocess.run(
-        f'clamd --config-file="{settings.CLAMAV_PATH}/clamav/clamd.conf"',
-        shell=True,
-        check=True,
-    )
 
     for path, uploaded_file_id in paths_to_scan:
         path = Path(settings.MEDIA_ROOT / path).resolve()
