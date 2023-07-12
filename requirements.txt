@@ -31,13 +31,13 @@ billiard==4.1.0 \
     --hash=sha256:0f50d6be051c6b2b75bfbc8bfd85af195c5739c281d3f5b86a5640c65563614a \
     --hash=sha256:1ad2eeae8e28053d729ba3373d34d9d6e210f6e4d8bf0a9c64f92bd053f1edf5
     # via celery
-boto3==1.27.0 \
-    --hash=sha256:908f9c277325d68963dfcfce963a05336f0eb19505fc239c0ab9d01f4cba0296 \
-    --hash=sha256:e1e535e9fb23977252f13652ed2fa9b4f2d59a53b04a5f2fad3ee415b6a3b2b0
+boto3==1.28.2 \
+    --hash=sha256:0d53fe604dc30edded21906bc56b30a7684f0715f4f6897307d53f8184997368 \
+    --hash=sha256:9933e40dc9ac72deac45cecce2df020e3bf8d0d537538d2b361c17d1cee807cc
     # via -r requirements.in
-botocore==1.30.0 \
-    --hash=sha256:b9cb5b78a289f0615a48d85066f01869029aa41b95993f2c0c55003df037c23f \
-    --hash=sha256:cac1333f41ec98e6f75bbba3f2c74b9e76aa3847469ecea6e7773a0af0049bee
+botocore==1.31.2 \
+    --hash=sha256:67a475bec9e52d495a358b34e219ef7f62907e83b87e5bc712528f998bd46dab \
+    --hash=sha256:d368ac0b58e2b9025b9c397e4a4f86d71788913ee619263506885a866a4f6811
     # via
     #   boto3
     #   s3transfer
