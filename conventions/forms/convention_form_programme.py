@@ -10,7 +10,7 @@ from programmes.models import (
 )
 
 
-class ProgrammeForm(forms.Form):
+class ProgrammeMinForm(forms.Form):
     object_name = "programme"
 
     uuid = forms.UUIDField(
@@ -45,6 +45,13 @@ class ProgrammeForm(forms.Form):
             "max_length": "L'adresse ne doit pas excéder 5000 caractères",
         },
     )
+
+
+class ProgrammeForm(ProgrammeMinForm):
+    """ "
+    Formulaire de l'opération pour la convention
+    """
+
     code_postal = forms.CharField(
         label="Code postal",
         min_length=5,

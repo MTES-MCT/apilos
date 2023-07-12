@@ -29,6 +29,8 @@ def new_avenant(request, convention_uuid):
                 target_pathname = "conventions:avenant_logements"
         if result["avenant_type"].nom == "bailleur":
             target_pathname = "conventions:avenant_bailleur"
+        if result["avenant_type"].nom == "programme":
+            target_pathname = "conventions:avenant_programme"
         if result["avenant_type"].nom == "duree":
             target_pathname = "conventions:avenant_financement"
         if result["avenant_type"].nom == "commentaires":

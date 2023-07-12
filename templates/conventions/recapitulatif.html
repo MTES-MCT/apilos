@@ -48,6 +48,9 @@
                     {% if 'bailleur' in avenant_list %}
                         {% include "conventions/recapitulatif/bailleur.html" with target_url='conventions:avenant_bailleur' bailleur=convention.bailleur %}
                     {% endif %}
+                    {% if 'programme' in avenant_list %}
+                        {% include "conventions/recapitulatif/operation.html" with target_url='conventions:avenant_programme' programme=convention.programme lot=convention.lot %}
+                    {% endif %}
                     {% if 'logements' in avenant_list %}
                         {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:avenant_foyer_residence_logements' lot=convention.lot logements=convention.lot.logements.all %}
                         {% include "conventions/recapitulatif/collectif.html" with target_url='conventions:avenant_collectif' lot=convention.lot %}
@@ -66,6 +69,10 @@
 
                         {% if 'bailleur' not in avenant_list %}
                             {% include "conventions/avenant/bailleur_update_start.html" with avenant_uuid=convention.uuid %}
+                            <hr>
+                        {% endif %}
+                        {% if 'programme' not in avenant_list %}
+                            {% include "conventions/avenant/programme_update_start.html" with avenant_uuid=convention.uuid %}
                             <hr>
                         {% endif %}
                         {% if 'logements' not in avenant_list %}

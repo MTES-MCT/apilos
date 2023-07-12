@@ -66,6 +66,11 @@ urlpatterns = [
         name="programme",
     ),
     path(
+        "avenant_programme/<convention_uuid>",
+        views.AvenantProgrammeView.as_view(),
+        name="avenant_programme",
+    ),
+    path(
         "cadastre/<convention_uuid>",
         views.ConventionCadastreView.as_view(),
         name="cadastre",

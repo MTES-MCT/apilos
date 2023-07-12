@@ -120,6 +120,11 @@ avenant_bailleur_step = ConventionFormStep(
     label="Bailleur",
     classname="AvenantBailleurView",
 )
+avenant_programme_step = ConventionFormStep(
+    pathname="conventions:avenant_programme",
+    label="Programme",
+    classname="AvenantProgrammeView",
+)
 
 avenant_logements_step = ConventionFormStep(
     pathname="conventions:avenant_logements",
@@ -221,6 +226,7 @@ class ConventionFormSteps:
                 ):
                     self.steps = [
                         avenant_bailleur_step,
+                        avenant_programme_step,
                         avenant_financement_step,
                         avenant_foyer_residence_logements_step,
                         avenant_collectif_step,
@@ -229,6 +235,7 @@ class ConventionFormSteps:
                 else:
                     self.steps = [
                         avenant_bailleur_step,
+                        avenant_programme_step,
                         avenant_financement_step,
                         avenant_logements_step,
                         avenant_annexes_step,
@@ -237,6 +244,8 @@ class ConventionFormSteps:
             else:
                 if active_classname == "AvenantBailleurView":
                     self.steps = [avenant_bailleur_step]
+                if active_classname == "AvenantProgrammeView":
+                    self.steps = [avenant_programme_step]
                 if active_classname in [
                     "AvenantLogementsView",
                     "AvenantAnnexesView",
@@ -306,6 +315,7 @@ class ConventionFormSteps:
 class BaseConventionView(LoginRequiredMixin, View):
     convention: Convention
 
+    # pylint: disable=R0201
     def _get_convention(self, convention_uuid):
         return Convention.objects.get(uuid=convention_uuid)
 
