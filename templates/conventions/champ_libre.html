@@ -1,0 +1,31 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% load custom_filters %}
+
+{% block page_title %}Informations complémentaires - APiLos{% endblock%}
+
+{% block javascript_extras %}
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner fr-pb-1w">
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/step_progressbar.html"%}
+        <div class="fr-container">
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w">
+                    <div class="fr-col-md-12">
+                        <h4>Informations complémentaires</h4>
+                        {% include "common/form/input_textarea.html" with form_input=form.champ_libre_avenant object_field="convention__champ_libre_avenant__"|add:form.uuid.value %}
+                        {% include "conventions/common/form_footer_button.html" %}
+                    </div>
+                </div>
+            </form>
+            FORMULAIRE DE CHAMP LIBRE
+        </div>
+    </div>
+{% endblock %}

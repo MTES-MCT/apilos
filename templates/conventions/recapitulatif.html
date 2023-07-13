@@ -60,6 +60,9 @@
                     {% if 'duree' in avenant_list %}
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:avenant_financement' %}
                     {% endif %}
+                    {% if 'champ_libre' in avenant_list %}
+                        {% include "conventions/recapitulatif/champ_libre.html" with target_url='conventions:avenant_champ_libre' %}
+                    {% endif %}
                     {% if 'commentaires' in avenant_list %}
                         {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' %}
                     {% endif %}
@@ -81,6 +84,10 @@
                         {% endif %}
                         {% if 'duree' not in avenant_list %}
                             {% include "conventions/avenant/financement_update_start.html" with avenant_uuid=convention.uuid %}
+                            <hr>
+                        {% endif %}
+                        {% if 'champ_libre' not in avenant_list %}
+                            {% include "conventions/avenant/champ_libre_start.html" with avenant_uuid=convention.uuid %}
                             <hr>
                         {% endif %}
                         {% if 'commentaires' not in avenant_list %}

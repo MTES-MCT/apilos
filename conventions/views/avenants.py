@@ -33,6 +33,8 @@ def new_avenant(request, convention_uuid):
             target_pathname = "conventions:avenant_programme"
         if result["avenant_type"].nom == "duree":
             target_pathname = "conventions:avenant_financement"
+        if result["avenant_type"].nom == "champ_libre":
+            target_pathname = "conventions:avenant_champ_libre"
         if result["avenant_type"].nom == "commentaires":
             target_pathname = "conventions:avenant_commentaires"
         if target_pathname:

@@ -213,6 +213,8 @@ class Convention(models.Model):
     attribution_pension_de_famille = models.BooleanField(default=False)
     attribution_residence_accueil = models.BooleanField(default=False)
 
+    champ_libre_avenant = models.TextField(null=True, blank=True)
+
     @property
     def attribution_type(self):
         if not self.programme.is_foyer():

@@ -237,6 +237,11 @@ urlpatterns = [
         name="form_avenants_for_avenant",
     ),
     path(
+        "avenant_champ_libre/<convention_uuid>",
+        views.AvenantChampLibreView.as_view(),
+        name="avenant_champ_libre",
+    ),
+    path(
         "expert_mode/<convention_uuid>",
         views.expert_mode,
         name="expert_mode",
