@@ -3,15 +3,12 @@
 beautifulsoup4
 black
 coverage[toml]
-cryptography
 django-browser-reload
 django-debug-toolbar
 django-extensions
 django-stubs
 djhtml
-honcho
 pre-commit
 ptpython
 pylint
 pylint-django
-django-stubs
