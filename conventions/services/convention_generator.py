@@ -102,7 +102,6 @@ def generate_convention_doc(convention: Convention, save_data=False):
     # It is an avenant
     avenant_data = {}
     if convention.is_avenant():
-        print(convention.avenant_types.all())
         for avenant_type in convention.avenant_types.all():
             avenant_data[f"avenant_type_{avenant_type}"] = True
 
