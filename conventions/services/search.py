@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import List
+from typing import Dict, List
 
 from django.conf import settings
 from django.core.paginator import Paginator
@@ -21,6 +21,9 @@ class ConventionSearchBaseService(ABC):
     def get_base_queryset(self) -> QuerySet:
         pass
 
+    def _get_filters(self) -> Dict:
+        return {}
+
     def get_order_by_fields(self) -> List:
         if not self.order_by:
             return ["cree_le"]
@@ -31,11 +34,11 @@ class ConventionSearchBaseService(ABC):
         return self.get_base_queryset().filter(**filters).count()
 
     def get_queryset(self) -> QuerySet:
-        return (
-            self.get_base_queryset()
-            .filter(**self.filters)
-            .order_by(*self.get_order_by_fields())
-        )
+        qs = self.get_base_queryset()
+        if filters := self._get_filters():
+            qs = qs.filter(**filters)
+
+        return qs.order_by(*self.get_order_by_fields())
 
     def paginate(self, size: int | None = None) -> Paginator:
         return Paginator(
@@ -82,7 +85,7 @@ class UserConventionSearchService(ConventionSearchBaseService):
     def __init__(
         self,
         user: User,
-        statuses: List[ConventionStatut],
+        statuses: List[ConventionStatut] = [],
         order_by: str | None = None,
         statut: str | None = None,
         financement: str | None = None,
@@ -105,8 +108,9 @@ class UserConventionSearchService(ConventionSearchBaseService):
         self.bailleur: Bailleur | None = bailleur
         self.administration: Administration | None = administration
 
-    def get_base_queryset(self) -> QuerySet:
-        self.filters["statut__in"] = map(lambda s: s.label, self.statuses)
+    def _get_filters(self):
+        if self.statuses:
+            self.filters["statut__in"] = map(lambda s: s.label, self.statuses)
 
         if self.statut:
             self.filters["statut"] = self.statut.label
@@ -117,6 +121,7 @@ class UserConventionSearchService(ConventionSearchBaseService):
         if self.financement:
             self.filters["financement"] = self.financement
 
+    def get_base_queryset(self) -> QuerySet:
         return (
             self.user.conventions()
             .prefetch_related("programme")

@@ -1,12 +1,15 @@
+{% comment %}
 {% if tab_active %}
+{% endcomment %}
+{% if False %}
     {# If tab is currently open, no link needed #}
     <li>
-        <div class="fr-tabs__tab" aria-selected="true">{{ count }} {{ title }}</div>
+        <div class="fr-tabs__tab" aria-selected="true">{{ tab.count }} {{ tab.title }}</div>
     </li>
 {% else %}
     <li>
-        <a class="fr-tabs__tab" href="{% url route %}?{{ request.GET|to_query_params }}" title="{{ title }}" aria-selected="false" >
-            <span class="fr-link">{{ count }} {{ title }}</span>
+        <a class="fr-tabs__tab" href="{% url tab.route %}?{{ request.GET|to_query_params }}" title="{{ tab.title }}" aria-selected="false" >
+            <span class="fr-link">{{ tab.count }} {{ tab.title }}</span>
         </a>
     </li>
 {% endif %}

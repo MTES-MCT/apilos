@@ -1,8 +1,8 @@
 <div class="fr-tabs fr-col-12">
     <div class="fr-container">
         <ul class="fr-tabs__list" role="tablist" aria-label="Liste des conventions">
-            {% for name, tab in tabs.items %}
-                {% include 'conventions/home/_tab.html' with tab_active=tab.is_active count=tab.count title=tab.title route=tab.route %}
+            {% for tab in tabs %}
+                {% include 'conventions/home/_tab.html' %}
             {% endfor %}
 
             <li class="fr-ml-md-auto">

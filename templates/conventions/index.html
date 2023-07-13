@@ -16,61 +16,59 @@
 {% endblock %}
 
 {% block content %}
-    {% with total_conventions=active_conventions_count|add:completed_conventions_count %}
-        {% if total_conventions > 0 %}
-            <div class="fr-container-fluid ds_banner">
-                <div class="fr-container">{% include "./_partial/header.html" %}</div>
-                <div class="fr-container-fluid">{% include "./_partial/tabs.html" %}</div>
+    {% if total_conventions > 0 %}
+        <div class="fr-container-fluid ds_banner">
+            <div class="fr-container">{% include "./_partial/header.html" %}</div>
+            <div class="fr-container-fluid">{% include "./_partial/tabs.html" %}</div>
+        </div>
+
+        {% include "conventions/convention_list.html" %}
+
+        {% if not CERBERE_AUTH and not request.user.is_staff %}
+            <div class="fr-container-fluid">
+                <div class="fr-container">
+                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+                        <div class="fr-my-5w">
+                            <a class="fr-btn fr-icon-add-line fr-btn--icon-left"
+                                href="{% url 'conventions:selection' %}">
+                                {% if request|is_instructeur %}
+                                    Créer une nouvelle convention comme un bailleur
+                                {% else %}
+                                    Créer une nouvelle convention
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            {% include "conventions/convention_list.html" %}
-
-            {% if not CERBERE_AUTH and not request.user.is_staff %}
-                <div class="fr-container-fluid">
-                    <div class="fr-container">
-                        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-                            <div class="fr-my-5w">
-                                <a class="fr-btn fr-icon-add-line fr-btn--icon-left"
-                                    href="{% url 'conventions:selection' %}">
-                                    {% if request|is_instructeur %}
-                                        Créer une nouvelle convention comme un bailleur
-                                    {% else %}
-                                        Créer une nouvelle convention
-                                    {% endif %}
-                                </a>
-                            </div>
+        {% endif %}
+        {% if CERBERE_AUTH %}
+            <div class="fr-container-fluid">
+                <div class="fr-container">
+                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+                        <div class="fr-my-5w">
+                            <a class="fr-btn fr-icon-add-line fr-btn--icon-left"
+                                href="{% url 'conventions:selection_from_zero' %}">Créer une convention ANRU</a>
                         </div>
                     </div>
                 </div>
-            {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        {% if request|is_bailleur %}
             {% if CERBERE_AUTH %}
-                <div class="fr-container-fluid">
-                    <div class="fr-container">
-                        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-                            <div class="fr-my-5w">
-                                <a class="fr-btn fr-icon-add-line fr-btn--icon-left"
-                                    href="{% url 'conventions:selection_from_zero' %}">Créer une convention ANRU</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-        {% else %}
-            {% if request|is_bailleur %}
-                {% if CERBERE_AUTH %}
-                    {% include "conventions/home/bailleur_cerbere_no_convention.html" %}
-                {% else %}
-                    {% include "conventions/home/bailleur_no_convention.html" %}
-                {% endif %}
-            {% elif  request|is_instructeur %}
-                {% if CERBERE_AUTH %}
-                    {% include "conventions/home/instructeur_cerbere_no_convention.html" %}
-                {% else %}
-                    {% include "conventions/home/instructeur_no_convention.html" %}
-                {% endif %}
+                {% include "conventions/home/bailleur_cerbere_no_convention.html" %}
             {% else %}
                 {% include "conventions/home/bailleur_no_convention.html" %}
             {% endif %}
+        {% elif  request|is_instructeur %}
+            {% if CERBERE_AUTH %}
+                {% include "conventions/home/instructeur_cerbere_no_convention.html" %}
+            {% else %}
+                {% include "conventions/home/instructeur_no_convention.html" %}
+            {% endif %}
+        {% else %}
+            {% include "conventions/home/bailleur_no_convention.html" %}
         {% endif %}
-    {% endwith %}
+    {% endif %}
 {% endblock %}

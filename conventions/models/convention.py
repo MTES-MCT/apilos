@@ -27,7 +27,14 @@ from users.type_models import EmailPreferences, TypeRole
 logger = logging.getLogger(__name__)
 
 
+class ConventionManager(models.Manager):
+    def without_avenants(self):
+        return self.filter(parent_id=None)
+
+
 class Convention(models.Model):
+    objects = ConventionManager()
+
     class Meta:
         indexes = [
             models.Index(fields=["numero"], name="convention_numero_idx"),
