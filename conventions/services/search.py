@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import Dict, List
+from typing import List
 
 from django.conf import settings
 from django.core.paginator import Paginator
@@ -15,30 +15,35 @@ from users.models import User
 
 class ConventionSearchBaseService(ABC):
     order_by = None
+    prefetch = []
     filters = defaultdict()
 
     @abstractmethod
-    def get_base_queryset(self) -> QuerySet:
+    def _get_base_queryset(self) -> QuerySet:
         pass
 
-    def _get_filters(self) -> Dict:
-        return {}
-
-    def get_order_by_fields(self) -> List:
-        if not self.order_by:
-            return ["cree_le"]
+    def _get_order_by(self) -> List:
+        if isinstance(self.order_by, list):
+            return self.order_by
         return [self.order_by]
 
-    def get_count_for_tab(self, tab):
+    def get_count_for(self, tab):
         filters = {**self.filters, "statut__in": [statut.label for statut in tab]}
-        return self.get_base_queryset().filter(**filters).count()
+        return self._get_base_queryset().filter(**filters).count()
 
     def get_queryset(self) -> QuerySet:
-        qs = self.get_base_queryset()
-        if filters := self._get_filters():
-            qs = qs.filter(**filters)
+        queryset = self._get_base_queryset()
 
-        return qs.order_by(*self.get_order_by_fields())
+        if self.filters:
+            queryset = queryset.filter(**self.filters)
+
+        if self.prefetch:
+            queryset = queryset.prefetch_related(*self.prefetch)
+
+        if order_by := self._get_order_by():
+            queryset = queryset.order_by(*order_by)
+
+        return queryset
 
     def paginate(self, size: int | None = None) -> Paginator:
         return Paginator(
@@ -47,45 +52,37 @@ class ConventionSearchBaseService(ABC):
 
 
 class AvenantListSearchService(ConventionSearchBaseService):
+    prefetch = ["programme", "lot"]
+
     def __init__(self, convention: Convention, order_by_numero: bool = False):
         self.convention: Convention = (
             convention.parent if convention.is_avenant() else convention
         )
-        self.order_by_numero: bool = order_by_numero
 
-    def get_order_by_fields(self) -> List:
-        return ["numero"] if self.order_by_numero else super().get_order_by_fields()
+        if order_by_numero:
+            self.order_by = "numero"
 
-    def get_base_queryset(self) -> QuerySet:
-        return (
-            self.convention.avenants.all()
-            .prefetch_related("programme")
-            .prefetch_related("lot")
-        )
+    def _get_base_queryset(self) -> QuerySet:
+        return self.convention.avenants.all()
 
 
 class ProgrammeConventionSearchService(ConventionSearchBaseService):
+    prefetch = ["programme", "programme__administration", "lot"]
+
     def __init__(self, programme: Programme, order_by: str | None = None):
         self.programme: Programme = programme
-        self.order_by: str | None = order_by
+        if order_by:
+            self.order_by = order_by
 
-    def get_base_queryset(self) -> QuerySet:
-        return (
-            Convention.objects.filter(programme=self.programme)
-            .prefetch_related("programme")
-            .prefetch_related("programme__administration")
-            .prefetch_related("lot")
-        )
-
-    def get_order_by_fields(self) -> List:
-        return [self.order_by] if self.order_by is not None else []
+    def _get_base_queryset(self) -> QuerySet:
+        return Convention.objects.filter(programme=self.programme)
 
 
 class UserConventionSearchService(ConventionSearchBaseService):
     def __init__(
         self,
         user: User,
-        statuses: List[ConventionStatut] = [],
+        statuses: List[ConventionStatut] = None,
         order_by: str | None = None,
         statut: str | None = None,
         financement: str | None = None,
@@ -98,8 +95,10 @@ class UserConventionSearchService(ConventionSearchBaseService):
     ):
         self.user: User = user
         self.order_by: str | None = order_by
-        self.statuses = statuses
-        self.statut: ConventionStatut | None = ConventionStatut.get_by_label(statut)
+        self.statuses = statuses or []
+        self.statut: ConventionStatut | None = (
+            ConventionStatut.get_by_label(statut) if statut else None
+        )
         self.financement: str | None = financement
         self.departement: str | None = departement
         self.commune: str | None = commune
@@ -108,7 +107,7 @@ class UserConventionSearchService(ConventionSearchBaseService):
         self.bailleur: Bailleur | None = bailleur
         self.administration: Administration | None = administration
 
-    def _get_filters(self):
+    def _build_filters(self):
         if self.statuses:
             self.filters["statut__in"] = map(lambda s: s.label, self.statuses)
 
@@ -121,7 +120,8 @@ class UserConventionSearchService(ConventionSearchBaseService):
         if self.financement:
             self.filters["financement"] = self.financement
 
-    def get_base_queryset(self) -> QuerySet:
+    def _get_base_queryset(self) -> QuerySet:
+        self._build_filters()
         return (
             self.user.conventions()
             .prefetch_related("programme")
