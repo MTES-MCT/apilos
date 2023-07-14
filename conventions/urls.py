@@ -4,9 +4,9 @@ from django.views.generic import RedirectView, TemplateView
 
 from . import views
 from .views import (
+    ConventionActivesSearchView,
     ConventionEnInstructionSearchView,
     ConventionTermineesSearchView,
-    ConventionActivesSearchView,
     LoyerSimulateurView,
 )
 
@@ -16,10 +16,18 @@ urlpatterns = [
     path(
         "en-cours",
         ConventionEnInstructionSearchView.as_view(),
-        name="search_instruction",
+        name=ConventionEnInstructionSearchView.name,
     ),
-    path("actives", ConventionActivesSearchView.as_view(), name="search_active"),
-    path("resiliees", ConventionTermineesSearchView.as_view(), name="search_resiliees"),
+    path(
+        "actives",
+        ConventionActivesSearchView.as_view(),
+        name=ConventionActivesSearchView.name,
+    ),
+    path(
+        "resiliees",
+        ConventionTermineesSearchView.as_view(),
+        name=ConventionTermineesSearchView.name,
+    ),
     path(
         "simulateur-de-loyer",
         LoyerSimulateurView.as_view(),

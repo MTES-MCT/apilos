@@ -131,7 +131,7 @@ class ConventionSearchView(LoginRequiredMixin, View):
     order_by = None
 
     @abstractmethod
-    def conventions_count(self):
+    def get_conventions_count(self):
         pass
 
     @property
@@ -187,14 +187,11 @@ class ConventionSearchView(LoginRequiredMixin, View):
 
     @staticmethod
     def _get_tab_for(subclass):
-        try:
-            route = reverse(subclass)
-        except:  # FIXME : remove
-            route = "conventions:search_instruction"
+        route = reverse(subclass.name)
 
         return {
             "title": subclass.tab_title,
-            "count": subclass.count(None),
+            "count": subclass.get_conventions_count(None),
             "route": route,
             "weight": subclass.weight,
         }
@@ -246,31 +243,34 @@ class ConventionSearchView(LoginRequiredMixin, View):
 
 
 class ConventionEnInstructionSearchView(ConventionSearchView):
+    name = "search_instruction"
     weight = 0
     statuses = [ConventionStatut.SIGNEE]
     order_by = "televersement_convention_signee_le"
     tab_title = "en instruction"
 
-    def conventions_count(self):
+    def get_conventions_count(self) -> int:
         return 10
 
 
 class ConventionActivesSearchView(ConventionSearchView):
+    name = "search_active"
     weight = 10
+    order_by = "televersement_convention_signee_le"
+    tab_title = "active(s)"
     statuses = [
         ConventionStatut.PROJET,
         ConventionStatut.INSTRUCTION,
         ConventionStatut.CORRECTION,
         ConventionStatut.A_SIGNER,
     ]
-    order_by = "televersement_convention_signee_le"
-    tab_title = "active(s)"
 
-    def conventions_count(self):
+    def get_conventions_count(self):
         return 10
 
 
 class ConventionTermineesSearchView(ConventionSearchView):
+    name = "search_resiliees"
     weight = 100
     order_by = "programme__date_achevement_compile"
     tab_title = "résiliée(s) ou dénoncée(s)"
@@ -280,7 +280,7 @@ class ConventionTermineesSearchView(ConventionSearchView):
         ConventionStatut.ANNULEE,
     ]
 
-    def conventions_count(self):
+    def get_conventions_count(self):
         return 1000
 
 
