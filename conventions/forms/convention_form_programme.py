@@ -10,7 +10,7 @@ from programmes.models import (
 )
 
 
-class ProgrammeMinForm(forms.Form):
+class ProgrammeMinimalForm(forms.Form):
     object_name = "programme"
 
     uuid = forms.UUIDField(
@@ -47,7 +47,7 @@ class ProgrammeMinForm(forms.Form):
     )
 
 
-class ProgrammeForm(ProgrammeMinForm):
+class ProgrammeForm(ProgrammeMinimalForm):
     """ "
     Formulaire de l'opération pour la convention
     """
