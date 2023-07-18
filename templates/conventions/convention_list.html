@@ -130,7 +130,7 @@
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
                             <div class="fr-fieldset__element">
                                 <div class="fr-checkbox-group fr-checkbox-group--sm">
-                                    <input name="anru" id="checkbox-restrict-to-anru" type="checkbox" {% if conventions.anru %}checked{% endif %}>
+                                    <input name="anru" id="checkbox-restrict-to-anru" type="checkbox" {% if request.GET.anru %}checked{% endif %}>
                                     <label class="fr-label" for="checkbox-restrict-to-anru">
                                         ANRU
                                         <span class="fr-hint-text">N'afficher que les conventions ANRU</span>

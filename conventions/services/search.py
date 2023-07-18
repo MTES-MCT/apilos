@@ -23,9 +23,10 @@ class ConventionSearchBaseService(ABC):
         pass
 
     def _get_order_by(self) -> List:
-        if isinstance(self.order_by, list):
-            return self.order_by
-        return [self.order_by]
+        if not isinstance(self.order_by, list):
+            self.order_by = [self.order_by]
+
+        return [field_to_order for field_to_order in self.order_by if field_to_order]
 
     def get_count_for(self, tab):
         filters = {**self.filters, "statut__in": [statut.label for statut in tab]}
@@ -71,6 +72,7 @@ class ProgrammeConventionSearchService(ConventionSearchBaseService):
 
     def __init__(self, programme: Programme, order_by: str | None = None):
         self.programme: Programme = programme
+
         if order_by:
             self.order_by = order_by
 
@@ -108,17 +110,21 @@ class UserConventionSearchService(ConventionSearchBaseService):
         self.administration: Administration | None = administration
 
     def _build_filters(self):
+        filters = defaultdict()
+
         if self.statuses:
-            self.filters["statut__in"] = map(lambda s: s.label, self.statuses)
+            filters["statut__in"] = map(lambda s: s.label, self.statuses)
 
         if self.statut:
-            self.filters["statut"] = self.statut.label
+            filters["statut"] = self.statut.label
 
         if self.commune:
-            self.filters["programme__ville__icontains"] = self.commune
+            filters["programme__ville__icontains"] = self.commune
 
         if self.financement:
-            self.filters["financement"] = self.financement
+            filters["financement"] = self.financement
+
+        self.filters = filters
 
     def _get_base_queryset(self) -> QuerySet:
         self._build_filters()

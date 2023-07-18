@@ -187,12 +187,12 @@ class ConventionSearchView(LoginRequiredMixin, View):
 
     @staticmethod
     def _get_tab_for(subclass):
-        route = reverse(subclass.name)
+        url = reverse(f"conventions:{subclass.name}")
 
         return {
             "title": subclass.tab_title,
             "count": subclass.get_conventions_count(None),
-            "route": route,
+            "url": url,
             "weight": subclass.weight,
         }
 
@@ -206,18 +206,24 @@ class ConventionSearchView(LoginRequiredMixin, View):
             key=lambda tab: tab["weight"],
         )
 
+    def _get_non_empty_query_param(self, query_param: str, default=None) -> str | None:
+        if value := self.request.GET.get(query_param):
+            return value
+
+        return default
+
     def get(self, request: AuthenticatedHttpRequest):
         search_service = UserConventionSearchService(
             administration=self.administration,
             anru=(request.GET.get("anru") is not None),
             bailleur=self.bailleur,
-            commune=request.GET.get("ville"),
-            departement=request.GET.get("departement_input", ""),
-            financement=request.GET.get("financement", ""),
-            order_by=request.GET.get("order_by", self.order_by),
-            search_input=request.GET.get("search_input", ""),
+            commune=self._get_non_empty_query_param("ville"),
+            departement=self._get_non_empty_query_param("departement_input"),
+            financement=self._get_non_empty_query_param("financement"),
+            order_by=self._get_non_empty_query_param("order_by", self.order_by),
+            search_input=self._get_non_empty_query_param("search_input", ""),
             statuses=self.statuses,
-            statut=request.GET.get("cstatut", ""),
+            statut=self._get_non_empty_query_param("cstatut", ""),
             user=request.user,
         )
 
@@ -234,7 +240,7 @@ class ConventionSearchView(LoginRequiredMixin, View):
                 "filtered_conventions_count": paginator.count,
                 "financements": Financement.choices,
                 "inactive": resolve(request.path_info).url_name == "search_instruction",
-                "search_input": request.GET.get("search_input", ""),
+                "search_input": self._get_non_empty_query_param("search_input", ""),
                 "statuts": ConventionStatut.choices,
                 "tabs": self.get_tabs(),
                 "total_conventions": request.user.conventions().count(),
@@ -245,9 +251,14 @@ class ConventionSearchView(LoginRequiredMixin, View):
 class ConventionEnInstructionSearchView(ConventionSearchView):
     name = "search_instruction"
     weight = 0
-    statuses = [ConventionStatut.SIGNEE]
     order_by = "televersement_convention_signee_le"
     tab_title = "en instruction"
+    statuses = [
+        ConventionStatut.PROJET,
+        ConventionStatut.INSTRUCTION,
+        ConventionStatut.CORRECTION,
+        ConventionStatut.A_SIGNER,
+    ]
 
     def get_conventions_count(self) -> int:
         return 10
@@ -258,12 +269,7 @@ class ConventionActivesSearchView(ConventionSearchView):
     weight = 10
     order_by = "televersement_convention_signee_le"
     tab_title = "active(s)"
-    statuses = [
-        ConventionStatut.PROJET,
-        ConventionStatut.INSTRUCTION,
-        ConventionStatut.CORRECTION,
-        ConventionStatut.A_SIGNER,
-    ]
+    statuses = [ConventionStatut.SIGNEE]
 
     def get_conventions_count(self):
         return 10
