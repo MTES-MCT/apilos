@@ -87,9 +87,11 @@ class ProgrammeConventionSearchService(ConventionSearchBaseService):
 class UserConventionSearchService(ConventionSearchBaseService):
     commune: str | None
     departement: str | None
-    financement: str | None
     order_by: str | None
     search_input: str | None
+    commune: str | None = None
+    financement: str | None = None
+    statut: ConventionStatut | None = None
 
     def __init__(
         self,
@@ -113,9 +115,7 @@ class UserConventionSearchService(ConventionSearchBaseService):
                 "search_input",
             ]:
                 setattr(self, name, search_filters.get(name))
-            self.statut: ConventionStatut | None = ConventionStatut.get_by_label(
-                search_filters.get("statut")
-            )
+            self.statut = ConventionStatut.get_by_label(search_filters.get("statut"))
 
     def _build_queryset_filters(self):
         filters = defaultdict()
