@@ -3,7 +3,7 @@ from django.http import HttpRequest
 from conventions.services.conventions import ConventionService
 from conventions.models import Convention
 from conventions.services import utils
-from conventions.forms import ProgrammeForm, ProgrammeMinForm
+from conventions.forms import ProgrammeForm, ProgrammeMinimalForm
 
 
 class ConventionProgrammeService(ConventionService):
@@ -34,7 +34,7 @@ class ConventionProgrammeService(ConventionService):
 
     def get_avenant(self):
         programme = self.convention.programme
-        self.form = ProgrammeMinForm(
+        self.form = ProgrammeMinimalForm(
             initial={
                 "uuid": programme.uuid,
                 "nom": programme.nom,
