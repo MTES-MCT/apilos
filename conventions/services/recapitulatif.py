@@ -5,6 +5,9 @@ from django.utils import timezone
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
+from conventions.forms.convention_form_administration import (
+    UpdateConventionAdministrationForm,
+)
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.notification import NotificationForm
 from conventions.forms.programme_number import ProgrammeNumberForm
@@ -60,6 +63,7 @@ class ConventionRecapitulatifService(ConventionService):
 
     def update_programme_number(self):
         programme_number_form = ProgrammeNumberForm(self.request.POST)
+
         if programme_number_form.is_valid():
             self.convention.programme.numero_galion = (
                 programme_number_form.cleaned_data["numero_galion"]
@@ -72,6 +76,7 @@ class ConventionRecapitulatifService(ConventionService):
             Programme.objects.filter(
                 Q(id=programme_id) | Q(parent_id=programme_id)
             ).update(numero_galion=programme_number_form.cleaned_data["numero_galion"])
+
         return self.get_convention_recapitulatif(
             programme_number_form=programme_number_form
         )
@@ -84,11 +89,14 @@ class ConventionRecapitulatifService(ConventionService):
                 "convention_numero": self.convention.get_default_convention_number()
             }
         )
+
         if programme_number_form is None:
             programme_number_form = ProgrammeNumberForm(
                 initial={"numero_galion": self.convention.programme.numero_galion}
             )
+
         complete_for_avenant_form = None
+
         if self.convention.is_incompleted_avenant_parent():
             complete_for_avenant_form = CompleteforavenantForm(
                 initial={
@@ -101,6 +109,7 @@ class ConventionRecapitulatifService(ConventionService):
             convention=self.convention,
             statut=CommentStatut.OUVERT,
         ).order_by("cree_le")
+
         if convention_type1_and_2_form is None:
             convention_type1_and_2_form = ConventionType1and2Form(
                 initial={
@@ -116,6 +125,12 @@ class ConventionRecapitulatifService(ConventionService):
                     "type2_lgts_concernes_option8": self.convention.type2_lgts_concernes_option8,
                 }
             )
+
+        update_convention_administration_form = UpdateConventionAdministrationForm(
+            self.request.user,
+            self.request.POST if self.request.method == "POST" else None,
+        )
+
         return {
             "opened_comments": opened_comments,
             "annexes": Annexe.objects.filter(
@@ -127,6 +142,7 @@ class ConventionRecapitulatifService(ConventionService):
             "ConventionType1and2Form": convention_type1_and_2_form,
             "programmeNumberForm": programme_number_form,
             "repartition_surfaces": self.convention.lot.repartition_surfaces(),
+            "update_convention_administration_form": update_convention_administration_form,
         }
 
     def save_convention_TypeIandII(self):
