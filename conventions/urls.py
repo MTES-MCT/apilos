@@ -66,6 +66,11 @@ urlpatterns = [
         name="programme",
     ),
     path(
+        "avenant_programme/<convention_uuid>",
+        views.AvenantProgrammeView.as_view(),
+        name="avenant_programme",
+    ),
+    path(
         "cadastre/<convention_uuid>",
         views.ConventionCadastreView.as_view(),
         name="cadastre",
@@ -230,6 +235,11 @@ urlpatterns = [
         "form_avenants_for_avenant/<convention_uuid>",
         views.form_avenants_for_avenant,
         name="form_avenants_for_avenant",
+    ),
+    path(
+        "avenant_champ_libre/<convention_uuid>",
+        views.AvenantChampLibreView.as_view(),
+        name="avenant_champ_libre",
     ),
     path(
         "expert_mode/<convention_uuid>",

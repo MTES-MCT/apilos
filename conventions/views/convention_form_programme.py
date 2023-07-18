@@ -13,3 +13,7 @@ class ConventionProgrammeView(ConventionView):
             .prefetch_related("lot")
             .get(uuid=convention_uuid)
         )
+
+
+class AvenantProgrammeView(ConventionProgrammeView):
+    pass

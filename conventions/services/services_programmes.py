@@ -3,14 +3,14 @@ from django.http import HttpRequest
 from conventions.services.conventions import ConventionService
 from conventions.models import Convention
 from conventions.services import utils
-from conventions.forms import ProgrammeForm
+from conventions.forms import ProgrammeForm, ProgrammeMinimalForm
 
 
 class ConventionProgrammeService(ConventionService):
     convention: Convention
     request: HttpRequest
-    form: ProgrammeForm
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
+    form: ProgrammeForm
     redirect_recap: bool = False
 
     def get(self):
@@ -29,6 +29,16 @@ class ConventionProgrammeService(ConventionService):
                 "autres_locaux_hors_convention": programme.autres_locaux_hors_convention,
                 "nb_locaux_commerciaux": programme.nb_locaux_commerciaux,
                 "nb_bureaux": programme.nb_bureaux,
+            }
+        )
+
+    def get_avenant(self):
+        programme = self.convention.programme
+        self.form = ProgrammeMinimalForm(
+            initial={
+                "uuid": programme.uuid,
+                "nom": programme.nom,
+                "adresse": programme.adresse,
             }
         )
 

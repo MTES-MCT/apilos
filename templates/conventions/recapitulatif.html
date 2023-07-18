@@ -48,6 +48,9 @@
                     {% if 'bailleur' in avenant_list %}
                         {% include "conventions/recapitulatif/bailleur.html" with target_url='conventions:avenant_bailleur' bailleur=convention.bailleur %}
                     {% endif %}
+                    {% if 'programme' in avenant_list %}
+                        {% include "conventions/recapitulatif/operation.html" with target_url='conventions:avenant_programme' programme=convention.programme lot=convention.lot %}
+                    {% endif %}
                     {% if 'logements' in avenant_list %}
                         {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:avenant_foyer_residence_logements' lot=convention.lot logements=convention.lot.logements.all %}
                         {% include "conventions/recapitulatif/collectif.html" with target_url='conventions:avenant_collectif' lot=convention.lot %}
@@ -56,6 +59,9 @@
                     {% endif %}
                     {% if 'duree' in avenant_list %}
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:avenant_financement' %}
+                    {% endif %}
+                    {% if 'champ_libre' in avenant_list %}
+                        {% include "conventions/recapitulatif/champ_libre.html" with target_url='conventions:avenant_champ_libre' %}
                     {% endif %}
                     {% if 'commentaires' in avenant_list %}
                         {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' %}
@@ -68,12 +74,20 @@
                             {% include "conventions/avenant/bailleur_update_start.html" with avenant_uuid=convention.uuid %}
                             <hr>
                         {% endif %}
+                        {% if 'programme' not in avenant_list %}
+                            {% include "conventions/avenant/programme_update_start.html" with avenant_uuid=convention.uuid %}
+                            <hr>
+                        {% endif %}
                         {% if 'logements' not in avenant_list %}
                             {% include "conventions/avenant/logements_update_start.html" with avenant_uuid=convention.uuid %}
                             <hr>
                         {% endif %}
                         {% if 'duree' not in avenant_list %}
                             {% include "conventions/avenant/financement_update_start.html" with avenant_uuid=convention.uuid %}
+                            <hr>
+                        {% endif %}
+                        {% if 'champ_libre' not in avenant_list %}
+                            {% include "conventions/avenant/champ_libre_start.html" with avenant_uuid=convention.uuid %}
                             <hr>
                         {% endif %}
                         {% if 'commentaires' not in avenant_list %}

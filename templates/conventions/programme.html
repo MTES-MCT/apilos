@@ -19,10 +19,20 @@
                     <div class="fr-col-md-12">
 
                         <h4>Adresse(s) de l'opération</h4>
-                        {% include "common/editable_fields_info.html" %}
+                        {% if not convention.is_avenant %}{% include "common/editable_fields_info.html" %}{% endif %}
 
                         {% include "common/form/input_text.html" with form_input=form.nom object_field="programme__nom__"|add:form.uuid.value %}
-                        {% include "common/form/input_checkbox.html" with form_input=form.anru object_field="programme__anru__"|add:form.uuid.value %}
+
+                        {% if not convention.is_avenant %}
+                            {% include "common/form/input_checkbox.html" with form_input=form.anru object_field="programme__anru__"|add:form.uuid.value %}
+                        {% else %}
+                            <div class="fr-mt-1w block--row-strech">
+                                <div class="fr-checkbox-group block--row-strech-1">
+                                    <input type="checkbox" disabled>
+                                    <label class="fr-label">L'opération bénéficie d'un financement <strong class="fr-ml-1w"> ANRU</strong></label>
+                                </div>
+                            </div>
+                        {% endif %}
                         <div class="fr-my-3w">
                             {% include "common/form/input_textarea.html" with form_input=form.adresse helptext_visible="True" object_field="programme__adresse__"|add:form.uuid.value %}
                             {% if form.adresse.value is not None %}
@@ -32,41 +42,56 @@
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_text.html" with form_input=form.code_postal object_field="programme__code_postal__"|add:form.uuid.value %}
+                                {% if not convention.is_avenant %}
+                                    {% include "common/form/input_text.html" with form_input=form.code_postal object_field="programme__code_postal__"|add:form.uuid.value %}
+                                {% else %}
+                                    <label class="fr-label">Code Postal</label>
+                                    <div class="fr-mt-1w block--row-strech" id="id_code_postal_div" >
+                                        <input class="fr-input" disabled value="{{convention.programme.code_postal}}"></input>
+                                    </div>
+                                {% endif %}
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_text.html" with form_input=form.ville object_field="programme__ville__"|add:form.uuid.value %}
-                            </div>
-                        </div>
-
-                        <h4 class="fr-mt-2w">Détails de l'opération</h4>
-
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_select.html" with form_input=form.type_habitat object_field="programme__type_habitat__"|add:form.uuid.value %}
-                            </div>
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_select.html" with form_input=form.type_operation object_field="programme__type_operation__"|add:form.uuid.value editable=convention|with_financement %}
-                                {% if not convention|with_financement %}
-                                    <em>le type d'opération n'est pas éditable pour les conventions sans financement</em>
+                                {% if not convention.is_avenant %}
+                                    {% include "common/form/input_text.html" with form_input=form.ville object_field="programme__ville__"|add:form.uuid.value %}
+                                {% else %}
+                                    <label class="fr-label">Ville</label>
+                                    <div class="fr-mt-1w block--row-strech" id="id_ville_div" >
+                                        <input class="fr-input" disabled value="{{convention.programme.ville}}"></input>
+                                    </div>
                                 {% endif %}
                             </div>
                         </div>
-                        {% if not convention.programme.is_foyer and not convention.programme.is_residence %}
-                            <h4 class="fr-mt-2w">
-                                Locaux auxquels ne s'applique pas la présente convention
-                            </h4>
+                        {% if not convention.is_avenant %}
+                            <h4 class="fr-mt-2w">Détails de l'opération</h4>
 
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_number.html" with form_input=form.nb_locaux_commerciaux object_field="programme__nb_locaux_commerciaux__"|add:form.uuid.value %}
+                                    {% include "common/form/input_select.html" with form_input=form.type_habitat object_field="programme__type_habitat__"|add:form.uuid.value %}
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_number.html" with form_input=form.nb_bureaux object_field="programme__nb_bureaux__"|add:form.uuid.value %}
+                                    {% include "common/form/input_select.html" with form_input=form.type_operation object_field="programme__type_operation__"|add:form.uuid.value editable=convention|with_financement %}
+                                    {% if not convention|with_financement %}
+                                        <em>le type d'opération n'est pas éditable pour les conventions sans financement</em>
+                                    {% endif %}
                                 </div>
                             </div>
+                            {% if not convention.programme.is_foyer and not convention.programme.is_residence %}
+                                <h4 class="fr-mt-2w">
+                                    Locaux auxquels ne s'applique pas la présente convention
+                                </h4>
 
-                            {% include "common/form/input_textarea.html" with form_input=form.autres_locaux_hors_convention object_field="programme__autres_locaux_hors_convention__"|add:form.uuid.value %}
+                                <div class="fr-grid-row fr-grid-row--gutters">
+                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                        {% include "common/form/input_number.html" with form_input=form.nb_locaux_commerciaux object_field="programme__nb_locaux_commerciaux__"|add:form.uuid.value %}
+                                    </div>
+                                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                        {% include "common/form/input_number.html" with form_input=form.nb_bureaux object_field="programme__nb_bureaux__"|add:form.uuid.value %}
+                                    </div>
+                                </div>
+
+                                {% include "common/form/input_textarea.html" with form_input=form.autres_locaux_hors_convention object_field="programme__autres_locaux_hors_convention__"|add:form.uuid.value %}
+                            {% endif %}
                         {% endif %}
                     </div>
                 </div>

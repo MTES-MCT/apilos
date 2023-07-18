@@ -120,6 +120,11 @@ avenant_bailleur_step = ConventionFormStep(
     label="Bailleur",
     classname="AvenantBailleurView",
 )
+avenant_programme_step = ConventionFormStep(
+    pathname="conventions:avenant_programme",
+    label="Programme",
+    classname="AvenantProgrammeView",
+)
 
 avenant_logements_step = ConventionFormStep(
     pathname="conventions:avenant_logements",
@@ -149,6 +154,12 @@ avenant_financement_step = ConventionFormStep(
     pathname="conventions:avenant_financement",
     label="Financement",
     classname="AvenantFinancementView",
+)
+
+avenant_champ_libre_step = ConventionFormStep(
+    pathname="conventions:avenant_champ_libre",
+    label="Champ libre",
+    classname="AvenantChampLibreView",
 )
 
 avenant_commentaires_step = ConventionFormStep(
@@ -221,22 +232,28 @@ class ConventionFormSteps:
                 ):
                     self.steps = [
                         avenant_bailleur_step,
+                        avenant_programme_step,
                         avenant_financement_step,
                         avenant_foyer_residence_logements_step,
                         avenant_collectif_step,
+                        avenant_champ_libre_step,
                         avenant_commentaires_step,
                     ]
                 else:
                     self.steps = [
                         avenant_bailleur_step,
+                        avenant_programme_step,
                         avenant_financement_step,
                         avenant_logements_step,
                         avenant_annexes_step,
+                        avenant_champ_libre_step,
                         avenant_commentaires_step,
                     ]
             else:
                 if active_classname == "AvenantBailleurView":
                     self.steps = [avenant_bailleur_step]
+                if active_classname == "AvenantProgrammeView":
+                    self.steps = [avenant_programme_step]
                 if active_classname in [
                     "AvenantLogementsView",
                     "AvenantAnnexesView",
@@ -252,6 +269,8 @@ class ConventionFormSteps:
                     ]
                 if active_classname == "AvenantFinancementView":
                     self.steps = [avenant_financement_step]
+                if active_classname == "AvenantChampLibreView":
+                    self.steps = [avenant_champ_libre_step]
                 if active_classname == "AvenantCommentsView":
                     self.steps = [avenant_commentaires_step]
         elif convention.programme.is_foyer():
@@ -306,6 +325,7 @@ class ConventionFormSteps:
 class BaseConventionView(LoginRequiredMixin, View):
     convention: Convention
 
+    # pylint: disable=R0201
     def _get_convention(self, convention_uuid):
         return Convention.objects.get(uuid=convention_uuid)
 

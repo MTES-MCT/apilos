@@ -46,6 +46,7 @@ class ConventionAdmin(admin.ModelAdmin):
         "televersement_convention_signee_le",
         "date_resiliation",
         "desc_avenant",
+        "champ_libre_avenant",
     )
     list_select_related = (
         "programme",
