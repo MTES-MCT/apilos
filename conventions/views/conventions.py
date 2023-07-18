@@ -1,5 +1,4 @@
 import mimetypes
-from abc import abstractmethod
 from datetime import date
 from zipfile import ZipFile
 
@@ -42,7 +41,12 @@ from conventions.services.recapitulatif import (
     convention_submit,
     convention_validate,
 )
-from conventions.services.search import UserConventionSearchService
+from conventions.services.search import (
+    UserConventionActivesSearchService,
+    UserConventionEnInstructionSearchService,
+    UserConventionSearchService,
+    UserConventionTermineesSearchService,
+)
 from conventions.services.utils import ReturnStatus, base_convention_response_error
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from core.storage import client
@@ -126,13 +130,60 @@ class RecapitulatifView(BaseConventionView):
         )
 
 
-class ConventionSearchView(LoginRequiredMixin, View):
-    statuses = []
-    order_by = None
+class ConventionTabsMixin:
+    def get_tab(self, subclass):
+        service = subclass.service_class(
+            user=self.request.user,
+        )
 
-    @abstractmethod
-    def get_conventions_count(self):
-        pass
+        url = reverse(f"conventions:{subclass.name}")
+
+        return {
+            "title": subclass.service_class.verbose_name,
+            "url": url,
+            "weight": subclass.service_class.weight,
+            "count": service.get_queryset().count(),
+        }
+
+    def get_tabs(self):
+        return sorted(
+            [
+                self.get_tab(subclass)
+                for subclass in ConventionSearchView.__subclasses__()
+            ],
+            key=lambda tab: tab["weight"],
+        )
+
+
+class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
+    service: UserConventionSearchService
+    service_class: type[UserConventionSearchService]
+    statuses: list
+    order_by: str
+
+    def setup(self, *args, **kwargs) -> None:
+        super().setup(*args, **kwargs)
+
+        search_filters_mapping = [
+            ("commune", "ville"),
+            ("departement", "departement_input"),
+            ("financement", "financement"),
+            ("order_by", "order_by"),
+            ("search_input", "search_input"),
+            ("statut", "cstatut"),
+        ]
+        search_filters = {
+            arg: self._get_non_empty_query_param(query_param)
+            for arg, query_param in search_filters_mapping
+        }
+
+        self.service = self.service_class(
+            administration=self.administration,
+            anru=(self.request.GET.get("anru") is not None),
+            bailleur=self.bailleur,
+            user=self.request.user,
+            search_filters=search_filters,
+        )
 
     @property
     def administration(self) -> Administration | None:
@@ -145,7 +196,7 @@ class ConventionSearchView(LoginRequiredMixin, View):
         return Bailleur.objects.filter(uuid=uuid).first()
 
     @property
-    def bailleur_queryset(self) -> QuerySet | None:
+    def bailleurs_queryset(self) -> QuerySet | None:
         user = self.request.user
         if user.is_instructeur():
             return user.bailleurs(full_scope=True).exclude(nom__exact="")[
@@ -155,7 +206,7 @@ class ConventionSearchView(LoginRequiredMixin, View):
         return None
 
     @property
-    def administration_queryset(self) -> QuerySet | None:
+    def administrations_queryset(self) -> QuerySet | None:
         user = self.request.user
 
         if user.is_bailleur():
@@ -174,6 +225,12 @@ class ConventionSearchView(LoginRequiredMixin, View):
             else None
         )
 
+    def _get_non_empty_query_param(self, query_param: str, default=None) -> str | None:
+        if value := self.request.GET.get(query_param):
+            return value
+
+        return default
+
     def _user_convention_statuses_choices(self, user: User) -> list[tuple[str, str]]:
         return [
             (
@@ -185,57 +242,16 @@ class ConventionSearchView(LoginRequiredMixin, View):
             for statut in self.statuses
         ]
 
-    @staticmethod
-    def _get_tab_for(subclass):
-        url = reverse(f"conventions:{subclass.name}")
-
-        return {
-            "title": subclass.tab_title,
-            "count": subclass.get_conventions_count(None),
-            "url": url,
-            "weight": subclass.weight,
-        }
-
-    @staticmethod
-    def get_tabs():
-        return sorted(
-            [
-                ConventionSearchView._get_tab_for(subclass)
-                for subclass in ConventionSearchView.__subclasses__()
-            ],
-            key=lambda tab: tab["weight"],
-        )
-
-    def _get_non_empty_query_param(self, query_param: str, default=None) -> str | None:
-        if value := self.request.GET.get(query_param):
-            return value
-
-        return default
-
     def get(self, request: AuthenticatedHttpRequest):
-        search_service = UserConventionSearchService(
-            administration=self.administration,
-            anru=(request.GET.get("anru") is not None),
-            bailleur=self.bailleur,
-            commune=self._get_non_empty_query_param("ville"),
-            departement=self._get_non_empty_query_param("departement_input"),
-            financement=self._get_non_empty_query_param("financement"),
-            order_by=self._get_non_empty_query_param("order_by", self.order_by),
-            search_input=self._get_non_empty_query_param("search_input", ""),
-            statuses=self.statuses,
-            statut=self._get_non_empty_query_param("cstatut", ""),
-            user=request.user,
-        )
-
-        paginator = search_service.paginate()
+        paginator = self.service.paginate()
 
         return render(
             request,
             "conventions/index.html",
             {
-                "administration_query": self.administration_queryset,
+                "administration_query": self.administrations_queryset,
                 "all_conventions_count": self.all_conventions_count,
-                "bailleur_query": self.bailleur_queryset,
+                "bailleur_query": self.bailleurs_queryset,
                 "conventions": paginator.get_page(request.GET.get("page", 1)),
                 "filtered_conventions_count": paginator.count,
                 "financements": Financement.choices,
@@ -249,48 +265,21 @@ class ConventionSearchView(LoginRequiredMixin, View):
 
 
 class ConventionEnInstructionSearchView(ConventionSearchView):
+    service_class = UserConventionEnInstructionSearchService
     name = "search_instruction"
-    weight = 0
-    order_by = "televersement_convention_signee_le"
-    tab_title = "en instruction"
-    statuses = [
-        ConventionStatut.PROJET,
-        ConventionStatut.INSTRUCTION,
-        ConventionStatut.CORRECTION,
-        ConventionStatut.A_SIGNER,
-    ]
-
-    def get_conventions_count(self) -> int:
-        return 10
 
 
 class ConventionActivesSearchView(ConventionSearchView):
+    service_class = UserConventionActivesSearchService
     name = "search_active"
-    weight = 10
-    order_by = "televersement_convention_signee_le"
-    tab_title = "active(s)"
-    statuses = [ConventionStatut.SIGNEE]
-
-    def get_conventions_count(self):
-        return 10
 
 
 class ConventionTermineesSearchView(ConventionSearchView):
+    service_class = UserConventionTermineesSearchService
     name = "search_resiliees"
-    weight = 100
-    order_by = "programme__date_achevement_compile"
-    tab_title = "résiliée(s) ou dénoncée(s)"
-    statuses = [
-        ConventionStatut.RESILIEE,
-        ConventionStatut.DENONCEE,
-        ConventionStatut.ANNULEE,
-    ]
-
-    def get_conventions_count(self):
-        return 1000
 
 
-class LoyerSimulateurView(LoginRequiredMixin, View):
+class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
     def post(self, request: AuthenticatedHttpRequest):
         loyer_simulateur_form = LoyerSimulateurForm(request.POST)
         montant_actualise = None
@@ -315,11 +304,9 @@ class LoyerSimulateurView(LoginRequiredMixin, View):
             "conventions/calculette_loyer.html",
             {
                 "form": loyer_simulateur_form,
-                "tabs": ConventionSearchView.get_tabs(),
+                "tabs": self.get_tabs(),
                 "montant_actualise": montant_actualise,
                 "annee_validite": annee_validite,
-                "active_conventions_count": 10,
-                "completed_conventions_count": 1000,
             },
         )
 
@@ -336,9 +323,7 @@ class LoyerSimulateurView(LoginRequiredMixin, View):
             "conventions/calculette_loyer.html",
             {
                 "form": loyer_simulateur_form,
-                "tabs": ConventionSearchView.get_tabs(),
-                "active_conventions_count": 10,
-                "completed_conventions_count": 1000,
+                "tabs": self.get_tabs(),
             },
         )
 

@@ -17,6 +17,7 @@ class ConventionSearchBaseService(ABC):
     order_by = None
     prefetch = []
     filters = defaultdict()
+    statuses = []
 
     @abstractmethod
     def _get_base_queryset(self) -> QuerySet:
@@ -28,8 +29,11 @@ class ConventionSearchBaseService(ABC):
 
         return [field_to_order for field_to_order in self.order_by if field_to_order]
 
-    def get_count_for(self, tab):
-        filters = {**self.filters, "statut__in": [statut.label for statut in tab]}
+    def get_count_for(self):
+        filters = {
+            **self.filters,
+            "statut__in": [statut.label for statut in self.statuses],
+        }
         return self._get_base_queryset().filter(**filters).count()
 
     def get_queryset(self) -> QuerySet:
@@ -81,35 +85,39 @@ class ProgrammeConventionSearchService(ConventionSearchBaseService):
 
 
 class UserConventionSearchService(ConventionSearchBaseService):
+    commune: str | None
+    departement: str | None
+    financement: str | None
+    order_by: str | None
+    search_input: str | None
+
     def __init__(
         self,
         user: User,
-        statuses: List[ConventionStatut] = None,
-        order_by: str | None = None,
-        statut: str | None = None,
-        financement: str | None = None,
-        departement: str | None = None,
-        commune: str | None = None,
-        search_input: str | None = None,
         anru: bool = False,
         bailleur: Bailleur | None = None,
         administration: Administration | None = None,
+        search_filters: dict | None = None,
     ):
         self.user: User = user
-        self.order_by: str | None = order_by
-        self.statuses = statuses or []
-        self.statut: ConventionStatut | None = (
-            ConventionStatut.get_by_label(statut) if statut else None
-        )
-        self.financement: str | None = financement
-        self.departement: str | None = departement
-        self.commune: str | None = commune
-        self.search_input: str | None = search_input
         self.anru: bool = anru
         self.bailleur: Bailleur | None = bailleur
         self.administration: Administration | None = administration
 
-    def _build_filters(self):
+        if search_filters:
+            for name in [
+                "commune",
+                "departement",
+                "financement",
+                "order_by",
+                "search_input",
+            ]:
+                setattr(self, name, search_filters.get(name))
+            self.statut: ConventionStatut | None = ConventionStatut.get_by_label(
+                search_filters.get("statut")
+            )
+
+    def _build_queryset_filters(self):
         filters = defaultdict()
 
         if self.statuses:
@@ -127,10 +135,40 @@ class UserConventionSearchService(ConventionSearchBaseService):
         self.filters = filters
 
     def _get_base_queryset(self) -> QuerySet:
-        self._build_filters()
+        self._build_queryset_filters()
         return (
             self.user.conventions()
             .prefetch_related("programme")
             .prefetch_related("programme__administration")
             .prefetch_related("lot")
         )
+
+
+class UserConventionTermineesSearchService(UserConventionSearchService):
+    weight = 100
+    order_by = "programme__date_achevement_compile"
+    verbose_name = "résiliée(s) / dénoncée(s)"
+    statuses = [
+        ConventionStatut.RESILIEE,
+        ConventionStatut.DENONCEE,
+        ConventionStatut.ANNULEE,
+    ]
+
+
+class UserConventionEnInstructionSearchService(UserConventionSearchService):
+    weight = 0
+    order_by = "televersement_convention_signee_le"
+    verbose_name = "en instruction"
+    statuses = [
+        ConventionStatut.PROJET,
+        ConventionStatut.INSTRUCTION,
+        ConventionStatut.CORRECTION,
+        ConventionStatut.A_SIGNER,
+    ]
+
+
+class UserConventionActivesSearchService(UserConventionSearchService):
+    weight = 10
+    order_by = "televersement_convention_signee_le"
+    verbose_name = "validée(s)"
+    statuses = [ConventionStatut.SIGNEE]
