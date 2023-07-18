@@ -16,11 +16,15 @@ from users.models import User
 class ConventionSearchBaseService(ABC):
     order_by = None
     prefetch = []
-    filters = defaultdict()
+    default_filters = defaultdict()
+    filters: dict
     statuses = []
 
     @abstractmethod
     def _get_base_queryset(self) -> QuerySet:
+        pass
+
+    def _build_queryset_filters(self) -> None:
         pass
 
     def _get_order_by(self) -> List:
@@ -38,6 +42,7 @@ class ConventionSearchBaseService(ABC):
 
     def get_queryset(self) -> QuerySet:
         queryset = self._get_base_queryset()
+        self._build_queryset_filters()
 
         if self.filters:
             queryset = queryset.filter(**self.filters)
@@ -118,41 +123,27 @@ class UserConventionSearchService(ConventionSearchBaseService):
             self.statut = ConventionStatut.get_by_label(search_filters.get("statut"))
 
     def _build_queryset_filters(self):
-        filters = defaultdict()
+        self.filters = self.default_filters
 
         if self.statuses:
-            filters["statut__in"] = map(lambda s: s.label, self.statuses)
+            self.filters["statut__in"] = map(lambda s: s.label, self.statuses)
 
         if self.statut:
-            filters["statut"] = self.statut.label
+            self.filters["statut"] = self.statut.label
 
         if self.commune:
-            filters["programme__ville__icontains"] = self.commune
+            self.filters["programme__ville__icontains"] = self.commune
 
         if self.financement:
-            filters["financement"] = self.financement
-
-        self.filters = filters
+            self.filters["financement"] = self.financement
 
     def _get_base_queryset(self) -> QuerySet:
-        self._build_queryset_filters()
         return (
             self.user.conventions()
             .prefetch_related("programme")
             .prefetch_related("programme__administration")
             .prefetch_related("lot")
         )
-
-
-class UserConventionTermineesSearchService(UserConventionSearchService):
-    weight = 100
-    order_by = "programme__date_achevement_compile"
-    verbose_name = "résiliée(s) / dénoncée(s)"
-    statuses = [
-        ConventionStatut.RESILIEE,
-        ConventionStatut.DENONCEE,
-        ConventionStatut.ANNULEE,
-    ]
 
 
 class UserConventionEnInstructionSearchService(UserConventionSearchService):
@@ -172,3 +163,16 @@ class UserConventionActivesSearchService(UserConventionSearchService):
     order_by = "televersement_convention_signee_le"
     verbose_name = "validée(s)"
     statuses = [ConventionStatut.SIGNEE]
+    default_filters = {"parent_id": None}
+
+
+class UserConventionTermineesSearchService(UserConventionSearchService):
+    weight = 100
+    order_by = "programme__date_achevement_compile"
+    verbose_name = "résiliée(s) / dénoncée(s)"
+    statuses = [
+        ConventionStatut.RESILIEE,
+        ConventionStatut.DENONCEE,
+        ConventionStatut.ANNULEE,
+    ]
+    default_filters = {"parent_id": None}

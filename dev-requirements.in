@@ -8,6 +8,7 @@ django-debug-toolbar
 django-extensions
 django-stubs
 djhtml
+honcho
 pre-commit
 ptpython
 pylint
