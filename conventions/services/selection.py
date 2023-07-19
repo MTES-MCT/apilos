@@ -124,6 +124,7 @@ class ConventionSelectionService:
                 programme = Programme.objects.create(
                     nom=self.form.cleaned_data["nom"],
                     code_postal=self.form.cleaned_data["code_postal"],
+                    ville=self.form.cleaned_data["ville"],
                     bailleur=self.form.cleaned_data["bailleur"],
                     administration=administration,
                     nature_logement=self.form.cleaned_data["nature_logement"],
@@ -136,6 +137,7 @@ class ConventionSelectionService:
                 )
                 programme.save()
                 lot = Lot.objects.create(
+                    nb_logements=self.form.cleaned_data["nb_logements"],
                     financement=self.form.cleaned_data["financement"],
                     programme=programme,
                 )
