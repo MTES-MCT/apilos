@@ -60,7 +60,6 @@ class ConventionRecapitulatifService(ConventionService):
 
     def update_programme_number(self):
         programme_number_form = ProgrammeNumberForm(self.request.POST)
-
         if programme_number_form.is_valid():
             self.convention.programme.numero_galion = (
                 programme_number_form.cleaned_data["numero_galion"]
@@ -73,7 +72,6 @@ class ConventionRecapitulatifService(ConventionService):
             Programme.objects.filter(
                 Q(id=programme_id) | Q(parent_id=programme_id)
             ).update(numero_galion=programme_number_form.cleaned_data["numero_galion"])
-
         return self.get_convention_recapitulatif(
             programme_number_form=programme_number_form
         )
@@ -81,21 +79,16 @@ class ConventionRecapitulatifService(ConventionService):
     def get_convention_recapitulatif(
         self, convention_type1_and_2_form=None, programme_number_form=None
     ):
-        # TODO : refacto services : déplacer tous les forms définis ici
-        # dans la vue
         convention_number_form = ConventionNumberForm(
             initial={
                 "convention_numero": self.convention.get_default_convention_number()
             }
         )
-
         if programme_number_form is None:
             programme_number_form = ProgrammeNumberForm(
                 initial={"numero_galion": self.convention.programme.numero_galion}
             )
-
         complete_for_avenant_form = None
-
         if self.convention.is_incompleted_avenant_parent():
             complete_for_avenant_form = CompleteforavenantForm(
                 initial={
@@ -108,7 +101,6 @@ class ConventionRecapitulatifService(ConventionService):
             convention=self.convention,
             statut=CommentStatut.OUVERT,
         ).order_by("cree_le")
-
         if convention_type1_and_2_form is None:
             convention_type1_and_2_form = ConventionType1and2Form(
                 initial={
@@ -124,7 +116,6 @@ class ConventionRecapitulatifService(ConventionService):
                     "type2_lgts_concernes_option8": self.convention.type2_lgts_concernes_option8,
                 }
             )
-
         return {
             "opened_comments": opened_comments,
             "annexes": Annexe.objects.filter(

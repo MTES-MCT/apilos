@@ -105,7 +105,3 @@ def convention_post_action(request, convention_uuid):
         "updatedate_form": updatedate_form,
         "form_posted": form_posted,
     }
-
-
-def update_convention_administration(request, convention_uuid):
-    pass

@@ -29,6 +29,12 @@
                 {% endfor %}
             {% else %}
                 {% for value, label in form_input.field.choices %}
+                    {% comment %}
+                  the safe filter is needed below if the choice or value passed is
+                  not of the same type. For example, types can be mixed, with the value
+                  being an UUID and the choice a string. The safe filters ensures everything
+                  is interpreted as string.
+                  {% endcomment %}
                     <option value="{{ value|safe }}"
                         {% if value|safe  == form_input.value|safe %}selected{% endif %}>
                         {{label}}
