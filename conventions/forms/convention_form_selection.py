@@ -94,6 +94,12 @@ class CreateConventionMinForm(forms.Form):
             "required": "La selection de la nature des logements est obligatoire"
         },
     )
+    nb_logements = forms.IntegerField(
+        label="Nb logements à conventionner",
+        error_messages={
+            "required": "Le nombre de logements à conventionner est obligatoire",
+        },
+    )
     code_postal = forms.CharField(
         label="Code postal",
         min_length=5,
@@ -102,6 +108,14 @@ class CreateConventionMinForm(forms.Form):
             "required": "Le code postal est obligatoire",
             "max_length": "Le code postal est une suite de 5 caractères",
             "min_length": "Le code postal est une suite de 5 caractères",
+        },
+    )
+    ville = forms.CharField(
+        label="Ville",
+        max_length=255,
+        error_messages={
+            "required": "La ville est obligatoire",
+            "max_length": "La ville ne doit pas excéder 255 caractères",
         },
     )
 
@@ -119,25 +133,11 @@ class ProgrammeSelectionFromZeroForm(CreateConventionMinForm):
             "max_length": "Le Numéro d'opération ne doit pas excéder 255 caractères",
         },
     )
-    nb_logements = forms.IntegerField(
-        label="Nb logements à conventionner",
-        error_messages={
-            "required": "Le nombre de logements à conventionner est obligatoire",
-        },
-    )
     type_habitat = forms.TypedChoiceField(
         label="Type d'habitat",
         choices=TypeHabitat.choices,
         error_messages={
             "required": "Le type d'habitat est obligatoire",
-        },
-    )
-    ville = forms.CharField(
-        label="Ville",
-        max_length=255,
-        error_messages={
-            "required": "La ville est obligatoire",
-            "max_length": "La ville ne doit pas excéder 255 caractères",
         },
     )
 

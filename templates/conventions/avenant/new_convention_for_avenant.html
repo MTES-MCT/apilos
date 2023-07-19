@@ -49,7 +49,13 @@
                 {% include "common/form/input_text.html" with form_input=form.code_postal mandatory_input=True %}
             </div>
             <div class="fr-col-12 fr-col-lg-6 fr-mb-2w">
+                {% include "common/form/input_text.html" with form_input=form.ville mandatory_input=True %}
+            </div>
+            <div class="fr-col-12 fr-col-lg-6 fr-mb-2w">
                 {% include "common/form/input_select.html" with form_input=form.financement mandatory_input=True %}
+            </div>
+            <div class="fr-col-12 fr-col-lg-6 fr-mb-2w">
+                {% include "common/form/input_number.html" with form_input=form.nb_logements %}
             </div>
             <div class="fr-col-12 fr-mb-2w">
                 {% include 'common/form/input_select.html' with form_input=form.nature_logement %}
