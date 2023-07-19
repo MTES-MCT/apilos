@@ -14,7 +14,7 @@ class ConventionChampLibreForm(forms.Form):
     champ_libre_avenant = forms.CharField(
         required=False,
         label="Ajoutez tous les renseignements supplémentaires, de type désignation des immeubles, "
-        "origines des propriétés ou autre, que vous souhaitez voir apparaître dans l'avenant'. "
+        "origines des propriétés ou autre, que vous souhaitez voir apparaître dans l'avenant. "
         "Ces informations apparaîtront à la fin de l'avenant.",
         max_length=5000,
         error_messages={
