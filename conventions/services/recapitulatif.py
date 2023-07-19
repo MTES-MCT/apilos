@@ -5,9 +5,6 @@ from django.utils import timezone
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
-from conventions.forms.convention_form_administration import (
-    UpdateConventionAdministrationForm,
-)
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.notification import NotificationForm
 from conventions.forms.programme_number import ProgrammeNumberForm
@@ -84,6 +81,8 @@ class ConventionRecapitulatifService(ConventionService):
     def get_convention_recapitulatif(
         self, convention_type1_and_2_form=None, programme_number_form=None
     ):
+        # TODO : refacto services : déplacer tous les forms définis ici
+        # dans la vue
         convention_number_form = ConventionNumberForm(
             initial={
                 "convention_numero": self.convention.get_default_convention_number()
@@ -126,11 +125,6 @@ class ConventionRecapitulatifService(ConventionService):
                 }
             )
 
-        update_convention_administration_form = UpdateConventionAdministrationForm(
-            self.request.user,
-            self.request.POST if self.request.method == "POST" else None,
-        )
-
         return {
             "opened_comments": opened_comments,
             "annexes": Annexe.objects.filter(
@@ -142,7 +136,6 @@ class ConventionRecapitulatifService(ConventionService):
             "ConventionType1and2Form": convention_type1_and_2_form,
             "programmeNumberForm": programme_number_form,
             "repartition_surfaces": self.convention.lot.repartition_surfaces(),
-            "update_convention_administration_form": update_convention_administration_form,
         }
 
     def save_convention_TypeIandII(self):

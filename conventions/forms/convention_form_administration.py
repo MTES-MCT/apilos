@@ -19,6 +19,15 @@ class UpdateConventionAdministrationForm(forms.Form):
             "invalid_choice": "invalid : Vous devez choisir une administration",
         },
     )
+
     verification = forms.CharField(
-        label="Vérification", validators=[RegexValidator("TRANSFÉRER")], required=True
+        label="Vérification",
+        validators=[RegexValidator("TRANSFÉRER")],
+        required=True,
+        error_messages={
+            "required": "Vous devez recopier le mot pour valider l'opération",
+        },
     )
+
+    def submit(self, request):
+        pass

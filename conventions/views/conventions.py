@@ -1,4 +1,5 @@
 import mimetypes
+from collections import defaultdict
 from datetime import date
 from zipfile import ZipFile
 
@@ -22,6 +23,9 @@ from django.urls import resolve, reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
+from conventions.forms.convention_form_administration import (
+    UpdateConventionAdministrationForm,
+)
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from conventions.forms.evenement import EvenementForm
 from conventions.models import Convention, ConventionStatut, Evenement, PieceJointe
@@ -59,6 +63,8 @@ class AuthenticatedHttpRequest(HttpRequest):
 
 
 class RecapitulatifView(BaseConventionView):
+    forms: dict
+
     def _get_convention(self, convention_uuid):
         return (
             Convention.objects.prefetch_related("programme")
@@ -70,6 +76,34 @@ class RecapitulatifView(BaseConventionView):
             .prefetch_related("programme__administration")
             .get(uuid=convention_uuid)
         )
+
+    def _get_forms(self, *args):
+        """Regroupe tous les formulaires utilisés sur la vue recapitulatif.
+        À terme, tous les formulaires définis sur ConventionRecapitulatifService devraient
+        être ajoutés ici pour éviter de mélanger business logic et affichage"""
+        forms = defaultdict()
+        forms[
+            "update_convention_administration_form"
+        ] = UpdateConventionAdministrationForm(
+            self.request.user,
+            initial={"administration": self.convention.programme.administration},
+            *args,
+        )
+        print("FORMS", self.convention.programme.administration)
+
+        return forms
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+
+        if request.method == "POST":
+            self.forms = self._get_forms(request.POST)
+        else:
+            self.forms = self._get_forms()
+
+        for _, form in self.forms.items():
+            if form.is_valid():
+                form.submit(request)
 
     # pylint: disable=W0613
     @has_campaign_permission("convention.view_convention")
@@ -91,6 +125,7 @@ class RecapitulatifView(BaseConventionView):
             {
                 **base_convention_response_error(request, self.convention),
                 **result,
+                **self.forms,
                 "convention_form_steps": ConventionFormSteps(
                     convention=self.convention
                 ),
@@ -113,12 +148,14 @@ class RecapitulatifView(BaseConventionView):
             result = service.reactive_convention()
         else:
             result = service.save_convention_TypeIandII()
+
         return render(
             request,
             "conventions/recapitulatif.html",
             {
                 **base_convention_response_error(request, self.convention),
                 **result,
+                **self.forms,
                 "convention_form_steps": ConventionFormSteps(
                     convention=self.convention
                 ),
