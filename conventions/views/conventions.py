@@ -1,5 +1,4 @@
 import mimetypes
-from collections import defaultdict
 from datetime import date
 from zipfile import ZipFile
 
@@ -79,19 +78,19 @@ class RecapitulatifView(BaseConventionView):
 
     def _get_forms(self, *args):
         """Regroupe tous les formulaires utilisés sur la vue recapitulatif.
-        À terme, tous les formulaires définis sur ConventionRecapitulatifService devraient
-        être ajoutés ici pour éviter de mélanger business logic et affichage"""
-        forms = defaultdict()
-        forms[
-            "update_convention_administration_form"
-        ] = UpdateConventionAdministrationForm(
-            self.request.user,
-            initial={"administration": self.convention.programme.administration},
-            *args,
-        )
-        print("FORMS", self.convention.programme.administration)
-
-        return forms
+        À terme, tous les formulaires définis sur ConventionRecapitulatifService
+        pourraient être définis ici pour éviter de mélanger business logic et affichage
+        """
+        return {
+            "update_convention_administration_form": UpdateConventionAdministrationForm(
+                self.request.user,
+                initial={
+                    "administration": self.convention.programme.administration,
+                    "convention": self.convention.pk,
+                },
+                *args,
+            )
+        }
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
