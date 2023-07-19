@@ -228,9 +228,9 @@ django-simple-history==3.3.0 \
     --hash=sha256:2313d2d346f15a1e7a92adb3b6696b226f1cd0c1d920869ec40c4c4076614c41 \
     --hash=sha256:dc1f98e558a0a1e0b6371c3b8efb85f86e02a6db56e83d0ec198343b7408d00a
     # via -r requirements.in
-django-sql-explorer[xls]==3.2 \
-    --hash=sha256:afc085bd227e47a5a2635f0dabbab2b6d15720e011b53a38ad0aede4e9a4d0d4 \
-    --hash=sha256:b3845685a15a1dd56c0e28c68d8b2b55cbe0f3d57e420f324bda46ea39725013
+django-sql-explorer[xls]==3.2.1 \
+    --hash=sha256:35e05f40eff91eead10c553cce2ee63033a19ac39c99b9ccdf87552c52784d63 \
+    --hash=sha256:735cc39e4ae2629049571229e2f7a8c8a54af4a988fcad12a333597724adaad7
     # via -r requirements.in
 django-storages==1.13.2 \
     --hash=sha256:31dc5a992520be571908c4c40d55d292660ece3a55b8141462b4e719aa38eab3 \
