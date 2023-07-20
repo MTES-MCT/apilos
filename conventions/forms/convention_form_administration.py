@@ -6,14 +6,9 @@ from instructeurs.models import Administration
 
 
 class UpdateConventionAdministrationForm(forms.Form):
-    def __init__(self, user, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if user.is_authenticated:
-            self.fields["administration"].queryset = user.administrations()
-
     administration = forms.ModelChoiceField(
         label="Administration",
-        queryset=Administration.objects.none(),
+        queryset=Administration.objects.all(),
         to_field_name="uuid",
         error_messages={
             "required": "Vous devez choisir une administration",
