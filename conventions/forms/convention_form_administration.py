@@ -8,7 +8,8 @@ from instructeurs.models import Administration
 class UpdateConventionAdministrationForm(forms.Form):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["administration"].queryset = user.administrations()
+        if user.is_authenticated:
+            self.fields["administration"].queryset = user.administrations()
 
     administration = forms.ModelChoiceField(
         label="Administration",
