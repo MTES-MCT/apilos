@@ -42,6 +42,9 @@
                                 {% include "common/form/input_text.html" with form_input=update_convention_administration_form.verification %}
                                 {% include "common/form/input_select.html" with form_input=update_convention_administration_form.administration %}
                                 {{ update_convention_administration_form.convention }}
+                                <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-warning-line">
+                                    Changer définitivement l'administration
+                                </button>
                             </form>
                         </p>
                     </div>

@@ -28,7 +28,7 @@ class UpdateConventionAdministrationForm(forms.Form):
 
     convention = forms.CharField(widget=forms.HiddenInput())
 
-    def submit(self, request):
+    def submit(self):
         convention = Convention.objects.get(pk=self.cleaned_data["convention"])
         new_administration = self.cleaned_data["administration"]
         convention.programme.administration = new_administration

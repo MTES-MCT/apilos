@@ -83,7 +83,6 @@ class RecapitulatifView(BaseConventionView):
         """
         return {
             "update_convention_administration_form": UpdateConventionAdministrationForm(
-                self.request.user,
                 initial={
                     "administration": self.convention.programme.administration,
                     "convention": self.convention.pk,
@@ -97,12 +96,12 @@ class RecapitulatifView(BaseConventionView):
 
         if request.method == "POST":
             self.forms = self._get_forms(request.POST)
+
+            for _, form in self.forms.items():
+                if form.is_valid():
+                    form.submit()
         else:
             self.forms = self._get_forms()
-
-        for _, form in self.forms.items():
-            if form.is_valid():
-                form.submit(request)
 
     # pylint: disable=W0613
     @has_campaign_permission("convention.view_convention")
