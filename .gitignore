@@ -1,6 +1,6 @@
 # Environment variable
 .env
-.env.test
+.env.test.local
 .venv
 
 #Cache

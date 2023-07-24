@@ -15,6 +15,7 @@ import sys
 from contextlib import suppress
 from datetime import timedelta
 from pathlib import Path
+from typing import cast
 
 import decouple
 import dj_database_url
@@ -25,8 +26,14 @@ from sentry_sdk.integrations.django import DjangoIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
+
 if TESTING:
-    config = Config(RepositoryEnv(BASE_DIR / ".env.test"))
+    config = Config(
+        RepositoryEnv(
+            BASE_DIR
+            / cast(str, decouple.config("TEST_DOT_ENV_FILE", default=".env.test"))
+        )
+    )
 else:
     config = decouple.config
 
