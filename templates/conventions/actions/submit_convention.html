@@ -14,15 +14,20 @@
             </p>
             {% with numero_galion=convention.programme.numero_galion %}
                 {% if not numero_galion %}
-                    <div>
-                        <em>le numero d'opération n'est pas défini pour l'opération de cette convention. Merci de le renseigner avant de continuer</em>
+                    <div class="fr-grid-row fr-my-2w">
+                        <div class="fr-icon-warning-line fr-mr-2w"></div>
+                        <div class="fr-col-11">
+                            <div class="fr-mb-2w">
+                                <strong>Le numéro d'opération n'est pas défini pour l'opération de cette convention. Merci de le renseigner avant de continuer.</strong>
+                            </div>
+                            {% include "conventions/actions/edit_numero_galion.html" %}
+                        </div>
                     </div>
-                    {% include "conventions/actions/edit_numero_galion.html" %}
                 {% endif %}
                 <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
                     {% csrf_token %}
                     <button name="SubmitConvention" value=True class="fr-btn fr-my-3w" {% if not numero_galion %}disabled{% endif %}>
-                        Soumettre au service instructeur
+                        {% if not numero_galion %}Veuillez définir le numéro d'opération avant de {% endif %}Soumettre au service instructeur
                     </button>
                 </form>
             {% endwith %}
