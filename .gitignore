@@ -1,5 +1,6 @@
 # Environment variable
 .env
+.env.test.local
 .venv
 
 #Cache
@@ -19,3 +20,4 @@ node_modules/
 
 #temporaire
 /.tgitconfig
+

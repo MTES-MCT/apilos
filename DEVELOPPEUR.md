@@ -35,7 +35,12 @@ docker-compose up -d
 
 ### Variables d'environnement
 
-Copier le [.env.template](.env.template) dans un fichier `.env` puis mettre à jour les variables d'environements.
+Copier les [.env.template](.env.template) dans un fichier `.env` et [.env.test](.env.test) dans `.env.test.local` puis mettre à jour les variables d'environements.
+
+```sh
+cp .env.template .env
+cp .env.test .env.test.local
+```
 
 Par exemple:
 
