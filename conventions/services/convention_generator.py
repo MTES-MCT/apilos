@@ -141,6 +141,8 @@ def generate_convention_doc(convention: Convention, save_data=False):
             if convention.date_fin_conventionnement
             else "---"
         ),
+        "res_sh_totale": _compute_total_locaux_collectifs(convention)
+        + logements_totale["sh_totale"],
     }
     context.update(_compute_mixte(convention))
     context.update(logements_totale)
