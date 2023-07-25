@@ -27,7 +27,7 @@
                 <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
                     {% csrf_token %}
                     <button name="SubmitConvention" value=True class="fr-btn fr-my-3w" {% if not numero_galion %}disabled{% endif %}>
-                        {% if not numero_galion %}Veuillez définir le numéro d'opération avant de {% endif %}Soumettre au service instructeur
+                        {% if not numero_galion %}Veuillez définir le numéro d'opération avant de soumettre{% else %}Soumettre{% endif %} au service instructeur
                     </button>
                 </form>
             {% endwith %}
