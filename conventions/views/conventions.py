@@ -104,7 +104,7 @@ class RecapitulatifView(BaseConventionView):
         self.forms = self._get_forms()
 
     @has_campaign_permission("convention.view_convention")
-    def get(self, request: HttpRequest, _convention_uuid: int):
+    def get(self, request: HttpRequest, **kwargs):
         service = ConventionRecapitulatifService(
             request=request, convention=self.convention
         )
@@ -129,7 +129,7 @@ class RecapitulatifView(BaseConventionView):
         )
 
     @has_campaign_permission("convention.change_convention")
-    def post(self, request: HttpRequest, _convention_uuid: int):
+    def post(self, request: HttpRequest, **kwargs):
         self.forms = self._get_forms(request.POST)
 
         for _, form in self.forms.items():
