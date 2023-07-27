@@ -134,6 +134,7 @@ class RecapitulatifView(BaseConventionView):
 
         for _, form in self.forms.items():
             if form.is_valid():
+                # TODO : gérer plusieurs formulaires valides ici
                 return form.submit(request)
 
         service = ConventionRecapitulatifService(
