@@ -175,6 +175,7 @@ MIDDLEWARE = [
     "hijack.middleware.HijackUserMiddleware",
 ]
 
+
 if not TESTING:
     MIDDLEWARE = MIDDLEWARE + [
         "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -220,6 +221,7 @@ TEMPLATES = [
         },
     },
 ]
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
 WSGI_APPLICATION = "core.wsgi.application"
 

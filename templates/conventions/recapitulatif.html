@@ -1,25 +1,18 @@
 {% extends "layout/base.html" %}
-
-{% block page_title %}Recapitulatif - APiLos{% endblock%}
-
+{% block page_title %}Recapitulatif - APiLos{% endblock %}
 {% load static %}
-
 {% load custom_filters %}
-
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script src="{% static "turbo/turbo.es2017-umd.js" %}" nonce="{{request.csp_nonce}}"></script>
     <script type="text/javascript" src="{% static "js/type1and2.js" %}" nonce="{{request.csp_nonce}}"></script>
-    <script nonce="{{request.csp_nonce}}">
-        Turbo.session.drive = false
-    </script>
+    <script nonce="{{request.csp_nonce}}">Turbo.session.drive = false</script>
 {% endblock %}
-
 {% block content %}
     {% with programme_uuid=convention.programme.uuid|slugify convention_uuid=convention.uuid|slugify lot_uuid=convention.lot.uuid|slugify ecolo_ref=convention.ecolo_reference %}
-        <input type="hidden" id="convention_uuid" value="{{convention.uuid}}">
+        <input type="hidden" id="convention_uuid" value="{{ convention.uuid }}">
         <div class="fr-container-fluid ds_banner">
-            {% include "conventions/common/form_header.html"%}
+            {% include "conventions/common/form_header.html" %}
             {% include "common/nav_bar.html"  with nav_bar_step="recapitulatif" %}
             <div class="fr-container fr-mt-5w">
                 {% csrf_token %}
@@ -33,7 +26,8 @@
                 {% endif %}
                 {% if convention.statut == CONVENTION_STATUT.SIGNEE and request|is_instructeur %}
                     <div class="fr-grid-row fr-grid-row--right">
-                        <a href="{% url 'conventions:expert_mode' convention_uuid=convention.uuid %}" class="fr-btn fr-btn--secondary">
+                        <a href="{% url 'conventions:expert_mode' convention_uuid=convention.uuid %}"
+                            class="fr-btn fr-btn--secondary">
                             {% if request.session.is_expert %}
                                 <span class="fr-icon-close-circle-line fr-mr-1w"></span>
                                 Sortir du mode expert
@@ -67,9 +61,7 @@
                         {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' %}
                     {% endif %}
                     <hr class="fr-mt-3w">
-
                     {% if convention|display_convention_form_progressbar %}
-
                         {% if 'bailleur' not in avenant_list %}
                             {% include "conventions/avenant/bailleur_update_start.html" with avenant_uuid=convention.uuid %}
                             <hr>
@@ -99,14 +91,14 @@
                     {% include "conventions/recapitulatif/bailleur.html"  with target_url='conventions:bailleur' bailleur=convention.bailleur %}
                     {% include "conventions/recapitulatif/operation.html" with target_url='conventions:programme' programme=convention.programme lot=convention.lot %}
                     {% include "conventions/recapitulatif/references_cadastrales.html"  with target_url='conventions:references_cadastrales' programme=convention.programme reference_cadastrales=convention.programme.referencecadastrales.all %}
-                    {%  if not ecolo_ref %}
+                    {% if not ecolo_ref %}
                         {% include "conventions/recapitulatif/edd.html"  with target_url='conventions:edd' programme=convention.programme lot=convention.lot logement_edds=convention.programme.logementedds.all %}
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:financement' %}
                     {% endif %}
                     {% include "conventions/recapitulatif/logements.html" with target_url='conventions:logements' lot=convention.lot logements=convention.lot.logements.all %}
                     {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:foyer_residence_logements' lot=convention.lot logements=convention.lot.logements.all %}
                     {% include "conventions/recapitulatif/collectif.html" with target_url='conventions:collectif' lot=convention.lot locaux_collectifs=convention.lot.locaux_collectifs.all %}
-                    {%  if not ecolo_ref %}
+                    {% if not ecolo_ref %}
                         {% include "conventions/recapitulatif/annexes.html" with target_url='conventions:annexes' annexes=convention.lot.annexes.all lot=convention.lot %}
                     {% else %}
                         {% include "conventions/recapitulatif/pieces_jointes.html" %}
@@ -117,35 +109,30 @@
                     {% include "conventions/recapitulatif/variantes.html" with target_url='conventions:variantes' %}
                     {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:commentaires' %}
                 {% endif %}
-
                 <turbo-frame id="convention_actions" data-turbo="true">
                     {% include "conventions/actions/submit_convention.html" %}
                     {% include "conventions/actions/instructeur_notification.html" %}
                     <div class="fr-grid-row fr-grid-row--gutters fr-mt-3w">
-                        <div class="fr-col-6 fr-py-5w fr-px-3w">
-                            {% include "conventions/actions/bailleur_notification.html" %}
-                        </div>
+                        <div class="fr-col-6 fr-py-5w fr-px-3w">{% include "conventions/actions/bailleur_notification.html" %}</div>
                         <div class="fr-col-6 fr-py-5w fr-px-3w apilos-or-border">
                             {% include "conventions/actions/instructeur_validation.html" %}
                         </div>
                     </div>
                     {% include "conventions/actions/type1and2_options.html" %}
                     {% include "conventions/actions/generate_convention.html" %}
-                    {% include "conventions/actions/update_administration.html"%}
-                    {% include "conventions/actions/cancel_convention.html"%}
-                    {% include "conventions/actions/delete.html"%}
+                    {% if request.path != "conventions:sent" %}
+                        {% comment %} La convention ne doit pas être affichée sur la vue
+                        Informations détaillées d'une convention finalisée {% endcomment %}
+                        {% include "conventions/actions/update_administration.html" %}
+                    {% endif %}
+                    {% include "conventions/actions/cancel_convention.html" %}
+                    {% include "conventions/actions/delete.html" %}
                     {% include "conventions/actions/display_spf_info.html" %}
                     {% include "conventions/actions/display_resiliation_info.html" %}
                 </turbo-frame>
-
-                <div class="fr-col-12 fr-py-5w">
-                    {% include "common/button/return_convention_index.html" %}
-                </div>
-
+                <div class="fr-col-12 fr-py-5w">{% include "common/button/return_convention_index.html" %}</div>
             </div>
         </div>
-
         <script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{request.csp_nonce}}"></script>
-
     {% endwith %}
 {% endblock %}

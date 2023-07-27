@@ -63,9 +63,19 @@
         {% block header %}
             {% include "layout/header.html" with without_action_button=False %}
         {% endblock %}
+
         <main role="main" class="contentAll">
+            <div class="fr-container">
+                {% for message in messages %}
+                    <div class="fr-alert {% if message.tags %}fr-alert--{{message.tags}}{% endif %}">
+                        <p>{{ message }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+
             {% block content %}{% endblock %}
         </main>
+
         {% block footer %}
             {% include "layout/footer.html" %}
         {% endblock %}
