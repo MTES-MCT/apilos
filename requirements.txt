@@ -143,9 +143,9 @@ click-repl==0.2.0 \
     --hash=sha256:94b3fbbc9406a236f176e0506524b2937e4b23b6f4c0c0b2a0a83f8a64e9194b \
     --hash=sha256:cd12f68d745bf6151210790540b4cb064c7b13e571bc64b6957d98d120dacfd8
     # via celery
-convertapi==1.6.0 \
-    --hash=sha256:2008938629849ff9551599db81295b7a35c3eb0de150caaa09827563af6a7b2b \
-    --hash=sha256:226e8bf0ca262a0f1c839d9ed2b5543247deca0a2f6703c2acdd6ed372e96a00
+convertapi==1.7.0 \
+    --hash=sha256:6875652d46b549920b42e2e8b6748a6316d507422e00bc2830fe9846b9dc47d0 \
+    --hash=sha256:e4021cec0d365e40f4bbbfe86aa4d78e573027b05b8b9de4faca4062454ced9c
     # via -r requirements.in
 cryptography==41.0.2 \
     --hash=sha256:01f1d9e537f9a15b037d5d9ee442b8c22e3ae11ce65ea1f3316a41c78756b711 \
