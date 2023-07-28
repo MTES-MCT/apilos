@@ -1,18 +1,21 @@
-from typing import Any, List
 from abc import ABC
+from typing import Any, List
 
-from django.forms import Form
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
 from django.db.models.functions import Substr
+from django.forms import Form
 from django.http.request import HttpRequest
 
 from bailleurs.models import Bailleur
 from conventions.forms import UploadForm
+from conventions.forms.convention_date_signature import ConventionDateForm
+from conventions.forms.resiliation import ConventionResiliationForm
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
 from conventions.services.file import ConventionFileService
+from conventions.services.search import AvenantListSearchService
 from instructeurs.models import Administration
 from users.models import User
 
@@ -178,4 +181,52 @@ def convention_sent(request, convention_uuid):
         "success": result_status,
         "convention": convention,
         "upform": upform,
+    }
+
+
+def convention_post_action(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    result_status = None
+    form_posted = None
+    if request.method == "POST":
+        resiliation_form = ConventionResiliationForm(request.POST)
+        updatedate_form = ConventionDateForm(request.POST)
+        is_resiliation = request.POST.get("resiliation", False)
+        if is_resiliation:
+            if resiliation_form.is_valid():
+                convention.statut = ConventionStatut.RESILIEE.label
+                convention.date_resiliation = resiliation_form.cleaned_data[
+                    "date_resiliation"
+                ]
+                convention.save()
+                # SUCCESS
+                result_status = utils.ReturnStatus.SUCCESS
+                form_posted = "resiliation"
+        else:
+            if updatedate_form.is_valid():
+                convention.televersement_convention_signee_le = (
+                    updatedate_form.cleaned_data["televersement_convention_signee_le"]
+                )
+                convention.save()
+                result_status = utils.ReturnStatus.SUCCESS
+                form_posted = "date_signature"
+
+    else:
+        resiliation_form = ConventionResiliationForm()
+        updatedate_form = ConventionDateForm()
+
+    upform = UploadForm()
+    avenant_search_service = AvenantListSearchService(convention, order_by_numero=True)
+    paginator = avenant_search_service.paginate()
+    total_avenants = convention.avenants.all().count()
+
+    return {
+        "success": result_status,
+        "upform": upform,
+        "convention": convention,
+        "avenants": paginator.get_page(request.GET.get("page", 1)),
+        "total_avenants": total_avenants,
+        "resiliation_form": resiliation_form,
+        "updatedate_form": updatedate_form,
+        "form_posted": form_posted,
     }

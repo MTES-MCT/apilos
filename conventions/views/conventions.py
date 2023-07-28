@@ -31,9 +31,8 @@ from conventions.permissions import (
     has_campaign_permission_view_function,
 )
 from conventions.services import convention_generator
-from conventions.services.avenants import convention_post_action
 from conventions.services.convention_generator import fiche_caf_doc
-from conventions.services.conventions import convention_sent
+from conventions.services.conventions import convention_post_action, convention_sent
 from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
@@ -50,7 +49,7 @@ from conventions.services.search import (
 from conventions.services.utils import ReturnStatus, base_convention_response_error
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from core.storage import client
-from core.utils import is_valid_uuid
+from core.utils import get_uuid_or_none
 from instructeurs.models import Administration
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
@@ -103,7 +102,7 @@ class RecapitulatifView(BaseConventionView):
 
     # pylint: disable=W0613
     @has_campaign_permission("convention.change_convention")
-    def post(self, request: AuthenticatedHttpRequest, convention_uuid: int):
+    def post(self, request: HttpRequest, convention_uuid: int):
         # pylint: disable=unused-argument
         service = ConventionRecapitulatifService(
             request=request, convention=self.convention
@@ -177,23 +176,21 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
             for arg, query_param in search_filters_mapping
         }
 
+        administration_uuid = self.request.GET.get("administration")
+        administration = Administration.objects.filter(
+            uuid=get_uuid_or_none(administration_uuid)
+        ).first()
+
+        bailleur_uuid = self.request.GET.get("bailleur")
+        bailleur = Bailleur.objects.filter(uuid=get_uuid_or_none(bailleur_uuid)).first()
+
         self.service = self.service_class(
-            administration=self.administration,
+            administration=administration,
             anru=(self.request.GET.get("anru") is not None),
-            bailleur=self.bailleur,
+            bailleur=bailleur,
             user=self.request.user,
             search_filters=search_filters,
         )
-
-    @property
-    def administration(self) -> Administration | None:
-        uuid = self._get_uuid_for("administration")
-        return Administration.objects.filter(uuid=uuid).first()
-
-    @property
-    def bailleur(self) -> Bailleur | None:
-        uuid = self._get_uuid_for("bailleur")
-        return Bailleur.objects.filter(uuid=uuid).first()
 
     @property
     def bailleurs_queryset(self) -> QuerySet | None:
@@ -217,13 +214,6 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
     @property
     def all_conventions_count(self):
         return sum(tab["count"] for tab in self.get_tabs())
-
-    def _get_uuid_for(self, name: str) -> str | None:
-        return (
-            self.request.GET.get(name)
-            if is_valid_uuid(self.request.GET.get(name))
-            else None
-        )
 
     def _get_non_empty_query_param(self, query_param: str, default=None) -> str | None:
         if value := self.request.GET.get(query_param):
