@@ -9,6 +9,8 @@ from django.db import migrations
 OLD_KEY = "Ancien Code Officiel"
 CURRENT_KEY = "Code Courant Officiel"
 
+# Source : https://public.opendatasoft.com/explore/dataset/georef-france-matching-code/export/?flg=fr&disjunctive.abbr_type&refine.abbr_type=REG noqa
+
 
 def remove_deprecated_region_codes(apps, schema_editor):
     Programme = apps.get_model("programmes", "Programme")
