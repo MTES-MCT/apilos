@@ -68,7 +68,6 @@ def upload_avenants_for_avenant(request, convention_uuid):
         parent_convention, order_by_numero=True
     )
 
-    ongoing_avenant_list_service = parent_convention.avenants.all().filter(numero=None)
     if request.method == "POST":
         avenant_form = InitavenantsforavenantForm(request.POST)
         if avenant_form.is_valid():
@@ -77,6 +76,7 @@ def upload_avenants_for_avenant(request, convention_uuid):
                 request.user, convention_origin=parent_convention
             )
             avenant.save()
+
             return {
                 "success": utils.ReturnStatus.SUCCESS,
                 "convention": avenant,
@@ -84,6 +84,8 @@ def upload_avenants_for_avenant(request, convention_uuid):
             }
     else:
         avenant_form = InitavenantsforavenantForm()
+
+    ongoing_avenant_list_service = parent_convention.avenants.all().filter(numero=None)
     return {
         "success": utils.ReturnStatus.ERROR,
         "form": avenant_form,

@@ -17,7 +17,7 @@ class ConventionSearchBaseService(ABC):
     order_by = None
     prefetch = []
     default_filters = defaultdict()
-    filters: dict
+    filters: dict = {}
     statuses = []
 
     @abstractmethod
