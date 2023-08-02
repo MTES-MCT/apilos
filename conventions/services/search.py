@@ -20,6 +20,10 @@ class ConventionSearchBaseService(ABC):
     filters: dict = {}
     statuses = []
 
+    @property
+    def choices(self) -> list[tuple[str, str]]:
+        return [(status.name, status.label) for status in self.statuses]
+
     @abstractmethod
     def _get_base_queryset(self) -> QuerySet:
         pass

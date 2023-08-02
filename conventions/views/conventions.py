@@ -221,17 +221,6 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
 
         return default
 
-    def _user_convention_statuses_choices(self, user: User) -> list[tuple[str, str]]:
-        return [
-            (
-                statut.name,
-                statut.value.instructeur.label
-                if user.is_instructeur()
-                else statut.value.bailleur.label,
-            )
-            for statut in self.statuses
-        ]
-
     def get(self, request: AuthenticatedHttpRequest):
         paginator = self.service.paginate()
 
@@ -247,7 +236,7 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
                 "financements": Financement.choices,
                 "inactive": resolve(request.path_info).url_name == "search_instruction",
                 "search_input": self._get_non_empty_query_param("search_input", ""),
-                "statuts": ConventionStatut.choices,
+                "statuts": self.service.choices,
                 "tabs": self.get_tabs(),
                 "total_conventions": request.user.conventions().count(),
             },
