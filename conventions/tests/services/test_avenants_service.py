@@ -1,8 +1,13 @@
 from django.http import HttpRequest
 from django.test import TestCase
 
-from conventions.models import Convention
-from conventions.services.avenants import create_avenant
+from conventions.models import Convention, ConventionStatut
+from conventions.services.avenants import (
+    _get_last_avenant,
+    create_avenant,
+    # complete_avenants_for_avenant,
+    # upload_avenants_for_avenant,
+)
 from conventions.services.utils import ReturnStatus
 from users.models import User
 
@@ -52,3 +57,35 @@ class ConventionAvenantsServiceTests(TestCase):
 
         self.assertEqual(result["success"], ReturnStatus.ERROR)
         self.assertEqual(self.convention.avenants.all().count(), 0)
+
+    def test_upload_avenants_for_avenant_basic(self):
+        pass
+
+    def _get_last_avenant_basic(self):
+        request = DummyRequest(
+            "POST",
+            {"uuid": self.convention.uuid, "avenant_type": "bailleur"},
+            self.user,
+        )
+
+        create_avenant(request, self.convention.uuid)
+        last_avenant = create_avenant(request, self.convention.uuid)["convention"]
+
+        self.assertEqual(_get_last_avenant(self.convention), last_avenant)
+
+    def _get_last_avenant_ongoing(self):
+        request = DummyRequest(
+            "POST",
+            {"uuid": self.convention.uuid, "avenant_type": "bailleur"},
+            self.user,
+        )
+
+        last_avenant = create_avenant(request, self.convention.uuid)["convention"]
+        last_avenant.statut = ConventionStatut.PROJET.label
+        last_avenant.save()
+
+        with self.assertRaises(Exception):
+            _get_last_avenant(self.convention)
+
+    def _get_last_avenant_without_avenants(self):
+        self.assertEqual(_get_last_avenant(self.convention), self.convention)
