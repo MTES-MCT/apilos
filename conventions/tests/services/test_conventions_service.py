@@ -2,7 +2,11 @@ from django.http import HttpRequest, QueryDict
 from django.test import TestCase
 
 from conventions.models import Convention
-from conventions.services.conventions import ConventionService, convention_sent
+from conventions.services.conventions import (
+    ConventionService,
+    convention_post_action,
+    convention_sent,
+)
 from users.models import User
 
 
@@ -20,8 +24,11 @@ class ConventionConventionsServiceTests(TestCase):
 
     def setUp(self):
         self.request = HttpRequest()
-        self.convention = Convention.objects.get(numero="0001")
         self.user = User.objects.get(username="nicolas")
+        self.convention = Convention.objects.get(numero="0001")
+        self.avenant = self.convention.clone(
+            self.user, convention_origin=self.convention
+        )
         self.request.user = self.user
 
     def test_convention_service_basic(self):
@@ -38,8 +45,12 @@ class ConventionConventionsServiceTests(TestCase):
         result = convention_sent(self.request, self.convention.uuid)
         self.assertEqual(result["convention"], self.convention)
 
-    def test_convention_sent_post(self):
-        self.request.method = "POST"
+    def test_convention_post_action_basic(self):
         self.request.POST = QueryDict()
-        result = convention_sent(self.request, self.convention.uuid)
+        result = convention_post_action(self.request, self.convention.uuid)
+
         self.assertEqual(result["convention"], self.convention)
+        self.assertEqual(
+            len(result["avenants"].object_list), len(self.convention.avenants.all())
+        )
+        self.assertEqual(result["total_avenants"], 1)
