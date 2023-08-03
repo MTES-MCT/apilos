@@ -152,7 +152,7 @@ class UserConventionSearchService(ConventionSearchBaseService):
 
 class UserConventionEnInstructionSearchService(UserConventionSearchService):
     weight = 0
-    order_by = "televersement_convention_signee_le"
+    order_by = "programme__date_achevement_compile"
     verbose_name = "en instruction"
     statuses = [
         ConventionStatut.PROJET,
@@ -172,7 +172,7 @@ class UserConventionActivesSearchService(UserConventionSearchService):
 
 class UserConventionTermineesSearchService(UserConventionSearchService):
     weight = 100
-    order_by = "programme__date_achevement_compile"
+    order_by = "televersement_convention_signee_le"
     verbose_name = "résiliée(s) / dénoncée(s)"
     statuses = [
         ConventionStatut.RESILIEE,
