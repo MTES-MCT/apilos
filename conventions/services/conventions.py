@@ -91,14 +91,15 @@ def convention_post_action(request, convention_uuid):
 
     upform = UploadForm()
     avenant_search_service = AvenantListSearchService(convention, order_by_numero=True)
-    paginated_avenants = avenant_search_service.paginate()
     total_avenants = convention.avenants.all().count()
 
     return {
         "success": result_status,
         "upform": upform,
         "convention": convention,
-        "avenants": paginated_avenants.get_page(request.GET.get("page", 1)),
+        "avenants": avenant_search_service.paginate().get_page(
+            request.GET.get("page", 1)
+        ),
         "total_avenants": total_avenants,
         "resiliation_form": resiliation_form,
         "updatedate_form": updatedate_form,
