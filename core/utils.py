@@ -22,10 +22,6 @@ def is_valid_uuid(val):
         return False
 
 
-def get_uuid_or_none(uuid_or_string):
-    return is_valid_uuid(uuid_or_string)
-
-
 def get_key_from_json_field(json_field, key, default=""):
     try:
         field = json.loads(json_field)

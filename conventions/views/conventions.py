@@ -49,7 +49,7 @@ from conventions.services.search import (
 from conventions.services.utils import ReturnStatus, base_convention_response_error
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from core.storage import client
-from core.utils import get_uuid_or_none
+from core.utils import is_valid_uuid
 from instructeurs.models import Administration
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
@@ -178,11 +178,13 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
 
         administration_uuid = self.request.GET.get("administration")
         administration = Administration.objects.filter(
-            uuid=get_uuid_or_none(administration_uuid)
+            uuid=is_valid_uuid(administration_uuid) or None
         ).first()
 
         bailleur_uuid = self.request.GET.get("bailleur")
-        bailleur = Bailleur.objects.filter(uuid=get_uuid_or_none(bailleur_uuid)).first()
+        bailleur = Bailleur.objects.filter(
+            uuid=is_valid_uuid(bailleur_uuid) or None
+        ).first()
 
         self.service = self.service_class(
             administration=administration,
