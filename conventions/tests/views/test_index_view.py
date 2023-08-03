@@ -3,9 +3,7 @@ from django.http.request import HttpRequest
 from django.test import TestCase
 from django.urls import reverse
 
-from conventions.services.search import (
-    UserConventionSearchService,
-)
+from conventions.services.search import UserConventionSearchService
 from conventions.views.conventions import ConventionSearchView, ConventionTabsMixin
 from users.models import User
 
@@ -92,5 +90,6 @@ class ConventionIndexViewTests(TestCase):
             service_class = DummyService
 
         tabs = DummyClassWithTabs().get_tabs()
+
         self.assertEqual(len(tabs), 4)
         self.assertEqual(tabs[-1]["title"], "Je suis un service")
