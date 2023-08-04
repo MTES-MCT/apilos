@@ -365,6 +365,7 @@ class User(AbstractUser):
         If omitted or None, no filter is applied
         """
         convs = Convention.objects
+
         if active is not None:
             convs = convs.filter(
                 statut__in=ConventionStatut.active_statuts()

@@ -1,7 +1,11 @@
 from bs4 import BeautifulSoup
-
+from django.http.request import HttpRequest
 from django.test import TestCase
 from django.urls import reverse
+
+from conventions.services.search import UserConventionSearchService
+from conventions.views.conventions import ConventionSearchView, ConventionTabsMixin
+from users.models import User
 
 
 class ConventionIndexViewTests(TestCase):
@@ -21,7 +25,7 @@ class ConventionIndexViewTests(TestCase):
         self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
         response = self.client.get(reverse("conventions:index"))
-        self.assertRedirects(response, reverse("conventions:search_active"))
+        self.assertRedirects(response, reverse("conventions:search_instruction"))
 
     def test_get_list_active(self):
         """
@@ -30,7 +34,7 @@ class ConventionIndexViewTests(TestCase):
         # login as superuser
         self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
-        response = self.client.get(reverse("conventions:search_active"))
+        response = self.client.get(reverse("conventions:search_instruction"))
         soup = BeautifulSoup(response.content, "html.parser")
         galion_refs = soup.find_all(attrs={"data-test-role": "programme-galion-cell"})
         financements = soup.find_all(
@@ -50,7 +54,7 @@ class ConventionIndexViewTests(TestCase):
         self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
         response = self.client.get(
-            reverse("conventions:search_active"),
+            reverse("conventions:search_instruction"),
             data={"order_by": "programme__bailleur__nom"},
         )
         soup = BeautifulSoup(response.content, "html.parser")
@@ -61,3 +65,31 @@ class ConventionIndexViewTests(TestCase):
 
         self.assertEqual({r.text.strip() for r in galion_refs}, {"12345", "98765"})
         self.assertEqual({f.text.strip() for f in financements}, {"PLUS", "PLAI"})
+
+    def test_get_tabs_basic(self):
+        class DummyClassWithTabs(ConventionTabsMixin):
+            def __init__(self):
+                self.request = HttpRequest()
+                self.request.user = User.objects.get(username="nicolas")
+
+        self.assertEqual(len(DummyClassWithTabs().get_tabs()), 3)
+
+    def test_get_tabs_with_new_view(self):
+        class DummyClassWithTabs(ConventionTabsMixin):
+            def __init__(self):
+                self.request = HttpRequest()
+                self.request.user = User.objects.get(username="nicolas")
+
+        class DummyService(UserConventionSearchService):
+            weight = 1000000
+            verbose_name = "Je suis un service"
+
+        # pylint: disable=W0611, unused-variable
+        class DummyConventionView(ConventionSearchView):
+            name = "search_instruction"
+            service_class = DummyService
+
+        tabs = DummyClassWithTabs().get_tabs()
+
+        self.assertEqual(len(tabs), 4)
+        self.assertEqual(tabs[-1]["title"], "Je suis un service")

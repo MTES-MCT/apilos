@@ -2,18 +2,11 @@ import datetime
 
 from django.utils import timezone
 
-from conventions.forms import (
-    InitavenantsforavenantForm,
-    AvenantsforavenantForm,
-)
+from conventions.forms import AvenantsforavenantForm, InitavenantsforavenantForm
 from conventions.forms.avenant import AvenantForm
-from conventions.models import (
-    AvenantType,
-    Convention,
-    ConventionStatut,
-)
+from conventions.models import AvenantType, Convention, ConventionStatut
 from conventions.services import utils
-from conventions.services.conventions import ConventionListService
+from conventions.services.search import AvenantListSearchService
 from upload.services import UploadService
 
 
@@ -71,14 +64,10 @@ def upload_avenants_for_avenant(request, convention_uuid):
         .prefetch_related("avenants")
         .get(uuid=convention_uuid)
     )
-    avenant_list_service = ConventionListService(
-        my_convention_list=parent_convention.avenants.all()
-        .prefetch_related("programme")
-        .prefetch_related("lot"),
-        order_by="cree_le",
+    avenant_search_service = AvenantListSearchService(
+        parent_convention, order_by_numero=True
     )
-    ongoing_avenant_list_service = parent_convention.avenants.all().filter(numero=None)
-    avenant_list_service.paginate()
+
     if request.method == "POST":
         avenant_form = InitavenantsforavenantForm(request.POST)
         if avenant_form.is_valid():
@@ -87,6 +76,7 @@ def upload_avenants_for_avenant(request, convention_uuid):
                 request.user, convention_origin=parent_convention
             )
             avenant.save()
+
             return {
                 "success": utils.ReturnStatus.SUCCESS,
                 "convention": avenant,
@@ -94,11 +84,15 @@ def upload_avenants_for_avenant(request, convention_uuid):
             }
     else:
         avenant_form = InitavenantsforavenantForm()
+
+    ongoing_avenant_list_service = parent_convention.avenants.all().filter(numero=None)
     return {
         "success": utils.ReturnStatus.ERROR,
         "form": avenant_form,
         "convention": parent_convention,
-        "avenants": avenant_list_service,
+        "avenants": avenant_search_service.paginate().get_page(
+            request.GET.get("page", 1)
+        ),
         "ongoing_avenants": ongoing_avenant_list_service,
     }
 
@@ -118,13 +112,10 @@ def _get_last_avenant(convention):
 def complete_avenants_for_avenant(request, convention_uuid):
     avenant = Convention.objects.get(uuid=convention_uuid)
     convention_parent = avenant.parent
-    avenant_list_service = ConventionListService(
-        my_convention_list=avenant.parent.avenants.all()
-        .prefetch_related("programme")
-        .prefetch_related("lot"),
-        order_by="numero",
+    avenant_search_service = AvenantListSearchService(
+        avenant.parent, order_by_numero=True
     )
-    avenant_list_service.paginate()
+
     avenant_numero = avenant.get_default_convention_number()
     if request.method == "POST":
         avenant_form = AvenantsforavenantForm(request.POST, request.FILES)
@@ -158,7 +149,9 @@ def complete_avenants_for_avenant(request, convention_uuid):
     return {
         "success": utils.ReturnStatus.ERROR,
         "avenant_numero": avenant_numero,
-        "avenants_parent": avenant_list_service,
+        "avenants_parent": avenant_search_service.paginate().get_page(
+            request.GET.get("page", 1)
+        ),
         "avenant_form": avenant_form,
         "convention_parent": convention_parent,
     }

@@ -1,7 +1,6 @@
-import uuid
 import json
-
-from typing import SupportsRound, Any
+import uuid
+from typing import Any, SupportsRound
 
 
 def round_half_up(number: SupportsRound[Any], ndigits: int = 0):

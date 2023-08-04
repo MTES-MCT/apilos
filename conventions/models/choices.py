@@ -8,17 +8,19 @@ class StatutByRole(NamedTuple):
     description_entete: str | None = ""
 
 
-class ReverseConventionStatut:
+class ReverseEnumMixin:
     _reverse: dict = {}
 
     @classmethod
     def get_by_label(cls, label: str):
+        if not label:
+            return None
         if not cls._reverse:
-            cls._reverse = {c.label: c for c in ConventionStatut}
+            cls._reverse = {c.label: c for c in cls}
         return cls._reverse[label]
 
 
-class ConventionStatut(Enum):
+class ConventionStatut(ReverseEnumMixin, Enum):
     """
     A/ PROJET : Projet - Création d'un projet de convention
         Le bailleur crée un projet de convention APL, il ajoute à ce projet des documents
@@ -165,10 +167,6 @@ class ConventionStatut(Enum):
     @property
     def choices(cls) -> list[tuple[str, str]]:
         return [(member.name, member.label) for member in cls]
-
-    @classmethod
-    def get_by_label(cls, label):
-        return ReverseConventionStatut.get_by_label(label)
 
     @classmethod
     def active_statuts(cls, flat: bool = True, as_instructeur: bool = True):

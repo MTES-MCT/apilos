@@ -1,0 +1,21 @@
+{% if not CERBERE_AUTH and not request.user.is_staff %}
+    <div class="fr-mr-3w">
+        <a class="fr-btn fr-icon-add-line fr-btn--icon-left" href="{% url 'conventions:selection' %}">
+            Créer une nouvelle convention
+        </a>
+    </div>
+{% endif %}
+{% if CERBERE_AUTH %}
+    <div class="fr-mr-3w">
+        <a class="fr-btn fr-icon-add-line fr-btn--icon-left" href="{% url 'conventions:selection_from_zero' %}">
+            Créer une convention ANRU
+        </a>
+    </div>
+{% endif %}
+{% if not request.user.is_staff %}
+    <div>
+        <a class="fr-btn fr-icon-add-line fr-btn--icon-left fr-btn--secondary " href="{% url 'conventions:new_avenant_start' %}">
+            Créer un avenant
+        </a>
+    </div>
+{% endif %}

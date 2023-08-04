@@ -4,9 +4,11 @@ from zipfile import ZipFile
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.files import File
 from django.core.files.storage import default_storage
+from django.db.models import QuerySet
 from django.http import (
     FileResponse,
     HttpRequest,
@@ -16,7 +18,8 @@ from django.http import (
     HttpResponseRedirect,
 )
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import resolve, reverse
+from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from bailleurs.models import Bailleur
@@ -29,17 +32,19 @@ from conventions.permissions import (
 )
 from conventions.services import convention_generator
 from conventions.services.convention_generator import fiche_caf_doc
-from conventions.services.conventions import (
-    ConventionListService,
-    convention_post_action,
-    convention_sent,
-)
+from conventions.services.conventions import convention_post_action, convention_sent
 from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
     convention_feedback,
     convention_submit,
     convention_validate,
+)
+from conventions.services.search import (
+    UserConventionActivesSearchService,
+    UserConventionEnInstructionSearchService,
+    UserConventionSearchService,
+    UserConventionTermineesSearchService,
 )
 from conventions.services.utils import ReturnStatus, base_convention_response_error
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
@@ -49,6 +54,11 @@ from instructeurs.models import Administration
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
 from upload.services import UploadService
+from users.models import User
+
+
+class AuthenticatedHttpRequest(HttpRequest):
+    user: User
 
 
 class RecapitulatifView(BaseConventionView):
@@ -119,87 +129,142 @@ class RecapitulatifView(BaseConventionView):
         )
 
 
-@login_required
-@require_GET
-def search(request, active: bool = True):
-    query_set = request.user.conventions(active=active)
-    uuid_bailleur = request.GET.get("bailleur")
-    bailleur = (
-        Bailleur.objects.filter(uuid=uuid_bailleur).first()
-        if is_valid_uuid(uuid_bailleur)
-        else None
-    )
-    bailleur_query = (
-        request.user.bailleurs(full_scope=True).exclude(nom__exact="")[
-            : settings.APILOS_MAX_DROPDOWN_COUNT
+class ConventionTabsMixin:
+    def get_tab(self, subclass):
+        service = subclass.service_class(
+            user=self.request.user,
+        )
+
+        url = reverse(f"conventions:{subclass.name}")
+
+        return {
+            "title": subclass.service_class.verbose_name,
+            "url": url,
+            "weight": subclass.service_class.weight,
+            "count": service.get_queryset().count(),
+        }
+
+    def get_tabs(self):
+        return sorted(
+            [
+                self.get_tab(subclass)
+                for subclass in ConventionSearchView.__subclasses__()
+            ],
+            key=lambda tab: tab["weight"],
+        )
+
+
+class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
+    service: UserConventionSearchService
+    service_class: type[UserConventionSearchService]
+    statuses: list
+    order_by: str
+
+    def setup(self, *args, **kwargs) -> None:
+        super().setup(*args, **kwargs)
+
+        search_filters_mapping = [
+            ("commune", "ville"),
+            ("departement", "departement_input"),
+            ("financement", "financement"),
+            ("order_by", "order_by"),
+            ("search_input", "search_input"),
+            ("statut", "cstatut"),
         ]
-        if request.user.is_instructeur()
-        else None
-    )
+        search_filters = {
+            arg: self._get_non_empty_query_param(query_param)
+            for arg, query_param in search_filters_mapping
+        }
 
-    uuid_administration = request.GET.get("administration")
-    administration = (
-        Administration.objects.filter(uuid=uuid_administration).first()
-        if is_valid_uuid(uuid_administration)
-        else None
-    )
-    administration_query = (
-        request.user.administrations()[: settings.APILOS_MAX_DROPDOWN_COUNT]
-        if request.user.is_bailleur()
-        else None
-    )
+        administration_uuid = self.request.GET.get("administration")
+        administration = Administration.objects.filter(
+            uuid=is_valid_uuid(administration_uuid) or None
+        ).first()
 
-    service = ConventionListService(
-        search_input=request.GET.get("search_input", ""),
-        order_by=request.GET.get(
-            "order_by",
-            "programme__date_achevement_compile"
-            if active
-            else "televersement_convention_signee_le",
-        ),
-        active=active,
-        page=request.GET.get("page", 1),
-        statut_filter=request.GET.get("cstatut", ""),
-        financement_filter=request.GET.get("financement", ""),
-        departement_input=request.GET.get("departement_input", ""),
-        ville=request.GET.get("ville"),
-        anru=(request.GET.get("anru") is not None),  # As anru is a checkbox
-        user=request.user,
-        bailleur=bailleur,
-        administration=administration,
-        my_convention_list=query_set.prefetch_related("programme")
-        .prefetch_related("programme__administration")
-        .prefetch_related("lot"),
-    )
-    service.paginate()
+        bailleur_uuid = self.request.GET.get("bailleur")
+        bailleur = Bailleur.objects.filter(
+            uuid=is_valid_uuid(bailleur_uuid) or None
+        ).first()
 
-    return render(
-        request,
-        "conventions/index.html",
-        {
-            "active": active,
-            "statuts": ConventionStatut.active_statuts(
-                False, request.user.is_instructeur()
-            )
-            if active
-            else ConventionStatut.completed_statuts(False, request.user.is_bailleur()),
-            "financements": Financement,
-            "nb_active_conventions": request.user.conventions(active=True).count(),
-            "nb_completed_conventions": request.user.conventions(active=False).count(),
-            "conventions": service,
-            "bailleur_query": bailleur_query,
-            "administration_query": administration_query,
-        },
-    )
+        self.service = self.service_class(
+            administration=administration,
+            anru=(self.request.GET.get("anru") is not None),
+            bailleur=bailleur,
+            user=self.request.user,
+            search_filters=search_filters,
+        )
+
+    @property
+    def bailleurs_queryset(self) -> QuerySet | None:
+        user = self.request.user
+        if user.is_instructeur():
+            return user.bailleurs(full_scope=True).exclude(nom__exact="")[
+                : settings.APILOS_MAX_DROPDOWN_COUNT
+            ]
+
+        return None
+
+    @property
+    def administrations_queryset(self) -> QuerySet | None:
+        user = self.request.user
+
+        if user.is_bailleur():
+            return user.administrations()[: settings.APILOS_MAX_DROPDOWN_COUNT]
+
+        return None
+
+    @property
+    def all_conventions_count(self):
+        return sum(tab["count"] for tab in self.get_tabs())
+
+    def _get_non_empty_query_param(self, query_param: str, default=None) -> str | None:
+        if value := self.request.GET.get(query_param):
+            return value
+
+        return default
+
+    def get(self, request: AuthenticatedHttpRequest):
+        paginator = self.service.paginate()
+
+        return render(
+            request,
+            "conventions/index.html",
+            {
+                "administration_query": self.administrations_queryset,
+                "all_conventions_count": self.all_conventions_count,
+                "bailleur_query": self.bailleurs_queryset,
+                "conventions": paginator.get_page(request.GET.get("page", 1)),
+                "filtered_conventions_count": paginator.count,
+                "financements": Financement.choices,
+                "inactive": resolve(request.path_info).url_name == "search_instruction",
+                "search_input": self._get_non_empty_query_param("search_input", ""),
+                "statuts": self.service.choices,
+                "tabs": self.get_tabs(),
+                "total_conventions": request.user.conventions().count(),
+            },
+        )
 
 
-@login_required
-def loyer_simulateur(request):
-    annee_validite = None
-    montant_actualise = None
+class ConventionEnInstructionSearchView(ConventionSearchView):
+    service_class = UserConventionEnInstructionSearchService
+    name = "search_instruction"
 
-    if request.method == "POST":
+
+class ConventionActivesSearchView(ConventionSearchView):
+    service_class = UserConventionActivesSearchService
+    name = "search_active"
+
+
+class ConventionTermineesSearchView(ConventionSearchView):
+    service_class = UserConventionTermineesSearchService
+    name = "search_resiliees"
+
+
+class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
+    def post(self, request: AuthenticatedHttpRequest):
         loyer_simulateur_form = LoyerSimulateurForm(request.POST)
+        montant_actualise = None
+        annee_validite = None
 
         if loyer_simulateur_form.is_valid():
             montant_actualise = LoyerRedevanceUpdateComputer.compute_loyer_update(
@@ -214,7 +279,19 @@ def loyer_simulateur(request):
             annee_validite = loyer_simulateur_form.cleaned_data[
                 "date_actualisation"
             ].year
-    else:
+
+        return render(
+            request,
+            "conventions/calculette_loyer.html",
+            {
+                "form": loyer_simulateur_form,
+                "tabs": self.get_tabs(),
+                "montant_actualise": montant_actualise,
+                "annee_validite": annee_validite,
+            },
+        )
+
+    def get(self, request: AuthenticatedHttpRequest):
         loyer_simulateur_form = LoyerSimulateurForm(
             initial=dict(
                 date_actualisation=date.today().isoformat(),
@@ -222,17 +299,14 @@ def loyer_simulateur(request):
             )
         )
 
-    return render(
-        request,
-        "conventions/loyer.html",
-        {
-            "form": loyer_simulateur_form,
-            "montant_actualise": montant_actualise,
-            "annee_validite": annee_validite,
-            "nb_active_conventions": request.user.conventions(active=True).count(),
-            "nb_completed_conventions": request.user.conventions(active=False).count(),
-        },
-    )
+        return render(
+            request,
+            "conventions/calculette_loyer.html",
+            {
+                "form": loyer_simulateur_form,
+                "tabs": self.get_tabs(),
+            },
+        )
 
 
 @require_POST
