@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 class ConventionManager(models.Manager):
     def avenants(self):
-        return self.exclude(parent_id=None)
+        return self.exclude(parent=None)
 
 
 class Convention(models.Model):
