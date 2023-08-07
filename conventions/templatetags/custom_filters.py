@@ -445,3 +445,23 @@ def attribute(object_from_template, key):
 @register.filter
 def can_promote(piece_jointe: PieceJointe):
     return piece_jointe.is_promotable()
+
+
+@register.simple_tag
+def administration_from(uuid):
+    try:
+        return Administration.objects.get(uuid=uuid)
+    # Exception can be broad here as we want to prevent a 500 in the template
+    # pylint: disable=W0703,broad-except
+    except Exception:
+        return ""
+
+
+@register.simple_tag
+def bailleur_from(uuid):
+    try:
+        return Bailleur.objects.filter(uuid=uuid).first()
+    # Exception can be broad here as we want to prevent a 500 in the template
+    # pylint: disable=W0703,broad-except
+    except Exception:
+        return ""

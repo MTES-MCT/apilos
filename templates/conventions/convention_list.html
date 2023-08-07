@@ -15,8 +15,9 @@
                                 <div class="">
                                     {% url 'users:search_bailleur' as search_bailleur_url %}
                                     <select class="fr-select" name="bailleur" id="search-field-bailleur">
-                                        {% if conventions.bailleur %}
-                                            <option selected value="{{ conventions.bailleur.uuid }}">{{ conventions.bailleur }}</option>
+                                        {% if request.GET.bailleur %}
+                                            <option selected value="{{ request.GET.bailleur }}">{% bailleur_from request.GET.bailleur %}</option>
+                                            {% endwith }
                                         {% else %}
                                             <option selected value>Bailleur</option>
                                             {% for bailleur in bailleur_query %}
@@ -50,8 +51,8 @@
                                 <div class="">
                                     {% url 'users:search_administration' as search_administration_url %}
                                     <select class="fr-select" name="administration" id="search-field-administration">
-                                        {% if conventions.administration %}
-                                            <option selected value="{{ conventions.administration.uuid }}">{{ conventions.administration }}</option>
+                                        {% if request.GET.administration %}
+                                            <option selected value="{{ request.GET.administration }}">{% administration_from request.GET.administration %}</option>
                                         {% else %}
                                             <option selected value>Instructeur</option>
                                             {% for administration in administration_query %}

@@ -101,19 +101,17 @@ class UserConventionSearchService(ConventionSearchBaseService):
     commune: str | None = None
     financement: str | None = None
     statut: ConventionStatut | None = None
+    bailleur: Bailleur | None = None
+    administration: Administration | None = None
 
     def __init__(
         self,
         user: User,
         anru: bool = False,
-        bailleur: Bailleur | None = None,
-        administration: Administration | None = None,
         search_filters: dict | None = None,
     ):
         self.user: User = user
         self.anru: bool = anru
-        self.bailleur: Bailleur | None = bailleur
-        self.administration: Administration | None = administration
 
         if search_filters:
             for name in [
@@ -122,6 +120,8 @@ class UserConventionSearchService(ConventionSearchBaseService):
                 "financement",
                 "order_by",
                 "search_input",
+                "bailleur",
+                "administration",
             ]:
                 setattr(self, name, search_filters.get(name))
             self.statut = ConventionStatut.get_by_label(search_filters.get("statut"))
@@ -140,6 +140,12 @@ class UserConventionSearchService(ConventionSearchBaseService):
 
         if self.financement:
             self.filters["financement"] = self.financement
+
+        if self.bailleur:
+            self.filters["lot__programme__bailleur__uuid"] = self.bailleur
+
+        if self.administration:
+            self.filters["lot__programme__administration__uuid"] = self.administration
 
     def _get_base_queryset(self) -> QuerySet:
         return (
