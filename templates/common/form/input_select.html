@@ -29,13 +29,6 @@
                 {% endfor %}
             {% else %}
                 {% for value, label in form_input.field.choices %}
-                    {% comment %}
-                    Le filtre safe est requis ci-dessous si la valeur et le choix passés
-                    en paramètre ne sont pas du même type.
-                    Par exemple : les types peuvent être mélangés dans le cas où la valeur
-                    est un UUID et le choix une string.
-                    Le filtre safe force les deux à être interprêtés comme des strings.
-                  {% endcomment %}
                     <option value="{{ value|safe }}"
                         {% if value|safe  == form_input.value|safe %}selected{% endif %}>
                         {{label}}

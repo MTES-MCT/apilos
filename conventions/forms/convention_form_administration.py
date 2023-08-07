@@ -34,7 +34,7 @@ class UpdateConventionAdministrationForm(forms.Form):
     def submit(self, request):
         convention = Convention.objects.get(pk=self.cleaned_data["convention"])
         if convention.is_avenant:
-            convention = convention.object.get(id=convention.parent_id)
+            convention = Convention.objects.get(id=convention.parent_id)
 
         new_administration = self.cleaned_data["administration"]
         avenants_to_updates = convention.avenants.all()
