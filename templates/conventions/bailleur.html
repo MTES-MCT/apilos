@@ -30,9 +30,12 @@
                         </strong>
                     </div>
                     <div class="fr-col-12 fr-col-lg-6">
-                        <div>{{bailleur.adresse}}</div>
+                        {% if bailleur.adresse %}
+                            <div>{{bailleur.adresse}}</div>
+                        {% endif %}
                         <div>
-                            {{bailleur.code_postal}} {{bailleur.ville}}
+                            {% if bailleur.code_postal %}{{bailleur.code_postal}}{% endif %}&nbsp;
+                            {% if bailleur.ville %}{{bailleur.ville}}{% endif %}
                         </div>
                     </div>
                     <div class="fr-col-12 fr-col-lg-6">

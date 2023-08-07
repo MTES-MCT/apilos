@@ -68,36 +68,27 @@ def get_or_create_conventions(operation: dict, user: User):
 
 
 def get_or_create_bailleur(bailleur_from_siap: dict):
-    # Nom
-    if "nom" in bailleur_from_siap:
-        nom = bailleur_from_siap["nom"]
-    elif "raisonSociale" in bailleur_from_siap:
-        nom = bailleur_from_siap["raisonSociale"]
+    nom = _get_bailleur_nom(bailleur_from_siap)
+    code_postal = _get_bailleur_code_postal(bailleur_from_siap)
+    ville = _get_bailleur_ville(bailleur_from_siap)
+    adresse = _get_bailleur_adresse(bailleur_from_siap)
+    nature_bailleur = _get_nature_bailleur(bailleur_from_siap)
 
-    adresse = code_postal = ville = ""
-    if "codePostal" in bailleur_from_siap:
-        code_postal = bailleur_from_siap["codePostal"]
-
-    if "ville" in bailleur_from_siap:
-        ville = bailleur_from_siap["ville"]
-    elif "adresseLigne6" in bailleur_from_siap and bailleur_from_siap["adresseLigne6"]:
-        ville = bailleur_from_siap["adresseLigne6"].lstrip("1234567890 ")
-
-    if "adresseLigne" in bailleur_from_siap:
-        adresse = bailleur_from_siap["adresseLigne"]
-
-    if not (
+    if nature_bailleur in [
+        "Bailleurs privés",
+        NatureBailleur.PRIVES,
+    ]:
+        if "email" in bailleur_from_siap and bailleur_from_siap["email"]:
+            bailleur_siren = bailleur_from_siap["email"]
+        else:
+            raise NotHandledBailleurPriveSIAPException(
+                "The « Bailleur privée » type of bailleur is not handled yet"
+            )
+    elif not (
         (bailleur_siren := bailleur_from_siap["siren"])
         if "siren" in bailleur_from_siap
         else None
     ):
-        if bailleur_from_siap["codeFamilleMO"] in [
-            "Bailleurs privés",
-            NatureBailleur.PRIVES,
-        ]:
-            raise NotHandledBailleurPriveSIAPException(
-                "The « Bailleur privée » type of bailleur is not handled yet"
-            )
         raise InconsistentDataSIAPException(
             "Missing Bailleur siren (can't be empty or null), bailleur can't be get or created"
         )
@@ -119,7 +110,7 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
             "adresse": adresse,
             "code_postal": code_postal,
             "ville": ville,
-            "nature_bailleur": _get_nature_bailleur(bailleur_from_siap),
+            "nature_bailleur": nature_bailleur,
         },
     )
     # Workaround waiting fix on SIAP Side :
@@ -131,6 +122,42 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
         bailleur.save()
 
     return bailleur
+
+
+def _get_bailleur_nom(bailleur_from_siap: dict) -> str:
+    if "nom" in bailleur_from_siap:
+        return bailleur_from_siap["nom"]
+    if "raisonSociale" in bailleur_from_siap:
+        return bailleur_from_siap["raisonSociale"]
+    return ""
+
+
+def _get_bailleur_code_postal(bailleur_from_siap: dict) -> str:
+    if "codePostal" in bailleur_from_siap:
+        return bailleur_from_siap["codePostal"]
+    if "adresseLigne6" in bailleur_from_siap and bailleur_from_siap["adresseLigne6"]:
+        return (
+            bailleur_from_siap["adresseLigne6"][:5]
+            if bailleur_from_siap["adresseLigne6"][:5].isnumeric()
+            else ""
+        )
+    return ""
+
+
+def _get_bailleur_ville(bailleur_from_siap: dict) -> str:
+    if "ville" in bailleur_from_siap:
+        return bailleur_from_siap["ville"]
+    if "adresseLigne6" in bailleur_from_siap and bailleur_from_siap["adresseLigne6"]:
+        return bailleur_from_siap["adresseLigne6"].lstrip("1234567890 ")
+    return ""
+
+
+def _get_bailleur_adresse(bailleur_from_siap: dict) -> str:
+    if "adresseLigne" in bailleur_from_siap:
+        return bailleur_from_siap["adresseLigne"]
+    if "adresseLigne4" in bailleur_from_siap:
+        return bailleur_from_siap["adresseLigne4"]
+    return ""
 
 
 def get_or_create_administration(administration_from_siap: dict):
