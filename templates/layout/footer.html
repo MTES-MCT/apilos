@@ -55,10 +55,7 @@
             </div>
         </div>
     </div>
-    <div hidden>
-        {{request.user.siap_habilitation}}<br>
-        INSTRUCTEUR : {{request.user.is_instructeur}}<br>
-        BAILLEUR : {{request.user.is_bailleur}}<br>
-        CERBERE : {{request.user.is_cerbere_user}}<br>
+    <div hidden id="debug_siap_habilitation">
+        {{request.user.siap_habilitation}}
     </div>
 </footer>
