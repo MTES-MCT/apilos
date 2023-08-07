@@ -1,6 +1,7 @@
+from bailleurs.models import NatureBailleur
 from conventions.models import ConventionStatut
-from siap.siap_client.client import SIAPClient
 from core import settings
+from siap.siap_client.client import SIAPClient
 
 
 def get_environment(request):
@@ -12,6 +13,10 @@ def get_environment(request):
     data["CONVENTION_STATUT"] = {
         convention_statut.name: convention_statut.label
         for convention_statut in ConventionStatut
+    }
+    data["NATURE_BAILLEUR"] = {
+        nature_bailleur.name: nature_bailleur.label
+        for nature_bailleur in NatureBailleur
     }
 
     if settings.CERBERE_AUTH:
