@@ -47,4 +47,4 @@ class UpdateConventionAdministrationForm(forms.Form):
             f"Nouvelle administration : {new_administration.nom}.",
         )
 
-        return redirect("conventions:search_active")
+        return redirect("conventions:index")
