@@ -32,7 +32,7 @@ class ConventionBailleurService(ConventionService):
         )
 
     def _get_bailleur_query(self, bailleur_uuid: str):
-        if self.request.user.is_cerbere_user():
+        if self.request.user.is_cerbere_user() and self.request.user.is_bailleur():
             sirens = []
             for habilitation in self.request.session["habilitations"]:
                 if self.should_add_sirens(habilitation):
