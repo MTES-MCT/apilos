@@ -1,9 +1,9 @@
 from django.test import override_settings
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APIClient, APITestCase
 
-from users.models import User
 from siap.siap_client.client import build_jwt
+from users.models import User
 
 
 @override_settings(USE_MOCKED_SIAP_CLIENT=True)
@@ -73,7 +73,7 @@ class ConventionKPIAPITest(APITestCase):
                 "indicateur_label": "en correction requise",
             },
             {
-                "indicateur_redirection_url": "/conventions/en-cours?cstatut=4.+A+signer",
+                "indicateur_redirection_url": "/conventions/actives",
                 "indicateur_valeur": 0,
                 "indicateur_label": "à signer",
             },
@@ -90,7 +90,7 @@ class ConventionKPIAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         expected = [
             {
-                "indicateur_redirection_url": "/conventions/en-cours?cstatut=2.+Instruction",
+                "indicateur_redirection_url": "/conventions/en-cours?cstatut=2.+Instruction+requise",
                 "indicateur_valeur": 0,
                 "indicateur_label": "en instruction",
             },
@@ -100,7 +100,7 @@ class ConventionKPIAPITest(APITestCase):
                 "indicateur_label": "à signer",
             },
             {
-                "indicateur_redirection_url": "/conventions/en-cours?cstatut=5.+Signée",
+                "indicateur_redirection_url": "/conventions/actives",
                 "indicateur_valeur": 0,
                 "indicateur_label": "finalisées",
             },
@@ -108,7 +108,6 @@ class ConventionKPIAPITest(APITestCase):
         self.assertEqual(response.data, expected)
 
     def test_get_convention_kpi_route_administrateur(self):
-
         accesstoken = build_jwt(
             user_login="test@apilos.com", habilitation_id=3
         )  # administrateur
@@ -123,7 +122,7 @@ class ConventionKPIAPITest(APITestCase):
                 "indicateur_label": "en cours",
             },
             {
-                "indicateur_redirection_url": "/conventions/en-cours?cstatut=5.+Signée",
+                "indicateur_redirection_url": "/conventions/actives",
                 "indicateur_valeur": 0,
                 "indicateur_label": "finalisées",
             },
