@@ -10,12 +10,19 @@ def clear_siap_users_from_standalone(apps, schema_editor):
         User.objects.values("email")
         .annotate(email_count=Count("email"))
         .filter(email_count__gt=1)
+        .values_list("email", flat=True)
     )
-    for duplicate in duplicates:
-        print(duplicate)
 
-    print(f"{len(duplicates)} vont être supprimés.")
-    duplicates.delete()
+    for email in list(duplicates):
+        print(email)
+
+    print(f"{len(duplicates)} emails en doublons détectés")
+
+    users_to_delete = User.objects.filter(email__in=duplicates).exclude(
+        cerbere_login=None
+    )
+    print(f"{len(users_to_delete)} utilisateurs vont être supprimés")
+    users_to_delete.delete()
 
 
 class Migration(migrations.Migration):
