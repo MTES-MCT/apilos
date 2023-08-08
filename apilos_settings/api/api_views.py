@@ -1,21 +1,20 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import JSONRenderer
-from rest_framework import serializers
-from drf_spectacular.utils import (
-    extend_schema,
-    OpenApiResponse,
-    OpenApiExample,
-    inline_serializer,
-)
-
 from django.conf import settings
 from django.db.models import Count
-
+from drf_spectacular.utils import (
+    OpenApiExample,
+    OpenApiResponse,
+    extend_schema,
+    inline_serializer,
+)
+from rest_framework import serializers
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from siap.siap_authentication import SIAPJWTAuthentication, SIAPSimpleJWTAuthentication
+
 from conventions.models import ConventionStatut
+from siap.siap_authentication import SIAPJWTAuthentication, SIAPSimpleJWTAuthentication
 
 
 class ApilosConfiguration(APIView):
@@ -184,7 +183,7 @@ class ConventionKPI(APIView):
                     "en cours",
                 ),
                 ConvKPI(
-                    "/conventions/en-cours?cstatut=5.+Signée",
+                    "/conventions/actives",
                     nb_conventions_by_status[ConventionStatut.SIGNEE.label],
                     "finalisées",
                 ),
@@ -196,7 +195,7 @@ class ConventionKPI(APIView):
             #   * SIGNEE
             list_conv_kpi = [
                 ConvKPI(
-                    "/conventions/en-cours?cstatut=2.+Instruction",
+                    "/conventions/en-cours?cstatut=2.+Instruction+requise",
                     nb_conventions_by_status[ConventionStatut.INSTRUCTION.label],
                     "en instruction",
                 ),
@@ -206,7 +205,7 @@ class ConventionKPI(APIView):
                     "à signer",
                 ),
                 ConvKPI(
-                    "/conventions/en-cours?cstatut=5.+Signée",
+                    "/conventions/actives",
                     nb_conventions_by_status[ConventionStatut.SIGNEE.label],
                     "finalisées",
                 ),
@@ -228,7 +227,7 @@ class ConventionKPI(APIView):
                     "en correction requise",
                 ),
                 ConvKPI(
-                    "/conventions/en-cours?cstatut=4.+A+signer",
+                    "/conventions/actives",
                     nb_conventions_by_status[ConventionStatut.A_SIGNER.label],
                     "à signer",
                 ),
