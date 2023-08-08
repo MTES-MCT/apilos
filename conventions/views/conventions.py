@@ -223,7 +223,7 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
                 "conventions": paginator.get_page(request.GET.get("page", 1)),
                 "filtered_conventions_count": paginator.count,
                 "financements": Financement.choices,
-                "inactive": resolve(request.path_info).url_name == "search_instruction",
+                "url_name": resolve(request.path_info).url_name,
                 "search_input": self._get_non_empty_query_param("search_input", ""),
                 "statuts": self.service.choices,
                 "tabs": self.get_tabs(),

@@ -281,16 +281,18 @@
                                                     <span class="text-title-blue-france fr-p-1w fr-ml-1w apilos-tag-avenant background-white">Avenant</span>
                                                 {%endif%}
                                             </div>
-                                            {% if not active or siap_operation and convention.programme.numero_galion %}
+                                            {% if url_name == "search_instruction" and convention.programme.numero_galion %}
                                                 <em data-test-role="programme-galion-cell">
                                                     {{convention.programme.numero_galion|highlight:search_input}}
                                                 </em>
                                             {% endif %}
-                                            {% if active and convention.numero %}
-                                                {% if convention.is_avenant %}
-                                                    <em data-test-role="programme-galion-cell">{{convention.parent.numero|highlight:search_input}} - Avenant n°{{convention.numero}}</em>
-                                                {% else %}
-                                                    <em data-test-role="programme-galion-cell">{{convention.numero|highlight:search_input}}</em>
+                                            {% if url_name == "search_active" or url_name == "search_resiliees" %}
+                                                {% if convention.numero %}
+                                                    {% if convention.is_avenant %}
+                                                        <em data-test-role="programme-galion-cell">{{convention.parent.numero|highlight:search_input}} - Avenant n°{{convention.numero}}</em>
+                                                    {% else %}
+                                                        <em data-test-role="programme-galion-cell">{{convention.numero|highlight:search_input}}</em>
+                                                    {% endif %}
                                                 {% endif %}
                                             {% endif %}
                                         </td>
