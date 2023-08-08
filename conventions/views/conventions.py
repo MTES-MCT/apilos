@@ -22,7 +22,6 @@ from django.urls import resolve, reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
-from bailleurs.models import Bailleur
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from conventions.forms.evenement import EvenementForm
 from conventions.models import Convention, ConventionStatut, Evenement, PieceJointe
@@ -49,8 +48,6 @@ from conventions.services.search import (
 from conventions.services.utils import ReturnStatus, base_convention_response_error
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from core.storage import client
-from core.utils import is_valid_uuid
-from instructeurs.models import Administration
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
 from upload.services import UploadService
@@ -170,26 +167,16 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
             ("order_by", "order_by"),
             ("search_input", "search_input"),
             ("statut", "cstatut"),
+            ("bailleur", "bailleur"),
+            ("administration", "administration"),
         ]
         search_filters = {
             arg: self._get_non_empty_query_param(query_param)
             for arg, query_param in search_filters_mapping
         }
 
-        administration_uuid = self.request.GET.get("administration")
-        administration = Administration.objects.filter(
-            uuid=is_valid_uuid(administration_uuid) or None
-        ).first()
-
-        bailleur_uuid = self.request.GET.get("bailleur")
-        bailleur = Bailleur.objects.filter(
-            uuid=is_valid_uuid(bailleur_uuid) or None
-        ).first()
-
         self.service = self.service_class(
-            administration=administration,
             anru=(self.request.GET.get("anru") is not None),
-            bailleur=bailleur,
             user=self.request.user,
             search_filters=search_filters,
         )
