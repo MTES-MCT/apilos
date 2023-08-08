@@ -24,36 +24,16 @@
 
         {% include "conventions/convention_list.html" %}
 
-        {% if not CERBERE_AUTH and not request.user.is_staff %}
-            <div class="fr-container-fluid">
-                <div class="fr-container">
-                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-                        <div class="fr-my-5w">
-                            <a class="fr-btn fr-icon-add-line fr-btn--icon-left"
-                                href="{% url 'conventions:selection' %}">
-                                {% if request|is_instructeur %}
-                                    Créer une nouvelle convention comme un bailleur
-                                {% else %}
-                                    Créer une nouvelle convention
-                                {% endif %}
-                            </a>
-                        </div>
+        <div class="fr-container-fluid">
+            <div class="fr-container">
+                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+                    <div class="fr-my-5w">
+                        <a class="fr-btn fr-icon-add-line fr-btn--icon-left"
+                            href="{% url 'conventions:new_convention' %}">Créer une convention ANRU</a>
                     </div>
                 </div>
             </div>
-        {% endif %}
-        {% if CERBERE_AUTH %}
-            <div class="fr-container-fluid">
-                <div class="fr-container">
-                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-                        <div class="fr-my-5w">
-                            <a class="fr-btn fr-icon-add-line fr-btn--icon-left"
-                                href="{% url 'conventions:selection_from_zero' %}">Créer une convention ANRU</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
+        </div>
     {% else %}
         {% if request|is_bailleur %}
             {% if CERBERE_AUTH %}
