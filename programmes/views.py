@@ -1,5 +1,6 @@
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
 from conventions.services.search import ProgrammeConventionSearchService
 from programmes.services import get_or_create_conventions_from_operation_number
 
@@ -15,6 +16,7 @@ def operation_conventions(request, numero_operation):
     )
 
     service = ProgrammeConventionSearchService(programme)
+    paginator = service.paginate()
 
     return render(
         request,
@@ -22,6 +24,9 @@ def operation_conventions(request, numero_operation):
         {
             "numero_operation": numero_operation,
             "programme": programme,
-            "conventions": service.get_results(),
+            "conventions": paginator.get_page(request.GET.get("page", 1)),
+            "filtered_conventions_count": paginator.count,
+            "all_conventions_count": paginator.count,
+            "search_input": "",
         },
     )
