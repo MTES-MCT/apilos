@@ -1,14 +1,12 @@
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Count
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
 
 from conventions.forms import (
     ConventionForAvenantForm,
     CreateConventionMinForm,
-    ProgrammeSelectionFromDBForm,
-    ProgrammeSelectionFromZeroForm,
+    NewConventionForm,
 )
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
@@ -26,7 +24,7 @@ class ConventionSelectionService:
     request: HttpRequest
     convention: Convention
     avenant: Convention
-    form: ProgrammeSelectionFromDBForm | CreateConventionMinForm
+    form: CreateConventionMinForm
     lots: QuerySet[Lot] | None = None
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
 
@@ -47,8 +45,8 @@ class ConventionSelectionService:
             else Administration.objects.all().order_by("nom")
         )
 
-    def get_from_zero(self):
-        self.form = ProgrammeSelectionFromZeroForm(
+    def get_create_convention(self):
+        self.form = NewConventionForm(
             administrations=self._get_administration_choices(),
             bailleur_query=self._get_bailleur_query(),
         )
@@ -59,9 +57,9 @@ class ConventionSelectionService:
             bailleur_query=self._get_bailleur_query(),
         )
 
-    def post_from_zero(self):
+    def post_create_convention(self):
         bailleur_uuid = self.request.POST.get("bailleur")
-        self.form = ProgrammeSelectionFromZeroForm(
+        self.form = NewConventionForm(
             self.request.POST,
             self.request.FILES,
             administrations=self._get_administration_choices(),
@@ -169,44 +167,3 @@ class ConventionSelectionService:
                 )
                 self.avenant.numero = self.form.cleaned_data["numero_avenant"]
                 self.avenant.save()
-
-    def get_from_db(self):
-        self.lots = (
-            self.request.user.lots()
-            .select_related("programme")
-            .annotate(nb_conventions=Count("conventions"))
-            .order_by(
-                "programme__ville", "programme__nom", "nb_logements", "financement"
-            )
-            .filter(programme__parent_id__isnull=True, nb_conventions=0)
-        )
-        self.form = ProgrammeSelectionFromDBForm(
-            lots=_get_choices_from_object(self.lots),
-        )
-
-    def post_from_db(self):
-        self.lots = (
-            self.request.user.lots()
-            .prefetch_related("programme")
-            .prefetch_related("conventions")
-            .order_by(
-                "programme__ville", "programme__nom", "nb_logements", "financement"
-            )
-            .filter(programme__parent_id__isnull=True, conventions__isnull=True)
-        )
-        self.form = ProgrammeSelectionFromDBForm(
-            self.request.POST,
-            lots=_get_choices_from_object(self.lots),
-        )
-        if self.form.is_valid():
-            lot = Lot.objects.get(uuid=self.form.cleaned_data["lot"])
-            lot.programme.nature_logement = self.form.cleaned_data["nature_logement"]
-            lot.programme.save()
-            self.convention = Convention.objects.create(
-                lot=lot,
-                programme_id=lot.programme_id,
-                financement=lot.financement,
-                cree_par=self.request.user,
-            )
-            self.convention.save()
-            self.return_status = utils.ReturnStatus.SUCCESS

@@ -4,62 +4,11 @@ from django.urls import reverse
 from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
 from conventions.tests.views.abstract import AbstractCreateViewTestCase
-from core.tests import utils_fixtures
 from instructeurs.models import Administration
 from programmes.models import Financement, NatureLogement, TypeHabitat
 
 
-class ConventionSelectionFromDBViewTests(AbstractCreateViewTestCase, TestCase):
-    fixtures = [
-        "auth.json",
-        # "departements.json",
-        "avenant_types.json",
-        "bailleurs_for_tests.json",
-        "instructeurs_for_tests.json",
-        "programmes_for_tests.json",
-        "conventions_for_tests.json",
-        "users_for_tests.json",
-    ]
-
-    def setUp(self):
-        super().setUp()
-
-        bailleur = Bailleur.objects.get(siret="987654321")
-        administration = Administration.objects.get(code="75000")
-        programme_2 = utils_fixtures.create_programme(
-            bailleur, administration, nom="Programme 2"
-        )
-        utils_fixtures.create_lot(programme_2, Financement.PLAI)
-        self.lot_plus_2 = utils_fixtures.create_lot(programme_2, Financement.PLUS)
-
-        self.target_path = reverse("conventions:selection")
-        self.next_target_starts_with = "/conventions/bailleur"
-        self.target_template = "conventions/selection_from_db.html"
-        self.error_payload = {
-            # "lot": str(self.convention.lot.uuid)
-        }
-        self.success_payload = {
-            "lot": str(self.lot_plus_2.uuid),
-            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
-        }
-        self.msg_prefix = "[ConventionSelectionFromDBViewTests] "
-
-    def _test_data_integrity(self):
-        self.assertTrue(
-            Convention.objects.get(lot=self.lot_plus_2),
-            msg=f"{self.msg_prefix}",
-        )
-
-    def test_view_superuser(self):
-        # login as superuser
-        response = self.client.post(
-            reverse("login"), {"username": "nicolas", "password": "12345"}
-        )
-        response = self.client.get(self.target_path)
-        self.assertEqual(response.status_code, 403, msg=f"{self.msg_prefix}")
-
-
-class ConventionSelectionFromZeroViewTests(AbstractCreateViewTestCase, TestCase):
+class NewConventionViewTests(AbstractCreateViewTestCase, TestCase):
     fixtures = [
         "auth.json",
         "departements.json",
@@ -76,9 +25,9 @@ class ConventionSelectionFromZeroViewTests(AbstractCreateViewTestCase, TestCase)
 
         bailleur = Bailleur.objects.get(siret="987654321")
         administration = Administration.objects.get(code="75000")
-        self.target_path = reverse("conventions:selection_from_zero")
+        self.target_path = reverse("conventions:new_convention")
         self.next_target_starts_with = "/conventions/bailleur"
-        self.target_template = "conventions/selection_from_zero.html"
+        self.target_template = "conventions/new_convention.html"
         self.error_payload = {
             "bailleur": str(bailleur.uuid),
             "administration": str(administration.uuid),
@@ -102,7 +51,7 @@ class ConventionSelectionFromZeroViewTests(AbstractCreateViewTestCase, TestCase)
             "code_postal": "20000",
             "ville": "Bisouville",
         }
-        self.msg_prefix = "[ConventionSelectionFromZeroViewTests] "
+        self.msg_prefix = "[NewConventionViewTests] "
 
     def _test_data_integrity(self):
         self.assertTrue(

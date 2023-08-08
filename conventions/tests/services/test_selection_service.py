@@ -4,15 +4,11 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 
 from bailleurs.models import Bailleur
-from conventions.forms import (
-    ProgrammeSelectionFromDBForm,
-    ProgrammeSelectionFromZeroForm,
-)
+from conventions.forms import NewConventionForm
 from conventions.models import Convention, ConventionStatut
 from conventions.services import selection, utils
-from core.tests import utils_fixtures
 from instructeurs.models import Administration
-from programmes.models import Financement, Lot, NatureLogement, TypeHabitat
+from programmes.models import Financement, NatureLogement, TypeHabitat
 from users.models import GroupProfile, User
 
 
@@ -38,76 +34,19 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
         self.service = selection.ConventionSelectionService(request=self.request)
 
-    def test_get_from_db(self):
+    def test_get_create_convention(self):
         administration = Administration.objects.get(code="75000")
-        lots = (
-            Lot.objects.filter(programme__administration=administration)
-            .order_by(
-                "programme__ville", "programme__nom", "nb_logements", "financement"
-            )
-            .filter(programme__parent_id__isnull=True, conventions__isnull=True)
-        )
-        self.service.get_from_db()
+        self.service.get_create_convention()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertIsInstance(self.service.form, ProgrammeSelectionFromDBForm)
-        self.assertEqual(
-            self.service.form.declared_fields["lot"].choices,
-            [(lot.uuid, str(lot)) for lot in lots],
-        )
-
-    def test_post_from_db_failed_form(self):
-        self.service.request.POST = {"lot": "", "nature_logement": ""}
-        self.service.post_from_db()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertTrue(self.service.form.has_error("lot"))
-        self.assertTrue(self.service.form.has_error("nature_logement"))
-
-    def test_post_from_db_failed_scope(self):
-        bailleur = Bailleur.objects.get(siret="987654321")
-        administration = Administration.objects.get(code="12345")
-        programme = utils_fixtures.create_programme(
-            bailleur, administration, nom="Programme failed"
-        )
-        utils_fixtures.create_lot(programme, Financement.PLAI)
-        lot_plus = utils_fixtures.create_lot(programme, Financement.PLUS)
-        self.service.request.POST = {"lot": str(lot_plus.uuid)}
-        self.service.post_from_db()
-
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertTrue(self.service.form.has_error("lot"))
-
-    def test_post_from_db_success(self):
-        bailleur = Bailleur.objects.get(siret="987654321")
-        administration = Administration.objects.get(code="75000")
-        programme_2 = utils_fixtures.create_programme(
-            bailleur, administration, nom="Programme 2"
-        )
-        utils_fixtures.create_lot(programme_2, Financement.PLAI)
-        lot_plus_2 = utils_fixtures.create_lot(programme_2, Financement.PLUS)
-
-        self.service.request.POST = {
-            "lot": str(lot_plus_2.uuid),
-            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
-        }
-        self.service.post_from_db()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
-        self.assertEqual(
-            self.service.convention, Convention.objects.get(lot=lot_plus_2)
-        )
-
-    def test_get_from_zero(self):
-        administration = Administration.objects.get(code="75000")
-        self.service.get_from_zero()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertIsInstance(self.service.form, ProgrammeSelectionFromZeroForm)
+        self.assertIsInstance(self.service.form, NewConventionForm)
         self.assertEqual(
             self.service.form.declared_fields["administration"].choices,
             [(administration.uuid, str(administration))],
         )
 
-    def test_post_from_zero_failed_form(self):
+    def test_post_create_convention_failed_form(self):
         self.service.request.POST = {}
-        self.service.post_from_zero()
+        self.service.post_create_convention()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
         self.assertTrue(self.service.form.has_error("numero_galion"))
         self.assertTrue(self.service.form.has_error("bailleur"))
@@ -120,7 +59,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
         self.assertTrue(self.service.form.has_error("code_postal"))
         self.assertTrue(self.service.form.has_error("ville"))
 
-    def test_post_from_zero_failed_scope(self):
+    def test_post_create_convention_failed_scope(self):
         bailleur = Bailleur.objects.get(siret="987654321")
         administration = Administration.objects.get(code="12345")
         self.service.request.POST = {
@@ -134,12 +73,12 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
             "code_postal": "20000",
             "ville": "Bisouville",
         }
-        self.service.post_from_zero()
+        self.service.post_create_convention()
 
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
         self.assertTrue(self.service.form.has_error("administration"))
 
-    def test_post_from_zero_success(self):
+    def test_post_create_convention_success(self):
         bailleur = Bailleur.objects.get(siret="987654321")
         administration = Administration.objects.get(code="75000")
         self.service.request.POST = {
@@ -154,7 +93,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
             "code_postal": "20000",
             "ville": "Bisouville",
         }
-        self.service.post_from_zero()
+        self.service.post_create_convention()
 
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
         self.assertEqual(
@@ -215,74 +154,14 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
         self.request.session["currently"] = GroupProfile.BAILLEUR
         self.service = selection.ConventionSelectionService(request=self.request)
 
-    def test_get_from_db(self):
-        bailleurs = Bailleur.objects.filter(siret__in=["987654321", "12345678901234"])
-        lots = (
-            Lot.objects.filter(programme__bailleur__in=bailleurs)
-            .order_by(
-                "programme__ville", "programme__nom", "nb_logements", "financement"
-            )
-            .filter(programme__parent_id__isnull=True, conventions__isnull=True)
-        )
-        self.service.get_from_db()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertIsInstance(self.service.form, ProgrammeSelectionFromDBForm)
-        self.assertEqual(
-            self.service.form.declared_fields["lot"].choices,
-            [(lot.uuid, str(lot)) for lot in lots],
-        )
-
-    def test_post_from_db_failed(self):
-        self.service.request.POST = {"lot": "", "nature_logement": ""}
-        self.service.post_from_db()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertTrue(self.service.form.has_error("lot"))
-        self.assertTrue(self.service.form.has_error("nature_logement"))
-
-        bailleur = Bailleur.objects.get(siret="2345678901")
-        administration = Administration.objects.get(code="12345")
-        programme = utils_fixtures.create_programme(
-            bailleur, administration, nom="Programme failed"
-        )
-        utils_fixtures.create_lot(programme, Financement.PLAI)
-        lot_plus = utils_fixtures.create_lot(programme, Financement.PLUS)
-        self.service.request.POST = {"lot": str(lot_plus.uuid)}
-        self.service.post_from_db()
-
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertTrue(self.service.form.has_error("lot"))
-
-    def test_post_from_db_success(self):
-        bailleur = Bailleur.objects.get(siret="987654321")
-        administration = Administration.objects.get(code="75000")
-        programme_2 = utils_fixtures.create_programme(
-            bailleur, administration, nom="Programme 2"
-        )
-        utils_fixtures.create_lot(programme_2, Financement.PLAI)
-        lot_plus_2 = utils_fixtures.create_lot(programme_2, Financement.PLUS)
-
-        self.service.request.POST = {
-            "lot": str(lot_plus_2.uuid),
-            "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
-        }
-        self.service.post_from_db()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
-        self.assertEqual(
-            self.service.convention, Convention.objects.get(lot=lot_plus_2)
-        )
-        self.assertEqual(
-            self.service.convention.programme.nature_logement,
-            NatureLogement.LOGEMENTSORDINAIRES,
-        )
-
-    def test_get_from_zero(self):
+    def test_get_create_convention(self):
         administrations = Administration.objects.all().order_by("nom")
         bailleurs = Bailleur.objects.filter(
             siret__in=["987654321", "12345678901234"]
         ).order_by("nom")
-        self.service.get_from_zero()
+        self.service.get_create_convention()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertIsInstance(self.service.form, ProgrammeSelectionFromZeroForm)
+        self.assertIsInstance(self.service.form, NewConventionForm)
         self.assertEqual(
             self.service.form.declared_fields["administration"].choices,
             [
@@ -295,7 +174,7 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             bailleurs.count(),
         )
 
-    def test_post_from_zero_failed_form(self):
+    def test_post_create_convention_failed_form(self):
         bailleur = Bailleur.objects.get(siret="987654321")
         administration = Administration.objects.get(code="75000")
         self.service.request.POST = {
@@ -309,11 +188,11 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             "code_postal": "20000",
             "ville": "",
         }
-        self.service.post_from_zero()
+        self.service.post_create_convention()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
         self.assertTrue(self.service.form.has_error("ville"))
 
-    def test_post_from_zero_failed_scope(self):
+    def test_post_create_convention_failed_scope(self):
         bailleur = Bailleur.objects.get(siret="2345678901")
         administration = Administration.objects.get(code="75000")
         self.service.request.POST = {
@@ -327,12 +206,12 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             "code_postal": "20000",
             "ville": "Bisouville",
         }
-        self.service.post_from_zero()
+        self.service.post_create_convention()
 
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
         self.assertTrue(self.service.form.has_error("bailleur"))
 
-    def test_post_from_zero_success(self):
+    def test_post_create_convention_success(self):
         bailleur = Bailleur.objects.get(siret="987654321")
         administration = Administration.objects.get(code="75000")
         self.service.request.POST = {
@@ -347,7 +226,7 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             "code_postal": "20000",
             "ville": "Bisouville",
         }
-        self.service.post_from_zero()
+        self.service.post_create_convention()
 
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
         self.assertEqual(

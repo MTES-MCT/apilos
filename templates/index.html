@@ -38,14 +38,6 @@
                             <li>Intégrez les modifications demandées par l'instructeur</li>
                         </ul>
                     </div>
-                    {% if not CERBERE_AUTH %}
-                        <div class="fr-col-lg-4 fr-col-md-12 fr-mt-md-5w fr-mt-lg-10w">
-                            <a class="fr-btn" href="{% url 'login' %}">
-                                <span class="fr-icon-edit-line fr-mr-1w" aria-hidden="true">
-                                </span>Créer une convention
-                            </a>
-                        </div>
-                    {% endif %}
                 </div>
                 <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w">
                     <div class="fr-col-lg-1 fr-col-md-3">
@@ -60,14 +52,6 @@
                             <li>Générez la convention APL au format Cerfa en 1 clic</li>
                         </ul>
                     </div>
-                    {% if not CERBERE_AUTH %}
-                        <div class="fr-col-lg-4 fr-col-md-12 fr-mt-md-5w fr-mt-lg-10w">
-                            <a class="fr-btn fr-btn--secondary" href="{% url 'login' %}?instructeur=1">
-                                <span class="fr-icon-account-line fr-mr-1w" aria-hidden="true">
-                                </span>Instruire une convention
-                            </a>
-                        </div>
-                    {% endif %}
                 </div>
             </div>
         </div>

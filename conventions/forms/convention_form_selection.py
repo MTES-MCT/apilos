@@ -10,37 +10,6 @@ from bailleurs.models import Bailleur
 from programmes.models import ActiveNatureLogement, FinancementEDD, TypeHabitat
 
 
-class ProgrammeSelectionFromDBForm(forms.Form):
-    """
-    Formulaire de sélection d'un couple programme/lot à conventionner connu en base de données
-    """
-
-    def __init__(self, *args, lots=None, **kwargs) -> None:
-        self.declared_fields["lot"].choices = lots
-        super().__init__(*args, **kwargs)
-
-    lot = forms.ChoiceField(
-        label="Lot à conventionner",
-        choices=[],
-        error_messages={
-            "required": "La selection du programme et de son financement est obligatoire"
-        },
-    )
-
-    nature_logement = forms.ChoiceField(
-        label="Nature des logements",
-        help_text=(
-            "Le type de convention dépends de la nature des logements, attention, le"
-            + " choix de la nature des logements est définitif. Plus de détails dans"
-            + " notre FAQ"
-        ),
-        choices=ActiveNatureLogement.choices,
-        error_messages={
-            "required": "La selection de la nature des logements est obligatoire"
-        },
-    )
-
-
 class CreateConventionMinForm(forms.Form):
     def __init__(
         self, *args, bailleur_query: QuerySet, administrations=None, **kwargs
@@ -120,7 +89,7 @@ class CreateConventionMinForm(forms.Form):
     )
 
 
-class ProgrammeSelectionFromZeroForm(CreateConventionMinForm):
+class NewConventionForm(CreateConventionMinForm):
     """
     Formulaire de création d'un programme/lot/convention à partir de zéro
     """

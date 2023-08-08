@@ -56,18 +56,11 @@ urlpatterns = [
     ),
     # Pages de troisième niveau : funnel d'instruction et d'action sur les conventions et avenants
     path(
-        "selection",
+        "new_convention",
         permission_required("convention.add_convention")(
-            views.ConventionSelectionFromDBView.as_view()
+            views.NewConventionView.as_view()
         ),
-        name="selection",
-    ),
-    path(
-        "selection_from_zero",
-        permission_required("convention.add_convention")(
-            views.ConventionSelectionFromZeroView.as_view()
-        ),
-        name="selection_from_zero",
+        name="new_convention",
     ),
     path(
         "bailleur/<convention_uuid>",
