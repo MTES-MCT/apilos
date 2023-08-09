@@ -12,7 +12,7 @@ from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
 from instructeurs.models import Administration
 from programmes.models import Lot, Programme
-from users.type_models import TypeRole, EmailPreferences
+from users.type_models import EmailPreferences, TypeRole
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +89,6 @@ class User(AbstractUser):
                 and self.siap_habilitation["role"]["typologie"]
                 == TypeRole.ADMINISTRATEUR
             ):
-
                 if self.siap_habilitation["role"]["perimetre_departement"]:
                     return (
                         obj.programme.code_insee_departement
@@ -250,7 +249,9 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return {"id__in": self.administration_ids()}
+            if (administration_ids := self.administration_ids()) is not None:
+                return {"id__in": administration_ids}
+            return {}
 
         # to do : manage programme related to geo for bailleur
         if self.is_bailleur():
@@ -265,7 +266,11 @@ class User(AbstractUser):
 
     def administration_ids(self):
         if self.is_cerbere_user():
-            if "administration" in self.siap_habilitation:
+            if (
+                "administration" in self.siap_habilitation
+                and self.siap_habilitation["administration"] is not None
+                and "id" in self.siap_habilitation["administration"]
+            ):
                 return [self.siap_habilitation["administration"]["id"]]
             return None
 
@@ -306,8 +311,14 @@ class User(AbstractUser):
         )
 
     def _bailleur_ids(self) -> list:
-        if self.is_cerbere_user() and self.siap_habilitation:
-            return [self.siap_habilitation["bailleur"]["id"]]
+        if self.is_cerbere_user():
+            if (
+                "bailleur" in self.siap_habilitation
+                and self.siap_habilitation["bailleur"] is not None
+                and "id" in self.siap_habilitation["bailleur"]
+            ):
+                return [self.siap_habilitation["bailleur"]["id"]]
+            raise Exception("Bailleur should be defined in siap_habilitation")
 
         bailleur_ids = list(
             map(
