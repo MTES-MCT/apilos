@@ -17,6 +17,10 @@ from users.type_models import EmailPreferences, TypeRole
 logger = logging.getLogger(__name__)
 
 
+class ExceptionPermissionConfig(Exception):
+    pass
+
+
 class GroupProfile(models.TextChoices):
     STAFF = "STAFF", "Staff"
     BAILLEUR = "BAILLEUR", "Bailleur"
@@ -112,7 +116,7 @@ class User(AbstractUser):
             return self.roles.filter(bailleur_id__in=bailleur_ids) or self.roles.filter(
                 administration_id=obj.programme.administration_id
             )
-        raise Exception(
+        raise ExceptionPermissionConfig(
             "Les permissions ne sont pas correctement configurer, un "
             + "objet de type Convention doit être asocié à la "
             + "permission 'change_convention'"
@@ -222,7 +226,7 @@ class User(AbstractUser):
                 )
             return programmes_result
 
-        raise Exception(
+        raise ExceptionPermissionConfig(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les programmes"
         )
 
@@ -259,7 +263,7 @@ class User(AbstractUser):
                 return {}
             return {"id__in": []}
 
-        raise Exception(
+        raise ExceptionPermissionConfig(
             "L'utilisateur courant n'a pas de role associé permettant le "
             + "filtre sur les administrations"
         )
@@ -306,7 +310,7 @@ class User(AbstractUser):
         if self.is_bailleur():
             return {"id__in": self._bailleur_ids()}
 
-        raise Exception(
+        raise ExceptionPermissionConfig(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les bailleurs"
         )
 
@@ -318,7 +322,9 @@ class User(AbstractUser):
                 and "id" in self.siap_habilitation["bailleur"]
             ):
                 return [self.siap_habilitation["bailleur"]["id"]]
-            raise Exception("Bailleur should be defined in siap_habilitation")
+            raise ExceptionPermissionConfig(
+                "Bailleur should be defined in siap_habilitation"
+            )
 
         bailleur_ids = list(
             map(
