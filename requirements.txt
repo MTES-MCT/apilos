@@ -31,13 +31,13 @@ billiard==4.1.0 \
     --hash=sha256:0f50d6be051c6b2b75bfbc8bfd85af195c5739c281d3f5b86a5640c65563614a \
     --hash=sha256:1ad2eeae8e28053d729ba3373d34d9d6e210f6e4d8bf0a9c64f92bd053f1edf5
     # via celery
-boto3==1.28.17 \
-    --hash=sha256:90f7cfb5e1821af95b1fc084bc50e6c47fa3edc99f32de1a2591faa0c546bea7 \
-    --hash=sha256:bca0526f819e0f19c0f1e6eba3e2d1d6b6a92a45129f98c0d716e5aab6d9444b
+boto3==1.28.22 \
+    --hash=sha256:0c1c1d19232018ac49fd2c0a94aa0b802f5d222e89448ff50734626bce454b32 \
+    --hash=sha256:af1ce129f462cdc8dfb1a1c559d7ed725e51344fb0ae4a56d9453196bf416555
     # via -r requirements.in
-botocore==1.31.17 \
-    --hash=sha256:396459065dba4339eb4da4ec8b4e6599728eb89b7caaceea199e26f7d824a41c \
-    --hash=sha256:6ac34a1d34aa3750e78b77b8596617e2bab938964694d651939dba2cbde2c12b
+botocore==1.31.22 \
+    --hash=sha256:b91025ca1a16b13ae662bdb46e7c16d2c53619df23bf3583a43791519da14870 \
+    --hash=sha256:d193ab0742ddc4af3a3994af4ec993acf5ac75460f298880fe869765e7bc578d
     # via
     #   boto3
     #   s3transfer
@@ -769,5 +769,6 @@ xlsxwriter==3.0.3 \
     # via django-sql-explorer
 
 # WARNING: The following packages were not pinned, but pip requires them to be
-# pinned when the requirements file includes hashes. Consider using the --allow-unsafe flag.
+# pinned when the requirements file includes hashes and the requirement is not
+# satisfied by a package already installed. Consider using the --allow-unsafe flag.
 # setuptools
