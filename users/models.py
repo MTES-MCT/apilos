@@ -12,9 +12,13 @@ from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
 from instructeurs.models import Administration
 from programmes.models import Lot, Programme
-from users.type_models import TypeRole, EmailPreferences
+from users.type_models import EmailPreferences, TypeRole
 
 logger = logging.getLogger(__name__)
+
+
+class ExceptionPermissionConfig(Exception):
+    pass
 
 
 class GroupProfile(models.TextChoices):
@@ -89,7 +93,6 @@ class User(AbstractUser):
                 and self.siap_habilitation["role"]["typologie"]
                 == TypeRole.ADMINISTRATEUR
             ):
-
                 if self.siap_habilitation["role"]["perimetre_departement"]:
                     return (
                         obj.programme.code_insee_departement
@@ -113,7 +116,7 @@ class User(AbstractUser):
             return self.roles.filter(bailleur_id__in=bailleur_ids) or self.roles.filter(
                 administration_id=obj.programme.administration_id
             )
-        raise Exception(
+        raise ExceptionPermissionConfig(
             "Les permissions ne sont pas correctement configurer, un "
             + "objet de type Convention doit être asocié à la "
             + "permission 'change_convention'"
@@ -223,7 +226,7 @@ class User(AbstractUser):
                 )
             return programmes_result
 
-        raise Exception(
+        raise ExceptionPermissionConfig(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les programmes"
         )
 
@@ -250,7 +253,9 @@ class User(AbstractUser):
 
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
-            return {"id__in": self.administration_ids()}
+            if (administration_ids := self.administration_ids()) is not None:
+                return {"id__in": administration_ids}
+            return {}
 
         # to do : manage programme related to geo for bailleur
         if self.is_bailleur():
@@ -258,14 +263,18 @@ class User(AbstractUser):
                 return {}
             return {"id__in": []}
 
-        raise Exception(
+        raise ExceptionPermissionConfig(
             "L'utilisateur courant n'a pas de role associé permettant le "
             + "filtre sur les administrations"
         )
 
     def administration_ids(self):
         if self.is_cerbere_user():
-            if "administration" in self.siap_habilitation:
+            if (
+                "administration" in self.siap_habilitation
+                and self.siap_habilitation["administration"] is not None
+                and "id" in self.siap_habilitation["administration"]
+            ):
                 return [self.siap_habilitation["administration"]["id"]]
             return None
 
@@ -301,13 +310,21 @@ class User(AbstractUser):
         if self.is_bailleur():
             return {"id__in": self._bailleur_ids()}
 
-        raise Exception(
+        raise ExceptionPermissionConfig(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les bailleurs"
         )
 
     def _bailleur_ids(self) -> list:
-        if self.is_cerbere_user() and self.siap_habilitation:
-            return [self.siap_habilitation["bailleur"]["id"]]
+        if self.is_cerbere_user():
+            if (
+                "bailleur" in self.siap_habilitation
+                and self.siap_habilitation["bailleur"] is not None
+                and "id" in self.siap_habilitation["bailleur"]
+            ):
+                return [self.siap_habilitation["bailleur"]["id"]]
+            raise ExceptionPermissionConfig(
+                "Bailleur should be defined in siap_habilitation"
+            )
 
         bailleur_ids = list(
             map(
