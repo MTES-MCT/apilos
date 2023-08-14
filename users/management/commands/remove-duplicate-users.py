@@ -9,7 +9,7 @@ from users.models import User
 logger = logging.getLogger(__name__)
 
 
-def clear_siap_users_from_standalone():
+def find_standalone_users_with_siap_account():
     duplicates = (
         User.objects.values("email")
         .annotate(email_count=Count("email"))
@@ -48,7 +48,7 @@ class Command(BaseCommand):
         verbose = options.get("verbose")
         dry_run = options.get("dry_run")
 
-        users_to_delete = clear_siap_users_from_standalone()
+        users_to_delete = find_standalone_users_with_siap_account()
 
         if verbose:
             for user in users_to_delete:
