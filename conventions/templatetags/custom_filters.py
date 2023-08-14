@@ -1,3 +1,4 @@
+import json
 from re import IGNORECASE
 from re import compile as rcompile
 from re import escape as rescape
@@ -14,6 +15,7 @@ from core.utils import get_key_from_json_field, is_valid_uuid
 from instructeurs.models import Administration
 from programmes.models import Financement
 from siap.siap_client.client import SIAPClient
+from upload.models import UploadedFile
 from users.models import GroupProfile
 
 
@@ -210,6 +212,23 @@ def get_files_from_textfiles(field):
     if isinstance(files, dict):
         return [f for f in files.values() if "uuid" in f and is_valid_uuid(f["uuid"])]
     return None
+
+
+@register.filter
+def without_missing_files(files):
+    if not files:
+        return ""
+
+    files_as_json = json.loads(files)
+    for convention_id, file in files_as_json.items():
+        try:
+            UploadedFile.objects.get(
+                uuid=file["convention_id"], filename=file["filename"]
+            )
+        except UploadedFile.DoesNotExist:
+            del files_as_json[convention_id]
+
+    return files_as_json
 
 
 @register.filter

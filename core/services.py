@@ -11,6 +11,8 @@ from django.core.files.storage import default_storage
 logger = logging.getLogger(__name__)
 
 # Using enum class create enumerations
+# These numeric ids match campaign templates ids.
+# They are listed under Brevo dashboard> Campaigns > Templates
 class EmailTemplateID(enum.Enum):
     # [PLATEFORME] BAILLEUR - Avenant à instruire - confirmation
     B_AVENANT_A_INSTRUIRE_CONFIRMATION = 106
@@ -44,6 +46,8 @@ class EmailTemplateID(enum.Enum):
     I_MENSUEL = 151
     # Bailleurs - 5 - ACTIVATION (récapitulatif mensuel)
     B_MENSUEL = 152
+    # Virus - 163 - Warning
+    VIRUS_WARNING = 163
 
 
 class EmailService:
@@ -90,19 +94,5 @@ class EmailService:
                         f.read(),
                         content_type,
                     )
-            if settings.SENDINBLUE_API_KEY:
-                message.send()
-            else:
-                logger.warning(
-                    """
-    Email message:
-        to: %s
-        cc: %s
-        template_id: %s
-        data: %s
-                """,
-                    message.to,
-                    message.cc,
-                    message.template_id,
-                    message.merge_global_data,
-                )
+
+            message.send()
