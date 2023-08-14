@@ -229,7 +229,7 @@ Certaines [commandes Django](https://docs.djangoproject.com/fr/4.2/ref/django-ad
 
 ### `./manage.py remove-duplicate-siap-users`
 
-Supprime les utilisateurs disposant d'un compte APiLos standalone et SIAP.
+Supprime les comptes des utilisateurs de la plateforme autonome si ils disposent d'un compte APiLos en version SIAP.
 
 Options :
 * **--dry-run** : exécute la commande sans rien écrire en base de données

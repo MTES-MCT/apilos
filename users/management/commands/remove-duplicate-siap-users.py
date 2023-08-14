@@ -20,11 +20,7 @@ def find_standalone_users_with_siap_account():
     for email in list(duplicates):
         logger.info(email)
 
-    logger.info("%s emails en doublons détectés", len(duplicates))
-
-    users_to_delete = User.objects.filter(email__in=duplicates).exclude(
-        cerbere_login=None
-    )
+    users_to_delete = User.objects.filter(email__in=duplicates, cerbere_login=None)
     return users_to_delete
 
 
