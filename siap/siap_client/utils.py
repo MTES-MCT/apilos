@@ -19,6 +19,10 @@ from programmes.models import (
 )
 from users.models import User
 
+ADDRESS_PC_CITY = "adresseLigne6"
+ADDRESS_LINE_RAW = "adresseLigne4"
+ADDRESS_CLEANED = "adresseLigne"
+
 
 def get_or_create_conventions(operation: dict, user: User):
     if operation["detailsOperation"]:
@@ -82,7 +86,7 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
             bailleur_siren = bailleur_from_siap["email"]
         else:
             raise NotHandledBailleurPriveSIAPException(
-                "The « Bailleur privée » type of bailleur is not handled yet"
+                "The « Bailleurs privés » type of bailleur is not handled yet"
             )
     elif not (
         (bailleur_siren := bailleur_from_siap["siren"])
@@ -135,10 +139,10 @@ def _get_bailleur_nom(bailleur_from_siap: dict) -> str:
 def _get_bailleur_code_postal(bailleur_from_siap: dict) -> str:
     if "codePostal" in bailleur_from_siap:
         return bailleur_from_siap["codePostal"]
-    if "adresseLigne6" in bailleur_from_siap and bailleur_from_siap["adresseLigne6"]:
+    if ADDRESS_PC_CITY in bailleur_from_siap and bailleur_from_siap[ADDRESS_PC_CITY]:
         return (
-            bailleur_from_siap["adresseLigne6"][:5]
-            if bailleur_from_siap["adresseLigne6"][:5].isnumeric()
+            bailleur_from_siap[ADDRESS_PC_CITY][:5]
+            if bailleur_from_siap[ADDRESS_PC_CITY][:5].isnumeric()
             else ""
         )
     return ""
@@ -147,16 +151,16 @@ def _get_bailleur_code_postal(bailleur_from_siap: dict) -> str:
 def _get_bailleur_ville(bailleur_from_siap: dict) -> str:
     if "ville" in bailleur_from_siap:
         return bailleur_from_siap["ville"]
-    if "adresseLigne6" in bailleur_from_siap and bailleur_from_siap["adresseLigne6"]:
-        return bailleur_from_siap["adresseLigne6"].lstrip("1234567890 ")
+    if ADDRESS_PC_CITY in bailleur_from_siap and bailleur_from_siap[ADDRESS_PC_CITY]:
+        return bailleur_from_siap[ADDRESS_PC_CITY].lstrip("1234567890 ")
     return ""
 
 
 def _get_bailleur_adresse(bailleur_from_siap: dict) -> str:
-    if "adresseLigne" in bailleur_from_siap:
-        return bailleur_from_siap["adresseLigne"]
-    if "adresseLigne4" in bailleur_from_siap:
-        return bailleur_from_siap["adresseLigne4"]
+    if ADDRESS_CLEANED in bailleur_from_siap:
+        return bailleur_from_siap[ADDRESS_CLEANED]
+    if ADDRESS_LINE_RAW in bailleur_from_siap:
+        return bailleur_from_siap[ADDRESS_LINE_RAW]
     return ""
 
 
