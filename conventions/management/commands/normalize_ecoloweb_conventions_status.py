@@ -51,7 +51,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         verbose = options.get("verbose")
-        dry_run = options.get("dry-run")
+        dry_run = options.get("dry_run")
 
         if not dry_run:
             logger.warning(
