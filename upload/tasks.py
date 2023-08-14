@@ -14,6 +14,9 @@ logger = logging.getLogger(__name__)
 
 @shared_task()
 def scan_uploaded_files(paths_to_scan, authenticated_user_id):
+    if "CLAMAV_PATH" not in settings:
+        return
+
     # refresh the database on demand before the scan starts
     subprocess.run(
         f'freshclam --config-file="{settings.CLAMAV_PATH}/clamav/freshclam.conf"',
