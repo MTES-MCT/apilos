@@ -41,7 +41,7 @@
                     <div class="fr-col-12 fr-col-lg-6">
 
                         <div class="fr-col-12">{% if bailleur.nature_bailleur == NATURE_BAILLEUR.PRIVES %}Email{% else %}SIRET{% endif %} : {{bailleur.siret}}</div>
-                        {% if bailleur.capital_social is not None %}
+                        {% if bailleur.capital_social %}
                             <div class="fr-col-12">Capital social : {{bailleur.capital_social}}</div>
                         {% endif %}
                     </div>
