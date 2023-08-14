@@ -222,3 +222,17 @@ L'import des fixtures crée plusieurs utilisateurs utiles lors du développement
 |-------------|------------------|--------------|-----------------------------|
 | bailleur    | demo.bailleur    | demo.12345   | demo.bailleur@oudard.org    |
 | instructeur | demo.instructeur | instru12345  | demo.instructeur@oudard.org |
+
+## Commandes
+
+Certaines [commandes Django](https://docs.djangoproject.com/fr/4.2/ref/django-admin/) ont été décrites, et peuvent être executées en local ou sur un serveur de production.
+
+### `./manage.py remove-duplicate-siap-users`
+
+Supprime les utilisateurs disposant d'un compte APiLos standalone et SIAP.
+
+Options :
+* **--dry-run** : exécute la commande sans rien écrire en base de données
+* **--verbose** : affiche la liste des utilisateurs à supprimer
+
+
