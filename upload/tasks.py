@@ -24,11 +24,14 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
     # )
 
     for path, uploaded_file_id in paths_to_scan:
-        with default_storage.open(path, "rb") as original_file_object:
+        with default_storage.open(path) as original_file_object:
             file_is_infected = False
 
             with tempfile.NamedTemporaryFile() as tf:
                 tf.write(original_file_object.read())
+                tf.seek(0)
+                logger.warning(f"{tf.read()=}")
+
                 output = subprocess.run(
                     f'clamdscan {tf.name} --config-file="{settings.CLAMAV_PATH}/clamav/clamd.conf"',
                     capture_output=True,
@@ -37,12 +40,13 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
                     text=True,
                 )
 
-                logger.warning(f"{output.stdout=}")
+                logger.warning(f"{output.stdout=} {tf.readlines()=}")
 
                 file_is_infected = (
                     "Infected files" in output.stdout
                     and "Infected files: 0" not in output.stdout
                 )
+
             if file_is_infected:
                 user = User.objects.get(id=authenticated_user_id)
                 EmailService(
@@ -52,7 +56,7 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
                     email_data={
                         "firstname": user.first_name,
                         "lastname": user.last_name,
-                        "filename": path.name,
+                        "filename": Path(path).name,
                     }
                 )
 
