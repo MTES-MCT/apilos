@@ -17,16 +17,14 @@ logger = logging.getLogger(__name__)
 @shared_task()
 def scan_uploaded_files(paths_to_scan, authenticated_user_id):
     # refresh the database on demand before the scan starts
-    subprocess.run(
-        f'freshclam --config-file="{settings.CLAMAV_PATH}/clamav/freshclam.conf"',
-        shell=True,
-        check=True,
-    )
+    # subprocess.run(
+    #     f'freshclam --config-file="{settings.CLAMAV_PATH}/clamav/freshclam.conf"',
+    #     shell=True,
+    #     check=True,
+    # )
 
     for path, uploaded_file_id in paths_to_scan:
-        file_path = Path(settings.MEDIA_ROOT / path).resolve()
-
-        with default_storage.open(file_path, "rb") as original_file_object:
+        with default_storage.open(path, "rb") as original_file_object:
             file_is_infected = False
 
             with tempfile.NamedTemporaryFile() as tf:
@@ -38,6 +36,8 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
                     check=False,
                     text=True,
                 )
+
+                logger.warning(f"{output.stdout=}")
 
                 file_is_infected = (
                     "Infected files" in output.stdout
@@ -56,7 +56,7 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
                     }
                 )
 
-                default_storage.delete(file_path)
+                default_storage.delete(path)
                 UploadedFile.objects.get(id=uploaded_file_id).delete()
 
                 logger.warning(
