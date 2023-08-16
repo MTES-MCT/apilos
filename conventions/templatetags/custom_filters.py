@@ -214,18 +214,15 @@ def get_files_from_textfiles(field):
 
 @register.filter
 def without_missing_files(files):
-    if not files:
-        return ""
-
     files_as_json = json.loads(files)
 
     for convention_id, file in files_as_json.items():
         try:
-            UploadedFile.objects.get(uuid=convention_id, filename=file["filename"])
+            UploadedFile.objects.get(uuid=file["uuid"], filename=file["filename"])
         except UploadedFile.DoesNotExist:
             del files_as_json[convention_id]
 
-    return files_as_json
+    return json.dumps(files_as_json)
 
 
 @register.filter
