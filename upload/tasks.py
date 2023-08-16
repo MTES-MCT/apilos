@@ -1,6 +1,6 @@
 import logging
-import tempfile
 import subprocess
+import tempfile
 from pathlib import Path
 
 from celery import shared_task
@@ -24,13 +24,11 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
     # )
 
     for path, uploaded_file_id in paths_to_scan:
-        with default_storage.open(path) as original_file_object:
-            file_is_infected = False
+        file_is_infected = False
 
+        with default_storage.open(path) as original_file_object:
             with tempfile.NamedTemporaryFile() as tf:
                 tf.write(original_file_object.read())
-                tf.seek(0)
-                logger.warning(f"{tf.read()=}")
 
                 output = subprocess.run(
                     f'clamdscan {tf.name} --config-file="{settings.CLAMAV_PATH}/clamav/clamd.conf"',
@@ -40,32 +38,30 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
                     text=True,
                 )
 
-                logger.warning(f"{output.stdout=} {tf.readlines()=}")
-
                 file_is_infected = (
                     "Infected files" in output.stdout
                     and "Infected files: 0" not in output.stdout
                 )
 
-            if file_is_infected:
-                user = User.objects.get(id=authenticated_user_id)
-                EmailService(
-                    to_emails=[user.email],
-                    email_template_id=EmailTemplateID.VIRUS_WARNING,
-                ).send_transactional_email(
-                    email_data={
-                        "firstname": user.first_name,
-                        "lastname": user.last_name,
-                        "filename": Path(path).name,
-                    }
-                )
+        if file_is_infected:
+            user = User.objects.get(id=authenticated_user_id)
+            EmailService(
+                to_emails=[user.email],
+                email_template_id=EmailTemplateID.VIRUS_WARNING,
+            ).send_transactional_email(
+                email_data={
+                    "firstname": user.first_name,
+                    "lastname": user.last_name,
+                    "filename": Path(path).name,
+                }
+            )
 
-                default_storage.delete(path)
-                UploadedFile.objects.get(id=uploaded_file_id).delete()
+            default_storage.delete(path)
+            UploadedFile.objects.get(id=uploaded_file_id).delete()
 
-                logger.warning(
-                    "An infected file has been detected."
-                    "The user has been warned by email "
-                    "and the file has succesfully been removed. | File location : %s",
-                    path,
-                )
+            logger.warning(
+                "An infected file has been detected."
+                "The user has been warned by email "
+                "and the file has succesfully been removed. | File location : %s",
+                path,
+            )

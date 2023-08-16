@@ -16,6 +16,7 @@ from conventions.services.utils import (
     base_convention_response_error,
     editable_convention,
 )
+from core.utils import is_valid_uuid
 
 
 @dataclass
@@ -322,8 +323,12 @@ class BaseConventionView(LoginRequiredMixin, View):
     def _get_convention(self, convention_uuid):
         return Convention.objects.get(uuid=convention_uuid)
 
-    def setup(self, request, *args, **kwargs):
-        self.convention = self._get_convention(kwargs.get("convention_uuid"))
+    # pylint: disable=W0221
+    def setup(self, request, convention_uuid, *args, **kwargs):
+        if is_valid_uuid(convention_uuid):
+            self.convention = self._get_convention(convention_uuid)
+            super().setup(request, convention_uuid, *args, **kwargs)
+
         super().setup(request, *args, **kwargs)
 
 
