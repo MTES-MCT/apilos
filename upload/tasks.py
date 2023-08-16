@@ -16,13 +16,6 @@ logger = logging.getLogger(__name__)
 
 @shared_task()
 def scan_uploaded_files(paths_to_scan, authenticated_user_id):
-    # refresh the database on demand before the scan starts
-    # subprocess.run(
-    #     f'freshclam --config-file="{settings.CLAMAV_PATH}/clamav/freshclam.conf"',
-    #     shell=True,
-    #     check=True,
-    # )
-
     for path, uploaded_file_id in paths_to_scan:
         with default_storage.open(path) as original_file_object:
             file_is_infected = False
