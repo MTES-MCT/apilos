@@ -509,6 +509,7 @@ if CERBERE_AUTH:
         "UTILISATEUR.PRENOM": "first_name",
         "UTILISATEUR.MEL": "email",
     }
+    CAS_LOGIN_MSG = None
     CAS_LOGGED_MSG = None
 
     LOGIN_URL = "/accounts/cerbere-login"
