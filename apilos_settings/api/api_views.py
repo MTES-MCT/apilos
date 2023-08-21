@@ -80,7 +80,7 @@ class ApilosConfiguration(APIView):
                 value={
                     "racine_url_acces_web": "https://apilos.beta.gouv.fr",
                     "url_acces_api_cloture_operation": (
-                        "/api-siap/v0/close_operation/{NUMERO_OPERATION_SIAP}"
+                        "/api-siap/v0/close_operation/{NUMERO_OPERATION_SIAP}/"
                     ),
                     "url_acces_api_conventions_operation": (
                         "/api-siap/v0/operation/{NUMERO_OPERATION_SIAP}"
@@ -108,7 +108,7 @@ class ApilosConfiguration(APIView):
             {
                 "racine_url_acces_web": protocol + request.get_host(),
                 "url_acces_api_cloture_operation": (
-                    "/api-siap/v0/close_operation/{NUMERO_OPERATION_SIAP}"
+                    "/api-siap/v0/close_operation/{NUMERO_OPERATION_SIAP}/"
                 ),
                 "url_acces_api_conventions_operation": (
                     "/api-siap/v0/operation/{NUMERO_OPERATION_SIAP}"

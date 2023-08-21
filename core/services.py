@@ -3,12 +3,12 @@ import logging
 import mimetypes
 from pathlib import Path
 from typing import List
-from django.conf import settings
 
-from django.core.mail import EmailMultiAlternatives
 from django.core.files.storage import default_storage
+from django.core.mail import EmailMultiAlternatives
 
 logger = logging.getLogger(__name__)
+
 
 # Using enum class create enumerations
 # These numeric ids match campaign templates ids.
