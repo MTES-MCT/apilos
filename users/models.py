@@ -322,9 +322,11 @@ class User(AbstractUser):
                 and "id" in self.siap_habilitation["bailleur"]
             ):
                 return [self.siap_habilitation["bailleur"]["id"]]
-            raise ExceptionPermissionConfig(
-                "Bailleur should be defined in siap_habilitation"
-            )
+            # NOTE: this exception is commente to allow SIAP bailleurs to access the
+            # standalone platform
+            # raise ExceptionPermissionConfig(
+            #     "Bailleur should be defined in siap_habilitation"
+            # )
 
         bailleur_ids = list(
             map(
