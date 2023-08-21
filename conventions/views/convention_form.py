@@ -1,26 +1,20 @@
 from abc import ABC
+from dataclasses import dataclass
 from typing import List
 
-from dataclasses import dataclass
-
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import (
-    HttpRequest,
-    HttpResponseRedirect,
-)
+from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
-from conventions.models import Convention
 
+from conventions.models import Convention
 from conventions.permissions import has_campaign_permission
-from conventions.services.conventions import (
-    ConventionService,
-)
+from conventions.services.conventions import ConventionService
 from conventions.services.utils import (
+    ReturnStatus,
     base_convention_response_error,
     editable_convention,
-    ReturnStatus,
 )
 
 
@@ -325,14 +319,12 @@ class ConventionFormSteps:
 class BaseConventionView(LoginRequiredMixin, View):
     convention: Convention
 
-    # pylint: disable=R0201
     def _get_convention(self, convention_uuid):
         return Convention.objects.get(uuid=convention_uuid)
 
-    # pylint: disable=W0221
-    def setup(self, request, convention_uuid, *args, **kwargs):
-        self.convention = self._get_convention(convention_uuid)
-        super().setup(request, convention_uuid, *args, **kwargs)
+    def setup(self, request, *args, **kwargs):
+        self.convention = self._get_convention(kwargs.get("convention_uuid"))
+        super().setup(request, *args, **kwargs)
 
 
 class ConventionView(ABC, BaseConventionView):
@@ -349,16 +341,14 @@ class ConventionView(ABC, BaseConventionView):
     def current_path_redirect(self):
         return self.steps.current_step_path()
 
-    # pylint: disable=W0221
-    def setup(self, request, convention_uuid, *args, **kwargs):
-        super().setup(request, convention_uuid, *args, **kwargs)
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
         self.steps = ConventionFormSteps(
             convention=self.convention, active_classname=self.__class__.__name__
         )
 
-    # pylint: disable=W0613
     @has_campaign_permission("convention.view_convention")
-    def get(self, request, convention_uuid):
+    def get(self, request, **kwargs):
         service = self.service_class(convention=self.convention, request=request)
         service.get()
         return render(

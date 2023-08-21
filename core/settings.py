@@ -175,6 +175,7 @@ MIDDLEWARE = [
     "hijack.middleware.HijackUserMiddleware",
 ]
 
+
 if not TESTING:
     MIDDLEWARE = MIDDLEWARE + [
         "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -220,6 +221,7 @@ TEMPLATES = [
         },
     },
 ]
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
 WSGI_APPLICATION = "core.wsgi.application"
 
@@ -507,6 +509,8 @@ if CERBERE_AUTH:
         "UTILISATEUR.PRENOM": "first_name",
         "UTILISATEUR.MEL": "email",
     }
+    CAS_LOGIN_MSG = None
+    CAS_LOGGED_MSG = None
 
     LOGIN_URL = "/accounts/cerbere-login"
 

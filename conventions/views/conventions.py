@@ -22,6 +22,9 @@ from django.urls import resolve, reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
+from conventions.forms.convention_form_administration import (
+    UpdateConventionAdministrationForm,
+)
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from conventions.forms.evenement import EvenementForm
 from conventions.models import Convention, ConventionStatut, Evenement, PieceJointe
@@ -58,23 +61,50 @@ class AuthenticatedHttpRequest(HttpRequest):
     user: User
 
 
+def get_forms_for_convention(convention: Convention, *args):
+    """Regroupe tous les formulaires utilisés sur la vue recapitulatif.
+    À terme, tous les formulaires définis sur ConventionRecapitulatifService
+    pourraient être définis ici pour éviter de mélanger business logic et affichage
+    """
+    return {
+        "update_convention_administration_form": UpdateConventionAdministrationForm(
+            initial={
+                "administration": convention.programme.administration,
+                "convention": convention.pk,
+            },
+            *args,
+        )
+    }
+
+
 class RecapitulatifView(BaseConventionView):
+    forms: dict
+
     def _get_convention(self, convention_uuid):
         return (
             Convention.objects.prefetch_related("programme")
-            .prefetch_related("programme__referencecadastrales")
-            .prefetch_related("programme__logementedds")
-            .prefetch_related("lot")
-            .prefetch_related("lot__type_stationnements")
-            .prefetch_related("lot__logements")
-            .prefetch_related("programme__administration")
+            .prefetch_related(
+                "programme__referencecadastrales",
+                "programme__logementedds",
+                "lot",
+                "lot__type_stationnements",
+                "lot__logements",
+                "programme__administration",
+            )
             .get(uuid=convention_uuid)
         )
 
-    # pylint: disable=W0613
+    def _get_forms(self, *args):
+        return get_forms_for_convention(self.convention, *args)
+
+    def setup(self, *args, **kwargs):
+        super().setup(*args, **kwargs)
+
+        self.convention = self._get_convention(kwargs.get("convention_uuid"))
+        self.forms = self._get_forms()
+
     @has_campaign_permission("convention.view_convention")
-    def get(self, request: HttpRequest, convention_uuid: int):
-        # pylint: disable=unused-argument
+    def get(self, request: HttpRequest, **kwargs):
         service = ConventionRecapitulatifService(
             request=request, convention=self.convention
         )
@@ -91,16 +121,22 @@ class RecapitulatifView(BaseConventionView):
             {
                 **base_convention_response_error(request, self.convention),
                 **result,
+                **self.forms,
                 "convention_form_steps": ConventionFormSteps(
                     convention=self.convention
                 ),
             },
         )
 
-    # pylint: disable=W0613
     @has_campaign_permission("convention.change_convention")
-    def post(self, request: HttpRequest, convention_uuid: int):
-        # pylint: disable=unused-argument
+    def post(self, request: HttpRequest, **kwargs):
+        self.forms = self._get_forms(request.POST)
+
+        for _, form in self.forms.items():
+            if form.is_valid():
+                # TODO : gérer plusieurs formulaires valides ici
+                return form.submit(request)
+
         service = ConventionRecapitulatifService(
             request=request, convention=self.convention
         )
@@ -113,12 +149,14 @@ class RecapitulatifView(BaseConventionView):
             result = service.reactive_convention()
         else:
             result = service.save_convention_TypeIandII()
+
         return render(
             request,
             "conventions/recapitulatif.html",
             {
                 **base_convention_response_error(request, self.convention),
                 **result,
+                **self.forms,
                 "convention_form_steps": ConventionFormSteps(
                     convention=self.convention
                 ),
@@ -481,17 +519,21 @@ def preview(request, convention_uuid):
 
 @login_required
 @has_campaign_permission_view_function("convention.change_convention")
-def sent(request, convention_uuid):
+def sent(request, convention_uuid, *args):
     result = convention_sent(request, convention_uuid)
+    convention = Convention.objects.get(uuid=convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:preview", args=[convention_uuid])
         )
+
     return render(
         request,
         "conventions/sent.html",
         {
             **result,
+            "convention": convention,
+            **get_forms_for_convention(convention, *args),
         },
     )
 
