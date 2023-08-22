@@ -1,18 +1,15 @@
 import datetime
-from unittest import mock
 import uuid
+from unittest import mock
 
 from django.test import TestCase
-from conventions.models import (
-    Convention,
-    ConventionHistory,
-    ConventionStatut,
-)
+
+from conventions.models import Convention, ConventionHistory, ConventionStatut
 from programmes.models import Financement
 from users.models import User
 from users.type_models import EmailPreferences, TypeRole
 
-# pylint: disable=R0201
+
 class ConventionModelsTest(TestCase):
     fixtures = [
         "auth.json",
@@ -95,7 +92,7 @@ class ConventionModelsTest(TestCase):
         self.assertEqual(convention.statut_for_template()["statut"], "1. Projet")
         self.assertEqual(
             convention.statut_for_template()["statut_display"],
-            "Projet",
+            "1. Projet",
         )
         self.assertEqual(convention.statut_for_template()["key_statut"], "Projet")
         convention.statut = ConventionStatut.INSTRUCTION.label
@@ -104,7 +101,7 @@ class ConventionModelsTest(TestCase):
         )
         self.assertEqual(
             convention.statut_for_template()["statut_display"],
-            "En instruction",
+            "2. Instruction requise",
         )
         self.assertEqual(
             convention.statut_for_template()["key_statut"], "Instruction_requise"
@@ -115,26 +112,28 @@ class ConventionModelsTest(TestCase):
         )
         self.assertEqual(
             convention.statut_for_template()["statut_display"],
-            "En correction",
+            "3. Corrections requises",
         )
         self.assertEqual(
             convention.statut_for_template()["key_statut"], "Corrections_requises"
         )
         convention.statut = ConventionStatut.A_SIGNER.label
         self.assertEqual(convention.statut_for_template()["statut"], "4. A signer")
-        self.assertEqual(convention.statut_for_template()["statut_display"], "À signer")
+        self.assertEqual(
+            convention.statut_for_template()["statut_display"], "4. A signer"
+        )
         self.assertEqual(convention.statut_for_template()["key_statut"], "A_signer")
         convention.statut = ConventionStatut.SIGNEE.label
         self.assertEqual(convention.statut_for_template()["statut"], "5. Signée")
         self.assertEqual(
-            convention.statut_for_template()["statut_display"], "Finalisée"
+            convention.statut_for_template()["statut_display"], "5. Signée"
         )
         self.assertEqual(convention.statut_for_template()["key_statut"], "Signee")
 
     def test_short_statut_for_bailleur(self):
         convention = Convention.objects.order_by("uuid").first()
         convention.statut = ConventionStatut.PROJET.label
-        self.assertEqual(convention.short_statut_for_bailleur(), "Projet")
+        self.assertEqual(convention.short_statut_for_bailleur(), "En projet")
         convention.statut = ConventionStatut.INSTRUCTION.label
         self.assertEqual(convention.short_statut_for_bailleur(), "En instruction")
         convention.statut = ConventionStatut.CORRECTION.label
@@ -149,9 +148,9 @@ class ConventionModelsTest(TestCase):
     def test_short_statut_for_instructeur(self):
         convention = Convention.objects.order_by("uuid").first()
         convention.statut = ConventionStatut.PROJET.label
-        self.assertEqual(convention.short_statut_for_instructeur(), "Projet")
+        self.assertEqual(convention.short_statut_for_instructeur(), "En projet")
         convention.statut = ConventionStatut.INSTRUCTION.label
-        self.assertEqual(convention.short_statut_for_instructeur(), "A instruire")
+        self.assertEqual(convention.short_statut_for_instructeur(), "À instruire")
         convention.statut = ConventionStatut.CORRECTION.label
         self.assertEqual(convention.short_statut_for_instructeur(), "En correction")
         convention.statut = ConventionStatut.A_SIGNER.label

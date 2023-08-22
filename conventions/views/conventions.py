@@ -266,6 +266,7 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
                 "statuts": self.service.choices,
                 "tabs": self.get_tabs(),
                 "total_conventions": request.user.conventions().count(),
+                "order_by": self._get_non_empty_query_param("order_by", ""),
             },
         )
 

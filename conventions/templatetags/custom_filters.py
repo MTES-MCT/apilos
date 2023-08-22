@@ -465,3 +465,48 @@ def bailleur_from(uuid):
     # pylint: disable=W0703,broad-except
     except Exception:
         return ""
+
+
+@register.filter
+def get_ordered_full_path(request, order_field):
+    get_copy = request.GET.copy()
+    if request.GET.get("order_by") == order_field:
+        order_field = f"-{order_field}"
+    get_copy["order_by"] = order_field
+    get_copy["page"] = 1
+    return f"{request.path}?{get_copy.urlencode()}"
+
+
+@register.filter
+def get_available_order_fields(request, url_name=None):
+    if url_name == "operation_conventions":
+        return {}
+    order_fields = {}
+    if is_instructeur(request):
+        order_fields = order_fields | {"programme__bailleur__nom": "Bailleur"}
+    if display_administration(request):
+        order_fields = order_fields | {"administration__nom": "Instructeur"}
+    if url_name == "search_instruction":
+        order_fields = order_fields | {"programme__nom": "Opération"}
+    else:
+        order_fields = order_fields | {"numero": "Numéro"}
+    order_fields = order_fields | {
+        "lot__financement": "Financement",
+        "programme__ville": "Ville",
+        "programme__code_postal": "Code postal",
+        "lot__nb_logements": "Nombre de logements",
+    }
+    if url_name == "search_instruction":
+        order_fields = order_fields | {
+            "programme__date_achevement_compile": "Livraison"
+        }
+    else:
+        order_fields = order_fields | {
+            "televersement_convention_signee_le": "Signature"
+        }
+    return order_fields
+
+
+@register.filter
+def get_ordervalue(order_fields, key=None):
+    return order_fields.get(key.lstrip("-"), "")
