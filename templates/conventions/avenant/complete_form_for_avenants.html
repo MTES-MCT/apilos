@@ -16,11 +16,11 @@
                     <div class="fr-col-12">
                         {% include "common/form/input_files.html" with form_input=complete_for_avenant_form.nom_fichier_signe editable=True %}
                     </div>
-
                 {% endif %}
             </div>
             <button class="fr-btn fr-mt-2w">Envoyer</button>
-        </form>
+        </div>
+    </form>
 {% else %}
     <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
         {% csrf_token %}
