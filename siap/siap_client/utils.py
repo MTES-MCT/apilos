@@ -291,35 +291,46 @@ def get_or_create_lots_and_conventions(
                 or financement not in Financement.values
             ):
                 continue
-            (lot, _) = Lot.objects.get_or_create(
+            my_lots = Lot.objects.filter(
                 programme=programme,
                 financement=financement,
-                defaults={
-                    "type_habitat": _type_habitat(aide),
-                    "nb_logements": _nb_logements(aide),
-                },
             )
-            lots.append(lot)
-            (convention, _) = Convention.objects.exclude(
-                statut=ConventionStatut.ANNULEE.label,
-            ).get_or_create(
-                programme=programme,
-                lot=lot,
-                financement=financement,
-                # When comes from SIAP through API, the user doesn't exist in DB
-                defaults={
-                    "cree_par": (user if user.id else None),
-                },
-            )
-            # When convention was created by SIAP through API and the user doesn't exist
-            # the forst user how access it will be the creator
-            if convention.cree_par is None and user.id is not None:
-                convention.cree_par = user
-                convention.save()
-
-            conventions.append(convention)
-
+            if my_lots:
+                for lot in my_lots:
+                    lots.append(lot)
+                    convention = _create_convention_from_lot(lot, user)
+                    conventions.append(convention)
+            else:
+                lot = Lot.objects.create(
+                    programme=programme,
+                    financement=financement,
+                    type_habitat=_type_habitat(aide),
+                    nb_logements=_nb_logements(aide),
+                )
+                lots.append(lot)
+                convention = _create_convention_from_lot(lot, user)
+                conventions.append(convention)
     return (lots, conventions)
+
+
+def _create_convention_from_lot(lot: Lot, user: User):
+    (convention, _) = Convention.objects.exclude(
+        statut=ConventionStatut.ANNULEE.label,
+    ).get_or_create(
+        programme=lot.programme,
+        lot=lot,
+        financement=lot.financement,
+        # When comes from SIAP through API, the user doesn't exist in DB
+        defaults={
+            "cree_par": (user if user.id else None),
+        },
+    )
+    # When convention was created by SIAP through API and the user doesn't exist
+    # the forst user how access it will be the creator
+    if convention.cree_par is None and user.id is not None:
+        convention.cree_par = user
+        convention.save()
+    return convention
 
 
 def _type_operation(type_operation_from_siap: str) -> TypeOperation:
