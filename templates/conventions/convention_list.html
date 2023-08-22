@@ -1,6 +1,6 @@
 {% load custom_filters %}
 
-{% if not siap_operation %}
+{% if url_name != "operation_conventions" %}
     <div class="fr-container">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-md-12 fr-mb-2w">
@@ -159,49 +159,25 @@
     <div class="fr-container fr-px-3w fr-mb-3w">
         <div class="fr-grid-row fr-grid-row--gutters fr-card fr-card--no-border">
             <div class="fr-col-md-12">
-                <details class="apilos-order-menu">
-                    <summary class="fr-grid-row fr-grid-row--right">Trier par  <span class="apilos-order-name fr-link"></span><span class="fr-icon-arrow-down-s-line"></span></summary>
-                    <div class="fr-grid-row fr-grid-row--right">
-                        <div class="apilos-order-menu--open fr-p-2w">
-                            {% if request|is_instructeur %}
-                                <div  class="fr-py-1w">
-                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__bailleur__nom' url_target='conventions:index' label_order='Bailleur' %}
+                {% with order_fields=request|get_available_order_fields:url_name %}
+                    {% if order_fields %}
+                        <details class="apilos-order-menu">
+                            <summary class="fr-grid-row fr-grid-row--right">Trier par
+                                <span class="apilos-order-name fr-link">{{order_fields|get_ordervalue:order_by}}</span>
+                                <span class="fr-icon-arrow-down-s-line"></span>
+                            </summary>
+                            <div class="fr-grid-row fr-grid-row--right">
+                                <div class="apilos-order-menu--open fr-p-2w">
+                                    {% for order_key, order_value in order_fields.items %}
+                                        <div  class="fr-py-1w">
+                                            {% include "common/table/display_order_item.html" %}
+                                        </div>
+                                    {% endfor %}
                                 </div>
-                            {% endif %}
-                            {% if request|display_administration %}
-                                <div  class="fr-py-1w">
-                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__administration__nom' url_target='conventions:index' label_order='Instructeur' %}
-                                </div>
-                            {% endif %}
-                            <div  class="fr-py-1w">
-                                {% if active %}
-                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__nom' url_target='conventions:index' label_order='Nom du programme' %}
-                                {% else %}
-                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='numero' url_target='conventions:index' label_order='Numéro' %}
-                                {% endif %}
                             </div>
-                            <div class="fr-py-1w">
-                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='lot__financement' url_target='conventions:index' label_order='Financement'%}
-                            </div>
-                            <div class="fr-py-1w">
-                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__ville' url_target='conventions:index' label_order='Ville' %}
-                            </div>
-                            <div class="fr-py-1w">
-                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__code_postal' url_target='conventions:index' label_order='Code postal' %}
-                            </div>
-                            <div class="fr-py-1w">
-                                {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='lot__nb_logements' url_target='conventions:index' label_order='Nombre de logements' %}
-                            </div>
-                            <div class="fr-py-1w">
-                                {% if active %}
-                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='programme__date_achevement_compile' url_target='conventions:index' label_order='Date de réalisation' %}
-                                {% else %}
-                                    {% include "common/table/display_order_item.html" with order_by=conventions.order_by order_by_column='televersement_convention_signee_le' url_target='conventions:index' label_order='Date de signature' %}
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </details>
+                        </details>
+                    {% endif %}
+                {% endwith %}
                 {% if filtered_conventions_count > 0 %}
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table aria-label="Conventions">
@@ -231,7 +207,7 @@
                                     <th title="Nombre de logements à conventionner" scope="col">
                                         Logements
                                     </th>
-                                    {% if active or siap_operation %}
+                                    {% if url_name == "search_instruction" or url_name == "operation_conventions" %}
                                         <th title="Date de livraison et mise en service" scope="col">
                                             Livraison
                                         </th>
@@ -302,7 +278,7 @@
                                             <em>{{convention.programme.code_postal|highlight:search_input}}</em>
                                         </td>
                                         <td>{{convention.lot.nb_logements}}</td>
-                                        {% if not active or siap_operation %}
+                                        {% if url_name == "search_instruction" or url_name == "operation_conventions" %}
                                             <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
                                         {% else %}
                                             <td>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>
