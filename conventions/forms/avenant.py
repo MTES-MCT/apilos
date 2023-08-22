@@ -67,7 +67,7 @@ class CompleteforavenantForm(forms.Form):
     )
     nom_fichier_signe = forms.FileField(
         label="Déposer la convention initiale (en PDF)",
-        required=True,
+        required=False,
     )
 
 
