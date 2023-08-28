@@ -86,13 +86,17 @@ class GetOrCreateProgrammeTest(TestCase):
             "zonage123": "02",
             "zonageABC": "A",
         },
+        "detailsOperation": [
+            {"aide": {"code": "PLAI", "libelle": "PLAI"}},
+            {"aide": {"code": "PLUS", "libelle": "PLUS"}},
+        ],
         "donneesOperation": {
             "nomOperation": "Sans travaux 2022-10-07",
             "numeroOperation": "20221000003",
             "aides": [],
             "sousNatureOperation": None,
             "typeConstruction": None,
-            "natureLogement": None,
+            "natureLogement": "LOO",
             "sansTravaux": False,
         },
     }
@@ -102,7 +106,6 @@ class GetOrCreateProgrammeTest(TestCase):
         utils_fixtures.create_bailleurs()
 
     def test_get_or_create(self):
-        self.data_from_siap["donneesOperation"]["natureLogement"] = "LOO"
         programme = utils.get_or_create_programme(
             self.data_from_siap,
             Bailleur.objects.first(),
@@ -111,22 +114,59 @@ class GetOrCreateProgrammeTest(TestCase):
         self.assertTrue(programme.uuid)
         self.assertEqual(programme.nature_logement, NatureLogement.LOGEMENTSORDINAIRES)
 
+    def test_get_or_create_no_details_failed(self):
+        data_from_siap = {**self.data_from_siap}
+        del data_from_siap["detailsOperation"]
+
+        self.assertRaises(
+            NoConventionForOperationSIAPException,
+            utils.get_or_create_programme,
+            data_from_siap,
+            Bailleur.objects.first(),
+            Administration.objects.first(),
+        )
+
     def test_get_or_create_sans_travaux(self):
-        self.data_from_siap["donneesOperation"]["sansTravaux"] = True
+        data_from_siap = {**self.data_from_siap}
+        data_from_siap["donneesOperation"]["sansTravaux"] = True
+        del data_from_siap["detailsOperation"]
         programme = utils.get_or_create_programme(
-            self.data_from_siap,
+            data_from_siap,
             Bailleur.objects.first(),
             Administration.objects.first(),
         )
         self.assertTrue(programme.uuid)
         self.assertEqual(programme.type_operation, TypeOperation.SANSTRAVAUX)
 
-    def test_get_or_create_failed(self):
-        self.data_from_siap["donneesOperation"]["natureLogement"] = None
+    def test_get_or_create_no_nature_failed(self):
+        data_from_siap = {**self.data_from_siap}
+        data_from_siap["donneesOperation"]["natureLogement"] = None
+        self.data_from_siap["detailsOperation"] = (
+            [
+                {"aide": {"code": "PLAI", "libelle": "PLAI"}},
+                {"aide": {"code": "PLUS", "libelle": "PLUS"}},
+            ],
+        )
         self.assertRaises(
             InconsistentDataSIAPException,
             utils.get_or_create_programme,
             self.data_from_siap,
+            Bailleur.objects.first(),
+            Administration.objects.first(),
+        )
+
+    def test_get_or_create_no_convention(self):
+        data_from_siap = {
+            **self.data_from_siap,
+            "detailsOperation": [
+                {"aide": {"code": "FAKE1", "libelle": "FAKE1"}},
+                {"aide": {"code": "FAKE2", "libelle": "FAKE2"}},
+            ],
+        }
+        self.assertRaises(
+            NoConventionForOperationSIAPException,
+            utils.get_or_create_programme,
+            data_from_siap,
             Bailleur.objects.first(),
             Administration.objects.first(),
         )
