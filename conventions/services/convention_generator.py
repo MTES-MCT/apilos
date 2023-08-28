@@ -1,18 +1,17 @@
 import datetime
-import os
 import io
-import math
 import json
-import jinja2
+import math
+import os
+
 import convertapi
-
-from docxtpl import DocxTemplate, InlineImage
-from docx.shared import Inches
-
+import jinja2
 from django.conf import settings
+from django.core.files.storage import default_storage
 from django.forms.models import model_to_dict
 from django.template.defaultfilters import date as template_date
-from django.core.files.storage import default_storage
+from docx.shared import Inches
+from docxtpl import DocxTemplate, InlineImage
 
 from conventions.models import Convention, ConventionType1and2
 from conventions.templatetags.custom_filters import (
@@ -20,11 +19,7 @@ from conventions.templatetags.custom_filters import (
     inline_text_multiline,
 )
 from core.utils import get_key_from_json_field, round_half_up
-from programmes.models import (
-    Financement,
-    Annexe,
-    TypologieLogement,
-)
+from programmes.models import Annexe, Financement, TypologieLogement
 from upload.models import UploadedFile
 from upload.services import UploadService
 
@@ -233,7 +228,6 @@ def _save_convention_donnees_validees(
     lot_num,
     logements_totale,
 ):
-
     annexes = (
         Annexe.objects.prefetch_related("logement")
         .filter(logement__lot_id=convention.lot.id)
@@ -324,7 +318,6 @@ def generate_pdf(file_stream: io.BytesIO, convention: Convention):
 
 
 def _save_io_as_file(file_io, convention_dirpath, convention_filename):
-
     upload_service = UploadService(
         convention_dirpath=convention_dirpath, filename=convention_filename
     )
@@ -484,17 +477,18 @@ def _compute_mixte(convention):
     }
     nb_logements = convention.lot.nb_logements or 0
     if convention.lot.financement == Financement.PLUS:
-        mixite["mixPLUS_10pc"] = round_half_up(nb_logements * 0.1)
         # cf. convention : 30 % au moins des logements
         if nb_logements < 10:
             # cf. convention : 30 % au moins des logements (ce nombre s'obtenant en arrondissant
             # à l'unité la plus proche le résultat de l'application du pourcentage)
+            mixite["mixPLUS_10pc"] = round_half_up(nb_logements * 0.1)
             mixite["mixPLUS_30pc"] = round_half_up(nb_logements * 0.3)
             mixite["mixPLUSinf10_30pc"] = round_half_up(nb_logements * 0.3)
             # cf. convention : 10 % des logements
             mixite["mixPLUSinf10_10pc"] = round_half_up(nb_logements * 0.1)
         else:
             # cf. convention : 30 % au moins des logements
+            mixite["mixPLUS_10pc"] = math.floor(nb_logements * 0.1)
             mixite["mixPLUSsup10_30pc"] = math.ceil(nb_logements * 0.3)
             mixite["mixPLUS_30pc"] = math.ceil(nb_logements * 0.3)
 
