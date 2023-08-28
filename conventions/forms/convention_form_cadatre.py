@@ -161,7 +161,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     effet_relatif_files = forms.CharField(
         required=False,
-        help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
+        help_text="Les fichiers de type images sont acceptés dans la limite de 100 Mo",
     )
     reference_cadastrale = forms.CharField(
         required=False,
