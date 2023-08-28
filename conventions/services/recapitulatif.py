@@ -252,7 +252,7 @@ def convention_submit(request: HttpRequest, convention: Convention):
                     habilitation_id=request.session["habilitation_id"],
                     operation_identifier=convention.programme.numero_galion,
                 )
-                for utilisateur in operation["gestionnaire"]["utilisateurs"]:
+                for utilisateur in operation["gestionnaireSecondaire"]["utilisateurs"]:
                     instructeur_emails.append(utilisateur["email"])
             except SIAPException:
                 submitted = utils.ReturnStatus.WARNING
