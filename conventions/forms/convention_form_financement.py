@@ -3,17 +3,14 @@
 """
 
 import datetime
+
 from dateutil.relativedelta import relativedelta
-
 from django import forms
-from django.forms import BaseFormSet, formset_factory
 from django.core.exceptions import ValidationError
+from django.forms import BaseFormSet, formset_factory
 
-from programmes.models import (
-    Financement,
-    TypeOperation,
-)
 from conventions.models import Preteur
+from programmes.models import Financement, TypeOperation
 
 
 class ConventionFinancementForm(forms.Form):
@@ -34,8 +31,12 @@ class ConventionFinancementForm(forms.Form):
         required=True,
         label="",
         initial=datetime.date.today().year,
+        max_value=datetime.date.today().year + 500,
+        min_value=1977,
         error_messages={
             "required": "La date de fin de conventionnement est obligatoire",
+            "max_value": "La fin de conventionnement ne peut être dans plus de 500 ans",
+            "min_value": "La fin de conventionnement ne peut être antérieur à 1977",
         },
     )
     fond_propre = forms.FloatField(
