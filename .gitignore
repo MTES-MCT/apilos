@@ -9,6 +9,7 @@ __pycache__
 *.pyc
 ~$*
 .coverage
+*.bak
 
 #local repo to store DB data, static and npm lib
 /media/
