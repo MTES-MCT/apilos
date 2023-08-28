@@ -139,7 +139,7 @@ def generate_convention_doc(convention: Convention, save_data=False):
         "res_sh_totale": _compute_total_locaux_collectifs(convention)
         + logements_totale["sh_totale"],
     }
-    context.update(_compute_mixte(convention))
+    context.update(compute_mixte(convention))
     context.update(logements_totale)
     context.update(object_images)
 
@@ -260,7 +260,7 @@ def _save_convention_donnees_validees(
             convention.lot.type_stationnements.all(), annexes
         ),
     }
-    context_to_save.update(_compute_mixte(convention))
+    context_to_save.update(compute_mixte(convention))
     context_to_save.update(logements_totale)
     object_files = {}
     object_files["vendeur_files"] = convention.programme.vendeur_files()
@@ -467,7 +467,7 @@ def _compute_liste_des_annexes(typestationnements, annexes):
     return ", ".join(annexes_list)
 
 
-def _compute_mixte(convention):
+def compute_mixte(convention):
     mixite = {
         "mixPLUSsup10_30pc": 0,
         "mixPLUSinf10_30pc": 0,
