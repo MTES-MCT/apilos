@@ -8,8 +8,8 @@ selon le type de convention :
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
-from core.utils import round_half_up
 
+from core.utils import round_half_up
 from programmes.models import (
     LogementEDD,
     Lot,
@@ -35,7 +35,7 @@ class LotLgtsOptionForm(forms.Form):
         ),
         help_text="""
             Plafond fixé au I de l'article D. 331-12. Ce nombre de logements doit-être
-            négocié avec les services instructeurs et n'est pas obligatoire. Il sera
+            négocié avec les services instructeurs. Il sera
             reporté sur l'article de mixité sociale correspondant su le document de convention.
         """,
     )
