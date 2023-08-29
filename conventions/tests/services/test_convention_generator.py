@@ -1,13 +1,15 @@
-from datetime import date
 import random
 import unittest
+from datetime import date
 
-from django.test import TestCase
 from django.conf import settings
+from django.test import TestCase
+
 from bailleurs.models import SousNatureBailleur
 from conventions.models import Convention, ConventionType1and2
 from conventions.services.convention_generator import (
     ConventionTypeConfigurationError,
+    compute_mixte,
     default_str_if_none,
     get_convention_template_path,
     pluralize,
@@ -29,6 +31,82 @@ class ConventionUtilGeneratorTest(unittest.TestCase):
         self.assertEqual(pluralize(random.randint(3, 999)), "s")
 
 
+class ConventionGeneratorComputeMixiteTest(TestCase):
+    fixtures = [
+        "auth.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+    ]
+
+    def test_compute_mixite_lt_10(self):
+        convention = Convention.objects.get(numero="0001")
+        convention.lot.nb_logements = 9
+        convention.lot.save()
+        self.assertEqual(
+            compute_mixte(convention),
+            {
+                "mixPLUS_10pc": 1,
+                "mixPLUS_30pc": 3,
+                "mixPLUSinf10_10pc": 1,
+                "mixPLUSinf10_30pc": 3,
+                "mixPLUSsup10_30pc": 0,
+            },
+        )
+        convention.lot.nb_logements = 5
+        convention.lot.save()
+        self.assertEqual(
+            compute_mixte(convention),
+            {
+                "mixPLUS_10pc": 1,
+                "mixPLUS_30pc": 2,
+                "mixPLUSinf10_10pc": 1,
+                "mixPLUSinf10_30pc": 2,
+                "mixPLUSsup10_30pc": 0,
+            },
+        )
+        convention.lot.nb_logements = 4
+        convention.lot.save()
+        self.assertEqual(
+            compute_mixte(convention),
+            {
+                "mixPLUS_10pc": 0,
+                "mixPLUS_30pc": 1,
+                "mixPLUSinf10_10pc": 0,
+                "mixPLUSinf10_30pc": 1,
+                "mixPLUSsup10_30pc": 0,
+            },
+        )
+
+    def test_compute_mixite_gt_10(self):
+        convention = Convention.objects.get(numero="0001")
+        convention.lot.nb_logements = 10
+        convention.lot.save()
+        self.assertEqual(
+            compute_mixte(convention),
+            {
+                "mixPLUS_10pc": 1,
+                "mixPLUS_30pc": 3,
+                "mixPLUSinf10_10pc": 0,
+                "mixPLUSinf10_30pc": 0,
+                "mixPLUSsup10_30pc": 3,
+            },
+        )
+        convention.lot.nb_logements = 11
+        convention.lot.save()
+        self.assertEqual(
+            compute_mixte(convention),
+            {
+                "mixPLUS_10pc": 1,
+                "mixPLUS_30pc": 4,
+                "mixPLUSinf10_10pc": 0,
+                "mixPLUSinf10_30pc": 0,
+                "mixPLUSsup10_30pc": 4,
+            },
+        )
+
+
 class ConventionServiceGeneratorTest(TestCase):
     fixtures = [
         "auth.json",
@@ -40,9 +118,6 @@ class ConventionServiceGeneratorTest(TestCase):
         "conventions_for_tests.json",
         "users_for_tests.json",
     ]
-
-    def setUp(self):
-        pass
 
     def test_get_convention_template_path(self):
         user = User.objects.get(username="fix")
