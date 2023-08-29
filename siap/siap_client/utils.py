@@ -214,6 +214,18 @@ def get_or_create_programme(
     (adresse, code_postal, ville) = _get_address_from_locdata(
         programme_from_siap["donneesLocalisation"]
     )
+
+    if type_operation != TypeOperation.SANSTRAVAUX and (
+        "detailsOperation" not in programme_from_siap
+        or [
+            aide["aide"]["code"]
+            for aide in programme_from_siap["detailsOperation"]
+            if aide["aide"]["code"] in Financement.values
+        ]
+        == []
+    ):
+        raise NoConventionForOperationSIAPException()
+
     (programme, _) = Programme.objects.get_or_create(
         numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"],
         parent=None,
