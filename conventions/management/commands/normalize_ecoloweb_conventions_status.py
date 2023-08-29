@@ -17,9 +17,14 @@ def find_ecoloweb_conventions():
         apilos_model="conventions.Convention"
     ).values_list("apilos_id", flat=True)
 
-    base_queryset = Convention.objects.exclude(statut=ConventionStatut.SIGNEE).filter(
-        id__in=ecoloweb_conventions_ids
-    )
+    base_queryset = Convention.objects.filter(
+        statut__in=[
+            ConventionStatut.PROJET.label,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+            ConventionStatut.A_SIGNER.label,
+        ]
+    ).filter(id__in=ecoloweb_conventions_ids)
     before = base_queryset.filter(
         televersement_convention_signee_le__lte=THRESHOLD_DATE,
     )
@@ -49,32 +54,53 @@ class Command(BaseCommand):
             default=False,
         )
 
+        parser.add_argument(
+            "--before",
+            help="update conventions before the 1th of March 2023",
+            action=argparse.BooleanOptionalAction,
+            default=False,
+        )
+
+        parser.add_argument(
+            "--after",
+            help="update conventions after the 1th of March 2023",
+            action=argparse.BooleanOptionalAction,
+            default=False,
+        )
+
     def handle(self, *args, **options):
         verbose = options.get("verbose")
         dry_run = options.get("dry_run")
+        before = options.get("before")
+        after = options.get("after")
 
         if not dry_run:
             logger.warning(
                 "La commande n'a pas été lancée avec le mode dry_run, des données vont être écrites en base de données"
             )
 
-        before, after = find_ecoloweb_conventions()
+        before_conventions, after_conventions = find_ecoloweb_conventions()
 
-        logger.warning(
-            "%s conventions antérieures au 1er mars 2023 concernées",
-            len(before),
-        )
-        if verbose:
-            for convention in before:
-                logger.warning(convention)
+        if before:
+            logger.warning(
+                "%s conventions antérieures au 1er mars 2023 concernées",
+                len(before_conventions),
+            )
+            if verbose:
+                for convention in before_conventions:
+                    logger.warning(convention)
 
-        logger.warning(
-            "%s conventions postérieures au 1er mars 2023 concernées",
-            len(after),
-        )
-        if verbose:
-            for convention in after:
-                logger.warning(convention)
+            if not dry_run:
+                update_conventions_status(before_conventions)
 
-        if not dry_run:
-            update_conventions_status(before)
+        if after:
+            logger.warning(
+                "%s conventions postérieures au 1er mars 2023 concernées",
+                len(after_conventions),
+            )
+            if verbose:
+                for convention in after_conventions:
+                    logger.warning(convention)
+
+            if not dry_run:
+                update_conventions_status(after_conventions)
