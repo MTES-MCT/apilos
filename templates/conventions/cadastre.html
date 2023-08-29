@@ -222,7 +222,7 @@
                             </table>
                         </div>
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-my-2w">
-                            {% include "common/form/input_upload.html" with form_input=form.effet_relatif form_input_files=form.effet_relatif_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.effet_relatif|get_files_from_textfiles object_field="programme__effet_relatif__"|add:form.uuid.value %}
+                            {% include "common/form/input_upload.html" with form_input=form.effet_relatif form_input_files=form.effet_relatif_files object_name='programme' object_uuid=convention.programme.uuid image_only=True file_list=convention.programme.effet_relatif|get_files_from_textfiles object_field="programme__effet_relatif__"|add:form.uuid.value %}
                         </div>
                         <div class="apilos-bordered fr-my-3w">
                             <p class="notes">
@@ -234,7 +234,7 @@
                                     {% include "common/form/input_upload.html" with form_input=form.acte_de_propriete form_input_files=form.acte_de_propriete_files object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.acte_de_propriete|get_files_from_textfiles object_field="programme__acte_de_propriete__"|add:form.uuid.value %}
                                 </div>
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                    {% include "common/form/input_upload.html" with form_input=form.certificat_adressage form_input_files=form.certificat_adressage_files  object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.certificat_adressage|get_files_from_textfiles object_field="programme__certificat_adressage__"|add:form.uuid.value %}
+                                    {% include "common/form/input_upload.html" with form_input=form.certificat_adressage form_input_files=form.certificat_adressage_files object_name='programme' object_uuid=convention.programme.uuid file_list=convention.programme.certificat_adressage|get_files_from_textfiles object_field="programme__certificat_adressage__"|add:form.uuid.value %}
                                 </div>
                             </div>
                         </div>
