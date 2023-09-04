@@ -25,12 +25,14 @@ def find_ecoloweb_conventions():
             ConventionStatut.A_SIGNER.label,
         ]
     ).filter(id__in=ecoloweb_conventions_ids)
-    before = base_queryset.filter(
+    before_conventions = base_queryset.filter(
         televersement_convention_signee_le__lte=THRESHOLD_DATE,
     )
-    after = base_queryset.filter(televersement_convention_signee_le__gt=THRESHOLD_DATE)
+    after_conventions = base_queryset.filter(
+        televersement_convention_signee_le__gt=THRESHOLD_DATE
+    )
 
-    return before, after
+    return before_conventions, after_conventions
 
 
 def update_conventions_status(conventions):
