@@ -14,13 +14,20 @@ def find_standalone_users_with_siap_account():
         User.objects.values("email")
         .annotate(email_count=Count("email"))
         .filter(email_count__gt=1)
+        .exclude(is_superuser=True)
+        .exclude(is_staff=True)
         .values_list("email", flat=True)
     )
 
     for email in list(duplicates):
         logger.info(email)
 
-    users_to_delete = User.objects.filter(email__in=duplicates, cerbere_login=None)
+    users_to_delete = (
+        User.objects.filter(email__in=duplicates, cerbere_login=None)
+        .exclude(is_superuser=True)
+        .exclude(is_staff=True)
+    )
+
     return users_to_delete
 
 
