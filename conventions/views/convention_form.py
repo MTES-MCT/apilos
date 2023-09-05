@@ -323,7 +323,8 @@ class BaseConventionView(LoginRequiredMixin, View):
         return Convention.objects.get(uuid=convention_uuid)
 
     def setup(self, request, *args, **kwargs):
-        self.convention = self._get_convention(kwargs.get("convention_uuid"))
+        if request.user.is_authenticated:
+            self.convention = self._get_convention(kwargs.get("convention_uuid"))
         super().setup(request, *args, **kwargs)
 
 
