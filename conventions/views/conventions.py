@@ -97,11 +97,10 @@ class RecapitulatifView(BaseConventionView):
     def _get_forms(self, *args):
         return get_forms_for_convention(self.convention, *args)
 
-    def setup(self, *args, **kwargs):
-        super().setup(*args, **kwargs)
-
-        self.convention = self._get_convention(kwargs.get("convention_uuid"))
-        self.forms = self._get_forms()
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        if request.user.is_authenticated:
+            self.forms = self._get_forms()
 
     @has_campaign_permission("convention.view_convention")
     def get(self, request: HttpRequest, **kwargs):
