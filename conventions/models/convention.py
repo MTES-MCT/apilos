@@ -222,6 +222,10 @@ class Convention(models.Model):
 
     champ_libre_avenant = models.TextField(null=True, blank=True)
 
+    date_denonciation = models.DateField(null=True, blank=True)
+    motif_denonciation = models.TextField(null=True, blank=True)
+    fichier_denonciation = models.TextField(null=True, blank=True)
+
     @property
     def attribution_type(self):
         if not self.programme.is_foyer():
