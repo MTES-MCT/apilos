@@ -1,0 +1,12 @@
+<div class="fr-col-12 block--row-strech">
+    <div class="block--row-strech-1 fr-mr-6w">
+        <h2 class="fr-text--lg">Dénoncer la convention</h2>
+        <p>Ici, vous pouvez dénoncer votre convention</p>
+    </div>
+    <form method="post"  action="{% url 'conventions:denonciation_start' convention_uuid=convention.uuid %}" data-turbo="false">
+        {% csrf_token %}
+        <input id="denonciation_start" type="hidden" name="denonciation_start" value="true">
+        <input type="hidden" value="denonciation" name="avenant_type">
+        <button class="fr-btn apilos-btn--secondary--red fr-btn--icon-left fr-icon-delete-line fr-my-2w">Dénoncer la convention</button>
+    </form>
+</div>
