@@ -228,7 +228,7 @@ def without_missing_files(files):
         except UploadedFile.DoesNotExist:
             del files_as_json[convention_id]
 
-    return files_as_json
+    return json.dumps(files_as_json)
 
 
 @register.filter
