@@ -65,6 +65,10 @@ class UploadService:
                 "rb",
             )
         return default_storage.open(
-            f"{self.convention_dirpath}/{self.filename}",
+            self.path,
             "rb",
         )
+
+    @property
+    def path(self):
+        return f"{self.convention_dirpath}/{self.filename}"
