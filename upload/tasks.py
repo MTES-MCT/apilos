@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def _get_auth_header(username, password):
-    creds = base64.b64encode(bytes("{}:{}".format(username, password), "utf-8"))
+    creds = base64.b64encode(bytes(f"{username}:{password}", "utf-8"))
     return dict(Authorization=b"Basic " + creds)
 
 
@@ -31,22 +31,19 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
             with tempfile.NamedTemporaryFile() as tf:
                 tf.write(original_file_object.read())
                 tf.seek(0)
-                headers = {
-                    **_get_auth_header(
-                        settings.CLAMAV_SERVICE_USER, settings.CLAMAV_SERVICE_PASSWORD
-                    ),
-                    "Transfer-encoding": "chunked",
-                }
+                headers = _get_auth_header(
+                    settings.CLAMAV_SERVICE_USER, settings.CLAMAV_SERVICE_PASSWORD
+                )
 
                 response = requests.post(
-                    f"{settings.CLAMAV_SERVICE_URL}/v2/scan-chunked",
+                    f"{settings.CLAMAV_SERVICE_URL}/v2/scan",
                     headers=headers,
-                    data=tf,
                     timeout=120,
+                    files={"file": tf},
                 )
-                logger.warning(response)
 
-                file_is_infected = True
+                data = response.json()
+                file_is_infected = data["malware"]
 
             if file_is_infected:
                 user = User.objects.get(id=authenticated_user_id)
