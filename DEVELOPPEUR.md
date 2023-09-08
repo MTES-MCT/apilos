@@ -117,28 +117,24 @@ python manage.py load_test_fixtures
 ### ClamAV (optionnel)
 
 ClamAV est utilisé pour le scan des fichiers uploadés.
-Il est disponible dans sur la majorité des [systèmes d'exploitation](https://www.clamav.net/downloads).
+Une version _as-a-service_ est utilisée.
+Pour développer localement, il est nécessaire d'utiliser [le projet dédié](https://github.com/betagouv/clamav-service).
 
-Sur les systèmes `debian` (ubuntu, Windows Subsystem for Linux) :
-```sh
-apt install clamav
-```
-
-Sur MacOS, la dépendance est disponible via Homebrew :
-```sh
-brew install clamav
-```
-
-ClamAV requiert une étape de configuration sur certains systèmes d'exploitations.
-Celle-ci consiste à copier des fichier de configuration :
+Pour l'utiliser, depuis un autre répertoire que le dépôt courant :
 
 ```sh
-# Sur MacOS, avec ClamAV installé via Homebrew
-cp /opt/homebrew/etc/clamav/freshclam.conf.sample /opt/homebrew/etc/clamav/freshclam.conf
-cp /opt/homebrew/etc/clamd/clamd.conf.sample /opt/homebrew/etc/clamd/clamd.conf
-
+git clone git@github.com:betagouv/clamav-service.git
+cd clamav-service
+make up
 ```
 
+Le service expose l'API sur le port 3310, celui-ci doit être défini dans le fichier `.env` de `APiLos`.
+Basé sur `.env.template`, définir la variable d'environnement `CLAMAV_SERVICE_URL` dans le fichier `.env` :
+```sh
+# .env
+# other environment variables ...
+CLAMAV_SERVICE_URL=http://localhost:3310
+```
 
 ## Qualité de code
 

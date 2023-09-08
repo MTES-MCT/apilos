@@ -568,4 +568,5 @@ CELERY_WORKER_MAX_TASKS_PER_CHILD = 5000
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 # ClamAV configuration
-CLAMAV_PATH = get_env_variable("CLAMAV_PATH", default="/app")
+if "CLAMAV_SERVICE_URL" in os.environ:
+    CLAMAV_SERVICE_URL = get_env_variable("CLAMAV_SERVICE_URL")
