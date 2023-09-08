@@ -1,8 +1,9 @@
+import base64
 import logging
 import tempfile
-import subprocess
 from pathlib import Path
 
+import requests
 from celery import shared_task
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -14,17 +15,15 @@ from users.models import User
 logger = logging.getLogger(__name__)
 
 
+def _get_auth_header(username, password):
+    creds = base64.b64encode(bytes("{}:{}".format(username, password), "utf-8"))
+    return dict(Authorization=b"Basic " + creds)
+
+
 @shared_task()
 def scan_uploaded_files(paths_to_scan, authenticated_user_id):
-    if "CLAMAV_SERVICE_URL" not in settings:
+    if not settings.CLAMAV_SERVICE_URL:
         return
-
-    # refresh the database on demand before the scan starts
-    subprocess.run(
-        f'freshclam --config-file="{settings.CLAMAV_PATH}/clamav/freshclam.conf"',
-        shell=True,
-        check=True,
-    )
 
     for path, uploaded_file_id in paths_to_scan:
         with default_storage.open(path) as original_file_object:
@@ -32,25 +31,22 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
             with tempfile.NamedTemporaryFile() as tf:
                 tf.write(original_file_object.read())
                 tf.seek(0)
+                headers = {
+                    **_get_auth_header(
+                        settings.CLAMAV_SERVICE_USER, settings.CLAMAV_SERVICE_PASSWORD
+                    ),
+                    "Transfer-encoding": "chunked",
+                }
 
-                logger.warning(
-                    "File scan started for path : %s | temporary path used : %s",
-                    path,
-                    tf.name,
+                response = requests.post(
+                    f"{settings.CLAMAV_SERVICE_URL}/v2/scan-chunked",
+                    headers=headers,
+                    data=tf,
+                    timeout=120,
                 )
-                output = subprocess.run(
-                    f'clamdscan {tf.name} --config-file="{settings.CLAMAV_PATH}/clamav/clamd.conf"',
-                    capture_output=True,
-                    shell=True,
-                    check=False,
-                    text=True,
-                )
+                logger.warning(response)
 
-                file_is_infected = (
-                    "Infected files" in output.stdout
-                    and "Infected files: 0" not in output.stdout
-                )
-                logger.warning("File scan result : %s", output.stdout)
+                file_is_infected = True
 
             if file_is_infected:
                 user = User.objects.get(id=authenticated_user_id)
