@@ -344,9 +344,10 @@ class ConventionView(ABC, BaseConventionView):
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
-        self.steps = ConventionFormSteps(
-            convention=self.convention, active_classname=self.__class__.__name__
-        )
+        if request.user.is_authenticated:
+            self.steps = ConventionFormSteps(
+                convention=self.convention, active_classname=self.__class__.__name__
+            )
 
     @has_campaign_permission("convention.view_convention")
     def get(self, request, **kwargs):
