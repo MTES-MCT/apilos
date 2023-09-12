@@ -49,7 +49,6 @@ class VirusDetection(TestCase):
             scan_uploaded_files([(virus.name, self.sample_file.pk)], self.user.id)
             self.assertEqual(len(mail.outbox), 0)
 
-            # response malware true
             responses.post(
                 f"{settings.CLAMAV_SERVICE_URL}/v2/scan",
                 json={"malware": True},
