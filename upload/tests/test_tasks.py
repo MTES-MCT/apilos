@@ -1,13 +1,14 @@
 import tempfile
 from pathlib import Path
-from unittest import mock
 
+import responses
+from django.conf import settings
 from django.core import mail
 from django.test import TestCase, override_settings
 
 from core.services import EmailTemplateID
 from upload.models import UploadedFile
-from upload.tasks import scan_uploaded_files
+from upload.tasks import get_clamav_auth_header, scan_uploaded_files
 from users.models import User
 
 
@@ -20,6 +21,7 @@ class SampleOutput:
 
 @override_settings(EMAIL_BACKEND="anymail.backends.test.EmailBackend")
 @override_settings(SENDINBLUE_API_KEY="fake_sendinblue_api_key")
+@override_settings(CLAMAV_SERVICE_URL="https://clamav.beta.gouv.fr")
 class VirusDetection(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
@@ -30,19 +32,28 @@ class VirusDetection(TestCase):
         self.user.save()
         self.sample_file = UploadedFile()
         self.sample_file.save()
+        self.clamav_auth_headers = get_clamav_auth_header(
+            settings.CLAMAV_SERVICE_USER, settings.CLAMAV_SERVICE_PASSWORD
+        )
 
-    @mock.patch("subprocess.run")
-    def test_clamav_email_sending(self, mock_subprocess_run):
+    @responses.activate
+    def test_clamav_email_sending(self):
         self.client.login(username="very_dangerous_user", password="p@ssw0rd")
-        mock_subprocess_run.return_value = SampleOutput("Infected files: 0")
 
         with tempfile.NamedTemporaryFile(dir="media", delete=False) as virus:
-            scan_uploaded_files([(virus.name, self.sample_file.pk)], self.user.id)
+            responses.post(
+                f"{settings.CLAMAV_SERVICE_URL}/v2/scan",
+                json={"malware": False},
+            )
 
-            self.assertTrue(mock_subprocess_run.called)
+            scan_uploaded_files([(virus.name, self.sample_file.pk)], self.user.id)
             self.assertEqual(len(mail.outbox), 0)
 
-            mock_subprocess_run.return_value = SampleOutput("Infected files: 1")
+            # response malware true
+            responses.post(
+                f"{settings.CLAMAV_SERVICE_URL}/v2/scan",
+                json={"malware": True},
+            )
             scan_uploaded_files([(virus.name, self.sample_file.pk)], self.user.id)
             self.assertEqual(len(mail.outbox), 1)
             self.assertEqual(

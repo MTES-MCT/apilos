@@ -15,9 +15,9 @@ from users.models import User
 logger = logging.getLogger(__name__)
 
 
-def _get_auth_header(username, password):
+def get_clamav_auth_header(username, password):
     creds = base64.b64encode(bytes(f"{username}:{password}", "utf-8"))
-    return dict(Authorization=b"Basic " + creds)
+    return {"Authorization": b"Basic " + creds}
 
 
 @shared_task()
@@ -31,7 +31,7 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
             with tempfile.NamedTemporaryFile() as tf:
                 tf.write(original_file_object.read())
                 tf.seek(0)
-                headers = _get_auth_header(
+                headers = get_clamav_auth_header(
                     settings.CLAMAV_SERVICE_USER, settings.CLAMAV_SERVICE_PASSWORD
                 )
 
