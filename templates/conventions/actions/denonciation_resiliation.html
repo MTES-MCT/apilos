@@ -1,10 +1,11 @@
+{% load display_filters %}
 <hr>
 <div class="fr-mb-5w">
     <div class="fr-my-2w">
         <p class="fr-alert__title">
-            Résiliation/dénonciation de {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}
+            Résiliation/dénonciation de {{convention|display_kind_with_pronom}}
         </p>
-        <p class="fr-mb-2w">Vous pouvez ici procéder à la résiliation/dénonciation de {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %} dans APiLos.</p>
+        <p class="fr-mb-2w">Vous pouvez ici procéder à la résiliation/dénonciation de {{convention|display_kind_with_pronom}} dans APiLos.</p>
 
         <form method="post" action="" id="{{resiliation_form.date_resiliation.id_for_label}}_validation_form">
             {% csrf_token %}
@@ -16,7 +17,7 @@
                 </div>
 
                 <button class="fr-btn apilos-btn--secondary--red fr-btn--icon-left fr-icon-delete-line fr-my-2w" data-fr-opened="false" type="button" aria-controls="fr-modal-resiliate-{{convention.uuid}}">
-                    Résilier/Dénoncer {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}
+                    Résilier/Dénoncer {{convention|display_kind_with_pronom}}
                 </button>
             </div>
         </form>

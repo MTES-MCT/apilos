@@ -31,6 +31,9 @@ class ConventionManager(models.Manager):
     def avenants(self):
         return self.exclude(parent=None)
 
+    def without_denonciation(self):
+        return self.exclude(avenant_types__nom__in=["denonciation"])
+
 
 class Convention(models.Model):
     objects = ConventionManager()
@@ -467,6 +470,13 @@ class Convention(models.Model):
 
     def is_avenant(self):
         return self.parent_id is not None
+
+    def is_denonciation(self):
+        return (
+            self.parent_id is not None
+            and self.avenant_types.filter(nom="denonciation").exists()
+        )
+        # à compléter
 
     def is_incompleted_avenant_parent(self):
         if self.is_avenant() and (

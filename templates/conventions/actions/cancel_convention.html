@@ -1,12 +1,15 @@
 {% load custom_filters %}
+{% load display_filters %}
 
 {% if convention|display_cancel_convention %}
     <div class="fr-col-12 fr-mb-5w fr-mt-3w">
-        <p class="fr-alert__title">Annuler {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}</p>
+        <p class="fr-alert__title">Annuler {{convention|display_kind_with_pronom}}</p>
         <div class="block--row-strech">
             <div class="block--row-strech-1 fr-mr-6w">
                 <p class="fr-mb-0">
-                    {% if convention.is_avenant %}
+                    {% if convention.is_denonciation %}
+                        La dénonciation peut être annulée. Elle sera encore accessible dans la liste des avenants.
+                    {% elif convention.is_avenant %}
                         L'avenant peut être annulé. Il sera encore accessible dans la liste des avenants
                     {% else %}
                         La convention peut être annulée. Elle sera encore accessible dans la liste des conventions
@@ -16,7 +19,7 @@
             <form method="post" data-turbo="false" action="#top">
                 {% csrf_token %}
                 <button class="fr-btn apilos-btn--secondary--red fr-my-1w fr-icon-close-circle-line fr-btn--icon-left" name='cancel_convention' value=1>
-                    Annuler {% if convention.is_avenant %}cet avenant{% else %}cette convention{% endif %}
+                    Annuler {{convention|display_kind_with_pronom}}
                 </button>
             </form>
         </div>
@@ -25,22 +28,18 @@
 {% endif %}
 {% if convention|display_reactive_convention %}
     <div class="fr-col-12 fr-mb-5w fr-mt-3w">
-        <p class="fr-alert__title">Ré-activer {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}</p>
+        <p class="fr-alert__title">Ré-activer {{convention|display_kind_with_pronom}}</p>
         <div class="block--row-strech">
             <div class="block--row-strech-1 fr-mr-6w">
                 <p class="fr-mb-0">
-                    {% if convention.is_avenant %}
-                        L'avenant est annulé mais il peut-être réactivé. Son statut passera à nouveau en Avenant en Projet
-                    {% else %}
-                        La convention est annulée mais elle peut-être réactivée. Son statut passera à nouveau en Convention en Projet
-                    {% endif %}
+                    {{convention|display_kind_with_pronom_with_cap}} est annulé{{convention|display_gender_terminaison}} mais {{convention|display_personnal_pronom}} peut-être réactivé{{convention|display_gender_terminaison}}. Son statut passera à nouveau en {{convention|display_kind_with_cap}} en Projet.
                 </p>
             </div>
             {% if convention.is_avenant and convention.parent|display_create_avenant or not convention.is_avenant %}
                 <form method="post" data-turbo="false" action="#top">
                     {% csrf_token %}
                     <button class="fr-btn fr-btn--secondary fr-my-1w fr-icon-close-circle-line fr-btn--icon-left" name='reactive_convention' value=1>
-                        Réactiver {% if convention.is_avenant %}cet avenant{% else %}cette convention{% endif %}
+                        Réactiver {{convention|display_kind_with_pronom}}
                     </button>
                 </form>
             {% elif convention.is_avenant and not convention.parent|display_create_avenant %}
