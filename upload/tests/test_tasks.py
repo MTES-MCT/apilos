@@ -37,7 +37,7 @@ class VirusDetection(TestCase):
         )
 
     @responses.activate
-    def test_clamav_email_sending(self):
+    def test_clamav_malicious_file(self):
         self.client.login(username="very_dangerous_user", password="p@ssw0rd")
 
         with tempfile.NamedTemporaryFile(dir="media", delete=False) as virus:
@@ -70,3 +70,6 @@ class VirusDetection(TestCase):
             self.assertEqual(UploadedFile.objects.all().count(), 0)
             with self.assertRaises(FileNotFoundError):
                 scan_uploaded_files([(virus.name, self.sample_file)], self.user.id)
+
+    def test_malicious_file_deletion_keep_safe_files(self):
+        pass

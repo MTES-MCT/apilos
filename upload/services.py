@@ -37,6 +37,7 @@ class UploadService:
 
         for chunk in file.chunks():
             destination.write(chunk)
+
         destination.close()
 
     def upload_file_io(self, file_io) -> None:
