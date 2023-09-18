@@ -65,7 +65,7 @@ class TestGetAvailableOrderFieldsFilter(TestCase):
                 self.request, "search_instruction"
             ),
             {
-                "administration__nom": "Instructeur",
+                "programme__administration__nom": "Instructeur",
                 "programme__nom": "Opération",
                 "lot__financement": "Financement",
                 "programme__ville": "Ville",
@@ -77,7 +77,7 @@ class TestGetAvailableOrderFieldsFilter(TestCase):
         self.assertEqual(
             custom_filters.get_available_order_fields(self.request, "other_url_name"),
             {
-                "administration__nom": "Instructeur",
+                "programme__administration__nom": "Instructeur",
                 "numero": "Numéro",
                 "lot__financement": "Financement",
                 "programme__ville": "Ville",

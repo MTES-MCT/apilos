@@ -485,7 +485,7 @@ def get_available_order_fields(request, url_name=None):
     if is_instructeur(request):
         order_fields = order_fields | {"programme__bailleur__nom": "Bailleur"}
     if display_administration(request):
-        order_fields = order_fields | {"administration__nom": "Instructeur"}
+        order_fields = order_fields | {"programme__administration__nom": "Instructeur"}
     if url_name == "search_instruction":
         order_fields = order_fields | {"programme__nom": "Opération"}
     else:
