@@ -113,6 +113,28 @@ Ajout de bailleurs, administrations, programmes et lots de test
 python manage.py load_test_fixtures
 ```
 
+### ClamAV (optionnel)
+
+ClamAV est utilisé pour le scan des fichiers uploadés.
+Une version _as-a-service_ est utilisée.
+Pour développer localement, il est nécessaire d'utiliser [le projet dédié](https://github.com/betagouv/clamav-service).
+
+Pour l'utiliser, depuis un autre répertoire que le dépôt courant :
+
+```sh
+git clone git@github.com:betagouv/clamav-service.git
+cd clamav-service
+make up
+```
+
+Le service expose l'API sur le port 3310, celui-ci doit être défini dans le fichier `.env` de `APiLos`.
+Basé sur `.env.template`, définir la variable d'environnement `CLAMAV_SERVICE_URL` dans le fichier `.env` :
+```sh
+# .env
+# other environment variables ...
+CLAMAV_SERVICE_URL=http://localhost:3310
+```
+
 ## Qualité de code
 
 ### Tests

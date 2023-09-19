@@ -37,6 +37,7 @@ class UploadService:
 
         for chunk in file.chunks():
             destination.write(chunk)
+
         destination.close()
 
     def upload_file_io(self, file_io) -> None:
@@ -65,6 +66,10 @@ class UploadService:
                 "rb",
             )
         return default_storage.open(
-            f"{self.convention_dirpath}/{self.filename}",
+            self.path,
             "rb",
         )
+
+    @property
+    def path(self):
+        return f"{self.convention_dirpath}/{self.filename}"

@@ -13,3 +13,4 @@ pre-commit
 ptpython
 pylint
 pylint-django
+responses
