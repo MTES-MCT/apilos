@@ -524,6 +524,8 @@ class Convention(models.Model):
         return ConventionStatut.get_by_label(self.statut).instructeur_label
 
     def genderize_desc(self, desc):
+        if self.is_denonciation():
+            return desc.format(pronom="elle", accord="e", article="la", autre="")
         if self.is_avenant():
             return desc.format(pronom="il", accord="", article="le", autre="autre")
         return desc.format(pronom="elle", accord="e", article="la", autre="")

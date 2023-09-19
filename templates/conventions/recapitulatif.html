@@ -39,7 +39,8 @@
                     </div>
                 {% endif %}
                 {% if convention.is_denonciation %}
-                    récapitulatif de la dénonciation
+                    {% include "conventions/recapitulatif/denonciation.html"  with target_url='conventions:denonciation' %}
+                    {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' %}
                 {% elif convention.is_avenant %}
                     {% if 'bailleur' in avenant_list %}
                         {% include "conventions/recapitulatif/bailleur.html" with target_url='conventions:avenant_bailleur' bailleur=convention.bailleur %}

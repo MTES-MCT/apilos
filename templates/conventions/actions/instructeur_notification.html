@@ -10,7 +10,7 @@
             {% endif %}
             {% if convention|display_demande_instruction %}
                 <h4>Vous avez modifié {{convention|display_kind_with_pronom}}<br>
-                    Renvoyez {{convention|display_kind_with_pronom}} à l'instruction</h4>
+                    Renvoyez {{convention|display_pronom}} à l'instruction</h4>
             {% else %}
                 <h4>Vous avez modifié {{convention|display_kind_with_pronom}}<br>
                     Faites part de vos commentaires à l'instructeur </h4>
@@ -19,7 +19,7 @@
                 <form method="post" action="{% url 'conventions:feedback' convention_uuid=convention.uuid %}" data-turbo="false">
                     {% csrf_token %}
                     {% include "common/form/input_textarea.html" with form_input=notificationForm.comment label="Ajouter un commentaire à l'attention de l'instructeur (optionnel)" editable=True %}
-                    <div class="fr-checkbox-group">
+                    <div class="fr-checkbox-group fr-mb-1w">
                         <input
                             type="hidden"
                             id="{{notificationForm.from_instructeur.id_for_label}}"

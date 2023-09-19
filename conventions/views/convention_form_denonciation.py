@@ -4,7 +4,7 @@ from conventions.views.convention_form import ConventionView
 
 
 class DenonciationView(ConventionView):
-    target_template: str = "conventions/avenant/denonciation.html"
+    target_template: str = "conventions/denonciation.html"
     service_class = ConventionDenonciationService
 
     def _get_convention(self, convention_uuid):

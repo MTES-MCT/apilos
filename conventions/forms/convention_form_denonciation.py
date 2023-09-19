@@ -13,9 +13,12 @@ class ConventionDenonciationForm(forms.Form):
     )
     date_denonciation = forms.DateField(
         required=True,
-        label="Indiquez la date de dénonciation.La dénonciation intervient à "
-        + "date d'échéance de la convention, c'est à dire sa date de fin ou de renouvellement "
-        + "(tous les 3 ans).",
+        label="Indiquez la date de dénonciation.",
+        help_text="""
+           La dénonciation intervient à date d'échéance de la convention, c'est à dire sa date de fin ou de renouvellement (tous les 3 ans). <br/>
+           La notification de dénonciation doit être faite au moins 6 mois avant l'échéance de la convention par acte authentique (acte notarié ou acte d'huissier de justice).<br/>
+           Si ces conditions ne sont pas respectées, elle ne pourra être validée par l'administration instructrice.
+        """,
         error_messages={
             "required": "Vous devez saisir une date de dénonciation",
         },
@@ -29,6 +32,9 @@ class ConventionDenonciationForm(forms.Form):
         },
     )
     fichier_denonciation = forms.CharField(
+        required=False, label="Acte authentique/administratif"
+    )
+    fichier_denonciation_files = forms.CharField(
         required=False,
         help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )
