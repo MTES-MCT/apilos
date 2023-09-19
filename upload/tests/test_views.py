@@ -5,7 +5,6 @@ from django.urls import reverse
 from upload.views import _compute_dirpath
 
 
-# @override_settings(CERBERE=None)
 class UploadViewTest(TestCase):
     fixtures = [
         "auth.json",
