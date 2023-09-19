@@ -1,8 +1,11 @@
 import logging
+from uuid import UUID
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import PermissionDenied
 from django.db import models
+from django.db.models import Q, QuerySet
 from django.db.models.functions import Substr
 from django.forms.models import model_to_dict
 from simple_history.models import HistoricalRecords
@@ -483,6 +486,31 @@ class User(AbstractUser):
 
     def is_cerbere_user(self):
         return self.cerbere_login is not None
+
+    def bailleur_query_set(
+        self,
+        only_bailleur_uuid: None | str | UUID = None,
+        exclude_bailleur_uuid: None | str | UUID = None,
+        has_no_parent: bool = True,
+        query_string: None | str = None,
+    ) -> QuerySet:
+        user_bailleur_queryset = self.bailleurs(full_scope=True)
+        if only_bailleur_uuid:
+            return user_bailleur_queryset.filter(uuid=only_bailleur_uuid)
+        if query_string:
+            user_bailleur_queryset = user_bailleur_queryset.filter(
+                Q(nom__icontains=query_string) | Q(siren__icontains=query_string)
+            )
+        if has_no_parent:
+            user_bailleur_queryset = user_bailleur_queryset.filter(
+                parent_id__isnull=True
+            )
+        if exclude_bailleur_uuid:
+            user_bailleur_queryset = user_bailleur_queryset.exclude(
+                uuid=exclude_bailleur_uuid
+            )
+
+        return user_bailleur_queryset[: settings.APILOS_MAX_DROPDOWN_COUNT]
 
     def __str__(self):
         return (

@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -32,9 +31,9 @@ def search_bailleur(request):
                 "label": b.nom + f" ( {b.siren} )" if b.siren else "",
                 "value": b.uuid,
             }
-            for b in request.user.bailleurs(full_scope=True).filter(
-                Q(nom__icontains=query) | Q(siren__icontains=query)
-            )[: settings.APILOS_MAX_DROPDOWN_COUNT]
+            for b in request.user.bailleur_query_set(
+                query_string=query, has_no_parent=False
+            )
         ],
         safe=False,
     )
@@ -48,13 +47,14 @@ def search_parent_bailleur(request, bailleur_uuid: str):
     return JsonResponse(
         [
             {
-                "label": b.nom,
+                "label": b.nom + f" ( {b.siren} )" if b.siren else "",
                 "value": b.uuid,
             }
-            for b in request.user.bailleurs(full_scope=True)
-            .exclude(uuid=bailleur_uuid)
-            .filter(parent_id__isnull=True)
-            .filter(nom__icontains=query)[: settings.APILOS_MAX_DROPDOWN_COUNT]
+            for b in request.user.bailleur_query_set(
+                query_string=query,
+                exclude_bailleur_uuid=bailleur_uuid,
+                has_no_parent=True,
+            )
         ],
         safe=False,
     )
