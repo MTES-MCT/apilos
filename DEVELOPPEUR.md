@@ -18,7 +18,6 @@ Il est conseillé d'installer un environnment virtuel pour isoler l'environnemen
 - Node >=18.14
 - docker
 - docker-compose
-- clamav (optionnel)
 
 ### Environment virtuel python
 
