@@ -70,6 +70,3 @@ class VirusDetection(TestCase):
             self.assertEqual(UploadedFile.objects.all().count(), 0)
             with self.assertRaises(FileNotFoundError):
                 scan_uploaded_files([(virus.name, self.sample_file)], self.user.id)
-
-    def test_malicious_file_deletion_keep_safe_files(self):
-        pass
