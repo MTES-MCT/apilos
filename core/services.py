@@ -4,6 +4,7 @@ import mimetypes
 from pathlib import Path
 from typing import List
 
+from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.mail import EmailMultiAlternatives
 
@@ -94,5 +95,19 @@ class EmailService:
                         f.read(),
                         content_type,
                     )
+            if settings.DEBUG:
+                logger.warning(
+                    """
+                    Email message:
+                        to: %s
+                        cc: %s
+                        template_id: %s
+                        data: %s
+                    """,
+                    message.to,
+                    message.cc,
+                    message.template_id,
+                    message.merge_global_data,
+                )
 
             message.send()
