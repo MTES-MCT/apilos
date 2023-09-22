@@ -103,6 +103,12 @@ foyer_variante_step = ConventionFormStep(
     classname="ConventionFoyerVariantesView",
 )
 
+administration_step = ConventionFormStep(
+    pathname="conventions:administration",
+    label="Administration",
+    classname="ConventionAdministrationView",
+)
+
 commentaires_step = ConventionFormStep(
     pathname="conventions:commentaires",
     label="Commentaires",
@@ -178,6 +184,7 @@ hlm_sem_type_steps = [
     logements_step,
     annexes_step,
     stationnements_step,
+    administration_step,
     commentaires_step,
 ]
 
@@ -191,6 +198,7 @@ foyer_steps = [
     collectif_step,
     foyer_attribution_step,
     foyer_variante_step,
+    administration_step,
     commentaires_step,
 ]
 
@@ -204,6 +212,7 @@ residence_steps = [
     collectif_step,
     residence_attribution_step,
     foyer_variante_step,
+    administration_step,
     commentaires_step,
 ]
 

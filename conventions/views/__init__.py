@@ -17,3 +17,5 @@ from conventions.views.convention_form_programme import *
 from conventions.views.convention_form_selection import *
 from conventions.views.convention_form_type_stationnement import *
 from conventions.views.convention_form_variante import *
+from conventions.views.convention_form_champ_libre import *
+from conventions.views.convention_form_administration import *
