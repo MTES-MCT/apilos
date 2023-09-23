@@ -23,14 +23,6 @@ class ConventionAdministrationService(ConventionService):
         self.form = UpdateConventionAdministrationForm(self.request.POST)
 
         if self.form.is_valid():
-            self.convention.attached = utils.set_files_and_text_field(
-                self.form.cleaned_data["attached_files"],
-            )
-            self.convention.commentaires = utils.set_files_and_text_field(
-                self.form.cleaned_data["commentaires_files"],
-                self.form.cleaned_data["commentaires"],
-            )
-
             if self.convention.parent:
                 convention = Convention.objects.get(id=self.convention.parent.id)
             else:
@@ -43,12 +35,4 @@ class ConventionAdministrationService(ConventionService):
             Programme.objects.filter(conventions__in=conventions_to_update).update(
                 administration=new_administration
             )
-
-            # messages.success(
-            #     self.request,
-            #     "L'administration a été modifiée avec succès. "
-            #     f"Nouvelle administration : {new_administration.nom}.",
-            # )
-
             self.return_status = utils.ReturnStatus.SUCCESS
-            # return redirect("conventions:search_instruction")

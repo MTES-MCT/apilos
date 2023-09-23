@@ -9,10 +9,10 @@
             {% include "common/step_progressbar.html"%}
             <div class="fr-container">
                 <form method="post" action="" id="{{ form_id }}">
+                    {{ form.errors }}
                     {% csrf_token %}
                     <div class="fr-grid-row fr-grid-row--gutters">
                         <div class="fr-col-md-12">
-                            {% csrf_token %}
                             {% include "common/form/input_text.html" with form_input=form.verification editable=True %}
                             {% include "common/form/input_select.html" with form_input=form.administration editable=True %}
                         </div>

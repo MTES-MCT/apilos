@@ -350,6 +350,7 @@ class ConventionView(ABC, BaseConventionView):
     service_class: ConventionService
     request: HttpRequest
     service: ConventionService
+    redirect_on_success: str
 
     @property
     def next_path_redirect(self):
@@ -398,13 +399,20 @@ class ConventionView(ABC, BaseConventionView):
                 return HttpResponseRedirect(
                     reverse("conventions:recapitulatif", args=[self.convention.uuid])
                 )
+
+            if getattr(self, "redirect_on_success"):
+                print("\n\n\n\n REDIRECT ON SUCCESS \n\n\n")
+                return HttpResponseRedirect(reverse(self.redirect_on_success))
+
             return HttpResponseRedirect(
                 reverse(self.next_path_redirect, args=[self.convention.uuid])
             )
+
         if self.service.return_status == ReturnStatus.REFRESH:
             return HttpResponseRedirect(
                 reverse(self.current_path_redirect, args=[self.convention.uuid])
             )
+
         return render(
             request,
             self.target_template,

@@ -26,5 +26,3 @@ class UpdateConventionAdministrationForm(forms.Form):
             "required": "Vous devez recopier le mot pour valider l'opération",
         },
     )
-
-    convention = forms.CharField(widget=forms.HiddenInput())
