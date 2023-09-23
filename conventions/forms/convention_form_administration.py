@@ -20,6 +20,8 @@ class UpdateConventionAdministrationForm(forms.Form):
         label="Vérification",
         validators=[RegexValidator("transférer")],
         required=True,
+        help_text="La modification d'une administration étant irréversible, "
+        "veuillez recopier le mot transférer ci-dessous",
         error_messages={
             "required": "Vous devez recopier le mot pour valider l'opération",
         },

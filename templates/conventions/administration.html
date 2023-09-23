@@ -1,0 +1,30 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %}Administration - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/step_progressbar.html"%}
+        <div class="fr-container">
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-md-12">
+                        <form method="post"
+                            data-turbo="false"
+                        >
+                            {% csrf_token %}
+                            {% include "common/form/input_text.html" with form_input=form.verification editable=True %}
+                            {% include "common/form/input_select.html" with form_input=form.administration editable=True %}
+                            <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-warning-line">
+                                Changer définitivement l'administration
+                            </button>
+                            <strong>Vous n'aurez plus accès à cette convention dès qu'elle sera transférée à une autre administration</strong>
+                        </form>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
