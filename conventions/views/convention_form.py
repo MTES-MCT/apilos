@@ -400,9 +400,10 @@ class ConventionView(ABC, BaseConventionView):
                     reverse("conventions:recapitulatif", args=[self.convention.uuid])
                 )
 
-            if getattr(self, "redirect_on_success"):
-                print("\n\n\n\n REDIRECT ON SUCCESS \n\n\n")
+            try:
                 return HttpResponseRedirect(reverse(self.redirect_on_success))
+            except AttributeError:
+                pass
 
             return HttpResponseRedirect(
                 reverse(self.next_path_redirect, args=[self.convention.uuid])
