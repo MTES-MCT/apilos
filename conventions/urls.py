@@ -199,6 +199,11 @@ urlpatterns = [
         name="denonciation_start",
     ),
     path(
+        "denonciation_validate/<convention_uuid>",
+        views.denonciation_validate,
+        name="denonciation_validate",
+    ),
+    path(
         "generate/<convention_uuid>",
         views.generate_convention,
         name="generate",

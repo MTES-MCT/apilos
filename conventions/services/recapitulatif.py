@@ -518,3 +518,22 @@ def convention_validate(request: HttpRequest, convention: Convention):
         "opened_comments": opened_comments,
         "ConventionType1and2Form": convention_type1_and_2_form,
     }
+
+
+def convention_denonciation_validate(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    parent = convention.parent
+    date_denonciation = convention.date_denonciation
+    if request.method == "POST":
+        parent.statut = ConventionStatut.DENONCEE.label
+        parent.date_denonciation = date_denonciation
+        parent.save()
+        for avenant in parent.avenants.all():
+            avenant.statut = ConventionStatut.DENONCEE.label
+            avenant.date_denonciation = date_denonciation
+            avenant.save()
+        result_status = utils.ReturnStatus.SUCCESS
+    return {
+        "success": result_status,
+        "convention": convention,
+    }

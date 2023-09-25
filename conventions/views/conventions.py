@@ -42,6 +42,7 @@ from conventions.services.recapitulatif import (
     convention_feedback,
     convention_submit,
     convention_validate,
+    convention_denonciation_validate,
 )
 from conventions.services.search import (
     UserConventionActivesSearchService,
@@ -417,6 +418,24 @@ def validate_convention(request, convention_uuid):
         {
             **result,
             "convention_form_steps": ConventionFormSteps(convention=convention),
+        },
+    )
+
+
+@require_POST
+@login_required
+@has_campaign_permission_view_function("convention.change_convention")
+def denonciation_validate(request, convention_uuid):
+    result = convention_denonciation_validate(request, convention_uuid)
+    if result["success"] == ReturnStatus.SUCCESS:
+        return HttpResponseRedirect(
+            reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+        )
+    return render(
+        request,
+        "conventions/recapitulatif.html",
+        {
+            **result,
         },
     )
 

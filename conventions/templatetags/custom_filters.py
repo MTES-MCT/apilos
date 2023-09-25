@@ -274,6 +274,7 @@ def display_is_validated(convention):
         ConventionStatut.A_SIGNER.label,
         ConventionStatut.SIGNEE.label,
         ConventionStatut.RESILIEE.label,
+        ConventionStatut.DENONCEE.label,
     ]
 
 
