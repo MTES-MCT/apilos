@@ -63,7 +63,7 @@ class ConventionSelectionService:
             self.request.POST,
             self.request.FILES,
             administrations=self._get_administration_choices(),
-            bailleur_query=self._get_bailleur_query(bailleur_uuid),
+            bailleur_query=self._get_bailleur_query(uuid=bailleur_uuid),
         )
         if self.form.is_valid():
             bailleur = self.form.cleaned_data["bailleur"]

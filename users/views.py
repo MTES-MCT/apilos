@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -28,7 +29,7 @@ def search_bailleur(request):
     return JsonResponse(
         [
             {
-                "label": b.nom + f" ( {b.siren} )" if b.siren else "",
+                "label": str(b),
                 "value": b.uuid,
             }
             for b in request.user.bailleur_query_set(
@@ -47,7 +48,7 @@ def search_parent_bailleur(request, bailleur_uuid: str):
     return JsonResponse(
         [
             {
-                "label": b.nom + f" ( {b.siren} )" if b.siren else "",
+                "label": str(b),
                 "value": b.uuid,
             }
             for b in request.user.bailleur_query_set(
@@ -68,12 +69,12 @@ def search_administration(request):
     return JsonResponse(
         [
             {
-                "label": a.nom,
+                "label": str(a),
                 "value": a.uuid,
             }
-            for a in request.user.administrations().filter(nom__icontains=query)[
-                : settings.APILOS_MAX_DROPDOWN_COUNT
-            ]
+            for a in request.user.administrations().filter(
+                Q(nom__icontains=query) | Q(code__icontains=query)
+            )[: settings.APILOS_MAX_DROPDOWN_COUNT]
         ],
         safe=False,
     )
