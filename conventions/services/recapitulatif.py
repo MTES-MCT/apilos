@@ -5,6 +5,8 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
 
+from django.views.decorators.http import require_POST
+
 from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
 from conventions.forms.convention_number import ConventionNumberForm
@@ -520,19 +522,19 @@ def convention_validate(request: HttpRequest, convention: Convention):
     }
 
 
+@require_POST
 def convention_denonciation_validate(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     parent = convention.parent
     date_denonciation = convention.date_denonciation
-    if request.method == "POST":
-        parent.statut = ConventionStatut.DENONCEE.label
-        parent.date_denonciation = date_denonciation
-        parent.save()
-        for avenant in parent.avenants.all():
-            avenant.statut = ConventionStatut.DENONCEE.label
-            avenant.date_denonciation = date_denonciation
-            avenant.save()
-        result_status = utils.ReturnStatus.SUCCESS
+    parent.statut = ConventionStatut.DENONCEE.label
+    parent.date_denonciation = date_denonciation
+    parent.save()
+    for avenant in parent.avenants.all():
+        avenant.statut = ConventionStatut.DENONCEE.label
+        avenant.date_denonciation = date_denonciation
+        avenant.save()
+    result_status = utils.ReturnStatus.SUCCESS
     return {
         "success": result_status,
         "convention": convention,

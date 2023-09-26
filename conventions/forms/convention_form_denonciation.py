@@ -31,10 +31,10 @@ class ConventionDenonciationForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
     )
-    fichier_denonciation = forms.CharField(
+    fichier_instruction_denonciation = forms.CharField(
         required=False, label="Acte authentique/administratif"
     )
-    fichier_denonciation_files = forms.CharField(
+    fichier_instruction_denonciation_files = forms.CharField(
         required=False,
         help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )

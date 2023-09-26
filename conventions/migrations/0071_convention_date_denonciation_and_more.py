@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="convention",
-            name="fichier_denonciation",
+            name="fichier_instruction_denonciation",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(

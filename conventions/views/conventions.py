@@ -570,7 +570,6 @@ def post_action(request, convention_uuid):
             return HttpResponseRedirect(
                 reverse("conventions:recapitulatif", args=[convention_uuid])
             )
-    if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:post_action", args=[convention_uuid])
         )
@@ -589,10 +588,9 @@ def denonciation_start(request, convention_uuid):
     result = create_avenant(request, convention_uuid)
 
     if result["success"] == ReturnStatus.SUCCESS:
-        if result["avenant_type"].nom == "denonciation":
-            return HttpResponseRedirect(
-                reverse("conventions:denonciation", args=[result["convention"].uuid])
-            )
+        return HttpResponseRedirect(
+            reverse("conventions:denonciation", args=[result["convention"].uuid])
+        )
 
     return render(
         request,

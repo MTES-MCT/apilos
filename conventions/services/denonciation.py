@@ -21,7 +21,8 @@ class ConventionDenonciationService(ConventionService):
                 ),
                 "motif_denonciation": self.convention.motif_denonciation,
                 **utils.get_text_and_files_from_field(
-                    "fichier_denonciation", self.convention.fichier_denonciation
+                    "fichier_instruction_denonciation",
+                    self.convention.fichier_instruction_denonciation,
                 ),
             }
         )
@@ -46,7 +47,7 @@ class ConventionDenonciationService(ConventionService):
                 **utils.init_text_and_files_from_field(
                     self.request,
                     self.convention,
-                    "fichier_denonciation",
+                    "fichier_instruction_denonciation",
                 ),
             }
         )
@@ -59,8 +60,10 @@ class ConventionDenonciationService(ConventionService):
         self.convention.motif_denonciation = self.form.cleaned_data[
             "motif_denonciation"
         ]
-        self.convention.fichier_denonciation = utils.set_files_and_text_field(
-            self.form.cleaned_data["fichier_denonciation_files"],
-            self.form.cleaned_data["fichier_denonciation"],
+        self.convention.fichier_instruction_denonciation = (
+            utils.set_files_and_text_field(
+                self.form.cleaned_data["fichier_instruction_denonciation_files"],
+                self.form.cleaned_data["fichier_instruction_denonciation"],
+            )
         )
         self.convention.save()
