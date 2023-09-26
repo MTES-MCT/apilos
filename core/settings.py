@@ -517,7 +517,6 @@ if CERBERE_AUTH:
 # Django defender (doc https://github.com/jazzband/django-defender#customizing-django-defender)
 REDIS_URL = get_env_variable("REDIS_URL")
 if REDIS_URL and not CERBERE_AUTH:
-    print("Defender!")
     INSTALLED_APPS += ["defender"]
     MIDDLEWARE += ["defender.middleware.FailedLoginMiddleware"]
 
