@@ -290,6 +290,14 @@ def display_is_resiliated(convention):
 
 
 @register.filter
+def display_is_not_resiliated_or_denonciated(convention):
+    return convention.statut not in [
+        ConventionStatut.RESILIEE.label,
+        ConventionStatut.DENONCEE.label,
+    ]
+
+
+@register.filter
 def display_spf_info(convention):
     return (
         convention.date_envoi_spf is not None
@@ -345,7 +353,11 @@ def display_redirect_project(convention):
 
 @register.filter
 def display_redirect_post_action(convention):
-    return convention.statut == ConventionStatut.SIGNEE.label
+    return convention.statut in [
+        ConventionStatut.SIGNEE.label,
+        ConventionStatut.DENONCEE.label,
+        ConventionStatut.RESILIEE.label,
+    ]
 
 
 @register.filter
@@ -425,6 +437,8 @@ def display_create_avenant(convention):
             ConventionStatut.PROJET.label,
             ConventionStatut.INSTRUCTION.label,
             ConventionStatut.CORRECTION.label,
+            ConventionStatut.DENONCEE.label,
+            ConventionStatut.RESILIEE.label,
         }
         & {avenant.statut for avenant in convention.avenants.all()}
     )

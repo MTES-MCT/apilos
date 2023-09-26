@@ -47,7 +47,7 @@
             {% endif %}
             <div role="alert" class="fr-col-12 fr-mb-3w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} fr-icon-{{convention.statut_icone}}-line">
                 <p class="fr-text--lg">
-                    Votre {{convention|display_kind}} est
+                    {% if convention.statut == CONVENTION_STATUT.DENONCEE %} Votre convention {% else %} Votre {{convention|display_kind}}{% endif %} est
                     <span class="fr-text--bold">
                         {% if request|is_instructeur %}
                             {{convention.short_statut_for_instructeur|lower}}

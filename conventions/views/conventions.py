@@ -429,7 +429,7 @@ def denonciation_validate(request, convention_uuid):
     result = convention_denonciation_validate(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
-            reverse("conventions:recapitulatif", args=[result["convention"].uuid])
+            reverse("conventions:post_action", args=[convention_uuid])
         )
     return render(
         request,

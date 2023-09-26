@@ -25,7 +25,7 @@ class ConventionFileService:
         )
         upload_service.upload_file(file)
 
-        if update_statut:
+        if update_statut and not convention.is_denonciation:
             convention.statut = ConventionStatut.SIGNEE.label
             convention.televersement_convention_signee_le = timezone.now()
 
