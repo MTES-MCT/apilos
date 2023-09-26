@@ -437,8 +437,6 @@ def display_create_avenant(convention):
             ConventionStatut.PROJET.label,
             ConventionStatut.INSTRUCTION.label,
             ConventionStatut.CORRECTION.label,
-            ConventionStatut.DENONCEE.label,
-            ConventionStatut.RESILIEE.label,
         }
         & {avenant.statut for avenant in convention.avenants.all()}
     )
