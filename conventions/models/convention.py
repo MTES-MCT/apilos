@@ -476,7 +476,6 @@ class Convention(models.Model):
             self.parent_id is not None
             and self.avenant_types.filter(nom="denonciation").exists()
         )
-        # à compléter
 
     def is_incompleted_avenant_parent(self):
         if self.is_avenant() and (
