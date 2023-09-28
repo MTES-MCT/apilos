@@ -9,6 +9,8 @@ from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.programme_number import ProgrammeNumberForm
 from conventions.models import Convention
 from conventions.services import recapitulatif
+from conventions.services.utils import ReturnStatus
+from core.exceptions.types import SIAPException
 from siap.siap_client.client import SIAPClient
 from users.models import User
 from users.type_models import EmailPreferences
@@ -145,8 +147,23 @@ class CollectInstructeurEmailsTestCase(TestCase):
 
         self.assertIn(self.user.email, instructeur_emails)
 
+    def test_collect_instructeur_cerbere_user_empty(self):
+        with patch.object(User, "is_cerbere_user") as mock_is_cerbere_user:
+            mock_is_cerbere_user.return_value = True
+            with patch.object(SIAPClient, "get_instance") as mock_get_instance:
+                mock_instance = mock_get_instance.return_value
+                mock_instance.get_operation.return_value = {
+                    "gestionnaireSecondaire": {"utilisateurs": []}
+                }
+                (instructeur_emails, _) = recapitulatif.collect_instructeur_emails(
+                    self.request, self.convention
+                )
+
+                self.assertEqual([], instructeur_emails)
+
     def test_collect_instructeur_cerbere_user(self):
         with patch.object(User, "is_cerbere_user") as mock_is_cerbere_user:
+            mock_is_cerbere_user.return_value = True
             with patch.object(SIAPClient, "get_instance") as mock_get_instance:
                 mock_instance = mock_get_instance.return_value
                 mock_instance.get_operation.return_value = {
@@ -195,7 +212,6 @@ class CollectInstructeurEmailsTestCase(TestCase):
                         ]
                     }
                 }
-                mock_is_cerbere_user.return_value = True
 
                 (instructeur_emails, _) = recapitulatif.collect_instructeur_emails(
                     self.request, self.convention
@@ -205,6 +221,7 @@ class CollectInstructeurEmailsTestCase(TestCase):
 
     def test_collect_instructeur_cerbere_user_multiprofil(self):
         with patch.object(User, "is_cerbere_user") as mock_is_cerbere_user:
+            mock_is_cerbere_user.return_value = True
             with patch.object(SIAPClient, "get_instance") as mock_get_instance:
                 mock_instance = mock_get_instance.return_value
                 mock_instance.get_operation.return_value = {
@@ -228,7 +245,6 @@ class CollectInstructeurEmailsTestCase(TestCase):
                         ]
                     }
                 }
-                mock_is_cerbere_user.return_value = True
 
                 (instructeur_emails, _) = recapitulatif.collect_instructeur_emails(
                     self.request, self.convention
@@ -241,6 +257,7 @@ class CollectInstructeurEmailsTestCase(TestCase):
             email="user3@SER_GEST.com", preferences_email=EmailPreferences.AUCUN
         )
         with patch.object(User, "is_cerbere_user") as mock_is_cerbere_user:
+            mock_is_cerbere_user.return_value = True
             with patch.object(SIAPClient, "get_instance") as mock_get_instance:
                 mock_instance = mock_get_instance.return_value
                 mock_instance.get_operation.return_value = {
@@ -257,10 +274,25 @@ class CollectInstructeurEmailsTestCase(TestCase):
                         ]
                     }
                 }
-                mock_is_cerbere_user.return_value = True
 
                 (instructeur_emails, _) = recapitulatif.collect_instructeur_emails(
                     self.request, self.convention
                 )
 
                 self.assertEqual(["user4@SER_GEST.com"], instructeur_emails)
+
+    def test_collect_instructeur_cerbere_user_raise_siapexception(self):
+        with patch.object(User, "is_cerbere_user") as mock_is_cerbere_user:
+            mock_is_cerbere_user.return_value = True
+            with patch.object(SIAPClient, "get_instance") as mock_get_instance:
+                mock_get_instance.side_effect = SIAPException("Test exception")
+
+                (
+                    instructeur_emails,
+                    submitted,
+                ) = recapitulatif.collect_instructeur_emails(
+                    self.request, self.convention
+                )
+
+                self.assertEqual([], instructeur_emails)
+                self.assertEqual(ReturnStatus.WARNING, submitted)

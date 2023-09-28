@@ -279,7 +279,6 @@ def collect_instructeur_emails(
                 habilitation_id=request.session["habilitation_id"],
                 operation_identifier=convention.programme.numero_galion,
             )
-            # FIXME : to be tested
             if (
                 "gestionnaireSecondaire" in operation
                 and "utilisateurs" in operation["gestionnaireSecondaire"]
@@ -292,7 +291,6 @@ def collect_instructeur_emails(
                         if "profil" in group and "code" in group["profil"]
                     ]:
                         instructeur_emails.append(utilisateur["email"])
-            # Remove all users who don't want to receive email
             user_to_remove = User.objects.filter(
                 email__in=instructeur_emails,
                 preferences_email=EmailPreferences.AUCUN,
