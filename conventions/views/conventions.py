@@ -426,17 +426,9 @@ def validate_convention(request, convention_uuid):
 @login_required
 @has_campaign_permission_view_function("convention.change_convention")
 def denonciation_validate(request, convention_uuid):
-    result = convention_denonciation_validate(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        return HttpResponseRedirect(
-            reverse("conventions:post_action", args=[convention_uuid])
-        )
-    return render(
-        request,
-        "conventions/recapitulatif.html",
-        {
-            **result,
-        },
+    convention_denonciation_validate(request, convention_uuid)
+    return HttpResponseRedirect(
+        reverse("conventions:post_action", args=[convention_uuid])
     )
 
 

@@ -1,3 +1,4 @@
+from datetime import date
 from unittest import mock
 from unittest.mock import patch
 
@@ -8,7 +9,8 @@ from django.test import RequestFactory, TestCase
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.programme_number import ProgrammeNumberForm
 from conventions.models import Convention
-from conventions.services import recapitulatif
+from conventions.models.choices import ConventionStatut
+from conventions.services import recapitulatif, utils
 from conventions.services.utils import ReturnStatus
 from core.exceptions.types import SIAPException
 from siap.siap_client.client import SIAPClient
@@ -81,16 +83,16 @@ class AvenantRecapitulatifServiceTests(TestCase):
     ]
 
     def setUp(self):
-        request = HttpRequest()
+        self.request = HttpRequest()
 
-        request.user = User.objects.get(username="fix")
+        self.request.user = User.objects.get(username="fix")
         self.convention1 = Convention.objects.get(numero="0001")
         # set service with avenant
         self.avenant1 = self.convention1.clone(
-            request.user, convention_origin=self.convention1
+            self.request.user, convention_origin=self.convention1
         )
         self.service = recapitulatif.ConventionRecapitulatifService(
-            convention=self.avenant1, request=request
+            convention=self.avenant1, request=self.request
         )
 
     def test_update_avenant_number_success(self):
@@ -115,6 +117,21 @@ class AvenantRecapitulatifServiceTests(TestCase):
 
         self.assertEqual(self.convention1.programme.numero_galion, "b" * 255)
         self.assertEqual(self.avenant1.programme.numero_galion, "b" * 255)
+
+    def test_convention_denonciation_validate(self):
+
+        self.avenant1.date_denonciation = date(2022, 12, 31)
+        self.avenant1.save()
+        denonciation_result = recapitulatif.convention_denonciation_validate(
+            self.request, self.avenant1.uuid
+        )
+        self.avenant1.refresh_from_db()
+        self.convention1.refresh_from_db()
+
+        self.assertEqual(denonciation_result["success"], utils.ReturnStatus.SUCCESS)
+        self.assertEqual(self.convention1.date_denonciation, date(2022, 12, 31))
+        self.assertEqual(self.convention1.statut, ConventionStatut.DENONCEE.label)
+        self.assertEqual(self.avenant1.statut, ConventionStatut.DENONCEE.label)
 
 
 class CollectInstructeurEmailsTestCase(TestCase):
