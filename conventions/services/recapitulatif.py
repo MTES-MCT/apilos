@@ -1,3 +1,5 @@
+from typing import List
+
 from django.db.models import Q
 from django.http import HttpRequest
 from django.urls import reverse
@@ -20,6 +22,8 @@ from core.exceptions.types import SIAPException
 from core.services import EmailService, EmailTemplateID
 from programmes.models import Annexe, Programme
 from siap.siap_client.client import SIAPClient
+from users.models import GroupProfile, User
+from users.type_models import EmailPreferences
 
 
 class ConventionRecapitulatifService(ConventionService):
@@ -243,30 +247,9 @@ def convention_submit(request: HttpRequest, convention: Convention):
         convention.statut = ConventionStatut.INSTRUCTION.label
         convention.save()
 
-        instructeur_emails = []
-        if request.user.is_cerbere_user():
-            try:
-                client = SIAPClient.get_instance()
-                operation = client.get_operation(
-                    user_login=request.user.cerbere_login,
-                    habilitation_id=request.session["habilitation_id"],
-                    operation_identifier=convention.programme.numero_galion,
-                )
-                if (
-                    "gestionnaireSecondaire" in operation
-                    and "utilisateurs" in operation["gestionnaireSecondaire"]
-                ):
-                    for utilisateur in operation["gestionnaireSecondaire"][
-                        "utilisateurs"
-                    ]:
-                        instructeur_emails.append(utilisateur["email"])
-            except SIAPException:
-                submitted = utils.ReturnStatus.WARNING
-        else:
-            instructeur_emails = convention.get_email_instructeur_users(
-                include_partial=True
-            )
-
+        instructeur_emails, submitted = collect_instructeur_emails(
+            request, convention, submitted
+        )
         send_email_instruction(
             request.build_absolute_uri(
                 reverse("conventions:recapitulatif", args=[convention.uuid])
@@ -280,6 +263,50 @@ def convention_submit(request: HttpRequest, convention: Convention):
         "success": submitted,
         "convention": convention,
     }
+
+
+def collect_instructeur_emails(
+    request: HttpRequest,
+    convention: Convention,
+    submitted: utils.ReturnStatus = utils.ReturnStatus.REFRESH,
+) -> List[str]:
+    instructeur_emails = []
+    if request.user.is_cerbere_user():
+        try:
+            client = SIAPClient.get_instance()
+            operation = client.get_operation(
+                user_login=request.user.cerbere_login,
+                habilitation_id=request.session["habilitation_id"],
+                operation_identifier=convention.programme.numero_galion,
+            )
+            if (
+                "gestionnaireSecondaire" in operation
+                and "utilisateurs" in operation["gestionnaireSecondaire"]
+            ):
+                for utilisateur in operation["gestionnaireSecondaire"]["utilisateurs"]:
+                    # Keep only the instructeur's emails
+                    if GroupProfile.SIAP_SER_GEST in [
+                        group["profil"]["code"]
+                        for group in utilisateur["groupes"]
+                        if "profil" in group and "code" in group["profil"]
+                    ]:
+                        instructeur_emails.append(utilisateur["email"])
+            user_to_remove = User.objects.filter(
+                email__in=instructeur_emails,
+                preferences_email=EmailPreferences.AUCUN,
+            )
+            instructeur_emails = [
+                email
+                for email in instructeur_emails
+                if email not in [user.email for user in user_to_remove]
+            ]
+        except SIAPException:
+            submitted = utils.ReturnStatus.WARNING
+    else:
+        instructeur_emails = convention.get_email_instructeur_users(
+            include_partial=True
+        )
+    return instructeur_emails, submitted
 
 
 def send_email_instruction(convention_url, convention, instructeur_emails):
