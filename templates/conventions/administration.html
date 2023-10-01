@@ -3,24 +3,28 @@
 {% block page_title %}Administration - APiLos{% endblock%}
 
 {% block content %}
-    {% with "administration_form" as form_id %}
-        <div class="fr-container-fluid ds_banner">
-            {% include "conventions/common/form_header.html"%}
-            {% include "common/step_progressbar.html"%}
-            <div class="fr-container">
-                <h3>Modification de l'administration</h3>
-                <form method="post" action="" id="{{ form_id }}">
-                    {{ form.errors }}
-                    {% csrf_token %}
-                    <div class="fr-grid-row fr-grid-row--gutters">
-                        <div class="fr-col-md-12">
-                            {% include "common/form/input_text.html" with form_input=form.verification editable=True %}
-                            {% include "common/form/input_select.html" with form_input=form.administration editable=True %}
+    {% if request.path != "conventions:sent" and request|is_instructeur %}
+        {% comment %} La convention ne doit pas être affichée sur la vue
+      Informations détaillées d'une convention finalisée {% endcomment %}
+        {% with "administration_form" as form_id %}
+            <div class="fr-container-fluid ds_banner">
+                {% include "conventions/common/form_header.html"%}
+                {% include "common/step_progressbar.html"%}
+                <div class="fr-container">
+                    <h3>Modification de l'administration</h3>
+                    <form method="post" action="" id="{{ form_id }}">
+                        {{ form.errors }}
+                        {% csrf_token %}
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-md-12">
+                                {% include "common/form/input_text.html" with form_input=form.verification editable=True %}
+                                {% include "common/form/input_select.html" with form_input=form.administration editable=True %}
+                            </div>
                         </div>
-                    </div>
-                </form>
-                {% include "conventions/common/form_footer_button.html" with warning="Vous n'aurez plus accès à cette convention dès qu'elle sera transférée à une autre administration" %}
+                    </form>
+                    {% include "conventions/common/form_footer_button.html" with warning="Vous n'aurez plus accès à cette convention dès qu'elle sera transférée à une autre administration" %}
+                </div>
             </div>
-        </div>
-    {% endwith %}
+        {% endwith %}
+    {% endif %}
 {% endblock %}
