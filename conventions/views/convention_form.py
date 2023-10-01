@@ -220,7 +220,7 @@ instructeur_only_steps = [administration_step]
 
 
 class ConventionFormSteps:
-    steps: List[ConventionFormStep]
+    steps: List[ConventionFormStep] | None
     convention: Convention
     total_step_number: int
     current_step_number: int
@@ -232,7 +232,12 @@ class ConventionFormSteps:
     )
 
     def __init__(
-        self, *, convention, request, steps=None, active_classname=None
+        self,
+        *,
+        convention,
+        request,
+        steps: List[ConventionFormStep] | None = None,
+        active_classname=None
     ) -> None:
         self.convention = convention
         self.steps = steps
@@ -264,30 +269,47 @@ class ConventionFormSteps:
             else:
                 self.steps = hlm_sem_type_steps
 
-        if not request.user.is_superuser and not request.user.is_instructeur():
+        if (
+            request.user.is_authenticated
+            and not request.user.is_superuser
+            and not request.user.is_instructeur()
+        ):
             self.steps = [
                 step for step in self.steps if step not in instructeur_only_steps
             ]
 
         if active_classname:
-            step_index = [
+            self.step_index = [
                 i
                 for i, elem in enumerate(self.steps)
                 if elem.classname == active_classname
             ][0]
-            self.current_step_number = step_index + 1
-            self.current_step = self.steps[step_index]
-            self.next_step = (
-                self.steps[step_index + 1]
-                if self.current_step_number < self.total_step_number
-                else self.last_step_path
-            )
-            if step_index > 0:
-                self.previous_step = self.steps[step_index - 1]
 
     @property
     def total_step_number(self):
         return len(self.steps)
+
+    @property
+    def current_step_number(self):
+        return self.step_index + 1
+
+    @property
+    def current_step(self):
+        return self.steps[self.step_index]
+
+    @property
+    def next_step(self):
+        if self.current_step_number < self.total_step_number:
+            return self.steps[self.step_index + 1]
+
+        return self.last_step_path
+
+    @property
+    def previous_step(self):
+        if self.step_index > 0:
+            return self.steps[self.step_index - 1]
+
+        return None
 
     def get_form_step(self):
         form_step = {

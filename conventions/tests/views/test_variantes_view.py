@@ -25,7 +25,7 @@ class ConventionVariantesViewTests(AbstractEditViewTestCase, TestCase):
             "conventions:variantes", args=[self.convention_75.uuid]
         )
         self.next_target_path = reverse(
-            "conventions:administration", args=[self.convention_75.uuid]
+            "conventions:commentaires", args=[self.convention_75.uuid]
         )
         self.convention_75.programme.nature_logement = NatureLogement.AUTRE
         self.convention_75.programme.save()
