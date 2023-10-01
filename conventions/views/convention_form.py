@@ -235,8 +235,41 @@ class ConventionFormSteps:
         self, *, convention, request, steps=None, active_classname=None
     ) -> None:
         self.convention = convention
-        if steps:
-            self.steps = steps
+        self.steps = steps
+
+        if not self.steps:
+            if convention.is_avenant():
+                varying_steps = (
+                    [avenant_foyer_residence_logements_step, avenant_collectif_step]
+                    if convention.programme.is_foyer()
+                    or convention.programme.is_residence()
+                    else [
+                        avenant_logements_step,
+                        avenant_annexes_step,
+                    ]
+                )
+                self.steps = [
+                    avenant_bailleur_step,
+                    avenant_programme_step,
+                    avenant_financement_step,
+                    *varying_steps,
+                    avenant_champ_libre_step,
+                    avenant_commentaires_step,
+                ]
+
+            elif convention.programme.is_foyer():
+                self.steps = foyer_steps
+            elif convention.programme.is_residence():
+                self.steps = residence_steps
+            else:
+                self.steps = hlm_sem_type_steps
+
+        if not request.user.is_superuser and not request.user.is_instructeur():
+            self.steps = [
+                step for step in self.steps if step not in instructeur_only_steps
+            ]
+
+        if active_classname:
             step_index = [
                 i
                 for i, elem in enumerate(self.steps)
@@ -252,45 +285,9 @@ class ConventionFormSteps:
             if step_index > 0:
                 self.previous_step = self.steps[step_index - 1]
 
-        else:
-            if convention.is_avenant():
-                if (
-                    convention.programme.is_foyer()
-                    or convention.programme.is_residence()
-                ):
-                    self.steps = [
-                        avenant_bailleur_step,
-                        avenant_programme_step,
-                        avenant_financement_step,
-                        avenant_foyer_residence_logements_step,
-                        avenant_collectif_step,
-                        avenant_champ_libre_step,
-                        avenant_commentaires_step,
-                    ]
-                else:
-                    self.steps = [
-                        avenant_bailleur_step,
-                        avenant_programme_step,
-                        avenant_financement_step,
-                        avenant_logements_step,
-                        avenant_annexes_step,
-                        avenant_champ_libre_step,
-                        avenant_commentaires_step,
-                    ]
-
-            elif convention.programme.is_foyer():
-                self.steps = foyer_steps
-            elif convention.programme.is_residence():
-                self.steps = residence_steps
-            else:
-                self.steps = hlm_sem_type_steps
-
-            if not request.user.is_superuser and not request.user.is_instructeur():
-                self.steps = [
-                    step for step in self.steps if step not in instructeur_only_steps
-                ]
-
-            self.total_step_number = len(self.steps)
+    @property
+    def total_step_number(self):
+        return len(self.steps)
 
     def get_form_step(self):
         form_step = {
@@ -345,8 +342,18 @@ class ConventionView(ABC, BaseConventionView):
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
+
+        form_steps = None
+        try:
+            form_steps = self.form_steps
+        except AttributeError:
+            pass
+
         self.steps = ConventionFormSteps(
-            convention=self.convention, request=request, steps=self.form_steps
+            convention=self.convention,
+            request=request,
+            steps=form_steps,
+            active_classname=type(self).__name__,
         )
 
     @has_campaign_permission("convention.view_convention")
