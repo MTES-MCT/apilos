@@ -913,7 +913,9 @@ class CustomFiltersTest(TestCase):
         self.convention.programme.nature_logement = (
             ActiveNatureLogement.LOGEMENTSORDINAIRES
         )
-        convention_form_steps = ConventionFormSteps(convention=self.convention)
+        convention_form_steps = ConventionFormSteps(
+            convention=self.convention, request=None
+        )
         self.assertTrue(custom_filters.is_a_step(convention_form_steps, "Bailleur"))
         self.assertTrue(
             custom_filters.is_a_step(convention_form_steps, "Stationnement")

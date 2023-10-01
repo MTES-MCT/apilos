@@ -23,6 +23,7 @@ class ConventionFormStep:
     pathname: str
     label: str
     classname: str | None
+    weight: int = 0
 
 
 bailleur_step = ConventionFormStep(
@@ -175,12 +176,16 @@ avenant_denonciation_step = ConventionFormStep(
 )
 
 
-hlm_sem_type_steps = [
+shared_steps = [
     bailleur_step,
     programme_step,
     cadastre_step,
     edd_step,
     financement_step,
+]
+
+hlm_sem_type_steps = [
+    *shared_steps,
     logements_step,
     annexes_step,
     stationnements_step,
@@ -189,11 +194,7 @@ hlm_sem_type_steps = [
 ]
 
 foyer_steps = [
-    bailleur_step,
-    programme_step,
-    cadastre_step,
-    edd_step,
-    financement_step,
+    *shared_steps,
     foyer_residence_logements_step,
     collectif_step,
     foyer_attribution_step,
@@ -203,11 +204,7 @@ foyer_steps = [
 ]
 
 residence_steps = [
-    bailleur_step,
-    programme_step,
-    cadastre_step,
-    edd_step,
-    financement_step,
+    *shared_steps,
     foyer_residence_logements_step,
     collectif_step,
     residence_attribution_step,
@@ -215,6 +212,8 @@ residence_steps = [
     administration_step,
     commentaires_step,
 ]
+
+instructeur_only_steps = [administration_step]
 
 
 class ConventionFormSteps:
@@ -230,8 +229,7 @@ class ConventionFormSteps:
         pathname="conventions:recapitulatif", label="Récapitulatif", classname=None
     )
 
-    def __init__(self, *, convention, active_classname=None) -> None:
-        # pylint: disable=R0912
+    def __init__(self, *, convention, request, active_classname=None) -> None:
         self.convention = convention
         if convention.is_avenant():
             if active_classname is None:
@@ -258,38 +256,41 @@ class ConventionFormSteps:
                         avenant_champ_libre_step,
                         avenant_commentaires_step,
                     ]
-            else:
-                if active_classname == "AvenantBailleurView":
-                    self.steps = [avenant_bailleur_step]
-                if active_classname == "AvenantProgrammeView":
-                    self.steps = [avenant_programme_step]
-                if active_classname in [
-                    "AvenantLogementsView",
-                    "AvenantAnnexesView",
-                ]:
-                    self.steps = [avenant_logements_step, avenant_annexes_step]
-                if active_classname in [
-                    "AvenantFoyerResidenceLogementsView",
-                    "AvenantCollectifView",
-                ]:
-                    self.steps = [
-                        avenant_foyer_residence_logements_step,
-                        avenant_collectif_step,
-                    ]
-                if active_classname == "AvenantFinancementView":
-                    self.steps = [avenant_financement_step]
-                if active_classname == "AvenantChampLibreView":
-                    self.steps = [avenant_champ_libre_step]
-                if active_classname == "AvenantCommentsView":
-                    self.steps = [avenant_commentaires_step]
-                if active_classname == "DenonciationView":
-                    self.steps = [avenant_denonciation_step]
+            elif active_classname == "AvenantBailleurView":
+                self.steps = [avenant_bailleur_step]
+            elif active_classname == "AvenantProgrammeView":
+                self.steps = [avenant_programme_step]
+            elif active_classname in [
+                "AvenantLogementsView",
+                "AvenantAnnexesView",
+            ]:
+                self.steps = [avenant_logements_step, avenant_annexes_step]
+            elif active_classname in [
+                "AvenantFoyerResidenceLogementsView",
+                "AvenantCollectifView",
+            ]:
+                self.steps = [
+                    avenant_foyer_residence_logements_step,
+                    avenant_collectif_step,
+                ]
+            elif active_classname == "AvenantFinancementView":
+                self.steps = [avenant_financement_step]
+            elif active_classname == "AvenantChampLibreView":
+                self.steps = [avenant_champ_libre_step]
+            elif active_classname == "AvenantCommentsView":
+                self.steps = [avenant_commentaires_step]
+
         elif convention.programme.is_foyer():
             self.steps = foyer_steps
         elif convention.programme.is_residence():
             self.steps = residence_steps
         else:
             self.steps = hlm_sem_type_steps
+
+        if not request.user.is_superuser and not request.user.is_instructeur():
+            self.steps = [
+                step for step in self.steps if step not in instructeur_only_steps
+            ]
 
         self.total_step_number = len(self.steps)
 
@@ -362,7 +363,9 @@ class ConventionView(ABC, BaseConventionView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.steps = ConventionFormSteps(
-            convention=self.convention, active_classname=self.__class__.__name__
+            convention=self.convention,
+            request=request,
+            active_classname=self.__class__.__name__,
         )
 
     @has_campaign_permission("convention.view_convention")

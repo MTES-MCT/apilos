@@ -96,7 +96,7 @@ class RecapitulatifView(BaseConventionView):
                 **base_convention_response_error(request, self.convention),
                 **result,
                 "convention_form_steps": ConventionFormSteps(
-                    convention=self.convention
+                    convention=self.convention, request=request
                 ),
             },
         )
@@ -123,7 +123,7 @@ class RecapitulatifView(BaseConventionView):
                 **base_convention_response_error(request, self.convention),
                 **result,
                 "convention_form_steps": ConventionFormSteps(
-                    convention=self.convention
+                    convention=self.convention, request=request
                 ),
             },
         )
@@ -380,7 +380,9 @@ def validate_convention(request, convention_uuid):
         "conventions/recapitulatif.html",
         {
             **result,
-            "convention_form_steps": ConventionFormSteps(convention=convention),
+            "convention_form_steps": ConventionFormSteps(
+                convention=convention, request=request
+            ),
         },
     )
 
