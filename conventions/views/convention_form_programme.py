@@ -1,6 +1,6 @@
 from conventions.models import Convention
 from conventions.services.services_programmes import ConventionProgrammeService
-from conventions.views.convention_form import ConventionView
+from conventions.views.convention_form import ConventionView, avenant_programme_step
 
 
 class ConventionProgrammeView(ConventionView):
@@ -16,4 +16,4 @@ class ConventionProgrammeView(ConventionView):
 
 
 class AvenantProgrammeView(ConventionProgrammeView):
-    pass
+    form_steps = [avenant_programme_step]

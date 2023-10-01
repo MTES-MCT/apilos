@@ -1,5 +1,5 @@
 from conventions.services.commentaires import ConventionCommentairesService
-from conventions.views.convention_form import ConventionView
+from conventions.views.convention_form import ConventionView, avenant_commentaires_step
 
 
 class ConventionCommentairesView(ConventionView):
@@ -8,4 +8,4 @@ class ConventionCommentairesView(ConventionView):
 
 
 class AvenantCommentsView(ConventionCommentairesView):
-    pass
+    form_steps = [avenant_commentaires_step]

@@ -23,7 +23,6 @@ class ConventionFormStep:
     pathname: str
     label: str
     classname: str | None
-    weight: int = 0
 
 
 bailleur_step = ConventionFormStep(
@@ -176,16 +175,12 @@ avenant_denonciation_step = ConventionFormStep(
 )
 
 
-shared_steps = [
+hlm_sem_type_steps = [
     bailleur_step,
     programme_step,
     cadastre_step,
     edd_step,
     financement_step,
-]
-
-hlm_sem_type_steps = [
-    *shared_steps,
     logements_step,
     annexes_step,
     stationnements_step,
@@ -194,7 +189,11 @@ hlm_sem_type_steps = [
 ]
 
 foyer_steps = [
-    *shared_steps,
+    bailleur_step,
+    programme_step,
+    cadastre_step,
+    edd_step,
+    financement_step,
     foyer_residence_logements_step,
     collectif_step,
     foyer_attribution_step,
@@ -204,7 +203,11 @@ foyer_steps = [
 ]
 
 residence_steps = [
-    *shared_steps,
+    bailleur_step,
+    programme_step,
+    cadastre_step,
+    edd_step,
+    financement_step,
     foyer_residence_logements_step,
     collectif_step,
     residence_attribution_step,
@@ -224,15 +227,33 @@ class ConventionFormSteps:
     current_step: ConventionFormStep
     next_step: ConventionFormStep
     previous_step: ConventionFormStep | None = None
-
     last_step_path: ConventionFormStep = ConventionFormStep(
         pathname="conventions:recapitulatif", label="Récapitulatif", classname=None
     )
 
-    def __init__(self, *, convention, request, active_classname=None) -> None:
+    def __init__(
+        self, *, convention, request, steps=None, active_classname=None
+    ) -> None:
         self.convention = convention
-        if convention.is_avenant():
-            if active_classname is None:
+        if steps:
+            self.steps = steps
+            step_index = [
+                i
+                for i, elem in enumerate(self.steps)
+                if elem.classname == active_classname
+            ][0]
+            self.current_step_number = step_index + 1
+            self.current_step = self.steps[step_index]
+            self.next_step = (
+                self.steps[step_index + 1]
+                if self.current_step_number < self.total_step_number
+                else self.last_step_path
+            )
+            if step_index > 0:
+                self.previous_step = self.steps[step_index - 1]
+
+        else:
+            if convention.is_avenant():
                 if (
                     convention.programme.is_foyer()
                     or convention.programme.is_residence()
@@ -256,59 +277,20 @@ class ConventionFormSteps:
                         avenant_champ_libre_step,
                         avenant_commentaires_step,
                     ]
-            elif active_classname == "AvenantBailleurView":
-                self.steps = [avenant_bailleur_step]
-            elif active_classname == "AvenantProgrammeView":
-                self.steps = [avenant_programme_step]
-            elif active_classname in [
-                "AvenantLogementsView",
-                "AvenantAnnexesView",
-            ]:
-                self.steps = [avenant_logements_step, avenant_annexes_step]
-            elif active_classname in [
-                "AvenantFoyerResidenceLogementsView",
-                "AvenantCollectifView",
-            ]:
+
+            elif convention.programme.is_foyer():
+                self.steps = foyer_steps
+            elif convention.programme.is_residence():
+                self.steps = residence_steps
+            else:
+                self.steps = hlm_sem_type_steps
+
+            if not request.user.is_superuser and not request.user.is_instructeur():
                 self.steps = [
-                    avenant_foyer_residence_logements_step,
-                    avenant_collectif_step,
+                    step for step in self.steps if step not in instructeur_only_steps
                 ]
-            elif active_classname == "AvenantFinancementView":
-                self.steps = [avenant_financement_step]
-            elif active_classname == "AvenantChampLibreView":
-                self.steps = [avenant_champ_libre_step]
-            elif active_classname == "AvenantCommentsView":
-                self.steps = [avenant_commentaires_step]
 
-        elif convention.programme.is_foyer():
-            self.steps = foyer_steps
-        elif convention.programme.is_residence():
-            self.steps = residence_steps
-        else:
-            self.steps = hlm_sem_type_steps
-
-        if not request.user.is_superuser and not request.user.is_instructeur():
-            self.steps = [
-                step for step in self.steps if step not in instructeur_only_steps
-            ]
-
-        self.total_step_number = len(self.steps)
-
-        if active_classname is not None:
-            step_index = [
-                i
-                for i, elem in enumerate(self.steps)
-                if elem.classname == active_classname
-            ][0]
-            self.current_step_number = step_index + 1
-            self.current_step = self.steps[step_index]
-            self.next_step = (
-                self.steps[step_index + 1]
-                if self.current_step_number < self.total_step_number
-                else self.last_step_path
-            )
-            if step_index > 0:
-                self.previous_step = self.steps[step_index - 1]
+            self.total_step_number = len(self.steps)
 
     def get_form_step(self):
         form_step = {
@@ -347,6 +329,7 @@ class BaseConventionView(LoginRequiredMixin, View):
 
 class ConventionView(ABC, BaseConventionView):
     steps: ConventionFormSteps
+    form_steps: List[ConventionFormStep]
     target_template: str
     service_class: ConventionService
     request: HttpRequest
@@ -363,9 +346,7 @@ class ConventionView(ABC, BaseConventionView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.steps = ConventionFormSteps(
-            convention=self.convention,
-            request=request,
-            active_classname=self.__class__.__name__,
+            convention=self.convention, request=request, steps=self.form_steps
         )
 
     @has_campaign_permission("convention.view_convention")

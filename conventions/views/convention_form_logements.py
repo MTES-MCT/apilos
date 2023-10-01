@@ -1,6 +1,10 @@
 from conventions.models import Convention
 from conventions.services.logements import ConventionLogementsService
-from conventions.views.convention_form import ConventionView
+from conventions.views.convention_form import (
+    ConventionView,
+    avenant_annexes_step,
+    avenant_logements_step,
+)
 
 
 class ConventionLogementsView(ConventionView):
@@ -16,4 +20,4 @@ class ConventionLogementsView(ConventionView):
 
 
 class AvenantLogementsView(ConventionLogementsView):
-    pass
+    form_steps = [avenant_logements_step, avenant_annexes_step]

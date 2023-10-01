@@ -29,6 +29,17 @@ from conventions.views.convention_form import (
     residence_attribution_step,
     stationnements_step,
 )
+from conventions.views.convention_form_annexes import AvenantAnnexesView
+from conventions.views.convention_form_bailleur import AvenantBailleurView
+from conventions.views.convention_form_champ_libre import AvenantChampLibreView
+from conventions.views.convention_form_collectif import AvenantCollectifView
+from conventions.views.convention_form_commentaires import AvenantCommentsView
+from conventions.views.convention_form_financement import AvenantFinancementView
+from conventions.views.convention_form_foyer_residence_logements import (
+    AvenantFoyerResidenceLogementsView,
+)
+from conventions.views.convention_form_logements import AvenantLogementsView
+from conventions.views.convention_form_programme import AvenantProgrammeView
 from programmes.models.choices import NatureLogement
 from users.models import User
 
@@ -113,72 +124,40 @@ class ConventionFormStepsTests(TestCase):
         )
 
     def test_avenant_bailleur_view_steps(self):
-        form_steps = ConventionFormSteps(
-            convention=self.avenant,
-            request=self.request,
-            active_classname="AvenantBailleurView",
-        )
-        self.assertEqual(form_steps.steps, [avenant_bailleur_step])
+        view = AvenantBailleurView()
+        self.assertEqual(view.form_steps, [avenant_bailleur_step])
 
     def test_avenant_programme_view_steps(self):
-        form_steps = ConventionFormSteps(
-            convention=self.avenant,
-            request=self.request,
-            active_classname="AvenantProgrammeView",
-        )
-        self.assertEqual(form_steps.steps, [avenant_programme_step])
+        view = AvenantProgrammeView()
+        self.assertEqual(view.form_steps, [avenant_programme_step])
 
     def test_avenant_logements_or_annexes_view_steps(self):
-        for classname in ["AvenantLogementsView", "AvenantAnnexesView"]:
-            form_steps = ConventionFormSteps(
-                convention=self.avenant,
-                request=self.request,
-                active_classname=classname,
-            )
-
+        for view in [AvenantLogementsView(), AvenantAnnexesView()]:
             self.assertEqual(
-                form_steps.steps, [avenant_logements_step, avenant_annexes_step]
+                view.form_steps, [avenant_logements_step, avenant_annexes_step]
             )
 
     def test_avenant_foyer_or_collectif_residence_view_steps(self):
-        for classname in [
-            "AvenantFoyerResidenceLogementsView",
-            "AvenantCollectifView",
+        for view in [
+            AvenantFoyerResidenceLogementsView(),
+            AvenantCollectifView(),
         ]:
-            form_steps = ConventionFormSteps(
-                convention=self.avenant,
-                request=self.request,
-                active_classname=classname,
-            )
-
             self.assertEqual(
-                form_steps.steps,
+                view.form_steps,
                 [avenant_foyer_residence_logements_step, avenant_collectif_step],
             )
 
     def test_avenant_financement_view_steps(self):
-        form_steps = ConventionFormSteps(
-            convention=self.avenant,
-            request=self.request,
-            active_classname="AvenantFinancementView",
-        )
-        self.assertEqual(form_steps.steps, [avenant_financement_step])
+        view = AvenantFinancementView()
+        self.assertEqual(view.form_steps, [avenant_financement_step])
 
     def test_avenant_champ_libre_view_steps(self):
-        form_steps = ConventionFormSteps(
-            convention=self.avenant,
-            request=self.request,
-            active_classname="AvenantChampLibreView",
-        )
-        self.assertEqual(form_steps.steps, [avenant_champ_libre_step])
+        view = AvenantChampLibreView()
+        self.assertEqual(view.form_steps, [avenant_champ_libre_step])
 
     def test_avenant_comments_view_steps(self):
-        form_steps = ConventionFormSteps(
-            convention=self.avenant,
-            request=self.request,
-            active_classname="AvenantCommentsView",
-        )
-        self.assertEqual(form_steps.steps, [avenant_commentaires_step])
+        view = AvenantCommentsView()
+        self.assertEqual(view.form_steps, [avenant_commentaires_step])
 
     def test_programme_foyer_steps(self):
         self.convention.programme.nature_logement = NatureLogement.AUTRE

@@ -1,5 +1,5 @@
 from conventions.services.bailleurs import ConventionBailleurService
-from conventions.views.convention_form import ConventionView
+from conventions.views.convention_form import ConventionView, avenant_bailleur_step
 
 
 class ConventionBailleurView(ConventionView):
@@ -16,3 +16,4 @@ class ConventionBailleurView(ConventionView):
 
 class AvenantBailleurView(ConventionBailleurView):
     current_path_redirect: str = "conventions:avenant_bailleur"
+    form_steps = [avenant_bailleur_step]

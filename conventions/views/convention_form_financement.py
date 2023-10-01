@@ -1,6 +1,6 @@
 from conventions.models import Convention
 from conventions.services.financement import ConventionFinancementService
-from conventions.views.convention_form import ConventionView
+from conventions.views.convention_form import ConventionView, avenant_financement_step
 
 
 class ConventionFinancementView(ConventionView):
@@ -12,4 +12,4 @@ class ConventionFinancementView(ConventionView):
 
 
 class AvenantFinancementView(ConventionFinancementView):
-    pass
+    form_steps = [avenant_financement_step]
