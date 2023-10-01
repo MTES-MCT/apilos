@@ -178,19 +178,20 @@ avenant_denonciation_step = ConventionFormStep(
 hlm_sem_type_steps = [
     bailleur_step,
     programme_step,
+    administration_step,
     cadastre_step,
     edd_step,
     financement_step,
     logements_step,
     annexes_step,
     stationnements_step,
-    administration_step,
     commentaires_step,
 ]
 
 foyer_steps = [
     bailleur_step,
     programme_step,
+    administration_step,
     cadastre_step,
     edd_step,
     financement_step,
@@ -198,13 +199,13 @@ foyer_steps = [
     collectif_step,
     foyer_attribution_step,
     foyer_variante_step,
-    administration_step,
     commentaires_step,
 ]
 
 residence_steps = [
     bailleur_step,
     programme_step,
+    administration_step,
     cadastre_step,
     edd_step,
     financement_step,
@@ -212,7 +213,6 @@ residence_steps = [
     collectif_step,
     residence_attribution_step,
     foyer_variante_step,
-    administration_step,
     commentaires_step,
 ]
 
