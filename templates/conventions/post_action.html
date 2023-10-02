@@ -175,9 +175,6 @@
                 <hr>
                 {% if convention|display_is_not_resiliated_or_denonciated %}
                     {% include "conventions/avenant/denonciation_start.html" %}
-                    {% if request|is_instructeur %}
-                        {% include "conventions/actions/denonciation_resiliation.html" %}
-                    {% endif %}
                 {% endif %}
             </div>
         </div>

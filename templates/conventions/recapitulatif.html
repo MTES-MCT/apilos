@@ -128,7 +128,9 @@
                         </div>
                     {% endif %}
                     {% include "conventions/actions/type1and2_options.html" %}
-                    {% include "conventions/actions/generate_convention.html" %}
+                    {% if not convention.is_denonciation %}
+                        {% include "conventions/actions/generate_convention.html" %}
+                    {% endif %}
                     {% if request.path != "conventions:sent" %}
                         {% comment %} La convention ne doit pas être affichée sur la vue
                         Informations détaillées d'une convention finalisée {% endcomment %}
