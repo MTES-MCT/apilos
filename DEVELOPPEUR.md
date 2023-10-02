@@ -209,6 +209,33 @@ pg_restore -d "${DB_URL}" --clean --no-acl --no-owner --no-privileges "${DUMP_FI
 
 Note : le fichier de dump est a l'extension `pgsql`
 
+### Restaurer un dump sur un environnement Scalingo
+
+**⚠️⚠️⚠️ Cette opération va supprimer les données sur l'environnement cible, n'executer cette commande que si vous êtes sûr de vous.**
+
+Ouvrir un tunnel (cf. le dashboard de la base de données) :
+
+```sh
+DB_URL=postgres://<user>:<password>@<server>:<port>/<database>?sslmode=prefer
+scalingo --app my-app db-tunnel --identity ~/.ssh/my_ssh_key $DB_URL
+```
+
+la commande retourne l'url d'accès à la base de données
+
+```txt
+Building tunnel to apilos-stag-3603.postgresql.dbs.scalingo.com:37228
+You can access your database on:
+127.0.0.1:10000
+```
+
+Dans un autre terminal, lancer la restauration
+
+```sh
+DB_URL=postgres://<user>:<password>@127.0.0.1:10000/<database>?sslmode=prefer
+DUMP_FILE=</path/to/dump/file>
+pg_restore -d "${DB_URL}" --clean --no-acl --no-owner --no-privileges "${DUMP_FILE}"
+```
+
 ## Utilisateurs
 
 L'import des fixtures crée plusieurs utilisateurs utiles lors du développement
@@ -227,7 +254,6 @@ Certaines [commandes Django](https://docs.djangoproject.com/fr/4.2/ref/django-ad
 Supprime les comptes des utilisateurs de la plateforme autonome si ils disposent d'un compte APiLos en version SIAP.
 
 Options :
-* **--dry-run** : exécute la commande sans rien écrire en base de données
-* **--verbose** : affiche la liste des utilisateurs à supprimer
 
-
+- **--dry-run** : exécute la commande sans rien écrire en base de données
+- **--verbose** : affiche la liste des utilisateurs à supprimer
