@@ -3,7 +3,7 @@
 from django.db import migrations
 
 
-def foobar(apps, schema_editor):
+def extract_admin_code_from_admin_name(apps, schema_editor):
     Administration = apps.get_model("instructeurs", "Administration")
 
     for administration in Administration.objects.all():
@@ -21,5 +21,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(foobar, migrations.RunPython.noop),
+        migrations.RunPython(
+            extract_admin_code_from_admin_name, migrations.RunPython.noop
+        ),
     ]
