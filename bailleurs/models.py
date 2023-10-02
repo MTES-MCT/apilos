@@ -133,7 +133,7 @@ class Bailleur(IngestableModel):
     )
 
     def __str__(self):
-        return f"{self.nom}"
+        return f"{self.nom} ({self.siren})" if self.siren else f"{self.nom}"
 
     def _get_id(self):
         return self.id

@@ -218,9 +218,9 @@ def edit_bailleur(request, bailleur_uuid):
                     else bailleur.nature_bailleur
                 ),
             },
-            bailleur_query=request.user.bailleurs(full_scope=True)
-            .exclude(id=bailleur.id)
-            .filter(parent_id__isnull=True),
+            bailleur_query=request.user.bailleur_query_set(
+                only_bailleur_uuid=request.POST.get("bailleur")
+            ),
         )
         if form.is_valid():
             if request.user.is_superuser or request.user.administrateur_de_compte:
@@ -280,9 +280,11 @@ def edit_bailleur(request, bailleur_uuid):
                     bailleur.signataire_date_deliberation
                 ),
             },
-            bailleur_query=request.user.bailleurs(full_scope=True)
-            .exclude(id=bailleur.id)
-            .filter(parent_id__isnull=True)[: settings.APILOS_MAX_DROPDOWN_COUNT],
+            bailleur_query=request.user.bailleur_query_set(
+                only_bailleur_uuid=bailleur.parent.uuid if bailleur.parent else None,
+                exclude_bailleur_uuid=bailleur.uuid,
+                has_no_parent=True,
+            ),
         )
     user_list_service = UserListService(
         search_input=request.GET.get("search_input", ""),

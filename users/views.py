@@ -29,12 +29,12 @@ def search_bailleur(request):
     return JsonResponse(
         [
             {
-                "label": b.nom + f" ( {b.siren} )" if b.siren else "",
+                "label": str(b),
                 "value": b.uuid,
             }
-            for b in request.user.bailleurs(full_scope=True).filter(
-                Q(nom__icontains=query) | Q(siren__icontains=query)
-            )[: settings.APILOS_MAX_DROPDOWN_COUNT]
+            for b in request.user.bailleur_query_set(
+                query_string=query, has_no_parent=False
+            )
         ],
         safe=False,
     )
@@ -48,13 +48,14 @@ def search_parent_bailleur(request, bailleur_uuid: str):
     return JsonResponse(
         [
             {
-                "label": b.nom,
+                "label": str(b),
                 "value": b.uuid,
             }
-            for b in request.user.bailleurs(full_scope=True)
-            .exclude(uuid=bailleur_uuid)
-            .filter(parent_id__isnull=True)
-            .filter(nom__icontains=query)[: settings.APILOS_MAX_DROPDOWN_COUNT]
+            for b in request.user.bailleur_query_set(
+                query_string=query,
+                exclude_bailleur_uuid=bailleur_uuid,
+                has_no_parent=True,
+            )
         ],
         safe=False,
     )
@@ -68,12 +69,12 @@ def search_administration(request):
     return JsonResponse(
         [
             {
-                "label": a.nom,
+                "label": str(a),
                 "value": a.uuid,
             }
-            for a in request.user.administrations().filter(nom__icontains=query)[
-                : settings.APILOS_MAX_DROPDOWN_COUNT
-            ]
+            for a in request.user.administrations().filter(
+                Q(nom__icontains=query) | Q(code__icontains=query)
+            )[: settings.APILOS_MAX_DROPDOWN_COUNT]
         ],
         safe=False,
     )

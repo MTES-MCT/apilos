@@ -1,6 +1,7 @@
 from django.test import TestCase
-from core.tests import utils_fixtures
+
 from bailleurs.models import Bailleur, SousNatureBailleur
+from core.tests import utils_fixtures
 
 
 class BailleurModelsTest(TestCase):
@@ -11,9 +12,8 @@ class BailleurModelsTest(TestCase):
 
     def test_object_str(self):
         bailleur = Bailleur.objects.order_by("uuid").first()
-        expected_object_name = f"{bailleur.nom}"
-        self.assertEqual(str(bailleur), expected_object_name)
-        self.assertEqual(bailleur.label, expected_object_name)
+        self.assertEqual(str(bailleur), f"{bailleur.nom} ({bailleur.siren})")
+        self.assertEqual(bailleur.label, bailleur.nom)
         self.assertEqual(bailleur.value, bailleur.id)
 
     def test_is_hlm_sem_or_type(self):

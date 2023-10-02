@@ -9,7 +9,27 @@ from programmes.models import Programme
 from users.models import User
 
 
-class AdministrationsModelsTest(TestCase):
+class UserModelStrTest(TestCase):
+    # Test model User
+    def test_object_user_str(self):
+        user = User(
+            username="adupont",
+            email="antoine.dupont@ffr.fr",
+            first_name="Antoine",
+            last_name="Dupont",
+        )
+        self.assertEqual(str(user), "Antoine Dupont")
+        user.first_name = ""
+        self.assertEqual(str(user), "Dupont")
+        user.last_name = ""
+        user.first_name = "Antoine"
+        self.assertEqual(str(user), "Antoine")
+        user.last_name = ""
+        user.first_name = ""
+        self.assertEqual(str(user), "adupont")
+
+
+class UserPermissions(TestCase):
     fixtures = [
         "auth.json",
         "departements.json",
@@ -20,23 +40,6 @@ class AdministrationsModelsTest(TestCase):
         "conventions_for_tests.json",
         "users_for_tests.json",
     ]
-
-    # Test model User
-    def test_object_user_str(self):
-        user = User.objects.get(username="sabine")
-        expected_object_name = f"{user.first_name} {user.last_name}"
-        self.assertEqual(str(user), expected_object_name)
-        user.first_name = ""
-        expected_object_name = f"{user.last_name}"
-        self.assertEqual(str(user), expected_object_name)
-        user.last_name = ""
-        user.first_name = "Sabine"
-        expected_object_name = f"{user.first_name}"
-        self.assertEqual(str(user), expected_object_name)
-        user.last_name = ""
-        user.first_name = ""
-        expected_object_name = f"{user.username}"
-        self.assertEqual(str(user), expected_object_name)
 
     def test_exception_permissions(self):
         # pylint: disable=W0703
@@ -154,6 +157,19 @@ class AdministrationsModelsTest(TestCase):
             self.assertFalse(
                 user_bailleur_hlm.has_perm("convention.view_convention", convention)
             )
+
+
+class UserQuerySetTest(TestCase):
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
+    ]
 
     def test_programmes(self):
         user_superuser = User.objects.get(username="nicolas")
@@ -470,3 +486,66 @@ class AdministrationsModelsTest(TestCase):
         role = User.objects.get(username="sabine").roles.all()[0]
         expected_object_name = f"{role.user} - {role.typologie} - {role.administration}"
         self.assertEqual(str(role), expected_object_name)
+
+
+class UserBailleurQuerySetTest(TestCase):
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
+    ]
+
+    def setUp(self):
+        troisf = Bailleur.objects.get(nom="3F")
+        hlm = Bailleur.objects.get(nom="HLM")
+        troisf.parent = hlm
+        troisf.save()
+
+    def test_bailleur_queryset_bailleur(self):
+        user = User.objects.get(username="raph")
+        bailleurs = user.bailleurs().filter(parent=None)
+        self.assertEqual(set(user.bailleur_query_set()), set(bailleurs))
+
+    def test_bailleur_queryset_instructeur(self):
+        user = User.objects.get(username="sabine")
+        bailleurs = Bailleur.objects.all().filter(parent=None)
+        self.assertEqual(set(user.bailleur_query_set()), set(bailleurs))
+
+    def test_bailleur_queryset_bailleur_only(self):
+        user = User.objects.get(username="raph")
+        bailleur = user.bailleurs().filter(parent=None).first()
+        self.assertEqual(
+            set(user.bailleur_query_set(only_bailleur_uuid=bailleur.uuid)),
+            set([bailleur]),
+        )
+
+    def test_bailleur_queryset_bailleur_exclude(self):
+        user = User.objects.get(username="raph")
+        bailleur = user.bailleurs().filter(parent=None).first()
+        bailleurs = user.bailleurs().filter(parent=None).exclude(uuid=bailleur.uuid)
+
+        self.assertEqual(
+            set(user.bailleur_query_set(exclude_bailleur_uuid=bailleur.uuid)),
+            set(bailleurs),
+        )
+
+    def test_bailleur_queryset_bailleur_querystring(self):
+        user = User.objects.get(username="raph")
+        bailleurs = user.bailleurs().filter(nom__contains="HL")
+        self.assertEqual(
+            set(user.bailleur_query_set(query_string="hl", has_no_parent=False)),
+            set(bailleurs),
+        )
+
+    def test_bailleur_queryset_bailleur_noparent(self):
+        user = User.objects.get(username="raph")
+        bailleurs = user.bailleurs()
+        self.assertEqual(
+            set(user.bailleur_query_set(has_no_parent=False)),
+            set(bailleurs),
+        )

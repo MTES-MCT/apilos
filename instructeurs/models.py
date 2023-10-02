@@ -46,7 +46,7 @@ class Administration(IngestableModel):
     )
 
     def __str__(self):
-        return self.nom
+        return f"{self.nom} ({self.code})" if self.code else self.nom
 
     def get_ville_signature_or_empty(self):
         return (
