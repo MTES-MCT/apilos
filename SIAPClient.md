@@ -149,6 +149,7 @@ from siap.siap_client.client import SIAPClient
 SIAPClient.get_instance().get_habilitations(user_login='user@domain.com')
 SIAPClient.get_instance().get_menu(user_login='user@domain.com', habilitation_id=5)
 SIAPClient.get_instance().get_operation(user_login='user@domain.com', habilitation_id=27, operation_identifier='20221000003')
+SIAPClient.get_instance().get_fusion(user_login='user@domain.com', habilitation_id=123, bailleur_siren="123456789")
 ```
 
 ## Pour tester le Client de l'API d'APiLos dans un shell (Appel de l'application APiLos à partir du backend de l'application SIAP)

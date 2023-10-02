@@ -239,6 +239,18 @@ class SIAPClientRemote(SIAPClientInterface):
             f"user doesn't have enough rights to display operation {response}"
         )
 
+    def get_fusion(self, user_login, habilitation_id, bailleur_siren) -> dict:
+        # /services/operation/api-int/v0/journalisation-fusion?siren=
+        response = _call_siap_api(
+            f"/journalisation-fusion?siren={bailleur_siren}",
+            base_route="/services/operation",
+            user_login=user_login,
+            habilitation_id=habilitation_id,
+        )
+        if response.status_code >= 200 and response.status_code < 300:
+            return response.json()
+        raise SIAPException(f"SIAP error returned {response.content}")
+
 
 # Manage SiapClient as a Singleton
 class SIAPClientMock(SIAPClientInterface):
