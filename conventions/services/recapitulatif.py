@@ -527,10 +527,7 @@ def convention_denonciation_validate(request, convention_uuid):
     parent.statut = ConventionStatut.DENONCEE.label
     parent.date_denonciation = date_denonciation
     parent.save()
-    for avenant in parent.avenants.all():
-        avenant.statut = ConventionStatut.DENONCEE.label
-        avenant.date_denonciation = date_denonciation
-        avenant.save()
+    parent.avenants.all().update(statut=ConventionStatut.DENONCEE.label, date_denonciation = date_denonciation)
     result_status = utils.ReturnStatus.SUCCESS
     return {
         "success": result_status,
