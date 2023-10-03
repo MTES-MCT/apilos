@@ -12,13 +12,6 @@ def display_kind(convention):
     return "convention"
 
 
-@register.filter
-def display_kind_with_cap(convention):
-    if convention.is_denonciation():
-        return "Dénonciation"
-    if convention.is_avenant():
-        return "Avenant"
-    return "Convention"
 
 
 @register.filter
