@@ -9,6 +9,7 @@ from conventions.forms.convention_form_cadatre import *
 from conventions.forms.convention_form_collectif import *
 from conventions.forms.convention_form_champ_libre import *
 from conventions.forms.convention_form_commentaires import *
+from conventions.forms.convention_form_denonciation import *
 from conventions.forms.convention_form_edd import *
 from conventions.forms.convention_form_financement import *
 from conventions.forms.convention_form_foyer_residence_variantes import *

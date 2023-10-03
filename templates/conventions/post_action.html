@@ -3,59 +3,74 @@
 {% block page_title %} Actions - APiLos {% endblock%}
 
 {% load static %}
+{% load display_filters %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html"%}
         {% include "common/nav_bar.html" with nav_bar_step="action" %}
         <div class="fr-container fr-py-5w">
-            <div class="fr-col-12 fr-mt-2w fr-mb-4w">
-                <p class="fr-alert__title">
-                    Historique
-                </p>
-                <div class="fr-grid-row">
-                    <div class="apilos-step-post-action fr-mr-2w">
-                        <div class="apilos-step-post-action--bubble fr-mr-2w"></div>
-                        {% if total_avenants > 0 %}
-                            <div class="apilos-step-post-action--line"></div>
-                        {% endif %}
+            {% if not convention.is_avenant %}
+                <div class="fr-col-12 fr-mt-2w fr-mb-4w">
+                    <p class="fr-alert__title">
+                        Historique
+                    </p>
+                    <div class="fr-grid-row">
+                        <div class="apilos-step-post-action fr-mr-2w">
+                            <div class="apilos-step-post-action--bubble fr-mr-2w"></div>
+                            {% if total_avenants > 0 %}
+                                <div class="apilos-step-post-action--line"></div>
+                            {% endif %}
+                        </div>
+                        <div class="fr-col-11">
+                            {% if convention.televersement_convention_signee_le %}
+                                <div class="fr-grid-row">{{convention|display_kind|capfirst}} signé{{convention|display_gender_terminaison}} le <span class="fr-ml-1v"><strong>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-'}}</strong></span></div>
+                            {% else %}
+                                <div class="fr-grid-row">Votre convention signée a déjà été déposée</div>
+                            {% endif %}
+                            <div class="fr-mb-3w">
+                                <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}"> Voir en PDF</a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="fr-col-11">
-                        {% if convention.televersement_convention_signee_le %}
-                            <div class="fr-grid-row">{% if convention.is_avenant %}Avenant signé {% else %}Convention signée {% endif %}le <span class="fr-ml-1v"><strong>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-'}}</strong></span></div>
-                        {% else %}
-                            <div class="fr-grid-row">Votre convention signée a déjà été déposée</div>
-                        {% endif %}
-                        <div class="fr-mb-3w">
-                            <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}"> Voir en PDF</a>
+                    {% include "conventions/avenant_list.html" with conventions=avenants %}
+                    {% include "conventions/denonciation_list.html" with conventions=denonciation %}
+                </div>
+            {% else %}
+                <div class="fr-py-3w">
+                    <a class='fr-btn' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Retour à la convention originale</a>
+                </div>
+            {% endif %}
+            {% if convention|display_is_not_resiliated_or_denonciated %}
+                <div class="fr-col-12 fr-mb-4w">
+                    <div role="alert" class="fr-alert fr-alert--info  fr-icon-arrow-right-s-line-double">
+                        <p class="fr-alert__title">
+                            Créer un {% if convention.is_avenant %}autre {% endif %}avenant
+                        </p>
+                        <p>Votre projet a évolué. Vous avez identifié des informations erronées ou caduques ?</p>
+                        <div class="block--row-strech">
+                            {% if convention.is_avenant and convention.parent|display_create_avenant or not convention.is_avenant and convention|display_create_avenant  %}
+                                <a class="fr-btn fr-my-1w fr-mr-2w" href="{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}">
+                                    <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>Créer un {% if convention.is_avenant %}autre {% endif %}avenant
+                                </a>
+                            {% else %}
+                                <button class="fr-btn fr-my-1w fr-mr-2w" disabled>
+                                    <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>
+                                    {% if convention.is_avenant and convention.is_denonciation %}
+                                        La dénonciation de la convention est en cours
+                                    {% else %}
+                                        Un avenant est déjà en cours.
+                                    {% endif %}
+                                </button>
+                            {% endif %}
+                            <a class="fr-my-1w fr-link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
+                                Consulter le récapitulatif
+                            </a>
                         </div>
                     </div>
                 </div>
-                {% include "conventions/avenant_list.html" with conventions=avenants %}
-            </div>
-            <div class="fr-col-12 fr-mb-4w">
-                <div role="alert" class="fr-alert fr-alert--info  fr-icon-arrow-right-s-line-double">
-                    <p class="fr-alert__title">
-                        Créer un {% if convention.is_avenant %}autre {% endif %}avenant
-                    </p>
-                    <p>Votre projet a évolué. Vous avez identifié des informations erronées ou caduques ?</p>
-                    <div class="block--row-strech">
-                        {% if convention.is_avenant and convention.parent|display_create_avenant or not convention.is_avenant and convention|display_create_avenant %}
-                            <a class="fr-btn fr-my-1w fr-mr-2w" href="{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}">
-                                <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>Créer un {% if convention.is_avenant %}autre {% endif %}avenant
-                            </a>
-                        {% else %}
-                            <button class="fr-btn fr-my-1w fr-mr-2w" disabled>
-                                <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>Un avenant est déjà en cours.
-                            </button>
-                        {% endif %}
-                        <a class="fr-my-1w fr-link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
-                            Consulter le récapitulatif
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <hr>
+                <hr>
+            {% endif %}
             <div class="fr-col-12">
                 <div class="fr-mb-2w block--row-strech">
                     <div class="block--row-strech-1 fr-my-2w">
@@ -80,10 +95,19 @@
                     <div class="fr-mb-2w block--row-strech">
                         <div class="block--row-strech-1 fr-my-2w">
                             <p class="fr-alert__title">
-                                Déposer à nouveau {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}
+                                {% if convention.is_denonciation %}
+                                    Déposer l'acte de dénonciation
+                                {% else %}
+                                    Déposer à nouveau {{convention|display_kind_with_pronom}}
+                                {% endif %}
                             </p>
                             <p class="fr-mb-0">
-                                Si nécessaire, vous pouvez déposer une nouvelle version de {% if convention.is_avenant %}l'avenant signé{% else %}la convention signée{% endif %} ici.
+                                {% if convention.is_denonciation %}
+                                    Vous pouvez déposer l'acte de dénonciation ici. Il sera accessible sur la page de visualisation de la dénonciation.
+                                {% else %}
+                                    Si nécessaire, vous pouvez déposer une nouvelle version de {{convention|display_kind_with_pronom}} signé{{convention|display_gender_terminaison}} ici.
+                                {% endif %}
+
                             </p>
                         </div>
                         <form method="post" action="{% url 'conventions:sent' convention_uuid=convention.uuid %}" enctype="multipart/form-data" id="{{upform.file.id_for_label}}_form">
@@ -97,7 +121,11 @@
                             <div class="block--row-strech">
                                 <div>
                                     <button id="{{upform.file.id_for_label}}_upload_button" class="fr-icon-upload-line fr-btn--icon-left fr-btn fr-btn--secondary fr-my-1w" type="button">
-                                        Déposer {% if convention.is_avenant %}l'avenant signé{% else %}la convention signée{% endif %}
+                                        {% if convention.is_denonciation %}
+                                            Déposer la dénonciation
+                                        {% else %}
+                                            Déposer {{convention|display_kind_with_pronom}} signé{{convention|display_gender_terminaison}}
+                                        {% endif %}
                                     </button>
                                     {% for error in upform.file.errors %}
                                         <p id="text-input-error-desc-error" class="fr-error-text">
@@ -123,15 +151,17 @@
                         </form>
                     </div>
                 </div>
-                <hr>
-                <div class="fr-col-12">
-                    <div class="fr-mb-5w fr-pt-2w">
-                        <p class="fr-alert__title">
-                            Date de signature
-                        </p>
-                        {% include "conventions/actions/update_date_signature.html" %}
+                {% if convention|display_is_not_resiliated_or_denonciated %}
+                    <hr>
+                    <div class="fr-col-12">
+                        <div class="fr-mb-5w fr-pt-2w">
+                            <p class="fr-alert__title">
+                                Date de signature
+                            </p>
+                            {% include "conventions/actions/update_date_signature.html" %}
+                        </div>
                     </div>
-                </div>
+                {% endif %}
             {% endif %}
             {% if convention|display_back_to_instruction:request %}
                 <hr>
@@ -142,68 +172,9 @@
                 </div>
             {% endif %}
             <div class="fr-col-12">
-                {% if request|is_instructeur %}
-                    <hr>
-                    <div class="fr-mb-5w">
-                        <div class="fr-my-2w">
-                            <p class="fr-alert__title">
-                                Résiliation/dénonciation de {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}
-                            </p>
-                            <p class="fr-mb-2w">Vous pouvez ici procéder à la résiliation/dénonciation de {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %} dans APiLos.</p>
-
-                            <form method="post" action="" id="{{resiliation_form.date_resiliation.id_for_label}}_validation_form">
-                                {% csrf_token %}
-                                <input id="resiliation" type="hidden" name="resiliation" value="true">
-                                <div class="block--row-strech">
-                                    <div class="block--row-strech-1  fr-mr-6w">
-
-                                        {% include "common/form/input_date.html" with form_input=resiliation_form.date_resiliation editable=True %}
-                                    </div>
-
-                                    <button class="fr-btn apilos-btn--secondary--red fr-btn--icon-left fr-icon-delete-line fr-my-2w" data-fr-opened="false" type="button" aria-controls="fr-modal-resiliate-{{convention.uuid}}">
-                                        Résilier/Dénoncer {% if convention.is_avenant %}l'avenant{% else %}la convention{% endif %}
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                        <dialog aria-labelledby="fr-modal-resiliate-{{convention.uuid}}-title" id="fr-modal-resiliate-{{convention.uuid}}" class="fr-modal" role="dialog">
-                            <div class="fr-container fr-container--fluid fr-container-md">
-                                <div class="fr-grid-row fr-grid-row--center">
-                                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
-                                        <div class="fr-modal__body">
-                                            <div class="fr-modal__header">
-                                                <button class="fr-link--close fr-link" aria-controls="fr-modal-resiliate-{{convention.uuid}}">Fermer</button>
-                                            </div>
-                                            <div class="fr-modal__content">
-                                                <h1 id="fr-modal-resiliate-{{convention.uuid}}-title" class="fr-modal__title">
-                                                    <span class="fr-icon-arrow-right-line fr-icon--lg"></span>
-                                                    {{ convention }}
-                                                </h1>
-                                                <p>Vous vous apprétez à résilier/dénoncer la convention "{{convention}}", êtes-vous sûr ?</p>
-                                            </div>
-                                            <div class="fr-modal__footer">
-                                                <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
-                                                    <li>
-                                                        <button type="button" class="fr-btn fr-btn--icon-left fr-icon-delete-line" id='resiliate_{{convention.uuid}}'>
-                                                            Résilier/dénoncer la convention
-                                                        </button>
-                                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                                            document.getElementById('resiliate_{{convention.uuid}}').addEventListener('click', function(){
-                                                                document.getElementById('{{resiliation_form.date_resiliation.id_for_label}}_validation_form').submit();
-                                                            });
-                                                        </script>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button" class="fr-btn fr-btn--secondary" aria-controls="fr-modal-resiliate-{{convention.uuid}}">Annuler</button>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </dialog>
-                    </div>
+                <hr>
+                {% if convention|display_is_not_resiliated_or_denonciated %}
+                    {% include "conventions/avenant/denonciation_start.html" %}
                 {% endif %}
             </div>
         </div>

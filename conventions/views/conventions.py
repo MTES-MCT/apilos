@@ -33,6 +33,7 @@ from conventions.permissions import (
     has_campaign_permission_view_function,
 )
 from conventions.services import convention_generator
+from conventions.services.avenants import create_avenant
 from conventions.services.convention_generator import fiche_caf_doc
 from conventions.services.conventions import convention_post_action, convention_sent
 from conventions.services.file import ConventionFileService
@@ -41,6 +42,7 @@ from conventions.services.recapitulatif import (
     convention_feedback,
     convention_submit,
     convention_validate,
+    convention_denonciation_validate,
 )
 from conventions.services.search import (
     UserConventionActivesSearchService,
@@ -420,6 +422,16 @@ def validate_convention(request, convention_uuid):
     )
 
 
+@require_POST
+@login_required
+@has_campaign_permission_view_function("convention.change_convention")
+def denonciation_validate(request, convention_uuid):
+    convention_denonciation_validate(request, convention_uuid)
+    return HttpResponseRedirect(
+        reverse("conventions:post_action", args=[convention_uuid])
+    )
+
+
 @login_required
 @require_POST
 @has_campaign_permission_view_function("convention.view_convention")
@@ -553,6 +565,25 @@ def post_action(request, convention_uuid):
         return HttpResponseRedirect(
             reverse("conventions:post_action", args=[convention_uuid])
         )
+    return render(
+        request,
+        "conventions/post_action.html",
+        {
+            **result,
+        },
+    )
+
+
+@login_required
+@permission_required("convention.add_convention")
+def denonciation_start(request, convention_uuid):
+    result = create_avenant(request, convention_uuid)
+
+    if result["success"] == ReturnStatus.SUCCESS:
+        return HttpResponseRedirect(
+            reverse("conventions:denonciation", args=[result["convention"].uuid])
+        )
+
     return render(
         request,
         "conventions/post_action.html",

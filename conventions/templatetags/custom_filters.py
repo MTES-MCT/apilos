@@ -274,6 +274,7 @@ def display_is_validated(convention):
         ConventionStatut.A_SIGNER.label,
         ConventionStatut.SIGNEE.label,
         ConventionStatut.RESILIEE.label,
+        ConventionStatut.DENONCEE.label,
     ]
 
 
@@ -286,6 +287,14 @@ def display_is_resiliated(convention):
         ]
         and not convention.is_avenant()
     )
+
+
+@register.filter
+def display_is_not_resiliated_or_denonciated(convention):
+    return convention.statut not in [
+        ConventionStatut.RESILIEE.label,
+        ConventionStatut.DENONCEE.label,
+    ]
 
 
 @register.filter
@@ -344,7 +353,11 @@ def display_redirect_project(convention):
 
 @register.filter
 def display_redirect_post_action(convention):
-    return convention.statut == ConventionStatut.SIGNEE.label
+    return convention.statut in [
+        ConventionStatut.SIGNEE.label,
+        ConventionStatut.DENONCEE.label,
+        ConventionStatut.RESILIEE.label,
+    ]
 
 
 @register.filter

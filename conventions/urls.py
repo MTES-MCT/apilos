@@ -189,6 +189,21 @@ urlpatterns = [
         name="validate",
     ),
     path(
+        "denonciation/<convention_uuid>",
+        views.DenonciationView.as_view(),
+        name="denonciation",
+    ),
+    path(
+        "denonciation_start/<convention_uuid>",
+        views.denonciation_start,
+        name="denonciation_start",
+    ),
+    path(
+        "denonciation_validate/<convention_uuid>",
+        views.denonciation_validate,
+        name="denonciation_validate",
+    ),
+    path(
         "generate/<convention_uuid>",
         views.generate_convention,
         name="generate",

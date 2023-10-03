@@ -162,6 +162,12 @@ avenant_commentaires_step = ConventionFormStep(
     classname="AvenantCommentsView",
 )
 
+avenant_denonciation_step = ConventionFormStep(
+    pathname="conventions:denonciation",
+    label="Dénonciation",
+    classname="DenonciationView",
+)
+
 
 hlm_sem_type_steps = [
     bailleur_step,
@@ -267,6 +273,8 @@ class ConventionFormSteps:
                     self.steps = [avenant_champ_libre_step]
                 if active_classname == "AvenantCommentsView":
                     self.steps = [avenant_commentaires_step]
+                if active_classname == "DenonciationView":
+                    self.steps = [avenant_denonciation_step]
         elif convention.programme.is_foyer():
             self.steps = foyer_steps
         elif convention.programme.is_residence():

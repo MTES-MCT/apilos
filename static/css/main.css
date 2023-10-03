@@ -720,6 +720,9 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   border-radius: 12px;
   border: solid 3px var(--background-action-high-blue-france);
 }
+.apilos-step-post-action--bubble--red {
+  border-color: #dc3545;
+}
 .apilos-step-post-action--line {
   height: calc(100% - 24px);
   width: 24px;

@@ -199,8 +199,11 @@ class CustomFiltersTest(TestCase):
         self.convention.statut = ConventionStatut.SIGNEE.label
         self.assertTrue(custom_filters.display_redirect_post_action(self.convention))
 
+        self.convention.statut = ConventionStatut.DENONCEE.label
+        self.assertTrue(custom_filters.display_redirect_post_action(self.convention))
+
         self.convention.statut = ConventionStatut.RESILIEE.label
-        self.assertFalse(custom_filters.display_redirect_post_action(self.convention))
+        self.assertTrue(custom_filters.display_redirect_post_action(self.convention))
 
     def test_display_convention_form_progressbar(self):
         self.convention.statut = ConventionStatut.PROJET.label

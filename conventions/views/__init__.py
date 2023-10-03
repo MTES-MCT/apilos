@@ -5,8 +5,10 @@ from conventions.views.convention_form_foyer_attribution import *
 from conventions.views.convention_form_residence_attribution import *
 from conventions.views.convention_form_bailleur import *
 from conventions.views.convention_form_cadastre import *
+from conventions.views.convention_form_champ_libre import *
 from conventions.views.convention_form_collectif import *
 from conventions.views.convention_form_commentaires import *
+from conventions.views.convention_form_denonciation import *
 from conventions.views.convention_form_edd import *
 from conventions.views.convention_form_financement import *
 from conventions.views.convention_form_foyer_residence_logements import *
@@ -15,4 +17,3 @@ from conventions.views.convention_form_programme import *
 from conventions.views.convention_form_selection import *
 from conventions.views.convention_form_type_stationnement import *
 from conventions.views.convention_form_variante import *
-from conventions.views.convention_form_champ_libre import *
