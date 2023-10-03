@@ -63,14 +63,6 @@ def display_personnal_pronom(convention):
     return "elle"
 
 
-@register.filter
-def display_personnal_pronom_with_cap(convention):
-    if convention.is_denonciation():
-        return "Elle"
-    if convention.is_avenant():
-        return "Il"
-    return "Elle"
-
 
 @register.filter
 def display_gender_terminaison(convention):
