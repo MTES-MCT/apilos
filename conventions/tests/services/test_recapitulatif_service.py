@@ -118,6 +118,15 @@ class ConventionRecapitulatifServiceTests(TestCase):
 
         self.assertFalse(result["conventionNumberForm"].has_error("numero_galion"))
 
+    def test_convention_submit(self):
+        result = recapitulatif.convention_submit(self.request, self.convention)
+        self.assertEqual(result["success"], utils.ReturnStatus.REFRESH)
+        self.assertEqual(result["convention"], self.convention)
+
+        self.request.POST = {"BackToInstruction": True}
+        result = recapitulatif.convention_submit(self.request, self.convention)
+        self.assertEqual(result["success"], utils.ReturnStatus.ERROR)
+
 
 class AvenantRecapitulatifServiceTests(TestCase):
     fixtures = [
