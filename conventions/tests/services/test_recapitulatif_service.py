@@ -6,6 +6,7 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import HttpRequest
 from django.test import RequestFactory, TestCase
 
+from comments.models import Comment, CommentStatut
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.programme_number import ProgrammeNumberForm
 from conventions.models import Convention
@@ -13,6 +14,7 @@ from conventions.models.choices import ConventionStatut
 from conventions.services import recapitulatif, utils
 from conventions.services.utils import ReturnStatus
 from core.exceptions.types import SIAPException
+from programmes.models.models import Lot, Programme
 from siap.siap_client.client import SIAPClient
 from users.models import User
 from users.type_models import EmailPreferences
@@ -30,11 +32,12 @@ class ConventionRecapitulatifServiceTests(TestCase):
     ]
 
     def setUp(self):
-        request = HttpRequest()
+        self.request = HttpRequest()
         self.convention = Convention.objects.get(numero="0001")
-        request.user = User.objects.get(username="fix")
+        self.user = User.objects.get(username="fix")
+        self.request.user = self.user
         self.service = recapitulatif.ConventionRecapitulatifService(
-            convention=self.convention, request=request
+            convention=self.convention, request=self.request
         )
 
     def test_get_convention_recapitulatif(self):
@@ -51,6 +54,51 @@ class ConventionRecapitulatifServiceTests(TestCase):
             result["programmeNumberForm"].initial["numero_galion"],
             self.service.convention.programme.numero_galion,
         )
+
+    def test_get_convention_recapitulatif_incompleted_avenant_parent(self):
+        avenant = self.convention.clone(self.user, convention_origin=self.convention)
+        service_avenant = recapitulatif.ConventionRecapitulatifService(
+            convention=avenant, request=self.request
+        )
+        programme = Programme.objects.get(pk=1)
+        dummy_lot = Lot.objects.get(pk=1)
+        dummy_lot.pk = None
+        dummy_lot.nb_logements = 69
+        dummy_lot.save()
+
+        with patch.object(
+            Convention, "is_incompleted_avenant_parent"
+        ) as mock_is_incompleted_avenant_parent:
+            mock_is_incompleted_avenant_parent.return_value = True
+
+            with patch.object(Convention, "programme", programme):
+                with patch.object(Convention, "lot", dummy_lot):
+                    with patch.object(Programme, "ville", programme):
+                        result = service_avenant.get_convention_recapitulatif()
+
+                        self.assertEqual(
+                            result["complete_for_avenant_form"].initial["ville"],
+                            "Paris",
+                        )
+                        self.assertEqual(
+                            result["complete_for_avenant_form"].initial["nb_logements"],
+                            69,
+                        )
+
+    def test_get_convention_recapitulatif_comments(self):
+        result = self.service.get_convention_recapitulatif()
+        self.assertEqual(result["opened_comments"].count(), 0)
+        Comment.objects.create(
+            user_id=self.user.id,
+            convention=self.convention,
+            statut=CommentStatut.OUVERT,
+        )
+        Comment.objects.create(
+            user_id=self.user.id,
+            convention=self.convention,
+            statut=CommentStatut.RESOLU,
+        )
+        self.assertEqual(result["opened_comments"].count(), 1)
 
     def test_update_programme_number_success(self):
         self.service.request.POST = {
@@ -119,7 +167,6 @@ class AvenantRecapitulatifServiceTests(TestCase):
         self.assertEqual(self.avenant1.programme.numero_galion, "b" * 255)
 
     def test_convention_denonciation_validate(self):
-
         self.avenant1.date_denonciation = date(2022, 12, 31)
         self.avenant1.save()
         denonciation_result = recapitulatif.convention_denonciation_validate(
