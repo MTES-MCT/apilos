@@ -8,7 +8,7 @@
             <div class="block--row-strech-1 fr-py-3w fr-mr-2w apilos--overflow_ellipsis">
                 <h1 class="fr-h2 apilos-d-inline">{{convention.programme.nom}}</h1>
                 {% if convention.is_avenant %}
-                    <span class="apilos-h2-thin"> - {{convention|display_kind_with_cap}}{% if convention.numero %} n°{{ convention.numero }}{% endif %}</span>
+                    <span class="apilos-h2-thin"> - {{convention|display_kind|capfirst}}{% if convention.numero %} n°{{ convention.numero }}{% endif %}</span>
                     <div class="fr-py-3w">
                         <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Consulter la convention originale</a>
                     </div>
