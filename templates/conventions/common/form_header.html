@@ -58,7 +58,7 @@
                 </p>
                 {% if convention.statut == CONVENTION_STATUT.A_SIGNER or convention.statut == CONVENTION_STATUT.SIGNEE %}
                     <p>
-                        {{convention|display_personnal_pronom_with_cap}} porte le numéro <strong>{{ convention.numero }}</strong>
+                        {{convention|display_personnal_pronom|capfirst}} porte le numéro <strong>{{ convention.numero }}</strong>
                     </p>
                 {% endif %}
                 {% if convention.statut == CONVENTION_STATUT.A_SIGNER %}
