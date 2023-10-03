@@ -32,7 +32,7 @@
         <div class="block--row-strech">
             <div class="block--row-strech-1 fr-mr-6w">
                 <p class="fr-mb-0">
-                    {{convention|display_kind_with_pronom_with_cap}} est annulé{{convention|display_gender_terminaison}} mais {{convention|display_personnal_pronom}} peut-être réactivé{{convention|display_gender_terminaison}}. Son statut passera à nouveau en {{convention|display_kind_with_cap}} en Projet.
+                    {{convention|display_kind_with_pronom|capfirst}} est annulé{{convention|display_gender_terminaison}} mais {{convention|display_personnal_pronom}} peut-être réactivé{{convention|display_gender_terminaison}}. Son statut passera à nouveau en {{convention|display_kind|capfirst}} en Projet.
                 </p>
             </div>
             {% if convention.is_avenant and convention.parent|display_create_avenant or not convention.is_avenant %}
