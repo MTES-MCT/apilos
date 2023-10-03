@@ -33,13 +33,6 @@ def display_kind_with_demonstratif(convention):
     return "cette convention"
 
 
-@register.filter
-def display_kind_with_demonstratif_with_cap(convention):
-    if convention.is_denonciation():
-        return "Cette dénonciation"
-    if convention.is_avenant():
-        return "Cet avenant"
-    return "Cette convention"
 
 
 @register.filter
