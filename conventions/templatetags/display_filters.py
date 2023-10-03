@@ -53,14 +53,6 @@ def display_pronom(convention):
     return "la"
 
 
-@register.filter
-def display_pronom_with_cap(convention):
-    if convention.is_denonciation():
-        return "La"
-    if convention.is_avenant():
-        return "Le"
-    return "La"
-
 
 @register.filter
 def display_personnal_pronom(convention):
