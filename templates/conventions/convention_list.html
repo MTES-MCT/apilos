@@ -255,7 +255,7 @@
                                                     {{convention.programme|highlight:search_input}}
                                                 </strong>
                                                 {% if convention.is_avenant %}
-                                                    <span class="{% if convention.is_denonciation %}warning-notification {% else %}text-title-blue-france {% endif %} fr-p-1w fr-ml-1w apilos-tag-avenant background-white">{{convention|display_kind_with_cap}}</span>
+                                                    <span class="{% if convention.is_denonciation %}warning-notification {% else %}text-title-blue-france {% endif %} fr-p-1w fr-ml-1w apilos-tag-avenant background-white">{{convention|display_kind|capfirst}}</span>
                                                 {% endif %}
                                             </div>
                                             {% if url_name == "search_instruction" and convention.programme.numero_galion %}
