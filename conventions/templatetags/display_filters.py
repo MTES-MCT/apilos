@@ -23,14 +23,6 @@ def display_kind_with_pronom(convention):
     return "la convention"
 
 
-@register.filter
-def display_kind_with_pronom_with_cap(convention):
-    if convention.is_denonciation():
-        return "La dénonciation"
-    if convention.is_avenant():
-        return "L'avenant"
-    return "La convention"
-
 
 @register.filter
 def display_kind_with_demonstratif(convention):
