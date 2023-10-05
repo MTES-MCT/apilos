@@ -314,6 +314,12 @@ def collect_instructeur_emails(
 def send_email_instruction(
     convention_url, convention, bailleur, user, instructeur_emails
 ):
+  email_data = {
+    "convention_url": convention_url,
+    "convention": str(convention),
+    "bailleur": str(bailleur),
+    "user": str(user),
+  }
     """
     Send email "convention à instruire" when bailleur submit the convention
     Send an email to the bailleur who click and bailleur TOUS
