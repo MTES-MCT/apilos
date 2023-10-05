@@ -22,13 +22,13 @@ class EmailTemplateID(enum.Enum):
     # [PLATEFORME] BAILLEURS - Bienvenu sur la plateforme APiLos
     B_WELCOME = 84
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Avenant à instruire
-    BtoI_AVENANT_A_INSTRUIRE = 98
+    BtoI_AVENANT_A_INSTRUIRE = 167
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Convention à instruire
-    BtoI_CONVENTION_A_INSTRUIRE = 97
+    BtoI_CONVENTION_A_INSTRUIRE = 166
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Corrections faites - avenant à instruire à nouveau
-    BtoI_AVENANT_CORRECTIONS_FAITES = 100
+    BtoI_AVENANT_CORRECTIONS_FAITES = 169
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Corrections faites - convention à instruire à nouveau
-    BtoI_CONVENTION_CORRECTIONS_FAITES = 99
+    BtoI_CONVENTION_CORRECTIONS_FAITES = 168
     # [PLATEFORME] INSTRUCTEUR - Bienvenu sur la plateforme APiLos
     I_WELCOME = 96
     # [PLATEFORME] INSTRUCTEUR à BAILLEUR - Avenant validé
