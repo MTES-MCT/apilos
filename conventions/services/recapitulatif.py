@@ -352,7 +352,7 @@ def send_email_instruction(
             else EmailTemplateID.BtoI_CONVENTION_A_INSTRUIRE,
         )
         email_service_to_instructeur.send_transactional_email(
-            email_data={
+            email_data=email_data
                 "convention_url": convention_url,
                 "convention": str(convention),
                 "bailleur": str(bailleur),
