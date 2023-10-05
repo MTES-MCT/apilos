@@ -255,6 +255,7 @@ def convention_submit(request: HttpRequest, convention: Convention):
                 reverse("conventions:recapitulatif", args=[convention.uuid])
             ),
             convention,
+            request.user,
             instructeur_emails,
         )
         if submitted != utils.ReturnStatus.WARNING:
@@ -309,13 +310,19 @@ def collect_instructeur_emails(
     return instructeur_emails, submitted
 
 
-def send_email_instruction(convention_url, convention, instructeur_emails):
+def send_email_instruction(convention_url, convention, user, instructeur_emails):
     """
     Send email "convention à instruire" when bailleur submit the convention
     Send an email to the bailleur who click and bailleur TOUS
     Send an email to all instructeur (except the ones who select AUCUN as email preference)
     """
     # Send a confirmation email to bailleur
+    email_data = {
+        "convention_url": convention_url,
+        "convention": str(convention),
+        "bailleur": str(convention.bailleur.nom),
+        "user": str(user),
+    }
 
     if len(destinataires_bailleur := convention.get_email_bailleur_users()) > 0:
         email_service_to_bailleur = EmailService(
@@ -324,12 +331,7 @@ def send_email_instruction(convention_url, convention, instructeur_emails):
             if convention.is_avenant()
             else EmailTemplateID.B_CONVENTION_A_INSTRUIRE_CONFIRMATION,
         )
-        email_service_to_bailleur.send_transactional_email(
-            email_data={
-                "convention_url": convention_url,
-                "convention": str(convention),
-            },
-        )
+        email_service_to_bailleur.send_transactional_email(email_data=email_data)
 
     # Send a notification email to instructeur
     if len(instructeur_emails) > 0:
@@ -339,12 +341,7 @@ def send_email_instruction(convention_url, convention, instructeur_emails):
             if convention.is_avenant()
             else EmailTemplateID.BtoI_CONVENTION_A_INSTRUIRE,
         )
-        email_service_to_instructeur.send_transactional_email(
-            email_data={
-                "convention_url": convention_url,
-                "convention": str(convention),
-            },
-        )
+        email_service_to_instructeur.send_transactional_email(email_data=email_data)
 
 
 def convention_feedback(request: HttpRequest, convention: Convention):
@@ -356,6 +353,7 @@ def convention_feedback(request: HttpRequest, convention: Convention):
                 reverse("conventions:recapitulatif", args=[convention.uuid]),
             ),
             convention,
+            request.user,
             cc,
             notification_form.cleaned_data["from_instructeur"],
             notification_form.cleaned_data["comment"],
@@ -388,6 +386,7 @@ def convention_feedback(request: HttpRequest, convention: Convention):
 def send_email_correction(
     convention_url,
     convention,
+    user,
     cc,
     from_instructeur,
     comment=None,
@@ -427,6 +426,8 @@ def send_email_correction(
             email_data={
                 "convention_url": convention_url,
                 "convention": str(convention),
+                "user": str(user),
+                "bailleur": str(convention.bailleur.nom),
                 "commentaire": comment,
             },
         )
@@ -527,7 +528,9 @@ def convention_denonciation_validate(request, convention_uuid):
     parent.statut = ConventionStatut.DENONCEE.label
     parent.date_denonciation = date_denonciation
     parent.save()
-    parent.avenants.all().update(statut=ConventionStatut.DENONCEE.label, date_denonciation = date_denonciation)
+    parent.avenants.all().update(
+        statut=ConventionStatut.DENONCEE.label, date_denonciation=date_denonciation
+    )
     result_status = utils.ReturnStatus.SUCCESS
     return {
         "success": result_status,
