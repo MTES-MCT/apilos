@@ -310,21 +310,19 @@ def collect_instructeur_emails(
     return instructeur_emails, submitted
 
 
-def send_email_instruction(
-    convention_url, convention, user, instructeur_emails
-):
-  email_data = {
-    "convention_url": convention_url,
-    "convention": str(convention),
-    "bailleur": str(convention.bailleur.nom),
-    "user": str(user),
-  }
+def send_email_instruction(convention_url, convention, user, instructeur_emails):
     """
     Send email "convention à instruire" when bailleur submit the convention
     Send an email to the bailleur who click and bailleur TOUS
     Send an email to all instructeur (except the ones who select AUCUN as email preference)
     """
     # Send a confirmation email to bailleur
+    email_data = {
+        "convention_url": convention_url,
+        "convention": str(convention),
+        "bailleur": str(convention.bailleur.nom),
+        "user": str(user),
+    }
 
     if len(destinataires_bailleur := convention.get_email_bailleur_users()) > 0:
         email_service_to_bailleur = EmailService(
@@ -333,14 +331,7 @@ def send_email_instruction(
             if convention.is_avenant()
             else EmailTemplateID.B_CONVENTION_A_INSTRUIRE_CONFIRMATION,
         )
-        email_service_to_bailleur.send_transactional_email(
-            email_data=email_data
-                "convention_url": convention_url,
-                "convention": str(convention),
-                "bailleur": str(convention.bailleur.nom),
-                "user": str(user),
-            }
-        )
+        email_service_to_bailleur.send_transactional_email(email_data=email_data)
 
     # Send a notification email to instructeur
     if len(instructeur_emails) > 0:
@@ -350,14 +341,7 @@ def send_email_instruction(
             if convention.is_avenant()
             else EmailTemplateID.BtoI_CONVENTION_A_INSTRUIRE,
         )
-        email_service_to_instructeur.send_transactional_email(
-            email_data=email_data
-                "convention_url": convention_url,
-                "convention": str(convention),
-                "bailleur": str(bailleur),
-                "user": str(user),
-            },
-        )
+        email_service_to_instructeur.send_transactional_email(email_data=email_data)
 
 
 def convention_feedback(request: HttpRequest, convention: Convention):
