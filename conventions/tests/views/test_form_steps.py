@@ -4,7 +4,6 @@ from django.test import TestCase
 from conventions.models import Convention
 from conventions.views.convention_form import (
     ConventionFormSteps,
-    administration_step,
     annexes_step,
     avenant_annexes_step,
     avenant_bailleur_step,
@@ -80,7 +79,6 @@ class ConventionFormStepsTests(TestCase):
                 logements_step,
                 annexes_step,
                 stationnements_step,
-                administration_step,
                 commentaires_step,
             ],
         )
@@ -180,7 +178,6 @@ class ConventionFormStepsTests(TestCase):
                 collectif_step,
                 foyer_attribution_step,
                 foyer_variante_step,
-                administration_step,
                 commentaires_step,
             ],
         )
@@ -206,7 +203,6 @@ class ConventionFormStepsTests(TestCase):
                 collectif_step,
                 residence_attribution_step,
                 foyer_variante_step,
-                administration_step,
                 commentaires_step,
             ],
         )

@@ -103,12 +103,6 @@ foyer_variante_step = ConventionFormStep(
     classname="ConventionFoyerVariantesView",
 )
 
-administration_step = ConventionFormStep(
-    pathname="conventions:administration",
-    label="Administration",
-    classname="ConventionAdministrationView",
-)
-
 commentaires_step = ConventionFormStep(
     pathname="conventions:commentaires",
     label="Commentaires",
@@ -184,7 +178,6 @@ hlm_sem_type_steps = [
     logements_step,
     annexes_step,
     stationnements_step,
-    administration_step,
     commentaires_step,
 ]
 
@@ -198,7 +191,6 @@ foyer_steps = [
     collectif_step,
     foyer_attribution_step,
     foyer_variante_step,
-    administration_step,
     commentaires_step,
 ]
 
@@ -212,21 +204,13 @@ residence_steps = [
     collectif_step,
     residence_attribution_step,
     foyer_variante_step,
-    administration_step,
     commentaires_step,
 ]
-
-instructeur_only_steps = [administration_step]
 
 
 class ConventionFormSteps:
     steps: List[ConventionFormStep] | None
     convention: Convention
-    total_step_number: int
-    current_step_number: int
-    current_step: ConventionFormStep
-    next_step: ConventionFormStep
-    previous_step: ConventionFormStep | None = None
     last_step_path: ConventionFormStep = ConventionFormStep(
         pathname="conventions:recapitulatif", label="Récapitulatif", classname=None
     )
@@ -269,15 +253,6 @@ class ConventionFormSteps:
             else:
                 self.steps = hlm_sem_type_steps
 
-        if (
-            request.user.is_authenticated
-            and not request.user.is_superuser
-            and not request.user.is_instructeur()
-        ):
-            self.steps = [
-                step for step in self.steps if step not in instructeur_only_steps
-            ]
-
         if active_classname:
             self.step_index = [
                 i
@@ -286,26 +261,26 @@ class ConventionFormSteps:
             ][0]
 
     @property
-    def total_step_number(self):
+    def total_step_number(self) -> int:
         return len(self.steps)
 
     @property
-    def current_step_number(self):
+    def current_step_number(self) -> int:
         return self.step_index + 1
 
     @property
-    def current_step(self):
+    def current_step(self) -> ConventionFormStep:
         return self.steps[self.step_index]
 
     @property
-    def next_step(self):
+    def next_step(self) -> ConventionFormStep:
         if self.current_step_number < self.total_step_number:
             return self.steps[self.step_index + 1]
 
         return self.last_step_path
 
     @property
-    def previous_step(self):
+    def previous_step(self) -> ConventionFormStep | None:
         if self.step_index > 0:
             return self.steps[self.step_index - 1]
 
