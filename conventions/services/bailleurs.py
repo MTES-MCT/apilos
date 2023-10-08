@@ -78,6 +78,7 @@ class ConventionBailleurService(ConventionService):
                 "gestionnaire_signataire_bloc_signature": (
                     self.convention.gestionnaire_signataire_bloc_signature
                 ),
+                "administration": self.convention.administration,
             },
         )
 

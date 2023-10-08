@@ -3,6 +3,7 @@ from django.db.models import QuerySet
 from django.utils.safestring import mark_safe
 
 from bailleurs.models import Bailleur, NatureBailleur, SousNatureBailleur
+from instructeurs.models import Administration
 
 
 class ChangeBailleurForm(forms.Form):
@@ -25,6 +26,12 @@ class ChangeBailleurForm(forms.Form):
 
 class ConventionBailleurForm(forms.Form):
     uuid = forms.UUIDField(required=False)
+    administration = forms.ModelChoiceField(
+        label="Administration",
+        queryset=Administration.objects.all(),
+        to_field_name="uuid",
+        required=False,
+    )
 
     signataire_nom = forms.CharField(
         label="Nom du signataire de la convention",
