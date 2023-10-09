@@ -21,6 +21,7 @@ class ConventionService(ABC):
     editable_after_upload: bool = False
     form: Form | None = None
     formset = None
+    upform: Form | None
     extra_forms: dict[str, Form | None] | None = None
 
     def __init__(

@@ -7,7 +7,6 @@ from .views import (
     ConventionActivesSearchView,
     ConventionEnInstructionSearchView,
     ConventionTermineesSearchView,
-    ConventionAdministrationView,
     LoyerSimulateurView,
 )
 
@@ -163,11 +162,6 @@ urlpatterns = [
         "commentaires/<convention_uuid>",
         views.ConventionCommentairesView.as_view(),
         name="commentaires",
-    ),
-    path(
-        "administration/<convention_uuid>",
-        ConventionAdministrationView.as_view(),
-        name="administration",
     ),
     path(
         "avenant_commentaires/<convention_uuid>",

@@ -408,7 +408,11 @@ class ConventionView(ABC, BaseConventionView):
             {
                 **base_convention_response_error(request, self.service.convention),
                 **({"form": self.service.form} if self.service.form else {}),
-                **({"upform": self.service.upform} if self.service.upform else {}),
+                **(
+                    {"extra_forms": self.service.extra_forms}
+                    if self.service.extra_forms
+                    else {}
+                ),
                 **({"formset": self.service.formset} if self.service.formset else {}),
                 "form_step": self.steps.get_form_step(),
                 **(

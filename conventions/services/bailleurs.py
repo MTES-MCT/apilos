@@ -93,12 +93,15 @@ class ConventionBailleurService(ConventionService):
                 bailleur_query=self._get_bailleur_query(
                     self.request.POST.get("bailleur") or None
                 ),
-            )
+            ),
         }
 
     def change_bailleur(self):
         self._init_forms()
         self._update_bailleur()
+
+    def change_administration(self):
+        print(self.request.POST)
 
     def update_bailleur(self):
         self._init_forms()
@@ -106,6 +109,7 @@ class ConventionBailleurService(ConventionService):
 
     def _update_bailleur(self):
         bailleur_form = self.extra_forms["bailleur_form"]
+
         if bailleur_form.is_valid():
             bailleur = bailleur_form.cleaned_data["bailleur"]
             self.convention.programme.bailleur = bailleur

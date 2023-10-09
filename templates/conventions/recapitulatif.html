@@ -133,11 +133,6 @@
                     {% if not convention.is_denonciation %}
                         {% include "conventions/actions/generate_convention.html" %}
                     {% endif %}
-                    {% if request.path != "conventions:sent" %}
-                        {% comment %} La convention ne doit pas être affichée sur la vue
-                        Informations détaillées d'une convention finalisée {% endcomment %}
-                        {% include "conventions/actions/update_administration.html" %}
-                    {% endif %}
                     {% include "conventions/actions/cancel_convention.html" %}
                     {% include "conventions/actions/delete.html" %}
                     {% include "conventions/actions/display_spf_info.html" %}
