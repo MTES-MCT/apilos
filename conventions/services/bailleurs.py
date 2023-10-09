@@ -1,9 +1,5 @@
 import logging
 from django.conf import settings
-from django.contrib import messages
-from django.urls import reverse
-
-from django.http.response import HttpResponseRedirect
 
 from bailleurs.models import Bailleur
 from conventions.forms import ChangeBailleurForm, ConventionBailleurForm
