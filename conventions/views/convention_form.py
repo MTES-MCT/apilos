@@ -408,6 +408,7 @@ class ConventionView(ABC, BaseConventionView):
             {
                 **base_convention_response_error(request, self.service.convention),
                 **({"form": self.service.form} if self.service.form else {}),
+                **({"upform": getattr(self.service, "upform", {})}),
                 **(
                     {"extra_forms": self.service.extra_forms}
                     if self.service.extra_forms

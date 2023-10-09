@@ -9,9 +9,10 @@ class ConventionBailleurView(ConventionView):
     service: ConventionBailleurService
 
     def post_action(self):
-        if bool(self.request.POST.get("change_bailleur", False)):
+        if bool(self.request.POST.get("change_bailleur")):
             self.service.change_bailleur()
         elif bool(self.request.POST.get("change_administration")):
+            self.redirect_on_success = "conventions:search_instruction"
             self.service.change_administration()
         else:
             self.service.update_bailleur()

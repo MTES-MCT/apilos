@@ -173,11 +173,13 @@
                             <div class="fr-btn fr-mt-auto fr-ml-auto fr-mb-1w">Changer l'administration</div>
                         </summary>
                         <form method="post" action="">
+                            {{ form.errors }}
                             {% csrf_token %}
                             {% with convention_uuid_str=convention.uuid|stringformat:"s" %}
                                 {% url 'users:search_administration' as search_administration_url %}
                                 {% include "common/form/input_search_select.html" with form_input=form.administration url=search_administration_url %}
                             {% endwith %}
+                            {% include "common/form/input_text.html" with form_input=form.verification %}
 
                             <button
                                 name="change_administration"
