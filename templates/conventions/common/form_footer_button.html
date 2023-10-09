@@ -6,16 +6,12 @@
                     <a href="{% url form_step.next_target convention_uuid=convention.uuid %}" class="fr-link">Passer cette étape</a>
                 {% endif %}
             </div>
-            {% if warning %}
-                {% include "common/modal/confirm_next_and_save.html" %}
-            {% else %}
-                {% include "common/button/next_and_save.html" %}
-            {% endif %}
+            {% include "common/button/next_and_save.html" %}
         </div>
         {% if form_step.previous_target %}
             {% include "common/button/previous.html" with precedent=form_step.previous_target convention_uuid=convention.uuid %}
         {% endif %}
     {% else %}
-        {% include "common/button/noteditable_button.html" %}
+        {% include "common/button/noteditable_button.html"%}
     {% endif %}
 </div>
