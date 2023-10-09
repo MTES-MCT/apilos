@@ -1,4 +1,3 @@
-import logging
 from django.conf import settings
 
 from bailleurs.models import Bailleur
@@ -10,8 +9,6 @@ from conventions.models.convention import Convention
 from conventions.services import utils
 from conventions.services.conventions import ConventionService
 from programmes.models.models import Programme
-
-logger = logging.getLogger(__name__)
 
 
 class ConventionBailleurService(ConventionService):
