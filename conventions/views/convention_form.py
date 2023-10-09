@@ -363,7 +363,7 @@ class ConventionView(ABC, BaseConventionView):
             {
                 **base_convention_response_error(request, service.convention),
                 **({"form": service.form} if service.form else {}),
-                **({"upform": service.upform} if service.upform else {}),
+                **({"extra_forms": service.extra_forms} if service.extra_forms else {}),
                 **({"formset": service.formset} if service.formset else {}),
                 "form_step": self.steps.get_form_step(),
                 "editable_after_upload": (

@@ -14,12 +14,12 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="fr-container-fluid ds_banner">
+    {# Bailleur #}
+    <div class="fr-container ds_banner">
         {% include "conventions/common/form_header.html"%}
         {% include "common/step_progressbar.html"%}
         {% with bailleur=convention.bailleur %}
-            <div class="fr-container">
+            {% with form=extra_forms.bailleur_form %}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-12">
                         <h4 class="fr-mb-0">Entreprise bailleur</h4>
@@ -39,21 +39,20 @@
                         </div>
                     </div>
                     <div class="fr-col-12 fr-col-lg-6">
-
                         <div class="fr-col-12">{% if bailleur.nature_bailleur == NATURE_BAILLEUR.PRIVES %}Email{% else %}SIRET{% endif %} : {{bailleur.siret}}</div>
                         {% if bailleur.capital_social %}
                             <div class="fr-col-12">Capital social : {{bailleur.capital_social}}</div>
                         {% endif %}
                     </div>
                     <hr class="fr-col-12 fr-mt-3w">
-                    {% if upform.bailleur.field.choices|length > 1 or upform.errors %}
+                    {% if form.bailleur.field.choices|length > 1 or form.errors %}
                         <div class="fr-col-12">
                             <div class="block--row-strech">
                                 <div class="block--row-strech-1 fr-mr-2w">
-                                    <div class=" fr-text--lg fr-mb-0"><strong>Ce n'est pas le bon bailleur ? </strong></div>
+                                    <div class="fr-text--lg fr-mb-0"><strong>Ce n'est pas le bon bailleur ? </strong></div>
                                     <div>Vous pouvez demander l'attribution de cette convention à un autre bailleur.</div>
                                 </div>
-                                <details {% if upform.errors %}open{% endif %} class="fr-mt-3w">
+                                <details {% if form.errors %}open{% endif %} class="fr-mt-3w">
                                     <summary>
                                         <div class="fr-btn">Changer le bailleur de cette convention et de son opération</div>
                                     </summary>
@@ -61,7 +60,7 @@
                                         <form method="post" action="">
                                             {% csrf_token %}
                                             {% url 'users:search_bailleur' as search_bailleur_url %}
-                                            {% include "common/form/input_search_select.html" with form_input=upform.bailleur url=search_bailleur_url %}
+                                            {% include "common/form/input_search_select.html" with form_input=form.bailleur url=search_bailleur_url %}
                                             <button class="fr-btn" name="change_bailleur" value="True">
                                                 Changer le bailleur
                                             </button>
@@ -71,60 +70,26 @@
                             </div>
                         </div>
                     {% endif %}
-                    <div class="fr-col-12 fr-mb-0 fr-text--sm"><em>Vous pouvez{% if upform.bailleur.field.choices%} également{% endif %} mettre à jour les informations de votre bailleur, si celles-ci sont erronées, dans
-                        <a href="{% url 'settings:edit_bailleur' bailleur_uuid=convention.bailleur.uuid %}" target="_blank" rel="noopener">votre espace d'administration</a></em>
+                    <div class="fr-col-12 fr-mb-0 fr-text--sm">
+                        <em>Vous pouvez{% if form.bailleur.field.choices%} également{% endif %} mettre à jour les informations de votre bailleur, si celles-ci sont erronées, dans
+                            <a
+                                href="{% url 'settings:edit_bailleur' bailleur_uuid=convention.bailleur.uuid %}"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                votre espace d'administration
+                            </a>
+                        </em>
                     </div>
-                    <hr class="fr-col-12 fr-my-3w">
                 </div>
-            </div>
+            {% endwith %}
         {% endwith %}
-
-        <div class="fr-container">
-            <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12">
-                    <h4 class="fr-mb-0">Administration</h4>
-                </div>
-                <div class="fr-col-12 fr-text--lg fr-mb-0">
-                    <strong>
-                        {{ convention.administration }}
-                    </strong>
-                </div>
-            </div>
-            <div class="fr-col-12 fr-mt-1w">
-                <div>
-                    <div class="block--row-strech-1">
-                        <strong>Ce n'est pas la bonne administration ? </strong>
-                        <p>Vous pouvez changer l'administration de cette convention. <br/>
-                            cette opération est irréversible et vous fera perdre l'accès à cette convention.</p>
-                    </div>
-                    <details {% if upform.errors %}open{% endif %} class="fr-mt-3w">
-                        <summary>
-                            <div class="fr-btn fr-mt-auto">Changer l'administration</div>
-                        </summary>
-                        <div class="fr-mt-1w">
-                            <form method="post" action="">
-                                {% csrf_token %}
-                                {% with convention_uuid_str=convention.uuid|stringformat:"s" %}
-                                    {% with 'users:search_administration' as url %}
-                                        {% include "common/form/input_search_select.html" with form_input=form.administration %}
-                                    {% endwith %}
-                                {% endwith %}
-                                <button
-                                    name="change_administration"
-                                    value="True"
-                                    class="fr-btn fr-btn--icon-left fr-icon-warning-line" type="submit" form="{{ form_id }}">
-                                    Valider le changement d'administration
-                                </button>
-                            </form>
-                        </div>
-                    </details>
-                </div>
-            </div>
-            <hr class="fr-col-12 fr-my-3w">
-        </div>
     </div>
+    {# Fin bailleur #}
 
+    {# Signataire #}
     <div class="fr-container">
+        <hr class="fr-col-12 fr-mt-3w">
         <form method="post" action="">
             {% csrf_token %}
 
@@ -176,9 +141,58 @@
                     {% endif %}
                 </div>
             </div>
-            {% include "common/required_fields_info.html" %}
-            {% include "conventions/common/form_footer_button.html" %}
         </form>
+        {% include "common/required_fields_info.html" %}
     </div>
+
+    {# Administration #}
+    <div class="fr-container">
+        <hr class="fr-col-12 fr-my-3w">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12">
+                <h4 class="fr-mb-0">Administration</h4>
+            </div>
+            <div class="fr-col-12 fr-text--lg fr-mb-0">
+                <strong>
+                    {{ convention.administration }}
+                </strong>
+            </div>
+        </div>
+        {% with form=extra_forms.administration_form %}
+            <div class="fr-col-12 fr-mt-1w">
+                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
+                    <div class="fr-col-12 fr-col-md-7">
+                        <strong>Ce n'est pas la bonne administration ?</strong>
+                        <p>
+                            Vous pouvez changer l'administration de cette convention. <br />
+                            cette opération est irréversible et vous fera perdre l'accès à cette convention.
+                        </p>
+                    </div>
+                    <details {% if form.errors %}open{% endif %} class="fr-mt-3w fr-col-12 fr-col-md-5">
+                        <summary>
+                            <div class="fr-btn fr-mt-auto fr-mb-1w">Changer l'administration</div>
+                        </summary>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            {% with convention_uuid_str=convention.uuid|stringformat:"s" %}
+                                {% url 'users:search_administration' as search_administration_url %}
+                                {% include "common/form/input_search_select.html" with form_input=form.administration url=search_administration_url %}
+                            {% endwith %}
+                            <button name="change_administration" value="True"
+                                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-warning-line" type="submit"
+                                form="{{ form_id }}"
+                            >
+                                Valider le changement d'administration
+                            </button>
+                        </form>
+                    </details>
+                </div>
+            </div>
+        {% endwith %}
+    </div>
+    {# Fin administration #}
+
+    <div class="fr-container">
+        {% include "conventions/common/form_footer_button.html" %}
     </div>
 {% endblock %}

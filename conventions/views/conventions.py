@@ -49,15 +49,11 @@ from conventions.services.search import (
 )
 from conventions.services.utils import ReturnStatus, base_convention_response_error
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
+from core.request import AuthenticatedHttpRequest
 from core.storage import client
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
 from upload.services import UploadService
-from users.models import User
-
-
-class AuthenticatedHttpRequest(HttpRequest):
-    user: User
 
 
 class RecapitulatifView(BaseConventionView):
