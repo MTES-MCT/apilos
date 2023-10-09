@@ -19,14 +19,3 @@ class UpdateConventionAdministrationForm(forms.Form):
             "invalid_choice": "invalid : Vous devez choisir une administration",
         },
     )
-
-    verification = forms.CharField(
-        label="Vérification",
-        validators=[RegexValidator("transférer")],
-        required=True,
-        help_text="La modification d'une administration étant irréversible, "
-        "veuillez <strong>recopier</strong> le mot <strong>transférer</strong> ci-dessous",
-        error_messages={
-            "required": "Vous devez recopier le mot pour valider l'opération",
-        },
-    )
