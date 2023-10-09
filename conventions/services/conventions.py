@@ -55,6 +55,7 @@ def convention_sent(request, convention_uuid):
     return {
         "success": result_status,
         "convention": convention,
+        "upform": upform,  # Obsolète: cette approche sera dépréciée dans le futur, au profit de extra_forms.
         "extra_forms": {
             "upform": upform,
         },
@@ -99,6 +100,7 @@ def convention_post_action(request, convention_uuid):
 
     return {
         "success": result_status,
+        "upform": upform,  # Obsolète: cette approche sera dépréciée dans le futur, au profit de extra_forms.
         "extra_forms": {
             "upform": upform,
         },

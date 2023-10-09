@@ -101,7 +101,24 @@ class ConventionBailleurService(ConventionService):
         self._update_bailleur()
 
     def change_administration(self):
-        print(self.request.POST)
+        pass
+        # self.request.user.check_perm("convention.change_convention", self.convention)
+        # self.form = UpdateConventionAdministrationForm(self.request.POST)
+
+        # if self.form.is_valid():
+        #     if self.convention.parent:
+        #         convention = Convention.objects.get(id=self.convention.parent.id)
+        #     else:
+        #         convention = self.convention
+
+        #     new_administration = self.form.cleaned_data["administration"]
+        #     avenants_to_updates = convention.avenants.all()
+        #     conventions_to_update = [convention, *avenants_to_updates]
+
+        #     Programme.objects.filter(conventions__in=conventions_to_update).update(
+        #         administration=new_administration
+        #     )
+        #     self.return_status = utils.ReturnStatus.SUCCESS       print(self.request.POST)
 
     def update_bailleur(self):
         self._init_forms()
