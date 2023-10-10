@@ -36,7 +36,7 @@ def find_ecoloweb_conventions():
 
 
 def update_conventions_status(conventions):
-    conventions.update(statut=ConventionStatut.SIGNEE)
+    conventions.update(statut=ConventionStatut.SIGNEE.label)
     logger.warning("%s conventions ont été mises à jour au statut Signée")
 
 
