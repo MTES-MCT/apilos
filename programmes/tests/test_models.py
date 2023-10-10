@@ -1,6 +1,7 @@
 import random
 from datetime import date
 
+from django.forms import model_to_dict
 from django.test import TestCase
 
 from bailleurs.models import Bailleur
@@ -395,3 +396,79 @@ class ReferenceCadastraleTest(TestCase):
             ReferenceCadastrale.compute_surface(529814), "52 ha 98 a 14 ca"
         )
         self.assertEqual(ReferenceCadastrale.compute_surface(), "0 ha 0 a 0 ca")
+
+
+class LogementModelsTest(TestCase):
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.lot = Lot.objects.order_by("-uuid").first()
+        for designation in ["B1", "B2"]:
+            Logement.objects.create(
+                designation=designation,
+                lot=self.lot,
+                typologie=TypologieLogement.T1,
+                surface_habitable=10.00,
+                surface_annexes=10.00,
+                surface_annexes_retenue=5.00,
+                surface_utile=15.00,
+                loyer_par_metre_carre=5,
+                coeficient=1.0000,
+                loyer=75.00,
+            )
+
+    def test_clone(self):
+        cloned_programme1 = self.lot.programme.clone()
+        cloned_lot1 = self.lot.clone(cloned_programme1)
+
+        logement = self.lot.logements.get(designation="B1")
+        self.assertEqual(logement.typologie, TypologieLogement.T1)
+
+        Annexe.objects.create(
+            logement=logement,
+            typologie=logement.typologie,
+            surface_hors_surface_retenue=5,
+            loyer_par_metre_carre=0.1,
+            loyer=0.5,
+        )
+        cloned_logement = logement.clone(cloned_lot1, typologie=TypologieLogement.T1BIS)
+
+        annexe = logement.annexes.get(logement__designation="B1")
+        cloned_annexe = cloned_logement.annexes.get(logement__designation="B1")
+
+        fields = [
+            "designation",
+            "surface_habitable",
+            "surface_annexes",
+            "surface_annexes_retenue",
+            "surface_utile",
+            "loyer_par_metre_carre",
+            "coeficient",
+            "loyer",
+        ]
+        self.assertEqual(
+            model_to_dict(logement, fields=fields),
+            model_to_dict(cloned_logement, fields=fields),
+        )
+        self.assertEqual(cloned_logement.typologie, TypologieLogement.T1BIS)
+
+        annexe_fields = [
+            "typologie",
+            "surface_hors_surface_retenue",
+            "loyer_par_metre_carre",
+            "loyer",
+        ]
+        self.assertEqual(
+            model_to_dict(annexe, fields=annexe_fields),
+            model_to_dict(cloned_annexe, fields=annexe_fields),
+        )

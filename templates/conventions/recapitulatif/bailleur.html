@@ -74,4 +74,8 @@
             {{ convention.administration }}
         </div>
     </div>
+
+    {% if convention.is_avenant %}
+        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="bailleur" %}
+    {% endif %}
 {% endblock %}

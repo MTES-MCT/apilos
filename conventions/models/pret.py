@@ -1,7 +1,10 @@
 import uuid
+from typing import Any
 
 from django.db import models
+from django.forms import model_to_dict
 
+from conventions.models import Convention
 from conventions.models.choices import Preteur
 
 
@@ -34,6 +37,25 @@ class Pret(models.Model):
         "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": autre,
     }
     sheet_name = "Financements"
+
+    def __str__(self):
+        return f"{self.convention} ({self.preteur})"
+
+    def clone(self, convention: Convention, **kwargs: dict[str, Any]) -> "Pret":
+        pret_fields = (
+            model_to_dict(
+                self,
+                exclude=[
+                    "uuid",
+                    "id",
+                    "cree_le",
+                    "mis_a_jour_le",
+                ],
+            )
+            | {"convention": convention}
+            | kwargs
+        )
+        return Pret.objects.create(**pret_fields)
 
     def _get_preteur(self):
         return self.get_preteur_display()

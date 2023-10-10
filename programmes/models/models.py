@@ -1,5 +1,6 @@
 import logging
 import uuid
+from typing import Any
 
 from django.db import models
 from django.db.models.signals import pre_save
@@ -696,6 +697,27 @@ class Logement(models.Model):
     def bailleur(self):
         return self.lot.programme.bailleur
 
+    def clone(self, lot: Lot, **kwargs: dict[str, Any]) -> "Logement":
+        logement_fields = (
+            model_to_dict(
+                self,
+                exclude=[
+                    "uuid",
+                    "id",
+                    "cree_le",
+                    "mis_a_jour_le",
+                ],
+            )
+            | {"lot": lot}
+            | kwargs
+        )
+        cloned_logement = Logement.objects.create(**logement_fields)
+
+        for annexe in self.annexes.all():
+            annexe.clone(cloned_logement)
+
+        return cloned_logement
+
     def __str__(self):
         return self.designation
 
@@ -779,6 +801,25 @@ class Annexe(models.Model):
     @property
     def bailleur(self):
         return self.logement.lot.programme.bailleur
+
+    def clone(self, cloned_logement, **kwargs):
+        annexe_fields = model_to_dict(
+            self,
+            exclude=[
+                "uuid",
+                "id",
+                "logement",
+                "cree_le",
+                "mis_a_jour_le",
+            ],
+        )
+        annexe_fields.update(
+            {
+                "logement": cloned_logement,
+            }
+        )
+        cloned_annexe = Annexe(**annexe_fields)
+        cloned_annexe.save()
 
     def __str__(self):
         return f"{self.typologie} - {self.logement}"

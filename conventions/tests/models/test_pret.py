@@ -70,3 +70,19 @@ class PretModelsTest(TestCase):
 
     def test_xlsx(self):
         utils_assertions.assert_xlsx(self, Pret, "financement")
+
+    def test_clone(self):
+        pret = Pret.objects.first()
+        pret.autre = "quelque chose"
+        pret.numero = "001"
+        pret.save()
+
+        convention = Convention.objects.first()
+
+        clone = pret.clone(convention=convention, autre="autre chose")
+
+        self.assertEqual(clone.convention, convention)
+        self.assertEqual(clone.numero, "001")
+        self.assertEqual(clone.autre, "autre chose")
+        for k in ("uuid", "id", "cree_le", "mis_a_jour_le"):
+            self.assertNotEqual(getattr(clone, k), getattr(pret, k))

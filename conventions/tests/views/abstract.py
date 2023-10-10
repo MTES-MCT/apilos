@@ -8,16 +8,17 @@ class AbstractCreateViewTestCase:
     convention_75: Convention
     target_path: str
     next_target_starts_with: str | None = None
-    target_template: str
+    target_template: str | None
     error_payload: dict
     success_payload: dict
     msg_prefix: str
     post_success_http_code: int = 302
+    post_error_http_code: int = 200
+    get_expected_http_code: int = 200
 
     def setUp(self):
         self.convention_75 = Convention.objects.filter(numero="0001").first()
         self.target_path = ""
-        self.next_target_path = ""
         self.target_template = ""
         self.error_payload = {}
         self.success_payload = {}
@@ -30,6 +31,9 @@ class AbstractCreateViewTestCase:
         if self.next_target_starts_with:
             self.assertTrue(response.url.startswith(self.next_target_starts_with))
 
+    def _login_as_superuser(self):
+        self.client.login(username="nicolas", password="12345")
+
     def test_view_not_logged(self):
         # user not logged -> redirect to login
         response = self.client.get(self.target_path)
@@ -41,20 +45,18 @@ class AbstractCreateViewTestCase:
         )
 
     def test_view_superuser(self):
-        # login as superuser
-        response = self.client.post(
-            reverse("login"), {"username": "nicolas", "password": "12345"}
-        )
-        response = self.client.get(self.target_path)
-        self.assertEqual(response.status_code, 200, msg=f"{self.msg_prefix}")
+        self._login_as_superuser()
 
-        response = self.client.post(
-            self.target_path,
-            self.success_payload,
+        response = self.client.get(self.target_path)
+        self.assertEqual(
+            response.status_code, self.get_expected_http_code, msg=f"{self.msg_prefix}"
         )
+
+        response = self.client.post(self.target_path, self.success_payload)
         self.assertEqual(
             response.status_code, self.post_success_http_code, msg=f"{self.msg_prefix}"
         )
+
         self._test_redirect(response)
         self._test_data_integrity()
 
@@ -62,10 +64,15 @@ class AbstractCreateViewTestCase:
             self.target_path,
             self.error_payload,
         )
-        self.assertEqual(response.status_code, 200, msg=f"{self.msg_prefix}")
-        self.assertTemplateUsed(
-            response, self.target_template, msg_prefix=self.msg_prefix
+        self.assertEqual(
+            response.status_code, self.post_error_http_code, msg=f"{self.msg_prefix}"
         )
+
+        if self.target_template is not None:
+            self.assertTemplateUsed(
+                response, self.target_template, msg_prefix=self.msg_prefix
+            )
+
         self._test_data_integrity()
 
     def test_view_instructeur_ok(self):
@@ -74,7 +81,9 @@ class AbstractCreateViewTestCase:
             reverse("login"), {"username": "fix", "password": "654321"}
         )
         response = self.client.get(self.target_path)
-        self.assertEqual(response.status_code, 200, msg=f"{self.msg_prefix}")
+        self.assertEqual(
+            response.status_code, self.get_expected_http_code, msg=f"{self.msg_prefix}"
+        )
 
         response = self.client.post(self.target_path, self.success_payload)
         self.assertEqual(
@@ -88,7 +97,9 @@ class AbstractCreateViewTestCase:
             reverse("login"), {"username": "raph", "password": "12345"}
         )
         response = self.client.get(self.target_path)
-        self.assertEqual(response.status_code, 200, msg=f"{self.msg_prefix}")
+        self.assertEqual(
+            response.status_code, self.get_expected_http_code, msg=f"{self.msg_prefix}"
+        )
 
         response = self.client.post(self.target_path, self.success_payload)
         self.assertEqual(

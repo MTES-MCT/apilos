@@ -21,6 +21,7 @@ class ProgrammeAdmin(ApilosModelAdmin):
     fields = (
         "uuid",
         "nom",
+        "adresse",
         "code_postal",
         "ville",
         "numero_galion",

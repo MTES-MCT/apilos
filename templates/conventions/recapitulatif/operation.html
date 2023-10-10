@@ -39,6 +39,9 @@
                         {% include "common/display_field_if_exists.html" with label="Nombre de bureaux (non-conventionnés)" value=programme.nb_bureaux object_field="programme__nb_bureaux__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Autres logements non-conventionnés" value=programme.autres_locaux_hors_convention object_field="programme__autres_locaux_hors_convention__"|add:programme_uuid %}
                     </div>
+                    {% if convention.is_avenant %}
+                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="programme" %}
+                    {% endif %}
                 </div>
             </div>
         </div>

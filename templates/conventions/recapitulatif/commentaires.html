@@ -15,6 +15,9 @@
                     </div>
                     {% include "common/display_text_and_files_if_exists.html" with text=convention.commentaires|get_text_from_textfiles file_list=convention.commentaires|get_files_from_textfiles %}
                     {% include "common/display_text_and_files_if_exists.html" with text=convention.attached|get_text_from_textfiles label="Fichiers à joindre à la convention" file_list=convention.attached|get_files_from_textfiles object_field="convention__attached__"|add:convention_uuid%}
+                    {% if convention.is_avenant %}
+                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="commentaires" %}
+                    {% endif %}
                 </div>
             </div>
         </div>

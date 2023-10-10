@@ -1,4 +1,10 @@
+from uuid import UUID
+
 import datetime
+import logging
+from django.db import transaction
+from django.http import HttpRequest
+from typing import Any
 
 from conventions.forms import AvenantsforavenantForm, InitavenantsforavenantForm
 from conventions.forms.avenant import AvenantForm
@@ -7,8 +13,10 @@ from conventions.services import utils
 from conventions.services.search import AvenantListSearchService
 from upload.services import UploadService
 
+logger = logging.getLogger(__name__)
 
-def create_avenant(request, convention_uuid):
+
+def create_avenant(request: HttpRequest, convention_uuid: UUID) -> dict[str, Any]:
     parent_convention = (
         Convention.objects.prefetch_related("programme")
         .prefetch_related("lot")
@@ -22,6 +30,7 @@ def create_avenant(request, convention_uuid):
             .prefetch_related("avenants")
             .get(id=parent_convention.parent_id)
         )
+
     if request.method == "POST":
         avenant_form = AvenantForm(request.POST)
         if avenant_form.is_valid():
@@ -29,14 +38,18 @@ def create_avenant(request, convention_uuid):
                 avenant = Convention.objects.get(uuid=avenant_form.cleaned_data["uuid"])
             else:
                 convention_to_clone = _get_last_avenant(parent_convention)
-                avenant = convention_to_clone.clone(
-                    request.user, convention_origin=parent_convention
-                )
+
+                with transaction.atomic():
+                    avenant = convention_to_clone.clone(
+                        request.user, convention_origin=parent_convention
+                    )
+
             avenant_type = AvenantType.objects.get(
                 nom=avenant_form.cleaned_data["avenant_type"]
             )
             avenant.avenant_types.add(avenant_type)
-            avenant.save()
+            avenant.save()  # TODO: check if this is necessary
+
             return {
                 "success": utils.ReturnStatus.SUCCESS,
                 "convention": avenant,
@@ -55,7 +68,9 @@ def create_avenant(request, convention_uuid):
     }
 
 
-def upload_avenants_for_avenant(request, convention_uuid):
+def upload_avenants_for_avenant(
+    request: HttpRequest, convention_uuid: UUID
+) -> dict[str, Any]:
     parent_convention = (
         Convention.objects.prefetch_related("programme")
         .prefetch_related("lot")
@@ -95,7 +110,7 @@ def upload_avenants_for_avenant(request, convention_uuid):
     }
 
 
-def _get_last_avenant(convention):
+def _get_last_avenant(convention: Convention) -> Convention:
     avenants_status = {avenant.statut for avenant in convention.avenants.all()}
     if {
         ConventionStatut.PROJET.label,
@@ -107,7 +122,9 @@ def _get_last_avenant(convention):
     return ordered_avenants[0] if ordered_avenants else convention
 
 
-def complete_avenants_for_avenant(request, convention_uuid):
+def complete_avenants_for_avenant(
+    request: HttpRequest, convention_uuid: UUID
+) -> dict[str, Any]:
     avenant = Convention.objects.get(uuid=convention_uuid)
     convention_parent = avenant.parent
     avenant_search_service = AvenantListSearchService(
@@ -115,6 +132,7 @@ def complete_avenants_for_avenant(request, convention_uuid):
     )
 
     avenant_numero = avenant.get_default_convention_number()
+
     if request.method == "POST":
         avenant_form = AvenantsforavenantForm(request.POST, request.FILES)
         if avenant_form.is_valid():
@@ -144,6 +162,7 @@ def complete_avenants_for_avenant(request, convention_uuid):
             }
     else:
         avenant_form = AvenantsforavenantForm()
+
     return {
         "success": utils.ReturnStatus.ERROR,
         "avenant_numero": avenant_numero,
@@ -153,3 +172,23 @@ def complete_avenants_for_avenant(request, convention_uuid):
         "avenant_form": avenant_form,
         "convention_parent": convention_parent,
     }
+
+
+def remove_avenant_type_from_avenant(avenant_type: str, convention_uuid: UUID) -> None:
+    try:
+        avenant_type = AvenantType.objects.get(nom=avenant_type)
+    except AvenantType.DoesNotExist:
+        logger.error(f"No avenant type named '{avenant_type}'")
+        return
+
+    try:
+        avenant = Convention.objects.avenants().get(uuid=convention_uuid)
+    except Convention.DoesNotExist:
+        logger.error(f"No avenant with uuid '{convention_uuid}'")
+        return
+
+    if not avenant.avenant_types.filter(pk=avenant_type.pk).exists():
+        return
+
+    with transaction.atomic():
+        avenant.avenant_types.remove(avenant_type)

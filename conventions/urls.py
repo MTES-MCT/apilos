@@ -228,7 +228,16 @@ urlpatterns = [
         views.fiche_caf,
         name="fiche_caf",
     ),
-    path("new_avenant/<convention_uuid>", views.new_avenant, name="new_avenant"),
+    path(
+        "new_avenant/<uuid:convention_uuid>",
+        views.new_avenant,
+        name="new_avenant",
+    ),
+    path(
+        "remove_from_avenant/<uuid:convention_uuid>",
+        views.remove_from_avenant,
+        name="remove_from_avenant",
+    ),
     path(
         "piece_jointe/<piece_jointe_uuid>",
         views.piece_jointe_access,
@@ -254,12 +263,12 @@ urlpatterns = [
         name="search_for_avenant",
     ),
     path(
-        "new_avenants_for_avenant/<convention_uuid>",
+        "new_avenants_for_avenant/<uuid:convention_uuid>",
         views.new_avenants_for_avenant,
         name="new_avenants_for_avenant",
     ),
     path(
-        "form_avenants_for_avenant/<convention_uuid>",
+        "form_avenants_for_avenant/<uuid:convention_uuid>",
         views.form_avenants_for_avenant,
         name="form_avenants_for_avenant",
     ),

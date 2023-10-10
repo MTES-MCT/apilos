@@ -79,6 +79,10 @@
                     {% else %}
                         {% include "common/display_field_if_exists.html" with label="Fonds propres" value=convention.fond_propre object_field="convention__fond_propre__"|add:convention_uuid %}
                     {% endif %}
+
+                    {% if convention.is_avenant %}
+                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="duree" %}
+                    {% endif %}
                 </div>
             </div>
         </div>
