@@ -8,6 +8,8 @@ from django.apps import apps
 from django.db import models
 from django.db.models import Q
 from django.forms import model_to_dict
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
 
 from conventions.models import TypeEvenement
 from conventions.models.avenant_type import AvenantType
@@ -126,7 +128,7 @@ class Convention(models.Model):
         AvenantType,
         blank=True,
         max_length=50,
-        related_name="avenant_types",
+        related_name="conventions",
         verbose_name="Type d'avenant",
     )
     signataire_nom = models.CharField(max_length=255, null=True, blank=True)
@@ -283,6 +285,18 @@ class Convention(models.Model):
             logger.warning(e)
 
         return None
+
+    @property
+    def last_avenant(self):
+        avenants_status = {avenant.statut for avenant in self.avenants.all()}
+        if {
+            ConventionStatut.PROJET.label,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+        } & avenants_status:
+            raise Exception("Ongoing avenant already exists")
+        ordered_avenants = self.avenants.order_by("-cree_le")
+        return ordered_avenants[0] if ordered_avenants else self
 
     def __str__(self):
         programme = self.programme
@@ -718,3 +732,35 @@ class Convention(models.Model):
 
     def get_status_definition(self):
         return ConventionStatut.get_by_label(self.statut)
+
+
+def _update_nested_convention_field(field, instance, previous_value):
+    if "." in field:
+        field_as_list = field.split(".")
+        previous_value = field_as_list[0]
+        field = ".".join(field_as_list[:1])
+        return _update_nested_convention_field(
+            field, getattr(instance, field), previous_value
+        )
+    setattr(instance, field, previous_value)
+    instance.save()
+
+
+@receiver(m2m_changed)
+def post_save_reset_avenant_fields_after_block_delete(
+    sender, instance, action, reverse, model, pk_set, **kwargs
+):
+    if action == "post_remove" and not reverse and model == AvenantType:
+        avenant_type = model.objects.get(pk=pk_set)
+        last_avenant_or_parent = instance.last_avenant or instance.parent
+        for field in avenant_type.fields:
+            if "." not in field:
+                setattr(instance, field, last_avenant_or_parent)
+            else:
+                _update_nested_convention_field(
+                    field,
+                    instance,
+                    getattr(last_avenant_or_parent, field.split(".")[0]),
+                )
+
+        instance.save()

@@ -1,4 +1,20 @@
 from django.db import models
+from bailleurs.models import Bailleur
+from programmes.models import Programme
+
+
+AVENANT_TYPE_FIELDS_MAPPING = {
+    "denonciation": [
+        "date_denonciation",
+        "motif_denonciation",
+        "fichier_instruction_denonciation",
+    ],
+    "champ_libre": [],
+    "programme": [],
+    "commentaires": [],
+    "duree": [],
+    "bailleur": ["programme.bailleur.nom"],
+}
 
 
 class AvenantType(models.Model):
@@ -14,3 +30,7 @@ class AvenantType(models.Model):
         return [
             (avenant_type.nom, avenant_type.nom) for avenant_type in cls.objects.all()
         ]
+
+    @property
+    def fields(self):
+        return AVENANT_TYPE_FIELDS_MAPPING.get(self.nom) or []

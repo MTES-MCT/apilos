@@ -3,7 +3,6 @@ from django.test import TestCase
 
 from conventions.models import Convention, ConventionStatut
 from conventions.services.avenants import (  # complete_avenants_for_avenant,
-    _get_last_avenant,
     create_avenant,
     upload_avenants_for_avenant,
 )
@@ -100,7 +99,7 @@ class ConventionAvenantsServiceTests(TestCase):
         self.assertEqual(result["convention"].champ_libre_avenant, "Coucou")
         self.assertNotEqual(self.convention.champ_libre_avenant, "Coucou")
 
-    def _get_last_avenant_basic(self):
+    def last_avenant_basic(self):
         self._create_avenant()
 
         request = DummyRequest(
@@ -111,9 +110,9 @@ class ConventionAvenantsServiceTests(TestCase):
 
         last_avenant = create_avenant(request, self.convention.uuid)["convention"]
 
-        self.assertEqual(_get_last_avenant(self.convention), last_avenant)
+        self.assertEqual(self.convention.last_avenant, last_avenant)
 
-    def _get_last_avenant_ongoing(self):
+    def last_avenant_ongoing(self):
         request = DummyRequest(
             "POST",
             {"uuid": self.convention.uuid, "avenant_type": "bailleur"},
@@ -125,7 +124,7 @@ class ConventionAvenantsServiceTests(TestCase):
         last_avenant.save()
 
         with self.assertRaises(Exception):
-            _get_last_avenant(self.convention)
+            self.convention.last_avenant
 
-    def _get_last_avenant_without_avenants(self):
-        self.assertEqual(_get_last_avenant(self.convention), self.convention)
+    def last_avenant_without_avenants(self):
+        self.assertEqual(self.convention.last_avenant, self.convention)
