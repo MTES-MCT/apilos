@@ -30,7 +30,7 @@ def create_avenant(request, convention_uuid):
             if avenant_form.cleaned_data["uuid"]:
                 avenant = Convention.objects.get(uuid=avenant_form.cleaned_data["uuid"])
             else:
-                convention_to_clone = parent_convention.last_avenant
+                convention_to_clone = _get_last_avenant(parent_convention)
                 avenant = convention_to_clone.clone(
                     request.user, convention_origin=parent_convention
                 )
@@ -71,7 +71,7 @@ def upload_avenants_for_avenant(request, convention_uuid):
     if request.method == "POST":
         avenant_form = InitavenantsforavenantForm(request.POST)
         if avenant_form.is_valid():
-            convention_to_clone = parent_convention.last_avenant
+            convention_to_clone = _get_last_avenant(parent_convention)
             avenant = convention_to_clone.clone(
                 request.user, convention_origin=parent_convention
             )
@@ -95,6 +95,18 @@ def upload_avenants_for_avenant(request, convention_uuid):
         ),
         "ongoing_avenants": ongoing_avenant_list_service,
     }
+
+
+def _get_last_avenant(convention):
+    avenants_status = {avenant.statut for avenant in convention.avenants.all()}
+    if {
+        ConventionStatut.PROJET.label,
+        ConventionStatut.INSTRUCTION.label,
+        ConventionStatut.CORRECTION.label,
+    } & avenants_status:
+        raise Exception("Ongoing avenant already exists")
+    ordered_avenants = convention.avenants.order_by("-cree_le")
+    return ordered_avenants[0] if ordered_avenants else convention
 
 
 def complete_avenants_for_avenant(request, convention_uuid):

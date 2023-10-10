@@ -1,8 +1,7 @@
 from django.db import models
-from bailleurs.models import Bailleur
-from programmes.models import Programme
 
 
+# TODO : remplir les champs
 AVENANT_TYPE_FIELDS_MAPPING = {
     "denonciation": [
         "date_denonciation",
@@ -10,7 +9,7 @@ AVENANT_TYPE_FIELDS_MAPPING = {
         "fichier_instruction_denonciation",
     ],
     "champ_libre": [],
-    "programme": [],
+    "programme": ["programme.nom", "programme.adresse"],
     "commentaires": [],
     "duree": [],
     "bailleur": ["programme.bailleur.nom"],
