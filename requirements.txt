@@ -232,9 +232,9 @@ django-sql-explorer[xls]==3.2.1 \
     --hash=sha256:35e05f40eff91eead10c553cce2ee63033a19ac39c99b9ccdf87552c52784d63 \
     --hash=sha256:735cc39e4ae2629049571229e2f7a8c8a54af4a988fcad12a333597724adaad7
     # via -r requirements.in
-django-storages==1.14.1 \
-    --hash=sha256:18cb6c305fbb2f114c11b5b7b647b6271aa251972dcd4a5651b9cee2b0bd3a8a \
-    --hash=sha256:a2c327d67792eec04c7f5f5bb2900b21f426de8a3a811cea85fac7904bdccf36
+django-storages==1.14.2 \
+    --hash=sha256:1db759346b52ada6c2efd9f23d8241ecf518813eb31db9e2589207174f58f6ad \
+    --hash=sha256:51b36af28cc5813b98d5f3dfe7459af638d84428c8df4a03990c7d74d1bea4e5
     # via -r requirements.in
 djangorestframework==3.14.0 \
     --hash=sha256:579a333e6256b09489cbe0a067e66abe55c6595d8926be6b99423786334350c8 \
