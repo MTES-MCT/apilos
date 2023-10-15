@@ -49,14 +49,14 @@ class ConventionCommentairesServiceTests(TestCase):
             self.convention_commentaires_service.form.initial["uuid"],
             self.convention_commentaires_service.convention.uuid,
         )
-        commentaires = json.loads(
-            self.convention_commentaires_service.convention.commentaires
+        commentaires_text = json.loads(
+            self.convention_commentaires_service.convention.commentaires_text
         )
-        text = commentaires["text"] if "text" in commentaires else None
+        text = commentaires_text["text"] if "text" in commentaires_text else None
         self.assertEqual(
             self.convention_commentaires_service.form.initial["commentaires"], text
         )
-        files = commentaires["files"] if "files" in commentaires else None
+        files = commentaires_text["files"] if "files" in commentaires_text else None
         self.assertEqual(
             json.loads(
                 self.convention_commentaires_service.form.initial["commentaires_files"]
@@ -91,16 +91,16 @@ class ConventionCommentairesServiceTests(TestCase):
 
         self.convention_commentaires_service.save()
         self.convention_commentaires_service.convention.refresh_from_db()
-        commentaires = json.loads(
-            self.convention_commentaires_service.convention.commentaires
+        commentaires_text = json.loads(
+            self.convention_commentaires_service.convention.commentaires_text
         )
         self.assertEqual(
             self.convention_commentaires_service.return_status,
             utils.ReturnStatus.SUCCESS,
         )
-        self.assertEqual(commentaires["text"], "this is a new comment")
+        self.assertEqual(commentaires_text["text"], "this is a new comment")
         self.assertEqual(
-            commentaires["files"],
+            commentaires_text["files"],
             {
                 "bbfc7e3a-e0e7-4899-a1e1-fc632c3ea6b0": {
                     "uuid": "bbfc7e3a-e0e7-4899-a1e1-fc632c3ea6b0",

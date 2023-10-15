@@ -93,7 +93,7 @@ class Convention(models.Model):
     )
     # fix me: weird to keep fond_propre here
     fond_propre = models.FloatField(null=True, blank=True)
-    commentaires = models.TextField(null=True, blank=True)
+    commentaires_text = models.TextField(null=True, blank=True)
     attached = models.TextField(null=True, blank=True)
     statut = models.CharField(
         max_length=25,
@@ -272,7 +272,7 @@ class Convention(models.Model):
     @property
     def description_avenant(self):
         try:
-            json_data = json.loads(self.commentaires)
+            json_data = json.loads(self.commentaires_text)
             if (
                 "text" in json_data
                 and isinstance(json_data["text"], dict)
@@ -594,7 +594,7 @@ class Convention(models.Model):
             self,
             exclude=[
                 "avenant_types",
-                "commentaires",
+                "commentaires_text",
                 "cree_le",
                 "date_resiliation",
                 "donnees_validees",

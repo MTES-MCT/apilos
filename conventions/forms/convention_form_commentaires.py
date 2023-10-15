@@ -4,9 +4,10 @@
 
 from django import forms
 
+from files.forms import MultipleFileField
+
 
 class ConventionCommentForm(forms.Form):
-
     uuid = forms.UUIDField(
         required=False,
         label="Commentaires",
@@ -33,7 +34,7 @@ class ConventionCommentForm(forms.Form):
         required=False,
     )
 
-    commentaires = forms.CharField(
+    commentaires_text = forms.CharField(
         required=False,
         label="Ajoutez vos commentaires à l'attention de l'instructeur",
         max_length=5000,
@@ -42,7 +43,7 @@ class ConventionCommentForm(forms.Form):
         },
     )
 
-    commentaires_files = forms.CharField(
+    commentaires_files = MultipleFileField(
         required=False,
         help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )

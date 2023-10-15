@@ -34,7 +34,7 @@ class ConventionCommentairesViewTests(AbstractEditViewTestCase, TestCase):
     def _test_data_integrity(self):
         self.convention_75.refresh_from_db()
         self.assertEqual(
-            self.convention_75.commentaires,
+            self.convention_75.commentaires_text,
             '{"files": [], "text": "This is a comment"}',
             msg=f"{self.msg_prefix}",
         )

@@ -11,10 +11,8 @@ class ConventionCommentairesService(ConventionService):
         self.form = ConventionCommentForm(
             initial={
                 "uuid": self.convention.uuid,
-                "commentaires": self.convention.commentaires,
-                **utils.get_text_and_files_from_field(
-                    "commentaires", self.convention.commentaires
-                ),
+                "commentaires_text": self.convention.commentaires_text,
+                "commentaires_files": self.convention.files.commentaires(),
                 **utils.get_text_and_files_from_field(
                     "attached", self.convention.attached
                 ),
@@ -28,8 +26,8 @@ class ConventionCommentairesService(ConventionService):
             self.convention.attached = utils.set_files_and_text_field(
                 self.form.cleaned_data["attached_files"],
             )
-            self.convention.commentaires = utils.set_files_and_text_field(
-                self.form.cleaned_data["commentaires_files"],
+            self.convention.commentaires_text = utils.set_files_and_text_field(
+                None,
                 self.form.cleaned_data["commentaires"],
             )
             self.convention.save()
