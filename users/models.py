@@ -318,25 +318,26 @@ class User(AbstractUser):
         )
 
     def _bailleur_ids(self) -> list:
+        bailleur_ids = []
         if self.is_cerbere_user():
             if (
                 "bailleur" in self.siap_habilitation
                 and self.siap_habilitation["bailleur"] is not None
                 and "id" in self.siap_habilitation["bailleur"]
             ):
-                return [self.siap_habilitation["bailleur"]["id"]]
+                bailleur_ids = [self.siap_habilitation["bailleur"]["id"]]
             # NOTE: this exception is commente to allow SIAP bailleurs to access the
             # standalone platform
             # raise ExceptionPermissionConfig(
             #     "Bailleur should be defined in siap_habilitation"
             # )
-
-        bailleur_ids = list(
-            map(
-                lambda role: role.bailleur_id,
-                self.roles.filter(typologie=TypeRole.BAILLEUR),
+        else:
+            bailleur_ids = list(
+                map(
+                    lambda role: role.bailleur_id,
+                    self.roles.filter(typologie=TypeRole.BAILLEUR),
+                )
             )
-        )
         bailleur_ids.extend(
             [
                 bailleur.id
