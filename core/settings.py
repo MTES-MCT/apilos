@@ -564,7 +564,9 @@ CELERY_ACKS_LATE = True
 CELERY_WORKER_MAX_TASKS_PER_CHILD = 5000
 
 # limit reach when an operation has 167 logements
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
+DATA_UPLOAD_MAX_NUMBER_FIELDS = int(
+    get_env_variable("DATA_UPLOAD_MAX_NUMBER_FIELDS", default="100000")
+)
 
 # ClamAV configuration
 CLAMAV_SERVICE_URL = get_env_variable("CLAMAV_SERVICE_URL", default=None)
