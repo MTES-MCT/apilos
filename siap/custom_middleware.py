@@ -1,13 +1,20 @@
 from typing import Tuple
-from django.contrib.auth.models import Group
+
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.forms import model_to_dict
 from django.http import HttpRequest
-from core.exceptions.types import TimeoutSIAPException, HabilitationSIAPException, AssociationHLMSIAPException
-from bailleurs.models import NatureBailleur
-from siap.siap_client.utils import get_or_create_bailleur, get_or_create_administration
+
+from bailleurs.models import Bailleur, NatureBailleur
+from core.exceptions.types import (
+    AssociationHLMSIAPException,
+    FusionAPISIAPException,
+    HabilitationSIAPException,
+    TimeoutSIAPException,
+)
 from siap.siap_client.client import SIAPClient
-from users.models import Role, GroupProfile
+from siap.siap_client.utils import get_or_create_administration, get_or_create_bailleur
+from users.models import GroupProfile, Role
 from users.type_models import TypeRole
 
 
@@ -82,7 +89,10 @@ def set_habilitation_in_session(
 
     # Set habilitation in session
     _find_or_create_entity(
-        request, request.session["habilitation"], session_only=session_only
+        request,
+        cerbere_login,
+        request.session["habilitation"],
+        session_only=session_only,
     )
 
 
@@ -144,7 +154,10 @@ def _manage_role(from_habilitation, session_only=False, **kwargs):
 
 
 def _find_or_create_entity(
-    request: HttpRequest, from_habilitation: dict, session_only: bool = False
+    request: HttpRequest,
+    cerbere_login: str,
+    from_habilitation: dict,
+    session_only: bool = False,
 ):
     request.session["bailleur"] = None
     request.session["administration"] = None
@@ -201,6 +214,26 @@ def _find_or_create_entity(
             user=request.user,
             group=Group.objects.get(name__iexact="bailleur"),
         )
+
+        # Manage Bailleur fusion : declare «absorbant» bailleur as parent of «absorbé»
+        try:
+            bailleur_fusions = SIAPClient.get_instance().get_fusion(
+                user_login=cerbere_login,
+                habilitation_id=from_habilitation["id"],
+                bailleur_siren=bailleur.siren,
+            )
+            chrildren_siren = [
+                fusion["sirenAbsorbe"]
+                for fusion in bailleur_fusions
+                if fusion["sirenAbsorbant"] == bailleur.siren
+            ]
+            Bailleur.objects.filter(parent=bailleur).exclude(
+                siren__in=chrildren_siren
+            ).update(parent=None)
+            Bailleur.objects.filter(siren__in=chrildren_siren).update(parent=bailleur)
+
+        except Exception as e:
+            raise FusionAPISIAPException("Error while get bailleur fusion : %s" % e)
 
     if from_habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_SER_GEST:
         # create if not exists gestionnaire

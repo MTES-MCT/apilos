@@ -769,3 +769,11 @@ operation_mock2 = {
         ],
     },
 }
+
+fusion_mock = [
+    {
+        "sirenAbsorbe": "271200024",
+        "sirenAbsorbant": "426580114",
+        "dateFinValidite": "2023-09-29",
+    }
+]

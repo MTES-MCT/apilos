@@ -17,6 +17,7 @@ from core.exceptions.types import (
 )
 from siap.siap_client.mock_data import (
     config_mock,
+    fusion_mock,
     habilitations_mock,
     menu_mock,
     operation_mock,
@@ -239,6 +240,20 @@ class SIAPClientRemote(SIAPClientInterface):
             f"user doesn't have enough rights to display operation {response}"
         )
 
+    def get_fusion(
+        self, user_login: str, habilitation_id: int, bailleur_siren: str
+    ) -> list:
+        # /services/operation/api-int/v0/journalisation-fusion?siren=
+        response = _call_siap_api(
+            f"/journalisation-fusion?siren={bailleur_siren}",
+            base_route="/services/operation",
+            user_login=user_login,
+            habilitation_id=habilitation_id,
+        )
+        if response.status_code >= 200 and response.status_code < 300:
+            return response.json()
+        raise SIAPException(f"SIAP error returned {response.content}")
+
 
 # Manage SiapClient as a Singleton
 class SIAPClientMock(SIAPClientInterface):
@@ -261,3 +276,8 @@ class SIAPClientMock(SIAPClientInterface):
         self, user_login: str, habilitation_id: int, operation_identifier: str
     ) -> dict:
         return operation_mock
+
+    def get_fusion(
+        self, user_login: str, habilitation_id: int, bailleur_siren: str
+    ) -> list:
+        return fusion_mock
