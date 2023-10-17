@@ -136,10 +136,6 @@ class Programme(IngestableModel):
     ville_signature_residence_agrement_gestionnaire_intermediation = models.CharField(
         null=True, max_length=255
     )  # RESIDENCE
-    date_residence_agrement = models.DateField(null=True)  # RESIDENCE
-    departement_residence_agrement = models.CharField(
-        null=True, max_length=255
-    )  # RESIDENCE
 
     date_achevement_compile = models.DateField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)

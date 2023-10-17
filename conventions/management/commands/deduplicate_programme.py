@@ -8,8 +8,7 @@ from programmes.models.models import Programme
 
 logger = logging.getLogger(__name__)
 
-
-# pylint disable=R0914,R0912,W1203
+# pylint: disable=R0914,R0912,W1203
 class Command(BaseCommand):
     def handle(self, *args, **options):
         num_galion = {
@@ -47,7 +46,6 @@ class Command(BaseCommand):
                     "permis_construire",
                     "departement_residence_argement_gestionnaire_intermediation",
                     "ville_signature_residence_agrement_gestionnaire_intermediation",
-                    "departement_residence_agrement",
                     "mention_publication_edd_volumetrique",
                     "mention_publication_edd_classique",
                 ]:
@@ -73,7 +71,6 @@ class Command(BaseCommand):
                     "date_autorisation_hors_habitat_inclusif",
                     "date_convention_location",
                     "date_residence_argement_gestionnaire_intermediation",
-                    "date_residence_agrement",
                     "date_achevement_compile",
                     "cree_le",
                     "mis_a_jour_le",

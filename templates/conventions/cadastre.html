@@ -73,17 +73,6 @@
                                     {% include "common/form/input_date.html" with form_input=form.date_residence_argement_gestionnaire_intermediation object_field="programme__date_residence_argement_gestionnaire_intermediation__"|add:form.uuid.value %}
                                 </div>
                             </div>
-
-                            <h4>Agrément prévu à l'article R. 353-156</h4>
-                            <span><em>Agrément prévu à l'article R. 353-156 du code de la construction et de l'habitation délivré par le préfet du département</em></span>
-                            <div class="fr-grid-row fr-grid-row--gutters fr-mb-5w">
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w">
-                                    {% include "common/form/input_text.html" with form_input=form.departement_residence_agrement object_field="programme__departement_residence_agrement__"|add:form.uuid.value placeholder="Département" %}
-                                </div>
-                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w">
-                                    {% include "common/form/input_date.html" with form_input=form.date_residence_agrement object_field="programme__date_residence_agrement__"|add:form.uuid.value %}
-                                </div>
-                            </div>
                             <hr>
                         {% endif %}
 
