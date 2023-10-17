@@ -239,7 +239,9 @@ class SIAPClientRemote(SIAPClientInterface):
             f"user doesn't have enough rights to display operation {response}"
         )
 
-    def get_fusion(self, user_login, habilitation_id, bailleur_siren) -> dict:
+    def get_fusion(
+        self, user_login: str, habilitation_id: int, bailleur_siren: str
+    ) -> dict:
         # /services/operation/api-int/v0/journalisation-fusion?siren=
         response = _call_siap_api(
             f"/journalisation-fusion?siren={bailleur_siren}",

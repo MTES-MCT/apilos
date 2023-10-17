@@ -32,3 +32,7 @@ class InconsistentDataSIAPException(SIAPException):
 
 class NotHandledBailleurPriveSIAPException(SIAPException):
     pass
+
+
+class FusionAPISIAPException(SIAPException):
+    pass
