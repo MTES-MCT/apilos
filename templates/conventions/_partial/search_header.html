@@ -1,19 +1,8 @@
 <div class="fr-grid-row fr-mt-2w fr-grid-row--gutters">
     <div class="fr-col-12 fr-my-3w block--row-strech fr-grid-row--middle">
-        {% if request|is_bailleur %}
-            <div class="block--row-strech-1">
-                <h1 class="m-0">Conventions et avenants</h1>
-            </div>
-            {% include "./create_action.html" %}
-        {% elif request|is_instructeur or request.user.is_superuser %}
-            <div class="block--row-strech-1">
-                <h2 class="fr-mb-3w">Bienvenue dans votre espace Instructeur</h2>
-                <p class="apilos-subtitle">
-                    {{ total_conventions }} convention{{ total_conventions|pluralize }} liée{{ total_conventions|pluralize }} à votre administration trouvée{{ total_conventions|pluralize }} dans APiLos
-                </p>
-            </div>
-        {% else %}
-            <p class="fr-mb-3w">Votre profil n'est pas bien configuré, merci de vous rapprocher de votre instructeur</p>
-        {% endif %}
+        <div class="block--row-strech-1">
+            <h1 class="m-0">Conventions et avenants</h1>
+        </div>
+        {% include "./create_action.html" %}
     </div>
 </div>

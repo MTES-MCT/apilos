@@ -3,10 +3,8 @@
         Créer une convention ANRU
     </a>
 </div>
-{% if not request.user.is_staff %}
-    <div>
-        <a class="fr-btn fr-icon-add-line fr-btn--icon-left fr-btn--secondary " href="{% url 'conventions:new_avenant_start' %}">
-            Créer un avenant
-        </a>
-    </div>
-{% endif %}
+<div>
+    <a class="fr-btn fr-icon-add-line fr-btn--icon-left fr-btn--secondary " href="{% url 'conventions:new_avenant_start' %}">
+        Créer un avenant
+    </a>
+</div>

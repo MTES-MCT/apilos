@@ -24,16 +24,6 @@
 
         {% include "conventions/convention_list.html" %}
 
-        <div class="fr-container-fluid">
-            <div class="fr-container">
-                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-                    <div class="fr-my-5w">
-                        <a class="fr-btn fr-icon-add-line fr-btn--icon-left"
-                            href="{% url 'conventions:new_convention' %}">Créer une convention ANRU</a>
-                    </div>
-                </div>
-            </div>
-        </div>
     {% else %}
         {% if request|is_bailleur %}
             {% if CERBERE_AUTH %}
