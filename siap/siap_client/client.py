@@ -17,6 +17,7 @@ from core.exceptions.types import (
 )
 from siap.siap_client.mock_data import (
     config_mock,
+    fusion_mock,
     habilitations_mock,
     menu_mock,
     operation_mock,
@@ -241,7 +242,7 @@ class SIAPClientRemote(SIAPClientInterface):
 
     def get_fusion(
         self, user_login: str, habilitation_id: int, bailleur_siren: str
-    ) -> dict:
+    ) -> list:
         # /services/operation/api-int/v0/journalisation-fusion?siren=
         response = _call_siap_api(
             f"/journalisation-fusion?siren={bailleur_siren}",
@@ -275,3 +276,8 @@ class SIAPClientMock(SIAPClientInterface):
         self, user_login: str, habilitation_id: int, operation_identifier: str
     ) -> dict:
         return operation_mock
+
+    def get_fusion(
+        self, user_login: str, habilitation_id: int, bailleur_siren: str
+    ) -> list:
+        return fusion_mock
