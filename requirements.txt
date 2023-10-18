@@ -204,9 +204,9 @@ django-anymail[sendinblue]==10.1 \
     --hash=sha256:5c4f26bd0f5507324ed1da31e430bca3293bb2c16f386e813484f2ea2df83d06 \
     --hash=sha256:e0a65c1e235dcb863dab67a3e193e899a48503b650df483d7b73f73983fd874b
     # via -r requirements.in
-django-cas-ng==5.0.0 \
-    --hash=sha256:42a064ca932edda90d2dca5d2e5c9a611cfd9031b6d544c0eeda9c5a2a5ba87e \
-    --hash=sha256:8f74b7bc9171dcb6477f97c9762026d080826bffe9fa87e105479d4cd2e2eb93
+django-cas-ng==5.0.1 \
+    --hash=sha256:76f400c1efc75511fbc8566cb376ece7178a922187c8e01bede257f5b405892a \
+    --hash=sha256:e02ba35cc289e3478ca43185383ba24e4f690a41110927e87e92ac6675248541
     # via -r requirements.in
 django-celery-results==2.5.1 \
     --hash=sha256:0da4cd5ecc049333e4524a23fcfc3460dfae91aa0a60f1fae4b6b2889c254e01 \
