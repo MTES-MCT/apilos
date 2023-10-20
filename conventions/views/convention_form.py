@@ -209,96 +209,82 @@ residence_steps = [
 
 
 class ConventionFormSteps:
-    steps: List[ConventionFormStep]
+    steps: List[ConventionFormStep] | None
     convention: Convention
-    total_step_number: int
-    current_step_number: int
-    current_step: ConventionFormStep
-    next_step: ConventionFormStep
-    previous_step: ConventionFormStep | None = None
-
     last_step_path: ConventionFormStep = ConventionFormStep(
         pathname="conventions:recapitulatif", label="Récapitulatif", classname=None
     )
 
-    def __init__(self, *, convention, active_classname=None) -> None:
-        # pylint: disable=R0912
+    def __init__(
+        self,
+        *,
+        convention,
+        request,
+        steps: List[ConventionFormStep] | None = None,
+        active_classname=None
+    ) -> None:
         self.convention = convention
-        if convention.is_avenant():
-            if active_classname is None:
-                if (
-                    convention.programme.is_foyer()
+        self.steps = steps
+
+        if not self.steps:
+            if convention.is_avenant():
+                varying_steps = (
+                    [avenant_foyer_residence_logements_step, avenant_collectif_step]
+                    if convention.programme.is_foyer()
                     or convention.programme.is_residence()
-                ):
-                    self.steps = [
-                        avenant_bailleur_step,
-                        avenant_programme_step,
-                        avenant_financement_step,
-                        avenant_foyer_residence_logements_step,
-                        avenant_collectif_step,
-                        avenant_champ_libre_step,
-                        avenant_commentaires_step,
-                    ]
-                else:
-                    self.steps = [
-                        avenant_bailleur_step,
-                        avenant_programme_step,
-                        avenant_financement_step,
+                    else [
                         avenant_logements_step,
                         avenant_annexes_step,
-                        avenant_champ_libre_step,
-                        avenant_commentaires_step,
                     ]
+                )
+                self.steps = [
+                    avenant_bailleur_step,
+                    avenant_programme_step,
+                    avenant_financement_step,
+                    *varying_steps,
+                    avenant_champ_libre_step,
+                    avenant_commentaires_step,
+                ]
+
+            elif convention.programme.is_foyer():
+                self.steps = foyer_steps
+            elif convention.programme.is_residence():
+                self.steps = residence_steps
             else:
-                if active_classname == "AvenantBailleurView":
-                    self.steps = [avenant_bailleur_step]
-                if active_classname == "AvenantProgrammeView":
-                    self.steps = [avenant_programme_step]
-                if active_classname in [
-                    "AvenantLogementsView",
-                    "AvenantAnnexesView",
-                ]:
-                    self.steps = [avenant_logements_step, avenant_annexes_step]
-                if active_classname in [
-                    "AvenantFoyerResidenceLogementsView",
-                    "AvenantCollectifView",
-                ]:
-                    self.steps = [
-                        avenant_foyer_residence_logements_step,
-                        avenant_collectif_step,
-                    ]
-                if active_classname == "AvenantFinancementView":
-                    self.steps = [avenant_financement_step]
-                if active_classname == "AvenantChampLibreView":
-                    self.steps = [avenant_champ_libre_step]
-                if active_classname == "AvenantCommentsView":
-                    self.steps = [avenant_commentaires_step]
-                if active_classname == "DenonciationView":
-                    self.steps = [avenant_denonciation_step]
-        elif convention.programme.is_foyer():
-            self.steps = foyer_steps
-        elif convention.programme.is_residence():
-            self.steps = residence_steps
-        else:
-            self.steps = hlm_sem_type_steps
+                self.steps = hlm_sem_type_steps
 
-        self.total_step_number = len(self.steps)
-
-        if active_classname is not None:
-            step_index = [
+        if active_classname:
+            self.step_index = [
                 i
                 for i, elem in enumerate(self.steps)
                 if elem.classname == active_classname
             ][0]
-            self.current_step_number = step_index + 1
-            self.current_step = self.steps[step_index]
-            self.next_step = (
-                self.steps[step_index + 1]
-                if self.current_step_number < self.total_step_number
-                else self.last_step_path
-            )
-            if step_index > 0:
-                self.previous_step = self.steps[step_index - 1]
+
+    @property
+    def total_step_number(self) -> int:
+        return len(self.steps)
+
+    @property
+    def current_step_number(self) -> int:
+        return self.step_index + 1
+
+    @property
+    def current_step(self) -> ConventionFormStep:
+        return self.steps[self.step_index]
+
+    @property
+    def next_step(self) -> ConventionFormStep:
+        if self.current_step_number < self.total_step_number:
+            return self.steps[self.step_index + 1]
+
+        return self.last_step_path
+
+    @property
+    def previous_step(self) -> ConventionFormStep | None:
+        if self.step_index > 0:
+            return self.steps[self.step_index - 1]
+
+        return None
 
     def get_form_step(self):
         form_step = {
@@ -337,10 +323,12 @@ class BaseConventionView(LoginRequiredMixin, View):
 
 class ConventionView(ABC, BaseConventionView):
     steps: ConventionFormSteps
+    form_steps: List[ConventionFormStep]
     target_template: str
     service_class: ConventionService
     request: HttpRequest
     service: ConventionService
+    redirect_on_success: str
 
     @property
     def next_path_redirect(self):
@@ -351,8 +339,18 @@ class ConventionView(ABC, BaseConventionView):
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
+
+        form_steps = None
+        try:
+            form_steps = self.form_steps
+        except AttributeError:
+            pass
+
         self.steps = ConventionFormSteps(
-            convention=self.convention, active_classname=self.__class__.__name__
+            convention=self.convention,
+            request=request,
+            steps=form_steps,
+            active_classname=type(self).__name__,
         )
 
     @has_campaign_permission("convention.view_convention")
@@ -365,7 +363,7 @@ class ConventionView(ABC, BaseConventionView):
             {
                 **base_convention_response_error(request, service.convention),
                 **({"form": service.form} if service.form else {}),
-                **({"upform": service.upform} if service.upform else {}),
+                **({"extra_forms": service.extra_forms} if service.extra_forms else {}),
                 **({"formset": service.formset} if service.formset else {}),
                 "form_step": self.steps.get_form_step(),
                 "editable_after_upload": (
@@ -389,20 +387,33 @@ class ConventionView(ABC, BaseConventionView):
                 return HttpResponseRedirect(
                     reverse("conventions:recapitulatif", args=[self.convention.uuid])
                 )
+
+            try:
+                return HttpResponseRedirect(reverse(self.redirect_on_success))
+            except AttributeError:
+                pass
+
             return HttpResponseRedirect(
                 reverse(self.next_path_redirect, args=[self.convention.uuid])
             )
+
         if self.service.return_status == ReturnStatus.REFRESH:
             return HttpResponseRedirect(
                 reverse(self.current_path_redirect, args=[self.convention.uuid])
             )
+
         return render(
             request,
             self.target_template,
             {
                 **base_convention_response_error(request, self.service.convention),
                 **({"form": self.service.form} if self.service.form else {}),
-                **({"upform": self.service.upform} if self.service.upform else {}),
+                **({"upform": getattr(self.service, "upform", {})}),
+                **(
+                    {"extra_forms": self.service.extra_forms}
+                    if self.service.extra_forms
+                    else {}
+                ),
                 **({"formset": self.service.formset} if self.service.formset else {}),
                 "form_step": self.steps.get_form_step(),
                 **(

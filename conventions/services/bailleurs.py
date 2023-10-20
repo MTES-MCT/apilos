@@ -1,20 +1,21 @@
 from django.conf import settings
-from django.http import HttpRequest
 
 from bailleurs.models import Bailleur
 from conventions.forms import ChangeBailleurForm, ConventionBailleurForm
-from conventions.models import Convention
+from conventions.forms.convention_form_administration import (
+    UpdateConventionAdministrationForm,
+)
+from conventions.models.convention import Convention
 from conventions.services import utils
 from conventions.services.conventions import ConventionService
+from programmes.models.models import Programme
 
 
 class ConventionBailleurService(ConventionService):
-    convention: Convention
-    request: HttpRequest
     form: ConventionBailleurForm
-    upform: ChangeBailleurForm
-    return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
-    redirect_recap: bool = False
+    extra_forms: dict[
+        str, ChangeBailleurForm | UpdateConventionAdministrationForm | None
+    ] = {"bailleur_form": None, "administration_form": None}
 
     def should_add_sirens(self, habilitation):
         if (
@@ -48,9 +49,13 @@ class ConventionBailleurService(ConventionService):
     def get(self):
         bailleur = self.convention.programme.bailleur
 
-        self.upform = ChangeBailleurForm(
+        self.extra_forms["bailleur_form"] = ChangeBailleurForm(
             bailleur_query=self._get_bailleur_query(bailleur.uuid),
             initial={"bailleur": bailleur},
+        )
+        self.extra_forms["administration_form"] = UpdateConventionAdministrationForm(
+            administrations_queryset=self.request.user.administrations(),
+            initial={"administration": self.convention.administration},
         )
         self.form = ConventionBailleurForm(
             initial={
@@ -78,38 +83,68 @@ class ConventionBailleurService(ConventionService):
                 "gestionnaire_signataire_bloc_signature": (
                     self.convention.gestionnaire_signataire_bloc_signature
                 ),
+                "administration": self.convention.administration,
             },
         )
 
     def _init_forms(self):
         self.form = ConventionBailleurForm(self.request.POST)
-        self.upform = ChangeBailleurForm(
-            self.request.POST,
-            bailleur_query=self._get_bailleur_query(
-                self.request.POST.get("bailleur") or None
+
+        self.extra_forms = {
+            "bailleur_form": ChangeBailleurForm(
+                self.request.POST,
+                bailleur_query=self._get_bailleur_query(
+                    self.request.POST.get("bailleur") or None
+                ),
             ),
-        )
+            "administration_form": UpdateConventionAdministrationForm(
+                self.request.POST,
+                administrations_queryset=self.request.user.administrations(),
+            ),
+        }
 
     def change_bailleur(self):
         self._init_forms()
         self._update_bailleur()
+
+    def change_administration(self):
+        self._init_forms()
+
+        form = self.extra_forms["administration_form"]
+
+        if form and form.is_valid():
+            if self.convention.parent:
+                convention = Convention.objects.get(id=self.convention.parent.id)
+            else:
+                convention = self.convention
+
+            new_administration = form.cleaned_data["administration"]
+            avenants_to_updates = convention.avenants.all()
+            conventions_to_update = [convention, *avenants_to_updates]
+
+            Programme.objects.filter(conventions__in=conventions_to_update).update(
+                administration=new_administration
+            )
+            self.return_status = utils.ReturnStatus.SUCCESS
+        else:
+            self.return_status = utils.ReturnStatus.REFRESH
 
     def update_bailleur(self):
         self._init_forms()
         self._bailleur_atomic_update()
 
     def _update_bailleur(self):
-        if self.upform.is_valid():
-            bailleur = self.upform.cleaned_data["bailleur"]
+        form = self.extra_forms["bailleur_form"]
+
+        if form and form.is_valid():
+            bailleur = form.cleaned_data["bailleur"]
             self.convention.programme.bailleur = bailleur
             self.convention.programme.save()
             self.return_status = utils.ReturnStatus.REFRESH
-        else:
-            self.upform.declared_fields[
-                "bailleur"
-            ].queryset = self.request.user.bailleurs(full_scope=True)[
-                : settings.APILOS_MAX_DROPDOWN_COUNT
-            ] | Bailleur.objects.filter(
+        elif form:
+            form.declared_fields["bailleur"].queryset = self.request.user.bailleurs(
+                full_scope=True
+            )[: settings.APILOS_MAX_DROPDOWN_COUNT] | Bailleur.objects.filter(
                 uuid=self.request.POST.get("bailleur") or None
             )
 

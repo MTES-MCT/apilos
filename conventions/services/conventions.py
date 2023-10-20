@@ -1,7 +1,6 @@
 from abc import ABC
 from typing import List
 from django.forms import Form
-from django.http.request import HttpRequest
 
 from conventions.forms import UploadForm
 from conventions.forms.convention_date_signature import ConventionDateForm
@@ -10,23 +9,25 @@ from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
 from conventions.services.file import ConventionFileService
 from conventions.services.search import AvenantListSearchService
+from core.request import AuthenticatedHttpRequest
 
 
 class ConventionService(ABC):
     convention: Convention
-    request: HttpRequest
+    request: AuthenticatedHttpRequest
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
     import_warnings: None | List = None
     redirect_recap: bool = False
     editable_after_upload: bool = False
-    form: Form = None
+    form: Form | None = None
     formset = None
-    upform = None
+    upform: Form | None
+    extra_forms: dict[str, Form | None] | None = None
 
     def __init__(
         self,
         convention: Convention,
-        request: HttpRequest,
+        request: AuthenticatedHttpRequest,
     ):
         self.convention = convention
         self.request = request
@@ -54,7 +55,10 @@ def convention_sent(request, convention_uuid):
     return {
         "success": result_status,
         "convention": convention,
-        "upform": upform,
+        "upform": upform,  # Obsolète: cette approche sera dépréciée dans le futur, au profit de extra_forms.
+        "extra_forms": {
+            "upform": upform,
+        },
     }
 
 
@@ -96,7 +100,10 @@ def convention_post_action(request, convention_uuid):
 
     return {
         "success": result_status,
-        "upform": upform,
+        "upform": upform,  # Obsolète: cette approche sera dépréciée dans le futur, au profit de extra_forms.
+        "extra_forms": {
+            "upform": upform,
+        },
         "convention": convention,
         "avenants": avenant_search_service.paginate().get_page(
             request.GET.get("page", 1)

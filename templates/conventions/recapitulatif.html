@@ -43,7 +43,9 @@
                     {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' %}
                 {% elif convention.is_avenant %}
                     {% if 'bailleur' in avenant_list %}
-                        {% include "conventions/recapitulatif/bailleur.html" with target_url='conventions:avenant_bailleur' bailleur=convention.bailleur %}
+                        {% if convention_form_steps|is_a_step:'ConventionBailleurView' or convention_form_steps|is_a_step:'AvenantBailleurView' %}
+                            {% include "conventions/recapitulatif/bailleur.html" with target_url='conventions:avenant_bailleur' bailleur=convention.bailleur %}
+                        {% endif %}
                     {% endif %}
                     {% if 'programme' in avenant_list %}
                         {% include "conventions/recapitulatif/operation.html" with target_url='conventions:avenant_programme' programme=convention.programme lot=convention.lot %}
@@ -130,11 +132,6 @@
                     {% include "conventions/actions/type1and2_options.html" %}
                     {% if not convention.is_denonciation %}
                         {% include "conventions/actions/generate_convention.html" %}
-                    {% endif %}
-                    {% if request.path != "conventions:sent" %}
-                        {% comment %} La convention ne doit pas être affichée sur la vue
-                        Informations détaillées d'une convention finalisée {% endcomment %}
-                        {% include "conventions/actions/update_administration.html" %}
                     {% endif %}
                     {% include "conventions/actions/cancel_convention.html" %}
                     {% include "conventions/actions/delete.html" %}
