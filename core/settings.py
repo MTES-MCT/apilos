@@ -204,6 +204,8 @@ if "debug_toolbar" in INSTALLED_APPS:
 
 ROOT_URLCONF = "core.urls"
 
+HIJACK_PERMISSION_CHECK = "hijack.permissions.superusers_and_staff"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
