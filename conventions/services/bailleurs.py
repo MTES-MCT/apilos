@@ -110,7 +110,6 @@ class ConventionBailleurService(ConventionService):
     def change_administration(self):
         self._init_forms()
 
-        self.request.user.check_perm("convention.change_convention", self.convention)
         form = self.extra_forms["administration_form"]
 
         if form and form.is_valid():
