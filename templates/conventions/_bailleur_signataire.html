@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="fr-col-12">
-        <form method="post" action="">
+        <form method="post" action="" id="bailleur_signataire">
             {% csrf_token %}
 
             {% include "common/form/input_text.html" with form_input=form.signataire_nom object_field="bailleur__signataire_nom__"|add:form.uuid.value %}
