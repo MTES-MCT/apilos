@@ -12,7 +12,14 @@
                                         {% for submenu in menu.menuItems %}
                                             <li>
 
-                                                <a class="fr-nav__link" href="{{ request|get_menu_url:submenu.url }}" target="_self" {% if submenu.url|is_conventionnement_menu_url %}aria-current="page"{% endif %}>{{submenu.libelle}}</a>
+                                                <a
+                                                    class="fr-nav__link"
+                                                    href="{{ request|get_menu_url:submenu.url }}"
+                                                    {% if submenu.openNewWindow %}target="_blank" rel="noreferrer"{% else %}target="_self"{% endif %}
+                                                    {% if submenu.url|is_conventionnement_menu_url %}aria-current="page"{% endif %}
+                                                >
+                                                    {{submenu.libelle}}
+                                                </a>
                                             </li>
                                         {% endfor %}
                                     </ul>
