@@ -343,7 +343,7 @@
       "statut": "6. Résiliée",
       "soumis_le": null,
       "premiere_soumission_le": null,
-      "valide_le": "2022-11-17T17:02:14.982Z",
+      "valide_le": "2022-11-17",
       "cree_par": null,
       "cree_le": "2022-11-09T10:17:11.568Z",
       "mis_a_jour_le": "2022-11-17T17:02:42.087Z",
@@ -362,7 +362,7 @@
       "signataire_date_deliberation": null,
       "donnees_validees": null,
       "nom_fichier_signe": "2022-11-17_18-02_convention_b21916fc-2778-4b39-83c7-bfbceeb477f9_signed.pdf",
-      "televersement_convention_signee_le": "2022-11-17T17:02:28.312Z",
+      "televersement_convention_signee_le": "2022-11-17",
       "date_resiliation": "2022-11-18",
       "avenant_types": []
     }
@@ -383,7 +383,7 @@
       "statut": "5. Signée",
       "soumis_le": null,
       "premiere_soumission_le": null,
-      "valide_le": "2022-11-17T17:37:54.253Z",
+      "valide_le": "2022-11-17",
       "cree_par": null,
       "cree_le": "2022-11-09T10:17:22.454Z",
       "mis_a_jour_le": "2022-11-17T17:38:07.094Z",
@@ -402,7 +402,7 @@
       "signataire_date_deliberation": null,
       "donnees_validees": null,
       "nom_fichier_signe": "2022-11-17_18-38_convention_e2a5462a-232e-46c5-b161-34f5c325edc8_signed.pdf",
-      "televersement_convention_signee_le": "2022-11-17T17:38:07.094Z",
+      "televersement_convention_signee_le": "2022-11-17",
       "date_resiliation": null,
       "avenant_types": []
     }
@@ -423,7 +423,7 @@
       "statut": "5. Signée",
       "soumis_le": "2022-11-17T16:27:53.812Z",
       "premiere_soumission_le": "2022-11-17T16:27:53.812Z",
-      "valide_le": "2022-11-17T16:28:19.579Z",
+      "valide_le": "2022-11-17",
       "cree_par": null,
       "cree_le": "2022-11-09T10:20:32.745Z",
       "mis_a_jour_le": "2022-11-17T16:28:49.770Z",
@@ -442,7 +442,7 @@
       "signataire_date_deliberation": null,
       "donnees_validees": null,
       "nom_fichier_signe": "2022-11-17_17-28_convention_f2750257-6e3e-49e0-99da-120ded27fc6f_signed.pdf",
-      "televersement_convention_signee_le": "2022-11-17T16:28:49.770Z",
+      "televersement_convention_signee_le": "2022-11-17",
       "date_resiliation": null,
       "avenant_types": []
     }
@@ -543,7 +543,7 @@
       "statut": "4. A signer",
       "soumis_le": "2022-11-17T15:05:20.777Z",
       "premiere_soumission_le": "2022-11-17T15:05:20.777Z",
-      "valide_le": "2022-11-17T15:05:57.483Z",
+      "valide_le": "2022-11-17",
       "cree_par": null,
       "cree_le": "2022-11-09T10:27:16.261Z",
       "mis_a_jour_le": "2022-11-17T15:06:01.239Z",
@@ -583,7 +583,7 @@
       "statut": "5. Signée",
       "soumis_le": "2022-11-17T15:16:23.595Z",
       "premiere_soumission_le": "2022-11-17T15:16:23.595Z",
-      "valide_le": "2022-11-17T15:16:53.957Z",
+      "valide_le": "2022-11-17",
       "cree_par": null,
       "cree_le": "2022-11-09T10:28:59.189Z",
       "mis_a_jour_le": "2022-11-17T15:18:18.694Z",
@@ -602,7 +602,7 @@
       "signataire_date_deliberation": null,
       "donnees_validees": null,
       "nom_fichier_signe": "2022-11-17_16-18_convention_c86fb1d5-cc3a-4870-afb6-cdf49c197e47_signed.pdf",
-      "televersement_convention_signee_le": "2022-11-17T15:18:18.693Z",
+      "televersement_convention_signee_le": "2022-11-17",
       "date_resiliation": null,
       "avenant_types": []
     }
@@ -623,7 +623,7 @@
       "statut": "1. Projet",
       "soumis_le": "2022-11-17T16:27:53.812Z",
       "premiere_soumission_le": "2022-11-17T16:27:53.812Z",
-      "valide_le": "2022-11-17T16:28:19.579Z",
+      "valide_le": "2022-11-17",
       "cree_par": null,
       "cree_le": "2022-11-17T16:29:47.732Z",
       "mis_a_jour_le": "2022-11-17T16:31:00.605Z",
@@ -642,11 +642,9 @@
       "signataire_date_deliberation": null,
       "donnees_validees": null,
       "nom_fichier_signe": "2022-11-17_17-28_convention_f2750257-6e3e-49e0-99da-120ded27fc6f_signed.pdf",
-      "televersement_convention_signee_le": "2022-11-17T16:28:49.770Z",
+      "televersement_convention_signee_le": "2022-11-17",
       "date_resiliation": null,
-      "avenant_types": [
-        3
-      ]
+      "avenant_types": [3]
     }
   },
   {
@@ -665,7 +663,7 @@
       "statut": "4. A signer",
       "soumis_le": "2022-11-17T17:41:58.566Z",
       "premiere_soumission_le": "2022-11-17T17:41:58.566Z",
-      "valide_le": "2022-11-17T17:37:54.253Z",
+      "valide_le": "2022-11-17",
       "cree_par": null,
       "cree_le": "2022-11-17T17:38:24.507Z",
       "mis_a_jour_le": "2022-11-17T17:42:15.299Z",
@@ -684,12 +682,9 @@
       "signataire_date_deliberation": null,
       "donnees_validees": null,
       "nom_fichier_signe": "2022-11-17_18-38_convention_e2a5462a-232e-46c5-b161-34f5c325edc8_signed.pdf",
-      "televersement_convention_signee_le": "2022-11-17T17:38:07.094Z",
+      "televersement_convention_signee_le": "2022-11-17",
       "date_resiliation": null,
-      "avenant_types": [
-        2,
-        3
-      ]
+      "avenant_types": [2, 3]
     }
   },
   {
@@ -708,7 +703,7 @@
       "statut": "1. Projet",
       "soumis_le": "2022-11-17T17:41:58.566Z",
       "premiere_soumission_le": "2022-11-17T17:41:58.566Z",
-      "valide_le": "2022-11-17T17:37:54.253Z",
+      "valide_le": "2022-11-17",
       "cree_par": null,
       "cree_le": "2022-11-17T17:42:40.647Z",
       "mis_a_jour_le": "2022-11-17T17:43:07.630Z",
@@ -727,11 +722,9 @@
       "signataire_date_deliberation": null,
       "donnees_validees": null,
       "nom_fichier_signe": "2022-11-17_18-38_convention_e2a5462a-232e-46c5-b161-34f5c325edc8_signed.pdf",
-      "televersement_convention_signee_le": "2022-11-17T17:38:07.094Z",
+      "televersement_convention_signee_le": "2022-11-17",
       "date_resiliation": null,
-      "avenant_types": [
-        3
-      ]
+      "avenant_types": [3]
     }
   },
   {

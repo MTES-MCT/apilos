@@ -102,7 +102,7 @@ class Convention(models.Model):
     )
     soumis_le = models.DateTimeField(null=True, blank=True)
     premiere_soumission_le = models.DateTimeField(null=True, blank=True)
-    valide_le = models.DateTimeField(null=True, blank=True)
+    valide_le = models.DateField(null=True, blank=True)
     cree_par = models.ForeignKey(
         "users.User",
         on_delete=models.SET_NULL,
@@ -157,7 +157,7 @@ class Convention(models.Model):
 
     donnees_validees = models.TextField(null=True, blank=True)
     nom_fichier_signe = models.CharField(max_length=255, null=True, blank=True)
-    televersement_convention_signee_le = models.DateTimeField(null=True, blank=True)
+    televersement_convention_signee_le = models.DateField(null=True, blank=True)
     date_resiliation = models.DateField(null=True, blank=True)
     desc_avenant = models.TextField(null=True, blank=True)
 
