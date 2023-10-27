@@ -365,6 +365,7 @@ class ConventionView(ABC, BaseConventionView):
                 **({"form": service.form} if service.form else {}),
                 **({"extra_forms": service.extra_forms} if service.extra_forms else {}),
                 **({"formset": service.formset} if service.formset else {}),
+                "upform": service.upform,  # obsolète, pourra être supprimé après rédaction de tests unitaires sur extra_forms
                 "form_step": self.steps.get_form_step(),
                 "editable_after_upload": (
                     editable_convention(request, self.convention)
