@@ -16,6 +16,7 @@ class ConventionBailleurService(ConventionService):
     extra_forms: dict[
         str, ChangeBailleurForm | UpdateConventionAdministrationForm | None
     ] = {"bailleur_form": None, "administration_form": None}
+    upform: ChangeBailleurForm | None
 
     def should_add_sirens(self, habilitation):
         if (
@@ -57,6 +58,8 @@ class ConventionBailleurService(ConventionService):
             administrations_queryset=self.request.user.administrations(),
             initial={"administration": self.convention.administration},
         )
+        self.upform = self.extra_forms["bailleur_form"]
+
         self.form = ConventionBailleurForm(
             initial={
                 "uuid": bailleur.uuid,
