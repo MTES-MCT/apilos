@@ -60,7 +60,7 @@ class ConventionBailleurService(ConventionService):
     def get(self):
         bailleur = self.convention.programme.bailleur
         self._initial_change_bailleur_form(bailleur)
-        self._initial_change_administration_form()
+        self._initial_change_administration_form(self.convention.administration)
         self._initial_bailleur_form(bailleur)
 
     def _initial_change_bailleur_form(self, bailleur: Bailleur):
@@ -69,10 +69,12 @@ class ConventionBailleurService(ConventionService):
             initial={"bailleur": bailleur},
         )
 
-    def _initial_change_administration_form(self):
+    def _initial_change_administration_form(self, administration: Administration):
         self.extra_forms["administration_form"] = ChangeAdministrationForm(
-            administrations_queryset=self.request.user.administrations(),
-            initial={"administration": self.convention.administration},
+            administrations_queryset=self._get_administration_query(
+                administration.uuid
+            ),
+            initial={"administration": administration},
         )
 
     def _initial_bailleur_form(self, bailleur: Bailleur):
@@ -118,7 +120,9 @@ class ConventionBailleurService(ConventionService):
             ),
             "administration_form": ChangeAdministrationForm(
                 self.request.POST,
-                administrations_queryset=self.request.user.administrations(),
+                administrations_queryset=self._get_administration_query(
+                    self.request.POST.get("administration") or None
+                ),
             ),
         }
 
@@ -147,14 +151,6 @@ class ConventionBailleurService(ConventionService):
                 administration=new_administration
             )
             self.return_status = utils.ReturnStatus.SUCCESS
-        else:
-            form.declared_fields[
-                "administration"
-            ].queryset = self.request.user.administrations(full_scope=True)[
-                : settings.APILOS_MAX_DROPDOWN_COUNT
-            ] | Administration.objects.filter(
-                uuid=self.request.POST.get("administration") or None
-            )
 
     def update_bailleur(self):
         self._init_forms()

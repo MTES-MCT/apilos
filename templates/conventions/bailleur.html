@@ -18,10 +18,11 @@
     {% include "common/step_progressbar.html"%}
     <div class="fr-container">
         <form method="post" action="">
+            {% csrf_token %}
             {% include "conventions/_bailleur_entreprise.html" %}
             {% include "conventions/_bailleur_signataire.html" %}
             {% include "conventions/_bailleur_administration.html" %}
+            {% include "conventions/common/form_footer_button.html" %}
         </form>
-        {% include "conventions/common/form_footer_button.html" with targetted_form="bailleur_signataire" %}
     </div>
 {% endblock %}
