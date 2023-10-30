@@ -62,7 +62,6 @@ class ConventionBailleurService(ConventionService):
         self._initial_change_bailleur_form(bailleur)
         self._initial_change_administration_form()
         self._initial_bailleur_form(bailleur)
-        self.upform = None  # will be deprecated soon
 
     def _initial_change_bailleur_form(self, bailleur: Bailleur):
         self.extra_forms["bailleur_form"] = ChangeBailleurForm(

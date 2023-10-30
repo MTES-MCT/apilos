@@ -1,5 +1,6 @@
 from abc import ABC
 from typing import List
+
 from django.forms import Form
 
 from conventions.forms import UploadForm
@@ -31,6 +32,7 @@ class ConventionService(ABC):
     ):
         self.convention = convention
         self.request = request
+        self.upform = None
 
     def get(self):
         pass
