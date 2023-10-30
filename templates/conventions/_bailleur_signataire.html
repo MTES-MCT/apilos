@@ -6,47 +6,45 @@
 
 {% block content %}
     <div class="fr-col-12">
-        <form method="post" action="" id="bailleur_signataire">
-            {% csrf_token %}
+        {% csrf_token %}
 
-            {% include "common/form/input_text.html" with form_input=form.signataire_nom object_field="bailleur__signataire_nom__"|add:form.uuid.value %}
+        {% include "common/form/input_text.html" with form_input=form.signataire_nom object_field="bailleur__signataire_nom__"|add:form.uuid.value %}
 
-            <div class="fr-mb-2w">
-                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                        {% include "common/form/input_text.html" with form_input=form.signataire_fonction object_field="bailleur__signataire_fonction__"|add:form.uuid.value %}
-                    </div>
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                        {% include "common/form/input_date.html" with form_input=form.signataire_date_deliberation object_field="bailleur__signataire_date_deliberation__"|add:form.uuid.value %}
-                    </div>
+        <div class="fr-mb-2w">
+            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                    {% include "common/form/input_text.html" with form_input=form.signataire_fonction object_field="bailleur__signataire_fonction__"|add:form.uuid.value %}
+                </div>
+                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                    {% include "common/form/input_date.html" with form_input=form.signataire_date_deliberation object_field="bailleur__signataire_date_deliberation__"|add:form.uuid.value %}
                 </div>
             </div>
+        </div>
 
-            <div class="fr-mb-2w">
-                {% include "common/form/input_text.html" with form_input=form.signataire_bloc_signature object_field="bailleur__signataire_bloc_signature__"|add:form.uuid.value %}
-            </div>
+        <div class="fr-mb-2w">
+            {% include "common/form/input_text.html" with form_input=form.signataire_bloc_signature object_field="bailleur__signataire_bloc_signature__"|add:form.uuid.value %}
+        </div>
 
-            {% if convention.programme.is_foyer or convention.programme.is_residence %}
-                <h4>Gestionnaire des logments conventionnés</h4>
-                {% with convention_uuid=convention.uuid|slugify %}
+        {% if convention.programme.is_foyer or convention.programme.is_residence %}
+            <h4>Gestionnaire des logments conventionnés</h4>
+            {% with convention_uuid=convention.uuid|slugify %}
 
-                    {% include "common/form/input_text.html" with form_input=form.gestionnaire object_field="convention__gestionnaire__"|add:convention_uuid %}
+                {% include "common/form/input_text.html" with form_input=form.gestionnaire object_field="convention__gestionnaire__"|add:convention_uuid %}
 
-                    {% include "common/form/input_text.html" with form_input=form.gestionnaire_signataire_nom object_field="convention__gestionnaire_signataire_nom__"|add:convention_uuid %}
+                {% include "common/form/input_text.html" with form_input=form.gestionnaire_signataire_nom object_field="convention__gestionnaire_signataire_nom__"|add:convention_uuid %}
 
-                    <div class="fr-mb-2w">
-                        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                                {% include "common/form/input_text.html" with form_input=form.gestionnaire_signataire_fonction object_field="convention__gestionnaire_signataire_fonction__"|add:convention_uuid %}
-                            </div>
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                                {% include "common/form/input_date.html" with form_input=form.gestionnaire_signataire_date_deliberation object_field="convention__gestionnaire_signataire_date_deliberation__"|add:convention_uuid %}
-                            </div>
+                <div class="fr-mb-2w">
+                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                            {% include "common/form/input_text.html" with form_input=form.gestionnaire_signataire_fonction object_field="convention__gestionnaire_signataire_fonction__"|add:convention_uuid %}
+                        </div>
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                            {% include "common/form/input_date.html" with form_input=form.gestionnaire_signataire_date_deliberation object_field="convention__gestionnaire_signataire_date_deliberation__"|add:convention_uuid %}
                         </div>
                     </div>
-                {% endwith %}
-            {% endif %}
-        </form>
+                </div>
+            {% endwith %}
+        {% endif %}
     </div>
     {% include "common/required_fields_info.html" %}
 {% endblock content %}
