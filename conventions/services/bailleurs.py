@@ -146,7 +146,7 @@ class ConventionBailleurService(ConventionService):
             Programme.objects.filter(conventions__in=conventions_to_update).update(
                 administration=new_administration
             )
-            self.return_status = utils.ReturnStatus.REFRESH
+            self.return_status = utils.ReturnStatus.SUCCESS
         else:
             form.declared_fields[
                 "administration"
