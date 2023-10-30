@@ -1,18 +1,14 @@
 from django.http import HttpRequest
 
-from conventions.services.conventions import ConventionService
-from conventions.services import utils, upload_objects
-from conventions.models import Convention
 from conventions.forms import (
-    UploadForm,
     ProgrammeCadastralForm,
     ReferenceCadastraleFormSet,
+    UploadForm,
 )
+from conventions.models import Convention
+from conventions.services import upload_objects, utils
+from conventions.services.conventions import ConventionService
 from programmes.models import ReferenceCadastrale
-
-
-def _get_choices_from_object(object_list):
-    return [(instance.uuid, str(instance)) for instance in object_list]
 
 
 class ConventionCadastreService(ConventionService):
@@ -239,7 +235,6 @@ class ConventionCadastreService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_programme_cadastrale(self):
-
         for field in [
             "permis_construire",
             "date_acte_notarie",

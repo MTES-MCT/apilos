@@ -22,7 +22,7 @@ class ConventionService(ABC):
     editable_after_upload: bool = False
     form: Form | None = None
     formset = None
-    upform: Form | None
+    upform: Form | None = None
     extra_forms: dict[str, Form | None] | None = None
 
     def __init__(
@@ -32,7 +32,6 @@ class ConventionService(ABC):
     ):
         self.convention = convention
         self.request = request
-        self.upform = None
 
     def get(self):
         pass
