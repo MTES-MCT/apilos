@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 
 from django.db.models import Q
@@ -487,7 +488,7 @@ def convention_validate(request: HttpRequest, convention: Convention):
                 user=request.user,
             ).save()
             if not convention.valide_le:
-                convention.valide_le = timezone.now()
+                convention.valide_le = datetime.date.today()
             convention.save()
 
             generate_and_send.delay(

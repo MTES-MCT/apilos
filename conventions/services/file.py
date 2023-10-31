@@ -3,7 +3,6 @@ import logging
 
 from django.conf import settings
 from django.core.files import File
-from django.utils import timezone
 
 from conventions.models import Convention, ConventionStatut, PieceJointe
 from core.storage import client
@@ -27,7 +26,7 @@ class ConventionFileService:
 
         if update_statut and not convention.statut == ConventionStatut.DENONCEE.label:
             convention.statut = ConventionStatut.SIGNEE.label
-            convention.televersement_convention_signee_le = timezone.now()
+            convention.televersement_convention_signee_le = datetime.date.today()
 
         convention.nom_fichier_signe = filename
         convention.save()

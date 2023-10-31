@@ -1,7 +1,5 @@
 import datetime
 
-from django.utils import timezone
-
 from conventions.forms import AvenantsforavenantForm, InitavenantsforavenantForm
 from conventions.forms.avenant import AvenantForm
 from conventions.models import AvenantType, Convention, ConventionStatut
@@ -133,7 +131,7 @@ def complete_avenants_for_avenant(request, convention_uuid):
             for avenant_type in avenant_form.cleaned_data["avenant_types"]:
                 avenanttype = AvenantType.objects.get(nom=avenant_type)
                 avenant.avenant_types.add(avenanttype)
-            avenant.televersement_convention_signee_le = timezone.now()
+            avenant.televersement_convention_signee_le = datetime.date.today()
             avenant.statut = ConventionStatut.SIGNEE.label
             avenant.numero = avenant.get_default_convention_number()
             avenant.desc_avenant = avenant_form.cleaned_data["desc_avenant"]
