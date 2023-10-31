@@ -251,8 +251,9 @@ def get_or_create_programme(
             "nature_logement": nature_logement,
         },
     )
-    # force nature_logement
+    # force nature_logement and administration
     programme.nature_logement = nature_logement
+    programme.administration = administration
     # force type operation if it is sans travaux
     if type_operation == TypeOperation.SANSTRAVAUX:
         programme.type_operation = TypeOperation.SANSTRAVAUX
