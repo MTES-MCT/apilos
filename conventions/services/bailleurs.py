@@ -2,20 +2,20 @@ from django.conf import settings
 
 from bailleurs.models import Bailleur
 from conventions.forms import ChangeBailleurForm, ConventionBailleurForm
-from conventions.forms.convention_form_administration import (
-    UpdateConventionAdministrationForm,
-)
+from conventions.forms.convention_form_administration import ChangeAdministrationForm
 from conventions.models.convention import Convention
 from conventions.services import utils
 from conventions.services.conventions import ConventionService
+from instructeurs.models import Administration
 from programmes.models.models import Programme
 
 
 class ConventionBailleurService(ConventionService):
     form: ConventionBailleurForm
-    extra_forms: dict[
-        str, ChangeBailleurForm | UpdateConventionAdministrationForm | None
-    ] = {"bailleur_form": None, "administration_form": None}
+    extra_forms: dict[str, ChangeBailleurForm | ChangeAdministrationForm | None] = {
+        "bailleur_form": None,
+        "administration_form": None,
+    }
     upform: ChangeBailleurForm | None
 
     def should_add_sirens(self, habilitation):
@@ -47,19 +47,37 @@ class ConventionBailleurService(ConventionService):
             ]
         )
 
+    def _get_administration_query(self, administration_uuid: str):
+        return (
+            self.request.user.administrations(full_scope=True).filter(
+                uuid=administration_uuid
+            )
+            | self.request.user.administrations(full_scope=True)[
+                : settings.APILOS_MAX_DROPDOWN_COUNT
+            ]
+        )
+
     def get(self):
         bailleur = self.convention.programme.bailleur
+        self._initial_change_bailleur_form(bailleur)
+        self._initial_change_administration_form(self.convention.administration)
+        self._initial_bailleur_form(bailleur)
 
+    def _initial_change_bailleur_form(self, bailleur: Bailleur):
         self.extra_forms["bailleur_form"] = ChangeBailleurForm(
             bailleur_query=self._get_bailleur_query(bailleur.uuid),
             initial={"bailleur": bailleur},
         )
-        self.extra_forms["administration_form"] = UpdateConventionAdministrationForm(
-            administrations_queryset=self.request.user.administrations(),
-            initial={"administration": self.convention.administration},
-        )
-        self.upform = self.extra_forms["bailleur_form"]
 
+    def _initial_change_administration_form(self, administration: Administration):
+        self.extra_forms["administration_form"] = ChangeAdministrationForm(
+            administrations_queryset=self._get_administration_query(
+                administration.uuid
+            ),
+            initial={"administration": administration},
+        )
+
+    def _initial_bailleur_form(self, bailleur: Bailleur):
         self.form = ConventionBailleurForm(
             initial={
                 "uuid": bailleur.uuid,
@@ -100,19 +118,23 @@ class ConventionBailleurService(ConventionService):
                     self.request.POST.get("bailleur") or None
                 ),
             ),
-            "administration_form": UpdateConventionAdministrationForm(
+            "administration_form": ChangeAdministrationForm(
                 self.request.POST,
-                administrations_queryset=self.request.user.administrations(),
+                administrations_queryset=self._get_administration_query(
+                    self.request.POST.get("administration") or None
+                ),
             ),
         }
 
     def change_bailleur(self):
         self._init_forms()
-        self._update_bailleur()
+        self._change_bailleur()
 
     def change_administration(self):
         self._init_forms()
+        self._change_administration()
 
+    def _change_administration(self):
         form = self.extra_forms["administration_form"]
 
         if form and form.is_valid():
@@ -129,14 +151,12 @@ class ConventionBailleurService(ConventionService):
                 administration=new_administration
             )
             self.return_status = utils.ReturnStatus.SUCCESS
-        else:
-            self.return_status = utils.ReturnStatus.REFRESH
 
     def update_bailleur(self):
         self._init_forms()
         self._bailleur_atomic_update()
 
-    def _update_bailleur(self):
+    def _change_bailleur(self):
         form = self.extra_forms["bailleur_form"]
 
         if form and form.is_valid():

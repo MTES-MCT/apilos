@@ -254,6 +254,10 @@ class User(AbstractUser):
         if self.is_superuser:
             return {}
 
+        # instructeur from cerbere has access to all administrations
+        if self.is_cerbere_user() and self.is_instructeur():
+            return {}
+
         # to do : manage programme related to geo for instructeur
         if self.is_instructeur():
             if (administration_ids := self.administration_ids()) is not None:

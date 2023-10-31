@@ -38,14 +38,11 @@
                                 <div class="fr-btn">Changer le bailleur de cette convention et de son opération</div>
                             </summary>
                             <div>
-                                <form method="post" action="">
-                                    {% csrf_token %}
-                                    {% url 'users:search_bailleur' as search_bailleur_url %}
-                                    {% include "common/form/input_search_select.html" with form_input=form.bailleur url=search_bailleur_url %}
-                                    <button class="fr-btn" name="change_bailleur" value="True">
-                                        Changer le bailleur
-                                    </button>
-                                </form>
+                                {% url 'users:search_bailleur' as search_bailleur_url %}
+                                {% include "common/form/input_search_select.html" with form_input=form.bailleur url=search_bailleur_url %}
+                                <button class="fr-btn" name="change_bailleur" value="True">
+                                    Changer le bailleur
+                                </button>
                             </div>
                         </details>
                     </div>

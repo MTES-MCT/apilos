@@ -1,5 +1,6 @@
 from abc import ABC
 from typing import List
+
 from django.forms import Form
 
 from conventions.forms import UploadForm
@@ -21,7 +22,7 @@ class ConventionService(ABC):
     editable_after_upload: bool = False
     form: Form | None = None
     formset = None
-    upform: Form | None
+    upform: Form | None = None
     extra_forms: dict[str, Form | None] | None = None
 
     def __init__(
