@@ -1,9 +1,10 @@
 from django import forms
 from django.core.validators import RegexValidator
+
 from instructeurs.models import Administration
 
 
-class UpdateConventionAdministrationForm(forms.Form):
+class ChangeAdministrationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         administrations_queryset = kwargs.pop("administrations_queryset")
         super().__init__(*args, **kwargs)
