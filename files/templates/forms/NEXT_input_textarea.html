@@ -1,0 +1,43 @@
+{% comment %}
+Une fois la refacto des formulaires achevées, ce fichier pourra être renommé pour
+supprimer le préfixe NEXT_
+{% endcomment %}
+
+<div class="fr-input-group {% if field.errors %}fr-select-group--error{% endif %}" id="{{field.id_for_label}}_group">
+    {# TODO : comprendre pourquoi on affiche pas le help text et le label en même temps #}
+    {% if field.help_text %}
+        <details>
+            <summary>
+                <label class="fr-label fr-mb-1w apilos-d-inline" for="{{field.id_for_label}}">
+                    {{ field.label }}
+                    {# include "common/form/required_field.html" with form_input=field #}
+                </label>
+                <span class="fr-link fr-link--sm fr-icon-information-line content__helpicon"></span>
+            </summary>
+            {# include "common/help_field.html" with form_input=field #}
+        </detailS>
+    {% else %}
+        <label class="fr-label fr-mb-1w" for="{{field.id_for_label}}">
+            {{ field.label }}
+            {# include "common/form/required_field.html" with form_input=field #}
+        </label>
+    {% endif %}
+    <div class="fr-mt-1w block--row-strech" id="{{field.id_for_label}}_div">
+        <textarea
+            class="fr-input {% if field.errors %}fr-input--error{% endif %}"
+            aria-describedby="text-input-error-desc-error"
+            type="text"
+            id="{{field.id_for_label}}"
+            name="{{field.html_name}}"
+            rows="{% if rows %}{{rows}}{% else %}3{% endif %}"
+            {% if not editable %}disabled{% endif %}>{{ field.value|default_if_none:'' }}</textarea>
+        {# include "common/utils/comments_field.html" #}
+    </div>
+
+    {# erreurs #}
+    {% for error in field.errors %}
+        <p id="text-input-error-desc-error" class="fr-error-text">
+            {{ error }}
+        </p>
+    {% endfor %}
+</div>

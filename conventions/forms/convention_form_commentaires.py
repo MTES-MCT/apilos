@@ -3,6 +3,7 @@
 """
 
 from django import forms
+from core.forms import LongText
 
 from files.forms import MultipleFileField
 
@@ -41,6 +42,7 @@ class ConventionCommentForm(forms.Form):
         error_messages={
             "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
+        widget=LongText(),
     )
 
     commentaires_files = MultipleFileField(
