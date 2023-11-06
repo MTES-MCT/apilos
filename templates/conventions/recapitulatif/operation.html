@@ -70,8 +70,8 @@
                                 {% if programme.date_residence_argement_gestionnaire_intermediation %}
                                     <h6>Agrément de gestionnaire ou agrément d'intermédiation</h6>
                                     {% include "common/display_field_if_exists.html" with label="Date" value=programme.date_residence_argement_gestionnaire_intermediation object_field="programme__date_residence_argement_gestionnaire_intermediation__"|add:programme_uuid %}
-                                    {% include "common/display_field_if_exists.html" with label="Date" value=programme.ville_signature_residence_agrement_gestionnaire_intermediation object_field="programme__ville_signature_residence_agrement_gestionnaire_intermediation__"|add:programme_uuid %}
-                                    {% include "common/display_field_if_exists.html" with label="Date" value=programme.departement_residence_argement_gestionnaire_intermediation object_field="programme__departement_residence_argement_gestionnaire_intermediation__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville_signature_residence_agrement_gestionnaire_intermediation object_field="programme__ville_signature_residence_agrement_gestionnaire_intermediation__"|add:programme_uuid %}
+                                    {% include "common/display_field_if_exists.html" with label="Département" value=programme.departement_residence_argement_gestionnaire_intermediation object_field="programme__departement_residence_argement_gestionnaire_intermediation__"|add:programme_uuid %}
                                     <hr>
                                 {% endif %}
                             {% endif %}
