@@ -200,6 +200,7 @@ class UserConventionActivesSearchService(UserConventionSearchService):
             self.extra_filters = (
                 Q(programme__nom__icontains=self.search_input)
                 | Q(programme__code_postal__icontains=self.search_input)
+                | Q(programme__numero_galion__icontains=self.search_input)
                 | Q(numero__icontains=self.search_input)
             )
 
@@ -220,5 +221,6 @@ class UserConventionTermineesSearchService(UserConventionSearchService):
             self.extra_filters = (
                 Q(programme__nom__icontains=self.search_input)
                 | Q(programme__code_postal__icontains=self.search_input)
+                | Q(programme__numero_galion__icontains=self.search_input)
                 | Q(numero__icontains=self.search_input)
             )
