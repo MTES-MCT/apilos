@@ -203,9 +203,7 @@ django==4.2.7 \
 django-anymail[sendinblue]==10.2 \
     --hash=sha256:1f3006d3b16874aaa32976078da6cdc9baa7f5274cf80e3fc51a288887617aaf \
     --hash=sha256:ca273abbc04b5ce06d1f3b3e5f28e2d79331519198fa6d6b5ba1b5aa5eea02f7
-    # via
-    #   -r requirements.in
-    #   django-anymail
+    # via -r requirements.in
 django-cas-ng==5.0.1 \
     --hash=sha256:76f400c1efc75511fbc8566cb376ece7178a922187c8e01bede257f5b405892a \
     --hash=sha256:e02ba35cc289e3478ca43185383ba24e4f690a41110927e87e92ac6675248541
@@ -488,13 +486,13 @@ pylint==2.15.5 \
     # via
     #   pylint-django
     #   pylint-plugin-utils
-pylint-django==2.5.3 \
-    --hash=sha256:0ac090d106c62fe33782a1d01bda1610b761bb1c9bf5035ced9d5f23a13d8591 \
-    --hash=sha256:56b12b6adf56d548412445bd35483034394a1a94901c3f8571980a13882299d5
+pylint-django==2.5.5 \
+    --hash=sha256:2f339e4bf55776958283395c5139c37700c91bd5ef1d8251ef6ac88b5abbba9b \
+    --hash=sha256:5abd5c2228e0e5e2a4cb6d0b4fc1d1cef1e773d0be911412f4dd4fc1a1a440b7
     # via -r requirements.in
-pylint-plugin-utils==0.7 \
-    --hash=sha256:b3d43e85ab74c4f48bb46ae4ce771e39c3a20f8b3d56982ab17aa73b4f98d535 \
-    --hash=sha256:ce48bc0516ae9415dd5c752c940dfe601b18fe0f48aa249f2386adfa95a004dd
+pylint-plugin-utils==0.8.2 \
+    --hash=sha256:ae11664737aa2effbf26f973a9e0b6779ab7106ec0adc5fe104b0907ca04e507 \
+    --hash=sha256:d3cebf68a38ba3fba23a873809155562571386d4c1b03e5b4c4cc26c3eee93e4
     # via pylint-django
 pyrsistent==0.19.2 \
     --hash=sha256:055ab45d5911d7cae397dc418808d8802fb95262751872c841c170b0dbf51eed \
