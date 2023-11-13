@@ -65,10 +65,6 @@ class ConventionCadastreService(ConventionService):
                 "ville_signature_residence_agrement_gestionnaire_intermediation": (
                     self.convention.programme.ville_signature_residence_agrement_gestionnaire_intermediation
                 ),
-                "date_residence_agrement": utils.format_date_for_form(
-                    self.convention.programme.date_residence_agrement
-                ),
-                "departement_residence_agrement": self.convention.programme.departement_residence_agrement,
                 "date_achevement": utils.format_date_for_form(
                     self.convention.programme.date_achevement
                 ),
@@ -164,8 +160,6 @@ class ConventionCadastreService(ConventionService):
                         "date_residence_argement_gestionnaire_intermediation",
                         "departement_residence_argement_gestionnaire_intermediation",
                         "ville_signature_residence_agrement_gestionnaire_intermediation",
-                        "date_residence_agrement",
-                        "departement_residence_agrement",
                         "date_achat",
                         "date_achevement",
                     ],
@@ -244,8 +238,6 @@ class ConventionCadastreService(ConventionService):
             "date_residence_argement_gestionnaire_intermediation",
             "departement_residence_argement_gestionnaire_intermediation",
             "ville_signature_residence_agrement_gestionnaire_intermediation",
-            "date_residence_agrement",
-            "departement_residence_agrement",
             "date_achat",
             "date_achevement",
         ]:
