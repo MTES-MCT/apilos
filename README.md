@@ -82,10 +82,6 @@ Ce stockage est activé lorsque les variable d'environnement AWS... sont défini
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 ```
 
-### Analytics
-
-APilos utilise [Matomo](https://stats.data.gouv.fr/index.php?module=CoreHome&action=index&idSite=188&period=day&date=yesterday#?idSite=188&period=day&date=yesterday&segment=&category=Dashboard_Dashboard&subcategory=1) comme outils d'analytics sous le domaine stats.data.gouv.fr
-
 ### Monitoring logiciel
 
 Nous utilisons [Sentry](https://sentry.io/organizations/betagouv-f7/issues/?project=5852556) fournit par beta.gouv.fr
