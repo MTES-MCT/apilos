@@ -259,14 +259,18 @@
                                                 {% endif %}
                                             </div>
                                             {% if convention.programme.numero_galion %}
-                                                <em data-test-role="programme-galion-cell">
-                                                    Op. : {{convention.programme.numero_galion|highlight:search_input}}
-                                                </em>
+                                                <div>
+                                                    <em data-test-role="programme-galion-cell">
+                                                        Op. : {{convention.programme.numero_galion|highlight:search_input}}
+                                                    </em>
+                                                </div>
                                             {% endif %}
                                             {% if url_name == "search_active" or url_name == "search_resiliees" %}
-                                                {% if convention.numero %}
-                                                    <em data-test-role="programme-galion-cell">Conv. : {{convention.numero|highlight:search_input}}</em>
-                                                {% endif %}
+                                                <div>
+                                                    {% if convention.numero %}
+                                                        <em data-test-role="programme-galion-cell">Conv. : {{convention.numero|highlight:search_input}}</em>
+                                                    {% endif %}
+                                                </div>
                                             {% endif %}
                                         </td>
                                         <td data-test-role="programme-financement-cell">{{convention.financement}}</td>
