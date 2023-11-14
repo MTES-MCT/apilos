@@ -125,7 +125,7 @@
 
                         {# Champs "Libre" (code opération / numéro de convention, code postal ou nom du programme) #}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
-                            <input class="fr-input" placeholder="{% if active %}Code{% else %}N° convention{% endif %}, programme ou code postal" type="search" id="search_input" name="search_input" value="{{ search_input }}" />
+                            <input class="fr-input" placeholder="Numéro, nom, code postal…" type="search" id="search_input" name="search_input" value="{{ search_input }}" />
                         </div>
 
                         {# Champs ANRU #}
@@ -258,19 +258,19 @@
                                                     <span class="{% if convention.is_denonciation %}warning-notification {% else %}text-title-blue-france {% endif %} fr-p-1w fr-ml-1w apilos-tag-avenant background-white">{{convention|display_kind|capfirst}}</span>
                                                 {% endif %}
                                             </div>
-                                            {% if url_name == "search_instruction" and convention.programme.numero_galion %}
-                                                <em data-test-role="programme-galion-cell">
-                                                    {{convention.programme.numero_galion|highlight:search_input}}
-                                                </em>
+                                            {% if convention.programme.numero_galion %}
+                                                <div>
+                                                    <em data-test-role="programme-galion-cell">
+                                                        Op. : {{convention.programme.numero_galion|highlight:search_input}}
+                                                    </em>
+                                                </div>
                                             {% endif %}
                                             {% if url_name == "search_active" or url_name == "search_resiliees" %}
-                                                {% if convention.numero %}
-                                                    {% if convention.is_avenant %}
-                                                        <em data-test-role="programme-galion-cell">{{convention.parent.numero|highlight:search_input}} - Avenant n°{{convention.numero}}</em>
-                                                    {% else %}
-                                                        <em data-test-role="programme-galion-cell">{{convention.numero|highlight:search_input}}</em>
+                                                <div>
+                                                    {% if convention.numero %}
+                                                        <em data-test-role="programme-galion-cell">Conv. : {{convention.numero|highlight:search_input}}</em>
                                                     {% endif %}
-                                                {% endif %}
+                                                </div>
                                             {% endif %}
                                         </td>
                                         <td data-test-role="programme-financement-cell">{{convention.financement}}</td>
