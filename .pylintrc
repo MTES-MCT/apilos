@@ -21,4 +21,4 @@ disable=
 min-similarity-lines=20
 max-args = 10
 max-line-length=120
-max-public-methods=30
+max-public-methods=31

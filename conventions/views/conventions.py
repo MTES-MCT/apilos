@@ -36,10 +36,10 @@ from conventions.services.conventions import convention_post_action, convention_
 from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
+    convention_denonciation_validate,
     convention_feedback,
     convention_submit,
     convention_validate,
-    convention_denonciation_validate,
 )
 from conventions.services.search import (
     UserConventionActivesSearchService,
