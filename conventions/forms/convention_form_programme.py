@@ -4,10 +4,7 @@
 
 from django import forms
 
-from programmes.models import (
-    TypeHabitat,
-    TypeOperation,
-)
+from programmes.models import TypeHabitat, TypeOperation
 
 
 class ProgrammeMinimalForm(forms.Form):

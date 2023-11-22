@@ -373,6 +373,8 @@ def _nature_logement(nature_logement_from_siap: str) -> TypeOperation:
 
 
 def _financement(code):
+    if code in ["PLUS_CD", Financement.PLUS_CD]:
+        return Financement.PLUS_CD
     if code in ["PLUS", Financement.PLUS]:
         return Financement.PLUS
     if code in ["PLAI", Financement.PLAI]:
