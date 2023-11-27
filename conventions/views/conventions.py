@@ -199,9 +199,8 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
 
         return None
 
-    @property
-    def all_conventions_count(self):
-        return sum(tab["count"] for tab in self.get_tabs())
+    def all_conventions_count(self, tabs):
+        return sum(tab["count"] for tab in tabs)
 
     def _get_non_empty_query_param(self, query_param: str, default=None) -> str | None:
         if value := self.request.GET.get(query_param):
@@ -211,13 +210,13 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
 
     def get(self, request: AuthenticatedHttpRequest):
         paginator = self.service.paginate()
-
+        tabs = self.get_tabs()
         return render(
             request,
             "conventions/index.html",
             {
                 "administration_query": self.administrations_queryset,
-                "all_conventions_count": self.all_conventions_count,
+                "all_conventions_count": self.all_conventions_count(tabs),
                 "bailleur_query": self.bailleurs_queryset,
                 "conventions": paginator.get_page(request.GET.get("page", 1)),
                 "filtered_conventions_count": paginator.count,
@@ -225,7 +224,7 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
                 "url_name": resolve(request.path_info).url_name,
                 "search_input": self._get_non_empty_query_param("search_input", ""),
                 "statuts": self.service.choices,
-                "tabs": self.get_tabs(),
+                "tabs": tabs,
                 "total_conventions": request.user.conventions().count(),
                 "order_by": self._get_non_empty_query_param("order_by", ""),
             },
