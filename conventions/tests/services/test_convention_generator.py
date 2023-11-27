@@ -1,7 +1,8 @@
-import random
 import unittest
 from datetime import date
+from unittest.mock import Mock
 
+import jinja2
 from django.conf import settings
 from django.test import TestCase
 
@@ -9,6 +10,10 @@ from bailleurs.models import SousNatureBailleur
 from conventions.models import Convention, ConventionType1and2
 from conventions.services.convention_generator import (
     ConventionTypeConfigurationError,
+    _compute_liste_des_annexes,
+    _get_jinja_env,
+    _get_loyer_par_metre_carre,
+    _to_fr_float,
     compute_mixte,
     default_str_if_none,
     get_convention_template_path,
@@ -21,14 +26,6 @@ from conventions.services.convention_generator import (
 )
 from programmes.models import ActiveNatureLogement, TypologieLogement
 from users.models import User
-
-
-class ConventionUtilGeneratorTest(unittest.TestCase):
-    def test_pluralize(self):
-        self.assertEqual(pluralize(0), "")
-        self.assertEqual(pluralize(1), "")
-        self.assertEqual(pluralize(2), "s")
-        self.assertEqual(pluralize(random.randint(3, 999)), "s")
 
 
 class ConventionGeneratorComputeMixiteTest(TestCase):
@@ -235,3 +232,102 @@ class ConventionServiceGeneratorTest(TestCase):
         self.assertEqual(to_fr_short_date_or_default(None), "---")
         self.assertEqual(to_fr_short_date_or_default(""), "---")
         self.assertEqual(to_fr_short_date_or_default(date(2022, 12, 31)), "31/12/2022")
+
+    def test_jinja_env_setup(self):
+        jinja_env = _get_jinja_env()
+
+        self.assertIsInstance(jinja_env, jinja2.Environment)
+        self.assertTrue(jinja_env.autoescape)
+
+        expected_filters = [
+            "d",
+            "dd",
+            "sd",
+            "sdd",
+            "f",
+            "pl",
+            "len",
+            "inline_text_multiline",
+            "get_text_as_list",
+            "default_str_if_none",
+            "default_empty_if_none",
+            "tl",
+        ]
+
+        for filter_name in expected_filters:
+            self.assertIn(filter_name, jinja_env.filters)
+
+
+class TestToFrFloat(unittest.TestCase):
+    def test_to_fr_float(self):
+        self.assertEqual(_to_fr_float(1234.5678), "1 234,57")
+        self.assertEqual(_to_fr_float(1234.5678, 3), "1 234,568")
+        self.assertEqual(_to_fr_float(1234.5), "1 234,50")
+        self.assertEqual(_to_fr_float(None), "")
+
+
+class TestPluralize(unittest.TestCase):
+    def test_pluralize(self):
+        self.assertEqual(pluralize(2), "s")
+        self.assertEqual(pluralize(1), "")
+        self.assertEqual(pluralize(0), "")
+        self.assertEqual(pluralize(None), "")
+
+
+class TestGetLoyerParMetreCarre(unittest.TestCase):
+    def test_get_loyer_par_metre_carre(self):
+        # Set up mock objects
+        mock_convention = Mock()
+        mock_logement = Mock()
+        mock_logement.loyer_par_metre_carre = 10.5
+        mock_convention.lot.logements.first.return_value = mock_logement
+
+        # Call the function to test
+        loyer_par_metre_carre = _get_loyer_par_metre_carre(mock_convention)
+
+        # Check that loyer_par_metre_carre is correct
+        self.assertEqual(loyer_par_metre_carre, 10.5)
+
+    def test_get_loyer_par_metre_carre_no_logement(self):
+        # Set up mock objects
+        mock_convention = Mock()
+        mock_convention.lot.logements.first.return_value = None
+
+        # Call the function to test
+        loyer_par_metre_carre = _get_loyer_par_metre_carre(mock_convention)
+
+        # Check that loyer_par_metre_carre is correct
+        self.assertEqual(loyer_par_metre_carre, 0)
+
+
+class TestComputeListeDesAnnexes(unittest.TestCase):
+    def test_compute_liste_des_annexes(self):
+        # Set up mock objects
+        mock_annexe1 = Mock()
+        mock_annexe1.get_typologie_display.return_value = "Type1"
+        mock_annexe2 = Mock()
+        mock_annexe2.get_typologie_display.return_value = "Type2"
+        mock_annexe3 = Mock()
+        mock_annexe3.get_typologie_display.return_value = "Type2"
+
+        mock_stationnement1 = Mock()
+        mock_stationnement1.get_typologie_display.return_value = "Type1"
+        mock_stationnement1.nb_stationnements = 1
+        mock_stationnement2 = Mock()
+        mock_stationnement2.get_typologie_display.return_value = "Type2"
+        mock_stationnement2.nb_stationnements = 3
+
+        annexes = [mock_annexe1, mock_annexe2, mock_annexe3]
+        typestationnements = [mock_stationnement1, mock_stationnement2]
+
+        # Call the function to test
+        annexes_list = _compute_liste_des_annexes(typestationnements, annexes)
+
+        # Check that annexes_list is correct
+        expected_annexes_list = (
+            "1 annexe de type type1,"
+            " 2 annexes de type type2,"
+            " 1 stationnement de type type1,"
+            " 3 stationnements de type type2"
+        )
+        self.assertEqual(annexes_list, expected_annexes_list)
