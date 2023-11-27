@@ -1,21 +1,16 @@
 from django.http import Http404
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import generics
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from drf_spectacular.utils import (
-    extend_schema,
-    OpenApiResponse,
-)
 
-from siap.siap_authentication import SIAPJWTAuthentication
-from programmes.services import get_or_create_conventions_from_operation_number
+from conventions.models.choices import ConventionStatut
+from programmes.api.operation_serializers import ClosingOperationSerializer
+from programmes.api.operation_serializers import OperationSerializer as MySerializer
 from programmes.models import Programme
-from programmes.api.operation_serializers import (
-    ClosingOperationSerializer,
-    OperationSerializer as MySerializer,
-)
+from programmes.services import get_or_create_conventions_from_operation_number
+from siap.siap_authentication import SIAPJWTAuthentication
 
 
 class OperationDetails(generics.GenericAPIView):
@@ -114,3 +109,49 @@ class OperationClosed(OperationDetails):
     )
     def post(self, request, numero_galion):
         return self.get(request, numero_galion)
+
+
+# empty class to prepare routes for SIAP:
+# * OperationClosed.get -> get the status of the last version of the convention
+# * OperationClosed.post -> create avenant if needed after operation is closed
+class OperationCanceled(OperationDetails):
+    @extend_schema(
+        tags=["operation"],
+        responses={
+            200: ClosingOperationSerializer,
+            400: OpenApiResponse(description="Bad request (something invalid)"),
+            401: OpenApiResponse(description="Unauthorized"),
+            403: OpenApiResponse(description="Forbidden"),
+            404: OpenApiResponse(description="Not Found"),
+        },
+        description=(
+            "Cancel opération's conventions, return an error if it is not possible"
+        ),
+    )
+    def post(self, request, numero_galion):
+        programmes = Programme.objects.filter(
+            numero_galion=numero_galion, parent_id=None
+        )
+
+        if any(
+            convention.statut == ConventionStatut.SIGNEE.label
+            for programme in programmes
+            for convention in programme.conventions.all()
+        ):
+            return Response(
+                {
+                    "status": "ERROR",
+                    "message": (
+                        "Au moins une des conventions de l'opération ne peut être"
+                        " supprimée car elle est active. Vous devez dénoncer ou"
+                        " résilier toutes les conventions de l'opération avant de"
+                        " demander sa suppression."
+                    ),
+                },
+            )
+
+        for programme in programmes:
+            for convention in programme.conventions.all():
+                convention.cancel()
+
+        return Response({"status": "SUCCESS"})

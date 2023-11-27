@@ -8,6 +8,7 @@ from django.apps import apps
 from django.db import models
 from django.db.models import Q
 from django.forms import model_to_dict
+from django.http import HttpRequest
 
 from conventions.models import TypeEvenement
 from conventions.models.avenant_type import AvenantType
@@ -718,3 +719,21 @@ class Convention(models.Model):
 
     def get_status_definition(self):
         return ConventionStatut.get_by_label(self.statut)
+
+    def cancel(self, request: HttpRequest | None = None):
+        if self.statut not in [
+            ConventionStatut.PROJET.label,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+            ConventionStatut.A_SIGNER.label,
+        ]:
+            return
+        previous_status = self.statut
+        self.statut = ConventionStatut.ANNULEE.label
+        self.save()
+        ConventionHistory.objects.create(
+            convention=self,
+            statut_convention=ConventionStatut.ANNULEE.label,
+            statut_convention_precedent=previous_status,
+            user=request.user if request else None,
+        ).save()

@@ -714,3 +714,159 @@ class OperationClosedAPITest(APITestCase):
             self.assertEqual(response.data[key], value)
         for key in ["date_achevement_previsible", "date_achat", "date_achevement"]:
             self.assertTrue(response.data[key])
+
+
+class OperationCanceledAPITest(APITestCase):
+    fixtures = ["departements.json"]
+    """
+    As super user, I can do anything using the API
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        utils_fixtures.create_all_for_siap()
+
+    def setUp(self):
+        settings.USE_MOCKED_SIAP_CLIENT = True
+        self.user = User.objects.create_superuser(
+            "super.user", "super.user@apilos.com", "12345"
+        )
+        self.user.cerbere_login = "nicolas.oudard@beta.gouv.fr"
+        self.user.save()
+
+    def test_cancel_operation_unauthorized(self):
+        client = APIClient()
+        response = client.get("/api-siap/v0/cancel_operation/20220600005/")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        accesstoken = build_jwt(user_login="toto")
+        client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
+        response = client.post("/api-siap/v0/cancel_operation/20220600005/")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_cancel_operation_in_instruction(self):
+        client = APIClient()
+        accesstoken = build_jwt(
+            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
+        )
+        client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
+
+        convention1 = Convention.objects.get(numero="0001")
+        convention1.statut = ConventionStatut.PROJET.label
+        convention1.save()
+        convention2 = Convention.objects.get(numero="0002")
+        convention2.statut = ConventionStatut.INSTRUCTION.label
+        convention2.save()
+
+        response = client.post("/api-siap/v0/cancel_operation/20220600005/")
+
+        self.assertEqual(response.data["status"], "SUCCESS")
+
+        convention1.refresh_from_db()
+        convention2.refresh_from_db()
+
+        self.assertEqual(convention1.statut, ConventionStatut.ANNULEE.label)
+        self.assertEqual(convention2.statut, ConventionStatut.ANNULEE.label)
+
+        convention1 = Convention.objects.get(numero="0001")
+        convention1.statut = ConventionStatut.A_SIGNER.label
+        convention1.save()
+        convention2 = Convention.objects.get(numero="0002")
+        convention2.statut = ConventionStatut.CORRECTION.label
+        convention2.save()
+
+        response = client.post("/api-siap/v0/cancel_operation/20220600005/")
+
+        self.assertEqual(response.data["status"], "SUCCESS")
+
+        convention1.refresh_from_db()
+        convention2.refresh_from_db()
+
+        self.assertEqual(convention1.statut, ConventionStatut.ANNULEE.label)
+        self.assertEqual(convention2.statut, ConventionStatut.ANNULEE.label)
+
+    def test_cancel_operation_in_signed(self):
+        client = APIClient()
+        accesstoken = build_jwt(
+            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
+        )
+        client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
+
+        convention1 = Convention.objects.get(numero="0001")
+        convention1.statut = ConventionStatut.SIGNEE.label
+        convention1.save()
+        convention2 = Convention.objects.get(numero="0002")
+        convention2.statut = ConventionStatut.INSTRUCTION.label
+        convention2.save()
+
+        response = client.post("/api-siap/v0/cancel_operation/20220600005/")
+
+        self.assertEqual(response.data["status"], "ERROR")
+        self.assertTrue("message" in response.data)
+
+        convention1.refresh_from_db()
+        convention2.refresh_from_db()
+
+        self.assertEqual(convention1.statut, ConventionStatut.SIGNEE.label)
+        self.assertEqual(convention2.statut, ConventionStatut.INSTRUCTION.label)
+
+    def test_cancel_operation_with_avenant(self):
+        client = APIClient()
+        accesstoken = build_jwt(
+            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
+        )
+        client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
+
+        convention1 = Convention.objects.get(numero="0001")
+        convention1.statut = ConventionStatut.SIGNEE.label
+        convention1.save()
+        convention2 = Convention.objects.get(numero="0002")
+        convention2.statut = ConventionStatut.INSTRUCTION.label
+        convention2.save()
+
+        avenant1 = convention1.clone(self.user, convention_origin=convention1)
+        avenant1.statut = ConventionStatut.INSTRUCTION.label
+        avenant1.save()
+
+        response = client.post("/api-siap/v0/cancel_operation/20220600005/")
+
+        self.assertEqual(response.data["status"], "ERROR")
+        self.assertTrue("message" in response.data)
+
+        convention1.refresh_from_db()
+        convention2.refresh_from_db()
+        avenant1.refresh_from_db()
+
+        self.assertEqual(convention1.statut, ConventionStatut.SIGNEE.label)
+        self.assertEqual(convention2.statut, ConventionStatut.INSTRUCTION.label)
+        self.assertEqual(avenant1.statut, ConventionStatut.INSTRUCTION.label)
+
+    def test_cancel_operation_with_denonciated(self):
+        client = APIClient()
+        accesstoken = build_jwt(
+            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
+        )
+        client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
+
+        convention1 = Convention.objects.get(numero="0001")
+        convention1.statut = ConventionStatut.DENONCEE.label
+        convention1.save()
+        convention2 = Convention.objects.get(numero="0002")
+        convention2.statut = ConventionStatut.DENONCEE.label
+        convention2.save()
+
+        avenant1 = convention1.clone(self.user, convention_origin=convention1)
+        avenant1.statut = ConventionStatut.DENONCEE.label
+        avenant1.save()
+
+        response = client.post("/api-siap/v0/cancel_operation/20220600005/")
+
+        self.assertEqual(response.data["status"], "SUCCESS")
+
+        convention1.refresh_from_db()
+        convention2.refresh_from_db()
+        avenant1.refresh_from_db()
+
+        self.assertEqual(convention1.statut, ConventionStatut.DENONCEE.label)
+        self.assertEqual(convention2.statut, ConventionStatut.DENONCEE.label)
+        self.assertEqual(avenant1.statut, ConventionStatut.DENONCEE.label)
