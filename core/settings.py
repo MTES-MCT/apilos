@@ -266,6 +266,8 @@ if get_env_variable("ECOLO_DATABASE_URL") != "":
 EXPLORER_CONNECTIONS = {"Default": "readonly"}
 EXPLORER_DEFAULT_CONNECTION = "readonly"
 
+CONN_HEALTH_CHECKS = True
+CONN_MAX_AGE = None
 
 AUTH_PASSWORD_VALIDATORS = [
     {
