@@ -304,25 +304,17 @@ def get_or_create_lots_and_conventions(
                 or financement not in Financement.values
             ):
                 continue
-            my_lots = Lot.objects.filter(
+            (lot, _) = Lot.objects.get_or_create(
                 programme=programme,
                 financement=financement,
+                defaults={
+                    "type_habitat": _type_habitat(aide),
+                    "nb_logements": _nb_logements(aide),
+                },
             )
-            if my_lots:
-                for lot in my_lots:
-                    lots.append(lot)
-                    convention = _create_convention_from_lot(lot, user)
-                    conventions.append(convention)
-            else:
-                lot = Lot.objects.create(
-                    programme=programme,
-                    financement=financement,
-                    type_habitat=_type_habitat(aide),
-                    nb_logements=_nb_logements(aide),
-                )
-                lots.append(lot)
-                convention = _create_convention_from_lot(lot, user)
-                conventions.append(convention)
+
+            convention = _create_convention_from_lot(lot, user)
+            lots.append(lot)
     return (lots, conventions)
 
 
