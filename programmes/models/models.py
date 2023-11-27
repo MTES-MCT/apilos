@@ -30,6 +30,10 @@ logger = logging.getLogger(__name__)
 class Programme(IngestableModel):
     class Meta:
         indexes = [
+            models.Index(fields=["numero_galion"], name="programme_numero_galion_idx"),
+            models.Index(fields=["ville"], name="programme_ville_idx"),
+            models.Index(fields=["code_postal"], name="programme_code_postal_idx"),
+            models.Index(fields=["nom"], name="programme_nom_idx"),
             models.Index(fields=["-date_achevement_compile"]),
         ]
 
