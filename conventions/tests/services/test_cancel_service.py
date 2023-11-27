@@ -32,6 +32,7 @@ class ConventionCancelServiceTest(TestCase):
                 ConventionStatut.PROJET.label,
                 ConventionStatut.INSTRUCTION.label,
                 ConventionStatut.CORRECTION.label,
+                ConventionStatut.A_SIGNER.label,
             ]:
                 self.convention.statut = statut
                 self.convention.save()
@@ -40,7 +41,6 @@ class ConventionCancelServiceTest(TestCase):
                 self.assertEqual(self.convention.statut, ConventionStatut.ANNULEE.label)
 
             for statut in [
-                ConventionStatut.A_SIGNER.label,
                 ConventionStatut.SIGNEE.label,
                 ConventionStatut.RESILIEE.label,
                 ConventionStatut.DENONCEE.label,

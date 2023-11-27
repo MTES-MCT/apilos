@@ -5,9 +5,13 @@ from drf_spectacular.views import (
     SpectacularSwaggerSplitView,
 )
 from rest_framework_simplejwt import views as jwt_views
-from apilos_settings.api.api_views import ApilosConfiguration, ConventionKPI
-from programmes.api.operation_api_views import OperationDetails, OperationClosed
 
+from apilos_settings.api.api_views import ApilosConfiguration, ConventionKPI
+from programmes.api.operation_api_views import (
+    OperationCanceled,
+    OperationClosed,
+    OperationDetails,
+)
 
 urlpatterns = [
     # API authentication
@@ -18,9 +22,11 @@ urlpatterns = [
     path("convention_kpi/", ConventionKPI.as_view()),
     # Operation details route
     path("operation/<str:numero_galion>/", OperationDetails.as_view()),
-    # Operation details route
+    # Operation close route
     path("close_operation/<str:numero_galion>/", OperationClosed.as_view()),
-    # DRF spectacula
+    # Opération cancel route
+    path("cancel_operation/<str:numero_galion>/", OperationCanceled.as_view()),
+    # DRF spectacular
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "schema-ui/",
