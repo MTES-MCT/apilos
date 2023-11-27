@@ -14,6 +14,7 @@ asgiref==3.6.0 \
     # via
     #   -c requirements.txt
     #   django
+    #   django-browser-reload
 astroid==2.12.12 \
     --hash=sha256:1c00a14f5a3ed0339d38d2e2e5b74ea2591df5861c0936bb292b84ccf3a78d83 \
     --hash=sha256:72702205200b2a638358369d90c222d74ebc376787af8fb2f7f2a86f7b5cc85f
@@ -140,9 +141,9 @@ django==4.2.7 \
     #   django-extensions
     #   django-stubs
     #   django-stubs-ext
-django-browser-reload==1.12.0 \
-    --hash=sha256:2dc98c752b55d22db9c11fbc0274c16160ce4dcd67ef0ef294135ab57d711435 \
-    --hash=sha256:6c10b4b59a5aa7a412284d7c909fb5b80199e98a488f5b24da5c49b090d1ef3f
+django-browser-reload==1.12.1 \
+    --hash=sha256:08b457f1b6599bf782d4d2ecdfb0897d6fc936ac4035060d0269c2af5ef4ef7a \
+    --hash=sha256:875b6bd01db13380522ccb4ae75871a2edeae74bb5ac92bf32eb76763d575d86
     # via -r dev-requirements.in
 django-debug-toolbar==4.2.0 \
     --hash=sha256:af99128c06e8e794479e65ab62cc6c7d1e74e1c19beb44dcbf9bad7a9c017327 \
