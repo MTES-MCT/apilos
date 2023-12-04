@@ -51,8 +51,9 @@ class ConventionAdmin(admin.ModelAdmin):
         "motif_denonciation",
     )
     list_select_related = (
-        "programme",
-        "lot",
+        "programme__bailleur",
+        "programme__administration",
+        "lot__programme",
     )
     readonly_fields = (
         "uuid",
