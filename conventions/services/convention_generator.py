@@ -19,7 +19,7 @@ from conventions.templatetags.custom_filters import (
     inline_text_multiline,
 )
 from core.utils import get_key_from_json_field, round_half_up
-from programmes.models import Annexe, Financement, TypologieLogement
+from programmes.models import Annexe, TypologieLogement
 from upload.models import UploadedFile
 from upload.services import UploadService
 
@@ -456,12 +456,10 @@ def _compute_liste_des_annexes(typestationnements, annexes):
 
     annexes_list = []
     for key, value in annexes_par_type.items():
-        annexes_list.append(
-            f"{value} annexe{'s' if value > 1 else ''} de type {key.lower()}"
-        )
+        annexes_list.append(f"{value} annexe{pluralize(value)} de type {key.lower()}")
     for key, value in stationnement_par_type.items():
         annexes_list.append(
-            f"{value} stationnement{'s' if value > 1 else ''} de type {key.lower()}"
+            f"{value} stationnement{pluralize(value)} de type {key.lower()}"
         )
 
     return ", ".join(annexes_list)
@@ -476,7 +474,7 @@ def compute_mixte(convention):
         "mixPLUS_10pc": 0,
     }
     nb_logements = convention.lot.nb_logements or 0
-    if convention.lot.financement == Financement.PLUS:
+    if convention.mixity_option():
         # cf. convention : 30 % au moins des logements
         if nb_logements < 10:
             # cf. convention : 30 % au moins des logements (ce nombre s'obtenant en arrondissant

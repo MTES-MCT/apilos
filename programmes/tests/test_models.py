@@ -325,17 +325,22 @@ class LotModelsTest(TestCase):
 
     def test_mixity_option(self):
         lot = Lot.objects.order_by("uuid").first()
-        lot.financement = Financement.PLUS
-        lot.lgts_mixite_sociale_negocies = random.randint(1, 10)
-        self.assertTrue(lot.mixity_option())
-        self.assertEqual(
-            lot.lgts_mixite_sociale_negocies, lot.lgts_mixite_sociale_negocies_display()
-        )
-        for k, _ in Financement.choices:
-            if k != Financement.PLUS:
-                lot.financement = k
-                self.assertFalse(lot.mixity_option())
-                self.assertEqual(0, lot.lgts_mixite_sociale_negocies_display())
+        for financement in [Financement.PLUS, Financement.PLUS_CD]:
+            lot.financement = financement
+            lot.lgts_mixite_sociale_negocies = random.randint(1, 10)
+            self.assertTrue(lot.mixity_option())
+            self.assertEqual(
+                lot.lgts_mixite_sociale_negocies,
+                lot.lgts_mixite_sociale_negocies_display(),
+            )
+        for financement in [
+            k
+            for (k, _) in Financement.choices
+            if k not in [Financement.PLUS, Financement.PLUS_CD]
+        ]:
+            lot.financement = financement
+            self.assertFalse(lot.mixity_option())
+            self.assertEqual(0, lot.lgts_mixite_sociale_negocies_display())
 
     def test_lot_bailleur(self):
         lot = Lot.objects.order_by("uuid").first()

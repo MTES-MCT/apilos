@@ -1,12 +1,9 @@
 import datetime
 
 from django.test import TestCase
+
+from conventions.models import Convention, Pret, Preteur
 from core.tests import utils_assertions
-from conventions.models import (
-    Convention,
-    Pret,
-    Preteur,
-)
 
 
 class PretModelsTest(TestCase):
@@ -45,7 +42,7 @@ class PretModelsTest(TestCase):
             pret.p_full(), "Caisse de Dépôts et Consignation pour le logement"
         )
         pret.preteur = Preteur.AUTRE
-        self.assertEqual(pret.p_full(), "Autre")
+        self.assertEqual(pret.p_full(), "Autre/Subventions")
         pret.preteur = Preteur.ETAT
         self.assertEqual(pret.p_full(), "Etat")
         pret.preteur = Preteur.REGION

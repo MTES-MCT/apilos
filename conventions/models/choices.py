@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import NamedTuple
+
 from django.db.models import TextChoices
 
 
@@ -240,7 +241,7 @@ class Preteur(TextChoices):
     CDCL = "CDCL", "CDC pour le logement"
     COMMUNE = "COMMUNE", "Commune et action logement"
     ANRU = "ANRU", "ANRU"
-    AUTRE = "AUTRE", "Autre"
+    AUTRE = "AUTRE", "Autre/Subventions"
 
 
 class TypeEvenement(TextChoices):
