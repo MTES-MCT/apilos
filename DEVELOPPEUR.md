@@ -94,7 +94,7 @@ python manage.py createsuperuser
 ## Lancer de l'application
 
 ```sh
-python manage.py runserver 0.0.0.0:8001
+make runserver
 ```
 
 L'application est désormais disponible [http://localhost:8001](http://localhost:8001)
@@ -149,7 +149,7 @@ Les tests sont organisés comme suit :
 L'application prend en charge des test unitaire et des tests d'intégration. Pour les lancer:
 
 ```sh
-python manage.py test
+make test
 ```
 
 et pour les lancer avec un test de coverage et afficher le rapport :
@@ -180,14 +180,13 @@ Puis compiler (recquiert l'installation de `pip-tools`):
 
 ```sh
 pip install pip-tools
-pip-compile --resolver=backtracking requirements.in --generate-hashes
-pip-compile --resolver=backtracking dev-requirements.in --generate-hashes
+make upgrade_requirements
 ```
 
 Et installer
 
 ```sh
-pip install -r requirements.txt -r dev-requirements.txt
+make install_requirements
 ```
 
 ## Manipulations de développement
