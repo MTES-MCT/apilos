@@ -551,7 +551,7 @@ class Convention(models.Model):
         with low revenu should be displayed in the interface and fill in the convention document
         Should be editable when it is a PLUS convention
         """
-        return self.financement == Financement.PLUS
+        return self.financement in [Financement.PLUS, Financement.PLUS_CD]
 
     def display_not_validated_status(self):
         """

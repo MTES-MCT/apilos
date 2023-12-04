@@ -18,6 +18,7 @@ class ZoneABC(models.TextChoices):
 
 class Financement(models.TextChoices):
     PLUS = "PLUS", "PLUS"
+    PLUS_CD = "PLUS_CD", "PLUS_CD"
     PLAI = "PLAI", "PLAI"
     PLAI_ADP = "PLAI_ADP", "PLAI_ADP"
     PLUS_PLAI = "PLUS-PLAI", "PLUS-PLAI"
@@ -29,6 +30,7 @@ class Financement(models.TextChoices):
 
 class FinancementEDD(models.TextChoices):
     PLUS = "PLUS", "PLUS"
+    PLUS_CD = "PLUS_CD", "PLUS_CD"
     PLAI = "PLAI", "PLAI"
     PLS = "PLS", "PLS"
     SANS_FINANCEMENT = "SANS_FINANCEMENT", "Sans Financement"
