@@ -55,7 +55,6 @@ DB_PORT=5433
 ### Installer les dépendances python
 
 ```sh
-pip install pip-tools
 pip install -r requirements.txt -r dev-requirements.txt
 ```
 
@@ -176,10 +175,9 @@ Plus de détails sur la doc dédiée [API.md](API.md)
 
 Ajouter les dépendances dans requirements.in ou dev-requirements.in
 
-Puis compiler (recquiert l'installation de `pip-tools`):
+Puis compiler (recquiert `pip-tools`, présent dans les requirements de dev):
 
 ```sh
-pip install pip-tools
 make upgrade_requirements
 ```
 

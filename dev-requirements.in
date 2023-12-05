@@ -9,6 +9,7 @@ django-extensions
 django-stubs
 djhtml
 honcho
+pip-tools
 pre-commit
 ptpython
 pylint
