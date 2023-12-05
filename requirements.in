@@ -22,7 +22,7 @@ drf-spectacular
 gunicorn
 Jinja2
 openpyxl
-psycopg2
+psycopg2-binary
 pyjwt
 pylint-django
 python-box
