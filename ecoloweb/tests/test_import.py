@@ -2,9 +2,9 @@ import os
 from datetime import datetime
 import glob
 from pathlib import Path
-from unittest import TestCase, skipIf
+from unittest import TestCase
 
-from django.db import connections, OperationalError
+from django.db import connections
 from django.db.backends.utils import CursorWrapper
 
 from ecoloweb.services import ConventionImporter

@@ -89,7 +89,7 @@ from (
         inner join ecolo.ecolo_valeurparamstatic vps on ir.annee_id = vps.id
         inner join ecolo.ecolo_naturelogement nl on ir.naturelogement_id = nl.id
 ) ir
-                """
+                """  # noqa: E501
         )
 
         with transaction.atomic():

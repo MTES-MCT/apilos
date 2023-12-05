@@ -6,7 +6,6 @@ from django import forms
 
 
 class ConventionDenonciationForm(forms.Form):
-
     uuid = forms.UUIDField(
         required=False,
         label="Dénonciation",
@@ -18,7 +17,7 @@ class ConventionDenonciationForm(forms.Form):
            La dénonciation intervient à date d'échéance de la convention, c'est à dire sa date de fin ou de renouvellement (tous les 3 ans).
            La notification de dénonciation doit être faite au moins 6 mois avant l'échéance de la convention par acte authentique (acte notarié ou acte d'huissier de justice).
            Si ces conditions ne sont pas respectées, elle ne pourra être validée par l'administration instructrice.
-        """,
+        """,  # noqa: E501
         error_messages={
             "required": "Vous devez saisir une date de dénonciation",
         },

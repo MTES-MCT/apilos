@@ -117,7 +117,7 @@ class Command(BaseCommand):
                     + f"l'entrée est ignorée: {str_row(my_row)}"
                 )
                 continue
-            if not my_row["Produit"] in dir(Financement):
+            if my_row["Produit"] not in dir(Financement):
                 if my_row["Produit"][0:4] in ["PLUS", "PLAI"]:
                     my_row["Produit"] = my_row["Produit"][0:4]
                 else:
@@ -129,7 +129,7 @@ class Command(BaseCommand):
             my_objects.append(my_row)
             count_inserted += 1
             if (
-                not my_row["Nb Garages aériens"] is None
+                my_row["Nb Garages aériens"] is not None
                 and int(my_row["Nb Garages aériens"]) > 0
             ):
                 ga_row = my_row.copy()
@@ -140,7 +140,7 @@ class Command(BaseCommand):
                 ga_row["Loyer"] = my_row["Loyer Garages aériens"]  # loyer
                 my_parkings.append(ga_row)
             if (
-                not my_row["Nb Garages enterrés"] is None
+                my_row["Nb Garages enterrés"] is not None
                 and int(str(my_row["Nb Garages enterrés"])) > 0
             ):
                 ge_row = my_row.copy()
@@ -151,7 +151,7 @@ class Command(BaseCommand):
                 ge_row["Loyer"] = my_row["Loyer Garages enterrés"]  # loyer
                 my_parkings.append(ge_row)
             if (
-                not my_row["Nb Places Stationnement"] is None
+                my_row["Nb Places Stationnement"] is not None
                 and int(str(my_row["Nb Places Stationnement"])) > 0
             ):
                 ps_row = my_row.copy()

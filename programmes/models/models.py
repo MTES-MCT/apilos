@@ -737,7 +737,7 @@ class Logement(models.Model):
     def _get_loyer(self):
         return self.loyer
 
-    l = property(_get_loyer)
+    l = property(_get_loyer)  # noqa: E741
 
 
 class Annexe(models.Model):
@@ -801,7 +801,7 @@ class Annexe(models.Model):
     def _get_loyer(self):
         return self.loyer
 
-    l = property(_get_loyer)
+    l = property(_get_loyer)  # noqa: E741
 
 
 class LocauxCollectifs(models.Model):
@@ -884,7 +884,7 @@ class TypeStationnement(IngestableModel):
     def _get_loyer(self):
         return self.loyer
 
-    l = property(_get_loyer)
+    l = property(_get_loyer)  # noqa: E741
 
 
 class IndiceEvolutionLoyer(models.Model):

@@ -12,7 +12,7 @@ from .importers_programmes import LotImporter
 from .query_iterator import QueryResultIterator
 from django.conf import settings
 
-from ..models import EcoloReference
+from ecoloweb.models import EcoloReference
 
 logger = logging.getLogger(__name__)
 
@@ -54,12 +54,12 @@ class ConventionImporter(ModelImporter):
             )
 
             return QueryResultIterator(
-                "select ch.id from ecolo.ecolo_conventionhistorique ch where ch.departement = %s and not ch.id = any(%s) order by ch.conventionapl_id, ch.financement, ch.numero nulls first",
+                "select ch.id from ecolo.ecolo_conventionhistorique ch where ch.departement = %s and not ch.id = any(%s) order by ch.conventionapl_id, ch.financement, ch.numero nulls first",  # noqa: E501
                 parameters=[self.departement, ids_to_skip],
             )
 
         return QueryResultIterator(
-            "select ch.id from ecolo.ecolo_conventionhistorique ch where ch.departement = %s order by ch.conventionapl_id, ch.financement, ch.numero nulls first",
+            "select ch.id from ecolo.ecolo_conventionhistorique ch where ch.departement = %s order by ch.conventionapl_id, ch.financement, ch.numero nulls first",  # noqa: E501
             parameters=[self.departement],
         )
 
