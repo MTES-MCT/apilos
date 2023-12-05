@@ -251,9 +251,7 @@ except decouple.UndefinedValueError:
 # from https://django-sql-explorer.readthedocs.io/en/latest/install.html
 # The readonly access is configured with fake access when DB_READONLY env
 # variable is not set.
-DB_READONLY = config(
-    "DB_READONLY", default="postgres://fakeusername:fakepassword@postgres:5432/database"
-)
+DB_READONLY = config("DB_READONLY")
 readonly_settings = dj_database_url.parse(DB_READONLY)
 
 DATABASES = {"default": default_settings, "readonly": readonly_settings}
