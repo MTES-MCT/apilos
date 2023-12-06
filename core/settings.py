@@ -161,6 +161,8 @@ if ENVIRONMENT == "development":
     SHELL_PLUS_PRINT_SQL = get_env_variable(
         "SHELL_PLUS_PRINT_SQL", default=True, cast=bool
     )
+    SHELL_PLUS = get_env_variable("SHELL_PLUS", default="ptpython")
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
