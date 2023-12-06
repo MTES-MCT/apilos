@@ -1,8 +1,11 @@
+from datetime import date, timedelta
+
 from bs4 import BeautifulSoup
 from django.http.request import HttpRequest
 from django.test import TestCase
 from django.urls import reverse
 
+from conventions.models import Convention
 from conventions.services.search import UserConventionSearchService
 from conventions.views.conventions import ConventionSearchView, ConventionTabsMixin
 from users.models import User
@@ -96,3 +99,50 @@ class ConventionIndexViewTests(TestCase):
 
         self.assertEqual(len(tabs), 4)
         self.assertEqual(tabs[-1]["title"], "Je suis un service")
+
+
+class ConventionIndexFiltersViewTests(TestCase):
+    fixtures = [
+        "auth.json",
+        "departements.json",
+        "avenant_types.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+        "users_for_tests.json",
+    ]
+
+    def _login(self):
+        # login as superuser
+        self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
+
+    def test_filter_year(self):
+        self._login()
+
+        last_convention = Convention.objects.order_by("-cree_le").first()
+        last_convention.cree_le = last_convention.cree_le - timedelta(days=365 * 4)
+        last_convention.save()
+
+        response = self.client.get(
+            reverse("conventions:search_instruction"), data={"year": "2000"}
+        )
+
+        self.assertEqual(
+            response.context["years"],
+            sorted([str(d) for d in range(2019, date.today().year + 1)], reverse=True),
+        )
+        self.assertEqual(response.context["total_conventions"], 4)
+        self.assertEqual(response.context["filtered_conventions_count"], 0)
+
+        response = self.client.get(
+            reverse("conventions:search_instruction"), data={"year": "2023"}
+        )
+        self.assertEqual(response.context["total_conventions"], 4)
+        self.assertEqual(response.context["filtered_conventions_count"], 3)
+
+        response = self.client.get(
+            reverse("conventions:search_instruction"), data={"year": "2019"}
+        )
+        self.assertEqual(response.context["total_conventions"], 4)
+        self.assertEqual(response.context["filtered_conventions_count"], 1)

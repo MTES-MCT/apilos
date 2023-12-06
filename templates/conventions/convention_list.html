@@ -116,6 +116,21 @@
                             </div>
                         </div>
 
+                        {# Champs annee #}
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                            <div class="">
+                                <select class="fr-select" name="year">
+                                    <option value="">Année</option>
+                                    {% for value in years %}
+                                        <option value="{{ value }}"
+                                            {% if value == request.GET.year %}selected{% endif %}>
+                                            {{ value }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
                         {# Champs "Libre" (code opération / numéro de convention, code postal ou nom du programme) #}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
                             <input class="fr-input" placeholder="Numéro, nom, code postal…" type="search" id="search_input" name="search_input" value="{{ search_input }}" />

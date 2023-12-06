@@ -115,6 +115,7 @@ class UserConventionSearchService(ConventionSearchBaseService):
     statut: ConventionStatut | None = None
     bailleur: Bailleur | None = None
     administration: Administration | None = None
+    year: str | None = None
 
     def __init__(
         self,
@@ -134,6 +135,7 @@ class UserConventionSearchService(ConventionSearchBaseService):
                 "search_input",
                 "bailleur",
                 "administration",
+                "year",
             ]:
                 setattr(self, name, search_filters.get(name))
             self.statut = ConventionStatut.get_by_label(search_filters.get("statut"))
@@ -161,6 +163,9 @@ class UserConventionSearchService(ConventionSearchBaseService):
 
         if self.anru:
             self.filters["lot__programme__anru"] = True
+
+        if self.year:
+            self.filters["cree_le__year"] = self.year
 
     def _get_base_queryset(self) -> QuerySet:
         qs = self.user.conventions()
