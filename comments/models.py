@@ -33,6 +33,11 @@ class Comment(models.Model):
     resolu_le = models.DateTimeField(null=True)
     clos_le = models.DateTimeField(null=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["statut"], name="comment_statut_idx"),
+        ]
+
     def object_detail(self):
         mapping_nom_objet = {
             "logement_edd": "Tableau de l'EDD simplifié",
