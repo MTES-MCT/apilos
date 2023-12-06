@@ -6,13 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('instructeurs', '0004_auto_20220202_1444'),
+        ("instructeurs", "0004_auto_20220202_1444"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='administration',
-            name='prefix_convention',
-            field=models.CharField(default='{département}/{zone}/{mois}/{année}/80.416/', max_length=255, null=True),
+            model_name="administration",
+            name="prefix_convention",
+            field=models.CharField(
+                default="{département}/{zone}/{mois}/{année}/80.416/",
+                max_length=255,
+                null=True,
+            ),
         ),
     ]

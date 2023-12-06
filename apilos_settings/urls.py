@@ -52,7 +52,6 @@ urlpatterns = [
         views.ImportBailleurUsersView.as_view(),
         name="import_bailleur_users",
     ),
-
     path(
         "users/delete/<username>",
         views.delete_user,

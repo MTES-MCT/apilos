@@ -12,8 +12,6 @@ def display_kind(convention):
     return "convention"
 
 
-
-
 @register.filter
 def display_kind_with_pronom(convention):
     if convention.is_denonciation():
@@ -23,7 +21,6 @@ def display_kind_with_pronom(convention):
     return "la convention"
 
 
-
 @register.filter
 def display_kind_with_demonstratif(convention):
     if convention.is_denonciation():
@@ -31,8 +28,6 @@ def display_kind_with_demonstratif(convention):
     if convention.is_avenant():
         return "cet avenant"
     return "cette convention"
-
-
 
 
 @register.filter
@@ -53,7 +48,6 @@ def display_pronom(convention):
     return "la"
 
 
-
 @register.filter
 def display_personnal_pronom(convention):
     if convention.is_denonciation():
@@ -61,7 +55,6 @@ def display_personnal_pronom(convention):
     if convention.is_avenant():
         return "il"
     return "elle"
-
 
 
 @register.filter
