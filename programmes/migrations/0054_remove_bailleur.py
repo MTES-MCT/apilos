@@ -6,32 +6,32 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('programmes', '0053_alter_logement_typologie'),
+        ("programmes", "0053_alter_logement_typologie"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='annexe',
-            name='bailleur',
+            model_name="annexe",
+            name="bailleur",
         ),
         migrations.RemoveField(
-            model_name='logement',
-            name='bailleur',
+            model_name="logement",
+            name="bailleur",
         ),
         migrations.RemoveField(
-            model_name='logementedd',
-            name='bailleur',
+            model_name="logementedd",
+            name="bailleur",
         ),
         migrations.RemoveField(
-            model_name='lot',
-            name='bailleur',
+            model_name="lot",
+            name="bailleur",
         ),
         migrations.RemoveField(
-            model_name='referencecadastrale',
-            name='bailleur',
+            model_name="referencecadastrale",
+            name="bailleur",
         ),
         migrations.RemoveField(
-            model_name='typestationnement',
-            name='bailleur',
+            model_name="typestationnement",
+            name="bailleur",
         ),
     ]
