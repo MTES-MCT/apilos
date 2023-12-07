@@ -193,25 +193,30 @@ class ConventionCadastreService(ConventionService):
         }
         for idx, form_reference_cadastrale in enumerate(self.formset):
             if form_reference_cadastrale["uuid"].value():
-                reference_cadastrale = ReferenceCadastrale.objects.get(
-                    uuid=form_reference_cadastrale["uuid"].value()
-                )
-                initformset = {
-                    **initformset,
-                    f"form-{idx}-uuid": reference_cadastrale.uuid,
-                    f"form-{idx}-section": utils.get_form_value(
-                        form_reference_cadastrale, reference_cadastrale, "section"
-                    ),
-                    f"form-{idx}-numero": utils.get_form_value(
-                        form_reference_cadastrale, reference_cadastrale, "numero"
-                    ),
-                    f"form-{idx}-lieudit": utils.get_form_value(
-                        form_reference_cadastrale, reference_cadastrale, "lieudit"
-                    ),
-                    f"form-{idx}-surface": utils.get_form_value(
-                        form_reference_cadastrale, reference_cadastrale, "surface"
-                    ),
-                }
+                try:
+                    reference_cadastrale = ReferenceCadastrale.objects.get(
+                        uuid=form_reference_cadastrale["uuid"].value()
+                    )
+                except ReferenceCadastrale.DoesNotExist:
+                    form_is_valid = False
+                    # TODO: add errors ?
+                else:
+                    initformset = {
+                        **initformset,
+                        f"form-{idx}-uuid": reference_cadastrale.uuid,
+                        f"form-{idx}-section": utils.get_form_value(
+                            form_reference_cadastrale, reference_cadastrale, "section"
+                        ),
+                        f"form-{idx}-numero": utils.get_form_value(
+                            form_reference_cadastrale, reference_cadastrale, "numero"
+                        ),
+                        f"form-{idx}-lieudit": utils.get_form_value(
+                            form_reference_cadastrale, reference_cadastrale, "lieudit"
+                        ),
+                        f"form-{idx}-surface": utils.get_form_value(
+                            form_reference_cadastrale, reference_cadastrale, "surface"
+                        ),
+                    }
             else:
                 initformset = {
                     **initformset,
