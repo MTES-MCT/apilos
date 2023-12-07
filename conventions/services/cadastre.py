@@ -1,3 +1,4 @@
+import logging
 from django.http import HttpRequest
 
 from conventions.forms import (
@@ -9,6 +10,8 @@ from conventions.models import Convention
 from conventions.services import upload_objects, utils
 from conventions.services.conventions import ConventionService
 from programmes.models import ReferenceCadastrale
+
+logger = logging.getLogger(__name__)
 
 
 class ConventionCadastreService(ConventionService):
@@ -200,7 +203,11 @@ class ConventionCadastreService(ConventionService):
                 except ReferenceCadastrale.DoesNotExist:
                     form_is_valid = False
                     self.form.add_error(
-                        field="uuid", error="Référence cadastrale inconnue"
+                        field=None, error="Référence cadastrale inconnue"
+                    )
+                    logger.error(
+                        "Unknown reference cadastrale with uuid %s",
+                        form_reference_cadastrale["uuid"].value(),
                     )
                 else:
                     initformset = {
