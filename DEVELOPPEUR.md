@@ -11,7 +11,7 @@ La plateforme APiLos est open source et la gestion de version est assuré via Gi
 ### Prérequis
 
 Les services Postgresql et Redis utilisés par APiLos sont dockerisés
-Python et Node sont nécessaires pour faire lacer l'application
+Python et Node sont nécessaires pour faire lancer l'application
 Il est conseillé d'installer un environnment virtuel pour isoler l'environnement python et node d'APiLos (asdf par exemple)
 
 - Python >=3.10
