@@ -199,7 +199,9 @@ class ConventionCadastreService(ConventionService):
                     )
                 except ReferenceCadastrale.DoesNotExist:
                     form_is_valid = False
-                    # TODO: add errors ?
+                    self.form.add_error(
+                        field="uuid", error="Référence cadastrale inconnue"
+                    )
                 else:
                     initformset = {
                         **initformset,
