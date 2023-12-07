@@ -22,7 +22,7 @@ from conventions_convention c
     """,
             reverse_sql="""
 drop view if exists v_convention_departement
-    """
+    """,
         ),
         RunSQL(
             sql="""
@@ -33,5 +33,6 @@ from conventions_conventionhistory
     """,
             reverse_sql="""
 drop view if exists v_convention_statuts
-        """)
+        """,
+        ),
     ]

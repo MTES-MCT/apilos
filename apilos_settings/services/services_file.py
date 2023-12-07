@@ -12,10 +12,18 @@ from users.services import UserService
 class BailleurListingProcessor:
     empty_lines_allowed = 5
     columns = {
-        'first_name': ['prénom', 'prenom'],
-        'last_name': ['nom'],
-        'email': ['email', 'e-mail', 'adresse email', 'adresse e-mail', 'courriel', 'mail', 'adresse mail'],
-        'bailleur': ['nom bailleur', 'nom du bailleur', 'bailleur']
+        "first_name": ["prénom", "prenom"],
+        "last_name": ["nom"],
+        "email": [
+            "email",
+            "e-mail",
+            "adresse email",
+            "adresse e-mail",
+            "courriel",
+            "mail",
+            "adresse mail",
+        ],
+        "bailleur": ["nom bailleur", "nom du bailleur", "bailleur"],
     }
 
     def __init__(self, filename):
@@ -27,7 +35,9 @@ class BailleurListingProcessor:
         # Create mapping:
         mapping = {}
 
-        for column in self._worksheet.iter_cols(min_col=1, max_col=self._worksheet.max_column, min_row=1, max_row=1):
+        for column in self._worksheet.iter_cols(
+            min_col=1, max_col=self._worksheet.max_column, min_row=1, max_row=1
+        ):
             cell = column[0]
             if cell.value is None:
                 continue
@@ -42,13 +52,22 @@ class BailleurListingProcessor:
         keys = [f'"{self.columns[k][0]}"' for k in diff]
         if len(diff) > 0:
             if len(diff) == 1:
-                raise Exception(f"Lecture du fichier impossible: la colonne {keys[0]} est manquante")
-            else:
-                raise Exception(f"Lecture du fichier impossible: les colonnes {', '.join(keys)} sont manquantes")
+                raise Exception(
+                    f"Lecture du fichier impossible: la colonne {keys[0]} est manquante"
+                )
+            raise Exception(
+                f"Lecture du fichier impossible: les colonnes {', '.join(keys)} sont manquantes"
+            )
 
         nb_empty_lines = 0
 
-        for row in self._worksheet.iter_rows(min_col=1, max_col=self._worksheet.max_column, min_row=2, max_row=self._worksheet.max_row, values_only=True):
+        for row in self._worksheet.iter_rows(
+            min_col=1,
+            max_col=self._worksheet.max_column,
+            min_row=2,
+            max_row=self._worksheet.max_row,
+            values_only=True,
+        ):
             data = {key: row[index - 1] for (key, index) in mapping.items()}
 
             # Check if row produces only empty data
@@ -58,11 +77,14 @@ class BailleurListingProcessor:
                 if nb_empty_lines == self.empty_lines_allowed:
                     break
             else:
-                bailleur = data.pop('bailleur')
+                bailleur = data.pop("bailleur")
                 bailleur = str(bailleur).strip() if bailleur is not None else None
-                data['bailleur'] = Bailleur.objects.filter(Q(nom__iexact=bailleur) | Q(siret=bailleur)).first()
-                data['username'] = UserService.extract_username_from_email(data.get('email', ''))
+                data["bailleur"] = Bailleur.objects.filter(
+                    Q(nom__iexact=bailleur) | Q(siret=bailleur)
+                ).first()
+                data["username"] = UserService.extract_username_from_email(
+                    data.get("email", "")
+                )
                 results.append(data)
 
         return results
-

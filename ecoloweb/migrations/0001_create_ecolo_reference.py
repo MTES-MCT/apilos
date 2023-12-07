@@ -7,20 +7,19 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='EcoloReference',
+            name="EcoloReference",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('apilos_model', models.CharField(max_length=64)),
-                ('ecolo_id', models.TextField(max_length=32)),
-                ('apilos_id', models.IntegerField()),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                ("apilos_model", models.CharField(max_length=64)),
+                ("ecolo_id", models.TextField(max_length=32)),
+                ("apilos_id", models.IntegerField()),
             ],
             options={
-                'unique_together': {('apilos_model', 'ecolo_id')},
+                "unique_together": {("apilos_model", "ecolo_id")},
             },
         ),
     ]
