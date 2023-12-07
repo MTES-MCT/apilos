@@ -12,6 +12,7 @@ def view_programme(convention):
     )
 
 
+@admin.register(Convention)
 class ConventionAdmin(admin.ModelAdmin):
     list_display = (view_programme, "administration", "bailleur", "financement", "uuid")
     search_fields = [
@@ -67,6 +68,17 @@ class ConventionAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(Convention, ConventionAdmin)
-admin.site.register(Pret)
+@admin.register(Pret)
+class PretAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "convention",
+        "preteur",
+        "date_octroi",
+        "numero",
+        "montant",
+    )
+    readonly_fields = ("convention",)
+
+
 admin.site.register(AvenantType)

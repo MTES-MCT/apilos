@@ -14,6 +14,7 @@ from .models import (
 )
 
 
+@admin.register(Programme)
 class ProgrammeAdmin(admin.ModelAdmin):
     list_display = ("nom", "uuid")
     fields = (
@@ -48,6 +49,7 @@ def view_programme(lot):
     return f"{lot.programme.ville} -  {lot.programme.nom}"
 
 
+@admin.register(Lot)
 class LotAdmin(admin.ModelAdmin):
     list_display = (view_programme, "financement", "uuid")
 
@@ -64,11 +66,34 @@ class LotAdmin(admin.ModelAdmin):
         "programme",
     )
 
+    list_select_related = ("programme",)
 
-admin.site.register(Programme, ProgrammeAdmin)
-admin.site.register(ReferenceCadastrale)
-admin.site.register(Lot, LotAdmin)
-admin.site.register(Logement)
-admin.site.register(Annexe)
-admin.site.register(TypeStationnement)
+
+@admin.register(Annexe)
+class AnnexeAdmin(admin.ModelAdmin):
+    list_select_related = ("logement",)
+
+
+@admin.register(Logement)
+class LogementAdmin(admin.ModelAdmin):
+    readonly_fields = ("lot",)
+    list_display = (
+        "id",
+        "lot",
+        "typologie",
+        "designation",
+    )
+
+
+@admin.register(ReferenceCadastrale)
+class ReferenceCadastraleAdmin(admin.ModelAdmin):
+    readonly_fields = ("programme",)
+
+
+@admin.register(TypeStationnement)
+class TypeStationnementAdmin(admin.ModelAdmin):
+    list_select_related = ("lot__programme",)
+    readonly_fields = ("lot",)
+
+
 admin.site.register(IndiceEvolutionLoyer)
