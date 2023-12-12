@@ -72,6 +72,7 @@ class LotAdmin(admin.ModelAdmin):
 @admin.register(Annexe)
 class AnnexeAdmin(admin.ModelAdmin):
     list_select_related = ("logement",)
+    readonly_fields = ("logement",)
 
 
 @admin.register(Logement)
