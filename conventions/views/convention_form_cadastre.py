@@ -1,3 +1,5 @@
+from django.shortcuts import get_object_or_404
+
 from conventions.models import Convention
 from conventions.services.cadastre import ConventionCadastreService
 from conventions.views.convention_form import ConventionView
@@ -8,8 +10,9 @@ class ConventionCadastreView(ConventionView):
     service_class = ConventionCadastreService
 
     def _get_convention(self, convention_uuid):
-        return (
-            Convention.objects.prefetch_related("programme")
-            .prefetch_related("programme__referencecadastrales")
-            .get(uuid=convention_uuid)
+        return get_object_or_404(
+            Convention.objects.prefetch_related("programme").prefetch_related(
+                "programme__referencecadastrales"
+            ),
+            uuid=convention_uuid,
         )
