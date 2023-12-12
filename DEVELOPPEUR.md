@@ -149,13 +149,13 @@ Les tests sont organisés comme suit :
 L'application prend en charge des test unitaire et des tests d'intégration. Pour les lancer:
 
 ```sh
-python manage.py test
+pytest
 ```
 
 et pour les lancer avec un test de coverage et afficher le rapport :
 
 ```sh
-coverage run --source='.' manage.py test
+coverage run -m pytest
 coverage report
 ```
 
