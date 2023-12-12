@@ -20,9 +20,9 @@ class ConventionProgrammeService(ConventionService):
             initial={
                 "uuid": programme.uuid,
                 "nom": programme.nom,
-                "adresse": programme.adresse,
-                "code_postal": programme.code_postal,
-                "ville": programme.ville,
+                "adresse": self.convention.adresse or programme.adresse,
+                "code_postal": self.convention.code_postal or programme.code_postal,
+                "ville": self.convention.ville or programme.ville,
                 "type_habitat": lot.type_habitat,
                 "type_operation": programme.type_operation,
                 "anru": programme.anru,
@@ -71,6 +71,7 @@ class ConventionProgrammeService(ConventionService):
             }
         )
         if self.form.is_valid():
+            _save_convention_adresse(self.convention, self.form)
             _save_programme_and_lot(
                 self.convention.programme, self.convention.lot, self.form
             )
@@ -79,9 +80,6 @@ class ConventionProgrammeService(ConventionService):
 
 def _save_programme_and_lot(programme, lot, form):
     programme.nom = form.cleaned_data["nom"]
-    programme.adresse = form.cleaned_data["adresse"]
-    programme.code_postal = form.cleaned_data["code_postal"]
-    programme.ville = form.cleaned_data["ville"]
     if form.cleaned_data["type_operation"]:
         programme.type_operation = form.cleaned_data["type_operation"]
     programme.anru = form.cleaned_data["anru"]
@@ -93,3 +91,10 @@ def _save_programme_and_lot(programme, lot, form):
     programme.save()
     lot.type_habitat = form.cleaned_data["type_habitat"]
     lot.save()
+
+
+def _save_convention_adresse(convention, form):
+    convention.adresse = form.cleaned_data["adresse"]
+    convention.code_postal = form.cleaned_data["code_postal"]
+    convention.ville = form.cleaned_data["ville"]
+    convention.save()

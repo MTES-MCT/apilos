@@ -51,6 +51,9 @@ class ConventionAdmin(ApilosModelAdmin):
         "champ_libre_avenant",
         "date_denonciation",
         "motif_denonciation",
+        "adresse",
+        "code_postal",
+        "ville",
     )
     list_select_related = (
         "programme__bailleur",

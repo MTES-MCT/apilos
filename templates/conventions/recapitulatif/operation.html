@@ -29,9 +29,9 @@
                         {% endif %}
 
                         {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom object_field="programme__nom__"|add:programme_uuid %}
-                        {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse object_field="programme__adresse__"|add:programme_uuid %}
-                        {% include "common/display_field_if_exists.html" with label="Code postal" value=programme.code_postal object_field="programme__code_postal__"|add:programme_uuid %}
-                        {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville object_field="programme__ville__"|add:programme_uuid %}
+                        {% include "common/display_field_if_exists.html" with label="Adresse" value=convention.adresse object_field="programme__adresse__"|add:programme_uuid %}
+                        {% include "common/display_field_if_exists.html" with label="Code postal" value=convention.code_postal object_field="programme__code_postal__"|add:programme_uuid %}
+                        {% include "common/display_field_if_exists.html" with label="Ville" value=convention.ville object_field="programme__ville__"|add:programme_uuid %}
                         {% include "common/display_checkbox.html" with label="ANRU" value=programme.anru object_field="programme__anru__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Type d'habitat" value=lot.get_type_habitat_display object_field="lot__type_habitat__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Type d'opération" value=programme.get_type_operation_display object_field="programme__type_operation__"|add:programme_uuid %}

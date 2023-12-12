@@ -40,6 +40,25 @@ class ConventionProgrammeServiceTests(TestCase):
             programme.uuid,
         )
         self.assertEqual(self.service.form.initial["nom"], programme.nom)
+        # Initialise avec l'adresse du programme si la convention n'a pas d'adresse
+        self.assertEqual(self.service.form.initial["adresse"], programme.adresse)
+        self.assertEqual(
+            self.service.form.initial["code_postal"], programme.code_postal
+        )
+        self.assertEqual(self.service.form.initial["ville"], programme.ville)
+
+    def test_get_with_convention_adresse(self):
+        self.service.convention.adresse = "123 rue du fake"
+        self.service.convention.code_postal = "02000"
+        self.service.convention.ville = "Fake ville"
+        self.service.convention.save()
+
+        self.service.get()
+
+        # Initialise avec l'adresse de la convention si définie
+        self.assertEqual(self.service.form.initial["adresse"], "123 rue du fake")
+        self.assertEqual(self.service.form.initial["code_postal"], "02000")
+        self.assertEqual(self.service.form.initial["ville"], "Fake ville")
 
     def test_save(self):
 
@@ -65,8 +84,8 @@ class ConventionProgrammeServiceTests(TestCase):
         self.service.request.POST = {
             "nom": "Fake Opération",
             "adresse": "123 rue du fake",
-            "code_postal": "01000",
-            "ville": "Fake ville",
+            "code_postal": "02000",
+            "ville": "Fake ville updated",
             "nb_logements": "28",
             "anru": "FALSE",
             "type_habitat": "INDIVIDUEL",
@@ -81,4 +100,11 @@ class ConventionProgrammeServiceTests(TestCase):
         self.service.convention.refresh_from_db()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
         self.assertEqual(programme.nom, "Fake Opération")
-        self.assertEqual(programme.adresse, "123 rue du fake")
+        # L'adresse du programme reste inchangée
+        self.assertEqual(programme.adresse, "22 rue segur")
+        self.assertEqual(programme.code_postal, "75007")
+        self.assertEqual(programme.ville, "Paris")
+        # L'adresse de la convention est mise à jour
+        self.assertEqual(self.service.convention.adresse, "123 rue du fake")
+        self.assertEqual(self.service.convention.code_postal, "02000")
+        self.assertEqual(self.service.convention.ville, "Fake ville updated")

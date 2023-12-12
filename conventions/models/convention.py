@@ -230,6 +230,10 @@ class Convention(models.Model):
     motif_denonciation = models.TextField(null=True, blank=True)
     fichier_instruction_denonciation = models.TextField(null=True, blank=True)
 
+    adresse = models.TextField(null=True, blank=True)
+    code_postal = models.CharField(max_length=5, null=True, blank=True)
+    ville = models.CharField(max_length=255, null=True, blank=True)
+
     @property
     def attribution_type(self):
         if not self.programme.is_foyer():
