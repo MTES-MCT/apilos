@@ -1,6 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from admin.admin import ApilosModelAdmin
 from .models import UploadedFile
 
-admin.site.register(UploadedFile)
+
+@admin.register(UploadedFile)
+class UploadedFileAdmin(ApilosModelAdmin):
+    staff_user_can_change = False
+    staff_user_can_add = False

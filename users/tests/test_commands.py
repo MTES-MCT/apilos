@@ -6,7 +6,6 @@ from unittest import mock
 from django.test import override_settings
 from django.core.management import call_command
 from django.test import TestCase
-from users.models import User
 
 
 class SendMonthlyEmailsCommandTest(TestCase):
@@ -147,96 +146,3 @@ doit être définie pour pouvoir envoyer des emails",
             "Pas le premier lundi du mois,\
  abandon",
         )
-
-
-class UpdateStaffUsersPermsTest(TestCase):
-    def _run_command(self):
-        out = StringIO()
-        err = StringIO()
-        call_command("update_staff_users_perms", stdout=out, stderr=err)
-
-    def test_not_added_if_superuser(self):
-        admin_user = User.objects.create_user(
-            username="admin", password="12345", is_staff=True, is_superuser=True
-        )
-        assert admin_user.is_staff is True
-        assert admin_user.is_superuser is True
-        assert admin_user.user_permissions.count() == 0
-
-        self._run_command()
-
-        admin_user.refresh_from_db()
-        assert admin_user.user_permissions.count() == 0
-
-    def test_permissions_added(self):
-        staff_user = User.objects.create_user(
-            username="staff", password="12345", is_staff=True
-        )
-        assert staff_user.is_staff is True
-        assert staff_user.is_superuser is False
-        assert staff_user.user_permissions.count() == 0
-
-        self._run_command()
-
-        staff_user.refresh_from_db()
-        assert sorted(
-            staff_user.user_permissions.values_list("codename", flat=True)
-        ) == [
-            "add_administration",
-            "add_annexe",
-            "add_avenanttype",
-            "add_bailleur",
-            "add_convention",
-            "add_departement",
-            "add_ecoloreference",
-            "add_evenement",
-            "add_indiceevolutionloyer",
-            "add_locauxcollectifs",
-            "add_logement",
-            "add_logementedd",
-            "add_lot",
-            "add_pret",
-            "add_programme",
-            "add_referencecadastrale",
-            "add_repartitionsurface",
-            "add_typestationnement",
-            "add_user",
-            "change_administration",
-            "change_annexe",
-            "change_avenanttype",
-            "change_bailleur",
-            "change_convention",
-            "change_departement",
-            "change_ecoloreference",
-            "change_evenement",
-            "change_indiceevolutionloyer",
-            "change_locauxcollectifs",
-            "change_logement",
-            "change_logementedd",
-            "change_lot",
-            "change_pret",
-            "change_programme",
-            "change_referencecadastrale",
-            "change_repartitionsurface",
-            "change_typestationnement",
-            "change_user",
-            "view_administration",
-            "view_annexe",
-            "view_avenanttype",
-            "view_bailleur",
-            "view_convention",
-            "view_departement",
-            "view_ecoloreference",
-            "view_evenement",
-            "view_indiceevolutionloyer",
-            "view_locauxcollectifs",
-            "view_logement",
-            "view_logementedd",
-            "view_lot",
-            "view_pret",
-            "view_programme",
-            "view_referencecadastrale",
-            "view_repartitionsurface",
-            "view_typestationnement",
-            "view_user",
-        ]

@@ -1,4 +1,5 @@
 from django.contrib import admin
+from admin.admin import ApilosModelAdmin
 
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
@@ -15,7 +16,7 @@ from .models import (
 
 
 @admin.register(Programme)
-class ProgrammeAdmin(admin.ModelAdmin):
+class ProgrammeAdmin(ApilosModelAdmin):
     list_display = ("nom", "uuid")
     fields = (
         "uuid",
@@ -50,7 +51,7 @@ def view_programme(lot):
 
 
 @admin.register(Lot)
-class LotAdmin(admin.ModelAdmin):
+class LotAdmin(ApilosModelAdmin):
     list_display = (view_programme, "financement", "uuid")
 
     fields = (
@@ -70,12 +71,12 @@ class LotAdmin(admin.ModelAdmin):
 
 
 @admin.register(Annexe)
-class AnnexeAdmin(admin.ModelAdmin):
+class AnnexeAdmin(ApilosModelAdmin):
     list_select_related = ("logement",)
 
 
 @admin.register(Logement)
-class LogementAdmin(admin.ModelAdmin):
+class LogementAdmin(ApilosModelAdmin):
     readonly_fields = ("lot",)
     list_display = (
         "id",
@@ -86,7 +87,7 @@ class LogementAdmin(admin.ModelAdmin):
 
 
 @admin.register(ReferenceCadastrale)
-class ReferenceCadastraleAdmin(admin.ModelAdmin):
+class ReferenceCadastraleAdmin(ApilosModelAdmin):
     readonly_fields = ("programme",)
 
 
@@ -96,4 +97,6 @@ class TypeStationnementAdmin(admin.ModelAdmin):
     readonly_fields = ("lot",)
 
 
-admin.site.register(IndiceEvolutionLoyer)
+@admin.register(IndiceEvolutionLoyer)
+class IndiceEvolutionLoyerAdmin(ApilosModelAdmin):
+    pass

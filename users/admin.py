@@ -1,12 +1,14 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
+from admin.admin import ApilosModelAdmin
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
 from .models import User, Role
 
 
-class CustomAdministrationAdmin(admin.ModelAdmin):
+@admin.register(Role)
+class CustomAdministrationAdmin(ApilosModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "administration":
             kwargs["queryset"] = Administration.objects.order_by("nom")
@@ -17,5 +19,6 @@ class CustomAdministrationAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-admin.site.register(User, UserAdmin)
-admin.site.register(Role, CustomAdministrationAdmin)
+@admin.register(User)
+class UserAdmin(BaseUserAdmin, ApilosModelAdmin):
+    pass

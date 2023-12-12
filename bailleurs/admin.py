@@ -1,12 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from admin.admin import ApilosModelAdmin
 from .models import Bailleur
 
 
-class BailleurAdmin(admin.ModelAdmin):
+@admin.register(Bailleur)
+class BailleurAdmin(ApilosModelAdmin):
     search_fields = ["nom"]
     list_display = ["nom", "nature_bailleur", "sous_nature_bailleur", "ville"]
-
-
-admin.site.register(Bailleur, BailleurAdmin)

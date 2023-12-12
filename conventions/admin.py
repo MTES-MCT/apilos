@@ -1,4 +1,5 @@
 from django.contrib import admin
+from admin.admin import ApilosModelAdmin
 
 from .models import Convention, Pret, AvenantType
 
@@ -13,7 +14,7 @@ def view_programme(convention):
 
 
 @admin.register(Convention)
-class ConventionAdmin(admin.ModelAdmin):
+class ConventionAdmin(ApilosModelAdmin):
     list_display = (view_programme, "administration", "bailleur", "financement", "uuid")
     search_fields = [
         "programme__ville",
@@ -69,7 +70,7 @@ class ConventionAdmin(admin.ModelAdmin):
 
 
 @admin.register(Pret)
-class PretAdmin(admin.ModelAdmin):
+class PretAdmin(ApilosModelAdmin):
     list_display = (
         "id",
         "convention",
@@ -81,4 +82,7 @@ class PretAdmin(admin.ModelAdmin):
     readonly_fields = ("convention",)
 
 
-admin.site.register(AvenantType)
+@admin.register(AvenantType)
+class AvenantTypeAdmin(ApilosModelAdmin):
+    staff_user_can_change = False
+    staff_user_can_add = False

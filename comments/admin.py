@@ -1,10 +1,11 @@
 from django.contrib import admin
+from admin.admin import ApilosModelAdmin
 
 from .models import Comment
 
 
 @admin.register(Comment)
-class CommentAdmin(admin.ModelAdmin):
+class CommentAdmin(ApilosModelAdmin):
     readonly_fields = (
         "convention",
         "nom_objet",
