@@ -14,7 +14,7 @@ django-hijack>=3.2
 django-simple-history
 django-sql-explorer[xls]
 django-storages>=1.11.1
-Django>=4.1,<5.0
+Django>=4.1,<6.0
 djangorestframework-simplejwt>=5.2.0
 djangorestframework>=3.12.4
 docxtpl>=0.12.0
