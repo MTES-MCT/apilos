@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.test import TestCase
 from django.urls import reverse
 
@@ -55,6 +57,28 @@ class ConventionEDDViewTests(AbstractEditViewTestCase, TestCase):
             "form-1-financement": "PLAI",
         }
         self.msg_prefix = "[ConventionEDDViewTests] "
+        self.path_to_get_convention = (
+            "conventions.views.convention_form_edd.ConventionEDDView._get_convention"
+        )
 
     def _test_data_integrity(self):
         pass
+
+    def test_view_not_logged_get_convention_not_called(self):
+        with patch(self.path_to_get_convention) as mocked_get_convention:
+            response = self.client.get(self.target_path)
+            self.assertEqual(response.status_code, 302, msg=f"{self.msg_prefix}")
+            # Ensure _get_convention is not called when not authenticated
+            self.assertFalse(mocked_get_convention.called)
+
+    def test_view_logged_get_convention_called(self):
+        response = self.client.post(
+            reverse("login"), {"username": "nicolas", "password": "12345"}
+        )
+        with patch(self.path_to_get_convention) as mocked_get_convention:
+            mocked_get_convention.return_value = self.convention_75
+            response = self.client.get(self.target_path)
+
+            self.assertEqual(response.status_code, 200)
+            # Ensure _get_convention is called when authenticated
+            self.assertTrue(mocked_get_convention.called)
