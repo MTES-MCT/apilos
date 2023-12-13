@@ -1,11 +1,9 @@
 from abc import ABC
 from dataclasses import dataclass
+from typing import Any
 
-from django.shortcuts import get_object_or_404
-
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import View
 
@@ -17,6 +15,7 @@ from conventions.services.utils import (
     base_convention_response_error,
     editable_convention,
 )
+from core.views import SetupLoginRequiredMixin
 
 
 @dataclass
@@ -311,15 +310,14 @@ class ConventionFormSteps:
         return self.current_step.pathname
 
 
-class BaseConventionView(LoginRequiredMixin, View):
+class BaseConventionView(SetupLoginRequiredMixin, View):
     convention: Convention
 
     def _get_convention(self, convention_uuid):
         return get_object_or_404(Convention, uuid=convention_uuid)
 
-    def setup(self, request, *args, **kwargs):
+    def logged_in_setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
         self.convention = self._get_convention(kwargs.get("convention_uuid"))
-        super().setup(request, *args, **kwargs)
 
 
 class ConventionView(ABC, BaseConventionView):
@@ -338,8 +336,8 @@ class ConventionView(ABC, BaseConventionView):
     def current_path_redirect(self):
         return self.steps.current_step_path()
 
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
+    def logged_in_setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
+        super().logged_in_setup(request, *args, **kwargs)
 
         form_steps = None
         try:
