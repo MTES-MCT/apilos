@@ -1,6 +1,8 @@
-name: "Test and check"
+name: "Test and deploy to staging"
 on:
-  - pull_request
+  push:
+    branches:
+      - main
 
 
 # Explicitely set permissions to allow Dependabot workflow runs to write in the PR
@@ -51,16 +53,16 @@ jobs:
       - name: Check migrations
         run: |
           python manage.py makemigrations --check --dry-run
-      - name: Execute test with coverage
+      - name: Execute test
         run: |
-          coverage run --source='.' manage.py test
-      - name: Create coverage report
-        run: coverage xml -o coverage.xml
-      - name: Post coverage to PR
-        uses: orgoro/coverage@v3
+          python manage.py test
+      - uses: kolok/deploy-to-scalingo@v1
         with:
-          coverageFile: coverage.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          thresholdAll: 0.6
-          thresholdNew: 0.5
-          thresholdModified: 0.4
+          ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
+          app-name: apilos-staging
+          known-host: ssh.osc-fr1.scalingo.com
+      - uses: kolok/deploy-to-scalingo@v1
+        with:
+          ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
+          app-name: apilos-siap-integration
+          known-host: ssh.osc-fr1.scalingo.com
