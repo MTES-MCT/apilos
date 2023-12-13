@@ -58,6 +58,13 @@ jobs:
       - name: Execute test
         run: |
           python manage.py test
+
+  deploy_to_staging:
+    name: "Deploy to staging"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - uses: kolok/deploy-to-scalingo@v1
         with:
           ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
