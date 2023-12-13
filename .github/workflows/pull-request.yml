@@ -13,6 +13,8 @@ permissions:
 env:
   DATABASE_URL: postgres://apilos:apilos@localhost:5432/apilos
   DB_READONLY: postgres://apilos:apilos@localhost:5432/apilos
+  SECRET_KEY: secret-key
+  DEBUG: False
 
 jobs:
   coverage:

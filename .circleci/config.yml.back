@@ -1,0 +1,261 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.10
+        environment:
+          DATABASE_URL: postgres://root:password@localhost/apilos_test
+          DB_READONLY: postgres://root:password@localhost/apilos_test
+          SECRET_KEY: secret-key
+          DEBUG: False
+      - image: circleci/postgres:12.2-postgis
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: apilos_test
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      - run:
+          name: Install AWS CLI
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Install dependencies
+          command: |
+            python3 -m venv .venv
+            . .venv/bin/activate
+            pip install -r requirements.txt -r dev-requirements.txt
+      - save_cache:
+          key: deps-{{ .Branch }}-{{ checksum "requirements.txt" }}
+          paths:
+            - ".venv"
+      - run:
+          name: Wait for Postgres server
+          command: dockerize -wait tcp://localhost:5432 -timeout 10s
+      - run:
+          name: Synchronize S3 bucket
+          command: |
+            AWS_ACCESS_KEY_ID=${CI_BUCKET_KEY} AWS_SECRET_ACCESS_KEY=${CI_BUCKET_SECRET} AWS_DEFAULT_REGION=${CI_BUCKET_REGION} aws s3 sync ${CI_BUCKET_URL} ecoloweb/tests/resources/ --endpoint-url=$CI_BUCKET_ENDPOINT_URL
+      - run:
+          command: |
+            sudo apt-get update && sudo apt-get install postgresql
+            PGPASSWORD=password psql -h localhost -U root -d apilos_test -c "create database ecolotest;"
+            PGPASSWORD=password psql -h localhost -U root -d ecolotest -c "create schema ecolo;"
+      - run:
+          name: Check no missing migrations
+          command: .venv/bin/python3 manage.py makemigrations --check --dry-run
+      - run:
+          name: Running tests
+          command: |
+            . .venv/bin/activate
+            python3 manage.py test
+      - store_artifacts:
+          path: test-reports/
+          destination: python_app
+  deploy_staging:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Add Scalingo to known_hosts
+          command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy Staging APiLos on Scalingo
+          command: |
+            git push -f git@ssh.osc-fr1.scalingo.com:apilos-staging.git $CIRCLE_SHA1:master
+  deploy_prod:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Add Scalingo to known_hosts
+          command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy master branch of APiLos on Scalingo
+          command: |
+            git push -f git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git $CIRCLE_SHA1:master
+  deploy_siap_integration:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Add Scalingo to known_hosts
+          command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy Staging APiLos on Scalingo
+          command: |
+            git push -f git@ssh.osc-fr1.scalingo.com:apilos-siap-integration.git $CIRCLE_SHA1:master
+  deploy_siap_recette:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Add Scalingo to known_hosts
+          command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy Staging APiLos on Scalingo
+          command: |
+            git push -f git@ssh.osc-fr1.scalingo.com:apilos-siap-recette.git $CIRCLE_SHA1:master
+  deploy_siap_ecole:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Add Scalingo to known_hosts
+          command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy Staging APiLos on Scalingo
+          command: |
+            git push -f git@ssh.osc-fr1.scalingo.com:apilos-siap-ecole.git $CIRCLE_SHA1:master
+  deploy_siap_production:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Add Scalingo to known_hosts
+          command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy Staging APiLos on Scalingo
+          command: |
+            git push -f git@ssh.osc-fr1.scalingo.com:apilos-siap-production.git $CIRCLE_SHA1:master
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only:
+                - /^v.*/
+      - deploy_staging:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop
+      - validate_deployment_in_staging:
+          type: approval
+          requires:
+            - build
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              ignore: /.*/
+      - deploy_staging:
+          requires:
+            - validate_deployment_in_staging
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              ignore: /.*/
+      - validate_deployment_in_prod:
+          type: approval
+          requires:
+            - build
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              ignore: /.*/
+      - deploy_prod:
+          requires:
+            - validate_deployment_in_prod
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              ignore: /.*/
+      - validate_deployment_in_siap_integration:
+          type: approval
+          requires:
+            - build
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              ignore: /.*/
+      - deploy_siap_integration:
+          requires:
+            - validate_deployment_in_siap_integration
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              ignore: /.*/
+      - validate_deployment_in_siap_recette:
+          type: approval
+          requires:
+            - build
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              ignore: /.*/
+      - deploy_siap_recette:
+          requires:
+            - validate_deployment_in_siap_recette
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              ignore: /.*/
+      - validate_deployment_in_siap_ecole:
+          type: approval
+          requires:
+            - build
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              ignore: /.*/
+      - deploy_siap_ecole:
+          requires:
+            - validate_deployment_in_siap_ecole
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              ignore: /.*/
+      - validate_deployment_in_siap_production:
+          type: approval
+          requires:
+            - build
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              ignore: /.*/
+      - deploy_siap_production:
+          requires:
+            - validate_deployment_in_siap_production
+          filters:
+            tags:
+              only:
+                - /^v.*/
+            branches:
+              ignore: /.*/
