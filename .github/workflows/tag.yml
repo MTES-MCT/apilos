@@ -1,8 +1,8 @@
 name: "Test and deploy to staging"
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*.*.*'
 
 env:
   DATABASE_URL: postgres://apilos:apilos@localhost:5432/apilos
@@ -59,10 +59,20 @@ jobs:
       - uses: kolok/deploy-to-scalingo@v1
         with:
           ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
-          app-name: apilos-staging
+          app-name: fabnum-apilos
           known-host: ssh.osc-fr1.scalingo.com
       - uses: kolok/deploy-to-scalingo@v1
         with:
           ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
-          app-name: apilos-siap-integration
+          app-name: apilos-siap-production
+          known-host: ssh.osc-fr1.scalingo.com
+      - uses: kolok/deploy-to-scalingo@v1
+        with:
+          ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
+          app-name: apilos-siap-recette
+          known-host: ssh.osc-fr1.scalingo.com
+      - uses: kolok/deploy-to-scalingo@v1
+        with:
+          ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
+          app-name: apilos-siap-ecole
           known-host: ssh.osc-fr1.scalingo.com
