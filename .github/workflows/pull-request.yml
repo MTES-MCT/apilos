@@ -2,7 +2,6 @@ name: "coverage"
 on:
   - pull_request
 
-
 # Explicitely set permissions to allow Dependabot workflow runs to write in the PR
 # for coverage's reporting.
 # By default, these are read-only when the actions are ran by Dependabot
@@ -55,6 +54,6 @@ jobs:
         with:
           coverageFile: coverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}
-          thresholdAll: 0.6
-          thresholdNew: 0.5
-          thresholdModified: 0.4
+          thresholdAll: 0.72
+          thresholdNew: 0.7
+          thresholdModified: 0.5
