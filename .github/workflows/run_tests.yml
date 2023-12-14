@@ -1,14 +1,9 @@
-name: "Test and check"
 on:
-  - pull_request
+  workflow_call:
 
-
-# Explicitely set permissions to allow Dependabot workflow runs to write in the PR
-# for coverage's reporting.
-# By default, these are read-only when the actions are ran by Dependabot
-# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions#changing-github_token-permissions
-permissions:
-  pull-requests: write
+defaults:
+  run:
+    shell: bash
 
 env:
   DATABASE_URL: postgres://apilos:apilos@localhost:5432/apilos
@@ -17,8 +12,8 @@ env:
   DEBUG: False
 
 jobs:
-  coverage:
-    name: Test & Coverage
+  test:
+    name: Test
 
     # Service containers to run with `container-job`
     services:
@@ -51,16 +46,6 @@ jobs:
       - name: Check migrations
         run: |
           python manage.py makemigrations --check --dry-run
-      - name: Execute test with coverage
+      - name: Execute test
         run: |
-          coverage run --source='.' manage.py test
-      - name: Create coverage report
-        run: coverage xml -o coverage.xml
-      - name: Post coverage to PR
-        uses: orgoro/coverage@v3
-        with:
-          coverageFile: coverage.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          thresholdAll: 0.6
-          thresholdNew: 0.5
-          thresholdModified: 0.4
+          python manage.py test
