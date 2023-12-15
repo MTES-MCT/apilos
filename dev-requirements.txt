@@ -261,9 +261,9 @@ prompt-toolkit==3.0.37 \
     # via
     #   -c requirements.txt
     #   ptpython
-ptpython==3.0.23 \
-    --hash=sha256:51069503684169b21e1980734a9ba2e104643b7e6a50d3ca0e5669ea70d9e21c \
-    --hash=sha256:9fc9bec2cc51bc4000c1224d8c56241ce8a406b3d49ec8dc266f78cd3cd04ba4
+ptpython==3.0.25 \
+    --hash=sha256:16654143dea960dcefb9d6e69af5f92f01c7a783dd28ff99e78bc7449fba805c \
+    --hash=sha256:887f0a91a576bc26585a0dcec41cd03f004ac7c46a2c88576c87fc51d6c06cd7
     # via -r dev-requirements.in
 pygments==2.15.1 \
     --hash=sha256:8ace4d3c1dd481894b2005f560ead0f9f19ee64fe983366be1a21e171d12775c \
