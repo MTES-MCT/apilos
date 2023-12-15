@@ -1,7 +1,6 @@
-name: "coverage"
+name: "Test and check"
 on:
   - pull_request
-
 
 # Explicitely set permissions to allow Dependabot workflow runs to write in the PR
 # for coverage's reporting.
@@ -9,6 +8,12 @@ on:
 # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions#changing-github_token-permissions
 permissions:
   pull-requests: write
+
+env:
+  DATABASE_URL: postgres://apilos:apilos@localhost:5432/apilos
+  DB_READONLY: postgres://apilos:apilos@localhost:5432/apilos
+  SECRET_KEY: secret-key
+  DEBUG: False
 
 jobs:
   coverage:
@@ -42,12 +47,12 @@ jobs:
           python-version: "3.10"
       - name: Install dependencies
         run: pip install -r requirements.txt -r dev-requirements.txt
+      - name: Check migrations
+        run: |
+          python manage.py makemigrations --check --dry-run
       - name: Execute test with coverage
         run: |
           coverage run --source='.' manage.py test
-        env:
-          DATABASE_URL: postgres://apilos:apilos@localhost:5432/apilos
-          DB_READONLY: postgres://apilos:apilos@localhost:5432/apilos
       - name: Create coverage report
         run: coverage xml -o coverage.xml
       - name: Post coverage to PR

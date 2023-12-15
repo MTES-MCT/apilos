@@ -1,0 +1,51 @@
+on:
+  workflow_call:
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  DATABASE_URL: postgres://apilos:apilos@localhost:5432/apilos
+  DB_READONLY: postgres://apilos:apilos@localhost:5432/apilos
+  SECRET_KEY: secret-key
+  DEBUG: False
+
+jobs:
+  test:
+    name: Test
+
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: apilos
+          POSTGRES_NAME: apilos
+          POSTGRES_HOST: postgres
+          POSTGRES_PASSWORD: apilos
+          POSTGRES_PORT: 5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r dev-requirements.txt
+      - name: Check migrations
+        run: |
+          python manage.py makemigrations --check --dry-run
+      - name: Execute test
+        run: |
+          python manage.py test
