@@ -8,7 +8,7 @@ from programmes.models.models import Programme
 
 logger = logging.getLogger(__name__)
 
-# pylint: disable=R0914,R0912,W1203
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
         num_galion = {

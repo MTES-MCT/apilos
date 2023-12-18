@@ -14,14 +14,6 @@ repos:
     - id: black
       language_version: python3.10
 
-# -   repo: local
-#     hooks:
-#     -   id: pylint
-#         name: PyLint
-#         entry: pylint
-#         language: system
-#         types: [python]
-
 -   repo: https://github.com/rtts/djhtml
     rev: v1.4.9
     hooks:

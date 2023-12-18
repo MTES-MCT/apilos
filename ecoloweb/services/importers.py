@@ -16,7 +16,6 @@ from ecoloweb.models import EcoloReference
 from ecoloweb.services.query_iterator import QueryResultIterator
 
 
-# pylint: disable=too-many-instance-attributes
 class ModelImporter(ABC):
     """
     Base importer service class whose responsibility is to ensure imports of entities from Ecoloweb

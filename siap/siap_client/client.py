@@ -78,7 +78,6 @@ def _call_siap_api(
         error_text = "Unauthorized"
         try:
             error_text = str(response.content["detail"])
-        # pylint: disable=W0702, bare-except
         except Exception:
             pass
         raise UnauthorizedSIAPException(error_text)
@@ -127,7 +126,6 @@ class SIAPClient:
 
 class SIAPClientInterface:
     def __init__(self) -> None:
-        # pylint: disable=E1111
         self.update_siap_config()
 
     def update_siap_config(self) -> None:

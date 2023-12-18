@@ -6,7 +6,6 @@ from django.core.files.storage import default_storage
 
 
 class UploadService:
-    # pylint: disable=R0902,R0913
     convention_dirpath: str
     filename: str
 

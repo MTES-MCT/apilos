@@ -5,7 +5,6 @@ from core.tests import utils_fixtures
 
 
 class BailleurModelsTest(TestCase):
-    # pylint: disable=E1101 no-member
     @classmethod
     def setUpTestData(cls):
         utils_fixtures.create_bailleur()

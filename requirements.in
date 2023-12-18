@@ -24,7 +24,6 @@ Jinja2>=3.0.2
 openpyxl>=3.0.7
 psycopg2>=2.9
 pyjwt>=2.4.0
-pylint-django>=2.5.3
 python-box>=6.0
 python-decouple>=3.4
 python-docx>=0.8.11

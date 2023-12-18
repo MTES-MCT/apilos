@@ -39,7 +39,6 @@ class ConventionHistory(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
 
-# pylint: disable=W0613
 @receiver(post_save, sender=ConventionHistory)
 def send_survey_email(sender, instance, *args, **kwargs):
     # send email to get user satisfaction after instructeur validate convention

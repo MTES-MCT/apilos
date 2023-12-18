@@ -42,7 +42,6 @@ class UserPermissions(TestCase):
     ]
 
     def test_exception_permissions(self):
-        # pylint: disable=W0703
         user_instructeur = User.objects.get(username="sabine")
         for perm in ["convention.view_convention", "convention.change_convention"]:
             try:
