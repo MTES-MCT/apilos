@@ -2,18 +2,20 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pip-compile"
+  - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "wednesday"
       time: "06:00" # UTC
+
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "wednesday"
       time: "06:00" # UTC
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
