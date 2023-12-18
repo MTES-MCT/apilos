@@ -33,7 +33,6 @@ class ConventionTypeConfigurationError(Exception):
 
 
 def get_convention_template_path(convention):
-    # pylint: disable=R0911
     if convention.is_avenant():
         if convention.programme.is_foyer() or convention.programme.is_residence():
             return f"{settings.BASE_DIR}/documents/FoyerResidence-Avenant-template.docx"
@@ -87,7 +86,6 @@ def _compute_total_locaux_collectifs(convention):
 
 
 def generate_convention_doc(convention: Convention, save_data=False):
-    # pylint: disable=R0912,R0914,R0915
     annexes = (
         Annexe.objects.prefetch_related("logement")
         .filter(logement__lot_id=convention.lot.id)
@@ -338,7 +336,6 @@ def pluralize(value):
 
 
 def _build_files_for_docx(doc, convention_uuid, file_list):
-    # pylint: disable=R1732
     local_pathes = []
     docx_images = []
     files = UploadedFile.objects.filter(uuid__in=file_list)

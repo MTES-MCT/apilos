@@ -131,7 +131,6 @@ class IngestableModel(models.Model):
         count_dup = 0
         mapped_elements = {}
         for element in elements:
-            # pylint: disable=W0640, cell-var-from-loop
             element_pivot = "__".join(get_elements_for_pivots(cls, element))
             if element_pivot not in mapped_elements:
                 mapped_elements[element_pivot] = {}

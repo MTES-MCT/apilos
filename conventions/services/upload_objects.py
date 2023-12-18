@@ -164,7 +164,6 @@ def _get_object_from_worksheet(
 
 
 def _extract_row(row, column_from_index, cls, *, class_field_mapping):
-    # pylint: disable=R0912
     new_warnings = []
     my_row = {}
     empty_line = True
