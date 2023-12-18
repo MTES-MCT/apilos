@@ -11,9 +11,8 @@ djhtml
 honcho
 pre-commit
 ptpython
-pylint
-pylint-django
 pytest
 pytest-django
 pytest-xdist
 responses
+ruff

@@ -129,7 +129,6 @@ class ConvKPI:
 
 
 class ConventionKPISerializer(serializers.Serializer):
-    # pylint: disable=W0223
     indicateur_redirection_url = serializers.CharField(max_length=200)
     indicateur_valeur = serializers.IntegerField()
     indicateur_label = serializers.CharField(max_length=100)

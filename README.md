@@ -39,7 +39,7 @@ Cependant, certaines briques logicielles sont partagées (voir l'illustration ci
 Plusieurs outils sont utilisés pour gérer la qualité de code:
 
 * [git pre-commit](https://pre-commit.com/) avec les hooks de bases : trailing-whitespace, check-yaml, check-added-large-files
-* [pylint](https://pypi.org/project/pylint/) comme linter intégré au pre-commit pour les fichier python (config $BASE/.pylintrc)
+* [ruff](https://github.com/astral-sh/ruff) comme linter intégré au pre-commit pour les fichiers python
 * [djhtml](https://pypi.org/project/djhtml/) comme prettier des fichiers html
 * [black](https://pypi.org/project/black/) comme prettier des fichiers python
 

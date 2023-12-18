@@ -58,7 +58,6 @@ class GroupProfile(models.TextChoices):
 
 
 class User(AbstractUser):
-    # pylint: disable=R0904
     siap_habilitation = {}
     administrateur_de_compte = models.BooleanField(default=False)
     telephone = models.CharField(

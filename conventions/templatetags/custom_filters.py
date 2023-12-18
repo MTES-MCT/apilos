@@ -482,7 +482,6 @@ def administration_from(uuid):
     try:
         return Administration.objects.get(uuid=uuid)
     # Exception can be broad here as we want to prevent a 500 in the template
-    # pylint: disable=W0703,broad-except
     except Exception:
         return ""
 
@@ -492,7 +491,6 @@ def bailleur_from(uuid):
     try:
         return Bailleur.objects.filter(uuid=uuid).first()
     # Exception can be broad here as we want to prevent a 500 in the template
-    # pylint: disable=W0703,broad-except
     except Exception:
         return ""
 

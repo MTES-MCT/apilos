@@ -88,7 +88,6 @@ class ConventionIndexViewTests(TestCase):
             weight = 1000000
             verbose_name = "Je suis un service"
 
-        # pylint: disable=W0611, unused-variable
         class DummyConventionView(ConventionSearchView):
             name = "search_instruction"
             service_class = DummyService

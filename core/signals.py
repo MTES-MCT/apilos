@@ -10,7 +10,7 @@ from django_cas_ng.signals import cas_user_authenticated, cas_user_logout
 
 logger = logging.getLogger(__name__)
 
-# pylint: disable=W0613
+
 @receiver(cas_user_authenticated)
 def cas_user_authenticated_callback(sender, **kwargs):
     attributes = kwargs.get("attributes")

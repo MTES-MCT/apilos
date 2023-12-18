@@ -37,7 +37,6 @@ class Programme(IngestableModel):
             models.Index(fields=["-date_achevement_compile"]),
         ]
 
-    # pylint: disable=R0904
     pivot = ["bailleur", "nom", "ville"]
     mapping = {
         "nom": "Nom Opération",
@@ -300,7 +299,6 @@ class Programme(IngestableModel):
         ]
 
 
-# pylint: disable=W0613
 @receiver(pre_save, sender=Programme)
 def compute_date_achevement_compile(sender, instance, *args, **kwargs):
     instance.date_achevement_compile = (

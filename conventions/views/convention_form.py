@@ -380,7 +380,6 @@ class ConventionView(ABC, BaseConventionView):
     def post_action(self):
         self.service.save()
 
-    # pylint: disable=W0613
     @has_campaign_permission("convention.change_convention")
     def post(self, request, convention_uuid):
         self.request = request

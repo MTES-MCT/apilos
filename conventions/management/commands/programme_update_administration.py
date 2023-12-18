@@ -5,7 +5,6 @@ from instructeurs.models import Administration
 
 
 class Command(BaseCommand):
-    # pylint: disable=R0912,R0914,R0915
     def handle(self, *args, **options):
 
         programme_uuid = input("Quel est l'identifiant UUID du programme à modifier ? ")

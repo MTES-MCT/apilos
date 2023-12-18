@@ -26,7 +26,6 @@ from programmes.models import (
 
 
 def params_logement(index):
-    # pylint: disable=R0911
     if index <= 7:
         return TypologieLogement.T1, 0.9, 30, 0, 0, 30
     if index <= 10:
@@ -45,7 +44,6 @@ def params_logement(index):
 class ProgrammeModelsTest(TestCase):
     fixtures = ["departements.json"]
 
-    # pylint: disable=E1101 no-member
     @classmethod
     def setUpTestData(cls):
         bailleur = utils_fixtures.create_bailleur()

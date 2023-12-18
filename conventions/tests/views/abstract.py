@@ -4,7 +4,6 @@ from conventions.models import Convention
 
 
 class AbstractCreateViewTestCase:
-    # pylint: disable=E1101
     # Should be used with TestCase class as a Mixin class
     convention_75: Convention
     target_path: str
@@ -99,7 +98,6 @@ class AbstractCreateViewTestCase:
 
 
 class AbstractEditViewTestCase(AbstractCreateViewTestCase):
-    # pylint: disable=E1101
     # Should be used with TestCase class as a Mixin class
     next_target_path: str
 

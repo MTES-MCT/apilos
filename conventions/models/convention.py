@@ -63,7 +63,6 @@ class Convention(models.Model):
             )
         ]
 
-    # pylint: disable=R0904
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     parent = models.ForeignKey(
@@ -430,7 +429,6 @@ class Convention(models.Model):
         return users_partial + users_all_email
 
     def get_convention_prefix(self):
-        # pylint: disable=C0209
         dept_code = self.programme.code_insee_departement
         admin_code = (
             "D"
@@ -458,7 +456,6 @@ class Convention(models.Model):
             number = convention_number["numero"].split(".")[-1]
             if number.isdigit() and int(number) > max_number:
                 max_number = int(number)
-        # pylint: disable=C0209 consider-using-f-string
         max_number = "%04d" % (max_number + 1)
         return f"{dept_code}.{admin_code}.{year%100}.{max_number}"
 
@@ -560,7 +557,6 @@ class Convention(models.Model):
         return ""
 
     def clone(self, user, *, convention_origin):
-        # pylint: disable=R0914
         cloned_programme = self.programme.clone()
 
         lot_fields = model_to_dict(

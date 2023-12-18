@@ -13,8 +13,6 @@ from users.models import User
 
 
 class GetAddressFromLocdataTest(TestCase):
-    # pylint: disable=W0212
-
     def test__get_address_from_locdata_empty(self):
         self.assertRaises(KeyError, utils._get_address_from_locdata, {})
         self.assertRaises(
@@ -198,6 +196,5 @@ class GetOrCreateConventionFromOperationTest(TestCase):
                 },
                 User.objects.first(),
             )
-        # pylint: disable=W0703
         except Exception as exception:
             self.assertNotEqual(exception, NoConventionForOperationSIAPException)

@@ -18,7 +18,6 @@ class BailleurImporter(ModelImporter):
             self._siret_resolver = SiretResolver(
                 settings.INSEE_API_KEY, settings.INSEE_API_SECRET
             )
-        # pylint: disable=W0703
         except BaseException:
             self._siret_resolver = None
 
@@ -29,7 +28,6 @@ class BailleurImporter(ModelImporter):
         if self._siret_resolver:
             try:
                 return self._siret_resolver.resolve(codesiren, date_creation)
-            # pylint: disable=W0703
             except BaseException:
                 return None
 

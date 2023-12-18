@@ -53,7 +53,6 @@ def get_env_variable(name, cast=str, default=""):
                 "uh-huh",
             ]
         return cast(os.environ[name])
-    # pylint: disable=W0702, bare-except
     except Exception:
         return config(name, cast=cast, default=default)
 
@@ -539,7 +538,6 @@ SENTRY_URL = get_env_variable("SENTRY_URL")
 if SENTRY_URL:  # pragma: no cover
     # opened issue on Sentry package : https://github.com/getsentry/sentry-python/issues/1081
     # it should be solved in a further release
-    # pylint: disable=E0110
     sentry_sdk.init(
         dsn=SENTRY_URL,
         integrations=[DjangoIntegration()],

@@ -158,7 +158,6 @@ class Bailleur(IngestableModel):
         return tuple(self.siret)
 
 
-# pylint: disable=W0613
 @receiver(pre_save, sender=Bailleur)
 def set_bailleur_nature(sender, instance, *args, **kwargs):
     if instance.sous_nature_bailleur in NATURE_RELATIONSHIP:
