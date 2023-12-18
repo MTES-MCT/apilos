@@ -16,6 +16,9 @@ env:
   DEBUG: False
 
 jobs:
+  check:
+    uses: ./.github/workflows/run_check.yml
+
   coverage:
     name: Test & Coverage
 
@@ -42,19 +45,25 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.10.8"
+
       - name: Install dependencies
         run: pip install -r requirements.txt -r dev-requirements.txt
+
       - name: Check migrations
         run: |
           python manage.py makemigrations --check --dry-run
+
       - name: Execute test with coverage
         run: |
           coverage run -m pytest
+
       - name: Create coverage report
         run: coverage xml -o coverage.xml
+
       - name: Post coverage to PR
         uses: orgoro/coverage@v3
         with:

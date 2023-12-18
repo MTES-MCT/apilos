@@ -11,6 +11,9 @@ env:
   DEBUG: False
 
 jobs:
+  check:
+    uses: ./.github/workflows/run_check.yml
+
   test:
     uses: ./.github/workflows/run_tests.yml
 
@@ -26,6 +29,7 @@ jobs:
           ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
           app-name: apilos-staging
           known-host: ssh.osc-fr1.scalingo.com
+
   deploy_to_siap_integration:
     name: "Deploy to Siap Integration"
     runs-on: ubuntu-latest
