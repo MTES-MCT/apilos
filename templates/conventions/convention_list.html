@@ -86,13 +86,6 @@
                             <input class="fr-input" placeholder="Commune" type="text" name="ville" value="{{ request.GET.ville }}" />
                         </div>
 
-                        {# Champs département (réservé aux utilsiateurs staff) #}
-                        {% if request.user.is_staff %}
-                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-3">
-                                <input class="fr-input" placeholder="Département" type="text" name="departement_input" value="{{ request.GET.departement_input }}" />
-                            </div>
-                        {% endif %}
-
                         {# Champs de recherche génériques (affichés à tous les utilisateurs) #}
                         {# Champs Statut #}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">

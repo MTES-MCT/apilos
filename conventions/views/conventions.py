@@ -161,7 +161,6 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
 
         search_filters_mapping = [
             ("commune", "ville"),
-            ("departement", "departement_input"),
             ("financement", "financement"),
             ("order_by", "order_by"),
             ("search_input", "search_input"),
