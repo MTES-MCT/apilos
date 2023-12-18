@@ -1,19 +1,3 @@
-# [tool.darker]
-# src = [
-#     "core",
-#     "bailleurs",
-#     "conventions",
-#     "instructeurs",
-#     "programmes",
-#     "stats",
-#     "users",
-# ]
-# diff = true
-# check = false
-# isort = false
-# lint = ["pylint"]
-# log_level = "INFO"
-
 [tool.coverage.run]
 omit = [
     "*/__init__.py",
