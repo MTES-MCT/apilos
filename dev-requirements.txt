@@ -268,6 +268,10 @@ exceptiongroup==1.2.0 \
     --hash=sha256:4bfd3996ac73b41e9b9628b04e079f193850720ea5945fc96a08633c66912f14 \
     --hash=sha256:91f5c769735f051a4290d52edd0858999b57e5876e9f85937691bd4c9fa3ed68
     # via pytest
+execnet==2.0.2 \
+    --hash=sha256:88256416ae766bc9e8895c76a87928c0012183da3cc4fc18016e6f050e025f41 \
+    --hash=sha256:cc59bc4423742fd71ad227122eb0dd44db51efb3dc4095b45ac9a08c770096af
+    # via pytest-xdist
 filelock==3.8.0 \
     --hash=sha256:55447caa666f2198c5b6b13a26d2084d26fa5b115c00d065664b2124680c4edc \
     --hash=sha256:617eb4e5eedc82fc5f47b6d61e4d11cb837c56cb4544e39081099fa17ad109d4
@@ -568,9 +572,14 @@ pytest==7.4.3 \
     # via
     #   -r dev-requirements.in
     #   pytest-django
+    #   pytest-xdist
 pytest-django==4.7.0 \
     --hash=sha256:4e1c79d5261ade2dd58d91208017cd8f62cb4710b56e012ecd361d15d5d662a2 \
     --hash=sha256:92d6fd46b1d79b54fb6b060bbb39428073396cec717d5f2e122a990d4b6aa5e8
+    # via -r dev-requirements.in
+pytest-xdist==3.5.0 \
+    --hash=sha256:cbb36f3d67e0c478baa57fa4edc8843887e0f6cfc42d677530a36d7472b32d8a \
+    --hash=sha256:d075629c7e00b611df89f490a5063944bee7a4362a5ff11c7cc7824a03dfce24
     # via -r dev-requirements.in
 pyyaml==6.0 \
     --hash=sha256:01b45c0191e6d66c470b6cf1b9531a771a83c1c4208272ead47a3ae4f2f603bf \
