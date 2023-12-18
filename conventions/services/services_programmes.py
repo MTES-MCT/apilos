@@ -1,9 +1,9 @@
 from django.http import HttpRequest
 
-from conventions.services.conventions import ConventionService
+from conventions.forms import ProgrammeForm, ProgrammeMinimalForm
 from conventions.models import Convention
 from conventions.services import utils
-from conventions.forms import ProgrammeForm, ProgrammeMinimalForm
+from conventions.services.conventions import ConventionService
 
 
 class ConventionProgrammeService(ConventionService):

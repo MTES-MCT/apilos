@@ -5,11 +5,8 @@ from django.test import TestCase
 
 from conventions.forms import ConventionFoyerAttributionForm
 from conventions.models import Convention
+from conventions.services import foyer_attribution, utils
 from conventions.tests.fixtures import foyer_attribution_success_payload
-from conventions.services import (
-    foyer_attribution,
-    utils,
-)
 from programmes.models import NatureLogement
 from users.models import User
 
@@ -137,13 +134,11 @@ class ConventionFoyerAttributionServiceTests(TestCase):
         )
 
     def test_save_success(self):
-
         self.service.request.POST = foyer_attribution_success_payload
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
     def test_save_failed_needed_fields(self):
-
         self.service.request.POST = {}
         self.service.save()
 

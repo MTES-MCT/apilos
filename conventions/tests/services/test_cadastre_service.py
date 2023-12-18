@@ -1,11 +1,14 @@
 from django.http import HttpRequest
 from django.test import TestCase
 
-from conventions.forms import UploadForm
-
-from conventions.forms import ProgrammeCadastralForm, ReferenceCadastraleFormSet
+from conventions.forms import (
+    ProgrammeCadastralForm,
+    ReferenceCadastraleFormSet,
+    UploadForm,
+)
 from conventions.models import Convention
-from conventions.services import cadastre as service_cadatsre, utils
+from conventions.services import cadastre as service_cadatsre
+from conventions.services import utils
 from users.models import User
 
 

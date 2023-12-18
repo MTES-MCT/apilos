@@ -1,5 +1,3 @@
-from conventions.services.conventions import ConventionService
-from conventions.services import upload_objects, utils
 from conventions.forms import (
     FoyerResidenceLogementFormSet,
     LogementFormSet,
@@ -7,6 +5,8 @@ from conventions.forms import (
     LotLgtsOptionForm,
     UploadForm,
 )
+from conventions.services import upload_objects, utils
+from conventions.services.conventions import ConventionService
 from programmes.models import Logement
 
 

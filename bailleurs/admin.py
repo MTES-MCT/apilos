@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from admin.admin import ApilosModelAdmin
+
 from .models import Bailleur
 
 

@@ -4,8 +4,8 @@ from conventions.models import Convention
 from conventions.services.collectif import ConventionCollectifService
 from conventions.views.convention_form import (
     ConventionView,
-    avenant_foyer_residence_logements_step,
     avenant_collectif_step,
+    avenant_foyer_residence_logements_step,
 )
 
 

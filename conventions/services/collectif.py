@@ -1,4 +1,4 @@
-from conventions.forms import UploadForm, LocauxCollectifsFormSet, LotCollectifForm
+from conventions.forms import LocauxCollectifsFormSet, LotCollectifForm, UploadForm
 from conventions.services.conventions import ConventionService
 from programmes.models import LocauxCollectifs
 

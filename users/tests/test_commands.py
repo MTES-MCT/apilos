@@ -3,9 +3,8 @@ from datetime import date
 from io import StringIO
 from unittest import mock
 
-from django.test import override_settings
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 
 class SendMonthlyEmailsCommandTest(TestCase):

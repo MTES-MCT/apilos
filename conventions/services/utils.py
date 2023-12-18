@@ -1,12 +1,12 @@
 import json
-
 from enum import Enum
+
 from django.http import HttpRequest
 
-from core.utils import is_valid_uuid
-from upload.models import UploadedFile
 from conventions.models import Convention, ConventionStatut
 from conventions.templatetags.custom_filters import is_bailleur, is_instructeur
+from core.utils import is_valid_uuid
+from upload.models import UploadedFile
 
 
 def format_date_for_form(date):

@@ -1,8 +1,8 @@
 import json
-
 from io import BytesIO
-from openpyxl import load_workbook
+
 from django.conf import settings
+from openpyxl import load_workbook
 
 
 def assert_xlsx(self, my_class, file_name, import_mapping="import_mapping"):

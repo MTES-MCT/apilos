@@ -1,11 +1,13 @@
-from io import BytesIO
-from zipfile import BadZipFile
 import datetime
 from decimal import Decimal
+from io import BytesIO
+
 from openpyxl import load_workbook
+from zipfile import BadZipFile
 
 from core.storage import client
 from programmes.models import TypologieLogement
+
 from . import utils
 
 

@@ -1,14 +1,13 @@
 from decimal import Decimal
+
 from django.forms import model_to_dict
 from django.http import HttpRequest
 from django.test import TestCase
 
-from conventions.forms import UploadForm, AnnexeFormSet, LotAnnexeForm
+from conventions.forms import AnnexeFormSet, LotAnnexeForm, UploadForm
 from conventions.models import Convention
+from conventions.services import utils
 from conventions.services.annexes import ConventionAnnexesService
-from conventions.services import (
-    utils,
-)
 from programmes.models import Annexe, Logement, TypologieAnnexe, TypologieLogement
 from users.models import User
 

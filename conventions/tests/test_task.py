@@ -1,9 +1,9 @@
 from pathlib import Path
 from unittest.mock import patch
 
-from django.test import TestCase, override_settings
 from django.core import mail
 from django.core.files.storage import default_storage
+from django.test import TestCase, override_settings
 
 from bailleurs.models import SousNatureBailleur
 from conventions.models.convention import Convention

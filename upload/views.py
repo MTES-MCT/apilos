@@ -1,10 +1,10 @@
-from django.http.response import JsonResponse, FileResponse
-from django.views.decorators.http import require_POST, require_GET
+from django.http.response import FileResponse, JsonResponse
+from django.views.decorators.http import require_GET, require_POST
+
 from conventions.models import Convention
 from programmes.models import Lot, Programme
-
-from upload.services import UploadService
 from upload.models import UploadedFile, UploadedFileSerializer
+from upload.services import UploadService
 from upload.tasks import scan_uploaded_files
 
 

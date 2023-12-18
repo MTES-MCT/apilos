@@ -1,4 +1,5 @@
 from decimal import Decimal
+
 from django.forms import model_to_dict
 from django.http import HttpRequest
 from django.test import TestCase
@@ -11,16 +12,14 @@ from conventions.forms import (
     UploadForm,
 )
 from conventions.models import Convention
+from conventions.services import utils
 from conventions.services.logements import (
     ConventionFoyerResidenceLogementsService,
     ConventionLogementsService,
 )
-from conventions.services import (
-    utils,
-)
 from conventions.tests.fixtures import (
-    logement_success_payload,
     foyer_residence_logements_success_payload,
+    logement_success_payload,
 )
 from programmes.models import Logement, NatureLogement
 from users.models import User

@@ -1,8 +1,9 @@
 import uuid
 
 from django.test import TestCase
-from conventions.models import Convention
+
 from comments.models import Comment, CommentStatut
+from conventions.models import Convention
 from users.models import User
 
 

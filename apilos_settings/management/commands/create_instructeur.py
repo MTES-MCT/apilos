@@ -1,12 +1,11 @@
 from django.contrib.auth.models import Group
 from django.core.management import BaseCommand
 from django.core.validators import validate_email
-
 from django.db import transaction
 
 from core.services import EmailService, EmailTemplateID
 from instructeurs.models import Administration
-from users.models import User, Role
+from users.models import Role, User
 from users.type_models import TypeRole
 
 

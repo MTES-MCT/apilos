@@ -1,14 +1,11 @@
+from django.core.exceptions import NON_FIELD_ERRORS
 from django.http import HttpRequest
 from django.test import TestCase
-from django.core.exceptions import NON_FIELD_ERRORS
 
 from conventions.forms import ConventionFoyerVariantesForm
 from conventions.models import Convention
+from conventions.services import utils, variantes
 from conventions.tests.fixtures import variantes_success_payload
-from conventions.services import (
-    variantes,
-    utils,
-)
 from programmes.models import NatureLogement
 from users.models import User
 
@@ -45,13 +42,11 @@ class ConventionFoyerVarianteServiceTests(TestCase):
         )
 
     def test_save_success(self):
-
         self.service.request.POST = variantes_success_payload
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
     def test_save_failed_variantes(self):
-
         self.service.request.POST = {
             "foyer_residence_variante_1": "FALSE",
             "foyer_residence_variante_2": "FALSE",
@@ -67,7 +62,6 @@ class ConventionFoyerVarianteServiceTests(TestCase):
         self.assertTrue(self.service.form.has_error(NON_FIELD_ERRORS))
 
     def test_save_failed_travaux_without_its_variante(self):
-
         self.service.request.POST = {
             "foyer_residence_variante_1": "on",
             "foyer_residence_variante_2": "on",

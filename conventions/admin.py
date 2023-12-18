@@ -1,7 +1,8 @@
 from django.contrib import admin
+
 from admin.admin import ApilosModelAdmin
 
-from .models import Convention, Pret, AvenantType
+from .models import AvenantType, Convention, Pret
 
 
 @admin.display(description="Programme")

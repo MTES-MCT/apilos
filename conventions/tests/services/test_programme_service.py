@@ -1,12 +1,9 @@
 from django.http import HttpRequest
 from django.test import TestCase
 
-from conventions.models import Convention
-from conventions.services import (
-    services_programmes,
-    utils,
-)
 from conventions.forms import ProgrammeForm
+from conventions.models import Convention
+from conventions.services import services_programmes, utils
 from users.models import User
 
 
@@ -61,7 +58,6 @@ class ConventionProgrammeServiceTests(TestCase):
         self.assertEqual(self.service.form.initial["ville"], "Fake ville")
 
     def test_save(self):
-
         programme = self.service.convention.programme
 
         self.service.request.POST = {

@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from conventions.tests.views.abstract import AbstractEditViewTestCase
 from conventions.tests.fixtures import variantes_success_payload
+from conventions.tests.views.abstract import AbstractEditViewTestCase
 from programmes.models import NatureLogement
 
 

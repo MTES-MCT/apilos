@@ -1,9 +1,8 @@
 import boto3
 from botocore.exceptions import ClientError
-from storages.backends.s3boto3 import S3Boto3Storage
-
 from django.conf import settings
 from django.core.files import File
+from storages.backends.s3boto3 import S3Boto3Storage
 
 
 class StorageClient:

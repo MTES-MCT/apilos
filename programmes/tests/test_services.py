@@ -1,4 +1,5 @@
 from datetime import date
+
 from django.test import TestCase
 
 from programmes.models import IndiceEvolutionLoyer, NatureLogement

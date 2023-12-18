@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
-from conventions.models import Convention
 
+from conventions.models import Convention
 from conventions.tests.views.abstract import AbstractEditViewTestCase
 from users.models import User
 

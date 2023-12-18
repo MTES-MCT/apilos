@@ -4,8 +4,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 
 from siap.custom_middleware import (
-    set_habilitation_in_session,
     copy_session_habilitation_to_user,
+    set_habilitation_in_session,
 )
 from users.models import User
 

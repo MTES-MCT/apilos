@@ -1,7 +1,7 @@
 import unittest
 import uuid
 
-from core.utils import round_half_up, is_valid_uuid, get_key_from_json_field
+from core.utils import get_key_from_json_field, is_valid_uuid, round_half_up
 
 
 class UtilsTest(unittest.TestCase):

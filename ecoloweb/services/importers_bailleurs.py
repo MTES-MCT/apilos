@@ -3,8 +3,9 @@ from datetime import date
 from django.conf import settings
 
 from bailleurs.models import Bailleur
-from .importers import ModelImporter
+
 from . import SiretResolver
+from .importers import ModelImporter
 
 
 class BailleurImporter(ModelImporter):

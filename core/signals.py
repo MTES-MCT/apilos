@@ -1,11 +1,11 @@
 import logging
 
-from django.dispatch import receiver
 from django.contrib.auth.signals import (
     user_logged_in,
     user_logged_out,
     user_login_failed,
 )
+from django.dispatch import receiver
 from django_cas_ng.signals import cas_user_authenticated, cas_user_logout
 
 logger = logging.getLogger(__name__)

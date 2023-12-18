@@ -4,7 +4,9 @@ import random
 
 from django.contrib.auth.models import Group, Permission
 
+from bailleurs.models import Bailleur
 from conventions.models import Convention
+from instructeurs.models import Administration
 from programmes.models import (
     Annexe,
     Financement,
@@ -15,10 +17,8 @@ from programmes.models import (
     TypologieAnnexe,
     TypologieLogement,
 )
-from bailleurs.models import Bailleur
 from upload.models import UploadedFile
 from users.models import User
-from instructeurs.models import Administration
 
 FILES = [
     {

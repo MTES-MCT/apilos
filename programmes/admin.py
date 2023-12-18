@@ -1,6 +1,6 @@
 from django.contrib import admin
-from admin.admin import ApilosModelAdmin
 
+from admin.admin import ApilosModelAdmin
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
 from programmes.models.models import IndiceEvolutionLoyer

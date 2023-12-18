@@ -3,14 +3,9 @@ import json
 from django.http import HttpRequest
 from django.test import TestCase
 
-from conventions.forms import (
-    ConventionCommentForm,
-)
+from conventions.forms import ConventionCommentForm
 from conventions.models import Convention
-from conventions.services import (
-    commentaires,
-    utils,
-)
+from conventions.services import commentaires, utils
 from users.models import User
 
 

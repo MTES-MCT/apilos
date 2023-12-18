@@ -1,7 +1,7 @@
 import unittest
 from datetime import date
-from unittest.mock import Mock, patch
 from decimal import Decimal
+from unittest.mock import Mock, patch
 
 import jinja2
 from django.conf import settings
@@ -19,8 +19,8 @@ from conventions.services.convention_generator import (
     _to_fr_float,
     compute_mixte,
     default_str_if_none,
-    get_convention_template_path,
     generate_convention_doc,
+    get_convention_template_path,
     pluralize,
     to_fr_date,
     to_fr_date_or_default,
@@ -28,7 +28,7 @@ from conventions.services.convention_generator import (
     to_fr_short_date_or_default,
     typologie_label,
 )
-from programmes.models import ActiveNatureLogement, TypologieLogement, Logement
+from programmes.models import ActiveNatureLogement, Logement, TypologieLogement
 from programmes.models.choices import NatureLogement
 from users.models import User
 

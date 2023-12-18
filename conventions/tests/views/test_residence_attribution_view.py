@@ -2,8 +2,8 @@ from django.forms import model_to_dict
 from django.test import TestCase
 from django.urls import reverse
 
-from conventions.tests.views.abstract import AbstractEditViewTestCase
 from conventions.tests.fixtures import residence_attribution_success_payload
+from conventions.tests.views.abstract import AbstractEditViewTestCase
 from programmes.models import NatureLogement
 
 

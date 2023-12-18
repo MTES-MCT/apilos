@@ -1,9 +1,8 @@
 import os
 import re
 import time
-from datetime import date
-
 from abc import ABC, abstractmethod
+from datetime import date
 
 from django.db import connections
 from django.db.backends.utils import CursorWrapper

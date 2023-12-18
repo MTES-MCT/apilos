@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from programmes.models import Programme
 from instructeurs.models import Administration
+from programmes.models import Programme
 
 
 class Command(BaseCommand):

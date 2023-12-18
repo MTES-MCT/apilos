@@ -3,11 +3,8 @@ from django.test import TestCase
 
 from conventions.forms import ConventionResidenceAttributionForm
 from conventions.models import Convention
+from conventions.services import residence_attribution, utils
 from conventions.tests.fixtures import residence_attribution_success_payload
-from conventions.services import (
-    residence_attribution,
-    utils,
-)
 from programmes.models import NatureLogement
 from users.models import User
 
@@ -44,13 +41,11 @@ class ConventionResidenceAttributionServiceTests(TestCase):
         )
 
     def test_save_success(self):
-
         self.service.request.POST = residence_attribution_success_payload
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
     def test_save_failed_needed_fields(self):
-
         self.service.request.POST = {}
         self.service.save()
 

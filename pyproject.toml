@@ -5,6 +5,8 @@ omit = [
     "*/migrations/*",
     "ecoloweb/*",
     "programmes/management/commands/import_galion.py",
+    # TODO: add tests on upload_objects.py and remove it from this list
+    "conventions/services/upload_objects.py",
 ]
 
 [tool.pytest.ini_options]
@@ -16,9 +18,9 @@ select = [
     "E",   # pycodestyle
     "W",   # pycodestyle
     "C90", # mccabe
-    # TODO: apply the following rules
-    # "I",   # isort
+    "I",   # isort
     "UP",  # pyupgrade
+    # TODO: apply the following rules
     # "N",   # pep8-naming
     # "BLE", # flake8-blind-except
     # "FBT", # flake8-boolean-trap
@@ -49,9 +51,12 @@ exclude = [
 "__init__.py" = ["F401", "F403"]
 "scripts/*.py" = ["INP001"]
 "**/migrations/*.py" = ["E501"]
-# TODO: ignored because of low coveragen, fix and remove
+# TODO: ignored because of low coverage, fix and remove
 "conventions/services/upload_objects.py" = ["UP"]
 "conventions/services/recapitulatif.py" = ["UP"]
+"conventions/views/avenants.py" = ["I001"]
+# TODO: changing imports order make tests fail, fix and remove
+"ecoloweb/services/__init__.py" = ["I001"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 20 # TODO: very high value, reduce to 10
@@ -67,12 +72,12 @@ known-third-party = [
     "django_cas_ng",
     "django",
     "docx",
+    "docxtpl",
     "drf_spectacular",
     "openpyxl",
     "rest_framework_simplejwt",
     "rest_framework",
     "sentry_sdk",
-    "siap",
     "simple_history",
     "storages",
     "zipfile",

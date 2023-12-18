@@ -1,6 +1,6 @@
-from conventions.forms import UploadForm, AnnexeFormSet, LotAnnexeForm
-from conventions.services.conventions import ConventionService
+from conventions.forms import AnnexeFormSet, LotAnnexeForm, UploadForm
 from conventions.services import upload_objects, utils
+from conventions.services.conventions import ConventionService
 from programmes.models import Annexe, Logement
 
 

@@ -3,8 +3,8 @@ import json
 from django.test import TestCase
 from django.urls import reverse
 
-from conventions.models import Convention
 from comments.models import Comment
+from conventions.models import Convention
 
 
 class CommentViewTest(TestCase):
