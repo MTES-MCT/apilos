@@ -201,6 +201,12 @@ def create_programme(
         date_achevement_previsible=datetime.date(2024, 1, 2),
         date_achat=datetime.date(2022, 1, 2),
         date_achevement=datetime.date(2024, 4, 11),
+        edd_stationnements='{"text": "EDD stationnements", "files": {"fbb9890f-171b-402d-a35e-71e1bd791b70": '
+        '{"uuid": "fbb9890f-171b-402d-a35e-71e1bd791b70", "thumbnail": "data:image/png;base64'
+        ',BLAHBLAH==", "size": "31185", "filename": "acquereur1.png", "content_type": "image/png"},'
+        '"dccd310d-2e50-45d8-a477-db7b08ae1d71": {"uuid": "dccd310d-2e50-45d8-a477-db7b08ae1d71", '
+        '"thumbnail": "data:image/png;base64,BLIHBLIH==", "size": "69076", "filename": '
+        '"acquereur2.png", "content_type": "image/png"}}}',
     )
 
 

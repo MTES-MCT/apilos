@@ -124,6 +124,7 @@ class Programme(IngestableModel):
     mention_publication_edd_volumetrique = models.TextField(max_length=5000, null=True)
     edd_classique = models.TextField(max_length=5000, null=True)
     mention_publication_edd_classique = models.TextField(max_length=5000, null=True)
+    edd_stationnements = models.TextField(max_length=5000, null=True, blank=True)
     permis_construire = models.CharField(max_length=255, null=True)
     date_achevement_previsible = models.DateField(null=True)
     date_achat = models.DateField(null=True)
@@ -280,6 +281,12 @@ class Programme(IngestableModel):
 
     def edd_classique_files(self):
         return get_key_from_json_field(self.edd_classique, "files", default={})
+
+    def edd_stationnements_text(self):
+        return get_key_from_json_field(self.edd_stationnements, "text")
+
+    def edd_stationnements_files(self):
+        return get_key_from_json_field(self.edd_stationnements, "files", default={})
 
     def is_foyer(self):
         return self.nature_logement in [NatureLogement.AUTRE]

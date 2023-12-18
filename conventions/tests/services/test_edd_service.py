@@ -65,6 +65,8 @@ class ConventionEDDServiceTests(TestCase):
             "edd_classique": "",
             "edd_classique_files": "{}",
             "mention_publication_edd_classique": "",
+            "edd_stationnements": "EDD stationnements test",
+            "edd_stationnements_files": "{}",
             "form-TOTAL_FORMS": 2,
             "form-INITIAL_FORMS": 2,
             "form-0-uuid": "",
@@ -78,6 +80,10 @@ class ConventionEDDServiceTests(TestCase):
         }
 
         self.service.save()
+        self.assertEqual(
+            self.service.convention.programme.edd_stationnements,
+            '{"files": {}, "text": "EDD stationnements test"}',
+        )
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
         edd_plai = self.service.convention.programme.logementedds.filter(
             financement=Financement.PLAI

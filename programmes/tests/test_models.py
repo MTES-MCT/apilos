@@ -217,6 +217,9 @@ class ProgrammeModelsTest(TestCase):
         utils_assertions.assert_get_text_and_files(
             self, programme, "reference_publication_acte"
         )
+        utils_assertions.assert_get_text_and_files(
+            self, programme, "edd_stationnements"
+        )
         utils_assertions.assert_get_files(self, programme, "acte_de_propriete")
         utils_assertions.assert_get_files(self, programme, "certificat_adressage")
         utils_assertions.assert_get_files(self, programme, "effet_relatif")
@@ -308,6 +311,32 @@ class ProgrammeModelsTest(TestCase):
         self.assertEqual(cloned_programme2.bailleur_id, programme.bailleur_id)
         self.assertEqual(
             cloned_programme2.administration_id, programme.administration_id
+        )
+
+    def test_edd_stationnements_text(self):
+        programme = programme = Programme.objects.order_by("-uuid").first()
+        self.assertEqual(programme.edd_stationnements_text(), "EDD stationnements")
+
+    def test_edd_stationnements_files(self):
+        programme = programme = Programme.objects.order_by("-uuid").first()
+        self.assertDictEqual(
+            programme.edd_stationnements_files(),
+            {
+                "fbb9890f-171b-402d-a35e-71e1bd791b70": {
+                    "uuid": "fbb9890f-171b-402d-a35e-71e1bd791b70",
+                    "thumbnail": "data:image/png;base64,BLAHBLAH==",
+                    "size": "31185",
+                    "filename": "acquereur1.png",
+                    "content_type": "image/png",
+                },
+                "dccd310d-2e50-45d8-a477-db7b08ae1d71": {
+                    "uuid": "dccd310d-2e50-45d8-a477-db7b08ae1d71",
+                    "thumbnail": "data:image/png;base64,BLIHBLIH==",
+                    "size": "69076",
+                    "filename": "acquereur2.png",
+                    "content_type": "image/png",
+                },
+            },
         )
 
 
