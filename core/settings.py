@@ -25,7 +25,7 @@ from django.core.exceptions import PermissionDenied
 from sentry_sdk.integrations.django import DjangoIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
+TESTING = (len(sys.argv) > 1 and sys.argv[1] == "test") or ("pytest" in sys.modules)
 
 if TESTING:
     config = Config(
@@ -520,7 +520,7 @@ if CERBERE_AUTH:
 
 # Django defender (doc https://github.com/jazzband/django-defender#customizing-django-defender)
 REDIS_URL = get_env_variable("REDIS_URL")
-if REDIS_URL and not CERBERE_AUTH:
+if REDIS_URL and not CERBERE_AUTH and not TESTING:
     INSTALLED_APPS += ["defender"]
     MIDDLEWARE += ["defender.middleware.FailedLoginMiddleware"]
 

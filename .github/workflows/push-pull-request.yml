@@ -52,7 +52,7 @@ jobs:
           python manage.py makemigrations --check --dry-run
       - name: Execute test with coverage
         run: |
-          coverage run --source='.' manage.py test
+          coverage run -m pytest
       - name: Create coverage report
         run: coverage xml -o coverage.xml
       - name: Post coverage to PR

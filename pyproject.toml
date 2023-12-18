@@ -24,3 +24,6 @@ omit = [
     "ecoloweb/*",
     "programmes/management/commands/import_galion.py",
 ]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "core.settings"
