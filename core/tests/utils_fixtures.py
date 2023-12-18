@@ -37,7 +37,6 @@ FILES = [
 
 
 def _create_upload_files():
-
     files_and_text = {"text": "this is a test", "files": {}}
     for file in FILES:
         uploaded_file = UploadedFile.objects.create(
@@ -257,7 +256,7 @@ def create_convention(lot: Lot, numero: str = "0001"):
         lot=lot,
         programme=lot.programme,
         financement=lot.financement,
-        commentaires=_create_upload_files(),
+        commentaires_text=_create_upload_files(),
     )
 
 
