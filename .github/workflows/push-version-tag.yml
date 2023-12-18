@@ -11,6 +11,9 @@ env:
   DEBUG: False
 
 jobs:
+  check:
+    uses: ./.github/workflows/run_check.yml
+
   test:
     uses: ./.github/workflows/run_tests.yml
 

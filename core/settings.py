@@ -54,7 +54,7 @@ def get_env_variable(name, cast=str, default=""):
             ]
         return cast(os.environ[name])
     # pylint: disable=W0702, bare-except
-    except:
+    except Exception:
         return config(name, cast=cast, default=default)
 
 

@@ -7,19 +7,28 @@ repos:
     -   id: trailing-whitespace
     -   id: check-yaml
     -   id: check-added-large-files
+
 -   repo: https://github.com/ambv/black
     rev: 22.3.0
     hooks:
     - id: black
       language_version: python3.10
--   repo: local
-    hooks:
-    -   id: pylint
-        name: PyLint
-        entry: pylint
-        language: system
-        types: [python]
+
+# -   repo: local
+#     hooks:
+#     -   id: pylint
+#         name: PyLint
+#         entry: pylint
+#         language: system
+#         types: [python]
+
 -   repo: https://github.com/rtts/djhtml
     rev: v1.4.9
     hooks:
     -   id: djhtml
+
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.0.292
+    hooks:
+    - id: ruff
+      args: [--fix, --exit-non-zero-on-fix]

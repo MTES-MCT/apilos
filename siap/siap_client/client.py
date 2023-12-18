@@ -79,7 +79,7 @@ def _call_siap_api(
         try:
             error_text = str(response.content["detail"])
         # pylint: disable=W0702, bare-except
-        except:
+        except Exception:
             pass
         raise UnauthorizedSIAPException(error_text)
     if response.status_code == 503:
