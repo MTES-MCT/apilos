@@ -73,6 +73,7 @@ class LotAdmin(ApilosModelAdmin):
 @admin.register(Annexe)
 class AnnexeAdmin(ApilosModelAdmin):
     list_select_related = ("logement",)
+    readonly_fields = ("logement",)
 
 
 @admin.register(Logement)
