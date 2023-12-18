@@ -337,17 +337,6 @@ class Convention(models.Model):
     def get_last_instructeur_notification(self):
         return self._get_last_notification_by_role(TypeRole.INSTRUCTEUR)
 
-    def get_last_submission(self):
-        try:
-            return self.conventionhistories.filter(
-                statut_convention__in=[
-                    ConventionStatut.INSTRUCTION.label,
-                    ConventionStatut.CORRECTION.label,
-                ],
-            ).latest("cree_le")
-        except ConventionHistory.DoesNotExist:
-            return None
-
     def get_email_bailleur_users(self, all_bailleur_users=False):
         """
         return the email of the bailleurs to send them an email following their email preferences
