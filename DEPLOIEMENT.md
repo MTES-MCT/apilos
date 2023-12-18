@@ -13,9 +13,9 @@ La base de données est sauvegardée toutes les nuits et Scalingo propose une so
 
 ## CI/CD et branch git
 
-Les "User Stories" (US) sont développées sur des "feature branches" (convention de nommage sNUM-US_DESCRIPTION) à partir de la branch `develop`.
-les `feature branches` font l'objet de `pull request` à merger sur `develop`.
-les `releases` sont préparées et déployées à partir de ma branch `master`
+Les "User Stories" (US) sont développées sur des "feature branches" (convention de nommage sNUM-US_DESCRIPTION) à partir de la branch `main`.
+les `feature branches` font l'objet de `pull request` à merger sur `main`.
+les `releases` sont préparées et déployées à partir de ma branch `main`
 
 La solution circleci est utilisée: [CircleCI:Apilos](https://app.circleci.com/pipelines/github/MTES-MCT/apilos?filter=all)
 La config est ici : [.circleci/config.yaml](.circleci/config.yaml)
@@ -26,7 +26,9 @@ A chaque push sur [Github](https://github.com/MTES-MCT/apilos), le projet est _b
 
 ### CD
 
-A chaque push sur la branche `develop`, le projet est déployé en [staging](https://staging.apilos.incubateur.net/).
+A chaque push sur la branche `main`, le projet est déployé en [staging](https://staging.apilos.incubateur.net/).
+
+A chaque push de tag de la forme `v*.*.*`, le projet est déployé en production.
 
 ## Déploiement
 
@@ -38,24 +40,20 @@ Lors du déploiement, les étapes définis dans le script [bin/post_deploy](bin/
 
 ### Déploiement en staging
 
-Le code est déployé en staging automatiquement via [CircleCI](https://app.circleci.com/pipelines/github/MTES-MCT/apilos) quand il est poussé sur la branch `develop` du repository [Github](https://github.com/MTES-MCT/apilos)
+Le code est déployé en staging automatiquement via Github Actions quand il est poussé sur la branch `main` du repository [Github](https://github.com/MTES-MCT/apilos)
 
-Pour forcer le déploiement en staging, il est aussi possible de pousser la branche develop sur le repo git du projet sur Scalingo
+Pour forcer le déploiement en staging, il est aussi possible de pousser la branche main sur le repo git du projet sur Scalingo
 
-```git push git@ssh.osc-fr1.scalingo.com:apilos-staging.git develop:master```
+```git push git@ssh.osc-fr1.scalingo.com:apilos-staging.git main:master```
 
 ### Déploiement en production
 
-Une nouvelle version de l'application peut être poussée en production à chaque ajout de _tag de version_ (voir [la documentation _semantic versioning_](https://semver.org/))
-consécutif à un _merge_ de la branche `develop` dans la branche `master`. Un déploiement sur tous les environnements est alors demandé,
-sous réserve de validation, automatiquement via [CircleCI](https://app.circleci.com/pipelines/github/MTES-MCT/apilos).
+Une nouvelle version de l'application est poussée en production à chaque ajout de _tag de version_ (voir [la documentation _semantic versioning_](https://semver.org/)).
 
-![CircleCI integration](static/img/circleci.png)
-
-Pour forcer la mise en production il est aussi possible de pousser la branche `master` sur le repo git du projet sur Scalingo :
+Pour forcer la mise en production il est aussi possible de pousser la branche `main` sur le repo git du projet sur Scalingo :
 
 ```bash
-git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git master:master
+git push git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git main:master
 ```
 
 ## Déployer un nouvel environnement
