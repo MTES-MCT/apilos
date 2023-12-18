@@ -65,6 +65,9 @@
                             <a class="fr-mb-1w fr-link" href="{% url target_url convention_uuid=convention.uuid %}">Ajouter un EDD</a>
                         </div>
                     {% endif %}
+                    <div class="table--limited-height">
+                        {% include "common/display_text_and_files_if_exists.html" with label="EDD pour les stationnements" text=programme.edd_stationnements|get_text_from_textfiles file_list=programme.edd_stationnements|get_files_from_textfiles object_field="programme__edd_stationnements__"|add:programme_uuid %}
+                    </div>
                 </div>
             </div>
         </div>

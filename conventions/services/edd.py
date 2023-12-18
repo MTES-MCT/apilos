@@ -45,6 +45,9 @@ class ConventionEDDService(ConventionService):
                 "mention_publication_edd_classique": (
                     self.convention.programme.mention_publication_edd_classique
                 ),
+                **utils.get_text_and_files_from_field(
+                    "edd_stationnements", self.convention.programme.edd_stationnements
+                ),
             }
         )
 
@@ -111,6 +114,9 @@ class ConventionEDDService(ConventionService):
                         self.convention.programme.mention_publication_edd_classique,
                     )
                 ),
+                **utils.init_text_and_files_from_field(
+                    self.request, self.convention.programme, "edd_stationnements"
+                ),
             }
         )
         form_is_valid = self.form.is_valid()
@@ -175,6 +181,10 @@ class ConventionEDDService(ConventionService):
         )
         self.convention.programme.mention_publication_edd_classique = (
             self.form.cleaned_data["mention_publication_edd_classique"]
+        )
+        self.convention.programme.edd_stationnements = utils.set_files_and_text_field(
+            self.form.cleaned_data["edd_stationnements_files"],
+            self.form.cleaned_data["edd_stationnements"],
         )
         self.convention.lot.save()
         self.convention.programme.save()

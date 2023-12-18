@@ -123,6 +123,7 @@ class Comment(models.Model):
             "convention__commentaires": "Commentaires à l'attention de l'instructeur",
             "lot__edd_volumetrique": "EDD volumétrique",
             "lot__edd_classique": "EDD classique",
+            "programme__edd_stationnements": "EDD pour les stationnements",
             "programme__mention_publication_edd_volumetrique": (
                 "Mention de publication de l'edd volumétrique"
             ),

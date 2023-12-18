@@ -72,6 +72,17 @@ class ProgrammeEDDForm(forms.Form):
             + "le numéro, le service, la date et les volumes du dépôt"
         ),
     )
+    edd_stationnements = forms.CharField(
+        required=False,
+        label="EDD pour les stationnements",
+        max_length=50000,
+        error_messages={
+            "max_length": "L'EDD pour les stationnements ne doit pas excéder 50000 caractères",
+        },
+    )
+    edd_stationnements_files = forms.CharField(
+        required=False,
+    )
 
 
 class LogementEDDForm(forms.Form):
