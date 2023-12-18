@@ -1,3 +1,21 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "APiLos"
+requires-python = "3.10.8"
+dynamic = ["dependencies", "optional-dependencies"]
+readme = "README.md"
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.in"] }
+optional-dependencies.dev = { file = ["dev-requirements.in"] }
+
+[tool.pip-tools]
+generate-hashes = true
+resolver = "backtracking"
+
 [tool.darker]
 src = [
     "core",
@@ -27,3 +45,4 @@ omit = [
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "core.settings"
+
