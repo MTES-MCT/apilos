@@ -55,6 +55,11 @@ class ConventionProgrammeViewTests(AbstractEditViewTestCase, TestCase):
         self.convention_75.refresh_from_db()
         self.assertEqual(
             self.convention_75.programme.adresse,
+            "22 rue segur",
+            msg=f"{self.msg_prefix}",
+        )
+        self.assertEqual(
+            self.convention_75.adresse,
             "123 rue du fake",
             msg=f"{self.msg_prefix}",
         )

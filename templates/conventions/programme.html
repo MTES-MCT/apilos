@@ -34,16 +34,16 @@
                             </div>
                         {% endif %}
                         <div class="fr-my-3w">
-                            {% include "common/form/input_textarea.html" with form_input=form.adresse helptext_visible="True" object_field="programme__adresse__"|add:form.uuid.value %}
+                            {% include "common/form/input_textarea.html" with form_input=form.adresse helptext_visible="True" object_field="adresse__"|add:form.uuid.value %}
                             {% if form.adresse.value is not None %}
-                                <em class=" fr-hint-text">Si ce champs est déjà pré-rempli, c'est que des adresses ont déjà été associées à cette opération. <br/>Veuillez-vous assurer d'avoir renseigné l'exhaustivité des adresses de l'opération.</em>
+                                <em class=" fr-hint-text">Si ce champs est déjà pré-rempli, c'est que des adresses ont déjà été associées à cette opération. <br/>Vous pouvez le modifier avec les adresses associées à cette convention.</em>
                             {% endif %}
                         </div>
 
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                                 {% if not convention.is_avenant %}
-                                    {% include "common/form/input_text.html" with form_input=form.code_postal object_field="programme__code_postal__"|add:form.uuid.value %}
+                                    {% include "common/form/input_text.html" with form_input=form.code_postal object_field="code_postal__"|add:form.uuid.value %}
                                 {% else %}
                                     <label class="fr-label">Code Postal</label>
                                     <div class="fr-mt-1w block--row-strech" id="id_code_postal_div" >
@@ -53,7 +53,7 @@
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                                 {% if not convention.is_avenant %}
-                                    {% include "common/form/input_text.html" with form_input=form.ville object_field="programme__ville__"|add:form.uuid.value %}
+                                    {% include "common/form/input_text.html" with form_input=form.ville object_field="ville__"|add:form.uuid.value %}
                                 {% else %}
                                     <label class="fr-label">Ville</label>
                                     <div class="fr-mt-1w block--row-strech" id="id_ville_div" >
