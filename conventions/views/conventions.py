@@ -21,6 +21,7 @@ from django.shortcuts import render
 from django.urls import resolve, reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
+from django.shortcuts import get_object_or_404
 
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from conventions.forms.evenement import EvenementForm
@@ -60,17 +61,16 @@ class RecapitulatifView(BaseConventionView):
     forms: dict
 
     def _get_convention(self, convention_uuid):
-        return (
-            Convention.objects.prefetch_related("programme")
-            .prefetch_related(
+        return get_object_or_404(
+            Convention.objects.prefetch_related("programme").prefetch_related(
                 "programme__referencecadastrales",
                 "programme__logementedds",
                 "lot",
                 "lot__type_stationnements",
                 "lot__logements",
                 "programme__administration",
-            )
-            .get(uuid=convention_uuid)
+            ),
+            uuid=convention_uuid,
         )
 
     @has_campaign_permission("convention.view_convention")

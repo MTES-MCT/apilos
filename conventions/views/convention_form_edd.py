@@ -1,3 +1,5 @@
+from django.shortcuts import get_object_or_404
+
 from conventions.models import Convention
 from conventions.services.edd import ConventionEDDService
 from conventions.views.convention_form import ConventionView
@@ -8,9 +10,9 @@ class ConventionEDDView(ConventionView):
     service_class = ConventionEDDService
 
     def _get_convention(self, convention_uuid):
-        return (
+        return get_object_or_404(
             Convention.objects.prefetch_related("programme")
             .prefetch_related("lot")
-            .prefetch_related("programme__logementedds")
-            .get(uuid=convention_uuid)
+            .prefetch_related("programme__logementedds"),
+            uuid=convention_uuid,
         )

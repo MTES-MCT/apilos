@@ -2,6 +2,8 @@ from abc import ABC
 from dataclasses import dataclass
 from typing import List
 
+from django.shortcuts import get_object_or_404
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import render
@@ -314,7 +316,7 @@ class BaseConventionView(LoginRequiredMixin, View):
     convention: Convention
 
     def _get_convention(self, convention_uuid):
-        return Convention.objects.get(uuid=convention_uuid)
+        return get_object_or_404(Convention, uuid=convention_uuid)
 
     def setup(self, request, *args, **kwargs):
         self.convention = self._get_convention(kwargs.get("convention_uuid"))
@@ -365,7 +367,8 @@ class ConventionView(ABC, BaseConventionView):
                 **({"form": service.form} if service.form else {}),
                 **({"extra_forms": service.extra_forms} if service.extra_forms else {}),
                 **({"formset": service.formset} if service.formset else {}),
-                "upform": service.upform,  # obsolète, pourra être supprimé après rédaction de tests unitaires sur extra_forms
+                # obsolète, pourra être supprimé après rédaction de tests unitaires sur extra_forms
+                "upform": service.upform,
                 "form_step": self.steps.get_form_step(),
                 "editable_after_upload": (
                     editable_convention(request, self.convention)
