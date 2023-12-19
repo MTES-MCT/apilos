@@ -3,7 +3,6 @@ import re
 import time
 from datetime import date
 
-from typing import Dict, Type
 from abc import ABC, abstractmethod
 
 from django.db import connections
@@ -76,7 +75,6 @@ class ModelImporter(ABC):
                 re.sub("--.*", "", line)
                 for line in open(
                     os.path.join(os.path.dirname(__file__), "resources/sql", path),
-                    "r",
                     encoding="utf8",
                 ).readlines()
             ]
@@ -96,7 +94,7 @@ class ModelImporter(ABC):
         return round(float(value), 2) if value is not None else None
 
     def find_ecolo_reference(
-        self, ecolo_id: str, model: Type[Model] | None = None
+        self, ecolo_id: str, model: type[Model] | None = None
     ) -> EcoloReference | None:
         """
         Based on input data, attempts to extract an existing EcoloReference, using the
@@ -114,7 +112,7 @@ class ModelImporter(ABC):
             ecolo_id=ecolo_id,
         ).first()
 
-    def resolve_ecolo_reference(self, ecolo_id: str, model: Type[Model]) -> Model:
+    def resolve_ecolo_reference(self, ecolo_id: str, model: type[Model]) -> Model:
         """
         Find the EcoloReference of model type model with id ecolo_id in Ecolo DB
         """
@@ -273,7 +271,7 @@ class ModelImporter(ABC):
             self._query_single_row(self.build_query_parameters(pk))
         )
 
-    def _query_single_row(self, parameters) -> Dict | None:
+    def _query_single_row(self, parameters) -> dict | None:
         """
         Execute a SQL query returning a single result, as dict
         """

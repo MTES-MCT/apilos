@@ -2,7 +2,6 @@ import enum
 import logging
 import mimetypes
 from pathlib import Path
-from typing import List
 
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -54,16 +53,16 @@ class EmailTemplateID(enum.Enum):
 class EmailService:
     subject: str
     from_email: str
-    to_emails: List[str] | None
-    cc_emails: List[str] | None
+    to_emails: list[str] | None
+    cc_emails: list[str] | None
     text_content: str
     html_content: str
     email_template_id: EmailTemplateID
 
     def __init__(
         self,
-        to_emails: List[str] | None = None,
-        cc_emails: List[str] | None = None,
+        to_emails: list[str] | None = None,
+        cc_emails: list[str] | None = None,
         email_template_id: EmailTemplateID = None,
     ):
         self.to_emails = to_emails

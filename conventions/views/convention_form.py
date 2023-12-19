@@ -1,6 +1,5 @@
 from abc import ABC
 from dataclasses import dataclass
-from typing import List
 
 from django.shortcuts import get_object_or_404
 
@@ -211,7 +210,7 @@ residence_steps = [
 
 
 class ConventionFormSteps:
-    steps: List[ConventionFormStep] | None
+    steps: list[ConventionFormStep] | None
     convention: Convention
     last_step_path: ConventionFormStep = ConventionFormStep(
         pathname="conventions:recapitulatif", label="Récapitulatif", classname=None
@@ -222,7 +221,7 @@ class ConventionFormSteps:
         *,
         convention,
         request,
-        steps: List[ConventionFormStep] | None = None,
+        steps: list[ConventionFormStep] | None = None,
         active_classname=None
     ) -> None:
         self.convention = convention
@@ -325,7 +324,7 @@ class BaseConventionView(LoginRequiredMixin, View):
 
 class ConventionView(ABC, BaseConventionView):
     steps: ConventionFormSteps
-    form_steps: List[ConventionFormStep]
+    form_steps: list[ConventionFormStep]
     target_template: str
     service_class: ConventionService
     request: HttpRequest

@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from copy import copy
-from typing import List
 
 from django.conf import settings
 from django.core.paginator import Paginator
@@ -36,7 +35,7 @@ class ConventionSearchBaseService(ABC):
     def _build_queryset_extra_filters(self) -> None:
         pass
 
-    def _get_order_by(self) -> List:
+    def _get_order_by(self) -> list:
         if not isinstance(self.order_by, list):
             self.order_by = [self.order_by]
 

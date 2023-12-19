@@ -1,5 +1,3 @@
-from typing import List
-
 from django.db.models import Q
 
 from openpyxl import Workbook, load_workbook
@@ -30,7 +28,7 @@ class BailleurListingProcessor:
         workbook: Workbook = load_workbook(filename=filename, data_only=True)
         self._worksheet: Worksheet = workbook[workbook.sheetnames[0]]
 
-    def process(self) -> List[dict]:
+    def process(self) -> list[dict]:
         results = []
         # Create mapping:
         mapping = {}

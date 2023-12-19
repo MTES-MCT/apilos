@@ -1,5 +1,4 @@
 from abc import ABC
-from typing import List
 
 from django.forms import Form
 
@@ -17,7 +16,7 @@ class ConventionService(ABC):
     convention: Convention
     request: AuthenticatedHttpRequest
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
-    import_warnings: None | List = None
+    import_warnings: None | list = None
     redirect_recap: bool = False
     editable_after_upload: bool = False
     form: Form | None = None

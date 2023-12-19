@@ -1,5 +1,3 @@
-from typing import List
-
 from django.http import HttpRequest
 
 from conventions.forms import UploadForm, TypeStationnementFormSet
@@ -18,7 +16,7 @@ class ConventionTypeStationnementService(ConventionService):
     editable_after_upload: bool
     redirect_recap: bool = False
     return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
-    import_warnings: None | List = None
+    import_warnings: None | list = None
 
     def get(self):
         self.editable_after_upload = bool(
