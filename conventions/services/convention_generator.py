@@ -109,6 +109,8 @@ def generate_convention_doc(convention: Convention, save_data=False):
 
     object_images, local_pathes = _get_object_images(doc, convention)
 
+    adresse = _get_adresse(convention)
+
     context = {
         **avenant_data,
         "convention": convention,
@@ -142,6 +144,7 @@ def generate_convention_doc(convention: Convention, save_data=False):
     context.update(compute_mixte(convention))
     context.update(logements_totale)
     context.update(object_images)
+    context.update(adresse)
 
     doc.render(context, _get_jinja_env())
     file_stream = io.BytesIO()
@@ -383,6 +386,24 @@ def get_files_attached(convention):
     return local_pathes
 
 
+def _get_adresse(convention):
+    adresse_totale = {}
+    if convention.adresse:
+        adresse_totale["adresse"] = convention.adresse
+    else:
+        adresse_totale["adresse"] = convention.programme.adresse
+    if convention.code_postal:
+        adresse_totale["code_postal"] = convention.code_postal
+    else:
+        adresse_totale["code_postal"] = convention.programme.code_postal
+    if convention.ville:
+        adresse_totale["ville"] = convention.ville
+    else:
+        adresse_totale["ville"] = convention.programme.ville
+
+    return adresse_totale
+
+
 def _get_object_images(doc, convention):
     object_images = {}
     local_pathes = []
@@ -427,6 +448,11 @@ def _get_object_images(doc, convention):
         doc, convention.uuid, convention.lot.edd_classique_files()
     )
     object_images["edd_classique_images"] = edd_classique_images
+    local_pathes += tmp_local_path
+    edd_stationnements_images, tmp_local_path = _build_files_for_docx(
+        doc, convention.uuid, convention.programme.edd_stationnements_files()
+    )
+    object_images["edd_stationnements_images"] = edd_stationnements_images
     local_pathes += tmp_local_path
 
     return object_images, local_pathes
