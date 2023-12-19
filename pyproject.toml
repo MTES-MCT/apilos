@@ -42,12 +42,16 @@ exclude = [
     "node_modules",
     "staticfiles",
     "templates",
+
 ]
 
 [tool.ruff.extend-per-file-ignores]
 "__init__.py" = ["F401", "F403"]
 "scripts/*.py" = ["INP001"]
 "**/migrations/*.py" = ["E501"]
+# TODO: ignored because of low coveragen, fix and remove
+"conventions/services/upload_objects.py" = ["UP"]
+"conventions/services/recapitulatif.py" = ["UP"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 20 # TODO: very high value, reduce to 10
