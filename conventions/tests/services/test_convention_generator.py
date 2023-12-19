@@ -1,6 +1,7 @@
 import unittest
 from datetime import date
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
+from decimal import Decimal
 
 import jinja2
 from django.conf import settings
@@ -11,12 +12,15 @@ from conventions.models import Convention, ConventionType1and2
 from conventions.services.convention_generator import (
     ConventionTypeConfigurationError,
     _compute_liste_des_annexes,
+    _compute_total_logement,
+    _get_adresse,
     _get_jinja_env,
     _get_loyer_par_metre_carre,
     _to_fr_float,
     compute_mixte,
     default_str_if_none,
     get_convention_template_path,
+    generate_convention_doc,
     pluralize,
     to_fr_date,
     to_fr_date_or_default,
@@ -24,8 +28,56 @@ from conventions.services.convention_generator import (
     to_fr_short_date_or_default,
     typologie_label,
 )
-from programmes.models import ActiveNatureLogement, TypologieLogement
+from programmes.models import ActiveNatureLogement, TypologieLogement, Logement
+from programmes.models.choices import NatureLogement
 from users.models import User
+
+
+def convention_context_keys():
+    return {
+        "annexes",
+        "res_sh_totale",
+        "references_cadastrales",
+        "administration",
+        "prets_cdc",
+        "stationnements",
+        "lc_sh_totale",
+        "su_totale",
+        "lot",
+        "programme",
+        "liste_des_annexes",
+        "mixPLUSinf10_10pc",
+        "logements",
+        "mixPLUSinf10_30pc",
+        "nombre_annees_conventionnement",
+        "mixPLUSsup10_30pc",
+        "sar_totale",
+        "logement_edds",
+        "lot_num",
+        "mixPLUS_30pc",
+        "convention",
+        "sh_totale",
+        "sa_totale",
+        "nb_logements_par_type",
+        "locaux_collectifs",
+        "loyer_m2",
+        "bailleur",
+        "mixPLUS_10pc",
+        "autres_prets",
+        "vendeur_images",
+        "effet_relatif_images",
+        "adresse",
+        "reference_publication_acte_images",
+        "code_postal",
+        "ville",
+        "reference_notaire_images",
+        "edd_classique_images",
+        "loyer_total",
+        "edd_stationnements_images",
+        "reference_cadastrale_images",
+        "acquereur_images",
+        "edd_volumetrique_images",
+    }
 
 
 class ConventionGeneratorComputeMixiteTest(TestCase):
@@ -115,6 +167,55 @@ class ConventionServiceGeneratorTest(TestCase):
         "conventions_for_tests.json",
         "users_for_tests.json",
     ]
+
+    def test_compute_total_logement(self):
+        convention = Convention.objects.get(numero="0001")
+        Logement.objects.create(lot=convention.lot, typologie=TypologieLogement.T2)
+        Logement.objects.create(lot=convention.lot, loyer=500)
+
+        Logement.objects.create(lot=convention.lot, loyer=1000)
+
+        logements_totale, nb_logements_par_type = _compute_total_logement(convention)
+        assert logements_totale == {
+            "loyer_total": Decimal("1500.00"),
+            "sa_totale": 0,
+            "sar_totale": 0,
+            "sh_totale": 0,
+            "su_totale": 0,
+        }
+        assert nb_logements_par_type == {"T1": 2, "T2": 1}
+
+    def test_get_adresse(self):
+        convention = Convention.objects.get(numero="0001")
+        convention.programme.adresse = "22 rue segur"
+        convention.programme.code_postal = "75000"
+        convention.programme.ville = "Paris"
+        convention.adresse = "23 rue segur"
+        convention.code_postal = None
+        convention.ville = None
+
+        result = _get_adresse(convention)
+
+        assert result == {
+            "adresse": "23 rue segur",
+            "code_postal": "75000",
+            "ville": "Paris",
+        }
+
+    def test_generate_convention_doc(self):
+        convention = Convention.objects.get(numero="0001")
+        convention.programme.nature_logement = NatureLogement.RESISDENCESOCIALE
+
+        with patch(
+            "conventions.services.convention_generator.DocxTemplate.render"
+        ) as mocked_render:
+            generate_convention_doc(convention)
+
+            args, _ = mocked_render.call_args
+            context = args[0]
+
+            mocked_render.assert_called_once()
+            assert set(context.keys()) == convention_context_keys()
 
     def test_get_convention_template_path(self):
         user = User.objects.get(username="fix")
