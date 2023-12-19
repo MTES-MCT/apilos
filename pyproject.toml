@@ -5,6 +5,7 @@ omit = [
     "*/migrations/*",
     "ecoloweb/*",
     "programmes/management/commands/import_galion.py",
+    "conventions/services/convention_generator.py", # TODO : fix coverage of this file
 ]
 
 [tool.pytest.ini_options]
@@ -42,7 +43,6 @@ exclude = [
     "node_modules",
     "staticfiles",
     "templates",
-    "conventions.services.convention_generator.py", # TODO : fix coverage of this file
 ]
 
 [tool.ruff.extend-per-file-ignores]
