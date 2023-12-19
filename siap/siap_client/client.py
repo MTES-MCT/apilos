@@ -182,10 +182,9 @@ class SIAPClientRemote(SIAPClientInterface):
         ] != ["racineUrlAccesWeb", "urlAccesWeb", "urlAccesWebOperation"]:
             raise SIAPException(
                 "SIAP configuration is not well formed"
-                ", racineUrlAccesWeb: %s"
-                ", urlAccesWeb: %s"
-                ", urlAccesWebOperation: %s"
-                % (
+                ", racineUrlAccesWeb: {}"
+                ", urlAccesWeb: {}"
+                ", urlAccesWebOperation: {}".format(
                     config["racineUrlAccesWeb"],
                     config["urlAccesWeb"],
                     config["urlAccesWebOperation"],

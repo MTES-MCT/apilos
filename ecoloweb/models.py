@@ -1,5 +1,3 @@
-from typing import Optional
-
 from django.apps import apps
 from django.db import models
 from django.db.models import Model
@@ -51,7 +49,7 @@ class EcoloReference(models.Model):
         app_label, model_name = self.apilos_model.split(".")
         return apps.get_model(app_label, model_name)
 
-    def resolve(self) -> Optional[Model]:
+    def resolve(self) -> Model | None:
         return self._get_model().objects.filter(pk=self.apilos_id).first()
 
     def update(self, data: dict):

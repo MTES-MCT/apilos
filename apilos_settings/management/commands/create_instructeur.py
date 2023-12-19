@@ -1,5 +1,3 @@
-from typing import Set
-
 from django.contrib.auth.models import Group
 from django.core.management import BaseCommand
 from django.core.validators import validate_email
@@ -47,7 +45,7 @@ class Command(BaseCommand):
         nom = options["nom"]
         email = options["email"]
         # Ensemble des administrations rattachées stockées dans un set pour éliminer automatiquement les doublons
-        administrations: Set[Administration] = set()
+        administrations: set[Administration] = set()
         for code in options["administrations"]:
             administrations.add(Administration.objects.get(code=code))
 

@@ -1,5 +1,4 @@
 from datetime import date
-from typing import Optional
 from api_insee import ApiInsee
 from box.exceptions import BoxKeyError
 from box import Box
@@ -14,9 +13,7 @@ class SiretResolver:
         self._insee_api_client = ApiInsee(key=api_key, secret=api_secret)
         self._box = Box(box_dots=True)
 
-    def resolve(
-        self, siren: str, date_creation: Optional[date] = None
-    ) -> Optional[str]:
+    def resolve(self, siren: str, date_creation: date | None = None) -> str | None:
         if not siren or len(siren) != 9 or not siren.isdigit():
             return None
 

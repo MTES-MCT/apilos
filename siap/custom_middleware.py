@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.forms import model_to_dict
@@ -103,7 +101,7 @@ def copy_session_habilitation_to_user(request):
         )
 
 
-def _get_perimetre_geographique(from_habilitation: dict) -> Tuple[None, str]:
+def _get_perimetre_geographique(from_habilitation: dict) -> tuple[None, str]:
     perimetre_departement = perimetre_region = None
     if (
         "porteeTerritComp" in from_habilitation

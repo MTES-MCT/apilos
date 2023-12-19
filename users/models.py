@@ -89,7 +89,7 @@ class User(AbstractUser):
     history = HistoricalRecords(excluded_fields=["last_login"])
 
     def has_object_permission(self, obj):
-        if isinstance(obj, (Convention, Lot)):
+        if isinstance(obj, Convention | Lot):
             if (
                 "role" in self.siap_habilitation
                 and self.siap_habilitation["role"]["typologie"]

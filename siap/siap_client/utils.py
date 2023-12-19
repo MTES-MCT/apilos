@@ -1,5 +1,4 @@
 import re
-from typing import Tuple
 
 from bailleurs.models import Bailleur, NatureBailleur
 from conventions.models import Convention, ConventionStatut
@@ -174,7 +173,7 @@ def get_or_create_administration(administration_from_siap: dict):
     return administration
 
 
-def _get_address_from_locdata(loc_data: dict) -> Tuple[str]:
+def _get_address_from_locdata(loc_data: dict) -> tuple[str]:
     if "adresseComplete" in loc_data:
         try:
             return (
