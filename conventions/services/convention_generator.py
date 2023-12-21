@@ -387,21 +387,11 @@ def get_files_attached(convention):
 
 
 def _get_adresse(convention):
-    adresse_totale = {}
-    if convention.adresse:
-        adresse_totale["adresse"] = convention.adresse
-    else:
-        adresse_totale["adresse"] = convention.programme.adresse
-    if convention.code_postal:
-        adresse_totale["code_postal"] = convention.code_postal
-    else:
-        adresse_totale["code_postal"] = convention.programme.code_postal
-    if convention.ville:
-        adresse_totale["ville"] = convention.ville
-    else:
-        adresse_totale["ville"] = convention.programme.ville
-
-    return adresse_totale
+    return {
+        "adresse": convention.adresse or convention.programme.adresse,
+        "code_postal": convention.code_postal or convention.programme.code_postal,
+        "ville": convention.ville or convention.programme.ville,
+    }
 
 
 def _get_object_images(doc, convention):
