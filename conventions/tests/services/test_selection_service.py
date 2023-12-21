@@ -102,6 +102,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
                 programme__nom="Programme de test", financement=Financement.PLUS
             ),
         )
+        self.assertEqual(self.service.convention.programme.numero_galion, "123456789")
 
     def test_post_for_avenant_success(self):
         bailleur = Bailleur.objects.get(siret="987654321")
