@@ -3,7 +3,7 @@ import sys
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from core.exceptions.types import SIAPException
+from siap.exceptions import SIAPException
 
 
 def handle_error_500(request):

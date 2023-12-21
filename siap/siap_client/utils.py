@@ -1,12 +1,8 @@
+import logging
 import re
 
 from bailleurs.models import Bailleur, NatureBailleur
 from conventions.models import Convention, ConventionStatut
-from core.exceptions.types import (
-    InconsistentDataSIAPException,
-    NoConventionForOperationSIAPException,
-    NotHandledBailleurPriveSIAPException,
-)
 from instructeurs.models import Administration
 from programmes.models import (
     Financement,
@@ -16,7 +12,17 @@ from programmes.models import (
     TypeHabitat,
     TypeOperation,
 )
+from programmes.utils import diff_programme_duplication
+from siap.exceptions import (
+    DuplicatedOperationSIAPException,
+    InconsistentDataSIAPException,
+    NoConventionForOperationSIAPException,
+    NotHandledBailleurPriveSIAPException,
+    OperationToRepairSIAPException,
+)
 from users.models import User
+
+logger = logging.getLogger(__name__)
 
 ADDRESS_PC_CITY = "adresseLigne6"
 ADDRESS_LINE_RAW = "adresseLigne4"
@@ -47,18 +53,21 @@ def get_or_create_conventions(operation: dict, user: User):
         raise KeyError(
             f"Operation not well formatted, related to `donneesMo` : {operation}"
         ) from ke
+
     try:
         administration = get_or_create_administration(operation["gestionnaire"])
     except (KeyError, TypeError) as ke:
         raise KeyError(
             f"Operation not well formatted, related to `gestionnaire` : {operation}"
         ) from ke
+
     try:
         programme = get_or_create_programme(operation, bailleur, administration)
     except (KeyError, TypeError) as ke:
         raise KeyError(
             f"Operation not well formatted, missing programme's informations : {operation}"
         ) from ke
+
     try:
         (lots, conventions) = get_or_create_lots_and_conventions(
             operation, programme, user
@@ -67,6 +76,7 @@ def get_or_create_conventions(operation: dict, user: User):
         raise KeyError(
             f"Operation not well formatted, missing lot and convention informations : {operation}"
         ) from ke
+
     return (programme, lots, conventions)
 
 
@@ -225,31 +235,41 @@ def get_or_create_programme(
     ):
         raise NoConventionForOperationSIAPException()
 
-    (programme, _) = Programme.objects.get_or_create(
-        numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"],
-        parent=None,
-        defaults={
-            "bailleur": bailleur,
-            "administration": administration,
-            "nom": programme_from_siap["donneesOperation"]["nomOperation"],
-            "adresse": adresse,
-            "code_postal": code_postal,
-            "ville": ville,
-            "code_insee_commune": programme_from_siap["donneesLocalisation"]["commune"][
-                "codeInsee"
-            ],
-            "code_insee_departement": programme_from_siap["donneesLocalisation"][
-                "departement"
-            ]["codeInsee"],
-            "code_insee_region": programme_from_siap["donneesLocalisation"]["region"][
-                "codeInsee"
-            ],
-            "zone_abc": programme_from_siap["donneesLocalisation"]["zonage123"],
-            "zone_123": programme_from_siap["donneesLocalisation"]["zonageABC"],
-            "type_operation": type_operation,
-            "nature_logement": nature_logement,
-        },
-    )
+    try:
+        (programme, _) = Programme.objects.get_or_create(
+            numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"],
+            parent=None,
+            defaults={
+                "bailleur": bailleur,
+                "administration": administration,
+                "nom": programme_from_siap["donneesOperation"]["nomOperation"],
+                "adresse": adresse,
+                "code_postal": code_postal,
+                "ville": ville,
+                "code_insee_commune": programme_from_siap["donneesLocalisation"][
+                    "commune"
+                ]["codeInsee"],
+                "code_insee_departement": programme_from_siap["donneesLocalisation"][
+                    "departement"
+                ]["codeInsee"],
+                "code_insee_region": programme_from_siap["donneesLocalisation"][
+                    "region"
+                ]["codeInsee"],
+                "zone_abc": programme_from_siap["donneesLocalisation"]["zonage123"],
+                "zone_123": programme_from_siap["donneesLocalisation"]["zonageABC"],
+                "type_operation": type_operation,
+                "nature_logement": nature_logement,
+            },
+        )
+    except Programme.MultipleObjectsReturned:
+        numero_operation = programme_from_siap["donneesOperation"]["numeroOperation"]
+
+        diff = diff_programme_duplication(numero_operation=numero_operation)
+        if len(diff):
+            raise OperationToRepairSIAPException(numero_operation=numero_operation)
+
+        raise DuplicatedOperationSIAPException(numero_operation=numero_operation)
+
     # force nature_logement and administration
     programme.nature_logement = nature_logement
     programme.administration = administration

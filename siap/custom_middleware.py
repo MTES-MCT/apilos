@@ -4,7 +4,7 @@ from django.forms import model_to_dict
 from django.http import HttpRequest
 
 from bailleurs.models import Bailleur, NatureBailleur
-from core.exceptions.types import (
+from siap.exceptions import (
     AssociationHLMSIAPException,
     FusionAPISIAPException,
     HabilitationSIAPException,

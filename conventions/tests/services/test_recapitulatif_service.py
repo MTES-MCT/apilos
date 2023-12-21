@@ -13,8 +13,8 @@ from conventions.models import Convention
 from conventions.models.choices import ConventionStatut
 from conventions.services import recapitulatif, utils
 from conventions.services.utils import ReturnStatus
-from core.exceptions.types import SIAPException
 from programmes.models.models import Lot, Programme
+from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
 from users.models import User
 from users.type_models import EmailPreferences
