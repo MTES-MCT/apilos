@@ -103,6 +103,10 @@ if SENDINBLUE_API_KEY:
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+DEFAULT_FROM_EMAIL = get_env_variable(
+    "DEFAULT_FROM_EMAIL", default="ne-pas-repondre@apilos.beta.gouv.fr"
+)
+
 env_allowed_hosts = []
 try:
     env_allowed_hosts = get_env_variable("ALLOWED_HOSTS").split(",")
