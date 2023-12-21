@@ -191,8 +191,6 @@ class ConventionServiceGeneratorTest(TestCase):
         convention.programme.code_postal = "75000"
         convention.programme.ville = "Paris"
         convention.adresse = "23 rue segur"
-        convention.code_postal = None
-        convention.ville = None
 
         result = _get_adresse(convention)
 

@@ -49,8 +49,8 @@ class ConventionProgrammeServiceTests(TestCase):
 
     def test_get_with_convention_adresse(self):
         self.service.convention.adresse = "123 rue du fake"
-        self.service.convention.code_postal = "02000"
-        self.service.convention.ville = "Fake ville"
+        self.service.convention.programme.code_postal = "02000"
+        self.service.convention.programme.ville = "Fake ville"
         self.service.convention.save()
 
         self.service.get()
@@ -84,8 +84,6 @@ class ConventionProgrammeServiceTests(TestCase):
         self.service.request.POST = {
             "nom": "Fake Opération",
             "adresse": "123 rue du fake",
-            "code_postal": "02000",
-            "ville": "Fake ville updated",
             "nb_logements": "28",
             "anru": "FALSE",
             "type_habitat": "INDIVIDUEL",
@@ -106,5 +104,3 @@ class ConventionProgrammeServiceTests(TestCase):
         self.assertEqual(programme.ville, "Paris")
         # L'adresse de la convention est mise à jour
         self.assertEqual(self.service.convention.adresse, "123 rue du fake")
-        self.assertEqual(self.service.convention.code_postal, "02000")
-        self.assertEqual(self.service.convention.ville, "Fake ville updated")
