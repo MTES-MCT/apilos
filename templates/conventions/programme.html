@@ -43,7 +43,7 @@
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                                 {% if not convention.is_avenant %}
-                                    {% include "common/form/input_text.html" with form_input=form.code_postal object_field="code_postal__"|add:form.uuid.value %}
+                                    {% include "common/form/input_text.html" with form_input=form.code_postal object_field="programme__code_postal__"|add:form.uuid.value %}
                                 {% else %}
                                     <label class="fr-label">Code Postal</label>
                                     <div class="fr-mt-1w block--row-strech" id="id_code_postal_div" >
@@ -53,7 +53,7 @@
                             </div>
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                                 {% if not convention.is_avenant %}
-                                    {% include "common/form/input_text.html" with form_input=form.ville object_field="ville__"|add:form.uuid.value %}
+                                    {% include "common/form/input_text.html" with form_input=form.ville object_field="programme__ville__"|add:form.uuid.value %}
                                 {% else %}
                                     <label class="fr-label">Ville</label>
                                     <div class="fr-mt-1w block--row-strech" id="id_ville_div" >

@@ -389,8 +389,8 @@ def get_files_attached(convention):
 def _get_adresse(convention):
     return {
         "adresse": convention.adresse or convention.programme.adresse,
-        "code_postal": convention.code_postal or convention.programme.code_postal,
-        "ville": convention.ville or convention.programme.ville,
+        "code_postal": convention.programme.code_postal,
+        "ville": convention.programme.ville,
     }
 
 
