@@ -325,12 +325,7 @@ def save_convention(request, convention_uuid):
 @login_required
 @has_campaign_permission_view_function("convention.delete_convention")
 def delete_convention(request, convention_uuid):
-    try:
-        convention = Convention.objects.get(uuid=convention_uuid)
-    except Convention.DoesNotExist:
-        pass
-    else:
-        convention.delete()
+    Convention.objects.filter(uuid=convention_uuid).delete()
     return HttpResponseRedirect(reverse("conventions:index"))
 
 
