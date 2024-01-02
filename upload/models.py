@@ -1,8 +1,8 @@
 import uuid
 
+from django.db import models
 from rest_framework import serializers
 
-from django.db import models
 
 # Create your models here.
 class UploadedFile(models.Model):

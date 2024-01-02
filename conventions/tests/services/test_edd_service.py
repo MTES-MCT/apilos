@@ -1,14 +1,11 @@
+from django.core.exceptions import ValidationError
 from django.http import HttpRequest
 from django.test import TestCase
-from django.core.exceptions import ValidationError
 
-from conventions.forms import UploadForm, ProgrammeEDDForm, LogementEDDFormSet
-
+from conventions.forms import LogementEDDFormSet, ProgrammeEDDForm, UploadForm
 from conventions.models import Convention
-from conventions.services import (
-    edd as service_edd,
-    utils,
-)
+from conventions.services import edd as service_edd
+from conventions.services import utils
 from programmes.models import Financement
 from users.models import User
 

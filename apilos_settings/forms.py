@@ -1,6 +1,6 @@
 from io import BytesIO
 
-from django.forms import forms, FileField
+from django.forms import FileField, forms
 
 from apilos_settings.services.services_file import BailleurListingProcessor
 

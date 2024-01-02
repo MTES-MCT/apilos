@@ -1,5 +1,4 @@
 from django.db.models import Q
-
 from openpyxl import Workbook, load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 

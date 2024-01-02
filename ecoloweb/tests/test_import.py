@@ -1,6 +1,6 @@
+import glob
 import os
 from datetime import datetime
-import glob
 from pathlib import Path
 from unittest import TestCase
 

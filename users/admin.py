@@ -4,7 +4,8 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from admin.admin import ApilosModelAdmin
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
-from .models import User, Role
+
+from .models import Role, User
 
 
 @admin.register(Role)

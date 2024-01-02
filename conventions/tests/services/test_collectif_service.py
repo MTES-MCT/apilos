@@ -1,14 +1,11 @@
 from django.http import HttpRequest
 from django.test import TestCase
 
-from conventions.models import Convention
-from conventions.tests.fixtures import collectif_success_payload
-from conventions.services import (
-    collectif,
-    utils,
-)
-from programmes.models import NatureLogement
 from conventions.forms import LocauxCollectifsFormSet, LotCollectifForm
+from conventions.models import Convention
+from conventions.services import collectif, utils
+from conventions.tests.fixtures import collectif_success_payload
+from programmes.models import NatureLogement
 from users.models import User
 
 
@@ -51,7 +48,6 @@ class ConventionCollectifServiceTests(TestCase):
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
     def test_save_failed_needed_fields(self):
-
         self.service.request.POST = {
             **collectif_success_payload,
             "form-1-type_local": "",

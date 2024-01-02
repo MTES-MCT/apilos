@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+
 from conventions.models.choices import Preteur
 
 

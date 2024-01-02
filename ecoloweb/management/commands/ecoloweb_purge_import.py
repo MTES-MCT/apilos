@@ -2,7 +2,7 @@ import sys
 
 from django.conf import settings
 from django.core.management import BaseCommand
-from django.db import transaction, connections
+from django.db import connections, transaction
 from django.db.backends.utils import CursorWrapper
 
 

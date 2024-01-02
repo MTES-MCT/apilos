@@ -1,6 +1,6 @@
 from django.http import HttpRequest
 
-from conventions.forms import UploadForm, TypeStationnementFormSet
+from conventions.forms import TypeStationnementFormSet, UploadForm
 from conventions.models import Convention
 from conventions.services.conventions import ConventionService
 from programmes.models import TypeStationnement

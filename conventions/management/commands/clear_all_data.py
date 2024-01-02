@@ -1,12 +1,12 @@
 import logging
 
-from django.core.management.base import BaseCommand
 from django.conf import settings
+from django.core.management.base import BaseCommand
 from django.db import transaction
 
+from bailleurs.models import Bailleur
 from ecoloweb.models import EcoloReference
 from instructeurs.models import Administration
-from bailleurs.models import Bailleur
 from users.models import User
 
 logger = logging.getLogger(__name__)

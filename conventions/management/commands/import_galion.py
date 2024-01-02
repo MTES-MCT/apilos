@@ -1,12 +1,13 @@
 import os
 import sys
 
-from django.core.management.base import BaseCommand
 from django.conf import settings
+from django.core.management.base import BaseCommand
 from openpyxl import load_workbook
-from instructeurs.models import Administration
+
 from bailleurs.models import Bailleur
-from programmes.models import Programme, Financement, Lot, TypeStationnement
+from instructeurs.models import Administration
+from programmes.models import Financement, Lot, Programme, TypeStationnement
 
 
 def str_row(row):

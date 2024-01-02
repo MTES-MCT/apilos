@@ -2,13 +2,12 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db.models import QuerySet
-from django.forms import formset_factory, BaseFormSet
+from django.forms import BaseFormSet, formset_factory
 
 from apilos_settings.models import Departement
 from bailleurs.models import Bailleur
-
 from users.models import User
-from users.type_models import TypeRole, EmailPreferences
+from users.type_models import EmailPreferences, TypeRole
 
 
 class UserNotificationForm(forms.Form):

@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from programmes.models import Programme
 from bailleurs.models import Bailleur
+from programmes.models import Programme
 
 
 class Command(BaseCommand):

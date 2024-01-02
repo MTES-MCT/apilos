@@ -1,7 +1,8 @@
 from datetime import date
+
 from api_insee import ApiInsee
-from box.exceptions import BoxKeyError
 from box import Box
+from box.exceptions import BoxKeyError
 
 
 class SiretResolver:

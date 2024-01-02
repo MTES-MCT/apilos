@@ -2,6 +2,7 @@
 
 from django.db import migrations
 from django.db.models.functions import Substr
+
 from programmes.models import Programme
 
 # TODO: check if code_insee_departement returned by SIAP is always 2 digits

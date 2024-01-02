@@ -6,7 +6,7 @@ from django.urls import reverse
 from bailleurs.models import Bailleur
 from conventions.models import Convention
 from core.services import EmailService, EmailTemplateID
-from users.models import User, Role
+from users.models import Role, User
 from users.type_models import TypeRole
 
 

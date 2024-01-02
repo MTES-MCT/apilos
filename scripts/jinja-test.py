@@ -1,5 +1,5 @@
-from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Inches
+from docxtpl import DocxTemplate, InlineImage
 
 doc = DocxTemplate("../documents/HLM-jinja.docx")
 

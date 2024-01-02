@@ -1,12 +1,10 @@
 from django.http import HttpRequest
 from django.test import TestCase
 
-from conventions.models import Convention
 from conventions.forms import TypeStationnementFormSet
-from conventions.services import (
-    type_stationnement as service_type_stationnement,
-    utils,
-)
+from conventions.models import Convention
+from conventions.services import type_stationnement as service_type_stationnement
+from conventions.services import utils
 from programmes.models import TypeStationnement
 from users.models import User
 

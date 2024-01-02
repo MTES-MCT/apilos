@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from programmes.models import Annexe, Logement, Programme, Lot, TypeStationnement
 from bailleurs.models import Bailleur
-from instructeurs.models import Administration
 from conventions.models import Convention
+from instructeurs.models import Administration
+from programmes.models import Annexe, Logement, Lot, Programme, TypeStationnement
 
 
 class BailleurSerializer(serializers.HyperlinkedModelSerializer):

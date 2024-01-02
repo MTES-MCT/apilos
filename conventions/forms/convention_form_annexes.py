@@ -5,12 +5,12 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
-from core.utils import round_half_up
 
+from core.utils import round_half_up
 from programmes.models import (
     Logement,
-    TypologieLogementClassique,
     TypologieAnnexe,
+    TypologieLogementClassique,
 )
 
 

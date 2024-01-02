@@ -7,8 +7,8 @@ from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
 
 from programmes.models import (
-    Lot,
     FinancementEDD,
+    Lot,
 )
 
 

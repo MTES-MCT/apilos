@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
-from conventions.models import Convention
 
+from conventions.models import Convention
 from conventions.tests.views.abstract import AbstractEditViewTestCase
 from programmes.models import Annexe, Logement, TypologieLogement
 from users.models import User

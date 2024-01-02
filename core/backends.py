@@ -1,11 +1,10 @@
 """
 Manage Auth backends
 """
-from django_cas_ng.backends import CASBackend
-
-from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import get_user_model
+from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
+from django_cas_ng.backends import CASBackend
 
 from users.models import GroupProfile
 

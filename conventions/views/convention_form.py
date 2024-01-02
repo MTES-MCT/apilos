@@ -2,10 +2,8 @@ from abc import ABC
 from dataclasses import dataclass
 from typing import Any
 
-from django.shortcuts import get_object_or_404
-
 from django.http import HttpRequest, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import View
 

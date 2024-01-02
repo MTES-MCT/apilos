@@ -6,8 +6,8 @@ from conventions.forms.convention_form_annexes import *
 from conventions.forms.convention_form_attribution import *
 from conventions.forms.convention_form_bailleur import *
 from conventions.forms.convention_form_cadatre import *
-from conventions.forms.convention_form_collectif import *
 from conventions.forms.convention_form_champ_libre import *
+from conventions.forms.convention_form_collectif import *
 from conventions.forms.convention_form_commentaires import *
 from conventions.forms.convention_form_denonciation import *
 from conventions.forms.convention_form_edd import *

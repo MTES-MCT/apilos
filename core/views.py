@@ -1,11 +1,12 @@
 from typing import Any
-from django.contrib.auth.views import (
-    PasswordResetConfirmView,
-    INTERNAL_RESET_SESSION_TOKEN,
-    PasswordContextMixin,
-)
+
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import (
+    INTERNAL_RESET_SESSION_TOKEN,
+    PasswordContextMixin,
+    PasswordResetConfirmView,
+)
 from django.http import HttpRequest
 
 

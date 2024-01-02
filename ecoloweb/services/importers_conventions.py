@@ -1,18 +1,18 @@
 import logging
 from datetime import date
 
+from django.conf import settings
 from django.db import transaction
 
-from conventions.models import Convention, PieceJointe, PieceJointeType, AvenantType
+from conventions.models import AvenantType, Convention, PieceJointe, PieceJointeType
 from conventions.models.evenement import Evenement
 from conventions.tasks import promote_piece_jointe
+from ecoloweb.models import EcoloReference
 from programmes.models import Programme
+
 from .importers import ModelImporter
 from .importers_programmes import LotImporter
 from .query_iterator import QueryResultIterator
-from django.conf import settings
-
-from ecoloweb.models import EcoloReference
 
 logger = logging.getLogger(__name__)
 
