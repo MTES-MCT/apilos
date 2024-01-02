@@ -4,6 +4,7 @@ from django.urls import reverse
 from conventions.tests.views.abstract import AbstractCreateViewTestCase
 from conventions.models import AvenantType
 from bailleurs.models import Bailleur
+from instructeurs.models import Administration
 
 from conventions.models import Pret
 
@@ -12,7 +13,7 @@ from unittest.mock import patch
 from datetime import date
 
 
-class RemoveFromAvenantViewTest(AbstractCreateViewTestCase, TestCase):
+class RemoveFromAvenantViewBaseTest(AbstractCreateViewTestCase, TestCase):
     fixtures = [
         "auth.json",
         "avenant_types.json",
@@ -36,45 +37,15 @@ class RemoveFromAvenantViewTest(AbstractCreateViewTestCase, TestCase):
         self.target_template = None
         self.next_target_starts_with = "/conventions/recapitulatif/"
 
-    def test_reset_avenant_type_bailleur(self):
-        self._login_as_superuser()
 
-        self.convention_75.signataire_nom = "Obiwan kenobi"
-        self.convention_75.save()
-
-        avenant = self.convention_75.clone(
-            user=self.user, convention_origin=self.convention_75
-        )
-
-        avenant_type_bailleur = AvenantType.objects.get(nom="bailleur")
-        avenant.avenant_types.add(avenant_type_bailleur)
-
-        avenant.signataire_nom = "Anakin Skywalker"
-        avenant.save()
-
-        bailleur = self.convention_75.programme.bailleur
-        autre_bailleur = Bailleur.objects.get(pk=2)
-        assert bailleur != autre_bailleur
-        avenant.programme.bailleur = autre_bailleur
-        avenant.programme.save()
-
-        response = self.client.post(
-            reverse("conventions:remove_from_avenant", args=[avenant.uuid]),
-            {"avenant_type": avenant_type_bailleur.nom},
-        )
-        self.assertEqual(
-            response.status_code, self.post_success_http_code, msg=f"{self.msg_prefix}"
-        )
-
-        avenant.refresh_from_db()
-        self.assertEqual(avenant.signataire_nom, "Obiwan kenobi")
-        self.assertEqual(avenant.programme.bailleur, bailleur)
-
+class RemoveAvenantViewDureeTest(RemoveFromAvenantViewBaseTest):
     def test_reset_avenant_type_duree(self):
         self._login_as_superuser()
 
         # Initialize convention attributes related to duree
         self.convention_75.date_fin_conventionnement = date(2045, 6, 30)
+        self.convention_75.fond_propre = 250000.0
+        self.convention_75.historique_financement_public = "Lorem ipsum 1"
         self.convention_75.save()
 
         # Create avenant with type duree
@@ -86,6 +57,8 @@ class RemoveFromAvenantViewTest(AbstractCreateViewTestCase, TestCase):
 
         # Modify avenants attributes related to duree
         avenant.date_fin_conventionnement = date(2144, 1, 1)
+        avenant.fond_propre = 100000.0
+        avenant.historique_financement_public = "Lorem ipsum 2"
         avenant.save()
 
         # Remove duree from avenant
@@ -99,10 +72,11 @@ class RemoveFromAvenantViewTest(AbstractCreateViewTestCase, TestCase):
         avenant.refresh_from_db()
 
         # Ensure attributes are back in previous states
-        self.assertEqual(avenant.date_fin_conventionnement, date(2045, 6, 30))
+        assert avenant.date_fin_conventionnement == date(2045, 6, 30)
+        assert avenant.fond_propre == 250000.0
+        assert avenant.historique_financement_public == "Lorem ipsum 1"
 
     def test_reset_avenant_type_duree_prets(self):
-        # Test attribute prets
         self._login_as_superuser()
 
         Pret.objects.create(id=888, convention=self.convention_75, montant=100000)
@@ -137,6 +111,50 @@ class RemoveFromAvenantViewTest(AbstractCreateViewTestCase, TestCase):
         self.assertTrue(Pret.objects.filter(pk__in=cloned_pret_ids).exists())
         self.assertTrue(Pret.objects.filter(pk__in=(888, 999)).exists())
 
+
+class RemoveAvenantViewBailleurTest(RemoveFromAvenantViewBaseTest):
+    def test_reset_avenant_type_bailleur(self):
+        self._login_as_superuser()
+
+        # Initialize convention attributes related to bailleur
+        self.convention_75.signataire_nom = "Obiwan kenobi"
+        self.convention_75.programme.bailleur = Bailleur.objects.get(pk=1)
+        self.convention_75.programme.administration = Administration.objects.get(pk=1)
+        self.convention_75.save()
+        self.convention_75.programme.save()
+
+        # Create avenant with type bailleur
+        avenant = self.convention_75.clone(
+            user=self.user, convention_origin=self.convention_75
+        )
+
+        avenant_type_bailleur = AvenantType.objects.get(nom="bailleur")
+        avenant.avenant_types.add(avenant_type_bailleur)
+
+        # Edit properties related to bailleur
+        avenant.signataire_nom = "Anakin Skywalker"
+        avenant.programme.bailleur = Bailleur.objects.get(pk=2)
+        avenant.programme.administration = Administration.objects.get(pk=2)
+        avenant.save()
+        avenant.programme.save()
+
+        # Remove bailleur from avenant
+        response = self.client.post(
+            reverse("conventions:remove_from_avenant", args=[avenant.uuid]),
+            {"avenant_type": avenant_type_bailleur.nom},
+        )
+        self.assertEqual(
+            response.status_code, self.post_success_http_code, msg=f"{self.msg_prefix}"
+        )
+        avenant.refresh_from_db()
+
+        # Assert bailleur properties are removed from the avenant
+        assert avenant.signataire_nom == "Obiwan kenobi"
+        assert avenant.programme.bailleur == Bailleur.objects.get(pk=1)
+        assert avenant.programme.administration == Administration.objects.get(pk=1)
+
+
+class RemoveFromAvenantViewTest(RemoveFromAvenantViewBaseTest):
     def test_no_avenant_type_exist(self):
         self._login_as_superuser()
 
