@@ -14,7 +14,10 @@ def add_comment(request):
     post_data = json.loads(request.body.decode("utf-8"))
     comment = post_data["comment"].strip()
     convention_uuid = post_data["convention_uuid"]
+
+    # FIXME: no perm needed here?
     convention = Convention.objects.get(uuid=convention_uuid)
+
     if comment:
         # save comment
         comment = Comment.objects.create(
