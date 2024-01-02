@@ -29,7 +29,11 @@ from conventions.permissions import has_campaign_permission
 from conventions.services import convention_generator
 from conventions.services.avenants import create_avenant
 from conventions.services.convention_generator import fiche_caf_doc
-from conventions.services.conventions import convention_post_action, convention_sent
+from conventions.services.conventions import (
+    convention_post_action,
+    convention_sent,
+    get_convention_or_403,
+)
 from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
@@ -51,8 +55,6 @@ from core.storage import client
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
 from upload.services import UploadService
-
-from conventions.services.conventions import get_convention_or_403
 
 
 class RecapitulatifView(BaseConventionView):

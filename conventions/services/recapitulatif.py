@@ -25,6 +25,7 @@ from programmes.models import Annexe, Programme
 from siap.siap_client.client import SIAPClient
 from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
+
 from .conventions import get_convention_or_403
 
 

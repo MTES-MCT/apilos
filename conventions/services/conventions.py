@@ -1,6 +1,8 @@
 from abc import ABC
 
+from django.core.exceptions import PermissionDenied
 from django.forms import Form
+from django.http.request import HttpRequest
 
 from conventions.forms import UploadForm
 from conventions.forms.convention_date_signature import ConventionDateForm
@@ -10,8 +12,6 @@ from conventions.services import utils
 from conventions.services.file import ConventionFileService
 from conventions.services.search import AvenantListSearchService
 from core.request import AuthenticatedHttpRequest
-from django.core.exceptions import PermissionDenied
-from django.http.request import HttpRequest
 
 
 class ConventionService(ABC):
