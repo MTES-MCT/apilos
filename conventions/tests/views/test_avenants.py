@@ -9,6 +9,7 @@ from conventions.models import Pret
 
 from users.models import User
 from unittest.mock import patch
+from datetime import date
 
 
 class RemoveFromAvenantViewTest(AbstractCreateViewTestCase, TestCase):
@@ -72,10 +73,42 @@ class RemoveFromAvenantViewTest(AbstractCreateViewTestCase, TestCase):
     def test_reset_avenant_type_duree(self):
         self._login_as_superuser()
 
+        # Initialize convention attributes related to duree
+        self.convention_75.date_fin_conventionnement = date(2045, 6, 30)
+        self.convention_75.save()
+
+        # Create avenant with type duree
+        avenant = self.convention_75.clone(
+            user=self.user, convention_origin=self.convention_75
+        )
+        avenant_type_duree = AvenantType.objects.get(pk=3)
+        avenant.avenant_types.add(avenant_type_duree)
+
+        # Modify avenants attributes related to duree
+        avenant.date_fin_conventionnement = date(2144, 1, 1)
+        avenant.save()
+
+        # Remove duree from avenant
+        response = self.client.post(
+            reverse("conventions:remove_from_avenant", args=[avenant.uuid]),
+            {"avenant_type": avenant_type_duree.nom},
+        )
+        self.assertEqual(
+            response.status_code, self.post_success_http_code, msg=f"{self.msg_prefix}"
+        )
+        avenant.refresh_from_db()
+
+        # Ensure attributes are back in previous states
+        self.assertEqual(avenant.date_fin_conventionnement, date(2045, 6, 30))
+
+    def test_reset_avenant_type_duree_prets(self):
+        # Test attribute prets
+        self._login_as_superuser()
+
         Pret.objects.create(id=888, convention=self.convention_75, montant=100000)
         Pret.objects.create(id=999, convention=self.convention_75, montant=100001)
-        self.assertEqual(self.convention_75.prets.count(), 2)
-        self.assertEqual(Pret.objects.count(), 2)
+        assert self.convention_75.prets.count() == 2
+        assert Pret.objects.count() == 2
 
         avenant = self.convention_75.clone(
             user=self.user, convention_origin=self.convention_75
