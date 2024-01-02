@@ -222,31 +222,43 @@ class ConventionPrefixTest(TestCase):
         )
 
     def test_get_convention_prefix_same_admin(self):
+        current_year = datetime.date.today().year % 100
         convention = Convention.objects.order_by("uuid").first()
-        self.assertEqual(convention.get_convention_prefix(), "13.67890.23.0001")
+        self.assertEqual(
+            convention.get_convention_prefix(), f"13.67890.{current_year}.0001"
+        )
         convention2 = self.clone_convention(convention)
         convention2.numero = "13.67890.23.0001"
         convention2.statut = ConventionStatut.A_SIGNER
         convention2.valide_le = datetime.date.today()
         convention2.save()
 
-        self.assertEqual(convention.get_convention_prefix(), "13.67890.23.0002")
+        self.assertEqual(
+            convention.get_convention_prefix(), f"13.67890.{current_year}.0002"
+        )
         convention3 = self.clone_convention(convention)
         convention3.numero = "13.67890.23.9998"
         convention3.statut = ConventionStatut.A_SIGNER
         convention3.valide_le = datetime.date.today()
         convention3.save()
-        self.assertEqual(convention.get_convention_prefix(), "13.67890.23.9999")
+        self.assertEqual(
+            convention.get_convention_prefix(), f"13.67890.{current_year}.9999"
+        )
 
     def test_get_convention_prefix_different_admin(self):
+        current_year = datetime.date.today().year % 100
         convention = Convention.objects.order_by("uuid").first()
-        self.assertEqual(convention.get_convention_prefix(), "13.67890.23.0001")
+        self.assertEqual(
+            convention.get_convention_prefix(), f"13.67890.{current_year}.0001"
+        )
         convention2 = self.clone_convention(convention)
         convention2.numero = "13.D.23.0001"
         convention2.statut = ConventionStatut.A_SIGNER
         convention2.valide_le = datetime.date.today()
         convention2.save()
-        self.assertEqual(convention.get_convention_prefix(), "13.67890.23.0002")
+        self.assertEqual(
+            convention.get_convention_prefix(), f"13.67890.{current_year}.0002"
+        )
 
 
 class ConventionHistoryModelsTest(TestCase):
