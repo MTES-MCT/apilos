@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("conventions", "0074_convention_adresse_convention_code_postal_and_more"),
+        ("conventions", "0075_remove_convention_code_postal_and_more"),
     ]
 
     operations = [
