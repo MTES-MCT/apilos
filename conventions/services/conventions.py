@@ -42,20 +42,24 @@ class ConventionService(ABC):
 
 
 def get_convention_or_403(
-    request: HttpRequest, convention_uuid: str, perms: list[str]
+    request: HttpRequest, convention_uuid: str, perms: str | list[str]
 ) -> Convention:
     try:
         convention = Convention.objects.get(uuid=convention_uuid)
     except Convention.DoesNotExist:
         raise PermissionDenied
+
+    if isinstance(perms, str):
+        perms = [perms]
     for perm in perms:
         request.user.check_perm(perm, convention)
+
     return convention
 
 
 def convention_sent(request, convention_uuid):
     convention = get_convention_or_403(
-        request, convention_uuid, perms=("convention.view_convention",)
+        request, convention_uuid, perms="convention.view_convention"
     )
 
     result_status = None
@@ -81,7 +85,7 @@ def convention_sent(request, convention_uuid):
 
 def convention_post_action(request, convention_uuid):
     convention = get_convention_or_403(
-        request, convention_uuid, perms=("convention.change_convention",)
+        request, convention_uuid, perms="convention.change_convention"
     )
 
     result_status = None

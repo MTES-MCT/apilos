@@ -512,7 +512,7 @@ def convention_validate(request: HttpRequest, convention: Convention):
 
 def convention_denonciation_validate(request, convention_uuid):
     convention = get_convention_or_403(
-        request, convention_uuid, perms=("convention.change_convention",)
+        request, convention_uuid, perms="convention.change_convention"
     )
 
     parent = convention.parent

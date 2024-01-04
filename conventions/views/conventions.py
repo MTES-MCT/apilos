@@ -300,7 +300,7 @@ def save_convention(request, convention_uuid):
     # could be in a summary service
 
     convention = get_convention_or_403(
-        request, convention_uuid, perms=("convention.change_convention",)
+        request, convention_uuid, perms="convention.change_convention"
     )
 
     result = convention_submit(request, convention)
@@ -328,7 +328,7 @@ def save_convention(request, convention_uuid):
 @login_required
 def delete_convention(request, convention_uuid):
     convention = get_convention_or_403(
-        request, convention_uuid, perms=("convention.delete_convention",)
+        request, convention_uuid, perms="convention.delete_convention"
     )
     convention.delete()
     return HttpResponseRedirect(reverse("conventions:index"))
@@ -484,7 +484,7 @@ def load_xlsx_model(request, file_type):
 @login_required
 def preview(request, convention_uuid):
     convention = get_convention_or_403(
-        request, convention_uuid, perms=("convention.view_convention",)
+        request, convention_uuid, perms="convention.view_convention"
     )
     return render(
         request,
@@ -556,7 +556,7 @@ def display_pdf(request, convention_uuid):
     # récupérer le doc PDF
 
     convention = get_convention_or_403(
-        request, convention_uuid, perms=("convention.view_convention",)
+        request, convention_uuid, perms="convention.view_convention"
     )
 
     filename = None
