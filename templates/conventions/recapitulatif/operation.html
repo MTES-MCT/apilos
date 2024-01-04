@@ -23,7 +23,9 @@
                                     <em>Numéro de décision : non renseigné</em>
                                 {% endif %}
                             </p>
-                            {% include "conventions/actions/edit_numero_galion.html" %}
+                            {% if request.session.is_expert %}
+                                {% include "conventions/actions/edit_numero_galion.html" %}
+                            {% endif %}
                         {% else %}
                             {% include "common/display_field_if_exists.html" with label="Numéro de décision" value=programme.numero_galion %}
                         {% endif %}

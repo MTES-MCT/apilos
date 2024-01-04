@@ -67,18 +67,36 @@ class ConventionRecapitulatifService(ConventionService):
             programme_number_form=programme_number_form
         )
 
-    def get_convention_recapitulatif(
-        self, convention_type1_and_2_form=None, programme_number_form=None
-    ):
-        convention_number_form = ConventionNumberForm(
-            initial={
-                "convention_numero": self.convention.get_default_convention_number()
-            }
+    def update_convention_number(self):
+        convention_number_form = ConventionNumberForm(self.request.POST)
+        convention_number_form.convention = self.convention
+        if convention_number_form.is_valid():
+            self.convention.numero = convention_number_form.cleaned_data[
+                "convention_numero"
+            ]
+            self.convention.save()
+        return self.get_convention_recapitulatif(
+            convention_number_form=convention_number_form
         )
+
+    def get_convention_recapitulatif(
+        self,
+        convention_type1_and_2_form=None,
+        programme_number_form=None,
+        convention_number_form=None,
+    ):
+        if convention_number_form is None:
+            convention_number_form = ConventionNumberForm(
+                initial={
+                    "convention_numero": self.convention.get_default_convention_number()
+                }
+            )
+
         if programme_number_form is None:
             programme_number_form = ProgrammeNumberForm(
                 initial={"numero_galion": self.convention.programme.numero_galion}
             )
+
         complete_for_avenant_form = None
         if self.convention.is_incompleted_avenant_parent():
             complete_for_avenant_form = CompleteforavenantForm(
