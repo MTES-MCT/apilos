@@ -600,7 +600,6 @@ def display_pdf(request, convention_uuid):
 @require_http_methods(["GET", "POST"])
 @login_required
 def journal(request, convention_uuid):
-    # FIXME: no perm needed here?
     convention = Convention.objects.get(uuid=convention_uuid)
 
     action = None
