@@ -1,4 +1,9 @@
+from typing import Any
+
 from django.contrib import admin
+from django.contrib.admin import SimpleListFilter
+from django.db.models import QuerySet
+from django.http import HttpRequest
 
 from admin.admin import ApilosModelAdmin
 
@@ -12,6 +17,28 @@ def view_programme(convention):
         + f"{convention.lot.nb_logements} lgts - "
         + f"{convention.lot.get_type_habitat_display()}"
     )
+
+
+class IsAvenantFilter(SimpleListFilter):
+    title = "type avenant"
+    parameter_name = "is_avenant"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> list[tuple[Any, str]]:
+        return (
+            ("Oui", "Oui"),
+            ("Non", "Non"),
+        )
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        match self.value():
+            case "Oui":
+                return queryset.filter(parent__isnull=False)
+            case "Non":
+                return queryset.filter(parent__isnull=True)
+            case _:
+                return queryset
 
 
 @admin.register(Convention)
@@ -67,6 +94,10 @@ class ConventionAdmin(ApilosModelAdmin):
         "administration",
         "parent",
         "cree_par",
+        "cree_le",
+    )
+    list_filter = (
+        IsAvenantFilter,
         "cree_le",
     )
 
