@@ -80,6 +80,7 @@ known-third-party = [
     "sentry_sdk",
     "simple_history",
     "storages",
+    "waffle",
     "zipfile",
 ]
 split-on-trailing-comma = true

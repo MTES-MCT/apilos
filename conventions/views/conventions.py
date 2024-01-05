@@ -21,6 +21,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import resolve, reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
+from waffle import flag_is_active
 from zipfile import ZipFile
 
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
@@ -47,6 +48,7 @@ from conventions.services.search import (
     UserConventionActivesSearchService,
     UserConventionEnInstructionSearchService,
     UserConventionSearchService,
+    UserConventionSmartSearchService,
     UserConventionTermineesSearchService,
 )
 from conventions.services.utils import ReturnStatus, base_convention_response_error
@@ -147,13 +149,13 @@ class ConventionTabsMixin:
         return sorted(
             [
                 self.get_tab(subclass)
-                for subclass in ConventionSearchView.__subclasses__()
+                for subclass in ConventionTabSearchBaseView.__subclasses__()
             ],
             key=lambda tab: tab["weight"],
         )
 
 
-class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
+class ConventionSearchBaseView(LoginRequiredMixin, View):
     service: UserConventionSearchService
     service_class: type[UserConventionSearchService]
     statuses: list
@@ -168,9 +170,7 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
         }
 
         self.service = self.service_class(
-            anru=(self.request.GET.get("anru") is not None),
-            user=self.request.user,
-            search_filters=search_filters,
+            user=self.request.user, search_filters=search_filters
         )
 
     @property
@@ -186,14 +186,10 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
     @property
     def administrations_queryset(self) -> QuerySet | None:
         user = self.request.user
-
         if user.is_bailleur():
             return user.administrations()[: settings.APILOS_MAX_DROPDOWN_COUNT]
 
         return None
-
-    def all_conventions_count(self, tabs):
-        return sum(tab["count"] for tab in tabs)
 
     def _get_non_empty_query_param(self, query_param: str, default=None) -> str | None:
         if value := self.request.GET.get(query_param):
@@ -201,15 +197,13 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
 
         return default
 
-    def get(self, request: AuthenticatedHttpRequest):
+    def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
         return render(request, "conventions/index.html", self.get_context(request))
 
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         paginator = self.service.paginate()
-        tabs = self.get_tabs()
         return {
             "administration_query": self.administrations_queryset,
-            "all_conventions_count": self.all_conventions_count(tabs),
             "bailleur_query": self.bailleurs_queryset,
             "conventions": paginator.get_page(request.GET.get("page", 1)),
             "filtered_conventions_count": paginator.count,
@@ -217,9 +211,54 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
             "url_name": resolve(request.path_info).url_name,
             "search_input": self._get_non_empty_query_param("search_input", ""),
             "statuts": self.service.choices,
-            "tabs": tabs,
             "total_conventions": request.user.conventions().count(),
             "order_by": self._get_non_empty_query_param("order_by", ""),
+        }
+
+    def get_search_filters_mapping(self) -> list[tuple[str, str]]:
+        return [
+            ("anru", "anru"),
+            ("commune", "ville"),
+            ("financement", "financement"),
+            ("order_by", "order_by"),
+            ("search_input", "search_input"),
+            ("statut", "cstatut"),
+            ("bailleur", "bailleur"),
+            ("administration", "administration"),
+        ]
+
+    def _date_signature_choices(
+        self, statuts: list[ConventionStatut] | None = None
+    ) -> list[str]:
+        validation_year_threshold = 1900
+
+        qs = Convention.objects.filter(
+            televersement_convention_signee_le__isnull=False,
+            televersement_convention_signee_le__year__gte=validation_year_threshold,
+        )
+        if statuts:
+            qs = qs.filter(statut__in=[s.label for s in statuts])
+
+        try:
+            earliest = qs.earliest(
+                "televersement_convention_signee_le"
+            ).televersement_convention_signee_le.year
+        except Convention.DoesNotExist:
+            earliest = validation_year_threshold  # fallback value
+
+        years = sorted(range(earliest, date.today().year + 1), reverse=True)
+        return [str(year) for year in years]
+
+
+class ConventionTabSearchBaseView(ConventionSearchBaseView, ConventionTabsMixin):
+    def all_conventions_count(self, tabs):
+        return sum(tab["count"] for tab in tabs)
+
+    def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
+        tabs = self.get_tabs()
+        return super().get_context(request) | {
+            "tabs": tabs,
+            "all_conventions_count": self.all_conventions_count(tabs),
         }
 
     def get_search_filters_mapping(self):
@@ -233,36 +272,21 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
             ("administration", "administration"),
         ]
 
-    def _date_signature_choices(self) -> list[str]:
-        validation_year_threshold = 1900
-        try:
-            earliest = (
-                Convention.objects.filter(
-                    statut__in=[s.label for s in self.service_class.statuses],
-                    televersement_convention_signee_le__isnull=False,
-                    televersement_convention_signee_le__year__gte=validation_year_threshold,
-                )
-                .earliest("televersement_convention_signee_le")
-                .televersement_convention_signee_le.year
-            )
-        except Convention.DoesNotExist:
-            earliest = validation_year_threshold  # fallback value
-        years = sorted(range(earliest, date.today().year + 1), reverse=True)
-        return [str(year) for year in years]
 
-
-class ConventionEnInstructionSearchView(ConventionSearchView):
+class ConventionEnInstructionSearchView(ConventionTabSearchBaseView):
     service_class = UserConventionEnInstructionSearchService
     name = "search_instruction"
 
 
-class ConventionActivesSearchView(ConventionSearchView):
+class ConventionActivesSearchView(ConventionTabSearchBaseView):
     service_class = UserConventionActivesSearchService
     name = "search_active"
 
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         return super().get_context(request) | {
-            "date_signature_choices": self._date_signature_choices()
+            "date_signature_choices": self._date_signature_choices(
+                statuts=self.service_class.statuses
+            )
         }
 
     def get_search_filters_mapping(self):
@@ -271,18 +295,60 @@ class ConventionActivesSearchView(ConventionSearchView):
         ]
 
 
-class ConventionTermineesSearchView(ConventionSearchView):
+class ConventionTermineesSearchView(ConventionTabSearchBaseView):
     service_class = UserConventionTermineesSearchService
     name = "search_resiliees"
 
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         return super().get_context(request) | {
-            "date_signature_choices": self._date_signature_choices()
+            "date_signature_choices": self._date_signature_choices(
+                statuts=self.service.statuses
+            )
         }
 
     def get_search_filters_mapping(self):
         return super().get_search_filters_mapping() + [
             ("date_signature", "date_signature")
+        ]
+
+
+class ConventionSearchView(ConventionSearchBaseView):
+    service_class = UserConventionSmartSearchService
+    name = "search"
+
+    def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
+        paginator = self.service.paginate()
+        return {
+            "statut_choices": ConventionStatut.choices,
+            "new_search": True,
+            "date_signature_choices": self._date_signature_choices(),
+            "financement_choices": Financement.choices,
+            "nature_logement_choices": NatureLogement.choices,
+            "conventions": paginator.get_page(request.GET.get("page", 1)),
+            "filtered_conventions_count": paginator.count,
+            "url_name": resolve(request.path_info).url_name,
+            "search_input": self._get_non_empty_query_param("search_input", ""),
+            "total_conventions": request.user.conventions().count(),
+            "order_by": self._get_non_empty_query_param("order_by", ""),
+        }
+
+    def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
+        if not flag_is_active(request, "nouvelle_recherche"):
+            return HttpResponseRedirect(
+                reverse(f"conventions:{ConventionEnInstructionSearchView.name}")
+            )
+        return super().get(request)
+
+    def get_search_filters_mapping(self) -> list[tuple[str, str]]:
+        return [
+            ("anru", "anru"),
+            ("avec_avenant", "avec_avenant"),
+            ("date_signature", "date_signature"),
+            ("financement", "financement"),
+            ("order_by", "order_by"),
+            ("search_input", "search_input"),
+            ("statut", "cstatut"),
+            ("nature_logement", "nature_logement"),
         ]
 
 

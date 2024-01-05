@@ -1,5 +1,7 @@
 import uuid
 
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -131,6 +133,13 @@ class Bailleur(IngestableModel):
         history_user_id_field=models.IntegerField(null=True),
         history_user_setter=custom_history_user_setter,
     )
+
+    search_vector = SearchVectorField(null=True, blank=True)
+
+    class Meta:
+        indexes = [
+            GinIndex(fields=["search_vector"], name="search_vector_bailleur_idx"),
+        ]
 
     def __str__(self):
         return f"{self.nom} ({self.siren})" if self.siren else f"{self.nom}"

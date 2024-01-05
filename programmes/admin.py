@@ -22,6 +22,8 @@ class ProgrammeAdmin(ApilosModelAdmin):
         "nom",
         "uuid",
         "numero_galion",
+        "ville",
+        "nature_logement",
     )
     fields = (
         "uuid",
@@ -34,13 +36,19 @@ class ProgrammeAdmin(ApilosModelAdmin):
         "bailleur",
         "zone_123",
         "zone_abc",
+        "nature_logement",
+        "search_vector",
     )
     readonly_fields = (
         "uuid",
         "administration",
         "bailleur",
+        "search_vector",
     )
-    list_filter = (IsCloneFilter,)
+    list_filter = (
+        IsCloneFilter,
+        "nature_logement",
+    )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "administration":

@@ -151,6 +151,7 @@ INSTALLED_APPS = [
     "hijack",
     "hijack.contrib.admin",
     "django_celery_results",
+    "waffle",
 ]
 
 if ENVIRONMENT == "development":
@@ -178,6 +179,7 @@ MIDDLEWARE = [
     "csp.middleware.CSPMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
     "hijack.middleware.HijackUserMiddleware",
+    "waffle.middleware.WaffleMiddleware",
 ]
 
 

@@ -1,0 +1,120 @@
+
+<div class="fr-container">
+    <div class="fr-grid-row fr-grid-row--gutters">
+
+        <div class="fr-col-md-12 fr-mb-2w">
+            <form class="fr-mt-2w" method="get" action="" id="search_table">
+                <input type="hidden" id="order_by" name="order_by" value="{{ order_by }}">
+                <input type="hidden" id="page" name="page" value="{{ page }}">
+
+                <div class="fr-grid-row fr-grid-row--gutters">
+
+                    {# Champs recherche libre #}
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-12">
+                        <input class="fr-input" type="search" id="search_input" name="search_input" value="{{ search_input }}"
+                            placeholder="Recherche par chiffres et mots-clés"/>
+                    </div>
+
+                </div>
+
+                <div class="fr-grid-row fr-grid-row--gutters">
+
+                    {# Champs statut #}
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                        Statut de la convention
+                        <select class="fr-select" id="cstatut" name="cstatut">
+                            <option value="">Sélectionner une option</option>
+                            {% for value, label in statut_choices %}
+                                <option value="{{ label }}"
+                                    {% if label == request.GET.cstatut %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {# Champs financement #}
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                        Type de financement
+                        <select class="fr-select" name="financement">
+                            <option value="">Sélectionner une option</option>
+                            {% for value, label in financement_choices %}
+                                <option value="{{ value }}"
+                                    {% if value == request.GET.financement %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {# Champs date de signature #}
+                    {% if date_signature_choices %}
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-3">
+                            Date de signature de la convention
+                            <select class="fr-select" name="date_signature">
+                                <option value="">Sélectionner une période</option>
+                                {% for value in date_signature_choices %}
+                                    <option value="{{ value }}"
+                                        {% if value == request.GET.date_signature %}selected{% endif %}>
+                                        {{ value }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    {% endif %}
+
+                    {# Champs nature des logements #}
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                        Nature des logements
+                        <select class="fr-select" name="nature_logement">
+                            <option value="">Sélectionner une option</option>
+                            {% for value, label in nature_logement_choices %}
+                                <option value="{{ value }}"
+                                    {% if value == request.GET.nature_logement %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="fr-grid-row fr-grid-row--gutters">
+
+                    {# Champs ANRU #}
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-4">
+                        <div class="fr-fieldset__element">
+                            <div class="fr-checkbox-group fr-checkbox-group--sm">
+                                <input name="anru" id="checkbox-restrict-to-anru" type="checkbox" {% if request.GET.anru %}checked{% endif %}>
+                                <label class="fr-label" for="checkbox-restrict-to-anru">
+                                    Afficher uniquement les conventions ANRU
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Champs avec avenant #}
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-5">
+                        <div class="fr-fieldset__element">
+                            <div class="fr-checkbox-group fr-checkbox-group--sm">
+                                <input name="avec_avenant" id="checkbox-restrict-to-with-avenant" type="checkbox" {% if request.GET.avec_avenant %}checked{% endif %}>
+                                <label class="fr-label" for="checkbox-restrict-to-with-avenant">
+                                    Afficher uniquement les conventions avec avenant
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-3">
+                        <button class="fr-btn" id="search_btn">
+                            <span class="fr-icon-search-line fr-mr-1w" aria-hidden="true"></span>
+                            Rechercher
+                        </button>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
