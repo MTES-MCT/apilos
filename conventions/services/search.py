@@ -3,8 +3,10 @@ from collections import defaultdict
 from copy import copy
 
 from django.conf import settings
+from django.contrib.postgres.search import TrigramSimilarity
 from django.core.paginator import Paginator
-from django.db.models import Q, QuerySet
+from django.db.models import Q, QuerySet, Value
+from django.db.models.functions import Replace
 
 from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
@@ -144,7 +146,9 @@ class UserConventionSearchService(ConventionSearchBaseService):
             self.filters["statut"] = self.statut.label
 
         if self.commune:
-            self.filters["programme__ville__icontains"] = self.commune
+            self.filters[
+                "programme_ville_similarity__gt"
+            ] = settings.TRIGRAM_SIMILARITY_THRESHOLD
 
         if self.financement:
             self.filters["financement"] = self.financement
@@ -159,12 +163,28 @@ class UserConventionSearchService(ConventionSearchBaseService):
             self.filters["lot__programme__anru"] = True
 
     def _get_base_queryset(self) -> QuerySet:
-        return (
+        qs = (
             self.user.conventions()
             .prefetch_related("programme")
             .prefetch_related("programme__administration")
             .prefetch_related("lot")
         )
+
+        if self.search_input:
+            qs = qs.annotate(
+                programme_nom_similarity=TrigramSimilarity(
+                    "programme__nom", self.search_input
+                )
+            ).order_by("-programme_nom_similarity")
+
+        if self.commune:
+            qs = qs.annotate(
+                programme_ville_similarity=TrigramSimilarity(
+                    "programme__ville", self.commune
+                )
+            ).order_by("-programme_ville_similarity")
+
+        return qs
 
 
 class UserConventionEnInstructionSearchService(UserConventionSearchService):
@@ -179,11 +199,13 @@ class UserConventionEnInstructionSearchService(UserConventionSearchService):
     ]
 
     def _build_queryset_extra_filters(self):
+        super()._build_queryset_extra_filters()
         if self.search_input:
             self.extra_filters = (
                 Q(programme__nom__icontains=self.search_input)
                 | Q(programme__code_postal__icontains=self.search_input)
                 | Q(programme__numero_galion__icontains=self.search_input)
+                | Q(programme_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
             )
 
 
@@ -194,13 +216,34 @@ class UserConventionActivesSearchService(UserConventionSearchService):
     statuses = [ConventionStatut.SIGNEE]
     default_filters = {"parent_id": None}
 
+    def _get_base_queryset(self) -> QuerySet:
+        qs = super()._get_base_queryset()
+
+        if self.search_input:
+            qs = qs.annotate(
+                _r1=Replace("numero", Value("/")),
+                _r2=Replace("_r1", Value("-")),
+                _r3=Replace("_r2", Value(" ")),
+                numero_similarity=TrigramSimilarity(
+                    "_r3",
+                    self.search_input.replace("-", "")
+                    .replace("/", "")
+                    .replace(" ", ""),
+                ),
+            ).order_by("-numero_similarity")
+
+        return qs
+
     def _build_queryset_extra_filters(self):
+        super()._build_queryset_extra_filters()
         if self.search_input:
             self.extra_filters = (
                 Q(programme__nom__icontains=self.search_input)
                 | Q(programme__code_postal__icontains=self.search_input)
                 | Q(programme__numero_galion__icontains=self.search_input)
                 | Q(numero__icontains=self.search_input)
+                | Q(numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
+                | Q(programme_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
             )
 
 
@@ -216,10 +259,12 @@ class UserConventionTermineesSearchService(UserConventionSearchService):
     default_filters = {"parent_id": None}
 
     def _build_queryset_extra_filters(self):
+        super()._build_queryset_extra_filters()
         if self.search_input:
             self.extra_filters = (
                 Q(programme__nom__icontains=self.search_input)
                 | Q(programme__code_postal__icontains=self.search_input)
                 | Q(programme__numero_galion__icontains=self.search_input)
                 | Q(numero__icontains=self.search_input)
+                | Q(programme_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
             )
