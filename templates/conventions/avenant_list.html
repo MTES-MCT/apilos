@@ -1,46 +1,43 @@
 {% load custom_filters %}
-{% if conventions %}
-    {% for convention in conventions %}
-        <div class="fr-grid-row">
-            <div class="apilos-step-post-action fr-mr-2w">
-                <div class="apilos-step-post-action--bubble fr-mr-2w"></div>
-                {% if not forloop.last %}
-                    <div class="apilos-step-post-action--line"></div>
-                {% endif %}
-            </div>
-            {% if convention|display_redirect_post_action %}
-                <div class="fr-col-11">
-                    <div class="fr-grid-row">
-                        <p class="fr-m-0">
-                            Avenant {{convention.numero|default_if_none:'x' }} {% if convention.televersement_convention_signee_le %}du <span class="fr-ml-1v"><strong>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }} </strong></span>{% endif %}:&nbsp;{% if convention.description_avenant %}
-                                {{ convention.description_avenant|linebreaksbr }}
-                            {% endif %}
-                        </p>
-                    </div>
-
-                    <div class="fr-mb-3w">
-                        <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}"> Voir en PDF</a>
-                    </div>
-
-                </div>
-            {% else %}
-                <div class="fr-grid-row fr-grid-row--middle fr-mb-3w">
-                    <div>
-                        Avenant {{convention.numero|default_if_none:'x'}}
-                        {% if convention.televersement_convention_signee_le %}
-                            du <span class="fr-ml-1v">
-                                <strong>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }} </strong>
-                            </span>
-                        {% endif %}
-                        <div>
-                            <a class="fr-link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" >Voir l'avenant</a>
-                        </div>
-                    </div>
-
-                    <div class="fr-ml-4w"><strong>{% include "conventions/home/statut_tag.html"  %}</strong></div>
-                </div>
+{% for convention in conventions %}
+    <div class="fr-grid-row">
+        <div class="apilos-step-post-action fr-mr-2w">
+            <div class="apilos-step-post-action--bubble fr-mr-2w"></div>
+            {% if not forloop.last %}
+                <div class="apilos-step-post-action--line"></div>
             {% endif %}
         </div>
-    {% endfor %}
-{% endif %}
+        {% if convention|display_redirect_post_action %}
+            <div class="fr-col-11">
+                <div class="fr-grid-row">
+                    <p class="fr-m-0">
+                        Avenant {{convention.numero|default_if_none:'x' }} {% if convention.televersement_convention_signee_le %}du <span class="fr-ml-1v"><strong>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }} </strong></span>{% endif %}:&nbsp;{% if convention.description_avenant %}
+                            {{ convention.description_avenant|linebreaksbr }}
+                        {% endif %}
+                    </p>
+                </div>
 
+                <div class="fr-mb-3w">
+                    <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}"> Voir en PDF</a>
+                </div>
+
+            </div>
+        {% else %}
+            <div class="fr-grid-row fr-grid-row--middle fr-mb-3w">
+                <div>
+                    Avenant {{convention.numero|default_if_none:'x'}}
+                    {% if convention.televersement_convention_signee_le %}
+                        du <span class="fr-ml-1v">
+                            <strong>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }} </strong>
+                        </span>
+                    {% endif %}
+                    <div>
+                        <a class="fr-link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" >Voir l'avenant</a>
+                    </div>
+                </div>
+
+                <div class="fr-ml-4w"><strong>{% include "conventions/home/statut_tag.html"  %}</strong></div>
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}
