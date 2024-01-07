@@ -90,7 +90,7 @@ def generate_convention_doc(convention: Convention, save_data=False):
     # pylint: disable=R0912,R0914,R0915
     annexes = (
         Annexe.objects.prefetch_related("logement")
-        .filter(logement__lot_id=convention.lot.id)
+        .filter(logement__lot_id=convention.lot_id)
         .all()
     )
 
@@ -233,7 +233,7 @@ def _save_convention_donnees_validees(
 ):
     annexes = (
         Annexe.objects.prefetch_related("logement")
-        .filter(logement__lot_id=convention.lot.id)
+        .filter(logement__lot_id=convention.lot_id)
         .all()
     )
 
