@@ -179,9 +179,7 @@ Ajouter les dépendances dans requirements.in ou dev-requirements.in
 Puis compiler (recquiert l'installation de `pip-tools`):
 
 ```sh
-pip install pip-tools
-pip-compile --resolver=backtracking requirements.in --generate-hashes
-pip-compile --resolver=backtracking dev-requirements.in --generate-hashes
+make freeze-requirements
 ```
 
 Et installer
