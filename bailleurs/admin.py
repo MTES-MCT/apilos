@@ -9,3 +9,4 @@ from .models import Bailleur
 class BailleurAdmin(ApilosModelAdmin):
     search_fields = ["nom"]
     list_display = ["nom", "nature_bailleur", "sous_nature_bailleur", "ville"]
+    readonly_fields = ("parent",)
