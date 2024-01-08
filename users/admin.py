@@ -10,6 +10,9 @@ from .models import Role, User
 
 @admin.register(Role)
 class CustomAdministrationAdmin(ApilosModelAdmin):
+    list_select_related = ("administration", "bailleur", "user")
+    readonly_fields = ("administration", "bailleur", "user")
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "administration":
             kwargs["queryset"] = Administration.objects.order_by("nom")
