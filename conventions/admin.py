@@ -2,7 +2,7 @@ from typing import Any
 
 from django import forms
 from django.contrib import admin
-from django.contrib.admin import SimpleListFilter
+from django.contrib.admin import ChoicesFieldListFilter, SimpleListFilter
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
@@ -41,6 +41,15 @@ class IsAvenantFilter(SimpleListFilter):
                 return queryset.filter(parent__isnull=True)
             case _:
                 return queryset
+
+
+class StatutFilter(ChoicesFieldListFilter):
+    def __init__(self, field, request, params, model, model_admin, field_path):
+        super().__init__(field, request, params, model, model_admin, field_path)
+        if self.used_parameters and self.lookup_kwarg in self.used_parameters:
+            self.used_parameters[self.lookup_kwarg] = ConventionStatut[
+                self.used_parameters[self.lookup_kwarg]
+            ].label
 
 
 class ConventionModelForm(forms.ModelForm):
@@ -124,6 +133,7 @@ class ConventionAdmin(ApilosModelAdmin):
     )
     list_filter = (
         IsAvenantFilter,
+        ("statut", StatutFilter),
         "cree_le",
     )
 
