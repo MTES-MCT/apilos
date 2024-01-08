@@ -62,9 +62,10 @@ jobs:
           coverage run -m pytest
 
       - name: Create coverage report
-        run: coverage xml -o coverage.xml
+        run: coverage xml -o coverage.xml --fail-under=79
 
       - name: Post coverage to PR
+        if: ${{ github.event.pull_request.head.repo.full_name == 'MTES-MCT/apilos' }}
         uses: orgoro/coverage@v3
         with:
           coverageFile: coverage.xml
