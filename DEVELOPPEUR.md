@@ -179,8 +179,7 @@ Ajouter les dépendances dans requirements.in ou dev-requirements.in
 Puis compiler (recquiert l'installation de `pip-tools`):
 
 ```sh
-pip install pip-tools
-make pip-compile
+make freeze-requirements
 ```
 
 Et installer
