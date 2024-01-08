@@ -142,6 +142,10 @@
                     {% include "common/display_field_if_exists.html" with label="Surface des locaux collectifs résidentiels" value=lot.surface_locaux_collectifs_residentiels object_field="lot__surface_locaux_collectifs_residentiels__"|add:lot_uuid %}
                     {% include "common/display_field_if_exists.html" with label="Nombre de logements à louer en plus à des ménages dont les ressources n'excèdent pas le plafond" value=lot.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:lot_uuid %}
 
+                    {% if convention.is_avenant %}
+                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="logements" %}
+                    {% endif %}
+
                 </div>
             </div>
         </div>

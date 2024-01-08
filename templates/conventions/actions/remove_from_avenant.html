@@ -1,0 +1,11 @@
+{% if convention|display_convention_form_progressbar or request.session.is_expert and convention.statut == CONVENTION_STATUT.SIGNEE %}
+    <div class="fr-grid-row fr-grid-row--right">
+        <form action="{% url 'conventions:remove_from_avenant' convention_uuid=convention.uuid %}" method="post">
+            {% csrf_token %}
+            <input
+                name="avenant_type"
+                value="{{avenant_type}}" hidden>
+            <button class="fr-btn apilos-btn--secondary--red fr-my-1w fr-icon-close-circle-line fr-btn--icon-left">Retirer ce bloc de l'avenant</button>
+        </form>
+    </div>
+{% endif %}

@@ -1,23 +1,28 @@
+from uuid import UUID
+
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
+from django.http import HttpRequest, HttpResponse
 
 from conventions.forms import AvenantSearchForm
 from conventions.services.avenants import (
     create_avenant,
     upload_avenants_for_avenant,
     complete_avenants_for_avenant,
+    remove_avenant_type_from_avenant,
 )
 from conventions.services.selection import ConventionSelectionService
 from conventions.services.utils import ReturnStatus
+from django.views.decorators.http import require_http_methods
 
 
 @login_required
 @permission_required("convention.add_convention")
-def new_avenant(request, convention_uuid):
+def new_avenant(request: HttpRequest, convention_uuid: UUID) -> HttpResponse:
     result = create_avenant(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         convention = result["convention"]
@@ -53,7 +58,9 @@ def new_avenant(request, convention_uuid):
 
 @login_required
 @permission_required("convention.add_convention")
-def new_avenants_for_avenant(request, convention_uuid):
+def new_avenants_for_avenant(
+    request: HttpRequest, convention_uuid: UUID
+) -> HttpResponse:
     result = upload_avenants_for_avenant(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
@@ -87,6 +94,22 @@ def form_avenants_for_avenant(request, convention_uuid):
         {
             **result,
         },
+    )
+
+
+@login_required
+@permission_required("convention.add_convention")
+@require_http_methods(["POST"])
+def remove_from_avenant(
+    request: HttpRequest, convention_uuid: UUID
+) -> HttpResponseRedirect:
+    avenant_type = request.POST.get("avenant_type")
+    if avenant_type:
+        remove_avenant_type_from_avenant(
+            avenant_type=avenant_type, convention_uuid=convention_uuid
+        )
+    return HttpResponseRedirect(
+        reverse("conventions:recapitulatif", args=[convention_uuid])
     )
 
 

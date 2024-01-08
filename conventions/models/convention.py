@@ -16,10 +16,8 @@ from conventions.models.choices import ConventionStatut, ConventionType1and2
 from conventions.models.convention_history import ConventionHistory
 from ecoloweb.models import EcoloReference
 from programmes.models import (
-    Annexe,
     Financement,
     LocauxCollectifs,
-    Logement,
     Lot,
     TypeStationnement,
 )
@@ -126,7 +124,7 @@ class Convention(models.Model):
         AvenantType,
         blank=True,
         max_length=50,
-        related_name="avenant_types",
+        related_name="conventions",
         verbose_name="Type d'avenant",
     )
     signataire_nom = models.CharField(max_length=255, null=True, blank=True)
@@ -615,39 +613,10 @@ class Convention(models.Model):
         cloned_convention.save()
 
         for logement in self.lot.logements.all():
-            logement_fields = model_to_dict(
-                logement,
-                exclude=[
-                    "id",
-                    "lot",
-                    "cree_le",
-                    "mis_a_jour_le",
-                ],
-            )
-            logement_fields.update(
-                {
-                    "lot": cloned_lot,
-                }
-            )
-            cloned_logement = Logement(**logement_fields)
-            cloned_logement.save()
-            for annexe in logement.annexes.all():
-                annexe_fields = model_to_dict(
-                    annexe,
-                    exclude=[
-                        "id",
-                        "logement",
-                        "cree_le",
-                        "mis_a_jour_le",
-                    ],
-                )
-                annexe_fields.update(
-                    {
-                        "logement": cloned_logement,
-                    }
-                )
-                cloned_annexe = Annexe(**annexe_fields)
-                cloned_annexe.save()
+            logement.clone(lot=cloned_lot)
+
+        for pret in convention_origin.prets.all():
+            pret.clone(convention=cloned_convention)
 
         for type_stationnement in self.lot.type_stationnements.all():
             type_stationnement_fields = model_to_dict(

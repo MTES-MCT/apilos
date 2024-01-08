@@ -16,6 +16,9 @@
                     <div class="table--limited-height">
                         {% include "common/display_textfield_if_exists.html" with value=convention.champ_libre_avenant object_field="convention__champ_libre_avenant__"|add:convention_uuid %}
                     </div>
+                    {% if convention.is_avenant %}
+                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="champ_libre" %}
+                    {% endif %}
                 </div>
             </div>
         </div>
