@@ -60,9 +60,13 @@
                         </div>
                     {% endif %}
 
-                    {% include "common/display_field_if_exists.html" with label="Surface habitable totale en m²" value=lot.foyer_residence_nb_garage_parking object_field="lot__foyer_residence_nb_garage_parking__"|add:lot_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Garages et/ ou parking (nombre)" value=lot.foyer_residence_nb_garage_parking object_field="lot__foyer_residence_nb_garage_parking__"|add:lot_uuid %}
                     {% include "common/display_textfield_if_exists.html" with label="Dépendances (nombre et surface)" value=lot.foyer_residence_dependance object_field="convention__foyer_residence_dependance__"|add:lot_uuid %}
                     {% include "common/display_textfield_if_exists.html" with label="Locaux auxquels ne s'appliquent pas la convention (Liste)" is_list=True value=lot.foyer_residence_locaux_hors_convention object_field="convention__foyer_residence_locaux_hors_convention__"|add:lot_uuid %}
+
+                    {% if convention.is_avenant %}
+                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="logements" %}
+                    {% endif %}
 
                 </div>
             </div>

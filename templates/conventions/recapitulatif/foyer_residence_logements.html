@@ -78,6 +78,10 @@
 
                     {% include "common/display_field_if_exists.html" with label="Surface habitable totale en m²" value=lot.surface_habitable_totale object_field="lot__surface_habitable_totale__"|add:lot_uuid %}
 
+                    {% if convention.is_avenant %}
+                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="logements" %}
+                    {% endif %}
+
                 </div>
             </div>
         </div>
