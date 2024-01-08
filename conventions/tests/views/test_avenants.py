@@ -1,16 +1,14 @@
+from datetime import date
+from unittest.mock import patch
+
 from django.test import TestCase
 from django.urls import reverse
 
-from conventions.tests.views.abstract import AbstractCreateViewTestCase
-from conventions.models import AvenantType
 from bailleurs.models import Bailleur
+from conventions.models import AvenantType, Pret
+from conventions.tests.views.abstract import AbstractCreateViewTestCase
 from instructeurs.models import Administration
-
-from conventions.models import Pret
-
 from users.models import User
-from unittest.mock import patch
-from datetime import date
 
 
 class RemoveFromAvenantViewBaseTest(AbstractCreateViewTestCase, TestCase):
@@ -120,6 +118,13 @@ class RemoveAvenantViewBailleurTest(RemoveFromAvenantViewBaseTest):
         self.convention_75.signataire_nom = "Obiwan kenobi"
         self.convention_75.programme.bailleur = Bailleur.objects.get(pk=1)
         self.convention_75.programme.administration = Administration.objects.get(pk=1)
+        self.convention_75.signataire_fonction = "PDG"
+        self.convention_75.signataire_date_deliberation = date(2014, 10, 9)
+        self.convention_75.signataire_bloc_signature = "Mon PDG"
+        self.convention_75.gestionnaire = "Entreprise gestionnaire 1"
+        self.convention_75.gestionnaire_signataire_nom = "Gestionnaire 1"
+        self.convention_75.gestionnaire_signataire_fonction = "CEO"
+        self.convention_75.gestionnaire_signataire_date_deliberation = date(2015, 10, 8)
         self.convention_75.save()
         self.convention_75.programme.save()
 
@@ -135,6 +140,13 @@ class RemoveAvenantViewBailleurTest(RemoveFromAvenantViewBaseTest):
         avenant.signataire_nom = "Anakin Skywalker"
         avenant.programme.bailleur = Bailleur.objects.get(pk=2)
         avenant.programme.administration = Administration.objects.get(pk=2)
+        avenant.signataire_fonction = "Intern"
+        avenant.signataire_date_deliberation = date(2014, 10, 10)
+        avenant.signataire_bloc_signature = "Mon PDG 2"
+        avenant.gestionnaire = "Entreprise gestionnaire 2"
+        avenant.gestionnaire_signataire_nom = "Gestionnaire 2"
+        avenant.gestionnaire_signataire_fonction = "Stagiaire"
+        avenant.gestionnaire_signataire_date_deliberation = date(2015, 10, 9)
         avenant.save()
         avenant.programme.save()
 
@@ -152,6 +164,13 @@ class RemoveAvenantViewBailleurTest(RemoveFromAvenantViewBaseTest):
         assert avenant.signataire_nom == "Obiwan kenobi"
         assert avenant.programme.bailleur == Bailleur.objects.get(pk=1)
         assert avenant.programme.administration == Administration.objects.get(pk=1)
+        assert avenant.signataire_fonction == "PDG"
+        assert avenant.signataire_date_deliberation == date(2014, 10, 9)
+        assert avenant.signataire_bloc_signature == "Mon PDG"
+        assert avenant.gestionnaire == "Entreprise gestionnaire 1"
+        assert avenant.gestionnaire_signataire_nom == "Gestionnaire 1"
+        assert avenant.gestionnaire_signataire_fonction == "CEO"
+        assert avenant.gestionnaire_signataire_date_deliberation == date(2015, 10, 8)
 
 
 class RemoveFromAvenantViewTest(RemoveFromAvenantViewBaseTest):
