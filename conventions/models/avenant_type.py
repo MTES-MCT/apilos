@@ -1,6 +1,5 @@
 from django.db import models
 
-
 AVENANT_TYPE_FIELDS_MAPPING = {
     "denonciation": [
         "date_denonciation",

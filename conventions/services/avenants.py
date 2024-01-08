@@ -1,10 +1,10 @@
-from uuid import UUID
-
 import datetime
 import logging
+from typing import Any
+from uuid import UUID
+
 from django.db import transaction
 from django.http import HttpRequest
-from typing import Any
 
 from conventions.forms import AvenantsforavenantForm, InitavenantsforavenantForm
 from conventions.forms.avenant import AvenantForm

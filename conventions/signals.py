@@ -1,12 +1,12 @@
 from typing import Any
 
+from django.db.models.fields.reverse_related import ManyToOneRel
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
-from conventions.models.avenant_type import AvenantType
 
 from conventions.models import Convention, Lot
+from conventions.models.avenant_type import AvenantType
 from programmes.models import Programme
-from django.db.models.fields.reverse_related import ManyToOneRel
 
 
 def _update_nested_convention_field(

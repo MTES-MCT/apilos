@@ -1,7 +1,7 @@
 from django.test import TestCase
-from conventions.models.avenant_type import AvenantType
+
 from conventions.models import Convention
-from conventions.models.avenant_type import AVENANT_TYPE_FIELDS_MAPPING
+from conventions.models.avenant_type import AVENANT_TYPE_FIELDS_MAPPING, AvenantType
 from programmes.models import Lot, Programme
 
 
