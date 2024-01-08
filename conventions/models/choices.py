@@ -13,12 +13,15 @@ class ReverseEnumMixin:
     _reverse: dict = {}
 
     @classmethod
-    def get_by_label(cls, label: str):
+    def get_by_label(cls, label: str | None) -> Enum | None:
         if not label:
             return None
         if not cls._reverse:
             cls._reverse = {c.label: c for c in cls}
-        return cls._reverse[label]
+        try:
+            return cls._reverse[label]
+        except KeyError:
+            return None
 
 
 class ConventionStatut(ReverseEnumMixin, Enum):
