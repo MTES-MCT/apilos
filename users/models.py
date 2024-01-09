@@ -126,7 +126,7 @@ class User(AbstractUser):
 
     def has_perm(self, perm, obj=None):
         if self.is_staff or self.is_superuser:
-            return super().has_perm(perm, obj)
+            return True
 
         # check object permission
         if obj is not None and not self.has_object_permission(obj):
