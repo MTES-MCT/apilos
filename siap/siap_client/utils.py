@@ -14,11 +14,11 @@ from programmes.models import (
 )
 from programmes.utils import diff_programme_duplication
 from siap.exceptions import (
+    ConflictedOperationSIAPException,
     DuplicatedOperationSIAPException,
     InconsistentDataSIAPException,
     NoConventionForOperationSIAPException,
     NotHandledBailleurPriveSIAPException,
-    OperationToRepairSIAPException,
 )
 from users.models import User
 
@@ -264,9 +264,12 @@ def get_or_create_programme(
     except Programme.MultipleObjectsReturned:
         numero_operation = programme_from_siap["donneesOperation"]["numeroOperation"]
 
-        diff = diff_programme_duplication(numero_operation=numero_operation)
+        diff = diff_programme_duplication(
+            numero_operation=numero_operation,
+            field_names=["administration_id", "bailleur_id"],
+        )
         if len(diff):
-            raise OperationToRepairSIAPException(numero_operation=numero_operation)
+            raise ConflictedOperationSIAPException(numero_operation=numero_operation)
 
         raise DuplicatedOperationSIAPException(numero_operation=numero_operation)
 
