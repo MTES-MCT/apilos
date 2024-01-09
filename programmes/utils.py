@@ -16,18 +16,21 @@ def diff_programme_duplication(
             "bailleur_id",
             "count_logementedds",
             "count_referencecadastrales",
-            "nb_lots",
+            "count_lots",
         ]
 
     diff = defaultdict(list)
 
-    for prog in (
-        Programme.objects.filter(parent__isnull=False, numero_galion=numero_operation)
-        .annotate(count_lots=Count("lots"))
-        .annotate(count_logementedds=Count("logementedds"))
-        .annotate(count_referencecadastrales=Count("referencecadastrales"))
-        .all()
-    ):
+    qs = Programme.objects.filter(parent__isnull=False, numero_galion=numero_operation)
+
+    if "count_logementedds" in field_names:
+        qs = qs.annotate(count_logementedds=Count("logementedds"))
+    if "count_referencecadastrales" in field_names:
+        qs = qs.annotate(count_logementedds=Count("referencecadastrales"))
+    if "count_lots" in field_names:
+        qs = qs.annotate(count_logementedds=Count("lots"))
+
+    for prog in qs.all():
         for f in field_names:
             value = getattr(prog, f, None)
             if value is not None:
