@@ -21,7 +21,7 @@ def diff_programme_duplication(
 
     diff = defaultdict(list)
 
-    qs = Programme.objects.filter(parent__isnull=False, numero_galion=numero_operation)
+    qs = Programme.objects.filter(parent__isnull=True, numero_galion=numero_operation)
 
     if "count_logementedds" in field_names:
         qs = qs.annotate(count_logementedds=Count("logementedds"))
