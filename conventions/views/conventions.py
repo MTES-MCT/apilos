@@ -717,10 +717,7 @@ def piece_jointe_promote(request, piece_jointe_uuid):
 @login_required
 @permission_required("convention.change_convention")
 def expert_mode(request, convention_uuid):
-    if "is_expert" in request.session and request.session["is_expert"] is True:
-        request.session["is_expert"] = False
-    else:
-        request.session["is_expert"] = True
+    request.session["is_expert"] = not request.session.get("is_expert")
     return HttpResponseRedirect(
         reverse("conventions:recapitulatif", args=[convention_uuid])
     )
