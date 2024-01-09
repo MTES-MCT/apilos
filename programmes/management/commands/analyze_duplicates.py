@@ -1,4 +1,5 @@
 import json
+import tempfile
 from typing import Any
 
 from django.core.management import BaseCommand
@@ -37,12 +38,12 @@ class Command(BaseCommand):
         self.stdout.write(f"Nombre de doublons: {len(duplicates)}")
         self.stdout.write(f"Nombre de doublons avec diff: {nb_diff}")
 
-        output_filepath = "/tmp/programme_duplicates.json"
-        with open(output_filepath, "w") as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", prefix="programme_duplicates_", suffix=".json", delete=False
+        ) as f:
             f.write(json.dumps(duplicates, indent=2))
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"✅ Une liste des doublons a été crée dans: {output_filepath}"
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"✅ Une liste des doublons a été crée dans: {f.name}"
+                )
             )
-        )
