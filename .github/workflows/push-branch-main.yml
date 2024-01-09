@@ -17,6 +17,18 @@ jobs:
   test:
     uses: ./.github/workflows/run_tests.yml
 
+  github_prerelease:
+    name: "Create GitHub pre-release"
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+
   deploy_to_staging:
     name: "Deploy to Staging"
     runs-on: ubuntu-latest
