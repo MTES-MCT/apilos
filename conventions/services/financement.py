@@ -24,9 +24,9 @@ class ConventionFinancementService(ConventionService):
                 "autre",
                 date_octroi_formatted=Case(
                     When(
-                        date_achat__isnull=False,
+                        date_octroi__isnull=False,
                         then=Func(
-                            F("date_achat"),
+                            F("date_octroi"),
                             Value("YYYY-MM-DD"),
                             output_field=CharField(),
                             function="to_char",
