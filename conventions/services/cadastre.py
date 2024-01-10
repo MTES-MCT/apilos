@@ -22,20 +22,11 @@ class ConventionCadastreService(ConventionService):
     editable_after_upload: bool = False
 
     def get(self):
-        initial = []
-        referencecadastrales = (
-            self.convention.programme.referencecadastrales.all().order_by("section")
+        initial = list(
+            self.convention.programme.referencecadastrales.values(
+                "uuid", "section", "numero", "lieudit", "surface"
+            ).order_by("section")
         )
-        for referencecadastrale in referencecadastrales:
-            initial.append(
-                {
-                    "uuid": referencecadastrale.uuid,
-                    "section": referencecadastrale.section,
-                    "numero": referencecadastrale.numero,
-                    "lieudit": referencecadastrale.lieudit,
-                    "surface": referencecadastrale.surface,
-                }
-            )
         self.formset = ReferenceCadastraleFormSet(initial=initial)
         self.form = ProgrammeCadastralForm(
             initial={

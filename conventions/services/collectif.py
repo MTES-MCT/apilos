@@ -11,21 +11,13 @@ class ConventionCollectifService(ConventionService):
     upform: UploadForm = UploadForm()
 
     def get(self):
-        initial = []
-        locaux_collectifs = LocauxCollectifs.objects.filter(
-            lot_id=self.convention.lot.id
-        )
-        for type_locaux_collectifs in locaux_collectifs:
-            initial.append(
-                {
-                    "uuid": type_locaux_collectifs.uuid,
-                    "type_local": type_locaux_collectifs.type_local,
-                    "surface_habitable": type_locaux_collectifs.surface_habitable,
-                    "nombre": type_locaux_collectifs.nombre,
-                }
-            )
-        self.formset = LocauxCollectifsFormSet(initial=initial)
         lot = self.convention.lot
+        initial = list(
+            LocauxCollectifs.objects.filter(lot_id=lot.id).values(
+                "uuid", "type_local", "surface_habitable", "nombre"
+            )
+        )
+        self.formset = LocauxCollectifsFormSet(initial=initial)
         self.form = LotCollectifForm(
             initial={
                 "uuid": lot.uuid,

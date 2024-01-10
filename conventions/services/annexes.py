@@ -1,3 +1,5 @@
+from django.db.models import F
+
 from conventions.forms import AnnexeFormSet, LotAnnexeForm, UploadForm
 from conventions.services import upload_objects, utils
 from conventions.services.conventions import ConventionService
@@ -10,22 +12,19 @@ class ConventionAnnexesService(ConventionService):
     upform: UploadForm = UploadForm()
 
     def get(self):
-        initial = []
-        annexes = Annexe.objects.filter(logement__lot_id=self.convention.lot.id)
-        for annexe in annexes:
-            initial.append(
-                {
-                    "uuid": annexe.uuid,
-                    "typologie": annexe.typologie,
-                    "logement_designation": annexe.logement.designation,
-                    "logement_typologie": annexe.logement.typologie,
-                    "surface_hors_surface_retenue": annexe.surface_hors_surface_retenue,
-                    "loyer_par_metre_carre": annexe.loyer_par_metre_carre,
-                    "loyer": annexe.loyer,
-                }
-            )
-        self.formset = AnnexeFormSet(initial=initial)
         lot = self.convention.lot
+        initial = list(
+            Annexe.objects.filter(logement__lot_id=lot.id).values(
+                "uuid",
+                "typologie",
+                "surface_hors_surface_retenue",
+                "loyer_par_metre_carre",
+                "loyer",
+                logement_designation=F("logement__designation"),
+                logement_typologie=F("logement__typologie"),
+            )
+        )
+        self.formset = AnnexeFormSet(initial=initial)
         self.form = LotAnnexeForm(
             initial={
                 "uuid": lot.uuid,

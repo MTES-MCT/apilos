@@ -18,16 +18,11 @@ class ConventionEDDService(ConventionService):
     editable_after_upload: bool = False
 
     def get(self):
-        initial = []
-        for logementedd in self.convention.programme.logementedds.all():
-            initial.append(
-                {
-                    "uuid": logementedd.uuid,
-                    "financement": logementedd.financement,
-                    "designation": logementedd.designation,
-                    "numero_lot": logementedd.numero_lot,
-                }
+        initial = list(
+            self.convention.programme.logementedds.values(
+                "uuid", "financement", "designation", "numero_lot"
             )
+        )
         self.formset = LogementEDDFormSet(initial=initial)
         self.form = ProgrammeEDDForm(
             initial={
