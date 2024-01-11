@@ -94,6 +94,12 @@ class Command(BaseCommand):
         if dry_run:
             print("Dry run mode, no changes executed")
         else:
-            # Update administration
-            programmes_filtered.update(administration=new_admin)
+            # Update administration and save history
+            now = datetime.now()
+            for p in programmes_filtered:
+                p.administration = new_admin
+                p._change_reason = (
+                    f"Reassign administration command launched on {str(now)}"
+                )
+                p.save()
             print("Changes executed")

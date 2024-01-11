@@ -95,6 +95,17 @@ class ReassignAdministrationTest(TestCase):
         # a convention that has been reassigned: new admin
         assert self.convention2_1.administration == self.admin3
 
+        # Ensure history was saved, with a reason for updates from the command
+        all_history = Programme.history.all()
+        assert all_history.count() == 4
+        programme_2_history = all_history.filter(nom="Programme 2")
+        assert programme_2_history.count() == 2
+        assert programme_2_history.last().history_change_reason is None
+        assert (
+            "Reassign administration command"
+            in programme_2_history.first().history_change_reason
+        )
+
     def test_reassign_administration_different_programs_dry_run(self):
         args = []
         kwargs = {
@@ -112,3 +123,6 @@ class ReassignAdministrationTest(TestCase):
         assert self.convention2.administration == self.admin1
         assert self.convention3.administration == self.admin2
         assert self.convention2_1.administration == self.admin1
+
+        # Ensure we only have creation records in history
+        assert Programme.history.all().count() == 3

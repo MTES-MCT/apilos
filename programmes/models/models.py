@@ -5,6 +5,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.forms import model_to_dict
+from simple_history.models import HistoricalRecords
 
 from conventions.models.choices import ConventionStatut
 from core.models import IngestableModel
@@ -144,6 +145,7 @@ class Programme(IngestableModel):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     search_vector = SearchVectorField(null=True, blank=True)
+    history = HistoricalRecords()
 
     @property
     def all_conventions_are_signed(self):
