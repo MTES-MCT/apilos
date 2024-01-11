@@ -53,7 +53,7 @@ class Command(BaseCommand):
         return super().add_arguments(parser)
 
     def handle(self, *args, **kwargs):
-        print("Reassign administration command called")
+        self.stdout.write("Reassign administration command called")
 
         # Parse arguments
         codes_postaux = kwargs["perimeter"]
@@ -76,33 +76,36 @@ class Command(BaseCommand):
         programmes_filtered = Programme.objects.filter(
             id__in=conventions.values_list("programme_id")
         )
-        print(f"Found {programmes_filtered.count()} programmes to update")
 
         # Get the list of conventions not in range but attached to thesse programmes to warn user
         conventions_also_impacted = Convention.objects.filter(
             programme__in=programmes_filtered
         ).exclude(id__in=conventions.values_list("id"))
 
-        print("Summary before execution:")
-        print("--------------------------")
-        print(f"{programmes_filtered.count()} programmes will be updated:")
+        self.stdout.write("Summary before execution:")
+        self.stdout.write("--------------------------")
+        self.stdout.write(f"{programmes_filtered.count()} programmes will be updated:")
         for p in programmes_filtered:
-            print(f"    - {p.nom} - {p.numero_galion}")
-        print("--------------------------")
-        print(f"{conventions.count()} conventions in the date range will be impacted:")
+            self.stdout.write(f"    - {p.nom} - {p.numero_galion}")
+        self.stdout.write("--------------------------")
+        self.stdout.write(
+            f"{conventions.count()} conventions in the date range will be impacted:"
+        )
         for c in conventions:
-            print("    - " + str(c))
-        print("--------------------------")
+            self.stdout.write("    - " + str(c))
+        self.stdout.write("--------------------------")
         if conventions_also_impacted.count() > 0:
-            print(
-                f"WARNING {conventions_also_impacted.count()} conventions out of "
-                f"the date range will be impacted as a side-effect:"
+            self.stdout.write(
+                self.style.WARNING(
+                    f"WARNING {conventions_also_impacted.count()} conventions out of "
+                    f"the date range will be impacted as a side-effect:"
+                )
             )
             for c in conventions_also_impacted:
-                print("    - " + str(c))
+                self.stdout.write("    - " + str(c))
 
         if dry_run:
-            print("Dry run mode, no changes executed")
+            self.stdout.write(self.style.WARNING("Dry run mode, no changes executed"))
         else:
             # Update administration and save history
             now = datetime.now()
@@ -112,4 +115,4 @@ class Command(BaseCommand):
                     f"Reassign administration command launched on {str(now)}"
                 )
                 p.save()
-            print("Changes executed")
+            self.stdout.write("Changes executed")
