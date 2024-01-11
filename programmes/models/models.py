@@ -9,7 +9,7 @@ from simple_history.models import HistoricalRecords
 
 from conventions.models.choices import ConventionStatut
 from core.models import IngestableModel
-from core.utils import get_key_from_json_field
+from core.utils import custom_history_user_setter, get_key_from_json_field
 
 from .choices import (
     Financement,
@@ -75,6 +75,7 @@ class Programme(IngestableModel):
     code_insee_departement = models.CharField(max_length=10, null=True)
     code_insee_region = models.CharField(max_length=10, null=True)
     annee_gestion_programmation = models.IntegerField(null=True)
+    # _history_user=None
 
     zone_123 = models.CharField(
         max_length=25,
@@ -145,7 +146,10 @@ class Programme(IngestableModel):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     search_vector = SearchVectorField(null=True, blank=True)
-    history = HistoricalRecords()
+    history = HistoricalRecords(
+        history_user_id_field=models.IntegerField(null=True),
+        history_user_setter=custom_history_user_setter,
+    )
 
     @property
     def all_conventions_are_signed(self):
