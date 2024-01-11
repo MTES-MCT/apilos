@@ -25,13 +25,28 @@ class ReassignAdministrationTest(TestCase):
         self.admin3 = Administration.objects.create(code="3313")
 
         self.programme1 = Programme.objects.create(
-            administration=self.admin1, bailleur_id=1, nom="Programme 1"
+            administration=self.admin1,
+            bailleur_id=1,
+            nom="Programme 1",
+            code_postal="75000",
         )
         self.programme2 = Programme.objects.create(
-            administration=self.admin1, bailleur_id=1, nom="Programme 2"
+            administration=self.admin1,
+            bailleur_id=1,
+            nom="Programme 2",
+            code_postal="75000",
         )
         self.programme3 = Programme.objects.create(
-            administration=self.admin2, bailleur_id=1, nom="Programme 3"
+            administration=self.admin2,
+            bailleur_id=1,
+            nom="Programme 3",
+            code_postal="75000",
+        )
+        self.programme4 = Programme.objects.create(
+            administration=self.admin1,
+            bailleur_id=1,
+            nom="Programme 4",
+            code_postal="75001",
         )
 
         self.convention1 = Convention.objects.create(
@@ -46,6 +61,9 @@ class ReassignAdministrationTest(TestCase):
         self.convention2_1 = Convention.objects.create(
             programme=self.programme2, lot_id=1, numero="9921"
         )
+        self.convention4 = Convention.objects.create(
+            programme=self.programme4, lot_id=1, numero="994"
+        )
 
         self.convention1.cree_le = datetime(
             year=2019, month=1, day=1, tzinfo=timezone.utc
@@ -58,6 +76,9 @@ class ReassignAdministrationTest(TestCase):
         )
         self.convention2_1.cree_le = datetime(
             year=2028, month=2, day=20, tzinfo=timezone.utc
+        )
+        self.convention4.cree_le = datetime(
+            year=2020, month=12, day=31, tzinfo=timezone.utc
         )
         self.convention1.save()
         self.convention2.save()
@@ -75,6 +96,7 @@ class ReassignAdministrationTest(TestCase):
     def test_reassign_administration_different_programs(self):
         args = []
         kwargs = {
+            "perimeter": ["75000", "75002"],
             "start_date": "2020-01-01",
             "end_date": "2021-12-31",
             "current_admin_code": str(self.admin1.code),
@@ -94,10 +116,12 @@ class ReassignAdministrationTest(TestCase):
         # Out of range but using the same program as
         # a convention that has been reassigned: new admin
         assert self.convention2_1.administration == self.admin3
+        # In range, but code_postal not in the perimeter: no change
+        assert self.convention4.administration == self.admin1
 
         # Ensure history was saved, with a reason for updates from the command
         all_history = Programme.history.all()
-        assert all_history.count() == 4
+        assert all_history.count() == 5
         programme_2_history = all_history.filter(nom="Programme 2")
         assert programme_2_history.count() == 2
         assert programme_2_history.last().history_change_reason is None
@@ -109,6 +133,7 @@ class ReassignAdministrationTest(TestCase):
     def test_reassign_administration_different_programs_dry_run(self):
         args = []
         kwargs = {
+            "perimeter": ["75000", "75002"],
             "start_date": "2020-01-01",
             "end_date": "2021-12-31",
             "current_admin_code": str(self.admin1.code),
@@ -125,4 +150,4 @@ class ReassignAdministrationTest(TestCase):
         assert self.convention2_1.administration == self.admin1
 
         # Ensure we only have creation records in history
-        assert Programme.history.all().count() == 3
+        assert Programme.history.all().count() == 4

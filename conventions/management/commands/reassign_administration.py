@@ -13,6 +13,13 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument(
+            "--perimeter",
+            required=True,
+            help="List of the impacted codes postaux",
+            action="store",
+            nargs="+",
+        )
+        parser.add_argument(
             "--start-date",
             required=True,
             help="Creation date YYYY-MM-DD from which to reassign conventions",
@@ -49,6 +56,7 @@ class Command(BaseCommand):
         print("Reassign administration command called")
 
         # Parse arguments
+        codes_postaux = kwargs["perimeter"]
         start_date = datetime.strptime(kwargs["start_date"], "%Y-%m-%d").date()
         end_date = datetime.strptime(kwargs["end_date"], "%Y-%m-%d").date()
         current_admin = Administration.objects.get(code=kwargs["current_admin_code"])
@@ -56,7 +64,9 @@ class Command(BaseCommand):
         dry_run = kwargs["dry_run"]
 
         # Find the conventions assigned to current_admin
-        programmes = Programme.objects.filter(administration=current_admin)
+        programmes = Programme.objects.filter(
+            administration=current_admin, code_postal__in=codes_postaux
+        )
         conventions = Convention.objects.filter(programme__in=programmes)
 
         # Filter the conventions to be in the date range
