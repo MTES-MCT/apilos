@@ -16,23 +16,20 @@ class ConventionLogementsService(ConventionService):
     upform: UploadForm = UploadForm()
 
     def get(self):
-        initial = []
-        logements = self.convention.lot.logements.all()
-        for logement in logements:
-            initial.append(
-                {
-                    "uuid": logement.uuid,
-                    "designation": logement.designation,
-                    "typologie": logement.typologie,
-                    "surface_habitable": logement.surface_habitable,
-                    "surface_annexes": logement.surface_annexes,
-                    "surface_annexes_retenue": logement.surface_annexes_retenue,
-                    "surface_utile": logement.surface_utile,
-                    "loyer_par_metre_carre": logement.loyer_par_metre_carre,
-                    "coeficient": logement.coeficient,
-                    "loyer": logement.loyer,
-                }
+        initial = list(
+            self.convention.lot.logements.values(
+                "uuid",
+                "designation",
+                "typologie",
+                "surface_habitable",
+                "surface_annexes",
+                "surface_annexes_retenue",
+                "surface_utile",
+                "loyer_par_metre_carre",
+                "coeficient",
+                "loyer",
             )
+        )
         self.formset = LogementFormSet(initial=initial)
         self.form = LotLgtsOptionForm(
             initial={
@@ -235,18 +232,11 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
     upform: UploadForm = UploadForm()
 
     def get(self):
-        initial = []
-        logements = self.convention.lot.logements.all()
-        for logement in logements:
-            initial.append(
-                {
-                    "uuid": logement.uuid,
-                    "designation": logement.designation,
-                    "typologie": logement.typologie,
-                    "surface_habitable": logement.surface_habitable,
-                    "loyer": logement.loyer,
-                }
+        initial = list(
+            self.convention.lot.logements.values(
+                "uuid", "designation", "typologie", "surface_habitable", "loyer"
             )
+        )
         self.formset = FoyerResidenceLogementFormSet(initial=initial)
         self.form = LotFoyerResidenceLgtsDetailsForm(
             initial={

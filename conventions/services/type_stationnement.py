@@ -22,17 +22,11 @@ class ConventionTypeStationnementService(ConventionService):
         self.editable_after_upload = bool(
             self.request.POST.get("editable_after_upload", False)
         )
-        initial = []
-        stationnements = self.convention.lot.type_stationnements.all()
-        for stationnement in stationnements:
-            initial.append(
-                {
-                    "uuid": stationnement.uuid,
-                    "typologie": stationnement.typologie,
-                    "nb_stationnements": stationnement.nb_stationnements,
-                    "loyer": stationnement.loyer,
-                }
+        initial = list(
+            self.convention.lot.type_stationnements.values(
+                "uuid", "typologie", "nb_stationnements", "loyer"
             )
+        )
         self.formset = TypeStationnementFormSet(initial=initial)
 
     def save(self):
