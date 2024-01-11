@@ -503,18 +503,20 @@ class Convention(models.Model):
             "key_statut": self.statut[3:].replace(" ", "_").replace("é", "e"),
         }
 
-    def short_statut_for_bailleur(self):
-        return ConventionStatut.get_by_label(self.statut).bailleur_label
-
-    def short_statut_for_instructeur(self):
-        return ConventionStatut.get_by_label(self.statut).instructeur_label
-
     def genderize_desc(self, desc):
         if self.is_denonciation():
             return desc.format(pronom="elle", accord="e", article="la", autre="")
         if self.is_avenant():
             return desc.format(pronom="il", accord="", article="le", autre="autre")
         return desc.format(pronom="elle", accord="e", article="la", autre="")
+
+    def short_statut_for_bailleur(self):
+        statut = ConventionStatut.get_by_label(self.statut).value.bailleur.label
+        return self.genderize_desc(statut)
+
+    def short_statut_for_instructeur(self):
+        statut = ConventionStatut.get_by_label(self.statut).value.instructeur.label
+        return self.genderize_desc(statut)
 
     def entete_desc_for_bailleur(self):
         desc = ConventionStatut.get_by_label(

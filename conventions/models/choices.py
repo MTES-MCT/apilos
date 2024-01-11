@@ -157,11 +157,11 @@ class ConventionStatut(ReverseEnumMixin, Enum):
     ANNULEE = Definition(
         "8. Annulée en suivi",
         StatutByRole(
-            "Annulée en suivi",
+            "Annulé{accord} en suivi",
             "Il n'est pas possible d'y apporter des modifications",
         ),
         StatutByRole(
-            "Annulée en suivi",
+            "Annulé{accord} en suivi",
             "Il n'est pas possible d'y apporter des modifications",
         ),
         "close",
