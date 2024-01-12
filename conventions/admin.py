@@ -76,9 +76,21 @@ class ConventionModelForm(forms.ModelForm):
         exclude = []
 
 
+@admin.display(description="Numero d'opération")
+def view_programme_operation(convention):
+    return convention.programme.numero_galion
+
+
 @admin.register(Convention)
 class ConventionAdmin(ApilosModelAdmin):
-    list_display = (view_programme, "administration", "bailleur", "financement", "uuid")
+    list_display = (
+        view_programme,
+        "administration",
+        "bailleur",
+        "financement",
+        "uuid",
+        view_programme_operation,
+    )
     search_fields = [
         "programme__ville",
         "programme__nom",
@@ -86,6 +98,7 @@ class ConventionAdmin(ApilosModelAdmin):
         "uuid",
         "programme__bailleur__nom",
         "programme__administration__nom",
+        "programme__numero_galion",
     ]
     fields = (
         "uuid",

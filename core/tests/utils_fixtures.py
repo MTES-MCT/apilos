@@ -37,7 +37,6 @@ FILES = [
 
 
 def _create_upload_files():
-
     files_and_text = {"text": "this is a test", "files": {}}
     for file in FILES:
         uploaded_file = UploadedFile.objects.create(
@@ -141,17 +140,18 @@ def create_group(name, rwd=None, rw=None, ru=None, ro=None):
     return group
 
 
-def create_bailleur():
-    return Bailleur.objects.create(
-        nom="3F",
-        siret="12345678901234",
-        capital_social="123000.50",
-        ville="Marseille",
-        signataire_nom="Patrick Patoulachi",
-        signataire_fonction="PDG",
-        signataire_date_deliberation=datetime.date(2014, 10, 9),
-        signataire_bloc_signature="Mon PDG",
-    )
+def create_bailleur(**kwargs):
+    d = {
+        "nom": "3F",
+        "siret": "12345678901234",
+        "capital_social": "123000.50",
+        "ville": "Marseille",
+        "signataire_nom": "Patrick Patoulachi",
+        "signataire_fonction": "PDG",
+        "signataire_date_deliberation": datetime.date(2014, 10, 9),
+        "signataire_bloc_signature": "Mon PDG",
+    } | kwargs
+    return Bailleur.objects.create(**d)
 
 
 def create_programme(

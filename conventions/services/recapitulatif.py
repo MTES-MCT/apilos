@@ -19,9 +19,9 @@ from conventions.services import utils
 from conventions.services.conventions import ConventionService
 from conventions.services.file import ConventionFileService
 from conventions.tasks import generate_and_send
-from core.exceptions.types import SIAPException
 from core.services import EmailService, EmailTemplateID
 from programmes.models import Annexe, Programme
+from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
 from users.models import GroupProfile, User
 from users.type_models import EmailPreferences

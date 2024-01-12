@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class SIAPException(Exception):
     pass
 
@@ -36,3 +39,19 @@ class NotHandledBailleurPriveSIAPException(SIAPException):
 
 class FusionAPISIAPException(SIAPException):
     pass
+
+
+class DuplicatedOperationSIAPException(SIAPException):
+    numero_operation: str
+
+    def __init__(self, numero_operation: str):
+        self.numero_operation = numero_operation
+        super().__init__(f"L'opération {numero_operation} est en doublon")
+
+
+class ConflictedOperationSIAPException(DuplicatedOperationSIAPException):
+    diff: dict[str, Any] = None
+
+    def __init__(self, numero_operation: str, diff: dict[str, Any]):
+        super().__init__(numero_operation)
+        self.diff = diff

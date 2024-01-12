@@ -1,13 +1,13 @@
 from django.test import TestCase
 
 from bailleurs.models import Bailleur
-from core.exceptions.types import (
-    InconsistentDataSIAPException,
-    NoConventionForOperationSIAPException,
-)
 from core.tests import utils_fixtures
 from instructeurs.models import Administration
 from programmes.models.choices import NatureLogement, TypeOperation
+from siap.exceptions import (
+    InconsistentDataSIAPException,
+    NoConventionForOperationSIAPException,
+)
 from siap.siap_client import utils
 from users.models import User
 
