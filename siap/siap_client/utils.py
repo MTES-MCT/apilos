@@ -269,7 +269,7 @@ def get_or_create_programme(
             field_names=["administration_id", "bailleur_id"],
         )
         if len(diff):
-            raise ConflictedOperationSIAPException(numero_operation=numero_operation)
+            raise ConflictedOperationSIAPException(numero_operation, diff)
 
         raise DuplicatedOperationSIAPException(numero_operation=numero_operation)
 
