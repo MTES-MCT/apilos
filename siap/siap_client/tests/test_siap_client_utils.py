@@ -1,8 +1,11 @@
+from datetime import date
+
 from django.test import TestCase
 
 from bailleurs.models import Bailleur
-from core.tests import utils_fixtures
+from bailleurs.tests.factories import BailleurFactory
 from instructeurs.models import Administration
+from instructeurs.tests.factories import AdministrationFactory
 from programmes.models.choices import NatureLogement, TypeOperation
 from siap.exceptions import (
     InconsistentDataSIAPException,
@@ -100,8 +103,56 @@ class GetOrCreateProgrammeTest(TestCase):
     }
 
     def setUp(self):
-        utils_fixtures.create_administrations()
-        utils_fixtures.create_bailleurs()
+        AdministrationFactory(
+            nom="CA d'Arles-Crau-Camargue-Montagnette",
+            code="12345",
+        ),
+        AdministrationFactory(
+            nom="Métropole de Marseille",
+            code="67890",
+        ),
+        AdministrationFactory(
+            nom="Paris",
+            code="75000",
+            code_postal="75001",
+        ),
+        AdministrationFactory(
+            nom="DDT Paris",
+            code="DD075",
+            code_postal="75015",
+            adresse="5 rue Leblanc Le Ponant",
+        ),
+
+        BailleurFactory(
+            nom="3F",
+            siret="12345678901234",
+            capital_social="123000.50",
+            ville="Marseille",
+            signataire_nom="Patrick Patoulachi",
+            signataire_date_deliberation=date(2014, 10, 9),
+            signataire_fonction="PDG",
+            signataire_bloc_signature="Mon PDG",
+        ),
+        BailleurFactory(
+            nom="HLM",
+            siret="987654321",
+            capital_social="123456",
+            ville="Marseille",
+            signataire_nom="Pall Antoine",
+            signataire_fonction="DG",
+            signataire_date_deliberation=date(2001, 12, 1),
+            signataire_bloc_signature="Mon DG",
+        ),
+        BailleurFactory(
+            nom="SEM",
+            siret="2345678901",
+            capital_social="123456",
+            ville="Marseille",
+            signataire_nom="Polo Alto",
+            signataire_fonction="PDG",
+            signataire_date_deliberation=date(2011, 12, 1),
+            signataire_bloc_signature="Mon PDG",
+        ),
 
     def test_get_or_create(self):
         programme = utils.get_or_create_programme(

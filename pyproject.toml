@@ -73,6 +73,7 @@ known-third-party = [
     "docx",
     "docxtpl",
     "drf_spectacular",
+    "factory",
     "openpyxl",
     "rest_framework_simplejwt",
     "rest_framework",

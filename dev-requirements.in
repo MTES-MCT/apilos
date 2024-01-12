@@ -8,6 +8,7 @@ django-debug-toolbar
 django-extensions
 django-stubs
 djhtml
+factory-boy
 honcho
 pip-tools
 pre-commit
@@ -17,3 +18,5 @@ pytest-django
 pytest-xdist
 responses
 ruff
+time-machine
+unittest-parametrize
