@@ -6,7 +6,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("conventions", "0075_remove_convention_code_postal_and_more"),
+        ("conventions", "0076_alter_convention_avenant_types_and_more"),
     ]
 
     operations = [

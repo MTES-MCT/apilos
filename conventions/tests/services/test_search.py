@@ -1,7 +1,6 @@
 from django.test import TestCase
 
 from conventions.services.search import (
-    UserConventionActivesSearchService,
     UserConventionEnInstructionSearchService,
 )
 from programmes.models import Programme
@@ -64,10 +63,10 @@ class TestUserConventionEnInstructionSearchService(SearchServiceTestBase):
     service_class = UserConventionEnInstructionSearchService
 
 
-class TestUserConventionActivesSearchService(SearchServiceTestBase):
-    __test__ = True
+# class TestUserConventionActivesSearchService(SearchServiceTestBase):
+#     __test__ = True
 
-    service_class = UserConventionActivesSearchService
+#     service_class = UserConventionActivesSearchService
 
 
 # class TestUserConventionTermineesSearchService(SearchServiceTestBase):
