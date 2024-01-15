@@ -1,5 +1,6 @@
 import mimetypes
 from datetime import date
+from typing import Any
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -161,19 +162,9 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
     def setup(self, *args, **kwargs) -> None:
         super().setup(*args, **kwargs)
 
-        search_filters_mapping = [
-            ("commune", "ville"),
-            ("financement", "financement"),
-            ("order_by", "order_by"),
-            ("search_input", "search_input"),
-            ("statut", "cstatut"),
-            ("bailleur", "bailleur"),
-            ("administration", "administration"),
-            ("year", "year"),
-        ]
         search_filters = {
             arg: self._get_non_empty_query_param(query_param)
-            for arg, query_param in search_filters_mapping
+            for arg, query_param in self.get_search_filters_mapping()
         }
 
         self.service = self.service_class(
@@ -201,15 +192,6 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
 
         return None
 
-    @cached_property
-    def years_choices(self) -> list[str]:
-        try:
-            earliest = Convention.objects.earliest("cree_le").cree_le.year
-        except Convention.DoesNotExist:
-            earliest = 1990  # fallback value
-        years = sorted(range(earliest, date.today().year + 1), reverse=True)
-        return [str(year) for year in years]
-
     def all_conventions_count(self, tabs):
         return sum(tab["count"] for tab in tabs)
 
@@ -220,27 +202,49 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
         return default
 
     def get(self, request: AuthenticatedHttpRequest):
+        return render(request, "conventions/index.html", self.get_context(request))
+
+    def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         paginator = self.service.paginate()
         tabs = self.get_tabs()
-        return render(
-            request,
-            "conventions/index.html",
-            {
-                "administration_query": self.administrations_queryset,
-                "all_conventions_count": self.all_conventions_count(tabs),
-                "bailleur_query": self.bailleurs_queryset,
-                "conventions": paginator.get_page(request.GET.get("page", 1)),
-                "filtered_conventions_count": paginator.count,
-                "financements": Financement.choices,
-                "url_name": resolve(request.path_info).url_name,
-                "search_input": self._get_non_empty_query_param("search_input", ""),
-                "statuts": self.service.choices,
-                "tabs": tabs,
-                "total_conventions": request.user.conventions().count(),
-                "order_by": self._get_non_empty_query_param("order_by", ""),
-                "years": self.years_choices,
-            },
-        )
+        return {
+            "administration_query": self.administrations_queryset,
+            "all_conventions_count": self.all_conventions_count(tabs),
+            "bailleur_query": self.bailleurs_queryset,
+            "conventions": paginator.get_page(request.GET.get("page", 1)),
+            "filtered_conventions_count": paginator.count,
+            "financements": Financement.choices,
+            "url_name": resolve(request.path_info).url_name,
+            "search_input": self._get_non_empty_query_param("search_input", ""),
+            "statuts": self.service.choices,
+            "tabs": tabs,
+            "total_conventions": request.user.conventions().count(),
+            "order_by": self._get_non_empty_query_param("order_by", ""),
+        }
+
+    def get_search_filters_mapping(self):
+        return [
+            ("commune", "ville"),
+            ("financement", "financement"),
+            ("order_by", "order_by"),
+            ("search_input", "search_input"),
+            ("statut", "cstatut"),
+            ("bailleur", "bailleur"),
+            ("administration", "administration"),
+        ]
+
+    @cached_property
+    def validation_year_choices(self) -> list[str]:
+        try:
+            earliest = (
+                Convention.objects.exclude(valide_le__isnull=True)
+                .earliest("valide_le")
+                .valide_le.year
+            )
+        except Convention.DoesNotExist:
+            earliest = 1990  # fallback value
+        years = sorted(range(earliest, date.today().year + 1), reverse=True)
+        return [str(year) for year in years]
 
 
 class ConventionEnInstructionSearchView(ConventionSearchView):
@@ -252,10 +256,30 @@ class ConventionActivesSearchView(ConventionSearchView):
     service_class = UserConventionActivesSearchService
     name = "search_active"
 
+    def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
+        return super().get_context(request) | {
+            "validation_year_choices": self.validation_year_choices
+        }
+
+    def get_search_filters_mapping(self):
+        return super().get_search_filters_mapping() + [
+            ("validation_year", "validation_year")
+        ]
+
 
 class ConventionTermineesSearchView(ConventionSearchView):
     service_class = UserConventionTermineesSearchService
     name = "search_resiliees"
+
+    def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
+        return super().get_context(request) | {
+            "validation_year_choices": self.validation_year_choices
+        }
+
+    def get_search_filters_mapping(self):
+        return super().get_search_filters_mapping() + [
+            ("validation_year", "validation_year")
+        ]
 
 
 class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):

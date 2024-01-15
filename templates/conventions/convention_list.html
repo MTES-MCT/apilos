@@ -116,20 +116,24 @@
                             </div>
                         </div>
 
-                        {# Champs annee #}
-                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
-                            <div class="">
-                                <select class="fr-select" name="year">
-                                    <option value="">Année</option>
-                                    {% for value in years %}
-                                        <option value="{{ value }}"
-                                            {% if value == request.GET.year %}selected{% endif %}>
-                                            {{ value }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
+                        {# Champs annee de valildation #}
+                        {% if validation_year_choices %}
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                                <div class="">
+                                    <select class="fr-select" name="validation_year">
+                                        <option value="">Année de validation</option>
+                                        {% for value in validation_year_choices %}
+                                            <option value="{{ value }}"
+                                                {% if value == request.GET.validation_year %}selected{% endif %}>
+                                                {{ value }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
+
+                        {# Champs date de signature #}
 
                         {# Champs "Libre" (code opération / numéro de convention, code postal ou nom du programme) #}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
