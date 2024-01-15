@@ -49,9 +49,11 @@ class DuplicatedOperationSIAPException(SIAPException):
         super().__init__(f"L'opération {numero_operation} est en doublon")
 
 
-class ConflictedOperationSIAPException(DuplicatedOperationSIAPException):
+class ConflictedOperationSIAPException(SIAPException):
+    numero_operation: str
     diff: dict[str, Any] = None
 
     def __init__(self, numero_operation: str, diff: dict[str, Any]):
-        super().__init__(numero_operation)
+        self.numero_operation = numero_operation
         self.diff = diff
+        super().__init__(f"L'opération {numero_operation} est en doublon")
