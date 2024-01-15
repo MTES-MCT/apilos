@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 env:
   DATABASE_URL: postgres://apilos:apilos@localhost:5432/apilos
@@ -37,7 +38,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - uses: kolok/deploy-to-scalingo@v1
+      - uses: kolok/deploy-to-scalingo@v1.3
         with:
           ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
           app-name: apilos-siap-integration
