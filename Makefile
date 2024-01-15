@@ -2,6 +2,9 @@
 
 SHELL := /bin/bash
 
+server:
+	@python manage.py runserver 0.0.0.0:8001
+
 fmt:
 	@pre-commit run --all-files
 
