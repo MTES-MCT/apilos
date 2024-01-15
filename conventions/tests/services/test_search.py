@@ -1,7 +1,11 @@
+from django.db import connection
 from django.test import TestCase
 
+from conventions.models import Convention, ConventionStatut
 from conventions.services.search import (
+    UserConventionActivesSearchService,
     UserConventionEnInstructionSearchService,
+    UserConventionTermineesSearchService,
 )
 from programmes.models import Programme
 from users.models import User
@@ -20,6 +24,12 @@ class SearchServiceTestBase(TestCase):
         "conventions_for_tests.json",
         "users_for_tests.json",
     ]
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        with connection.cursor() as cursor:
+            cursor.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
 
     def setUp(self) -> None:
         self.user = User.objects.get(username="nicolas")
@@ -63,13 +73,27 @@ class TestUserConventionEnInstructionSearchService(SearchServiceTestBase):
     service_class = UserConventionEnInstructionSearchService
 
 
-# class TestUserConventionActivesSearchService(SearchServiceTestBase):
-#     __test__ = True
+class TestUserConventionActivesSearchService(SearchServiceTestBase):
+    __test__ = True
 
-#     service_class = UserConventionActivesSearchService
+    service_class = UserConventionActivesSearchService
+
+    def setUp(self) -> None:
+        super().setUp()
+        Convention.objects.all().update(statut=ConventionStatut.SIGNEE.label)
+
+    def test_no_filter(self):
+        self.assertEqual(self.service_class(user=self.user).get_queryset().count(), 4)
 
 
-# class TestUserConventionTermineesSearchService(SearchServiceTestBase):
-#     __test__ = True
+class TestUserConventionTermineesSearchService(SearchServiceTestBase):
+    __test__ = True
 
-#     service_class = UserConventionTermineesSearchService
+    service_class = UserConventionTermineesSearchService
+
+    def setUp(self) -> None:
+        super().setUp()
+        Convention.objects.all().update(statut=ConventionStatut.RESILIEE.label)
+
+    def test_no_filter(self):
+        self.assertEqual(self.service_class(user=self.user).get_queryset().count(), 4)
