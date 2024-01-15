@@ -107,6 +107,7 @@ class ConventionRecapitulatifServiceTests(TestCase):
         }
         self.service.update_programme_number()
 
+        self.convention.programme.refresh_from_db()
         self.assertEqual(self.convention.programme.numero_galion, "0" * 255)
 
     def test_update_programme_number_failed(self):
@@ -117,6 +118,25 @@ class ConventionRecapitulatifServiceTests(TestCase):
         result = self.service.update_programme_number()
 
         self.assertFalse(result["conventionNumberForm"].has_error("numero_galion"))
+
+    def test_updateconvention_number_success(self):
+        self.service.request.POST = {
+            "convention_numero": "91-1-11-1988-85.1231.075.078/078",
+            "update_convention_number": "1",
+        }
+        self.service.update_convention_number()
+
+        self.convention.refresh_from_db()
+        self.assertEqual(self.convention.numero, "91-1-11-1988-85.1231.075.078/078")
+
+    def test_updateconvention_number_failed(self):
+        self.service.request.POST = {
+            "convention_numero": "dummy_value",
+            "update_convention_number": "1",
+        }
+        result = self.service.update_convention_number()
+
+        self.assertFalse(result["conventionNumberForm"].has_error("convention_numero"))
 
     def test_convention_submit(self):
         result = recapitulatif.convention_submit(self.request, self.convention)

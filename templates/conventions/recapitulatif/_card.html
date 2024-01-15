@@ -11,7 +11,9 @@
                             {% endblock title %}
                         </h4>
                     </div>
-                    {% include "conventions/actions/goto.html" %}
+                    {% if target_url %}
+                        {% include "conventions/actions/goto.html" %}
+                    {% endif %}
                 </div>
                 {% block body %}
                 {% endblock body %}

@@ -1,0 +1,20 @@
+{% extends "conventions/recapitulatif/_card.html" %}
+{% load custom_filters %}
+
+{% block card_classes %}fr-mt-1w{% endblock card_classes %}
+{% block title %}Convention{% endblock title %}
+
+{% block body %}
+    <div class="table--limited-height">
+        {% if request.user.is_instructeur %}
+            <p class="fr-mt-1w fr-mb-0">
+                <strong>Numéro de convention : {{convention.numero}}</strong>
+            </p>
+            {% if request.session.is_expert %}
+                {% include "conventions/actions/edit_numero_convention.html" %}
+            {% endif %}
+        {% else %}
+            {% include "common/display_field_if_exists.html" with label="Numéro de convention" value=convention.numero %}
+        {% endif %}
+    </div>
+{% endblock %}

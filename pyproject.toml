@@ -7,7 +7,6 @@ omit = [
     "programmes/management/commands/import_galion.py",
     # TODO: add tests on the following modules and remove them from this list
     "conventions/services/upload_objects.py",
-    "conventions/services/recapitulatif.py",
 ]
 
 [tool.pytest.ini_options]

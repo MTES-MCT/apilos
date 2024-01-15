@@ -1,0 +1,46 @@
+<button class="fr-btn fr-btn--secondary" data-fr-opened="false" type="button" aria-controls="fr-modal-update-convention-number">
+    Éditer le numéro de convention
+</button>
+
+{% if conventionNumberForm.errors %}
+    <input data-fr-opened="true" aria-controls="fr-modal-update-convention-number" type="hidden">
+{% endif %}
+
+<dialog aria-labelledby="fr-modal-update-convention-number-title" id="fr-modal-update-convention-number" data-fr-opened="true" class="fr-modal" role="dialog" open="true">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <button class="fr-link--close fr-link" type="button" aria-controls="fr-modal-update-convention-number">Fermer</button>
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="fr-modal__content">
+                            <div role="alert" class="fr-alert fr-alert--warning">
+                                <p class="fr-alert__title">Modifier le numéro de convention</p>
+                                <p>la modification de ce numéro de décision peut avoir des conséquences ... </p>
+                            </div>
+                            {% include "common/form/input_text.html" with form_input=conventionNumberForm.convention_numero editable=True%}
+
+                        </div>
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button class="fr-btn fr-btn--secondary" type="button" aria-controls="fr-modal-update-convention-number">
+                                        Annuler
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn fr-icon-checkbox-line" name='update_convention_number' value=1>
+                                        Changer le numéro de convention
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

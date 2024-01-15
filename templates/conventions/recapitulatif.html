@@ -37,6 +37,9 @@
                             {% endif %}
                         </a>
                     </div>
+                    {% if request.session.is_expert %}
+                        {% include "conventions/recapitulatif/convention.html" %}
+                    {% endif %}
                 {% endif %}
                 {% if convention.is_denonciation %}
                     {% include "conventions/recapitulatif/denonciation.html"  with target_url='conventions:denonciation' %}
