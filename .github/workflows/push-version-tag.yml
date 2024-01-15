@@ -17,6 +17,17 @@ jobs:
   test:
     uses: ./.github/workflows/run_tests.yml
 
+  github_release:
+    name: "Create GitHub release"
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
   deploy_to_production:
     name: "Deploy to Production"
     runs-on: ubuntu-latest
