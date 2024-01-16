@@ -3,8 +3,8 @@ from django.contrib import admin
 from django.contrib.admin import ChoicesFieldListFilter
 
 from admin.admin import ApilosModelAdmin
+from admin.filters import IsCloneFilter
 from conventions.models.choices import ConventionStatut
-from core.admin import IsCloneFilter
 
 from .models import AvenantType, Convention, Pret
 

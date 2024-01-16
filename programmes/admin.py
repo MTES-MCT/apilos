@@ -1,8 +1,8 @@
 from django.contrib import admin
 
 from admin.admin import ApilosModelAdmin
+from admin.filters import IsCloneFilter
 from bailleurs.models import Bailleur
-from core.admin import IsCloneFilter
 from instructeurs.models import Administration
 from programmes.models.models import IndiceEvolutionLoyer
 
