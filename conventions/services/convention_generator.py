@@ -24,10 +24,6 @@ from upload.models import UploadedFile
 from upload.services import UploadService
 
 
-class NotHandleConventionType(Exception):
-    pass
-
-
 class ConventionTypeConfigurationError(Exception):
     pass
 

@@ -44,7 +44,7 @@ class ConventionRecapitulatifTests(AbstractCreateViewTestCase, TestCase):
             ("update_convention_number", "update_convention_number"),
             ("cancel_convention", "cancel_convention"),
             ("reactive_convention", "reactive_convention"),
-            (None, "save_convention_TypeIandII"),
+            (None, "save_convention_type_1_and_2"),
         ):
             with patch(
                 "conventions.views.conventions.ConventionRecapitulatifService",

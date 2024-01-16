@@ -22,7 +22,7 @@ def _save_uploaded_file(my_file, convention, file_name):
 def handle_uploaded_xlsx(
     upform,
     my_file,
-    myClass,
+    my_class,
     convention,
     file_name,
     class_field_mapping="import_mapping",
@@ -38,11 +38,11 @@ def handle_uploaded_xlsx(
         )
         return {"success": utils.ReturnStatus.ERROR}
     try:
-        my_ws = my_wb[myClass.sheet_name]
+        my_ws = my_wb[my_class.sheet_name]
     except KeyError:
         upform.add_error(
             "file",
-            f"Le fichier importé doit avoir une feuille nommée '{myClass.sheet_name}'",
+            f"Le fichier importé doit avoir une feuille nommée '{my_class.sheet_name}'",
         )
         return {"success": utils.ReturnStatus.ERROR}
     min_row = 3
@@ -53,11 +53,11 @@ def handle_uploaded_xlsx(
     _save_uploaded_file(my_file, convention, file_name)
 
     column_from_index, import_warnings = _check_not_useful_columns(
-        my_ws, myClass, class_field_mapping
+        my_ws, my_class, class_field_mapping
     )
 
     if _has_error_column_header_exist(
-        upform, myClass, class_field_mapping, column_from_index
+        upform, my_class, class_field_mapping, column_from_index
     ):
         return {"success": utils.ReturnStatus.ERROR}
 
@@ -65,7 +65,7 @@ def handle_uploaded_xlsx(
     my_objects, import_warnings = _get_object_from_worksheet(
         my_ws,
         column_from_index,
-        myClass,
+        my_class,
         import_warnings,
         min_row,
         class_field_mapping=class_field_mapping,
@@ -81,7 +81,7 @@ def handle_uploaded_xlsx(
     }
 
 
-def _check_not_useful_columns(my_ws, myClass, class_field_mapping):
+def _check_not_useful_columns(my_ws, my_class, class_field_mapping):
     import_warnings = []
     column_from_index = {}
     for col in my_ws.iter_cols(
@@ -91,7 +91,7 @@ def _check_not_useful_columns(my_ws, myClass, class_field_mapping):
             if cell.value is None:
                 continue
             key = all_words_in_key_of_dict(
-                cell.value, getattr(myClass, class_field_mapping)
+                cell.value, getattr(my_class, class_field_mapping)
             )
             if key is None:
                 import_warnings.append(
@@ -99,7 +99,7 @@ def _check_not_useful_columns(my_ws, myClass, class_field_mapping):
                         f"La colonne nommée '{cell.value}' est inconnue, "
                         + "elle sera ignorée. Le contenu des colonnes "
                         + "attendus est dans la liste : "
-                        + f"{', '.join(getattr(myClass, class_field_mapping).keys())}"
+                        + f"{', '.join(getattr(my_class, class_field_mapping).keys())}"
                     )
                 )
                 continue
@@ -108,10 +108,10 @@ def _check_not_useful_columns(my_ws, myClass, class_field_mapping):
 
 
 def _has_error_column_header_exist(
-    upform, myClass, class_field_mapping, column_from_index
+    upform, my_class, class_field_mapping, column_from_index
 ):
     error_column = False
-    for key in getattr(myClass, class_field_mapping):
+    for key in getattr(my_class, class_field_mapping):
         if not all_words_in_key_of_dict(key, list(column_from_index.values())):
             upform.add_error(
                 "file",
@@ -127,7 +127,7 @@ def _has_error_column_header_exist(
 def _get_object_from_worksheet(
     my_ws,
     column_from_index,
-    myClass,
+    my_class,
     import_warnings,
     min_row=3,
     *,
@@ -140,12 +140,12 @@ def _get_object_from_worksheet(
         min_row=min_row, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
     ):
         my_row, empty_line, new_warnings = _extract_row(
-            row, column_from_index, myClass, class_field_mapping=class_field_mapping
+            row, column_from_index, my_class, class_field_mapping=class_field_mapping
         )
 
-        if hasattr(myClass, class_field_needed_mapping):
-            if not empty_line and getattr(myClass, class_field_needed_mapping):
-                for needed_field in getattr(myClass, class_field_needed_mapping):
+        if hasattr(my_class, class_field_needed_mapping):
+            if not empty_line and getattr(my_class, class_field_needed_mapping):
+                for needed_field in getattr(my_class, class_field_needed_mapping):
                     if needed_field.name not in my_row:
                         empty_line = True
                         new_warnings.append(

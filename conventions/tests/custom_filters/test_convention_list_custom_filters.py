@@ -128,7 +128,7 @@ class TestGetOrderValueFilters(TestCase):
             custom_filters.get_ordervalue({"param1": "Params"}, "-param1"), "Params"
         )
 
-    def test_noKey(self):
+    def test_no_key(self):
         self.assertEqual(
             custom_filters.get_ordervalue({"param1": "Params"}, "nokey"), ""
         )

@@ -20,7 +20,7 @@ from users.type_models import EmailPreferences, TypeRole
 logger = logging.getLogger(__name__)
 
 
-class ExceptionPermissionConfig(Exception):
+class ExceptionPermissionConfig(Exception):  # noqa: N818
     pass
 
 

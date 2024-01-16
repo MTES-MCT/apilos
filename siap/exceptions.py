@@ -1,7 +1,7 @@
 from typing import Any
 
 
-class SIAPException(Exception):
+class SIAPException(Exception):  # noqa: N818
     pass
 
 

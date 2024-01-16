@@ -75,13 +75,13 @@ class ConventionLogementsServiceTests(TestCase):
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
-        logement_B1 = Logement.objects.prefetch_related("lot").get(
+        logement_b1 = Logement.objects.prefetch_related("lot").get(
             lot=self.service.convention.lot, designation="B1"
         )
 
         self.assertEqual(
             model_to_dict(
-                logement_B1,
+                logement_b1,
                 fields=[
                     "designation",
                     "typologie",
@@ -106,9 +106,9 @@ class ConventionLogementsServiceTests(TestCase):
                 "loyer": Decimal("135.00"),
             },
         )
-        self.assertEqual(logement_B1.lot.loyer_derogatoire, 10.00)
-        self.assertEqual(logement_B1.lot.surface_locaux_collectifs_residentiels, 25.00)
-        self.assertEqual(logement_B1.lot.lgts_mixite_sociale_negocies, 2)
+        self.assertEqual(logement_b1.lot.loyer_derogatoire, 10.00)
+        self.assertEqual(logement_b1.lot.surface_locaux_collectifs_residentiels, 25.00)
+        self.assertEqual(logement_b1.lot.lgts_mixite_sociale_negocies, 2)
 
     def test_save_fails_on_loyer(self):
         self.service.request.POST = {
@@ -189,13 +189,13 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
-        logement_B1 = Logement.objects.prefetch_related("lot").get(
+        logement_b1 = Logement.objects.prefetch_related("lot").get(
             lot=self.service.convention.lot, designation="B1"
         )
 
         self.assertEqual(
             model_to_dict(
-                logement_B1,
+                logement_b1,
                 fields=[
                     "designation",
                     "typologie",
@@ -210,7 +210,7 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
                 "loyer": Decimal("135.00"),
             },
         )
-        self.assertEqual(logement_B1.lot.surface_habitable_totale, Decimal("50.55"))
+        self.assertEqual(logement_b1.lot.surface_habitable_totale, Decimal("50.55"))
 
     def test_save_fails_on_loyer(self):
         self.service.request.POST = {

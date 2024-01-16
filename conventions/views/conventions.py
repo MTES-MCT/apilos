@@ -111,7 +111,7 @@ class RecapitulatifView(BaseConventionView):
         elif request.POST.get("reactive_convention"):
             result = service.reactive_convention()
         else:
-            result = service.save_convention_TypeIandII()
+            result = service.save_convention_type_1_and_2()
 
         return render(
             request,
@@ -440,7 +440,7 @@ def load_xlsx_model(request, file_type):
         filepath = (
             settings.BASE_DIR / "static" / "files" / "tous_les_templates_xlsx.zip"
         )
-        with ZipFile(filepath, "w") as zipObj:
+        with ZipFile(filepath, "w") as zip_obj:
             # Add multiple files to the zip
             for each_file in [
                 "annexes",
@@ -450,11 +450,11 @@ def load_xlsx_model(request, file_type):
                 "logements",
                 "stationnements",
             ]:
-                zipObj.write(
+                zip_obj.write(
                     f"{settings.BASE_DIR}/static/files/{each_file}.xlsx",
                     arcname=f"{each_file}.xlsx",
                 )
-            zipObj.close()
+            zip_obj.close()
         with open(filepath, "rb") as zip_file:
             # close the Zip File
             response = HttpResponse(zip_file, content_type="application/force-download")

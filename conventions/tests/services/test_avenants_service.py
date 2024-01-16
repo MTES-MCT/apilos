@@ -16,10 +16,10 @@ class DummyRequest:
     POST: dict
     user: User
 
-    def __init__(self, method, POST, user):
+    def __init__(self, method, post, user):
         self.method = method
         if self.method == "POST":
-            self.POST = POST
+            self.POST = post
         else:
             self.GET = {}
         self.user = user
