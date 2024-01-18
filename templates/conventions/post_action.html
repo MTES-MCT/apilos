@@ -58,6 +58,9 @@
                                     <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>
                                     {% if convention.is_avenant and convention.is_denonciation %}
                                         La dénonciation de la convention est en cours
+                                    {% endif %}
+                                    {% if convention.is_avenant and convention.is_resiliation %}
+                                        La résiliation de la convention est en cours
                                     {% else %}
                                         Un avenant est déjà en cours.
                                     {% endif %}
@@ -175,6 +178,7 @@
                 <hr>
                 {% if convention|display_is_not_resiliated_or_denonciated %}
                     {% include "conventions/avenant/denonciation_start.html" %}
+                    {% include "conventions/avenant/resiliation_start.html" %}
                 {% endif %}
             </div>
         </div>

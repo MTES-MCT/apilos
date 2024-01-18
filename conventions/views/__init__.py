@@ -13,6 +13,7 @@ from conventions.views.convention_form_foyer_residence_logements import *
 from conventions.views.convention_form_logements import *
 from conventions.views.convention_form_programme import *
 from conventions.views.convention_form_residence_attribution import *
+from conventions.views.convention_form_resiliation import *
 from conventions.views.convention_form_selection import *
 from conventions.views.convention_form_type_stationnement import *
 from conventions.views.convention_form_variante import *

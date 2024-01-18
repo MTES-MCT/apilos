@@ -227,6 +227,10 @@ class Convention(models.Model):
     motif_denonciation = models.TextField(null=True, blank=True)
     fichier_instruction_denonciation = models.TextField(null=True, blank=True)
 
+    date_resiliation = models.DateField(null=True, blank=True)
+    motif_resiliation = models.TextField(null=True, blank=True)
+    fichier_instruction_resiliation = models.TextField(null=True, blank=True)
+
     adresse = models.TextField(null=True, blank=True)
 
     @property
@@ -462,6 +466,12 @@ class Convention(models.Model):
         return (
             self.parent_id is not None
             and self.avenant_types.filter(nom="denonciation").exists()
+        )
+
+    def is_resiliation(self):
+        return (
+            self.parent_id is not None
+            and self.avenant_types.filter(nom="resiliation").exists()
         )
 
     def is_incompleted_avenant_parent(self):

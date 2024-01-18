@@ -4,7 +4,7 @@ from django.forms import Form
 
 from conventions.forms import UploadForm
 from conventions.forms.convention_date_signature import ConventionDateForm
-from conventions.forms.resiliation import ConventionResiliationForm
+from conventions.forms.convention_form_resiliation import ConventionResiliationForm
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
 from conventions.services.file import ConventionFileService

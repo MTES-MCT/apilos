@@ -1,0 +1,45 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %} Résiliation - APiLos {% endblock%}
+
+{% load static %}
+
+{% block javascript_extras %}
+    <script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
+
+{% block css_extras %}
+    <link rel="stylesheet" href="{% static "dropzonejs/min/basic.min.css" %}">
+    <link rel="stylesheet" href="{% static "dropzonejs/min/dropzone.min.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/step_progressbar.html"%}
+    </div>
+    <div class="fr-container fr-py-5w">
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w">
+                <div class="fr-col-12 fr-mb-4w">
+                    <h4>Date de résiliation</h4>
+                    {% include "common/form/input_date.html" with form_input=form.date_resiliation object_field="convention__date_resiliation__"|add:form.uuid.value %}
+                </div>
+                <div class="fr-col-12 fr-mb-4w">
+                    <h4>Motif de résiliation</h4>
+                    {% include "common/form/input_textarea.html" with form_input=form.motif_resiliation object_field="convention__motif_resiliation__"|add:form.uuid.value %}
+                </div>
+                <div class="fr-col-12 fr-mb-4w">
+                    <h4>Champ libre facultatif</h4>
+                    {% include "common/form/input_textarea.html" with form_input=form.champ_libre_avenant object_field="convention__champ_libre_avenant__"|add:form.uuid.value %}
+                </div>
+                {% include "conventions/common/form_footer_button.html" %}
+            </div>
+        </form>
+    </div>
+{% endblock %}

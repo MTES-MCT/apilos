@@ -551,6 +551,25 @@ def denonciation_start(request, convention_uuid):
 
 
 @login_required
+@permission_required("convention.add_convention")
+def resiliation_start(request, convention_uuid):
+    result = create_avenant(request, convention_uuid)
+
+    if result["success"] == ReturnStatus.SUCCESS:
+        return HttpResponseRedirect(
+            reverse("conventions:resiliation", args=[result["convention"].uuid])
+        )
+
+    return render(
+        request,
+        "conventions/post_action.html",
+        {
+            **result,
+        },
+    )
+
+
+@login_required
 @has_campaign_permission_view_function("convention.view_convention")
 def display_pdf(request, convention_uuid):
     # récupérer le doc PDF

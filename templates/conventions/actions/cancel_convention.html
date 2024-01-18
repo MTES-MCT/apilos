@@ -9,6 +9,8 @@
                 <p class="fr-mb-0">
                     {% if convention.is_denonciation %}
                         La dénonciation peut être annulée. Elle sera encore accessible dans la liste des avenants.
+                    {% elif convention.is_resiliation %}
+                        La résiliation peut être annulée. Elle sera encore accessible dans la liste des avenants.
                     {% elif convention.is_avenant %}
                         L'avenant peut être annulé. Il sera encore accessible dans la liste des avenants
                     {% else %}
