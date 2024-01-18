@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from admin.admin import ApilosModelAdmin
+from admin.filters import IsCloneFilter
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
 from programmes.models.models import IndiceEvolutionLoyer
@@ -39,6 +40,7 @@ class ProgrammeAdmin(ApilosModelAdmin):
         "administration",
         "bailleur",
     )
+    list_filter = (IsCloneFilter,)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "administration":

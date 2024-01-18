@@ -1,12 +1,9 @@
-from typing import Any
-
 from django import forms
 from django.contrib import admin
-from django.contrib.admin import ChoicesFieldListFilter, SimpleListFilter
-from django.db.models import QuerySet
-from django.http import HttpRequest
+from django.contrib.admin import ChoicesFieldListFilter
 
 from admin.admin import ApilosModelAdmin
+from admin.filters import IsCloneFilter
 from conventions.models.choices import ConventionStatut
 
 from .models import AvenantType, Convention, Pret
@@ -21,26 +18,9 @@ def view_programme(convention):
     )
 
 
-class IsAvenantFilter(SimpleListFilter):
-    title = "type avenant"
+class IsAvenantFilter(IsCloneFilter):
+    title = "est un avenant"
     parameter_name = "is_avenant"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> list[tuple[Any, str]]:
-        return (
-            ("Oui", "Oui"),
-            ("Non", "Non"),
-        )
-
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        match self.value():
-            case "Oui":
-                return queryset.filter(parent__isnull=False)
-            case "Non":
-                return queryset.filter(parent__isnull=True)
-            case _:
-                return queryset
 
 
 class StatutFilter(ChoicesFieldListFilter):
