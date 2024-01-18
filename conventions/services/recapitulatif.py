@@ -138,7 +138,7 @@ class ConventionRecapitulatifService(ConventionService):
             "repartition_surfaces": self.convention.lot.repartition_surfaces(),
         }
 
-    def save_convention_TypeIandII(self):
+    def save_convention_type_1_and_2(self):
         convention_type1_and_2_form = ConventionType1and2Form(self.request.POST)
         if convention_type1_and_2_form.is_valid():
             self.convention.type1and2 = (

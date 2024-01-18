@@ -61,10 +61,10 @@ class UserForm(UserNotificationForm):
         },
     )
 
-    phoneNumberRegex = RegexValidator(regex=r"^\+*[0-9\s]{8,25}$")
+    phone_number_regex = RegexValidator(regex=r"^\+*[0-9\s]{8,25}$")
     telephone = forms.CharField(
         required=False,
-        validators=[phoneNumberRegex],
+        validators=[phone_number_regex],
         max_length=25,
         label="Numéro de téléphone professionnel",
     )

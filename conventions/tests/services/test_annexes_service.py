@@ -107,14 +107,14 @@ class ConventionAnnexesServiceTests(TestCase):
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
-        annexes_B1 = Annexe.objects.filter(
+        annexes_b1 = Annexe.objects.filter(
             logement__lot=self.service.convention.lot, logement__designation="B1"
         )
-        self.assertEqual(annexes_B1.count(), 1)
+        self.assertEqual(annexes_b1.count(), 1)
 
         self.assertEqual(
             model_to_dict(
-                annexes_B1[0],
+                annexes_b1[0],
                 fields=[
                     "typologie",
                     "surface_hors_surface_retenue",
