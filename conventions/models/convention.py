@@ -30,8 +30,8 @@ class ConventionManager(models.Manager):
     def avenants(self):
         return self.exclude(parent=None)
 
-    def without_denonciation(self):
-        return self.exclude(avenant_types__nom__in=["denonciation"])
+    def without_denonciation_and_resiliation(self):
+        return self.exclude(avenant_types__nom__in=["denonciation", "resiliation"])
 
 
 class Convention(models.Model):

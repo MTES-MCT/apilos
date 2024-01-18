@@ -95,8 +95,9 @@ def convention_post_action(request, convention_uuid):
 
     upform = UploadForm()
     avenant_search_service = AvenantListSearchService(convention, order_by_numero=True)
-    total_avenants = convention.avenants.without_denonciation().count()
+    total_avenants = convention.avenants.without_denonciation_and_resiliation().count()
     denonciation = convention.avenants.filter(avenant_types__nom__in=["denonciation"])
+    resiliaiton = convention.avenants.filter(avenant_types__nom__in=["resiliation"])
 
     return {
         "success": result_status,
@@ -110,6 +111,7 @@ def convention_post_action(request, convention_uuid):
         ),
         "total_avenants": total_avenants,
         "denonciation": denonciation,
+        "resiliation": resiliaiton,
         "resiliation_form": resiliation_form,
         "updatedate_form": updatedate_form,
         "form_posted": form_posted,
