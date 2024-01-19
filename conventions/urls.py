@@ -214,6 +214,11 @@ urlpatterns = [
         name="resiliation_start",
     ),
     path(
+        "resiliation_acte/<convention_uuid>",
+        views.ResiliationActeView.as_view(),
+        name="resiliation_acte",
+    ),
+    path(
         "generate/<convention_uuid>",
         views.generate_convention,
         name="generate",
