@@ -107,4 +107,19 @@ class TypeStationnementAdmin(admin.ModelAdmin):
 
 @admin.register(IndiceEvolutionLoyer)
 class IndiceEvolutionLoyerAdmin(ApilosModelAdmin):
-    pass
+    list_display = (
+        "uuid",
+        "annee",
+        "date_debut",
+        "date_fin",
+        "is_loyer",
+        "nature_logement",
+        "evolution",
+    )
+
+    list_filter = (
+        "is_loyer",
+        "nature_logement",
+    )
+
+    search_fields = ("annee",)
