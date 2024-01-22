@@ -91,6 +91,12 @@ class ConventionFinancementForm(forms.Form):
                     + f"{min_years}"
                 ),
             )
+        # No control on max date for foyer and residence
+        if (
+            self.convention.programme.is_foyer()
+            or self.convention.programme.is_residence()
+        ):
+            return
         if annee_fin_conventionnement > max_years:
             self.add_error(
                 "annee_fin_conventionnement",

@@ -7,7 +7,8 @@ from conventions.forms import ConventionFinancementForm, PretFormSet, UploadForm
 from conventions.models import Convention, Pret, Preteur
 from conventions.services import financement as financement_service
 from conventions.services import utils
-from programmes.models import TypeOperation
+from programmes.models import Financement, TypeOperation
+from programmes.models.choices import NatureLogement
 from users.models import User
 
 financement_form = {
@@ -131,3 +132,20 @@ class ConventionFinancementServiceTests(TestCase):
 
         form = self.service.form
         self.assertTrue(form.has_error("annee_fin_conventionnement"))
+
+    def test_year_max_limit_disabled(self):
+        self.service.convention.financement = Financement.PLS
+        self.service.convention.save()
+        programme = self.service.convention.programme
+        programme.type_operation = TypeOperation.NEUF
+        programme.nature_logement = NatureLogement.AUTRE
+        programme.save()
+        self.service.request.POST = {
+            **financement_form,
+            "annee_fin_conventionnement": datetime.date.today().year + 50,
+        }
+        self.service.save()
+
+        form = self.service.form
+        # Convention is of type foyer, so the max limit for PLS is disabled, no error
+        assert form.errors == {}
