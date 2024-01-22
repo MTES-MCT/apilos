@@ -5,7 +5,7 @@ from django.forms import model_to_dict
 from django.test import TestCase
 
 from bailleurs.models import Bailleur
-from core.tests import utils_assertions, utils_fixtures
+from core.tests import utils_assertions
 from instructeurs.models import Administration
 from programmes.models import (
     Annexe,
@@ -24,6 +24,7 @@ from programmes.models import (
     TypologieLogement,
     TypologieStationnement,
 )
+from programmes.tests.factories import ProgrammeFactory
 
 
 def params_logement(index):
@@ -47,8 +48,7 @@ class ProgrammeModelsTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        bailleur = utils_fixtures.create_bailleur()
-        programme = utils_fixtures.create_programme(bailleur)
+        programme = ProgrammeFactory()
 
         for financement in [Financement.PLAI, Financement.PLUS]:
             lot = Lot.objects.create(

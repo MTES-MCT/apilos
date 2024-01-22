@@ -1,16 +1,31 @@
 from operator import itemgetter
 
-from django.conf import settings
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
+from bailleurs.tests.factories import BailleurFactory
 from conventions.models.choices import ConventionStatut
 from conventions.models.convention import Convention
-from core.tests import utils_fixtures
+from conventions.tests.factories import ConventionFactory
+from instructeurs.tests.factories import AdministrationFactory
 from programmes.api.tests import fixtures
-from programmes.models import Programme
+from programmes.models import (
+    Financement,
+    Programme,
+    TypeHabitat,
+    TypologieAnnexe,
+    TypologieLogement,
+)
+from programmes.tests.factories import (
+    AnnexeFactory,
+    LogementFactory,
+    LotFactory,
+    ProgrammeFactory,
+)
 from siap.siap_client.client import build_jwt
 from users.models import User
+from users.tests.factories import GroupFactory, UserFactory
 
 operation_response = {
     **fixtures.programme2,
@@ -49,6 +64,94 @@ operation_response = {
 }
 
 
+def create_all_for_siap():
+    UserFactory(
+        username="sabine",
+        email="sabine@apilos.com",
+        first_name="Sabine",
+        last_name="Marini",
+        cerbere=True,
+    )
+
+    GroupFactory(name="Instructeur", rwd=["logement", "convention"])
+    GroupFactory(name="Bailleur", rw=["logement", "convention"])
+
+    administration = AdministrationFactory(
+        nom="CA d'Arles-Crau-Camargue-Montagnette",
+        code="12345",
+    )
+
+    bailleur = BailleurFactory(
+        nom="3F",
+        siret="12345678901234",
+        siren="123456789",
+        capital_social="123000.50",
+        ville="Marseille",
+    )
+
+    programme_75 = ProgrammeFactory(
+        bailleur=bailleur,
+        administration=administration,
+        nom="Programme 1",
+        numero_galion="20220600005",
+        make_upload_on_fields=[
+            "acquereur",
+            "acte_de_propriete",
+            "certificat_adressage",
+            "effet_relatif",
+            "reference_cadastrale",
+            "reference_notaire",
+            "reference_publication_acte",
+            "vendeur",
+        ],
+    )
+
+    lot_plai = LotFactory(
+        programme=programme_75,
+        financement=Financement.PLAI,
+        type_habitat=TypeHabitat.MIXTE,
+        make_upload_on_fields=["edd_volumetrique", "edd_classique"],
+    )
+    lot_plus = LotFactory(
+        programme=programme_75,
+        financement=Financement.PLUS,
+        type_habitat=TypeHabitat.COLLECTIF,
+        make_upload_on_fields=["edd_volumetrique", "edd_classique"],
+    )
+
+    ConventionFactory(
+        lot=lot_plus,
+        numero="0001",
+        make_upload_on_fields=["commentaires"],
+    )
+    ConventionFactory(
+        lot=lot_plai,
+        numero="0002",
+        make_upload_on_fields=["commentaires"],
+    )
+
+    log1 = LogementFactory(
+        lot=lot_plai, designation="PLAI 1", typologie=TypologieLogement.T1
+    )
+    AnnexeFactory(
+        logement=log1,
+        typologie=TypologieAnnexe.COUR,
+        surface_hors_surface_retenue=5,
+        loyer_par_metre_carre=0.1,
+    )
+    AnnexeFactory(
+        logement=log1,
+        typologie=TypologieAnnexe.JARDIN,
+        surface_hors_surface_retenue=5,
+        loyer_par_metre_carre=0.1,
+    )
+
+    LogementFactory(lot=lot_plai, designation="PLAI 2", typologie=TypologieLogement.T2)
+    LogementFactory(lot=lot_plai, designation="PLAI 3", typologie=TypologieLogement.T3)
+    LogementFactory(lot=lot_plus, designation="PLUS 1", typologie=TypologieLogement.T1)
+
+
+@override_settings(USE_MOCKED_SIAP_CLIENT=True)
 class OperationDetailsAPITest(APITestCase):
     fixtures = ["departements.json"]
 
@@ -58,10 +161,9 @@ class OperationDetailsAPITest(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        utils_fixtures.create_all_for_siap()
+        create_all_for_siap()
 
     def setUp(self):
-        settings.USE_MOCKED_SIAP_CLIENT = True
         user = User.objects.create_superuser(
             "super.user", "super.user@apilos.com", "12345"
         )
@@ -102,9 +204,9 @@ class OperationDetailsAPITest(APITestCase):
             "anru": False,
         }
         for key, value in expected_data.items():
-            self.assertEqual(response.data[key], value)
+            self.assertEqual(response.data[key], value, f"Error on key {key}")
         for key in ["date_achevement_previsible", "date_achat", "date_achevement"]:
-            self.assertTrue(response.data[key])
+            self.assertTrue(response.data[key], f"Error on key {key}")
 
     def test_post_operation_unauthorized(self):
         client = APIClient()
@@ -145,6 +247,7 @@ class OperationDetailsAPITest(APITestCase):
         self.assertEqual(response.data, operation_response)
 
 
+@override_settings(USE_MOCKED_SIAP_CLIENT=True)
 class OperationClosedAPITest(APITestCase):
     fixtures = ["departements.json"]
     """
@@ -153,10 +256,9 @@ class OperationClosedAPITest(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        utils_fixtures.create_all_for_siap()
+        create_all_for_siap()
 
     def setUp(self):
-        settings.USE_MOCKED_SIAP_CLIENT = True
         user = User.objects.create_superuser(
             "super.user", "super.user@apilos.com", "12345"
         )
@@ -700,7 +802,7 @@ class OperationClosedAPITest(APITestCase):
             "nom": "Programme 1",
             "bailleur": fixtures.bailleur,
             "administration": fixtures.administration,
-            # "conventions": [fixtures.convention1, fixtures.convention2],
+            "conventions": [fixtures.convention1, fixtures.convention2],
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
@@ -716,6 +818,7 @@ class OperationClosedAPITest(APITestCase):
             self.assertTrue(response.data[key])
 
 
+@override_settings(USE_MOCKED_SIAP_CLIENT=True)
 class OperationCanceledAPITest(APITestCase):
     fixtures = ["departements.json"]
     """
@@ -724,10 +827,9 @@ class OperationCanceledAPITest(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        utils_fixtures.create_all_for_siap()
+        create_all_for_siap()
 
     def setUp(self):
-        settings.USE_MOCKED_SIAP_CLIENT = True
         self.user = User.objects.create_superuser(
             "super.user", "super.user@apilos.com", "12345"
         )
