@@ -469,7 +469,7 @@ class Convention(models.Model):
             and self.avenant_types.filter(nom="denonciation").exists()
         )
 
-    def is_resiliation(self):
+    def is_resiliation(self) -> bool:
         return (
             self.parent_id is not None
             and self.avenant_types.filter(nom="resiliation").exists()
@@ -707,5 +707,5 @@ class Convention(models.Model):
             user=request.user if request else None,
         ).save()
 
-    def resiliation_disabled(self):
+    def resiliation_disabled(self) -> bool:
         return self.fichier_instruction_resiliation is None

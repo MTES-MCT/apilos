@@ -10,7 +10,7 @@ class ConventionResiliationActeForm(forms.Form):
     )
     date_resiliation_definitive = forms.DateField(
         required=True,
-        label="Spécifier la date de résiliation définitive",
+        label="Indiquez la date de résiliation définitive",
         error_messages={
             "required": "Vous devez saisir une date de résiliation définitive",
         },
@@ -36,7 +36,7 @@ class ConventionResiliationForm(forms.Form):
     )
     date_resiliation_demandee = forms.DateField(
         required=True,
-        label="Spécifier la date de résiliation",
+        label="Indiquez la date de résiliation",
         error_messages={
             "required": "Vous devez saisir une date de résiliation",
         },

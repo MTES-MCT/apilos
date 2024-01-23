@@ -17,5 +17,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(add_avenant_types),
+        migrations.RunPython(add_avenant_types, migrations.RunPython.noop),
     ]
