@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 
 from conventions.models import Convention
-from conventions.services.denonciation import (
+from conventions.services.resiliation import (
     ConventionResiliationActeService,
     ConventionResiliationService,
 )

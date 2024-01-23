@@ -151,7 +151,6 @@ class User(AbstractUser):
         # Si l'utilisateur a un login Cerbere et le champs siap_habilitation est
         # proprement initialisé (i.e. dans un contexte web connecté de cet
         # utilisateur avec session)
-        return False
         if self.is_cerbere_user() and self.siap_habilitation:
             return "currently" in self.siap_habilitation and self.siap_habilitation[
                 "currently"
@@ -177,17 +176,15 @@ class User(AbstractUser):
                 GroupProfile.SIAP_SER_DEP,
                 GroupProfile.SIAP_ADM_CENTRALE,
             ]
-        return True
         return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
 
     def is_instructeur_departemental(self):
-        # if self.is_cerbere_user():
-        #     return "currently" in self.siap_habilitation and self.siap_habilitation[
-        #         "currently"
-        #     ] in [
-        #         GroupProfile.SIAP_SER_DEP,
-        #     ]
-        return True
+        if self.is_cerbere_user():
+            return "currently" in self.siap_habilitation and self.siap_habilitation[
+                "currently"
+            ] in [
+                GroupProfile.SIAP_SER_DEP,
+            ]
 
     def get_active_administrations(self):
         return (
