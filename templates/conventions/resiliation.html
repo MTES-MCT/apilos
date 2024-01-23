@@ -1,20 +1,4 @@
-{% extends "layout/base.html" %}
-
-{% block page_title %} Résiliation - APiLos {% endblock%}
-
-{% load static %}
-
-{% block javascript_extras %}
-    <script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-    <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-    <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
-    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
-
-{% block css_extras %}
-    <link rel="stylesheet" href="{% static "dropzonejs/min/basic.min.css" %}">
-    <link rel="stylesheet" href="{% static "dropzonejs/min/dropzone.min.css" %}">
-{% endblock %}
+{% extends "conventions/resiliation_base.html" %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">

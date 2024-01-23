@@ -1,5 +1,7 @@
 from django import forms
 
+error_message_max_length = "Le message ne doit pas excéder 5000 caractères"
+
 
 class ConventionResiliationActeForm(forms.Form):
     uuid = forms.UUIDField(
@@ -18,7 +20,7 @@ class ConventionResiliationActeForm(forms.Form):
         label="Acte authentique/administratif",
         max_length=5000,
         error_messages={
-            "max_length": "Le message ne doit pas excéder 5000 caractères",
+            "max_length": error_message_max_length,
         },
     )
     fichier_instruction_resiliation_files = forms.CharField(
@@ -44,7 +46,7 @@ class ConventionResiliationForm(forms.Form):
         label="Indiquez ici le motif de la résiliation de la convention.",
         max_length=5000,
         error_messages={
-            "max_length": "Le message ne doit pas excéder 5000 caractères",
+            "max_length": error_message_max_length,
         },
     )
     champ_libre_avenant = forms.CharField(
@@ -52,6 +54,6 @@ class ConventionResiliationForm(forms.Form):
         label="Ajoutez tous les renseignements supplémentaires concernant la résiliation.",
         max_length=5000,
         error_messages={
-            "max_length": "Le message ne doit pas excéder 5000 caractères",
+            "max_length": error_message_max_length,
         },
     )
