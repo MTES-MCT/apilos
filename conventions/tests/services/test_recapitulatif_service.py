@@ -209,6 +209,22 @@ class AvenantRecapitulatifServiceTests(TestCase):
         self.assertEqual(self.convention1.statut, ConventionStatut.DENONCEE.label)
         self.assertEqual(self.avenant1.statut, ConventionStatut.DENONCEE.label)
 
+    def test_convention_resiliation_validate(self):
+        self.avenant1.date_resiliation_definitive = date(2022, 12, 31)
+        self.avenant1.save()
+        resiliation_result = recapitulatif.convention_resiliation_validate(
+            self.request, self.avenant1.uuid
+        )
+        self.avenant1.refresh_from_db()
+        self.convention1.refresh_from_db()
+
+        self.assertEqual(resiliation_result["success"], utils.ReturnStatus.SUCCESS)
+        self.assertEqual(
+            self.convention1.date_resiliation_definitive, date(2022, 12, 31)
+        )
+        self.assertEqual(self.convention1.statut, ConventionStatut.RESILIEE.label)
+        self.assertEqual(self.avenant1.statut, ConventionStatut.RESILIEE.label)
+
 
 class CollectInstructeurEmailsTestCase(TestCase):
     fixtures = [

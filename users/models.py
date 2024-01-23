@@ -185,6 +185,7 @@ class User(AbstractUser):
             ] in [
                 GroupProfile.SIAP_SER_DEP,
             ]
+        return self.is_superuser
 
     def get_active_administrations(self):
         return (
