@@ -706,3 +706,6 @@ class Convention(models.Model):
             statut_convention_precedent=previous_status,
             user=request.user if request else None,
         ).save()
+
+    def resiliation_disabled(self):
+        return self.fichier_instruction_resiliation is None

@@ -174,6 +174,12 @@ avenant_resiliation_demande_step = ConventionFormStep(
     classname="ResiliationView",
 )
 
+avenant_resiliation_creation_step = ConventionFormStep(
+    pathname="conventions:resiliation_creation",
+    label="Création de la résiliation",
+    classname="ResiliationCreationView",
+)
+
 avenant_resiliation_acte_step = ConventionFormStep(
     pathname="conventions:resiliation_acte",
     label="Instruction de la résiliation",
