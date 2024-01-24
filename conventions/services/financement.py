@@ -1,7 +1,5 @@
 import datetime
 
-from django.db.models import Case, CharField, F, Func, Value, When
-
 from conventions.forms import ConventionFinancementForm, PretFormSet
 from conventions.forms.upload import UploadForm
 from conventions.models.pret import Pret
@@ -22,22 +20,11 @@ class ConventionFinancementService(ConventionService):
                 "montant",
                 "preteur",
                 "autre",
-                date_octroi_formatted=Case(
-                    When(
-                        date_octroi__isnull=False,
-                        then=Func(
-                            F("date_octroi"),
-                            Value("YYYY-MM-DD"),
-                            output_field=CharField(),
-                            function="to_char",
-                        ),
-                    ),
-                    default=Value(""),
-                ),
+                "date_octroi",
             )
         )
         for item in initial:
-            item["date_octroi"] = item.pop("date_octroi_formatted")
+            item["date_octroi"] = utils.format_date_for_form(item["date_octroi"])
         self.formset = PretFormSet(initial=initial)
         self.form = ConventionFinancementForm(
             initial={
