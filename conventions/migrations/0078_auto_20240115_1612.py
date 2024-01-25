@@ -13,7 +13,7 @@ def add_avenant_types(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("conventions", "0076_alter_convention_avenant_types_and_more"),
+        ("conventions", "0077_trigram_extensions"),
     ]
 
     operations = [

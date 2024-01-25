@@ -27,7 +27,7 @@
 {% endif %}
 {% if convention|display_is_validated %}
     <div role="alert" class="fr-alert fr-alert--success">
-        <p class="fr-alert__title">La résiliation a été validée pour la date du {{ convention.date_resiliation_definitive|date:"j F Y" }}</p>
+        <p class="fr-alert__title">La résiliation a été validée pour la date du {{ convention.date_resiliation|date:"j F Y" }}</p>
     </div>
     <hr>
 {% endif %}

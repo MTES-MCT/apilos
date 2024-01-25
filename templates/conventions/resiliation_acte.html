@@ -11,10 +11,6 @@
             {% csrf_token %}
             <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w">
                 <div class="fr-col-12 fr-mb-4w">
-                    <h4>Date de résiliation définitive</h4>
-                    {% include "common/form/input_date.html" with form_input=form.date_resiliation_definitive object_field="convention__date_resiliation_definitive__"|add:form.uuid.value %}
-                </div>
-                <div class="fr-col-12 fr-mb-4w">
                     {% include "common/form/input_upload.html" with form_input=form.fichier_instruction_resiliation form_input_files=form.fichier_instruction_resiliation_files object_name='convention' object_uuid=convention.uuid file_list=convention.fichier_instruction_resiliation|get_files_from_textfiles object_field="convention__fichier_instruction_resiliation__"|add:form.uuid.value %}
                 </div>
                 {% include "conventions/common/form_footer_button.html" %}

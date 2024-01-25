@@ -8,16 +8,9 @@ class ConventionResiliationActeForm(forms.Form):
         required=False,
         label="Résiliation",
     )
-    date_resiliation_definitive = forms.DateField(
-        required=True,
-        label="Indiquez la date de résiliation définitive",
-        error_messages={
-            "required": "Vous devez saisir une date de résiliation définitive",
-        },
-    )
     fichier_instruction_resiliation = forms.CharField(
         required=False,
-        label="Acte authentique/administratif",
+        label="Acte administratif (arrêté)",
         max_length=5000,
         error_messages={
             "max_length": error_message_max_length,
@@ -34,7 +27,7 @@ class ConventionResiliationForm(forms.Form):
         required=False,
         label="Résiliation",
     )
-    date_resiliation_demandee = forms.DateField(
+    date_resiliation = forms.DateField(
         required=True,
         label="Indiquez la date de résiliation",
         error_messages={
@@ -49,11 +42,15 @@ class ConventionResiliationForm(forms.Form):
             "max_length": error_message_max_length,
         },
     )
-    champ_libre_avenant = forms.CharField(
+    commentaires = forms.CharField(
         required=False,
-        label="Ajoutez tous les renseignements supplémentaires concernant la résiliation.",
+        label="Ajoutez vos commentaires à l'attention de l'instructeur",
         max_length=5000,
         error_messages={
-            "max_length": error_message_max_length,
+            "max_length": "Le message ne doit pas excéder 5000 caractères",
         },
+    )
+    commentaires_files = forms.CharField(
+        required=False,
+        help_text="Les fichiers de type images et pdf sont acceptés dans la limite de 100 Mo",
     )

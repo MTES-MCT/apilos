@@ -11,7 +11,7 @@
                     {% include "conventions/actions/goto.html" %}
                 </div>
                 <div class="table--limited-height">
-                    {% include "common/display_field_if_exists.html" with label="Date définitive de la résiliation" value=convention.date_resiliation_definitive object_field="convention__date_resiliation_definitive__"|add:convention_uuid %}
+                    {% include "common/display_field_if_exists.html" with label="Date définitive de la résiliation" value=convention.date_resiliation object_field="convention__date_resiliation__"|add:convention_uuid %}
                     {% include "common/display_text_and_files_if_exists.html" with file_list=convention.fichier_instruction_resiliation|get_files_from_textfiles %}
                 </div>
             </div>

@@ -17,7 +17,6 @@ def resiliation_acte_service():
     request = RequestFactory().post(
         "/",
         data={
-            "date_resiliation_definitive": "2022-09-03",
             "fichier_instruction_resiliation": "test_file",
         },
     )
@@ -35,7 +34,6 @@ class TestConventionResiliationActeService:
 
         assert set(resiliation_acte_service.form.initial.keys()) == {
             "uuid",
-            "date_resiliation_definitive",
             "fichier_instruction_resiliation",
             "fichier_instruction_resiliation_files",
         }
@@ -44,9 +42,6 @@ class TestConventionResiliationActeService:
         resiliation_acte_service.save()
         resiliation_acte_service.convention.refresh_from_db()
 
-        assert resiliation_acte_service.convention.date_resiliation_definitive == date(
-            2022, 9, 3
-        )
         assert (
             "test_file"
             in resiliation_acte_service.convention.fichier_instruction_resiliation
@@ -59,9 +54,9 @@ def resiliation_service():
     request = RequestFactory().post(
         "/",
         data={
-            "date_resiliation_demandee": "2022-09-04",
+            "date_resiliation": "2022-09-04",
             "motif_resiliation": "Motif de résiliation",
-            "champ_libre_avenant": "Champ libre avenant",
+            "commentaires": "Commentaires test",
         },
     )
     request.user = user
@@ -78,21 +73,21 @@ class TestConventionResiliationService:
 
         assert set(resiliation_service.form.initial.keys()) == {
             "uuid",
-            "date_resiliation_demandee",
+            "date_resiliation",
             "motif_resiliation",
-            "champ_libre_avenant",
+            "commentaires",
+            "commentaires_files",
         }
 
     def test_save(self, resiliation_service):
         resiliation_service.save()
         resiliation_service.convention.refresh_from_db()
 
-        assert resiliation_service.convention.date_resiliation_demandee == date(
-            2022, 9, 4
-        )
+        assert resiliation_service.convention.date_resiliation == date(2022, 9, 4)
         assert (
             resiliation_service.convention.motif_resiliation == "Motif de résiliation"
         )
         assert (
-            resiliation_service.convention.champ_libre_avenant == "Champ libre avenant"
+            resiliation_service.convention.commentaires
+            == '{"files": [], "text": "Commentaires test"}'
         )

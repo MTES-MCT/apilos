@@ -19,9 +19,6 @@ class ConventionResiliationActeService(ConventionService):
         self.form = ConventionResiliationActeForm(
             initial={
                 "uuid": self.convention.uuid,
-                "date_resiliation_definitive": utils.format_date_for_form(
-                    self.convention.date_resiliation_definitive
-                ),
                 **utils.get_text_and_files_from_field(
                     "fichier_instruction_resiliation",
                     self.convention.fichier_instruction_resiliation,
@@ -38,13 +35,6 @@ class ConventionResiliationActeService(ConventionService):
         self.form = ConventionResiliationActeForm(
             {
                 "uuid": self.convention.uuid,
-                **utils.build_partial_form(
-                    self.request,
-                    self.convention,
-                    [
-                        "date_resiliation_definitive",
-                    ],
-                ),
                 **utils.init_text_and_files_from_field(
                     self.request,
                     self.convention,
@@ -57,9 +47,6 @@ class ConventionResiliationActeService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_resiliation_acte(self):
-        self.convention.date_resiliation_definitive = self.form.cleaned_data[
-            "date_resiliation_definitive"
-        ]
         self.convention.fichier_instruction_resiliation = (
             utils.set_files_and_text_field(
                 self.form.cleaned_data["fichier_instruction_resiliation_files"],
@@ -79,11 +66,13 @@ class ConventionResiliationService(ConventionService):
         self.form = ConventionResiliationForm(
             initial={
                 "uuid": self.convention.uuid,
-                "date_resiliation_demandee": utils.format_date_for_form(
-                    self.convention.date_resiliation_demandee
+                "date_resiliation": utils.format_date_for_form(
+                    self.convention.date_resiliation
                 ),
                 "motif_resiliation": self.convention.motif_resiliation,
-                "champ_libre_avenant": self.convention.champ_libre_avenant,
+                **utils.get_text_and_files_from_field(
+                    "commentaires", self.convention.commentaires
+                ),
             }
         )
 
@@ -100,10 +89,14 @@ class ConventionResiliationService(ConventionService):
                     self.request,
                     self.convention,
                     [
-                        "date_resiliation_demandee",
+                        "date_resiliation",
                         "motif_resiliation",
-                        "champ_libre_avenant",
                     ],
+                ),
+                **utils.init_text_and_files_from_field(
+                    self.request,
+                    self.convention,
+                    "commentaires",
                 ),
             }
         )
@@ -112,11 +105,10 @@ class ConventionResiliationService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_resiliation(self):
-        self.convention.date_resiliation_demandee = self.form.cleaned_data[
-            "date_resiliation_demandee"
-        ]
+        self.convention.date_resiliation = self.form.cleaned_data["date_resiliation"]
         self.convention.motif_resiliation = self.form.cleaned_data["motif_resiliation"]
-        self.convention.champ_libre_avenant = self.form.cleaned_data[
-            "champ_libre_avenant"
-        ]
+        self.convention.commentaires = utils.set_files_and_text_field(
+            self.form.cleaned_data["commentaires_files"],
+            self.form.cleaned_data["commentaires"],
+        )
         self.convention.save()

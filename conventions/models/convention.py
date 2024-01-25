@@ -227,10 +227,9 @@ class Convention(models.Model):
     motif_denonciation = models.TextField(null=True, blank=True)
     fichier_instruction_denonciation = models.TextField(null=True, blank=True)
 
-    date_resiliation_demandee = models.DateField(null=True, blank=True)
+    date_resiliation = models.DateField(null=True, blank=True)
     motif_resiliation = models.TextField(null=True, blank=True)
     fichier_instruction_resiliation = models.TextField(null=True, blank=True)
-    date_resiliation_definitive = models.DateField(null=True, blank=True)
 
     adresse = models.TextField(null=True, blank=True)
 
@@ -708,4 +707,7 @@ class Convention(models.Model):
         ).save()
 
     def resiliation_disabled(self) -> bool:
-        return self.fichier_instruction_resiliation is None
+        return (
+            self.fichier_instruction_resiliation is None
+            or self.fichier_instruction_resiliation == '{"files": {}, "text": ""}'
+        )
