@@ -3,7 +3,7 @@ from collections import defaultdict
 from copy import copy
 
 from django.conf import settings
-from django.contrib.postgres.search import SearchVector, TrigramSimilarity
+from django.contrib.postgres.search import TrigramSimilarity
 from django.core.paginator import Paginator
 from django.db.models import Q, QuerySet, Value
 from django.db.models.functions import Replace
@@ -150,7 +150,10 @@ class UserConventionSearchService(ConventionSearchBaseService):
             self.filters["statut"] = self.statut.label
 
         if self.commune:
-            self.filters["vector_ville"] = self.commune
+            # self.filters["vector_ville"] = self.commune
+            self.filters[
+                "programme_ville_similarity__gt"
+            ] = settings.TRIGRAM_SIMILARITY_THRESHOLD
 
         if self.financement:
             self.filters["financement"] = self.financement
@@ -179,8 +182,13 @@ class UserConventionSearchService(ConventionSearchBaseService):
 
         if self.commune:
             qs = qs.annotate(
-                vector_ville=(SearchVector("programme__ville", config="french"))
+                programme_ville_similarity=TrigramSimilarity(
+                    "programme__ville", self.commune
+                )
             )
+            # qs = qs.annotate(
+            #     vector_ville=(SearchVector("programme__ville", config="french"))
+            # )
 
         return qs
 
@@ -189,6 +197,9 @@ class UserConventionSearchService(ConventionSearchBaseService):
 
         if self.search_input:
             order_by.append("-programme_nom_similarity")
+
+        if self.commune:
+            order_by.append("-programme_ville_similarity")
 
         return order_by
 
