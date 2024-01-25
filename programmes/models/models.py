@@ -39,7 +39,7 @@ class Programme(IngestableModel):
             models.Index(fields=["nom"], name="programme_nom_idx"),
             models.Index(fields=["-date_achevement_compile"]),
             GinIndex(
-                SearchVector("ville", config="french"), name="search_vector_ville"
+                SearchVector("ville", config="french"), name="search_vector_ville_idx"
             ),
         ]
 
