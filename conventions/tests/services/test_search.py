@@ -39,10 +39,12 @@ class SearchServiceTestBase(ParametrizedTestCase, TestCase):
         [
             ("Paris", 0),
             ("Bourg-en-Bresse", 1),
-            ("Bourg-en-Bresse 2", 1),
+            ("Bourg en Bresse", 1),
             ("bourg en bresse", 1),
-            ("bour en bress", 1),
+            ("bourg en bress", 1),
+            ("bourg bresse", 1),
             ("bourg", 1),
+            ("bourg en brèsse", 1),
         ],
     )
     def test_search_programme_ville(self, input: str, expected_count: int):
