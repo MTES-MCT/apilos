@@ -15,10 +15,28 @@ La base de données est sauvegardée toutes les nuits et Scalingo propose une so
 
 Les "User Stories" (US) sont développées sur des "feature branches" (convention de nommage sNUM-US_DESCRIPTION) à partir de la branch `main`.
 les `feature branches` font l'objet de `pull request` à merger sur `main`.
-les `releases` sont préparées et déployées à partir de ma branch `main`
 
-La solution circleci est utilisée: [CircleCI:Apilos](https://app.circleci.com/pipelines/github/MTES-MCT/apilos?filter=all)
-La config est ici : [.circleci/config.yaml](.circleci/config.yaml)
+La solution github actions est utilisée: [Github Actions](https://github.com/MTES-MCT/apilos/actions)
+La config est ici : [.github/workflows](.github/workflows)
+
+### Comment release
+
+- Taggez le dernier commit de la branche main et uploadez sur github.
+
+`git tag v1.23.0`
+`git push --tags`
+
+La CI va lancer les tests, déployer en production et créer une release.
+
+- Vérifiez que les déploiements en production se passent bien en consultant les logs. Une CI verte ne veut pas dire que le déploiement a fonctionné.
+
+- Ajoutez le changelog technique à la release github, vous pouvez le générer avec la commande
+
+`git log v1.23.0...v1.22.0 --oneline`
+
+- Toujours sur la release github, ajoutez les sections Fonctionnalités, Correctifs, Mise à jour des dépendances et Amélioratons techniques. Ajoutez-y les lignes de changelog qui correspondent en reformulant pour les rendre compréhensible par quelqu'un de non-technique. Inspirez-vous des releases précédentes.
+
+- Prévenez de la mise en production sur mattermost, ainsi que sur le slack du SIAP.
 
 ### CI
 
