@@ -19,7 +19,6 @@ from django.http import (
 )
 from django.shortcuts import get_object_or_404, render
 from django.urls import resolve, reverse
-from django.utils.functional import cached_property
 from django.views import View
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from zipfile import ZipFile
@@ -233,16 +232,20 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
             ("administration", "administration"),
         ]
 
-    @cached_property
-    def validation_year_choices(self) -> list[str]:
+    def _date_validation_choices(self) -> list[str]:
+        validation_year_threshold = 1900
         try:
             earliest = (
-                Convention.objects.exclude(valide_le__isnull=True)
+                Convention.objects.filter(
+                    statut__in=[s.label for s in self.service_class.statuses],
+                    valide_le__isnull=False,
+                    valide_le__year__gte=validation_year_threshold,
+                )
                 .earliest("valide_le")
                 .valide_le.year
             )
         except Convention.DoesNotExist:
-            earliest = 1990  # fallback value
+            earliest = validation_year_threshold  # fallback value
         years = sorted(range(earliest, date.today().year + 1), reverse=True)
         return [str(year) for year in years]
 
@@ -258,12 +261,12 @@ class ConventionActivesSearchView(ConventionSearchView):
 
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         return super().get_context(request) | {
-            "validation_year_choices": self.validation_year_choices
+            "date_validation_choices": self._date_validation_choices()
         }
 
     def get_search_filters_mapping(self):
         return super().get_search_filters_mapping() + [
-            ("validation_year", "validation_year")
+            ("date_validation", "date_validation")
         ]
 
 
@@ -273,12 +276,12 @@ class ConventionTermineesSearchView(ConventionSearchView):
 
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         return super().get_context(request) | {
-            "validation_year_choices": self.validation_year_choices
+            "date_validation_choices": self._date_validation_choices()
         }
 
     def get_search_filters_mapping(self):
         return super().get_search_filters_mapping() + [
-            ("validation_year", "validation_year")
+            ("date_validation", "date_validation")
         ]
 
 

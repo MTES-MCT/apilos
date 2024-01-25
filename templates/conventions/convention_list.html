@@ -117,14 +117,14 @@
                         </div>
 
                         {# Champs annee de validation #}
-                        {% if validation_year_choices %}
+                        {% if date_validation_choices %}
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
                                 <div class="">
-                                    <select class="fr-select" name="validation_year">
+                                    <select class="fr-select" name="date_validation">
                                         <option value="">Année de validation</option>
-                                        {% for value in validation_year_choices %}
+                                        {% for value in date_validation_choices %}
                                             <option value="{{ value }}"
-                                                {% if value == request.GET.validation_year %}selected{% endif %}>
+                                                {% if value == request.GET.date_validation %}selected{% endif %}>
                                                 {{ value }}
                                             </option>
                                         {% endfor %}

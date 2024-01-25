@@ -110,22 +110,22 @@ class ConventionIndexFiltersViewTests(TestCase):
         "users_for_tests.json",
     ]
 
-    def test_filter_validation_year(self):
+    def test_filter_date_validation(self):
         self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
         ConventionFactory(statut=ConventionStatut.SIGNEE.label, valide_le="2023-01-01")
         ConventionFactory(statut=ConventionStatut.SIGNEE.label, valide_le="2020-01-01")
 
         response = self.client.get(
-            reverse("conventions:search_active"), data={"validation_year": "2000"}
+            reverse("conventions:search_active"), data={"date_validation": "2000"}
         )
         self.assertEqual(
-            response.context["validation_year_choices"],
+            response.context["date_validation_choices"],
             sorted([str(d) for d in range(2020, date.today().year + 1)], reverse=True),
         )
         self.assertEqual(response.context["filtered_conventions_count"], 0)
 
         response = self.client.get(
-            reverse("conventions:search_active"), data={"validation_year": "2023"}
+            reverse("conventions:search_active"), data={"date_validation": "2023"}
         )
         self.assertEqual(response.context["filtered_conventions_count"], 1)
