@@ -82,16 +82,22 @@ class TestUserConventionActivesSearchService(SearchServiceTestBase):
         Convention.objects.all().update(statut=ConventionStatut.SIGNEE.label)
 
     def test_search_date_validation(self):
-        ConventionFactory(statut=ConventionStatut.SIGNEE.label, valide_le="2023-01-01")
-        ConventionFactory(statut=ConventionStatut.SIGNEE.label, valide_le="2020-01-01")
+        ConventionFactory(
+            statut=ConventionStatut.SIGNEE.label,
+            televersement_convention_signee_le="2023-01-01",
+        )
+        ConventionFactory(
+            statut=ConventionStatut.SIGNEE.label,
+            televersement_convention_signee_le="2020-01-01",
+        )
 
         service = self.service_class(
-            user=self.user, search_filters={"date_validation": "2000"}
+            user=self.user, search_filters={"date_signature": "2000"}
         )
         self.assertEqual(service.get_queryset().count(), 0)
 
         service = self.service_class(
-            user=self.user, search_filters={"date_validation": "2023"}
+            user=self.user, search_filters={"date_signature": "2023"}
         )
         self.assertEqual(service.get_queryset().count(), 1)
 
