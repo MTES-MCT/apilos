@@ -47,7 +47,7 @@ def is_instructeur(request: HttpRequest) -> bool:
 
 @register.filter
 def current_administration(request: HttpRequest) -> None | int:
-    if is_instructeur(request) and request.session["administration"]:
+    if is_instructeur(request) and request.session.get("administration"):
         administration = Administration.objects.get(
             id=request.session["administration"]["id"]
         )
@@ -57,7 +57,7 @@ def current_administration(request: HttpRequest) -> None | int:
 
 @register.filter
 def current_bailleur(request: HttpRequest) -> None | int:
-    if is_bailleur(request) and request.session["bailleur"]:
+    if is_bailleur(request) and request.session.get("bailleur"):
         bailleur = Bailleur.objects.get(id=request.session["bailleur"]["id"])
         return bailleur.uuid
     return None

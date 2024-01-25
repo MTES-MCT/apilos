@@ -261,7 +261,7 @@ class User(AbstractUser):
     # else raise
     #
     def administration_filter(self, full_scope=False):
-        if self.is_superuser:
+        if self.is_superuser or self.is_staff:
             return {}
 
         # instructeur from cerbere has access to all administrations
@@ -310,12 +310,13 @@ class User(AbstractUser):
     #
     # list of bailleurs following role
     # super admin = all bailleurs, filtre = {}
+    # staff user = all bailleurs, filtre = {}
     # instructeur = all bailleurs following geo, filtre = {}
     # bailleur = bailleurs which belongs to the user as a bailleur, filtre = {id__in: [x,y,z]}
     # else raise
     #
     def bailleur_filter(self, full_scope=False):
-        if self.is_superuser:
+        if self.is_superuser or self.is_staff:
             return {}
 
         # to do : manage programme related to geo for instructeur
@@ -446,8 +447,9 @@ class User(AbstractUser):
         )
 
     def user_list(self, order_by="username"):
-        if self.is_superuser:
+        if self.is_superuser or self.is_staff:
             return User.objects.all().order_by(order_by)
+
         if self.is_bailleur():
             return (
                 User.objects.all()
