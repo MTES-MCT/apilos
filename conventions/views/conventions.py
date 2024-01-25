@@ -571,12 +571,11 @@ def resiliation_start(request, convention_uuid):
             return HttpResponseRedirect(
                 reverse("conventions:resiliation", args=[result["convention"].uuid])
             )
-        else:
-            return HttpResponseRedirect(
-                reverse(
-                    "conventions:resiliation_creation", args=[result["convention"].uuid]
-                )
+        return HttpResponseRedirect(
+            reverse(
+                "conventions:resiliation_creation", args=[result["convention"].uuid]
             )
+        )
 
     return render(
         request,

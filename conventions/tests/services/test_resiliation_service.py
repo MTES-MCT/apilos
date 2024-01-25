@@ -1,100 +1,98 @@
 from datetime import date
 
-from django.test import RequestFactory, TestCase
+import pytest
+from django.test import RequestFactory
 
 from conventions.services.resiliation import (
     ConventionResiliationActeService,
     ConventionResiliationService,
 )
 from conventions.tests.factories import ConventionFactory
-from users.models import User
+from users.tests.factories import UserFactory
 
 
-class ConventionResiliationActeServiceTest(TestCase):
-    fixtures = [
-        "auth.json",
-        "avenant_types.json",
-        "bailleurs_for_tests.json",
-        "instructeurs_for_tests.json",
-        "programmes_for_tests.json",
-        "conventions_for_tests.json",
-        "users_for_tests.json",
-    ]
+@pytest.fixture()
+def resiliation_acte_service():
+    user = UserFactory(is_superuser=True)
+    request = RequestFactory().post(
+        "/",
+        data={
+            "date_resiliation_definitive": "2022-09-03",
+            "fichier_instruction_resiliation": "test_file",
+        },
+    )
+    request.user = user
+    return ConventionResiliationActeService(
+        convention=ConventionFactory(),
+        request=request,
+    )
 
-    def setUp(self):
-        user = User.objects.get(username="nicolas")
-        request = RequestFactory().post(
-            "/",
-            data={
-                "date_resiliation_definitive": "2022-09-03",
-                "fichier_instruction_resiliation": "test_file",
-            },
-        )
-        request.user = user
-        self.service = ConventionResiliationActeService(
-            convention=ConventionFactory(),
-            request=request,
-        )
 
-    def test_get(self):
-        self.service.get()
+@pytest.mark.django_db
+class TestConventionResiliationActeService:
+    def test_get(self, resiliation_acte_service):
+        resiliation_acte_service.get()
 
-        assert set(self.service.form.initial.keys()) == {
+        assert set(resiliation_acte_service.form.initial.keys()) == {
             "uuid",
             "date_resiliation_definitive",
             "fichier_instruction_resiliation",
             "fichier_instruction_resiliation_files",
         }
 
-    def test_save(self):
-        self.service.save()
-        self.service.convention.refresh_from_db()
+    def test_save(self, resiliation_acte_service):
+        resiliation_acte_service.save()
+        resiliation_acte_service.convention.refresh_from_db()
 
-        assert self.service.convention.date_resiliation_definitive == date(2022, 9, 3)
-        assert "test_file" in self.service.convention.fichier_instruction_resiliation
-
-
-class ConventionResiliationServiceTest(TestCase):
-    fixtures = [
-        "auth.json",
-        "avenant_types.json",
-        "bailleurs_for_tests.json",
-        "instructeurs_for_tests.json",
-        "programmes_for_tests.json",
-        "conventions_for_tests.json",
-        "users_for_tests.json",
-    ]
-
-    def setUp(self):
-        user = User.objects.get(username="nicolas")
-        request = RequestFactory().post(
-            "/",
-            data={
-                "date_resiliation_demandee": "2022-09-04",
-                "motif_resiliation": "Motif de résiliation",
-                "champ_libre_avenant": "Champ libre avenant",
-            },
+        assert resiliation_acte_service.convention.date_resiliation_definitive == date(
+            2022, 9, 3
         )
-        request.user = user
-        self.service = ConventionResiliationService(
-            convention=ConventionFactory(),
-            request=request,
+        assert (
+            "test_file"
+            in resiliation_acte_service.convention.fichier_instruction_resiliation
         )
 
-    def test_get(self):
-        self.service.get()
 
-        assert set(self.service.form.initial.keys()) == {
+@pytest.fixture()
+def resiliation_service():
+    user = UserFactory(is_superuser=True)
+    request = RequestFactory().post(
+        "/",
+        data={
+            "date_resiliation_demandee": "2022-09-04",
+            "motif_resiliation": "Motif de résiliation",
+            "champ_libre_avenant": "Champ libre avenant",
+        },
+    )
+    request.user = user
+    return ConventionResiliationService(
+        convention=ConventionFactory(),
+        request=request,
+    )
+
+
+@pytest.mark.django_db
+class TestConventionResiliationService:
+    def test_get(self, resiliation_service):
+        resiliation_service.get()
+
+        assert set(resiliation_service.form.initial.keys()) == {
             "uuid",
             "date_resiliation_demandee",
             "motif_resiliation",
             "champ_libre_avenant",
         }
 
-    def test_save(self):
-        self.service.save()
-        self.service.convention.refresh_from_db()
+    def test_save(self, resiliation_service):
+        resiliation_service.save()
+        resiliation_service.convention.refresh_from_db()
 
-        assert self.service.convention.date_resiliation_demandee == date(2022, 9, 4)
-        assert self.service.convention.motif_resiliation == "Motif de résiliation"
-        assert self.service.convention.champ_libre_avenant == "Champ libre avenant"
+        assert resiliation_service.convention.date_resiliation_demandee == date(
+            2022, 9, 4
+        )
+        assert (
+            resiliation_service.convention.motif_resiliation == "Motif de résiliation"
+        )
+        assert (
+            resiliation_service.convention.champ_libre_avenant == "Champ libre avenant"
+        )
