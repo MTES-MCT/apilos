@@ -6,6 +6,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from comments.models import Comment
 from conventions.models import Convention
+from conventions.services.conventions import get_convention_or_403
 
 
 @login_required
@@ -14,7 +15,9 @@ def add_comment(request):
     post_data = json.loads(request.body.decode("utf-8"))
     comment = post_data["comment"].strip()
     convention_uuid = post_data["convention_uuid"]
-    convention = Convention.objects.get(uuid=convention_uuid)
+
+    convention = get_convention_or_403(request, convention_uuid)
+
     if comment:
         # save comment
         comment = Comment.objects.create(

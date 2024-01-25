@@ -25,14 +25,15 @@ from zipfile import ZipFile
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from conventions.forms.evenement import EvenementForm
 from conventions.models import Convention, ConventionStatut, Evenement, PieceJointe
-from conventions.permissions import (
-    has_campaign_permission,
-    has_campaign_permission_view_function,
-)
+from conventions.permissions import has_campaign_permission
 from conventions.services import convention_generator
 from conventions.services.avenants import create_avenant
 from conventions.services.convention_generator import fiche_caf_doc
-from conventions.services.conventions import convention_post_action, convention_sent
+from conventions.services.conventions import (
+    convention_post_action,
+    convention_sent,
+    get_convention_or_403,
+)
 from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
@@ -297,11 +298,13 @@ class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
 
 @require_POST
 @login_required
-@has_campaign_permission_view_function("convention.change_convention")
 def save_convention(request, convention_uuid):
     # could be in a summary service
-    convention = Convention.objects.get(uuid=convention_uuid)
-    request.user.check_perm("convention.change_convention", convention)
+
+    convention = get_convention_or_403(
+        request, convention_uuid, perms="convention.change_convention"
+    )
+
     result = convention_submit(request, convention)
     if result["success"] in [ReturnStatus.SUCCESS, ReturnStatus.WARNING]:
         result.update(
@@ -325,19 +328,23 @@ def save_convention(request, convention_uuid):
 
 @require_POST
 @login_required
-@has_campaign_permission_view_function("convention.delete_convention")
 def delete_convention(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
+    convention = get_convention_or_403(
+        request, convention_uuid, perms="convention.delete_convention"
+    )
     convention.delete()
     return HttpResponseRedirect(reverse("conventions:index"))
 
 
 @require_POST
 @login_required
-@has_campaign_permission_view_function("convention.change_convention")
 def feedback_convention(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
-    request.user.check_perm("convention.view_convention", convention)
+    convention = get_convention_or_403(
+        request,
+        convention_uuid,
+        perms=("convention.view_convention", "convention.change_convention"),
+    )
+
     result = convention_feedback(request, convention)
     return HttpResponseRedirect(
         reverse("conventions:recapitulatif", args=[result["convention"].uuid])
@@ -346,7 +353,6 @@ def feedback_convention(request, convention_uuid):
 
 @require_POST
 @login_required
-@has_campaign_permission_view_function("convention.change_convention")
 def validate_convention(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme__bailleur")
@@ -358,6 +364,7 @@ def validate_convention(request, convention_uuid):
         .get(uuid=convention_uuid)
     )
     request.user.check_perm("convention.change_convention", convention)
+
     result = convention_validate(request, convention)
     is_complete_avenant_form = request.POST.get("completeform", False)
     if is_complete_avenant_form:
@@ -384,7 +391,6 @@ def validate_convention(request, convention_uuid):
 
 @require_POST
 @login_required
-@has_campaign_permission_view_function("convention.change_convention")
 def denonciation_validate(request, convention_uuid):
     convention_denonciation_validate(request, convention_uuid)
     return HttpResponseRedirect(
@@ -394,7 +400,6 @@ def denonciation_validate(request, convention_uuid):
 
 @login_required
 @require_POST
-@has_campaign_permission_view_function("convention.view_convention")
 def generate_convention(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme__bailleur")
@@ -479,10 +484,10 @@ def load_xlsx_model(request, file_type):
 
 @require_GET
 @login_required
-@has_campaign_permission_view_function("convention.view_convention")
 def preview(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
-    request.user.check_perm("convention.view_convention", convention)
+    convention = get_convention_or_403(
+        request, convention_uuid, perms="convention.view_convention"
+    )
     return render(
         request,
         "conventions/preview.html",
@@ -491,7 +496,6 @@ def preview(request, convention_uuid):
 
 
 @login_required
-@has_campaign_permission_view_function("convention.change_convention")
 def sent(request, convention_uuid, *args):
     result = convention_sent(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
@@ -510,7 +514,6 @@ def sent(request, convention_uuid, *args):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-@has_campaign_permission_view_function("convention.change_convention")
 def post_action(request, convention_uuid):
     # Step 12/12
     result = convention_post_action(request, convention_uuid)
@@ -551,10 +554,13 @@ def denonciation_start(request, convention_uuid):
 
 
 @login_required
-@has_campaign_permission_view_function("convention.view_convention")
 def display_pdf(request, convention_uuid):
     # récupérer le doc PDF
-    convention = Convention.objects.get(uuid=convention_uuid)
+
+    convention = get_convention_or_403(
+        request, convention_uuid, perms="convention.view_convention"
+    )
+
     filename = None
     if (
         convention.statut
@@ -650,7 +656,6 @@ def journal(request, convention_uuid):
 
 @login_required
 @require_GET
-@has_campaign_permission_view_function("convention.view_convention")
 def fiche_caf(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("lot")
@@ -659,6 +664,8 @@ def fiche_caf(request, convention_uuid):
         .prefetch_related("programme__administration")
         .get(uuid=convention_uuid)
     )
+    request.user.check_perm("convention.view_convention", convention)
+
     file_stream = fiche_caf_doc(convention)
 
     response = HttpResponse(
