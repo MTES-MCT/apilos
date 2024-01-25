@@ -14,8 +14,6 @@ def diff_programme_duplication(
             "ville",
             "administration_id",
             "bailleur_id",
-            "count_logementedds",
-            "count_referencecadastrales",
             "count_lots",
         ]
 
@@ -23,10 +21,6 @@ def diff_programme_duplication(
 
     qs = Programme.objects.filter(parent__isnull=True, numero_galion=numero_operation)
 
-    if "count_logementedds" in field_names:
-        qs = qs.annotate(count_logementedds=Count("logementedds"))
-    if "count_referencecadastrales" in field_names:
-        qs = qs.annotate(count_logementedds=Count("referencecadastrales"))
     if "count_lots" in field_names:
         qs = qs.annotate(count_logementedds=Count("lots"))
 
@@ -36,4 +30,4 @@ def diff_programme_duplication(
             if value is not None:
                 diff[f].append(value)
 
-    return {k: list(set(v)) for k, v in diff.items() if len(set(v)) > 1}
+    return {k: sorted(list(set(v))) for k, v in diff.items() if len(set(v)) > 1}
