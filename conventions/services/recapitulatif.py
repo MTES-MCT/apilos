@@ -541,3 +541,21 @@ def convention_denonciation_validate(request, convention_uuid):
         "success": result_status,
         "convention": convention,
     }
+
+
+def convention_resiliation_validate(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+    parent = convention.parent
+    date_resiliation = convention.date_resiliation
+    parent.statut = ConventionStatut.RESILIEE.label
+    parent.date_resiliation = date_resiliation
+    parent.save()
+    parent.avenants.all().update(
+        statut=ConventionStatut.RESILIEE.label,
+        date_resiliation=date_resiliation,
+    )
+    result_status = utils.ReturnStatus.SUCCESS
+    return {
+        "success": result_status,
+        "convention": convention,
+    }

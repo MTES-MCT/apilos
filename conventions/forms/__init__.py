@@ -15,10 +15,10 @@ from conventions.forms.convention_form_financement import *
 from conventions.forms.convention_form_foyer_residence_variantes import *
 from conventions.forms.convention_form_logements import *
 from conventions.forms.convention_form_programme import *
+from conventions.forms.convention_form_resiliation import *
 from conventions.forms.convention_form_selection import *
 from conventions.forms.convention_form_type_stationnements import *
 from conventions.forms.convention_number import *
 from conventions.forms.notification import *
-from conventions.forms.resiliation import *
 from conventions.forms.type1and2 import *
 from conventions.forms.upload import *

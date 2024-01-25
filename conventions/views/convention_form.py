@@ -168,6 +168,23 @@ avenant_denonciation_step = ConventionFormStep(
     classname="DenonciationView",
 )
 
+avenant_resiliation_demande_step = ConventionFormStep(
+    pathname="conventions:resiliation_start",
+    label="Création de la résiliation",
+    classname="ResiliationView",
+)
+
+avenant_resiliation_creation_step = ConventionFormStep(
+    pathname="conventions:resiliation_creation",
+    label="Création de la résiliation",
+    classname="ResiliationCreationView",
+)
+
+avenant_resiliation_acte_step = ConventionFormStep(
+    pathname="conventions:resiliation_acte",
+    label="Instruction de la résiliation",
+    classname="ResiliationActeView",
+)
 
 hlm_sem_type_steps = [
     bailleur_step,

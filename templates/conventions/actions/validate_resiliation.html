@@ -1,0 +1,33 @@
+{% load custom_filters %}
+{% if convention|display_validation:request %}
+    <div role="alert" class="fr-alert fr-alert--A_signer fr-icon-arrow-right-s-line-double h-100">
+        <p class="fr-alert__title">Valider la résiliation</p>
+        <p class="fr-py-3w">Si l'ensemble des informations est correcte, vous pouvez valider la dénonciation de la convention.</p>
+        <form method="post" action="{% url 'conventions:resiliation_validate' convention_uuid=convention.uuid %}" data-turbo="false">
+            {% csrf_token %}
+            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+                <div class="fr-col-12">
+                    {% if convention.resiliation_disabled %}
+                        <button class="fr-btn" disabled>
+                            Valider la résiliation
+                        </button>
+                    {% else %}
+                        <button class="fr-btn">
+                            Valider la résiliation
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+        {% if convention.resiliation_disabled %}
+            <p class="fr-py-3w">Vous devez fournir l'acte administratif pour valider la résiliation.</p>
+        {% endif %}
+    </div>
+    <hr>
+{% endif %}
+{% if convention|display_is_validated %}
+    <div role="alert" class="fr-alert fr-alert--success">
+        <p class="fr-alert__title">La résiliation a été validée pour la date du {{ convention.date_resiliation|date:"j F Y" }}</p>
+    </div>
+    <hr>
+{% endif %}

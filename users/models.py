@@ -178,6 +178,15 @@ class User(AbstractUser):
             ]
         return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
 
+    def is_instructeur_departemental(self):
+        if self.is_cerbere_user():
+            return "currently" in self.siap_habilitation and self.siap_habilitation[
+                "currently"
+            ] in [
+                GroupProfile.SIAP_SER_DEP,
+            ]
+        return self.is_superuser
+
     def get_active_administrations(self):
         return (
             self.roles.filter(typologie=TypeRole.INSTRUCTEUR)

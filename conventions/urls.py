@@ -204,6 +204,31 @@ urlpatterns = [
         name="denonciation_validate",
     ),
     path(
+        "resiliation/<convention_uuid>",
+        views.ResiliationView.as_view(),
+        name="resiliation",
+    ),
+    path(
+        "resiliation_start/<convention_uuid>",
+        views.resiliation_start,
+        name="resiliation_start",
+    ),
+    path(
+        "resiliation_acte/<convention_uuid>",
+        views.ResiliationActeView.as_view(),
+        name="resiliation_acte",
+    ),
+    path(
+        "resiliation_creation/<convention_uuid>",
+        views.ResiliationCreationView.as_view(),
+        name="resiliation_creation",
+    ),
+    path(
+        "resiliation_validate/<convention_uuid>",
+        views.resiliation_validate,
+        name="resiliation_validate",
+    ),
+    path(
         "generate/<convention_uuid>",
         views.generate_convention,
         name="generate",

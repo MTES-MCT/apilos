@@ -87,7 +87,7 @@ class AvenantListSearchService(ConventionSearchBaseService):
             self.order_by = "numero"
 
     def _get_base_queryset(self) -> QuerySet:
-        return self.convention.avenants.without_denonciation()
+        return self.convention.avenants.without_denonciation_and_resiliation()
 
 
 class ProgrammeConventionSearchService(ConventionSearchBaseService):

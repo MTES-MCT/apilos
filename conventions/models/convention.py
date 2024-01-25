@@ -30,8 +30,8 @@ class ConventionManager(models.Manager):
     def avenants(self):
         return self.exclude(parent=None)
 
-    def without_denonciation(self):
-        return self.exclude(avenant_types__nom__in=["denonciation"])
+    def without_denonciation_and_resiliation(self):
+        return self.exclude(avenant_types__nom__in=["denonciation", "resiliation"])
 
 
 class Convention(models.Model):
@@ -226,6 +226,10 @@ class Convention(models.Model):
     date_denonciation = models.DateField(null=True, blank=True)
     motif_denonciation = models.TextField(null=True, blank=True)
     fichier_instruction_denonciation = models.TextField(null=True, blank=True)
+
+    date_resiliation = models.DateField(null=True, blank=True)
+    motif_resiliation = models.TextField(null=True, blank=True)
+    fichier_instruction_resiliation = models.TextField(null=True, blank=True)
 
     adresse = models.TextField(null=True, blank=True)
 
@@ -464,6 +468,12 @@ class Convention(models.Model):
             and self.avenant_types.filter(nom="denonciation").exists()
         )
 
+    def is_resiliation(self) -> bool:
+        return (
+            self.parent_id is not None
+            and self.avenant_types.filter(nom="resiliation").exists()
+        )
+
     def is_incompleted_avenant_parent(self):
         if self.is_avenant() and (
             not self.parent.programme.ville
@@ -695,3 +705,9 @@ class Convention(models.Model):
             statut_convention_precedent=previous_status,
             user=request.user if request else None,
         ).save()
+
+    def resiliation_disabled(self) -> bool:
+        return (
+            self.fichier_instruction_resiliation is None
+            or self.fichier_instruction_resiliation == '{"files": {}, "text": ""}'
+        )

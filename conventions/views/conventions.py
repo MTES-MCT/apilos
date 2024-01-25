@@ -38,6 +38,7 @@ from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
     convention_denonciation_validate,
     convention_feedback,
+    convention_resiliation_validate,
     convention_submit,
     convention_validate,
 )
@@ -392,6 +393,16 @@ def denonciation_validate(request, convention_uuid):
     )
 
 
+@require_POST
+@login_required
+@has_campaign_permission_view_function("convention.change_convention")
+def resiliation_validate(request, convention_uuid):
+    convention_resiliation_validate(request, convention_uuid)
+    return HttpResponseRedirect(
+        reverse("conventions:post_action", args=[convention_uuid])
+    )
+
+
 @login_required
 @require_POST
 @has_campaign_permission_view_function("convention.view_convention")
@@ -539,6 +550,31 @@ def denonciation_start(request, convention_uuid):
     if result["success"] == ReturnStatus.SUCCESS:
         return HttpResponseRedirect(
             reverse("conventions:denonciation", args=[result["convention"].uuid])
+        )
+
+    return render(
+        request,
+        "conventions/post_action.html",
+        {
+            **result,
+        },
+    )
+
+
+@login_required
+@permission_required("convention.add_convention")
+def resiliation_start(request, convention_uuid):
+    result = create_avenant(request, convention_uuid)
+
+    if result["success"] == ReturnStatus.SUCCESS:
+        if request.user.is_instructeur_departemental():
+            return HttpResponseRedirect(
+                reverse("conventions:resiliation", args=[result["convention"].uuid])
+            )
+        return HttpResponseRedirect(
+            reverse(
+                "conventions:resiliation_creation", args=[result["convention"].uuid]
+            )
         )
 
     return render(
