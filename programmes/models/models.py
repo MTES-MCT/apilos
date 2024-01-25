@@ -2,6 +2,8 @@ import logging
 import uuid
 from typing import Any
 
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVector
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -36,6 +38,9 @@ class Programme(IngestableModel):
             models.Index(fields=["code_postal"], name="programme_code_postal_idx"),
             models.Index(fields=["nom"], name="programme_nom_idx"),
             models.Index(fields=["-date_achevement_compile"]),
+            GinIndex(
+                SearchVector("ville", config="french"), name="search_vector_ville"
+            ),
         ]
 
     pivot = ["bailleur", "nom", "ville"]

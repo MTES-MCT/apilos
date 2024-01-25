@@ -3,7 +3,7 @@ from collections import defaultdict
 from copy import copy
 
 from django.conf import settings
-from django.contrib.postgres.search import TrigramSimilarity
+from django.contrib.postgres.search import SearchVector, TrigramSimilarity
 from django.core.paginator import Paginator
 from django.db.models import Q, QuerySet, Value
 from django.db.models.functions import Replace
@@ -104,6 +104,8 @@ class ProgrammeConventionSearchService(ConventionSearchBaseService):
 
 
 class UserConventionSearchService(ConventionSearchBaseService):
+    prefetch = ["programme__administration", "lot"]
+
     commune: str | None
     departement: str | None
     order_by: str | None
@@ -146,9 +148,7 @@ class UserConventionSearchService(ConventionSearchBaseService):
             self.filters["statut"] = self.statut.label
 
         if self.commune:
-            self.filters[
-                "programme_ville_similarity__gt"
-            ] = settings.TRIGRAM_SIMILARITY_THRESHOLD
+            self.filters["vector_ville"] = self.commune
 
         if self.financement:
             self.filters["financement"] = self.financement
@@ -163,28 +163,29 @@ class UserConventionSearchService(ConventionSearchBaseService):
             self.filters["lot__programme__anru"] = True
 
     def _get_base_queryset(self) -> QuerySet:
-        qs = (
-            self.user.conventions()
-            .prefetch_related("programme")
-            .prefetch_related("programme__administration")
-            .prefetch_related("lot")
-        )
+        qs = self.user.conventions()
 
         if self.search_input:
             qs = qs.annotate(
                 programme_nom_similarity=TrigramSimilarity(
                     "programme__nom", self.search_input
                 )
-            ).order_by("-programme_nom_similarity")
+            )
 
         if self.commune:
             qs = qs.annotate(
-                programme_ville_similarity=TrigramSimilarity(
-                    "programme__ville", self.commune
-                )
-            ).order_by("-programme_ville_similarity")
+                vector_ville=(SearchVector("programme__ville", config="french"))
+            )
 
         return qs
+
+    def _get_order_by(self) -> list:
+        order_by = super()._get_order_by()
+
+        if self.search_input:
+            order_by.append("-programme_nom_similarity")
+
+        return order_by
 
 
 class UserConventionEnInstructionSearchService(UserConventionSearchService):
@@ -230,7 +231,7 @@ class UserConventionActivesSearchService(UserConventionSearchService):
                     .replace("/", "")
                     .replace(" ", ""),
                 ),
-            ).order_by("-numero_similarity")
+            )
 
         return qs
 
@@ -245,6 +246,14 @@ class UserConventionActivesSearchService(UserConventionSearchService):
                 | Q(numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
                 | Q(programme_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
             )
+
+    def _get_order_by(self) -> list:
+        qs = super()._get_order_by()
+
+        if self.search_input:
+            qs.append("-numero_similarity")
+
+        return qs
 
 
 class UserConventionTermineesSearchService(UserConventionSearchService):
