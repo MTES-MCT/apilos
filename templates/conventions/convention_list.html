@@ -116,6 +116,25 @@
                             </div>
                         </div>
 
+                        {# Champs annee de validation #}
+                        {% if date_validation_choices %}
+                            <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
+                                <div class="">
+                                    <select class="fr-select" name="date_validation">
+                                        <option value="">Année de validation</option>
+                                        {% for value in date_validation_choices %}
+                                            <option value="{{ value }}"
+                                                {% if value == request.GET.date_validation %}selected{% endif %}>
+                                                {{ value }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {# Champs date de signature #}
+
                         {# Champs "Libre" (code opération / numéro de convention, code postal ou nom du programme) #}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
                             <input class="fr-input" placeholder="Numéro, nom, code postal…" type="search" id="search_input" name="search_input" value="{{ search_input }}" />
