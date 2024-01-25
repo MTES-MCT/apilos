@@ -5,8 +5,9 @@ from django.http.request import HttpRequest
 from django.test import TestCase
 from django.urls import reverse
 
-from conventions.models import Convention, ConventionStatut
+from conventions.models import ConventionStatut
 from conventions.services.search import UserConventionSearchService
+from conventions.tests.factories import ConventionFactory
 from conventions.views.conventions import ConventionSearchView, ConventionTabsMixin
 from users.models import User
 
@@ -104,31 +105,16 @@ class ConventionIndexViewTests(TestCase):
 class ConventionIndexFiltersViewTests(TestCase):
     fixtures = [
         "auth.json",
-        "departements.json",
-        "avenant_types.json",
         "bailleurs_for_tests.json",
         "instructeurs_for_tests.json",
-        "programmes_for_tests.json",
-        "conventions_for_tests.json",
         "users_for_tests.json",
     ]
 
-    def _login(self):
-        # login as superuser
+    def test_filter_validation_year(self):
         self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
-    def test_filter_validation_year(self):
-        self._login()
-
-        convention = Convention.objects.get(pk=1)
-        convention.statut = ConventionStatut.SIGNEE.label
-        convention.valide_le = date(2023, 1, 1)
-        convention.save()
-
-        convention = Convention.objects.get(pk=2)
-        convention.statut = ConventionStatut.SIGNEE.label
-        convention.valide_le = date(2020, 1, 1)
-        convention.save()
+        ConventionFactory(statut=ConventionStatut.SIGNEE.label, valide_le="2023-01-01")
+        ConventionFactory(statut=ConventionStatut.SIGNEE.label, valide_le="2020-01-01")
 
         response = self.client.get(
             reverse("conventions:search_active"), data={"validation_year": "2000"}
