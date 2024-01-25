@@ -1,4 +1,9 @@
+from typing import Any
+
 from django.contrib import admin
+from django.contrib.admin import SimpleListFilter
+from django.db.models import Count, QuerySet
+from django.http import HttpRequest
 
 from admin.admin import ApilosModelAdmin
 from admin.filters import IsCloneFilter
@@ -57,6 +62,29 @@ def view_programme(lot):
     return f"{lot.programme.ville} -  {lot.programme.nom}"
 
 
+class HasConvention(SimpleListFilter):
+    title = "lié à une convention"
+    parameter_name = "has_convention"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> list[tuple[Any, str]]:
+        return (
+            ("Oui", "Oui"),
+            ("Non", "Non"),
+        )
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        queryset = queryset.annotate(convention_count=Count("conventions"))
+        match self.value():
+            case "Oui":
+                return queryset.filter(convention_count__gt=0)
+            case "Non":
+                return queryset.filter(convention_count__lte=0)
+            case _:
+                return queryset
+
+
 @admin.register(Lot)
 class LotAdmin(ApilosModelAdmin):
     list_display = (view_programme, "financement", "uuid")
@@ -75,6 +103,8 @@ class LotAdmin(ApilosModelAdmin):
     )
 
     list_select_related = ("programme",)
+
+    list_filter = (HasConvention,)
 
 
 @admin.register(Annexe)
