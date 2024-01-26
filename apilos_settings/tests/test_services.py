@@ -119,9 +119,9 @@ class ImportBailleurUsersServiceTest(TestCase):
 
     def _create_request(self, request):
         # Workaround to mock session & flash messages support (see https://stackoverflow.com/a/12011907/4558679 )
-        setattr(request, "session", "session")
-        messages = FallbackStorage(request)
-        setattr(request, "_messages", messages)
+        request.session = "session"
+        request._messages = FallbackStorage(request)
+
         # Disable CSRF checking
         request._dont_enforce_csrf_checks = True
 

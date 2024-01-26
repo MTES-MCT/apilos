@@ -31,9 +31,11 @@ class ConventionSearchBaseService(ABC):
     def _get_base_queryset(self) -> QuerySet:
         pass
 
+    @abstractmethod
     def _build_queryset_filters(self) -> None:
         pass
 
+    @abstractmethod
     def _build_queryset_extra_filters(self) -> None:
         pass
 
