@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 from collections import defaultdict
 from copy import copy
 
@@ -15,7 +14,7 @@ from programmes.models import Programme
 from users.models import User
 
 
-class ConventionSearchBaseService(ABC):
+class ConventionSearchBaseService:
     order_by = None
     prefetch = []
     default_filters = defaultdict()
@@ -27,15 +26,12 @@ class ConventionSearchBaseService(ABC):
     def choices(self) -> list[tuple[str, str]]:
         return [(status.name, status.label) for status in self.statuses]
 
-    @abstractmethod
     def _get_base_queryset(self) -> QuerySet:
         pass
 
-    @abstractmethod
     def _build_queryset_filters(self) -> None:
         pass
 
-    @abstractmethod
     def _build_queryset_extra_filters(self) -> None:
         pass
 
@@ -91,12 +87,6 @@ class AvenantListSearchService(ConventionSearchBaseService):
     def _get_base_queryset(self) -> QuerySet:
         return self.convention.avenants.without_denonciation_and_resiliation()
 
-    def _build_queryset_filters(self) -> None:
-        pass
-
-    def _build_queryset_extra_filters(self) -> None:
-        pass
-
 
 class ProgrammeConventionSearchService(ConventionSearchBaseService):
     prefetch = ["programme", "programme__administration", "lot"]
@@ -109,12 +99,6 @@ class ProgrammeConventionSearchService(ConventionSearchBaseService):
 
     def _get_base_queryset(self) -> QuerySet:
         return Convention.objects.filter(programme=self.programme)
-
-    def _build_queryset_filters(self) -> None:
-        pass
-
-    def _build_queryset_extra_filters(self) -> None:
-        pass
 
 
 class UserConventionSearchService(ConventionSearchBaseService):

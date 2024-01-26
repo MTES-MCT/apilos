@@ -29,7 +29,7 @@ class LoyerRedevanceUpdateComputer:
         montant_initial: float,
         nature_logement: str,
         date_initiale: date,
-        date_actualisation: date | None,
+        date_actualisation: date | None = None,
     ) -> float:
         if date_actualisation is None:
             date_actualisation = date.today()
