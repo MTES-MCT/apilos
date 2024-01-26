@@ -15,7 +15,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options.get("dry_run")
 
-        programmes = (
+        lots = (
             Programme.objects.all()
             .annotate(convention_count=Count("conventions"))
             .filter(convention_count=0)
@@ -23,21 +23,19 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Found {programmes.count()} programmes without conventions to be removed: "
+                f"Found {lots.count()} lots without conventions to be removed: "
             )
         )
-        for programme in programmes:
+        for lot in lots:
             self.stdout.write(
                 self.style.SUCCESS(
-                    f" - {str(programme.uuid)} - {programme.nom} - {programme.numero_galion} - {programme.cree_le}"
+                    f" - {lot.nom} - {lot.numero_galion} - {lot.cree_le}"
                 )
             )
 
         if not dry_run:
-            for programme in programmes:
-                programme.delete()
+            for lot in lots:
+                lot.delete()
             self.stdout.write(
-                self.style.SUCCESS(
-                    f"Removed {programmes.count()} programmes without conventions"
-                )
+                self.style.SUCCESS(f"Removed {lots.count()} lots without conventions")
             )
