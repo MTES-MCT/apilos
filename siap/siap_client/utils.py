@@ -261,7 +261,7 @@ def get_or_create_programme(
                 "nature_logement": nature_logement,
             },
         )
-    except Programme.MultipleObjectsReturned:
+    except Programme.MultipleObjectsReturned as exc:
         numero_operation = programme_from_siap["donneesOperation"]["numeroOperation"]
 
         diff = diff_programme_duplication(
@@ -269,9 +269,11 @@ def get_or_create_programme(
             field_names=["administration_id", "bailleur_id"],
         )
         if len(diff):
-            raise ConflictedOperationSIAPException(numero_operation, diff)
+            raise ConflictedOperationSIAPException(numero_operation, diff) from exc
 
-        raise DuplicatedOperationSIAPException(numero_operation=numero_operation)
+        raise DuplicatedOperationSIAPException(
+            numero_operation=numero_operation
+        ) from exc
 
     # force nature_logement and administration
     programme.nature_logement = nature_logement

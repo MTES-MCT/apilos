@@ -230,8 +230,10 @@ def _find_or_create_entity(
             ).update(parent=None)
             Bailleur.objects.filter(siren__in=chrildren_siren).update(parent=bailleur)
 
-        except Exception as e:
-            raise FusionAPISIAPException("Error while get bailleur fusion : %s" % e)
+        except Exception as exc:
+            raise FusionAPISIAPException(
+                "Error while get bailleur fusion : %s" % exc
+            ) from exc
 
     if from_habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_SER_GEST:
         # create if not exists gestionnaire

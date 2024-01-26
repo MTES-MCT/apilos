@@ -26,9 +26,7 @@ class EmailServiceTests(TestCase):
         )
 
     def test_email_template_id_not_configured(self):
-        with self.assertRaises(
-            Exception,
-        ):
+        with self.assertRaises(Exception):  # noqa: B017
             EmailService(to_emails=["bailleur@apilos.fr"]).send_transactional_email()
 
 
@@ -53,7 +51,6 @@ class ServicesUtilsTests(TestCase):
         self.request.session.save()
 
     def test_editable_convention(self):
-
         convention = Convention.objects.get(numero="0001")
         convention.statut = ConventionStatut.PROJET.label
         self.request.session["currently"] = GroupProfile.INSTRUCTEUR
