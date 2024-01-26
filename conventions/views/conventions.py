@@ -233,17 +233,17 @@ class ConventionSearchView(LoginRequiredMixin, ConventionTabsMixin, View):
             ("administration", "administration"),
         ]
 
-    def _date_validation_choices(self) -> list[str]:
+    def _date_signature_choices(self) -> list[str]:
         validation_year_threshold = 1900
         try:
             earliest = (
                 Convention.objects.filter(
                     statut__in=[s.label for s in self.service_class.statuses],
-                    valide_le__isnull=False,
-                    valide_le__year__gte=validation_year_threshold,
+                    televersement_convention_signee_le__isnull=False,
+                    televersement_convention_signee_le__year__gte=validation_year_threshold,
                 )
-                .earliest("valide_le")
-                .valide_le.year
+                .earliest("televersement_convention_signee_le")
+                .televersement_convention_signee_le.year
             )
         except Convention.DoesNotExist:
             earliest = validation_year_threshold  # fallback value
@@ -262,12 +262,12 @@ class ConventionActivesSearchView(ConventionSearchView):
 
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         return super().get_context(request) | {
-            "date_validation_choices": self._date_validation_choices()
+            "date_signature_choices": self._date_signature_choices()
         }
 
     def get_search_filters_mapping(self):
         return super().get_search_filters_mapping() + [
-            ("date_validation", "date_validation")
+            ("date_signature", "date_signature")
         ]
 
 
@@ -277,12 +277,12 @@ class ConventionTermineesSearchView(ConventionSearchView):
 
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         return super().get_context(request) | {
-            "date_validation_choices": self._date_validation_choices()
+            "date_signature_choices": self._date_signature_choices()
         }
 
     def get_search_filters_mapping(self):
         return super().get_search_filters_mapping() + [
-            ("date_validation", "date_validation")
+            ("date_signature", "date_signature")
         ]
 
 
