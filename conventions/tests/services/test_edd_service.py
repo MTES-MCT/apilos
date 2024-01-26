@@ -115,7 +115,7 @@ class ConventionEDDServiceTests(TestCase):
 
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertEqual(len(self.service.formset.optional_error), 1)
+        self.assertEqual(len(self.service.formset.optional_errors), 1)
         self.assertTrue(
             isinstance(self.service.formset.optional_errors[0], ValidationError)
         )

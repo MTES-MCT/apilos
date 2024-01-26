@@ -91,6 +91,12 @@ class AvenantListSearchService(ConventionSearchBaseService):
     def _get_base_queryset(self) -> QuerySet:
         return self.convention.avenants.without_denonciation_and_resiliation()
 
+    def _build_queryset_filters(self) -> None:
+        pass
+
+    def _build_queryset_extra_filters(self) -> None:
+        pass
+
 
 class ProgrammeConventionSearchService(ConventionSearchBaseService):
     prefetch = ["programme", "programme__administration", "lot"]
@@ -103,6 +109,12 @@ class ProgrammeConventionSearchService(ConventionSearchBaseService):
 
     def _get_base_queryset(self) -> QuerySet:
         return Convention.objects.filter(programme=self.programme)
+
+    def _build_queryset_filters(self) -> None:
+        pass
+
+    def _build_queryset_extra_filters(self) -> None:
+        pass
 
 
 class UserConventionSearchService(ConventionSearchBaseService):
