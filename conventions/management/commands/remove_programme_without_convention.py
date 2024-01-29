@@ -21,9 +21,11 @@ class Command(BaseCommand):
             .filter(convention_count=0)
         )
 
+        programmes_count = programmes.count()
+
         self.stdout.write(
             self.style.SUCCESS(
-                f"Found {programmes.count()} programmes without conventions to be removed: "
+                f"Found {programmes_count} programmes without conventions to be removed: "
             )
         )
         for programme in programmes:
@@ -34,10 +36,12 @@ class Command(BaseCommand):
             )
 
         if not dry_run:
+            count = 0
             for programme in programmes:
                 programme.delete()
+                count += 1
             self.stdout.write(
                 self.style.SUCCESS(
-                    f"Removed {programmes.count()} programmes without conventions"
+                    f"Removed {count}/{programmes_count} programmes without conventions"
                 )
             )
