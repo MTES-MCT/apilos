@@ -16,6 +16,11 @@ from upload.services import UploadService
 logger = logging.getLogger(__name__)
 
 
+class OngoingAvenantError(Exception):
+    def __init__(self):
+        super().__init__("Ongoing avenant already exists")
+
+
 def create_avenant(request: HttpRequest, convention_uuid: UUID) -> dict[str, Any]:
     parent_convention = (
         Convention.objects.prefetch_related("programme")
@@ -117,7 +122,7 @@ def _get_last_avenant(convention: Convention) -> Convention:
         ConventionStatut.INSTRUCTION.label,
         ConventionStatut.CORRECTION.label,
     } & avenants_status:
-        raise Exception("Ongoing avenant already exists")
+        raise OngoingAvenantError()
     ordered_avenants = convention.avenants.order_by("-cree_le")
     return ordered_avenants[0] if ordered_avenants else convention
 

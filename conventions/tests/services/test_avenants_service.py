@@ -3,6 +3,7 @@ from django.test import TestCase
 
 from conventions.models import Convention, ConventionStatut
 from conventions.services.avenants import (  # complete_avenants_for_avenant,
+    OngoingAvenantError,
     _get_last_avenant,
     create_avenant,
     upload_avenants_for_avenant,
@@ -43,14 +44,18 @@ class ConventionAvenantsServiceTests(TestCase):
         self.user = User.objects.get(username="nicolas")
         self.request.user = self.user
 
-    def _create_avenant(self):
+    def _create_avenant(self, statut=None):
         request = DummyRequest(
             "POST",
             {"avenant_type": "bailleur"},
             self.user,
         )
-        avenant = create_avenant(request, self.convention.uuid)
-        return avenant["convention"]
+        result = create_avenant(request, self.convention.uuid)
+        avenant = result["convention"]
+        if statut:
+            avenant.statut = statut.label
+            avenant.save()
+        return avenant
 
     def test_create_avenant_basic(self):
         request = DummyRequest(
@@ -100,32 +105,25 @@ class ConventionAvenantsServiceTests(TestCase):
         self.assertEqual(result["convention"].champ_libre_avenant, "Coucou")
         self.assertNotEqual(self.convention.champ_libre_avenant, "Coucou")
 
-    def _get_last_avenant_basic(self):
-        self._create_avenant()
+    def test_get_last_avenant_basic(self):
+        self._create_avenant(statut=ConventionStatut.SIGNEE)
+        last_avenant = self._create_avenant(statut=ConventionStatut.SIGNEE)
 
+        assert _get_last_avenant(self.convention) == last_avenant
+
+    def test_get_last_avenant_ongoing(self):
         request = DummyRequest(
             "POST",
-            {"uuid": self.convention.uuid, "avenant_type": "bailleur"},
+            {"avenant_type": "bailleur"},
             self.user,
         )
-
-        last_avenant = create_avenant(request, self.convention.uuid)["convention"]
-
-        self.assertEqual(_get_last_avenant(self.convention), last_avenant)
-
-    def _get_last_avenant_ongoing(self):
-        request = DummyRequest(
-            "POST",
-            {"uuid": self.convention.uuid, "avenant_type": "bailleur"},
-            self.user,
-        )
-
         last_avenant = create_avenant(request, self.convention.uuid)["convention"]
         last_avenant.statut = ConventionStatut.PROJET.label
         last_avenant.save()
 
-        with self.assertRaises(Exception):
+        with self.assertRaises(OngoingAvenantError) as exc:
             _get_last_avenant(self.convention)
+            assert exc.message == "Ongoing avenant already exists"
 
-    def _get_last_avenant_without_avenants(self):
+    def test_get_last_avenant_without_avenants(self):
         self.assertEqual(_get_last_avenant(self.convention), self.convention)
