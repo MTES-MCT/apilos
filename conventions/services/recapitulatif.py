@@ -31,6 +31,9 @@ class ConventionRecapitulatifService(ConventionService):
     def get(self):
         pass
 
+    def save(self):
+        pass
+
     def cancel_convention(self):
         self.convention.cancel(self.request)
         return {}

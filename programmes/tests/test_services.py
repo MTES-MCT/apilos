@@ -224,21 +224,21 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
         résidence universitaire, hébergement) avec la calculette, une exception
         est levée
         """
-        with self.assertRaises(Exception):
+        with self.assertRaises(Exception):  # noqa: B017
             LoyerRedevanceUpdateComputer.compute_loyer_update(
                 montant_initial=400,
                 nature_logement=NatureLogement.PENSIONSDEFAMILLE,
                 date_initiale=date.fromisoformat("2013-07-12"),
             )
 
-        with self.assertRaises(Exception):
+        with self.assertRaises(Exception):  # noqa: B017
             LoyerRedevanceUpdateComputer.compute_loyer_update(
                 montant_initial=400,
                 nature_logement=NatureLogement.HEBERGEMENT,
                 date_initiale=date.fromisoformat("2013-07-12"),
             )
 
-        with self.assertRaises(Exception):
+        with self.assertRaises(Exception):  # noqa: B017
             LoyerRedevanceUpdateComputer.compute_loyer_update(
                 montant_initial=400,
                 nature_logement=NatureLogement.RESIDENCEUNIVERSITAIRE,

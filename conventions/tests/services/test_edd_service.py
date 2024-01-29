@@ -115,11 +115,9 @@ class ConventionEDDServiceTests(TestCase):
 
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertEqual(len(getattr(self.service.formset, "optional_errors")), 1)
+        self.assertEqual(len(self.service.formset.optional_errors), 1)
         self.assertTrue(
-            isinstance(
-                getattr(self.service.formset, "optional_errors")[0], ValidationError
-            )
+            isinstance(self.service.formset.optional_errors[0], ValidationError)
         )
 
         self.service.request.POST["ignore_optional_errors"] = "1"

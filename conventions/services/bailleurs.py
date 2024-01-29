@@ -63,6 +63,9 @@ class ConventionBailleurService(ConventionService):
         self._initial_change_administration_form(self.convention.administration)
         self._initial_bailleur_form(bailleur)
 
+    def save(self):
+        pass
+
     def _initial_change_bailleur_form(self, bailleur: Bailleur):
         self.extra_forms["bailleur_form"] = ChangeBailleurForm(
             bailleur_query=self._get_bailleur_query(bailleur.uuid),

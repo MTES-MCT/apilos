@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 from collections import defaultdict
 from copy import copy
 
@@ -15,7 +14,7 @@ from programmes.models import Programme
 from users.models import User
 
 
-class ConventionSearchBaseService(ABC):
+class ConventionSearchBaseService:
     order_by = None
     prefetch = []
     default_filters = defaultdict()
@@ -27,7 +26,6 @@ class ConventionSearchBaseService(ABC):
     def choices(self) -> list[tuple[str, str]]:
         return [(status.name, status.label) for status in self.statuses]
 
-    @abstractmethod
     def _get_base_queryset(self) -> QuerySet:
         pass
 

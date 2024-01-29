@@ -173,8 +173,8 @@ class SIAPClientRemote(SIAPClientInterface):
         response = _call_siap_api("/config")
         try:
             return response.json()
-        except requests.exceptions.JSONDecodeError:
-            raise PermissionDenied(f"SIAP error returned: {response.text}")
+        except requests.exceptions.JSONDecodeError as exc:
+            raise PermissionDenied(f"SIAP error returned: {response.text}") from exc
 
     def update_siap_config(self) -> None:
         config = self.get_siap_config()

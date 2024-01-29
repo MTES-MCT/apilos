@@ -10,6 +10,14 @@ from conventions.services.conventions import (
 from users.models import User
 
 
+class ConventionServiceImpl(ConventionService):
+    def get(self):
+        pass
+
+    def save(self):
+        pass
+
+
 class ConventionConventionsServiceTests(TestCase):
     fixtures = [
         "auth.json",
@@ -32,12 +40,7 @@ class ConventionConventionsServiceTests(TestCase):
         self.request.user = self.user
 
     def test_convention_service_basic(self):
-        service = ConventionService(self.convention, self.request)
-
-        # Ensure no error is raised when calling these two methods
-        service.get()
-        service.save()
-
+        service = ConventionServiceImpl(self.convention, self.request)
         self.assertEqual(self.convention, service.convention)
         self.assertEqual(self.request, service.request)
 

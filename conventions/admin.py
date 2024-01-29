@@ -44,7 +44,7 @@ class ConventionModelForm(forms.ModelForm):
             if statut:
                 initial["statut"] = statut.name
 
-        super().__init__(initial=initial, *args, **kwargs)
+        super().__init__(*args, initial=initial, **kwargs)
 
     def _post_clean(self):
         super()._post_clean()

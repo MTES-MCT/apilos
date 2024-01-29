@@ -29,8 +29,11 @@ class LoyerRedevanceUpdateComputer:
         montant_initial: float,
         nature_logement: str,
         date_initiale: date,
-        date_actualisation: date | None = date.today(),
+        date_actualisation: date | None = None,
     ) -> float:
+        if date_actualisation is None:
+            date_actualisation = date.today()
+
         if nature_logement not in NatureLogement.eligible_for_update():
             raise Exception(f"Nature de logement invalide {nature_logement}")
 

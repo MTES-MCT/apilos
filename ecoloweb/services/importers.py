@@ -233,6 +233,7 @@ class ModelImporter(ABC):
 
         return instance
 
+    @abstractmethod
     def _on_processed(self, ecolo_id: str | None, model: Model | None, created: bool):
         pass
 
@@ -288,7 +289,7 @@ class ModelImporter(ABC):
         columns = [col[0] for col in self._db_connection.description]
         row = self._db_connection.fetchone()
 
-        return dict(zip(columns, row)) if row else None
+        return dict(zip(columns, row, strict=True)) if row else None
 
     def import_many(self, ecolo_id: str | None):
         """

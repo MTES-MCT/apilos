@@ -733,6 +733,7 @@ class CustomFiltersTest(TestCase):
             bailleur = self.convention.programme.bailleur
             bailleur.sous_nature_bailleur = sous_nature_bailleur
             bailleur.save()
+
             for type1andtype2 in [
                 ConventionType1and2.TYPE1,
                 ConventionType1and2.TYPE2,
@@ -774,6 +775,8 @@ class CustomFiltersTest(TestCase):
                     ConventionType1and2.TYPE2,
                     None,
                 ]:
+                    self.convention.type1and2 = type1andtype2
+
                     if nature_logement in [
                         ActiveNatureLogement.LOGEMENTSORDINAIRES,
                         ActiveNatureLogement.RESIDENCEUNIVERSITAIRE,
@@ -800,11 +803,13 @@ class CustomFiltersTest(TestCase):
         )
         for sous_nature_bailleur, _ in SousNatureBailleur.choices:
             avenant.programme.bailleur.sous_nature_bailleur = sous_nature_bailleur
+
             for type1andtype2 in [
                 ConventionType1and2.TYPE1,
                 ConventionType1and2.TYPE2,
                 None,
             ]:
+                self.convention.type1and2 = type1andtype2
                 self.assertFalse(custom_filters.display_type1and2(avenant))
 
     def test_display_deactivated_because_type1and2_config_is_needed(self):
@@ -903,6 +908,7 @@ class CustomFiltersTest(TestCase):
                 ConventionType1and2.TYPE2,
                 None,
             ]:
+                avenant.type1and2 = type1andtype2
                 self.assertFalse(
                     custom_filters.display_deactivated_because_type1and2_config_is_needed(
                         avenant

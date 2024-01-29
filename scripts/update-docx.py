@@ -26,7 +26,7 @@ for paragraph in document.paragraphs:
         paragraph.add_run().add_picture(
             "../documents/Screenshot.png", width=Inches(5.0)
         )
-        next
+        next  # noqa: B018
     if paragraph.text == "__Tableau__":
         paragraph.text = "Voici mon tableau:"
         records = (
@@ -46,7 +46,7 @@ for paragraph in document.paragraphs:
             row_cells[1].text = id
             row_cells[2].text = desc
         move_table_after(table, paragraph)
-        next
+        next  # noqa: B018
     text = paragraph.text
     text_updated = False
     for key in dict.keys():

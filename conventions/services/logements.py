@@ -294,7 +294,6 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                 self.editable_after_upload = True
 
     def _foyer_residence_logements_atomic_update(self):
-
         self.formset = FoyerResidenceLogementFormSet(self.request.POST)
         initformset = {
             "form-TOTAL_FORMS": self.request.POST.get(
@@ -349,10 +348,10 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                 "uuid": self.convention.lot.uuid,
                 "surface_habitable_totale": self.request.POST.get(
                     "surface_habitable_totale",
-                    getattr(self.convention.lot, "surface_habitable_totale"),
+                    self.convention.lot.surface_habitable_totale,
                 ),
                 "nb_logements": self.request.POST.get(
-                    "nb_logements", getattr(self.convention.lot, "nb_logements")
+                    "nb_logements", self.convention.lot.nb_logements
                 ),
             }
         )

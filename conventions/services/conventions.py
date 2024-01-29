@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from django.forms import Form
 
@@ -32,9 +32,11 @@ class ConventionService(ABC):
         self.convention = convention
         self.request = request
 
+    @abstractmethod
     def get(self):
         pass
 
+    @abstractmethod
     def save(self):
         pass
 

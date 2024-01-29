@@ -26,6 +26,6 @@ class QueryResultIterator:
         if row := self._db_connection.fetchone():
             self.lines_fetched += 1
 
-            return dict(zip(self._columns, row))
+            return dict(zip(self._columns, row, strict=True))
 
         raise StopIteration
