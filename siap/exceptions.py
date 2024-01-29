@@ -57,3 +57,8 @@ class ConflictedOperationSIAPException(SIAPException):
         self.numero_operation = numero_operation
         self.diff = diff
         super().__init__(f"L'opération {numero_operation} est en doublon")
+
+
+class OngoingAvenantSIAPException(SIAPException):
+    def __init__(self):
+        super().__init__("Ongoing avenant already exists")
