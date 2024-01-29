@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.db.models import Count
 
-from programmes.models import Programme
+from programmes.models import Lot
 
 
 class Command(BaseCommand):
@@ -16,26 +16,31 @@ class Command(BaseCommand):
         dry_run = options.get("dry_run")
 
         lots = (
-            Programme.objects.all()
+            Lot.objects.all()
             .annotate(convention_count=Count("conventions"))
             .filter(convention_count=0)
         )
 
+        lots_count = lots.count()
         self.stdout.write(
             self.style.SUCCESS(
-                f"Found {lots.count()} lots without conventions to be removed: "
+                f"Found {lots_count} lots without conventions to be removed: "
             )
         )
         for lot in lots:
             self.stdout.write(
                 self.style.SUCCESS(
-                    f" - {lot.nom} - {lot.numero_galion} - {lot.cree_le}"
+                    f" - {lot.programme.nom} - {lot.programme.numero_galion} - {lot.financement} - {lot.cree_le}"
                 )
             )
 
         if not dry_run:
+            count = 0
             for lot in lots:
                 lot.delete()
+                count += 1
             self.stdout.write(
-                self.style.SUCCESS(f"Removed {lots.count()} lots without conventions")
+                self.style.SUCCESS(
+                    f"Removed {count}/{lots_count} lots without conventions"
+                )
             )
