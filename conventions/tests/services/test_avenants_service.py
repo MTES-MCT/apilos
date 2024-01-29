@@ -3,12 +3,12 @@ from django.test import TestCase
 
 from conventions.models import Convention, ConventionStatut
 from conventions.services.avenants import (  # complete_avenants_for_avenant,
+    OngoingAvenantError,
     _get_last_avenant,
     create_avenant,
     upload_avenants_for_avenant,
 )
 from conventions.services.utils import ReturnStatus
-from siap.exceptions import OngoingAvenantSIAPException
 from users.models import User
 
 
@@ -121,7 +121,7 @@ class ConventionAvenantsServiceTests(TestCase):
         last_avenant.statut = ConventionStatut.PROJET.label
         last_avenant.save()
 
-        with self.assertRaises(OngoingAvenantSIAPException) as exc:
+        with self.assertRaises(OngoingAvenantError) as exc:
             _get_last_avenant(self.convention)
             assert exc.message == "Ongoing avenant already exists"
 
