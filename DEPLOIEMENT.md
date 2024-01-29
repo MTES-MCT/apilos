@@ -38,6 +38,8 @@ La CI va lancer les tests, déployer en production et créer une release.
 
 - Prévenez de la mise en production sur mattermost, ainsi que sur le slack du SIAP.
 
+- Sur le board de sprint, passez les tickets de staging vers prod.
+
 ### CI
 
 A chaque push sur [Github](https://github.com/MTES-MCT/apilos), le projet est _buildé_ et les tests sont passés
