@@ -35,7 +35,7 @@
                         {% endif %}
                         <div class="fr-my-3w">
                             {% include "common/form/input_textarea.html" with form_input=form.adresse helptext_visible="True" object_field="adresse__"|add:form.uuid.value %}
-                            {% if form.adresse.value is not None %}
+                            {% if form.adresse.value is not None and not convention.adresse %}
                                 <em class=" fr-hint-text">Si ce champs est déjà pré-rempli, c'est que des adresses ont déjà été associées à cette opération. <br/>Vous pouvez le modifier avec les adresses associées à cette convention.</em>
                             {% endif %}
                         </div>
