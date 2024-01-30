@@ -433,7 +433,7 @@ class User(AbstractUser):
             avenants_bailleur_id_subquery = (
                 convs.filter(
                     parent_id=Coalesce(OuterRef("parent_id"), OuterRef("id")),
-                    statut=ConventionStatut.SIGNEE,
+                    statut__in=[ConventionStatut.A_SIGNER, ConventionStatut.SIGNEE],
                 )
                 .order_by("-cree_le")
                 .values("programme__bailleur_id")
