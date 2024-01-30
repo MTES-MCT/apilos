@@ -199,7 +199,7 @@ class UserConventionSearchService(ConventionSearchBaseService):
         if self.search_input:
             order_by.append("-programme_nom_similarity")
 
-        order_by.append("uuid")
+        order_by.append("-cree_le")
         return order_by
 
 
@@ -344,6 +344,7 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
     def _get_base_queryset(self) -> QuerySet:
         qs = self.user.conventions()
 
+        # TODO: a challenger
         if self.avec_avenant:
             qs = qs.annotate(count_avenants=Count("avenants"))
 
@@ -403,6 +404,7 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 "-search_vector_bailleur_rank",
             ]
 
+        order_by.append("-cree_le")
         return order_by
 
     def _build_queryset_filters(self) -> None:

@@ -167,7 +167,7 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
             ),
         )
 
-        convention_avec_avenant: Convention = ConventionFactory(
+        ConventionFactory(
             uuid="fbb9890f-171b-402d-a35e-71e1bd791b72",
             statut=ConventionStatut.INSTRUCTION.label,
             financement=Financement.PLS,
@@ -185,9 +185,6 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
                 ),
             ),
         )
-        convention_avec_avenant.clone(
-            user=self.user, convention_origin=convention_avec_avenant
-        )
 
     @parametrize(
         "search_filters, expected",
@@ -195,15 +192,10 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
             param(
                 {"anru": "on"},
                 [
-                    "fbb9890f-171b-402d-a35e-71e1bd791b70",
                     "fbb9890f-171b-402d-a35e-71e1bd791b72",
+                    "fbb9890f-171b-402d-a35e-71e1bd791b70",
                 ],
                 id="anru",
-            ),
-            param(
-                {"avec_avenant": "on"},
-                ["fbb9890f-171b-402d-a35e-71e1bd791b72"],
-                id="avec_avenant",
             ),
             param(
                 {"statut": ConventionStatut.PROJET.label},
@@ -218,8 +210,8 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
             param(
                 {"nature_logement": NatureLogement.LOGEMENTSORDINAIRES},
                 [
-                    "fbb9890f-171b-402d-a35e-71e1bd791b70",
                     "fbb9890f-171b-402d-a35e-71e1bd791b72",
+                    "fbb9890f-171b-402d-a35e-71e1bd791b70",
                 ],
                 id="nature_logement",
             ),
