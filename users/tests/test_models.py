@@ -594,7 +594,7 @@ def test_conventions_visibility_bailleur_avenant(db):
     request.user = super_user
     result = create_avenant(request, convention1.uuid)
     avenant1 = result["convention"]
-    avenant1.statut = ConventionStatut.SIGNEE
+    avenant1.statut = ConventionStatut.SIGNEE.label
     avenant1.save()
 
     assert user1.conventions().count() == 3
@@ -606,7 +606,7 @@ def test_conventions_visibility_bailleur_avenant(db):
     request.user = super_user
     result = create_avenant(request, convention1.uuid)
     avenant2 = result["convention"]
-    avenant2.statut = ConventionStatut.PROJET
+    avenant2.statut = ConventionStatut.PROJET.label
     avenant2.save()
 
     avenant2.programme.bailleur = bailleur2
@@ -617,7 +617,7 @@ def test_conventions_visibility_bailleur_avenant(db):
     assert user3.conventions().count() == 0
 
     # Change avenant statut to SIGNEE
-    avenant2.statut = ConventionStatut.SIGNEE
+    avenant2.statut = ConventionStatut.SIGNEE.label
     avenant2.save()
 
     assert user1.conventions().count() == 1
