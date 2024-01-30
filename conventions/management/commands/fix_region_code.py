@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from programmes.models.models import Programme
+from programmes.models import Programme
 
 dept_region_code = {
     "01": "84",

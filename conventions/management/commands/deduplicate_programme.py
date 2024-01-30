@@ -4,7 +4,7 @@ import logging
 from django.core.management.base import BaseCommand
 from django.db.models import Count
 
-from programmes.models.models import Programme
+from programmes.models import Programme
 
 logger = logging.getLogger(__name__)
 

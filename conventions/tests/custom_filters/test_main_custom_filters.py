@@ -684,6 +684,8 @@ class CustomFiltersTest(TestCase):
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
         av.delete()
 
+        cloned_programme = self.convention.programme.clone()
+        cloned_lot = self.convention.lot.clone(cloned_programme)
         av = Convention.objects.create(
             statut=ConventionStatut.SIGNEE.label,
             parent=self.convention,
@@ -694,6 +696,8 @@ class CustomFiltersTest(TestCase):
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
         av.delete()
 
+        cloned_programme = self.convention.programme.clone()
+        cloned_lot = self.convention.lot.clone(cloned_programme)
         av = Convention.objects.create(
             statut=ConventionStatut.RESILIEE.label,
             parent=self.convention,
@@ -704,6 +708,8 @@ class CustomFiltersTest(TestCase):
         self.assertTrue(custom_filters.display_create_avenant(self.convention))
         av.delete()
 
+        cloned_programme = self.convention.programme.clone()
+        cloned_lot = self.convention.lot.clone(cloned_programme)
         ongoing_avenant = Convention.objects.create(
             statut=ConventionStatut.PROJET.label,
             parent=self.convention,

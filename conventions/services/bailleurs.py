@@ -7,7 +7,7 @@ from conventions.models.convention import Convention
 from conventions.services import utils
 from conventions.services.conventions import ConventionService
 from instructeurs.models import Administration
-from programmes.models.models import Programme
+from programmes.models import Programme
 
 
 class ConventionBailleurService(ConventionService):

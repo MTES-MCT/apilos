@@ -1,15 +1,11 @@
-import logging
 import uuid
 from typing import Any
 
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector
 from django.db import models
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 from django.forms import model_to_dict
 
-from apilos_settings.models import Departement
 from conventions.models.choices import ConventionStatut
 from core.models import IngestableModel
 from core.utils import get_key_from_json_field
@@ -26,8 +22,6 @@ from .choices import (
     Zone123,
     ZoneABC,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class Programme(IngestableModel):
@@ -303,43 +297,6 @@ class Programme(IngestableModel):
             NatureLogement.PENSIONSDEFAMILLE,
             NatureLogement.RESIDENCEDACCUEIL,
         ]
-
-
-@receiver(pre_save, sender=Programme)
-def compute_date_achevement_compile(sender, instance, *args, **kwargs):
-    instance.date_achevement_compile = (
-        instance.date_achevement or instance.date_achevement_previsible
-    )
-    if instance.code_postal and len(instance.code_postal) == 5:
-        code_departement = instance.code_postal[0:2]
-        if (
-            instance.code_insee_departement != code_departement
-            and instance.code_insee_departement
-            not in [
-                "2A",
-                "2B",
-            ]
-        ):
-            try:
-                if code_departement == "20":
-                    # Cas spécial de la Corse car in n'est pas possible de déterminer le département
-                    # à partir du code postal
-                    departement = Departement.objects.filter(
-                        code_postal=code_departement
-                    ).first()
-                    if departement:
-                        instance.code_insee_departement = "20"
-                        instance.code_insee_region = departement.code_insee_region
-                else:
-                    departement = Departement.objects.get(code_postal=code_departement)
-                    instance.code_insee_departement = departement.code_insee
-                    instance.code_insee_region = departement.code_insee_region
-            except (Departement.DoesNotExist, AttributeError):
-                logger.error(
-                    "Le numero de departement %s n'existe pas depuis le code postal %s",
-                    code_departement,
-                    instance.code_postal,
-                )
 
 
 class LogementEDD(models.Model):
@@ -936,30 +893,3 @@ class TypeStationnement(IngestableModel):
         return self.loyer
 
     l = property(_get_loyer)  # noqa: E741
-
-
-class IndiceEvolutionLoyer(models.Model):
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=["annee", "is_loyer", "nature_logement"],
-                name="idx_annee_and_type",
-            ),
-        ]
-
-    id = models.AutoField(primary_key=True)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    is_loyer = models.BooleanField(default=True)
-    annee = models.IntegerField()
-    date_debut = models.DateField()
-    date_fin = models.DateField()
-    nature_logement = models.TextField(
-        choices=NatureLogement.choices,
-        default=NatureLogement.LOGEMENTSORDINAIRES,
-        null=True,
-    )
-    # Evolution, en pourcentage
-    evolution = models.FloatField()
-
-    def __str__(self):
-        return f"{self.annee} / {self.nature_logement} => {self.evolution}"

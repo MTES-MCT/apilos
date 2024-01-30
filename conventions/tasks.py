@@ -42,7 +42,6 @@ def generate_and_send(args):
         if settings.DEFAULT_FILE_STORAGE == "storages.backends.s3boto3.S3Boto3Storage":
             with default_storage.open(pdf_path, "rb") as src_file:
                 with open(settings.MEDIA_ROOT / pdf_path, "wb") as desc_file:
-
                     desc_file.write(src_file.read())
 
         with ZipFile(local_zip_path, "w") as myzip:
