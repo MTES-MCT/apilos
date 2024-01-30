@@ -1,11 +1,14 @@
 from typing import Any
 
 from django.db.models.fields.reverse_related import ManyToOneRel
-from django.db.models.signals import m2m_changed
+from django.db.models.signals import m2m_changed, post_delete, post_save
 from django.dispatch import receiver
 
 from conventions.models import Convention, Lot
 from conventions.models.avenant_type import AvenantType
+from conventions.models.choices import ConventionStatut
+from conventions.models.convention_history import ConventionHistory
+from core.services import EmailService, EmailTemplateID
 from programmes.models import Programme
 
 
@@ -70,3 +73,54 @@ def post_save_reset_avenant_fields_after_block_delete(
                     instance=instance,
                     previous_instance=last_avenant_or_parent,
                 )
+
+
+@receiver(post_save, sender=ConventionHistory)
+def send_survey_email(sender, instance, *args, **kwargs):
+    # send email to get user satisfaction after instructeur validate convention
+    # or bailleur submit convention for the first time ?
+
+    # check if it is the first time the bailleur user submit a convention
+    if (
+        instance.statut_convention == ConventionStatut.INSTRUCTION.label
+        and not ConventionHistory.objects.filter(
+            user=instance.user, statut_convention=ConventionStatut.INSTRUCTION.label
+        ).exclude(id=instance.id)
+        and instance.user.is_bailleur()
+    ):
+        EmailService(
+            to_emails=[instance.user.email],
+            email_template_id=EmailTemplateID.B_SATISFACTION,
+        ).send_transactional_email(
+            email_data={
+                "email": instance.user.email,
+                "firstname": instance.user.first_name,
+                "lastname": instance.user.last_name,
+            }
+        )
+
+    # check if it is the first time the instructeur user validate a convention
+    if (
+        instance.statut_convention == ConventionStatut.A_SIGNER.label
+        and not ConventionHistory.objects.filter(
+            user=instance.user, statut_convention=ConventionStatut.A_SIGNER.label
+        ).exclude(id=instance.id)
+        and instance.user.is_instructeur()
+    ):
+        EmailService(
+            to_emails=[instance.user.email],
+            email_template_id=EmailTemplateID.I_SATISFACTION,
+        ).send_transactional_email(
+            email_data={
+                "email": instance.user.email,
+                "firstname": instance.user.first_name,
+                "lastname": instance.user.last_name,
+            }
+        )
+
+
+@receiver(post_delete, sender=Convention)
+def remove_lot(sender, instance, *args, **kwargs):
+    lot = Lot.objects.get(id=instance.lot_id)
+    if lot.conventions.count() == 0:
+        lot.delete()

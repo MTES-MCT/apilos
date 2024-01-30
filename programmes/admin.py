@@ -4,7 +4,7 @@ from admin.admin import ApilosModelAdmin
 from admin.filters import IsCloneFilter
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
-from programmes.models.models import IndiceEvolutionLoyer
+from programmes.models import IndiceEvolutionLoyer
 
 from .models import (
     Annexe,
