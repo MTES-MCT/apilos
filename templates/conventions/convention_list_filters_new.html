@@ -10,9 +10,10 @@
                 <div class="fr-grid-row fr-grid-row--gutters">
 
                     {# Champs recherche libre #}
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-12">
+                    <div class="fr-col-12">
                         <input class="fr-input" type="search" id="search_input" name="search_input" value="{{ search_input }}"
                             placeholder="Recherche par chiffres et mots-clés"/>
+                        <div class="fr-text--xs fr-mt-2w fr-mb-5w apilos-text-info"><span class="fr-icon-info-fill fr-mr-1w" aria-hidden="true"></span>Recherche libre multi-critères : nom, numéro, adresse de l'opération ; numéro de la convention ; SIREN, nom du bailleur  |  <em>Exemple : "sapins bleus 18000"</em></div>
                     </div>
 
                 </div>
@@ -20,9 +21,9 @@
                 <div class="fr-grid-row fr-grid-row--gutters">
 
                     {# Champs statut #}
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
-                        Statut de la convention
-                        <select class="fr-select" id="cstatut" name="cstatut">
+                    <div class="fr-col-12 fr-col-lg-3 fr-mb-2w search-select">
+                        <div class="select-label">Statut de la convention</div>
+                        <select class="fr-select fr-mt-1w" id="cstatut" name="cstatut">
                             <option value="">Sélectionner une option</option>
                             {% for value, label in statut_choices %}
                                 <option value="{{ label }}"
@@ -34,9 +35,9 @@
                     </div>
 
                     {# Champs financement #}
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
-                        Type de financement
-                        <select class="fr-select" name="financement">
+                    <div class="fr-col-12 fr-col-lg-3 fr-mb-2w search-select">
+                        <div class="select-label">Type de financement</div>
+                        <select class="fr-select fr-mt-1w" name="financement">
                             <option value="">Sélectionner une option</option>
                             {% for value, label in financement_choices %}
                                 <option value="{{ value }}"
@@ -49,9 +50,9 @@
 
                     {# Champs date de signature #}
                     {% if date_signature_choices %}
-                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-3">
-                            Date de signature de la convention
-                            <select class="fr-select" name="date_signature">
+                        <div class="fr-col-12 fr-col-lg-3 fr-mb-2w search-select">
+                            <div class="select-label">Année de signature</div>
+                            <select class="fr-select fr-mt-1w" name="date_signature">
                                 <option value="">Sélectionner une période</option>
                                 {% for value in date_signature_choices %}
                                     <option value="{{ value }}"
@@ -64,9 +65,9 @@
                     {% endif %}
 
                     {# Champs nature des logements #}
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-3 fr-mb-2w">
-                        Nature des logements
-                        <select class="fr-select" name="nature_logement">
+                    <div class="fr-col-12 fr-col-lg-3 fr-mb-2w search-select">
+                        <div class="select-label">Nature des logements</div>
+                        <select class="fr-select fr-mt-1w" name="nature_logement">
                             <option value="">Sélectionner une option</option>
                             {% for value, label in nature_logement_choices %}
                                 <option value="{{ value }}"
@@ -105,7 +106,7 @@
                         </div>
                     </div>
 
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-3">
+                    <div class="fr-col-12 fr-col-lg-3 fr-col-12 fr-col-md-12 fr-col-lg-3 fr-grid-row fr-grid-row--right">
                         <button class="fr-btn" id="search_btn">
                             <span class="fr-icon-search-line fr-mr-1w" aria-hidden="true"></span>
                             Rechercher

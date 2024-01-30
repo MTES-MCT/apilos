@@ -28,7 +28,13 @@
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table aria-label="Conventions">
                             {% if filtered_conventions_count != all_conventions_count %}
-                                <caption><em>{{ filtered_conventions_count }} convention{{ all_conventions_count|pluralize }} correspond{{ filtered_conventions_count|pluralize:'ent' }} à votre recherche</em></caption>
+                                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-2w">
+                                    <div class="fr-mr-2w notes fr-col-2">{{ filtered_conventions_count }} résultats</div>
+                                    <a href="/" class="fr-link">
+                                        <span class="fr-icon-close-circle-line fr-mr-1w"></span>
+                                        Réinitaliser la recherche
+                                    </a>
+                                </div>
                             {% endif %}
                             <thead>
                                 <tr class="th_inline">
@@ -137,7 +143,20 @@
                     {% include 'common/table/pagination.html' with paginate_list=conventions %}
 
                 {% else %}
-                    <p>Aucune convention ne correspond à votre recherche...</p>
+                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+                        <div class="fr-mr-2w notes fr-col-2">Aucun résultat</div>
+                        <a href="/" class="fr-link">
+                            <span class="fr-icon-close-circle-line fr-mr-1w"></span>
+                            Réinitaliser la recherche
+                        </a>
+                    </div>
+                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+                        <div class="fr-col-9">
+                            <div class="fr-text--lg">Aucune convention ne correspond à votre recherche</div>
+                            <div>Si vous avez recherché par numéro ou mots-clés, vérifiez qu’ils sont corrects.<br/>Sinon peut-être que la convention que vous recherchez n’est pas référencée dans le SIAP / Apilos. </div>
+                        </div>
+                        <img class="fr-mr-3w" src="/static/icons/not_found.png" alt="not_found">
+                    </div>
                 {% endif %}
             </div>
         </div>
