@@ -149,7 +149,6 @@ class UserConventionSearchService(ConventionSearchBaseService):
             self.filters["statut"] = self.statut.label
 
         if self.commune:
-            # self.filters["vector_ville"] = self.commune
             self.filters[
                 "programme_ville_similarity__gt"
             ] = settings.TRIGRAM_SIMILARITY_THRESHOLD
@@ -312,7 +311,6 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
 
     search_input: str | None = None
     search_input_numbers: str | None = None
-    search_input_cleaned: str | None = None
     search_query: SearchQuery | None = None
 
     def __init__(self, user: User, search_filters: dict | None = None) -> None:
@@ -337,9 +335,6 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 self.search_input_numbers = " ".join(
                     re.findall(r"\d+", self.search_input)
                 ).strip()
-                self.search_input_cleaned = self.search_input.replace("-", "").replace(
-                    "/", ""
-                )
 
     def _get_base_queryset(self) -> QuerySet:
         qs = self.user.conventions()
@@ -361,17 +356,27 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 )
             )
 
-        if self.search_input_cleaned:
-            qs = qs.annotate(
-                _r1=Replace("numero", Value("/")),
-                _r2=Replace("_r1", Value("-")),
-                numero_similarity=TrigramSimilarity("_r2", self.search_input_cleaned),
-            ).annotate(
-                _r1=Replace("programme__numero_galion", Value("/")),
-                _r2=Replace("_r1", Value("-")),
-                numero_operation_similarity=TrigramSimilarity(
-                    "_r2", self.search_input_cleaned
-                ),
+        if self.search_input:
+            qs = (
+                qs.annotate(
+                    programme_ville_similarity=TrigramSimilarity(
+                        "programme__ville", self.search_input
+                    )
+                )
+                .annotate(
+                    _r1=Replace("numero", Value("/")),
+                    _r2=Replace("_r1", Value("-")),
+                    numero_similarity=TrigramSimilarity(
+                        "_r2", self.search_input.replace("-", "").replace("/", "")
+                    ),
+                )
+                .annotate(
+                    _r1=Replace("programme__numero_galion", Value("/")),
+                    _r2=Replace("_r1", Value("-")),
+                    numero_operation_similarity=TrigramSimilarity(
+                        "_r2", self.search_input.replace("-", "").replace("/", "")
+                    ),
+                )
             )
 
         if self.search_input_numbers:
@@ -387,10 +392,11 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
     def _get_order_by(self) -> list[str]:
         order_by = super()._get_order_by()
 
-        if self.search_input_cleaned:
+        if self.search_input:
             order_by += [
                 "-numero_similarity",
                 "-numero_operation_similarity",
+                "-programme_ville_similarity",
             ]
 
         if self.search_input_numbers:
@@ -438,6 +444,9 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 | Q(numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
                 | Q(
                     numero_operation_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                )
+                | Q(
+                    programme_ville_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
                 )
             )
 

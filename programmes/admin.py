@@ -49,6 +49,14 @@ class ProgrammeAdmin(ApilosModelAdmin):
         IsCloneFilter,
         "nature_logement",
     )
+    search_fields = (
+        "nom",
+        "adresse",
+        "code_postal",
+        "ville",
+        "numero_galion",
+        "uuid",
+    )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "administration":
@@ -56,8 +64,6 @@ class ProgrammeAdmin(ApilosModelAdmin):
         if db_field.name == "bailleur":
             kwargs["queryset"] = Bailleur.objects.order_by("nom")
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-    search_fields = ["nom", "uuid", "numero_galion"]
 
 
 @admin.display(description="Programme")
