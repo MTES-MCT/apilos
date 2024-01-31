@@ -34,6 +34,14 @@
                                         <span class="fr-icon-close-circle-line fr-mr-1w"></span>
                                         Réinitaliser la recherche
                                     </a>
+                                    {% if new_search %}
+                                        <a href="{% url 'conventions:loyer_simulateur' %}" class="fr-link fr-ml-2w"
+                                            title="Calculatrice de loyers"
+                                            aria-selected="{% if request.resolver_match.view_name == "conventions:loyer_simulateur" %}true{% else %}false{% endif %}"                                >
+                                            <span aria-hidden="true" class="fr-icon-equalizer-fill"></span>
+                                            Calculatrice de loyers
+                                        </a>
+                                    {% endif %}
                                 </div>
                             {% endif %}
                             <thead>
@@ -149,6 +157,14 @@
                             <span class="fr-icon-close-circle-line fr-mr-1w"></span>
                             Réinitaliser la recherche
                         </a>
+                        {% if new_search %}
+                            <a href="{% url 'conventions:loyer_simulateur' %}" class="fr-link fr-ml-2w"
+                                title="Calculatrice de loyers"
+                                aria-selected="{% if request.resolver_match.view_name == "conventions:loyer_simulateur" %}true{% else %}false{% endif %}"                                >
+                                <span aria-hidden="true" class="fr-icon-equalizer-fill"></span>
+                                Calculatrice de loyers
+                            </a>
+                        {% endif %}
                     </div>
                     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
                         <div class="fr-col-9">
