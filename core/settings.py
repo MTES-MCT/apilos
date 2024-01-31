@@ -585,3 +585,6 @@ CLAMAV_SERVICE_PASSWORD = get_env_variable("CLAMAV_SERVICE_PASSWORD")
 TRIGRAM_SIMILARITY_THRESHOLD = get_env_variable(
     "TRIGRAM_SIMILARITY_THRESHOLD", float, default=0.3
 )
+
+# Feature flags
+FLAG_NEW_SEARCH = "nouvelle_recherche"

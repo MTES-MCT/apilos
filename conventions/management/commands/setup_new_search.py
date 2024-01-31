@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import F
 from waffle.models import Flag
@@ -9,10 +10,10 @@ from programmes.models import Programme
 class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write(
-            ">> Création du flag 'nouvelle_recherche' pour activer la nouvelle recherche des conventions"
+            f">> Création du flag {settings.FLAG_NEW_SEARCH} pour activer la nouvelle recherche des conventions"
         )
         Flag.objects.get_or_create(
-            name="nouvelle_recherche",
+            name=settings.FLAG_NEW_SEARCH,
             defaults={
                 "note": "Active la nouvelle recherche des conventions",
             },

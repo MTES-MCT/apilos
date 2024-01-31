@@ -1,6 +1,7 @@
 from datetime import date
 
 from bs4 import BeautifulSoup
+from django.conf import settings
 from django.http.request import HttpRequest
 from django.test import TestCase
 from django.urls import reverse
@@ -34,7 +35,7 @@ class ConventionIndexViewTests(TestCase):
     def test_get_index(self):
         self._login()
 
-        with override_flag("nouvelle_recherche", active=True):
+        with override_flag(settings.FLAG_NEW_SEARCH, active=True):
             response = self.client.get(reverse("conventions:index"))
             self.assertRedirects(response, reverse("conventions:search"))
 
@@ -44,7 +45,7 @@ class ConventionIndexViewTests(TestCase):
         response = self.client.get(reverse("conventions:search"))
         self.assertRedirects(response, reverse("conventions:search_instruction"))
 
-        with override_flag("nouvelle_recherche", active=True):
+        with override_flag(settings.FLAG_NEW_SEARCH, active=True):
             response = self.client.get(reverse("conventions:search"))
             assert response.status_code == 200
 

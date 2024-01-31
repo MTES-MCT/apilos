@@ -333,7 +333,7 @@ class ConventionSearchView(ConventionSearchBaseView):
         }
 
     def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
-        if not flag_is_active(request, "nouvelle_recherche"):
+        if not flag_is_active(request, settings.FLAG_NEW_SEARCH):
             return HttpResponseRedirect(
                 reverse(f"conventions:{ConventionEnInstructionSearchView.name}")
             )
@@ -380,7 +380,7 @@ class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
                 "tabs": self.get_tabs(),
                 "montant_actualise": montant_actualise,
                 "annee_validite": annee_validite,
-                "new_search": flag_is_active(request, "nouvelle_recherche"),
+                "new_search": flag_is_active(request, settings.FLAG_NEW_SEARCH),
             },
         )
 
@@ -398,7 +398,7 @@ class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
             {
                 "form": loyer_simulateur_form,
                 "tabs": self.get_tabs(),
-                "new_search": flag_is_active(request, "nouvelle_recherche"),
+                "new_search": flag_is_active(request, settings.FLAG_NEW_SEARCH),
             },
         )
 
