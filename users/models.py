@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 from uuid import UUID
 
 from django.conf import settings
@@ -261,7 +262,7 @@ class User(AbstractUser):
     # else raise
     #
     def administration_filter(self, full_scope=False):
-        if self.is_superuser or self.is_staff:
+        if self.is_superuser:
             return {}
 
         # instructeur from cerbere has access to all administrations
@@ -285,7 +286,7 @@ class User(AbstractUser):
             + "filtre sur les administrations"
         )
 
-    def administration_ids(self):
+    def administration_ids(self) -> list[Any] | None:
         if self.is_cerbere_user():
             if (
                 "administration" in self.siap_habilitation
@@ -316,7 +317,7 @@ class User(AbstractUser):
     # else raise
     #
     def bailleur_filter(self, full_scope=False):
-        if self.is_superuser or self.is_staff:
+        if self.is_superuser:
             return {}
 
         # to do : manage programme related to geo for instructeur
@@ -447,27 +448,29 @@ class User(AbstractUser):
         )
 
     def user_list(self, order_by="username"):
-        if self.is_superuser or self.is_staff:
+        if self.is_superuser:
             return User.objects.all().order_by(order_by)
 
-        if self.is_bailleur():
+        if self.is_bailleur() and len(bailleur_ids := self._bailleur_ids()) > 0:
             return (
                 User.objects.all()
-                .filter(roles__bailleur_id__in=self._bailleur_ids())
+                .filter(roles__bailleur_id__in=bailleur_ids)
                 .order_by(order_by)
                 .distinct()
             )
-        if self.is_instructeur():
+
+        if (
+            self.is_instructeur()
+            and (administration_ids := self.administration_ids()) is not None
+        ):
             return (
                 User.objects.all()
-                .filter(roles__administration_id__in=self.administration_ids())
+                .filter(roles__administration_id__in=administration_ids)
                 .order_by(order_by)
                 .distinct()
             )
-        raise Exception(
-            "L'utilisateur courant n'a pas de role associé permettant de"
-            + " filtrer les utilisateurs"
-        )
+
+        return User.objects.none()
 
     def is_administrator(self, user=None):
         if self.is_superuser:
