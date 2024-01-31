@@ -43,6 +43,10 @@ class Convention(models.Model):
             models.Index(fields=["statut"], name="convention_statut_idx"),
             models.Index(fields=["uuid"], name="convention_uuid_idx"),
             models.Index(fields=["valide_le"], name="convention_valid_le_idx"),
+            models.Index(
+                fields=["televersement_convention_signee_le"],
+                name="convention_tele_signee_le_idx",
+            ),
         ]
         constraints = [
             # https://github.com/betagouv/SPPNautInterface/issues/227
