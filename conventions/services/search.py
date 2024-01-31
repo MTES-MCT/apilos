@@ -420,7 +420,7 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
             self.filters["statut"] = self.statut.label
 
         if self.anru:
-            self.filters["lot__programme__anru"] = True
+            self.filters["programme__anru"] = True
 
         if self.avec_avenant:
             self.filters["count_avenants__gt"] = 0
@@ -429,7 +429,7 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
             self.filters["financement"] = self.financement
 
         if self.nature_logement:
-            self.filters["lot__programme__nature_logement"] = self.nature_logement
+            self.filters["programme__nature_logement"] = self.nature_logement
 
         if self.date_signature:
             self.filters[
