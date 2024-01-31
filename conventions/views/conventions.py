@@ -380,6 +380,7 @@ class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
                 "tabs": self.get_tabs(),
                 "montant_actualise": montant_actualise,
                 "annee_validite": annee_validite,
+                "new_search": flag_is_active(request, "nouvelle_recherche"),
             },
         )
 
@@ -397,6 +398,7 @@ class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
             {
                 "form": loyer_simulateur_form,
                 "tabs": self.get_tabs(),
+                "new_search": flag_is_active(request, "nouvelle_recherche"),
             },
         )
 
