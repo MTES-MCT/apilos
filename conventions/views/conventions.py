@@ -63,14 +63,16 @@ class RecapitulatifView(BaseConventionView):
 
     def _get_convention(self, convention_uuid):
         return get_object_or_404(
-            Convention.objects.prefetch_related("programme").prefetch_related(
+            Convention.objects.prefetch_related("programme")
+            .prefetch_related(
                 "programme__referencecadastrales",
                 "programme__logementedds",
                 "lot",
                 "lot__type_stationnements",
                 "lot__logements",
                 "programme__administration",
-            ),
+            )
+            .with_avenant_types_info(),
             uuid=convention_uuid,
         )
 

@@ -171,7 +171,7 @@ class UserConventionSearchService(ConventionSearchBaseService):
             ] = self.date_signature
 
     def _get_base_queryset(self) -> QuerySet:
-        qs = self.user.conventions()
+        qs = self.user.conventions().with_avenant_types_info()
 
         if self.search_input:
             qs = qs.annotate(

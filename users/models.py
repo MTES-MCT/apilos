@@ -8,6 +8,7 @@ from django.db import models
 from django.db.models import Q, QuerySet
 from django.db.models.functions import Substr
 from django.forms.models import model_to_dict
+from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
 
 from apilos_settings.models import Departement
@@ -204,8 +205,12 @@ class User(AbstractUser):
             ]
         return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
 
-    def _is_role(self, role):
-        return role in map(lambda r: r.typologie, self.roles.all())
+    @cached_property
+    def role_typologies(self) -> list[str]:
+        return self.roles.values_list("typologie", flat=True).distinct()
+
+    def _is_role(self, role: str) -> bool:
+        return role in self.role_typologies
 
     def programmes(self) -> list:
         """

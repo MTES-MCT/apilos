@@ -1,10 +1,12 @@
 from django import template
 
+from conventions.models import Convention
+
 register = template.Library()
 
 
 @register.filter
-def display_kind(convention):
+def display_kind(convention: Convention) -> str:
     if convention.is_denonciation():
         return "dénonciation"
     if convention.is_resiliation():

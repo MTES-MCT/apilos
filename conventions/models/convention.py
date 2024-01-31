@@ -6,7 +6,7 @@ from datetime import date
 
 from django.apps import apps
 from django.db import models
-from django.db.models import Q
+from django.db.models import Exists, Q
 from django.forms import model_to_dict
 from django.http import HttpRequest
 
@@ -26,16 +26,35 @@ from users.type_models import EmailPreferences, TypeRole
 logger = logging.getLogger(__name__)
 
 
-class ConventionManager(models.Manager):
+class ConventionQuerySet(models.QuerySet):
     def avenants(self):
         return self.exclude(parent=None)
 
-    def without_denonciation_and_resiliation(self):
+    def without_denonciation_and_resiliation(self) -> models.QuerySet:
         return self.exclude(avenant_types__nom__in=["denonciation", "resiliation"])
+
+    def with_avenant_types_info(self) -> models.QuerySet:
+        return self.annotate(
+            is_avenant_denonciation=Exists(
+                AvenantType.objects.filter(
+                    conventions__pk=models.OuterRef("pk"),
+                    conventions__parent_id__isnull=False,
+                    nom="denonciation",
+                )
+            )
+        ).annotate(
+            is_avenant_resiliation=Exists(
+                AvenantType.objects.filter(
+                    conventions__pk=models.OuterRef("pk"),
+                    conventions__parent_id__isnull=False,
+                    nom="resiliation",
+                )
+            )
+        )
 
 
 class Convention(models.Model):
-    objects = ConventionManager()
+    objects = ConventionQuerySet.as_manager()
 
     class Meta:
         indexes = [

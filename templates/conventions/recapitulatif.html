@@ -41,10 +41,10 @@
                         {% include "conventions/recapitulatif/convention.html" %}
                     {% endif %}
                 {% endif %}
-                {% if convention.is_denonciation %}
+                {% if convention.is_avenant_denonciation %}
                     {% include "conventions/recapitulatif/denonciation.html"  with target_url='conventions:denonciation' %}
                     {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' %}
-                {% elif convention.is_resiliation %}
+                {% elif convention.is_avenant_resiliation %}
                     {% if request.user.is_instructeur_departemental %}
                         {% include "conventions/recapitulatif/resiliation.html"  with target_url='conventions:resiliation' %}
                         {% include "conventions/recapitulatif/resiliation_acte.html"  with target_url='conventions:resiliation_acte' %}
@@ -136,7 +136,7 @@
                             {% if convention.is_resiliation and request.user.is_instructeur_departemental %}
                                 <div class="fr-col-6 fr-py-5w fr-px-3w apilos-or-border">
                             {% endif %}
-                            {% if convention.is_denonciation %}
+                            {% if convention.is_avenant_denonciation %}
                                 {% include "conventions/actions/validate_denonciation.html" %}
                             {% elif convention.is_resiliation %}
                                 {% if request.user.is_instructeur_departemental %}
@@ -149,7 +149,7 @@
                         </div>
                     {% endif %}
                     {% include "conventions/actions/type1and2_options.html" %}
-                    {% if not convention.is_denonciation and not convention.is_resiliation %}
+                    {% if not convention.is_avenant_denonciation and not convention.is_avenant_resiliation %}
                         {% include "conventions/actions/generate_convention.html" %}
                     {% endif %}
                     {% include "conventions/actions/cancel_convention.html" %}
