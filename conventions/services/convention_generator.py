@@ -3,6 +3,7 @@ import io
 import json
 import math
 import os
+import subprocess
 
 import convertapi
 import jinja2
@@ -306,9 +307,22 @@ def generate_pdf(file_stream: io.BytesIO, convention: Convention):
         os.remove(local_docx_path)
     else:
         convention_dirpath = f"conventions/{convention.uuid}/convention_docs"
-        convention_filename = f"{convention.uuid}.docx"
-        pdf_path = _save_io_as_file(
-            file_stream, convention_dirpath, convention_filename
+        convention_docx_filename = f"{convention.uuid}.docx"
+        convention_pdf_filename = f"{convention.uuid}.pdf"
+        doc_path = _save_io_as_file(
+            file_stream, convention_dirpath, convention_docx_filename
+        )
+        pdf_path = f"{convention_dirpath}/{convention_pdf_filename}"
+        subprocess.run(
+            [
+                "/Applications/LibreOffice.app/Contents/MacOS/soffice",
+                "--convert-to",
+                "pdf:writer_pdf_Export",
+                "--outdir",
+                f"media/{convention_dirpath}",
+                f"media/{doc_path}",
+            ],
+            check=True,
         )
 
     file_stream.seek(0)
