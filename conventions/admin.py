@@ -1,3 +1,5 @@
+from typing import Any
+
 from django import forms
 from django.contrib import admin
 from django.contrib.admin import ChoicesFieldListFilter
@@ -46,10 +48,9 @@ class ConventionModelForm(forms.ModelForm):
 
         super().__init__(*args, initial=initial, **kwargs)
 
-    def _post_clean(self):
-        super()._post_clean()
-        statut = self.cleaned_data.get("statut")
-        self.cleaned_data["statut"] = ConventionStatut[statut].label
+    def save(self, commit: bool = True) -> Any:
+        self.instance.statut = ConventionStatut[self.instance.statut].label
+        return super().save(commit)
 
     class Meta:
         model = Convention
