@@ -29,19 +29,16 @@
                         <table aria-label="Conventions">
                             {% if filtered_conventions_count != all_conventions_count %}
                                 <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-2w">
-                                    <div class="fr-mr-2w notes fr-col-2">{{ filtered_conventions_count }} résultats</div>
-                                    {% if new_search %}
-                                        <a href="/" class="fr-link">
-                                            <span class="fr-icon-close-circle-line fr-mr-1w"></span>
-                                            Réinitaliser la recherche
-                                        </a>
-                                        <a href="{% url 'conventions:loyer_simulateur' %}" class="fr-link fr-ml-2w"
-                                            title="Calculatrice de loyers"
-                                            aria-selected="{% if request.resolver_match.view_name == "conventions:loyer_simulateur" %}true{% else %}false{% endif %}"                                >
-                                            <span aria-hidden="true" class="fr-icon-equalizer-fill"></span>
-                                            Calculatrice de loyers
-                                        </a>
-                                    {% endif %}
+                                    <div class="fr-grid-row fr-col-12">
+
+                                        <div class="fr-mr-2w notes">{{ filtered_conventions_count }} résultats</div>
+                                        {% if new_search %}
+                                            <a href="/" class="fr-link">
+                                                <span class="fr-icon-close-circle-line fr-mr-1w"></span>
+                                                Réinitaliser la recherche
+                                            </a>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             {% endif %}
                             <thead>

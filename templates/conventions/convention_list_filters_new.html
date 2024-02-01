@@ -1,6 +1,14 @@
 
 <div class="fr-container">
     <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-grid-row fr-grid-row--right">
+            <a href="{% url 'conventions:loyer_simulateur' %}" class="fr-link fr-ml-2w"
+                title="Calculatrice de loyers"
+                aria-selected="{% if request.resolver_match.view_name == "conventions:loyer_simulateur" %}true{% else %}false{% endif %}"                                >
+                <span aria-hidden="true" class="fr-icon-equalizer-fill"></span>
+                Calculatrice de loyers
+            </a>
+        </div>
 
         <div class="fr-col-md-12 fr-mb-2w">
             <form class="fr-mt-2w" method="get" action="" id="search_table">
