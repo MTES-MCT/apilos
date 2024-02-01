@@ -39,6 +39,7 @@ class FinancementEDD(models.TextChoices):
 class TypologieLogementClassique(models.TextChoices):
     T1 = "T1", "T1"
     T1BIS = "T1bis", "T1 bis"
+    T1prime = "T1prime", "T1'"
     T2 = "T2", "T2"
     T3 = "T3", "T3"
     T4 = "T4", "T4"
