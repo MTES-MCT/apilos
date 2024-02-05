@@ -311,7 +311,6 @@ class User(AbstractUser):
     #
     # list of bailleurs following role
     # super admin = all bailleurs, filtre = {}
-    # staff user = all bailleurs, filtre = {}
     # instructeur = all bailleurs following geo, filtre = {}
     # bailleur = bailleurs which belongs to the user as a bailleur, filtre = {id__in: [x,y,z]}
     # else raise
