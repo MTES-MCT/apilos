@@ -88,8 +88,8 @@
 }
 .search-select:has(.fr-select option[selected]) .select-label::after {
   content: "";
-  -webkit-mask-image: url("../../static/dsfr/icons/system/fr--success-fill.svg");
-  mask-image: url("../../static/dsfr/icons/system/fr--success-fill.svg");
+  -webkit-mask-image: url("/static/dsfr/icons/system/fr--success-fill.svg");
+  mask-image: url("/static/dsfr/icons/system/fr--success-fill.svg");
   --icon-size: 1.2rem;
   background-color: var(--background-active-blue-france);
   height: var(--icon-size);
