@@ -38,11 +38,7 @@ def edit_administration(request, administration_uuid):
     result = services_view.edit_administration(request, administration_uuid)
     if result["success"] and not settings.CERBERE_AUTH:
         return HttpResponseRedirect(reverse("settings:administrations"))
-    return render(
-        request,
-        "settings/edit_administration.html",
-        {**result},
-    )
+    return render(request, "settings/edit_administration.html", result)
 
 
 @login_required
@@ -59,11 +55,7 @@ def edit_bailleur(request, bailleur_uuid):
     result = services.edit_bailleur(request, bailleur_uuid)
     if result["success"] and not settings.CERBERE_AUTH:
         return HttpResponseRedirect(reverse("settings:bailleurs"))
-    return render(
-        request,
-        "settings/edit_bailleur.html",
-        {**result},
-    )
+    return render(request, "settings/edit_bailleur.html", result)
 
 
 class ImportBailleurUsersView(LoginRequiredMixin, View):
@@ -104,13 +96,10 @@ class ImportBailleurUsersView(LoginRequiredMixin, View):
 
 @login_required
 def profile(request):
-    result = services.user_profile(request)
     return render(
         request,
         "settings/user_profile.html",
-        {
-            **result,
-        },
+        services.user_profile(request),
     )
 
 

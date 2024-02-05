@@ -231,12 +231,12 @@ def edit_bailleur(request, bailleur_uuid):
                 "siren": bailleur.siren,
                 "sous_nature_bailleur": (
                     request.POST.get("sous_nature_bailleur", False)
-                    if request.user.is_superuser
+                    if request.user.is_superuser or request.user.is_staff
                     else bailleur.sous_nature_bailleur
                 ),
                 "nature_bailleur": (
                     request.POST.get("nature_bailleur", False)
-                    if request.user.is_superuser
+                    if request.user.is_superuser or request.user.is_staff
                     else bailleur.nature_bailleur
                 ),
             },
@@ -245,7 +245,11 @@ def edit_bailleur(request, bailleur_uuid):
             ),
         )
         if form.is_valid():
-            if request.user.is_superuser or request.user.administrateur_de_compte:
+            if (
+                request.user.is_superuser
+                or request.user.is_staff
+                or request.user.administrateur_de_compte
+            ):
                 parent = (
                     form.cleaned_data["bailleur"]
                     if form.cleaned_data["bailleur"]
