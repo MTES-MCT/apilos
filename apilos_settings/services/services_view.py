@@ -112,12 +112,16 @@ def user_profile(request):
 
 
 @require_GET
-def administration_list(request):
+def administration_list(request: HttpRequest) -> dict[str, Any]:
     search_input = request.GET.get("search_input", "")
     order_by = request.GET.get("order_by", "nom")
     page = request.GET.get("page", 1)
 
-    my_administration_list = request.user.administrations().order_by(order_by)
+    my_administration_list = (
+        Administration.objects.all().order_by(order_by)
+        if request.user.is_staff or request.user.is_superuser
+        else request.user.administrations().order_by(order_by)
+    )
     total_administration = my_administration_list.count()
     if search_input:
         my_administration_list = my_administration_list.filter(
@@ -198,6 +202,22 @@ def edit_administration(request, administration_uuid):
         "editable": True,
         "success": success,
     }
+
+
+@require_GET
+def bailleur_list(request: HttpRequest) -> dict[str, Any]:
+    bailleur_list_service = BailleurListService(
+        search_input=request.GET.get("search_input", ""),
+        order_by=request.GET.get("order_by", "nom"),
+        page=request.GET.get("page", 1),
+        item_list=(
+            Bailleur.objects.all().order_by("nom")
+            if request.user.is_superuser or request.user.is_staff
+            else request.user.bailleurs()
+        ),
+    )
+    bailleur_list_service.paginate()
+    return bailleur_list_service.as_dict()
 
 
 def edit_bailleur(request, bailleur_uuid):
@@ -306,15 +326,18 @@ def edit_bailleur(request, bailleur_uuid):
 
 
 @require_GET
-def user_list(request):
+def user_list(request: HttpRequest) -> dict[str, Any]:
     user_list_service = UserListService(
         search_input=request.GET.get("search_input", ""),
         order_by=request.GET.get("order_by", "username"),
         page=request.GET.get("page", 1),
-        my_user_list=request.user.user_list(),
+        my_user_list=(
+            User.objects.all()
+            if request.user.is_staff or request.user.is_superuser
+            else request.user.user_list()
+        ),
     )
     user_list_service.paginate()
-
     return user_list_service.as_dict()
 
 

@@ -26,11 +26,10 @@ def index(request):
 
 @login_required
 def administrations(request):
-    result = services_view.administration_list(request)
     return render(
         request,
         "settings/administrations.html",
-        {**result},
+        services_view.administration_list(request),
     )
 
 
@@ -48,18 +47,10 @@ def edit_administration(request, administration_uuid):
 
 @login_required
 def bailleurs(request):
-    bailleur_list_service = services_view.BailleurListService(
-        search_input=request.GET.get("search_input", ""),
-        order_by=request.GET.get("order_by", "nom"),
-        page=request.GET.get("page", 1),
-        item_list=request.user.bailleurs(),
-    )
-    bailleur_list_service.paginate()
-
     return render(
         request,
         "settings/bailleurs.html",
-        bailleur_list_service.as_dict(),
+        services_view.bailleur_list(request),
     )
 
 
@@ -125,11 +116,10 @@ def profile(request):
 
 @login_required
 def users(request):
-    result = services.user_list(request)
     return render(
         request,
         "settings/users.html",
-        {**result},
+        services.user_list(request),
     )
 
 
