@@ -586,5 +586,6 @@ TRIGRAM_SIMILARITY_THRESHOLD = get_env_variable(
     "TRIGRAM_SIMILARITY_THRESHOLD", float, default=0.3
 )
 
-# Feature flags
+# Waffle
 FLAG_NEW_SEARCH = "nouvelle_recherche"
+WAFFLE_ENABLE_ADMIN_PAGES = False
