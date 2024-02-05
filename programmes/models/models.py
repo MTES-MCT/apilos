@@ -2,7 +2,7 @@ import uuid
 from typing import Any
 
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchVector
+from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.forms import model_to_dict
 
@@ -32,9 +32,7 @@ class Programme(IngestableModel):
             models.Index(fields=["code_postal"], name="programme_code_postal_idx"),
             models.Index(fields=["nom"], name="programme_nom_idx"),
             models.Index(fields=["-date_achevement_compile"]),
-            GinIndex(
-                SearchVector("ville", config="french"), name="search_vector_ville_idx"
-            ),
+            GinIndex(fields=["search_vector"], name="search_vector_programme_idx"),
         ]
 
     pivot = ["bailleur", "nom", "ville"]
@@ -144,6 +142,8 @@ class Programme(IngestableModel):
     date_achevement_compile = models.DateField(null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+
+    search_vector = SearchVectorField(null=True, blank=True)
 
     @property
     def all_conventions_are_signed(self):

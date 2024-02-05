@@ -151,6 +151,7 @@ INSTALLED_APPS = [
     "hijack",
     "hijack.contrib.admin",
     "django_celery_results",
+    "waffle",
 ]
 
 if ENVIRONMENT == "development":
@@ -178,6 +179,7 @@ MIDDLEWARE = [
     "csp.middleware.CSPMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
     "hijack.middleware.HijackUserMiddleware",
+    "waffle.middleware.WaffleMiddleware",
 ]
 
 
@@ -583,3 +585,7 @@ CLAMAV_SERVICE_PASSWORD = get_env_variable("CLAMAV_SERVICE_PASSWORD")
 TRIGRAM_SIMILARITY_THRESHOLD = get_env_variable(
     "TRIGRAM_SIMILARITY_THRESHOLD", float, default=0.3
 )
+
+# Waffle
+FLAG_NEW_SEARCH = "nouvelle_recherche"
+WAFFLE_ENABLE_ADMIN_PAGES = False

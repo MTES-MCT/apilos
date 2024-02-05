@@ -14,6 +14,7 @@ django-hijack
 django-simple-history
 django-sql-explorer[xls]
 django-storages
+django-waffle
 Django<5.0
 djangorestframework-simplejwt
 djangorestframework

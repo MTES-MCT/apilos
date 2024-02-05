@@ -11,16 +11,24 @@
 {% endblock %}
 
 {% block css_extras %}
-    <link rel="stylesheet"
-        href="{% static 'virtual-select/virtual-select.min.css' %}">
+    <link rel="stylesheet" href="{% static 'virtual-select/virtual-select.min.css' %}">
 {% endblock %}
 
 {% block content %}
     {% if total_conventions > 0 %}
         <div class="fr-container-fluid ds_banner">
             <div class="fr-container">{% include "./_partial/search_header.html" %}</div>
-            <div class="fr-container-fluid">{% include "./_partial/tabs.html" %}</div>
+
+            {% if tabs %}
+                <div class="fr-container-fluid">{% include "./_partial/tabs.html" %}</div>
+            {% endif %}
         </div>
+
+        {% if new_search %}
+            {% include "conventions/convention_list_filters_new.html" %}
+        {% else %}
+            {% include "conventions/convention_list_filters.html" %}
+        {% endif %}
 
         {% include "conventions/convention_list.html" %}
 

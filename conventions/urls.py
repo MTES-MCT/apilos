@@ -6,13 +6,23 @@ from . import views
 from .views import (
     ConventionActivesSearchView,
     ConventionEnInstructionSearchView,
+    ConventionSearchView,
     ConventionTermineesSearchView,
     LoyerSimulateurView,
 )
 
 urlpatterns = [
     # Pages de premier niveau : recherche et calculette de loyer
-    path("", RedirectView.as_view(url="/conventions/en-cours"), name="index"),
+    path(
+        "",
+        RedirectView.as_view(url="/conventions/recherche"),
+        name="index",
+    ),
+    path(
+        "recherche",
+        ConventionSearchView.as_view(),
+        name=ConventionSearchView.name,
+    ),
     path(
         "en-cours",
         ConventionEnInstructionSearchView.as_view(),

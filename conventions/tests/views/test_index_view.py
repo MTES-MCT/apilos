@@ -1,14 +1,19 @@
 from datetime import date
 
 from bs4 import BeautifulSoup
+from django.conf import settings
 from django.http.request import HttpRequest
 from django.test import TestCase
 from django.urls import reverse
+from waffle.testutils import override_flag
 
 from conventions.models import ConventionStatut
 from conventions.services.search import UserConventionSearchService
 from conventions.tests.factories import ConventionFactory
-from conventions.views.conventions import ConventionSearchView, ConventionTabsMixin
+from conventions.views.conventions import (
+    ConventionTabSearchBaseView,
+    ConventionTabsMixin,
+)
 from users.models import User
 
 
@@ -24,19 +29,31 @@ class ConventionIndexViewTests(TestCase):
         "users_for_tests.json",
     ]
 
-    def test_get_index(self):
-        # login as superuser
+    def _login(self):
         self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
-        response = self.client.get(reverse("conventions:index"))
+    def test_get_index(self):
+        self._login()
+
+        with override_flag(settings.FLAG_NEW_SEARCH, active=True):
+            response = self.client.get(reverse("conventions:index"))
+            self.assertRedirects(response, reverse("conventions:search"))
+
+    def test_feature_flag_redirect(self):
+        self._login()
+
+        response = self.client.get(reverse("conventions:search"))
         self.assertRedirects(response, reverse("conventions:search_instruction"))
+
+        with override_flag(settings.FLAG_NEW_SEARCH, active=True):
+            response = self.client.get(reverse("conventions:search"))
+            assert response.status_code == 200
 
     def test_get_list_active(self):
         """
         Test displaying convention list as superuser without filter nor order
         """
-        # login as superuser
-        self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
+        self._login()
 
         response = self.client.get(reverse("conventions:search_instruction"))
         soup = BeautifulSoup(response.content, "html.parser")
@@ -56,8 +73,7 @@ class ConventionIndexViewTests(TestCase):
         """
         Test displaying convention list as superuser without filter but with bailleur order
         """
-        # login as superuser
-        self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
+        self._login()
 
         response = self.client.get(
             reverse("conventions:search_instruction"),
@@ -92,7 +108,7 @@ class ConventionIndexViewTests(TestCase):
             weight = 1000000
             verbose_name = "Je suis un service"
 
-        class DummyConventionView(ConventionSearchView):
+        class DummyConventionView(ConventionTabSearchBaseView):
             name = "search_instruction"
             service_class = DummyService
 
