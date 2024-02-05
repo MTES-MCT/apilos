@@ -43,6 +43,13 @@
                             {% endif %}
                             <thead>
                                 <tr class="th_inline">
+
+                                    {% if debug_search_ranking %}
+                                        <th title="Ranking" scope="col">
+                                            >> Debug ranking >>>>>>>>>>
+                                        </th>
+                                    {% endif %}
+
                                     <th title="Statut de la convention" scope="col">
                                         Statut
                                     </th>
@@ -78,6 +85,43 @@
                             <tbody>
                                 {% for convention in conventions %}
                                     <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
+
+                                        {% if debug_search_ranking %}
+                                            <td>
+                                                {{ settings.TRIGRAM_SIMILARITY_THRESHOLD }}
+                                                {% if convention.rank %}
+                                                    <div>
+                                                        rank: {{ convention.rank }}
+                                                    </div>
+                                                {% endif %}
+                                                {% if convention.search_vector_programme_rank %}
+                                                    <div>
+                                                        vector programme: {{ convention.search_vector_programme_rank }}
+                                                    </div>
+                                                {% endif %}
+                                                {% if convention.search_vector_bailleur_rank %}
+                                                    <div>
+                                                        vector bailleur: {{ convention.search_vector_bailleur_rank }}
+                                                    </div>
+                                                {% endif %}
+                                                {% if convention.numero_similarity and convention.numero_similarity > TRIGRAM_SIMILARITY_THRESHOLD %}
+                                                    <div>
+                                                        conv numero trgm: {{ convention.numero_similarity }}
+                                                    </div>
+                                                {% endif %}
+                                                {% if convention.programme_ville_similarity and convention.programme_ville_similarity > TRIGRAM_SIMILARITY_THRESHOLD %}
+                                                    <div>
+                                                        programme ville trgm: {{ convention.programme_ville_similarity }}
+                                                    </div>
+                                                {% endif %}
+                                                {% if convention.numero_operation_similarity and convention.numero_operation_similarity > TRIGRAM_SIMILARITY_THRESHOLD %}
+                                                    <div>
+                                                        programme numero trgm: {{ convention.numero_operation_similarity }}
+                                                    </div>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+
                                         <td title="{{convention.statut_for_template.statut_display}}">
                                             {% include "conventions/home/statut_tag.html"  %}
                                             <script type="text/javascript" nonce="{{request.csp_nonce}}">

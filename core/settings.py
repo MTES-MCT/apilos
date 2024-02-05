@@ -585,6 +585,9 @@ CLAMAV_SERVICE_PASSWORD = get_env_variable("CLAMAV_SERVICE_PASSWORD")
 TRIGRAM_SIMILARITY_THRESHOLD = get_env_variable(
     "TRIGRAM_SIMILARITY_THRESHOLD", float, default=0.3
 )
+DEBUG_SEARCH_RANKING = get_env_variable(
+    "DEBUG_SEARCH_RANKING", cast=bool, default=False
+)
 
 # Waffle
 FLAG_NEW_SEARCH = "nouvelle_recherche"
