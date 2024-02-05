@@ -2,19 +2,39 @@ from datetime import date
 
 from django.test import TestCase
 
+from apilos_settings.models import Departement
 from programmes.models import IndiceEvolutionLoyer, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
 
 
 class LoyerRedevanceUpdateComputerTest(TestCase):
+    def setUp(self):
+        self.departement = Departement.objects.get_or_create(
+            code_insee="10", nom="Aube"
+        )[0]
+
     @classmethod
     def setUpTestData(cls):
+        departement1 = Departement.objects.get_or_create(
+            code_insee="2A", nom="Corse-du-Sud"
+        )[0]
+        departement2 = Departement.objects.get_or_create(
+            code_insee="2B", nom="Haute-Corse"
+        )[0]
         data = [
+            {
+                "annee": 2023,
+                "evolution": 2,
+                "date_debut": "2022-01-01",
+                "date_fin": "2022-12-31",
+                "departements": [departement1, departement2],
+            },
             {
                 "annee": 2023,
                 "evolution": 3.6,
                 "date_debut": "2022-01-01",
                 "date_fin": "2022-12-31",
+                "departements": None,
             },
             {
                 "annee": 2022,
@@ -123,10 +143,13 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
             ]:
                 is_loyer = nature_logement == NatureLogement.LOGEMENTSORDINAIRES
                 nature_logement = nature_logement if not is_loyer else None
-                IndiceEvolutionLoyer.objects.update_or_create(
+                indice = IndiceEvolutionLoyer.objects.update_or_create(
                     annee=annee["annee"],
                     is_loyer=is_loyer,
                     nature_logement=nature_logement,
+                    departements__in=[d.id for d in annee.get("departements")]
+                    if annee.get("departements")
+                    else [],
                     defaults=dict(
                         annee=annee["annee"],
                         is_loyer=is_loyer,
@@ -135,7 +158,10 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
                         date_fin=annee["date_fin"],
                         evolution=annee["evolution"],
                     ),
-                )
+                )[0]
+                if annee.get("departements"):
+                    for d in annee.get("departements"):
+                        indice.departements.add(d)
 
     def test_compute_loyer_update_logements_ordinaires(self):
         """
@@ -147,6 +173,7 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
             nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
             date_initiale=date.fromisoformat("2008-04-06"),
             date_actualisation=date.fromisoformat("2023-04-06"),
+            departement=self.departement,
         )
         self.assertAlmostEqual(11.96, update, places=2)
 
@@ -155,6 +182,7 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
             nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
             date_initiale=date.fromisoformat("2013-07-12"),
             date_actualisation=date.fromisoformat("2014-03-18"),
+            departement=self.departement,
         )
         self.assertAlmostEqual(400 * 1.012, update, places=2)
 
@@ -162,6 +190,7 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
             montant_initial=100,
             nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
             date_initiale=date.fromisoformat("2014-02-01"),
+            departement=self.departement,
         )
         self.assertAlmostEqual(
             100 * 1.0057 * 1.0008 * 1.0125 * 1.0153 * 1.0066 * 1.0042 * 1.036,
@@ -180,6 +209,7 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
             nature_logement=NatureLogement.RESISDENCESOCIALE,
             date_initiale=date.fromisoformat("2013-07-12"),
             date_actualisation=date.fromisoformat("2014-03-18"),
+            departement=self.departement,
         )
         self.assertAlmostEqual(400 * 1.012, update, places=2)
 
@@ -187,6 +217,7 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
             montant_initial=100,
             nature_logement=NatureLogement.RESISDENCESOCIALE,
             date_initiale=date.fromisoformat("2014-02-01"),
+            departement=self.departement,
         )
         self.assertAlmostEqual(
             100 * 1.0057 * 1.0008 * 1.0125 * 1.0153 * 1.0066 * 1.0042 * 1.036,
@@ -204,6 +235,7 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
             nature_logement=NatureLogement.RESIDENCEDACCUEIL,
             date_initiale=date.fromisoformat("2013-07-12"),
             date_actualisation=date.fromisoformat("2014-03-18"),
+            departement=self.departement,
         )
         self.assertAlmostEqual(400 * 1.012, update, places=2)
 
@@ -211,6 +243,7 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
             montant_initial=100,
             nature_logement=NatureLogement.RESIDENCEDACCUEIL,
             date_initiale=date.fromisoformat("2014-02-01"),
+            departement=self.departement,
         )
         self.assertAlmostEqual(
             100 * 1.0057 * 1.0008 * 1.0125 * 1.0153 * 1.0066 * 1.0042 * 1.036,
@@ -229,6 +262,7 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
                 montant_initial=400,
                 nature_logement=NatureLogement.PENSIONSDEFAMILLE,
                 date_initiale=date.fromisoformat("2013-07-12"),
+                departement=self.departement,
             )
 
         with self.assertRaises(Exception):  # noqa: B017
@@ -236,6 +270,7 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
                 montant_initial=400,
                 nature_logement=NatureLogement.HEBERGEMENT,
                 date_initiale=date.fromisoformat("2013-07-12"),
+                departement=self.departement,
             )
 
         with self.assertRaises(Exception):  # noqa: B017
@@ -243,4 +278,31 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
                 montant_initial=400,
                 nature_logement=NatureLogement.RESIDENCEUNIVERSITAIRE,
                 date_initiale=date.fromisoformat("2013-07-12"),
+                departement=self.departement,
             )
+
+    def test_compute_loyer_departements(self):
+        departement = Departement.objects.get_or_create(
+            code_insee="2A", nom="Corse-du-Sud"
+        )[0]
+
+        update = LoyerRedevanceUpdateComputer.compute_loyer_update(
+            montant_initial=1000,
+            nature_logement=NatureLogement.RESISDENCESOCIALE,
+            date_initiale=date.fromisoformat("2022-07-12"),
+            date_actualisation=date.fromisoformat("2023-03-18"),
+            departement=departement,
+        )
+        # We expect the specific 2,0 indice for this departement
+        self.assertAlmostEqual(1020, update, places=2)
+
+    def test_compute_loyer_departements_generic_case(self):
+        update = LoyerRedevanceUpdateComputer.compute_loyer_update(
+            montant_initial=1000,
+            nature_logement=NatureLogement.RESISDENCESOCIALE,
+            date_initiale=date.fromisoformat("2022-07-12"),
+            date_actualisation=date.fromisoformat("2023-03-18"),
+            departement=self.departement,
+        )
+        # No specific indice for this departement, we expect the generic 3.6 indice
+        self.assertAlmostEqual(1036, update, places=2)

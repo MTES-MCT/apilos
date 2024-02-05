@@ -373,6 +373,7 @@ class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
                 date_actualisation=loyer_simulateur_form.cleaned_data[
                     "date_actualisation"
                 ],
+                departement=loyer_simulateur_form.cleaned_data["departement"],
             )
 
             annee_validite = loyer_simulateur_form.cleaned_data[

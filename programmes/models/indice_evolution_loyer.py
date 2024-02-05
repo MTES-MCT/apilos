@@ -2,6 +2,8 @@ import uuid
 
 from django.db import models
 
+from apilos_settings.models import Departement
+
 from .choices import (
     NatureLogement,
 )
@@ -29,6 +31,12 @@ class IndiceEvolutionLoyer(models.Model):
     )
     # Evolution, en pourcentage
     evolution = models.FloatField()
+    departements = models.ManyToManyField(
+        Departement,
+        blank=True,
+        related_name="departements",
+        verbose_name="Départements concernés",
+    )
 
     def __str__(self):
         return f"{self.annee} / {self.nature_logement} => {self.evolution}"

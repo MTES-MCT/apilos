@@ -129,7 +129,11 @@ class IndiceEvolutionLoyerAdmin(ApilosModelAdmin):
         "is_loyer",
         "nature_logement",
         "evolution",
+        "liste_departements",
     )
+
+    def liste_departements(self, obj):
+        return "\n".join([d.nom for d in obj.departements.all()])
 
     list_filter = (
         "is_loyer",
