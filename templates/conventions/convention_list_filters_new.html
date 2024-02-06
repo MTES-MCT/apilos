@@ -102,13 +102,13 @@
                         </div>
                     </div>
 
-                    {# Champs avec avenant #}
+                    {# Champs avenant #}
                     <div class="fr-col-12 fr-col-md-12 fr-col-lg-5">
                         <div class="fr-fieldset__element">
                             <div class="fr-checkbox-group fr-checkbox-group--sm">
-                                <input name="avec_avenant" id="checkbox-restrict-to-with-avenant" type="checkbox" {% if request.GET.avec_avenant %}checked{% endif %}>
+                                <input name="avenant_seulement" id="checkbox-restrict-to-with-avenant" type="checkbox" {% if request.GET.avenant_seulement %}checked{% endif %}>
                                 <label class="fr-label" for="checkbox-restrict-to-with-avenant">
-                                    Afficher uniquement les conventions avec avenant
+                                    Afficher uniquement les avenants
                                 </label>
                             </div>
                         </div>
