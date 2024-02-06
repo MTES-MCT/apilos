@@ -19,17 +19,21 @@ class ConventionSearchBaseService:
     order_by = None
     prefetch = []
     default_filters = defaultdict()
-    filters: dict = {}
-    extra_filters = None
 
     def _get_base_queryset(self) -> QuerySet:
-        pass
+        return Convention.objects.none()
 
-    def _build_queryset_filters(self) -> None:
-        pass
+    def _build_filters(self, queryset: QuerySet) -> QuerySet:
+        return queryset
 
-    def _build_queryset_extra_filters(self) -> None:
-        pass
+    def _build_ranking(self, queryset: QuerySet) -> QuerySet:
+        return queryset
+
+    def _build_search_filters(self, queryset: QuerySet) -> QuerySet:
+        return queryset
+
+    def _build_scoring(self, queryset: QuerySet) -> QuerySet:
+        return queryset
 
     def _get_order_by(self) -> list[str]:
         if not isinstance(self.order_by, list):
@@ -39,14 +43,10 @@ class ConventionSearchBaseService:
 
     def get_queryset(self) -> QuerySet:
         queryset = self._get_base_queryset()
-        self._build_queryset_filters()
-        self._build_queryset_extra_filters()
-
-        if self.filters:
-            queryset = queryset.filter(**self.filters)
-
-        if self.extra_filters:
-            queryset = queryset.filter(self.extra_filters)
+        queryset = self._build_filters(queryset)
+        queryset = self._build_ranking(queryset)
+        queryset = self._build_search_filters(queryset)
+        queryset = self._build_scoring(queryset)
 
         if self.prefetch:
             queryset = queryset.prefetch_related(*self.prefetch)
@@ -139,55 +139,59 @@ class UserConventionSearchService(ConventionSearchBaseService):
     def choices(self) -> list[tuple[str, str]]:
         return [(status.name, status.label) for status in self.statuses]
 
-    def _build_queryset_filters(self):
-        self.filters = copy(self.default_filters)
+    def _get_base_queryset(self) -> QuerySet:
+        return self.user.conventions()
+
+    def _build_filters(self, queryset: QuerySet) -> QuerySet:
+        filters = copy(self.default_filters)
 
         if self.statuses:
-            self.filters["statut__in"] = map(lambda s: s.label, self.statuses)
+            filters["statut__in"] = map(lambda s: s.label, self.statuses)
 
         if self.statut:
-            self.filters["statut"] = self.statut.label
-
-        if self.commune:
-            self.filters[
-                "programme_ville_similarity__gt"
-            ] = settings.TRIGRAM_SIMILARITY_THRESHOLD
+            filters["statut"] = self.statut.label
 
         if self.financement:
-            self.filters["financement"] = self.financement
+            filters["financement"] = self.financement
 
         if self.bailleur:
-            self.filters["lot__programme__bailleur__uuid"] = self.bailleur
+            filters["lot__programme__bailleur__uuid"] = self.bailleur
 
         if self.administration:
-            self.filters["lot__programme__administration__uuid"] = self.administration
+            filters["lot__programme__administration__uuid"] = self.administration
 
         if self.anru:
-            self.filters["lot__programme__anru"] = True
+            filters["lot__programme__anru"] = True
 
         if self.date_signature:
-            self.filters[
-                "televersement_convention_signee_le__year"
-            ] = self.date_signature
+            filters["televersement_convention_signee_le__year"] = self.date_signature
 
-    def _get_base_queryset(self) -> QuerySet:
-        qs = self.user.conventions()
+        return queryset.filter(**filters)
 
+    def _build_ranking(self, queryset: QuerySet) -> QuerySet:
         if self.search_input:
-            qs = qs.annotate(
+            queryset = queryset.annotate(
                 programme_nom_similarity=TrigramSimilarity(
                     "programme__nom", self.search_input
                 )
             )
 
         if self.commune:
-            qs = qs.annotate(
+            queryset = queryset.annotate(
                 programme_ville_similarity=TrigramSimilarity(
                     "programme__ville", self.commune
                 )
             )
 
-        return qs
+        return queryset
+
+    def _build_search_filters(self, queryset: QuerySet) -> QuerySet:
+        if self.commune:
+            queryset = queryset.filter(
+                programme_ville_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+            )
+
+        return queryset
 
     def _get_order_by(self) -> list:
         order_by = super()._get_order_by()
@@ -213,15 +217,18 @@ class UserConventionEnInstructionSearchService(UserConventionSearchService):
         ConventionStatut.A_SIGNER,
     ]
 
-    def _build_queryset_extra_filters(self):
-        super()._build_queryset_extra_filters()
+    def _build_search_filters(self, queryset: QuerySet) -> QuerySet:
+        queryset = super()._build_search_filters(queryset)
+
         if self.search_input:
-            self.extra_filters = (
+            queryset = queryset.filter(
                 Q(programme__nom__icontains=self.search_input)
                 | Q(programme__code_postal__icontains=self.search_input)
                 | Q(programme__numero_galion__icontains=self.search_input)
                 | Q(programme_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
             )
+
+        return queryset
 
 
 class UserConventionActivesSearchService(UserConventionSearchService):
@@ -231,11 +238,11 @@ class UserConventionActivesSearchService(UserConventionSearchService):
     statuses = [ConventionStatut.SIGNEE]
     default_filters = {"parent_id": None}
 
-    def _get_base_queryset(self) -> QuerySet:
-        qs = super()._get_base_queryset()
+    def _build_ranking(self, queryset: QuerySet) -> QuerySet:
+        queryset = super()._build_ranking(queryset)
 
         if self.search_input:
-            qs = qs.annotate(
+            queryset = queryset.annotate(
                 _r1=Replace("numero", Value("/")),
                 _r2=Replace("_r1", Value("-")),
                 _r3=Replace("_r2", Value(" ")),
@@ -247,12 +254,13 @@ class UserConventionActivesSearchService(UserConventionSearchService):
                 ),
             )
 
-        return qs
+        return queryset
 
-    def _build_queryset_extra_filters(self):
-        super()._build_queryset_extra_filters()
+    def _build_search_filters(self, queryset: QuerySet) -> QuerySet:
+        queryset = super()._build_search_filters(queryset)
+
         if self.search_input:
-            self.extra_filters = (
+            queryset = queryset.filter(
                 Q(programme__nom__icontains=self.search_input)
                 | Q(programme__code_postal__icontains=self.search_input)
                 | Q(programme__numero_galion__icontains=self.search_input)
@@ -260,6 +268,8 @@ class UserConventionActivesSearchService(UserConventionSearchService):
                 | Q(numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
                 | Q(programme_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
             )
+
+        return queryset
 
     def _get_order_by(self) -> list:
         qs = super()._get_order_by()
@@ -281,16 +291,18 @@ class UserConventionTermineesSearchService(UserConventionSearchService):
     ]
     default_filters = {"parent_id": None}
 
-    def _build_queryset_extra_filters(self):
-        super()._build_queryset_extra_filters()
+    def _build_search_filters(self, queryset: QuerySet) -> QuerySet:
+        queryset = super()._build_search_filters(queryset)
+
         if self.search_input:
-            self.extra_filters = (
+            queryset = queryset.filter(
                 Q(programme__nom__icontains=self.search_input)
                 | Q(programme__code_postal__icontains=self.search_input)
                 | Q(programme__numero_galion__icontains=self.search_input)
                 | Q(numero__icontains=self.search_input)
                 | Q(programme_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
             )
+        return queryset
 
 
 class UserConventionSmartSearchService(ConventionSearchBaseService):
@@ -337,28 +349,49 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 ).strip()
 
     def _get_base_queryset(self) -> QuerySet:
-        qs = self.user.conventions()
+        return self.user.conventions()
 
-        # TODO: a challenger
+    def _build_filters(self, queryset: QuerySet) -> QuerySet:
+        if self.statut:
+            queryset = queryset.filter(statut=self.statut.label)
+
+        if self.anru:
+            queryset = queryset.filter(programme__anru=True)
+
         if self.avec_avenant:
-            qs = qs.annotate(count_avenants=Count("avenants"))
-
-        if self.search_query:
-            qs = qs.annotate(
-                search_vector_programme_rank=SearchRank(
-                    vector="programme__search_vector",
-                    query=self.search_query,
-                )
-            ).annotate(
-                search_vector_bailleur_rank=SearchRank(
-                    vector="programme__bailleur__search_vector",
-                    query=self.search_query,
-                )
+            queryset = queryset.annotate(count_avenants=Count("avenants")).filter(
+                count_avenants__gt=0
             )
 
+        if self.financement:
+            queryset = queryset.filter(financement=self.financement)
+
+        if self.nature_logement:
+            queryset = queryset.filter(programme__nature_logement=self.nature_logement)
+
+        if self.date_signature:
+            queryset = queryset.filter(
+                televersement_convention_signee_le__year=self.date_signature
+            )
+
+        return queryset
+
+    def _build_ranking(self, queryset: QuerySet) -> QuerySet:
         if self.search_input:
-            qs = (
-                qs.annotate(
+            queryset = (
+                queryset.annotate(
+                    search_vector_programme_rank=SearchRank(
+                        vector="programme__search_vector",
+                        query=self.search_query,
+                    )
+                )
+                .annotate(
+                    search_vector_bailleur_rank=SearchRank(
+                        vector="programme__bailleur__search_vector",
+                        query=self.search_query,
+                    )
+                )
+                .annotate(
                     programme_ville_similarity=TrigramSimilarity(
                         "programme__ville", self.search_input
                     )
@@ -377,68 +410,19 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                         "_r2", self.search_input.replace("-", "").replace("/", "")
                     ),
                 )
+                .annotate(
+                    bailleur_siret_similarity=TrigramSimilarity(
+                        Replace("programme__bailleur__siret", Value(" ")),
+                        self.search_input_numbers,
+                    ),
+                )
             )
 
-        if self.search_input_numbers:
-            qs = qs.annotate(
-                bailleur_siret_similarity=TrigramSimilarity(
-                    Replace("programme__bailleur__siret", Value(" ")),
-                    self.search_input_numbers,
-                ),
-            )
+        return queryset
 
-        return qs
-
-    def _get_order_by(self) -> list[str]:
-        order_by = super()._get_order_by()
-
+    def _build_search_filters(self, queryset: QuerySet) -> QuerySet:
         if self.search_input:
-            order_by += [
-                "-numero_similarity",
-                "-numero_operation_similarity",
-                "-programme_ville_similarity",
-            ]
-
-        if self.search_input_numbers:
-            order_by += [
-                "-bailleur_siret_similarity",
-            ]
-
-        if self.search_query:
-            order_by += [
-                "-search_vector_programme_rank",
-                "-search_vector_bailleur_rank",
-            ]
-
-        order_by.append("-cree_le")
-        return order_by
-
-    def _build_queryset_filters(self) -> None:
-        self.filters = copy(self.default_filters)
-
-        if self.statut:
-            self.filters["statut"] = self.statut.label
-
-        if self.anru:
-            self.filters["programme__anru"] = True
-
-        if self.avec_avenant:
-            self.filters["count_avenants__gt"] = 0
-
-        if self.financement:
-            self.filters["financement"] = self.financement
-
-        if self.nature_logement:
-            self.filters["programme__nature_logement"] = self.nature_logement
-
-        if self.date_signature:
-            self.filters[
-                "televersement_convention_signee_le__year"
-            ] = self.date_signature
-
-    def _build_queryset_extra_filters(self) -> None:
-        if self.search_input:
-            self.extra_filters = (
+            queryset = queryset.filter(
                 Q(programme__search_vector=self.search_query)
                 | Q(programme__bailleur__search_vector=self.search_query)
                 | Q(numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
@@ -448,9 +432,29 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 | Q(
                     programme_ville_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
                 )
+                | Q(bailleur_siret_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
             )
 
-        if self.search_input_numbers:
-            self.extra_filters |= Q(
-                bailleur_siret_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
-            )
+        return queryset
+
+    def _build_scoring(self, queryset: QuerySet) -> QuerySet:
+        queryset = super()._build_scoring(queryset)
+        # TODO: construire un score global en s'appuyant sur les annotations de ranking
+        return queryset
+
+    def _get_order_by(self) -> list[str]:
+        order_by = super()._get_order_by()
+
+        # TODO: trier par score global
+        if self.search_input:
+            order_by += [
+                "-numero_similarity",
+                "-numero_operation_similarity",
+                "-programme_ville_similarity",
+                "-bailleur_siret_similarity",
+                "-search_vector_programme_rank",
+                "-search_vector_bailleur_rank",
+            ]
+
+        order_by.append("-cree_le")
+        return order_by
