@@ -330,8 +330,7 @@ class ConventionSearchView(ConventionSearchBaseView):
             "search_input": self._get_non_empty_query_param("search_input", ""),
             "total_conventions": request.user.conventions().count(),
             "order_by": self._get_non_empty_query_param("order_by", ""),
-            "debug_search_ranking": settings.DEBUG_SEARCH_RANKING,
-            "TRIGRAM_SIMILARITY_THRESHOLD": settings.TRIGRAM_SIMILARITY_THRESHOLD,
+            "debug_search_scoring": settings.DEBUG_SEARCH_RANKING,
         }
 
     def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:

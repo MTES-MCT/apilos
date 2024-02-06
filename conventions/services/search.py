@@ -5,8 +5,8 @@ from copy import copy
 from django.conf import settings
 from django.contrib.postgres.search import SearchQuery, SearchRank, TrigramSimilarity
 from django.core.paginator import Paginator
-from django.db.models import Count, Q, QuerySet, Value
-from django.db.models.functions import Replace, Round
+from django.db.models import Case, Count, F, Q, QuerySet, Value, When
+from django.db.models.functions import Coalesce, Replace, Round
 
 from bailleurs.models import Bailleur
 from conventions.models import Convention, ConventionStatut
@@ -31,8 +31,8 @@ class ConventionSearchBaseService:
     def _build_queryset_extra_filters(self) -> None:
         pass
 
-    def _get_ranking(self):
-        pass
+    def _build_scoring_annotations(self, queryset: QuerySet) -> QuerySet:
+        return queryset
 
     def _get_order_by(self) -> list[str]:
         if not isinstance(self.order_by, list):
@@ -51,8 +51,7 @@ class ConventionSearchBaseService:
         if self.extra_filters:
             queryset = queryset.filter(self.extra_filters)
 
-        if ranking := self._get_ranking():
-            queryset = queryset.annotate(rank=ranking)
+        queryset = self._build_scoring_annotations(queryset)
 
         if self.prefetch:
             queryset = queryset.prefetch_related(*self.prefetch)
@@ -352,58 +351,40 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
         if self.search_input:
             qs = (
                 qs.annotate(
-                    search_vector_programme_rank=Round(
-                        SearchRank(
-                            vector="programme__search_vector",
-                            query=self.search_query,
-                            # normalization=Value(2),
-                        ),
-                        precision=2,
+                    search_vector_programme_rank=SearchRank(
+                        vector="programme__search_vector",
+                        query=self.search_query,
                     )
                 )
                 .annotate(
-                    search_vector_bailleur_rank=Round(
-                        SearchRank(
-                            vector="programme__bailleur__search_vector",
-                            query=self.search_query,
-                            # normalization=Value(2),
-                        ),
-                        precision=2,
+                    search_vector_bailleur_rank=SearchRank(
+                        vector="programme__bailleur__search_vector",
+                        query=self.search_query,
                     )
                 )
                 .annotate(
-                    programme_ville_similarity=Round(
-                        TrigramSimilarity("programme__ville", self.search_input),
-                        precision=2,
-                    )
+                    programme_ville_similarity=TrigramSimilarity(
+                        "programme__ville", self.search_input
+                    ),
                 )
                 .annotate(
                     _r1=Replace("numero", Value("/")),
                     _r2=Replace("_r1", Value("-")),
-                    numero_similarity=Round(
-                        TrigramSimilarity(
-                            "_r2", self.search_input.replace("-", "").replace("/", "")
-                        ),
-                        precision=2,
+                    numero_similarity=TrigramSimilarity(
+                        "_r2", self.search_input.replace("-", "").replace("/", "")
                     ),
                 )
                 .annotate(
                     _r1=Replace("programme__numero_galion", Value("/")),
                     _r2=Replace("_r1", Value("-")),
-                    numero_operation_similarity=Round(
-                        TrigramSimilarity(
-                            "_r2", self.search_input.replace("-", "").replace("/", "")
-                        ),
-                        precision=2,
+                    numero_operation_similarity=TrigramSimilarity(
+                        "_r2", self.search_input.replace("-", "").replace("/", "")
                     ),
                 )
                 .annotate(
-                    bailleur_siret_similarity=Round(
-                        TrigramSimilarity(
-                            Replace("programme__bailleur__siret", Value(" ")),
-                            self.search_input_numbers,
-                        ),
-                        precision=2,
+                    bailleur_siret_similarity=TrigramSimilarity(
+                        Replace("programme__bailleur__siret", Value(" ")),
+                        self.search_input_numbers,
                     )
                 )
             )
@@ -448,29 +429,78 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 | Q(bailleur_siret_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
             )
 
-    def _get_ranking(self):
-        return None
-        # if self.search_input:
-        #     return (
-        #         Coalesce(F("search_vector_programme_rank"), 0.0)
-        #         + Coalesce(F("search_vector_bailleur_rank"), 0.0)
-        #         + Coalesce(F("programme_ville_similarity"), 0.0)
-        #         + Coalesce(F("numero_similarity"), 0.0)
-        #         + Coalesce(F("numero_operation_similarity"), 0.0)
-        #     )
+    def _build_scoring_annotations(self, queryset: QuerySet) -> QuerySet:
+        if self.search_input:
+            return (
+                queryset.annotate(
+                    vector_programme_score=Round(
+                        Coalesce(F("search_vector_programme_rank"), 0.0), precision=2
+                    )
+                )
+                .annotate(
+                    vector_bailleur_score=Round(
+                        Coalesce(F("search_vector_bailleur_rank"), 0.0), precision=2
+                    )
+                )
+                .annotate(
+                    trgm_programme_ville_score=Case(
+                        When(
+                            programme_ville_similarity__lte=settings.TRIGRAM_SIMILARITY_THRESHOLD,
+                            then=Value(0.0),
+                        ),
+                        default=Round(
+                            Coalesce(F("programme_ville_similarity"), 0.0), precision=2
+                        ),
+                    )
+                )
+                .annotate(
+                    trgm_conv_numero_score=Case(
+                        When(
+                            numero_similarity__lte=settings.TRIGRAM_SIMILARITY_THRESHOLD,
+                            then=Value(0.0),
+                        ),
+                        default=Round(
+                            Coalesce(F("numero_similarity"), 0.0), precision=2
+                        ),
+                    )
+                )
+                .annotate(
+                    trgm_programme_numero_score=Case(
+                        When(
+                            numero_operation_similarity__lte=settings.TRIGRAM_SIMILARITY_THRESHOLD,
+                            then=Value(0.0),
+                        ),
+                        default=Round(
+                            Coalesce(F("numero_operation_similarity"), 0.0), precision=2
+                        ),
+                    )
+                )
+                .annotate(
+                    trgm_bailleur_siret_score=Case(
+                        When(
+                            bailleur_siret_similarity__lte=settings.TRIGRAM_SIMILARITY_THRESHOLD,
+                            then=Value(0.0),
+                        ),
+                        default=Round(
+                            Coalesce(F("bailleur_siret_similarity"), 0.0), precision=2
+                        ),
+                    )
+                )
+            )
+
+        return queryset
 
     def _get_order_by(self) -> list[str]:
         order_by = super()._get_order_by()
 
         if self.search_input:
-            # order_by += ["-rank"]
             order_by += [
-                "-search_vector_programme_rank",
-                "-search_vector_bailleur_rank",
-                "-numero_similarity",
-                "-numero_operation_similarity",
-                "-programme_ville_similarity",
-                "-bailleur_siret_similarity",
+                "-vector_programme_score",
+                "-vector_bailleur_score",
+                "-trgm_programme_ville_score",
+                "-trgm_programme_numero_score",
+                "-trgm_conv_numero_score",
+                "-trgm_bailleur_siret_score",
             ]
 
         order_by.append("-cree_le")
