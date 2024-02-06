@@ -5,7 +5,7 @@ from copy import copy
 from django.conf import settings
 from django.contrib.postgres.search import SearchQuery, SearchRank, TrigramSimilarity
 from django.core.paginator import Paginator
-from django.db.models import Count, Q, QuerySet, Value
+from django.db.models import Q, QuerySet, Value
 from django.db.models.functions import Replace
 
 from bailleurs.models import Bailleur
@@ -314,7 +314,7 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
 
     user: User
     anru: bool
-    avec_avenant: bool
+    avenant_seulement: bool
 
     date_signature: str | None = None
     financement: str | None = None
@@ -328,11 +328,11 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
     def __init__(self, user: User, search_filters: dict | None = None) -> None:
         self.user = user
         self.anru = False
-        self.avec_avenant = False
+        self.avenant_seulement = False
 
         if search_filters:
             self.anru = search_filters.get("anru") is not None
-            self.avec_avenant = search_filters.get("avec_avenant") is not None
+            self.avenant_seulement = search_filters.get("avenant_seulement") is not None
             self.statut = ConventionStatut.get_by_label(search_filters.get("statut"))
             for name in (
                 "date_signature",
@@ -358,10 +358,8 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
         if self.anru:
             queryset = queryset.filter(programme__anru=True)
 
-        if self.avec_avenant:
-            queryset = queryset.annotate(count_avenants=Count("avenants")).filter(
-                count_avenants__gt=0
-            )
+        if self.avenant_seulement:
+            queryset = queryset.filter(parent_id__isnull=False)
 
         if self.financement:
             queryset = queryset.filter(financement=self.financement)

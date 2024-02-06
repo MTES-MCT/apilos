@@ -342,7 +342,7 @@ class ConventionSearchView(ConventionSearchBaseView):
     def get_search_filters_mapping(self) -> list[tuple[str, str]]:
         return [
             ("anru", "anru"),
-            ("avec_avenant", "avec_avenant"),
+            ("avenant_seulement", "avenant_seulement"),
             ("date_signature", "date_signature"),
             ("financement", "financement"),
             ("order_by", "order_by"),
