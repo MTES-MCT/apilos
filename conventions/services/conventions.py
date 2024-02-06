@@ -3,7 +3,10 @@ from abc import ABC, abstractmethod
 from django.forms import Form
 
 from conventions.forms import UploadForm
-from conventions.forms.convention_date_signature import ConventionDateForm
+from conventions.forms.convention_form_dates import (
+    ConventionDateResiliationForm,
+    ConventionDateSignatureForm,
+)
 from conventions.forms.convention_form_resiliation import ConventionResiliationForm
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
@@ -70,7 +73,8 @@ def convention_post_action(request, convention_uuid):
     form_posted = None
     if request.method == "POST":
         resiliation_form = ConventionResiliationForm(request.POST)
-        updatedate_form = ConventionDateForm(request.POST)
+        signature_date_form = ConventionDateSignatureForm(request.POST)
+        resiliation_date_form = ConventionDateResiliationForm(request.POST)
         is_resiliation = request.POST.get("resiliation", False)
         if is_resiliation:
             if resiliation_form.is_valid():
@@ -83,17 +87,27 @@ def convention_post_action(request, convention_uuid):
                 result_status = utils.ReturnStatus.SUCCESS
                 form_posted = "resiliation"
         else:
-            if updatedate_form.is_valid():
+            if signature_date_form.is_valid():
                 convention.televersement_convention_signee_le = (
-                    updatedate_form.cleaned_data["televersement_convention_signee_le"]
+                    signature_date_form.cleaned_data[
+                        "televersement_convention_signee_le"
+                    ]
                 )
                 convention.save()
                 result_status = utils.ReturnStatus.SUCCESS
                 form_posted = "date_signature"
+            elif resiliation_date_form.is_valid():
+                convention.date_resiliation = resiliation_date_form.cleaned_data[
+                    "date_resiliation"
+                ]
+                convention.save()
+                result_status = utils.ReturnStatus.SUCCESS
+                form_posted = "date_resiliation"
 
     else:
         resiliation_form = ConventionResiliationForm()
-        updatedate_form = ConventionDateForm()
+        signature_date_form = ConventionDateSignatureForm()
+        resiliation_date_form = ConventionDateResiliationForm
 
     upform = UploadForm()
     avenant_search_service = AvenantListSearchService(convention, order_by_numero=True)
@@ -115,6 +129,7 @@ def convention_post_action(request, convention_uuid):
         "denonciation": denonciation,
         "resiliation": resiliation,
         "resiliation_form": resiliation_form,
-        "updatedate_form": updatedate_form,
+        "signature_date_form": signature_date_form,
+        "resiliation_date_form": resiliation_date_form,
         "form_posted": form_posted,
     }

@@ -1,5 +1,7 @@
+import datetime
+
 from django.http import HttpRequest, QueryDict
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 
 from conventions.models import Convention
 from conventions.services.conventions import (
@@ -57,3 +59,11 @@ class ConventionConventionsServiceTests(TestCase):
             len(result["avenants"].object_list), len(self.convention.avenants.all())
         )
         self.assertEqual(result["total_avenants"], 1)
+
+    def test_convention_post_action_resiliation_date(self):
+        request = RequestFactory().post("/", data={"date_resiliation": "2024-03-01"})
+
+        convention_post_action(request, self.convention.uuid)
+
+        self.convention.refresh_from_db()
+        assert self.convention.date_resiliation == datetime.date(2024, 3, 1)
