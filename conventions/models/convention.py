@@ -157,6 +157,9 @@ class Convention(models.Model):
     gestionnaire_signataire_bloc_signature = models.CharField(
         max_length=5000, null=True, blank=True
     )
+    gestionnaire_bloc_info_complementaire = models.CharField(
+        max_length=5000, null=True, blank=True
+    )
 
     donnees_validees = models.TextField(null=True, blank=True)
     nom_fichier_signe = models.CharField(max_length=255, null=True, blank=True)

@@ -61,6 +61,7 @@
                 <div class="fr-col-12 fr-col-lg-6">
                     <div class="fr-mb-2w">
                         <strong>{% include "common/display_field_if_exists.html" with value=convention.gestionnaire object_field="convention__gestionnaire__"|add:convention_uuid %}</strong>
+                        {% include "common/display_field_if_exists.html" with value=convention.gestionnaire_bloc_info_complementaire object_field="convention__gestionnaire_bloc_info_complementaire__"|add:convention_uuid %}
                     </div>
                 </div>
                 <div class="fr-col-12 fr-col-lg-6">

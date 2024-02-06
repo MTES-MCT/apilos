@@ -126,6 +126,19 @@ class ConventionBailleurForm(forms.Form):
             "max_length": "Bloc signature du gestionnaire ne doit pas excéder 5000 caractères",
         },
     )
+    gestionnaire_bloc_info_complementaire = forms.CharField(
+        label="Élément complémentaires concernant le gestionnaire sur la convention",
+        help_text=mark_safe(
+            "Sur les documents de convention, vous avez la possibilité de préciser"
+            + " les informations du gestionnaire (SIRET, SIREN, adresse etc...) "
+            + "<strong>avant</strong> la mention «&nbsp;dénommé ci-après le gestionnaire&nbsp;»"
+        ),
+        required=False,
+        max_length=5000,
+        error_messages={
+            "max_length": "Le bloc ne doit pas excéder 5000 caractères",
+        },
+    )
 
     def clean(self):
         gestionnaire = self.cleaned_data.get("gestionnaire", None)

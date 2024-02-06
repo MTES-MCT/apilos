@@ -41,6 +41,7 @@
                         </div>
                     </div>
                 </div>
+                {% include "common/form/input_text.html" with form_input=form.gestionnaire_bloc_info_complementaire object_field="convention__gestionnaire_bloc_info_complementaire__"|add:convention_uuid %}
             {% endwith %}
         {% endif %}
     </div>
