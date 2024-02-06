@@ -21,10 +21,10 @@ class ConventionSearchBaseService:
     default_filters = defaultdict()
 
     def _get_base_queryset(self) -> QuerySet:
-        pass
+        return Convention.objects.none()
 
     def _build_filters(self, queryset: QuerySet) -> QuerySet:
-        pass
+        return queryset
 
     def _build_ranking(self, queryset: QuerySet) -> QuerySet:
         return queryset
