@@ -139,6 +139,9 @@ class UserConventionSearchService(ConventionSearchBaseService):
     def choices(self) -> list[tuple[str, str]]:
         return [(status.name, status.label) for status in self.statuses]
 
+    def _get_base_queryset(self) -> QuerySet:
+        return self.user.conventions()
+
     def _build_filters(self, queryset: QuerySet) -> QuerySet:
         filters = copy(self.default_filters)
 
@@ -407,21 +410,19 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                         "_r2", self.search_input.replace("-", "").replace("/", "")
                     ),
                 )
-            )
-
-        if len(self.search_input_numbers):
-            queryset = queryset.annotate(
-                bailleur_siret_similarity=TrigramSimilarity(
-                    Replace("programme__bailleur__siret", Value(" ")),
-                    self.search_input_numbers,
-                ),
+                .annotate(
+                    bailleur_siret_similarity=TrigramSimilarity(
+                        Replace("programme__bailleur__siret", Value(" ")),
+                        self.search_input_numbers,
+                    ),
+                )
             )
 
         return queryset
 
     def _build_search_filters(self, queryset: QuerySet) -> QuerySet:
         if self.search_input:
-            extra_filters = (
+            queryset = queryset.filter(
                 Q(programme__search_vector=self.search_query)
                 | Q(programme__bailleur__search_vector=self.search_query)
                 | Q(numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
@@ -431,14 +432,10 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 | Q(
                     programme_ville_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
                 )
+                | Q(bailleur_siret_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
             )
 
-            if len(self.search_input_numbers):
-                extra_filters |= Q(
-                    bailleur_siret_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
-                )
-
-            queryset = queryset.filter(extra_filters)
+        return queryset
 
     def _build_scoring(self, queryset: QuerySet) -> QuerySet:
         queryset = super()._build_scoring(queryset)
@@ -454,13 +451,9 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 "-numero_similarity",
                 "-numero_operation_similarity",
                 "-programme_ville_similarity",
+                "-bailleur_siret_similarity",
                 "-search_vector_programme_rank",
                 "-search_vector_bailleur_rank",
-            ]
-
-        if len(self.search_input_numbers):
-            order_by += [
-                "-bailleur_siret_similarity",
             ]
 
         order_by.append("-cree_le")
