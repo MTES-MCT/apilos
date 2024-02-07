@@ -92,9 +92,11 @@ class ProgrammeImporter(ModelImporter):
     def _prepare_data(self, data: dict) -> dict:
         parent_id = data.pop("parent_id")
         return {
-            "parent": self.resolve_ecolo_reference(ecolo_id=parent_id, model=self.model)
-            if parent_id is not None
-            else None,
+            "parent": (
+                self.resolve_ecolo_reference(ecolo_id=parent_id, model=self.model)
+                if parent_id is not None
+                else None
+            ),
             "bailleur": self._bailleur_importer.import_one(data.pop("bailleur_id")),
             "administration": self._administration_importer.import_one(
                 data.pop("administration_id")
@@ -135,9 +137,11 @@ class LotImporter(ModelImporter):
         parent_id = data.pop("parent_id")
 
         return {
-            "parent": self.resolve_ecolo_reference(ecolo_id=parent_id, model=self.model)
-            if parent_id is not None
-            else None,
+            "parent": (
+                self.resolve_ecolo_reference(ecolo_id=parent_id, model=self.model)
+                if parent_id is not None
+                else None
+            ),
             "programme": self._programme_importer.import_one(data.pop("programme_id")),
             "surface_habitable_totale": self._rounded_value(
                 data.pop("surface_habitable_totale")

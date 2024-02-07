@@ -188,9 +188,11 @@ class ConventionStatut(ReverseEnumMixin, Enum):
         return [
             (
                 statut.name,
-                statut.value.instructeur.label
-                if as_instructeur
-                else statut.value.bailleur.label,
+                (
+                    statut.value.instructeur.label
+                    if as_instructeur
+                    else statut.value.bailleur.label
+                ),
             )
             for statut in [cls.PROJET, cls.INSTRUCTION, cls.CORRECTION, cls.A_SIGNER]
         ]
@@ -206,9 +208,11 @@ class ConventionStatut(ReverseEnumMixin, Enum):
         return [
             (
                 statut.name,
-                statut.value.instructeur.label
-                if as_instructeur
-                else statut.value.bailleur.label,
+                (
+                    statut.value.instructeur.label
+                    if as_instructeur
+                    else statut.value.bailleur.label
+                ),
             )
             for statut in [cls.SIGNEE, cls.RESILIEE, cls.DENONCEE, cls.ANNULEE]
         ]

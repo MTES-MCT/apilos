@@ -3,8 +3,8 @@
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-grid-row fr-grid-row--right">
             <a href="{% url 'conventions:loyer_simulateur' %}" class="fr-link fr-ml-2w"
-                title="Calculatrice de loyers"
-                aria-selected="{% if request.resolver_match.view_name == "conventions:loyer_simulateur" %}true{% else %}false{% endif %}"                                >
+               title="Calculatrice de loyers"
+               aria-selected="{% if request.resolver_match.view_name == "conventions:loyer_simulateur" %}true{% else %}false{% endif %}"                                >
                 <span aria-hidden="true" class="fr-icon-equalizer-fill"></span>
                 Calculatrice de loyers
             </a>
@@ -20,7 +20,7 @@
                     {# Champs recherche libre #}
                     <div class="fr-col-12">
                         <input class="fr-input" type="search" id="search_input" name="search_input" value="{{ search_input }}"
-                            placeholder="Recherche par chiffres et mots-clés"/>
+                               placeholder="Recherche par chiffres et mots-clés"/>
                         <div class="fr-text--xs fr-mt-2w fr-mb-5w apilos-text-info"><span class="fr-icon-info-fill fr-mr-1w" aria-hidden="true"></span>Recherche libre multi-critères : nom, numéro, adresse de l'opération ; numéro de la convention ; SIREN, nom du bailleur  |  <em>Exemple : "sapins bleus 18000"</em></div>
                     </div>
 
@@ -38,7 +38,7 @@
                             name="cstatut">
                             {% for value, label in statut_choices %}
                                 <option value="{{ label }}"
-                                    {% if label in request.GET.cstatut %}selected{% endif %}>
+                                        {% if label in request.GET.cstatut %}selected{% endif %}>
                                     {{ label }}
                                 </option>
                             {% endfor %}
@@ -60,7 +60,7 @@
                             <option value="">Sélectionner une option</option>
                             {% for value, label in financement_choices %}
                                 <option value="{{ value }}"
-                                    {% if value == request.GET.financement %}selected{% endif %}>
+                                        {% if value == request.GET.financement %}selected{% endif %}>
                                     {{ label }}
                                 </option>
                             {% endfor %}
@@ -75,7 +75,7 @@
                                 <option value="">Sélectionner une période</option>
                                 {% for value in date_signature_choices %}
                                     <option value="{{ value }}"
-                                        {% if value == request.GET.date_signature %}selected{% endif %}>
+                                            {% if value == request.GET.date_signature %}selected{% endif %}>
                                         {{ value }}
                                     </option>
                                 {% endfor %}
@@ -90,7 +90,7 @@
                             <option value="">Sélectionner une option</option>
                             {% for value, label in nature_logement_choices %}
                                 <option value="{{ value }}"
-                                    {% if value == request.GET.nature_logement %}selected{% endif %}>
+                                        {% if value == request.GET.nature_logement %}selected{% endif %}>
                                     {{ label }}
                                 </option>
                             {% endfor %}

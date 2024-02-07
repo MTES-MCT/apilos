@@ -39,9 +39,11 @@ class LoyerRedevanceUpdateComputer:
 
         qs = (
             IndiceEvolutionLoyer.objects.filter(
-                nature_logement=nature_logement
-                if nature_logement != NatureLogement.LOGEMENTSORDINAIRES
-                else None,
+                nature_logement=(
+                    nature_logement
+                    if nature_logement != NatureLogement.LOGEMENTSORDINAIRES
+                    else None
+                ),
                 is_loyer=nature_logement == NatureLogement.LOGEMENTSORDINAIRES,
             )
             .filter(

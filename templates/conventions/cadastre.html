@@ -93,13 +93,13 @@
                                         <div class="fr-fieldset__content">
                                             <div class="fr-radio-group">
                                                 <input type="radio" value= "achevement" id="achevement" name="achevement" class="achevement_choice_button"
-                                                    {% if convention.programme.date_achevement %} checked {% endif %}
+                                                       {% if convention.programme.date_achevement %} checked {% endif %}
                                                 >
                                                 <label for="achevement">Mon bâtiment est achevé</label>
                                             </div>
                                             <div class="fr-radio-group">
                                                 <input type="radio" value= "achevement_previsible" id="achevement_previsible" name="achevement"class="achevement_choice_button"
-                                                    {% if convention.programme.date_achevement_previsible and convention.programme.date_achevement is None %} checked {% endif %}
+                                                       {% if convention.programme.date_achevement_previsible and convention.programme.date_achevement is None %} checked {% endif %}
                                                 >
                                                 <label for="achevement_previsible">Mon bâtiment est en construction</label>
                                             </div>

@@ -16,7 +16,7 @@
             <option value="" hidden></option>
             {% for element in form_input.field.queryset %}
                 <option value="{{ element|attribute:form_input.field.to_field_name }}"
-                    {% if form_input.value|stringformat:'s' == element|attribute:form_input.field.to_field_name|stringformat:'s' %}selected{% endif %}>
+                        {% if form_input.value|stringformat:'s' == element|attribute:form_input.field.to_field_name|stringformat:'s' %}selected{% endif %}>
                     {{ element }}
                 </option>
             {% endfor %}

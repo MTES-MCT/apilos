@@ -16,7 +16,7 @@
             {% include "common/form/disable_form_input.html" %}>
             {% for element in form_input.field.choices %}
                 <option value="{{element.0}}"
-                    {% if element.0 in form_input.value %}selected{% endif %}>
+                        {% if element.0 in form_input.value %}selected{% endif %}>
                     {{element.1}}
                 </option>
             {% endfor %}

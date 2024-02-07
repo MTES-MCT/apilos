@@ -66,9 +66,11 @@ class ConventionImporter(ModelImporter):
     def _prepare_data(self, data: dict) -> dict:
         parent_id = data.pop("parent_id")
         return {
-            "parent": self.resolve_ecolo_reference(ecolo_id=parent_id, model=self.model)
-            if parent_id is not None
-            else None,
+            "parent": (
+                self.resolve_ecolo_reference(ecolo_id=parent_id, model=self.model)
+                if parent_id is not None
+                else None
+            ),
             "lot": self._lot_importer.import_one(data.pop("lot_id")),
             "programme": self.resolve_ecolo_reference(
                 ecolo_id=data.pop("programme_id"), model=Programme

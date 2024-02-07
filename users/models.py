@@ -405,9 +405,11 @@ class User(AbstractUser):
 
         if active is not None:
             convs = convs.filter(
-                statut__in=ConventionStatut.active_statuts()
-                if active
-                else ConventionStatut.completed_statuts()
+                statut__in=(
+                    ConventionStatut.active_statuts()
+                    if active
+                    else ConventionStatut.completed_statuts()
+                )
             )
 
         if self.is_superuser:

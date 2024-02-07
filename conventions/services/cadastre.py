@@ -126,9 +126,9 @@ class ConventionCadastreService(ConventionService):
                 for refcad in ReferenceCadastrale.objects.filter(
                     programme_id=self.convention.programme_id
                 ):
-                    refcads_by_section[
-                        f"{refcad.section}__{refcad.numero}"
-                    ] = refcad.uuid
+                    refcads_by_section[f"{refcad.section}__{refcad.numero}"] = (
+                        refcad.uuid
+                    )
 
                 for obj in result["objects"]:
                     if (

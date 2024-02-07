@@ -94,7 +94,7 @@
                                 <option value="">Statut</option>
                                 {% for value, label in statuts %}
                                     <option value="{{ label }}"
-                                        {% if label == request.GET.cstatut %}selected{% endif %}>
+                                            {% if label == request.GET.cstatut %}selected{% endif %}>
                                         {{ label }}
                                     </option>
                                 {% endfor %}
@@ -109,7 +109,7 @@
                                 <option value="">Financement</option>
                                 {% for value, label in financements %}
                                     <option value="{{ label }}"
-                                        {% if value == request.GET.financement %}selected{% endif %}>
+                                            {% if value == request.GET.financement %}selected{% endif %}>
                                         {{ label }}
                                     </option>
                                 {% endfor %}
@@ -125,7 +125,7 @@
                                     <option value="">Année de signature</option>
                                     {% for value in date_signature_choices %}
                                         <option value="{{ value }}"
-                                            {% if value == request.GET.date_signature %}selected{% endif %}>
+                                                {% if value == request.GET.date_signature %}selected{% endif %}>
                                             {{ value }}
                                         </option>
                                     {% endfor %}
