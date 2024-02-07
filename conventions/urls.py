@@ -1,11 +1,12 @@
 from django.contrib.auth.decorators import permission_required
 from django.urls import path
-from django.views.generic import RedirectView, TemplateView
+from django.views.generic import TemplateView
 
 from . import views
 from .views import (
     ConventionActivesSearchView,
     ConventionEnInstructionSearchView,
+    ConventionIndexView,
     ConventionSearchView,
     ConventionTermineesSearchView,
     LoyerSimulateurView,
@@ -15,7 +16,7 @@ urlpatterns = [
     # Pages de premier niveau : recherche et calculette de loyer
     path(
         "",
-        RedirectView.as_view(url="/conventions/recherche"),
+        ConventionIndexView.as_view(),
         name="index",
     ),
     path(

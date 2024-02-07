@@ -21,6 +21,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import resolve, reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
+from django.views.generic import RedirectView
 from waffle import flag_is_active
 from zipfile import ZipFile
 
@@ -58,6 +59,15 @@ from core.storage import client
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
 from upload.services import UploadService
+
+
+class ConventionIndexView(RedirectView):
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if flag_is_active(request, settings.FLAG_NEW_SEARCH):
+            self.url = reverse(f"conventions:{ConventionSearchView.name}")
+        else:
+            self.url = reverse(f"conventions:{ConventionEnInstructionSearchView.name}")
+        return super().get(request, *args, **kwargs)
 
 
 class RecapitulatifView(BaseConventionView):
@@ -331,13 +341,6 @@ class ConventionSearchView(ConventionSearchBaseView):
             "total_conventions": request.user.conventions().count(),
             "order_by": self._get_non_empty_query_param("order_by", ""),
         }
-
-    def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
-        if not flag_is_active(request, settings.FLAG_NEW_SEARCH):
-            return HttpResponseRedirect(
-                reverse(f"conventions:{ConventionEnInstructionSearchView.name}")
-            )
-        return super().get(request)
 
     def get_search_filters_mapping(self) -> list[tuple[str, str]]:
         return [
