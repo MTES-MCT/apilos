@@ -23,6 +23,7 @@ from django.views import View
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.views.generic import RedirectView
 from waffle import flag_is_active
+from waffle.mixins import WaffleFlagMixin
 from zipfile import ZipFile
 
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
@@ -322,7 +323,9 @@ class ConventionTermineesSearchView(ConventionTabSearchBaseView):
         ]
 
 
-class ConventionSearchView(ConventionSearchBaseView):
+class ConventionSearchView(WaffleFlagMixin, ConventionSearchBaseView):
+    waffle_flag = settings.FLAG_NEW_SEARCH
+
     service_class = UserConventionSmartSearchService
     name = "search"
 
