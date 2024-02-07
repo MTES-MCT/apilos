@@ -39,15 +39,9 @@ class ConventionIndexViewTests(TestCase):
             response = self.client.get(reverse("conventions:index"))
             self.assertRedirects(response, reverse("conventions:search"))
 
-    def test_feature_flag_redirect(self):
-        self._login()
-
-        response = self.client.get(reverse("conventions:search"))
-        self.assertRedirects(response, reverse("conventions:search_instruction"))
-
-        with override_flag(settings.FLAG_NEW_SEARCH, active=True):
-            response = self.client.get(reverse("conventions:search"))
-            assert response.status_code == 200
+        with override_flag(settings.FLAG_NEW_SEARCH, active=False):
+            response = self.client.get(reverse("conventions:index"))
+            self.assertRedirects(response, reverse("conventions:search_instruction"))
 
     def test_get_list_active(self):
         """

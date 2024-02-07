@@ -51,7 +51,9 @@ class UserViewTests(TestCase):
         )
         response = self.client.get(reverse("conventions:index"))
         self.assertRedirects(
-            response, reverse("conventions:search"), fetch_redirect_response=False
+            response,
+            reverse("conventions:search_instruction"),
+            fetch_redirect_response=False,
         )
         response = self.client.get(reverse("conventions:search_active"))
 
