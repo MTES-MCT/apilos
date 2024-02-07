@@ -9,6 +9,7 @@ from django.db import models
 from django.db.models import Q
 from django.forms import model_to_dict
 from django.http import HttpRequest
+from django.utils.functional import cached_property
 
 from conventions.models import TypeEvenement
 from conventions.models.avenant_type import AvenantType
@@ -466,12 +467,14 @@ class Convention(models.Model):
     def is_avenant(self):
         return self.parent_id is not None
 
+    @cached_property
     def is_denonciation(self):
         return (
             self.parent_id is not None
             and self.avenant_types.filter(nom="denonciation").exists()
         )
 
+    @cached_property
     def is_resiliation(self) -> bool:
         return (
             self.parent_id is not None
@@ -518,7 +521,7 @@ class Convention(models.Model):
         }
 
     def genderize_desc(self, desc):
-        if self.is_denonciation():
+        if self.is_denonciation:
             return desc.format(pronom="elle", accord="e", article="la", autre="")
         if self.is_avenant():
             return desc.format(pronom="il", accord="", article="le", autre="autre")
