@@ -84,7 +84,8 @@
                             </thead>
                             <tbody>
                                 {% for convention in conventions %}
-                                    <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
+                                    <tr id="convention_redirect_{{convention.uuid}}"
+                                        class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
 
                                         {% if debug_search_scoring %}
                                             <td>
@@ -155,7 +156,7 @@
                                                     </em>
                                                 </div>
                                             {% endif %}
-                                            {% if url_name == "search_active" or url_name == "search_resiliees" %}
+                                            {% if url_name == "search_active" or url_name == "search_resiliees" or new_search %}
                                                 <div>
                                                     {% if convention.numero %}
                                                         <em data-test-role="programme-galion-cell">Conv. : {{convention.numero|highlight:search_input}}</em>
@@ -169,11 +170,15 @@
                                             <em>{{convention.programme.code_postal|highlight:search_input}}</em>
                                         </td>
                                         <td>{{convention.lot.nb_logements}}</td>
+
                                         {% if url_name == "search_instruction" or url_name == "operation_conventions" %}
                                             <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
+                                        {% elif new_search %}
+                                            <td>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>
                                         {% else %}
                                             <td>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>
                                         {% endif %}
+
                                     </tr>
                                 {% endfor %}
                             </tbody>
