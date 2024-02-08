@@ -5,6 +5,7 @@ from django.test import TestCase
 from apilos_settings.models import Departement
 from programmes.models import IndiceEvolutionLoyer, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
+from programmes.tests.factories import DepartementFactory
 
 
 class LoyerRedevanceUpdateComputerTest(TestCase):
@@ -15,12 +16,8 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        departement1 = Departement.objects.get_or_create(
-            code_insee="2A", nom="Corse-du-Sud"
-        )[0]
-        departement2 = Departement.objects.get_or_create(
-            code_insee="2B", nom="Haute-Corse"
-        )[0]
+        departement1 = DepartementFactory(code_insee="2A", nom="Corse-du-Sud")
+        departement2 = DepartementFactory(code_insee="2B", nom="Haute-Corse")
         data = [
             {
                 "annee": 2023,

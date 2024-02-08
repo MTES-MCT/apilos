@@ -1,5 +1,6 @@
 import functools
 from datetime import date
+from typing import Any
 
 from django.db.models import Q
 
@@ -24,8 +25,8 @@ def get_or_create_conventions_from_operation_number(request, numero_operation):
     return get_or_create_conventions(operation, request.user)
 
 
-def _find_index_by_annee(annee, lst):
-    for i, dic in enumerate(lst):
+def _find_index_by_annee(annee: str, evolutions: list[dict[str, Any]]) -> int:
+    for i, dic in enumerate(evolutions):
         if dic["annee"] == annee:
             return i
     return -1
