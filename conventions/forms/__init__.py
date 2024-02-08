@@ -1,6 +1,5 @@
 from conventions.forms.avenant import *
 from conventions.forms.bailleur import *
-from conventions.forms.convention_date_signature import *
 from conventions.forms.convention_form_administration import *
 from conventions.forms.convention_form_annexes import *
 from conventions.forms.convention_form_attribution import *
@@ -9,6 +8,7 @@ from conventions.forms.convention_form_cadatre import *
 from conventions.forms.convention_form_champ_libre import *
 from conventions.forms.convention_form_collectif import *
 from conventions.forms.convention_form_commentaires import *
+from conventions.forms.convention_form_dates import *
 from conventions.forms.convention_form_denonciation import *
 from conventions.forms.convention_form_edd import *
 from conventions.forms.convention_form_financement import *

@@ -9,7 +9,7 @@
                 Votre {{convention|display_kind}} a été signé{{convention|display_gender_terminaison}} le {{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-'}}.<br/>
                 Ce n'est pas la bonne date ?
             </p>
-            {% include "common/form/input_date.html" with form_input=updatedate_form.televersement_convention_signee_le editable=True %}
+            {% include "common/form/input_date.html" with form_input=signature_date_form.televersement_convention_signee_le editable=True %}
         </div>
         <button class="fr-btn fr-btn--secondary">
             Mettre à jour la date

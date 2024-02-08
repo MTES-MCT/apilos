@@ -166,6 +166,17 @@
                         </div>
                     </div>
                 {% endif %}
+                {% if convention|display_is_resiliated %}
+                    <hr>
+                    <div class="fr-col-12">
+                        <div class="fr-mb-5w fr-pt-2w">
+                            <p class="fr-alert__title">
+                                Date de résiliation
+                            </p>
+                            {% include "conventions/actions/update_date_resiliation.html" %}
+                        </div>
+                    </div>
+                {% endif %}
             {% endif %}
             {% if convention|display_back_to_instruction:request %}
                 <hr>
