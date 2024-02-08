@@ -319,7 +319,7 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
     date_signature: str | None = None
     financement: str | None = None
     nature_logement: str | None = None
-    statut: ConventionStatut | None = None
+    statuts: list[ConventionStatut] | None = None
 
     search_input: str | None = None
     search_input_numbers: str | None = None
@@ -329,11 +329,16 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
         self.user = user
         self.anru = False
         self.avenant_seulement = False
+        self.statuts = None
 
         if search_filters:
             self.anru = search_filters.get("anru") is not None
             self.avenant_seulement = search_filters.get("avenant_seulement") is not None
-            self.statut = ConventionStatut.get_by_label(search_filters.get("statut"))
+            if search_filters.get("statuts"):
+                self.statuts = [
+                    ConventionStatut.get_by_label(s)
+                    for s in search_filters.get("statuts").split(",")
+                ]
             for name in (
                 "date_signature",
                 "financement",
@@ -352,8 +357,8 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
         return self.user.conventions()
 
     def _build_filters(self, queryset: QuerySet) -> QuerySet:
-        if self.statut:
-            queryset = queryset.filter(statut=self.statut.label)
+        if self.statuts:
+            queryset = queryset.filter(statut__in=[s.label for s in self.statuts])
 
         if self.anru:
             queryset = queryset.filter(programme__anru=True)

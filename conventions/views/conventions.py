@@ -347,7 +347,7 @@ class ConventionSearchView(ConventionSearchBaseView):
             ("financement", "financement"),
             ("order_by", "order_by"),
             ("search_input", "search_input"),
-            ("statut", "cstatut"),
+            ("statuts", "cstatut"),
             ("nature_logement", "nature_logement"),
         ]
 

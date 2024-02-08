@@ -198,9 +198,19 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
                 id="anru",
             ),
             param(
-                {"statut": ConventionStatut.PROJET.label},
+                {"statuts": ConventionStatut.PROJET.label},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b71"],
-                id="statut",
+                id="statuts_unique",
+            ),
+            param(
+                {
+                    "statuts": f"{ConventionStatut.PROJET.label},{ConventionStatut.INSTRUCTION.label}"
+                },
+                [
+                    "fbb9890f-171b-402d-a35e-71e1bd791b72",
+                    "fbb9890f-171b-402d-a35e-71e1bd791b71",
+                ],
+                id="statuts_multiples",
             ),
             param(
                 {"financement": Financement.PLAI},

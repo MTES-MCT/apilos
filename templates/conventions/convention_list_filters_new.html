@@ -31,16 +31,27 @@
                     {# Champs statut #}
                     <div class="fr-col-12 fr-col-lg-3 fr-mb-2w search-select">
                         <div class="select-label">Statut de la convention</div>
-                        <select class="fr-select fr-mt-1w" id="cstatut" name="cstatut">
-                            <option value="">Sélectionner une option</option>
+                        <select
+                            multiple
+                            class="fr-select fr-mt-1w"
+                            id="cstatut"
+                            name="cstatut">
                             {% for value, label in statut_choices %}
                                 <option value="{{ label }}"
-                                    {% if label == request.GET.cstatut %}selected{% endif %}>
+                                    {% if label in request.GET.cstatut %}selected{% endif %}>
                                     {{ label }}
                                 </option>
                             {% endfor %}
                         </select>
                     </div>
+                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                        VirtualSelect.init({
+                            ele: '#cstatut',
+                            optionsCount: 5,
+                            search: false,
+                            multiple: true
+                        });
+                    </script>
 
                     {# Champs financement #}
                     <div class="fr-col-12 fr-col-lg-3 fr-mb-2w search-select">
