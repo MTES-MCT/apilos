@@ -144,9 +144,11 @@ class LoyerRedevanceUpdateComputerTest(TestCase):
                     annee=annee["annee"],
                     is_loyer=is_loyer,
                     nature_logement=nature_logement,
-                    departements__in=[d.id for d in annee.get("departements")]
-                    if annee.get("departements")
-                    else [],
+                    departements__in=(
+                        [d.id for d in annee.get("departements")]
+                        if annee.get("departements")
+                        else []
+                    ),
                     defaults=dict(
                         annee=annee["annee"],
                         is_loyer=is_loyer,
