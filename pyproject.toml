@@ -30,7 +30,6 @@ select = [
     # TODO: apply the following rules
     # "BLE", # flake8-blind-except
     # "C4",  # flake8-comprehensions
-    # "ISC", # flake8-implicit-str-concat
 ]
 line-length = 120
 show-fixes = true
