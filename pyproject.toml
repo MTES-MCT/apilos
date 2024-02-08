@@ -14,23 +14,23 @@ DJANGO_SETTINGS_MODULE = "core.settings"
 
 [tool.ruff]
 select = [
-    "F",   # Pyflakes
-    "E",   # pycodestyle
-    "W",   # pycodestyle
-    "C90", # mccabe
-    "I",   # isort
-    "UP",  # pyupgrade
-    "N",   # pep8-naming
     "B",   # flake8-bugbear
+    "C90", # mccabe
+    "E",   # pycodestyle
+    "F",   # Pyflakes
+    "I",   # isort
+    "INP", # flake8-no-pep420
+    "N",   # pep8-naming
+    "PGH", # pygrep-hooks
+    "Q",   # flake8-quotes
+    "T20", # flake8-print
+    "TID", # flake8-tidy-imports
+    "UP",  # pyupgrade
+    "W",   # pycodestyle
     # TODO: apply the following rules
     # "BLE", # flake8-blind-except
     # "C4",  # flake8-comprehensions
     # "ISC", # flake8-implicit-str-concat
-    # "T20", # flake8-print
-    "Q",   # flake8-quotes
-    "TID", # flake8-tidy-imports
-    "PGH", # pygrep-hooks
-    "INP", # flake8-no-pep420
 ]
 line-length = 120
 show-fixes = true
@@ -43,7 +43,6 @@ exclude = [
     "node_modules",
     "staticfiles",
     "templates",
-
 ]
 
 [tool.ruff.extend-per-file-ignores]

@@ -1,5 +1,9 @@
+import logging
+
 from django.db import models
 from django.db.utils import DataError
+
+logger = logging.getLogger(__name__)
 
 
 def lower_value_using_mapping(my_cls, element_dict, pivot):
@@ -100,7 +104,7 @@ def _create_object_from_fields(cls, element, full_element):
             try:
                 object_fields[each_field] = int(element[each_field])
             except ValueError:
-                print(
+                logger.info(
                     f"IGNORED field {each_field} because value is not"
                     + f" int as required : {element[each_field]}"
                 )
@@ -148,8 +152,8 @@ class IngestableModel(models.Model):
                 mapped_elements2 = {}
                 for element_item in cls.mapping.items():
                     mapped_elements2[element_item[0]] = element[element_item[1]]
-        print(f"{count} éléments créés ou mis à jour de class {cls}")
-        print(f"{count_dup} éléments dupliqué pour la class {cls}")
+        logger.info(f"{count} éléments créés ou mis à jour de class {cls}")
+        logger.info(f"{count_dup} éléments dupliqué pour la class {cls}")
         return mapped_elements
 
     @classmethod
@@ -162,7 +166,7 @@ class IngestableModel(models.Model):
             try:
                 new_object.save()
             except DataError:
-                print(
+                logger.info(
                     "[DataError] Error Data while saving object,"
                     + " probably linked to Decimal and false rent amount"
                     + f" {new_object.__dict__}"
@@ -171,7 +175,7 @@ class IngestableModel(models.Model):
             return True
         if not create_only:
             if len(my_objects) != 1:
-                print(
+                logger.info(
                     "multiple object returned, "
                     + f"it is not possible to update it, it is too dangerous {object_filter}"
                 )
@@ -208,7 +212,7 @@ class IngestableModel(models.Model):
             try:
                 setattr(my_object, each_field, int(element[each_field]))
             except ValueError:
-                print(
+                logger.info(
                     f"IGNORED field {each_field} because value is not"
                     + f" int as required : {element[each_field]}"
                 )

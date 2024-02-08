@@ -25,7 +25,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if settings.ENVIRONMENT == "production":
-            print("This command can't be executed on prod environment")
+            self.stdout.write(
+                self.style.NOTICE("This command can't be executed on prod environment")
+            )
             sys.exit(1)
 
         departements = options["departements"]

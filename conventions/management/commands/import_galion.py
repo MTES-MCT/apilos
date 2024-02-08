@@ -28,7 +28,9 @@ class Command(BaseCommand):
         file_path = file_path_input or file_path
         wb = load_workbook(file_path, read_only=True)
         if not wb.sheetnames:
-            print("Error, the worksheet is not compatible, no sheet detected")
+            self.stdout.write(
+                "Error, the worksheet is not compatible, no sheet detected"
+            )
             sys.exit(1)
 
         sheet_name = "Rapport 1"
@@ -40,9 +42,11 @@ class Command(BaseCommand):
 
         create_only = True
         if settings.ENVIRONMENT != "production":
-            print("Choose the action required (default 1) ")
-            print("1: Create only, the already existing entry won't be updated")
-            print(
+            self.stdout.write("Choose the action required (default 1) ")
+            self.stdout.write(
+                "1: Create only, the already existing entry won't be updated"
+            )
+            self.stdout.write(
                 "2: Create and Update, create if it doesn't exist, "
                 + "else update entry based on its pivots"
             )
@@ -53,14 +57,14 @@ class Command(BaseCommand):
             elif inp == "2":
                 create_only = False
             else:
-                print("Using default option 1: Create only")
+                self.stdout.write("Using default option 1: Create only")
 
         # Create one object by row
         column_from_index = {}
         for my_tuple in ws["B4":"AF4"]:
             for cell in my_tuple:
                 column_from_index[cell.column] = str(cell.value).strip()
-        #        print(cell.value)
+        #        self.stdout.write(cell.value)
 
         # List here the fields to strip
         to_sprit = [
@@ -107,12 +111,12 @@ class Command(BaseCommand):
                     str(cell.value).strip() if cell.column in to_sprit else cell.value
                 )
             if len(my_row["MOA (code SIRET)"]) != 14:
-                print(
+                self.stdout.write(
                     f"le siret n'a pas de bon format, l'entrée est ignorée: {str_row(my_row)}"
                 )
                 continue
             if len(my_row["Gestionnaire (code)"]) != 5:
-                print(
+                self.stdout.write(
                     "le service instructeur n'est pas renseigné, "
                     + f"l'entrée est ignorée: {str_row(my_row)}"
                 )
@@ -121,7 +125,7 @@ class Command(BaseCommand):
                 if my_row["Produit"][0:4] in ["PLUS", "PLAI"]:
                     my_row["Produit"] = my_row["Produit"][0:4]
                 else:
-                    print(
+                    self.stdout.write(
                         "le financement n'est pas supporté, "
                         + f"l'entrée est ignorée: {str_row(my_row)}"
                     )
@@ -161,9 +165,11 @@ class Command(BaseCommand):
                 ]  # nb_stationnements
                 ps_row["Loyer"] = my_row["Loyer Places Stationnement"]  # loyer
                 my_parkings.append(ps_row)
-        print(f"{count_rows - count_inserted} / {count_rows} lignes ignorées")
-        print(f"{len(my_objects)} lignes objet")
-        print(f"{len(my_parkings)} lignes parking")
+        self.stdout.write(
+            f"{count_rows - count_inserted} / {count_rows} lignes ignorées"
+        )
+        self.stdout.write(f"{len(my_objects)} lignes objet")
+        self.stdout.write(f"{len(my_parkings)} lignes parking")
 
         Administration.map_and_create(my_objects, create_only)
         Bailleur.map_and_create(my_objects, create_only)

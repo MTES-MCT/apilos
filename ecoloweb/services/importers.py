@@ -62,7 +62,7 @@ class ModelImporter(ABC):
 
     def _debug(self, message: str):
         if self.debug:
-            print(message)
+            print(message)  # noqa: T201
 
     def _get_file_content(self, path):
         """

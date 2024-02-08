@@ -51,10 +51,10 @@ class Command(BaseCommand):
         validate_email(email)
 
         if len(administrations) == 0:
-            print("Aucune administration trouvée, création annulée")
+            self.stdout.write("Aucune administration trouvée, création annulée")
 
         elif User.objects.filter(email=email).first() is not None:
-            print(
+            self.stdout.write(
                 f"L'instructeur {prenom} {nom} ({email}) existe déjà, création annulée"
             )
 

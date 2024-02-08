@@ -17,13 +17,15 @@ class Command(BaseCommand):
             .prefetch_related("referencecadastrales")
             .get(uuid=programme_uuid)
         )
-        print(f"le programme `{programme_uuid}` : `{programme}` va être modifié")
+        self.stdout.write(
+            f"le programme `{programme_uuid}` : `{programme}` va être modifié"
+        )
 
         bailleur_siret = input(
             "Quel est le siret du bailleur auquel le programme doit etre rattacher ? "
         )
         bailleur = Bailleur.objects.get(siret=bailleur_siret)
-        print(
+        self.stdout.write(
             f"le programme `{programme}` va être attribué au bailleur `{bailleur}` "
             + f"de siret `{bailleur_siret}`"
         )
@@ -34,7 +36,7 @@ class Command(BaseCommand):
             with transaction.atomic():
                 programme.bailleur = bailleur
                 programme.save()
-            print(
+            self.stdout.write(
                 f"le bailleur du programme `{programme}` a été mise à jour "
                 + f"avec le bailleur de siret `{bailleur_siret}`"
             )
