@@ -585,9 +585,9 @@ def load_xlsx_model(request, file_type):
             # close the Zip File
             response = HttpResponse(zip_file, content_type="application/force-download")
             zip_file.close()
-        response[
-            "Content-Disposition"
-        ] = 'attachment; filename="tous_les_templates_xlsx.zip"'
+        response["Content-Disposition"] = (
+            'attachment; filename="tous_les_templates_xlsx.zip"'
+        )
         return response
 
     filepath = settings.BASE_DIR / "static" / "files" / f"{file_type}.xlsx"

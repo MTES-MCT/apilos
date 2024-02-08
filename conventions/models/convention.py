@@ -684,9 +684,7 @@ class Convention(models.Model):
         return (
             self.numero
             if self.numero
-            else self.get_convention_prefix()
-            if self.programme.administration
-            else ""
+            else self.get_convention_prefix() if self.programme.administration else ""
         )
 
     def get_status_definition(self):

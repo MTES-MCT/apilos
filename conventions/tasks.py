@@ -67,9 +67,11 @@ def generate_and_send(args):
         email_service_to_bailleur = EmailService(
             to_emails=destinataires_bailleur,
             cc_emails=[convention_email_validator],
-            email_template_id=EmailTemplateID.ItoB_AVENANT_VALIDE
-            if convention.is_avenant()
-            else EmailTemplateID.ItoB_CONVENTION_VALIDEE,
+            email_template_id=(
+                EmailTemplateID.ItoB_AVENANT_VALIDE
+                if convention.is_avenant()
+                else EmailTemplateID.ItoB_CONVENTION_VALIDEE
+            ),
         )
         administration = convention.administration
 

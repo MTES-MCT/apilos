@@ -2,7 +2,7 @@
     <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
         <div class="fr-checkbox-group block--row-strech-1 {% if form_input.errors %}fr-checkbox-group--error{% endif %}">
             <input type='hidden' value='FALSE' name="{{form_input.html_name}}"
-                {% include "common/form/disable_form_input.html" %}>
+                   {% include "common/form/disable_form_input.html" %}>
             <input
                 type="checkbox"
                 id="{{form_input.html_name}}"

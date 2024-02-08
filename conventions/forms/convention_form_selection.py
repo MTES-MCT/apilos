@@ -3,6 +3,7 @@
     - Selection d'un lot à conventionner
     - création d'un programme/lot/convention à partir de zéro
 """
+
 from django import forms
 from django.db.models import QuerySet
 

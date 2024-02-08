@@ -30,11 +30,11 @@ class ConventionFinancementService(ConventionService):
         self.form = ConventionFinancementForm(
             initial={
                 "uuid": self.convention.uuid,
-                "annee_fin_conventionnement": str(
-                    self.convention.date_fin_conventionnement.year
-                )
-                if self.convention.date_fin_conventionnement is not None
-                else None,
+                "annee_fin_conventionnement": (
+                    str(self.convention.date_fin_conventionnement.year)
+                    if self.convention.date_fin_conventionnement is not None
+                    else None
+                ),
                 "fond_propre": self.convention.fond_propre,
                 "historique_financement_public": self.convention.historique_financement_public,
             }
@@ -90,9 +90,11 @@ class ConventionFinancementService(ConventionService):
                 ),
                 "annee_fin_conventionnement": self.request.POST.get(
                     "annee_fin_conventionnement",
-                    self.convention.date_fin_conventionnement.year
-                    if self.convention.date_fin_conventionnement is not None
-                    else None,
+                    (
+                        self.convention.date_fin_conventionnement.year
+                        if self.convention.date_fin_conventionnement is not None
+                        else None
+                    ),
                 ),
             }
         )

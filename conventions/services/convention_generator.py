@@ -263,15 +263,15 @@ def _save_convention_donnees_validees(
     object_files = {}
     object_files["vendeur_files"] = convention.programme.vendeur_files()
     object_files["acquereur_files"] = convention.programme.acquereur_files()
-    object_files[
-        "reference_notaire_files"
-    ] = convention.programme.reference_notaire_files()
-    object_files[
-        "reference_publication_acte_files"
-    ] = convention.programme.reference_publication_acte_files()
-    object_files[
-        "reference_cadastrale_files"
-    ] = convention.programme.reference_cadastrale_files()
+    object_files["reference_notaire_files"] = (
+        convention.programme.reference_notaire_files()
+    )
+    object_files["reference_publication_acte_files"] = (
+        convention.programme.reference_publication_acte_files()
+    )
+    object_files["reference_cadastrale_files"] = (
+        convention.programme.reference_cadastrale_files()
+    )
     object_files["effet_relatif_files"] = convention.programme.effet_relatif_files()
     object_files["edd_volumetrique_files"] = convention.lot.edd_volumetrique_files()
     object_files["edd_classique_files"] = convention.lot.edd_classique_files()
@@ -410,9 +410,9 @@ def _get_object_images(doc, convention):
     reference_publication_acte_images, tmp_local_path = _build_files_for_docx(
         doc, convention.uuid, convention.programme.reference_publication_acte_files()
     )
-    object_images[
-        "reference_publication_acte_images"
-    ] = reference_publication_acte_images
+    object_images["reference_publication_acte_images"] = (
+        reference_publication_acte_images
+    )
     local_pathes += tmp_local_path
     reference_cadastrale_images, tmp_local_path = _build_files_for_docx(
         doc, convention.uuid, convention.programme.reference_cadastrale_files()

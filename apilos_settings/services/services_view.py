@@ -485,9 +485,11 @@ def add_user(request):
                     else []
                 ),
             },
-            bailleur_query=bailleur_query.filter(uuid=request.POST.get("bailleur"))
-            if request.POST.get("bailleur")
-            else bailleur_query,
+            bailleur_query=(
+                bailleur_query.filter(uuid=request.POST.get("bailleur"))
+                if request.POST.get("bailleur")
+                else bailleur_query
+            ),
             administrations=administrations,
         )
         if form.is_valid():

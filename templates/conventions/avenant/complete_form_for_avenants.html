@@ -40,13 +40,13 @@
             <p class="fr-mb-0">Vous pouvez le valider avec ce numéro ou modifier le numéro ci-dessous avant de valider.</p>
             <p><em>N'oubliez pas d'importer les avenants manquants, le cas échéant.</em></p>
             <input class="fr-input fr-col-12 fr-my-3w"
-                id="{{conventionNumberForm.convention_numero.id_for_label}}"
-                name="{{conventionNumberForm.convention_numero.html_name}}"
-                {% if convention.numero %}
-                    value="{{convention.numero}}"
-                {% else %}
-                    value="{{conventionNumberForm.convention_numero.value}}"
-                {% endif %}
+                   id="{{conventionNumberForm.convention_numero.id_for_label}}"
+                   name="{{conventionNumberForm.convention_numero.html_name}}"
+                   {% if convention.numero %}
+                       value="{{convention.numero}}"
+                   {% else %}
+                       value="{{conventionNumberForm.convention_numero.value}}"
+                   {% endif %}
             >
         </div>
         <div class="fr-col-12 fr-mt-2w">

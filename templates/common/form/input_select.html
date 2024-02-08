@@ -23,14 +23,14 @@
             {% if enum %}
                 {% for element in enum %}
                     <option value="{{element.value}}"
-                        {% if element.value  == form_input.value %}selected{% endif %}>
+                            {% if element.value  == form_input.value %}selected{% endif %}>
                         {{element.label}}
                     </option>
                 {% endfor %}
             {% else %}
                 {% for value, label in form_input.field.choices %}
                     <option value="{{ value|safe }}"
-                        {% if value|safe  == form_input.value|safe %}selected{% endif %}>
+                            {% if value|safe  == form_input.value|safe %}selected{% endif %}>
                         {{label}}
                     </option>
                 {% endfor %}

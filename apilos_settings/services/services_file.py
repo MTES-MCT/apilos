@@ -38,7 +38,7 @@ class BailleurListingProcessor:
             cell = column[0]
             if cell.value is None:
                 continue
-            for (key, labels) in self.columns.items():
+            for key, labels in self.columns.items():
                 if cell.value.strip().lower() in labels:
                     mapping[key] = cell.column
                     break

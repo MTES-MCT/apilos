@@ -73,9 +73,11 @@ def handle_uploaded_xlsx(
     )
 
     return {
-        "success": utils.ReturnStatus.SUCCESS
-        if len(import_warnings) == 0
-        else utils.ReturnStatus.WARNING,
+        "success": (
+            utils.ReturnStatus.SUCCESS
+            if len(import_warnings) == 0
+            else utils.ReturnStatus.WARNING
+        ),
         "objects": my_objects,
         "import_warnings": import_warnings,
     }

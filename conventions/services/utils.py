@@ -56,9 +56,11 @@ def get_text_and_files_from_field(name, field):
             "filename": file.filename,
             "size": file.size,
             "content_type": file.content_type,
-            "thumbnail": files[str(file.uuid)]["thumbnail"]
-            if "thumbnail" in files[str(file.uuid)]
-            else None,
+            "thumbnail": (
+                files[str(file.uuid)]["thumbnail"]
+                if "thumbnail" in files[str(file.uuid)]
+                else None
+            ),
         }
     object_field["files"] = json.dumps(returned_files)
     return {
@@ -139,7 +141,9 @@ def set_from_form_or_object(field, form, obj):
     setattr(
         obj,
         field,
-        form.cleaned_data[field]
-        if form.cleaned_data[field] is not None
-        else getattr(obj, field),
+        (
+            form.cleaned_data[field]
+            if form.cleaned_data[field] is not None
+            else getattr(obj, field)
+        ),
     )

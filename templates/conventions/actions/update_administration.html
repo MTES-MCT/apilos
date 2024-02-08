@@ -7,10 +7,10 @@
                 <p class="fr-mb-0">La convention peut être transférée à une autre administration.</p>
             </div>
             <button class="fr-icon-arrow-right-line fr-btn--icon-left fr-btn fr-btn--secondary fr-my-1w"
-                name='cancel_convention'
-                value="1"
-                data-fr-opened="{% if update_convention_administration_form.errors|length > 0 %}true{% else %}false{% endif %}"
-                aria-controls="update-administration-modal">Modifier l'administration</button>
+                    name='cancel_convention'
+                    value="1"
+                    data-fr-opened="{% if update_convention_administration_form.errors|length > 0 %}true{% else %}false{% endif %}"
+                    aria-controls="update-administration-modal">Modifier l'administration</button>
         </div>
     </div>
     <hr>
@@ -26,8 +26,8 @@
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
                             <button class="fr-link--close fr-link"
-                                title="Fermer la fenêtre modale"
-                                aria-controls="update-administration-modal">Fermer</button>
+                                    title="Fermer la fenêtre modale"
+                                    aria-controls="update-administration-modal">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-title-modal-1" class="fr-modal__title">
@@ -37,7 +37,7 @@
                             <p>
                                 Pour modifier l'administration, veuillez recopier le mot <strong>transférer</strong> ci-dessous:
                                 <form method="post"
-                                    data-turbo="false"
+                                      data-turbo="false"
                                 >
                                     {% csrf_token %}
                                     {% include "common/form/input_text.html" with form_input=update_convention_administration_form.verification editable=True %}

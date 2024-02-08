@@ -48,20 +48,20 @@
                                     document.addEventListener('DOMContentLoaded', function () {
                                         document.getElementById('{{form.user_type.id_for_label}}')
                                             .addEventListener('change', function(event){
-                                            if (event.target.value == "BAILLEUR") {
-                                                document.getElementById('select_administration').hidden = true
-                                                document.getElementById('select_bailleur').hidden = false
-                                            }
-                                            else if (event.target.value == "INSTRUCTEUR") {
-                                                document.getElementById('select_administration').hidden = false
-                                                document.getElementById('select_bailleur').hidden = true
-                                            }
-                                            else {
-                                                document.getElementById('select_administration').hidden = true
-                                                document.getElementById('select_bailleur').hidden = true
-                                            }
+                                                if (event.target.value == "BAILLEUR") {
+                                                    document.getElementById('select_administration').hidden = true
+                                                    document.getElementById('select_bailleur').hidden = false
+                                                }
+                                                else if (event.target.value == "INSTRUCTEUR") {
+                                                    document.getElementById('select_administration').hidden = false
+                                                    document.getElementById('select_bailleur').hidden = true
+                                                }
+                                                else {
+                                                    document.getElementById('select_administration').hidden = true
+                                                    document.getElementById('select_bailleur').hidden = true
+                                                }
 
-                                        });
+                                            });
                                     });
                                 </script>
                                 <div id="select_administration" {% if form.user_type.value != 'INSTRUCTEUR' %} hidden {% endif %}>

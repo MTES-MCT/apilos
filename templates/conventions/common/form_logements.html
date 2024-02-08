@@ -87,7 +87,7 @@
                                 {% endif %}
                                 <td>
                                     <input type="hidden" id="{{form.uuid.id_for_label}}" name="{{form.uuid.html_name}}"
-                                        value="{{ form.uuid.value|default_if_none:'' }}">
+                                           value="{{ form.uuid.value|default_if_none:'' }}">
                                     {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field editable=editable_after_upload %}
                                 </td>
                                 <td>
@@ -144,7 +144,7 @@
 </div>
 
 <input type="hidden" id="{{form.uuid.id_for_label}}" name="{{form.uuid.html_name}}"
-    value="{{ form.uuid.value|default_if_none:'' }}">
+       value="{{ form.uuid.value|default_if_none:'' }}">
 
 <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-mb-2w">
