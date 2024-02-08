@@ -1,4 +1,8 @@
+from typing import Any
+
 from django.contrib import admin
+from django.http import HttpRequest
+from django_stubs_ext import QuerySetAny
 
 from admin.admin import ApilosModelAdmin
 from admin.filters import IsCloneFilter
@@ -121,6 +125,9 @@ class TypeStationnementAdmin(admin.ModelAdmin):
 
 @admin.register(IndiceEvolutionLoyer)
 class IndiceEvolutionLoyerAdmin(ApilosModelAdmin):
+    def get_queryset(self, request: HttpRequest) -> QuerySetAny[Any]:
+        return super().get_queryset(request).prefetch_related("departements")
+
     list_display = (
         "uuid",
         "annee",
@@ -129,7 +136,11 @@ class IndiceEvolutionLoyerAdmin(ApilosModelAdmin):
         "is_loyer",
         "nature_logement",
         "evolution",
+        "liste_departements",
     )
+
+    def liste_departements(self, obj):
+        return "\n".join([d.nom for d in obj.departements.all()])
 
     list_filter = (
         "is_loyer",

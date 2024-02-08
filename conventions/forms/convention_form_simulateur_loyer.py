@@ -1,5 +1,6 @@
 from django import forms
 
+from apilos_settings.models import Departement
 from programmes.models import NatureLogement
 
 
@@ -33,4 +34,10 @@ class LoyerSimulateurForm(forms.Form):
         error_messages={
             "required": "La date initiale est obligatoire",
         },
+    )
+    departement = forms.ModelChoiceField(
+        label="Département",
+        queryset=Departement.objects.all(),
+        required=True,
+        empty_label=None,
     )

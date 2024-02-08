@@ -5,6 +5,7 @@ from datetime import date
 import factory
 from factory import fuzzy
 
+from apilos_settings.models import Departement
 from core.tests.factories import BaseFactory
 from programmes.models import Annexe, Logement, Lot, Programme
 from programmes.models.choices import (
@@ -105,3 +106,9 @@ class AnnexeFactory(BaseFactory):
     )
 
     logement = factory.SubFactory(LogementFactory)
+
+
+class DepartementFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Departement
+        django_get_or_create = ("code_insee", "nom")

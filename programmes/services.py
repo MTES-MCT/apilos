@@ -1,8 +1,10 @@
 import functools
 from datetime import date
+from typing import Any
 
 from django.db.models import Q
 
+from apilos_settings.models import Departement
 from programmes.models import IndiceEvolutionLoyer, NatureLogement
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
@@ -23,12 +25,20 @@ def get_or_create_conventions_from_operation_number(request, numero_operation):
     return get_or_create_conventions(operation, request.user)
 
 
+def _find_index_by_annee(annee: str, evolutions: list[dict[str, Any]]) -> int:
+    for i, dic in enumerate(evolutions):
+        if dic["annee"] == annee:
+            return i
+    return -1
+
+
 class LoyerRedevanceUpdateComputer:
     @staticmethod
     def compute_loyer_update(
         montant_initial: float,
         nature_logement: str,
         date_initiale: date,
+        departement: Departement,
         date_actualisation: date | None = None,
     ) -> float:
         if date_actualisation is None:
@@ -54,10 +64,18 @@ class LoyerRedevanceUpdateComputer:
             .order_by("date_debut")
         )
 
-        evolutions = list(qs.values_list("evolution", flat=True))
+        evolutions_departements = list(
+            qs.filter(departements__id=departement.id).values("annee", "evolution")
+        )
+        evolutions = list(qs.filter(departements__id=None).values("annee", "evolution"))
+
+        for indice in evolutions_departements:
+            i = _find_index_by_annee(indice["annee"], evolutions)
+            if i >= 0:
+                evolutions[i]["evolution"] = indice["evolution"]
 
         return functools.reduce(
-            lambda loyer, evolution: loyer * ((100.0 + evolution) / 100.0),
+            lambda loyer, evolution: loyer * ((100.0 + evolution["evolution"]) / 100.0),
             evolutions,
             montant_initial,
         )
