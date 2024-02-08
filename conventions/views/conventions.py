@@ -343,6 +343,7 @@ class ConventionSearchView(WaffleFlagMixin, ConventionSearchBaseView):
             "search_input": self._get_non_empty_query_param("search_input", ""),
             "total_conventions": request.user.conventions().count(),
             "order_by": self._get_non_empty_query_param("order_by", ""),
+            "debug_search_scoring": settings.DEBUG_SEARCH_SCORING,
         }
 
     def get_search_filters_mapping(self) -> list[tuple[str, str]]:

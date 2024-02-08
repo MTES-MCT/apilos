@@ -43,6 +43,13 @@
                             {% endif %}
                             <thead>
                                 <tr class="th_inline">
+
+                                    {% if debug_search_scoring %}
+                                        <th title="Scoring" scope="col">
+                                            >> Debug scoring >>>>>>>>>>>>>>
+                                        </th>
+                                    {% endif %}
+
                                     <th title="Statut de la convention" scope="col">
                                         Statut
                                     </th>
@@ -78,6 +85,33 @@
                             <tbody>
                                 {% for convention in conventions %}
                                     <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
+
+                                        {% if debug_search_scoring %}
+                                            <td>
+                                                <div>
+                                                    <b>score: {{ convention.score }}</b>
+                                                </div>
+                                                <div>
+                                                    programme nom: {{ convention.programme_nom_similarity }}
+                                                </div>
+                                                <div>
+                                                    programme ville: {{ convention.programme_ville_similarity }}
+                                                </div>
+                                                <div>
+                                                    programme numero: {{ convention.programme_numero_similarity }}
+                                                </div>
+                                                <div>
+                                                    bailleur nom: {{ convention.bailleur_nom_similarity }}
+                                                </div>
+                                                <div>
+                                                    bailleur siret: {{ convention.bailleur_siret_similarity }}
+                                                </div>
+                                                <div>
+                                                    conv numero: {{ convention.conv_numero_similarity }}
+                                                </div>
+                                            </td>
+                                        {% endif %}
+
                                         <td title="{{convention.statut_for_template.statut_display}}">
                                             {% include "conventions/home/statut_tag.html"  %}
                                             <script type="text/javascript" nonce="{{request.csp_nonce}}">
