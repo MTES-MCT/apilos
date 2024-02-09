@@ -15,6 +15,7 @@ from conventions.forms import BailleurForm
 from conventions.services import utils
 from conventions.services.utils import ReturnStatus
 from core.services import EmailService, EmailTemplateID
+from core.utils import make_random_string
 from instructeurs.forms import AdministrationForm
 from instructeurs.models import Administration
 from users.forms import (
@@ -539,9 +540,10 @@ def add_user(request):
             if form.cleaned_data["preferences_email"] is not None:
                 user.preferences_email = form.cleaned_data["preferences_email"]
 
-            password = User.objects.make_random_password()
-            user.set_password(password)
+            _p = make_random_string()
+            user.set_password(_p)
             user.save()
+
             if form.cleaned_data["filtre_departements"] is not None:
                 user.filtre_departements.clear()
                 user.filtre_departements.add(*form.cleaned_data["filtre_departements"])
@@ -555,7 +557,7 @@ def add_user(request):
                         "username": user.username,
                         "firstname": user.first_name,
                         "lastname": user.last_name,
-                        "password": password,
+                        "password": _p,
                         "login_url": request.build_absolute_uri("/accounts/login/"),
                     }
                 )
@@ -575,7 +577,7 @@ def add_user(request):
                         "username": user.username,
                         "firstname": user.first_name,
                         "lastname": user.last_name,
-                        "password": password,
+                        "password": _p,
                         "login_url": request.build_absolute_uri("/accounts/login/")
                         + "?instructeur=1",
                     }

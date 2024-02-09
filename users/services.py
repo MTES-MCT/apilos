@@ -6,6 +6,7 @@ from django.urls import reverse
 from bailleurs.models import Bailleur
 from conventions.models import Convention
 from core.services import EmailService, EmailTemplateID
+from core.utils import make_random_string
 from users.models import Role, User
 from users.type_models import TypeRole
 
@@ -35,8 +36,8 @@ class UserService:
             group=group_bailleur,
         )
 
-        password = User.objects.make_random_password()
-        user_bailleur.set_password(password)
+        _p = make_random_string()
+        user_bailleur.set_password(_p)
         user_bailleur.save()
 
         EmailService(
@@ -48,7 +49,7 @@ class UserService:
                 "username": user_bailleur.username,
                 "firstname": user_bailleur.first_name,
                 "lastname": user_bailleur.last_name,
-                "password": password,
+                "password": _p,
                 "login_url": login_url,
             }
         )

@@ -39,7 +39,7 @@ def generate_and_send(args):
         local_zip_path = settings.MEDIA_ROOT / zip_path
         local_zip_path.parent.mkdir(parents=True, exist_ok=True)
 
-        if settings.DEFAULT_FILE_STORAGE == "storages.backends.s3boto3.S3Boto3Storage":
+        if settings.IS_S3_STORAGE:
             with default_storage.open(pdf_path, "rb") as src_file:
                 with open(settings.MEDIA_ROOT / pdf_path, "wb") as desc_file:
                     desc_file.write(src_file.read())
@@ -57,7 +57,7 @@ def generate_and_send(args):
                 )
                 local_path.unlink()
 
-        if settings.DEFAULT_FILE_STORAGE == "storages.backends.s3boto3.S3Boto3Storage":
+        if settings.IS_S3_STORAGE:
             with open(local_zip_path, "rb") as src_file:
                 with default_storage.open(zip_path, "wb") as desc_file:
                     desc_file.write(src_file.read())
