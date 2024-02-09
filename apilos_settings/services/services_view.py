@@ -29,6 +29,10 @@ from users.models import Role, TypeRole, User
 from users.services import UserService
 
 
+def _is_staff_or_admin(request: HttpRequest) -> bool:
+    return request.user.is_superuser or request.user.is_staff
+
+
 def user_profile(request):
     # display user form
     if request.method == "POST":
@@ -119,7 +123,7 @@ def administration_list(request: HttpRequest) -> dict[str, Any]:
 
     my_administration_list = (
         Administration.objects.all().order_by(order_by)
-        if request.user.is_staff or request.user.is_superuser
+        if _is_staff_or_admin(request)
         else request.user.administrations().order_by(order_by)
     )
     total_administration = my_administration_list.count()
@@ -158,7 +162,7 @@ def edit_administration(request, administration_uuid):
                 "nom": request.POST.get("nom", administration.nom),
                 "code": (
                     request.POST.get("code", False)
-                    if request.user.is_superuser
+                    if _is_staff_or_admin(request)
                     else administration.code
                 ),
             }
@@ -212,7 +216,7 @@ def bailleur_list(request: HttpRequest) -> dict[str, Any]:
         page=request.GET.get("page", 1),
         item_list=(
             Bailleur.objects.all().order_by("nom")
-            if request.user.is_superuser or request.user.is_staff
+            if _is_staff_or_admin(request)
             else request.user.bailleurs()
         ),
     )
@@ -231,12 +235,12 @@ def edit_bailleur(request, bailleur_uuid):
                 "siren": bailleur.siren,
                 "sous_nature_bailleur": (
                     request.POST.get("sous_nature_bailleur", False)
-                    if request.user.is_superuser or request.user.is_staff
+                    if _is_staff_or_admin(request)
                     else bailleur.sous_nature_bailleur
                 ),
                 "nature_bailleur": (
                     request.POST.get("nature_bailleur", False)
-                    if request.user.is_superuser or request.user.is_staff
+                    if _is_staff_or_admin(request)
                     else bailleur.nature_bailleur
                 ),
             },
@@ -245,11 +249,7 @@ def edit_bailleur(request, bailleur_uuid):
             ),
         )
         if form.is_valid():
-            if (
-                request.user.is_superuser
-                or request.user.is_staff
-                or request.user.administrateur_de_compte
-            ):
+            if _is_staff_or_admin(request) or request.user.administrateur_de_compte:
                 parent = (
                     form.cleaned_data["bailleur"]
                     if form.cleaned_data["bailleur"]
