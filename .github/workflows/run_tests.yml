@@ -49,6 +49,10 @@ jobs:
         run: |
           python manage.py makemigrations --check --dry-run
 
+      - name: Check collectstatic
+        run: |
+          python manage.py collectstatic --noinput --dry-run
+
       - name: Execute test
         run: |
           python -m pytest
