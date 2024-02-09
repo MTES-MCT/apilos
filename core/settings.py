@@ -297,8 +297,6 @@ TIME_ZONE = "Europe/Paris"
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 
@@ -342,10 +340,25 @@ AWS_S3_REGION_NAME = get_env_variable("AWS_S3_REGION_NAME")
 AWS_S3_ENDPOINT_URL = get_env_variable("AWS_S3_ENDPOINT_URL")
 AWS_ECOLOWEB_BUCKET_NAME = get_env_variable("AWS_ECOLOWEB_BUCKET_NAME")
 
-if AWS_ACCESS_KEY_ID:  # pragma: no cover
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-else:
-    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+IS_S3_STORAGE = True if AWS_ACCESS_KEY_ID else False
+
+STORAGES = {
+    "default": {
+        "BACKEND": (
+            "storages.backends.s3boto3.S3Boto3Storage"
+            if IS_S3_STORAGE
+            else "django.core.files.storage.FileSystemStorage"
+        )
+    },
+    "staticfiles": {
+        "BACKEND": (
+            # Disable whitenoise for test
+            "django.contrib.staticfiles.storage.StaticFilesStorage"
+            if TESTING
+            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        )
+    },
+}
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -419,13 +432,6 @@ CSP_INCLUDE_NONCE_IN = [
     "script-src",
 ]
 CSP_EXCLUDE_URL_PREFIXES = ("/explorer",)
-
-# Disable whitenoise for test
-STATICFILES_STORAGE = (
-    "django.contrib.staticfiles.storage.StaticFilesStorage"
-    if TESTING
-    else "whitenoise.storage.CompressedManifestStaticFilesStorage"
-)
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
