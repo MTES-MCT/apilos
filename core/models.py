@@ -6,15 +6,7 @@ from django.db.utils import DataError
 logger = logging.getLogger(__name__)
 
 
-def lower_value_using_mapping(my_cls, element_dict, pivot):
-    return element_dict[my_cls.mapping[pivot]].lower()
-
-
-def check_value_using_mapping(my_cls, element_dict, pivot, value):
-    return element_dict[my_cls.mapping[pivot]].lower() == value.lower()
-
-
-def filter_choices_on_value(my_cls, element_dict, pivot):
+def _filter_choices_on_value(my_cls, element_dict, pivot):
     return list(
         filter(
             lambda x: element_dict[my_cls.mapping[pivot]].lower() == x[1].lower(),
@@ -23,7 +15,7 @@ def filter_choices_on_value(my_cls, element_dict, pivot):
     )
 
 
-def filter_choices_on_key(my_cls, element_dict, key):
+def _filter_choices_on_key(my_cls, element_dict, key):
     return list(
         filter(
             lambda x: element_dict[key].lower() == x[1].lower(),
@@ -32,14 +24,14 @@ def filter_choices_on_key(my_cls, element_dict, key):
     )
 
 
-def build_filter(my_cls, element_dict):
+def _build_filter(my_cls, element_dict):
     object_filter = {}
     if isinstance(my_cls.pivot, list):
         for pivot in my_cls.pivot:
             if isinstance(
                 my_cls._meta.get_field(pivot), models.fields.related.ForeignKey
             ):
-                sub_object_filter = build_filter(
+                sub_object_filter = _build_filter(
                     my_cls._meta.get_field(pivot).related_model, element_dict
                 )
                 object_filter[my_cls._meta.get_field(pivot).attname] = (
@@ -52,7 +44,7 @@ def build_filter(my_cls, element_dict):
                 isinstance(my_cls._meta.get_field(pivot), models.fields.CharField)
                 and my_cls._meta.get_field(pivot).choices
             ):
-                filter_on_value = filter_choices_on_value(my_cls, element_dict, pivot)
+                filter_on_value = _filter_choices_on_value(my_cls, element_dict, pivot)
                 if filter_on_value:
                     object_filter[pivot] = filter_on_value[0][0]
                 else:
@@ -94,7 +86,7 @@ def _create_object_from_fields(cls, element, full_element):
             object_fields[each_field] = (
                 cls._meta.get_field(each_field)
                 .related_model.objects.filter(
-                    **build_filter(
+                    **_build_filter(
                         cls._meta.get_field(each_field).related_model, full_element
                     )
                 )
@@ -112,7 +104,7 @@ def _create_object_from_fields(cls, element, full_element):
             isinstance(cls._meta.get_field(each_field), models.fields.CharField)
             and cls._meta.get_field(each_field).choices
         ):
-            filter_on_value = filter_choices_on_key(cls, element, each_field)
+            filter_on_value = _filter_choices_on_key(cls, element, each_field)
             if filter_on_value:
                 object_fields[each_field] = filter_on_value[0][0]
             else:
@@ -158,7 +150,7 @@ class IngestableModel(models.Model):
 
     @classmethod
     def find_or_create_by_pivot(cls, element, full_element, create_only=True):
-        object_filter = build_filter(cls, full_element)
+        object_filter = _build_filter(cls, full_element)
         my_objects = cls.objects.filter(**object_filter)
         if not my_objects:
             object_fields = _create_object_from_fields(cls, element, full_element)
@@ -200,7 +192,7 @@ class IngestableModel(models.Model):
                 each_field,
                 cls._meta.get_field(each_field)
                 .related_model.objects.filter(
-                    **build_filter(
+                    **_build_filter(
                         cls._meta.get_field(each_field).related_model,
                         full_element,
                     )
@@ -220,7 +212,7 @@ class IngestableModel(models.Model):
             isinstance(cls._meta.get_field(each_field), models.fields.CharField)
             and cls._meta.get_field(each_field).choices
         ):
-            filter_on_value = filter_choices_on_key(cls, element, each_field)
+            filter_on_value = _filter_choices_on_key(cls, element, each_field)
             if filter_on_value:
                 setattr(my_object, each_field, filter_on_value[0][0])
             else:
