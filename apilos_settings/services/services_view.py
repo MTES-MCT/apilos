@@ -369,6 +369,7 @@ def edit_user(request, username):
 
     if request.method == "POST" and request.user.is_administrator(user):
         match request.POST.get("action_type", ""):
+
             case "remove_bailleur":
                 form = UserForm(initial=model_to_dict(user))
                 form_add_bailleur = AddBailleurForm(bailleur_query=bailleur_query)
