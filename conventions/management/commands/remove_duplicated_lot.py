@@ -1,8 +1,24 @@
+import csv
+
 from django.core.management.base import BaseCommand
 from django.db.models import Count
 
 from conventions.models import Convention
 from conventions.models.choices import ConventionStatut
+
+
+def data_to_csv(data, header, filename):
+
+    # Open (or create) your CSV file
+    with open(filename, "w", newline="") as f:
+        writer = csv.writer(f)
+
+        # Write the header
+        writer.writerow(header)
+
+        # Write the data
+        for row in data:
+            writer.writerow(row)
 
 
 class Command(BaseCommand):
@@ -15,6 +31,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         dry_run = options.get("dry_run")
+        deletions = []
 
         programme_financement_duplicates = (
             Convention.objects.exclude(statut=ConventionStatut.ANNULEE.label)
@@ -71,20 +88,49 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR("No deletion"))
                     continue
                 selected_convention = conventions[int(option) - 1]
+
                 if not dry_run:
                     to_delete = input(
                         f"Are you sure you want to delete {selected_convention} - {selected_convention.statut} ? (y/N)"
                     )
-                    if to_delete == "y":
+                    if to_delete != "y":
                         self.stdout.write(
-                            self.style.SUCCESS(
-                                f"Removing {selected_convention} - {selected_convention.statut}"
-                            )
+                            self.style.ERROR("Not confirmed : no deletion")
                         )
-                        selected_convention.delete()
-                        count_delete += 1
+                        continue
+
+                deletions.append(
+                    [
+                        f"{selected_convention.lot.id}",
+                        f"{selected_convention.programme.numero_galion}",
+                        f"{selected_convention}",
+                        f"{selected_convention.cree_le}",
+                        f"{selected_convention.cree_par.email if duplicate.cree_par else '-'}",
+                    ]
+                )
+                if not dry_run:
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"Removing {selected_convention} - {selected_convention.statut}"
+                        )
+                    )
+                    selected_convention.delete()
+                else:
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"Would be removed {selected_convention} - {selected_convention.statut}"
+                        )
+                    )
+
+                count_delete += 1
+                self.stdout.write(self.style.SUCCESS(deletions))
 
         self.stdout.write(
             self.style.SUCCESS(f"Found {count} conventions with duplicated lots")
         )
         self.stdout.write(self.style.SUCCESS(f"{count_delete} conventions deleted"))
+        data_to_csv(
+            deletions,
+            ["lot id", "programme", "convention", "created at", "created by"],
+            "output.csv",
+        )
