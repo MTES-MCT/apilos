@@ -1,12 +1,18 @@
 from django.db.models.functions import Substr
 from django.test import TestCase
+from django.test.client import RequestFactory
 
 from apilos_settings.models import Departement
 from bailleurs.models import Bailleur
+from bailleurs.tests.factories import BailleurFactory
 from conventions.models import Convention, ConventionStatut
+from conventions.services.avenants import create_avenant
+from conventions.tests.factories import ConventionFactory
 from instructeurs.models import Administration
 from programmes.models import Programme
-from users.models import User
+from users.models import Role, User
+from users.tests.factories import GroupFactory, UserFactory
+from users.type_models import TypeRole
 
 
 class UserModelStrTest(TestCase):
@@ -548,3 +554,80 @@ class UserBailleurQuerySetTest(TestCase):
             set(user.bailleur_query_set(has_no_parent=False)),
             set(bailleurs),
         )
+
+
+def _create_bailleur_and_user(group):
+    bailleur = BailleurFactory()
+    user = UserFactory()
+
+    Role.objects.create(
+        typologie=TypeRole.BAILLEUR,
+        bailleur=bailleur,
+        user=user,
+        group=group,
+    )
+    return bailleur, user
+
+
+def test_conventions_visibility_bailleur_avenant(db):
+    # Create three bailleurs
+    super_user = UserFactory(is_staff=True, is_superuser=True)
+    group = GroupFactory(name="Bailleur", rw=["logement", "convention"])
+    bailleur1, user1 = _create_bailleur_and_user(group)
+    bailleur2, user2 = _create_bailleur_and_user(group)
+    bailleur3, user3 = _create_bailleur_and_user(group)
+
+    # Create two conventions for the first bailleur
+    convention1 = ConventionFactory()
+    convention1.programme.bailleur = bailleur1
+    convention1.programme.save()
+    convention2 = ConventionFactory()
+    convention2.programme.bailleur = bailleur1
+    convention2.programme.save()
+
+    assert user1.conventions().count() == 2
+    assert user2.conventions().count() == 0
+    assert user3.conventions().count() == 0
+
+    # Make an avenant on the first convention
+    request = RequestFactory().post("/", data={"avenant_type": "resiliation"})
+    request.user = super_user
+    result = create_avenant(request, convention1.uuid)
+    avenant1 = result["convention"]
+    avenant1.statut = ConventionStatut.SIGNEE.label
+    avenant1.save()
+
+    assert user1.conventions().count() == 3
+    assert user2.conventions().count() == 0
+    assert user3.conventions().count() == 0
+
+    # Make another avenant in statut PROJET on the first convention changing bailleur
+    request = RequestFactory().post("/", data={"avenant_type": "bailleur"})
+    request.user = super_user
+    result = create_avenant(request, convention1.uuid)
+    avenant2 = result["convention"]
+    avenant2.statut = ConventionStatut.PROJET.label
+    avenant2.save()
+
+    avenant2.programme.bailleur = bailleur2
+    avenant2.programme.save()
+
+    assert user1.conventions().count() == 4
+    assert user2.conventions().count() == 0
+    assert user3.conventions().count() == 0
+
+    # Change avenant statut to SIGNEE
+    avenant2.statut = ConventionStatut.SIGNEE.label
+    avenant2.save()
+
+    assert user1.conventions().count() == 1
+    assert user2.conventions().count() == 3
+    assert user3.conventions().count() == 0
+
+    # Verify that the bailleur_id from the first avenant is not impacting visibility
+    avenant1.programme.bailleur = bailleur3
+    avenant1.programme.save()
+
+    assert user1.conventions().count() == 1
+    assert user2.conventions().count() == 3
+    assert user3.conventions().count() == 0
