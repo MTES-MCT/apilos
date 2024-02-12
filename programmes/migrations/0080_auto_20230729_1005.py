@@ -28,7 +28,9 @@ def remove_deprecated_region_codes(apps, schema_editor):
                 programmes_to_update.update(code_insee_region=row[CURRENT_KEY])
                 updated_programmes.extend(programmes_to_update)
 
-    print(f"\n {len(updated_programmes)} programmes ont été mis à jour avec succès")
+    print(  # noqa: T201
+        f"\n {len(updated_programmes)} programmes ont été mis à jour avec succès"
+    )
 
 
 class Migration(migrations.Migration):

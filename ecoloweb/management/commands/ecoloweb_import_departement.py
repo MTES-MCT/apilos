@@ -39,7 +39,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if "ecoloweb" not in connections:
-            print("No 'ecoloweb' connection defined, import aborted!")
+            self.stdout.write("No 'ecoloweb' connection defined, import aborted!")
             sys.exit(1)
 
         departements: list = options["departements"]
@@ -75,11 +75,11 @@ class Command(BaseCommand):
 
         except KeyboardInterrupt:
             if use_transaction:
-                print("Rollabcking all changes due to runtime error")
+                self.stdout.write("Rollabcking all changes due to runtime error")
                 transaction.rollback()
         except BaseException as e:
             if use_transaction:
-                print("Rollabcking all changes due to runtime error")
+                self.stdout.write("Rollabcking all changes due to runtime error")
                 transaction.rollback()
             raise e
         else:
@@ -94,7 +94,7 @@ class Command(BaseCommand):
         else:
             pct = round(results.lines_fetched / results.lines_total * 100, 1)
             label = f"#{convention.id}" if convention is not None else "<ref supprimée>"
-            print(
+            self.stdout.write(
                 f"({departement}) traité convention {label} "
                 f"({results.lines_fetched} / {results.lines_total} => "
                 f"{pct} %)"

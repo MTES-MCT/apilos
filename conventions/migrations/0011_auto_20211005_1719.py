@@ -36,7 +36,7 @@ def rollback_field_with_images(apps, schema_editor):
                 json_field = json.loads(field)
                 convention.comments = json_field["text"] if "text" in json_field else ""
             except json.decoder.JSONDecodeError:
-                print(f"json error : {field}")
+                print(f"json error : {field}")  # noqa: T201
 
         convention.save()
 

@@ -121,9 +121,9 @@ class Command(BaseCommand):
             Programme.objects.filter(code_postal=code_postal).update(
                 code_insee_departement=dept
             )
-            print(f"Updated {code_postal} to {dept}")
+            self.stdout.write(f"Updated {code_postal} to {dept}")
         for dept, region in dept_region_code.items():
             Programme.objects.filter(code_insee_departement=dept).update(
                 code_insee_region=region
             )
-            print(f"Updated {dept} to {region}")
+            self.stdout.write(f"Updated {dept} to {region}")

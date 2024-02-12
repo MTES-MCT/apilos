@@ -9,13 +9,15 @@ class Command(BaseCommand):
 
         programme_uuid = input("Quel est l'identifiant UUID du programme à modifier ? ")
         programme = Programme.objects.get(uuid=programme_uuid)
-        print(f"le programme `{programme_uuid}` : `{programme}` va être modifié")
+        self.stdout.write(
+            f"le programme `{programme_uuid}` : `{programme}` va être modifié"
+        )
 
         administration_code = input(
             "Quel est le code de l'administration à laquelle le programme doit être rattacher ? "
         )
         administration = Administration.objects.get(code=administration_code)
-        print(
+        self.stdout.write(
             f"le programme `{programme}` va être attribué à l'administration"
             + f" `{administration}` de code `{administration_code}`"
         )
@@ -25,12 +27,12 @@ class Command(BaseCommand):
         if go.lower() == "oui":
             programme.administration = administration
             programme.save()
-            print(
+            self.stdout.write(
                 f"l'administration du programme `{programme}` a été mise à "
                 + f"jour avec l'administration de code `{administration_code}`"
             )
 
-        print(
+        self.stdout.write(
             f"le programme `{programme}` va être attribué à l'administration"
             + f" `{administration}` de code `{administration_code}`"
         )
