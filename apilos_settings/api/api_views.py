@@ -172,6 +172,78 @@ class ConventionKPI(APIView):
 
         return Response(ConventionKPISerializer(list_conv_kpi, many=True).data)
 
+    def _build_conv_kpi(
+        self,
+        conv_queryset: QuerySet[Convention],
+        conv_statuts: list[ConventionStatut],
+        label: str,
+    ) -> ConvKPI:
+        return ConvKPI(
+            indicateur_redirection_url="/conventions/recherche?cstatut={}".format(
+                ",".join([str(s.label) for s in conv_statuts])
+            ),
+            indicateur_valeur=conv_queryset.filter(statut__in=conv_statuts).count(),
+            indicateur_label=label,
+        )
+
+    def _build_conv_kpi_list(
+        self, request: HttpRequest, queryset: QuerySet[Convention]
+    ) -> list[ConvKPI]:
+
+        if request.user.is_administration():
+            return [
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[
+                        ConventionStatut.PROJET,
+                        ConventionStatut.INSTRUCTION,
+                        ConventionStatut.CORRECTION,
+                        ConventionStatut.A_SIGNER,
+                    ],
+                    label="en cours",
+                ),
+            ]
+
+        if request.user.is_instructeur():
+            return [
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[ConventionStatut.INSTRUCTION],
+                    label="en instruction",
+                ),
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[ConventionStatut.CORRECTION],
+                    label="en correction",
+                ),
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[ConventionStatut.A_SIGNER],
+                    label="à signer",
+                ),
+            ]
+
+        if request.user.is_bailleur():
+            return [
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[ConventionStatut.PROJET],
+                    label="en projet",
+                ),
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[ConventionStatut.CORRECTION],
+                    label="en correction",
+                ),
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[ConventionStatut.A_SIGNER],
+                    label="à signer",
+                ),
+            ]
+
+        return []
+
     def _build_conv_kpi_list_old(
         self, request: HttpRequest, queryset: QuerySet[Convention]
     ) -> list[ConvKPI]:
@@ -242,76 +314,6 @@ class ConventionKPI(APIView):
                     "/conventions/actives",
                     nb_conventions_by_status[ConventionStatut.A_SIGNER.label],
                     "à signer",
-                ),
-            ]
-
-    def _build_conv_kpi(
-        self,
-        conv_queryset: QuerySet[Convention],
-        conv_statuts: list[ConventionStatut],
-        label: str,
-    ) -> ConvKPI:
-        return ConvKPI(
-            indicateur_redirection_url="/conventions/recherche?cstatut={}".format(
-                ",".join([str(s.label) for s in conv_statuts])
-            ),
-            indicateur_valeur=conv_queryset.filter(statut__in=conv_statuts).count(),
-            indicateur_label=label,
-        )
-
-    def _build_conv_kpi_list(
-        self, request: HttpRequest, queryset: QuerySet[Convention]
-    ) -> list[ConvKPI]:
-
-        if request.user.is_administration():
-            return [
-                self._build_conv_kpi(
-                    conv_queryset=queryset,
-                    conv_statuts=[
-                        ConventionStatut.PROJET,
-                        ConventionStatut.INSTRUCTION,
-                        ConventionStatut.CORRECTION,
-                        ConventionStatut.A_SIGNER,
-                    ],
-                    label="en cours",
-                ),
-            ]
-
-        if request.user.is_instructeur():
-            return [
-                self._build_conv_kpi(
-                    conv_queryset=queryset,
-                    conv_statuts=[ConventionStatut.INSTRUCTION],
-                    label="en instruction",
-                ),
-                self._build_conv_kpi(
-                    conv_queryset=queryset,
-                    conv_statuts=[ConventionStatut.CORRECTION],
-                    label="en correction",
-                ),
-                self._build_conv_kpi(
-                    conv_queryset=queryset,
-                    conv_statuts=[ConventionStatut.A_SIGNER],
-                    label="à signer",
-                ),
-            ]
-
-        if request.user.is_bailleur():
-            return [
-                self._build_conv_kpi(
-                    conv_queryset=queryset,
-                    conv_statuts=[ConventionStatut.PROJET],
-                    label="en projet",
-                ),
-                self._build_conv_kpi(
-                    conv_queryset=queryset,
-                    conv_statuts=[ConventionStatut.CORRECTION],
-                    label="en correction",
-                ),
-                self._build_conv_kpi(
-                    conv_queryset=queryset,
-                    conv_statuts=[ConventionStatut.A_SIGNER],
-                    label="à signer",
                 ),
             ]
 
