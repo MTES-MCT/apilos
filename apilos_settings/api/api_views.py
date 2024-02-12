@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.db.models import Count
+from django.db.models import Count, QuerySet
+from django.http.request import HttpRequest
 from drf_spectacular.utils import (
     OpenApiExample,
     OpenApiResponse,
@@ -12,8 +13,9 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from waffle import flag_is_active
 
-from conventions.models import ConventionStatut
+from conventions.models import Convention, ConventionStatut
 from siap.siap_authentication import SIAPJWTAuthentication, SIAPSimpleJWTAuthentication
 
 
@@ -156,23 +158,32 @@ class ConventionKPI(APIView):
         """
         Return main settings of the application.
         """
-        query_by_statuses = (
+        queryset = (
             request.user.conventions()
             .filter(parent_id__isnull=True)
             .values("statut")
             .annotate(total=Count("statut"))
         )
 
+        if flag_is_active(request, settings.FLAG_NEW_SEARCH):
+            list_conv_kpi = self._build_conv_kpi_list(request, queryset)
+        else:
+            list_conv_kpi = self._build_conv_kpi_list_old(request, queryset)
+
+        return Response(ConventionKPISerializer(list_conv_kpi, many=True).data)
+
+    def _build_conv_kpi_list_old(
+        self, request: HttpRequest, queryset: QuerySet[Convention]
+    ) -> list[ConvKPI]:
         nb_conventions_by_status = {
             convention_statut.label: 0 for convention_statut in ConventionStatut
-        } | {query["statut"]: query["total"] for query in query_by_statuses}
-        list_conv_kpi = []
+        } | {query["statut"]: query["total"] for query in queryset}
 
         if request.user.is_administration():
             # As an administrator, we want to see the number of conventions that are in status:
             #   * en-cours
             #   * SIGNEE
-            list_conv_kpi = [
+            return [
                 ConvKPI(
                     "/conventions/en-cours",
                     nb_conventions_by_status[ConventionStatut.PROJET.label]
@@ -187,12 +198,13 @@ class ConventionKPI(APIView):
                     "finalisées",
                 ),
             ]
-        elif request.user.is_instructeur():
+
+        if request.user.is_instructeur():
             # As an instructeur, we want to see the number of conventions that are in status:
             #   * INSTRUCTION
             #   * A_SIGNER
             #   * SIGNEE
-            list_conv_kpi = [
+            return [
                 ConvKPI(
                     "/conventions/en-cours?cstatut=2.+Instruction+requise",
                     nb_conventions_by_status[ConventionStatut.INSTRUCTION.label],
@@ -209,12 +221,13 @@ class ConventionKPI(APIView):
                     "finalisées",
                 ),
             ]
-        elif request.user.is_bailleur():
+
+        if request.user.is_bailleur():
             # As a bailleur, we want to see the number of conventions that are in status:
             #   * PROJET
             #   * CORRRECTION
             #   * A_SIGNER
-            list_conv_kpi = [
+            return [
                 ConvKPI(
                     "/conventions/en-cours?cstatut=1.+Projet",
                     nb_conventions_by_status[ConventionStatut.PROJET.label],
@@ -231,4 +244,75 @@ class ConventionKPI(APIView):
                     "à signer",
                 ),
             ]
-        return Response(ConventionKPISerializer(list_conv_kpi, many=True).data)
+
+    def _build_conv_kpi(
+        self,
+        conv_queryset: QuerySet[Convention],
+        conv_statuts: list[ConventionStatut],
+        label: str,
+    ) -> ConvKPI:
+        return ConvKPI(
+            indicateur_redirection_url="/conventions/recherche?cstatut={}".format(
+                ",".join([str(s.label) for s in conv_statuts])
+            ),
+            indicateur_valeur=conv_queryset.filter(statut__in=conv_statuts).count(),
+            indicateur_label=label,
+        )
+
+    def _build_conv_kpi_list(
+        self, request: HttpRequest, queryset: QuerySet[Convention]
+    ) -> list[ConvKPI]:
+
+        if request.user.is_administration():
+            return [
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[
+                        ConventionStatut.PROJET,
+                        ConventionStatut.INSTRUCTION,
+                        ConventionStatut.CORRECTION,
+                        ConventionStatut.A_SIGNER,
+                    ],
+                    label="en cours",
+                ),
+            ]
+
+        if request.user.is_instructeur():
+            return [
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[ConventionStatut.INSTRUCTION],
+                    label="en instruction",
+                ),
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[ConventionStatut.CORRECTION],
+                    label="en correction",
+                ),
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[ConventionStatut.A_SIGNER],
+                    label="à signer",
+                ),
+            ]
+
+        if request.user.is_bailleur():
+            return [
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[ConventionStatut.PROJET],
+                    label="en projet",
+                ),
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[ConventionStatut.CORRECTION],
+                    label="en correction",
+                ),
+                self._build_conv_kpi(
+                    conv_queryset=queryset,
+                    conv_statuts=[ConventionStatut.A_SIGNER],
+                    label="à signer",
+                ),
+            ]
+
+        return []
