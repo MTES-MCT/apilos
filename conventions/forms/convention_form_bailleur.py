@@ -127,7 +127,7 @@ class ConventionBailleurForm(forms.Form):
         },
     )
     gestionnaire_bloc_info_complementaire = forms.CharField(
-        label="Élément complémentaires concernant le gestionnaire sur la convention",
+        label="Éléments complémentaires concernant le gestionnaire sur la convention",
         help_text=mark_safe(
             "Sur les documents de convention, vous avez la possibilité de préciser"
             + " les informations du gestionnaire (SIRET, SIREN, adresse etc...) "
