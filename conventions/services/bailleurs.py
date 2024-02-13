@@ -107,6 +107,9 @@ class ConventionBailleurService(ConventionService):
                 "gestionnaire_signataire_bloc_signature": (
                     self.convention.gestionnaire_signataire_bloc_signature
                 ),
+                "gestionnaire_bloc_info_complementaire": (
+                    self.convention.gestionnaire_bloc_info_complementaire
+                ),
                 "administration": self.convention.administration,
             },
         )
@@ -217,6 +220,10 @@ class ConventionBailleurService(ConventionService):
                     "gestionnaire_signataire_bloc_signature",
                     self.convention.gestionnaire_signataire_bloc_signature,
                 ),
+                "gestionnaire_bloc_info_complementaire": self.request.POST.get(
+                    "gestionnaire_bloc_info_complementaire",
+                    self.convention.gestionnaire_bloc_info_complementaire,
+                ),
             },
         )
 
@@ -247,5 +254,8 @@ class ConventionBailleurService(ConventionService):
         )
         self.convention.gestionnaire_signataire_bloc_signature = self.form.cleaned_data[
             "gestionnaire_signataire_bloc_signature"
+        ]
+        self.convention.gestionnaire_bloc_info_complementaire = self.form.cleaned_data[
+            "gestionnaire_bloc_info_complementaire"
         ]
         self.convention.save()

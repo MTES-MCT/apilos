@@ -41,7 +41,18 @@
                         </div>
                     </div>
                 </div>
+                {% include "common/form/input_text.html" with form_input=form.gestionnaire_bloc_info_complementaire object_field="convention__gestionnaire_bloc_info_complementaire__"|add:convention_uuid %}
             {% endwith %}
+
+            <div class="fr-col-12">
+                <label><em>Prévisualisation des éléments complémentaires</em></label>
+                <div class="fr-card fr-card--no-arrow">
+                    <div class="fr-card__body fr-my-2w">
+                        <div> [...] en date du <span class="apilos-insert-date-deliberation"></span>, <span class="apilos-insert-info-complementaire"></span> dénommé ci-après le gestionnaire, et agissant à ce titre en application de la convention de location conclue avec le propriétaire ;
+                        </div>
+                    </div>
+                </div>
+            </div>
         {% endif %}
     </div>
     {% include "common/required_fields_info.html" %}
