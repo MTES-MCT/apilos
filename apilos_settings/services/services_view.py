@@ -29,6 +29,10 @@ from users.models import Role, TypeRole, User
 from users.services import UserService
 
 
+def _is_staff_or_admin(request: HttpRequest) -> bool:
+    return request.user.is_superuser or request.user.is_staff
+
+
 def user_profile(request):
     # display user form
     if request.method == "POST":
@@ -112,12 +116,16 @@ def user_profile(request):
 
 
 @require_GET
-def administration_list(request):
+def administration_list(request: HttpRequest) -> dict[str, Any]:
     search_input = request.GET.get("search_input", "")
     order_by = request.GET.get("order_by", "nom")
     page = request.GET.get("page", 1)
 
-    my_administration_list = request.user.administrations().order_by(order_by)
+    my_administration_list = (
+        Administration.objects.all().order_by(order_by)
+        if _is_staff_or_admin(request)
+        else request.user.administrations().order_by(order_by)
+    )
     total_administration = my_administration_list.count()
     if search_input:
         my_administration_list = my_administration_list.filter(
@@ -154,7 +162,7 @@ def edit_administration(request, administration_uuid):
                 "nom": request.POST.get("nom", administration.nom),
                 "code": (
                     request.POST.get("code", False)
-                    if request.user.is_superuser
+                    if _is_staff_or_admin(request)
                     else administration.code
                 ),
             }
@@ -200,6 +208,22 @@ def edit_administration(request, administration_uuid):
     }
 
 
+@require_GET
+def bailleur_list(request: HttpRequest) -> dict[str, Any]:
+    bailleur_list_service = BailleurListService(
+        search_input=request.GET.get("search_input", ""),
+        order_by=request.GET.get("order_by", "nom"),
+        page=request.GET.get("page", 1),
+        item_list=(
+            Bailleur.objects.all().order_by("nom")
+            if _is_staff_or_admin(request)
+            else request.user.bailleurs()
+        ),
+    )
+    bailleur_list_service.paginate()
+    return bailleur_list_service.as_dict()
+
+
 def edit_bailleur(request, bailleur_uuid):
     bailleur = Bailleur.objects.get(uuid=bailleur_uuid)
     success = False
@@ -211,12 +235,12 @@ def edit_bailleur(request, bailleur_uuid):
                 "siren": bailleur.siren,
                 "sous_nature_bailleur": (
                     request.POST.get("sous_nature_bailleur", False)
-                    if request.user.is_superuser
+                    if _is_staff_or_admin(request)
                     else bailleur.sous_nature_bailleur
                 ),
                 "nature_bailleur": (
                     request.POST.get("nature_bailleur", False)
-                    if request.user.is_superuser
+                    if _is_staff_or_admin(request)
                     else bailleur.nature_bailleur
                 ),
             },
@@ -225,7 +249,7 @@ def edit_bailleur(request, bailleur_uuid):
             ),
         )
         if form.is_valid():
-            if request.user.is_superuser or request.user.administrateur_de_compte:
+            if _is_staff_or_admin(request) or request.user.administrateur_de_compte:
                 parent = (
                     form.cleaned_data["bailleur"]
                     if form.cleaned_data["bailleur"]
@@ -306,15 +330,18 @@ def edit_bailleur(request, bailleur_uuid):
 
 
 @require_GET
-def user_list(request):
+def user_list(request: HttpRequest) -> dict[str, Any]:
     user_list_service = UserListService(
         search_input=request.GET.get("search_input", ""),
         order_by=request.GET.get("order_by", "username"),
         page=request.GET.get("page", 1),
-        my_user_list=request.user.user_list(),
+        my_user_list=(
+            User.objects.exclude(Q(is_staff=True) | Q(is_superuser=True))
+            if _is_staff_or_admin(request)
+            else request.user.user_list()
+        ),
     )
     user_list_service.paginate()
-
     return user_list_service.as_dict()
 
 

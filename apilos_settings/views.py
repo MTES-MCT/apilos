@@ -26,11 +26,10 @@ def index(request):
 
 @login_required
 def administrations(request):
-    result = services_view.administration_list(request)
     return render(
         request,
         "settings/administrations.html",
-        {**result},
+        services_view.administration_list(request),
     )
 
 
@@ -39,27 +38,15 @@ def edit_administration(request, administration_uuid):
     result = services_view.edit_administration(request, administration_uuid)
     if result["success"] and not settings.CERBERE_AUTH:
         return HttpResponseRedirect(reverse("settings:administrations"))
-    return render(
-        request,
-        "settings/edit_administration.html",
-        {**result},
-    )
+    return render(request, "settings/edit_administration.html", result)
 
 
 @login_required
 def bailleurs(request):
-    bailleur_list_service = services_view.BailleurListService(
-        search_input=request.GET.get("search_input", ""),
-        order_by=request.GET.get("order_by", "nom"),
-        page=request.GET.get("page", 1),
-        item_list=request.user.bailleurs(),
-    )
-    bailleur_list_service.paginate()
-
     return render(
         request,
         "settings/bailleurs.html",
-        bailleur_list_service.as_dict(),
+        services_view.bailleur_list(request),
     )
 
 
@@ -68,11 +55,7 @@ def edit_bailleur(request, bailleur_uuid):
     result = services.edit_bailleur(request, bailleur_uuid)
     if result["success"] and not settings.CERBERE_AUTH:
         return HttpResponseRedirect(reverse("settings:bailleurs"))
-    return render(
-        request,
-        "settings/edit_bailleur.html",
-        {**result},
-    )
+    return render(request, "settings/edit_bailleur.html", result)
 
 
 class ImportBailleurUsersView(LoginRequiredMixin, View):
@@ -113,23 +96,19 @@ class ImportBailleurUsersView(LoginRequiredMixin, View):
 
 @login_required
 def profile(request):
-    result = services.user_profile(request)
     return render(
         request,
         "settings/user_profile.html",
-        {
-            **result,
-        },
+        services.user_profile(request),
     )
 
 
 @login_required
 def users(request):
-    result = services.user_list(request)
     return render(
         request,
         "settings/users.html",
-        {**result},
+        services.user_list(request),
     )
 
 
