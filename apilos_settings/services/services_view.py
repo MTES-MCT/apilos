@@ -336,7 +336,7 @@ def user_list(request: HttpRequest) -> dict[str, Any]:
         order_by=request.GET.get("order_by", "username"),
         page=request.GET.get("page", 1),
         my_user_list=(
-            User.objects.exclude(is_staff=True).exclude(is_superuser=True).all()
+            User.objects.exclude(Q(is_staff=True) | Q(is_superuser=True))
             if _is_staff_or_admin(request)
             else request.user.user_list()
         ),
