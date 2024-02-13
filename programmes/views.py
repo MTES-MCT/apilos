@@ -1,7 +1,9 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import resolve, reverse
+from waffle import flag_is_active
 
 from conventions.services.search import ProgrammeConventionSearchService
 from programmes.services import get_or_create_conventions_from_operation_number
@@ -19,8 +21,13 @@ def operation_conventions(request, numero_operation):
             request, numero_operation
         )
     except DuplicatedOperationSIAPException as exc:
+        redirect_view_name = (
+            "conventions:search"
+            if flag_is_active(request, settings.FLAG_NEW_SEARCH)
+            else "conventions:search_instruction"
+        )
         return HttpResponseRedirect(
-            f"{reverse('conventions:search_instruction')}?search_input={exc.numero_operation}"
+            f"{reverse(redirect_view_name)}?search_input={exc.numero_operation}"
         )
 
     service = ProgrammeConventionSearchService(programme)

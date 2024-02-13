@@ -13,7 +13,7 @@ class ConventionBailleurView(ConventionView):
             self.service.change_bailleur()
         elif bool(self.request.POST.get("change_administration")):
             self.service.change_administration()
-            self.redirect_on_success = "conventions:search_instruction"
+            self.redirect_on_success = "conventions:index"
         else:
             self.service.update_bailleur()
 

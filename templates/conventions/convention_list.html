@@ -71,7 +71,11 @@
                                     <th title="Nombre de logements à conventionner" scope="col">
                                         Logements
                                     </th>
-                                    {% if url_name == "search_instruction" or url_name == "operation_conventions" %}
+                                    {% if new_search %}
+                                        <th title="Date de signature" scope="col">
+                                            Signature
+                                        </th>
+                                    {% elif url_name == "search_instruction" or url_name == "operation_conventions" %}
                                         <th title="Date de livraison et mise en service" scope="col">
                                             Livraison
                                         </th>
@@ -171,10 +175,10 @@
                                         </td>
                                         <td>{{convention.lot.nb_logements}}</td>
 
-                                        {% if url_name == "search_instruction" or url_name == "operation_conventions" %}
-                                            <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
-                                        {% elif new_search %}
+                                        {% if new_search %}
                                             <td>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>
+                                        {% elif url_name == "search_instruction" or url_name == "operation_conventions" %}
+                                            <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
                                         {% else %}
                                             <td>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>
                                         {% endif %}
