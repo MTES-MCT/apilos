@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db.models import Count, QuerySet
 from django.http.request import HttpRequest
+from django.urls import reverse
 from drf_spectacular.utils import (
     OpenApiExample,
     OpenApiResponse,
@@ -159,16 +160,15 @@ class ConventionKPI(APIView):
         Return main settings of the application.
         """
         queryset = (
-            request.user.conventions()
-            .filter(parent_id__isnull=True)
-            .values("statut")
-            .annotate(total=Count("statut"))
+            request.user.conventions().filter(parent_id__isnull=True).values("statut")
         )
 
         if flag_is_active(request, settings.FLAG_NEW_SEARCH):
             list_conv_kpi = self._build_conv_kpi_list(request, queryset)
         else:
-            list_conv_kpi = self._build_conv_kpi_list_old(request, queryset)
+            list_conv_kpi = self._build_conv_kpi_list_old(
+                request, queryset.annotate(total=Count("statut"))
+            )
 
         return Response(ConventionKPISerializer(list_conv_kpi, many=True).data)
 
@@ -178,11 +178,12 @@ class ConventionKPI(APIView):
         conv_statuts: list[ConventionStatut],
         label: str,
     ) -> ConvKPI:
+        _statuts = [str(s.label) for s in conv_statuts]
         return ConvKPI(
-            indicateur_redirection_url="/conventions/recherche?cstatut={}".format(
-                ",".join([str(s.label) for s in conv_statuts])
+            indicateur_redirection_url="{}?cstatut={}".format(
+                reverse("conventions:search"), ",".join(_statuts)
             ),
-            indicateur_valeur=conv_queryset.filter(statut__in=conv_statuts).count(),
+            indicateur_valeur=conv_queryset.filter(statut__in=_statuts).count(),
             indicateur_label=label,
         )
 
