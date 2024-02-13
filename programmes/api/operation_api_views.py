@@ -1,5 +1,5 @@
 from django.http import Http404
-from drf_spectacular.utils import OpenApiResponse, extend_schema
+from drf_spectacular.utils import OpenApiExample, OpenApiResponse, extend_schema
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -13,15 +13,9 @@ from programmes.services import get_or_create_conventions_from_operation_number
 from siap.siap_authentication import SIAPJWTAuthentication
 
 
-class OperationDetails(generics.GenericAPIView):
-    """
-    Retrieve, update or delete a programme instance.
-    """
-
+class OperationApiViewBase(generics.GenericAPIView):
     authentication_classes = [SIAPJWTAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
-
-    serializer_class = MySerializer
 
     def get_last_relevant_programme(self, numero_galion):
         try:
@@ -34,6 +28,12 @@ class OperationDetails(generics.GenericAPIView):
             return programme
         except Programme.DoesNotExist as does_not_exist:
             raise Http404 from does_not_exist
+
+
+class OperationDetails(OperationApiViewBase):
+    """
+    Retrieve, update or delete a programme instance.
+    """
 
     @extend_schema(
         tags=["operation"],
@@ -74,7 +74,7 @@ class OperationDetails(generics.GenericAPIView):
 # empty class to prepare routes for SIAP:
 # * OperationClosed.get -> get the status of the last version of the convention
 # * OperationClosed.post -> create avenant if needed after operation is closed
-class OperationClosed(OperationDetails):
+class OperationClosed(OperationApiViewBase):
     @extend_schema(
         tags=["operation"],
         responses={
@@ -114,19 +114,54 @@ class OperationClosed(OperationDetails):
 # empty class to prepare routes for SIAP:
 # * OperationClosed.get -> get the status of the last version of the convention
 # * OperationClosed.post -> create avenant if needed after operation is closed
-class OperationCanceled(OperationDetails):
+class OperationCanceled(OperationApiViewBase):
     @extend_schema(
         tags=["operation"],
         responses={
-            200: ClosingOperationSerializer,
+            200: OpenApiResponse(description="JSON with status and message"),
             400: OpenApiResponse(description="Bad request (something invalid)"),
             401: OpenApiResponse(description="Unauthorized"),
             403: OpenApiResponse(description="Forbidden"),
             404: OpenApiResponse(description="Not Found"),
         },
         description=(
-            "Cancel opération's conventions, return an error if it is not possible"
+            "Cancel opération's conventions, return a status and a message"
+            "if the cancelation is not possible."
         ),
+        examples=[
+            OpenApiExample(
+                "Cancelation with success",
+                summary="Example when cancelation is possible",
+                description=(
+                    "Example when cancelation is possible,"
+                    " operation's convention are canceled"
+                ),
+                value={
+                    "status": "SUCCESS",
+                },
+                request_only=False,  # signal that example only applies to requests
+                response_only=True,  # signal that example only applies to responses
+            ),
+            OpenApiExample(
+                "Cancelation failed",
+                summary="Example when cancelation is not possible",
+                description=(
+                    "Example when cancelation is not possible,"
+                    " operation's convention are not canceled"
+                ),
+                value={
+                    "status": "ERROR",
+                    "message": (
+                        "Au moins une des conventions de l'opération ne peut être"
+                        " supprimée car elle est active. Vous devez dénoncer ou"
+                        " résilier toutes les conventions de l'opération avant de"
+                        " demander sa suppression."
+                    ),
+                },
+                request_only=False,  # signal that example only applies to requests
+                response_only=True,  # signal that example only applies to responses
+            ),
+        ],
     )
     def post(self, request, numero_galion):
         programmes = Programme.objects.filter(

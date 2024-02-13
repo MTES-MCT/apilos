@@ -25,7 +25,10 @@ urlpatterns = [
     # Operation close route
     path("close_operation/<str:numero_galion>/", OperationClosed.as_view()),
     # Opération cancel route
-    path("cancel_operation/<str:numero_galion>/", OperationCanceled.as_view()),
+    path(
+        "cancel_operation/<str:numero_galion>/",
+        OperationCanceled.as_view(),
+    ),
     # DRF spectacular
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path(

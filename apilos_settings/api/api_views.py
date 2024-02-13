@@ -37,6 +37,28 @@ class ApilosConfiguration(APIView):
                         max_length=2000,
                         help_text="Racine de l'URL d'accès web à l'application avec son protocole",
                     ),
+                    "url_acces_api_cloture_operation": serializers.CharField(
+                        max_length=2000,
+                        help_text=(
+                            "Route API a appeler lors de la cloture de l'opération"
+                            " en GET pour vérifier qu'il est possible de cloturer"
+                            " en POST pour alerter de la cloture"
+                        ),
+                    ),
+                    "url_acces_api_annulation_operation": serializers.CharField(
+                        max_length=2000,
+                        help_text=(
+                            "Route API a appeler en POST lors de l'annulation de"
+                            " l'opération"
+                        ),
+                    ),
+                    "url_acces_api_conventions_operation": serializers.CharField(
+                        max_length=2000,
+                        help_text=(
+                            "Route API permettant de récupérer les conventions"
+                            " associées à une opération"
+                        ),
+                    ),
                     "url_acces_web_operation": serializers.CharField(
                         max_length=2000,
                         help_text=(
@@ -82,6 +104,9 @@ class ApilosConfiguration(APIView):
                     "url_acces_api_cloture_operation": (
                         "/api-siap/v0/close_operation/{NUMERO_OPERATION_SIAP}/"
                     ),
+                    "url_acces_api_annulation_operation": (
+                        "/api-siap/v0/cancel_operation/{NUMERO_OPERATION_SIAP}/"
+                    ),
                     "url_acces_api_conventions_operation": (
                         "/api-siap/v0/operation/{NUMERO_OPERATION_SIAP}"
                     ),
@@ -109,6 +134,9 @@ class ApilosConfiguration(APIView):
                 "racine_url_acces_web": protocol + request.get_host(),
                 "url_acces_api_cloture_operation": (
                     "/api-siap/v0/close_operation/{NUMERO_OPERATION_SIAP}/"
+                ),
+                "url_acces_api_annulation_operation": (
+                    "/api-siap/v0/cancel_operation/{NUMERO_OPERATION_SIAP}/"
                 ),
                 "url_acces_api_conventions_operation": (
                     "/api-siap/v0/operation/{NUMERO_OPERATION_SIAP}"

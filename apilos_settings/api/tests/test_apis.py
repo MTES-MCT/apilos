@@ -36,6 +36,9 @@ class ConfigurationAPITest(APITestCase):
             "url_acces_api_cloture_operation": (
                 "/api-siap/v0/close_operation/{NUMERO_OPERATION_SIAP}/"
             ),
+            "url_acces_api_annulation_operation": (
+                "/api-siap/v0/cancel_operation/{NUMERO_OPERATION_SIAP}/"
+            ),
             "url_acces_api_conventions_operation": (
                 "/api-siap/v0/operation/{NUMERO_OPERATION_SIAP}"
             ),
