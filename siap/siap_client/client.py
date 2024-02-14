@@ -78,7 +78,7 @@ def _call_siap_api(
         error_text = "Unauthorized"
         try:
             error_text = str(response.content["detail"])
-        except Exception:
+        except KeyError:
             pass
         raise UnauthorizedSIAPException(error_text)
     if response.status_code == 503:

@@ -53,7 +53,7 @@ def get_env_variable(name, cast=str, default=""):
                 "uh-huh",
             ]
         return cast(os.environ[name])
-    except Exception:
+    except Exception:  # noqa: BLE001
         return config(name, cast=cast, default=default)
 
 

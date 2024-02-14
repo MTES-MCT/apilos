@@ -479,20 +479,12 @@ def can_promote(piece_jointe: PieceJointe):
 
 @register.simple_tag
 def administration_from(uuid):
-    try:
-        return Administration.objects.get(uuid=uuid)
-    # Exception can be broad here as we want to prevent a 500 in the template
-    except Exception:
-        return ""
+    return Administration.objects.filter(uuid=uuid).first() or ""
 
 
 @register.simple_tag
 def bailleur_from(uuid):
-    try:
-        return Bailleur.objects.filter(uuid=uuid).first()
-    # Exception can be broad here as we want to prevent a 500 in the template
-    except Exception:
-        return ""
+    return Bailleur.objects.filter(uuid=uuid).first() or ""
 
 
 @register.filter

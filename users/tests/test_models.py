@@ -10,7 +10,7 @@ from conventions.services.avenants import create_avenant
 from conventions.tests.factories import ConventionFactory
 from instructeurs.models import Administration
 from programmes.models import Programme
-from users.models import Role, User
+from users.models import ExceptionPermissionConfig, Role, User
 from users.tests.factories import GroupFactory, UserFactory
 from users.type_models import TypeRole
 
@@ -50,14 +50,9 @@ class UserPermissions(TestCase):
     def test_exception_permissions(self):
         user_instructeur = User.objects.get(username="sabine")
         for perm in ["convention.view_convention", "convention.change_convention"]:
-            try:
+            with self.assertRaises(ExceptionPermissionConfig):
+                # has_perm with non convention object should raise an Exception
                 user_instructeur.has_perm(perm, user_instructeur)
-                self.fail(
-                    f"has_perm '{perm}' "
-                    "with non convention object should raise an Exception"
-                )
-            except Exception:
-                pass
 
     def test_permissions_instructeur(self):
         user_instructeur_paris = User.objects.get(username="fix")

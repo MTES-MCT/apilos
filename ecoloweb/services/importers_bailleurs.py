@@ -19,7 +19,7 @@ class BailleurImporter(ModelImporter):
             self._siret_resolver = SiretResolver(
                 settings.INSEE_API_KEY, settings.INSEE_API_SECRET
             )
-        except BaseException:
+        except BaseException:  # noqa: BLE001
             self._siret_resolver = None
 
         self._query_one = self._get_file_content("importers/bailleur.sql")
@@ -29,7 +29,7 @@ class BailleurImporter(ModelImporter):
         if self._siret_resolver:
             try:
                 return self._siret_resolver.resolve(codesiren, date_creation)
-            except BaseException:
+            except BaseException:  # noqa: BLE001
                 return None
 
         return None
