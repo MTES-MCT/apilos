@@ -1,7 +1,7 @@
 import logging
-from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandParser
+from django.db import models
 
 from conventions.models import Convention
 from instructeurs.models import Administration
@@ -13,42 +13,25 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument(
-            "--perimeter",
+            "--departements",
             required=True,
-            help="List of the impacted codes postaux",
+            help="List of the impacted departements",
             action="store",
             nargs="+",
         )
         parser.add_argument(
-            "--start-date",
-            required=True,
-            help="Creation date YYYY-MM-DD from which to reassign conventions",
-            action="store",
-            nargs=1,
-        )
-        parser.add_argument(
-            "--end-date",
-            required=True,
-            help="Creation date YYYY-MM-DD until which to reassign conventions",
-            action="store",
-            nargs=1,
-        )
-        parser.add_argument(
-            "--current-admin-code",
-            required=True,
-            help="Administration currently assigned to the conventions (code)",
-            action="store",
-            nargs=1,
-        )
-        parser.add_argument(
             "--new-admin-code",
             required=True,
+            type=str,
             help="New administration to assign to the conventions (code)",
             action="store",
-            nargs=1,
+            nargs="?",
         )
         parser.add_argument(
-            "--dry-run", type=bool, help="Dry run mode", nargs="?", default=True
+            "--no-dry-run",
+            default=False,
+            action="store_true",
+            help="Disable dry run mode",
         )
         return super().add_arguments(parser)
 
@@ -56,63 +39,47 @@ class Command(BaseCommand):
         self.stdout.write("Reassign administration command called")
 
         # Parse arguments
-        codes_postaux = kwargs["perimeter"]
-        start_date = datetime.strptime(kwargs["start_date"], "%Y-%m-%d").date()
-        end_date = datetime.strptime(kwargs["end_date"], "%Y-%m-%d").date()
-        current_admin = Administration.objects.get(code=kwargs["current_admin_code"])
+        departements = kwargs["departements"]
         new_admin = Administration.objects.get(code=kwargs["new_admin_code"])
-        dry_run = kwargs["dry_run"]
+        no_dry_run = kwargs["no_dry_run"]
 
         # Find the conventions assigned to current_admin
         programmes = Programme.objects.filter(
-            administration=current_admin, code_postal__in=codes_postaux
-        )
+            code_insee_departement__in=departements
+        ).exclude(administration=new_admin)
         conventions = Convention.objects.filter(programme__in=programmes)
-
-        # Filter the conventions to be in the date range
-        conventions = conventions.filter(cree_le__range=[start_date, end_date])
-
-        # Get programs to udpate
-        programmes_filtered = Programme.objects.filter(
-            id__in=conventions.values_list("programme_id")
+        old_admins = (
+            programmes.values("administration")
+            .distinct()
+            .annotate(count=models.Count("pk"))
         )
 
-        # Get the list of conventions not in range but attached to thesse programmes to warn user
-        conventions_also_impacted = Convention.objects.filter(
-            programme__in=programmes_filtered
-        ).exclude(id__in=conventions.values_list("id"))
-
+        # Output summary
         self.stdout.write("Summary before execution:")
         self.stdout.write("--------------------------")
-        self.stdout.write(f"{programmes_filtered.count()} programmes will be updated:")
-        for p in programmes_filtered:
-            self.stdout.write(f"    - {p.nom} - {p.numero_galion}")
+        programmes_count = programmes.count()
+        self.stdout.write(f"{programmes_count} programmes will be updated:")
+        if programmes_count < 10:
+            for p in programmes:
+                self.stdout.write(f"    - {p.nom} - {p.numero_galion}")
         self.stdout.write("--------------------------")
-        self.stdout.write(
-            f"{conventions.count()} conventions in the date range will be impacted:"
-        )
-        for c in conventions:
-            self.stdout.write("    - " + str(c))
-        self.stdout.write("--------------------------")
-        if conventions_also_impacted.count() > 0:
-            self.stdout.write(
-                self.style.WARNING(
-                    f"WARNING {conventions_also_impacted.count()} conventions out of "
-                    f"the date range will be impacted as a side-effect:"
-                )
-            )
-            for c in conventions_also_impacted:
+        conventions_count = conventions.count()
+        self.stdout.write(f"{conventions_count} conventions will be impacted:")
+        if conventions_count < 10:
+            for c in conventions:
                 self.stdout.write("    - " + str(c))
+        self.stdout.write("--------------------------")
+        self.stdout.write("Current administrations for the impacted conventions:")
+        for old_admin in old_admins:
+            admin = Administration.objects.get(pk=old_admin["administration"])
+            self.stdout.write(f"{admin.code} ({old_admin['count']} conventions)")
 
-        if dry_run:
-            self.stdout.write(self.style.WARNING("Dry run mode, no changes executed"))
-        else:
+        if no_dry_run:
             # Update administration and save history
-            now = datetime.now()
-            for p in programmes_filtered:
+            for p in programmes:
+                p.reassign_command_old_admin_backup = p.administration.code
                 p.administration = new_admin
-                p._change_reason = (
-                    f"Reassign administration command launched on {str(now)}"
-                )
                 p.save()
             self.stdout.write("Changes executed")
+        else:
+            self.stdout.write(self.style.WARNING("Dry run mode, no changes executed"))
