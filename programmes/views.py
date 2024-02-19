@@ -21,13 +21,12 @@ def operation_conventions(request, numero_operation):
             request, numero_operation
         )
     except DuplicatedOperationSIAPException as exc:
-        redirect_view_name = (
-            "conventions:search"
-            if flag_is_active(request, settings.FLAG_NEW_SEARCH)
-            else "conventions:search_instruction"
-        )
+        if flag_is_active(request, settings.FLAG_NEW_SEARCH):
+            return HttpResponseRedirect(
+                f"{reverse('conventions:search')}?search_numero={exc.numero_operation}"
+            )
         return HttpResponseRedirect(
-            f"{reverse(redirect_view_name)}?search_input={exc.numero_operation}"
+            f"{reverse('conventions:search_instruction')}?search_input={exc.numero_operation}"
         )
 
     service = ProgrammeConventionSearchService(programme)

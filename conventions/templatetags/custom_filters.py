@@ -529,4 +529,6 @@ def get_available_order_fields(request, url_name=None):
 
 @register.filter
 def get_ordervalue(order_fields, key=None):
+    if key is None:
+        return ""
     return order_fields.get(key.lstrip("-"), "")

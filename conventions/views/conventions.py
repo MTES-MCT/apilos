@@ -169,8 +169,6 @@ class ConventionTabsMixin:
 class ConventionSearchBaseView(LoginRequiredMixin, View):
     service: UserConventionSearchService
     service_class: type[UserConventionSearchService]
-    statuses: list
-    order_by: str
 
     def setup(self, *args, **kwargs) -> None:
         super().setup(*args, **kwargs)
@@ -329,10 +327,25 @@ class ConventionSearchView(WaffleFlagMixin, ConventionSearchBaseView):
     service_class = UserConventionSmartSearchService
     name = "search"
 
+    def _statut_choices(self, request: AuthenticatedHttpRequest):
+        if request.user.is_instructeur():
+            return [
+                (member.value.instructeur.label.format(accord="e"), member.label)
+                for member in ConventionStatut
+            ]
+
+        if request.user.is_bailleur():
+            return [
+                (member.value.bailleur.label.format(accord="e"), member.label)
+                for member in ConventionStatut
+            ]
+
+        return [(member.label, member.label) for member in ConventionStatut]
+
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         paginator = self.service.paginate()
         return {
-            "statut_choices": ConventionStatut.choices,
+            "statut_choices": self._statut_choices(request=request),
             "new_search": True,
             "date_signature_choices": self._date_signature_choices(),
             "financement_choices": Financement.choices,
@@ -340,10 +353,21 @@ class ConventionSearchView(WaffleFlagMixin, ConventionSearchBaseView):
             "conventions": paginator.get_page(request.GET.get("page", 1)),
             "filtered_conventions_count": paginator.count,
             "url_name": resolve(request.path_info).url_name,
-            "search_input": self._get_non_empty_query_param("search_input", ""),
             "total_conventions": request.user.conventions().count(),
-            "order_by": self._get_non_empty_query_param("order_by", ""),
             "debug_search_scoring": settings.DEBUG_SEARCH_SCORING,
+            # FIXME: needed for highlighting
+            "search_input": self._get_non_empty_query_param(
+                "search_operation_nom", default=""
+            ),
+        } | {
+            k: self._get_non_empty_query_param(k, default="")
+            for k in (
+                "order_by",
+                "search_lieu",
+                "search_bailleur",
+                "search_numero",
+                "search_operation_nom",
+            )
         }
 
     def get_search_filters_mapping(self) -> list[tuple[str, str]]:
@@ -352,10 +376,13 @@ class ConventionSearchView(WaffleFlagMixin, ConventionSearchBaseView):
             ("avenant_seulement", "avenant_seulement"),
             ("date_signature", "date_signature"),
             ("financement", "financement"),
-            ("order_by", "order_by"),
-            ("search_input", "search_input"),
-            ("statuts", "cstatut"),
             ("nature_logement", "nature_logement"),
+            ("order_by", "order_by"),
+            ("search_lieu", "search_lieu"),
+            ("search_bailleur", "search_bailleur"),
+            ("search_numero", "search_numero"),
+            ("search_operation_nom", "search_operation_nom"),
+            ("statuts", "cstatut"),
         ]
 
 
