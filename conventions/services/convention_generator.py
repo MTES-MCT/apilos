@@ -315,7 +315,7 @@ def generate_pdf(file_stream: io.BytesIO, convention: Convention):
         pdf_path = f"{convention_dirpath}/{convention_pdf_filename}"
         subprocess.run(
             [
-                "/Applications/LibreOffice.app/Contents/MacOS/soffice",
+                settings.LIBREOFFICE_EXEC,
                 "--convert-to",
                 "pdf:writer_pdf_Export",
                 "--outdir",
