@@ -9,6 +9,8 @@ from .models import Bailleur
 class BailleurAdmin(ApilosModelAdmin):
     search_fields = [
         "nom",
+        "siret",
+        "siren",
     ]
     list_display = [
         "nom",
