@@ -6,6 +6,10 @@ from bailleurs.models import Bailleur
 from users.services import UserService
 
 
+class FileReadingError(Exception):
+    pass
+
+
 class BailleurListingProcessor:
     empty_lines_allowed = 5
     columns = {
@@ -49,10 +53,10 @@ class BailleurListingProcessor:
         keys = [f'"{self.columns[k][0]}"' for k in diff]
         if len(diff) > 0:
             if len(diff) == 1:
-                raise Exception(
+                raise FileReadingError(
                     f"Lecture du fichier impossible: la colonne {keys[0]} est manquante"
                 )
-            raise Exception(
+            raise FileReadingError(
                 f"Lecture du fichier impossible: les colonnes {', '.join(keys)} sont manquantes"
             )
 

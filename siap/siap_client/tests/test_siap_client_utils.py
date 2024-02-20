@@ -247,5 +247,5 @@ class GetOrCreateConventionFromOperationTest(TestCase):
                 },
                 User.objects.first(),
             )
-        except Exception as exception:
+        except Exception as exception:  # noqa: BLE001
             self.assertNotEqual(exception, NoConventionForOperationSIAPException)

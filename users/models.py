@@ -120,7 +120,7 @@ class User(AbstractUser):
                 administration_id=obj.programme.administration_id
             )
         raise ExceptionPermissionConfig(
-            "Les permissions ne sont pas correctement configurer, un "
+            "Les permissions ne sont pas correctement configurées, un "
             + "objet de type Convention doit être asocié à la "
             + "permission 'change_convention'"
         )

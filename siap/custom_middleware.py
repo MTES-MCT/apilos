@@ -230,7 +230,7 @@ def _find_or_create_entity(
             ).update(parent=None)
             Bailleur.objects.filter(siren__in=chrildren_siren).update(parent=bailleur)
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             raise FusionAPISIAPException(
                 "Error while get bailleur fusion : %s" % exc
             ) from exc

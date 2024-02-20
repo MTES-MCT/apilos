@@ -16,6 +16,7 @@ DJANGO_SETTINGS_MODULE = "core.settings"
 [tool.ruff]
 select = [
     "B",   # flake8-bugbear
+    "BLE", # flake8-blind-except
     "C90", # mccabe
     "E",   # pycodestyle
     "F",   # Pyflakes
@@ -29,7 +30,6 @@ select = [
     "UP",  # pyupgrade
     "W",   # pycodestyle
     # TODO: apply the following rules
-    # "BLE", # flake8-blind-except
     # "C4",  # flake8-comprehensions
 ]
 line-length = 120
