@@ -10,6 +10,9 @@
         {% include "common/nav_bar.html" with nav_bar_step="sent" %}
         <div class="fr-container fr-py-5w">
             {% include "conventions/actions/back_to_instruction.html" %}
+            {% if convention.statut != CONVENTION_STATUT.A_SIGNER %}
+                {% include "conventions/actions/upload_signed_document.html" %}
+            {% endif %}
         </div>
     </div>
 {% endblock %}
