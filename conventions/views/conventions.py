@@ -355,10 +355,6 @@ class ConventionSearchView(WaffleFlagMixin, ConventionSearchBaseView):
             "url_name": resolve(request.path_info).url_name,
             "total_conventions": request.user.conventions().count(),
             "debug_search_scoring": settings.DEBUG_SEARCH_SCORING,
-            # FIXME: needed for highlighting
-            "search_input": self._get_non_empty_query_param(
-                "search_operation_nom", default=""
-            ),
         } | {
             k: self._get_non_empty_query_param(k, default="")
             for k in (

@@ -2,6 +2,7 @@ import json
 from re import IGNORECASE
 from re import compile as rcompile
 from re import escape as rescape
+from typing import Any
 from urllib.parse import urlencode
 
 from django.conf import settings
@@ -20,14 +21,42 @@ from users.models import GroupProfile
 
 
 @register.filter(name="highlight")
-def highlight(text, search):
+def highlight(text: Any, search: str) -> str:
+    if not isinstance(text, str):
+        text = str(text)
+
+    if len(search) == 0:
+        return text
+
     rgx = rcompile(rescape(search), IGNORECASE)
     return mark_safe(
         rgx.sub(
-            lambda m: f'<span class="apilos-search-highlight">{m.group()}</span>',
-            str(text),
+            lambda m: f'<span class="apilos-search-highlight">{m.group()}</span>', text
         )
     )
+
+
+@register.filter(name="highlight_if_match")
+def highlight_if_match(text: Any, search: str) -> str:
+    if not isinstance(text, str):
+        text = str(text)
+
+    if len(search) < 3:
+        return text
+
+    def _normalize(text: str) -> str:
+        for c in ("-", "_", "/", ","):
+            text = text.replace(c, " ")
+        return " ".join(text.split()).lower()
+
+    rgx = rcompile(rescape(_normalize(search)))
+    match = rgx.search(_normalize(text))
+    if match:
+        start, end = match.span()
+        text = f"{text[:start]}<span class='apilos-search-highlight'>{text[start:end]}</span>{text[end:]}"
+        return mark_safe(text)
+
+    return text
 
 
 @register.filter

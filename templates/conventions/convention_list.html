@@ -139,7 +139,13 @@
                                             </script>
                                         </td>
                                         {% if request|is_instructeur %}
-                                            <td>{{convention.programme.bailleur|highlight:search_input}}</td>
+                                            <td>
+                                                {% if new_search %}
+                                                    {{convention.programme.bailleur|highlight_if_match:search_bailleur}}
+                                                {% else %}
+                                                    {{convention.programme.bailleur|highlight:search_input}}
+                                                {% endif %}
+                                            </td>
                                         {% endif %}
                                         {% if request|display_administration %}
                                             <td>{{convention.programme.administration}}</td>
@@ -147,7 +153,11 @@
                                         <td>
                                             <div class="apilos--flex-row-left-center">
                                                 <strong class="apilos--overflow_ellipsis">
-                                                    {{convention.programme|highlight:search_input}}
+                                                    {% if new_search %}
+                                                        {{convention.programme|highlight_if_match:search_operation_nom}}
+                                                    {% else %}
+                                                        {{convention.programme|highlight:search_input}}
+                                                    {% endif %}
                                                 </strong>
                                                 {% if convention.is_avenant %}
                                                     <span class="{% if convention.is_denonciation %}warning-notification {% else %}text-title-blue-france {% endif %} fr-p-1w fr-ml-1w apilos-tag-avenant background-white">{{convention|display_kind|capfirst}}</span>
@@ -156,22 +166,45 @@
                                             {% if convention.programme.numero_galion %}
                                                 <div>
                                                     <em data-test-role="programme-galion-cell">
-                                                        Op. : {{convention.programme.numero_galion|highlight:search_input}}
+                                                        {% if new_search %}
+                                                            Op. : {{convention.programme.numero_galion|highlight_if_match:search_numero}}
+                                                        {% else %}
+                                                            Op. : {{convention.programme.numero_galion|highlight:search_input}}
+                                                        {% endif %}
                                                     </em>
                                                 </div>
                                             {% endif %}
                                             {% if url_name == "search_active" or url_name == "search_resiliees" or new_search %}
                                                 <div>
                                                     {% if convention.numero %}
-                                                        <em data-test-role="programme-galion-cell">Conv. : {{convention.numero|highlight:search_input}}</em>
+                                                        <em data-test-role="programme-galion-cell">
+                                                            {% if new_search %}
+                                                                Conv. : {{convention.numero|highlight_if_match:search_numero}}
+                                                            {% else %}
+                                                                Conv. : {{convention.numero|highlight:search_input}}
+                                                            {% endif %}
+                                                        </em>
                                                     {% endif %}
                                                 </div>
                                             {% endif %}
                                         </td>
                                         <td data-test-role="programme-financement-cell">{{convention.financement}}</td>
                                         <td>
-                                            <strong>{{convention.programme.ville|highlight:search_input}}</strong><br/>
-                                            <em>{{convention.programme.code_postal|highlight:search_input}}</em>
+                                            <strong>
+                                                {% if new_search %}
+                                                    {{convention.programme.ville|highlight_if_match:search_lieu}}
+                                                {% else %}
+                                                    {{convention.programme.ville|highlight:search_input}}
+                                                {% endif %}
+                                            </strong>
+                                            <br/>
+                                            <em>
+                                                {% if new_search %}
+                                                    {{convention.programme.code_postal|highlight_if_match:search_lieu}}
+                                                {% else %}
+                                                    {{convention.programme.code_postal|highlight:search_input}}
+                                                {% endif %}
+                                            </em>
                                         </td>
                                         <td>{{convention.lot.nb_logements}}</td>
 
