@@ -231,27 +231,32 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
                 id="date_sgnature",
             ),
             param(
-                {"search_input": "33N611709S700029"},
+                {"search_operation_nom": "rue occitanie"},
+                ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
+                id="programme_nom",
+            ),
+            param(
+                {"search_numero": "33N611709S700029"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
                 id="numero_convention_exact",
             ),
             param(
-                {"search_input": "33N6117090002"},
+                {"search_numero": "33N6117090002"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
                 id="numero_convention_avec_erreurs",
             ),
             param(
-                {"search_input": "51/2015/2006-569/049R"},
+                {"search_numero": "51/2015/2006-569/049R"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b71"],
                 id="numero_convention_avec_caracteres_speciaux",
             ),
             param(
-                {"search_input": "20230600400430"},
+                {"search_numero": "20230600400430"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b71"],
                 id="numero_operation_avec_erreurs",
             ),
             param(
-                {"search_input": "51/2015/2006-569/049R 33N611709S700029"},
+                {"search_numero": "51/2015/2006-569/049R 33N611709S700029"},
                 [
                     "fbb9890f-171b-402d-a35e-71e1bd791b71",
                     "fbb9890f-171b-402d-a35e-71e1bd791b70",
@@ -259,44 +264,49 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
                 id="numero_operation_et_convention",
             ),
             param(
-                {"search_input": "la chalouere angers"},
-                ["fbb9890f-171b-402d-a35e-71e1bd791b72"],
-                id="vector_programme_adresse",
-            ),
-            param(
-                {"search_input": "la chalouère ANGER"},
-                ["fbb9890f-171b-402d-a35e-71e1bd791b72"],
-                id="vector_programme_adresse_accents",
-            ),
-            param(
-                {"search_input": "rue occitanie"},
-                ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
-                id="vector_programme_nom",
-            ),
-            param(
-                {"search_input": "Semcodan Courbevoie"},
+                {"search_bailleur": "Semcodan Courbevoie"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
                 id="bailleur_nom",
             ),
             param(
-                {"search_input": "05720113900029"},
+                {"search_bailleur": "05720113900029"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b72"],
                 id="bailleur_siret",
             ),
             param(
-                {"search_input": "057201139"},
+                {"search_bailleur": "057201139"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b72"],
                 id="bailleur_siren",
             ),
             param(
-                {"search_input": "057 201 139 00029"},
+                {"search_bailleur": "057 201 139 00029"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b72"],
                 id="bailleur_siret_avec_espace",
             ),
             param(
-                {"search_input": "475680815"},
+                {"search_bailleur": "475680815"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b71"],
                 id="bailleur_siret_avec_espace_en_base",
+            ),
+            param(
+                {"search_bailleur": "Vilogia 475680815"},
+                ["fbb9890f-171b-402d-a35e-71e1bd791b71"],
+                id="bailleur_nom_et_siren",
+            ),
+            param(
+                {"search_lieu": "bourg en bresse"},
+                ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
+                id="programme_commune",
+            ),
+            param(
+                {"search_lieu": "01012"},
+                ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
+                id="programme_code_postal",
+            ),
+            param(
+                {"search_lieu": "bourg-en-bresss 01012"},
+                ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
+                id="programme_commune_et_code_postal",
             ),
         ],
     )

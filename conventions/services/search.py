@@ -1,4 +1,3 @@
-import re
 from collections import defaultdict
 from copy import copy
 
@@ -321,9 +320,11 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
     nature_logement: str | None = None
     statuts: list[ConventionStatut] | None = None
 
-    search_input: str | None = None
-    search_input_numbers: str | None = None
-    search_query: SearchQuery | None = None
+    search_operation_nom: str | None = None
+    search_operation_nom_query: SearchQuery | None = None
+    search_numero: str | None = None
+    search_bailleur: str | None = None
+    search_lieu: str | None = None
 
     def __init__(self, user: User, search_filters: dict | None = None) -> None:
         self.user = user
@@ -343,15 +344,17 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 "date_signature",
                 "financement",
                 "nature_logement",
-                "search_input",
+                "search_operation_nom",
+                "search_numero",
+                "search_bailleur",
+                "search_lieu",
             ):
                 setattr(self, name, search_filters.get(name))
 
-            if self.search_input:
-                self.search_query = SearchQuery(self.search_input, config="french")
-                self.search_input_numbers = " ".join(
-                    re.findall(r"\d+", self.search_input)
-                ).strip()
+            if self.search_operation_nom:
+                self.search_operation_nom_query = SearchQuery(
+                    self.search_operation_nom, config="french"
+                )
 
     def _get_base_queryset(self) -> QuerySet:
         return self.user.conventions()
@@ -380,177 +383,191 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
         return queryset
 
     def _build_ranking(self, queryset: QuerySet) -> QuerySet:
-        if self.search_input:
-            queryset = (
-                queryset.annotate(
-                    search_vector_programme_rank=SearchRank(
-                        vector="programme__search_vector",
-                        query=self.search_query,
-                    )
+        if self.search_operation_nom_query:
+            queryset = queryset.annotate(
+                search_vector_programme_rank=SearchRank(
+                    vector="programme__search_vector",
+                    query=self.search_operation_nom_query,
                 )
-                # queryset.annotate(
-                #     programme_nom_similarity=TrigramSimilarity(
-                #         "programme__nom", self.search_input
-                #     )
-                # )
-                .annotate(
-                    # TODO: utiliser un champ composé full_adress ?
-                    programme_ville_similarity=TrigramSimilarity(
-                        "programme__ville", self.search_input
-                    )
+            )
+
+        if self.search_numero:
+            _search_numero = self.search_numero.replace("-", "").replace("/", "")
+            queryset = queryset.annotate(
+                _r1=Replace("programme__numero_galion", Value("/")),
+                _r2=Replace("_r1", Value("-")),
+                programme_numero_similarity=TrigramSimilarity("_r2", _search_numero),
+            ).annotate(
+                _r1=Replace("numero", Value("/")),
+                _r2=Replace("_r1", Value("-")),
+                conv_numero_similarity=TrigramSimilarity("_r2", _search_numero),
+            )
+
+        if self.search_bailleur:
+            queryset = queryset.annotate(
+                bailleur_nom_similarity=TrigramSimilarity(
+                    "programme__bailleur__nom", self.search_bailleur
                 )
-                .annotate(
-                    _r1=Replace("programme__numero_galion", Value("/")),
-                    _r2=Replace("_r1", Value("-")),
-                    programme_numero_similarity=TrigramSimilarity(
-                        "_r2", self.search_input.replace("-", "").replace("/", "")
-                    ),
+            ).annotate(
+                bailleur_siret_similarity=TrigramSimilarity(
+                    Replace("programme__bailleur__siret", Value(" ")),
+                    self.search_bailleur,
+                ),
+            )
+
+        if self.search_lieu:
+            queryset = queryset.annotate(
+                programme_ville_similarity=TrigramSimilarity(
+                    "programme__ville", self.search_lieu
                 )
-                # .annotate(
-                #     search_vector_bailleur_rank=SearchRank(
-                #         vector="programme__bailleur__search_vector",
-                #         query=self.search_query,
-                #     )
-                # )
-                .annotate(
-                    bailleur_nom_similarity=TrigramSimilarity(
-                        "programme__bailleur__nom", self.search_input
-                    )
-                )
-                .annotate(
-                    bailleur_siret_similarity=TrigramSimilarity(
-                        Replace("programme__bailleur__siret", Value(" ")),
-                        self.search_input_numbers,
-                    ),
-                )
-                .annotate(
-                    _r1=Replace("numero", Value("/")),
-                    _r2=Replace("_r1", Value("-")),
-                    conv_numero_similarity=TrigramSimilarity(
-                        "_r2", self.search_input.replace("-", "").replace("/", "")
-                    ),
+            ).annotate(
+                programme_code_postal_similarity=TrigramSimilarity(
+                    "programme__code_postal", self.search_lieu
                 )
             )
 
         return queryset
 
     def _build_search_filters(self, queryset: QuerySet) -> QuerySet:
-        if self.search_input:
+        if self.search_operation_nom_query:
             queryset = queryset.filter(
-                Q(programme__search_vector=self.search_query)
-                # Q(programme_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
-                | Q(
-                    programme_ville_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
-                )
-                | Q(
-                    programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
-                )
-                # | Q(programme__bailleur__search_vector=self.search_query)
-                | Q(bailleur_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
-                | Q(bailleur_siret_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
+                programme__search_vector=self.search_operation_nom_query
+            )
+
+        if self.search_numero:
+            queryset = queryset.filter(
+                Q(programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
                 | Q(conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
+            )
+
+        if self.search_bailleur:
+            queryset = queryset.filter(
+                Q(bailleur_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
+                | Q(bailleur_siret_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
+            )
+
+        if self.search_lieu:
+            queryset = queryset.filter(
+                Q(programme_ville_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
+                | Q(
+                    programme_code_postal_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                )
             )
 
         return queryset
 
     def _build_scoring(self, queryset: QuerySet) -> QuerySet:
-        # TODO: construire un score global en s'appuyant sur les annotations de ranking
-
-        if self.search_input:
-            queryset = (
-                queryset.annotate(
-                    programme_nom_score=Round(
+        if self.search_operation_nom:
+            queryset = queryset.annotate(
+                programme_nom_score=(
+                    Round(
                         Coalesce(F("search_vector_programme_rank"), 0.0),
                         precision=2,
                     )
                 )
-                # queryset.annotate(
-                #     programme_nom_score=Case(
-                #         When(
-                #             programme_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
-                #             then=Round(
-                #                 Coalesce(F("programme_nom_similarity"), 0.0),
-                #                 precision=2,
-                #             ),
-                #         ),
-                #         default=Value(0.0),
-                #     )
-                # )
-                .annotate(
-                    programme_ville_score=Case(
-                        When(
-                            programme_ville_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
-                            then=Round(
-                                Coalesce(F("programme_ville_similarity"), 0.0),
-                                precision=2,
-                            ),
+            )
+        else:
+            queryset = queryset.annotate(programme_nom_score=Value(0.0))
+
+        if self.search_numero:
+            queryset = queryset.annotate(
+                programme_numero_score=Case(
+                    When(
+                        programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
+                        then=Round(
+                            Coalesce(F("programme_numero_similarity"), 0.0),
+                            precision=2,
                         ),
-                        default=Value(0.0),
-                    )
+                    ),
+                    default=Value(0.0),
                 )
-                .annotate(
-                    programme_numero_score=Case(
-                        When(
-                            programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
-                            then=Round(
-                                Coalesce(F("programme_numero_similarity"), 0.0),
-                                precision=2,
-                            ),
+            ).annotate(
+                conv_numero_score=Case(
+                    When(
+                        conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
+                        then=Round(
+                            Coalesce(F("conv_numero_similarity"), 0.0),
+                            precision=2,
                         ),
-                        default=Value(0.0),
-                    )
-                )
-                .annotate(
-                    bailleur_nom_score=Case(
-                        When(
-                            bailleur_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
-                            then=Round(
-                                Coalesce(F("bailleur_nom_similarity"), 0.0),
-                                precision=2,
-                            ),
-                        ),
-                        default=Value(0.0),
-                    )
-                )
-                .annotate(
-                    bailleur_siret_score=Case(
-                        When(
-                            bailleur_siret_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
-                            then=Round(
-                                Coalesce(F("bailleur_siret_similarity"), 0.0),
-                                precision=2,
-                            ),
-                        ),
-                        default=Value(0.0),
-                    )
-                )
-                .annotate(
-                    conv_numero_score=Case(
-                        When(
-                            conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
-                            then=Round(
-                                Coalesce(F("conv_numero_similarity"), 0.0),
-                                precision=2,
-                            ),
-                        ),
-                        default=Value(0.0),
-                    )
-                )
-                .annotate(
-                    score=F("programme_nom_score")
-                    + F("programme_ville_score")
-                    + F("programme_numero_score")
-                    + F("bailleur_nom_score")
-                    + F("bailleur_siret_score")
-                    + F("conv_numero_score")
+                    ),
+                    default=Value(0.0),
                 )
             )
+        else:
+            queryset = queryset.annotate(
+                programme_numero_score=Value(0.0),
+                conv_numero_score=Value(0.0),
+            )
 
-        return queryset
+        if self.search_bailleur:
+            queryset = queryset.annotate(
+                bailleur_nom_score=Case(
+                    When(
+                        bailleur_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
+                        then=Round(
+                            Coalesce(F("bailleur_nom_similarity"), 0.0),
+                            precision=2,
+                        ),
+                    ),
+                    default=Value(0.0),
+                )
+            ).annotate(
+                bailleur_siret_score=Case(
+                    When(
+                        bailleur_siret_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
+                        then=Round(
+                            Coalesce(F("bailleur_siret_similarity"), 0.0),
+                            precision=2,
+                        ),
+                    ),
+                    default=Value(0.0),
+                )
+            )
+        else:
+            queryset = queryset.annotate(
+                bailleur_nom_score=Value(0.0),
+                bailleur_siret_score=Value(0.0),
+            )
+
+        if self.search_lieu:
+            queryset = queryset.annotate(
+                programme_ville_score=Case(
+                    When(
+                        programme_ville_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
+                        then=Round(
+                            Coalesce(F("programme_ville_similarity"), 0.0),
+                            precision=2,
+                        ),
+                    ),
+                    default=Value(0.0),
+                )
+            ).annotate(
+                programme_code_postal_score=Case(
+                    When(
+                        programme_code_postal_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
+                        then=Round(
+                            Coalesce(F("programme_code_postal_similarity"), 0.0),
+                            precision=2,
+                        ),
+                    ),
+                    default=Value(0.0),
+                )
+            )
+        else:
+            queryset = queryset.annotate(
+                programme_ville_score=Value(0.0),
+                programme_code_postal_score=Value(0.0),
+            )
+
+        return queryset.annotate(
+            score=F("programme_nom_score")
+            + F("programme_numero_score")
+            + F("conv_numero_score")
+            + F("bailleur_nom_score")
+            + F("bailleur_siret_score")
+            + F("programme_ville_score")
+            + F("programme_code_postal_score")
+        )
 
     def _get_order_by(self) -> list[str]:
-        order_by = super()._get_order_by()
-        if self.search_input:
-            order_by.append("-score")
-        order_by.append("-cree_le")
-        return order_by
+        return super()._get_order_by() + ["-score", "-cree_le"]

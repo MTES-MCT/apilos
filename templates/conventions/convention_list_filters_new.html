@@ -1,4 +1,3 @@
-
 <div class="fr-container">
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-grid-row fr-grid-row--right">
@@ -11,17 +10,39 @@
         </div>
 
         <div class="fr-col-md-12 fr-mb-2w">
+            <hr>
             <form class="fr-mt-2w" method="get" action="" id="search_table">
                 <input type="hidden" id="order_by" name="order_by" value="{{ order_by }}">
                 <input type="hidden" id="page" name="page" value="{{ page }}">
 
                 <div class="fr-grid-row fr-grid-row--gutters">
 
-                    {# Champs recherche libre #}
-                    <div class="fr-col-12">
-                        <input class="fr-input" type="search" id="search_input" name="search_input" value="{{ search_input }}"
-                               placeholder="Recherche par chiffres et mots-clés"/>
-                        <div class="fr-text--xs fr-mt-2w fr-mb-5w apilos-text-info"><span class="fr-icon-info-fill fr-mr-1w" aria-hidden="true"></span>Recherche libre multi-critères : nom, numéro, adresse de l'opération ; numéro de la convention ; SIREN, nom du bailleur  |  <em>Exemple : "sapins bleus 18000"</em></div>
+                    {# Champs nom de l'opération #}
+                    <div class="fr-col-12 fr-col-lg-6 fr-mb-4w">
+                        <div class="select-label">Nom de l'opération</div>
+                        <input class="fr-input fr-mt-1w" type="search" id="search_operation_nom" name="search_operation_nom" value="{{ search_operation_nom }}" placeholder="Rechercher"/>
+                    </div>
+
+                    {# Champs numéro de l'opération ou de la convention #}
+                    <div class="fr-col-12 fr-col-lg-6 fr-mb-4w">
+                        <div class="select-label">Numéro de l'opération ou de la convention</div>
+                        <input class="fr-input fr-mt-1w" type="search" id="search_numero" name="search_numero" value="{{ search_numero }}" placeholder="Rechercher"/>
+                    </div>
+
+                </div>
+
+                <div class="fr-grid-row fr-grid-row--gutters">
+
+                    {# Champs bailleur #}
+                    <div class="fr-col-12 fr-col-lg-6 fr-mb-4w">
+                        <div class="select-label">Bailleur (nom ou SIREN)</div>
+                        <input class="fr-input fr-mt-1w" type="search" id="search_bailleur" name="search_bailleur" value="{{ search_bailleur }}" placeholder="Rechercher"/>
+                    </div>
+
+                    {# Champs commune #}
+                    <div class="fr-col-12 fr-col-lg-6 fr-mb-4w">
+                        <div class="select-label">Commune, code postal</div>
+                        <input class="fr-input fr-mt-1w" type="search" id="search_lieu" name="search_lieu" value="{{ search_lieu }}" placeholder="Rechercher"/>
                     </div>
 
                 </div>
@@ -36,9 +57,9 @@
                             class="fr-select fr-mt-1w"
                             id="cstatut"
                             name="cstatut">
-                            {% for value, label in statut_choices %}
-                                <option value="{{ label }}"
-                                        {% if label in request.GET.cstatut %}selected{% endif %}>
+                            {% for label, value in statut_choices %}
+                                <option value="{{ value }}"
+                                        {% if value in request.GET.cstatut %}selected{% endif %}>
                                     {{ label }}
                                 </option>
                             {% endfor %}
@@ -50,7 +71,7 @@
                             optionsCount: 5,
                             search: false,
                             multiple: true,
-                            placeholder: "Selectionner une option",
+                            placeholder: "Selectionner",
                             optionsSelectedText: "options sélectionnées",
                             allOptionsSelectedText: "Toutes les options",
                             selectAllText: "Tout sélectionner",
@@ -105,25 +126,25 @@
 
                 <div class="fr-grid-row fr-grid-row--gutters">
 
-                    {# Champs ANRU #}
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-4">
-                        <div class="fr-fieldset__element">
-                            <div class="fr-checkbox-group fr-checkbox-group--sm">
-                                <input name="anru" id="checkbox-restrict-to-anru" type="checkbox" {% if request.GET.anru %}checked{% endif %}>
-                                <label class="fr-label" for="checkbox-restrict-to-anru">
-                                    Afficher uniquement les conventions ANRU
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
                     {# Champs avenant #}
-                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-5">
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-4">
                         <div class="fr-fieldset__element">
                             <div class="fr-checkbox-group fr-checkbox-group--sm">
                                 <input name="avenant_seulement" id="checkbox-restrict-to-with-avenant" type="checkbox" {% if request.GET.avenant_seulement %}checked{% endif %}>
                                 <label class="fr-label" for="checkbox-restrict-to-with-avenant">
                                     Afficher uniquement les avenants
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Champs ANRU #}
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-5">
+                        <div class="fr-fieldset__element">
+                            <div class="fr-checkbox-group fr-checkbox-group--sm">
+                                <input name="anru" id="checkbox-restrict-to-anru" type="checkbox" {% if request.GET.anru %}checked{% endif %}>
+                                <label class="fr-label" for="checkbox-restrict-to-anru">
+                                    Afficher uniquement les conventions ANRU
                                 </label>
                             </div>
                         </div>

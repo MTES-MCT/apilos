@@ -3,7 +3,6 @@ from django.core.management.base import BaseCommand
 from django.db.models import F
 from waffle.models import Flag
 
-from bailleurs.models import Bailleur
 from programmes.models import Programme
 
 
@@ -28,11 +27,6 @@ class Command(BaseCommand):
             ">> Mise à jour de tous les programmes pour peupler le nouveau champs search_vector"
         )
         Programme.objects.update(nom=F("nom"))
-
-        self.stdout.write(
-            ">> Mise à jour de tous les bailleurs pour peupler le nouveau champs search_vector"
-        )
-        Bailleur.objects.update(nom=F("nom"))
 
         self.stdout.write(
             self.style.SUCCESS(

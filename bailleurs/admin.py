@@ -16,7 +16,4 @@ class BailleurAdmin(ApilosModelAdmin):
         "sous_nature_bailleur",
         "ville",
     ]
-    readonly_fields = (
-        "parent",
-        "search_vector",
-    )
+    readonly_fields = ("parent",)
