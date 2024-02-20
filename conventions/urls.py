@@ -225,11 +225,6 @@ urlpatterns = [
         name="resiliation_start",
     ),
     path(
-        "resiliation_acte/<convention_uuid>",
-        views.ResiliationActeView.as_view(),
-        name="resiliation_acte",
-    ),
-    path(
         "resiliation_creation/<convention_uuid>",
         views.ResiliationCreationView.as_view(),
         name="resiliation_creation",
