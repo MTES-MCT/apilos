@@ -179,7 +179,6 @@ MIDDLEWARE = [
     "csp.middleware.CSPMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
     "hijack.middleware.HijackUserMiddleware",
-    "waffle.middleware.WaffleMiddleware",
 ]
 
 
@@ -592,3 +591,4 @@ DEBUG_SEARCH_SCORING = get_env_variable(
 # Waffle
 FLAG_NEW_SEARCH = "nouvelle_recherche"
 WAFFLE_ENABLE_ADMIN_PAGES = False
+MIDDLEWARE += ["waffle.middleware.WaffleMiddleware"]
