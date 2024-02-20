@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.db.models import Count, QuerySet
 from django.http.request import HttpRequest
@@ -18,6 +20,8 @@ from waffle import flag_is_active
 
 from conventions.models import Convention, ConventionStatut
 from siap.siap_authentication import SIAPJWTAuthentication, SIAPSimpleJWTAuthentication
+
+logger = logging.getLogger(__name__)
 
 
 class ApilosConfiguration(APIView):
@@ -163,7 +167,13 @@ class ConventionKPI(APIView):
             request.user.conventions().filter(parent_id__isnull=True).values("statut")
         )
 
-        if flag_is_active(request, settings.FLAG_NEW_SEARCH):
+        try:
+            _new_search = flag_is_active(request, settings.FLAG_NEW_SEARCH)
+        except ValueError as err:
+            logger.error(err, exc_info=True)
+            _new_search = False
+
+        if _new_search:
             list_conv_kpi = self._build_conv_kpi_list(request, queryset)
         else:
             list_conv_kpi = self._build_conv_kpi_list_old(
