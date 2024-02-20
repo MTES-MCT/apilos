@@ -64,7 +64,7 @@
 
                 {% if convention.statut == CONVENTION_STATUT.A_SIGNER %}
                     {% if request|is_instructeur %}
-                        <div class="block--row-strech">
+                        <div class="block--row-strech fr-pt-2w">
                             {% include "conventions/common/form_upload_signed_document.html" %}
 
                             <a class="fr-my-1w fr-link fr-ml-2w" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
