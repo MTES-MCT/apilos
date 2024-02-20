@@ -61,9 +61,16 @@
                         {{convention|display_personnal_pronom|capfirst}} porte le numéro <strong>{{ convention.numero }}</strong>
                     </p>
                 {% endif %}
+
                 {% if convention.statut == CONVENTION_STATUT.A_SIGNER %}
                     {% if request|is_instructeur %}
-                        Vous pouvez <a class="fr-link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>déposer {{convention|display_kind_with_pronom}} signé{{convention|display_gender_terminaison}}</a>
+                        <div class="block--row-strech fr-pt-2w">
+                            {% include "conventions/common/form_upload_signed_document.html" %}
+
+                            <a class="fr-my-1w fr-link fr-ml-2w" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
+                                Consulter le récapitulatif
+                            </a>
+                        </div>
                     {% else %}
                         {% if convention.programme.administration.adresse and convention.programme.administration.code_postal and convention.programme.administration.ville %}
                             <p>
@@ -72,6 +79,7 @@
                         {% endif %}
                     {% endif %}
                 {% endif %}
+
                 <p>{% if request|is_instructeur %}
                     {{convention.entete_desc_for_instructeur}}
                 {% else %}
