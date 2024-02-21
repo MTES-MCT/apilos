@@ -141,6 +141,7 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
                 code_postal="01012",
                 nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
                 bailleur=BailleurFactory(
+                    uuid="9eaece28-e15f-4d23-94f5-20902f5b0180",
                     nom="SEMCODAN Société d'Economie Mixte Courbevoie-Danto",
                     siret="34322777300011",
                 ),
@@ -231,6 +232,11 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
                 id="date_sgnature",
             ),
             param(
+                {"bailleur": "9eaece28-e15f-4d23-94f5-20902f5b0180"},
+                ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
+                id="bailleur",
+            ),
+            param(
                 {"search_operation_nom": "rue occitanie"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
                 id="programme_nom",
@@ -262,41 +268,6 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
                     "fbb9890f-171b-402d-a35e-71e1bd791b70",
                 ],
                 id="numero_operation_et_convention",
-            ),
-            param(
-                {"search_bailleur": "Semcodan Courbevoie"},
-                ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
-                id="bailleur_nom",
-            ),
-            param(
-                {"search_bailleur": "05720113900029"},
-                ["fbb9890f-171b-402d-a35e-71e1bd791b72"],
-                id="bailleur_siret",
-            ),
-            param(
-                {"search_bailleur": "057201139"},
-                ["fbb9890f-171b-402d-a35e-71e1bd791b72"],
-                id="bailleur_siren",
-            ),
-            param(
-                {"search_bailleur": "057 201 139 00029"},
-                ["fbb9890f-171b-402d-a35e-71e1bd791b72"],
-                id="bailleur_siret_avec_espace",
-            ),
-            param(
-                {"search_bailleur": "475680815"},
-                ["fbb9890f-171b-402d-a35e-71e1bd791b71"],
-                id="bailleur_siret_avec_espace_en_base",
-            ),
-            param(
-                {"search_bailleur": "Vilogia 475680815"},
-                ["fbb9890f-171b-402d-a35e-71e1bd791b71"],
-                id="bailleur_nom_et_siren",
-            ),
-            param(
-                {"search_lieu": "bourg en bresse"},
-                ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
-                id="programme_commune",
             ),
             param(
                 {"search_lieu": "01012"},
