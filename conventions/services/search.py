@@ -319,11 +319,11 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
     financement: str | None = None
     nature_logement: str | None = None
     statuts: list[ConventionStatut] | None = None
+    bailleur: str | None = None
 
     search_operation_nom: str | None = None
     search_operation_nom_query: SearchQuery | None = None
     search_numero: str | None = None
-    search_bailleur: str | None = None
     search_lieu: str | None = None
 
     def __init__(self, user: User, search_filters: dict | None = None) -> None:
@@ -341,13 +341,13 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                     for s in search_filters.get("statuts").split(",")
                 ]
             for name in (
+                "bailleur",
                 "date_signature",
                 "financement",
                 "nature_logement",
-                "search_operation_nom",
-                "search_numero",
-                "search_bailleur",
                 "search_lieu",
+                "search_numero",
+                "search_operation_nom",
             ):
                 setattr(self, name, search_filters.get(name))
 
@@ -380,12 +380,15 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 televersement_convention_signee_le__year=self.date_signature
             )
 
+        if self.bailleur:
+            queryset = queryset.filter(programme__bailleur__uuid=self.bailleur)
+
         return queryset
 
     def _build_ranking(self, queryset: QuerySet) -> QuerySet:
         if self.search_operation_nom_query:
             queryset = queryset.annotate(
-                search_vector_programme_rank=SearchRank(
+                search_vector_programme_nom_rank=SearchRank(
                     vector="programme__search_vector",
                     query=self.search_operation_nom_query,
                 )
@@ -401,18 +404,6 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 _r1=Replace("numero", Value("/")),
                 _r2=Replace("_r1", Value("-")),
                 conv_numero_similarity=TrigramSimilarity("_r2", _search_numero),
-            )
-
-        if self.search_bailleur:
-            queryset = queryset.annotate(
-                bailleur_nom_similarity=TrigramSimilarity(
-                    "programme__bailleur__nom", self.search_bailleur
-                )
-            ).annotate(
-                bailleur_siret_similarity=TrigramSimilarity(
-                    Replace("programme__bailleur__siret", Value(" ")),
-                    self.search_bailleur,
-                ),
             )
 
         if self.search_lieu:
@@ -440,12 +431,6 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 | Q(conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
             )
 
-        if self.search_bailleur:
-            queryset = queryset.filter(
-                Q(bailleur_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
-                | Q(bailleur_siret_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
-            )
-
         if self.search_lieu:
             queryset = queryset.filter(
                 Q(programme_ville_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
@@ -461,7 +446,7 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
             queryset = queryset.annotate(
                 programme_nom_score=(
                     Round(
-                        Coalesce(F("search_vector_programme_rank"), 0.0),
+                        Coalesce(F("search_vector_programme_nom_rank"), 0.0),
                         precision=2,
                     )
                 )
@@ -499,36 +484,6 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 conv_numero_score=Value(0.0),
             )
 
-        if self.search_bailleur:
-            queryset = queryset.annotate(
-                bailleur_nom_score=Case(
-                    When(
-                        bailleur_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
-                        then=Round(
-                            Coalesce(F("bailleur_nom_similarity"), 0.0),
-                            precision=2,
-                        ),
-                    ),
-                    default=Value(0.0),
-                )
-            ).annotate(
-                bailleur_siret_score=Case(
-                    When(
-                        bailleur_siret_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
-                        then=Round(
-                            Coalesce(F("bailleur_siret_similarity"), 0.0),
-                            precision=2,
-                        ),
-                    ),
-                    default=Value(0.0),
-                )
-            )
-        else:
-            queryset = queryset.annotate(
-                bailleur_nom_score=Value(0.0),
-                bailleur_siret_score=Value(0.0),
-            )
-
         if self.search_lieu:
             queryset = queryset.annotate(
                 programme_ville_score=Case(
@@ -563,8 +518,6 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
             score=F("programme_nom_score")
             + F("programme_numero_score")
             + F("conv_numero_score")
-            + F("bailleur_nom_score")
-            + F("bailleur_siret_score")
             + F("programme_ville_score")
             + F("programme_code_postal_score")
         )

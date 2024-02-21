@@ -97,22 +97,19 @@
                                                     <b>score: {{ convention.score }}</b>
                                                 </div>
                                                 <div>
-                                                    programme nom: {{ convention.programme_nom_similarity }}
+                                                    op. nom (vector): {{ convention.search_vector_programme_nom_rank }}
                                                 </div>
                                                 <div>
-                                                    programme ville: {{ convention.programme_ville_similarity }}
-                                                </div>
-                                                <div>
-                                                    programme numero: {{ convention.programme_numero_similarity }}
-                                                </div>
-                                                <div>
-                                                    bailleur nom: {{ convention.bailleur_nom_similarity }}
-                                                </div>
-                                                <div>
-                                                    bailleur siret: {{ convention.bailleur_siret_similarity }}
+                                                    op. numero: {{ convention.programme_numero_similarity }}
                                                 </div>
                                                 <div>
                                                     conv numero: {{ convention.conv_numero_similarity }}
+                                                </div>
+                                                <div>
+                                                    op. ville: {{ convention.programme_ville_similarity }}
+                                                </div>
+                                                <div>
+                                                    op. code postal: {{ convention.programme_code_postal_similarity }}
                                                 </div>
                                             </td>
                                         {% endif %}
@@ -141,7 +138,7 @@
                                         {% if request|is_instructeur %}
                                             <td>
                                                 {% if new_search %}
-                                                    {{convention.programme.bailleur|highlight_if_match:search_bailleur}}
+                                                    {{convention.programme.bailleur}}
                                                 {% else %}
                                                     {{convention.programme.bailleur|highlight:search_input}}
                                                 {% endif %}

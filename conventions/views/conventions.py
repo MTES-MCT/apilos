@@ -354,15 +354,15 @@ class ConventionSearchView(WaffleFlagMixin, ConventionSearchBaseView):
             "filtered_conventions_count": paginator.count,
             "url_name": resolve(request.path_info).url_name,
             "total_conventions": request.user.conventions().count(),
+            "bailleur_query": self.bailleurs_queryset,
             "debug_search_scoring": settings.DEBUG_SEARCH_SCORING,
         } | {
             k: self._get_non_empty_query_param(k, default="")
             for k in (
                 "order_by",
-                "search_lieu",
-                "search_bailleur",
-                "search_numero",
                 "search_operation_nom",
+                "search_numero",
+                "search_lieu",
             )
         }
 
@@ -370,12 +370,12 @@ class ConventionSearchView(WaffleFlagMixin, ConventionSearchBaseView):
         return [
             ("anru", "anru"),
             ("avenant_seulement", "avenant_seulement"),
+            ("bailleur", "bailleur"),
             ("date_signature", "date_signature"),
             ("financement", "financement"),
             ("nature_logement", "nature_logement"),
             ("order_by", "order_by"),
             ("search_lieu", "search_lieu"),
-            ("search_bailleur", "search_bailleur"),
             ("search_numero", "search_numero"),
             ("search_operation_nom", "search_operation_nom"),
             ("statuts", "cstatut"),
