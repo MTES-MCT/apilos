@@ -151,7 +151,7 @@
                                             <div class="apilos--flex-row-left-center">
                                                 <strong class="apilos--overflow_ellipsis">
                                                     {% if new_search %}
-                                                        {{convention.programme|highlight_if_match:request.GET.search_operation_nom}}
+                                                        {{convention.programme|highlight_if_match:search_operation_nom}}
                                                     {% else %}
                                                         {{convention.programme|highlight:search_input}}
                                                     {% endif %}
@@ -164,7 +164,7 @@
                                                 <div>
                                                     <em data-test-role="programme-galion-cell">
                                                         {% if new_search %}
-                                                            Op. : {{convention.programme.numero_galion|highlight_if_match:request.GET.search_numero}}
+                                                            Op. : {{convention.programme.numero_galion|highlight_if_match:search_numero}}
                                                         {% else %}
                                                             Op. : {{convention.programme.numero_galion|highlight:search_input}}
                                                         {% endif %}
@@ -176,7 +176,7 @@
                                                     {% if convention.numero %}
                                                         <em data-test-role="programme-galion-cell">
                                                             {% if new_search %}
-                                                                Conv. : {{convention.numero|highlight_if_match:request.GET.search_numero}}
+                                                                Conv. : {{convention.numero|highlight_if_match:search_numero}}
                                                             {% else %}
                                                                 Conv. : {{convention.numero|highlight:search_input}}
                                                             {% endif %}
@@ -189,7 +189,7 @@
                                         <td>
                                             <strong>
                                                 {% if new_search %}
-                                                    {{convention.programme.ville|highlight_if_match:request.GET.search_lieu}}
+                                                    {{convention.programme.ville|highlight_if_match:search_lieu}}
                                                 {% else %}
                                                     {{convention.programme.ville|highlight:search_input}}
                                                 {% endif %}
@@ -197,7 +197,7 @@
                                             <br/>
                                             <em>
                                                 {% if new_search %}
-                                                    {{convention.programme.code_postal|highlight_if_match:request.GET.search_lieu}}
+                                                    {{convention.programme.code_postal|highlight_if_match:search_lieu}}
                                                 {% else %}
                                                     {{convention.programme.code_postal|highlight:search_input}}
                                                 {% endif %}

@@ -355,8 +355,15 @@ class ConventionSearchView(WaffleFlagMixin, ConventionSearchBaseView):
             "url_name": resolve(request.path_info).url_name,
             "total_conventions": request.user.conventions().count(),
             "bailleur_query": self.bailleurs_queryset,
-            "order_by": self._get_non_empty_query_param("order_by", default=""),
             "debug_search_scoring": settings.DEBUG_SEARCH_SCORING,
+        } | {
+            k: self._get_non_empty_query_param(k, default="")
+            for k in (
+                "order_by",
+                "search_operation_nom",
+                "search_numero",
+                "search_lieu",
+            )
         }
 
     def get_search_filters_mapping(self) -> list[tuple[str, str]]:
