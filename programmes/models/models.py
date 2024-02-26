@@ -144,6 +144,7 @@ class Programme(IngestableModel):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     search_vector = SearchVectorField(null=True, blank=True)
+    reassign_command_old_admin_backup = models.JSONField(default=None, null=True)
 
     @property
     def all_conventions_are_signed(self):
