@@ -10,7 +10,7 @@ from conventions.services.search import (
     UserConventionSmartSearchService,
     UserConventionTermineesSearchService,
 )
-from conventions.tests.factories import ConventionFactory
+from conventions.tests.factories import AvenantFactory, ConventionFactory
 from programmes.models.choices import Financement, NatureLogement
 from programmes.tests.factories import ProgrammeFactory
 from users.tests.factories import UserFactory
@@ -168,8 +168,9 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
             ),
         )
 
-        ConventionFactory(
+        convention = ConventionFactory(
             uuid="fbb9890f-171b-402d-a35e-71e1bd791b72",
+            numero="32O665408Y777889",
             statut=ConventionStatut.INSTRUCTION.label,
             financement=Financement.PLS,
             lot__programme=ProgrammeFactory(
@@ -187,12 +188,21 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
             ),
         )
 
+        AvenantFactory(
+            uuid="a6862260-5afa-4e2c-ae07-a39276c55e46",
+            parent=convention,
+            statut=ConventionStatut.ANNULEE.label,
+            financement=Financement.PLS,
+            lot__programme=convention.programme,
+        )
+
     @parametrize(
         "search_filters, expected",
         [
             param(
                 {"anru": "on"},
                 [
+                    "a6862260-5afa-4e2c-ae07-a39276c55e46",
                     "fbb9890f-171b-402d-a35e-71e1bd791b72",
                     "fbb9890f-171b-402d-a35e-71e1bd791b70",
                 ],
@@ -221,6 +231,7 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
             param(
                 {"nature_logement": NatureLogement.LOGEMENTSORDINAIRES},
                 [
+                    "a6862260-5afa-4e2c-ae07-a39276c55e46",
                     "fbb9890f-171b-402d-a35e-71e1bd791b72",
                     "fbb9890f-171b-402d-a35e-71e1bd791b70",
                 ],
@@ -255,6 +266,14 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
                 {"search_numero": "51/2015/2006-569/049R"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b71"],
                 id="numero_convention_avec_caracteres_speciaux",
+            ),
+            param(
+                {"search_numero": "32O665408Y777889"},
+                [
+                    "fbb9890f-171b-402d-a35e-71e1bd791b72",
+                    "a6862260-5afa-4e2c-ae07-a39276c55e46",
+                ],
+                id="numero_convention_avec_avenant",
             ),
             param(
                 {"search_numero": "20230600400430"},

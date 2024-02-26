@@ -14,3 +14,8 @@ class ConventionFactory(BaseFactory, UploadFactoryMixin):
     lot = factory.SubFactory("programmes.tests.factories.LotFactory")
     programme = factory.SelfAttribute("lot.programme")
     financement = factory.SelfAttribute("lot.financement")
+
+
+class AvenantFactory(ConventionFactory):
+    numero = "1"
+    parent = factory.SubFactory(ConventionFactory)
