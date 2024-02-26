@@ -5,7 +5,7 @@ from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
-from waffle.testutils import override_flag
+from waffle.testutils import override_switch
 
 from conventions.models import Convention
 from conventions.models.choices import ConventionStatut
@@ -138,7 +138,7 @@ class ConventionKPIAPITest(APITestCase):
         self.assertEqual(response.data, expected)
 
 
-@override_flag(settings.FLAG_NEW_SEARCH, active=True)
+@override_switch(settings.SWITCH_NEW_CONVENTION_KPI, active=True)
 @override_settings(USE_MOCKED_SIAP_CLIENT=True)
 @patch("users.models.User.conventions", Mock(return_value=Convention.objects))
 class ConventionKPIAPINewSearchTest(ParametrizedTestCase, APITestCase):

@@ -590,5 +590,6 @@ DEBUG_SEARCH_SCORING = get_env_variable(
 
 # Waffle
 FLAG_NEW_SEARCH = "nouvelle_recherche"
+SWITCH_NEW_CONVENTION_KPI = "convention_kpi"
 WAFFLE_ENABLE_ADMIN_PAGES = False
 MIDDLEWARE += ["waffle.middleware.WaffleMiddleware"]
