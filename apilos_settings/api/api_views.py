@@ -16,7 +16,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from waffle import flag_is_active
+from waffle import switch_is_active
 
 from conventions.models import Convention, ConventionStatut
 from siap.siap_authentication import SIAPJWTAuthentication, SIAPSimpleJWTAuthentication
@@ -167,13 +167,7 @@ class ConventionKPI(APIView):
             request.user.conventions().filter(parent_id__isnull=True).values("statut")
         )
 
-        try:
-            _new_search = flag_is_active(request, settings.FLAG_NEW_SEARCH)
-        except ValueError as err:
-            logger.error(err, exc_info=True)
-            _new_search = False
-
-        if _new_search:
+        if switch_is_active(settings.SWITCH_NEW_CONVENTION_KPI):
             list_conv_kpi = self._build_conv_kpi_list(request, queryset)
         else:
             list_conv_kpi = self._build_conv_kpi_list_old(
