@@ -68,10 +68,9 @@ class ReassignAdministrationTest(TestCase):
 
         # Ensure admin has changed
         assert self.convention1.administration == self.admin3
-        assert (
-            self.convention1.programme.reassign_command_old_admin_backup
-            == self.admin1.code
-        )
+        assert self.convention1.programme.reassign_command_old_admin_backup == {
+            "backup_code": self.admin1.code
+        }
         # Departement not in the perimeter: no change
         assert self.convention2.administration == self.admin2
         assert self.convention2.programme.reassign_command_old_admin_backup is None

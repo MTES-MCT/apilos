@@ -77,7 +77,9 @@ class Command(BaseCommand):
         if no_dry_run:
             # Update administration and save history
             for p in programmes:
-                p.reassign_command_old_admin_backup = p.administration.code
+                p.reassign_command_old_admin_backup = {
+                    "backup_code": p.administration.code
+                }
                 p.administration = new_admin
                 p.save()
             self.stdout.write("Changes executed")
