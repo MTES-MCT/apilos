@@ -38,7 +38,6 @@ class CustomFlagAdmin(WaffleCustomAdminMixin, FlagAdmin):
         "note",
         "users",
     )
-    readonly_fields = ("name",)
 
 
 @admin.register(Sample)

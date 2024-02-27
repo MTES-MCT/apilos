@@ -74,6 +74,13 @@ urlpatterns = [
         name="new_convention",
     ),
     path(
+        "add_convention",
+        permission_required("convention.add_convention")(
+            views.AddConventionView.as_view()
+        ),
+        name="add_convention",
+    ),
+    path(
         "bailleur/<convention_uuid>",
         views.ConventionBailleurView.as_view(),
         name="bailleur",
