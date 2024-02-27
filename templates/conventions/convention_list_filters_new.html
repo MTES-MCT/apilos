@@ -9,33 +9,33 @@
             </a>
         </div>
 
-        <div class="fr-col-md-12 fr-mb-2w">
+        <div class="fr-col-md-12 fr-mb-1w">
             <hr>
             <form class="fr-mt-2w" method="get" action="" id="search_table">
                 <input type="hidden" id="order_by" name="order_by" value="{{ order_by }}">
                 <input type="hidden" id="page" name="page" value="{{ page }}">
 
-                <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
 
                     {# Champs nom de l'opération #}
-                    <div class="fr-col-12 fr-col-lg-6 fr-mb-4w">
+                    <div class="fr-col-12 fr-col-lg-6">
                         <div class="select-label">Nom de l'opération</div>
                         <input class="fr-input fr-mt-1w" type="search" id="search_operation_nom" name="search_operation_nom" value="{{ request.GET.search_operation_nom }}" placeholder="Rechercher"/>
                     </div>
 
                     {# Champs numéro de l'opération ou de la convention #}
-                    <div class="fr-col-12 fr-col-lg-6 fr-mb-4w">
+                    <div class="fr-col-12 fr-col-lg-6">
                         <div class="select-label">Numéro de l'opération ou de la convention</div>
                         <input class="fr-input fr-mt-1w" type="search" id="search_numero" name="search_numero" value="{{ request.GET.search_numero }}" placeholder="Rechercher"/>
                     </div>
 
                 </div>
 
-                <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
 
                     {# Champs bailleur #}
                     {% if bailleur_query %}
-                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-4w search-select">
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 search-select">
                             <div class="select-label">Bailleur (nom ou SIREN)</div>
                             <div class="fr-mt-1w">
                                 {% url 'users:search_bailleur' as search_bailleur_url %}
@@ -71,18 +71,18 @@
                     {% endif %}
 
                     {# Champs commune #}
-                    <div class="fr-col-12 fr-col-lg-6 fr-mb-4w">
+                    <div class="fr-col-12 fr-col-lg-6">
                         <div class="select-label">Commune, code postal</div>
                         <input class="fr-input fr-mt-1w" type="search" id="search_lieu" name="search_lieu" value="{{ request.GET.search_lieu }}" placeholder="Rechercher"/>
                     </div>
 
                 </div>
 
-                <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
 
                     {# Champs statut #}
-                    <div class="fr-col-12 fr-col-lg-3 fr-mb-2w search-select">
-                        <div class="select-label">Statut</div>
+                    <div class="fr-col-12 fr-col-lg-3 search-select">
+                        <div class="select-label">Statut convention ou avenant</div>
                         <select
                             multiple
                             class="fr-select fr-mt-1w"
@@ -102,7 +102,7 @@
                             optionsCount: 5,
                             search: false,
                             multiple: true,
-                            placeholder: "Selectionner",
+                            placeholder: "Sélectionner",
                             optionsSelectedText: "options sélectionnées",
                             allOptionsSelectedText: "Toutes les options",
                             selectAllText: "Tout sélectionner",
@@ -110,7 +110,7 @@
                     </script>
 
                     {# Champs financement #}
-                    <div class="fr-col-12 fr-col-lg-3 fr-mb-2w search-select">
+                    <div class="fr-col-12 fr-col-lg-3 search-select">
                         <div class="select-label">Type de financement</div>
                         <select class="fr-select fr-mt-1w" name="financement">
                             <option value="">Sélectionner une option</option>
@@ -125,7 +125,7 @@
 
                     {# Champs date de signature #}
                     {% if date_signature_choices %}
-                        <div class="fr-col-12 fr-col-lg-3 fr-mb-2w search-select">
+                        <div class="fr-col-12 fr-col-lg-3 search-select">
                             <div class="select-label">Année de signature</div>
                             <select class="fr-select fr-mt-1w" name="date_signature">
                                 <option value="">Sélectionner une période</option>
@@ -140,7 +140,7 @@
                     {% endif %}
 
                     {# Champs nature des logements #}
-                    <div class="fr-col-12 fr-col-lg-3 fr-mb-2w search-select">
+                    <div class="fr-col-12 fr-col-lg-3 search-select">
                         <div class="select-label">Nature des logements</div>
                         <select class="fr-select fr-mt-1w" name="nature_logement">
                             <option value="">Sélectionner une option</option>

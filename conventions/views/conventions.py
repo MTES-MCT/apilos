@@ -356,6 +356,7 @@ class ConventionSearchView(WaffleFlagMixin, ConventionSearchBaseView):
             "total_conventions": request.user.conventions().count(),
             "bailleur_query": self.bailleurs_queryset,
             "debug_search_scoring": settings.DEBUG_SEARCH_SCORING,
+            "siap_assistance_url": settings.SIAP_ASSISTANCE_URL,
         } | {
             k: self._get_non_empty_query_param(k, default="")
             for k in (

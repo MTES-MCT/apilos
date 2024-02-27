@@ -590,6 +590,14 @@ DEBUG_SEARCH_SCORING = get_env_variable(
 
 # Waffle
 FLAG_NEW_SEARCH = "nouvelle_recherche"
+FLAG_ADD_CONVENTION = "ajout_convention"
 SWITCH_NEW_CONVENTION_KPI = "convention_kpi"
+SWITCH_NEW_SEARCH_HIDE_SORT_BUTTON = "cacher_trier_par"
 WAFFLE_ENABLE_ADMIN_PAGES = False
 MIDDLEWARE += ["waffle.middleware.WaffleMiddleware"]
+
+# Assistance
+SIAP_ASSISTANCE_URL = get_env_variable(
+    "SIAP_ASSISTANCE_URL",
+    default="https://siap-logement.atlassian.net/servicedesk/customer/portal/3/group/8/create/14",
+)

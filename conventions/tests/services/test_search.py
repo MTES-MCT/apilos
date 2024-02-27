@@ -202,9 +202,9 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
             param(
                 {"anru": "on"},
                 [
-                    "a6862260-5afa-4e2c-ae07-a39276c55e46",
                     "fbb9890f-171b-402d-a35e-71e1bd791b72",
                     "fbb9890f-171b-402d-a35e-71e1bd791b70",
+                    "a6862260-5afa-4e2c-ae07-a39276c55e46",
                 ],
                 id="anru",
             ),
@@ -231,9 +231,9 @@ class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
             param(
                 {"nature_logement": NatureLogement.LOGEMENTSORDINAIRES},
                 [
-                    "a6862260-5afa-4e2c-ae07-a39276c55e46",
                     "fbb9890f-171b-402d-a35e-71e1bd791b72",
                     "fbb9890f-171b-402d-a35e-71e1bd791b70",
+                    "a6862260-5afa-4e2c-ae07-a39276c55e46",
                 ],
                 id="nature_logement",
             ),

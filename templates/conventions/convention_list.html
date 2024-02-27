@@ -1,29 +1,35 @@
 {% load custom_filters %}
 {% load display_filters %}
+{% load waffle_tags %}
 
 <div class="fr-container-fluid ds_banner">
     <div class="fr-container fr-px-3w fr-mb-3w">
         <div class="fr-grid-row fr-grid-row--gutters fr-card fr-card--no-border">
             <div class="fr-col-md-12">
-                {% with order_fields=request|get_available_order_fields:url_name %}
-                    {% if order_fields %}
-                        <details class="apilos-order-menu">
-                            <summary class="fr-grid-row fr-grid-row--right">Trier par
-                                <span class="apilos-order-name fr-link">{{order_fields|get_ordervalue:order_by}}</span>
-                                <span class="fr-icon-arrow-down-s-line"></span>
-                            </summary>
-                            <div class="fr-grid-row fr-grid-row--right">
-                                <div class="apilos-order-menu--open fr-p-2w">
-                                    {% for order_key, order_value in order_fields.items %}
-                                        <div  class="fr-py-1w">
-                                            {% include "common/table/display_order_item.html" %}
-                                        </div>
-                                    {% endfor %}
+
+                {% switch "cacher_trier_par" %}
+                {% else %}
+                    {% with order_fields=request|get_available_order_fields:url_name %}
+                        {% if order_fields %}
+                            <details class="apilos-order-menu">
+                                <summary class="fr-grid-row fr-grid-row--right">Trier par
+                                    <span class="apilos-order-name fr-link">{{order_fields|get_ordervalue:order_by}}</span>
+                                    <span class="fr-icon-arrow-down-s-line"></span>
+                                </summary>
+                                <div class="fr-grid-row fr-grid-row--right">
+                                    <div class="apilos-order-menu--open fr-p-2w">
+                                        {% for order_key, order_value in order_fields.items %}
+                                            <div  class="fr-py-1w">
+                                                {% include "common/table/display_order_item.html" %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
-                            </div>
-                        </details>
-                    {% endif %}
-                {% endwith %}
+                            </details>
+                        {% endif %}
+                    {% endwith %}
+                {% endswitch %}
+
                 {% if filtered_conventions_count > 0 %}
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table aria-label="Conventions">
@@ -106,6 +112,9 @@
                                                     conv numero: {{ convention.conv_numero_similarity }}
                                                 </div>
                                                 <div>
+                                                    conv numero: {{ convention.parent_conv_numero_similarity }}
+                                                </div>
+                                                <div>
                                                     op. ville: {{ convention.programme_ville_similarity }}
                                                 </div>
                                                 <div>
@@ -157,7 +166,7 @@
                                                     {% endif %}
                                                 </strong>
                                                 {% if convention.is_avenant %}
-                                                    <span class="{% if convention.is_denonciation %}warning-notification {% else %}text-title-blue-france {% endif %} fr-p-1w fr-ml-1w apilos-tag-avenant background-white">{{convention|display_kind|capfirst}}</span>
+                                                    <span class="{% if convention.is_denonciation %}warning-notification {% else %}text-title-blue-france {% endif %} fr-p-1w fr-ml-1w apilos-tag-avenant background-white">{{convention|display_kind_with_numero|capfirst}}</span>
                                                 {% endif %}
                                             </div>
                                             {% if convention.programme.numero_galion %}
@@ -173,15 +182,21 @@
                                             {% endif %}
                                             {% if url_name == "search_active" or url_name == "search_resiliees" or new_search %}
                                                 <div>
-                                                    {% if convention.numero %}
-                                                        <em data-test-role="programme-galion-cell">
+                                                    <em data-test-role="programme-galion-cell">
+                                                        {% if convention.numero and not convention.parent %}
                                                             {% if new_search %}
                                                                 Conv. : {{convention.numero|highlight_if_match:search_numero}}
                                                             {% else %}
                                                                 Conv. : {{convention.numero|highlight:search_input}}
                                                             {% endif %}
-                                                        </em>
-                                                    {% endif %}
+                                                        {% elif convention.parent %}
+                                                            {% if new_search %}
+                                                                Conv. : {{convention.parent.numero|highlight_if_match:search_numero}}
+                                                            {% else %}
+                                                                Conv. : {{convention.parent.numero|highlight:search_input}}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </em>
                                                 </div>
                                             {% endif %}
                                         </td>
@@ -228,10 +243,31 @@
                             Réinitaliser la recherche
                         </a>
                     </div>
-                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-5w">
                         <div class="fr-col-9">
-                            <div class="fr-text--lg">Aucune convention ne correspond à votre recherche</div>
-                            <div>Si vous avez recherché par numéro ou mots-clés, vérifiez qu’ils sont corrects.<br/>Sinon peut-être que la convention que vous recherchez n’est pas référencée dans le SIAP / Apilos. </div>
+                            <div class="fr-text--lg">Aucune convention ou avenant ne correspond à votre recherche</div>
+                            <div>Si vous avez plusieurs habilitations, relancez votre recherche avec un autre profil.<br/>
+                                Sinon, peut-être que la convention que vous recherchez n’est pas référencée dans le SIAP / Apilos.
+                                Dans ce cas, nous vous invitons à l'ajouter.
+                            </div>
+                            <div class="fr-mt-5w fr-ml-1w">
+                                <div class="fr-grid-row fr-grid-row--gutters" >
+                                    {% flag "ajout_convention" %}
+                                        <div>
+                                            <a class="fr-btn fr-icon-add-line fr-btn--icon-left fr-btn--secondary fr-mr-2w" href="{% url 'conventions:add_convention' %}">
+                                                Ajouter une convention existante dans le SIAP / Apilos
+                                            </a>
+                                        </div>
+                                    {% endflag %}
+                                    {% if siap_assistance_url %}
+                                        <div class="">
+                                            <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary" href="{{ siap_assistance_url }}">
+                                                Contactez l'assistance
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                         <img class="fr-mr-3w" src="/static/icons/not_found.png" alt="not_found">
                     </div>
