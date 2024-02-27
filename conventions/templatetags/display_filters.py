@@ -23,7 +23,7 @@ def display_kind_with_numero(convention: Convention) -> str:
     if convention.is_resiliation:
         return "résiliation"
     if convention.is_avenant():
-        return f"avenant {convention.numero}"
+        return f"avenant {convention.numero}" if convention.numero else "avenant"
     return "convention"
 
 
