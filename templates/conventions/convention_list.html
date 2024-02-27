@@ -252,16 +252,20 @@
                             </div>
                             <div class="fr-mt-5w fr-ml-1w">
                                 <div class="fr-grid-row fr-grid-row--gutters" >
-                                    <div>
-                                        <a class="fr-btn fr-icon-add-line fr-btn--icon-left fr-btn--secondary" href="{% url 'conventions:new_convention' %}">
-                                            Ajouter une convention existante dans le SIAP / Apilos
-                                        </a>
-                                    </div>
-                                    <div class="fr-ml-2w">
-                                        <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary" href="{% url 'conventions:new_avenant_start' %}">
-                                            Contactez l'assistance
-                                        </a>
-                                    </div>
+                                    {% flag "ajout_convention" %}
+                                        <div>
+                                            <a class="fr-btn fr-icon-add-line fr-btn--icon-left fr-btn--secondary fr-mr-2w" href="{% url 'conventions:new_convention' %}">
+                                                Ajouter une convention existante dans le SIAP / Apilos
+                                            </a>
+                                        </div>
+                                    {% endflag %}
+                                    {% if siap_assistance_url %}
+                                        <div class="">
+                                            <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary" href="{{ siap_assistance_url }}">
+                                                Contactez l'assistance
+                                            </a>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
