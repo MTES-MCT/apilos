@@ -142,7 +142,7 @@
                     {# Champs nature des logements #}
                     <div class="fr-col-12 fr-col-lg-3 search-select">
                         <div class="select-label">Nature des logements</div>
-                        <select class="fr-select fr-mt-1w apilos-italic" name="nature_logement">
+                        <select class="fr-select fr-mt-1w" name="nature_logement">
                             <option value="">Sélectionner une option</option>
                             {% for value, label in nature_logement_choices %}
                                 <option value="{{ value }}"
@@ -158,8 +158,8 @@
                 <div class="fr-grid-row fr-grid-row--gutters">
 
                     {# Champs avenant #}
-                    <div class="fr-col-9">
-                        <div class="fr-fieldset__element apilos-inline-block">
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-4">
+                        <div class="fr-fieldset__element">
                             <div class="fr-checkbox-group fr-checkbox-group--sm">
                                 <input name="avenant_seulement" id="checkbox-restrict-to-with-avenant" type="checkbox" {% if request.GET.avenant_seulement %}checked{% endif %}>
                                 <label class="fr-label" for="checkbox-restrict-to-with-avenant">
@@ -167,8 +167,11 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="fr-fieldset__element apilos-inline-block
-                                   ">
+                    </div>
+
+                    {# Champs ANRU #}
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-5">
+                        <div class="fr-fieldset__element">
                             <div class="fr-checkbox-group fr-checkbox-group--sm">
                                 <input name="anru" id="checkbox-restrict-to-anru" type="checkbox" {% if request.GET.anru %}checked{% endif %}>
                                 <label class="fr-label" for="checkbox-restrict-to-anru">

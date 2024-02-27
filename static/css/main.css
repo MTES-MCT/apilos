@@ -812,14 +812,6 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   background-image: url("/static/img/ecoloweb.svg");
 }
 
-.apilos-inline-block {
-  display: inline-block;
-}
-
-.apilos-italic {
-  font-style: italic;
-}
-
 /*
  * End display convention status
  */
