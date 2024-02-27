@@ -1,29 +1,35 @@
 {% load custom_filters %}
 {% load display_filters %}
+{% load waffle_tags %}
 
 <div class="fr-container-fluid ds_banner">
     <div class="fr-container fr-px-3w fr-mb-3w">
         <div class="fr-grid-row fr-grid-row--gutters fr-card fr-card--no-border">
             <div class="fr-col-md-12">
-                {% with order_fields=request|get_available_order_fields:url_name %}
-                    {% if order_fields %}
-                        <details class="apilos-order-menu">
-                            <summary class="fr-grid-row fr-grid-row--right">Trier par
-                                <span class="apilos-order-name fr-link">{{order_fields|get_ordervalue:order_by}}</span>
-                                <span class="fr-icon-arrow-down-s-line"></span>
-                            </summary>
-                            <div class="fr-grid-row fr-grid-row--right">
-                                <div class="apilos-order-menu--open fr-p-2w">
-                                    {% for order_key, order_value in order_fields.items %}
-                                        <div  class="fr-py-1w">
-                                            {% include "common/table/display_order_item.html" %}
-                                        </div>
-                                    {% endfor %}
+
+                {% switch "cacher_trier_par" %}
+                {% else %}
+                    {% with order_fields=request|get_available_order_fields:url_name %}
+                        {% if order_fields %}
+                            <details class="apilos-order-menu">
+                                <summary class="fr-grid-row fr-grid-row--right">Trier par
+                                    <span class="apilos-order-name fr-link">{{order_fields|get_ordervalue:order_by}}</span>
+                                    <span class="fr-icon-arrow-down-s-line"></span>
+                                </summary>
+                                <div class="fr-grid-row fr-grid-row--right">
+                                    <div class="apilos-order-menu--open fr-p-2w">
+                                        {% for order_key, order_value in order_fields.items %}
+                                            <div  class="fr-py-1w">
+                                                {% include "common/table/display_order_item.html" %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
-                            </div>
-                        </details>
-                    {% endif %}
-                {% endwith %}
+                            </details>
+                        {% endif %}
+                    {% endwith %}
+                {% endswitch %}
+
                 {% if filtered_conventions_count > 0 %}
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table aria-label="Conventions">
@@ -106,6 +112,9 @@
                                                     conv numero: {{ convention.conv_numero_similarity }}
                                                 </div>
                                                 <div>
+                                                    conv numero: {{ convention.parent_conv_numero_similarity }}
+                                                </div>
+                                                <div>
                                                     op. ville: {{ convention.programme_ville_similarity }}
                                                 </div>
                                                 <div>
@@ -173,15 +182,21 @@
                                             {% endif %}
                                             {% if url_name == "search_active" or url_name == "search_resiliees" or new_search %}
                                                 <div>
-                                                    {% if convention.numero %}
-                                                        <em data-test-role="programme-galion-cell">
+                                                    <em data-test-role="programme-galion-cell">
+                                                        {% if convention.numero and not convention.parent %}
                                                             {% if new_search %}
                                                                 Conv. : {{convention.numero|highlight_if_match:search_numero}}
                                                             {% else %}
                                                                 Conv. : {{convention.numero|highlight:search_input}}
                                                             {% endif %}
-                                                        </em>
-                                                    {% endif %}
+                                                        {% elif convention.parent %}
+                                                            {% if new_search %}
+                                                                Conv. : {{convention.parent.numero|highlight_if_match:search_numero}}
+                                                            {% else %}
+                                                                Conv. : {{convention.parent.numero|highlight:search_input}}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </em>
                                                 </div>
                                             {% endif %}
                                         </td>

@@ -393,6 +393,12 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
         )
 
     def _build_ranking(self, queryset: QuerySet) -> QuerySet:
+        queryset = queryset.annotate(
+            _is_avenant=Case(
+                When(parent__isnull=False, then=Value(True)), default=False
+            )
+        )
+
         if self.search_operation_nom_query:
             queryset = queryset.annotate(
                 search_vector_programme_nom_rank=SearchRank(
@@ -403,24 +409,23 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
 
         if self.search_numero:
             _search_numero = self.search_numero.replace("-", "").replace("/", "")
-            queryset = (
-                queryset.annotate(
-                    programme_numero_similarity=self._numero_trgm_similarity(
-                        field_name="programme__numero_galion",
-                        search_term=_search_numero,
-                    )
+            queryset = queryset.annotate(
+                programme_numero_similarity=self._numero_trgm_similarity(
+                    field_name="programme__numero_galion",
+                    search_term=_search_numero,
                 )
-                .annotate(
+            ).annotate(
+                parent_conv_numero_similarity=self._numero_trgm_similarity(
+                    field_name="parent__numero", search_term=_search_numero
+                )
+            )
+
+            if not self.avenant_seulement:
+                queryset = queryset.annotate(
                     conv_numero_similarity=self._numero_trgm_similarity(
                         field_name="numero", search_term=_search_numero
                     )
                 )
-                .annotate(
-                    parent_conv_numero_similarity=self._numero_trgm_similarity(
-                        field_name="parent__numero", search_term=_search_numero
-                    )
-                )
-            )
 
         if self.search_lieu:
             queryset = queryset.annotate(
@@ -442,13 +447,27 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
             )
 
         if self.search_numero:
-            queryset = queryset.filter(
-                Q(programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
-                | Q(conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
-                | Q(
-                    parent_conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+            if self.avenant_seulement:
+                queryset = queryset.filter(
+                    Q(
+                        programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                    )
+                    | Q(
+                        parent_conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                    )
                 )
-            )
+            else:
+                queryset = queryset.filter(
+                    Q(
+                        programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                    )
+                    | Q(
+                        conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                    )
+                    | Q(
+                        parent_conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                    )
+                )
 
         if self.search_lieu:
             queryset = queryset.filter(
@@ -474,20 +493,32 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
             queryset = queryset.annotate(programme_nom_score=Value(0.0))
 
         if self.search_numero:
-            queryset = (
-                queryset.annotate(
-                    programme_numero_score=Case(
-                        When(
-                            programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
-                            then=Round(
-                                Coalesce(F("programme_numero_similarity"), 0.0),
-                                precision=2,
-                            ),
+            queryset = queryset.annotate(
+                programme_numero_score=Case(
+                    When(
+                        programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
+                        then=Round(
+                            Coalesce(F("programme_numero_similarity"), 0.0),
+                            precision=2,
                         ),
-                        default=Value(0.0),
-                    )
+                    ),
+                    default=Value(0.0),
                 )
-                .annotate(
+            ).annotate(
+                parent_conv_numero_score=Case(
+                    When(
+                        parent_conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
+                        then=Round(
+                            Coalesce(F("parent_conv_numero_similarity"), 0.0),
+                            precision=2,
+                        ),
+                    ),
+                    default=Value(0.0),
+                )
+            )
+
+            if not self.avenant_seulement:
+                queryset = queryset.annotate(
                     conv_numero_score=Case(
                         When(
                             conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
@@ -499,19 +530,8 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                         default=Value(0.0),
                     )
                 )
-                .annotate(
-                    parent_conv_numero_score=Case(
-                        When(
-                            parent_conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
-                            then=Round(
-                                Coalesce(F("conv_numero_similarity"), 0.0),
-                                precision=2,
-                            ),
-                        ),
-                        default=Value(0.0),
-                    )
-                )
-            )
+            else:
+                queryset = queryset.annotate(conv_numero_score=Value(0.0))
         else:
             queryset = queryset.annotate(
                 programme_numero_score=Value(0.0),
@@ -549,13 +569,30 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 programme_code_postal_score=Value(0.0),
             )
 
+        if self.avenant_seulement:
+            return queryset.annotate(
+                score=(
+                    F("programme_nom_score")
+                    + F("programme_numero_score")
+                    + F("parent_conv_numero_score")
+                    + F("programme_ville_score")
+                    + F("programme_code_postal_score")
+                )
+            )
+
         return queryset.annotate(
-            score=F("programme_nom_score")
-            + F("programme_numero_score")
-            + F("conv_numero_score")
-            + F("parent_conv_numero_score")
-            + F("programme_ville_score")
-            + F("programme_code_postal_score")
+            score=(
+                F("programme_nom_score")
+                + F("programme_numero_score")
+                + F("conv_numero_score")
+                + F("parent_conv_numero_score")
+                + F("programme_ville_score")
+                + F("programme_code_postal_score")
+                + Case(
+                    When(_is_avenant=True, then=Value(-0.3)),
+                    default=Value(0.0),
+                )
+            )
         )
 
     def _get_order_by(self) -> list[str]:
