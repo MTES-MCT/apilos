@@ -243,10 +243,27 @@
                             Réinitaliser la recherche
                         </a>
                     </div>
-                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-5w">
                         <div class="fr-col-9">
-                            <div class="fr-text--lg">Aucune convention ne correspond à votre recherche</div>
-                            <div>Si vous avez recherché par numéro ou mots-clés, vérifiez qu’ils sont corrects.<br/>Sinon peut-être que la convention que vous recherchez n’est pas référencée dans le SIAP / Apilos. </div>
+                            <div class="fr-text--lg">Aucune convention ou avenant ne correspond à votre recherche</div>
+                            <div>Si vous avez plusieurs habilitations, relancez votre recherche avec un autre profil.<br/>
+                                Sinon, peut-être que la convention que vous recherchez n’est pas référencée dans le SIAP / Apilos.
+                                Dans ce cas, nous vous invitons à l'ajouter.
+                            </div>
+                            <div class="fr-mt-5w fr-ml-1w">
+                                <div class="fr-grid-row fr-grid-row--gutters" >
+                                    <div>
+                                        <a class="fr-btn fr-icon-add-line fr-btn--icon-left fr-btn--secondary" href="{% url 'conventions:new_convention' %}">
+                                            Ajouter une convention existante dans le SIAP / Apilos
+                                        </a>
+                                    </div>
+                                    <div class="fr-ml-2w">
+                                        <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary" href="{% url 'conventions:new_avenant_start' %}">
+                                            Contactez l'assistance
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <img class="fr-mr-3w" src="/static/icons/not_found.png" alt="not_found">
                     </div>

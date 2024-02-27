@@ -830,6 +830,11 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   text-decoration: none;
 }
 
+.fr-btn--tertiary:hover {
+  color: #000091 !important;
+  text-decoration: none;
+}
+
 .fr-header__tools-links .fr-btn:hover {
   color: #000091 !important;
 }
