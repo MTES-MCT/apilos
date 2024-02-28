@@ -65,13 +65,11 @@ urlpatterns = [
         views.journal,
         name="journal",
     ),
-    # Pages de troisième niveau : funnel d'instruction et d'action sur les conventions et avenants
+    # Pages pour l'ajout simplifié d'une convention finalisée
     path(
-        "new_convention",
-        permission_required("convention.add_convention")(
-            views.NewConventionView.as_view()
-        ),
-        name="new_convention",
+        "select_operation",
+        views.SelectOperationView.as_view(),
+        name="select_operation",
     ),
     path(
         "add_convention",
@@ -79,6 +77,14 @@ urlpatterns = [
             views.AddConventionView.as_view()
         ),
         name="add_convention",
+    ),
+    # Pages de troisième niveau : funnel d'instruction et d'action sur les conventions et avenants
+    path(
+        "new_convention",
+        permission_required("convention.add_convention")(
+            views.NewConventionView.as_view()
+        ),
+        name="new_convention",
     ),
     path(
         "bailleur/<convention_uuid>",

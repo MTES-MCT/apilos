@@ -1,0 +1,46 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}Sélectionner une opération{% endblock%}
+
+{% block content %}
+
+    <div class="fr-container">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-my-3w block--row-strech fr-grid-row--middle">
+                <div class="block--row-strech-1">
+                    <h1 class="m-0">Ajouter une convention existante</h1>
+                </div>
+            </div>
+        </div>
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-md-12 fr-mb-1w">
+                <form class="fr-mt-2w" method="get" action="" id="search_table">
+                    <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
+                        <div class="fr-col-12 fr-col-lg-6">
+                            <div class="select-label">Nom de l'opération</div>
+                            <input class="fr-input fr-mt-1w" type="search" id="operation_nom" name="operation_nom" value="{{ request.GET.operation_nom }}" placeholder="Rechercher"/>
+                        </div>
+                        <div class="fr-col-12 fr-col-lg-6">
+                            <div class="select-label">Numéro de l'opération</div>
+                            <input class="fr-input fr-mt-1w" type="search" id="operation_numero" name="operation_numero" value="{{ request.GET.operation_numero }}" placeholder="Rechercher"/>
+                        </div>
+                    </div>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-lg-3 fr-col-12 fr-col-md-12 fr-col-lg-12 fr-grid-row fr-grid-row--right">
+                            <button class="fr-btn" id="search_btn">
+                                <span class="fr-icon-search-line fr-mr-1w" aria-hidden="true"></span>
+                                Rechercher
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="fr-grid-row fr-grid-row--gutters fr-mt-5w">
+        </div>
+
+    </div>
+
+{% endblock %}
