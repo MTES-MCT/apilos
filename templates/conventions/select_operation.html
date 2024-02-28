@@ -10,27 +10,28 @@
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-my-3w block--row-strech fr-grid-row--middle">
                 <div class="block--row-strech-1">
-                    <h1 class="m-0">Ajouter une convention existante</h1>
+                    <h2 class="m-0">Ajouter une convention existante</h2>
                 </div>
             </div>
         </div>
 
         <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-md-12 fr-mb-5w">
+                {% comment %} TODO: add stepper {% endcomment %}
+            </div>
+        </div>
+
+        <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-md-12 fr-mb-1w">
+                <h5>Quelle opération est liée à cette convention ?</h5>
                 <form class="fr-mt-2w" method="get" action="" id="search_table">
-                    <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
-                        <div class="fr-col-12 fr-col-lg-6">
-                            <div class="select-label">Nom de l'opération</div>
-                            <input class="fr-input fr-mt-1w" type="search" id="nom_operation" name="nom_operation" value="{{ request.GET.nom_operation }}" placeholder="Rechercher"/>
-                        </div>
+                    <div class="fr-grid-row fr-grid-row--gutters">
                         <div class="fr-col-12 fr-col-lg-6">
                             <div class="select-label">Numéro de l'opération</div>
                             <input class="fr-input fr-mt-1w" type="search" id="numero_operation" name="numero_operation" value="{{ request.GET.numero_operation }}" placeholder="Rechercher"/>
                         </div>
-                    </div>
-                    <div class="fr-grid-row fr-grid-row--gutters">
-                        <div class="fr-col-12 fr-col-lg-3 fr-col-12 fr-col-md-12 fr-col-lg-12 fr-grid-row fr-grid-row--right">
-                            <button class="fr-btn" id="search_btn">
+                        <div class="fr-col-12 fr-col-lg-6 fr-grid-row fr-grid-row--right">
+                            <button class="fr-btn fr-mt-3w" id="search_btn">
                                 <span class="fr-icon-search-line fr-mr-1w" aria-hidden="true"></span>
                                 Rechercher
                             </button>
@@ -40,8 +41,8 @@
             </div>
         </div>
 
-        <div class="fr-grid-row fr-grid-row--gutters fr-mt-5w">
-            <div class="fr-col-md-12 fr-mt-3w fr-mb-3w">
+        <div class="fr-grid-row fr-grid-row--gutters fr-mt-4w">
+            <div class="fr-col-md-12">
                 {% include "conventions/select_operation_list.html" %}
             </div>
         </div>

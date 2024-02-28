@@ -1,6 +1,8 @@
 import unittest
 import uuid
 
+from django.db import connection
+
 from core.utils import get_key_from_json_field, is_valid_uuid, round_half_up
 
 
@@ -91,3 +93,11 @@ class UtilsTest(unittest.TestCase):
             ),
             {"myokey": "myovalue"},
         )
+
+
+class PGTrgmTestMixin:
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        with connection.cursor() as cursor:
+            cursor.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
