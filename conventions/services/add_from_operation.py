@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models import QuerySet, Value
 from django.db.models.functions import Replace
@@ -90,8 +91,8 @@ class SelectOperationService:
                     self.numero_operation.replace("-", "").replace("/", ""),
                 )
             )
-            .filter(numero_operation_trgrm__gt=0.5)
-            .order_by("-numero_operation_trgrm")
+            .filter(numero_operation_trgrm__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
+            .order_by("-numero_operation_trgrm", "-cree_le")
         )
         return [Operation.from_apilos_programme(programme=p) for p in qs[:10]]
 
