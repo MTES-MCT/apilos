@@ -208,7 +208,7 @@ class User(AbstractUser):
     def _is_role(self, role):
         return role in map(lambda r: r.typologie, self.roles.all())
 
-    def programmes(self) -> list:
+    def programmes(self) -> QuerySet[Programme]:
         """
         Programme of the user following is role :
         * super admin = all programme, filtre = {}
