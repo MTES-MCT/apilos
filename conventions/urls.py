@@ -74,7 +74,7 @@ urlpatterns = [
     path(
         "add_convention",
         permission_required("convention.add_convention")(
-            views.AddConventionView.as_view()
+            views.AddConventionFromOperationView.as_view()
         ),
         name="add_convention",
     ),

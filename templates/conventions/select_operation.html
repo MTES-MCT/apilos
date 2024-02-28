@@ -14,17 +14,18 @@
                 </div>
             </div>
         </div>
+
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-md-12 fr-mb-1w">
                 <form class="fr-mt-2w" method="get" action="" id="search_table">
                     <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
                         <div class="fr-col-12 fr-col-lg-6">
                             <div class="select-label">Nom de l'opération</div>
-                            <input class="fr-input fr-mt-1w" type="search" id="operation_nom" name="operation_nom" value="{{ request.GET.operation_nom }}" placeholder="Rechercher"/>
+                            <input class="fr-input fr-mt-1w" type="search" id="nom_operation" name="nom_operation" value="{{ request.GET.nom_operation }}" placeholder="Rechercher"/>
                         </div>
                         <div class="fr-col-12 fr-col-lg-6">
                             <div class="select-label">Numéro de l'opération</div>
-                            <input class="fr-input fr-mt-1w" type="search" id="operation_numero" name="operation_numero" value="{{ request.GET.operation_numero }}" placeholder="Rechercher"/>
+                            <input class="fr-input fr-mt-1w" type="search" id="numero_operation" name="numero_operation" value="{{ request.GET.numero_operation }}" placeholder="Rechercher"/>
                         </div>
                     </div>
                     <div class="fr-grid-row fr-grid-row--gutters">
@@ -38,7 +39,11 @@
                 </form>
             </div>
         </div>
+
         <div class="fr-grid-row fr-grid-row--gutters fr-mt-5w">
+            <div class="fr-col-md-12 fr-mt-3w fr-mb-3w">
+                {% include "conventions/select_operation_list.html" %}
+            </div>
         </div>
 
     </div>
