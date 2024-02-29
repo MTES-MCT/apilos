@@ -65,7 +65,6 @@ known-third-party = [
     "boto3",
     "botocore",
     "celery",
-    "decouple",
     "dj_database_url",
     "django_cas_ng",
     "django",

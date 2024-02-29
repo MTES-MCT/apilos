@@ -15,57 +15,57 @@ import sys
 from contextlib import suppress
 from datetime import timedelta
 from pathlib import Path
-from typing import cast
 
-import decouple
 import dj_database_url
+import environ
 import sentry_sdk
-from decouple import Config, RepositoryEnv
 from django.core.exceptions import PermissionDenied
 from sentry_sdk.integrations.django import DjangoIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 TESTING = (len(sys.argv) > 1 and sys.argv[1] == "test") or ("pytest" in sys.modules)
 
-if TESTING:
-    config = Config(
-        RepositoryEnv(
-            BASE_DIR
-            / cast(str, decouple.config("TEST_DOT_ENV_FILE", default=".env.test"))
-        )
-    )
-else:
-    config = decouple.config
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False),
+    ENVIRONMENT=(str, "development"),
+    CRON_ENABLED=(bool, False),
+    LOGLEVEL=(str, "error"),
+    DEFAULT_FROM_EMAIL=(str, "ne-pas-repondre@apilos.beta.gouv.fr"),
+    SHELL_PLUS_PRINT_SQL=(bool, True),
+    SHELL_PLUS=(str, "ptpython"),
+    DB_PORT=(str, "5432"),
+    JWT_ALGORITHM=(str, "HS256"),
+    JWT_SIGN_KEY=(str, None),
+    SIAP_CLIENT_JWT_SIGN_KEY=(str, "alertalert"),
+    SIAP_CLIENT_ALGORITHM=(str, "HS256"),
+    SIAP_CLIENT_HOST=(str, None),
+    SIAP_CLIENT_PATH=(str, None),
+    APILOS_MAX_DROPDOWN_COUNT=(int, 20),
+    USE_MOCKED_SIAP_CLIENT=(bool),
+    NO_SIAP_MENU=(bool),
+    DEFENDER_BEHIND_REVERSE_PROXY=(bool, False),
+    DATA_UPLOAD_MAX_NUMBER_FIELDS=(int, 100000),
+    CLAMAV_SERVICE_URL=(str, None),
+    TRIGRAM_SIMILARITY_THRESHOLD=(float, 0.3),
+    DEBUG_SEARCH_SCORING=(bool, False),
+    DATABASE_URL=(str, None),
+    SENDINBLUE_API_KEY=(str, None),
+)
 
-
-def get_env_variable(name, cast=str, default=""):
-    try:
-        if cast == bool:
-            return os.environ[name].lower() in [
-                "true",
-                "1",
-                "t",
-                "y",
-                "yes",
-                "yeah",
-                "yup",
-                "certainly",
-                "uh-huh",
-            ]
-        return cast(os.environ[name])
-    except Exception:  # noqa: BLE001
-        return config(name, cast=cast, default=default)
+dot_env_filename = ".env.test" if TESTING else ".env"
+environ.Env.read_env(os.path.join(BASE_DIR, dot_env_filename), overwrite=True)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-SECRET_KEY = get_env_variable("SECRET_KEY")
-DEBUG = get_env_variable("DEBUG", cast=bool)
-ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
-CRON_ENABLED = get_env_variable("CRON_ENABLED", default=False, cast=bool)
+SECRET_KEY = env("SECRET_KEY")
+DEBUG = env("DEBUG")
+ENVIRONMENT = env("ENVIRONMENT")
+CRON_ENABLED = env("CRON_ENABLED")
 
-LOGLEVEL = get_env_variable("LOGLEVEL", default="error").upper()
+LOGLEVEL = env("LOGLEVEL").upper()
 
 LOGGING = {
     "version": 1,
@@ -90,8 +90,8 @@ LOGGING = {
     },
 }
 
-SENDINBLUE_API_KEY = get_env_variable("SENDINBLUE_API_KEY")
-APPLICATION_DOMAIN_URL = get_env_variable("APPLICATION_DOMAIN_URL")
+SENDINBLUE_API_KEY = env("SENDINBLUE_API_KEY")
+APPLICATION_DOMAIN_URL = env("APPLICATION_DOMAIN_URL")
 
 MAX_EMAIL_ATTACHED_FILES_SIZE = 10 * 1024 * 1024  # 10MB
 
@@ -103,21 +103,19 @@ if SENDINBLUE_API_KEY:
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-DEFAULT_FROM_EMAIL = get_env_variable(
-    "DEFAULT_FROM_EMAIL", default="ne-pas-repondre@apilos.beta.gouv.fr"
-)
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
 
 env_allowed_hosts = []
 try:
-    env_allowed_hosts = get_env_variable("ALLOWED_HOSTS").split(",")
+    env_allowed_hosts = env("ALLOWED_HOSTS").split(",")
 except KeyError:
     pass
 
 # Convert API
-CONVERTAPI_SECRET = get_env_variable("CONVERTAPI_SECRET")
+CONVERTAPI_SECRET = env("CONVERTAPI_SECRET")
 # INSEE API
-INSEE_API_KEY = get_env_variable("INSEE_API_KEY")
-INSEE_API_SECRET = get_env_variable("INSEE_API_SECRET")
+INSEE_API_KEY = env("INSEE_API_KEY")
+INSEE_API_SECRET = env("INSEE_API_SECRET")
 
 ALLOWED_HOSTS = ["localhost"] + env_allowed_hosts
 
@@ -162,10 +160,8 @@ if ENVIRONMENT == "development":
             "debug_toolbar",
         ]
     )
-    SHELL_PLUS_PRINT_SQL = get_env_variable(
-        "SHELL_PLUS_PRINT_SQL", default=True, cast=bool
-    )
-    SHELL_PLUS = get_env_variable("SHELL_PLUS", default="ptpython")
+    SHELL_PLUS_PRINT_SQL = env("SHELL_PLUS_PRINT_SQL")
+    SHELL_PLUS = env("SHELL_PLUS")
 
 
 MIDDLEWARE = [
@@ -233,22 +229,23 @@ MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-try:
-    # dj_database_url is used in scalingo environment to interpret the
-    # connection configuration to the DB from a single URL with all path
-    # and credentials
-    DATABASE_URL = config("DATABASE_URL")
+# try:
+# dj_database_url is used in scalingo environment to interpret the
+# connection configuration to the DB from a single URL with all path
+# and credentials
+DATABASE_URL = env("DATABASE_URL")
+if DATABASE_URL:
     default_settings = dj_database_url.parse(DATABASE_URL)
-except decouple.UndefinedValueError:
+else:
     default_settings = {
         "ENGINE": "django.db.backends.postgresql",
-        "USER": get_env_variable("DB_USER"),
-        "NAME": get_env_variable("DB_NAME"),
-        "HOST": get_env_variable("DB_HOST"),
-        "PASSWORD": get_env_variable("DB_PASSWORD"),
-        "PORT": get_env_variable("DB_PORT", default="5432"),
+        "USER": env("DB_USER"),
+        "NAME": env("DB_NAME"),
+        "HOST": env("DB_HOST"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "PORT": env("DB_PORT"),
         "TEST": {
-            "NAME": get_env_variable("DB_NAME") + "-test",
+            "NAME": env("DB_NAME") + "-test",
         },
         "ATOMIC_REQUESTS": True,
     }
@@ -257,15 +254,13 @@ except decouple.UndefinedValueError:
 # from https://django-sql-explorer.readthedocs.io/en/latest/install.html
 # The readonly access is configured with fake access when DB_READONLY env
 # variable is not set.
-DB_READONLY = config("DB_READONLY")
+DB_READONLY = env("DB_READONLY")
 readonly_settings = dj_database_url.parse(DB_READONLY)
 
 DATABASES = {"default": default_settings, "readonly": readonly_settings}
 
-if get_env_variable("ECOLO_DATABASE_URL") != "":
-    DATABASES["ecoloweb"] = dj_database_url.parse(
-        get_env_variable("ECOLO_DATABASE_URL")
-    )
+if env("ECOLO_DATABASE_URL") != "":
+    DATABASES["ecoloweb"] = dj_database_url.parse(env("ECOLO_DATABASE_URL"))
 
 EXPLORER_CONNECTIONS = {"Default": "readonly"}
 EXPLORER_DEFAULT_CONNECTION = "readonly"
@@ -335,13 +330,13 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 # Object storage with Scaleway
-AWS_ACCESS_KEY_ID = get_env_variable("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = get_env_variable("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = get_env_variable("AWS_STORAGE_BUCKET_NAME")
-AWS_DEFAULT_ACL = get_env_variable("AWS_DEFAULT_ACL")
-AWS_S3_REGION_NAME = get_env_variable("AWS_S3_REGION_NAME")
-AWS_S3_ENDPOINT_URL = get_env_variable("AWS_S3_ENDPOINT_URL")
-AWS_ECOLOWEB_BUCKET_NAME = get_env_variable("AWS_ECOLOWEB_BUCKET_NAME")
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
+AWS_DEFAULT_ACL = env("AWS_DEFAULT_ACL")
+AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME")
+AWS_S3_ENDPOINT_URL = env("AWS_S3_ENDPOINT_URL")
+AWS_ECOLOWEB_BUCKET_NAME = env("AWS_ECOLOWEB_BUCKET_NAME")
 
 if AWS_ACCESS_KEY_ID:  # pragma: no cover
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
@@ -460,16 +455,16 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ALGORITHM": get_env_variable("JWT_ALGORITHM", default="HS256"),
-    "SIGNING_KEY": get_env_variable("JWT_SIGN_KEY", default=None),
+    "ALGORITHM": env("JWT_ALGORITHM"),
+    "SIGNING_KEY": env("JWT_SIGN_KEY"),
     "USER_ID_CLAIM": "user-login",
     "USER_ID_FIELD": "cerbere_login",
 }
 
-SIAP_CLIENT_JWT_SIGN_KEY = get_env_variable("SIAP_CLIENT_JWT_SIGN_KEY", default=None)
-SIAP_CLIENT_ALGORITHM = get_env_variable("SIAP_CLIENT_ALGORITHM", default="HS256")
-SIAP_CLIENT_HOST = get_env_variable("SIAP_CLIENT_HOST", default=None)
-SIAP_CLIENT_PATH = get_env_variable("SIAP_CLIENT_PATH", default=None)
+SIAP_CLIENT_JWT_SIGN_KEY = env("SIAP_CLIENT_JWT_SIGN_KEY")
+SIAP_CLIENT_ALGORITHM = env("SIAP_CLIENT_ALGORITHM")
+SIAP_CLIENT_HOST = env("SIAP_CLIENT_HOST")
+SIAP_CLIENT_PATH = env("SIAP_CLIENT_PATH")
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "API APiLos",
@@ -482,18 +477,16 @@ SPECTACULAR_SETTINGS = {
 }
 
 APILOS_PAGINATION_PER_PAGE = 20
-APILOS_MAX_DROPDOWN_COUNT = get_env_variable(
-    "APILOS_MAX_DROPDOWN_COUNT", cast=int, default=20
-)
+APILOS_MAX_DROPDOWN_COUNT = env("APILOS_MAX_DROPDOWN_COUNT")
 
 # to do : deprecate drf_yasg
 SWAGGER_SETTINGS = {
     "DEFAULT_AUTO_SCHEMA_CLASS": "api.auto_schema.ReadWriteAutoSchema",
 }
 
-CERBERE_AUTH = get_env_variable("CERBERE_AUTH")
-USE_MOCKED_SIAP_CLIENT = get_env_variable("USE_MOCKED_SIAP_CLIENT", cast=bool)
-NO_SIAP_MENU = get_env_variable("NO_SIAP_MENU", cast=bool)
+CERBERE_AUTH = env("CERBERE_AUTH")
+USE_MOCKED_SIAP_CLIENT = env("USE_MOCKED_SIAP_CLIENT")
+NO_SIAP_MENU = env("NO_SIAP_MENU")
 
 if CERBERE_AUTH:
     MIDDLEWARE = MIDDLEWARE + [
@@ -523,22 +516,20 @@ if CERBERE_AUTH:
     LOGIN_URL = "/accounts/cerbere-login"
 
 # Django defender (doc https://github.com/jazzband/django-defender#customizing-django-defender)
-REDIS_URL = get_env_variable("REDIS_URL")
+REDIS_URL = env("REDIS_URL")
 if REDIS_URL and not CERBERE_AUTH and not TESTING:
     INSTALLED_APPS += ["defender"]
     MIDDLEWARE += ["defender.middleware.FailedLoginMiddleware"]
 
     DEFENDER_LOGIN_FAILURE_LIMIT = 5
-    DEFENDER_BEHIND_REVERSE_PROXY = get_env_variable(
-        "DEFENDER_BEHIND_REVERSE_PROXY", cast=bool, default=False
-    )
+    DEFENDER_BEHIND_REVERSE_PROXY = env("DEFENDER_BEHIND_REVERSE_PROXY")
     DEFENDER_REDIS_URL = REDIS_URL
     DEFENDER_COOLOFF_TIME = 6 * 60 * 60
 
 
 # Sentry
 
-SENTRY_URL = get_env_variable("SENTRY_URL")
+SENTRY_URL = env("SENTRY_URL")
 
 if SENTRY_URL:  # pragma: no cover
     # opened issue on Sentry package : https://github.com/getsentry/sentry-python/issues/1081
@@ -558,35 +549,29 @@ if SENTRY_URL:  # pragma: no cover
     )
 
 # Crisp
-CRISP_WEBSITE_ID = get_env_variable("CRISP_WEBSITE_ID")
+CRISP_WEBSITE_ID = env("CRISP_WEBSITE_ID")
 
 # Celery (see https://docs.celeryq.dev/en/stable/userguide/configuration.html#configuration)
 CELERY_TIMEZONE = "Europe/Paris"
 # CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 60 * 60
-CELERY_BROKER_URL = get_env_variable("REDIS_URL")
+CELERY_BROKER_URL = env("REDIS_URL")
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_SEND_EVENTS = True
 CELERY_ACKS_LATE = True
 CELERY_WORKER_MAX_TASKS_PER_CHILD = 5000
 
 # limit reach when an operation has 167 logements
-DATA_UPLOAD_MAX_NUMBER_FIELDS = int(
-    get_env_variable("DATA_UPLOAD_MAX_NUMBER_FIELDS", default="100000")
-)
+DATA_UPLOAD_MAX_NUMBER_FIELDS = env("DATA_UPLOAD_MAX_NUMBER_FIELDS")
 
 # ClamAV configuration
-CLAMAV_SERVICE_URL = get_env_variable("CLAMAV_SERVICE_URL", default=None)
-CLAMAV_SERVICE_USER = get_env_variable("CLAMAV_SERVICE_USER")
-CLAMAV_SERVICE_PASSWORD = get_env_variable("CLAMAV_SERVICE_PASSWORD")
+CLAMAV_SERVICE_URL = env("CLAMAV_SERVICE_URL")
+CLAMAV_SERVICE_USER = env("CLAMAV_SERVICE_USER")
+CLAMAV_SERVICE_PASSWORD = env("CLAMAV_SERVICE_PASSWORD")
 
 # Search
-TRIGRAM_SIMILARITY_THRESHOLD = get_env_variable(
-    "TRIGRAM_SIMILARITY_THRESHOLD", float, default=0.3
-)
-DEBUG_SEARCH_SCORING = get_env_variable(
-    "DEBUG_SEARCH_SCORING", cast=bool, default=False
-)
+TRIGRAM_SIMILARITY_THRESHOLD = env("TRIGRAM_SIMILARITY_THRESHOLD")
+DEBUG_SEARCH_SCORING = env("DEBUG_SEARCH_SCORING")
 
 # Waffle
 FLAG_NEW_SEARCH = "nouvelle_recherche"

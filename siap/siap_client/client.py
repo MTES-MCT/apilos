@@ -43,7 +43,6 @@ def build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
     }
     if habilitation_id:
         payload["habilitation-id"] = habilitation_id
-
     return jwt.encode(
         payload,
         settings.SIAP_CLIENT_JWT_SIGN_KEY,

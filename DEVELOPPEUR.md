@@ -56,7 +56,7 @@ DB_PORT=5433
 
 ```sh
 pip install pip-tools
-pip install -r requirements.txt -r dev-requirements.txt
+pip install --no-deps -r requirements.txt -r dev-requirements.txt
 ```
 
 ### Installer les dependances npm
@@ -185,7 +185,7 @@ make freeze-requirements
 Et installer
 
 ```sh
-pip install -r requirements.txt -r dev-requirements.txt
+pip install --no-deps -r requirements.txt -r dev-requirements.txt
 ```
 
 ## Manipulations de développement

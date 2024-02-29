@@ -10,6 +10,7 @@ django-cas-ng
 django-celery-results
 django-csp
 django-defender
+django-environ
 django-hijack
 django-simple-history
 django-sql-explorer[xls]
@@ -26,7 +27,6 @@ openpyxl
 psycopg2
 pyjwt
 python-box
-python-decouple
 python-docx
 redis
 sentry-sdk

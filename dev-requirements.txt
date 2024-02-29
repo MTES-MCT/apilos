@@ -123,9 +123,7 @@ coverage[toml]==7.4.2 \
     --hash=sha256:f72cdd2586f9a769570d4b5714a3837b3a59a53b096bb954f1811f6a0afad305 \
     --hash=sha256:f8e845d894e39fb53834da826078f6dc1a933b32b1478cf437007367efaf6f6a \
     --hash=sha256:fe6e43c8b510719b48af7db9631b5fbac910ade4bd90e6378c85ac5ac706382c
-    # via
-    #   -r dev-requirements.in
-    #   coverage
+    # via -r dev-requirements.in
 distlib==0.3.6 \
     --hash=sha256:14bad2d9b04d3a36127ac97f30b12a19268f211063d8f8ee4f47108896e11b46 \
     --hash=sha256:f35c4b692542ca110de7ef0bea44d73981caeb34ca0b9b6b2e6d7790dda8f80e
