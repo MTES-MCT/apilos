@@ -275,6 +275,12 @@ class SIAPClientMock(SIAPClientInterface):
     def get_operation(
         self, user_login: str, habilitation_id: int, operation_identifier: str
     ) -> dict:
+        if (
+            operation_identifier
+            and operation_mock["donneesOperation"]["numeroOperation"]
+            != operation_identifier
+        ):
+            raise SIAPException("Operation not found")
         return operation_mock
 
     def get_fusion(

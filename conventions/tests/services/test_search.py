@@ -1,4 +1,3 @@
-from django.db import connection
 from django.test import TestCase
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
 
@@ -11,21 +10,16 @@ from conventions.services.search import (
     UserConventionTermineesSearchService,
 )
 from conventions.tests.factories import AvenantFactory, ConventionFactory
+from core.tests.test_utils import PGTrgmTestMixin
 from programmes.models.choices import Financement, NatureLogement
 from programmes.tests.factories import ProgrammeFactory
 from users.tests.factories import UserFactory
 
 
-class SearchServiceTestBase(ParametrizedTestCase, TestCase):
+class SearchServiceTestBase(PGTrgmTestMixin, ParametrizedTestCase, TestCase):
     __test__ = False
 
     service_class: type
-
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        with connection.cursor() as cursor:
-            cursor.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
 
     def setUp(self) -> None:
         self.user = UserFactory(is_staff=True, is_superuser=True)
@@ -116,13 +110,9 @@ class TestUserConventionTermineesSearchService(SearchServiceTestBase):
         Convention.objects.all().update(statut=ConventionStatut.RESILIEE.label)
 
 
-class TestUserConventionSmartSearchService(ParametrizedTestCase, TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        with connection.cursor() as cursor:
-            cursor.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
-
+class TestUserConventionSmartSearchService(
+    PGTrgmTestMixin, ParametrizedTestCase, TestCase
+):
     def setUp(self) -> None:
         self.user = UserFactory(is_staff=True, is_superuser=True)
 
