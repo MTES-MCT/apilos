@@ -183,22 +183,14 @@ class ConventionSearchBaseView(LoginRequiredMixin, View):
         )
 
     @property
-    def bailleurs_queryset(self) -> QuerySet | None:
-        user = self.request.user
-        if user.is_instructeur():
-            return user.bailleurs(full_scope=True).exclude(nom__exact="")[
-                : settings.APILOS_MAX_DROPDOWN_COUNT
-            ]
-
-        return None
+    def bailleurs_queryset(self) -> QuerySet:
+        return self.request.user.bailleurs(full_scope=True).exclude(nom__exact="")[
+            : settings.APILOS_MAX_DROPDOWN_COUNT
+        ]
 
     @property
-    def administrations_queryset(self) -> QuerySet | None:
-        user = self.request.user
-        if user.is_bailleur():
-            return user.administrations()[: settings.APILOS_MAX_DROPDOWN_COUNT]
-
-        return None
+    def administrations_queryset(self) -> QuerySet:
+        return self.request.user.administrations()[: settings.APILOS_MAX_DROPDOWN_COUNT]
 
     def _get_non_empty_query_param(self, query_param: str, default=None) -> str | None:
         if value := self.request.GET.get(query_param):
@@ -212,8 +204,12 @@ class ConventionSearchBaseView(LoginRequiredMixin, View):
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         paginator = self.service.paginate()
         return {
-            "administration_query": self.administrations_queryset,
-            "bailleur_query": self.bailleurs_queryset,
+            "administration_query": (
+                self.administrations_queryset if request.user.is_bailleur() else None
+            ),
+            "bailleur_query": (
+                self.bailleurs_queryset if request.user.is_instructeur() else None
+            ),
             "conventions": paginator.get_page(request.GET.get("page", 1)),
             "filtered_conventions_count": paginator.count,
             "financements": Financement.choices,
