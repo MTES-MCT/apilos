@@ -51,6 +51,10 @@ env = environ.Env(
     DEBUG_SEARCH_SCORING=(bool, False),
     DATABASE_URL=(str, None),
     SENDINBLUE_API_KEY=(str, None),
+    SIAP_ASSISTANCE_URL=(
+        str,
+        "https://siap-logement.atlassian.net/servicedesk/customer/portal/3/group/8/create/14",
+    ),
 )
 
 dot_env_filename = ".env.test" if TESTING else ".env"
@@ -582,7 +586,4 @@ WAFFLE_ENABLE_ADMIN_PAGES = False
 MIDDLEWARE += ["waffle.middleware.WaffleMiddleware"]
 
 # Assistance
-SIAP_ASSISTANCE_URL = get_env_variable(
-    "SIAP_ASSISTANCE_URL",
-    default="https://siap-logement.atlassian.net/servicedesk/customer/portal/3/group/8/create/14",
-)
+SIAP_ASSISTANCE_URL = env("SIAP_ASSISTANCE_URL")
