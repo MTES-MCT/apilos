@@ -107,3 +107,15 @@
 
 {% endif %}
 
+{% block js %}
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+        rows = document.querySelectorAll('tr.clickable')
+        rows.forEach(row => {
+            numero = row.children[0].textContent
+            row.addEventListener("click", () => {
+                window.location = "add_convention?numero_operation=" + encodeURIComponent(numero)
+            })
+        });
+    </script>
+{% endblock %}
+

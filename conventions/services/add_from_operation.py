@@ -7,6 +7,9 @@ from django.db.models.functions import Replace
 from django.http import HttpRequest
 
 from conventions.forms.convention_form_add import ConventionAddForm
+from conventions.services.selection import _get_choices_from_object
+from conventions.templatetags.custom_filters import is_instructeur
+from instructeurs.models import Administration
 from programmes.models import NatureLogement, Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
@@ -107,5 +110,22 @@ class ConventionAddService:
 
     def get_form(self) -> ConventionAddForm:
         if self.form is None:
-            self.form = ConventionAddForm()
+            self.form = ConventionAddForm(
+                administrations=self._get_administration_choices(),
+                bailleur_query=self._get_bailleur_query(),
+            )
         return self.form
+
+    def _get_bailleur_query(self, uuid: str | None = None):
+        queryset = self.request.user.bailleurs(full_scope=True)
+        if uuid:
+            return queryset.all()
+
+        return queryset[0 : settings.APILOS_MAX_DROPDOWN_COUNT]
+
+    def _get_administration_choices(self):
+        return _get_choices_from_object(
+            self.request.user.administrations()
+            if is_instructeur(self.request)
+            else Administration.objects.all().order_by("nom")
+        )
