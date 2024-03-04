@@ -3,8 +3,8 @@
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-stepper fr-col-md-12">
             <h2 class="fr-stepper__title">
-                <span class="fr-stepper__state">Étape {{form_step.number}} sur {{form_step.total}}</span>
                 {{form_step.current_step.title}}
+                <span class="fr-stepper__state">Étape {{form_step.number}} sur {{form_step.total}}</span>
             </h2>
             <div class="fr-stepper__steps" data-fr-current-step="{{form_step.number}}" data-fr-steps="{{form_step.total}}"></div>
             {% if form_step.next_step %}
