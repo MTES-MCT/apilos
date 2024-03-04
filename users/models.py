@@ -254,9 +254,12 @@ class User(AbstractUser):
             return Programme.objects.all()
 
         if self.is_instructeur():
-            return Programme.objects.filter(
-                administration_id__in=self.administration_ids()
-            )
+            if administration_ids := self.administration_ids():
+                return Programme.objects.filter(
+                    administration_id__in=administration_ids
+                )
+            else:
+                return Programme.objects.none()
 
         if self.is_bailleur():
             programmes_result = Programme.objects.filter(
@@ -418,10 +421,9 @@ class User(AbstractUser):
         return conventions
 
     def _apply_administration_ids_filters(self, convs):
-        administrations_ids = self.administration_ids()
-        if administrations_ids:
+        if administrations_ids := self.administration_ids():
             convs = convs.filter(
-                programme__administration_id__in=self.administration_ids(),
+                programme__administration_id__in=administrations_ids,
             )
         return convs
 
