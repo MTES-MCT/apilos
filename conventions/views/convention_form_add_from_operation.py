@@ -36,4 +36,9 @@ class AddConventionFromOperationView(WaffleFlagMixin, LoginRequiredMixin, Templa
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         service = ConventionAddService(self.request)
         ctx = super().get_context_data(**kwargs)
-        ctx.update({"form": service.get_form()})
+        ctx.update(
+            {
+                "form": service.get_form(),
+            }
+        )
+        return ctx
