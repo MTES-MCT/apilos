@@ -323,6 +323,7 @@ def generate_pdf(file_stream: io.BytesIO, convention: Convention):
                 f"media/{doc_path}",
             ],
             check=True,
+            env={"HOME": "/app"},
         )
 
     file_stream.seek(0)
