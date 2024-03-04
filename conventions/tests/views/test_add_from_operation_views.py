@@ -1,7 +1,7 @@
 from django.test import SimpleTestCase
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
 
-from conventions.views.convention_form_add_from_operation import Step, Stepper
+from conventions.views.convention_form_add_from_operation import Stepper
 
 
 class StepperTest(ParametrizedTestCase, SimpleTestCase):
@@ -17,14 +17,8 @@ class StepperTest(ParametrizedTestCase, SimpleTestCase):
             param(
                 1,
                 {
-                    "current_step": Step(
-                        title="Sélection de l'opération",
-                        pathname="conventions:select_operation",
-                    ),
-                    "next_step": Step(
-                        title="Créer la convention dans Apilos",
-                        pathname="conventions:add_convention",
-                    ),
+                    "current_step": "Sélectioner l'opération",
+                    "next_step": "Créer la convention dans Apilos",
                     "number": 1,
                     "total": 3,
                 },
@@ -33,14 +27,8 @@ class StepperTest(ParametrizedTestCase, SimpleTestCase):
             param(
                 2,
                 {
-                    "current_step": Step(
-                        title="Créer la convention dans Apilos",
-                        pathname="conventions:add_convention",
-                    ),
-                    "next_step": Step(
-                        title="Ajouter les avenants (optionnel)",
-                        pathname="conventions:add_convention",
-                    ),
+                    "current_step": "Créer la convention dans Apilos",
+                    "next_step": "Ajouter les avenants (optionnel)",
                     "number": 2,
                     "total": 3,
                 },
@@ -49,10 +37,7 @@ class StepperTest(ParametrizedTestCase, SimpleTestCase):
             param(
                 3,
                 {
-                    "current_step": Step(
-                        title="Ajouter les avenants (optionnel)",
-                        pathname="conventions:add_convention",
-                    ),
+                    "current_step": "Ajouter les avenants (optionnel)",
                     "next_step": None,
                     "number": 3,
                     "total": 3,

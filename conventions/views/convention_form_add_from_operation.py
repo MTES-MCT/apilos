@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Any
 
 from django.conf import settings
@@ -13,32 +12,17 @@ from conventions.services.add_from_operation import (
 )
 
 
-@dataclass
-class Step:
-    title: str
-    pathname: str
-
-
 class Stepper:
-    steps: list[Step]
+    steps: list[str]
 
     def __init__(self) -> None:
         self.steps = [
-            Step(
-                title="Sélection de l'opération",
-                pathname="conventions:select_operation",
-            ),
-            Step(
-                title="Créer la convention dans Apilos",
-                pathname="conventions:add_convention",
-            ),
-            Step(
-                title="Ajouter les avenants (optionnel)",
-                pathname="conventions:add_convention",
-            ),
+            "Sélectioner l'opération",
+            "Créer la convention dans Apilos",
+            "Ajouter les avenants (optionnel)",
         ]
 
-    def get_form_step(self, step_number: int) -> Step | None:
+    def get_form_step(self, step_number: int) -> dict[str, Any] | None:
         count_steps = len(self.steps)
         if step_number < 1 or step_number > count_steps:
             return None
