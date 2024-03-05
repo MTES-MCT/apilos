@@ -52,6 +52,9 @@ class SelectOperationService:
         self.request = request
         self.numero_operation = numero_operation
 
+    def get_operation(self) -> Operation | None:
+        return self._fetch_siap_operation() or self._get_apilos_operation()
+
     def fetch_operations(self) -> tuple[bool, list[Operation]]:
         if self.numero_operation is None:
             return False, []
