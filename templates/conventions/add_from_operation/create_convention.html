@@ -19,6 +19,16 @@
 
         {% include "./stepper.html"%}
 
+        <div class="apilos-info-operation">
+            <h3>Opération : {{operation.nom}}</h3>
+            <div class="fr-col-12">
+                <span><u>Opération {{operation.numero}}</u></span>
+                <span>{{operation.commune}}</span>
+                <span>Bailleur : {{operation.bailleur}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="fr-container fr-my-5w">
         <h6>Détails de la convention à ajouter</h6>
         <form method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
