@@ -20,3 +20,4 @@ responses
 ruff
 time-machine
 unittest-parametrize
+vulture

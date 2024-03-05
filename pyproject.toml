@@ -90,3 +90,55 @@ section-order = [
     "first-party",
     "local-folder",
 ]
+
+
+[tool.vulture]
+exclude = ["*/settings.py", "*/settings/*.py", "*/migrations/*.py"]
+ignore_decorators = [
+    # Django
+    "@receiver",
+    "@register.filter",
+    "@register.inclusion_tag",
+    "@register.simple_tag",
+    # django.contrib.admin
+    "@admin.action",
+    "@admin.display",
+    "@admin.register",
+    # pytest
+    "@pytest.fixture",
+]
+ignore_names = [
+    # Django
+    "*Config",     # AppConfig subclasses
+    "*Middleware",
+    "clean_*",
+    "Meta",
+    "urlpatterns",
+    # django.contrib.admin
+    "get_extra",
+    "get_fieldsets",
+    "has_add_permission",
+    "has_change_permission",
+    "has_delete_permission",
+    "has_view_permission",
+    "lookups",
+    # misc
+    "signals"
+]
+paths = [
+    "api",
+    "apilos_settings",
+    "bailleurs",
+    "comments",
+    "conventions",
+    "core",
+    "ecoloweb",
+    "instructeurs",
+    "programmes",
+    "siap",
+    "stats",
+    "upload",
+    "users",
+]
+min_confidence = 80
+sort_by_size = true

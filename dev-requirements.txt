@@ -447,6 +447,7 @@ tomli==2.0.1 \
     #   pip-tools
     #   pyproject-hooks
     #   pytest
+    #   vulture
 types-pytz==2023.3.0.0 \
     --hash=sha256:4fc2a7fbbc315f0b6630e0b899fd6c743705abe1094d007b0e612d10da15e0f3 \
     --hash=sha256:ecdc70d543aaf3616a7e48631543a884f74205f284cefd6649ddf44c6a820aac
@@ -478,6 +479,10 @@ virtualenv==20.16.7 \
     --hash=sha256:8691e3ff9387f743e00f6bb20f70121f5e4f596cae754531f2b3b3a1b1ac696e \
     --hash=sha256:efd66b00386fdb7dbe4822d172303f40cd05e50e01740b19ea42425cbe653e29
     # via pre-commit
+vulture==2.11 \
+    --hash=sha256:12d745f7710ffbf6aeb8279ba9068a24d4e52e8ed333b8b044035c9d6b823aba \
+    --hash=sha256:f0fbb60bce6511aad87ee0736c502456737490a82d919a44e6d92262cb35f1c2
+    # via -r dev-requirements.in
 wcwidth==0.2.6 \
     --hash=sha256:795b138f6875577cd91bba52baf9e445cd5118fd32723b460e30a0af30ea230e \
     --hash=sha256:a5220780a404dbe3353789870978e472cfe477761f06ee55077256e509b156d0
