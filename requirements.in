@@ -35,4 +35,6 @@ sentry-sdk
 tenacity
 tqdm
 typing-extensions
+uno
+unoserver
 whitenoise
