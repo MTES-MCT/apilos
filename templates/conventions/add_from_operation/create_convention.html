@@ -27,9 +27,11 @@
         {% else %}
             <div class="apilos-info-operation fr-mb-5w">
                 <h3>Opération : {{operation.nom}}</h3>
-                <span><u>Opération {{operation.numero}}</u></span>
-                <span>{{operation.commune}}</span>
-                <span>Bailleur : {{operation.bailleur}}</span>
+                <div class="fr-col-12">
+                    <span><u>Opération {{operation.numero}}</u></span>
+                    <span>{{operation.commune}}</span>
+                    <span>Bailleur : {{operation.bailleur}}</span>
+                </div>
             </div>
             <h6>Détails de la convention à ajouter</h6>
             <form method="post" action="" enctype="multipart/form-data">
