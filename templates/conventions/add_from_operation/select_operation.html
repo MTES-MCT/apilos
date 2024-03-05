@@ -1,0 +1,35 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}Sélectionner une opération{% endblock%}
+
+{% block content %}
+
+    <div class="fr-container fr-my-5w">
+        <h3>Ajouter une convention existante</h3>
+
+        {% include "./stepper.html"%}
+
+        <h6>Quelle opération est liée à cette convention ?</h6>
+        <form class="fr-mt-2w" method="get" action="" id="search_table">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-lg-6">
+                    <div class="select-label">Numéro de l'opération</div>
+                    <input class="fr-input fr-mt-1w" type="search" id="numero_operation" name="numero_operation" value="{{ request.GET.numero_operation }}" placeholder="Rechercher"/>
+                </div>
+                <div class="fr-col-12 fr-col-lg-6 fr-grid-row fr-grid-row--right">
+                    <button class="fr-btn fr-mt-3w" id="search_btn">
+                        <span class="fr-icon-search-line fr-mr-1w" aria-hidden="true"></span>
+                        Rechercher
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="fr-col-md-12 fr-mt-4w">
+            {% include "conventions/add_from_operation/select_operation_list.html" %}
+        </div>
+    </div>
+
+{% endblock %}

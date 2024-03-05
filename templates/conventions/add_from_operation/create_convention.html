@@ -13,8 +13,13 @@
 {% endblock %}
 
 {% block content %}
+
     <div class="fr-container fr-my-5w">
-        <h4>Détails de la convention à ajouter</h4>
+        <h3>Ajouter une convention existante</h3>
+
+        {% include "./stepper.html"%}
+
+        <h6>Détails de la convention à ajouter</h6>
         <form method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="fr-grid-row fr-grid-row--gutters">
