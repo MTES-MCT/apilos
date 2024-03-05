@@ -73,22 +73,16 @@ class AddConventionFromOperationView(AddConventionFromOperationBaseView, Templat
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         service = ConventionAddService(self.request)
-
+        form = service.get_form()
         numero_operation = self.request.GET.get("numero_operation")
-        exact_match, operations = SelectOperationService(
+        operation = SelectOperationService(
             request=self.request, numero_operation=numero_operation
-        ).fetch_operations()
-
-        if not exact_match:
-            # TODO handle error
-            raise Exception()
-
-        operation = operations[0]
+        ).get_operation()
 
         ctx = super().get_context_data(**kwargs)
         ctx.update(
             {
-                "form": service.get_form(),
+                "form": form,
                 "operation": operation,
             }
         )
