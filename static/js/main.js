@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 function OnInput() {
-  console.log("frappe, petit vermisseau")
   this.style.height = 'auto';
   this.style.height = (this.scrollHeight) + "px";
 }
