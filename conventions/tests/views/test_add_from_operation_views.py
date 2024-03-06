@@ -1,7 +1,7 @@
 from django.test import SimpleTestCase
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
 
-from conventions.views.convention_form_add_from_operation import Stepper
+from conventions.views.convention_form_from_operation import Stepper
 
 
 class StepperTest(ParametrizedTestCase, SimpleTestCase):

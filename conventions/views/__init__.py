@@ -1,5 +1,4 @@
 from conventions.views.avenants import *
-from conventions.views.convention_form_add_from_operation import *
 from conventions.views.convention_form_annexes import *
 from conventions.views.convention_form_bailleur import *
 from conventions.views.convention_form_cadastre import *
@@ -11,6 +10,7 @@ from conventions.views.convention_form_edd import *
 from conventions.views.convention_form_financement import *
 from conventions.views.convention_form_foyer_attribution import *
 from conventions.views.convention_form_foyer_residence_logements import *
+from conventions.views.convention_form_from_operation import *
 from conventions.views.convention_form_logements import *
 from conventions.views.convention_form_programme import *
 from conventions.views.convention_form_residence_attribution import *

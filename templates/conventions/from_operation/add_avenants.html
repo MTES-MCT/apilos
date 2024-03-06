@@ -1,0 +1,49 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}Ajout de convention simplifié - APiLos{% endblock%}
+
+{% block content %}
+
+    <div class="fr-container fr-my-5w">
+        <h3>Ajouter des avenants existants</h3>
+
+        {% include "./stepper.html"%}
+
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-8">
+                <h6>Avez-vous un ou plusieurs avenants à associer à cette convention ?</h6>
+            </div>
+            <div class="fr-col-3 fr-mr-4w">
+                <a href="{% url 'conventions:post_action' convention_uuid=convention_uuid %}" class="fr-link">Passer cette étape</a>
+            </div>
+        </div>
+
+        <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ formset.management_form }}
+
+            <div class="fr-grid-row fr-grid-row--gutters">
+                {% for form in formset %}
+                    {% if form.uuid.value %}
+                        {{ form.as_hidden }}
+                        <div class="fr-col-12 fr-mt-4">
+                            FIXME - L'avenant numéro {{ form.numero.value }} de type '{{ form.avenant_type.value }}' a été créé
+                            <hr>
+                        </div>
+                    {% else %}
+                        {% include "conventions/from_operation/add_avenants_form.html" with form=form %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="form-button-footer fr-py-5w">
+                <button class="fr-btn fr-icon-arrow-right-s-line fr-btn--icon-right" name="action" value="submit" type="submit">
+                    Enregistrer
+                </button>
+            </div>
+        </form>
+
+{% endblock%}

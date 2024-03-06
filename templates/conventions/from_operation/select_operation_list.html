@@ -28,7 +28,7 @@
                         <th title="Commune" scope="col">
                             Commune
                         </th>
-                        <th title="Goto" scope="col">
+                        <th title="" scope="col">
                         </th>
                     </tr>
                 </thead>
@@ -42,7 +42,7 @@
                             <td>{{ operation.commune }}</td>
                             <td>
                                 <button class="fr-btn--tertiary">
-                                    <span class="fr-icon-external-link-line" aria-hidden="true"></span>
+                                    <span class="fr-icon-arrow-right-line" aria-hidden="true"></span>
                                 </button>
                             </td>
                         </tr>
@@ -113,7 +113,7 @@
         rows.forEach(row => {
             numero = row.children[0].textContent
             row.addEventListener("click", () => {
-                window.location = "add_convention?numero_operation=" + encodeURIComponent(numero)
+                window.location = "add_convention/" + encodeURIComponent(numero)
             })
         });
     </script>

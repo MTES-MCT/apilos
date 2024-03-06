@@ -2,14 +2,16 @@ from django.test import TestCase, override_settings
 from django.test.client import RequestFactory
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
 
-from conventions.services.add_from_operation import (
-    ConventionAddService,
+from conventions.services.from_operation import (
+    AddAvenantsService,
+    AddConventionService,
     Operation,
     SelectOperationService,
 )
 from core.tests.test_utils import PGTrgmTestMixin
 from programmes.models import NatureLogement
 from programmes.tests.factories import ProgrammeFactory
+from siap.siap_client.mock_data import operation_mock
 from users.tests.factories import UserFactory
 
 
@@ -50,6 +52,7 @@ class TestSelectOperationService(PGTrgmTestMixin, ParametrizedTestCase, TestCase
                         bailleur="13055",
                         nature="LOO",
                         commune="Marseille",
+                        siap_payload=operation_mock,
                     )
                 ],
                 id="siap_match_exact",
@@ -64,6 +67,7 @@ class TestSelectOperationService(PGTrgmTestMixin, ParametrizedTestCase, TestCase
                         bailleur="Bailleur A",
                         nature="Logements ordinaires",
                         commune="Bayonne",
+                        siap_payload=None,
                     )
                 ],
                 id="apilos_match_exact",
@@ -78,6 +82,7 @@ class TestSelectOperationService(PGTrgmTestMixin, ParametrizedTestCase, TestCase
                         bailleur="Bailleur B",
                         nature="Résidence sociale",
                         commune="L'Isle-sur-la-Sorgue",
+                        siap_payload=None,
                     ),
                     Operation(
                         numero="2017DD01100057",
@@ -85,6 +90,7 @@ class TestSelectOperationService(PGTrgmTestMixin, ParametrizedTestCase, TestCase
                         bailleur="Bailleur A",
                         nature="Logements ordinaires",
                         commune="Bayonne",
+                        siap_payload=None,
                     ),
                 ],
                 id="apilos_search_trgrm",
@@ -102,7 +108,13 @@ class TestSelectOperationService(PGTrgmTestMixin, ParametrizedTestCase, TestCase
         assert operations == expected_operations
 
 
-class TestConventionAddService(TestCase):
+class TestAddConventionService(TestCase):
     def basic_test(self):
-        service = ConventionAddService(request=RequestFactory())
-        assert service.get_form() is not None
+        service = AddConventionService(request=RequestFactory())
+        assert service.form is not None
+
+
+class TestAddAvenantsService(TestCase):
+    def basic_test(self):
+        service = AddAvenantsService(request=RequestFactory())
+        assert service.form is not None
