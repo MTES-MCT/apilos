@@ -23,4 +23,13 @@ document.addEventListener("DOMContentLoaded", () => {
       blocPreview.innerText = blocForm.value;
     })
   }
+  const tx = document.querySelector("textarea#id_champ_libre_avenant");
+    tx.setAttribute("style", "height:" + (tx.scrollHeight) + "px;overflow-y:hidden;");
+    tx.addEventListener("input", OnInput, false);
 })
+
+function OnInput() {
+  console.log("frappe, petit vermisseau")
+  this.style.height = 'auto';
+  this.style.height = (this.scrollHeight) + "px";
+}
