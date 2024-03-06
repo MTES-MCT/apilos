@@ -20,7 +20,7 @@ from programmes.models.models import Lot
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.utils import (
-    get_or_create_programme_from_siap,
+    get_or_create_programme_from_siap_operation,
 )
 
 
@@ -175,7 +175,7 @@ class ConventionAddService:
         form = self.get_form()
         if form.is_valid():
             with transaction.atomic():
-                programme = get_or_create_programme_from_siap(operation_siap)
+                programme = get_or_create_programme_from_siap_operation(operation_siap)
                 lot = self._create_lot(programme=programme)
                 self.convention = self._create_convention(lot=lot)
 

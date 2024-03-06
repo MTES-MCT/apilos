@@ -3,6 +3,7 @@ from typing import Any
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView, View
 from waffle.mixins import WaffleFlagMixin
@@ -99,10 +100,10 @@ class AddConventionFromOperationView(AddConventionFromOperationBaseView, Templat
 
         service = ConventionAddService(request)
         service.post_create_convention(numero_operation=numero_operation)
-
         if service.return_status == utils.ReturnStatus.SUCCESS:
             return HttpResponseRedirect(reverse("conventions:add_avenants"))
-        raise CreateConventionFromOperationError("Error during convention creation.")
+        else:
+            return render(self.request, self.template_name, self.get_context_data())
 
 
 class AddAvenantsView(AddConventionFromOperationBaseView, TemplateView):

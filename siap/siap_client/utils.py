@@ -29,7 +29,7 @@ ADDRESS_LINE_RAW = "adresseLigne4"
 ADDRESS_CLEANED = "adresseLigne"
 
 
-def get_or_create_programme_from_siap(operation: dict) -> Programme:
+def get_or_create_programme_from_siap_operation(operation: dict) -> Programme:
     try:
         # Waiting fix on SIAP
         # https://airtable.com/appqEzValO6eQoHbM/tblNIOUJttSKoH866/viwarZ7MJFl9MSfsi/recuXwXkRXzvssine?blocks=hide
@@ -71,7 +71,7 @@ def get_or_create_conventions(operation: dict, user: User):
         if len(filtered_op_aides) == 0:
             raise NoConventionForOperationSIAPException()
 
-    programme = get_or_create_programme_from_siap(operation)
+    programme = get_or_create_programme_from_siap_operation(operation)
 
     try:
         (lots, conventions) = get_or_create_lots_and_conventions(
