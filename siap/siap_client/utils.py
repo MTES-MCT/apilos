@@ -29,17 +29,7 @@ ADDRESS_LINE_RAW = "adresseLigne4"
 ADDRESS_CLEANED = "adresseLigne"
 
 
-def get_or_create_conventions(operation: dict, user: User):
-    if operation["detailsOperation"]:
-        op_aides = [
-            aide["aide"]["code"]
-            for aide in operation["detailsOperation"]
-            if "aide" in aide and "code" in aide["aide"]
-        ]
-        filtered_op_aides = [aide for aide in op_aides if aide in Financement.values]
-        if len(filtered_op_aides) == 0:
-            raise NoConventionForOperationSIAPException()
-
+def get_or_create_programme_from_siap(operation: dict) -> Programme:
     try:
         # Waiting fix on SIAP
         # https://airtable.com/appqEzValO6eQoHbM/tblNIOUJttSKoH866/viwarZ7MJFl9MSfsi/recuXwXkRXzvssine?blocks=hide
@@ -67,6 +57,21 @@ def get_or_create_conventions(operation: dict, user: User):
         raise KeyError(
             f"Operation not well formatted, missing programme's informations : {operation}"
         ) from ke
+    return programme
+
+
+def get_or_create_conventions(operation: dict, user: User):
+    if operation["detailsOperation"]:
+        op_aides = [
+            aide["aide"]["code"]
+            for aide in operation["detailsOperation"]
+            if "aide" in aide and "code" in aide["aide"]
+        ]
+        filtered_op_aides = [aide for aide in op_aides if aide in Financement.values]
+        if len(filtered_op_aides) == 0:
+            raise NoConventionForOperationSIAPException()
+
+    programme = get_or_create_programme_from_siap(operation)
 
     try:
         (lots, conventions) = get_or_create_lots_and_conventions(

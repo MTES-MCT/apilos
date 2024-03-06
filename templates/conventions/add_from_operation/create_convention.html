@@ -41,42 +41,6 @@
                         {% include "common/form/input_text.html" with form_input=form.numero  mandatory_input=True editable=True %}
                     </div>
                     <div class="fr-col-6">
-                        {% include "common/form/input_text.html" with form_input=form.nom  mandatory_input=True editable=True %}
-                    </div>
-                    <div class="fr-col-6">
-                        {% include "common/form/input_select.html" with form_input=form.bailleur without_empty_option=form.bailleur.field.choices|length_is:1 mandatory_input=True editable=True %}
-                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                            document.addEventListener('DOMContentLoaded', function () {
-                                VirtualSelect.init({
-                                    ele: '#{{form.bailleur.id_for_label}}',
-                                    multiple: false,
-                                    hideClearButton: true,
-                                    search: true,
-                                    searchPlaceholderText: "Rechercher votre bailleur...",
-                                    noSearchResultsText: "Aucun bailleur ne correspond à votre recherche"
-                                });
-                            });
-                        </script>
-                    </div>
-                    <div class="fr-col-6">
-                        {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 mandatory_input=True editable=True%}
-                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                            document.addEventListener('DOMContentLoaded', function () {
-                                VirtualSelect.init({
-                                    ele: '#{{form.administration.id_for_label}}',
-                                    multiple: false,
-                                    hideClearButton: true,
-                                    search: true,
-                                    searchPlaceholderText: "Rechercher votre administration...",
-                                    noSearchResultsText: "Aucune administration ne correspond à votre recherche"
-                                });
-                            });
-                        </script>
-                    </div>
-                    <div class="fr-col-6">
-                        {% include 'common/form/input_select.html' with form_input=form.nature_logement editable=True %}
-                    </div>
-                    <div class="fr-col-6">
                         {% include "common/form/input_number.html" with form_input=form.nb_logements editable=True %}
                     </div>
                     <div class="fr-col-6">
@@ -101,7 +65,7 @@
                     </div>
                 </div>
                 <div class="form-button-footer fr-py-5w">
-                    <button class="fr-btn fr-icon-arrow-right-s-line fr-btn--icon-right">
+                    <button class="fr-btn fr-icon-arrow-right-s-line fr-btn--icon-right" name="action" value="submit" type="submit">
                         Enregistrer
                     </button>
                 </div>

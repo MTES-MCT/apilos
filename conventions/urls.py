@@ -78,6 +78,13 @@ urlpatterns = [
         ),
         name="add_convention",
     ),
+    path(
+        "add_avenants",
+        permission_required("convention.add_convention")(
+            views.AddAvenantsView.as_view()
+        ),
+        name="add_avenants",
+    ),
     # Pages de troisième niveau : funnel d'instruction et d'action sur les conventions et avenants
     path(
         "new_convention",
