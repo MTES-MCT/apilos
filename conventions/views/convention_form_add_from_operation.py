@@ -2,14 +2,21 @@ from typing import Any
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponseRedirect
+from django.shortcuts import render
+from django.urls import reverse
 from django.views.generic import TemplateView, View
 from waffle.mixins import WaffleFlagMixin
 
+from conventions.services import utils
 from conventions.services.add_from_operation import (
     ConventionAddService,
     SelectOperationService,
 )
+
+
+class CreateConventionFromOperationError(Exception):
+    pass
 
 
 class Stepper:
@@ -87,3 +94,18 @@ class AddConventionFromOperationView(AddConventionFromOperationBaseView, Templat
             }
         )
         return ctx
+
+    def post(self, request):
+        numero_operation = self.request.GET.get("numero_operation")
+
+        service = ConventionAddService(request)
+        service.post_create_convention(numero_operation=numero_operation)
+        if service.return_status == utils.ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(reverse("conventions:add_avenants"))
+        else:
+            return render(self.request, self.template_name, self.get_context_data())
+
+
+class AddAvenantsView(AddConventionFromOperationBaseView, TemplateView):
+    template_name = "conventions/add_from_operation/create_avenants.html"
+    step_number = 3

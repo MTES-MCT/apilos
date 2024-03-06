@@ -1,18 +1,27 @@
+import datetime
 from dataclasses import dataclass
 
 from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
+from django.db import transaction
 from django.db.models import QuerySet, Value
 from django.db.models.functions import Replace
 from django.http import HttpRequest
 
 from conventions.forms.convention_form_add import ConventionAddForm
+from conventions.models.convention import Convention
+from conventions.services import utils
+from conventions.services.file import ConventionFileService
 from conventions.services.selection import _get_choices_from_object
 from conventions.templatetags.custom_filters import is_instructeur
 from instructeurs.models import Administration
 from programmes.models import NatureLogement, Programme
+from programmes.models.models import Lot
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
+from siap.siap_client.utils import (
+    get_or_create_programme_from_siap_operation,
+)
 
 
 @dataclass
@@ -114,8 +123,8 @@ class ConventionAddService:
     def get_form(self) -> ConventionAddForm:
         if self.form is None:
             self.form = ConventionAddForm(
-                administrations=self._get_administration_choices(),
-                bailleur_query=self._get_bailleur_query(),
+                self.request.POST,
+                self.request.FILES,
             )
         return self.form
 
@@ -132,3 +141,47 @@ class ConventionAddService:
             if is_instructeur(self.request)
             else Administration.objects.all().order_by("nom")
         )
+
+    def _create_lot(self, programme):
+        lot = Lot.objects.create(
+            nb_logements=self.form.cleaned_data["nb_logements"],
+            financement=self.form.cleaned_data["financement"],
+            programme=programme,
+        )
+        return lot
+
+    def _create_convention(self, lot):
+        return Convention.objects.create(
+            lot=lot,
+            programme_id=lot.programme_id,
+            financement=lot.financement,
+            cree_par=self.request.user,
+            numero=self.form.cleaned_data["numero"],
+            televersement_convention_signee_le=datetime.date(
+                self.form.cleaned_data["annee_signature"], 1, 1
+            ),
+        )
+
+    def post_create_convention(self, numero_operation):
+        try:
+            operation_siap = SIAPClient.get_instance().get_operation(
+                user_login=self.request.user.cerbere_login,
+                habilitation_id=self.request.session["habilitation_id"],
+                operation_identifier=numero_operation,
+            )
+        except SIAPException:
+            operation_siap = None
+
+        form = self.get_form()
+        if form.is_valid():
+            with transaction.atomic():
+                programme = get_or_create_programme_from_siap_operation(operation_siap)
+                lot = self._create_lot(programme=programme)
+                self.convention = self._create_convention(lot=lot)
+
+                file = self.request.FILES.get("nom_fichier_signe", False)
+                if file:
+                    ConventionFileService.upload_convention_file(self.convention, file)
+            self.return_status = utils.ReturnStatus.SUCCESS
+        else:
+            self.return_status = utils.ReturnStatus.ERROR
