@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
+from django.db import transaction
 from django.db.models import QuerySet, Value
 from django.db.models.functions import Replace
 from django.http import HttpRequest
@@ -121,7 +122,10 @@ class ConventionAddService:
 
     def get_form(self) -> ConventionAddForm:
         if self.form is None:
-            self.form = ConventionAddForm()
+            self.form = ConventionAddForm(
+                self.request.POST,
+                self.request.FILES,
+            )
         return self.form
 
     def _get_bailleur_query(self, uuid: str | None = None):
@@ -159,10 +163,6 @@ class ConventionAddService:
         )
 
     def post_create_convention(self, numero_operation):
-        self.form = ConventionAddForm(
-            self.request.POST,
-            self.request.FILES,
-        )
         try:
             operation_siap = SIAPClient.get_instance().get_operation(
                 user_login=self.request.user.cerbere_login,
@@ -172,14 +172,16 @@ class ConventionAddService:
         except SIAPException:
             operation_siap = None
 
-        if self.form.is_valid():
-            programme = get_or_create_programme_from_siap(operation_siap)
-            lot = self._create_lot(programme=programme)
-            self.convention = self._create_convention(lot=lot)
+        form = self.get_form()
+        if form.is_valid():
+            with transaction.atomic():
+                programme = get_or_create_programme_from_siap(operation_siap)
+                lot = self._create_lot(programme=programme)
+                self.convention = self._create_convention(lot=lot)
 
-            file = self.request.FILES.get("nom_fichier_signe", False)
-            if file:
-                ConventionFileService.upload_convention_file(self.convention, file)
+                file = self.request.FILES.get("nom_fichier_signe", False)
+                if file:
+                    ConventionFileService.upload_convention_file(self.convention, file)
             self.return_status = utils.ReturnStatus.SUCCESS
         else:
             self.return_status = utils.ReturnStatus.ERROR
