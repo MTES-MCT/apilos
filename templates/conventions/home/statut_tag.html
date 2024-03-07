@@ -1,9 +1,3 @@
-
-
-<div class="fr-mb-1w fr-py-1w fr-pr-2w fr-alert fr-alert--{{convention.statut_for_template.key_statut}} apilos-tag-status fr-icon-{{convention.statut_icone}}-line">
-    {% if request|is_instructeur %}
-        {{convention.short_statut_for_instructeur}}
-    {% else %}
-        {{convention.short_statut_for_bailleur}}
-    {% endif %}
+<div class="apilos-badge">
+    <div class="fr-badge apilos-badge-{{convention.statut_for_template.key_statut}} fr-icon-{{convention.statut_icone}}-fill fr-badge--icon-{{convention.statut_icone}}">{{convention.short_statut_neutre}}</div>
 </div>

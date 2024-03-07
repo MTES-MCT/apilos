@@ -72,6 +72,7 @@ class ConventionStatut(ReverseEnumMixin, Enum):
         label: str
         bailleur: StatutByRole
         instructeur: StatutByRole
+        neutre: str
         icone: str
 
     PROJET = Definition(
@@ -84,7 +85,8 @@ class ConventionStatut(ReverseEnumMixin, Enum):
             "En projet",
             "Une fois que votre bailleur aura complété ses informations, il vous {article} soumettra en instruction",
         ),
-        "pencil",
+        "En projet",
+        "edit",
     )
 
     INSTRUCTION = Definition(
@@ -98,6 +100,7 @@ class ConventionStatut(ReverseEnumMixin, Enum):
             "Vous pouvez désormais procéder à son instruction et "
             "{article} valider ou demander des corrections à votre bailleur",
         ),
+        "À instruire",
         "eye",
     )
     CORRECTION = Definition(
@@ -110,12 +113,14 @@ class ConventionStatut(ReverseEnumMixin, Enum):
             "En correction",
             "Une fois que votre bailleur aura procédé aux corrections, il pourra vous {article} soumettre à nouveau",
         ),
+        "En correction",
         "question-answer",
     )
     A_SIGNER = Definition(
         "4. A signer",
         StatutByRole("À signer"),
         StatutByRole("À signer"),
+        "À signer",
         "draft",
     )
     SIGNEE = Definition(
@@ -128,6 +133,7 @@ class ConventionStatut(ReverseEnumMixin, Enum):
             "Finalisée",
             "Un {autre} avenant devra désormais être créé pour mettre à jour une information",
         ),
+        "Valide",
         "success",
     )
     RESILIEE = Definition(
@@ -140,7 +146,8 @@ class ConventionStatut(ReverseEnumMixin, Enum):
             "Résiliée",
             "Il n'est pas possible d'y apporter des modifications",
         ),
-        "close",
+        "Résiliation",
+        "close-circle",
     )
     DENONCEE = Definition(
         "7. Dénoncée",
@@ -152,7 +159,8 @@ class ConventionStatut(ReverseEnumMixin, Enum):
             "Dénoncée",
             "Il n'est pas possible d'y apporter des modifications",
         ),
-        "close",
+        "Dénonciation",
+        "close-circle",
     )
     ANNULEE = Definition(
         "8. Annulée en suivi",
@@ -164,7 +172,8 @@ class ConventionStatut(ReverseEnumMixin, Enum):
             "Annulé{accord} en suivi",
             "Il n'est pas possible d'y apporter des modifications",
         ),
-        "close",
+        "Annulation",
+        "close-circle",
     )
 
     @classmethod
@@ -228,6 +237,10 @@ class ConventionStatut(ReverseEnumMixin, Enum):
     @property
     def instructeur_label(self):
         return self.value.instructeur.label
+
+    @property
+    def neutre(self):
+        return self.value.neutre
 
     @property
     def icone(self):
