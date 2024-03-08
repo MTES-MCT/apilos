@@ -155,6 +155,9 @@ details > summary::-webkit-details-marker {
   border: solid 1px #ccc;
   padding: 15px;
 }
+.apilos-separator {
+  border-right: solid 2px #DDDDDD
+}
 .apilos-h2-thin {
   font-size: 2rem;
   line-height: 2.5rem;
@@ -544,6 +547,9 @@ a[href].apilos-block-faqlink:after {
 .apilos-text--italic {
   font-style: italic;
 }
+.apilos-text--black {
+  color: black;
+}
 
 .status_ouvert {
   color: #0762c8;
@@ -793,6 +799,38 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   box-shadow: inset 0 0 0 1px var(--border-default-grey),
     inset 2.5rem 0 0 0 #cccccc;
 }
+[class*="apilos-badge-"] {
+  display:inline;
+}
+.apilos-badge {
+  min-width: 155px;
+}
+.apilos-badge-Projet {
+  background-color: #E9EDFE;
+  color: #2F4077;
+}
+.apilos-badge-Instruction_requise {
+  background-color: #FFE9E9;
+  color: #CE0500;
+}
+.apilos-badge-Corrections_requises {
+  background-color: #FFE8E5;
+  color: #B34000;
+}
+.apilos-badge-A_signer {
+  background-color: #FEECC2;
+  color: #716043;
+}
+.apilos-badge-Signee {
+  background-color: #B8FEC9;
+  color: #18753C;
+}
+.apilos-badge-Denoncee,
+.apilos-badge-Resiliee,
+.apilos-badge-Annulee_en_suivi {
+  background-color: #EEEEEE;
+  color: #666666;
+}
 
 .apilos-alert {
   display: flex;
@@ -861,7 +899,7 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   top: 0;
 }
 .apilos-sticky-2 {
-  top: 110px;
+  top: 160px;
 }
 
 /*

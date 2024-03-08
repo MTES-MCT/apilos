@@ -530,6 +530,9 @@ class Convention(models.Model):
             return desc.format(pronom="il", accord="", article="le", autre="autre")
         return desc.format(pronom="elle", accord="e", article="la", autre="")
 
+    def short_statut_neutre(self):
+        return ConventionStatut.get_by_label(self.statut).neutre
+
     def short_statut_for_bailleur(self):
         statut = ConventionStatut.get_by_label(self.statut).value.bailleur.label
         return self.genderize_desc(statut)

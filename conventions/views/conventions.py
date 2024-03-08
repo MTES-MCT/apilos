@@ -323,25 +323,12 @@ class ConventionSearchView(WaffleFlagMixin, ConventionSearchBaseView):
     service_class = UserConventionSmartSearchService
     name = "search"
 
-    def _statut_choices(self, request: AuthenticatedHttpRequest):
-        if request.user.is_instructeur():
-            return [
-                (member.value.instructeur.label.format(accord="e"), member.label)
-                for member in ConventionStatut
-            ]
-
-        if request.user.is_bailleur():
-            return [
-                (member.value.bailleur.label.format(accord="e"), member.label)
-                for member in ConventionStatut
-            ]
-
-        return [(member.label, member.label) for member in ConventionStatut]
-
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         paginator = self.service.paginate()
         return {
-            "statut_choices": self._statut_choices(request=request),
+            "statut_choices": [
+                (member.neutre, member.label) for member in ConventionStatut
+            ],
             "new_search": True,
             "date_signature_choices": self._date_signature_choices(),
             "financement_choices": Financement.choices,
