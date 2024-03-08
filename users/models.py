@@ -130,7 +130,7 @@ class User(AbstractUser):
             )
 
             bailleur_id = (
-                Convention.objects.filter(id=obj.id, parent_id=None)
+                Convention.objects.filter(id=obj.id)
                 .values("programme__bailleur_id")
                 .first()
             )
@@ -475,9 +475,9 @@ class User(AbstractUser):
                 .order_by("-cree_le")
                 .values("programme__bailleur_id")
             )
-            bailleur_id_subquery = convs.filter(
-                id=OuterRef("id"), parent_id=None
-            ).values("programme__bailleur_id")
+            bailleur_id_subquery = convs.filter(id=OuterRef("id")).values(
+                "programme__bailleur_id"
+            )
             convs = convs.annotate(
                 effective_bailleur_id=Coalesce(
                     Subquery(avenants_bailleur_id_subquery[:1]),
