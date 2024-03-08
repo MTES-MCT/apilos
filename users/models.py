@@ -112,12 +112,43 @@ class User(AbstractUser):
             bailleur = Bailleur.objects.prefetch_related("parent").get(
                 id=obj.programme.bailleur_id
             )
-            bailleur_ids = [obj.programme.bailleur_id]
+
+            # This block aims to determine the effective bailleur_id for the conventions
+            # If there are no avenants, the effective bailleur_id is from the convention programme
+            # If there are avenants, the effective bailleur_id is the programme bailleur_id from the most recent avenant
+            avenants_bailleur_id = (
+                Convention.objects.filter(
+                    parent_id=Coalesce(obj.parent_id, obj.id),
+                    statut__in=[
+                        ConventionStatut.A_SIGNER.label,
+                        ConventionStatut.SIGNEE.label,
+                    ],
+                )
+                .order_by("-cree_le")
+                .values("programme__bailleur_id")
+                .first()
+            )
+
+            bailleur_id = (
+                Convention.objects.filter(id=obj.id, parent_id=None)
+                .values("programme__bailleur_id")
+                .first()
+            )
+
+            effective_bailleur_id = avenants_bailleur_id or bailleur_id
+            if effective_bailleur_id is not None:
+                effective_bailleur_id = effective_bailleur_id["programme__bailleur_id"]
+
+            bailleur_ids = [effective_bailleur_id]
             if bailleur.parent:
                 bailleur_ids.append(bailleur.parent.id)
             # is bailleur of the convention or is instructeur of the convention
-            return self.roles.filter(bailleur_id__in=bailleur_ids) or self.roles.filter(
-                administration_id=obj.programme.administration_id
+            return self.roles.filter(bailleur_id__in=bailleur_ids).count() > 0 or (
+                obj.programme.administration_id is not None
+                and self.roles.filter(
+                    administration_id=obj.programme.administration_id
+                ).count()
+                > 0
             )
         raise ExceptionPermissionConfig(
             "Les permissions ne sont pas correctement configurées, un "

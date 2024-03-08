@@ -567,7 +567,7 @@ def _create_bailleur_and_user(group):
 def test_conventions_visibility_bailleur_avenant(db):
     # Create three bailleurs
     super_user = UserFactory(is_staff=True, is_superuser=True)
-    group = GroupFactory(name="Bailleur", rw=["logement", "convention"])
+    group = GroupFactory(name="Bailleur", rw=[])
     bailleur1, user1 = _create_bailleur_and_user(group)
     bailleur2, user2 = _create_bailleur_and_user(group)
     bailleur3, user3 = _create_bailleur_and_user(group)
@@ -596,6 +596,11 @@ def test_conventions_visibility_bailleur_avenant(db):
     assert user2.conventions().count() == 0
     assert user3.conventions().count() == 0
 
+    assert user1.has_object_permission(convention1)
+    assert user1.has_object_permission(avenant1)
+    assert not user2.has_object_permission(convention1)
+    assert not user2.has_object_permission(avenant1)
+
     # Make another avenant in statut PROJET on the first convention changing bailleur
     request = RequestFactory().post("/", data={"avenant_type": "bailleur"})
     request.user = super_user
@@ -611,6 +616,13 @@ def test_conventions_visibility_bailleur_avenant(db):
     assert user2.conventions().count() == 0
     assert user3.conventions().count() == 0
 
+    assert user1.has_object_permission(convention1)
+    assert user1.has_object_permission(avenant1)
+    assert user1.has_object_permission(avenant2)
+    assert not user2.has_object_permission(convention1)
+    assert not user2.has_object_permission(avenant1)
+    assert not user2.has_object_permission(avenant2)
+
     # Change avenant statut to SIGNEE
     avenant2.statut = ConventionStatut.SIGNEE.label
     avenant2.save()
@@ -618,6 +630,13 @@ def test_conventions_visibility_bailleur_avenant(db):
     assert user1.conventions().count() == 1
     assert user2.conventions().count() == 3
     assert user3.conventions().count() == 0
+
+    assert not user1.has_object_permission(convention1)
+    assert not user1.has_object_permission(avenant1)
+    assert not user1.has_object_permission(avenant2)
+    assert user2.has_object_permission(convention1)
+    assert user2.has_object_permission(avenant1)
+    assert user2.has_object_permission(avenant2)
 
     # Verify that the bailleur_id from the first avenant is not impacting visibility
     avenant1.programme.bailleur = bailleur3
