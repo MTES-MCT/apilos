@@ -23,9 +23,11 @@ document.addEventListener("DOMContentLoaded", () => {
       blocPreview.innerText = blocForm.value;
     })
   }
-  const tx = document.querySelector("textarea#id_champ_libre_avenant");
+  var tx = document.querySelector("textarea#id_champ_libre_avenant");
+  if (document.contains(tx)) {
     tx.setAttribute("style", "height:" + (tx.scrollHeight) + "px;overflow-y:hidden;");
     tx.addEventListener("input", OnInput, false);
+  }
 })
 
 function OnInput() {
