@@ -72,6 +72,13 @@ class AvenantType(models.Model):
             (avenant_type.nom, avenant_type.nom) for avenant_type in cls.objects.all()
         ]
 
+    @classmethod
+    def get_as_detailed_choices(cls):
+        return [
+            (avenant_type.nom, f"{avenant_type.nom.title()} - {avenant_type.desc}")
+            for avenant_type in cls.objects.all()
+        ]
+
     @property
     def fields(self):
         return AVENANT_TYPE_FIELDS_MAPPING.get(self.nom) or []

@@ -20,11 +20,14 @@
         {% include "./stepper.html"%}
 
         {% if operation is None %}
+
             <div class="apilos-info-operation">
                 <h3>Opération introuvable</h3>
                 <div class="fr-col-12">Aucune opération ne correspond à ce numéro.</div>
             </div>
+
         {% else %}
+
             <div class="apilos-info-operation fr-mb-5w">
                 <h3>Opération : {{operation.nom}}</h3>
                 <div class="fr-col-12">
@@ -36,7 +39,15 @@
             <h6>Détails de la convention à ajouter</h6>
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
+
                 <div class="fr-grid-row fr-grid-row--gutters">
+
+                    {% for error in form.non_field_errors %}
+                        <p id="text-input-error-desc-error" class="fr-error-text fr-mb-4w">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
                     <div class="fr-col-6">
                         {% include "common/form/input_text.html" with form_input=form.numero  mandatory_input=True editable=True %}
                     </div>
@@ -50,15 +61,15 @@
                         {% include "common/form/input_number.html" with form_input=form.annee_signature mandatory_input=True editable=True %}
                     </div>
                     <div class="fr-col-12">
-                        <div class="fr-upload-group">
+                        <div class="fr-upload-group {% if form.nom_fichier_signe.errors %}fr-select-group--error{% endif %}" id="{{form.nom_fichier_signe.id_for_label}}_group">
                             <label class="fr-label" for="file-upload">Déposer la convention (en PDF)
                                 <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
                             </label>
                             <input
-                                class="fr-upload"
+                                class="fr-upload {% if form.nom_fichier_signe.errors %}fr-input--error{% endif %}"
                                 type="file"
                                 id="file-upload"
-                                name="nom_fichier_signe"
+                                name="{{form.nom_fichier_signe.html_name}}"
                                 accept="application/pdf"
                             >
                         </div>

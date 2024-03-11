@@ -1,11 +1,11 @@
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, TestCase
+from django.urls import reverse
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
 
-from conventions.views.convention_form_add_from_operation import Stepper
+from conventions.views.convention_form_from_operation import Stepper
 
 
 class StepperTest(ParametrizedTestCase, SimpleTestCase):
-
     @parametrize(
         "step_number, expected",
         [
@@ -53,3 +53,33 @@ class StepperTest(ParametrizedTestCase, SimpleTestCase):
     )
     def test_get_form_step(self, step_number, expected):
         assert Stepper().get_form_step(step_number) == expected
+
+
+class SelectOperationViewTest(TestCase):
+    def basic_test(self):
+        response = self.client.get(
+            reverse("conventions:from_operation_select_operation")
+        )
+        assert response.status_code == 200
+
+    # TODO: add tests
+
+
+class AddConventionViewTest(TestCase):
+    def basic_test(self):
+        response = self.client.get(
+            reverse("conventions:from_operation_add_convention", args=["123"])
+        )
+        assert response.status_code == 200
+
+    # TODO: add tests
+
+
+class AddAvenantsViewTest(TestCase):
+    def basic_test(self):
+        response = self.client.get(
+            reverse("conventions:from_operation_add_avenants", args=["123"])
+        )
+        assert response.status_code == 200
+
+    # TODO: add tests

@@ -65,25 +65,25 @@ urlpatterns = [
         views.journal,
         name="journal",
     ),
-    # Pages pour l'ajout simplifié d'une convention finalisée
+    # Pages pour l'ajout simplifié d'une convention finalisée, depuis une opération
     path(
-        "select_operation",
+        "from_operation",
         views.SelectOperationView.as_view(),
-        name="select_operation",
+        name="from_operation_select",
     ),
     path(
-        "add_convention",
+        "from_operation/add_convention/<str:numero_operation>",
         permission_required("convention.add_convention")(
-            views.AddConventionFromOperationView.as_view()
+            views.AddConventionView.as_view()
         ),
-        name="add_convention",
+        name="from_operation_add_convention",
     ),
     path(
-        "add_avenants",
+        "from_operation/add_avenants/<uuid:convention_uuid>",
         permission_required("convention.add_convention")(
             views.AddAvenantsView.as_view()
         ),
-        name="add_avenants",
+        name="from_operation_add_avenants",
     ),
     # Pages de troisième niveau : funnel d'instruction et d'action sur les conventions et avenants
     path(

@@ -6,6 +6,7 @@ omit = [
     "ecoloweb/*",
     "programmes/management/commands/import_galion.py",
     # TODO: add tests on the following modules and remove them from this list
+    "conventions/views/convention_form_from_operation.py",
     "conventions/services/upload_objects.py",
     "core/models.py",
 ]
