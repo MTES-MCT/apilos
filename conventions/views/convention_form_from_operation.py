@@ -44,7 +44,7 @@ class Stepper:
         }
 
 
-class AddConventionFromOperationBaseView(WaffleFlagMixin, LoginRequiredMixin, View):
+class FromOperationBaseView(WaffleFlagMixin, LoginRequiredMixin, View):
     waffle_flag = settings.FLAG_ADD_CONVENTION
     stepper: Stepper
     step_number: int
@@ -59,7 +59,7 @@ class AddConventionFromOperationBaseView(WaffleFlagMixin, LoginRequiredMixin, Vi
         }
 
 
-class SelectOperationView(AddConventionFromOperationBaseView, TemplateView):
+class SelectOperationView(FromOperationBaseView, TemplateView):
     template_name = "conventions/from_operation/select_operation.html"
     step_number = 1
 
@@ -77,7 +77,7 @@ class SelectOperationView(AddConventionFromOperationBaseView, TemplateView):
 
 
 class AddConventionView(
-    AddConventionFromOperationBaseView, TemplateResponseMixin, ContextMixin, View
+    FromOperationBaseView, TemplateResponseMixin, ContextMixin, View
 ):
     template_name = "conventions/from_operation/add_convention.html"
     step_number = 2
@@ -117,9 +117,7 @@ class AddConventionView(
         return self.render_to_response(context=context)
 
 
-class AddAvenantsView(
-    AddConventionFromOperationBaseView, TemplateResponseMixin, ContextMixin, View
-):
+class AddAvenantsView(FromOperationBaseView, TemplateResponseMixin, ContextMixin, View):
     template_name = "conventions/from_operation/add_avenants.html"
     step_number = 3
 
