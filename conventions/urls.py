@@ -72,7 +72,7 @@ urlpatterns = [
         name="from_operation_select",
     ),
     path(
-        "from_operation/add_convention/<str:numero_operation>",
+        "from_operation/add_convention/<numero_operation>",
         permission_required("convention.add_convention")(
             views.AddConventionView.as_view()
         ),

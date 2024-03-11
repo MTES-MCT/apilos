@@ -1,24 +1,21 @@
 import datetime
 from dataclasses import dataclass
-from typing import Any
 
 from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import IntegrityError, transaction
 from django.db.models import QuerySet, Value
 from django.db.models.functions import Replace
-from django.forms import formset_factory
 from django.http import HttpRequest
 
 from conventions.forms.convention_from_operation import (
     AddAvenantForm,
-    AddAvenantFormSet,
     AddConventionForm,
 )
 from conventions.models import Convention, ConventionStatut
 from conventions.models.avenant_type import AvenantType
-from conventions.services import utils
 from conventions.services.file import ConventionFileService
+from conventions.services.utils import ReturnStatus
 from programmes.models import NatureLogement, Programme
 from programmes.models.models import Lot
 from siap.exceptions import SIAPException
@@ -123,7 +120,7 @@ class SelectOperationService:
 class AddConventionService:
     request: HttpRequest
     form: AddConventionForm
-    return_status: utils.ReturnStatus
+    return_status: ReturnStatus
     operation: Operation
     convention: Convention | None = None
 
@@ -156,10 +153,9 @@ class AddConventionService:
             ),
         )
 
-    def save(self) -> None:
+    def save(self) -> ReturnStatus:
         if not self.form.is_valid():
-            self.return_status = utils.ReturnStatus.ERROR
-            return
+            return ReturnStatus.ERROR
 
         with transaction.atomic():
             try:
@@ -179,83 +175,94 @@ class AddConventionService:
                 if file:
                     ConventionFileService.upload_convention_file(self.convention, file)
 
+                return ReturnStatus.SUCCESS
+
             except IntegrityError as err:
                 # TODO: handle this error correctly
                 self.form.add_error(field=None, error=str(err))
-                self.return_status = utils.ReturnStatus.ERROR
-                return
-
-        self.return_status = utils.ReturnStatus.SUCCESS
-
-
-AddAvenantFormSetFactory = formset_factory(
-    form=AddAvenantForm, formset=AddAvenantFormSet
-)
+                return ReturnStatus.ERROR
 
 
 class AddAvenantsService:
     request: HttpRequest
     convention: Convention
-    formset: AddAvenantFormSet
+    form: AddAvenantForm
 
     def __init__(self, request: HttpRequest, convention: Convention) -> None:
         self.request = request
         self.convention = convention
 
+        bailleur_query = request.user.bailleur_query_set(
+            only_bailleur_uuid=self.convention.programme.bailleur.uuid,
+        )
+
         if request.method == "POST":
-            self.formset = AddAvenantFormSetFactory(
-                initial=self._get_form_initial(), data=request.POST, files=request.FILES
+            self.form = AddAvenantForm(
+                data=request.POST,
+                files=request.FILES,
+                bailleur_query=bailleur_query,
             )
         else:
-            self.formset = AddAvenantFormSetFactory(initial=self._get_form_initial())
+            self.form = AddAvenantForm(
+                bailleur_query=bailleur_query,
+                initial={
+                    "bailleur": self.convention.programme.bailleur,
+                    "nb_logements": self.convention.lot.nb_logements,
+                },
+            )
 
-    def _get_form_initial(self) -> list[dict[str, Any]]:
-        return [
-            {
-                "uuid": avenant.uuid,
-                "numero": avenant.numero,
-                "avenant_type": avenant.avenant_types.first().nom,
-                # FIXME
-                # "annee_signature": avenant.televersement_convention_signee_le.year,
-                "annee_signature": 0,
-                "nom_fichier_signe": avenant.nom_fichier_signe,
-            }
-            for avenant in self.convention.avenants.all()
-        ]
+    def save(self) -> ReturnStatus:
+        if not self.form.is_valid():
+            return ReturnStatus.ERROR
 
-    def save(self) -> None:
-        if not self.formset.is_valid():
-            return
+        with transaction.atomic():
+            try:
+                avenant = self.convention.clone(
+                    self.request.user, convention_origin=self.convention
+                )
 
-        for form in self.formset:
-            if form.cleaned_data["uuid"]:
-                continue
+                avenant.numero = self.form.cleaned_data["numero"]
+                avenant.statut = ConventionStatut.SIGNEE.label
+                avenant.televersement_convention_signee_le = datetime.date(
+                    self.form.cleaned_data["annee_signature"], 1, 1
+                )
+                avenant.save()
 
-            with transaction.atomic():
-                try:
-                    avenant = self.convention.clone(
-                        self.request.user, convention_origin=self.convention
+                file = self.request.FILES.get("nom_fichier_signe", False)
+                if file:
+                    ConventionFileService.upload_convention_file(
+                        convention=avenant, file=file, update_statut=False
                     )
 
-                    file = self.request.FILES.get("nom_fichier_signe", False)
-                    if file:
-                        ConventionFileService.upload_convention_file(
-                            convention=avenant, file=file, update_statut=False
-                        )
-
-                    avenant.numero = form.cleaned_data["numero"]
-                    avenant.statut = ConventionStatut.SIGNEE.label
-                    # FIXME
-                    # avenant.televersement_convention_signee_le = (
-                    #     datetime.date(form.cleaned_data["annee_signature"], 1, 1),
-                    # )
+                # Avenant type Champ libre
+                if champ_libre_avenant := self.form.cleaned_data["champ_libre_avenant"]:
+                    avenant.champ_libre_avenant = champ_libre_avenant
                     avenant.save()
-
-                    avenant_type = AvenantType.objects.get(
-                        nom=form.cleaned_data["avenant_type"]
+                    avenant.avenant_types.add(
+                        AvenantType.objects.get(nom="champ_libre")
                     )
-                    avenant.avenant_types.add(avenant_type)
 
-                except IntegrityError as err:
-                    # TODO: handle this error correctly
-                    self.form.add_error(field=None, error=str(err))
+                # Avenant type Bailleur
+                if (
+                    bailleur := self.form.cleaned_data["bailleur"]
+                    != self.convention.programme.bailleur
+                ):
+                    self.convention.programme.bailleur = bailleur
+                    self.convention.programme.save()
+                    avenant.avenant_types.add(AvenantType.objects.get(nom="bailleur"))
+
+                # Avenant type Logements
+                if (
+                    nb_logements := self.form.cleaned_data["nb_logements"]
+                    != self.convention.lot.nb_logements
+                ):
+                    self.convention.lot.nb_logements = nb_logements
+                    self.convention.lot.save()
+                    avenant.avenant_types.add(AvenantType.objects.get(nom="logements"))
+
+                return ReturnStatus.SUCCESS
+
+            except IntegrityError as err:
+                # TODO: handle this error correctly
+                self.form.add_error(field=None, error=str(err))
+                return ReturnStatus.ERROR

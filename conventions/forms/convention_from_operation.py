@@ -1,7 +1,7 @@
 from django import forms
-from django.forms import BaseFormSet
+from django.db.models import QuerySet
 
-from conventions.models.avenant_type import AvenantType
+from bailleurs.models import Bailleur
 from programmes.models.choices import FinancementEDD
 
 
@@ -42,10 +42,9 @@ class AddConventionForm(forms.Form):
 
 
 class AddAvenantForm(forms.Form):
-    uuid = forms.CharField(
-        widget=forms.HiddenInput(),
-        required=False,
-    )
+    def __init__(self, *args, bailleur_query: QuerySet[Bailleur], **kwargs) -> None:
+        self.declared_fields["bailleur"].queryset = bailleur_query
+        super().__init__(*args, **kwargs)
 
     numero = forms.CharField(
         label="Numéro de l'avenant",
@@ -56,31 +55,36 @@ class AddAvenantForm(forms.Form):
             "min_length": "Le numéro de la convention est obligatoire",
             "max_length": "Le numéro de la convention ne doit pas excéder 255 caractères",
         },
-    )
-
-    avenant_type = forms.ChoiceField(
-        label="Objet de l'avenant",
-        choices=AvenantType.get_as_detailed_choices,
-        error_messages={
-            "required": "Le type d'avenant est obligatoire",
-        },
         required=True,
     )
 
     annee_signature = forms.IntegerField(
         label="Année de signature de l'avenant",
+        required=True,
     )
 
     nom_fichier_signe = forms.FileField(
+        required=True,
+    )
+
+    bailleur = forms.ModelChoiceField(
+        label="Bailleur suite à cet avenant",
+        queryset=Bailleur.objects.none(),
+        to_field_name="uuid",
         required=False,
     )
 
-    def _post_clean(self):
-        if self.cleaned_data.get("uuid") and not self.cleaned_data.get(
-            "nom_fichier_signe"
-        ):
-            self.add_error("nom_fichier_signe", "Le fichier signé est obligatoire")
+    champ_libre_avenant = forms.CharField(
+        label="Renseignements supplémentaires suite à cet avenant",
+        max_length=5000,
+        error_messages={
+            "max_length": "Le message ne doit pas excéder 5000 caractères",
+        },
+        required=False,
+        empty_value=None,
+    )
 
-
-class AddAvenantFormSet(BaseFormSet):
-    pass
+    nb_logements = forms.IntegerField(
+        label="Nombre de logements suite à cet avenant",
+        required=False,
+    )

@@ -11,6 +11,7 @@ class BailleurAdmin(ApilosModelAdmin):
         "nom",
         "siret",
         "siren",
+        "uuid",
     ]
     list_display = [
         "nom",
