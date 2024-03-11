@@ -15,7 +15,6 @@ from conventions.services.avenants import (
     complete_avenants_for_avenant,
     remove_avenant_type_from_avenant,
 )
-from conventions.services.selection import ConventionSelectionService
 from conventions.services.utils import ReturnStatus
 from django.views.decorators.http import require_http_methods
 
@@ -130,16 +129,13 @@ class SearchForAvenantResultView(LoginRequiredMixin, View):
                 numero__endswith=search_form.cleaned_data["numero"],
             )
 
-            service = ConventionSelectionService(request)
-            service.get_for_avenant()
-
             return render(
                 request,
                 "conventions/avenant/search_for_avenant.html",
                 {
                     "conventions": conventions,
-                    "form": service.form,
                     "editable": True,
+                    "search_form": search_form,
                 },
             )
 
@@ -147,24 +143,4 @@ class SearchForAvenantResultView(LoginRequiredMixin, View):
             request,
             "conventions/avenant/search_for_avenant.html",
             {"conventions": None, "search_form": search_form},
-        )
-
-    def post(self, request):
-        service = ConventionSelectionService(request)
-        service.post_for_avenant()
-
-        if service.return_status == ReturnStatus.SUCCESS:
-            return HttpResponseRedirect(
-                reverse(
-                    "conventions:recapitulatif",
-                    args=[service.avenant.uuid],
-                )
-            )
-        return render(
-            request,
-            "conventions/avenant/search_for_avenant.html",
-            {
-                "form": service.form,
-                "editable": True,
-            },
         )
