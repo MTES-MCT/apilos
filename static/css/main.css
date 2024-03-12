@@ -818,7 +818,7 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
 [class*="apilos-badge-"] {
   display:inline;
 }
-.apilos-badge {
+table .apilos-badge {
   min-width: 155px;
 }
 .apilos-badge-Projet {
@@ -916,7 +916,19 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
   top: 0;
 }
 .apilos-sticky-2 {
-  top: 160px;
+  top: 176px;
+}
+.fr-container-fluid:has(.apilos-notice--warning) .apilos-sticky-2 {
+  top: 248px;
+}
+.recapitulatif .recapitulatif-link {
+  display: none;
+}
+.apilos-notice--warning {
+  background-color: var(--background-contrast-warning);
+}
+.apilos-notice--warning p {
+  color: var(--text-default-warning)
 }
 
 /*

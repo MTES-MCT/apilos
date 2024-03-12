@@ -3,9 +3,9 @@
 {% load display_filters %}
 
 {% if convention %}
-    <div class="apilos-sticky fr-pt-2w {% if convention|display_convention_form_progressbar %}no_navbar{% endif %}">
+    <div class="apilos-sticky {% if convention|display_convention_form_progressbar %}no_navbar{% endif %}">
         <div class="fr-notice fr-notice--info">
-            <div class="fr-container">
+            <div class="fr-container fr-py-2w">
                 <div class="block--row-strech">
                     <div class="block--row-strech-1 fr-mr-2w apilos--overflow_ellipsis">
                         <div class="fr-btn--icon-left fr-icon-arrow-go-back-fill fr-text--xs notes fr-pb-2w">
@@ -21,30 +21,39 @@
                             </div>
                         {% else %}
                             <div class="fr-grid-row fr-mt-2w apilos-text--black">
-                                <div class="fr-pr-1w apilos-separator">{% include "conventions/home/statut_tag.html"  %}</div>
+                                <div class="fr-pr-2w apilos-separator">{% include "conventions/home/statut_tag.html"  %}</div>
                                 {% if convention.programme.numero_galion %}
-                                    <div class="fr-px-1w apilos-separator">
+                                    <div class="fr-px-2w fr-text--sm apilos-separator">
                                         <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
                                             Opération n°{{convention.programme.numero_galion}}
                                         </a>
                                     </div>
                                 {% endif %}
-                                <div class="fr-px-1w apilos-separator">{{ convention.programme.ville|default_if_none:'-' }}</div>
-                                <div class="fr-px-1w apilos-separator">{{ convention.lot.nb_logements|default_if_none:'-' }} logement{{ convention.lot.nb_logements|pluralize }}</div>
-                                <div class="fr-px-1w apilos-separator">{{ convention.programme.get_nature_logement_display }}</div>
-                                <div class="fr-pl-1w">{{ convention.lot.financement|default_if_none:'' }}</div>
+                                <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.programme.ville|default_if_none:'-' }}</div>
+                                <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.lot.nb_logements|default_if_none:'-' }} logement{{ convention.lot.nb_logements|pluralize }}</div>
+                                <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.programme.get_nature_logement_display }}</div>
+                                <div class="fr-pl-2w fr-text--sm">{{ convention.lot.financement|default_if_none:'' }}</div>
+                                <div class="recapitulatif-link fr-pl-3w">
+                                    <a class="fr-link fr-text--sm" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
+                                        Voir le récapitulatif<span class="fr-pl-2w fr-icon-arrow-right-line fr-icon--sm" aria-hidden="true"></span>
+                                    </a>
+                                </div>
                             </div>
                         {% endif %}
                     </div>
-                    {% if request.session.is_expert and convention.statut == CONVENTION_STATUT.SIGNEE %}
-                        <div class="fr-alert fr-alert--warning">
-                            <h3 class="fr-alert__title">Mode expert - Les modifications sont sous votre responsabilité.</h3>
-                            <a href="{% url 'conventions:expert_mode' convention_uuid=convention.uuid %}">Sortir du mode expert</a>
-                        </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
+        {% if request.session.is_expert and convention.statut == CONVENTION_STATUT.SIGNEE %}
+            <div class="fr-notice apilos-notice--warning">
+                <div class="fr-container">
+                    <div class="apilos-input-group--inline">
+                        <p><strong><span class="fr-icon-warning-fill fr-mr-2w"></span>Mode expert : vous modifiez une convention au statut valide </strong></p>
+                        <a class="fr-btn" href="{% url 'conventions:expert_mode' convention_uuid=convention.uuid %}">Sortir du mode expert</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
     {% if convention.ecolo_reference %}
         <div class="fr-container fr-pt-2w">
