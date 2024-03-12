@@ -325,6 +325,7 @@ def generate_pdf(file_stream: io.BytesIO, convention: Convention):
             check=True,
             env={"HOME": "/app"},
         )
+        # export HOME=/app && /app/.apt/usr/bin/libreoffice --convert-to pdf:writer_pdf_Export --outdir /app/media /app/documents/Avenant-template.docx
 
     file_stream.seek(0)
 
