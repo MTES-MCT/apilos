@@ -129,13 +129,14 @@ class User(AbstractUser):
                 .first()
             )
 
-            bailleur_id = (
-                Convention.objects.filter(id=obj.id)
-                .values("programme__bailleur_id")
-                .first()
-            )
-
-            effective_bailleur_id = avenants_bailleur_id or bailleur_id
+            if avenants_bailleur_id is not None:
+                effective_bailleur_id = avenants_bailleur_id
+            else:
+                effective_bailleur_id = (
+                    Convention.objects.filter(id=obj.id)
+                    .values("programme__bailleur_id")
+                    .first()
+                )
             if effective_bailleur_id is not None:
                 effective_bailleur_id = effective_bailleur_id["programme__bailleur_id"]
 
