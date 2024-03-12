@@ -18,13 +18,13 @@
                 <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
 
                     {# Champs nom de l'opération #}
-                    <div class="fr-col-12 fr-col-lg-6">
+                    <div class="fr-col-12 fr-col-lg-6 search-input">
                         <div class="select-label">Nom de l'opération</div>
                         <input class="fr-input fr-mt-1w" type="search" id="search_operation_nom" name="search_operation_nom" value="{{ request.GET.search_operation_nom }}" placeholder="Rechercher"/>
                     </div>
 
                     {# Champs numéro de l'opération ou de la convention #}
-                    <div class="fr-col-12 fr-col-lg-6">
+                    <div class="fr-col-12 fr-col-lg-6 search-input">
                         <div class="select-label">Numéro de l'opération ou de la convention</div>
                         <input class="fr-input fr-mt-1w" type="search" id="search_numero" name="search_numero" value="{{ request.GET.search_numero }}" placeholder="Rechercher"/>
                     </div>
@@ -35,7 +35,7 @@
 
                     {# Champs bailleur #}
                     {% if bailleur_query %}
-                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 search-select">
+                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 search-select search-bailleur">
                             <div class="select-label">Bailleur (nom ou SIREN)</div>
                             <div class="fr-mt-1w">
                                 {% url 'users:search_bailleur' as search_bailleur_url %}
@@ -44,7 +44,7 @@
                                         <option selected value="{{ request.GET.bailleur }}">{% bailleur_from request.GET.bailleur %}</option>
                                         {% endwith }
                                     {% else %}
-                                        <option selected value>Bailleur</option>
+                                        <option selected value></option>
                                         {% for bailleur in bailleur_query %}
                                             <option value="{{ bailleur.uuid }}">
                                                 {{ bailleur }}
@@ -58,7 +58,6 @@
                                     ele: '#search-field-bailleur',
                                     search: true,
                                     placeholder: "Rechercher",
-                                    selectedValue: null,
                                     searchPlaceholderText: "Nom du bailleur ( SIREN )",
                                     onServerSearch: function (search, select) {
                                         fetch('{{ search_bailleur_url }}?q=' + search)
@@ -71,7 +70,7 @@
                     {% endif %}
 
                     {# Champs commune #}
-                    <div class="fr-col-12 fr-col-lg-6">
+                    <div class="fr-col-12 fr-col-lg-6 search-input">
                         <div class="select-label">Commune, code postal</div>
                         <input class="fr-input fr-mt-1w" type="search" id="search_lieu" name="search_lieu" value="{{ request.GET.search_lieu }}" placeholder="Rechercher"/>
                     </div>
@@ -81,7 +80,7 @@
                 <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
 
                     {# Champs statut #}
-                    <div class="fr-col-12 fr-col-lg-3 search-select">
+                    <div class="fr-col-12 fr-col-lg-3 search-select search-statut">
                         <div class="select-label">Statut convention ou avenant</div>
                         <select
                             multiple

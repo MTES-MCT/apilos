@@ -83,10 +83,17 @@
     background-color: white;
   }
 }
-.fr-select:has(option[selected]) {
+
+#search_table .fr-select:has(option[selected]),
+#search_table .fr-input:not([value=""]),
+#search_table .search-select.search-bailleur:has(.vscomp-wrapper.has-value .vscomp-value:not([data-tooltip=""])) .fr-select,
+#search_table .search-select.search-statut:has(.vscomp-wrapper.has-value) .fr-select {
   border: solid 1px var(--text-default-info);
 }
-.search-select:has(.fr-select option[selected]) .select-label::after {
+#search_table .search-select:has(.fr-select option[selected]) .select-label::after,
+#search_table .search-input:has(.fr-input:not([value=""])) .select-label::after ,
+#search_table .search-select.search-bailleur:has(.vscomp-wrapper.has-value .vscomp-value:not([data-tooltip=""])) .select-label::after,
+#search_table .search-select.search-statut:has(.vscomp-wrapper.has-value) .select-label::after {
   content: "";
   -webkit-mask-image: url("/static/dsfr/icons/system/fr--success-fill.svg");
   mask-image: url("/static/dsfr/icons/system/fr--success-fill.svg");
@@ -98,6 +105,15 @@
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   margin-left: 0.5rem;
+}
+
+#search_table select option[value=""],
+#search_table select:has(option:checked[value=""]),
+#search_table .search-bailleur .vscomp-value[data-tooltip=""],
+#search_table .search-select .vscomp-wrapper:not(.has-value) .vscomp-value {
+  opacity: 1;
+  color: var(--text-mention-grey);
+  font-style: italic;
 }
 .h-100 {
   height: 100%;
@@ -876,6 +892,7 @@ button:not(:disabled).apilos-btn--secondary--red:hover {
 .fr-header__tools-links .fr-btn:hover {
   color: #000091 !important;
 }
+
 
 /*
  * End Adapt button color when it is a link 'a'
