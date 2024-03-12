@@ -114,7 +114,9 @@ def generate_convention_doc(convention: Convention, save_data=False):
         "lot": convention.lot,
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
-        "logements": convention.lot.logements.order_by("typologie").all(),
+        "logements": convention.lot.logements.order_by(
+            "typologie", "designation"
+        ).all(),
         "locaux_collectifs": convention.lot.locaux_collectifs.all(),
         "annexes": annexes,
         "stationnements": convention.lot.type_stationnements.all(),
