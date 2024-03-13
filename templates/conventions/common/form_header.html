@@ -7,38 +7,87 @@
         <div class="fr-notice fr-notice--info">
             <div class="fr-container fr-py-2w">
                 <div class="block--row-strech">
-                    <div class="block--row-strech-1 fr-mr-2w apilos--overflow_ellipsis">
+                    <div class="block--row-strech-1 apilos--overflow_ellipsis">
                         <div class="fr-btn--icon-left fr-icon-arrow-go-back-fill fr-text--xs notes fr-pb-2w">
                             <a href="{% url 'conventions:index' %}">
                                 Liste des conventions
                             </a>
                         </div>
-                        <h1 class="fr-h3 apilos-d-inline">{{convention.programme.nom}}</h1>
                         {% if convention.is_avenant %}
-                            <span class="apilos-h2-thin"> - {{convention|display_kind|capfirst}}{% if convention.numero %} n°{{ convention.numero }}{% endif %}</span>
-                            <div class="fr-py-3w">
-                                <a class='fr-link apilos-link' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Consulter la convention originale</a>
-                            </div>
-                        {% else %}
-                            <div class="fr-grid-row fr-mt-2w apilos-text--black">
-                                <div class="fr-pr-2w apilos-separator">{% include "conventions/home/statut_tag.html"  %}</div>
-                                {% if convention.programme.numero_galion %}
-                                    <div class="fr-px-2w fr-text--sm apilos-separator">
-                                        <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
-                                            Opération n°{{convention.programme.numero_galion}}
-                                        </a>
+                            <span class="apilos-h2-thin apilos-text--black">{{convention|display_kind|capfirst}}{% if convention.numero %} n°{{ convention.numero }}{% endif %} - </span>
+                            <h1 class="fr-h3 apilos-d-inline">{{convention.programme.nom}}</h1>
+                            <div class="fr-grid-row fr-mt-2w fr-text--sm apilos-text--black">
+                                {% if convention.statut != CONVENTION_STATUT.RESILIEE and convention.statut != CONVENTION_STATUT.DENONCEE %}
+                                    <div class="fr-pr-2w">{% include "conventions/home/statut_tag.html"  %}</div>
+                                {% endif %}
+                                {% if convention.statut == CONVENTION_STATUT.RESILIEE and convention.date_resiliation %}
+                                    <div class="fr-pr-2w">
+                                        {% if convention.is_resiliation_due %}
+                                            Convention résiliée depuis le {{ convention.date_resiliation }}
+                                        {% else %}
+                                            Résiliation de la convention prévue le {{ convention.date_resiliation }}
+                                        {% endif %}
                                     </div>
                                 {% endif %}
-                                <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.programme.ville|default_if_none:'-' }}</div>
-                                <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.lot.nb_logements|default_if_none:'-' }} logement{{ convention.lot.nb_logements|pluralize }}</div>
-                                <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.programme.get_nature_logement_display }}</div>
-                                <div class="fr-pl-2w fr-text--sm">{{ convention.lot.financement|default_if_none:'' }}</div>
-                                <div class="recapitulatif-link fr-pl-3w">
-                                    <a class="fr-link fr-text--sm" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
-                                        Voir le récapitulatif<span class="fr-pl-2w fr-icon-arrow-right-line fr-icon--sm" aria-hidden="true"></span>
-                                    </a>
-                                </div>
+                                {% if convention.statut == CONVENTION_STATUT.DENONCEE and convention.date_denonciation %}
+                                    <div class="fr-pr-2w">
+                                        {% if convention.is_denonciation_due %}
+                                            Convention dénoncée depuis le {{ convention.date_denonciation }}
+                                        {% else %}
+                                            Dénonciation de la convention prévue le {{ convention.date_denonciation }}
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                <a class='fr-link apilos-link fr-text--sm' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Consulter la convention originale n°{{convention.parent.numero}} <span class="fr-pl-2w fr-icon-arrow-right-line fr-icon--sm" aria-hidden="true"></span></a>
                             </div>
+                        {% else %}
+                            {% if convention.statut == CONVENTION_STATUT.RESILIEE and convention.is_resiliation_due %}
+                                <span class="apilos-h2-thin apilos-text--black">Résiliation - </span>
+                            {% elif convention.statut == CONVENTION_STATUT.DENONCEE and convention.is_denonciation_due %}
+                                <span class="apilos-h2-thin apilos-text--black">Dénonciation - </span>
+                            {% endif %}
+                            <h1 class="fr-h3 apilos-d-inline">{{convention.programme.nom}}</h1>
+                            {% if convention.statut != CONVENTION_STATUT.RESILIEE and convention.statut != CONVENTION_STATUT.DENONCEE %}
+                                <div class="apilos-input-group--inline">
+                                    <div class="fr-grid-row fr-mt-2w apilos-text--black">
+                                        <div class="fr-pr-2w apilos-separator">{% include "conventions/home/statut_tag.html"  %}</div>
+                                        {% if convention.programme.numero_galion %}
+                                            <div class="fr-px-2w fr-text--sm apilos-separator">
+                                                <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}">
+                                                    Opération n°{{convention.programme.numero_galion}}
+                                                </a>
+                                            </div>
+                                        {% endif %}
+                                        <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.programme.ville|default_if_none:'-' }}</div>
+                                        <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.lot.nb_logements|default_if_none:'-' }} logement{{ convention.lot.nb_logements|pluralize }}</div>
+                                        <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.programme.get_nature_logement_display }}</div>
+                                        <div class="fr-pl-2w fr-text--sm">{{ convention.lot.financement|default_if_none:'' }}</div>
+                                    </div>
+                                    <div class="recapitulatif-link fr-pl-3w">
+                                        <a class="fr-link apilos-link fr-text--sm" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
+                                            Voir le récapitulatif<span class="fr-pl-2w fr-icon-arrow-right-line fr-icon--sm" aria-hidden="true"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if convention.statut == CONVENTION_STATUT.RESILIEE and convention.date_resiliation %}
+                                <div class="fr-mt-2w fr-text--sm apilos-text--black">
+                                    {% if convention.is_resiliation_due %}
+                                        Convention résiliée depuis le {{ convention.date_resiliation }}
+                                    {% else %}
+                                        Résiliation de la convention prévue le {{ convention.date_resiliation }}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                            {% if convention.statut == CONVENTION_STATUT.DENONCEE and convention.date_denonciation %}
+                                <div class="fr-mt-2w fr-text--sm apilos-text--black">
+                                    {% if convention.is_denonciation_due %}
+                                        Convention dénoncée depuis le {{ convention.date_denonciation }}
+                                    {% else %}
+                                        Dénonciation de la convention prévue le {{ convention.date_denonciation }}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
                         {% endif %}
                     </div>
                 </div>

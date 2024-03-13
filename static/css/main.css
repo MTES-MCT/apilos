@@ -710,6 +710,7 @@ table.fullwidth {
 .apilos-link {
   display: inline !important;
   text-decoration: none !important;
+  background-image: none;
 }
 /*  */
 .apilos-multiselect {
