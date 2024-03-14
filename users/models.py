@@ -6,8 +6,8 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import PermissionDenied
 from django.db import models
-from django.db.models import Q, QuerySet
-from django.db.models.functions import Substr
+from django.db.models import OuterRef, Q, QuerySet, Subquery
+from django.db.models.functions import Coalesce, Substr
 from django.forms.models import model_to_dict
 from simple_history.models import HistoricalRecords
 
@@ -112,12 +112,38 @@ class User(AbstractUser):
             bailleur = Bailleur.objects.prefetch_related("parent").get(
                 id=obj.programme.bailleur_id
             )
-            bailleur_ids = [obj.programme.bailleur_id]
+
+            # This block aims to determine the effective bailleur_id for the conventions
+            # If there are no avenants, the effective bailleur_id is from the convention programme
+            # If there are avenants, the effective bailleur_id is the programme bailleur_id from the most recent avenant
+            avenants_bailleur_id = (
+                Convention.objects.filter(
+                    parent_id=Coalesce(obj.parent_id, obj.id),
+                    statut__in=[
+                        ConventionStatut.A_SIGNER.label,
+                        ConventionStatut.SIGNEE.label,
+                    ],
+                )
+                .order_by("-cree_le")
+                .values("programme__bailleur_id")
+                .first()
+            )
+
+            if avenants_bailleur_id is not None:
+                effective_bailleur_id = avenants_bailleur_id["programme__bailleur_id"]
+            else:
+                effective_bailleur_id = obj.programme.bailleur_id
+
+            bailleur_ids = [effective_bailleur_id]
             if bailleur.parent:
                 bailleur_ids.append(bailleur.parent.id)
             # is bailleur of the convention or is instructeur of the convention
-            return self.roles.filter(bailleur_id__in=bailleur_ids) or self.roles.filter(
-                administration_id=obj.programme.administration_id
+            return self.roles.filter(bailleur_id__in=bailleur_ids).count() > 0 or (
+                obj.programme.administration_id is not None
+                and self.roles.filter(
+                    administration_id=obj.programme.administration_id
+                ).count()
+                > 0
             )
         raise ExceptionPermissionConfig(
             "Les permissions ne sont pas correctement configurées, un "
@@ -429,7 +455,33 @@ class User(AbstractUser):
 
         if self.is_bailleur():
             convs = self._apply_geo_filters(convs)
-            convs = convs.filter(programme__bailleur_id__in=self._bailleur_ids())
+
+            # This block aims to determine the effective bailleur_id for the conventions
+            # If there are no avenants, the effective bailleur_id is from the convention programme
+            # If there are avenants, the effective bailleur_id is the programme bailleur_id from the most recent avenant
+            avenants_bailleur_id_subquery = (
+                convs.filter(
+                    parent_id=Coalesce(OuterRef("parent_id"), OuterRef("id")),
+                    statut__in=[
+                        ConventionStatut.A_SIGNER.label,
+                        ConventionStatut.SIGNEE.label,
+                    ],
+                )
+                .order_by("-cree_le")
+                .values("programme__bailleur_id")
+            )
+            bailleur_id_subquery = convs.filter(id=OuterRef("id")).values(
+                "programme__bailleur_id"
+            )
+            convs = convs.annotate(
+                effective_bailleur_id=Coalesce(
+                    Subquery(avenants_bailleur_id_subquery[:1]),
+                    Subquery(bailleur_id_subquery[:1]),
+                )
+            )
+
+            # Then we filter the conventions so the effective bailleur_id matches the bailleur ids this bailleur can see
+            convs = convs.filter(effective_bailleur_id__in=self._bailleur_ids())
             if self.id and self.filtre_departements.exists():
                 convs = convs.annotate(
                     departement=Substr("programme__code_postal", 1, 2)
