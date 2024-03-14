@@ -447,27 +447,38 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
             )
 
         if self.search_numero:
-            if self.avenant_seulement:
-                queryset = queryset.filter(
-                    Q(
-                        programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+            if len(self.search_numero) == 4:
+                if self.avenant_seulement:
+                    queryset = queryset.filter(
+                        parent__numero__endswith=self.search_numero
                     )
-                    | Q(
-                        parent_conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                else:
+                    queryset = queryset.filter(
+                        Q(numero__endswith=self.search_numero)
+                        | Q(parent__numero__endswith=self.search_numero)
                     )
-                )
             else:
-                queryset = queryset.filter(
-                    Q(
-                        programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                if self.avenant_seulement:
+                    queryset = queryset.filter(
+                        Q(
+                            programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                        )
+                        | Q(
+                            parent_conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                        )
                     )
-                    | Q(
-                        conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                else:
+                    queryset = queryset.filter(
+                        Q(
+                            programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                        )
+                        | Q(
+                            conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                        )
+                        | Q(
+                            parent_conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                        )
                     )
-                    | Q(
-                        parent_conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
-                    )
-                )
 
         if self.search_lieu:
             queryset = queryset.filter(

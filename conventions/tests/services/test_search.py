@@ -279,6 +279,11 @@ class TestUserConventionSmartSearchService(
                 id="numero_operation_et_convention",
             ),
             param(
+                {"search_numero": "0029"},
+                ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
+                id="numero_convention_derniers_caracteres",
+            ),
+            param(
                 {"search_lieu": "01012"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
                 id="programme_code_postal",
