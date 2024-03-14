@@ -164,7 +164,6 @@ class Convention(models.Model):
     donnees_validees = models.TextField(null=True, blank=True)
     nom_fichier_signe = models.CharField(max_length=255, null=True, blank=True)
     televersement_convention_signee_le = models.DateField(null=True, blank=True)
-    date_resiliation = models.DateField(null=True, blank=True)
     desc_avenant = models.TextField(null=True, blank=True)
 
     historique_financement_public = models.CharField(
@@ -477,12 +476,20 @@ class Convention(models.Model):
             and self.avenant_types.filter(nom="denonciation").exists()
         )
 
+    @property
+    def is_denonciation_due(self):
+        return date.today() > self.date_denonciation
+
     @cached_property
     def is_resiliation(self) -> bool:
         return (
             self.parent_id is not None
             and self.avenant_types.filter(nom="resiliation").exists()
         )
+
+    @property
+    def is_resiliation_due(self):
+        return date.today() > self.date_resiliation
 
     def is_incompleted_avenant_parent(self):
         if self.is_avenant() and (

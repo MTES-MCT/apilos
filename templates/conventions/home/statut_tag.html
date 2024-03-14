@@ -1,3 +1,19 @@
 <div class="apilos-badge">
-    <div class="fr-badge apilos-badge-{{convention.statut_for_template.key_statut}} fr-icon-{{convention.statut_icone}}-fill fr-badge--icon-{{convention.statut_icone}}">{{convention.short_statut_neutre}}</div>
+    {% if convention.statut == CONVENTION_STATUT.RESILIEE and not convention.is_resiliation_due or convention.statut == CONVENTION_STATUT.DENONCEE and not convention.is_denonciation_due %}
+        <div class="fr-badge apilos-badge-Signee fr-icon-success-fill fr-badge--icon-success fr-text--xs">
+            Valide
+        </div>
+        <div class="fr-text--xs notes">
+            {% if convention.statut == CONVENTION_STATUT.RESILIEE and not convention.is_resiliation_due %}
+                Résiliation programmée
+            {% elif convention.statut == CONVENTION_STATUT.DENONCEE and not convention.is_denonciation_due %}
+                Dénonciation programmée
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="fr-badge apilos-badge-{{convention.statut_for_template.key_statut}} fr-icon-{{convention.statut_icone}}-fill fr-badge--icon-{{convention.statut_icone}} fr-text--xs">
+
+            {{convention.short_statut_neutre}}
+        </div>
+    {% endif %}
 </div>
