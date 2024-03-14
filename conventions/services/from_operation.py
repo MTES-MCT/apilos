@@ -17,8 +17,9 @@ from conventions.models.avenant_type import AvenantType
 from conventions.services.file import ConventionFileService
 from conventions.services.utils import ReturnStatus
 from programmes.models import NatureLogement, Programme
+from programmes.models.choices import FinancementEDD
 from programmes.models.models import Lot
-from siap.exceptions import SIAPException
+from siap.exceptions import DuplicatedOperationSIAPException, SIAPException
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.utils import (
     get_or_create_programme_from_siap_operation,
@@ -122,16 +123,37 @@ class AddConventionService:
     form: AddConventionForm
     operation: Operation
     convention: Convention | None = None
+    conventions: list[Convention]
 
     def __init__(self, request: HttpRequest, operation: Operation) -> None:
         self.request = request
         self.operation = operation
+        programmes = Programme.objects.filter(numero_galion=self.operation.numero)
 
-        # TODO: exclure des choix de financement du formulaire, si une convention existe déjà pour ce programme
-        if request.method == "POST":
-            self.form = AddConventionForm(request.POST, request.FILES)
+        if programmes.count() > 1:
+            raise DuplicatedOperationSIAPException(
+                numero_operation=self.operation.numero
+            )
+        programme = programmes.first()
+        if programme is not None:
+            self.conventions = Convention.objects.filter(programme_id=programme.id)
         else:
-            self.form = AddConventionForm()
+            self.conventions = []
+
+        financements = []
+        existing_financements = self.conventions.values_list(
+            "lot__financement", flat=True
+        )
+        for financement in FinancementEDD.choices:
+            if financement[0] not in existing_financements:
+                financements.append(financement)
+
+        if request.method == "POST":
+            self.form = AddConventionForm(
+                request.POST, request.FILES, financements=financements
+            )
+        else:
+            self.form = AddConventionForm(financements=financements)
 
     def _create_lot(self, programme: Programme) -> Lot:
         return Lot.objects.create(

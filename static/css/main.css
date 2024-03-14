@@ -1085,3 +1085,6 @@ table .apilos-badge {
 .apilos-info-operation span:last-child {
   border-right: none;
 }
+.apilos-info-operation .fr-table caption {
+  font-size: 1.0rem;
+}

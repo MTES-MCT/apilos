@@ -113,6 +113,7 @@ class AddConventionView(
         context = self.get_context_data(**kwargs) | {
             "form": service.form,
             "operation": operation,
+            "conventions": service.conventions,
         }
         return self.render_to_response(context=context)
 

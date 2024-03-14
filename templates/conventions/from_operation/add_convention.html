@@ -29,11 +29,36 @@
         {% else %}
 
             <div class="apilos-info-operation fr-mb-5w">
-                <h3>Opération : {{operation.nom}}</h3>
+                <h3>{{operation.nom}}</h3>
                 <div class="fr-col-12">
-                    <span><u>Opération {{operation.numero}}</u></span>
+                    <span><u>Opération n°{{operation.numero}}</u></span>
                     <span>{{operation.commune}}</span>
                     <span>Bailleur : {{operation.bailleur}}</span>
+                </div>
+                <div class="fr-table fr-table--bordered">
+                    <table>
+                        <caption>Convention(s) liée(s) à cette opération et enregistrée(s) dans le SIAP / Apilos</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Statut</th>
+                                <th scope="col">Numéro de convention</th>
+                                <th scope="col">Financement</th>
+                                <th scope="col">Logements</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for convention in conventions %}
+                                <tr>
+                                    <td>{{ convention.statut }}</td>
+                                    <td>{{ convention.numero|default_if_none:"" }}</td>
+                                    <td>{{ convention.lot.financement }}</td>
+                                    <td>{{ convention.lot.nb_logements }}</td>
+                                    <td>Lien</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <h6>Détails de la convention à ajouter</h6>
