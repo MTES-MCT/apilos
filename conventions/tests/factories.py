@@ -24,3 +24,4 @@ class AvenantFactory(ConventionFactory):
 class AvenantTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = AvenantType
+        django_get_or_create = ("nom",)
