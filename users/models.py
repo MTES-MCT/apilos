@@ -130,15 +130,9 @@ class User(AbstractUser):
             )
 
             if avenants_bailleur_id is not None:
-                effective_bailleur_id = avenants_bailleur_id
+                effective_bailleur_id = avenants_bailleur_id["programme__bailleur_id"]
             else:
-                effective_bailleur_id = (
-                    Convention.objects.filter(id=obj.id)
-                    .values("programme__bailleur_id")
-                    .first()
-                )
-            if effective_bailleur_id is not None:
-                effective_bailleur_id = effective_bailleur_id["programme__bailleur_id"]
+                effective_bailleur_id = obj.programme.bailleur_id
 
             bailleur_ids = [effective_bailleur_id]
             if bailleur.parent:
