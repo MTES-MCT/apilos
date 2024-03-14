@@ -242,19 +242,15 @@ class AddAvenantsService:
                     )
 
                 # Avenant type Bailleur
-                if (
-                    bailleur := self.form.cleaned_data["bailleur"]
-                    != self.convention.programme.bailleur
-                ):
+                bailleur = self.form.cleaned_data["bailleur"]
+                if bailleur and bailleur != self.convention.programme.bailleur:
                     self.convention.programme.bailleur = bailleur
                     self.convention.programme.save()
                     avenant.avenant_types.add(AvenantType.objects.get(nom="bailleur"))
 
                 # Avenant type Logements
-                if (
-                    nb_logements := self.form.cleaned_data["nb_logements"]
-                    != self.convention.lot.nb_logements
-                ):
+                nb_logements = self.form.cleaned_data["nb_logements"]
+                if nb_logements and nb_logements != self.convention.lot.nb_logements:
                     self.convention.lot.nb_logements = nb_logements
                     self.convention.lot.save()
                     avenant.avenant_types.add(AvenantType.objects.get(nom="logements"))
