@@ -120,7 +120,6 @@ class SelectOperationService:
 class AddConventionService:
     request: HttpRequest
     form: AddConventionForm
-    return_status: ReturnStatus
     operation: Operation
     convention: Convention | None = None
 
