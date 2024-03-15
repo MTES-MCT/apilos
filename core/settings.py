@@ -593,6 +593,8 @@ FLAG_NEW_SEARCH = "nouvelle_recherche"
 FLAG_ADD_CONVENTION = "ajout_convention"
 SWITCH_NEW_CONVENTION_KPI = "convention_kpi"
 SWITCH_NEW_SEARCH_HIDE_SORT_BUTTON = "cacher_trier_par"
+SWITCH_DISABLE_FINAL_BAILLEUR = "disable_final_bailleur"
+
 WAFFLE_ENABLE_ADMIN_PAGES = False
 MIDDLEWARE += ["waffle.middleware.WaffleMiddleware"]
 
