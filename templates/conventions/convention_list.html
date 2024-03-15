@@ -6,30 +6,6 @@
     <div class="fr-container fr-px-3w fr-mb-3w">
         <div class="fr-grid-row fr-grid-row--gutters fr-card fr-card--no-border">
             <div class="fr-col-md-12">
-
-                {% switch "cacher_trier_par" %}
-                {% else %}
-                    {% with order_fields=request|get_available_order_fields:url_name %}
-                        {% if order_fields %}
-                            <details class="apilos-order-menu">
-                                <summary class="fr-grid-row fr-grid-row--right">Trier par
-                                    <span class="apilos-order-name fr-link">{{order_fields|get_ordervalue:order_by}}</span>
-                                    <span class="fr-icon-arrow-down-s-line"></span>
-                                </summary>
-                                <div class="fr-grid-row fr-grid-row--right">
-                                    <div class="apilos-order-menu--open fr-p-2w">
-                                        {% for order_key, order_value in order_fields.items %}
-                                            <div  class="fr-py-1w">
-                                                {% include "common/table/display_order_item.html" %}
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </details>
-                        {% endif %}
-                    {% endwith %}
-                {% endswitch %}
-
                 {% if filtered_conventions_count > 0 %}
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table aria-label="Conventions">

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.http.request import HttpRequest
 from django.test import TestCase
 from django.urls import reverse
-from waffle.testutils import override_flag
+from waffle.testutils import override_switch
 
 from conventions.models import ConventionStatut
 from conventions.services.search import UserConventionSearchService
@@ -35,11 +35,11 @@ class ConventionIndexViewTests(TestCase):
     def test_get_index(self):
         self._login()
 
-        with override_flag(settings.FLAG_NEW_SEARCH, active=True):
+        with override_switch(settings.SWITCH_NEW_SEARCH, active=True):
             response = self.client.get(reverse("conventions:index"))
             self.assertRedirects(response, reverse("conventions:search"))
 
-        with override_flag(settings.FLAG_NEW_SEARCH, active=False):
+        with override_switch(settings.SWITCH_NEW_SEARCH, active=False):
             response = self.client.get(reverse("conventions:index"))
             self.assertRedirects(response, reverse("conventions:search_instruction"))
 

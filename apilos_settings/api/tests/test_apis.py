@@ -138,7 +138,7 @@ class ConventionKPIAPITest(APITestCase):
         self.assertEqual(response.data, expected)
 
 
-@override_switch(settings.SWITCH_NEW_CONVENTION_KPI, active=True)
+@override_switch(settings.SWITCH_NEW_SEARCH, active=True)
 @override_settings(USE_MOCKED_SIAP_CLIENT=True)
 @patch("users.models.User.conventions", Mock(return_value=Convention.objects))
 class ConventionKPIAPINewSearchTest(ParametrizedTestCase, APITestCase):
