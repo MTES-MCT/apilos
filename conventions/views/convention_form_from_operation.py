@@ -98,18 +98,14 @@ class AddConventionView(
 
         service = AddConventionService(request=request, operation=operation)
         if request.method == "POST":
-            service.save()
-            if (
-                service.return_status == utils.ReturnStatus.SUCCESS
-                and service.convention
-            ):
+            save_status = service.save()
+            if save_status == utils.ReturnStatus.SUCCESS and service.convention:
                 return HttpResponseRedirect(
                     reverse(
                         "conventions:from_operation_add_avenants",
                         kwargs={"convention_uuid": service.convention.uuid},
                     )
                 )
-
         context = self.get_context_data(**kwargs) | {
             "form": service.form,
             "operation": operation,
