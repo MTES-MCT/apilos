@@ -626,8 +626,7 @@ def test_conventions_visibility_bailleur_avenant(db):
     assert not user2.has_object_permission(avenant1)
     assert not user2.has_object_permission(avenant2)
 
-    # Change avenant statut to SIGNEE
-    avenant2.statut = ConventionStatut.SIGNEE.label
+    avenant2.statut = ConventionStatut.CORRECTION.label
     avenant2.save()
 
     assert user1.conventions().count() == 1
