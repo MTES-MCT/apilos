@@ -16,15 +16,9 @@ APiLos est un produit de la plateforme SIAP (Système d'information des aides à
 
 La plateforme est développé avec le framework Django et son moteur de template par défaut.
 
+Les librairies Javascript nécessaires à l'application sont compilés par l'aplication [Parcel.js](https://parceljs.org/)
+
 Le design de l'interface suit le [Système de design de l'état](https://www.systeme-de-design.gouv.fr/)
-
-DETAILS DE LA GENERATION DE DOC:
-
-- La génération de document de convention au format .docx est prise en charge par la librairie [python-docx-template](https://docxtpl.readthedocs.io/en/latest/) qui utilise le moteur de template Jinja2 pour générer des documents docx
-
-- Le package openpyxl est utilisé pour l'interprétation des fichier xlsx (import de tableaux)
-
-DETAILS DE LA COMPILATION JS et CSS avec Parcel
 
 APiLos utilise le SSO CERBERE du Minitère de la transition écologique pour authetifier ses utilisateurs, les habilitations (gestion des droits et périmètres) sont fournis par le SIAP.
 
@@ -92,13 +86,7 @@ Pour en plus de détails, merci de se référer à la documentation sur [DEPLOIE
 
 ### Installation de la plateforme en local (Developpeurs)
 
-Trouver les détails d'installation de l'application en local pour le dévellopement et les détails techniques sur la documentation dédiée : [DEVELOPPEUR.md](DEVELOPPEUR.md)
-
-### Population : permission des roles et départements
-
-```python manage.py loaddata auth.json departements.json```
-
-Cette commande est excutée lors du déploiement de l'application juste après la migration
+Trouver les détails d'installation de l'application en local pour le développement et les détails techniques sur la documentation dédiée : [DEVELOPPEUR.md](DEVELOPPEUR.md)
 
 ### Envoi de mails
 
@@ -181,7 +169,7 @@ Lorsqu'un utilisateur se connecte sur APiLos:
 1. APilos crée le Bailleur ou l'Administration de l'habilitation active de l'utilisateur si cette entité n'existe pas déjà
 1. Les permissions associées à l'habilitation active sont stockées en session.
 
-Lorsqu'un utilisateur accède aux conventions liées à une opération… TODO
+Lorsqu'un utilisateur accède aux conventions liées à une opération… TODO : à continuer / voir aussi ici les répétition avec la doc dans SIAPClient.md
 
 Les objets partagés par le SIAP et repris dans APiLos sont :
 

@@ -4,6 +4,43 @@ Cette documentation décrit toutes les étapes nécessaires à l'intallation et 
 
 Les règles et standards de codage y sont décrits
 
+## Quelques détails sur la stack technique utilisée
+
+### Framework et langages de programmation
+
+#### Django / Python
+
+On utilise le framework python Django
+
+Dans la plus part des cas la logique logicielle est découpée comme suit
+
+* Les vues : prennent en charges les permissions et affichages des pages
+* Les services : prennent en charge la logique métier avec l'execution des formulaires
+* Les formulaires : définissent les règles métiers
+* Les models : assurent la cohérence du schéma et des objets en base de données
+
+##### Génération de documents xls et pdf
+
+APiLos est un outils permettant de générer un document contractuel de convention APL.
+
+La génération de document de convention au format .docx est prise en charge par la librairie [python-docx-template](https://docxtpl.readthedocs.io/en/latest/) qui utilise le moteur de template Jinja2 pour modifier le template des documents de conventions APL. Les templates de docuements sont dans le dossier [./documents](./documents/)
+
+Une fois la convention validée par les deux parties, celle-ci est envoyée au format pdf par email au bailleur. Le service ConvertAPI est utilisé pour générer une version pdf du document docx.
+
+##### Import de firchiers excel
+
+Lors de l'instruction des conventions, les bailleurs téléversent des tableaux de cadastres, financements, logements, annexes. Le package openpyxl est utilisé pour l'interprétation des fichiers xlsx
+
+#### Javascript
+
+Peu de JS est utilisé dans l'application. Les dépendances sont déclarées dans le fichier [package.json](./package.json)
+
+Avant de lancer l'application, il est nécessaire d'installer ces dépendances:
+
+```sh
+npm install
+```
+
 ## Installation
 
 La plateforme APiLos est open source et la gestion de version est assuré via Github. La première étape est donc de cloner ce repository github.
@@ -54,6 +91,8 @@ DB_PORT=5433
 
 ### Installer les dépendances python
 
+On utilise pip-tools pour gérer les dépendances `python`
+
 ```sh
 pip install pip-tools
 pip install -r requirements.txt -r dev-requirements.txt
@@ -93,19 +132,15 @@ python manage.py createsuperuser
 
 ## Lancer de l'application
 
+On utilise la librairie  `honcho` en environnement de développement pour lancer les services django server et celery workers dont les commandes sont définis dans le fichier [Procfile.dev](./Procfile.dev)
+
 ```sh
-python manage.py runserver 0.0.0.0:8001
+honcho start -f Procfile.dev
 ```
 
-L'application est désormais disponible [http://localhost:8001](http://localhost:8001)
+L'application est désormais disponible à l'adresse [http://localhost:8001](http://localhost:8001)
 
 ### Population de la base de donnnées en environnement de développement
-
-Ajout les bailleurs, administrations, programmes, lots, logements, types de stationnement issue galion
-
-```sh
-python manage.py import_galion
-```
 
 Ajout de bailleurs, administrations, programmes et lots de test
 
@@ -139,10 +174,14 @@ CLAMAV_SERVICE_URL=http://localhost:3310
 
 ### Tests
 
+La librairie pytest est utilisée pour lancer les tests.
+Quelques tests d'intégration utilisent la libraire `beautifulsoup` quand il est nécessaire d'inspecter le DOM.
+La librairie factory_boy est utilisé pour gérer des fixtures
+
 Les tests sont organisés comme suit :
 
-- Tests unitaires : APPNAME/tests/models/…
-- Tests integration : APPNAME/tests/views/… APPNAME/tests/services/…
+* Tests unitaires : APPNAME/tests/models/…
+* Tests integration : APPNAME/tests/views/… APPNAME/tests/services/…
 
 ### Lancement des tests
 
@@ -236,6 +275,8 @@ pg_restore -d "${DB_URL}" --clean --no-acl --no-owner --no-privileges "${DUMP_FI
 
 ## Utilisateurs
 
+DEPRECATED ?
+
 L'import des fixtures crée plusieurs utilisateurs utiles lors du développement
 
 |             | identifiant      | mot de passe | email                       |
@@ -243,15 +284,4 @@ L'import des fixtures crée plusieurs utilisateurs utiles lors du développement
 | bailleur    | demo.bailleur    | demo.12345   | demo.bailleur@oudard.org    |
 | instructeur | demo.instructeur | instru12345  | demo.instructeur@oudard.org |
 
-## Commandes
-
-Certaines [commandes Django](https://docs.djangoproject.com/fr/4.2/ref/django-admin/) ont été décrites, et peuvent être executées en local ou sur un serveur de production.
-
-### `./manage.py remove-duplicate-siap-users`
-
-Supprime les comptes des utilisateurs de la plateforme autonome si ils disposent d'un compte APiLos en version SIAP.
-
-Options :
-
-- **--dry-run** : exécute la commande sans rien écrire en base de données
-- **--verbose** : affiche la liste des utilisateurs à supprimer
+TODO : décrire ici le mode autonome et le mode SIAP
