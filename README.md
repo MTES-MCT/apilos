@@ -20,7 +20,7 @@ Les librairies Javascript nécessaires à l'application sont compilés par l'apl
 
 Le design de l'interface suit le [Système de design de l'état](https://www.systeme-de-design.gouv.fr/)
 
-APiLos utilise le SSO CERBERE du Minitère de la transition écologique pour authetifier ses utilisateurs, les habilitations (gestion des droits et périmètres) sont fournis par le SIAP.
+APiLos utilise le SSO CERBERE du Minitère de la transition écologique pour authentifier ses utilisateurs. Les habilitations (gestion des droits et périmètres) sont fournies par le SIAP.
 
 ![Architecture APilos](static/img/ArchitectureAPiLos.jpg)
 
@@ -30,10 +30,10 @@ Les solutions tierces utilisées par APiLos:
 - CERBERE : SSO - Authentification des utilisateurs
 - Scalingo : hébergement de la solution (cloud souverain)
 - Scaleway : stockage de fichiers compatible avec le protocole S3
-- Brevo : envoie de courriels transactionnels
+- Brevo : envoi de courriels transactionnels
 - ConvertAPI : conversion de document de convention au format PDF
 - Sentry : monitoring logiciel
-- Github : gestion des versions du code source d’ APiLos et chaine de tests et de mise en production (CI/CD)
+- Github : gestion des versions du code source d’ APiLos et chaîne de tests et de mise en production (CI/CD)
 
 ### Qualité de code
 
@@ -52,9 +52,9 @@ Lors de chaque commit, un controle de qualité est exécuté sur tous les fichie
 
 La branche `main` est protégée : il n'est pas possible de la modifier autre que par une Pull Request.
 
-Pour chaque fonctionnalité, le développeur fait un Pull Request sur github de sa branche de développement vers la branche `main`. Grâce à la fonctionnalité [CODEOWNERS](.github/CODEOWNERS) de github, la revue de la PR est assignée à 2 membres de l'équipe de développeur d'APiLos.
+Pour chaque fonctionnalité, le développeur fait une Pull Request sur github de sa branche de développement vers la branche `main`. Grâce à la fonctionnalité [CODEOWNERS](.github/CODEOWNERS) de github, la revue de la PR est assignée à 2 membres de l'équipe de développeur d'APiLos.
 
-Une Pull Request ne peut pas être "mergée" tant qu'elle n'a pas au moins une approbation d'un membre de l'équipe. Pour les Pull Request qui modifie l'architecture de l'application, qui modifie de manière importante le comportement de l'application ou qui met à jour une version majeur d'une dépendance, on préfèrera avoir 2 approbations.
+Une Pull Request ne peut pas être "mergée" tant qu'elle n'a pas au moins une approbation d'un membre de l'équipe. Pour une Pull Request qui modifie l'architecture de l'application, qui modifie de manière importante le comportement de l'application ou qui met à jour une version majeur d'une dépendance, on préfèrera avoir 2 approbations.
 
 A chaque Pull Request, un certain nombre de controles sont exécutés.
 
@@ -119,7 +119,7 @@ erDiagram
 Notes :
 
 - Une Opération sur le SIAP peut-être appelé un Programme sur APiLos, Dans la mesure du possible, nous utiliserons `Opération` dans la documentation.
-- Une Opération contient un lot par type de finanacement
+- Une Opération contient un lot par type de financement
 
 #### Diagramme des statuts d'une convention
 
