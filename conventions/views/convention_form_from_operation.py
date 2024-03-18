@@ -13,7 +13,7 @@ from django.views.generic.base import (
 )
 from waffle.mixins import WaffleFlagMixin
 
-from conventions.models import Convention
+from conventions.models import ConventionStatut
 from conventions.services import utils
 from conventions.services.from_operation import (
     AddAvenantsService,
@@ -128,14 +128,19 @@ class AddAvenantsView(FromOperationBaseView, TemplateResponseMixin, ContextMixin
         return self._handle(request, *args, **kwargs)
 
     def _handle(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        convention = get_object_or_404(Convention, uuid=kwargs.get("convention_uuid"))
+        convention = get_object_or_404(
+            request.user.conventions().filter(statut=ConventionStatut.SIGNEE.label),
+            uuid=kwargs.get("convention_uuid"),
+        )
 
-        service = AddAvenantsService(request=self.request, convention=convention)
+        service = AddAvenantsService(request=request, convention=convention)
         if request.method == "POST":
-            service.save()
+            if service.save() == utils.ReturnStatus.SUCCESS:
+                return HttpResponseRedirect(redirect_to=self.request.path)
 
         context = self.get_context_data(**kwargs) | {
-            "formset": service.formset,
+            "form": service.form,
             "convention": convention,
+            "avenants": convention.avenants.all(),
         }
         return self.render_to_response(context=context)
