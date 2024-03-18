@@ -121,6 +121,26 @@ Notes :
 - Une Opération sur le SIAP peut-être appelé un Programme sur APiLos, Dans la mesure du possible, nous utiliserons `Opération` dans la documentation.
 - Une Opération contient un lot par type de finanacement
 
+#### Diagramme des statuts d'une convention
+
+Représente la vie d'une convention
+
+```mermaid
+---
+title: Diagramme des statuts d'une convention
+---
+
+flowchart LR
+      Projet[En projet] --> Instruction[À instruire] --> ASigner[À signer] --> Valide --> Résiliation
+      Instruction --> Correction[Corrections requises]
+      Correction --> Instruction
+      Projet --> Annule[Annulation]
+      Instruction --> Annule
+      Correction --> Annule
+      Valide --> Dénonciation
+
+```
+
 #### Gestion des avenants
 
 Lors de la création d'avenant, l'ensemble des objets : Opération, Convention, Lot, Logement, Annexe, Type de stationnement, Financement liées à la convention sont dupliquées et les champs `parent_id` des objets Opérations, Lot et Convention se réfèrent aux objets de la convention principale. L'ordre des avenants est déterminé par leur date de création. il ne peux y avoir qu'un seul avenant en cours d'instruction par convention.
@@ -160,29 +180,6 @@ flowchart RL
     Avenant3 --> ConventionPrincipale
 ```
 
-#### Partage d'objet avec le SIAP
-
-Lorsqu'un utilisateur se connecte sur APiLos:
-
-1. APiLos vérifie l'authentification de l'utilisateur via CERBERE
-1. APiLos récupère les habilitations de l'utilisateur via le SIAP, l'habilitation active de l'utilisateur est transmise par le SIAP via le paramètre habilitation_id dans l'url. Si ce paramètre n'est pas présent, la première habilitation disponible dans la liste des habilitations récupérées du SIAP sera l'habilitation active.
-1. APilos crée le Bailleur ou l'Administration de l'habilitation active de l'utilisateur si cette entité n'existe pas déjà
-1. Les permissions associées à l'habilitation active sont stockées en session.
-
-Lorsqu'un utilisateur accède aux conventions liées à une opération… TODO : à continuer / voir aussi ici les répétition avec la doc dans SIAPClient.md
-
-Les objets partagés par le SIAP et repris dans APiLos sont :
-
-- Les Administrations
-  - champ pivot : `code_administration`
-  - champs repris lors de la création : …
-- Les Bailleurs
-  - champ pivot : `siren`
-- Les Opérations (opérations financées via le SIAP)
-  - champ pivot : `numero`
-- Les Lots ( un lot par financement et par Opération)
-  - champ pivot : `numero` de l'opération + `financement`
-
 ### Stockage de fichiers
 
 Les documents sont stockés sur un répertoire distant et souverain compatible avec le protocole S3 sur [Scaleway](https://console.scaleway.com/object-storage/buckets) ce processus est géré via la librairie python boto en combinaison avec le package default_storage de Django
@@ -200,6 +197,10 @@ Le monitoring logiciel est assuré via [Sentry](https://sentry.incubateur.net/or
 ### Monitoring système
 
 APiLos est monitoré par l'outil [Dashlord](https://dashlord.mte.incubateur.net/dashlord/url/apilos-beta-gouv-fr/) de la fabrique du numérique du Ministère de la Transition écologique et de la Cohésion des territoires. Dashlord inclut un monitoring via updown.io qui ping l'application toutes les 5 minutes.
+
+## SIAP
+
+Tous les détails concernant les interactions entre APiLos et la platefome SIAP sont décrites dans la documentation [SIAP-APiLos.md](./SIAP-APiLos.md)
 
 ## Protection des données
 

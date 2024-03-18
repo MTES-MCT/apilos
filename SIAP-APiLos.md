@@ -1,3 +1,6 @@
+
+
+
 # Documentation des interactions SIAP APiLos
 
 [Tableau de bord des développements communs entre SIAP et APiLos](https://airtable.com/shruWiCQNMkq6Wggk/tblNIOUJttSKoH866)
@@ -136,6 +139,92 @@ Les utilisateurs de type instructeur sont autoirisés à voir et modifier les op
 * Administration centrale
 
 Les utilisateurs de type administrateur sont autoirisés à voir et modifier les opérations, conventions et objects associés selon la géographie du profile : le département, la région ou la france entièrte définit par l'habilitation active.
+
+## Partage d'objet avec le SIAP
+
+Les objets de la plateforme de financement (SIAP) sont récupérés et créés à la demande sur APiLos dans 2 cas de figure
+
+1. Lorsqu'un utilisateur se connecte sur APiLos:
+
+    1. APiLos vérifie l'authentification de l'utilisateur via CERBERE
+    1. APiLos récupère les habilitations de l'utilisateur via le SIAP, l'habilitation active de l'utilisateur est transmise par le SIAP via le paramètre habilitation_id dans l'url. Si ce paramètre n'est pas présent, la première habilitation disponible dans la liste des habilitations récupérées du SIAP sera l'habilitation active.
+    1. APilos crée le Bailleur ou l'Administration de l'habilitation active de l'utilisateur si cette entité n'existe pas déjà
+    1. Les permissions associées à l'habilitation active sont stockées en session.
+
+2. Lorsqu'un utilisateur accède aux conventions liées à une opération
+
+    1. APiLos récupère les informations liées à l'opération financée
+    1. APiLos crée la Bailleur et l'Administration de l'opération si ces entités n'existent pas déjà
+    1. APiLos crée l'Opération si cette entité n'existent pas déjà
+    1. APiLos crée 1 lots par Aide (PLUS, PLAI, PLS…) si ces lot n'exitent pas déjà, note : l'aide PLAI_ADP (PLAI adapté) sont inclus dans dans l'aide PLAI et nefont pas l'objet de convention spécifique
+    1. APiLos crée 1 convention par lots si cette convention n'existe pas déjà
+
+### Détails des objets partagés par le SIAP et repris dans APiLos
+
+On notera : `champ_siap` (`champ_apilos` details)
+
+* Les Administrations
+  * champ pivot : `code` (`code` de l'administration)
+  * champs repris lors de la création : `libelle` (`nom` de l'administration)
+
+* Les Bailleurs
+  * champ pivot : `siren`
+  * champs repris lors de la création :
+    * `nom` ou `raisonSociale` (`nom` du bailleur)
+    * `adresse` interprété des champs d'adresses du SIAP (`adresse`)
+    * `codePostal` (`code_postal`)
+    * `ville` interprété des champs d'adresses du SIAP (`ville`)
+    * `codeFamilleMO` (nature du bailleur)
+
+* Les Opérations (opérations financées via le SIAP)
+  * champ pivot : `numeroOperation` (numero_galion)
+  * champs repris lors de la création :
+    * `nomOperation` (`nom`)
+    * `adresse` interprété des champs d'adresses du SIAP (`adresse`)
+    * `code_postal` interprété des champs d'adresses du SIAP (`code_postal`)
+    * `ville` interprété des champs d'adresses du SIAP (`ville`)
+    * `commune`/`codeInsee` (`code_insee_commune`)
+    * `departement`/`codeInsee` (`code_insee_departement`)
+    * `region`/`codeInsee` (`code_insee_region`)
+    * `zonage123` (`zone_abc`)
+    * `zonageABC` (`zone_123`)
+    * `sansTravaux` ou `sousNatureOperation` (`type_operation`)
+    * `natureLogement` (`nature_logement`)
+
+* Les Lots ( un lot par financement et par Opération)
+  * champ pivot : `numero` de l'opération + `financement`
+  * champs repris lors de la création :
+    * `aide`/`code` (`financement`)
+    * selon les valeurs `nbLogementsIndividuels`, `nbLogementsCollectifs` (`type_habitat` COLLECTIF, INDIVIDUEL ou MIXTE),
+    * `nbLogementsIndividuels` + `nbLogementsCollectifs` (`nb_logements`)
+
+### Les valeurs des listes valuées et leurs correspondances
+
+#### Nature du bailleur (SIAP -> APiLos)
+
+* HLM -> HLM
+* SEM -> SEM
+* par défaut (toute autre valeur) -> Bailleurs privés
+
+#### Type de l'opération (dépend des champs `sansTravaux` ou `sousNatureOperation`) (SIAP -> APiLos)
+
+* Si `sansTravaux` = 1 -> SANSTRAVAUX
+* CNE -> NEUF
+* AAM -> ACQUISAMELIORATION
+* AST -> ACQUISSANSTRAVAUX
+* par défaut (toute autre valeur) -> SANSOBJET
+
+#### Nature logement (SIAP -> APiLos)
+
+* ALF -> AUTRE
+* HEB -> HEBERGEMENT
+* RES -> RESISDENCESOCIALE
+* PEF -> PENSIONSDEFAMILLE
+* REA -> RESIDENCEDACCUEIL
+* REU -> RESIDENCEUNIVERSITAIRE
+* RHVS -> RHVS
+* LOO -> LOGEMENTSORDINAIRES
+
 
 ## Pour tester le Client de l'API du SIAP dans un shell (Appel de l'application SIAP à partir du backend de l'application APiLos)
 
