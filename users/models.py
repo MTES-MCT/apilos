@@ -114,9 +114,7 @@ class User(AbstractUser):
                 id=obj.programme.bailleur_id
             )
 
-            if switch_is_active(settings.SWITCH_DISABLE_FINAL_BAILLEUR):
-                effective_bailleur_id = obj.programme.bailleur_id
-            else:
+            if switch_is_active(settings.SWITCH_VISIBILITY_AVENANT_BAILLEUR):
                 # This block aims to determine the effective bailleur_id for the conventions
                 # If there are no avenants, the effective bailleur_id is from the convention programme
                 # If there are avenants, the effective bailleur_id is the programme bailleur_id
@@ -140,6 +138,8 @@ class User(AbstractUser):
                     ]
                 else:
                     effective_bailleur_id = obj.programme.bailleur_id
+            else:
+                effective_bailleur_id = obj.programme.bailleur_id
 
             bailleur_ids = [effective_bailleur_id]
             if bailleur.parent:
@@ -463,9 +463,7 @@ class User(AbstractUser):
         if self.is_bailleur():
             convs = self._apply_geo_filters(convs)
 
-            if switch_is_active(settings.SWITCH_DISABLE_FINAL_BAILLEUR):
-                convs = convs.filter(programme__bailleur_id__in=self._bailleur_ids())
-            else:
+            if switch_is_active(settings.SWITCH_VISIBILITY_AVENANT_BAILLEUR):
                 # This block aims to determine the effective bailleur_id for the conventions
                 # If there are no avenants, the effective bailleur_id is from the convention programme
                 # If there are avenants, the effective bailleur_id is the programme bailleur_id
@@ -494,6 +492,8 @@ class User(AbstractUser):
                 # Then we filter the conventions so the effective bailleur_id matches
                 # the bailleur ids this bailleur can see
                 convs = convs.filter(effective_bailleur_id__in=self._bailleur_ids())
+            else:
+                convs = convs.filter(programme__bailleur_id__in=self._bailleur_ids())
 
             if self.id and self.filtre_departements.exists():
                 convs = convs.annotate(
