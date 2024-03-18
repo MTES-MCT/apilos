@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.db.models.functions import Substr
 from django.test import TestCase
 from django.test.client import RequestFactory
+from waffle.testutils import override_switch
 
 from apilos_settings.models import Departement
 from bailleurs.models import Bailleur
@@ -564,6 +566,7 @@ def _create_bailleur_and_user(group):
     return bailleur, user
 
 
+@override_switch(settings.SWITCH_VISIBILITY_AVENANT_BAILLEUR, active=True)
 def test_conventions_visibility_bailleur_avenant(db):
     # Create three bailleurs
     super_user = UserFactory(is_staff=True, is_superuser=True)
