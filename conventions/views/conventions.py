@@ -413,7 +413,7 @@ class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
             {
                 "form": loyer_simulateur_form,
                 "tabs": self.get_tabs(),
-                "new_search": switch_is_active(request, settings.SWITCH_NEW_SEARCH),
+                "new_search": switch_is_active(settings.SWITCH_NEW_SEARCH),
             },
         )
 
