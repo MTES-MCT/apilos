@@ -42,7 +42,6 @@
 
 
         <!-- Matomo -->
-
         {% if ENVIRONMENT == "production" %}
             <script src="https://stats.beta.gouv.fr/matomo.js" async nonce="{{request.csp_nonce}}"></script>
             <script type="text/javascript" nonce="{{request.csp_nonce}}">

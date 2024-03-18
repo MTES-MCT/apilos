@@ -382,6 +382,7 @@ CSP_SCRIPT_SRC = (
     # Crisp
     "https://client.crisp.chat",
     "https://settings.crisp.chat",
+    "https://stats.beta.gouv.fr/matomo.js",
 )
 CSP_IMG_SRC = (
     "'self'",
