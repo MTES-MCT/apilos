@@ -167,7 +167,7 @@ class ConventionKPI(APIView):
             request.user.conventions().filter(parent_id__isnull=True).values("statut")
         )
 
-        if switch_is_active(settings.SWITCH_NEW_CONVENTION_KPI):
+        if switch_is_active(settings.SWITCH_NEW_SEARCH):
             list_conv_kpi = self._build_conv_kpi_list(request, queryset)
         else:
             list_conv_kpi = self._build_conv_kpi_list_old(

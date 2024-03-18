@@ -22,8 +22,8 @@ from django.urls import resolve, reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.views.generic import RedirectView
-from waffle import flag_is_active
-from waffle.mixins import WaffleFlagMixin
+from waffle import switch_is_active
+from waffle.mixins import WaffleSwitchMixin
 from zipfile import ZipFile
 
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
@@ -64,7 +64,7 @@ from upload.services import UploadService
 
 class ConventionIndexView(RedirectView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if flag_is_active(request, settings.FLAG_NEW_SEARCH):
+        if switch_is_active(settings.SWITCH_NEW_SEARCH):
             self.url = reverse(f"conventions:{ConventionSearchView.name}")
         else:
             self.url = reverse(f"conventions:{ConventionEnInstructionSearchView.name}")
@@ -317,8 +317,8 @@ class ConventionTermineesSearchView(ConventionTabSearchBaseView):
         ]
 
 
-class ConventionSearchView(WaffleFlagMixin, ConventionSearchBaseView):
-    waffle_flag = settings.FLAG_NEW_SEARCH
+class ConventionSearchView(WaffleSwitchMixin, ConventionSearchBaseView):
+    waffle_switch = settings.SWITCH_NEW_SEARCH
 
     service_class = UserConventionSmartSearchService
     name = "search"
@@ -395,7 +395,7 @@ class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
                 "tabs": self.get_tabs(),
                 "montant_actualise": montant_actualise,
                 "annee_validite": annee_validite,
-                "new_search": flag_is_active(request, settings.FLAG_NEW_SEARCH),
+                "new_search": switch_is_active(settings.SWITCH_NEW_SEARCH),
             },
         )
 
@@ -413,7 +413,7 @@ class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
             {
                 "form": loyer_simulateur_form,
                 "tabs": self.get_tabs(),
-                "new_search": flag_is_active(request, settings.FLAG_NEW_SEARCH),
+                "new_search": switch_is_active(request, settings.SWITCH_NEW_SEARCH),
             },
         )
 

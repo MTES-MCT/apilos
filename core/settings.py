@@ -589,11 +589,9 @@ DEBUG_SEARCH_SCORING = get_env_variable(
 )
 
 # Waffle
-FLAG_NEW_SEARCH = "nouvelle_recherche"
-FLAG_ADD_CONVENTION = "ajout_convention"
-SWITCH_NEW_CONVENTION_KPI = "convention_kpi"
-SWITCH_NEW_SEARCH_HIDE_SORT_BUTTON = "cacher_trier_par"
+SWITCH_NEW_SEARCH = "new_search"
 SWITCH_VISIBILITY_AVENANT_BAILLEUR = "switch_visibility_avenant_bailleur"
+FLAG_ADD_CONVENTION = "ajout_convention"
 
 WAFFLE_ENABLE_ADMIN_PAGES = False
 MIDDLEWARE += ["waffle.middleware.WaffleMiddleware"]
