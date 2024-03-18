@@ -123,6 +123,7 @@ class User(AbstractUser):
                     Convention.objects.filter(
                         parent_id=Coalesce(obj.parent_id, obj.id),
                         statut__in=[
+                            ConventionStatut.CORRECTION.label,
                             ConventionStatut.A_SIGNER.label,
                             ConventionStatut.SIGNEE.label,
                         ],
@@ -472,6 +473,7 @@ class User(AbstractUser):
                     convs.filter(
                         parent_id=Coalesce(OuterRef("parent_id"), OuterRef("id")),
                         statut__in=[
+                            ConventionStatut.CORRECTION.label,
                             ConventionStatut.A_SIGNER.label,
                             ConventionStatut.SIGNEE.label,
                         ],
