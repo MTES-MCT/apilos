@@ -25,7 +25,7 @@ class StepperTest(ParametrizedTestCase, SimpleTestCase):
             param(
                 1,
                 {
-                    "current_step": "Sélectioner l'opération",
+                    "current_step": "Sélectionner l'opération",
                     "next_step": "Créer la convention dans Apilos",
                     "number": 1,
                     "total": 3,
