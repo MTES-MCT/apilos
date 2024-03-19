@@ -66,7 +66,7 @@
                                         <td>{{ convention.lot.financement }}</td>
                                         <td>{{ convention.lot.nb_logements }}</td>
                                         <td>
-                                            <a target="_blank" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
+                                            <a target="_blank" rel="noopener" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
                                                 <span class="fr-icon-eye-line" aria-hidden="true"></span>
                                             </a>
                                         </td>
