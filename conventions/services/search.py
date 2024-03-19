@@ -368,12 +368,12 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                 if ConventionStatut.RESILIEE not in self.statuts:
                     _statut_filters |= Q(
                         statut=ConventionStatut.RESILIEE.label,
-                        date_resiliation__lt=date.today(),
+                        date_resiliation__gt=date.today(),
                     )
                 if ConventionStatut.DENONCEE not in self.statuts:
                     _statut_filters |= Q(
                         statut=ConventionStatut.DENONCEE.label,
-                        date_denonciation__lt=date.today(),
+                        date_denonciation__gt=date.today(),
                     )
 
             queryset = queryset.filter(_statut_filters)
