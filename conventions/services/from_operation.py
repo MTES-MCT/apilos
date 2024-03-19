@@ -19,7 +19,7 @@ from conventions.services.utils import ReturnStatus
 from programmes.models import NatureLogement, Programme
 from programmes.models.choices import FinancementEDD
 from programmes.models.models import Lot
-from siap.exceptions import DuplicatedOperationSIAPException, SIAPException
+from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.utils import (
     get_or_create_programme_from_siap_operation,
@@ -142,13 +142,11 @@ class AddConventionService:
         if operation is None:
             return Convention.objects.none()
 
-        programmes = Programme.objects.filter(numero_galion=self.operation.numero)
-
-        if programmes.count() > 1:
-            raise DuplicatedOperationSIAPException(
-                numero_operation=self.operation.numero
-            )
-        programme = programmes.first()
+        programme = (
+            Programme.objects.filter(numero_galion=self.operation.numero)
+            .order_by("-cree_le")
+            .first()
+        )
         if programme is None:
             return Convention.objects.none()
 
