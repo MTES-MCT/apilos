@@ -28,11 +28,11 @@
 
         {% else %}
 
-            <div class="fr-notice fr-notice--info">
-                <div class="fr-container">
+            <div class="apilos-notice-background fr-notice fr-notice--info fr-mb-5w fr-mt-1w fr-pt-3w">
+                <div class="fr-container fr-px-5w">
                     <h3>{{operation.nom}}</h3>
                     <div class="apilos-input-group--inline">
-                        <div class="fr-grid-row fr-mt-2w apilos-text--black">
+                        <div class="fr-grid-row fr-mt-1w apilos-text--black">
                             <div class="fr-pr-2w fr-text--sm apilos-separator">
                                 <a href="{% url 'programmes:operation_conventions' numero_operation=operation.numero %}">
                                     Opération n°{{operation.numero}}
@@ -42,7 +42,7 @@
                             <div class="fr-px-2w fr-text--sm">Bailleur : {{operation.bailleur}}</div>
                         </div>
                     </div>
-                    <div class="fr-table fr-table--bordered apilos-text--black">
+                    <div class="fr-table fr-table--bordered fr-table--layout-fixed apilos-text--black fr-my-3w fr-p-3w fr-pt-7w">
                         <table>
                             <caption class="fr-text--sm">Convention(s) liée(s) à cette opération et enregistrée(s) dans le SIAP / Apilos</caption>
                             <thead>
@@ -57,11 +57,19 @@
                             <tbody>
                                 {% for convention in conventions %}
                                     <tr>
-                                        <td>{{ convention.statut }}</td>
+                                        <td>
+                                            <div class="fr-pr-2w">
+                                                {% include "conventions/home/statut_tag.html"  %}
+                                            </div>
+                                        </td>
                                         <td>{{ convention.numero|default_if_none:"" }}</td>
                                         <td>{{ convention.lot.financement }}</td>
                                         <td>{{ convention.lot.nb_logements }}</td>
-                                        <td>Lien</td>
+                                        <td>
+                                            <a target="_blank" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
+                                                <span class="fr-icon-eye-line" aria-hidden="true"></span>
+                                            </a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

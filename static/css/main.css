@@ -1072,3 +1072,21 @@ table .apilos-badge {
 .hidden {
   display: none;
 }
+
+
+.apilos-notice-background {
+  background-color: #dde5ff;
+}
+.fr-notice .fr-table {
+  background-color: var(--background-default-grey);
+  border-radius: 0.5em;
+}
+.fr-notice .fr-table caption {
+  top: 1.5em;
+}
+.fr-notice .fr-table thead {
+  background-color: #f4f6ff;
+}
+.fr-notice .fr-table tbody {
+  background-color: var(--background-default-grey);
+}
