@@ -1090,3 +1090,9 @@ table .apilos-badge {
 .fr-notice .fr-table tbody {
   background-color: var(--background-default-grey);
 }
+.fr-notice .fr-table tbody a {
+  background-image: none;
+}
+.apilos-no-dsfr-target[target="_blank"]::after {
+  content: none;
+}
