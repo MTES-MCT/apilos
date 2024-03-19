@@ -205,9 +205,9 @@ class TestUserConventionSmartSearchService(
 
         ConventionFactory(
             uuid="53702e67-60c1-431e-baa9-449960cf8bcb",
-            numero="QHKINZYDKDLSNJZ",
+            numero="QHKINZYDKDLSNJW",
             statut=ConventionStatut.RESILIEE.label,
-            financement=Financement.PLUS,
+            financement=Financement.PALULOS,
             televersement_convention_signee_le="2014-01-01",
             date_resiliation=date.today() + timedelta(days=1),
             lot__programme=programme,
@@ -215,11 +215,31 @@ class TestUserConventionSmartSearchService(
 
         ConventionFactory(
             uuid="4c337449-4fbc-42de-9f93-948a4dd65ee1",
-            numero="QHKINZYDKDLSNJY",
+            numero="QHKINZYDKDLSNJX",
             statut=ConventionStatut.RESILIEE.label,
-            financement=Financement.PLAI,
+            financement=Financement.PALULOS,
             televersement_convention_signee_le="2014-01-01",
             date_resiliation=date.today() - timedelta(days=1),
+            lot__programme=programme,
+        )
+
+        ConventionFactory(
+            uuid="60511ac3-f979-4a13-917d-1c746b4e4390",
+            numero="QHKINZYDKDLSNJY",
+            statut=ConventionStatut.DENONCEE.label,
+            financement=Financement.PALULOS,
+            televersement_convention_signee_le="2014-01-01",
+            date_denonciation=date.today() + timedelta(days=1),
+            lot__programme=programme,
+        )
+
+        ConventionFactory(
+            uuid="75d19956-2561-4987-9dbf-497803e152f8",
+            numero="QHKINZYDKDLSNJZ",
+            statut=ConventionStatut.DENONCEE.label,
+            financement=Financement.PALULOS,
+            televersement_convention_signee_le="2014-01-01",
+            date_denonciation=date.today() - timedelta(days=1),
             lot__programme=programme,
         )
 
@@ -333,10 +353,11 @@ class TestUserConventionSmartSearchService(
             param(
                 {"statuts": ConventionStatut.SIGNEE.label},
                 [
+                    "60511ac3-f979-4a13-917d-1c746b4e4390",
                     "53702e67-60c1-431e-baa9-449960cf8bcb",
                     "fbb9890f-171b-402d-a35e-71e1bd791b70",
                 ],
-                id="conv_valide_et_resiliee",
+                id="conv_en_resiliation",
             ),
         ],
     )
