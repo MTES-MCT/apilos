@@ -17,6 +17,7 @@ from conventions.models.avenant_type import AvenantType
 from conventions.services.file import ConventionFileService
 from conventions.services.utils import ReturnStatus
 from programmes.models import NatureLogement, Programme
+from programmes.models.choices import FinancementEDD
 from programmes.models.models import Lot
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
@@ -120,18 +121,46 @@ class SelectOperationService:
 class AddConventionService:
     request: HttpRequest
     form: AddConventionForm
-    operation: Operation
+    operation: Operation | None = None
     convention: Convention | None = None
+    conventions: list[Convention]
 
-    def __init__(self, request: HttpRequest, operation: Operation) -> None:
+    def __init__(self, request: HttpRequest, operation: Operation | None) -> None:
         self.request = request
         self.operation = operation
+        self.conventions = self._get_conventions(operation=self.operation)
+        financements = self._get_financements(conventions=self.conventions)
 
-        # TODO: exclure des choix de financement du formulaire, si une convention existe déjà pour ce programme
         if request.method == "POST":
-            self.form = AddConventionForm(request.POST, request.FILES)
+            self.form = AddConventionForm(
+                request.POST, request.FILES, financements=financements
+            )
         else:
-            self.form = AddConventionForm()
+            self.form = AddConventionForm(financements=financements)
+
+    def _get_conventions(self, operation: Operation | None) -> QuerySet[Convention]:
+        if operation is None:
+            return Convention.objects.none()
+
+        programme = (
+            Programme.objects.filter(numero_galion=self.operation.numero)
+            .order_by("-cree_le")
+            .first()
+        )
+        if programme is None:
+            return Convention.objects.none()
+
+        return Convention.objects.filter(programme_id=programme.id)
+
+    def _get_financements(
+        self, conventions: QuerySet[Convention]
+    ) -> list[tuple[str, str]]:
+        financements = []
+        existing_financements = conventions.values_list("lot__financement", flat=True)
+        for financement in FinancementEDD.choices:
+            if financement[0] not in existing_financements:
+                financements.append(financement)
+        return financements
 
     def _create_lot(self, programme: Programme) -> Lot:
         return Lot.objects.create(

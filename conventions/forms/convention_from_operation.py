@@ -6,6 +6,11 @@ from programmes.models.choices import FinancementEDD
 
 
 class AddConventionForm(forms.Form):
+
+    def __init__(self, *args, financements: list[tuple[str, str]], **kwargs) -> None:
+        self.declared_fields["financement"].choices = financements
+        super().__init__(*args, **kwargs)
+
     numero = forms.CharField(
         label="Numéro de la convention",
         max_length=255,
