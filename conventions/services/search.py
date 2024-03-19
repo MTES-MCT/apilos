@@ -1,5 +1,6 @@
 from collections import defaultdict
 from copy import copy
+from datetime import date
 
 from django.conf import settings
 from django.contrib.postgres.search import SearchQuery, SearchRank, TrigramSimilarity
@@ -361,7 +362,21 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
 
     def _build_filters(self, queryset: QuerySet) -> QuerySet:
         if self.statuts:
-            queryset = queryset.filter(statut__in=[s.label for s in self.statuts])
+            _statut_filters = Q(statut__in=[s.label for s in self.statuts])
+
+            if ConventionStatut.SIGNEE in self.statuts:
+                if ConventionStatut.RESILIEE not in self.statuts:
+                    _statut_filters |= Q(
+                        statut=ConventionStatut.RESILIEE.label,
+                        date_resiliation__lt=date.today(),
+                    )
+                if ConventionStatut.DENONCEE not in self.statuts:
+                    _statut_filters |= Q(
+                        statut=ConventionStatut.DENONCEE.label,
+                        date_denonciation__lt=date.today(),
+                    )
+
+            queryset = queryset.filter(_statut_filters)
 
         if self.anru:
             queryset = queryset.filter(programme__anru=True)
