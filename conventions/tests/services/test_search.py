@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+
 from django.test import TestCase
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
 
@@ -186,6 +188,41 @@ class TestUserConventionSmartSearchService(
             lot__programme=convention.programme,
         )
 
+        programme = ProgrammeFactory(
+            anru=False,
+            numero_galion="2014E891109087",
+            nom="blah blah blah",
+            ville="Marseille",
+            adresse="Rue de la canebière",
+            code_postal="13000",
+            nature_logement=NatureLogement.RESIDENCEUNIVERSITAIRE,
+            bailleur=BailleurFactory(
+                uuid="d9639714-87c5-4602-bb9d-a83dabdb304a",
+                nom="bailleur 2",
+                siret="123456789",
+            ),
+        )
+
+        ConventionFactory(
+            uuid="53702e67-60c1-431e-baa9-449960cf8bcb",
+            numero="QHKINZYDKDLSNJZ",
+            statut=ConventionStatut.RESILIEE.label,
+            financement=Financement.PLUS,
+            televersement_convention_signee_le="2014-01-01",
+            date_resiliation=date.today() + timedelta(days=1),
+            lot__programme=programme,
+        )
+
+        ConventionFactory(
+            uuid="4c337449-4fbc-42de-9f93-948a4dd65ee1",
+            numero="QHKINZYDKDLSNJY",
+            statut=ConventionStatut.RESILIEE.label,
+            financement=Financement.PLAI,
+            televersement_convention_signee_le="2014-01-01",
+            date_resiliation=date.today() - timedelta(days=1),
+            lot__programme=programme,
+        )
+
     @parametrize(
         "search_filters, expected",
         [
@@ -292,6 +329,14 @@ class TestUserConventionSmartSearchService(
                 {"search_lieu": "bourg-en-bresss 01012"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
                 id="programme_commune_et_code_postal",
+            ),
+            param(
+                {"statuts": ConventionStatut.SIGNEE.label},
+                [
+                    "53702e67-60c1-431e-baa9-449960cf8bcb",
+                    "fbb9890f-171b-402d-a35e-71e1bd791b70",
+                ],
+                id="conv_valide_et_resiliee",
             ),
         ],
     )
