@@ -1073,18 +1073,6 @@ table .apilos-badge {
   display: none;
 }
 
-.apilos-info-operation {
-  background: #f4f6ff;
-  padding: 1.5em;
-}
-.apilos-info-operation span{
-  padding-right: 1em;
-  border-right: #e5e5e5 solid 2px;
-  margin-right: 1em;
-}
-.apilos-info-operation span:last-child {
-  border-right: none;
-}
-.apilos-info-operation .fr-table caption {
+/* .fr-notice .fr-table caption {
   font-size: 1.0rem;
-}
+} */

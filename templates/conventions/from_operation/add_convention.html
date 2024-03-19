@@ -28,37 +28,45 @@
 
         {% else %}
 
-            <div class="apilos-info-operation fr-mb-5w">
-                <h3>{{operation.nom}}</h3>
-                <div class="fr-col-12">
-                    <span><u>Opération n°{{operation.numero}}</u></span>
-                    <span>{{operation.commune}}</span>
-                    <span>Bailleur : {{operation.bailleur}}</span>
-                </div>
-                <div class="fr-table fr-table--bordered">
-                    <table>
-                        <caption>Convention(s) liée(s) à cette opération et enregistrée(s) dans le SIAP / Apilos</caption>
-                        <thead>
-                            <tr>
-                                <th scope="col">Statut</th>
-                                <th scope="col">Numéro de convention</th>
-                                <th scope="col">Financement</th>
-                                <th scope="col">Logements</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for convention in conventions %}
+            <div class="fr-notice fr-notice--info">
+                <div class="fr-container">
+                    <h3>{{operation.nom}}</h3>
+                    <div class="apilos-input-group--inline">
+                        <div class="fr-grid-row fr-mt-2w apilos-text--black">
+                            <div class="fr-pr-2w fr-text--sm apilos-separator">
+                                <a href="{% url 'programmes:operation_conventions' numero_operation=operation.numero %}">
+                                    Opération n°{{operation.numero}}
+                                </a>
+                            </div>
+                            <div class="fr-px-2w fr-text--sm apilos-separator">{{operation.commune}}</div>
+                            <div class="fr-px-2w fr-text--sm">Bailleur : {{operation.bailleur}}</div>
+                        </div>
+                    </div>
+                    <div class="fr-table fr-table--bordered apilos-text--black">
+                        <table>
+                            <caption class="fr-text--sm">Convention(s) liée(s) à cette opération et enregistrée(s) dans le SIAP / Apilos</caption>
+                            <thead>
                                 <tr>
-                                    <td>{{ convention.statut }}</td>
-                                    <td>{{ convention.numero|default_if_none:"" }}</td>
-                                    <td>{{ convention.lot.financement }}</td>
-                                    <td>{{ convention.lot.nb_logements }}</td>
-                                    <td>Lien</td>
+                                    <th scope="col">Statut</th>
+                                    <th scope="col">Numéro de convention</th>
+                                    <th scope="col">Financement</th>
+                                    <th scope="col">Logements</th>
+                                    <th></th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {% for convention in conventions %}
+                                    <tr>
+                                        <td>{{ convention.statut }}</td>
+                                        <td>{{ convention.numero|default_if_none:"" }}</td>
+                                        <td>{{ convention.lot.financement }}</td>
+                                        <td>{{ convention.lot.nb_logements }}</td>
+                                        <td>Lien</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <h6>Détails de la convention à ajouter</h6>
