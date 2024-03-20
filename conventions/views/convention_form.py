@@ -45,7 +45,7 @@ cadastre_step = ConventionFormStep(
 
 edd_step = ConventionFormStep(
     pathname="conventions:edd",
-    label="EDD",
+    label="États descriptifs de division",
     classname="ConventionEDDView",
 )
 
