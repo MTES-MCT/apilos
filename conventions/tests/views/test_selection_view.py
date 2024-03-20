@@ -8,7 +8,7 @@ from instructeurs.models import Administration
 from programmes.models import Financement, NatureLogement, TypeHabitat
 
 
-class NewConventionViewTests(AbstractCreateViewTestCase, TestCase):
+class NewConventionAnruViewTests(AbstractCreateViewTestCase, TestCase):
     fixtures = [
         "auth.json",
         "departements.json",
@@ -25,9 +25,9 @@ class NewConventionViewTests(AbstractCreateViewTestCase, TestCase):
 
         bailleur = Bailleur.objects.get(siret="987654321")
         administration = Administration.objects.get(code="75000")
-        self.target_path = reverse("conventions:new_convention")
+        self.target_path = reverse("conventions:new_convention_anru")
         self.next_target_starts_with = "/conventions/bailleur"
-        self.target_template = "conventions/new_convention.html"
+        self.target_template = "conventions/new_convention_anru.html"
         self.error_payload = {
             "bailleur": str(bailleur.uuid),
             "administration": str(administration.uuid),
@@ -51,7 +51,7 @@ class NewConventionViewTests(AbstractCreateViewTestCase, TestCase):
             "code_postal": "20000",
             "ville": "Bisouville",
         }
-        self.msg_prefix = "[NewConventionViewTests] "
+        self.msg_prefix = "[NewConventionAnruViewTests] "
 
     def _test_data_integrity(self):
         self.assertTrue(
