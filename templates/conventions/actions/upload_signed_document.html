@@ -2,7 +2,7 @@
 
 <div class="fr-col-12 fr-my-2w">
     {% if request|is_instructeur %}
-        <div role="alert" class="fr-alert fr-alert--info fr-icon-arrow-right-s-line-double">
+        <div role="alert" class="fr-alert fr-alert--A_signer fr-icon-draft-line">
             <p class="fr-alert__title">
                 {% if convention.is_denonciation %}
                     Déposer l'acte de dénonciation publié
@@ -14,7 +14,8 @@
                 {% if convention.is_denonciation %}
                     Ici, vous pouvez déposer l'acte de dénonciation de votre convention publié.
                 {% else %}
-                    Ici, vous pouvez déposer votre {{convention|display_kind}} signé{{convention|display_gender_terminaison}} afin qu'{{convention|display_personnal_pronom}} puisse être transmis{{convention|display_gender_terminaison}}.
+                    votre {{convention|display_kind}} porte le numéro <strong>{{ convention.numero|default_if_none:'-' }}</strong><br/>
+                    Dernière étape : déposez la version signée pour la validation finale.
                 {% endif %}
             </p>
 
