@@ -25,7 +25,7 @@ class ProgrammeCadastralForm(forms.Form):
     )
     date_acte_notarie = forms.DateField(
         required=False,
-        label="Date de l'acte notarié (si différent de la date d’achat)",
+        label="Date de l'acte notarié",
     )
     date_achevement_previsible = forms.DateField(
         required=False,

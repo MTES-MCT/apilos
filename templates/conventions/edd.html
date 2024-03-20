@@ -34,21 +34,13 @@
                     <div class="fr-col-md-12">
 
                         <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
-                            <p>L’ajout des états descriptifs de division (EDD) est facultatif et dépend des spécificités locales des services de publicité foncière. </p>
-                            <p>Pour rappel, l’EDD peut être demandé quand une opération comporte plusieurs financements et donc plusieurs conventions.</p>
+                            <p>L'ajout des états descriptifs de division (EDD) est facultatif et dépend des spécificités locales des services de publicité foncière. </p>
+                            <p>Pour rappel, l'EDD peut être demandé quand une opération comporte plusieurs financements et donc plusieurs conventions.</p>
+                            <a href="https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8061055/EDD" class='fr-link' target="_blank" rel="noopener">Plus d'informations</a>
                         </div>
-
-                        {% include "common/form/input_upload.html" with form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files object_name='lot' object_uuid=convention.lot.uuid textarea=True image_only=True file_list=convention.lot.edd_volumetrique|get_files_from_textfiles object_field="lot__edd_volumetrique__"|add:form.lot_uuid.value %}
-
-                        {% include "common/form/input_textarea.html" with form_input=form.mention_publication_edd_volumetrique object_field="programme__mention_publication_edd_volumetrique__"|add:form.uuid.value %}
-
-                        {% include "common/form/input_upload.html" with form_input=form.edd_classique form_input_files=form.edd_classique_files object_name='lot' object_uuid=convention.lot.uuid textarea=True image_only=True file_list=convention.lot.edd_classique|get_files_from_textfiles object_field="lot__edd_classique__"|add:form.lot_uuid.value %}
-
-                        {% include "common/form/input_textarea.html" with form_input=form.mention_publication_edd_classique object_field="programme__mention_publication_edd_classique__"|add:form.uuid.value %}
-
                         <h4 class="fr-mb-1w">EDD Simplifié</h4>
                         <p class="fr-text--xs notes fr-mb-1w">
-                            <em>L’EDD simplifié doit comporter tous les logements du programme quels que soient leurs financements.</em>
+                            <em>L'EDD simplifié doit comporter tous les logements du programme quels que soient leurs financements.</em>
                         </p>
 
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
@@ -160,6 +152,15 @@
                                 </tbody>
                             </table>
                         </div>
+                        <hr>
+                        {% include "common/form/input_upload.html" with form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files object_name='lot' object_uuid=convention.lot.uuid textarea=True image_only=True file_list=convention.lot.edd_volumetrique|get_files_from_textfiles object_field="lot__edd_volumetrique__"|add:form.lot_uuid.value %}
+
+                        {% include "common/form/input_textarea.html" with form_input=form.mention_publication_edd_volumetrique object_field="programme__mention_publication_edd_volumetrique__"|add:form.uuid.value %}
+                        <hr>
+                        {% include "common/form/input_upload.html" with form_input=form.edd_classique form_input_files=form.edd_classique_files object_name='lot' object_uuid=convention.lot.uuid textarea=True image_only=True file_list=convention.lot.edd_classique|get_files_from_textfiles object_field="lot__edd_classique__"|add:form.lot_uuid.value %}
+
+                        {% include "common/form/input_textarea.html" with form_input=form.mention_publication_edd_classique object_field="programme__mention_publication_edd_classique__"|add:form.uuid.value %}
+                        <hr>
                         {% include "common/form/input_upload.html" with form_input=form.edd_stationnements form_input_files=form.edd_stationnements_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.edd_stationnements|get_files_from_textfiles object_field="programme__edd_stationnements__"|add:form.uuid.value %}
                     </div>
                 </div>
