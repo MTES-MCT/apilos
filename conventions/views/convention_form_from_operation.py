@@ -27,7 +27,7 @@ class Stepper:
 
     def __init__(self) -> None:
         self.steps = [
-            "Sélectioner l'opération",
+            "Sélectionner l'opération",
             "Créer la convention dans Apilos",
             "Ajouter les avenants (optionnel)",
         ]

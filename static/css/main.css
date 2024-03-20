@@ -25,12 +25,24 @@
   align-items: center;
   justify-content: left;
 }
+.apilos--container_ellipsis {
+  position: relative;
+  width: 16rem;
+  height: 24px;
+}
 .apilos--overflow_ellipsis {
   display: block;
   width: 16rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.apilos--overflow_ellipsis:hover {
+  overflow: visible;
+  position: absolute;
+  width: auto;
+  background-color: white;
+  z-index: 1;
 }
 
 .apilos-d-inline {
@@ -706,6 +718,10 @@ table.fullwidth {
 .fr-link--sm:before {
   margin: 0.1rem !important;
 }
+.fr-table--bordered tbody tr:hover {
+  background-color: white;
+  transform: scale(1.02);
+}
 
 .apilos-link {
   display: inline !important;
@@ -741,6 +757,10 @@ table.fullwidth {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  background-color: #F5F5FE;
+  border-bottom: solid 2px #3A3A3A;
+  position: relative;
+  z-index: 1;
 }
 
 .apilos-btn--red {

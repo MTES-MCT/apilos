@@ -25,7 +25,6 @@
                             {% endif %}
                             <thead>
                                 <tr class="th_inline">
-
                                     {% if debug_search_scoring %}
                                         <th title="Scoring" scope="col">
                                             >> Debug scoring >>>>>>>>>>>>>>
@@ -35,15 +34,15 @@
                                     <th title="Statut de la convention" scope="col">
                                         Statut
                                     </th>
+                                    <th title="Opération" scope="col" class="col__width--150">
+                                        Opération
+                                    </th>
                                     {% if request|is_instructeur %}
                                         <th scope="col">Bailleur</th>
                                     {% endif %}
                                     {% if request|display_administration %}
                                         <th scope="col">Instructeur</th>
                                     {% endif %}
-                                    <th title="Opération" scope="col" class="col__width--150">
-                                        Opération
-                                    </th>
                                     <th title="Financement" scope="col">
                                         Financement
                                     </th>
@@ -53,19 +52,12 @@
                                     <th title="Nombre de logements à conventionner" scope="col">
                                         Logements
                                     </th>
-                                    {% if new_search %}
-                                        <th title="Date de signature" scope="col">
-                                            Signature
-                                        </th>
-                                    {% elif url_name == "search_instruction" or url_name == "operation_conventions" %}
-                                        <th title="Date de livraison et mise en service" scope="col">
-                                            Livraison
-                                        </th>
-                                    {% else %}
-                                        <th title="Date de signature" scope="col">
-                                            Signature
-                                        </th>
-                                    {% endif %}
+                                    <th title="Date de livraison et mise en service" scope="col">
+                                        Livraison
+                                    </th>
+                                    <th title="Date de signature" scope="col">
+                                        Signature
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -120,27 +112,17 @@
                                                 });
                                             </script>
                                         </td>
-                                        {% if request|is_instructeur %}
-                                            <td>
-                                                {% if new_search %}
-                                                    {{convention.programme.bailleur}}
-                                                {% else %}
-                                                    {{convention.programme.bailleur|highlight:search_input}}
-                                                {% endif %}
-                                            </td>
-                                        {% endif %}
-                                        {% if request|display_administration %}
-                                            <td>{{convention.programme.administration}}</td>
-                                        {% endif %}
                                         <td>
                                             <div class="apilos--flex-row-left-center">
-                                                <strong class="apilos--overflow_ellipsis">
-                                                    {% if new_search %}
-                                                        {{convention.programme|highlight_if_match:search_operation_nom}}
-                                                    {% else %}
-                                                        {{convention.programme|highlight:search_input}}
-                                                    {% endif %}
-                                                </strong>
+                                                <div class="apilos--container_ellipsis">
+                                                    <strong class="apilos--overflow_ellipsis">
+                                                        {% if new_search %}
+                                                            {{convention.programme|highlight_if_match:search_operation_nom}}
+                                                        {% else %}
+                                                            {{convention.programme|highlight:search_input}}
+                                                        {% endif %}
+                                                    </strong>
+                                                </div>
                                                 {% if convention.is_avenant %}
                                                     <span class="{% if convention.is_denonciation %}warning-notification {% else %}text-title-blue-france {% endif %} fr-p-1w fr-ml-1w apilos-tag-avenant background-white">{{convention|display_kind_with_numero|capfirst}}</span>
                                                 {% endif %}
@@ -176,6 +158,14 @@
                                                 </div>
                                             {% endif %}
                                         </td>
+                                        {% if request|is_instructeur %}
+                                            <td>
+                                                {{convention.programme.bailleur.nom}}
+                                            </td>
+                                        {% endif %}
+                                        {% if request|display_administration %}
+                                            <td>{{convention.programme.administration.nom}}</td>
+                                        {% endif %}
                                         <td data-test-role="programme-financement-cell">{{convention.financement}}</td>
                                         <td>
                                             <strong>
@@ -195,15 +185,8 @@
                                             </em>
                                         </td>
                                         <td>{{convention.lot.nb_logements}}</td>
-
-                                        {% if new_search %}
-                                            <td>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>
-                                        {% elif url_name == "search_instruction" or url_name == "operation_conventions" %}
-                                            <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
-                                        {% else %}
-                                            <td>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>
-                                        {% endif %}
-
+                                        <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
+                                        <td>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
