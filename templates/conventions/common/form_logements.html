@@ -24,6 +24,12 @@
             </p>
         {% endfor %}
 
+        {% if convention.is_avenant %}
+            <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
+                <strong>Retrouvez rapidement les logements à modifier</strong> en utilisant la commande <strong>CTRL+F</strong> sur votre clavier et en indiquant la désignation du logement
+            </div>
+        {% endif %}
+
         {{ formset.management_form }}
         <div class="fr-table fr-table--bordered table--layout-fixed">
             <table id="lgts_table"  aria-label="Logements">
