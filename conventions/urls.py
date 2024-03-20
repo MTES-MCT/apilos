@@ -87,6 +87,11 @@ urlpatterns = [
     ),
     # Pages de troisième niveau : funnel d'instruction et d'action sur les conventions et avenants
     path(
+        "new_convention_choice",
+        TemplateView.as_view(template_name="conventions/new_convention_choice.html"),
+        name="new_convention_choice",
+    ),
+    path(
         "new_convention_anru",
         permission_required("convention.add_convention")(
             views.NewConventionAnruView.as_view()
