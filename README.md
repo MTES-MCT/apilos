@@ -22,7 +22,7 @@ Le design de l'interface suit le [Système de design de l'état](https://www.sys
 
 APiLos utilise le SSO CERBERE du Minitère de la transition écologique pour authentifier ses utilisateurs. Les habilitations (gestion des droits et périmètres) sont fournies par le SIAP.
 
-![Architecture APilos](static/img/ArchitectureAPiLos.jpg)
+![Architecture APilos](./static/img/ArchitectureAPiLos.jpg)
 
 Les solutions tierces utilisées par APiLos:
 
