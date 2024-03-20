@@ -37,7 +37,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.apilos--overflow_ellipsis:hover {
+.apilos--container_ellipsis .apilos--overflow_ellipsis:hover {
   overflow: visible;
   position: absolute;
   width: auto;
