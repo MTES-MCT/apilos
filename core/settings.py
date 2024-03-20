@@ -384,6 +384,8 @@ CSP_SCRIPT_SRC = (
     "https://settings.crisp.chat",
     # Matomo
     "https://stats.beta.gouv.fr/matomo.js",
+    "https://stats.beta.gouv.fr/matomo.php",
+    "https://stats.beta.gouv.fr/plugins/HeatmapSessionRecording/configs.php",
 )
 CSP_IMG_SRC = (
     "'self'",
