@@ -160,11 +160,11 @@
                                         </td>
                                         {% if request|is_instructeur %}
                                             <td>
-                                                {{convention.programme.bailleur}}
+                                                {{convention.programme.bailleur.nom}}
                                             </td>
                                         {% endif %}
                                         {% if request|display_administration %}
-                                            <td>{{convention.programme.administration}}</td>
+                                            <td>{{convention.programme.administration.nom}}</td>
                                         {% endif %}
                                         <td data-test-role="programme-financement-cell">{{convention.financement}}</td>
                                         <td>
