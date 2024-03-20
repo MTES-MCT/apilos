@@ -271,10 +271,7 @@ def get_or_create_programme(
     except Programme.MultipleObjectsReturned as exc:
         numero_operation = programme_from_siap["donneesOperation"]["numeroOperation"]
 
-        diff = diff_programme_duplication(
-            numero_operation=numero_operation,
-            field_names=["administration_id", "bailleur_id"],
-        )
+        diff = diff_programme_duplication(numero_operation=numero_operation)
         if len(diff):
             raise ConflictedOperationSIAPException(numero_operation, diff) from exc
 
