@@ -313,6 +313,7 @@ def generate_pdf(file_stream: io.BytesIO, convention: Convention):
             file_stream, convention_dirpath, convention_docx_filename
         )
         pdf_path = f"{convention_dirpath}/{convention_pdf_filename}"
+        # FIXME: use a valid command
         subprocess.run(
             [
                 settings.LIBREOFFICE_EXEC,
@@ -325,7 +326,6 @@ def generate_pdf(file_stream: io.BytesIO, convention: Convention):
             check=True,
             env={"HOME": "/app"},
         )
-        # export HOME=/app && /app/.apt/usr/bin/libreoffice --convert-to pdf:writer_pdf_Export --outdir /app/media /app/documents/Avenant-template.docx
 
     file_stream.seek(0)
 
