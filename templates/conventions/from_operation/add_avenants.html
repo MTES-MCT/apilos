@@ -15,9 +15,13 @@
 {% block content %}
 
     <div class="fr-container fr-my-5w">
-        <h3>Ajouter une convention existante</h3>
+        <h1>Ajouter une convention</h1>
 
         {% include "./stepper.html"%}
+
+        <div class="fr-alert fr-alert--success">
+            <p>La convention {{ convention }} a bien été ajoutée dans Apilos !</p>
+        </div>
 
         {% if avenants %}
             <div class="fr-grid-row fr-grid-row--gutters">
@@ -82,7 +86,7 @@
                 </div>
                 <div class="fr-col-6">
                     <div class="form-button-footer fr-pt-4w">
-                        <button class="fr-btn fr-icon-add-circle-line fr-btn--icon-left fr-btn--secondary" name="action" value="submit" type="submit">
+                        <button class="fr-btn fr-icon-add-circle-line fr-btn--icon-left fr-btn--primary" name="action" value="submit" type="submit">
                             Ajouter cet avenant
                         </button>
                     </div>
@@ -95,10 +99,9 @@
                 <div class="block--row-strech-1">
                 </div>
                 <div class="form-button-footer">
-                    <a href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}" class="fr-link">
-                        <button class="fr-btn fr-icon-arrow-right-s-line fr-btn--icon-right" name="action">
-                            Passer cette étape
-                        </button>
+                    <a href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}" class="fr-btn fr-btn--tertiary fr-icon-arrow-right-s-line fr-btn--icon-right">
+                        Passer cette étape
+
                     </a>
                 </div>
             </div>

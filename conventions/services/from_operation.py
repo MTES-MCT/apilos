@@ -98,7 +98,9 @@ class SelectOperationService:
         return self.request.user.programmes()
 
     def _get_apilos_operation(self) -> Operation | None:
-        qs = self._user_programmes().filter(numero_galion=self.numero_operation)
+        qs = self._user_programmes().filter(
+            numero_galion=self.numero_operation, parent_id=None
+        )
         if qs.count() == 1:
             return Operation.from_apilos_programme(programme=qs.first())
         return None
@@ -112,7 +114,10 @@ class SelectOperationService:
                     self.numero_operation.replace("-", "").replace("/", ""),
                 )
             )
-            .filter(numero_operation_trgrm__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
+            .filter(
+                numero_operation_trgrm__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD,
+                parent_id=None,
+            )
             .order_by("-numero_operation_trgrm", "-cree_le")
         )
         return [Operation.from_apilos_programme(programme=p) for p in qs[:10]]
@@ -143,7 +148,9 @@ class AddConventionService:
             return Convention.objects.none()
 
         programme = (
-            Programme.objects.filter(numero_galion=self.operation.numero)
+            Programme.objects.filter(
+                numero_galion=self.operation.numero, parent_id=None
+            )
             .order_by("-cree_le")
             .first()
         )
@@ -193,7 +200,7 @@ class AddConventionService:
                     )
                 else:
                     programme = Programme.objects.get(
-                        numero_galion=self.operation.numero
+                        numero_galion=self.operation.numero, parent_id=None
                     )
 
                 lot = self._create_lot(programme=programme)
