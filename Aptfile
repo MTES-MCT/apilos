@@ -1,6 +1,11 @@
 libreoffice-core-nogui
 libreoffice-java-common
 libreoffice-script-provider-python
-uno-libs-private
-python3-uno
-unoconv
+libsm6
+libice6
+libxinerama1
+libdbus-glib-1-2
+libharfbuzz0b
+libharfbuzz-icu0
+libx11-xcb1
+libxcb1

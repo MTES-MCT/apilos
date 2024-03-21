@@ -10,3 +10,26 @@ unoconv -f pdf /app/documents/Avenant-template.docx
 
 mkdir -p /app/libreoffice-config
 /app/.apt/usr/bin/libreoffice --headless -env:UserInstallation=file:///app/libreoffice-config --convert-to pdf:writer_pdf_Export --outdir /app/media /app/documents/Avenant-template.docx
+
+
+
+### Test Matthieu (local)
+mkdir -p /tmp/libreoffice-config
+libreoffice --headless -env:UserInstallation=file:///tmp/libreoffice-config --convert-to pdf:writer_pdf_Export --outdir /tmp ./documents/Avenant-template.docx
+
+unoconvert --convert-to pdf:writer_pdf_Export ./documents/Avenant-template.docx /tmp/Avenant-template.pdf
+
+
+### APT list
+libreoffice-core-nogui
+libreoffice-java-common
+libreoffice-script-provider-python
+uno-libs-private
+python3-uno
+unoconv
+
+
+### Python requirements
+uno
+unoserver
+# unotools

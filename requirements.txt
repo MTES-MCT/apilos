@@ -350,11 +350,6 @@ psycopg2==2.9.9 \
     --hash=sha256:de80739447af31525feddeb8effd640782cf5998e1a4e9192ebdf829717e3913 \
     --hash=sha256:ff432630e510709564c01dafdbe996cb552e0b9f3f065eb89bdce5bd31fabf4c
     # via -r requirements.in
-py==1.4.22 \
-    --hash=sha256:1ef0c4eb8f12f970dd831f32755f95a36af66a8ca9c35991100146428fd42474
-    # via
-    #   pytest
-    #   uno
 pyjwt==2.8.0 \
     --hash=sha256:57e28d156e3d5c10088e0c68abb90bfac3df82b40a71bd0daa20c65ccd5c23de \
     --hash=sha256:59127c392cc44c2da5bb3192169a91f429924e17aff6534d70fdc02ab3e04320
@@ -385,9 +380,6 @@ pyrsistent==0.19.2 \
     --hash=sha256:ea6b79a02a28550c98b6ca9c35b9f492beaa54d7c5c9e9949555893c8a9234d0 \
     --hash=sha256:f1258f4e6c42ad0b20f9cfcc3ada5bd6b83374516cd01c0960e3cb75fdca6770
     # via jsonschema
-pytest==2.6.0 \
-    --hash=sha256:1e4f7c23d5444c01316bd84edd629af3170331fade12bcc263f0a2a716bbaed1
-    # via uno
 python-box==7.1.1 \
     --hash=sha256:0036fd47d388deaca8ebd65aea905f88ee6ef91d1d8ce34898b66f1824afbe80 \
     --hash=sha256:1b3f346e332dba16df0b0543d319d9e7ce07d93e5ae152175302894352aa2d28 \
@@ -538,12 +530,12 @@ tzdata==2023.3 \
     --hash=sha256:11ef1e08e54acb0d4f95bdb1be05da659673de4acbd21bf9c69e94cc5e907a3a \
     --hash=sha256:7e65763eef3120314099b6939b5546db7adce1e7d6f2e179e3df563c70511eda
     # via celery
-uno==0.3.3 \
-    --hash=sha256:2037b35b5f038c8156c273b963d1c4afd536f72939b1bb86a17460d4251935c4
-    # via -r requirements.in
 unoserver==2.0.1 \
     --hash=sha256:a092e1529fa8e4e6370e92a9ab287900d9437e862d97b9286752bcf74752f286 \
     --hash=sha256:f2b700552b8a4c8056a3f5ae23ce744dfc9e87ba0872be89d4050e2e1ab4610a
+    # via -r requirements.in
+unotools==0.3.3 \
+    --hash=sha256:72190c70279977db7e60c620b54e8ade9f11e9113289e7728fe367014cbd268d
     # via -r requirements.in
 uritemplate==4.1.1 \
     --hash=sha256:4346edfc5c3b79f694bccd6d6099a322bbeb628dbf2cd86eea55a456ce5124f0 \
