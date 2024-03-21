@@ -350,6 +350,11 @@ psycopg2==2.9.9 \
     --hash=sha256:de80739447af31525feddeb8effd640782cf5998e1a4e9192ebdf829717e3913 \
     --hash=sha256:ff432630e510709564c01dafdbe996cb552e0b9f3f065eb89bdce5bd31fabf4c
     # via -r requirements.in
+py==1.4.22 \
+    --hash=sha256:1ef0c4eb8f12f970dd831f32755f95a36af66a8ca9c35991100146428fd42474
+    # via
+    #   pytest
+    #   uno
 pyjwt==2.8.0 \
     --hash=sha256:57e28d156e3d5c10088e0c68abb90bfac3df82b40a71bd0daa20c65ccd5c23de \
     --hash=sha256:59127c392cc44c2da5bb3192169a91f429924e17aff6534d70fdc02ab3e04320
