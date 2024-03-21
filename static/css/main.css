@@ -1125,3 +1125,6 @@ table .apilos-badge {
 .apilos-no-dsfr-target[target="_blank"]::after {
   content: none;
 }
+.apilos-link-background {
+  background-color:#f4f6ff;
+}

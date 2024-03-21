@@ -8,7 +8,7 @@ from conventions.services.selection import ConventionSelectionService
 from conventions.services.utils import ReturnStatus
 
 
-class NewConventionView(LoginRequiredMixin, View):
+class NewConventionAnruView(LoginRequiredMixin, View):
     # @permission_required("convention.add_convention")
     def get(self, request):
         service = ConventionSelectionService(request)
@@ -16,7 +16,7 @@ class NewConventionView(LoginRequiredMixin, View):
 
         return render(
             request,
-            "conventions/new_convention.html",
+            "conventions/new_convention_anru.html",
             {
                 "form": service.form,
                 "editable": True,
@@ -34,7 +34,7 @@ class NewConventionView(LoginRequiredMixin, View):
             )
         return render(
             request,
-            "conventions/new_convention.html",
+            "conventions/new_convention_anru.html",
             {
                 "form": service.form,
                 "editable": True,
