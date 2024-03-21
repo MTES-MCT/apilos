@@ -313,10 +313,10 @@ def generate_pdf(file_stream: io.BytesIO, convention: Convention):
             file_stream, convention_dirpath, convention_docx_filename
         )
         pdf_path = f"{convention_dirpath}/{convention_pdf_filename}"
-        # FIXME: use a valid command
         subprocess.run(
             [
                 settings.LIBREOFFICE_EXEC,
+                "--headless",
                 "--convert-to",
                 "pdf:writer_pdf_Export",
                 "--outdir",
