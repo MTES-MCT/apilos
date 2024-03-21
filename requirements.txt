@@ -530,13 +530,6 @@ tzdata==2023.3 \
     --hash=sha256:11ef1e08e54acb0d4f95bdb1be05da659673de4acbd21bf9c69e94cc5e907a3a \
     --hash=sha256:7e65763eef3120314099b6939b5546db7adce1e7d6f2e179e3df563c70511eda
     # via celery
-unoserver==2.0.1 \
-    --hash=sha256:a092e1529fa8e4e6370e92a9ab287900d9437e862d97b9286752bcf74752f286 \
-    --hash=sha256:f2b700552b8a4c8056a3f5ae23ce744dfc9e87ba0872be89d4050e2e1ab4610a
-    # via -r requirements.in
-unotools==0.3.3 \
-    --hash=sha256:72190c70279977db7e60c620b54e8ade9f11e9113289e7728fe367014cbd268d
-    # via -r requirements.in
 uritemplate==4.1.1 \
     --hash=sha256:4346edfc5c3b79f694bccd6d6099a322bbeb628dbf2cd86eea55a456ce5124f0 \
     --hash=sha256:830c08b8d99bdd312ea4ead05994a38e8936266f84b9a7878232db50b044e02e
