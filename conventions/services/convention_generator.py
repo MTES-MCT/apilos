@@ -4,8 +4,8 @@ import json
 import math
 import os
 import subprocess
+from pathlib import Path
 
-import convertapi
 import jinja2
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -299,59 +299,41 @@ def _save_convention_donnees_validees(
 
 def generate_pdf(file_stream: io.BytesIO, convention: Convention):
     # save the convention docx locally
-    local_docx_path = str(settings.MEDIA_ROOT) + f"/convention_{convention.uuid}.docx"
+    print("coucou", "1" * 10)
+    local_docx_path = Path(settings.MEDIA_ROOT, f"convention_{convention.uuid}.docx")
+    local_pdf_path = Path(settings.MEDIA_ROOT, f"convention_{convention.uuid}.pdf")
+    with open(local_docx_path, "wb") as local_file:
+        local_file.write(file_stream.read())
 
-    # get a pdf version
-    if settings.CONVERTAPI_SECRET:
-        with open(local_docx_path, "wb") as local_file:
-            local_file.write(file_stream.read())
-            local_file.close()
+    print("coucou", "2" * 10)
+    subprocess.run(
+        [
+            settings.LIBREOFFICE_EXEC,
+            "--headless",
+            "--convert-to",
+            "pdf:writer_pdf_Export",
+            "--outdir",
+            local_pdf_path.parent,
+            local_docx_path,
+        ],
+        check=True,
+        capture_output=True,
+    )
+    print("coucou", "3" * 10)
+    os.remove(local_docx_path)
 
-        convertapi.api_secret = settings.CONVERTAPI_SECRET
-        result = convertapi.convert("pdf", {"File": local_docx_path})
-
-        convention_dirpath = f"conventions/{convention.uuid}/convention_docs"
-        convention_filename = f"{convention.uuid}.pdf"
-        pdf_path = _save_io_as_file(
-            result.file.io, convention_dirpath, convention_filename
-        )
-
-        # remove docx version
-        os.remove(local_docx_path)
-    else:
-        convention_dirpath = f"conventions/{convention.uuid}/convention_docs"
-        convention_docx_filename = f"{convention.uuid}.docx"
-        convention_pdf_filename = f"{convention.uuid}.pdf"
-        doc_path = _save_io_as_file(
-            file_stream, convention_dirpath, convention_docx_filename
-        )
-        pdf_path = f"{convention_dirpath}/{convention_pdf_filename}"
-        # FIXME: use a valid command
-        subprocess.run(
-            [
-                settings.LIBREOFFICE_EXEC,
-                "--convert-to",
-                "pdf:writer_pdf_Export",
-                "--outdir",
-                f"media/{convention_dirpath}",
-                f"media/{doc_path}",
-            ],
-            check=True,
-            env={"HOME": "/app"},
-        )
+    convention_dirpath = f"conventions/{convention.uuid}/convention_docs"
+    convention_pdf_filename = f"{convention.uuid}.pdf"
+    upload_service = UploadService(
+        convention_dirpath=convention_dirpath, filename=convention_pdf_filename
+    )
+    upload_service.copy_local_file(local_pdf_path)
+    print("coucou", "4" * 10)
 
     file_stream.seek(0)
 
     # END PDF GENERATION
-    return pdf_path
-
-
-def _save_io_as_file(file_io, convention_dirpath, convention_filename):
-    upload_service = UploadService(
-        convention_dirpath=convention_dirpath, filename=convention_filename
-    )
-    upload_service.upload_file_io(file_io)
-    return f"{convention_dirpath}/{convention_filename}"
+    return local_pdf_path
 
 
 def _to_fr_float(value, d=2):

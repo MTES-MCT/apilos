@@ -17,6 +17,10 @@ class UploadService:
         self.convention_dirpath = convention_dirpath
         self.filename = filename
 
+    def copy_local_file(self, src_path: str) -> None:
+        with open(src_path, "rb") as src_file:
+            self.upload_file(File(src_file))
+
     def upload_file(self, file: File) -> None:
         if (
             settings.DEFAULT_FILE_STORAGE

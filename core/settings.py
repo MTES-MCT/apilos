@@ -586,4 +586,8 @@ SIAP_ASSISTANCE_URL = get_env_variable(
     default="https://siap-logement.atlassian.net/servicedesk/customer/portal/3/group/8/create/14",
 )
 
-LIBREOFFICE_EXEC = get_env_variable("LIBREOFFICE_EXEC")
+# LibreOffice
+LIBREOFFICE_EXEC = get_env_variable(
+    "LIBREOFFICE_EXEC",
+    default="/app/vendor/libreoffice/opt/libreoffice7.3/program/soffice",
+)
