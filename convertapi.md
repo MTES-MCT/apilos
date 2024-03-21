@@ -7,3 +7,6 @@ export HOME=/app && /app/.apt/usr/bin/libreoffice --headless --convert-to pdf:wr
 
 LD_LIBRARY_PATH=/app/.apt/usr/lib/libreoffice/program
 unoconv -f pdf /app/documents/Avenant-template.docx
+
+mkdir -p /app/libreoffice-config
+/app/.apt/usr/bin/libreoffice --headless -env:UserInstallation=file:///app/libreoffice-config --convert-to pdf:writer_pdf_Export --outdir /app/media /app/documents/Avenant-template.docx
