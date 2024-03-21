@@ -11,28 +11,28 @@
 {% block content %}
     <div class="fr-container fr-my-5w">
         <h2 class="fr-mb-7w">Créer une convention</h2>
-        <div>
-            <div class="fr-grid-row fr-mb-7w">
-                <div class="fr-col fr-col-md-6">
-                    <div class="fr-card fr-enlarge-link">
-                        <div class="fr-card__body">
-                            <div class="fr-card__content">
-                                <h3 class="fr-card__title">
-                                    <a href="{% url 'conventions:new_convention_anru' %}">Créer une convention ANRU</a>
-                                </h3>
-                                <p class="fr-card__desc">Sans agrément, contractualisée dans le cadre du Programme National de Rénovation Urbaine (PNRU)</p>
-                            </div>
+        <div class="fr-grid-row fr-mb-9w">
+            <div class="fr-col fr-col-md-6">
+                <div class="fr-card fr-enlarge-link">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">
+                                <a href="{% url 'conventions:new_convention_anru' %}">Créer une convention ANRU</a>
+                            </h3>
+                            <p class="fr-card__desc">Sans agrément, contractualisée dans le cadre du Programme National de Rénovation Urbaine (PNRU)</p>
                         </div>
                     </div>
                 </div>
             </div>
-            {% flag "ajout_convention" %}
-                <div>
-                    <a class="fr-btn fr-icon-add-line fr-btn--icon-left fr-btn--secondary" href="{% url 'conventions:from_operation_select' %}">
-                        Ajouter une convention existante dans le SIAP / Apilos
-                    </a>
-                </div>
-            {% endflag %}
         </div>
+        {% flag "ajout_convention" %}
+            <div class="fr-mb-9w">
+                <span class="fr-p-2w apilos-link-background">
+                    <a class="fr-link fr-icon-arrow-right-line fr-link--icon-right" href="{% url 'conventions:from_operation_select' %}">
+                        Vous souhaitez <strong>ajouter une convention existante</strong> qui n'est pas encore référencée dans le SIAP ?
+                    </a>
+                </span>
+            </div>
+        {% endflag %}
     </div>
 {% endblock %}
