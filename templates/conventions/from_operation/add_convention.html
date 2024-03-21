@@ -15,7 +15,7 @@
 {% block content %}
 
     <div class="fr-container fr-my-5w">
-        <h3>Ajouter une convention existante</h3>
+        <h1>Ajouter une convention</h1>
 
         {% include "./stepper.html"%}
 
@@ -27,26 +27,27 @@
             </div>
 
         {% else %}
+            <h3 class="fr-pb-2w fr-toggle--border-bottom fr-mb-5w">Opération liée</h3>
 
-            <div class="apilos-notice-background fr-notice fr-notice--info fr-mb-5w fr-mt-1w fr-pt-3w">
-                <div class="fr-container fr-px-5w">
-                    <h3>{{operation.nom}}</h3>
-                    <div class="apilos-input-group--inline">
-                        <div class="fr-grid-row fr-mt-1w apilos-text--black">
-                            <div class="fr-pr-2w fr-text--sm apilos-separator">
-                                <a href="{% url 'programmes:operation_conventions' numero_operation=operation.numero %}">
-                                    Opération n°{{operation.numero}}
-                                </a>
-                            </div>
-                            <div class="fr-px-2w fr-text--sm apilos-separator">{{operation.commune}}</div>
-                            <div class="fr-px-2w fr-text--sm">Bailleur : {{operation.bailleur}}</div>
+            <div class="fr-mb-7w">
+                <h4 class="fr-mb-0">{{operation.nom}}</h4>
+                <div class="apilos-input-group--inline">
+                    <div class="fr-grid-row fr-mt-1w apilos-text--black">
+                        <div class="fr-pr-2w fr-text--sm apilos-separator">
+                            <a href="{% url 'programmes:operation_conventions' numero_operation=operation.numero %}">
+                                Opération n°{{operation.numero}}
+                            </a>
                         </div>
+                        <div class="fr-px-2w fr-text--sm apilos-separator">{{operation.commune}}</div>
+                        <div class="fr-px-2w fr-text--sm">Bailleur : {{operation.bailleur}}</div>
                     </div>
-                    <div class="fr-table fr-table--bordered fr-table--layout-fixed apilos-text--black fr-my-3w fr-p-3w fr-pt-7w">
+                </div>
+                {% if conventions.count > 0 %}
+                    <div class="fr-table fr-table--bordered fr-table--layout-fixed apilos-text--black">
                         <table>
-                            <caption class="fr-text--sm">Convention(s) liée(s) à cette opération et enregistrée(s) dans le SIAP / Apilos</caption>
+                            <caption class="fr-text--sm fr-text--regular">Convention(s) liée(s) à cette opération et enregistrée(s) dans le SIAP / Apilos</caption>
                             <thead>
-                                <tr>
+                                <tr class="th_inline">
                                     <th scope="col">Statut</th>
                                     <th scope="col">Numéro de convention</th>
                                     <th scope="col">Financement</th>
@@ -56,7 +57,7 @@
                             </thead>
                             <tbody>
                                 {% for convention in conventions %}
-                                    <tr>
+                                    <tr class="clickable" id="convention_redirect_{{convention.uuid}}">
                                         <td>
                                             <div class="fr-pr-2w">
                                                 {% include "conventions/home/statut_tag.html"  %}
@@ -66,18 +67,38 @@
                                         <td>{{ convention.lot.financement }}</td>
                                         <td>{{ convention.lot.nb_logements }}</td>
                                         <td>
-                                            <a target="_blank" rel="noopener" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" class="apilos-no-dsfr-target">
-                                                <span class="fr-icon-eye-line" aria-hidden="true"></span>
-                                            </a>
+                                            <span class="fr-icon-eye-line" aria-hidden="true"></span>
                                         </td>
                                     </tr>
+                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                            document.getElementById('convention_redirect_{{convention.uuid}}').addEventListener('click', function(){
+                                                if (this.classList.contains("sent")) {
+                                                    const url="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
+                                                    window.open(url, "_blank");
+                                                }
+                                                else if (this.classList.contains("signed")) {
+                                                    const url="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
+                                                    window.open(url, "_blank");
+                                                }
+                                                else if (this.classList.contains("project")) {
+                                                    const url="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
+                                                    window.open(url, "_blank");
+                                                }
+                                                else {
+                                                    const url="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
+                                                    window.open(url, "_blank");
+                                                }
+                                            });
+                                        });
+                                    </script>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
-                </div>
+                {% endif %}
             </div>
-            <h6>Détails de la convention à ajouter</h6>
+            <h3 class="fr-pb-2w fr-toggle--border-bottom fr-mb-5w">Détails de la convention à ajouter</h3>
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
 

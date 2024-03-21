@@ -4,13 +4,6 @@
     <div class="fr-table fr-table--bordered table--layout-fixed">
         <table aria-label="Operations">
             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-2w">
-                <div class="fr-grid-row fr-col-12">
-                    <div class="fr-mr-2w notes">{{ operations|length }} résultat(s)</div>
-                    <a href="{{ request.path }}" class="fr-link">
-                        <span class="fr-icon-close-circle-line fr-mr-1w"></span>
-                        Réinitaliser la recherche
-                    </a>
-                </div>
                 <thead>
                     <tr class="th_inline">
                         <th title="Numéro de l'opération" scope="col">
@@ -41,7 +34,7 @@
                             <td>{{ operation.nature }}</td>
                             <td>{{ operation.commune }}</td>
                             <td>
-                                <button class="fr-btn--tertiary">
+                                <button class="fr-btn fr-btn--tertiary-no-outline">
                                     <span class="fr-icon-arrow-right-line" aria-hidden="true"></span>
                                 </button>
                             </td>
@@ -55,7 +48,7 @@
             {% if exact_match %}
                 <div class="fr-mt-10w"></div>
             {% else %}
-                <div class="fr-col-9">
+                <div class="fr-col-7">
                     <div class="fr-text--lg">Vous ne trouvez pas l'opération liée ?</div>
                     <div>
                         Vérifiez que vous avez saisi un numéro d'opération correct.<br>
@@ -74,7 +67,10 @@
                         </div>
                     </div>
                 </div>
-                <img class="fr-mr-3w" src="/static/icons/not_found.png" alt="not_found">
+
+                <div class="fr-col-5 text--center">
+                    <img src="/static/icons/not_found.png" alt="not_found">
+                </div>
             {% endif %}
         </div>
 
@@ -82,11 +78,10 @@
 
     {% if request.GET.numero_operation %}
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-5w">
-            <div class="fr-col-9">
+            <div class="fr-col-7">
                 <div class="fr-text--lg">Aucune opération trouvée</div>
                 <div>
-                    L'opération portant le numéro {{ request.GET.numero_operation }} n'est pas référencée dans le SIAP / Apilos.<br>
-                    Vérifiez que le numéro est correct, ou contactez notre équipe support.
+                    L'opération portant le numéro {{ request.GET.numero_operation }} n'est pas référencée dans le SIAP / Apilos. Vérifiez que le numéro est correct, ou contactez notre équipe support.
                 </div>
                 <div class="fr-mt-5w fr-ml-1w">
                     <div class="fr-grid-row fr-grid-row--gutters" >
@@ -100,8 +95,17 @@
                     </div>
                 </div>
             </div>
-            <img class="fr-mr-3w" src="/static/icons/not_found.png" alt="not_found">
+            <div class="fr-col-5 text--center">
+                <img src="/static/icons/not_found.png" alt="not_found">
+            </div>
         </div>
+    {% else %}
+        <p class="fr-mt-10w fr-mb-2w">Vous n'avez pas le numéro de l'opération ?</p>
+        {% if siap_assistance_url %}
+            <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary" href="{{ siap_assistance_url }}">
+                Contactez l'assistance
+            </a>
+        {% endif %}
     {% endif %}
 
 
