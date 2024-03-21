@@ -32,5 +32,14 @@ unoconv
 
 uno
 unoserver
+unotools
 
-# unotools
+
+### Solution en passant par l'appimage
+
+Doc: https://github.com/BlueTeaLondon/heroku-buildpack-libreoffice-for-heroku-18/blob/master/bin/compile
+
+Ajout du buildpack: https://github.com/BlueTeaLondon/heroku-buildpack-libreoffice-for-heroku-18.git
+
+Commande:
+/app/vendor/libreoffice/opt/libreoffice7.3/program/soffice --headless --convert-to pdf:writer_pdf_Export --outdir /app/media /app/documents/Avenant-template.docx
