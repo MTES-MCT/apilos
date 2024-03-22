@@ -363,7 +363,6 @@ CSRF_COOKIE_SAMESITE = "Strict"
 SESSION_COOKIE_SAMESITE = "Lax"
 
 # https://django-csp.readthedocs.io/en/latest/configuration.html
-# Crisp configuration: https://docs.crisp.chat/guides/others/whitelisting-our-systems/crisp-domain-names/
 CSP_DEFAULT_SRC = "'none'"
 CSP_SCRIPT_SRC = (
     "https://stats.data.gouv.fr/piwik.js",
@@ -379,9 +378,6 @@ CSP_SCRIPT_SRC = (
     # Swagger UI
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.js",
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-standalone-preset.js",
-    # Crisp
-    "https://client.crisp.chat",
-    "https://settings.crisp.chat",
     # Matomo
     "https://stats.beta.gouv.fr/matomo.js",
     "https://stats.beta.gouv.fr/plugins/HeatmapSessionRecording/configs.php",
@@ -390,10 +386,6 @@ CSP_IMG_SRC = (
     "'self'",
     "data:",
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png",
-    # Crisp
-    "https://client.crisp.chat",
-    "https://image.crisp.chat",
-    "https://storage.crisp.chat",
 )
 CSP_OBJECT_SRC = "'none'"
 
@@ -402,30 +394,17 @@ CSP_FRAME_SRC = (
     "'self'",
     "https://www.dailymotion.com/embed/video/x8fkp4y",
     "https://www.dailymotion.com/embed/video/x8frr91",
-    # Crisp
-    "https://game.crisp.chat",
     # Metabase
     "https://metabase.apilos.beta.gouv.fr/public/dashboard/b91cd727-95e2-44c7-b8ae-0cf4a235abfb",
 )
 
-CSP_MEDIA_SRC = (
-    # Crisp
-    "https://client.crisp.chat"
-)
 CSP_FONT_SRC = (
     "'self'",
     "data:",
-    # Crisp
-    "https://client.crisp.chat",
 )
 CSP_CONNECT_SRC = (
     "'self'",
     "https://stats.data.gouv.fr/piwik.php",
-    # Crisp
-    "https://client.crisp.chat",
-    "https://storage.crisp.chat",
-    "wss://client.relay.crisp.chat",
-    "wss://stream.relay.crisp.chat",
     # Matomo
     "https://stats.beta.gouv.fr/matomo.php",
     "https://stats.beta.gouv.fr/plugins/HeatmapSessionRecording/configs.php",
@@ -435,8 +414,6 @@ CSP_STYLE_SRC = (
     "https://code.highcharts.com/css/highcharts.css",
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui.css",
     "'unsafe-inline'",
-    # Crisp
-    "https://client.crisp.chat",
 )
 CSP_MANIFEST_SRC = "'self'"
 CSP_INCLUDE_NONCE_IN = [
@@ -563,12 +540,8 @@ if SENTRY_URL:  # pragma: no cover
         ignore_errors=[PermissionDenied],
     )
 
-# Crisp
-CRISP_WEBSITE_ID = get_env_variable("CRISP_WEBSITE_ID")
-
 # Celery (see https://docs.celeryq.dev/en/stable/userguide/configuration.html#configuration)
 CELERY_TIMEZONE = "Europe/Paris"
-# CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 60 * 60
 CELERY_BROKER_URL = get_env_variable("REDIS_URL")
 CELERY_RESULT_BACKEND = "django-db"
