@@ -24,6 +24,12 @@
             </p>
         {% endfor %}
 
+        {% if convention.is_avenant %}
+            <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
+                <strong>Retrouvez rapidement les logements à modifier</strong> en utilisant la commande <strong>CTRL+F</strong> sur votre clavier et en indiquant la désignation du logement
+            </div>
+        {% endif %}
+
         {{ formset.management_form }}
         <div class="fr-table fr-table--bordered table--layout-fixed">
             <table id="lgts_table"  aria-label="Logements">
@@ -161,6 +167,9 @@
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-mb-2w">
             {% include "common/form/input_number.html" with display_inline=True form_input=form.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:form.uuid.value %}
+            <div class="insert-info">
+                <a href="https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8061069/Logements#%3Ainfo%3A-Options-facultatives-pour-les-Financements-PLUS" target="_blank" rel="noopener" class="fr-text--xs fr-link">Informations complémentaires</a>
+            </div>
         </div>
     </div>
 {% endif %}

@@ -24,7 +24,7 @@
         </div>
 
         {% if convention.programme.is_foyer or convention.programme.is_residence %}
-            <h4>Gestionnaire des logments conventionnés</h4>
+            <h4>Gestionnaire des logements conventionnés</h4>
             {% with convention_uuid=convention.uuid|slugify %}
 
                 {% include "common/form/input_text.html" with form_input=form.gestionnaire object_field="convention__gestionnaire__"|add:convention_uuid %}

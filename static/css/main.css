@@ -65,7 +65,10 @@
   right: 0;
   z-index: 1;
 }
-
+.insert-info {
+  margin-top: -20px;
+  margin-bottom: 20px;
+}
 .fr-icon--xxl {
   --icon-size: 4rem;
 }
