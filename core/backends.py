@@ -55,8 +55,12 @@ class EmailBackend(ModelBackend):
                 elif user.is_instructeur():
                     request.session["currently"] = GroupProfile.INSTRUCTEUR
                     admin_ids = user.administration_ids()
-                    request.session["multi_administration"] = (
-                        admin_ids == [] or len(admin_ids) > 1
-                    )
+
+                    if admin_ids is None:
+                        request.session["multi_administration"] = False
+                    else:
+                        request.session["multi_administration"] = (
+                            admin_ids == [] or len(admin_ids) > 1
+                        )
             return user
         return None

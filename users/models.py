@@ -244,7 +244,7 @@ class User(AbstractUser):
 
     def programmes(self) -> QuerySet[Programme]:
         """
-        Programme of the user following is role :
+        Programme of the user following his role :
         * super admin = all programme, filtre = {}
         * instructeur = all programme following geo, filtre = {}
         * bailleur = programme which belongs to the bailleurs, filtre = {bailleur_id__in: [x,y,z]}
@@ -254,9 +254,12 @@ class User(AbstractUser):
             return Programme.objects.all()
 
         if self.is_instructeur():
-            return Programme.objects.filter(
-                administration_id__in=self.administration_ids()
-            )
+            if administration_ids := self.administration_ids():
+                return Programme.objects.filter(
+                    administration_id__in=administration_ids
+                )
+            else:
+                return Programme.objects.none()
 
         if self.is_bailleur():
             programmes_result = Programme.objects.filter(
@@ -304,6 +307,7 @@ class User(AbstractUser):
             return {}
 
         # to do : manage programme related to geo for instructeur
+        # TODO: deprecated, we only have instructeurs from cerbere now
         if self.is_instructeur():
             if (administration_ids := self.administration_ids()) is not None:
                 return {"id__in": administration_ids}
@@ -418,10 +422,9 @@ class User(AbstractUser):
         return conventions
 
     def _apply_administration_ids_filters(self, convs):
-        administrations_ids = self.administration_ids()
-        if administrations_ids:
+        if administrations_ids := self.administration_ids():
             convs = convs.filter(
-                programme__administration_id__in=self.administration_ids(),
+                programme__administration_id__in=administrations_ids,
             )
         return convs
 
