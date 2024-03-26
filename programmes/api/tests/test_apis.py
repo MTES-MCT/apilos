@@ -110,12 +110,14 @@ def create_all_for_siap():
         programme=programme_75,
         financement=Financement.PLAI,
         type_habitat=TypeHabitat.MIXTE,
+        nb_logements=None,
         make_upload_on_fields=["edd_volumetrique", "edd_classique"],
     )
     lot_plus = LotFactory(
         programme=programme_75,
         financement=Financement.PLUS,
         type_habitat=TypeHabitat.COLLECTIF,
+        nb_logements=None,
         make_upload_on_fields=["edd_volumetrique", "edd_classique"],
     )
 
@@ -193,7 +195,6 @@ class OperationDetailsAPITest(APITestCase):
             "nom": "Programme 1",
             "bailleur": fixtures.bailleur,
             "administration": fixtures.administration,
-            "conventions": [fixtures.convention1, fixtures.convention2],
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
@@ -207,6 +208,9 @@ class OperationDetailsAPITest(APITestCase):
             self.assertEqual(response.data[key], value, f"Error on key {key}")
         for key in ["date_achevement_previsible", "date_achat", "date_achevement"]:
             self.assertTrue(response.data[key], f"Error on key {key}")
+        self.assertCountEqual(
+            response.data["conventions"], [fixtures.convention1, fixtures.convention2]
+        )
 
     def test_post_operation_unauthorized(self):
         client = APIClient()
