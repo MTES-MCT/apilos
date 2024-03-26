@@ -31,6 +31,7 @@
                         <tr class="th_inline">
                             <th scope="col">Statut</th>
                             <th scope="col">Numéro de l'avenant</th>
+                            <th scope="col">Date de l'avenant</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -43,6 +44,7 @@
                                     </div>
                                 </td>
                                 <td>{{ avenant.numero|default_if_none:"" }}</td>
+                                <td>{{ avenant.televersement_convention_signee_le}}</td>
                                 <td>
                                     <span class="fr-icon-eye-line" aria-hidden="true"></span>
                                 </td>
