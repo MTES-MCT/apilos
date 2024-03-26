@@ -1,3 +1,5 @@
+from datetime import date
+
 from django import forms
 from django.db.models import QuerySet
 
@@ -37,8 +39,9 @@ class AddConventionForm(forms.Form):
         },
     )
 
-    annee_signature = forms.IntegerField(
+    annee_signature = forms.ChoiceField(
         label="Année de signature de la convention",
+        choices=[(year, str(year)) for year in range(date.today().year + 1, 1900, -1)],
     )
 
     nom_fichier_signe = forms.FileField(
@@ -63,9 +66,10 @@ class AddAvenantForm(forms.Form):
         required=True,
     )
 
-    annee_signature = forms.IntegerField(
+    annee_signature = forms.ChoiceField(
         label="Année de signature de l'avenant",
         required=True,
+        choices=[(year, str(year)) for year in range(date.today().year + 1, 1900, -1)],
     )
 
     nom_fichier_signe = forms.FileField(

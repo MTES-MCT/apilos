@@ -27,10 +27,10 @@
             </div>
 
         {% else %}
-            <h3 class="fr-pb-2w fr-toggle--border-bottom fr-mb-5w">Opération liée</h3>
+            <h4 class="fr-pb-2w fr-toggle--border-bottom fr-mb-5w">Opération liée</h4>
 
             <div class="fr-mb-7w">
-                <h4 class="fr-mb-0">{{operation.nom}}</h4>
+                <h6 class="fr-mb-0 fr-text--lg">{{operation.nom}}</h6>
                 <div class="apilos-input-group--inline">
                     <div class="fr-grid-row fr-mt-1w apilos-text--black">
                         <div class="fr-pr-2w fr-text--sm apilos-separator">
@@ -100,7 +100,7 @@
                     </div>
                 {% endif %}
             </div>
-            <h3 class="fr-pb-2w fr-toggle--border-bottom fr-mb-5w">Détails de la convention à ajouter</h3>
+            <h4 class="fr-pb-2w fr-toggle--border-bottom fr-mb-5w">Détails de la convention à ajouter</h4>
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
 
@@ -122,11 +122,12 @@
                         {% include "common/form/input_select.html" with form_input=form.financement mandatory_input=True editable=True %}
                     </div>
                     <div class="fr-col-6">
-                        {% include "common/form/input_number.html" with form_input=form.annee_signature mandatory_input=True editable=True %}
+                        {% include "common/form/input_select.html" with form_input=form.annee_signature mandatory_input=True editable=True %}
                     </div>
                     <div class="fr-col-12">
                         <div class="fr-upload-group {% if form.nom_fichier_signe.errors %}fr-select-group--error{% endif %}" id="{{form.nom_fichier_signe.id_for_label}}_group">
                             <label class="fr-label" for="file-upload">Déposer la convention (en PDF)
+                                {% include "common/form/required_field.html" with form_input=form_input mandatory_input=True %}
                                 <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
                             </label>
                             <input
