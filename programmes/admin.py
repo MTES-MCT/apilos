@@ -7,6 +7,7 @@ from django.http import HttpRequest
 from admin.admin import ApilosModelAdmin
 from admin.filters import IsCloneFilter
 from bailleurs.models import Bailleur
+from conventions.models import Convention
 from instructeurs.models import Administration
 from programmes.models import IndiceEvolutionLoyer
 
@@ -18,6 +19,28 @@ from .models import (
     ReferenceCadastrale,
     TypeStationnement,
 )
+
+
+class ConventionInline(admin.StackedInline):
+    model = Convention
+    fields = ("uuid", "get_statut", "financement", "lot")
+    readonly_fields = (
+        "uuid",
+        "get_statut",
+    )
+    show_change_link = True
+    can_delete = False
+    extra = 0
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    @admin.display(description="Statut")
+    def get_statut(self, obj):
+        return obj.statut
 
 
 @admin.register(Programme)
@@ -61,6 +84,8 @@ class ProgrammeAdmin(ApilosModelAdmin):
         "numero_galion",
         "uuid",
     )
+
+    inlines = (ConventionInline,)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "administration":

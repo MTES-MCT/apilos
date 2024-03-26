@@ -3,6 +3,7 @@ from typing import Any
 from django import forms
 from django.contrib import admin
 from django.contrib.admin import ChoicesFieldListFilter
+from django.core.exceptions import ValidationError
 
 from admin.admin import ApilosModelAdmin
 from admin.filters import IsCloneFilter
@@ -47,6 +48,14 @@ class ConventionModelForm(forms.ModelForm):
                 initial["statut"] = statut.name
 
         super().__init__(*args, initial=initial, **kwargs)
+
+    def validate_unique(self) -> None:
+        super().validate_unique()
+
+        try:
+            self.instance.validate_constraints()
+        except ValidationError as err:
+            self.add_error(None, err)
 
     def save(self, commit: bool = True) -> Any:
         self.instance.statut = ConventionStatut[self.instance.statut].label
