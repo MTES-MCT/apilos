@@ -2,6 +2,8 @@ import json
 import uuid
 from typing import Any, SupportsRound
 
+from django.utils.crypto import get_random_string
+
 
 def round_half_up(number: SupportsRound[Any], ndigits: int = 0):
     """
@@ -40,4 +42,11 @@ def custom_history_user_setter(instance, history_user):
     """
     instance.history_user_id = (
         history_user.pk if history_user and history_user.pk else None
+    )
+
+
+def make_random_string(length: int = 10) -> str:
+    return get_random_string(
+        length,
+        allowed_chars="abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789",
     )

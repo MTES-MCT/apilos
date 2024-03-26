@@ -4,6 +4,7 @@ from django.core.validators import validate_email
 from django.db import transaction
 
 from core.services import EmailService, EmailTemplateID
+from core.utils import make_random_string
 from instructeurs.models import Administration
 from users.models import Role, User
 from users.type_models import TypeRole
@@ -86,8 +87,8 @@ class Command(BaseCommand):
                     last_name=nom,
                 )
 
-                password = User.objects.make_random_password()
-                user.set_password(password)
+                _p = make_random_string()
+                user.set_password(_p)
                 user.save()
 
                 for administration in administrations:
@@ -108,7 +109,7 @@ class Command(BaseCommand):
                         "username": user.username,
                         "firstname": user.first_name,
                         "lastname": user.last_name,
-                        "password": password,
+                        "password": _p,
                         "login_url": "https://apilos.beta.gouv.fr/accounts/login/?instructeur=1",
                     }
                 )
