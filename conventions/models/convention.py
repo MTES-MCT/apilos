@@ -16,12 +16,7 @@ from conventions.models.avenant_type import AvenantType
 from conventions.models.choices import ConventionStatut, ConventionType1and2
 from conventions.models.convention_history import ConventionHistory
 from ecoloweb.models import EcoloReference
-from programmes.models import (
-    Financement,
-    LocauxCollectifs,
-    Lot,
-    TypeStationnement,
-)
+from programmes.models import Financement, LocauxCollectifs, Lot, TypeStationnement
 from users.type_models import EmailPreferences, TypeRole
 
 logger = logging.getLogger(__name__)
@@ -186,32 +181,32 @@ class Convention(models.Model):
         max_length=255, null=True, blank=True
     )
     attribution_inclusif_conditions_specifiques = models.CharField(
-        null=True, blank=True, max_length=5000
+        null=True, blank=True, max_length=50000
     )
     attribution_inclusif_conditions_admission = models.CharField(
-        null=True, blank=True, max_length=5000
+        null=True, blank=True, max_length=50000
     )
     attribution_inclusif_modalites_attribution = models.CharField(
-        null=True, blank=True, max_length=5000
+        null=True, blank=True, max_length=50000
     )
     attribution_inclusif_partenariats = models.CharField(
-        null=True, blank=True, max_length=5000
+        null=True, blank=True, max_length=50000
     )
     attribution_inclusif_activites = models.CharField(
-        null=True, blank=True, max_length=5000
+        null=True, blank=True, max_length=50000
     )
     attribution_reservation_prefectorale = models.IntegerField(null=True, blank=True)
     attribution_modalites_reservations = models.CharField(
-        null=True, blank=True, max_length=5000
+        null=True, blank=True, max_length=50000
     )
     attribution_modalites_choix_personnes = models.CharField(
-        null=True, blank=True, max_length=5000
+        null=True, blank=True, max_length=50000
     )
     attribution_prestations_integrees = models.CharField(
-        null=True, blank=True, max_length=5000
+        null=True, blank=True, max_length=50000
     )
     attribution_prestations_facultatives = models.CharField(
-        null=True, blank=True, max_length=5000
+        null=True, blank=True, max_length=50000
     )
 
     foyer_residence_variante_1 = models.BooleanField(default=True)
