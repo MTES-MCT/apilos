@@ -733,6 +733,7 @@ table.fullwidth {
 .fr-table--bordered tbody tr:hover {
   background-color: white;
   transform: scale(1.02);
+  background-size: 98% 1px;
 }
 
 .apilos-link {
