@@ -63,11 +63,13 @@
                                                 {% include "conventions/home/statut_tag.html"  %}
                                             </div>
                                         </td>
-                                        <td>{{ convention.numero|default_if_none:"" }}</td>
+                                        <td>{{ convention.numero|default_if_none:"-" }}</td>
                                         <td>{{ convention.lot.financement }}</td>
                                         <td>{{ convention.lot.nb_logements }}</td>
                                         <td>
-                                            <span class="fr-icon-eye-line" aria-hidden="true"></span>
+                                            <div class="fr-grid-row fr-grid-row--center">
+                                                <span class="fr-icon-eye-line" aria-hidden="true"></span>
+                                            </div>
                                         </td>
                                     </tr>
                                     <script type="text/javascript" nonce="{{request.csp_nonce}}">
