@@ -140,9 +140,9 @@ django-waffle==4.1.0 \
     --hash=sha256:5979a2f3dd674ef7086480525b39651fc2045427f6d8e6a614192656d3402c5b \
     --hash=sha256:e49d7d461d89f3bd8e53f20efe39310acca8f275c9888495e68e195345bf18b1
     # via -r requirements.in
-djangorestframework==3.15.0 \
-    --hash=sha256:3f4a263012e1b263bf49a4907eb4cfe14de840a09b1ba64596d01a9c54835919 \
-    --hash=sha256:5fa616048a7ec287fdaab3148aa5151efb73f7f8be1e23a9d18484e61e672695
+djangorestframework==3.15.1 \
+    --hash=sha256:3ccc0475bce968608cf30d07fb17d8e52d1d7fc8bfe779c905463200750cbca6 \
+    --hash=sha256:f88fad74183dfc7144b2756d0d2ac716ea5b4c7c9840995ac3bfd8ec034333c1
     # via
     #   -r requirements.in
     #   djangorestframework-simplejwt
