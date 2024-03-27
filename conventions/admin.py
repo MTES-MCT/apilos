@@ -1,8 +1,7 @@
-from typing import Any
-
 from django import forms
 from django.contrib import admin
 from django.contrib.admin import ChoicesFieldListFilter
+from django.core.exceptions import ValidationError
 
 from admin.admin import ApilosModelAdmin
 from admin.filters import IsCloneFilter
@@ -48,9 +47,29 @@ class ConventionModelForm(forms.ModelForm):
 
         super().__init__(*args, initial=initial, **kwargs)
 
-    def save(self, commit: bool = True) -> Any:
+    def _post_clean(self) -> None:
+        super()._post_clean()
+
         self.instance.statut = ConventionStatut[self.instance.statut].label
-        return super().save(commit)
+
+        try:
+            self.instance.validate_constraints()
+        except ValidationError as err:
+            if "unique_display_name" in str(err):
+                self.add_error(
+                    None,
+                    (
+                        "Problème d'unicité, une convention existe déjà pour ces critères. "
+                        "Vérifiez les conventions existantes sur le programme {}, le lot {}, "
+                        "avec un financement {}.".format(
+                            self.instance.programme.id,
+                            self.instance.lot.id,
+                            self.instance.financement,
+                        )
+                    ),
+                )
+            else:
+                self.add_error(None, err)
 
     class Meta:
         model = Convention
