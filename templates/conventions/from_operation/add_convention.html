@@ -100,52 +100,59 @@
                     </div>
                 {% endif %}
             </div>
-            <h4 class="fr-pb-2w fr-toggle--border-bottom fr-mb-5w">Détails de la convention à ajouter</h4>
-            <form method="post" action="" enctype="multipart/form-data">
-                {% csrf_token %}
+            {% if form.financement.field.choices %}
+                <h4 class="fr-pb-2w fr-toggle--border-bottom fr-mb-5w">Détails de la convention à ajouter</h4>
+                <form method="post" action="" enctype="multipart/form-data">
+                    {% csrf_token %}
 
-                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-grid-row fr-grid-row--gutters">
 
-                    {% for error in form.non_field_errors %}
-                        <p id="text-input-error-desc-error" class="fr-error-text fr-mb-4w">
-                            {{ error }}
-                        </p>
-                    {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <p id="text-input-error-desc-error" class="fr-error-text fr-mb-4w">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
 
-                    <div class="fr-col-6">
-                        {% include "common/form/input_text.html" with form_input=form.numero  mandatory_input=True editable=True %}
-                    </div>
-                    <div class="fr-col-6">
-                        {% include "common/form/input_number.html" with form_input=form.nb_logements editable=True %}
-                    </div>
-                    <div class="fr-col-6">
-                        {% include "common/form/input_select.html" with form_input=form.financement mandatory_input=True editable=True %}
-                    </div>
-                    <div class="fr-col-6">
-                        {% include "common/form/input_select.html" with form_input=form.annee_signature mandatory_input=True editable=True %}
-                    </div>
-                    <div class="fr-col-12">
-                        <div class="fr-upload-group {% if form.nom_fichier_signe.errors %}fr-select-group--error{% endif %}" id="{{form.nom_fichier_signe.id_for_label}}_group">
-                            <label class="fr-label" for="file-upload">Déposer la convention (en PDF)
-                                {% include "common/form/required_field.html" with form_input=form_input mandatory_input=True %}
-                                <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
-                            </label>
-                            <input
-                                class="fr-upload {% if form.nom_fichier_signe.errors %}fr-input--error{% endif %}"
-                                type="file"
-                                id="file-upload"
-                                name="{{form.nom_fichier_signe.html_name}}"
-                                accept="application/pdf"
-                            >
+                        <div class="fr-col-6">
+                            {% include "common/form/input_text.html" with form_input=form.numero  mandatory_input=True editable=True %}
+                        </div>
+                        <div class="fr-col-6">
+                            {% include "common/form/input_number.html" with form_input=form.nb_logements editable=True %}
+                        </div>
+                        <div class="fr-col-6">
+                            {% include "common/form/input_select.html" with form_input=form.financement mandatory_input=True editable=True %}
+                        </div>
+                        <div class="fr-col-6">
+                            {% include "common/form/input_select.html" with form_input=form.annee_signature mandatory_input=True editable=True %}
+                        </div>
+                        <div class="fr-col-12">
+                            <div class="fr-upload-group {% if form.nom_fichier_signe.errors %}fr-select-group--error{% endif %}" id="{{form.nom_fichier_signe.id_for_label}}_group">
+                                <label class="fr-label" for="file-upload">Déposer la convention (en PDF)
+                                    {% include "common/form/required_field.html" with form_input=form_input mandatory_input=True %}
+                                    <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
+                                </label>
+                                <input
+                                    class="fr-upload {% if form.nom_fichier_signe.errors %}fr-input--error{% endif %}"
+                                    type="file"
+                                    id="file-upload"
+                                    name="{{form.nom_fichier_signe.html_name}}"
+                                    accept="application/pdf"
+                                >
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-button-footer fr-py-5w">
-                    <button class="fr-btn fr-icon-arrow-right-s-line fr-btn--icon-right" name="action" value="submit" type="submit">
-                        Enregistrer
-                    </button>
-                </div>
-            </form>
+                    <div class="form-button-footer fr-py-5w">
+                        <button class="fr-btn fr-icon-arrow-right-s-line fr-btn--icon-right" name="action" value="submit" type="submit">
+                            Enregistrer
+                        </button>
+                    </div>
+                </form>
+            {% else %}
+                <p>Toutes les conventions liées à cette opération sont déjà enregistrées dans le SIAP.</p>
+                <a class="fr-btn fr-btn--primary" href="{% url 'conventions:search' %}">
+                    Retour à la liste des conventions
+                </a>
+            {% endif %}
         {% endif %}
     </div>
 
