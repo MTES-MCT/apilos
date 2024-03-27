@@ -7,7 +7,7 @@ from django.forms import BaseFormSet, formset_factory
 from apilos_settings.models import Departement
 from bailleurs.models import Bailleur
 from users.models import User
-from users.type_models import EmailPreferences, TypeRole
+from users.type_models import EmailPreferences
 
 
 class UserNotificationForm(forms.Form):
@@ -104,64 +104,6 @@ class UserForm(UserNotificationForm):
                 "Le email de l'utilisateur existe déjà, il doit-être unique"
             )
         return email
-
-
-class AddUserForm(UserForm):
-    bailleur = forms.ModelChoiceField(
-        required=False,
-        label="Entreprise bailleur",
-        queryset=Bailleur.objects.none(),
-        to_field_name="uuid",
-    )
-
-    def __init__(
-        self, *args, bailleur_query: QuerySet, administrations=None, **kwargs
-    ) -> None:
-        self.declared_fields["bailleur"].queryset = bailleur_query
-        self.declared_fields["administration"].choices = administrations
-
-        super().__init__(*args, **kwargs)
-
-    user_type = forms.ChoiceField(
-        required=False, label="Type d'utilisateur", choices=TypeRole.choices
-    )
-
-    administration = forms.CharField(
-        required=False,
-        label="Administration",
-    )
-
-    def clean_username(self):
-        username = self.cleaned_data["username"]
-        if User.objects.filter(username=username).exists():
-            raise ValidationError(
-                "L'identifiant de l'utilisateur existe déjà, il doit-être unique"
-            )
-        return username
-
-    def clean(self):
-        cleaned_data = super().clean()
-        user_type = cleaned_data.get("user_type")
-        is_superuser = cleaned_data.get("is_superuser")
-
-        if not is_superuser:
-            if not user_type:
-                self.add_error(
-                    "user_type",
-                    ("Le type d'utilisateur est obligatoire"),
-                )
-            if user_type == "BAILLEUR":
-                if not cleaned_data.get("bailleur"):
-                    self.add_error(
-                        "bailleur",
-                        ("Le bailleur est obligatoire"),
-                    )
-            if user_type == "INSTRUCTEUR":
-                if not cleaned_data.get("administration"):
-                    self.add_error(
-                        "administration",
-                        ("L'administration est obligatoire"),
-                    )
 
 
 class UserBailleurForm(forms.Form):

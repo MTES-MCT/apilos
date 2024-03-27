@@ -44,18 +44,8 @@ urlpatterns = [
         name="edit_user",
     ),
     path(
-        "users/new/",
-        views.add_user,
-        name="add_user",
-    ),
-    path(
         "users/bailleur/import",
         views.ImportBailleurUsersView.as_view(),
         name="import_bailleur_users",
-    ),
-    path(
-        "users/delete/<username>",
-        views.delete_user,
-        name="delete_user",
     ),
 ]
