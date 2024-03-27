@@ -14,6 +14,19 @@ omit = [
 DJANGO_SETTINGS_MODULE = "core.settings"
 
 [tool.ruff]
+line-length = 120
+show-fixes = true
+target-version = "py312"
+exclude = [
+    ".venv",
+    "bin",
+    "documents",
+    "node_modules",
+    "staticfiles",
+    "templates",
+]
+
+[tool.ruff.lint]
 select = [
     "B",   # flake8-bugbear
     "BLE", # flake8-blind-except
@@ -29,23 +42,11 @@ select = [
     "TID", # flake8-tidy-imports
     "UP",  # pyupgrade
     "W",   # pycodestyle
-    # TODO: apply the following rules
-    # "C4",  # flake8-comprehensions
 ]
-line-length = 120
-show-fixes = true
 unfixable = ["B"]
-target-version = "py310"
-exclude = [
-    ".venv",
-    "bin",
-    "documents",
-    "node_modules",
-    "staticfiles",
-    "templates",
-]
 
-[tool.ruff.extend-per-file-ignores]
+
+[tool.ruff.lint.extend-per-file-ignores]
 "__init__.py" = ["F401", "F403"]
 "scripts/*.py" = ["INP001"]
 "**/migrations/*.py" = ["E501", "N806"]
@@ -59,7 +60,7 @@ exclude = [
 [tool.ruff.lint.mccabe]
 max-complexity = 20 # TODO: very high value, reduce to 10
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 case-sensitive = true
 known-third-party = [
     "boto3",
