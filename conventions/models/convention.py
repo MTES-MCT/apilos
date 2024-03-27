@@ -729,3 +729,28 @@ class Convention(models.Model):
             self.fichier_instruction_resiliation is None
             or self.fichier_instruction_resiliation == '{"files": {}, "text": ""}'
         )
+
+    @classmethod
+    def date_signature_choices(
+        cls, statuts: list[ConventionStatut] | None = None, from_threshold=False
+    ) -> list[str]:
+        validation_year_threshold = 1900
+        if from_threshold:
+            earliest = validation_year_threshold
+        else:
+            qs = Convention.objects.filter(
+                televersement_convention_signee_le__isnull=False,
+                televersement_convention_signee_le__year__gte=validation_year_threshold,
+            )
+            if statuts:
+                qs = qs.filter(statut__in=[s.label for s in statuts])
+
+            try:
+                earliest = qs.earliest(
+                    "televersement_convention_signee_le"
+                ).televersement_convention_signee_le.year
+            except Convention.DoesNotExist:
+                earliest = validation_year_threshold  # fallback value
+
+        years = range(date.today().year, earliest - 1, -1)
+        return [(year, str(year)) for year in years]

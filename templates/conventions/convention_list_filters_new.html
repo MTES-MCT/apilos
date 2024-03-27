@@ -128,10 +128,10 @@
                             <div class="select-label">Année de signature</div>
                             <select class="fr-select fr-mt-1w" name="date_signature">
                                 <option value="">Sélectionner une période</option>
-                                {% for value in date_signature_choices %}
+                                {% for value, label in date_signature_choices %}
                                     <option value="{{ value }}"
                                             {% if value == request.GET.date_signature %}selected{% endif %}>
-                                        {{ value }}
+                                        {{ label }}
                                     </option>
                                 {% endfor %}
                             </select>

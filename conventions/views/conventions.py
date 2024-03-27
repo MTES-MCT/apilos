@@ -232,28 +232,6 @@ class ConventionSearchBaseView(LoginRequiredMixin, View):
             ("administration", "administration"),
         ]
 
-    def _date_signature_choices(
-        self, statuts: list[ConventionStatut] | None = None
-    ) -> list[str]:
-        validation_year_threshold = 1900
-
-        qs = Convention.objects.filter(
-            televersement_convention_signee_le__isnull=False,
-            televersement_convention_signee_le__year__gte=validation_year_threshold,
-        )
-        if statuts:
-            qs = qs.filter(statut__in=[s.label for s in statuts])
-
-        try:
-            earliest = qs.earliest(
-                "televersement_convention_signee_le"
-            ).televersement_convention_signee_le.year
-        except Convention.DoesNotExist:
-            earliest = validation_year_threshold  # fallback value
-
-        years = sorted(range(earliest, date.today().year + 1), reverse=True)
-        return [str(year) for year in years]
-
 
 class ConventionTabSearchBaseView(ConventionSearchBaseView, ConventionTabsMixin):
     def all_conventions_count(self, tabs):
@@ -289,7 +267,7 @@ class ConventionActivesSearchView(ConventionTabSearchBaseView):
 
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         return super().get_context(request) | {
-            "date_signature_choices": self._date_signature_choices(
+            "date_signature_choices": Convention.date_signature_choices(
                 statuts=self.service_class.statuses
             )
         }
@@ -306,7 +284,7 @@ class ConventionTermineesSearchView(ConventionTabSearchBaseView):
 
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         return super().get_context(request) | {
-            "date_signature_choices": self._date_signature_choices(
+            "date_signature_choices": Convention.date_signature_choices(
                 statuts=self.service.statuses
             )
         }
@@ -330,7 +308,7 @@ class ConventionSearchView(WaffleSwitchMixin, ConventionSearchBaseView):
                 (member.neutre, member.label) for member in ConventionStatut
             ],
             "new_search": True,
-            "date_signature_choices": self._date_signature_choices(),
+            "date_signature_choices": Convention.date_signature_choices(),
             "financement_choices": Financement.choices,
             "nature_logement_choices": NatureLogement.choices,
             "conventions": paginator.get_page(request.GET.get("page", 1)),

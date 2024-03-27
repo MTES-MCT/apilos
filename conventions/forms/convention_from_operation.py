@@ -1,9 +1,8 @@
-from datetime import date
-
 from django import forms
 from django.db.models import QuerySet
 
 from bailleurs.models import Bailleur
+from conventions.models.convention import Convention
 from programmes.models.choices import FinancementEDD
 
 
@@ -41,7 +40,7 @@ class AddConventionForm(forms.Form):
 
     annee_signature = forms.ChoiceField(
         label="Année de signature de la convention",
-        choices=[(year, str(year)) for year in range(date.today().year + 1, 1900, -1)],
+        choices=Convention.date_signature_choices(from_threshold=True),
     )
 
     nom_fichier_signe = forms.FileField(
@@ -69,7 +68,7 @@ class AddAvenantForm(forms.Form):
     annee_signature = forms.ChoiceField(
         label="Année de signature de l'avenant",
         required=True,
-        choices=[(year, str(year)) for year in range(date.today().year + 1, 1900, -1)],
+        choices=Convention.date_signature_choices(from_threshold=True),
     )
 
     nom_fichier_signe = forms.FileField(
