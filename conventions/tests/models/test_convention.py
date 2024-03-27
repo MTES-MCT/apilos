@@ -323,3 +323,10 @@ class ConventionHistoryModelsTest(TestCase):
                     "lastname": instructeur.last_name,
                 }
             )
+
+
+def test_convention_date_signature_choices():
+    current_year = datetime.date.today().year
+    choices = Convention.date_signature_choices(from_threshold=True)
+    assert choices[0] == (current_year, str(current_year))
+    assert choices[-1] == (1900, "1900")

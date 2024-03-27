@@ -2,6 +2,7 @@ from django import forms
 from django.db.models import QuerySet
 
 from bailleurs.models import Bailleur
+from conventions.models.convention import Convention
 from programmes.models.choices import FinancementEDD
 
 
@@ -37,8 +38,9 @@ class AddConventionForm(forms.Form):
         },
     )
 
-    annee_signature = forms.IntegerField(
+    annee_signature = forms.ChoiceField(
         label="Année de signature de la convention",
+        choices=Convention.date_signature_choices(from_threshold=True),
     )
 
     nom_fichier_signe = forms.FileField(
@@ -63,9 +65,10 @@ class AddAvenantForm(forms.Form):
         required=True,
     )
 
-    annee_signature = forms.IntegerField(
+    annee_signature = forms.ChoiceField(
         label="Année de signature de l'avenant",
         required=True,
+        choices=Convention.date_signature_choices(from_threshold=True),
     )
 
     nom_fichier_signe = forms.FileField(

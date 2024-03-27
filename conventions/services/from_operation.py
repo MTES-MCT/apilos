@@ -184,8 +184,9 @@ class AddConventionService:
             cree_par=self.request.user,
             numero=self.form.cleaned_data["numero"],
             televersement_convention_signee_le=datetime.date(
-                self.form.cleaned_data["annee_signature"], 1, 1
+                int(self.form.cleaned_data["annee_signature"]), 1, 1
             ),
+            statut=ConventionStatut.SIGNEE.label,
         )
 
     def save(self) -> ReturnStatus:
@@ -208,7 +209,9 @@ class AddConventionService:
 
                 file = self.request.FILES.get("nom_fichier_signe", False)
                 if file:
-                    ConventionFileService.upload_convention_file(self.convention, file)
+                    ConventionFileService.upload_convention_file(
+                        self.convention, file, update_statut=False
+                    )
 
                 return ReturnStatus.SUCCESS
 
@@ -259,7 +262,7 @@ class AddAvenantsService:
                 avenant.numero = self.form.cleaned_data["numero"]
                 avenant.statut = ConventionStatut.SIGNEE.label
                 avenant.televersement_convention_signee_le = datetime.date(
-                    self.form.cleaned_data["annee_signature"], 1, 1
+                    int(self.form.cleaned_data["annee_signature"]), 1, 1
                 )
                 avenant.save()
 

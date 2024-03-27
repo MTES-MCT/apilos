@@ -87,7 +87,7 @@
                     {% include "common/form/input_text.html" with form_input=form.numero mandatory_input=True editable=True %}
                 </div>
                 <div class="fr-col-6">
-                    {% include "common/form/input_number.html" with form_input=form.annee_signature mandatory_input=True editable=True %}
+                    {% include "common/form/input_select.html" with form_input=form.annee_signature mandatory_input=True editable=True %}
                 </div>
                 <div class="fr-col-6">
                     {% url 'users:search_bailleur' as search_bailleur_url %}
@@ -102,6 +102,7 @@
                 <div class="fr-col-6">
                     <div class="fr-upload-group {% if form.nom_fichier_signe.errors %}fr-select-group--error{% endif %}" id="{{form.nom_fichier_signe.id_for_label}}_group">
                         <label class="fr-label" for="file-upload">Déposer l'avenant (en PDF)
+                            {% include "common/form/required_field.html" with form_input=form_input mandatory_input=True %}
                             <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
                         </label>
                         <input

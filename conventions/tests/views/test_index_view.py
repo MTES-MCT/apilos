@@ -137,7 +137,9 @@ class ConventionIndexFiltersViewTests(TestCase):
         )
         self.assertEqual(
             response.context["date_signature_choices"],
-            sorted([str(d) for d in range(2020, date.today().year + 1)], reverse=True),
+            sorted(
+                [(d, str(d)) for d in range(2020, date.today().year + 1)], reverse=True
+            ),
         )
         self.assertEqual(response.context["filtered_conventions_count"], 0)
 
