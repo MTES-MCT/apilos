@@ -14,13 +14,11 @@ from bailleurs.models import Bailleur, NatureBailleur
 from conventions.forms import BailleurForm
 from conventions.services import utils
 from conventions.services.utils import ReturnStatus
-from core.services import EmailService, EmailTemplateID
 from instructeurs.forms import AdministrationForm
 from instructeurs.models import Administration
 from users.forms import (
     AddAdministrationForm,
     AddBailleurForm,
-    AddUserForm,
     UserBailleurFormSet,
     UserForm,
     UserNotificationForm,
@@ -492,117 +490,6 @@ def _init_user_form(user, bailleur_query=None, administrations=None):
         AddBailleurForm(bailleur_query=bailleur_query),
         AddAdministrationForm(administrations=administrations),
     )
-
-
-def add_user(request):
-    status = ""
-    administrations = [
-        (b.uuid, b.nom) for b in request.user.administrations(full_scope=True)
-    ]
-    bailleur_query = request.user.bailleurs(full_scope=True)
-
-    if request.method == "POST" and request.user.is_administrator():
-        form = AddUserForm(
-            {
-                **request.POST.dict(),
-                "filtre_departements": (
-                    [int(num) for num in request.POST["filtre_departements"].split(",")]
-                    if "filtre_departements" in request.POST
-                    and request.POST["filtre_departements"]
-                    else []
-                ),
-            },
-            bailleur_query=(
-                bailleur_query.filter(uuid=request.POST.get("bailleur"))
-                if request.POST.get("bailleur")
-                else bailleur_query
-            ),
-            administrations=administrations,
-        )
-        if form.is_valid():
-            # Forbid non super users to grant super user role to new users
-            is_superuser = (
-                form.cleaned_data["is_superuser"]
-                if request.user.is_superuser
-                else False
-            )
-            user = User.objects.create(
-                email=form.cleaned_data["email"],
-                username=form.cleaned_data["username"],
-                first_name=form.cleaned_data["first_name"],
-                last_name=form.cleaned_data["last_name"],
-                telephone=form.cleaned_data["telephone"],
-                administrateur_de_compte=form.cleaned_data["administrateur_de_compte"],
-                is_superuser=is_superuser,
-                creator=request.user,
-            )
-            if form.cleaned_data["preferences_email"] is not None:
-                user.preferences_email = form.cleaned_data["preferences_email"]
-
-            password = User.objects.make_random_password()
-            user.set_password(password)
-            user.save()
-            if form.cleaned_data["filtre_departements"] is not None:
-                user.filtre_departements.clear()
-                user.filtre_departements.add(*form.cleaned_data["filtre_departements"])
-            if form.cleaned_data["user_type"] == "BAILLEUR":
-                EmailService(
-                    to_emails=[user.email],
-                    email_template_id=EmailTemplateID.B_WELCOME,
-                ).send_transactional_email(
-                    email_data={
-                        "email": user.email,
-                        "username": user.username,
-                        "firstname": user.first_name,
-                        "lastname": user.last_name,
-                        "password": password,
-                        "login_url": request.build_absolute_uri("/accounts/login/"),
-                    }
-                )
-                Role.objects.create(
-                    typologie=TypeRole.BAILLEUR,
-                    bailleur=form.cleaned_data["bailleur"],
-                    user=user,
-                    group=Group.objects.get(name="bailleur"),
-                )
-            if form.cleaned_data["user_type"] == "INSTRUCTEUR":
-                EmailService(
-                    to_emails=[user.email],
-                    email_template_id=EmailTemplateID.I_WELCOME,
-                ).send_transactional_email(
-                    email_data={
-                        "email": user.email,
-                        "username": user.username,
-                        "firstname": user.first_name,
-                        "lastname": user.last_name,
-                        "password": password,
-                        "login_url": request.build_absolute_uri("/accounts/login/")
-                        + "?instructeur=1",
-                    }
-                )
-                Role.objects.create(
-                    typologie=TypeRole.INSTRUCTEUR,
-                    administration=request.user.administrations().get(
-                        uuid=form.cleaned_data["administration"]
-                    ),
-                    user=user,
-                    group=Group.objects.get(name="instructeur"),
-                )
-            status = "user_created"
-    else:
-        form = AddUserForm(
-            administrations=administrations,
-            bailleur_query=bailleur_query[: settings.APILOS_MAX_DROPDOWN_COUNT],
-        )
-    return {
-        "form": form,
-        "status": status,
-        "editable": True,
-    }
-
-
-def delete_user(request, username):
-    User.objects.get(username=username).delete()
 
 
 class UserListService:

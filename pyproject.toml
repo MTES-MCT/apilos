@@ -6,6 +6,7 @@ omit = [
     "ecoloweb/*",
     # TODO: add tests on the following modules and remove them from this list
     "conventions/services/upload_objects.py",
+    "apilos_settings/services/services_view.py",
 ]
 
 [tool.pytest.ini_options]

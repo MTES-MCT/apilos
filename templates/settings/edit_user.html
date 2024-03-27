@@ -143,10 +143,6 @@
                             {% include 'settings/add_bailleur_to_user.html' %}
                         </div>
                     {% endif %}
-                    {% if request.user.is_superuser %}
-                        {% include 'settings/delete_user.html' %}
-                    {% endif %}
-
                 </div>
             </div>
         </div>

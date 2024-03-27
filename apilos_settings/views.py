@@ -1,11 +1,10 @@
 from django.conf import settings
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
-from django.views.decorators.http import require_POST
 
 from apilos_settings.models import Departement
 from apilos_settings.services import services_view
@@ -131,26 +130,3 @@ def edit_user(request, username):
             "departements": Departement.objects.all(),
         },
     )
-
-
-@login_required
-def add_user(request):
-    result = services.add_user(request)
-    if result["status"] == "user_created":
-        return HttpResponseRedirect(reverse("settings:users"))
-    return render(
-        request,
-        "settings/add_user.html",
-        {
-            **result,
-            "departements": Departement.objects.all(),
-        },
-    )
-
-
-@require_POST
-@login_required
-@permission_required("users.delete_user")
-def delete_user(request, username):
-    services.delete_user(request, username)
-    return HttpResponseRedirect(reverse("settings:users"))
