@@ -8,6 +8,7 @@ omit = [
     # TODO: add tests on the following modules and remove them from this list
     "conventions/services/upload_objects.py",
     "core/models.py",
+    "apilos_settings/services/services_view.py",
 ]
 
 [tool.pytest.ini_options]

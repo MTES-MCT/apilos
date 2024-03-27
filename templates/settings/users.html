@@ -34,13 +34,6 @@
                     {% endif %}
 
                     {% include 'settings/user_list.html' with users=paginated_users %}
-
-                    {% if request.user.is_administrator %}
-                        <a class="fr-btn fr-icon-add-circle-line fr-btn--icon-left fr-mt-3w" type="button" href="{% url 'settings:add_user'%}">
-                            Ajouter un utilisateur
-                        </a>
-                    {% endif %}
-
                 </div>
             </div>
         </div>
