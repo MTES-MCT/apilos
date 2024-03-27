@@ -806,7 +806,6 @@ class OperationClosedAPITest(APITestCase):
             "nom": "Programme 1",
             "bailleur": fixtures.bailleur,
             "administration": fixtures.administration,
-            "conventions": [fixtures.convention1, fixtures.convention2],
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
@@ -820,6 +819,9 @@ class OperationClosedAPITest(APITestCase):
             self.assertEqual(response.data[key], value, f"Error on key {key}")
         for key in ["date_achevement_previsible", "date_achat", "date_achevement"]:
             self.assertTrue(response.data[key], f"Error on key {key}")
+        self.assertCountEqual(
+            response.data["conventions"], [fixtures.convention1, fixtures.convention2]
+        )
 
 
 @override_settings(USE_MOCKED_SIAP_CLIENT=True)
