@@ -22,6 +22,7 @@ import dj_database_url
 import sentry_sdk
 from decouple import Config, RepositoryEnv
 from django.core.exceptions import PermissionDenied
+from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -527,7 +528,7 @@ if SENTRY_URL:  # pragma: no cover
     # it should be solved in a further release
     sentry_sdk.init(
         dsn=SENTRY_URL,
-        integrations=[DjangoIntegration()],
+        integrations=[DjangoIntegration(), CeleryIntegration(monitor_beat_tasks=True)],
         environment=ENVIRONMENT,
         # Set traces_sample_rate to 1.0 to capture 100%
         # of transactions for performance monitoring.
