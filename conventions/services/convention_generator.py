@@ -83,7 +83,9 @@ def _compute_total_locaux_collectifs(convention):
     )
 
 
-def get_or_generate_convention_doc(convention: Convention, save_data=False):
+def get_or_generate_convention_doc(
+    convention: Convention, save_data=False
+) -> DocxTemplate:
     if convention.fichier_override_cerfa and convention.fichier_override_cerfa != "{}":
         files_dict = json.loads(convention.fichier_override_cerfa)
         files = list(files_dict["files"].values())
@@ -96,7 +98,7 @@ def get_or_generate_convention_doc(convention: Convention, save_data=False):
     return generate_convention_doc(convention=convention, save_data=save_data)
 
 
-def generate_convention_doc(convention: Convention, save_data=False):
+def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemplate:
     annexes = (
         Annexe.objects.prefetch_related("logement")
         .filter(logement__lot_id=convention.lot_id)
@@ -158,9 +160,6 @@ def generate_convention_doc(convention: Convention, save_data=False):
     context.update(adresse)
 
     doc.render(context, _get_jinja_env())
-    file_stream = io.BytesIO()
-    doc.save(file_stream)
-    file_stream.seek(0)
 
     for local_path in list(set(local_pathes)):
         os.remove(local_path)
@@ -174,7 +173,7 @@ def generate_convention_doc(convention: Convention, save_data=False):
             logements_totale,
         )
 
-    return file_stream
+    return doc
 
 
 def typologie_label(typologie: str):
@@ -297,43 +296,55 @@ def _save_convention_donnees_validees(
     convention.save()
 
 
-def generate_pdf(file_stream: io.BytesIO, convention: Convention):
-    # save the convention docx locally
-    print("coucou", "1" * 10)
-    local_docx_path = Path(settings.MEDIA_ROOT, f"convention_{convention.uuid}.docx")
-    local_pdf_path = Path(settings.MEDIA_ROOT, f"convention_{convention.uuid}.pdf")
-    with open(local_docx_path, "wb") as local_file:
-        local_file.write(file_stream.read())
+def get_tmp_local_path() -> Path:
+    local_path = Path(settings.MEDIA_ROOT, "tmp")
+    local_path.mkdir(parents=True, exist_ok=True)
+    return local_path
 
-    print("coucou", "2" * 10)
-    subprocess.run(
-        [
-            settings.LIBREOFFICE_EXEC,
-            "--headless",
-            "--convert-to",
-            "pdf:writer_pdf_Export",
-            "--outdir",
-            local_pdf_path.parent,
-            local_docx_path,
-        ],
-        check=True,
-        capture_output=True,
-    )
-    print("coucou", "3" * 10)
-    os.remove(local_docx_path)
 
-    convention_dirpath = f"conventions/{convention.uuid}/convention_docs"
-    convention_pdf_filename = f"{convention.uuid}.pdf"
-    upload_service = UploadService(
-        convention_dirpath=convention_dirpath, filename=convention_pdf_filename
-    )
-    upload_service.copy_local_file(local_pdf_path)
-    print("coucou", "4" * 10)
+class PDFConversionError(Exception):
+    pass
 
-    file_stream.seek(0)
 
-    # END PDF GENERATION
-    return local_pdf_path
+def generate_pdf(doc: DocxTemplate, convention_uuid: str) -> None:
+    local_path = get_tmp_local_path()
+    local_docx_path = local_path / f"convention_{convention_uuid}.docx"
+    local_pdf_path = local_path / f"convention_{convention_uuid}.pdf"
+
+    # Save the convention docx locally
+    doc.save(local_docx_path)
+
+    # Generate the pdf file from the docx file, and upload it to the storage
+    try:
+        subprocess.run(
+            [
+                settings.LIBREOFFICE_EXEC,
+                "--headless",
+                "--convert-to",
+                "pdf:writer_pdf_Export",
+                "--outdir",
+                local_pdf_path.parent,
+                local_docx_path,
+            ],
+            check=True,
+            capture_output=True,
+        )
+
+        UploadService(
+            convention_dirpath=f"conventions/{convention_uuid}/convention_docs",
+            filename=f"{convention_uuid}.pdf",
+        ).copy_local_file(local_pdf_path)
+
+    # TODO: catch all possible errors
+    except (subprocess.CalledProcessError, OSError) as err:
+        raise PDFConversionError from err
+
+    finally:
+        # Remove the local files
+        if local_docx_path.exists():
+            os.remove(local_docx_path)
+        if local_pdf_path.exists():
+            os.remove(local_pdf_path)
 
 
 def _to_fr_float(value, d=2):

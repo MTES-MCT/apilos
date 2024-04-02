@@ -1,7 +1,9 @@
+import io
 import json
 import mimetypes
 from datetime import date
 from typing import Any
+from zipfile import ZipFile
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -21,11 +23,10 @@ from django.http import (
 from django.shortcuts import get_object_or_404, render
 from django.urls import resolve, reverse
 from django.views import View
-from django.views.decorators.http import require_GET, require_POST, require_http_methods
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from django.views.generic import RedirectView
 from waffle import switch_is_active
 from waffle.mixins import WaffleSwitchMixin
-from zipfile import ZipFile
 
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from conventions.forms.evenement import EvenementForm
@@ -547,7 +548,10 @@ def generate_convention(request, convention_uuid):
     )
     request.user.check_perm("convention.view_convention", convention)
 
-    data = convention_generator.generate_convention_doc(convention)
+    doc = convention_generator.generate_convention_doc(convention)
+    data = io.BytesIO()
+    doc.save(data)
+    data.seek(0)
 
     response = HttpResponse(
         data,

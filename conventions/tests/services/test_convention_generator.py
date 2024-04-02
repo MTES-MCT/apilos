@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch
 import jinja2
 from django.conf import settings
 from django.test import TestCase
+from docxtpl import DocxTemplate
 
 from bailleurs.models import SousNatureBailleur
 from conventions.models import Convention, ConventionType1and2
@@ -20,6 +21,7 @@ from conventions.services.convention_generator import (
     compute_mixte,
     default_str_if_none,
     generate_convention_doc,
+    generate_pdf,
     get_convention_template_path,
     pluralize,
     to_fr_date,
@@ -450,3 +452,19 @@ class TestComputeListeDesAnnexes(unittest.TestCase):
             " 3 stationnements de type type2"
         )
         self.assertEqual(annexes_list, expected_annexes_list)
+
+
+class TestGeneratePdf(unittest.TestCase):
+    def test_generate_pdf(self):
+
+        mock_doc = Mock(DocxTemplate, autospec=True)
+
+        with patch(
+            "conventions.services.convention_generator.subprocess.run"
+        ) as mock_run:
+            generate_pdf(
+                doc=mock_doc, convention_uuid="8f59189c-3086-4355-b7eb-9a84bcab9582"
+            )
+
+        mock_run.assert_called_once()
+        mock_doc.save.assert_called_once()
