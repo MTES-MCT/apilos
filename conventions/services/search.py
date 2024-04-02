@@ -462,15 +462,29 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
             )
 
         if self.search_numero:
-            if len(self.search_numero) == 4:
+            _search_numero_n = self.search_numero.replace("-", "").replace("/", "")
+            _search_numero_s = len(_search_numero_n)
+            if _search_numero_s > 0 and _search_numero_s < 5:
                 if self.avenant_seulement:
-                    queryset = queryset.filter(
-                        parent__numero__endswith=self.search_numero
-                    )
+                    queryset = queryset.annotate(
+                        parent_numero_n=Replace(
+                            Replace(Replace("parent__numero", Value("/")), Value("-")),
+                            Value(" "),
+                        )
+                    ).filter(parent_numero_n__endswith=_search_numero_n)
                 else:
-                    queryset = queryset.filter(
-                        Q(numero__endswith=self.search_numero)
-                        | Q(parent__numero__endswith=self.search_numero)
+                    queryset = queryset.annotate(
+                        numero_n=Replace(
+                            Replace(Replace("numero", Value("/")), Value("-")),
+                            Value(" "),
+                        ),
+                        parent_numero_n=Replace(
+                            Replace(Replace("parent__numero", Value("/")), Value("-")),
+                            Value(" "),
+                        ),
+                    ).filter(
+                        Q(numero_n__endswith=_search_numero_n)
+                        | Q(parent__numero_n__endswith=_search_numero_n)
                     )
             else:
                 if self.avenant_seulement:
