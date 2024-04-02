@@ -42,8 +42,7 @@ class Operation:
             nom=payload["donneesOperation"]["nomOperation"],
             numero=payload["donneesOperation"]["numeroOperation"],
             nature=payload["donneesOperation"]["natureLogement"],
-            # FIXME: use entiteMorale.nom
-            bailleur=payload["gestionnaire"]["code"],
+            bailleur=payload["donneesMo"]["nom"],
             commune=payload["donneesLocalisation"]["adresseComplete"]["commune"],
             siap_payload=payload,
         )
