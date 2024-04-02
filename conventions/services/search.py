@@ -463,7 +463,8 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
 
         if self.search_numero:
             _search_numero_n = self.search_numero.replace("-", "").replace("/", "")
-            if len(_search_numero_n) < 5:
+            _search_numero_s = len(_search_numero_n)
+            if _search_numero_s > 0 and _search_numero_s < 5:
                 if self.avenant_seulement:
                     queryset = queryset.annotate(
                         parent_numero_n=Replace(
@@ -473,12 +474,12 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                     ).filter(parent_numero_n__endswith=_search_numero_n)
                 else:
                     queryset = queryset.annotate(
-                        parent_numero_n=Replace(
-                            Replace(Replace("parent__numero", Value("/")), Value("-")),
+                        numero_n=Replace(
+                            Replace(Replace("numero", Value("/")), Value("-")),
                             Value(" "),
                         ),
-                        numero_norm=Replace(
-                            Replace(Replace("numero", Value("/")), Value("-")),
+                        parent_numero_n=Replace(
+                            Replace(Replace("parent__numero", Value("/")), Value("-")),
                             Value(" "),
                         ),
                     ).filter(

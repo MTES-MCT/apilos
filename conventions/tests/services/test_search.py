@@ -120,7 +120,7 @@ class TestUserConventionSmartSearchService(
 
         ConventionFactory(
             uuid="fbb9890f-171b-402d-a35e-71e1bd791b70",
-            numero="33N611709S700029",
+            numero="33N611709S70002-9",
             statut=ConventionStatut.SIGNEE.label,
             financement=Financement.PLUS,
             televersement_convention_signee_le="2024-01-01",
@@ -338,7 +338,21 @@ class TestUserConventionSmartSearchService(
             param(
                 {"search_numero": "0029"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
-                id="numero_convention_derniers_caracteres",
+                id="numero_convention_4_derniers_caracteres",
+            ),
+            param(
+                {"search_numero": "29"},
+                ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
+                id="numero_convention_2_derniers_caracteres",
+            ),
+            param(
+                {"search_numero": "9"},
+                [
+                    "fbb9890f-171b-402d-a35e-71e1bd791b72",
+                    "fbb9890f-171b-402d-a35e-71e1bd791b70",
+                    "a6862260-5afa-4e2c-ae07-a39276c55e46",
+                ],
+                id="numero_convention_dernier_caractere",
             ),
             param(
                 {"search_lieu": "01012"},
