@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from bailleurs.models import Bailleur
-from conventions.models import Convention
+from conventions.models import Convention, Pret
 from instructeurs.models import Administration
 from programmes.models import Annexe, Logement, Lot, Programme, TypeStationnement
 
@@ -171,3 +171,62 @@ class ClosingOperationSerializer(OperationSerializer):
             "last_conventions_state",
         )
         ref_name = "ClosingOperation"
+
+
+class OperationInfoSIAPSerializer(serializers.HyperlinkedModelSerializer):
+    bailleur = BailleurSerializer(read_only=True)
+    administration = AdministrationSerializer(read_only=True)
+
+    class Meta:
+        model = Programme
+        fields = (
+            "nom",
+            "bailleur",
+            "administration",
+            "code_postal",
+            "ville",
+            "adresse",
+            "numero_galion",
+            "zone_123",
+            "zone_abc",
+            "type_operation",
+            "anru",
+            "date_achevement_previsible",
+            "date_achat",
+            "date_achevement",
+        )
+        ref_name = "Operation"
+
+
+class PretSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Pret
+        fields = (
+            "preteur",
+            "autre",
+            "date_octroi",
+            "numero",
+            "duree",
+            "montant",
+        )
+        ref_name = "Pret"
+
+
+class ConventionInfoSIAPSerializer(serializers.HyperlinkedModelSerializer):
+    lot = LotSerializer(read_only=True)
+    operation = OperationInfoSIAPSerializer(source="programme", read_only=True)
+    prets = PretSerializer(many=True)
+
+    class Meta:
+        model = Convention
+        fields = (
+            "date_fin_conventionnement",
+            "financement",
+            "fond_propre",
+            "lot",
+            "prets",
+            "operation",
+            "numero",
+            "statut",
+        )
+        ref_name = "ConventionInfoSIAP"
