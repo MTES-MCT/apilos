@@ -88,6 +88,12 @@ urlpatterns = [
         ),
         name="from_operation_add_avenants",
     ),
+    # Pages pour la finalisation d'une convention par un instructeur
+    path(
+        "finalisation/<uuid:convention_uuid>/numero",
+        views.FinalisationNumero.as_view(),
+        name="finalisation_numero",
+    ),
     # Pages de troisième niveau : funnel d'instruction et d'action sur les conventions et avenants
     path(
         "new_convention_choice",

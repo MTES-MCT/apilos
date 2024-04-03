@@ -11,7 +11,7 @@
                 <p class="fr-alert__title fr-mb-3w">Finaliser la convention en trois étapes</p>
                 <p class="fr-mb-3w">Toutes les corrections sont terminées ?</p>
                 <p class="fr-mb-3w">Nous vous invitons à vérifier le document CERFA de la convention avant sa validation finale.</p>
-                <a class="fr-btn fr-btn--primary" href="#">Finaliser la convention</a>
+                <a class="fr-btn fr-btn--primary" href="{% url 'conventions:finalisation_numero' convention_uuid=convention.uuid %}" data-turbo="false">Finaliser la convention</a>
             {% else %}
                 <p class="fr-alert__title">Valider la convention</p>
                 {% with editable_validation=convention|display_deactivated_because_type1and2_config_is_needed|not_op %}

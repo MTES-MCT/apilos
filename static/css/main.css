@@ -1017,7 +1017,7 @@ table .apilos-badge {
 .fr-stepper__steps[data-fr-current-step="11"] {
   --current-step: 11;
 }
-.apilos-stepper-align-right {
+.apilos-align-right {
   text-align: right;
 }
 
