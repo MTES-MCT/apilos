@@ -94,6 +94,11 @@ urlpatterns = [
         views.FinalisationNumero.as_view(),
         name="finalisation_numero",
     ),
+    path(
+        "finalisation/<uuid:convention_uuid>/cerfa",
+        views.FinalisationCerfa.as_view(),
+        name="finalisation_cerfa",
+    ),
     # Pages de troisième niveau : funnel d'instruction et d'action sur les conventions et avenants
     path(
         "new_convention_choice",
