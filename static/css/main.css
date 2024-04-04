@@ -1112,3 +1112,7 @@ table .apilos-badge {
 .apilos-link-background {
   background-color:#f4f6ff;
 }
+.apilos-fit-content-centered {
+  width: fit-content;
+  margin: auto;
+}

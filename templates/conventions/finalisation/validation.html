@@ -1,0 +1,29 @@
+{% extends "layout/base.html" %}
+{% block page_title %}Finalisation - APiLos{% endblock %}
+{% block content %}
+    {% include "conventions/common/form_header.html"%}
+    <div class="fr-container fr-my-5w">
+        <h1>Finaliser la convention</h1>
+
+        {% include "../common/stepper.html"%}
+        <div class="fr-grid-row">
+            <div class="fr-col-8">
+                <p>La convention est prête à être transmise au bailleur pour signature !</p>
+                <button class="fr-btn fr-btn--primary">
+                    Valider et envoyer la convention pour signature
+                </button>
+            </div>
+            <div class="fr-col-4 fr-notice fr-notice--info">
+                <div class="apilos-fit-content-centered">
+                    <form method="post" action="{% url 'conventions:generate' convention_uuid=convention.uuid %}" data-turbo="false">
+                        {% csrf_token %}
+                        <button class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left">
+                            Document CERFA de la convention
+                        </button>
+                    </form>
+                    <a class="fr-link" href="#">Récapitulatif du formulaire</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -28,7 +28,7 @@ class FinalisationNumeroForm(FinalisationFormBase):
 
 
 class FinalisationCerfaForm(FinalisationFormBase):
-    pass
+    cerfa = forms.FileField()
 
 
 class FinalisationServiceBase:
@@ -56,6 +56,10 @@ class FinalisationNumeroService(FinalisationServiceBase):
 
 class FinalisationCerfaService(FinalisationServiceBase):
     form: FinalisationCerfaForm
+
+
+class FinalisationValidationService(FinalisationServiceBase):
+    pass
 
 
 class FinalisationBase(TemplateView):
@@ -110,3 +114,9 @@ class FinalisationCerfa(FinalisationBase):
     template_name = "conventions/finalisation/cerfa.html"
     step_number = 2
     service_class = FinalisationCerfaService
+
+
+class FinalisationValidation(FinalisationBase):
+    template_name = "conventions/finalisation/validation.html"
+    step_number = 3
+    service_class = FinalisationValidationService
