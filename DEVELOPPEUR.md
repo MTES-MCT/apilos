@@ -25,7 +25,7 @@ APiLos est un outils permettant de générer un document contractuel de conventi
 
 La génération de document de convention au format .docx est prise en charge par la librairie [python-docx-template](https://docxtpl.readthedocs.io/en/latest/) qui utilise le moteur de template Jinja2 pour modifier le template des documents de conventions APL. Les templates de docuements sont dans le dossier [./documents](./documents/)
 
-Une fois la convention validée par les deux parties, celle-ci est envoyée au format pdf par email au bailleur. L'application [Libreoffice](https://fr.libreoffice.org/download/telecharger-libreoffice/) est utilisée pour générer une version pdf du document docx.
+Une fois la convention validée par les deux parties, celle-ci est envoyée au format pdf par email au bailleur. L'application [Libreoffice](https://https://fr.libreoffice.org/discover/libreoffice/) est utilisée pour générer une version pdf du document docx.
 
 ##### Import de firchiers excel
 
