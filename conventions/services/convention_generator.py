@@ -312,7 +312,7 @@ def generate_pdf(doc: DocxTemplate, convention_uuid: str) -> None:
     local_pdf_path = local_path / f"convention_{convention_uuid}.pdf"
 
     # Save the convention docx locally
-    doc.save(local_docx_path)
+    doc.save(filename=local_docx_path)
 
     # Generate the pdf file from the docx file, and upload it to the storage
     try:
@@ -333,9 +333,8 @@ def generate_pdf(doc: DocxTemplate, convention_uuid: str) -> None:
         UploadService(
             convention_dirpath=f"conventions/{convention_uuid}/convention_docs",
             filename=f"{convention_uuid}.pdf",
-        ).copy_local_file(local_pdf_path)
+        ).copy_local_file(src_path=local_pdf_path)
 
-    # TODO: catch all possible errors
     except (subprocess.CalledProcessError, OSError) as err:
         raise PDFConversionError from err
 
