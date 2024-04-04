@@ -1,7 +1,6 @@
 api-insee
 boto3
 celery<6.0
-convertapi
 dj-database-url
 dj-static
 dj-static
