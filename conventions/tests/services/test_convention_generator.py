@@ -1,11 +1,12 @@
 import unittest
 from datetime import date
 from decimal import Decimal
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 import jinja2
 from django.conf import settings
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from docxtpl import DocxTemplate
 
 from bailleurs.models import SousNatureBailleur
@@ -454,17 +455,32 @@ class TestComputeListeDesAnnexes(unittest.TestCase):
         self.assertEqual(annexes_list, expected_annexes_list)
 
 
-class TestGeneratePdf(unittest.TestCase):
-    def test_generate_pdf(self):
-
+@override_settings(LIBREOFFICE_EXEC="/app/vendor/libreoffice/soffice")
+class TestGeneratePdf(TestCase):
+    @patch("conventions.services.convention_generator.subprocess.run")
+    def test_subprocess_command(self, mock_subprocess_run):
         mock_doc = Mock(DocxTemplate, autospec=True)
+        convention_uuid = "8f59189c-3086-4355-b7eb-9a84bcab9582"
+        expected_local_path = Path(settings.MEDIA_ROOT, "tmp")
+        expected_local_docx_path = (
+            expected_local_path / f"convention_{convention_uuid}.docx"
+        )
 
-        with patch(
-            "conventions.services.convention_generator.subprocess.run"
-        ) as mock_run:
-            generate_pdf(
-                doc=mock_doc, convention_uuid="8f59189c-3086-4355-b7eb-9a84bcab9582"
-            )
+        # TODO: create real files instead of doing patch here
+        with patch("upload.services.UploadService.copy_local_file"):
+            generate_pdf(doc=mock_doc, convention_uuid=convention_uuid)
 
-        mock_run.assert_called_once()
-        mock_doc.save.assert_called_once()
+        mock_subprocess_run.assert_called_once_with(
+            [
+                "/app/vendor/libreoffice/soffice",
+                "--headless",
+                "--convert-to",
+                "pdf:writer_pdf_Export",
+                "--outdir",
+                expected_local_path,
+                expected_local_docx_path,
+            ],
+            check=True,
+            capture_output=True,
+        )
+        mock_doc.save.assert_called_once_with(filename=expected_local_docx_path)
