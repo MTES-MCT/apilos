@@ -13,6 +13,7 @@ from bailleurs.models import SousNatureBailleur
 from conventions.models import Convention, ConventionType1and2
 from conventions.services.convention_generator import (
     ConventionTypeConfigurationError,
+    PDFConversionError,
     _compute_liste_des_annexes,
     _compute_total_logement,
     _get_adresse,
@@ -459,6 +460,8 @@ class TestComputeListeDesAnnexes(unittest.TestCase):
 class TestGeneratePdf(TestCase):
     @patch("conventions.services.convention_generator.subprocess.run")
     def test_subprocess_command(self, mock_subprocess_run):
+        mock_subprocess_run.return_value = Mock(returncode=0, stderr=b"")
+
         mock_doc = Mock(DocxTemplate, autospec=True)
         convention_uuid = "8f59189c-3086-4355-b7eb-9a84bcab9582"
         expected_local_path = Path(settings.MEDIA_ROOT, "tmp")
@@ -484,3 +487,12 @@ class TestGeneratePdf(TestCase):
             capture_output=True,
         )
         mock_doc.save.assert_called_once_with(filename=expected_local_docx_path)
+
+    @patch("conventions.services.convention_generator.subprocess.run")
+    def test_command_return_code_err(self, mock_subprocess_run):
+        mock_subprocess_run.return_value = Mock(returncode=1, stderr=b"Error")
+
+        with self.assertRaises(PDFConversionError):
+            generate_pdf(
+                doc=Mock(DocxTemplate, autospec=True), convention_uuid="any value"
+            )
