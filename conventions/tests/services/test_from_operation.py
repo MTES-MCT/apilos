@@ -56,7 +56,7 @@ class TestSelectOperationService(PGTrgmTestMixin, ParametrizedTestCase, TestCase
                     Operation(
                         numero="20220600006",
                         nom="Programme 2",
-                        bailleur="13055",
+                        bailleur="3F",
                         nature="LOO",
                         commune="Marseille",
                         siap_payload=operation_mock,
