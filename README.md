@@ -113,7 +113,7 @@ erDiagram
     Lot ||--|{ Logement : un-plusieurs
     Logement ||--|{ Annexe : un-plusieurs
     Lot ||--|{ TypeStationnement : un-plusieurs
-    Lot ||--|{ Financement : un-plusieurs
+    Convention ||--|{ Pret : un-plusieurs
 ```
 
 Notes :
@@ -143,7 +143,7 @@ flowchart LR
 
 #### Gestion des avenants
 
-Lors de la création d'avenant, l'ensemble des objets : Opération, Convention, Lot, Logement, Annexe, Type de stationnement, Financement liées à la convention sont dupliquées et les champs `parent_id` des objets Opérations, Lot et Convention se réfèrent aux objets de la convention principale. L'ordre des avenants est déterminé par leur date de création. il ne peux y avoir qu'un seul avenant en cours d'instruction par convention.
+Lors de la création d'avenant, l'ensemble des objets : Opération, Convention, Lot, Logement, Annexe, Type de stationnement, Prêt liées à la convention sont dupliquées et les champs `parent_id` des objets Opérations, Lot et Convention se réfèrent aux objets de la convention principale. L'ordre des avenants est déterminé par leur date de création. il ne peux y avoir qu'un seul avenant en cours d'instruction par convention.
 
 ```mermaid
 ---
@@ -155,25 +155,25 @@ flowchart RL
         direction LR
         Opération3 --> Convention3 --> Lot3 --> Logement3 --> Annexe3
         Lot3 --> TypeStationnement3
-        Lot3 --> Financement3
+        Convention3 --> Prêt3
     end
     subgraph Avenant2
         direction LR
         Opération2 --> Convention2 --> Lot2 --> Logement2 --> Annexe2
         Lot2 --> TypeStationnement2
-        Lot2 --> Financement2
+        Convention2 --> Prêt2
     end
     subgraph Avenant1
         direction LR
         Opération1 --> Convention1 --> Lot1 --> Logement1 --> Annexe1
         Lot1 --> TypeStationnement1
-        Lot1 --> Financement1
+        Convention1 --> Prêt1
     end
     subgraph ConventionPrincipale
         direction LR
         Opération --> Convention --> Lot --> Logement --> Annexe
         Lot --> TypeStationnement
-        Lot --> Financement
+        Convention --> Prêt
     end
     Avenant1 --> ConventionPrincipale
     Avenant2 --> ConventionPrincipale

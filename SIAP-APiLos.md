@@ -7,14 +7,14 @@
 
 ## Environnements
 
-| Environnement  | URL SIAP          | URL APiLos version SIAP | URL APiLos autonome | Propos de l'environement |
-| :--- | :--- |:--- |:--- |:--- |
-| Production | https://siap.logement.gouv.fr (MTE) | https://apilos.logement.gouv.fr | https://apilos.beta.gouv.fr | Partagé avec la version APiLos autonome de production |
-| Pilote | https://prehabilitation.siap.logement.gouv.fr (MTE) | ❌ | ❌ | Préhabilitation et recette de la reprise de donnée, pas d'intérêt d'avoir une plateforme APiLos en mirroir |
-| Ecole | https://ecole.siap.logement.gouv.fr (MTE) | https://siap-ecole.apilos.beta.gouv.fr | ❌ | Utilisé pour les formations |
-| Préproduction | https://preprod.siap.logement.gouv.fr (MTE) | ❌ | ❌ | Peu d'intérêt d'avoir un environnement mirroir APiLos puisse que ce cas est testé sur tous les autres environnements. Proposition : supprimer le lien avec la plateforme APiLos car l'environnement actuellement utilisé est déjà utilisé par la plateforme recette |
-| Recette | https://minlog-siap.gateway.recette.sully-group.fr (Sully) | https://siap-recette.apilos.beta.gouv.fr | ❌ | Rectte métier |
-| IntAPI | https://minlog-siap.gateway.intapi.recette.sully-group.fr (Sully) | https://siap-integration.apilos.beta.gouv.fr | https://staging.apilos.beta.gouv.fr | Utilisé pour le développement et la validation des fonctionnalités impliquant les 2 plateformes Partagé avec la version APiLos autonome de staging |
+| Environnement  | URL SIAP          | URL APiLos version SIAP | Propos de l'environement |
+| :--- | :--- |:--- |:--- |
+| Production | https://siap.logement.gouv.fr (MTE) | https://apilos.logement.gouv.fr | Partagé avec la version APiLos autonome de production |
+| Pilote | https://prehabilitation.siap.logement.gouv.fr (MTE) | ❌ | Préhabilitation et recette de la reprise de donnée, pas d'intérêt d'avoir une plateforme APiLos en mirroir |
+| Ecole | https://ecole.siap.logement.gouv.fr (MTE) | https://siap-ecole.apilos.beta.gouv.fr | Utilisé pour les formations |
+| Préproduction | https://preprod.siap.logement.gouv.fr (MTE) | ❌ | Peu d'intérêt d'avoir un environnement mirroir APiLos puisse que ce cas est testé sur tous les autres environnements. Proposition : supprimer le lien avec la plateforme APiLos car l'environnement actuellement utilisé est déjà utilisé par la plateforme recette |
+| Recette | https://minlog-siap.gateway.recette.sully-group.fr (Sully) | https://siap-recette.apilos.beta.gouv.fr | Rectte métier |
+| IntAPI | https://minlog-siap.gateway.intapi.recette.sully-group.fr (Sully) | https://siap-integration.apilos.beta.gouv.fr | Utilisé pour le développement et la validation des fonctionnalités impliquant les 2 plateformes Partagé avec la version APiLos autonome de staging |
 
 ## Cas d'utilisation
 
@@ -64,7 +64,7 @@ sequenceDiagram
     APiLos->>SIAP: GET menu
     APiLos->>-Client: Affichage de l'application avec l'entête selon habilitations
 
-    Note Over Client: clic sur `Oprération > Financement`
+    Note Over Client: clic sur `Opération > Financement`
     Client->>SIAP: Redirection vers APiLos<br>avec habilitation_id active dans l'url
 
 ```
