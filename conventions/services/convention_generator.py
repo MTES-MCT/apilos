@@ -306,6 +306,24 @@ class PDFConversionError(Exception):
     pass
 
 
+def run_pdf_convert_cmd(
+    src_docx_path: Path, dst_pdf_path: Path
+) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        [
+            settings.LIBREOFFICE_EXEC,
+            "--headless",
+            "--convert-to",
+            "pdf:writer_pdf_Export",
+            "--outdir",
+            dst_pdf_path.parent,
+            src_docx_path,
+        ],
+        check=True,
+        capture_output=True,
+    )
+
+
 def generate_pdf(doc: DocxTemplate, convention_uuid: str) -> None:
     local_path = get_tmp_local_path()
     local_docx_path = local_path / f"convention_{convention_uuid}.docx"
@@ -316,19 +334,13 @@ def generate_pdf(doc: DocxTemplate, convention_uuid: str) -> None:
 
     # Generate the pdf file from the docx file, and upload it to the storage
     try:
-        subprocess.run(
-            [
-                settings.LIBREOFFICE_EXEC,
-                "--headless",
-                "--convert-to",
-                "pdf:writer_pdf_Export",
-                "--outdir",
-                local_pdf_path.parent,
-                local_docx_path,
-            ],
-            check=True,
-            capture_output=True,
+        result = run_pdf_convert_cmd(
+            src_docx_path=local_docx_path, dst_pdf_path=local_pdf_path
         )
+        if result.returncode != 0:
+            raise PDFConversionError(
+                f"Error while converting the docx file to pdf: {result.stderr}"
+            )
 
         UploadService(
             convention_dirpath=f"conventions/{convention_uuid}/convention_docs",

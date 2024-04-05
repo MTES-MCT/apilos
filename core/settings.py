@@ -344,10 +344,8 @@ AWS_ECOLOWEB_BUCKET_NAME = get_env_variable("AWS_ECOLOWEB_BUCKET_NAME")
 
 if AWS_ACCESS_KEY_ID:  # pragma: no cover
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-    IS_S3_STORAGE = True
 else:
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
-    IS_S3_STORAGE = False
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
