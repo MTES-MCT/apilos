@@ -60,12 +60,9 @@ class ConventionModelForm(forms.ModelForm):
                     None,
                     (
                         "Problème d'unicité, une convention existe déjà pour ces critères. "
-                        "Vérifiez les conventions existantes sur le programme {}, le lot {}, "
-                        "avec un financement {}.".format(
-                            self.instance.programme.id,
-                            self.instance.lot.id,
-                            self.instance.financement,
-                        )
+                        f"Vérifiez les conventions existantes sur le programme {self.instance.programme.id}, "
+                        "le lot {self.instance.lot.id}, "
+                        f"avec un financement {self.instance.financement}."
                     ),
                 )
             else:
