@@ -1,5 +1,20 @@
 {% extends "layout/base.html" %}
 {% block page_title %}Finalisation - APiLos{% endblock %}
+
+{% load static %}
+
+{% block javascript_extras %}
+    <script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
+
+{% block css_extras %}
+    <link rel="stylesheet" href="{% static "dropzonejs/min/basic.min.css" %}">
+    <link rel="stylesheet" href="{% static "dropzonejs/min/dropzone.min.css" %}">
+{% endblock %}
+
 {% block content %}
     {% include "conventions/common/form_header.html"%}
     <div class="fr-container fr-my-5w">
@@ -17,71 +32,34 @@
 
         <p class="fr-text--light">Si nécessaire, vous pouvez effectuer des modifications et remplacer ce document par une nouvelle version.</p>
 
-        <form method="post" data-turbo="false">
-            {% csrf_token %}
-            <div class="fr-accordions-group">
-                <section class="fr-accordion">
-                    <h3 class="fr-accordion__title">
-                        <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-114" type="button">Mode expert : remplacer le document CERFA</button>
-                    </h3>
-                    <div class="fr-collapse" id="accordion-114">
-                        <div class="fr-alert fr-alert--error fr-mb-5w">
-                            <p>Si vous modifiez des éléments de contenu, mettez bien à jour le formulaire de la convention pour garantir la cohérence des données</p>
-                        </div>
-                        <input id="file-upload-lock" type="hidden" name="Upload" value="true" disabled="disabled" />
-                        <input
-                            class="fileinput--hidden"
-                            type="file"
-                            id="file-upload-input"
-
-                            name="file"
-                            accept="application/vnd.openxmlformats-officedocument.wordprocessingm"
-                        />
-
-                        <button
-                            class="fr-btn fr-btn--secondary fr-icon-upload-line fr-btn--icon-left auto-upload-btn"
-                            type="button"
-                            data-input="file-upload-input"
-                            data-lock="file-upload-lock"
-                        >
-                            Déposer un nouveau CERFA et remplacer la version actuelle
-                        </button>
+        <div class="fr-accordions-group">
+            <section class="fr-accordion">
+                <h3 class="fr-accordion__title">
+                    <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-114" type="button">Mode expert : remplacer le document CERFA</button>
+                </h3>
+                <div class="fr-collapse" id="accordion-114">
+                    <div class="fr-alert fr-alert--error fr-mb-5w">
+                        <p>Si vous modifiez des éléments de contenu, mettez bien à jour le formulaire de la convention pour garantir la cohérence des données</p>
                     </div>
-                </section>
-            </div>
-            <div class="apilos-align-right fr-mt-3w">
-                <button class="fr-btn">
-                    Enregistrer et étape suivante
-                </button>
-            </div>
-        </form>
+                    <form id="cerfa-form" method="post" action="{% url 'conventions:finalisation_cerfa' convention_uuid=convention.uuid %}" data-turbo="false">
+                        {% csrf_token %}
+                        {% include "common/form/input_upload.html" with form_input=form.fichier_override_cerfa form_input_files=form.fichier_override_cerfa_files object_name='convention' override_cerfa=True object_uuid=convention.uuid file_list=convention.fichier_override_cerfa|get_files_from_textfiles object_field="convention__fichier_override_cerfa__"|add:form.uuid.value %}
+                    </form>
+                </div>
+            </section>
+        </div>
+        <div class="apilos-align-right fr-mt-3w">
+            <button class="fr-btn" id="submit-cerfa">
+                Enregistrer et étape suivante
+            </button>
+            <script nonce="{{request.csp_nonce}}">
+                btn = document.getElementById("submit-cerfa")
+                form = document.getElementById("cerfa-form")
+                btn.addEventListener("click", () => {
+                    form.submit()
+                })
+            </script>
+        </div>
     </div>
 {% endblock %}
 
-{% block js %}
-    <script type="text/javascript" nonce="{{request.csp_nonce}}">
-        document.addEventListener('DOMContentLoaded', function () {
-            // Handler auto upload buttons
-            for (let button of document.getElementsByClassName('auto-upload-btn')) {
-
-                const input = document.getElementById(button.getAttribute('data-input'));
-                const lock = document.getElementById(button.getAttribute('data-lock'));
-
-                if (input) {
-                    button.onclick = function () {
-                        // Enable related hidden input as lock
-                        if (lock) {
-                            lock.removeAttribute('disabled');
-                        }
-                        // Trigger file selection popup
-                        input.click();
-                    }
-
-                    // input.onchange = function () {
-                    //     this.form.submit();
-                    // }
-                }
-            }
-        });
-    </script>
-{% endblock %}

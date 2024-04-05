@@ -1,3 +1,4 @@
+import json
 import mimetypes
 from datetime import date
 from typing import Any
@@ -504,6 +505,21 @@ def resiliation_validate(request, convention_uuid):
     return HttpResponseRedirect(
         reverse("conventions:post_action", args=[convention_uuid])
     )
+
+
+@login_required
+@require_POST
+@has_campaign_permission_view_function("convention.view_convention")
+def get_or_generate_cerfa(request, convention_uuid):
+    convention = Convention.objects.get(uuid=convention_uuid)
+
+    file_dict = json.loads(convention.fichier_override_cerfa)
+    files = list(file_dict["files"].values())
+    if files.count() > 0:
+        # Download file
+        pass
+    else:
+        return generate_convention(request, convention_uuid)
 
 
 @login_required

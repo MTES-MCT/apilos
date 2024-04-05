@@ -285,6 +285,11 @@ urlpatterns = [
     ),
     path(
         "generate/<convention_uuid>",
+        views.get_or_generate_cerfa,
+        name="get_or_generate_cerfa",
+    ),
+    path(
+        "generate/<convention_uuid>",
         views.generate_convention,
         name="generate",
     ),

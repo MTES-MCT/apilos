@@ -235,6 +235,8 @@ class Convention(models.Model):
 
     adresse = models.TextField(null=True, blank=True)
 
+    fichier_override_cerfa = models.TextField(null=True, blank=True)
+
     @property
     def attribution_type(self):
         if not self.programme.is_foyer():
