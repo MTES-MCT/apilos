@@ -478,13 +478,8 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
                             Replace(Replace("numero", Value("/")), Value("-")),
                             Value(" "),
                         ),
-                        parent_numero_n=Replace(
-                            Replace(Replace("parent__numero", Value("/")), Value("-")),
-                            Value(" "),
-                        ),
                     ).filter(
-                        Q(numero_n__endswith=_search_numero_n)
-                        | Q(parent__numero_n__endswith=_search_numero_n)
+                        Q(parent__isnull=True) & Q(numero_n__endswith=_search_numero_n)
                     )
             else:
                 if self.avenant_seulement:

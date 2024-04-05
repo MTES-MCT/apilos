@@ -350,7 +350,6 @@ class TestUserConventionSmartSearchService(
                 [
                     "fbb9890f-171b-402d-a35e-71e1bd791b72",
                     "fbb9890f-171b-402d-a35e-71e1bd791b70",
-                    "a6862260-5afa-4e2c-ae07-a39276c55e46",
                 ],
                 id="numero_convention_dernier_caractere",
             ),
