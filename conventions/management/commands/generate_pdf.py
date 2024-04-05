@@ -54,7 +54,7 @@ class Command(BaseCommand):
                 return
 
             self.stdout.write(
-                self.style.SUCCESS(f"Generated PDF file: {local_docx_path}")
+                self.style.SUCCESS(f"Generated PDF file: {local_pdf_path}")
             )
 
         except subprocess.CalledProcessError as err:
