@@ -24,16 +24,19 @@ urlpatterns = [
         ConventionSearchView.as_view(),
         name=ConventionSearchView.name,
     ),
+    # DEPRECATED
     path(
         "en-cours",
         ConventionEnInstructionSearchView.as_view(),
         name=ConventionEnInstructionSearchView.name,
     ),
+    # DEPRECATED
     path(
         "actives",
         ConventionActivesSearchView.as_view(),
         name=ConventionActivesSearchView.name,
     ),
+    # DEPRECATED
     path(
         "resiliees",
         ConventionTermineesSearchView.as_view(),

@@ -15,7 +15,7 @@ from programmes.models import Programme
 from users.models import User
 
 
-class ConventionSearchBaseService:
+class ConventionSearchServiceBase:
     order_by = None
     prefetch = []
     default_filters = defaultdict()
@@ -62,7 +62,7 @@ class ConventionSearchBaseService:
         )
 
 
-class AvenantListSearchService(ConventionSearchBaseService):
+class AvenantListSearchService(ConventionSearchServiceBase):
     prefetch = ["programme", "lot"]
 
     def __init__(self, convention: Convention, order_by_numero: bool = False):
@@ -77,7 +77,7 @@ class AvenantListSearchService(ConventionSearchBaseService):
         return self.convention.avenants.without_denonciation_and_resiliation()
 
 
-class ProgrammeConventionSearchService(ConventionSearchBaseService):
+class ProgrammeConventionSearchService(ConventionSearchServiceBase):
     prefetch = [
         "programme__administration",
         "lot",
@@ -93,7 +93,7 @@ class ProgrammeConventionSearchService(ConventionSearchBaseService):
         return Convention.objects.filter(programme=self.programme)
 
 
-class UserConventionSearchService(ConventionSearchBaseService):
+class UserConventionSearchService(ConventionSearchServiceBase):
     prefetch = [
         "programme__bailleur",
         "programme__administration",
@@ -206,6 +206,7 @@ class UserConventionSearchService(ConventionSearchBaseService):
         return order_by
 
 
+# DEPRECATED
 class UserConventionEnInstructionSearchService(UserConventionSearchService):
     weight = 0
     order_by = "programme__date_achevement_compile"
@@ -231,6 +232,7 @@ class UserConventionEnInstructionSearchService(UserConventionSearchService):
         return queryset
 
 
+# DEPRECATED
 class UserConventionActivesSearchService(UserConventionSearchService):
     weight = 10
     order_by = "televersement_convention_signee_le"
@@ -280,6 +282,7 @@ class UserConventionActivesSearchService(UserConventionSearchService):
         return qs
 
 
+# DEPRECATED
 class UserConventionTermineesSearchService(UserConventionSearchService):
     weight = 100
     order_by = "televersement_convention_signee_le"
@@ -305,7 +308,7 @@ class UserConventionTermineesSearchService(UserConventionSearchService):
         return queryset
 
 
-class UserConventionSmartSearchService(ConventionSearchBaseService):
+class ConventionSearchService(ConventionSearchServiceBase):
     prefetch = [
         "programme__bailleur",
         "programme__administration",

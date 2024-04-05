@@ -6,9 +6,9 @@ from unittest_parametrize import ParametrizedTestCase, param, parametrize
 from bailleurs.tests.factories import BailleurFactory
 from conventions.models import Convention, ConventionStatut
 from conventions.services.search import (
+    ConventionSearchService,
     UserConventionActivesSearchService,
     UserConventionEnInstructionSearchService,
-    UserConventionSmartSearchService,
     UserConventionTermineesSearchService,
 )
 from conventions.tests.factories import AvenantFactory, ConventionFactory
@@ -375,7 +375,5 @@ class TestUserConventionSmartSearchService(
         ],
     )
     def test_search_filters(self, search_filters: str, expected: list[str]):
-        service = UserConventionSmartSearchService(
-            user=self.user, search_filters=search_filters
-        )
+        service = ConventionSearchService(user=self.user, search_filters=search_filters)
         self.assertEqual([str(c.uuid) for c in service.get_queryset()], expected)
