@@ -158,9 +158,9 @@ docxtpl==0.16.8 \
     --hash=sha256:461d3d4e261f670d31de4eee2c8c3e00af2686e7afdb5c5ccb465bd0650da6eb \
     --hash=sha256:dffd549bc707a63ff1b5ed00a4dec613d6b6a242b66ee467a6e010c43a324d48
     # via -r requirements.in
-drf-spectacular==0.27.1 \
-    --hash=sha256:0a4cada4b7136a0bf17233476c066c511a048bc6a485ae2140326ac7ba4003b2 \
-    --hash=sha256:452e0cff3c12ee057b897508a077562967b9e62717992eeec10e62dbbc7b5a33
+drf-spectacular==0.27.2 \
+    --hash=sha256:a199492f2163c4101055075ebdbb037d59c6e0030692fc83a1a8c0fc65929981 \
+    --hash=sha256:b1c04bf8b2fbbeaf6f59414b4ea448c8787aba4d32f76055c3b13335cf7ec37b
     # via -r requirements.in
 et-xmlfile==1.1.0 \
     --hash=sha256:8eb9e2bc2f8c97e37a2dc85a09ecdcdec9d8a396530a6d5a33b30b9a92da0c5c \
