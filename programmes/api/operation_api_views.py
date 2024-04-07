@@ -6,7 +6,10 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from conventions.models.choices import ConventionStatut
-from programmes.api.operation_serializers import ClosingOperationSerializer
+from programmes.api.operation_serializers import (
+    ClosingOperationSerializer,
+    ConventionInfoSIAPSerializer,
+)
 from programmes.api.operation_serializers import OperationSerializer as MySerializer
 from programmes.models import Programme
 from programmes.services import get_or_create_conventions_from_operation_number
@@ -155,3 +158,18 @@ class OperationCanceled(OperationDetails):
                 convention.cancel()
 
         return Response({"status": "SUCCESS"})
+
+
+class DummyView(generics.GenericAPIView):
+    @extend_schema(
+        tags=["info_siap"],
+        responses={
+            200: ConventionInfoSIAPSerializer,
+        },
+        description=(
+            "Aucune route n'est définie pour cette vue. Elle est utilisée pour générer"
+            " la documentation du serializer de Convention pour l'export InfoSIAP."
+        ),
+    )
+    def get(self, request):
+        pass  # No implementation

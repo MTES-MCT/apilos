@@ -173,7 +173,7 @@ class ClosingOperationSerializer(OperationSerializer):
         ref_name = "ClosingOperation"
 
 
-class OperationInfoSIAPSerializer(serializers.HyperlinkedModelSerializer):
+class OperationInfoSIAPSerializer(serializers.ModelSerializer):
     bailleur = BailleurSerializer(read_only=True)
     administration = AdministrationSerializer(read_only=True)
 
@@ -195,7 +195,7 @@ class OperationInfoSIAPSerializer(serializers.HyperlinkedModelSerializer):
             "date_achat",
             "date_achevement",
         )
-        ref_name = "Operation"
+        ref_name = "OperationInfoSIAP"
 
 
 class PretSerializer(serializers.HyperlinkedModelSerializer):
@@ -212,7 +212,7 @@ class PretSerializer(serializers.HyperlinkedModelSerializer):
         ref_name = "Pret"
 
 
-class ConventionInfoSIAPSerializer(serializers.HyperlinkedModelSerializer):
+class ConventionInfoSIAPSerializer(serializers.ModelSerializer):
     lot = LotSerializer(read_only=True)
     operation = OperationInfoSIAPSerializer(source="programme", read_only=True)
     prets = PretSerializer(many=True)
