@@ -8,6 +8,7 @@ from rest_framework_simplejwt import views as jwt_views
 
 from apilos_settings.api.api_views import ApilosConfiguration, ConventionKPI
 from programmes.api.operation_api_views import (
+    DummyView,
     OperationCanceled,
     OperationClosed,
     OperationDetails,
@@ -26,6 +27,7 @@ urlpatterns = [
     path("close_operation/<str:numero_galion>/", OperationClosed.as_view()),
     # Opération cancel route
     path("cancel_operation/<str:numero_galion>/", OperationCanceled.as_view()),
+    path("dummy/", DummyView.as_view()),
     # DRF spectacular
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
