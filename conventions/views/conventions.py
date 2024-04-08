@@ -47,10 +47,10 @@ from conventions.services.recapitulatif import (
     convention_validate,
 )
 from conventions.services.search import (
+    ConventionSearchService,
     UserConventionActivesSearchService,
     UserConventionEnInstructionSearchService,
     UserConventionSearchService,
-    UserConventionSmartSearchService,
     UserConventionTermineesSearchService,
 )
 from conventions.services.utils import ReturnStatus, base_convention_response_error
@@ -256,11 +256,13 @@ class ConventionTabSearchBaseView(ConventionSearchBaseView, ConventionTabsMixin)
         ]
 
 
+# DEPRECATED: new_search is now the default search view
 class ConventionEnInstructionSearchView(ConventionTabSearchBaseView):
     service_class = UserConventionEnInstructionSearchService
     name = "search_instruction"
 
 
+# DEPRECATED: new_search is now the default search view
 class ConventionActivesSearchView(ConventionTabSearchBaseView):
     service_class = UserConventionActivesSearchService
     name = "search_active"
@@ -278,6 +280,7 @@ class ConventionActivesSearchView(ConventionTabSearchBaseView):
         ]
 
 
+# DEPRECATED: new_search is now the default search view
 class ConventionTermineesSearchView(ConventionTabSearchBaseView):
     service_class = UserConventionTermineesSearchService
     name = "search_resiliees"
@@ -298,7 +301,7 @@ class ConventionTermineesSearchView(ConventionTabSearchBaseView):
 class ConventionSearchView(WaffleSwitchMixin, ConventionSearchBaseView):
     waffle_switch = settings.SWITCH_NEW_SEARCH
 
-    service_class = UserConventionSmartSearchService
+    service_class = ConventionSearchService
     name = "search"
 
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:

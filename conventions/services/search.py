@@ -15,7 +15,7 @@ from programmes.models import Programme
 from users.models import User
 
 
-class ConventionSearchBaseService:
+class ConventionSearchServiceBase:
     order_by = None
     prefetch = []
     default_filters = defaultdict()
@@ -62,7 +62,7 @@ class ConventionSearchBaseService:
         )
 
 
-class AvenantListSearchService(ConventionSearchBaseService):
+class AvenantListSearchService(ConventionSearchServiceBase):
     prefetch = ["programme", "lot"]
 
     def __init__(self, convention: Convention, order_by_numero: bool = False):
@@ -77,7 +77,7 @@ class AvenantListSearchService(ConventionSearchBaseService):
         return self.convention.avenants.without_denonciation_and_resiliation()
 
 
-class ProgrammeConventionSearchService(ConventionSearchBaseService):
+class ProgrammeConventionSearchService(ConventionSearchServiceBase):
     prefetch = [
         "programme__administration",
         "lot",
@@ -93,7 +93,7 @@ class ProgrammeConventionSearchService(ConventionSearchBaseService):
         return Convention.objects.filter(programme=self.programme)
 
 
-class UserConventionSearchService(ConventionSearchBaseService):
+class UserConventionSearchService(ConventionSearchServiceBase):
     prefetch = [
         "programme__bailleur",
         "programme__administration",
@@ -206,6 +206,7 @@ class UserConventionSearchService(ConventionSearchBaseService):
         return order_by
 
 
+# DEPRECATED: new_search is now the default search view
 class UserConventionEnInstructionSearchService(UserConventionSearchService):
     weight = 0
     order_by = "programme__date_achevement_compile"
@@ -231,6 +232,7 @@ class UserConventionEnInstructionSearchService(UserConventionSearchService):
         return queryset
 
 
+# DEPRECATED: new_search is now the default search view
 class UserConventionActivesSearchService(UserConventionSearchService):
     weight = 10
     order_by = "televersement_convention_signee_le"
@@ -280,6 +282,7 @@ class UserConventionActivesSearchService(UserConventionSearchService):
         return qs
 
 
+# DEPRECATED: new_search is now the default search view
 class UserConventionTermineesSearchService(UserConventionSearchService):
     weight = 100
     order_by = "televersement_convention_signee_le"
@@ -305,7 +308,7 @@ class UserConventionTermineesSearchService(UserConventionSearchService):
         return queryset
 
 
-class UserConventionSmartSearchService(ConventionSearchBaseService):
+class ConventionSearchService(ConventionSearchServiceBase):
     prefetch = [
         "programme__bailleur",
         "programme__administration",
@@ -365,6 +368,8 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
             _statut_filters = Q(statut__in=[s.label for s in self.statuts])
 
             if ConventionStatut.SIGNEE in self.statuts:
+                # Si on filtre sur les conventions signées,
+                # on inclut égaement les conventions en cours de resiliation ou de denonciation
                 if ConventionStatut.RESILIEE not in self.statuts:
                     _statut_filters |= Q(
                         statut=ConventionStatut.RESILIEE.label,
@@ -408,6 +413,12 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
         )
 
     def _build_ranking(self, queryset: QuerySet) -> QuerySet:
+        """
+        On ajoute des annotations pour le ranking des différentes parties de la convention.
+        On utilise un vector pour le nom du programme,
+        et on calcule une similarité trigramme pour les numéros et le lieu.
+        """
+
         queryset = queryset.annotate(
             _is_avenant=Case(
                 When(parent__isnull=False, then=Value(True)), default=False
@@ -456,12 +467,21 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
         return queryset
 
     def _build_search_filters(self, queryset: QuerySet) -> QuerySet:
+        """
+        On applique les filtres de recherche sur les différentes parties de la convention.
+        Pour le seuil de similarité, on utilise une valeur unique,
+        définie dans les settings (TRIGRAM_SIMILARITY_THRESHOLD).
+        """
+
         if self.search_operation_nom_query:
             queryset = queryset.filter(
                 programme__search_vector=self.search_operation_nom_query
             )
 
         if self.search_numero:
+            # Si on a moins de 5 caractères, on va effectuer une recherche de type "endswith",
+            # uniquement sur les numéros de convention et non les avenants,
+            # afin de conserver la recherche par numéro de convention de type "ecoloweb"
             _search_numero_n = self.search_numero.replace("-", "").replace("/", "")
             _search_numero_s = len(_search_numero_n)
             if _search_numero_s > 0 and _search_numero_s < 5:
@@ -515,6 +535,11 @@ class UserConventionSmartSearchService(ConventionSearchBaseService):
         return queryset
 
     def _build_scoring(self, queryset: QuerySet) -> QuerySet:
+        """
+        On normalise les scores pour les différentes parties de la recherche,
+        puis on les additionne pour obtenir un score global.
+        """
+
         if self.search_operation_nom:
             queryset = queryset.annotate(
                 programme_nom_score=(
