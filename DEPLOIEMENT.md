@@ -46,7 +46,7 @@ A chaque push sur [Github](https://github.com/MTES-MCT/apilos), le projet est _b
 
 ### CD
 
-A chaque push sur la branche `main`, le projet est déployé en [staging](https://staging.apilos.incubateur.net/).
+A chaque push sur la branche `main`, le projet est déployé en [staging](https://siap-integration.apilos.beta.gouv.fr/).
 
 A chaque push de tag de la forme `v*.*.*`, le projet est déployé en production.
 
