@@ -20,6 +20,6 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     "send-monthly-emails": {
         "task": "users.tasks.send_monthly_emails",
-        "schedule": crontab(minute="35"),
+        "schedule": crontab(minute=0, hour=7, day_of_week=1),
     },
 }

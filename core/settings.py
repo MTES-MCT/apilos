@@ -548,6 +548,7 @@ CELERY_RESULT_BACKEND = "django-db"
 CELERY_SEND_EVENTS = True
 CELERY_ACKS_LATE = True
 CELERY_WORKER_MAX_TASKS_PER_CHILD = 5000
+CELERY_ALWAYS_EAGER = get_env_variable("CELERY_ALWAYS_EAGER", cast=bool, default=False)
 
 # limit reach when an operation has 167 logements
 DATA_UPLOAD_MAX_NUMBER_FIELDS = int(
