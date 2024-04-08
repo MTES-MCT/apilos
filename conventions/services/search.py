@@ -206,7 +206,7 @@ class UserConventionSearchService(ConventionSearchServiceBase):
         return order_by
 
 
-# DEPRECATED
+# DEPRECATED: new_search is now the default search view
 class UserConventionEnInstructionSearchService(UserConventionSearchService):
     weight = 0
     order_by = "programme__date_achevement_compile"
@@ -232,7 +232,7 @@ class UserConventionEnInstructionSearchService(UserConventionSearchService):
         return queryset
 
 
-# DEPRECATED
+# DEPRECATED: new_search is now the default search view
 class UserConventionActivesSearchService(UserConventionSearchService):
     weight = 10
     order_by = "televersement_convention_signee_le"
@@ -282,7 +282,7 @@ class UserConventionActivesSearchService(UserConventionSearchService):
         return qs
 
 
-# DEPRECATED
+# DEPRECATED: new_search is now the default search view
 class UserConventionTermineesSearchService(UserConventionSearchService):
     weight = 100
     order_by = "televersement_convention_signee_le"

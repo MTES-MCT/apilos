@@ -256,13 +256,13 @@ class ConventionTabSearchBaseView(ConventionSearchBaseView, ConventionTabsMixin)
         ]
 
 
-# DEPRECATED
+# DEPRECATED: new_search is now the default search view
 class ConventionEnInstructionSearchView(ConventionTabSearchBaseView):
     service_class = UserConventionEnInstructionSearchService
     name = "search_instruction"
 
 
-# DEPRECATED
+# DEPRECATED: new_search is now the default search view
 class ConventionActivesSearchView(ConventionTabSearchBaseView):
     service_class = UserConventionActivesSearchService
     name = "search_active"
@@ -280,7 +280,7 @@ class ConventionActivesSearchView(ConventionTabSearchBaseView):
         ]
 
 
-# DEPRECATED
+# DEPRECATED: new_search is now the default search view
 class ConventionTermineesSearchView(ConventionTabSearchBaseView):
     service_class = UserConventionTermineesSearchService
     name = "search_resiliees"

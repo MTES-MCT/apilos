@@ -24,19 +24,19 @@ urlpatterns = [
         ConventionSearchView.as_view(),
         name=ConventionSearchView.name,
     ),
-    # DEPRECATED
+    # DEPRECATED: new_search is now the default search view
     path(
         "en-cours",
         ConventionEnInstructionSearchView.as_view(),
         name=ConventionEnInstructionSearchView.name,
     ),
-    # DEPRECATED
+    # DEPRECATED: new_search is now the default search view
     path(
         "actives",
         ConventionActivesSearchView.as_view(),
         name=ConventionActivesSearchView.name,
     ),
-    # DEPRECATED
+    # DEPRECATED: new_search is now the default search view
     path(
         "resiliees",
         ConventionTermineesSearchView.as_view(),
