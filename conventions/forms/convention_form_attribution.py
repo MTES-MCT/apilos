@@ -24,30 +24,54 @@ class ConventionAttributionForm(forms.Form):
 
     attribution_modalites_reservations = forms.CharField(
         label="Modalités de gestion des reservations",
+        max_length=50000,
         error_messages={
-            "required": "Les modalités de gestion des reservations sont obligatoires"
+            "required": "Les modalités de gestion des reservations sont obligatoires",
+            "max_length": (
+                "Les modalités de gestion des reservations"
+                " ne doivent pas excéder 50000 caractères"
+            ),
         },
     )
 
     attribution_modalites_choix_personnes = forms.CharField(
         label="Modalités de choix des personnes accueillies",
+        max_length=50000,
         error_messages={
-            "required": "Les modalités de choix des personnes accueillies sont obligatoires"
+            "required": "Les modalités de choix des personnes accueillies sont obligatoires",
+            "max_length": (
+                "Les modalités de choix des personnes accueillies"
+                " ne doivent pas excéder 50000 caractères"
+            ),
         },
     )
 
     attribution_prestations_integrees = forms.CharField(
         required=False,
-        label="Prestation intégrées dans la redevance (Liste)",
+        max_length=50000,
+        label="Prestations intégrées dans la redevance (Liste)",
         help_text="Les prestations obligatoirement intégrées dans la redevance et non"
         + " prises en compte pour le calcul de l'APL (non prises en compte au titre des"
         + " charges récupérables)",
+        error_messages={
+            "max_length": (
+                "Les prestations intégrées dans la redevance"
+                " ne doivent pas excéder 50000 caractères"
+            ),
+        },
     )
 
     attribution_prestations_facultatives = forms.CharField(
         required=False,
+        max_length=50000,
         label="Prestations facultatives (Liste)",
         help_text="Prestations facultatives à la demande du résident facturées séparément",
+        error_messages={
+            "max_length": (
+                "Les prestations facultatives"
+                " ne doivent pas excéder 50000 caractères"
+            ),
+        },
     )
 
 
@@ -117,6 +141,10 @@ class ConventionFoyerAttributionForm(ConventionAttributionForm):
     attribution_agees_autre_detail = forms.CharField(
         required=False,
         label="",
+        max_length=255,
+        error_messages={
+            "max_length": "ce champ ne doit pas excéder 255 caractères",
+        },
     )
 
     # Foyer pour personnes handicapées
@@ -139,28 +167,61 @@ class ConventionFoyerAttributionForm(ConventionAttributionForm):
     attribution_handicapes_autre_detail = forms.CharField(
         required=False,
         label="",
+        max_length=255,
+        error_messages={
+            "max_length": "ce champ ne doit pas excéder 255 caractères",
+        },
     )
     attribution_inclusif_conditions_specifiques = forms.CharField(
         required=False,
         label="Conditions spécifiques d'accueil",
+        max_length=50000,
+        error_messages={
+            "max_length": (
+                "Les conditions spécifiques d'accueil"
+                " ne doivent pas excéder 50000 caractères"
+            ),
+        },
     )
     attribution_inclusif_conditions_admission = forms.CharField(
         required=False,
         label="Conditions d'admission dans l’habitat inclusif",
+        max_length=50000,
+        error_messages={
+            "max_length": (
+                "Les conditions spécifiques d'accueil"
+                " ne doivent pas excéder 50000 caractères"
+            ),
+        },
     )
     attribution_inclusif_modalites_attribution = forms.CharField(
         required=False,
         label="Modalités d'attribution",
+        max_length=50000,
+        error_messages={
+            "max_length": (
+                "Les conditions spécifiques d'accueil"
+                " ne doivent pas excéder 50000 caractères"
+            ),
+        },
     )
     attribution_inclusif_partenariats = forms.CharField(
         required=False,
         label="Partenariats concourant à la mise en œuvre du projet de vie sociale"
         + " et partagée mis en place",
+        max_length=50000,
+        error_messages={
+            "max_length": "Ce champ ne doit pas excéder 50000 caractères",
+        },
     )
     attribution_inclusif_activites = forms.CharField(
         required=False,
         label="Activités proposées à l’ensemble des résidents dans le cadre du projet"
         + " de vie sociale et partagée",
+        max_length=50000,
+        error_messages={
+            "max_length": "Ce champ ne doit pas excéder 50000 caractères",
+        },
     )
 
     def clean(self):
