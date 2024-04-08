@@ -368,6 +368,8 @@ class ConventionSearchService(ConventionSearchServiceBase):
             _statut_filters = Q(statut__in=[s.label for s in self.statuts])
 
             if ConventionStatut.SIGNEE in self.statuts:
+                # Si on filtre sur les conventions signées,
+                # on inclut égaement les conventions en cours de resiliation ou de denonciation
                 if ConventionStatut.RESILIEE not in self.statuts:
                     _statut_filters |= Q(
                         statut=ConventionStatut.RESILIEE.label,
@@ -411,6 +413,12 @@ class ConventionSearchService(ConventionSearchServiceBase):
         )
 
     def _build_ranking(self, queryset: QuerySet) -> QuerySet:
+        """
+        On ajoute des annotations pour le ranking des différentes parties de la convention.
+        On utilise un vector pour le nom du programme,
+        et on calcule une similarité trigramme pour les numéros et le lieu.
+        """
+
         queryset = queryset.annotate(
             _is_avenant=Case(
                 When(parent__isnull=False, then=Value(True)), default=False
@@ -459,12 +467,21 @@ class ConventionSearchService(ConventionSearchServiceBase):
         return queryset
 
     def _build_search_filters(self, queryset: QuerySet) -> QuerySet:
+        """
+        On applique les filtres de recherche sur les différentes parties de la convention.
+        Pour le seuil de similarité, on utilise une valeur unique,
+        définie dans les settings (TRIGRAM_SIMILARITY_THRESHOLD).
+        """
+
         if self.search_operation_nom_query:
             queryset = queryset.filter(
                 programme__search_vector=self.search_operation_nom_query
             )
 
         if self.search_numero:
+            # Si on a moins de 5 caractères, on va effectuer une recherche de type "endswith",
+            # uniquement sur les numéros de convention et non les avenants,
+            # afin de conserver la recherche par numéro de convention de type "ecoloweb"
             _search_numero_n = self.search_numero.replace("-", "").replace("/", "")
             _search_numero_s = len(_search_numero_n)
             if _search_numero_s > 0 and _search_numero_s < 5:
@@ -518,6 +535,11 @@ class ConventionSearchService(ConventionSearchServiceBase):
         return queryset
 
     def _build_scoring(self, queryset: QuerySet) -> QuerySet:
+        """
+        On normalise les scores pour les différentes parties de la recherche,
+        puis on les additionne pour obtenir un score global.
+        """
+
         if self.search_operation_nom:
             queryset = queryset.annotate(
                 programme_nom_score=(
