@@ -34,11 +34,6 @@
         <!--Js-->
 
         {% block javascript_extras %}{% endblock %}
-        {% if CRISP_WEBSITE_ID %}
-            <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                window.$crisp=[];window.CRISP_WEBSITE_ID="{{ CRISP_WEBSITE_ID }}";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();
-            </script>
-        {% endif %}
 
 
         <!-- Matomo -->
@@ -81,27 +76,8 @@
             {% include "layout/footer.html" %}
         {% endblock %}
 
-        {% block feedback %}
-            {# Enable the mailto feedback button only as a Crisp fallback and no in SIAP context#}
-            {% if not CRISP_WEBSITE_ID and not CERBERE_AUTH %}
-                <div class="container__feedback_btn">
-                    <a href="mailto:contact@apilos.beta.gouv.fr" class="cta">
-                        <span class="apilos-icon fr-icon-mail-line" aria-hidden="true"></span>
-                        <span class="button-text">Faites nous part de vos retours</span>
-                    </a>
-                </div>
-            {% endif %}
-        {% endblock %}
-
         {% include "layout/sentry.html" %}
         {% include "layout/javascript_load.html" %}
-        {% if CRISP_WEBSITE_ID and user %}
-            <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                {# See Crisp documentation https://docs.crisp.chat/guides/chatbox-sdks/web-sdk/dollar-crisp/ #}
-                $crisp.push(["set", "user:email", "{{ user.email }}"]);
-                $crisp.push(["set", "user:nickname", "{{ user.first_name }} {{ user.last_name }}"]);
-            </script>
-        {% endif %}
         {% block js %}{% endblock %}
     </body>
 </html>
