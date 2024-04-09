@@ -60,6 +60,7 @@ from core.request import AuthenticatedHttpRequest
 from core.storage import client
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
+from upload.models import UploadedFile
 from upload.services import UploadService
 
 
@@ -513,13 +514,19 @@ def resiliation_validate(request, convention_uuid):
 def get_or_generate_cerfa(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
 
-    file_dict = json.loads(convention.fichier_override_cerfa)
-    files = list(file_dict["files"].values())
-    if files.count() > 0:
-        # Download file
-        pass
-    else:
-        return generate_convention(request, convention_uuid)
+    files_dict = json.loads(convention.fichier_override_cerfa)
+    files = list(files_dict["files"].values())
+    if len(files) > 0:
+        file_dict = files[0]
+        uploaded_file = UploadedFile.objects.get(uuid=file_dict["uuid"])
+        file = UploadService().get_file(uploaded_file.filepath(convention_uuid))
+
+        return FileResponse(
+            file,
+            filename=file_dict["filename"],
+            as_attachment=True,
+        )
+    return generate_convention(request, convention_uuid)
 
 
 @login_required

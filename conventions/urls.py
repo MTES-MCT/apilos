@@ -284,7 +284,7 @@ urlpatterns = [
         name="resiliation_validate",
     ),
     path(
-        "generate/<convention_uuid>",
+        "get_or_generate_cerfa/<convention_uuid>",
         views.get_or_generate_cerfa,
         name="get_or_generate_cerfa",
     ),
