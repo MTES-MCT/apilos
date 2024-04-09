@@ -8,7 +8,7 @@ from users.tasks import send_monthly_emails
 
 
 @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
-class SendMonthlyEmailsTask(ParametrizedTestCase, TestCase):
+class SendMonthlyEmailsTaskTest(ParametrizedTestCase, TestCase):
 
     @parametrize(
         "travel_to, call_expected",
