@@ -1,15 +1,21 @@
 from django import forms
+from django.utils.safestring import mark_safe
+
+from conventions.models.convention import Convention
 
 
 class FinalisationNumeroForm(forms.Form):
+    convention: Convention
     uuid = forms.UUIDField(
         required=False,
         label="Finalisation numéro",
     )
     numero = forms.CharField(
         label="Numéro de convention",
-        help_text="Cet identifiant proposé est unique et standardisé à l'échelle nationale."
-        '<a href="https://siap-logement.atlassian.net/wiki/x/f4Bu">En savoir plus</a>',
+        help_text=mark_safe(
+            "Cet identifiant proposé est unique et standardisé à l'échelle nationale."
+            '<a href="https://siap-logement.atlassian.net/wiki/x/f4Bu">En savoir plus</a>'
+        ),
         max_length=255,
         min_length=1,
         required=True,
@@ -19,6 +25,24 @@ class FinalisationNumeroForm(forms.Form):
             "max_length": "Le numéro de la convention ne doit pas excéder 255 caractères",
         },
     )
+
+    def __init__(self, *args, convention: Convention, **kwargs):
+        self.convention = convention
+        return super().__init__(*args, **kwargs)
+
+    def clean_numero(self):
+        numero = self.cleaned_data["numero"]
+        if (
+            not self.convention.is_avenant()
+            and Convention.objects.filter(numero=numero)
+            .exclude(pk=self.convention.pk)
+            .exists()
+        ):
+            raise forms.ValidationError(
+                f"La convention de numero {numero} existe déjà,"
+                + " merci de choisir un autre numéro de convention."
+            )
+        return numero
 
 
 class FinalisationCerfaForm(forms.Form):

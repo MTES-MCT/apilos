@@ -20,10 +20,12 @@ class FinalisationNumeroService(FinalisationServiceBase):
     def __init__(self, convention_uuid: str, request: HttpRequest) -> None:
         self.convention = Convention.objects.get(uuid=convention_uuid)
         if request.method == "POST":
-            self.form = FinalisationNumeroForm(request.POST, request.FILES)
+            self.form = FinalisationNumeroForm(
+                request.POST, request.FILES, convention=self.convention
+            )
         else:
             self.form = FinalisationNumeroForm(
-                initial={"numero": self.convention.numero}
+                initial={"numero": self.convention.numero}, convention=self.convention
             )
 
     def save(self) -> str:
