@@ -13,6 +13,9 @@ class FinalisationServiceBase:
     form: forms.Form
     convention: Convention
 
+    def __init__(self, convention_uuid: str, request: HttpRequest) -> None:
+        self.convention = Convention.objects.get(uuid=convention_uuid)
+
 
 class FinalisationNumeroService(FinalisationServiceBase):
     form: FinalisationNumeroForm

@@ -37,7 +37,8 @@ class FinalisationBase(WaffleFlagMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["convention"] = service.convention
         context["form_step"] = self.stepper.get_form_step(step_number=self.step_number)
-        context["form"] = service.form
+        if hasattr(service, "form"):
+            context["form"] = service.form
         return context
 
 
