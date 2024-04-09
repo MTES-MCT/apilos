@@ -28,7 +28,7 @@ class FinalisationNumeroForm(forms.Form):
 
     def __init__(self, *args, convention: Convention, **kwargs):
         self.convention = convention
-        return super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_numero(self):
         numero = self.cleaned_data["numero"]
