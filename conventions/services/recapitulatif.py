@@ -449,6 +449,7 @@ def convention_validate(request: HttpRequest, convention: Convention):
     convention_number_form = ConventionNumberForm(request.POST)
     complete_for_avenant_form = CompleteforavenantForm(request.POST, request.FILES)
     is_completeform = request.POST.get("completeform", False)
+    is_finalisationform = request.POST.get("validationform", False)
     if is_completeform:
         if complete_for_avenant_form.is_valid():
             parentconvention = convention.parent
@@ -484,10 +485,14 @@ def convention_validate(request: HttpRequest, convention: Convention):
                 "convention": convention,
             }
     else:
-        convention_number_form.convention = convention
-        if convention_number_form.is_valid():
-            convention.numero = convention_number_form.cleaned_data["convention_numero"]
-            convention.save()
+        if not is_finalisationform:
+            convention_number_form.convention = convention
+            if convention_number_form.is_valid():
+                convention.numero = convention_number_form.cleaned_data[
+                    "convention_numero"
+                ]
+                convention.save()
+        if is_finalisationform or convention_number_form.is_valid():
             # Generate the doc should be placed after the status update
             # because the watermark report the status of the convention
             previous_status = convention.statut
