@@ -1,5 +1,5 @@
 
-function init_dropzone_from_file(form_id, accepted_files) {
+function init_dropzone_from_file(form_id, accepted_files, singleFile=false) {
     csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value
     object_name = document.getElementById(form_id + "_object_name").value
     object_uuid = document.getElementById(form_id + "_object_uuid").value
@@ -70,6 +70,14 @@ function init_dropzone_from_file(form_id, accepted_files) {
                 };
                 document.getElementById(form_id).value = JSON.stringify(files);
             })
+            if (singleFile) {
+                this.hiddenFileInput.removeAttribute('multiple');
+                this.on('addedfile', function(file) {
+                    if (this.files.length > 1) {
+                        this.removeFile(this.files[0]);
+                    }
+                });
+            }
         },
         dictDefaultMessage: "Cliquez dans la zone ou déposez-y vos fichiers",
         dictFallbackMessage: "Votre navigateur ne supporte pas la fonction drag'n'drop. Nous vous conseillons de changer de navigateur",
@@ -90,6 +98,7 @@ function init_dropzone_from_file(form_id, accepted_files) {
 
 function init_dropzone_thumbnail(myDropzone, name, size, uuid, thumbnail_url) {
     var mockFile = { name: name, size: size, uuid: uuid };
+    myDropzone.files.push(mockFile);
     myDropzone.options.addedfile.call(myDropzone, mockFile);
     if (thumbnail_url != 'None' && thumbnail_url != undefined) {
         myDropzone.options.thumbnail.call(myDropzone, mockFile, thumbnail_url);
