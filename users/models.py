@@ -1,4 +1,3 @@
-import logging
 from typing import Any
 from uuid import UUID
 
@@ -8,7 +7,6 @@ from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import OuterRef, Q, QuerySet, Subquery
 from django.db.models.functions import Coalesce, Substr
-from django.forms.models import model_to_dict
 from simple_history.models import HistoricalRecords
 from waffle import switch_is_active
 
@@ -18,8 +16,6 @@ from conventions.models import Convention, ConventionStatut
 from instructeurs.models import Administration
 from programmes.models import Lot, Programme
 from users.type_models import EmailPreferences, TypeRole
-
-logger = logging.getLogger(__name__)
 
 
 class ExceptionPermissionConfig(Exception):  # noqa: N818
@@ -650,22 +646,6 @@ class Role(models.Model):
     perimetre_region = models.CharField(max_length=10, null=True)
     perimetre_departement = models.CharField(max_length=10, null=True)
     history = HistoricalRecords()
-
-    def save(self, *args, **kwargs):
-        logger.info(
-            "created Role %s for user %s ",
-            model_to_dict(self),
-            model_to_dict(self.user),
-        )
-        return super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        logger.info(
-            "removed Role %s for user %s ",
-            model_to_dict(self),
-            model_to_dict(self.user),
-        )
-        return super().delete(*args, **kwargs)
 
     def __str__(self):
         entity = ""
