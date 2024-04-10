@@ -454,6 +454,9 @@ SIAP_CLIENT_JWT_SIGN_KEY = get_env_variable("SIAP_CLIENT_JWT_SIGN_KEY", default=
 SIAP_CLIENT_ALGORITHM = get_env_variable("SIAP_CLIENT_ALGORITHM", default="HS256")
 SIAP_CLIENT_HOST = get_env_variable("SIAP_CLIENT_HOST", default=None)
 SIAP_CLIENT_PATH = get_env_variable("SIAP_CLIENT_PATH", default=None)
+SIAP_CLIENT_LOG_API_CALLS = get_env_variable(
+    "SIAP_CLIENT_LOG_API_CALLS", cast=bool, default=False
+)
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "API APiLos",

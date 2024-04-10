@@ -74,6 +74,7 @@ def _call_siap_api(
         )
     except (requests.ReadTimeout, requests.ConnectTimeout) as e:
         raise TimeoutSIAPException() from e
+
     if response.status_code == 401:
         error_text = "Unauthorized"
         try:
@@ -81,16 +82,21 @@ def _call_siap_api(
         except KeyError:
             pass
         raise UnauthorizedSIAPException(error_text)
+
     if response.status_code == 503:
         raise UnavailableServiceSIAPException()
+
     if response.status_code >= 400:
         logger.error("ERROR from SIAP API: %s", response.content)
-    logger.warning(
-        "[Status code: %s] SIAP API : %s, WITH JWT  : %s",
-        response.status_code,
-        response.content,
-        myjwt,
-    )
+
+    if settings.SIAP_CLIENT_LOG_API_CALLS:
+        logger.warning(
+            "[Status code: %s] SIAP API : %s, WITH JWT  : %s",
+            response.status_code,
+            response.content,
+            myjwt,
+        )
+
     return response
 
 
