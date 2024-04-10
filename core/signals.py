@@ -28,13 +28,6 @@ def cas_user_logout_callback(sender, **kwargs):
     args = {}
     args.update(kwargs)
 
-    logger.info(
-        f'User logs in via CERBERE: user={kwargs.get("user")},'
-        + f' session: {kwargs.get("session")},'
-        + f' ticket: {kwargs.get("ticket")}'
-    )
-    logger.debug("All login attributes : %s", kwargs)
-
 
 @receiver(user_logged_in)
 def user_logged_in_callback(sender, request, user, **kwargs):
