@@ -41,5 +41,5 @@ class ConventionFileService:
             if file is not None:
                 # TODO mark piece jointe as missing
                 cls.upload_convention_file(piece_jointe.convention, file, False)
-        except FileNotFoundError as fnfe:
-            logger.warning(fnfe)
+        except FileNotFoundError as err:
+            logger.warning(err, exc_info=True)

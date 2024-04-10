@@ -77,7 +77,6 @@ def get_elements_for_pivots(my_cls, element):
 
 
 def _create_object_from_fields(cls, element, full_element):
-
     object_fields = {}
     for each_field in element.keys():
         if isinstance(
@@ -122,12 +121,13 @@ class IngestableModel(models.Model):
         abstract = True
 
     @classmethod
-    def map_and_create(cls, elements, create_only=True):
+    def map_and_create(cls, elements, create_only=True) -> tuple[int, int, dict, dict]:
         count = 0
         count_dup = 0
         mapped_elements = {}
+        mapped_elements_dup = {}
+
         for element in elements:
-            # pylint: disable=W0640, cell-var-from-loop
             element_pivot = "__".join(get_elements_for_pivots(cls, element))
             if element_pivot not in mapped_elements:
                 mapped_elements[element_pivot] = {}
@@ -141,12 +141,11 @@ class IngestableModel(models.Model):
                     count += 1
             else:
                 count_dup += 1
-                mapped_elements2 = {}
+                mapped_elements_dup = {}
                 for element_item in cls.mapping.items():
-                    mapped_elements2[element_item[0]] = element[element_item[1]]
-        logger.info(f"{count} éléments créés ou mis à jour de class {cls}")
-        logger.info(f"{count_dup} éléments dupliqué pour la class {cls}")
-        return mapped_elements
+                    mapped_elements_dup[element_item[0]] = element[element_item[1]]
+
+        return count, count_dup, mapped_elements, mapped_elements_dup
 
     @classmethod
     def find_or_create_by_pivot(cls, element, full_element, create_only=True):
