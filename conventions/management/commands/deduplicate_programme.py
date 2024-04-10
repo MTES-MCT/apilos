@@ -1,12 +1,9 @@
 import json
-import logging
 
 from django.core.management.base import BaseCommand
 from django.db.models import Count
 
 from programmes.models import Programme
-
-logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -51,7 +48,7 @@ class Command(BaseCommand):
                 ]:
                     if len(values := {getattr(p, field) or "" for p in programmes}) > 1:
                         setattr(programmes[0], field, " / ".join(values)[:255])
-                        logger.warning(getattr(programmes[0], field))
+
                 # get first not none
                 for field in [
                     "ville",
@@ -153,5 +150,6 @@ class Command(BaseCommand):
                         parent_id=programmes[0].id
                     )
                     p.delete()
-        logger.warning(f"Total programmes to merge {count}")
-        logger.warning(f"Failed {failed}")
+
+        self.stdout.write(f"Total programmes to merge {count}")
+        self.stdout.write(f"Failed {failed}")
