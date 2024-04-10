@@ -287,8 +287,10 @@ class Convention(models.Model):
                 and "description_avenant" in json_data["text"]
             ):
                 return json_data["text"]["description_avenant"]
-        except (json.decoder.JSONDecodeError, TypeError) as e:
-            logger.warning(e)
+        except (json.decoder.JSONDecodeError, TypeError):
+            logger.error(
+                f"Error while parsing commentaires for convention {self.id}, invalid JSON content"
+            )
 
         return None
 
