@@ -171,8 +171,40 @@ class Command(BaseCommand):
         self.stdout.write(f"{len(my_objects)} lignes objet")
         self.stdout.write(f"{len(my_parkings)} lignes parking")
 
-        Administration.map_and_create(my_objects, create_only)
-        Bailleur.map_and_create(my_objects, create_only)
-        Programme.map_and_create(my_objects, create_only)
-        Lot.map_and_create(my_objects, create_only)
-        TypeStationnement.map_and_create(my_parkings, create_only)
+        (count, count_dup, _, _) = Administration.map_and_create(
+            my_objects, create_only
+        )
+        self.stdout.write(
+            f"{count} éléments créés ou mis à jour pour la classe Administration"
+        )
+        self.stdout.write(
+            f"{count_dup} éléments dupliqué pour la classe Administration"
+        )
+
+        (count, count_dup, _, _) = Bailleur.map_and_create(my_objects, create_only)
+        self.stdout.write(
+            f"{count} éléments créés ou mis à jour pour la classe Bailleur"
+        )
+        self.stdout.write(
+            f"{count_dup} éléments dupliqué pour la classe Administration"
+        )
+
+        (count, count_dup, _, _) = Programme.map_and_create(my_objects, create_only)
+        self.stdout.write(
+            f"{count} éléments créés ou mis à jour pour la classe Programme"
+        )
+        self.stdout.write(f"{count_dup} éléments dupliqué pour la classe Programme")
+
+        (count, count_dup, _, _) = Lot.map_and_create(my_objects, create_only)
+        self.stdout.write(f"{count} éléments créés ou mis à jour pour la classe Lot")
+        self.stdout.write(f"{count_dup} éléments dupliqué pour la classe Lot")
+
+        (count, count_dup, _, _) = TypeStationnement.map_and_create(
+            my_parkings, create_only
+        )
+        self.stdout.write(
+            f"{count} éléments créés ou mis à jour pour la classe TypeStationnement"
+        )
+        self.stdout.write(
+            f"{count_dup} éléments dupliqué pour la classe TypeStationnement"
+        )
