@@ -1,5 +1,3 @@
-import logging
-
 from django.core.management.base import BaseCommand
 from rest_framework.renderers import JSONRenderer
 
@@ -36,7 +34,7 @@ class Command(BaseCommand):
         with open("conventions.json", "w", newline="") as jsonfile:
             offset = 0
             while offset < count:
-                logging.warning("count %i, offset %i", count, offset)
+                self.stdout.write(f"count: {count}, offset: {offset}")
                 for convention in conventions[offset : offset + 1000]:
                     serializer = ConventionInfoSIAPSerializer(convention)
                     json_data = JSONRenderer().render(serializer.data).decode("utf-8")

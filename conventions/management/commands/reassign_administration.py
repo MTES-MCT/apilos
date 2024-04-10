@@ -1,13 +1,9 @@
-import logging
-
 from django.core.management.base import BaseCommand, CommandParser
 from django.db import models
 
 from conventions.models import Convention
 from instructeurs.models import Administration
 from programmes.models import Programme
-
-logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):

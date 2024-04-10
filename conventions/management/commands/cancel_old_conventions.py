@@ -1,5 +1,3 @@
-import logging
-
 from django.core.management.base import BaseCommand
 
 from conventions.models import Convention
@@ -34,8 +32,13 @@ class Command(BaseCommand):
         departement = options.get("departement")
         administration_code = options.get("administration_code")
         if not departement and not administration_code:
-            logging.warning("You must provide a departement or an administration code")
+            self.stdout.write(
+                self.style.ERROR(
+                    "You must provide a departement or an administration code"
+                )
+            )
             return
+
         older_than = options.get("older_than")
         conventions = Convention.objects.filter(
             programme__date_achevement__lt=older_than,
@@ -52,7 +55,7 @@ class Command(BaseCommand):
 
         nb_conventions = conventions.count()
         for convention in conventions:
-            logging.warning(
+            self.stdout.write(
                 f" {convention.uuid} - {convention} - {convention.programme.date_achevement}"
             )
 
@@ -63,6 +66,8 @@ class Command(BaseCommand):
 
         if go.lower() == "yes":
             conventions.update(statut=ConventionStatut.ANNULEE.label)
-            logging.info("{nb_conventions} conventions canceled")
+            self.stdout.write(
+                self.style.SUCCESS(f"{nb_conventions} conventions canceled")
+            )
         else:
-            logging.info("Abording")
+            self.sidout.write(self.style.NOTICE("Abording"))

@@ -1,5 +1,4 @@
 import argparse
-import logging
 from datetime import date
 
 from django.core.management.base import BaseCommand
@@ -8,7 +7,6 @@ from conventions.models import Convention
 from conventions.models.choices import ConventionStatut
 from ecoloweb.models import EcoloReference
 
-logger = logging.getLogger(__name__)
 THRESHOLD_DATE = date(2023, 3, 1)
 
 
@@ -33,11 +31,6 @@ def find_ecoloweb_conventions():
     )
 
     return before_conventions, after_conventions
-
-
-def update_conventions_status(conventions):
-    conventions.update(statut=ConventionStatut.SIGNEE.label)
-    logger.warning("%s conventions ont été mises à jour au statut Signée")
 
 
 class Command(BaseCommand):
@@ -70,6 +63,12 @@ class Command(BaseCommand):
             default=False,
         )
 
+    def _update_conventions_status(self, conventions):
+        conventions.update(statut=ConventionStatut.SIGNEE.label)
+        self.stdout.write(
+            f"{conventions.count()} conventions ont été mises à jour au statut Signée"
+        )
+
     def handle(self, *args, **options):
         verbose = options.get("verbose")
         dry_run = options.get("dry_run")
@@ -77,32 +76,33 @@ class Command(BaseCommand):
         after = options.get("after")
 
         if not dry_run:
-            logger.warning(
-                "La commande n'a pas été lancée avec le mode dry_run, des données vont être écrites en base de données"
+            self.stdout.write(
+                self.style.WARNING(
+                    "La commande n'a pas été lancée avec le mode dry_run, "
+                    "des données vont être écrites en base de données"
+                )
             )
 
         before_conventions, after_conventions = find_ecoloweb_conventions()
 
         if before:
-            logger.warning(
-                "%s conventions antérieures au 1er mars 2023 concernées",
-                len(before_conventions),
+            self.stdout.write(
+                f"{len(before_conventions)} conventions antérieures au 1er mars 2023 concernées"
             )
             if verbose:
                 for convention in before_conventions:
-                    logger.warning(convention)
+                    self.stdout.write(convention)
 
             if not dry_run:
-                update_conventions_status(before_conventions)
+                self._update_conventions_status(before_conventions)
 
         if after:
-            logger.warning(
-                "%s conventions postérieures au 1er mars 2023 concernées",
-                len(after_conventions),
+            self.stdout.write(
+                f"{len(after_conventions)} conventions postérieures au 1er mars 2023 concernées"
             )
             if verbose:
                 for convention in after_conventions:
-                    logger.warning(convention)
+                    self.stdout.write(convention)
 
             if not dry_run:
-                update_conventions_status(after_conventions)
+                self._update_conventions_status(after_conventions)

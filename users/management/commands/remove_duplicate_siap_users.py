@@ -1,34 +1,9 @@
 import argparse
-import logging
 
 from django.core.management.base import BaseCommand
 from django.db.models import Count
 
 from users.models import User
-
-logger = logging.getLogger(__name__)
-
-
-def find_standalone_users_with_siap_account():
-    duplicates = (
-        User.objects.values("email")
-        .annotate(email_count=Count("email"))
-        .filter(email_count__gt=1)
-        .exclude(is_superuser=True)
-        .exclude(is_staff=True)
-        .values_list("email", flat=True)
-    )
-
-    for email in list(duplicates):
-        logger.info(email)
-
-    users_to_delete = (
-        User.objects.filter(email__in=duplicates, cerbere_login=None)
-        .exclude(is_superuser=True)
-        .exclude(is_staff=True)
-    )
-
-    return users_to_delete
 
 
 class Command(BaseCommand):
@@ -51,17 +26,42 @@ class Command(BaseCommand):
         verbose = options.get("verbose")
         dry_run = options.get("dry_run")
 
-        users_to_delete = find_standalone_users_with_siap_account()
+        users_to_delete = self._find_standalone_users_with_siap_account()
 
         if verbose:
             for user in users_to_delete:
-                logger.info(user)
+                self.stdout.write(user)
 
-        logger.info("%s utilisateurs en doublons ont été trouvé", len(users_to_delete))
+        self.stdout.write(
+            "%s utilisateurs en doublons ont été trouvé", len(users_to_delete)
+        )
 
         if not dry_run:
-            logger.warning(
-                "La commande n'a pas été lancée avec le mode dry_run, "
-                "des données vont être supprimées de la base de données"
+            self.stdout.write(
+                self.style.WARNING(
+                    "La commande n'a pas été lancée avec le mode dry_run, "
+                    "des données vont être supprimées de la base de données"
+                )
             )
             users_to_delete.delete()
+
+    def _find_standalone_users_with_siap_account(self):
+        duplicates = (
+            User.objects.values("email")
+            .annotate(email_count=Count("email"))
+            .filter(email_count__gt=1)
+            .exclude(is_superuser=True)
+            .exclude(is_staff=True)
+            .values_list("email", flat=True)
+        )
+
+        for email in list(duplicates):
+            self.stdout.write(email)
+
+        users_to_delete = (
+            User.objects.filter(email__in=duplicates, cerbere_login=None)
+            .exclude(is_superuser=True)
+            .exclude(is_staff=True)
+        )
+
+        return users_to_delete
