@@ -1,5 +1,6 @@
 import logging
 
+from django.conf import settings
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 
@@ -22,12 +23,13 @@ class SIAPSimpleJWTAuthentication(JWTAuthentication):
         if raw_token is None:
             return None
 
-        logger.warning(
-            "[SIAP call] METHOD : %s, PATH: %s, JWT TOKEN : %s",
-            request.method,
-            request.path,
-            raw_token,
-        )
+        if settings.SIAP_CLIENT_LOG_API_CALLS:
+            logger.warning(
+                "[SIAP call] METHOD : %s, PATH: %s, JWT TOKEN : %s",
+                request.method,
+                request.path,
+                raw_token,
+            )
 
         validated_token = self.get_validated_token(raw_token)
         return User(), validated_token
