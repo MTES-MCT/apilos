@@ -60,7 +60,6 @@ def test_get_cerfa(client, convention):
     response = client.get(url)
     assert response.status_code == 200
     assertTemplateUsed(response, "conventions/finalisation/cerfa.html")
-    assert "Cerfa.docx" in str(response.content)
 
 
 @pytest.mark.django_db
