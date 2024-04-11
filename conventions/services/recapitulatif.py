@@ -449,7 +449,7 @@ def convention_validate(request: HttpRequest, convention: Convention):
     convention_number_form = ConventionNumberForm(request.POST)
     complete_for_avenant_form = CompleteforavenantForm(request.POST, request.FILES)
     is_completeform = request.POST.get("completeform", False)
-    is_finalisationform = request.POST.get("validationform", False)
+    is_finalisationform = request.POST.get("finalisationform", False)
     if is_completeform:
         if complete_for_avenant_form.is_valid():
             parentconvention = convention.parent

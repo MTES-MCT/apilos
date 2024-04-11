@@ -93,7 +93,7 @@
                 value="{{ object_uuid }}">
 
             <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                let {{form_input.id_for_label}} = init_dropzone_from_file("{{form_input_files.id_for_label}}" {% if image_only %}, 'image/*'{% else %}, undefined{% endif %}{% if single_file %}, true{% endif %});
+                let {{form_input.id_for_label}} = init_dropzone_from_file("{{form_input_files.id_for_label}}" {% if image_only %}, 'image/*'{% elif override_cerfa %}, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'{% else %}, undefined{% endif %}{% if single_file %}, true{% endif %});
                 init_dropzone_list({{form_input.id_for_label}},"{{form_input_files.id_for_label}}");
             </script>
 

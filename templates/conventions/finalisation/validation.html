@@ -11,7 +11,7 @@
                 <p>La convention est prête à être transmise au bailleur pour signature !</p>
                 <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
                     {% csrf_token %}
-                    <input id="finalisationform" type="hidden" name="finalisationform" value="true" disabled="disabled" />
+                    <input id="finalisationform" type="hidden" name="finalisationform" value="true" />
                     <button class="fr-btn">
                         Valider et envoyer la convention pour signature
                     </button>
