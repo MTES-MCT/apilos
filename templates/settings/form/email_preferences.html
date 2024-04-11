@@ -1,4 +1,4 @@
-{% if not user.is_superuser %}
+{% if not user.is_superuser or not user.is_staff %}
     <div class="fr-form-group">
         <fieldset class="fr-fieldset">
             <legend class="fr-fieldset__legend fr-h4" id='radio-legend'>

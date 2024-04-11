@@ -27,88 +27,28 @@ from users.models import Role, TypeRole, User
 from users.services import UserService
 
 
-def _is_staff_or_admin(request: HttpRequest) -> bool:
+def user_is_staff_or_admin(request: HttpRequest) -> bool:
     return request.user.is_superuser or request.user.is_staff
 
 
-def user_profile(request):
-    # display user form
+def user_profile(request: HttpRequest) -> dict[str, Any]:
     if request.method == "POST":
-        if settings.CERBERE_AUTH:
-            userform = UserNotificationForm(request.POST)
-            if (
-                userform.is_valid()
-                and userform.cleaned_data["preferences_email"] is not None
-            ):
-                request.user.preferences_email = userform.cleaned_data[
-                    "preferences_email"
-                ]
-                request.user.save()
-                messages.add_message(
-                    request,
-                    messages.SUCCESS,
-                    "Votre profil a été enregistré avec succès",
-                )
-
-        else:
-            posted_request = request.POST.dict()
-            posted_request["username"] = request.user.username
-            # Erase admnistrateur de compte if current user is not admin
-            # Because a non-administrator can't give this status himself
-            userform = UserForm(
-                {
-                    **request.POST.dict(),
-                    "username": request.user.username,
-                    "administrateur_de_compte": (
-                        request.POST.get("administrateur_de_compte", False)
-                        if request.user.is_administrator()
-                        else request.user.administrateur_de_compte
-                    ),
-                    "is_superuser": (
-                        request.POST.get("is_superuser", False)
-                        if request.user.is_superuser
-                        else request.user.is_superuser
-                    ),
-                    "filtre_departements": (
-                        [
-                            int(num)
-                            for num in request.POST["filtre_departements"].split(",")
-                        ]
-                        if "filtre_departements" in request.POST
-                        and request.POST["filtre_departements"]
-                        else []
-                    ),
-                }
+        form = UserNotificationForm(request.POST)
+        if form.is_valid() and form.cleaned_data["preferences_email"] is not None:
+            request.user.preferences_email = form.cleaned_data["preferences_email"]
+            request.user.save()
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                "Votre profil a été enregistré avec succès",
             )
-            if userform.is_valid():
-                request.user.email = userform.cleaned_data["email"]
-                request.user.first_name = userform.cleaned_data["first_name"]
-                request.user.last_name = userform.cleaned_data["last_name"]
-                request.user.telephone = userform.cleaned_data["telephone"]
-                if userform.cleaned_data["preferences_email"] is not None:
-                    request.user.preferences_email = userform.cleaned_data[
-                        "preferences_email"
-                    ]
-                request.user.administrateur_de_compte = userform.cleaned_data[
-                    "administrateur_de_compte"
-                ]
-                request.user.is_superuser = userform.cleaned_data["is_superuser"]
-                request.user.save()
-                if userform.cleaned_data["filtre_departements"] is not None:
-                    request.user.filtre_departements.clear()
-                    request.user.filtre_departements.add(
-                        *userform.cleaned_data["filtre_departements"]
-                    )
-                messages.add_message(
-                    request,
-                    messages.SUCCESS,
-                    "Votre profil a été enregistré avec succès",
-                )
     else:
-        userform = UserForm(initial=model_to_dict(request.user))
+        form = UserNotificationForm(
+            initial={"preferences_email": request.user.preferences_email}
+        )
 
     return {
-        "form": userform,
+        "form": form,
         "editable": True,
     }
 
@@ -121,7 +61,7 @@ def administration_list(request: HttpRequest) -> dict[str, Any]:
 
     my_administration_list = (
         Administration.objects.all().order_by(order_by)
-        if _is_staff_or_admin(request)
+        if user_is_staff_or_admin(request)
         else request.user.administrations().order_by(order_by)
     )
     total_administration = my_administration_list.count()
@@ -160,7 +100,7 @@ def edit_administration(request, administration_uuid):
                 "nom": request.POST.get("nom", administration.nom),
                 "code": (
                     request.POST.get("code", False)
-                    if _is_staff_or_admin(request)
+                    if user_is_staff_or_admin(request)
                     else administration.code
                 ),
             }
@@ -214,7 +154,7 @@ def bailleur_list(request: HttpRequest) -> dict[str, Any]:
         page=request.GET.get("page", 1),
         item_list=(
             Bailleur.objects.all().order_by("nom")
-            if _is_staff_or_admin(request)
+            if user_is_staff_or_admin(request)
             else request.user.bailleurs()
         ),
     )
@@ -233,12 +173,12 @@ def edit_bailleur(request, bailleur_uuid):
                 "siren": bailleur.siren,
                 "sous_nature_bailleur": (
                     request.POST.get("sous_nature_bailleur", False)
-                    if _is_staff_or_admin(request)
+                    if user_is_staff_or_admin(request)
                     else bailleur.sous_nature_bailleur
                 ),
                 "nature_bailleur": (
                     request.POST.get("nature_bailleur", False)
-                    if _is_staff_or_admin(request)
+                    if user_is_staff_or_admin(request)
                     else bailleur.nature_bailleur
                 ),
             },
@@ -247,7 +187,7 @@ def edit_bailleur(request, bailleur_uuid):
             ),
         )
         if form.is_valid():
-            if _is_staff_or_admin(request) or request.user.administrateur_de_compte:
+            if user_is_staff_or_admin(request) or request.user.administrateur_de_compte:
                 parent = (
                     form.cleaned_data["bailleur"]
                     if form.cleaned_data["bailleur"]
@@ -335,7 +275,7 @@ def user_list(request: HttpRequest) -> dict[str, Any]:
         page=request.GET.get("page", 1),
         my_user_list=(
             User.objects.exclude(Q(is_staff=True) | Q(is_superuser=True))
-            if _is_staff_or_admin(request)
+            if user_is_staff_or_admin(request)
             else request.user.user_list()
         ),
     )
@@ -343,152 +283,103 @@ def user_list(request: HttpRequest) -> dict[str, Any]:
     return user_list_service.as_dict()
 
 
-def edit_user(request, username):
+# TODO: Refactor this function
+def edit_user(request: HttpRequest, username: str) -> tuple[bool, dict[str, Any]]:
+    user_updated: bool = False
+
     user = User.objects.get(username=username)
-    status = ""
+
     bailleur_query = (
         request.user.bailleurs(full_scope=True)
         .exclude(nature_bailleur=NatureBailleur.PRIVES)
         .exclude(id__in=user.get_active_bailleurs())
     )
+
     administrations = [
         (b.uuid, b.nom)
         for b in request.user.administrations(full_scope=True).exclude(
             id__in=user.get_active_administrations()
         )
     ]
+
     if request.method == "POST" and request.user.is_administrator(user):
-        action_type = request.POST.get("action_type", "")
-        if action_type == "remove_bailleur":
-            form = UserForm(initial=model_to_dict(user))
-            form_add_bailleur = AddBailleurForm(bailleur_query=bailleur_query)
-            form_add_administration = AddAdministrationForm(
-                administrations=administrations
-            )
-            bailleur_uuid = request.POST.get("bailleur")
-            Role.objects.get(
-                typologie=TypeRole.BAILLEUR,
-                bailleur=request.user.bailleurs().get(uuid=bailleur_uuid),
-                user=user,
-            ).delete()
-        elif action_type == "add_bailleur":
-            form = UserForm(initial=model_to_dict(user))
-            form_add_administration = AddAdministrationForm(
-                administrations=administrations
-            )
-            form_add_bailleur = AddBailleurForm(
-                request.POST, bailleur_query=bailleur_query
-            )
-            if form_add_bailleur.is_valid() and request.user.is_administrator():
-                Role.objects.create(
+        form = UserForm(request.POST)
+
+        form_add_bailleur = AddBailleurForm(
+            request.POST,
+            bailleur_query=bailleur_query,
+        )
+
+        form_add_administration = AddAdministrationForm(
+            request.POST,
+            administrations=administrations,
+        )
+
+        match request.POST.get("action_type", ""):
+            case "remove_bailleur":
+                Role.objects.get(
                     typologie=TypeRole.BAILLEUR,
-                    bailleur=form_add_bailleur.cleaned_data["bailleur"],
+                    bailleur=request.user.bailleurs().get(
+                        uuid=request.POST.get("bailleur")
+                    ),
                     user=user,
-                    group=Group.objects.get(name="bailleur"),
-                )
-        elif action_type == "remove_administration":
-            form = UserForm(initial=model_to_dict(user))
-            form_add_bailleur = AddBailleurForm(bailleur_query=bailleur_query)
-            form_add_administration = AddAdministrationForm(
-                administrations=administrations
-            )
-            administration_uuid = request.POST.get("administration")
-            Role.objects.get(
-                typologie=TypeRole.INSTRUCTEUR,
-                administration=request.user.administrations().get(
-                    uuid=administration_uuid
-                ),
-                user=user,
-            ).delete()
-        elif action_type == "add_administration":
-            form = UserForm(initial=model_to_dict(user))
-            form_add_bailleur = AddBailleurForm(bailleur_query=bailleur_query)
-            form_add_administration = AddAdministrationForm(
-                request.POST, administrations=administrations
-            )
-            if form_add_administration.is_valid() and request.user.is_administrator():
-                Role.objects.create(
+                ).delete()
+
+            case "add_bailleur":
+                if form_add_bailleur.is_valid():
+                    Role.objects.create(
+                        typologie=TypeRole.BAILLEUR,
+                        bailleur=form_add_bailleur.cleaned_data["bailleur"],
+                        user=user,
+                        group=Group.objects.get(name="bailleur"),
+                    )
+
+            case "remove_administration":
+                Role.objects.get(
                     typologie=TypeRole.INSTRUCTEUR,
                     administration=request.user.administrations().get(
-                        uuid=form_add_administration.cleaned_data["administration"]
+                        uuid=request.POST.get("administration")
                     ),
                     user=user,
-                    group=Group.objects.get(name="instructeur"),
-                )
-        else:
-            form_add_bailleur = AddBailleurForm(bailleur_query=bailleur_query)
-            form_add_administration = AddAdministrationForm(
-                administrations=administrations
-            )
-            # Erase administrateur de compte if current user is not admin
-            # Because a non-administrator can't give this status himself
-            # --> need to check the common scope of user and current user
-            form = UserForm(
-                {
-                    **request.POST.dict(),
-                    "username": username,
-                    "administrateur_de_compte": (
-                        request.POST.get("administrateur_de_compte", False)
-                        if request.user.is_administrator(user)
-                        else user.administrateur_de_compte
-                    ),
-                    "is_superuser": (
-                        request.POST.get("is_superuser", False)
-                        if request.user.is_superuser
-                        else user.is_superuser
-                    ),
-                    # Without virtualselect, we have a list of strings
-                    # "filtre_departements": request.POST.getlist("filtre_departements"),
-                    # With virtualselect, we have a string of comma separated values
-                    "filtre_departements": (
-                        request.POST["filtre_departements"].split(",")
-                        if "filtre_departements" in request.POST
-                        and request.POST["filtre_departements"]
-                        else []
-                    ),
-                }
-            )
+                ).delete()
 
-            if form.is_valid():
-                user.email = form.cleaned_data["email"]
-                user.first_name = form.cleaned_data["first_name"]
-                user.last_name = form.cleaned_data["last_name"]
-                user.telephone = form.cleaned_data["telephone"]
-                if form.cleaned_data["preferences_email"] is not None:
-                    user.preferences_email = form.cleaned_data["preferences_email"]
-                user.administrateur_de_compte = form.cleaned_data[
-                    "administrateur_de_compte"
-                ]
-                user.is_superuser = form.cleaned_data["is_superuser"]
-                user.save()
-                user.filtre_departements.clear()
-                for departement in form.cleaned_data["filtre_departements"]:
-                    user.filtre_departements.add(departement)
-                status = "user_updated"
+            case "add_administration":
+                if form_add_administration.is_valid():
+                    Role.objects.create(
+                        typologie=TypeRole.INSTRUCTEUR,
+                        administration=request.user.administrations().get(
+                            uuid=form_add_administration.cleaned_data["administration"]
+                        ),
+                        user=user,
+                        group=Group.objects.get(name="instructeur"),
+                    )
+
+            case _:
+                if form.is_valid():
+                    if form.cleaned_data["preferences_email"] is not None:
+                        user.preferences_email = form.cleaned_data["preferences_email"]
+
+                    user.administrateur_de_compte = form.cleaned_data[
+                        "administrateur_de_compte"
+                    ]
+                    user.save()
+
+                    user_updated = True
     else:
-        (form, form_add_bailleur, form_add_administration) = _init_user_form(
-            user, bailleur_query=bailleur_query, administrations=administrations
-        )
-    return {
-        "form": form,
-        "user": user,
-        "editable": True,
-        "status": status,
-        "form_add_bailleur": form_add_bailleur,
-        "form_add_administration": form_add_administration,
-    }
+        form = UserForm(initial=model_to_dict(user))
+        form_add_bailleur = AddBailleurForm(bailleur_query=bailleur_query)
+        form_add_administration = AddAdministrationForm(administrations=administrations)
 
-
-def _init_user_form(user, bailleur_query=None, administrations=None):
     return (
-        UserForm(
-            initial={
-                **model_to_dict(user),
-                "filtre_departements": user.filtre_departements.all(),
-            }
-        ),
-        AddBailleurForm(bailleur_query=bailleur_query),
-        AddAdministrationForm(administrations=administrations),
+        user_updated,
+        {
+            "user": user,
+            "editable": True,
+            "form": form,
+            "form_add_bailleur": form_add_bailleur,
+            "form_add_administration": form_add_administration,
+            "is_staff_or_admin": user_is_staff_or_admin(request),
+        },
     )
 
 

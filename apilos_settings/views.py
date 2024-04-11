@@ -1,19 +1,20 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
+from django.views.decorators.http import require_GET
 
-from apilos_settings.models import Departement
 from apilos_settings.services import services_view
 from apilos_settings.services import services_view as services
 from conventions.services.utils import ReturnStatus
 
 
+@require_GET
 @login_required
-def index(request):
+def index(request: HttpRequest) -> HttpResponseRedirect:
     if request.user.is_superuser:
         return HttpResponseRedirect(reverse("settings:users"))
     if request.user.is_bailleur():
@@ -23,8 +24,9 @@ def index(request):
     return HttpResponseRedirect(reverse("settings:users"))
 
 
+@require_GET
 @login_required
-def administrations(request):
+def administrations(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "settings/administrations.html",
@@ -32,16 +34,18 @@ def administrations(request):
     )
 
 
+@require_GET
 @login_required
-def edit_administration(request, administration_uuid):
+def edit_administration(request: HttpRequest, administration_uuid: str) -> HttpResponse:
     result = services_view.edit_administration(request, administration_uuid)
     if result["success"] and not settings.CERBERE_AUTH:
         return HttpResponseRedirect(reverse("settings:administrations"))
     return render(request, "settings/edit_administration.html", result)
 
 
+@require_GET
 @login_required
-def bailleurs(request):
+def bailleurs(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "settings/bailleurs.html",
@@ -49,8 +53,9 @@ def bailleurs(request):
     )
 
 
+@require_GET
 @login_required
-def edit_bailleur(request, bailleur_uuid):
+def edit_bailleur(request: HttpRequest, bailleur_uuid: str) -> HttpResponse:
     result = services.edit_bailleur(request, bailleur_uuid)
     if result["success"] and not settings.CERBERE_AUTH:
         return HttpResponseRedirect(reverse("settings:bailleurs"))
@@ -58,7 +63,7 @@ def edit_bailleur(request, bailleur_uuid):
 
 
 class ImportBailleurUsersView(LoginRequiredMixin, View):
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         if not request.user.is_staff:
             return HttpResponseRedirect(reverse("settings:users"))
 
@@ -73,7 +78,7 @@ class ImportBailleurUsersView(LoginRequiredMixin, View):
             },
         )
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> HttpResponse:
         if not request.user.is_staff:
             return HttpResponseRedirect(reverse("settings:users"))
 
@@ -93,8 +98,9 @@ class ImportBailleurUsersView(LoginRequiredMixin, View):
         )
 
 
+@require_GET
 @login_required
-def profile(request):
+def profile(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "settings/user_profile.html",
@@ -102,8 +108,9 @@ def profile(request):
     )
 
 
+@require_GET
 @login_required
-def users(request):
+def users(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "settings/users.html",
@@ -111,22 +118,22 @@ def users(request):
     )
 
 
+@require_GET
 @login_required
-def edit_user(request, username):
-    result = services.edit_user(request, username)
-    if result["status"] == "user_updated":
+def edit_user(request: HttpRequest, username: str) -> HttpResponse:
+    user_updated, context = services.edit_user(request, username)
+    if user_updated:
         return HttpResponseRedirect(reverse("settings:users"))
+
     if (
-        not result["user"].is_instructeur()
-        and not result["user"].is_bailleur()
-        and not request.user.is_superuser
+        not context["user"].is_instructeur()
+        and not context["user"].is_bailleur()
+        and not context["is_staff_or_admin"]
     ):
         return HttpResponseRedirect(reverse("settings:users"))
+
     return render(
         request,
         "settings/edit_user.html",
-        {
-            **result,
-            "departements": Departement.objects.all(),
-        },
+        context,
     )

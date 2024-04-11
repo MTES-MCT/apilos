@@ -1,10 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
 from django.db.models import QuerySet
 from django.forms import BaseFormSet, formset_factory
 
-from apilos_settings.models import Departement
 from bailleurs.models import Bailleur
 from users.models import User
 from users.type_models import EmailPreferences
@@ -35,40 +33,6 @@ class UserForm(UserNotificationForm):
         },
     )
 
-    first_name = forms.CharField(
-        required=False,
-        label="Prénom",
-        max_length=150,
-        error_messages={
-            "max_length": "Le prénom de l'utilisateur ne doit pas excéder 150 caractères",
-        },
-    )
-
-    last_name = forms.CharField(
-        required=False,
-        label="Nom",
-        max_length=150,
-        error_messages={
-            "max_length": "Le nom de l'utilisateur ne doit pas excéder 150 caractères",
-        },
-    )
-
-    email = forms.EmailField(
-        required=True,
-        label="Email",
-        error_messages={
-            "required": "L'email de l'utilisateur est obligatoire",
-        },
-    )
-
-    phone_number_regex = RegexValidator(regex=r"^\+*[0-9\s]{8,25}$")
-    telephone = forms.CharField(
-        required=False,
-        validators=[phone_number_regex],
-        max_length=25,
-        label="Numéro de téléphone professionnel",
-    )
-
     administrateur_de_compte = forms.BooleanField(
         required=False,
         label="Administrateur de compte",
@@ -78,32 +42,6 @@ class UserForm(UserNotificationForm):
             + " de vos entités ou vous ré-attribuer les droits d'administration"
         ),
     )
-
-    is_superuser = forms.BooleanField(
-        required=False,
-        label="Super Utilisateur",
-        help_text="Un super utilisateur a tous les droits",
-    )
-
-    filtre_departements = forms.ModelMultipleChoiceField(
-        queryset=Departement.objects.all(),
-        label="Filtrer par départements",
-        help_text="Les programmes et conventions affichés à l'utilisateur seront filtrés"
-        + " en utilisant la liste des départements ci-dessous",
-        required=False,
-    )
-
-    def clean_email(self):
-        email = self.cleaned_data["email"]
-        same_users = User.objects.filter(email=email)
-        if "username" in self.cleaned_data:
-            same_users = same_users.exclude(username=self.cleaned_data["username"])
-
-        if same_users.exists():
-            raise ValidationError(
-                "Le email de l'utilisateur existe déjà, il doit-être unique"
-            )
-        return email
 
 
 class UserBailleurForm(forms.Form):
