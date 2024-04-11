@@ -6,7 +6,10 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("conventions", "0082_convention_gestionnaire_bloc_info_complementaire"),
+        (
+            "conventions",
+            "0082_alter_convention_attribution_inclusif_activites_and_more",
+        ),
     ]
 
     operations = [
